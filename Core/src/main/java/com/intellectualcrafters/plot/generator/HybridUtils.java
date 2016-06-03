@@ -163,7 +163,7 @@ public abstract class HybridUtils {
                         whenDone.value += checkModified(plot.getArea().worldname, bx, ex, cpw.PLOT_HEIGHT, cpw.PLOT_HEIGHT, bz, ez, cpw.TOP_BLOCK);
                         whenDone.value += checkModified(
                                 plot.getArea().worldname, bx, ex, cpw.PLOT_HEIGHT + 1, 255, bz, ez,
-                                new PlotBlock[]{new PlotBlock((short) 0, (byte) 0)});
+                                new PlotBlock[]{PlotBlock.get((short) 0, (byte) 0)});
                     }
                 }, this, 5);
 

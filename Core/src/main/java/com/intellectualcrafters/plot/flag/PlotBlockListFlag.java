@@ -34,7 +34,7 @@ public class PlotBlockListFlag extends ListFlag<HashSet<PlotBlock>> {
                     data = -1;
                 }
                 short id = Short.parseShort(split[0]);
-                block = new PlotBlock(id, data);
+                block = PlotBlock.get(id, data);
             } catch (NumberFormatException ignored) {
                 StringComparison<PlotBlock>.ComparisonResult str = WorldUtil.IMP.getClosestBlock(value);
                 if (str == null || str.match > 1) {

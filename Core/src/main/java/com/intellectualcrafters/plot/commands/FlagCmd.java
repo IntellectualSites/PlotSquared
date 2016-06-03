@@ -62,7 +62,7 @@ public class FlagCmd extends SubCommand {
         Flag<?> flag = null;
         if (args.length > 1) {
             flag = FlagManager.getFlag(args[1]);
-            if (flag == null || FlagManager.isReserved(flag)) {
+            if (flag == null || flag.isReserved()) {
                 MainUtil.sendMessage(player, C.NOT_VALID_FLAG);
                 return false;
             }

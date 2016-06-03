@@ -498,6 +498,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     return;
                 }
             } else if (now.equals(lastPlot)) {
+                ForceFieldListener.handleForcefield(player, pp, now);
                 return;
             } else if (!plotEntry(pp, now)) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
@@ -548,6 +549,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     return;
                 }
             } else if (now.equals(lastPlot)) {
+                ForceFieldListener.handleForcefield(player, pp, now);
                 return;
             } else if (!plotEntry(pp, now)) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
@@ -637,7 +639,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
                 Block block = event.getBlock();
                 if (destroy.isPresent() && destroy.get()
-                        .contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
+                        .contains(PlotBlock.get((short) block.getTypeId(), block.getData()))) {
                     return;
                 }
                 if (Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
@@ -834,7 +836,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             if (!plot.isAdded(plotPlayer.getUUID())) {
                 Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
                 Block block = event.getBlock();
-                if (destroy.isPresent() && destroy.get().contains(new PlotBlock((short) block.getTypeId(), block.getData())) || Permissions
+                if (destroy.isPresent() && destroy.get().contains(PlotBlock.get((short) block.getTypeId(), block.getData())) || Permissions
                         .hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }
@@ -1189,7 +1191,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     break;
                 }
                 Material handType = hand.getType();
-                lb = new BukkitLazyBlock(new PlotBlock((short) handType.getId(), (byte) 0));
+                lb = new BukkitLazyBlock(PlotBlock.get((short) handType.getId(), (byte) 0));
                 switch (handType) {
                     case MONSTER_EGG:
                     case MONSTER_EGGS:
@@ -1787,8 +1789,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_UNOWNED);
             event.setCancelled(true);
         } else if (!plot.isAdded(pp.getUUID())) {
-            Optional<HashSet<PlotBlock>> use = plot.getFlag(Flags.USE);
-            if (use.isPresent() && use.get().contains(new PlotBlock((short) event.getBucket().getId(), (byte) 0))) {
+            if (Flags.USE.contains(plot, PlotBlock.get(event.getBucket().getId(), 0))) {
                 return;
             }
             if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
@@ -1858,7 +1859,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         } else if (!plot.isAdded(plotPlayer.getUUID())) {
             Optional<HashSet<PlotBlock>> use = plot.getFlag(Flags.USE);
             Block block = event.getBlockClicked();
-            if (use.isPresent() && use.get().contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
+            if (use.isPresent() && use.get().contains(PlotBlock.get(block.getTypeId(), block.getData()))) {
                 return;
             }
             if (Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_BUILD_OTHER)) {
@@ -2292,7 +2293,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 Set<PlotBlock> place = plot.getFlag(Flags.PLACE, null);
                 if (place != null) {
                     Block block = event.getBlock();
-                    if (place.contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
+                    if (place.contains(PlotBlock.get((short) block.getTypeId(), block.getData()))) {
                         return;
                     }
                 }

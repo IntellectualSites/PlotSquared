@@ -38,7 +38,7 @@ public class FlagTest {
         Optional<? extends Collection> flag = plot.getFlag(use);
         if (flag.isPresent()) {
             System.out.println(Flags.USE.valueToString(flag.get()));
-            testBlock = new PlotBlock((short) 1, (byte) 0);
+            testBlock = PlotBlock.get((short) 1, (byte) 0);
             flag.get().add(testBlock);
         }
         if (flag.isPresent()) {

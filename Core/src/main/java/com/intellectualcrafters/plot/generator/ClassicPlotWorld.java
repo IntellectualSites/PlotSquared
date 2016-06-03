@@ -12,12 +12,12 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     public int ROAD_HEIGHT = 64;
     public int PLOT_HEIGHT = 64;
     public int WALL_HEIGHT = 64;
-    public PlotBlock[] MAIN_BLOCK = new PlotBlock[] { new PlotBlock((short) 1, (byte) 0) };
-    public PlotBlock[] TOP_BLOCK = new PlotBlock[] { new PlotBlock((short) 2, (byte) 0) };
-    public PlotBlock WALL_BLOCK = new PlotBlock((short) 44, (byte) 0);
-    public PlotBlock CLAIMED_WALL_BLOCK = new PlotBlock((short) 44, (byte) 1);
-    public PlotBlock WALL_FILLING = new PlotBlock((short) 1, (byte) 0);
-    public PlotBlock ROAD_BLOCK = new PlotBlock((short) 155, (byte) 0);
+    public PlotBlock[] MAIN_BLOCK = new PlotBlock[] { PlotBlock.get((short) 1, (byte) 0) };
+    public PlotBlock[] TOP_BLOCK = new PlotBlock[] { PlotBlock.get((short) 2, (byte) 0) };
+    public PlotBlock WALL_BLOCK = PlotBlock.get((short) 44, (byte) 0);
+    public PlotBlock CLAIMED_WALL_BLOCK = PlotBlock.get((short) 44, (byte) 1);
+    public PlotBlock WALL_FILLING = PlotBlock.get((short) 1, (byte) 0);
+    public PlotBlock ROAD_BLOCK = PlotBlock.get((short) 155, (byte) 0);
     public boolean PLOT_BEDROCK = true;
 
     public ClassicPlotWorld(String worldName, String id, IndependentPlotGenerator generator, PlotId min, PlotId max) {

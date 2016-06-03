@@ -151,11 +151,11 @@ public class HybridPlotManager extends ClassicPlotManager {
         final PlotBlock[] filling = dpw.MAIN_BLOCK;
         final PlotBlock bedrock;
         if (dpw.PLOT_BEDROCK) {
-            bedrock = new PlotBlock((short) 7, (byte) 0);
+            bedrock = PlotBlock.get((short) 7, (byte) 0);
         } else {
-            bedrock = new PlotBlock((short) 0, (byte) 0);
+            bedrock = PlotBlock.get((short) 0, (byte) 0);
         }
-        final PlotBlock air = new PlotBlock((short) 0, (byte) 0);
+        final PlotBlock air = PlotBlock.get((short) 0, (byte) 0);
         final String biome = WorldUtil.IMP.getBiomeList()[dpw.PLOT_BIOME];
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override

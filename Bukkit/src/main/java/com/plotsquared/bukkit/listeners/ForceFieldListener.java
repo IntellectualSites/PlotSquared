@@ -1,26 +1,22 @@
 package com.plotsquared.bukkit.listeners;
 
-import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.util.Vector;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
+import org.bukkit.util.Vector;
 
 public class ForceFieldListener implements Listener {
 
-    private Set<PlotPlayer> getNearbyPlayers(Player player, Plot plot) {
+    private static Set<PlotPlayer> getNearbyPlayers(Player player, Plot plot) {
         Set<PlotPlayer> players = new HashSet<>();
         for (Entity entity : player.getNearbyEntities(5d, 5d, 5d)) {
             PlotPlayer plotPlayer;
@@ -34,7 +30,7 @@ public class ForceFieldListener implements Listener {
         return players;
     }
 
-    private PlotPlayer hasNearbyPermitted(Player player, Plot plot) {
+    private static PlotPlayer hasNearbyPermitted(Player player, Plot plot) {
         for (Entity entity : player.getNearbyEntities(5d, 5d, 5d)) {
             if (!(entity instanceof Player)) {
                 continue;
@@ -53,7 +49,7 @@ public class ForceFieldListener implements Listener {
         return null;
     }
 
-    private Vector calculateVelocity(PlotPlayer player, PlotPlayer e) {
+    private static Vector calculateVelocity(PlotPlayer player, PlotPlayer e) {
         Location playerLocation = player.getLocationFull();
         Location oPlayerLocation = e.getLocation();
         double playerX = playerLocation.getX();
@@ -83,16 +79,8 @@ public class ForceFieldListener implements Listener {
         return new Vector(x, y, z);
     }
 
-    @EventHandler
-    public void onPlotEntry(PlayerMoveEvent event) {
-        Player player = event.getPlayer();
-        PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
-        Plot plot = plotPlayer.getCurrentPlot();
-        if (plot == null) {
-            return;
-        }
-        Optional<Boolean> forcefield = plot.getFlag(Flags.FORCEFIELD);
-        if (forcefield.isPresent() && forcefield.get()) {
+    public static void handleForcefield(Player player, PlotPlayer plotPlayer, Plot plot) {
+        if (Flags.FORCEFIELD.isTrue(plot)) {
             UUID uuid = plotPlayer.getUUID();
             if (plot.isAdded(uuid)) {
                 Set<PlotPlayer> players = getNearbyPlayers(player, plot);

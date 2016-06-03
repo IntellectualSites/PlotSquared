@@ -106,7 +106,7 @@ public class AugmentedUtils {
                 primaryMask = result;
             }
             PlotChunk<?> secondaryMask;
-            PlotBlock air = new PlotBlock((short) 0, (byte) 0);
+            PlotBlock air = PlotBlock.get((short) 0, (byte) 0);
             if (area.TERRAIN == 2) {
                 PlotManager manager = area.getPlotManager();
                 final boolean[][] canPlace = new boolean[16][16];

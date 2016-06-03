@@ -1,7 +1,6 @@
 package com.intellectualcrafters.plot.flag;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Sets;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
@@ -11,7 +10,6 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,8 +25,6 @@ import java.util.Set;
  */
 public class FlagManager {
 
-
-    private static final HashSet<Flag<?>> reserved = Sets.newHashSet(Flags.ANALYSIS, Flags.DONE);
 
     /**
      * Some events can be called millions of times each second (e.g. physics) and reusing is a lot faster.
@@ -67,7 +63,11 @@ public class FlagManager {
      * @return false if the flag was already reserved, otherwise true
      */
     public static boolean reserveFlag(Flag<?> flag) {
-        return reserved.add(flag);
+        if (flag.isReserved()) {
+            return false;
+        }
+        flag.reserve();
+        return true;
     }
 
     /**
@@ -76,7 +76,7 @@ public class FlagManager {
      * @return true if the flag is reserved, false otherwise
      */
     public static boolean isReserved(Flag<?> flag) {
-        return reserved.contains(flag);
+        return flag.isReserved();
     }
 
     /**
@@ -84,7 +84,13 @@ public class FlagManager {
      * @return a set of reserved flags
      */
     public static Set<Flag<?>> getReservedFlags() {
-        return Collections.unmodifiableSet(reserved);
+        HashSet<Flag<?>> reserved = new HashSet<>();
+        for (Flag flag : Flags.getFlags()) {
+            if (flag.isReserved()) {
+                reserved.add(flag);
+            }
+        }
+        return reserved;
     }
 
     /**
@@ -93,7 +99,11 @@ public class FlagManager {
      * @return true if the flag was unreserved
      */
     public static boolean unreserveFlag(Flag<?> flag) {
-        return reserved.remove(flag);
+        if (flag.isReserved()) {
+            flag.unreserve();
+            return true;
+        }
+        return false;
     }
 
     public static String toString(HashMap<Flag<?>, Object> flags) {
@@ -175,22 +185,24 @@ public class FlagManager {
     }
 
     public static HashMap<Flag<?>, Object> getPlotFlags(PlotArea area, PlotSettings settings, boolean ignorePluginflags) {
-        HashMap<Flag<?>, Object> flags = new HashMap<>();
+        HashMap<Flag<?>, Object> flags = null;
         if (area != null && !area.DEFAULT_FLAGS.isEmpty()) {
+            flags = new HashMap<>(area.DEFAULT_FLAGS.size());
             flags.putAll(area.DEFAULT_FLAGS);
         }
         if (ignorePluginflags) {
+            if (flags == null) {
+                flags = new HashMap<>(settings.flags.size());
+            }
             for (Map.Entry<Flag<?>, Object> flag : settings.flags.entrySet()) {
-                if (isReserved(flag.getKey())) {
+                if (flag.getKey().isReserved()) {
                     continue;
                 }
                 flags.put(flag.getKey(), flag.getValue());
             }
-        } else {
-            flags.putAll(settings.flags);
+            return flags;
         }
-
-        return flags;
+        return settings.flags;
     }
 
     public static Map<Flag<?>, Object> getSettingFlags(PlotArea area, PlotSettings settings) {
@@ -288,29 +300,15 @@ public class FlagManager {
      * @return the {@code Flag} object defined by {@code string}
      */
     public static Flag<?> getFlag(String string) {
-        for (Flag flag : Flags.getFlags()) {
-            if (flag.getName().equalsIgnoreCase(string)) {
-                if (isReserved(flag)) {
-                    return null;
-                }
-                return flag;
-            }
-        }
-        return null;
+        return Flags.getFlag(string);
     }
 
     public static Flag<?> getFlag(String string, boolean ignoreReserved) {
-        for (Flag flag : Flags.getFlags()) {
-            if (flag.getName().equalsIgnoreCase(string)) {
-                if (!ignoreReserved) {
-                    if (isReserved(flag)) {
-                        return null;
-                    }
-                }
-                return flag;
-            }
+        Flag<?> flag = Flags.getFlag(string);
+        if (!ignoreReserved && flag != null && flag.isReserved()) {
+            return null;
         }
-        return null;
+        return flag;
     }
 
 

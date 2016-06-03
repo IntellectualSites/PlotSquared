@@ -153,7 +153,7 @@ public class SpongeUtil extends WorldUtil {
                     if (state.getType() == BlockTypes.AIR) {
                         continue;
                     }
-                    PlotBlock plotBlock = new PlotBlock((short) (i & 0xFFF), (byte) (i >> 12 & 0xF));
+                    PlotBlock plotBlock = PlotBlock.get((short) (i & 0xFFF), (byte) (i >> 12 & 0xF));
                     stateArray[i] = state;
                     stateMap.put(state, plotBlock);
                 } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ignored) {
@@ -301,7 +301,7 @@ public class SpongeUtil extends WorldUtil {
                 match = comparison.match;
                 id = SpongeUtil.getPlotBlock(comparison.best.getDefaultState()).id;
             }
-            PlotBlock block = new PlotBlock(id, data);
+            PlotBlock block = PlotBlock.get(id, data);
             StringComparison<PlotBlock> outer = new StringComparison<PlotBlock>();
             return outer.new ComparisonResult(match, block);
 

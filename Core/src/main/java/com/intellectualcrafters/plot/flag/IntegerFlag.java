@@ -1,5 +1,7 @@
 package com.intellectualcrafters.plot.flag;
 
+import com.intellectualcrafters.plot.object.Plot;
+
 public class IntegerFlag extends Flag<Integer> {
 
     public IntegerFlag(String name) {
@@ -20,5 +22,20 @@ public class IntegerFlag extends Flag<Integer> {
         } catch (NumberFormatException ignored) {
             return null;
         }
+    }
+
+    public boolean isEqual(Plot plot, int value) {
+        Integer existing = FlagManager.getPlotFlagRaw(plot, this);
+        return existing != null && existing == value;
+    }
+
+    public boolean isMore(Plot plot, int value) {
+        Integer existing = FlagManager.getPlotFlagRaw(plot, this);
+        return existing != null && existing > value;
+    }
+
+    public boolean isLess(Plot plot, int value) {
+        Integer existing = FlagManager.getPlotFlagRaw(plot, this);
+        return existing != null && existing < value;
     }
 }

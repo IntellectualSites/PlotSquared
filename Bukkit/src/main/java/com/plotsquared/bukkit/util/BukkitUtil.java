@@ -270,7 +270,7 @@ public class BukkitUtil extends WorldUtil {
     public StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name) {
         try {
             Material material = Material.valueOf(name.toUpperCase());
-            return new StringComparison<PlotBlock>().new ComparisonResult(0, new PlotBlock((short) material.getId(), (byte) 0));
+            return new StringComparison<PlotBlock>().new ComparisonResult(0, PlotBlock.get((short) material.getId(), (byte) 0));
         } catch (IllegalArgumentException ignored) {}
         try {
             byte data;
@@ -291,7 +291,7 @@ public class BukkitUtil extends WorldUtil {
                 match = comparison.match;
                 id = (short) comparison.best.getId();
             }
-            PlotBlock block = new PlotBlock(id, data);
+            PlotBlock block = PlotBlock.get(id, data);
             StringComparison<PlotBlock> outer = new StringComparison<>();
             return outer.new ComparisonResult(match, block);
 
@@ -317,7 +317,7 @@ public class BukkitUtil extends WorldUtil {
         if (block == null) {
             return PlotBlock.EVERYTHING;
         }
-        return new PlotBlock((short) block.getTypeId(), block.getData());
+        return PlotBlock.get((short) block.getTypeId(), block.getData());
     }
 
     @Override

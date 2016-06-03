@@ -49,7 +49,7 @@ public class Music extends SubCommand {
         };
         int index = 0;
         for (int i = 2256; i < 2268; i++) {
-            String name = "&r&6" + WorldUtil.IMP.getClosestMatchingName(new PlotBlock((short) i, (byte) 0));
+            String name = "&r&6" + WorldUtil.IMP.getClosestMatchingName(PlotBlock.get((short) i, (byte) 0));
             String[] lore = {"&r&aClick to play!"};
             PlotItemStack item = new PlotItemStack(i, (byte) 0, 1, name, lore);
             inv.setItem(index, item);

@@ -88,7 +88,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         if (plot == null) {
             return;
         }
-        if (plot.getFlag(Flags.INSTABREAK).or(false)) {
+        if (Flags.INSTABREAK.isTrue(plot)) {
             event.getBlock().breakNaturally();
         }
     }
@@ -103,7 +103,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         if (plot == null) {
             return;
         }
-        if (plot.getFlag(Flags.INVINCIBLE).or(false)) {
+        if (Flags.INVINCIBLE.isTrue(plot)) {
             event.setCancelled(true);
         }
     }
@@ -117,7 +117,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
             return;
         }
         UUID uuid = pp.getUUID();
-        if (plot.isAdded(uuid) && plot.getFlag(Flags.DROP_PROTECTION).or(false)) {
+        if (plot.isAdded(uuid) && Flags.DROP_PROTECTION.isTrue(plot)) {
             event.setCancelled(true);
         }
     }

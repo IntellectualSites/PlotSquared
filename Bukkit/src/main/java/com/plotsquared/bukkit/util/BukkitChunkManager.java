@@ -1066,7 +1066,7 @@ public class BukkitChunkManager extends ChunkManager {
                     if (typeId == 0) {
                         ids[y] = PlotBlock.EVERYTHING;
                     } else {
-                        ids[y] = new PlotBlock((short) typeId, block.getData());
+                        ids[y] = PlotBlock.get((short) typeId, block.getData());
                     }
                 }
                 if (!id.equals(Material.AIR)) {

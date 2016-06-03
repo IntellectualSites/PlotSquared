@@ -5,6 +5,7 @@ import com.intellectualcrafters.plot.object.Plot;
 public abstract class Flag<V> {
 
     private final String name;
+    private boolean reserved = false;
 
     /**
      * Flag object used to store basic information for a Plot. Flags are a
@@ -15,6 +16,20 @@ public abstract class Flag<V> {
      */
     public Flag(String name) {
         this.name = name;
+    }
+
+    public Flag reserve() {
+        reserved = true;
+        return this;
+    }
+
+    public boolean isReserved() {
+        return reserved;
+    }
+
+    public Flag unreserve() {
+        reserved = false;
+        return this;
     }
 
     public abstract String valueToString(Object value);

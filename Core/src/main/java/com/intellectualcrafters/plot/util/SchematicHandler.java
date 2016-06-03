@@ -325,7 +325,7 @@ public abstract class SchematicHandler {
                                                     SetQueue.IMP.setBlock(plot.getArea().worldname, xx, yy, zz, id);
                                                     break;
                                                 default:
-                                                    SetQueue.IMP.setBlock(plot.getArea().worldname, xx, yy, zz, new PlotBlock((short) id, datas[i]));
+                                                    SetQueue.IMP.setBlock(plot.getArea().worldname, xx, yy, zz, PlotBlock.get((short) id, datas[i]));
                                                     break;
                                             }
                                         }

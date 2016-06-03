@@ -1,17 +1,14 @@
 package com.intellectualcrafters.plot.flag;
 
-import com.google.common.collect.Sets;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.HashMap;
 
 public class Flags {
 
@@ -115,46 +112,51 @@ public class Flags {
     };
     public static final BooleanFlag SLEEP = new BooleanFlag("sleep");
 
-    private static final HashSet<Flag<?>> flags = Sets.newHashSet(MUSIC, DESCRIPTION, ANALYSIS, GREETING, FAREWELL, FEED, HEAL,
-            GAMEMODE,
-            DONE,
-            REDSTONE,
-            FLY, NOTIFY_LEAVE, NOTIFY_ENTER, TIME, WEATHER, KEEP, PRICE, EXPLOSION, GRASS_GROW, VINE_GROW, MYCEL_GROW, DISABLE_PHYSICS, SNOW_MELT,
-            ICE_MELT,
-            FIRE_SPREAD, BLOCK_BURN, BLOCK_IGNITION, SOIL_DRY, BLOCKED_CMDS, USE, BREAK, PLACE, DEVICE_INTERACT, VEHICLE_BREAK, VEHICLE_PLACE,
-            VEHICLE_USE,
-            HANGING_BREAK, HANGING_PLACE, HANGING_INTERACT, MISC_PLACE, MISC_BREAK, MISC_INTERACT, PLAYER_INTERACT, TAMED_ATTACK, TAMED_INTERACT,
-            ANIMAL_ATTACK, ANIMAL_INTERACT, HOSTILE_ATTACK, HOSTILE_INTERACT, MOB_PLACE, FORCEFIELD, INVINCIBLE, ITEM_DROP, INSTABREAK,
-            DROP_PROTECTION, PVP,
-            PVE, NO_WORLDEDIT, MISC_CAP, ENTITY_CAP, MOB_CAP, ANIMAL_CAP, HOSTILE_CAP, VEHICLE_CAP);
+    private static final HashMap<String, Flag<?>> flags;
+    static {
+        flags = new HashMap<>();
+        try {
+            for (Field field : Flags.class.getDeclaredFields()) {
+                if (!field.isAccessible()) {
+                    field.setAccessible(true);
+                }
+                String fieldName = field.getName().replace("_","-").toLowerCase();
+                Object fieldValue = field.get(null);
+                if (!(fieldValue instanceof Flag)) {
+                    continue;
+                }
+                Flag flag = (Flag) fieldValue;
+                if (!flag.getName().equals(fieldName)) {
+                    PS.debug(Flags.class + "Field doesn't match: " + fieldName + " != " + flag.getName());
+                }
+                flags.put(flag.getName(), flag);
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Get an immutable set of registered flags.
      *
      * @return a set of registered flags.
      */
-    public static Set<Flag<?>> getFlags() {
-        return Collections.unmodifiableSet(flags);
+    public static Collection<Flag<?>> getFlags() {
+        return flags.values();
+    }
+
+    public static Flag<?> getFlag(String flag) {
+        return flags.get(flag);
     }
 
     public static void registerFlag(final Flag<?> flag) {
-        Iterator<Flag<?>> iterator = flags.iterator();
-        Flag<?> duplicate = null;
-        while (iterator.hasNext()){
-            duplicate = iterator.next();
-            if (flag.getName().equalsIgnoreCase(duplicate.getName())) {
-                iterator.remove();
-                flags.add(flag);
-                break;
-            }
-        }
-        final Flag<?> dupFinal = duplicate;
+        final Flag<?> duplicate = flags.put(flag.getName(), flag);
         PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
             @Override public void run(PlotArea value) {
-                if (dupFinal != null) {
+                if (duplicate != null) {
                     Object remove;
-                    if (value.DEFAULT_FLAGS.containsKey(dupFinal)) {
-                        remove = value.DEFAULT_FLAGS.remove(dupFinal);
+                    if (value.DEFAULT_FLAGS.containsKey(duplicate)) {
+                        remove = value.DEFAULT_FLAGS.remove(duplicate);
                         if (!(remove instanceof String)) {
                             //error message? maybe?
                             return;
@@ -166,10 +168,10 @@ public class Flags {
         });
         PS.get().foreachPlotRaw(new RunnableVal<Plot>() {
             @Override public void run(Plot value) {
-                if (dupFinal != null) {
+                if (duplicate != null) {
                     Object remove = null;
-                    if (value.getFlags().containsKey(dupFinal)) {
-                        remove = value.getFlags().remove(dupFinal);
+                    if (value.getFlags().containsKey(duplicate)) {
+                        remove = value.getFlags().remove(duplicate);
                     }
                     if (!(remove instanceof String)) {
                         //error message? maybe?

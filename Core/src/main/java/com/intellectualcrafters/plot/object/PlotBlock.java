@@ -3,6 +3,18 @@ package com.intellectualcrafters.plot.object;
 public class PlotBlock {
 
     public static final PlotBlock EVERYTHING = new PlotBlock((short) 0, (byte) 0);
+    private static final PlotBlock[] CACHE = new PlotBlock[65535];
+    static {
+        for (int i = 0; i < 65535; i++) {
+            short id = (short) (i >> 4);
+            byte data = (byte) (i & 15);
+            CACHE[i] = new PlotBlock(id, data);
+        }
+    }
+
+    public static PlotBlock get(int id, int data) {
+        return CACHE[(id << 4) + data];
+    }
 
     public final short id;
     public final byte data;

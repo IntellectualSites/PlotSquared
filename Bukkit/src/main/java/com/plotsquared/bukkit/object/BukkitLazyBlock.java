@@ -122,7 +122,7 @@ public class BukkitLazyBlock extends LazyBlock {
                 data = this.block.getData();
                 break;
         }
-        this.pb = new PlotBlock((short) this.id, data);
+        this.pb = PlotBlock.get((short) this.id, data);
         return this.pb;
 
     }

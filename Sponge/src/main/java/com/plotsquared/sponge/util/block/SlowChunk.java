@@ -39,7 +39,7 @@ public class SlowChunk extends PlotChunk<Chunk> {
         if (id == this.lastBlock.id && data == this.lastBlock.data) {
             this.result[MainUtil.CACHE_I[x][y][z]][MainUtil.CACHE_J[x][y][z]] = this.lastBlock;
         } else {
-            this.result[MainUtil.CACHE_I[x][y][z]][MainUtil.CACHE_J[x][y][z]] = new PlotBlock((short) id, data);
+            this.result[MainUtil.CACHE_I[x][y][z]][MainUtil.CACHE_J[x][y][z]] = PlotBlock.get((short) id, data);
         }
     }
     
