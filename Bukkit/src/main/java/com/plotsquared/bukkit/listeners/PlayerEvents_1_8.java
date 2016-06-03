@@ -32,6 +32,7 @@ import java.util.UUID;
 
 public class PlayerEvents_1_8 extends PlotListener implements Listener {
     
+    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         if (!event.isLeftClick() || (event.getAction() != InventoryAction.PLACE_ALL) || event.isShiftClick()) {

@@ -79,6 +79,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
@@ -313,10 +314,21 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                         }
                                         Location location = entity.getLocation();
                                         if (BukkitUtil.getLocation(location).isPlotRoad()) {
-                                            Entity passenger = entity.getPassenger();
-                                            if (!(passenger instanceof Player) && entity.getMetadata("keep").isEmpty()) {
-                                                iterator.remove();
-                                                entity.remove();
+                                            if (entity instanceof LivingEntity) {
+                                                LivingEntity livingEntity = (LivingEntity) entity;
+                                                if (!livingEntity.isLeashed() || !entity.hasMetadata("keep")) {
+                                                    Entity passenger = entity.getPassenger();
+                                                    if (!(passenger instanceof Player) && entity.getMetadata("keep").isEmpty()) {
+                                                        iterator.remove();
+                                                        entity.remove();
+                                                    }
+                                                }
+                                            } else {
+                                                Entity passenger = entity.getPassenger();
+                                                if (!(passenger instanceof Player) && entity.getMetadata("keep").isEmpty()) {
+                                                    iterator.remove();
+                                                    entity.remove();
+                                                }
                                             }
                                         }
                                 }

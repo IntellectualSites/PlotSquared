@@ -228,13 +228,14 @@ public class PlotAPI {
      * Get the plot manager for a world. Most of these methods can be accessed
      * through the MainUtil.
      *
-     * @param world Which manager to get
+     * @param world the world to retrieve the manager from
      *
      * @return PlotManager
      *
      * @see PlotManager
      * @see PS#getPlotManager(Plot)
      */
+    @SuppressWarnings("deprecation")
     @Deprecated
     public PlotManager getPlotManager(World world) {
         if (world == null) {
@@ -292,6 +293,7 @@ public class PlotAPI {
      * @see #getPlotAreas(World)
      * @see PlotArea
      */
+    @SuppressWarnings("deprecation")
     @Deprecated
     public PlotArea getWorldSettings(World world) {
         if (world == null) {
@@ -395,6 +397,7 @@ public class PlotAPI {
      *
      * @see PlotArea#getPlot(PlotId)
      */
+    @SuppressWarnings("deprecation")
     @Deprecated
     public Plot getPlot(World world, int x, int z) {
         if (world == null) {
@@ -446,6 +449,7 @@ public class PlotAPI {
      *
      * @see #getPlots(World, Player, boolean)
      */
+    @SuppressWarnings("deprecation")
     @Deprecated
     public boolean hasPlot(World world, Player player) {
         return getPlots(world, player, true).length > 0;
@@ -500,6 +504,7 @@ public class PlotAPI {
      * @return World[] - array of plot worlds
      *
      */
+    @SuppressWarnings("deprecation")
     @Deprecated
     public String[] getPlotWorlds() {
         Set<String> plotWorldStrings = PS.get().getPlotWorldStrings();
@@ -531,6 +536,7 @@ public class PlotAPI {
      *
      * @see Plot
      */
+    @SuppressWarnings("deprecation")
     @Deprecated
     public Location[] getLocations(Plot plot) {
         Location bukkitBottom = BukkitUtil.getLocation(plot.getCorners()[0]);
@@ -563,9 +569,10 @@ public class PlotAPI {
      *
      * @see Plot
      */
+    @SuppressWarnings("deprecation")
     @Deprecated
     public Location getBottomLocation(Plot plot) {
-        return BukkitUtil.getLocation(plot.getBottom());
+        return BukkitUtil.getLocation(plot.getCorners()[0]);
     }
 
     /**
@@ -579,9 +586,10 @@ public class PlotAPI {
      *
      * @see Plot
      */
+    @SuppressWarnings("deprecation")
     @Deprecated
     public Location getTopLocation(Plot plot) {
-        return BukkitUtil.getLocation(plot.getTop());
+        return BukkitUtil.getLocation(plot.getCorners()[1]);
     }
 
     /**
