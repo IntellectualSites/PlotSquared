@@ -1,7 +1,5 @@
 package com.intellectualcrafters.configuration;
 
-import com.intellectualcrafters.plot.PS;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -324,7 +322,7 @@ public class MemorySection implements ConfigurationSection {
     }
 
     @Override
-    public Object get(String path, Object def) {
+    public Object get(String path, Object defaultValue) {
         if (path == null) {
             throw new NullPointerException("Path cannot be null");
         }
@@ -347,7 +345,7 @@ public class MemorySection implements ConfigurationSection {
         while ((i1 = path.indexOf(separator, i2 = i1 + 1)) != -1) {
             section = section.getConfigurationSection(path.substring(i2, i1));
             if (section == null) {
-                return def;
+                return defaultValue;
             }
         }
 
@@ -355,12 +353,12 @@ public class MemorySection implements ConfigurationSection {
         if (section == this) {
             Object result = this.map.get(key);
             if (result == null) {
-                return def;
+                return defaultValue;
             } else {
                 return result;
             }
         }
-        return section.get(key, def);
+        return section.get(key, defaultValue);
     }
 
     @Override
@@ -464,12 +462,12 @@ public class MemorySection implements ConfigurationSection {
     }
 
     @Override
-    public boolean getBoolean(String path, boolean def) {
-        Object val = get(path, def);
+    public boolean getBoolean(String path, boolean defaultValue) {
+        Object val = get(path, defaultValue);
         if (val instanceof Boolean) {
             return (Boolean) val;
         } else {
-            return def;
+            return defaultValue;
         }
     }
 
@@ -486,9 +484,9 @@ public class MemorySection implements ConfigurationSection {
     }
 
     @Override
-    public double getDouble(String path, double def) {
-        Object val = get(path, def);
-        return toDouble(val, def);
+    public double getDouble(String path, double defaultValue) {
+        Object val = get(path, defaultValue);
+        return toDouble(val, defaultValue);
     }
 
     @Override

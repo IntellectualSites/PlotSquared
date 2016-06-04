@@ -57,7 +57,7 @@ public class CommentManager {
     }
 
     public static long getTimestamp(PlotPlayer player, String inbox) {
-        return player.getMeta("inbox:" + inbox, player.getPreviousLogin());
+        return player.getMeta("inbox:" + inbox, player.getLastPlayed());
     }
 
     public static void addInbox(CommentInbox inbox) {

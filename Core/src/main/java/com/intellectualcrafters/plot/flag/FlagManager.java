@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.flag;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
@@ -10,11 +11,11 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -84,13 +85,13 @@ public class FlagManager {
      * @return a set of reserved flags
      */
     public static Set<Flag<?>> getReservedFlags() {
-        HashSet<Flag<?>> reserved = new HashSet<>();
+        ImmutableSet.Builder<Flag<?>> reserved = ImmutableSet.builder();
         for (Flag flag : Flags.getFlags()) {
             if (flag.isReserved()) {
                 reserved.add(flag);
             }
         }
-        return reserved;
+        return reserved.build();
     }
 
     /**
@@ -147,7 +148,7 @@ public class FlagManager {
     }
 
     /**
-     * Add a flag to a plot
+     * Add a flag to a plot.
      * @param origin
      * @param flag
      * @param value
@@ -173,9 +174,9 @@ public class FlagManager {
     }
 
     /**
-     *
+     * Returns a map of the {@link Flag}s and their values for the specified plot.
      * @param plot the plot
-     * @return a map of flags and their values
+     * @return a map of the flags and values for the plot, returns an empty map for unowned plots
      */
     public static Map<Flag<?>, Object> getPlotFlags(Plot plot) {
         if (!plot.hasOwner()) {
@@ -276,11 +277,11 @@ public class FlagManager {
     }
 
     /**
-     * Get a list of registered {@link Flag} objects based on player permissions
+     * Get a list of registered {@link Flag} objects based on player permissions.
      *
-     * @param player with permissions
+     * @param player the player
      *
-     * @return List (Flag)
+     * @return a list of flags the specified player can use
      */
     public static List<Flag> getFlags(PlotPlayer player) {
         List<Flag> returnFlags = new ArrayList<>();
@@ -293,11 +294,11 @@ public class FlagManager {
     }
 
     /**
-     * Get a {@link Flag} specified by a {@code String}.
+     * Get a {@link Flag} specified by the specified {@code String}.
      *
      * @param string the flag name
      *
-     * @return the {@code Flag} object defined by {@code string}
+     * @return the {@code Flag} object defined by the {@code String}
      */
     public static Flag<?> getFlag(String string) {
         return Flags.getFlag(string);

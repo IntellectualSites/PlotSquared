@@ -5,6 +5,7 @@ import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.util.PlotGameMode;
 import com.intellectualcrafters.plot.util.PlotWeather;
+
 import java.util.UUID;
 
 public class ConsolePlayer extends PlotPlayer {
@@ -32,11 +33,6 @@ public class ConsolePlayer extends PlotPlayer {
     }
 
     @Override
-    public long getPreviousLogin() {
-        return 0;
-    }
-    
-    @Override
     public Location getLocation() {
         return this.<Location>getMeta("location");
     }
@@ -50,7 +46,11 @@ public class ConsolePlayer extends PlotPlayer {
     public UUID getUUID() {
         return DBFunc.everyone;
     }
-    
+
+    @Override public long getLastPlayed() {
+        return 0;
+    }
+
     @Override
     public boolean hasPermission(String permission) {
         return true;

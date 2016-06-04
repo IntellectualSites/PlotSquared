@@ -18,18 +18,16 @@ public abstract class Flag<V> {
         this.name = name;
     }
 
-    public Flag reserve() {
-        reserved = true;
-        return this;
+    public void reserve() {
+        this.reserved = true;
     }
 
     public boolean isReserved() {
-        return reserved;
+        return this.reserved;
     }
 
-    public Flag unreserve() {
-        reserved = false;
-        return this;
+    public void unreserve() {
+        this.reserved = false;
     }
 
     public abstract String valueToString(Object value);

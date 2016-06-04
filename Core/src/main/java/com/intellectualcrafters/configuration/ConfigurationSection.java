@@ -144,10 +144,10 @@ public interface ConfigurationSection {
      * {@link Configuration}.
      *
      * @param path Path of the Object to get.
-     * @param def The default value to return if the path is not found.
+     * @param defaultValue The default value to return if the path is not found.
      * @return Requested Object.
      */
-    Object get(String path, Object def);
+    Object get(String path, Object defaultValue);
 
     /**
      * Sets the specified path to the given value.
@@ -293,11 +293,11 @@ public interface ConfigurationSection {
      * {@link Configuration}.
      *
      * @param path Path of the boolean to get.
-     * @param def The default value to return if the path is not found or is
+     * @param defaultValue The default value to return if the path is not found or is
      *     not a boolean.
      * @return Requested boolean.
      */
-    boolean getBoolean(String path, boolean def);
+    boolean getBoolean(String path, boolean defaultValue);
 
     /**
      * Checks if the specified path is a boolean.
@@ -333,11 +333,11 @@ public interface ConfigurationSection {
      * {@link Configuration}.
      *
      * @param path Path of the double to get.
-     * @param def The default value to return if the path is not found or is
+     * @param defaultValue The default value to return if the path is not found or is
      *     not a double.
      * @return Requested double.
      */
-    double getDouble(String path, double def);
+    double getDouble(String path, double defaultValue);
 
     /**
      * Checks if the specified path is a double.

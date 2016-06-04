@@ -23,15 +23,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * The PlotPlayer class<br>
- *  - Can cast to: BukkitPlayer / SpongePlayer, which are the current implementations<br>
+ * The abstract class supporting {@code BukkitPlayer} and {@code SpongePlayer}.
  */
-public abstract class PlotPlayer implements CommandCaller {
+public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     private Map<String, byte[]> metaMap = new HashMap<>();
 
-    /**
-     * The metadata map.
-     */
+    /** The metadata map.*/
     private ConcurrentHashMap<String, Object> meta;
 
     /**
@@ -71,9 +68,9 @@ public abstract class PlotPlayer implements CommandCaller {
 
     /**
      * Get the session metadata for a key.
-     * @param <T>
-     * @param key
-     * @return
+     * @param key the name of the metadata key
+     * @param <T> the object type to return
+     * @return the value assigned to the key or null if it does not exist
      */
     public <T> T getMeta(String key) {
         if (this.meta != null) {
@@ -82,19 +79,12 @@ public abstract class PlotPlayer implements CommandCaller {
         return null;
     }
 
-    /**
-     *
-     * @param key
-     * @param def
-     * @param <T>
-     * @return
-     */
-    public <T> T getMeta(String key, T def) {
-        if (this.meta != null) {
-            T value = (T) this.meta.get(key);
-            return value == null ? def : value;
+    public <T> T getMeta(String key, T defaultValue) {
+        T meta = getMeta(key);
+        if (meta == null) {
+            return defaultValue;
         }
-        return def;
+        return meta;
     }
 
     /**
@@ -108,8 +98,9 @@ public abstract class PlotPlayer implements CommandCaller {
     }
 
     /**
-     * Returns the player's name.
-     * @see #getName()
+     * The player's name.
+     *
+     * @return the name of the player
      */
     @Override
     public String toString() {
@@ -118,9 +109,7 @@ public abstract class PlotPlayer implements CommandCaller {
 
     /**
      * Get the player's current plot.
-     *  - This will return null if the player is standing in the road, or not in a plot world/area
-     *  - An unowned plot is still a plot, it just doesn't have any settings
-     * @return
+     * @return the plot the player is standing on or null if standing on a road or not in a {@link PlotArea}
      */
     public Plot getCurrentPlot() {
         return (Plot) getMeta("lastplot");
@@ -189,10 +178,10 @@ public abstract class PlotPlayer implements CommandCaller {
     }
 
     /**
-     * Get the plots the player owns
+     * Get a {@code Set} of plots owned by this player.
      * @see PS for more searching functions
      * @see #getPlotCount() for the number of plots
-     * @return Set of plots
+     * @return a {@code Set} of plots owned by the player
      */
     public Set<Plot> getPlots() {
         return PS.get().getPlots(this);
@@ -232,11 +221,10 @@ public abstract class PlotPlayer implements CommandCaller {
 
     ////////////////////////////////////////////////
 
-    /**
-     * Get the previous time the player logged in.
-     * @return
-     */
-    public abstract long getPreviousLogin();
+    @Deprecated
+    public long getPreviousLogin() {
+        return getLastPlayed();
+    }
 
     /**
      * Get the player's full location (including yaw/pitch)
@@ -259,18 +247,6 @@ public abstract class PlotPlayer implements CommandCaller {
      * @param location the target location
      */
     public abstract void teleport(Location location);
-
-    /**
-     * Checks if the player is online.
-     * @return true if the player is online
-     */
-    public abstract boolean isOnline();
-
-    /**
-     * Retrieves the name of the player.
-     * @return the players username
-     */
-    public abstract String getName();
 
     /**
      * Set the compass target.
@@ -311,7 +287,7 @@ public abstract class PlotPlayer implements CommandCaller {
     }
 
     /**
-     * Set the player's local weather
+     * Set the player's local weather.
      * @param weather the weather visible to the player
      */
     public abstract void setWeather(PlotWeather weather);
@@ -342,13 +318,13 @@ public abstract class PlotPlayer implements CommandCaller {
 
     /**
      * Play music at a location for the player.
-     * @param location
-     * @param id
+     * @param location where to play the music
+     * @param id the numerical record item id
      */
     public abstract void playMusic(Location location, int id);
 
     /**
-     * Check if the player is banned
+     * Check if the player is banned.
      * @return true if the player is banned, false otherwise.
      */
     public abstract boolean isBanned();
@@ -399,7 +375,7 @@ public abstract class PlotPlayer implements CommandCaller {
 
     /**
      * Get the amount of clusters a player owns.
-     * @return
+     * @return the number of clusters this player owns
      */
     public int getPlayerClusterCount() {
         final AtomicInteger count = new AtomicInteger();
@@ -413,9 +389,9 @@ public abstract class PlotPlayer implements CommandCaller {
     }
 
     /**
-     * Return a set of all plots a player owns in a certain world.
+     * Return a {@code Set} of all plots a player owns in a certain world.
      * @param world the world to retrieve plots from
-     * @return a set of plots the player owns in the provided world
+     * @return a {@code Set} of plots the player owns in the provided world
      */
     public Set<Plot> getPlots(String world) {
         UUID uuid = getUUID();
@@ -460,6 +436,10 @@ public abstract class PlotPlayer implements CommandCaller {
 
     public abstract void stopSpectating();
 
+    /**
+     * The amount of money this playe
+     * @return
+     */
     public double getMoney() {
         return EconHandler.manager == null ? 0 : EconHandler.manager.getMoney(this);
     }

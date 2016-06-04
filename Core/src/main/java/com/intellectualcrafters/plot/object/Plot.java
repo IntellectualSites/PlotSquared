@@ -962,12 +962,12 @@ public class Plot {
     /**
      * Get the flag for a given key
      * @param key the flag
-     * @param def if the key is null, the value to return
+     * @param defaultValue if the key is null, the value to return
      */
-    public <V> V getFlag(Flag<V> key, V def) {
+    public <V> V getFlag(Flag<V> key, V defaultValue) {
         V value = FlagManager.getPlotFlagRaw(this, key);
         if (value == null) {
-            return def;
+            return defaultValue;
         } else {
             return value;
         }
@@ -1022,7 +1022,7 @@ public class Plot {
 
     /**
      * Returns true if a previous task was running
-     * @return
+     * @return true if a previous task is running
      */
     public int addRunning() {
         int value = this.getRunning();
@@ -1208,9 +1208,7 @@ public class Plot {
         return true;
     }
 
-    /**
-     * Clear the ratings for this plot
-     */
+    /** Clear the ratings for this plot */
     public void clearRatings() {
         Plot base = this.getBasePlot(false);
         PlotSettings baseSettings = base.getSettings();
@@ -1387,7 +1385,7 @@ public class Plot {
     }
 
     /**
-     * Get the biome.
+     * Retrieve the biome of the plot.
      * @return the name of the biome
      */
     public String getBiome() {

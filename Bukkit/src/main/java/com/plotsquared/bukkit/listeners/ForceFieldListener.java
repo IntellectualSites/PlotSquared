@@ -6,13 +6,14 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 public class ForceFieldListener implements Listener {
 

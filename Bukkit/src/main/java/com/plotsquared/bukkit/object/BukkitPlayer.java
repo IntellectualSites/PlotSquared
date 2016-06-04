@@ -22,8 +22,7 @@ public class BukkitPlayer extends PlotPlayer {
     public boolean offline;
     private UUID uuid;
     private String name;
-    private long last = 0;
-    
+
     /**
      * <p>Please do not use this method. Instead use
      * BukkitUtil.getPlayer(Player), as it caches player objects.</p>
@@ -39,15 +38,7 @@ public class BukkitPlayer extends PlotPlayer {
         this.offline = offline;
         super.populatePersistentMetaMap();
     }
-    
-    @Override
-    public long getPreviousLogin() {
-        if (this.last == 0) {
-            this.last = this.player.getLastPlayed();
-        }
-        return this.last;
-    }
-    
+
     @Override
     public Location getLocation() {
         Location location = super.getLocation();
@@ -61,7 +52,11 @@ public class BukkitPlayer extends PlotPlayer {
         }
         return this.uuid;
     }
-    
+
+    @Override public long getLastPlayed() {
+        return this.player.getLastPlayed();
+    }
+
     @Override
     public boolean hasPermission(String permission) {
         if (this.offline && EconHandler.manager != null) {

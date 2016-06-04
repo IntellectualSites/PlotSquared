@@ -15,7 +15,6 @@ import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
-import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
 import net.minecraft.block.Block;
 import net.minecraft.world.biome.Biome;
@@ -46,6 +45,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -246,11 +246,9 @@ public class SpongeUtil extends WorldUtil {
     }
 
     public static org.spongepowered.api.world.Location<World> getLocation(Location location) {
-        Optional<World> world = SpongeMain.THIS.getServer().getWorld(location.getWorld());
-        if (!world.isPresent()) {
-            return null;
-        }
-        return new org.spongepowered.api.world.Location<>(world.get(), location.getX(), location.getY(), location.getZ());
+        Collection<World> worlds = Sponge.getServer().getWorlds();
+        World world = Sponge.getServer().getWorld(location.getWorld()).orElse(worlds.toArray(new World[worlds.size()])[0]);
+        return new org.spongepowered.api.world.Location<>(world, location.getX(), location.getY(), location.getZ());
     }
 
     public static Location getLocation(String world, Vector3i position) {

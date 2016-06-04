@@ -6,11 +6,13 @@ import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
+
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
-public class Flags {
+public final class Flags {
 
     public static final IntegerFlag MUSIC = new IntegerFlag("music");
     public static final StringFlag DESCRIPTION = new StringFlag("description");
@@ -116,10 +118,7 @@ public class Flags {
     static {
         flags = new HashMap<>();
         try {
-            for (Field field : Flags.class.getDeclaredFields()) {
-                if (!field.isAccessible()) {
-                    field.setAccessible(true);
-                }
+            for (Field field : Flags.class.getFields()) {
                 String fieldName = field.getName().replace("_","-").toLowerCase();
                 Object fieldValue = field.get(null);
                 if (!(fieldValue instanceof Flag)) {
@@ -131,18 +130,18 @@ public class Flags {
                 }
                 flags.put(flag.getName(), flag);
             }
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Get an immutable set of registered flags.
+     * Get an immutable collection of registered flags.
      *
-     * @return a set of registered flags.
+     * @return a collection of registered flags.
      */
     public static Collection<Flag<?>> getFlags() {
-        return flags.values();
+        return Collections.unmodifiableCollection(flags.values());
     }
 
     public static Flag<?> getFlag(String flag) {

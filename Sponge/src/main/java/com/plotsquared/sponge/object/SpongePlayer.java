@@ -11,7 +11,6 @@ import com.plotsquared.sponge.util.SpongeUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.TargetedLocationData;
-import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.effect.sound.SoundTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
@@ -21,7 +20,7 @@ import org.spongepowered.api.text.chat.ChatTypes;
 import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.world.World;
 
-import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 public class SpongePlayer extends PlotPlayer {
@@ -29,7 +28,6 @@ public class SpongePlayer extends PlotPlayer {
     public final Player player;
     private UUID uuid;
     private String name;
-    private long last = 0;
 
     public SpongePlayer(Player player) {
         this.player = player;
@@ -40,19 +38,7 @@ public class SpongePlayer extends PlotPlayer {
     public RequiredType getSuperCaller() {
         return RequiredType.PLAYER;
     }
-    
-    @Override
-    public long getPreviousLogin() {
-        if (this.last != 0) {
-            return this.last;
-        }
-        Value<Instant> data = this.player.getJoinData().lastPlayed();
-        if (data.exists()) {
-            return this.last = data.get().getEpochSecond() * 1000;
-        }
-        return 0;
-    }
-    
+
     @Override
     public Location getLocation() {
         Location location = super.getLocation();
@@ -75,7 +61,11 @@ public class SpongePlayer extends PlotPlayer {
         }
         return this.uuid;
     }
-    
+
+    @Override public long getLastPlayed() {
+        return this.player.lastPlayed().get().toEpochMilli();
+    }
+
     @Override
     public boolean hasPermission(String permission) {
         return this.player.hasPermission(permission);
@@ -234,7 +224,7 @@ public class SpongePlayer extends PlotPlayer {
 
     @Override
     public boolean isBanned() {
-        BanService service = Sponge.getServiceManager().provide(BanService.class).get();
-        return service.isBanned(this.player.getProfile());
+        Optional<BanService> service = Sponge.getServiceManager().provide(BanService.class);
+        return service.isPresent() && service.get().isBanned(this.player.getProfile());
     }
 }
