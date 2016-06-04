@@ -67,7 +67,7 @@ public class Remove extends SubCommand {
             }
             default:
                 Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
-                if (uuids.isEmpty()) {
+                if (!uuids.isEmpty()) {
                     for (UUID uuid : uuids) {
                         if (plot.getTrusted().contains(uuid)) {
                             if (plot.removeTrusted(uuid)) {
