@@ -6,20 +6,16 @@ import com.google.common.io.ByteSource;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
+import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.util.NbtFactory;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,6 +24,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 
 public class FileUUIDHandler extends UUIDHandlerImplementation {
 
@@ -84,7 +82,6 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                 }
                 if (Settings.UUID.NATIVE_UUID_PROVIDER) {
                     HashBiMap<StringWrapper, UUID> toAdd = HashBiMap.create(new HashMap<StringWrapper, UUID>());
-                    toAdd.put(new StringWrapper("*"), DBFunc.everyone);
                     HashSet<UUID> all = UUIDHandler.getAllUUIDS();
                     PS.debug("&aFast mode UUID caching enabled!");
                     File playerDataFolder = new File(container, world + File.separator + "playerdata");
@@ -128,7 +125,6 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                     }
                 }
                 HashBiMap<StringWrapper, UUID> toAdd = HashBiMap.create(new HashMap<StringWrapper, UUID>());
-                toAdd.put(new StringWrapper("*"), DBFunc.everyone);
                 HashSet<String> worlds = Sets.newHashSet(world, "world");
                 HashSet<UUID> uuids = new HashSet<>();
                 HashSet<String> names = new HashSet<>();

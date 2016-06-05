@@ -29,6 +29,7 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.ChatManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -206,6 +207,7 @@ public class PS {
                 startUuidCatching();
             } else {
                 // Start these separately
+                UUIDHandler.add(new StringWrapper("*"), DBFunc.everyone);
                 startExpiryTasks();
                 startPlotMeConversion();
             }
@@ -364,6 +366,7 @@ public class PS {
                 UUIDHandler.startCaching(new Runnable() {
                     @Override
                     public void run() {
+                        UUIDHandler.add(new StringWrapper("*"), DBFunc.everyone);
                         for (Plot plot : getPlots()) {
                             if (plot.hasOwner() && plot.temp != -1) {
                                 if (UUIDHandler.getName(plot.owner) == null) {

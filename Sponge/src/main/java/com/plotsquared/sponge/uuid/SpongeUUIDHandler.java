@@ -1,15 +1,13 @@
 package com.plotsquared.sponge.uuid;
 
-import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.sponge.SpongeMain;
-import org.spongepowered.api.profile.GameProfile;
-
 import java.util.UUID;
+import org.spongepowered.api.profile.GameProfile;
 
 public class SpongeUUIDHandler extends UUIDHandlerImplementation {
 
@@ -26,7 +24,6 @@ public class SpongeUUIDHandler extends UUIDHandlerImplementation {
     }
 
     public boolean cache(Runnable whenDone) {
-        add(new StringWrapper("*"), DBFunc.everyone);
         for (GameProfile profile : SpongeMain.THIS.getServer().getGameProfileManager().getCache().getProfiles()) {
             String name = profile.getName().orElse(null);
             if (name != null) {
