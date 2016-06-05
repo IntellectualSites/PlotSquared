@@ -7,12 +7,12 @@ public class Storage extends Config {
     @Comment("MySQL section")
     public static final class MYSQL {
         @Comment("Should MySQL be used?")
-        public static final boolean USE = false;
-        public static final String HOST = "localhost";
-        public static final String PORT = "3306";
-        public static final String USER = "root";
-        public static final String PASSWORD = "password";
-        public static final String DATABASE = "plot_db";
+        public static boolean USE = false;
+        public static String HOST = "localhost";
+        public static String PORT = "3306";
+        public static String USER = "root";
+        public static String PASSWORD = "password";
+        public static String DATABASE = "plot_db";
     }
 
     @Comment("SQLite section")
