@@ -8,24 +8,25 @@ import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
 import com.plotsquared.bukkit.events.PlayerLeavePlotEvent;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.listener.PlotListener;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.UUID;
 
 public class PlotPlusListener extends PlotListener implements Listener {
 
@@ -89,7 +90,12 @@ public class PlotPlusListener extends PlotListener implements Listener {
             return;
         }
         if (Flags.INSTABREAK.isTrue(plot)) {
-            event.getBlock().breakNaturally();
+            Block block = event.getBlock();
+            BlockBreakEvent call = new BlockBreakEvent(block, player);
+            Bukkit.getServer().getPluginManager().callEvent(call);
+            if (!call.isCancelled()) {
+                event.getBlock().breakNaturally();
+            }
         }
     }
     
