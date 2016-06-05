@@ -7,6 +7,7 @@ import com.intellectualcrafters.plot.commands.WE_Anywhere;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.config.Storage;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.Database;
 import com.intellectualcrafters.plot.database.MySQL;
@@ -20,7 +21,6 @@ import com.intellectualcrafters.plot.logger.DelegateLogger;
 import com.intellectualcrafters.plot.logger.ILogger;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotFilter;
@@ -35,7 +35,6 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.CommentManager;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.InventoryUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
@@ -48,9 +47,9 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.area.QuadMap;
+import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.plotsquared.listener.WESubscriber;
 import com.sk89q.worldedit.WorldEdit;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -104,10 +103,12 @@ public class PS {
     public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
     public File styleFile;
     public File configFile;
+    public File worldsFile;
     public File commandsFile;
     public File translationFile;
     public YamlConfiguration style;
     public YamlConfiguration config;
+    public YamlConfiguration worlds;
     public YamlConfiguration storage;
     public YamlConfiguration commands;
     public TaskManager TASK;
@@ -152,47 +153,62 @@ public class PS {
                 PS.log(C.CONSOLE_JAVA_OUTDATED_1_8);
             }
             this.TASK = this.IMP.getTaskManager();
-            if (!C.ENABLED.s().isEmpty()) {
-                PS.log(C.ENABLED);
-            }
             setupConfigs();
-            this.translationFile = new File(this.IMP.getDirectory() + File.separator + "translations" + File.separator + "PlotSquared.use_THIS.yml");
+            this.translationFile = MainUtil.getFile(this.IMP.getDirectory(), Settings.PATHS.TRANSLATIONS + File.separator + "PlotSquared.use_THIS.yml");
             C.load(this.translationFile);
-            setupDatabase();
+
+            // Database
+            if (Settings.ENABLED_COMPONENTS.DATABASE) {
+                setupDatabase();
+            }
+            // Comments
             CommentManager.registerDefaultInboxes();
-            // Tasks
-            if (Settings.KILL_ROAD_MOBS || Settings.KILL_ROAD_VEHICLES) {
+            // Kill entities
+            if (Settings.ENABLED_COMPONENTS.KILL_ROAD_MOBS || Settings.ENABLED_COMPONENTS.KILL_ROAD_VEHICLES) {
                 this.IMP.runEntityTask();
             }
-            try {
-                if (this.IMP.initWorldEdit()) {
-                    this.worldedit = WorldEdit.getInstance();
-                    WorldEdit.getInstance().getEventBus().register(new WESubscriber());
-                    new WE_Anywhere();
+            // WorldEdit
+            if (Settings.ENABLED_COMPONENTS.WORLDEDIT_RESTRICTIONS) {
+                try {
+                    if (this.IMP.initWorldEdit()) {
+                        this.worldedit = WorldEdit.getInstance();
+                        WorldEdit.getInstance().getEventBus().register(new WESubscriber());
+                        new WE_Anywhere();
 
+                    }
+                } catch (Throwable e) {
+                    PS.debug("Incompatible version of WorldEdit, please upgrade: http://builds.enginehub.org/job/worldedit?branch=master");
                 }
-            } catch (Exception e) {
-                PS.debug("Incompatible version of WorldEdit, please upgrade: http://builds.enginehub.org/job/worldedit?branch=master");
             }
-
-            // Events
-            this.IMP.registerCommands();
-            this.IMP.registerPlayerEvents();
-            this.IMP.registerInventoryEvents();
-            this.IMP.registerPlotPlusEvents();
-            this.IMP.registerForceFieldEvents();
+            // Commands
+            if (Settings.ENABLED_COMPONENTS.COMMANDS) {
+                this.IMP.registerCommands();
+            }
+            if (Settings.ENABLED_COMPONENTS.EVENTS) {
+                this.IMP.registerPlayerEvents();
+                this.IMP.registerInventoryEvents();
+                this.IMP.registerPlotPlusEvents();
+                this.IMP.registerForceFieldEvents();
+            }
+            // Required
             this.IMP.registerWorldEvents();
-            if (Settings.METRICS) {
+            if (Settings.ENABLED_COMPONENTS.METRICS) {
                 this.IMP.startMetrics();
             } else {
                 PS.log(C.CONSOLE_PLEASE_ENABLE_METRICS);
             }
-            if (Settings.CHUNK_PROCESSOR) {
+            if (Settings.ENABLED_COMPONENTS.CHUNK_PROCESSOR) {
                 this.IMP.registerChunkProcessor();
             }
             // create UUIDWrapper
             UUIDHandler.implementation = this.IMP.initUUIDHandler();
-            startUuidCatching();
+            if (Settings.ENABLED_COMPONENTS.UUID_CACHE) {
+                startUuidCatching();
+            } else {
+                // Start these separately
+                startExpiryTasks();
+                startPlotMeConversion();
+            }
             // create event util class
             EventUtil.manager = this.IMP.initEventUtil();
             // create Hybrid utility class
@@ -214,32 +230,36 @@ public class PS {
             // Chat
             ChatManager.manager = this.IMP.initChatManager();
             // Economy
-            TaskManager.runTask(new Runnable() {
-                @Override
-                public void run() {
-                    EconHandler.manager = PS.this.IMP.getEconomyHandler();
-                }
-            });
+            if (Settings.ENABLED_COMPONENTS.ECONOMY) {
+                TaskManager.runTask(new Runnable() {
+                    @Override
+                    public void run() {
+                        EconHandler.manager = PS.this.IMP.getEconomyHandler();
+                    }
+                });
+            }
 
             // Check for updates
-            TaskManager.runTaskAsync(new Runnable() {
-                @Override
-                public void run() {
-                    URL url = Updater.getUpdate();
-                    if (url != null) {
-                        PS.this.update = url;
-                    } else if (PS.this.lastVersion == null) {
-                        PS.log("&aThanks for installing PlotSquared!");
-                    } else if (!get().checkVersion(PS.this.lastVersion, PS.this.version)) {
-                        PS.log("&aThanks for updating from " + StringMan.join(PS.this.lastVersion, ".") + " to " + StringMan
-                                .join(PS.this.version, ".") + "!");
-                        DBFunc.dbManager.updateTables(PS.this.lastVersion);
+            if (Settings.ENABLED_COMPONENTS.UPDATER) {
+                TaskManager.runTaskAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        URL url = Updater.getUpdate();
+                        if (url != null) {
+                            PS.this.update = url;
+                        } else if (PS.this.lastVersion == null) {
+                            PS.log("&aThanks for installing PlotSquared!");
+                        } else if (!get().checkVersion(PS.this.lastVersion, PS.this.version)) {
+                            PS.log("&aThanks for updating from " + StringMan.join(PS.this.lastVersion, ".") + " to " + StringMan
+                                    .join(PS.this.version, ".") + "!");
+                            DBFunc.dbManager.updateTables(PS.this.lastVersion);
+                        }
                     }
-                }
-            });
+                });
+            }
 
             // World generators:
-            final ConfigurationSection section = this.config.getConfigurationSection("worlds");
+            final ConfigurationSection section = this.worlds.getConfigurationSection("worlds");
             if (section != null) {
                 for (String world : section.getKeys(false)) {
                     if (world.equals("CheckingPlotSquaredGenerator")) {
@@ -270,16 +290,19 @@ public class PS {
             }
 
             // Copy files
-            copyFile("automerge.js", "scripts");
-            copyFile("town.template", "templates");
-            copyFile("skyblock.template", "templates");
-            copyFile("german.yml", "translations");
-            copyFile("s_chinese_unescaped.yml", "translations");
-            copyFile("s_chinese.yml", "translations");
-            copyFile("italian.yml", "translations");
+            copyFile("automerge.js", Settings.PATHS.SCRIPTS);
+            copyFile("town.template", Settings.PATHS.TEMPLATES);
+            copyFile("skyblock.template", Settings.PATHS.TEMPLATES);
+            copyFile("german.yml", Settings.PATHS.TRANSLATIONS);
+            copyFile("s_chinese_unescaped.yml", Settings.PATHS.TRANSLATIONS);
+            copyFile("s_chinese.yml", Settings.PATHS.TRANSLATIONS);
+            copyFile("italian.yml", Settings.PATHS.TRANSLATIONS);
             showDebug();
         } catch (Throwable e) {
             e.printStackTrace();
+        }
+        if (!C.ENABLED.s().isEmpty()) {
+            PS.log(C.ENABLED);
         }
     }
 
@@ -348,36 +371,37 @@ public class PS {
                                 }
                             }
                         }
-                        // Auto clearing
-                        if (Settings.AUTO_CLEAR) {
-                            ExpireManager.IMP = new ExpireManager();
-                            if (Settings.AUTO_CLEAR_CONFIRMATION) {
-                                ExpireManager.IMP.runConfirmedTask();
-                            } else {
-                                ExpireManager.IMP.runAutomatedTask();
-                            }
-                        }
-                        // PlotMe
-                        if (Settings.CONVERT_PLOTME || Settings.CACHE_PLOTME) {
-                            TaskManager.runTaskLater(new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    if (PS.this.IMP.initPlotMeConverter()) {
-                                        PS.log("&c=== IMPORTANT ===");
-                                        PS.log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
-                                        PS.log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
-                                        PS.log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
-                                        PS.log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the "
-                                                + "'settings.yml'");
-                                    }
-                                }
-                            }, 20);
-                        }
+                        startExpiryTasks();
+                        startPlotMeConversion();
                     }
                 });
             }
         }, 20);
+    }
+
+    private void startExpiryTasks() {
+        if (Settings.ENABLED_COMPONENTS.PLOT_EXPIRY) {
+            ExpireManager.IMP = new ExpireManager();
+            ExpireManager.IMP.runAutomatedTask();
+        }
+    }
+
+    private void startPlotMeConversion() {
+        if (Settings.ENABLED_COMPONENTS.PLOTME_CONVERTER || Settings.PLOTME.CACHE_UUDS) {
+            TaskManager.runTaskLater(new Runnable() {
+                @Override
+                public void run() {
+                    if (PS.this.IMP.initPlotMeConverter()) {
+                        PS.log("&c=== IMPORTANT ===");
+                        PS.log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
+                        PS.log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
+                        PS.log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
+                        PS.log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the "
+                                + "'settings.yml'");
+                    }
+                }
+            }, 20);
+        }
     }
 
     public boolean isMainThread(Thread thread) {
@@ -1352,13 +1376,13 @@ public class PS {
             this.plotAreaHasCollision = true;
         }
         Set<String> worlds;
-        if (this.config.contains("worlds")) {
-            worlds = this.config.getConfigurationSection("worlds").getKeys(false);
+        if (this.worlds.contains("worlds")) {
+            worlds = this.worlds.getConfigurationSection("worlds").getKeys(false);
         } else {
             worlds = new HashSet<>();
         }
         String path = "worlds." + world;
-        ConfigurationSection worldSection = this.config.getConfigurationSection(path);
+        ConfigurationSection worldSection = this.worlds.getConfigurationSection(path);
         int type;
         if (worldSection != null) {
             type = worldSection.getInt("generator.type", 0);
@@ -1397,14 +1421,14 @@ public class PS {
             PS.log(C.PREFIX + "&3 - generator: &7" + baseGenerator + ">" + plotGenerator);
             PS.log(C.PREFIX + "&3 - plotworld: &7" + plotArea.getClass().getName());
             PS.log(C.PREFIX + "&3 - manager: &7" + plotManager.getClass().getName());
-            if (!this.config.contains(path)) {
-                this.config.createSection(path);
-                worldSection = this.config.getConfigurationSection(path);
+            if (!this.worlds.contains(path)) {
+                this.worlds.createSection(path);
+                worldSection = this.worlds.getConfigurationSection(path);
             }
             plotArea.saveConfiguration(worldSection);
             plotArea.loadDefaultConfiguration(worldSection);
             try {
-                this.config.save(this.configFile);
+                this.worlds.save(this.worldsFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -1447,7 +1471,7 @@ public class PS {
                         pa.saveConfiguration(worldSection);
                         pa.loadDefaultConfiguration(worldSection);
                         try {
-                            this.config.save(this.configFile);
+                            this.worlds.save(this.worldsFile);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -1472,7 +1496,7 @@ public class PS {
                 pa.saveConfiguration(worldSection);
                 pa.loadDefaultConfiguration(worldSection);
                 try {
-                    this.config.save(this.configFile);
+                    this.worlds.save(this.worldsFile);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -1546,7 +1570,7 @@ public class PS {
                 }
                 pa.loadDefaultConfiguration(clone);
                 try {
-                    this.config.save(this.configFile);
+                    this.worlds.save(this.worldsFile);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -1588,35 +1612,35 @@ public class PS {
                     switch (key) {
                         case "s":
                         case "size":
-                            this.config.set(base + "plot.size", Configuration.INTEGER.parseString(value).shortValue());
+                            this.worlds.set(base + "plot.size", Configuration.INTEGER.parseString(value).shortValue());
                             break;
                         case "g":
                         case "gap":
-                            this.config.set(base + "road.width", Configuration.INTEGER.parseString(value).shortValue());
+                            this.worlds.set(base + "road.width", Configuration.INTEGER.parseString(value).shortValue());
                             break;
                         case "h":
                         case "height":
-                            this.config.set(base + "road.height", Configuration.INTEGER.parseString(value).shortValue());
-                            this.config.set(base + "plot.height", Configuration.INTEGER.parseString(value).shortValue());
-                            this.config.set(base + "wall.height", Configuration.INTEGER.parseString(value).shortValue());
+                            this.worlds.set(base + "road.height", Configuration.INTEGER.parseString(value).shortValue());
+                            this.worlds.set(base + "plot.height", Configuration.INTEGER.parseString(value).shortValue());
+                            this.worlds.set(base + "wall.height", Configuration.INTEGER.parseString(value).shortValue());
                             break;
                         case "f":
                         case "floor":
-                            this.config.set(base + "plot.floor",
+                            this.worlds.set(base + "plot.floor",
                                     new ArrayList<>(Arrays.asList(StringMan.join(Configuration.BLOCKLIST.parseString(value), ",").split(","))));
                             break;
                         case "m":
                         case "main":
-                            this.config.set(base + "plot.filling",
+                            this.worlds.set(base + "plot.filling",
                                     new ArrayList<>(Arrays.asList(StringMan.join(Configuration.BLOCKLIST.parseString(value), ",").split(","))));
                             break;
                         case "w":
                         case "wall":
-                            this.config.set(base + "wall.filling", Configuration.BLOCK.parseString(value).toString());
+                            this.worlds.set(base + "wall.filling", Configuration.BLOCK.parseString(value).toString());
                             break;
                         case "b":
                         case "border":
-                            this.config.set(base + "wall.block", Configuration.BLOCK.parseString(value).toString());
+                            this.worlds.set(base + "wall.block", Configuration.BLOCK.parseString(value).toString());
                             break;
                         default:
                             PS.log("&cKey not found: &7" + element);
@@ -1629,10 +1653,10 @@ public class PS {
                 }
             }
             try {
-                ConfigurationSection section = this.config.getConfigurationSection("worlds." + world);
+                ConfigurationSection section = this.worlds.getConfigurationSection("worlds." + world);
                 plotworld.saveConfiguration(section);
                 plotworld.loadConfiguration(section);
-                this.config.save(this.configFile);
+                this.worlds.save(this.worldsFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -1783,33 +1807,26 @@ public class PS {
      */
     public void setupDatabase() {
         try {
-            if (Settings.DB.USE_MONGO) {
-                PS.log(C.PREFIX + "MongoDB is not yet implemented");
-                PS.log(C.PREFIX + "&cNo storage type is set!");
-                this.IMP.disable();
-                return;
-            }
             if (DBFunc.dbManager == null) {
-                if (Settings.DB.USE_MYSQL) {
-                    this.database = new MySQL(Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
-                } else if (Settings.DB.USE_SQLITE) {
-                    this.database = new SQLite(this.IMP.getDirectory() + File.separator + Settings.DB.SQLITE_DB + ".db");
+                if (Storage.MYSQL.USE) {
+                    this.database = new MySQL(Storage.MYSQL.HOST, Storage.MYSQL.PORT, Storage.MYSQL.DATABASE, Storage.MYSQL.USER, Storage.MYSQL.PASSWORD);
+                } else if (Storage.SQLITE.USE) {
+                    File file = MainUtil.getFile(IMP.getDirectory(), Storage.SQLITE.DB + ".db");
+                    this.database = new SQLite(file);
                 } else {
                     PS.log(C.PREFIX + "&cNo storage type is set!");
                     this.IMP.disable();
                     return;
                 }
             }
-            DBFunc.dbManager = new SQLManager(this.database, Settings.DB.PREFIX, false);
+            DBFunc.dbManager = new SQLManager(this.database, Storage.PREFIX, false);
             this.plots_tmp = DBFunc.getPlots();
             this.clusters_tmp = DBFunc.getClusters();
         } catch (ClassNotFoundException | SQLException e) {
             PS.log(C.PREFIX + "&cFailed to open DATABASE connection. The plugin will disable itself.");
-            if (Settings.DB.USE_MONGO) {
-                PS.log("$4MONGO");
-            } else if (Settings.DB.USE_MYSQL) {
+            if (Storage.MYSQL.USE) {
                 PS.log("$4MYSQL");
-            } else if (Settings.DB.USE_SQLITE) {
+            } else if (Storage.SQLITE.USE) {
                 PS.log("$4SQLITE");
             }
             PS.log("&d==== Here is an ugly stacktrace, if you are interested in those things ===");
@@ -1829,239 +1846,25 @@ public class PS {
             String[] split = lastVersionString.split("\\.");
             this.lastVersion = new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])};
         }
-
-        this.config.set("version", StringMan.join(this.version, "."));
-        this.config.set("platform", this.platform);
-
-        Map<String, Object> options = new HashMap<>();
-
-        // Protection
-        options.put("protection.redstone.disable-offline", Settings.REDSTONE_DISABLER);
-        options.put("protection.redstone.disable-unoccupied", Settings.REDSTONE_DISABLER_UNOCCUPIED);
-
-        // PlotMe
-        options.put("plotme-alias", Settings.USE_PLOTME_ALIAS);
-        options.put("plotme-convert.enabled", Settings.CONVERT_PLOTME);
-        options.put("plotme-convert.cache-uuids", Settings.CACHE_PLOTME);
-
-        // UUID
-        options.put("uuid.use_sqluuidhandler", Settings.USE_SQLUUIDHANDLER);
-        options.put("UUID.offline", Settings.OFFLINE_MODE);
-        options.put("UUID.force-lowercase", Settings.UUID_LOWERCASE);
-        options.put("uuid.read-from-disk", Settings.UUID_FROM_DISK);
-
-        // Mob stuff
-        options.put("kill_road_vehicles", Settings.KILL_ROAD_VEHICLES);
-        options.put("kill_road_mobs", Settings.KILL_ROAD_MOBS);
-
-        // Clearing + Expiry
-        options.put("clear.fastmode", false);
-        options.put("clear.on.ban", false);
-        options.put("clear.auto.enabled", true);
-        options.put("clear.auto.days", 7);
-        options.put("clear.auto.clear-interval-seconds", Settings.CLEAR_INTERVAL);
-        options.put("clear.auto.calibration.changes", 1);
-        options.put("clear.auto.calibration.faces", 0);
-        options.put("clear.auto.calibration.data", 0);
-        options.put("clear.auto.calibration.air", 0);
-        options.put("clear.auto.calibration.variety", 0);
-        options.put("clear.auto.calibration.changes_sd", 1);
-        options.put("clear.auto.calibration.faces_sd", 0);
-        options.put("clear.auto.calibration.data_sd", 0);
-        options.put("clear.auto.calibration.air_sd", 0);
-        options.put("clear.auto.calibration.variety_sd", 0);
-        options.put("clear.auto.confirmation", Settings.AUTO_CLEAR_CONFIRMATION); // TODO FIXME
-
-        int keep = this.config.getInt("clear.keep-if-modified");
-        int ignore = this.config.getInt("clear.ignore-if-modified");
-        if (keep > 0 || ignore > 0) {
-            options.put("clear.auto.threshold", 1);
-            options.put("clear.auto.enabled", false);
-            PS.log("&cIMPORTANT MESSAGE ABOUT THIS UPDATE!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            PS.log("&cSorry for all the exclamation marks, but this could be important.");
-            PS.log("&cPlot clearing has changed to a new system that requires calibration.");
-            PS.log("&cThis is how it will work: ");
-            PS.log("&c - Players will rate plots");
-            PS.log("&c - When enough plots are rated, you can run /plot debugexec calibrate-analysis");
-            PS.log("&c - You can decide the (rough) percentage of expired plots to clear");
-            PS.log("&c - To just clear all expired plot, ignore this and set: &7threshold: -1");
-            PS.log("&cMore information:&7 https://github.com/IntellectualSites/PlotSquared/wiki/Plot-analysis:");
-        } else {
-            options.put("clear.auto.threshold", Settings.CLEAR_THRESHOLD);
-        }
-        this.config.set("clear.keep-if-modified", null);
-        this.config.set("clear.ignore-if-modified", null);
-
-        // Done
-        options.put("approval.ratings.check-done", Settings.REQUIRE_DONE);
-        options.put("approval.done.counts-towards-limit", Settings.DONE_COUNTS_TOWARDS_LIMIT);
-        options.put("approval.done.restrict-building", Settings.DONE_RESTRICTS_BUILDING);
-        options.put("approval.done.required-for-download", Settings.DOWNLOAD_REQUIRES_DONE);
-
-        // Schematics
-        if (StringMan.isEqual(this.config.getString("schematic.save_path"), "plugins/PlotSquared/schematics")) {
-            this.config.set("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
-        }
-        options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
-        options.put("bo3.save_path", Settings.BO3_SAVE_PATH);
-
-        // Web
-        options.put("web.url", Settings.WEB_URL);
-        options.put("web.server-ip", Settings.WEB_IP);
-
-        // Caching
-        options.put("cache.permissions", Settings.PERMISSION_CACHING);
-        options.put("cache.ratings", Settings.CACHE_RATINGS);
-
-        // Titles
-        options.put("titles", Settings.TITLES);
-
-        // Teleportation
-        options.put("teleport.on_login", Settings.TELEPORT_ON_LOGIN);
-        options.put("teleport.on_death", Settings.TELEPORT_ON_DEATH);
-        options.put("teleport.delay", Settings.TELEPORT_DELAY);
-
-        // WorldEdit
-        options.put("worldedit.enable-for-helpers", Settings.WE_ALLOW_HELPER);
-        options.put("worldedit.blacklist", Arrays.asList("cs", ".s", "restore", "snapshot", "delchunks", "listchunks"));
-
-        // Chunk processor
-        options.put("chunk-processor.enabled", Settings.CHUNK_PROCESSOR);
-        options.put("chunk-processor.auto-unload", Settings.CHUNK_PROCESSOR_GC);
-        options.put("chunk-processor.experimental-fast-async-worldedit", Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT);
-        options.put("chunk-processor.max-blockstates", Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES);
-        options.put("chunk-processor.max-entities", Settings.CHUNK_PROCESSOR_MAX_ENTITIES);
-        options.put("chunk-processor.disable-physics", Settings.CHUNK_PROCESSOR_DISABLE_PHYSICS);
-
-        // Comments
-        options.put("comments.notifications.enabled", Settings.COMMENT_NOTIFICATIONS);
-
-        // Plot limits
-        options.put("global_limit", Settings.GLOBAL_LIMIT);
-        options.put("max_plots", Settings.MAX_PLOTS);
-        options.put("claim.max-auto-area", Settings.MAX_AUTO_SIZE);
-        options.put("merge.remove-terrain", Settings.MERGE_REMOVES_ROADS);
-
-        // Misc
-        options.put("console.color", Settings.CONSOLE_COLOR);
-        options.put("chat.fancy", Settings.FANCY_CHAT);
-        options.put("metrics", true);
-        options.put("debug", true);
-        options.put("update-notifications", Settings.UPDATE_NOTIFICATIONS);
-
-        for (Entry<String, Object> node : options.entrySet()) {
-            if (!this.config.contains(node.getKey())) {
-                this.config.set(node.getKey(), node.getValue());
+        if (checkVersion(new int[]{3,4,0}, version)) {
+            Settings.convertLegacy(configFile);
+            if (config.contains("worlds")) {
+                ConfigurationSection worldSection = config.getConfigurationSection("worlds");
+                worlds.set("worlds", worldSection);
+                try {
+                    worlds.save(worldsFile);
+                } catch (IOException e) {
+                    PS.debug("Failed to save PlotSquared worlds.yml");
+                    e.printStackTrace();
+                }
             }
+        } else {
+            Settings.load(configFile);
         }
-
-        // Protection
-        Settings.REDSTONE_DISABLER = this.config.getBoolean("protection.redstone.disable-offline");
-        Settings.REDSTONE_DISABLER_UNOCCUPIED = this.config.getBoolean("protection.redstone.disable-unoccupied");
-
-        // PlotMe
-        Settings.USE_PLOTME_ALIAS = this.config.getBoolean("plotme-alias");
-        Settings.CONVERT_PLOTME = this.config.getBoolean("plotme-convert.enabled");
-        Settings.CACHE_PLOTME = this.config.getBoolean("plotme-convert.cache-uuids");
-
-        // UUID
-        Settings.USE_SQLUUIDHANDLER = this.config.getBoolean("uuid.use_sqluuidhandler");
-        Settings.OFFLINE_MODE = this.config.getBoolean("UUID.offline");
-        Settings.UUID_LOWERCASE = Settings.OFFLINE_MODE && this.config.getBoolean("UUID.force-lowercase");
-        Settings.UUID_FROM_DISK = this.config.getBoolean("uuid.read-from-disk");
-
-        // Mob stuff
-        Settings.KILL_ROAD_MOBS = this.config.getBoolean("kill_road_mobs");
-        Settings.KILL_ROAD_VEHICLES = this.config.getBoolean("kill_road_vehicles");
-
-        // Clearing + Expiry
-        Settings.FAST_CLEAR = this.config.getBoolean("clear.fastmode");
-        Settings.DELETE_PLOTS_ON_BAN = this.config.getBoolean("clear.on.ban");
-        Settings.AUTO_CLEAR_DAYS = this.config.getInt("clear.auto.days");
-        Settings.CLEAR_THRESHOLD = this.config.getInt("clear.auto.threshold");
-        Settings.AUTO_CLEAR = this.config.getBoolean("clear.auto.enabled");
-        Settings.CLEAR_INTERVAL = this.config.getInt("clear.auto.clear-interval-seconds");
-
-        // Clearing modifiers
-        PlotAnalysis.MODIFIERS.changes = this.config.getInt("clear.auto.calibration.changes");
-        PlotAnalysis.MODIFIERS.faces = this.config.getInt("clear.auto.calibration.faces");
-        PlotAnalysis.MODIFIERS.data = this.config.getInt("clear.auto.calibration.data");
-        PlotAnalysis.MODIFIERS.air = this.config.getInt("clear.auto.calibration.air");
-        PlotAnalysis.MODIFIERS.variety = this.config.getInt("clear.auto.calibration.variety");
-        PlotAnalysis.MODIFIERS.changes_sd = this.config.getInt("clear.auto.calibration.changes_sd");
-        PlotAnalysis.MODIFIERS.faces_sd = this.config.getInt("clear.auto.calibration.faces_sd");
-        PlotAnalysis.MODIFIERS.data_sd = this.config.getInt("clear.auto.calibration.data_sd");
-        PlotAnalysis.MODIFIERS.air_sd = this.config.getInt("clear.auto.calibration.air_sd");
-        PlotAnalysis.MODIFIERS.variety_sd = this.config.getInt("clear.auto.calibration.variety_sd");
-        Settings.AUTO_CLEAR_CONFIRMATION = this.config.getBoolean("clear.auto.confirmation"); // TODO FIXME
-
-        // Done
-        Settings.REQUIRE_DONE = this.config.getBoolean("approval.ratings.check-done");
-        Settings.DONE_COUNTS_TOWARDS_LIMIT = this.config.getBoolean("approval.done.counts-towards-limit");
-        Settings.DONE_RESTRICTS_BUILDING = this.config.getBoolean("approval.done.restrict-building");
-        Settings.DOWNLOAD_REQUIRES_DONE = this.config.getBoolean("approval.done.required-for-download");
-
-        // Schematics
-        Settings.SCHEMATIC_SAVE_PATH = this.config.getString("schematics.save_path");
-
-
-        Settings.BO3_SAVE_PATH = this.config.getString("bo3.save_path");
-
-        // Web
-        Settings.WEB_URL = this.config.getString("web.url");
-        Settings.WEB_IP = this.config.getString("web.server-ip");
-
-        // Caching
-        Settings.PERMISSION_CACHING = this.config.getBoolean("cache.permissions");
-        Settings.CACHE_RATINGS = this.config.getBoolean("cache.ratings");
-
-        // Rating system
-        Settings.RATING_CATEGORIES = this.config.getStringList("ratings.categories");
-
-        // Titles
-        Settings.TITLES = this.config.getBoolean("titles");
-
-        // Teleportation
-        Settings.TELEPORT_DELAY = this.config.getInt("teleport.delay");
-        Settings.TELEPORT_ON_LOGIN = this.config.getBoolean("teleport.on_login");
-        Settings.TELEPORT_ON_DEATH = this.config.getBoolean("teleport.on_death");
-
-        // WorldEdit
-        Settings.WE_ALLOW_HELPER = this.config.getBoolean("worldedit.enable-for-helpers");
-
-        // Chunk processor
-        Settings.CHUNK_PROCESSOR = this.config.getBoolean("chunk-processor.enabled");
-        Settings.CHUNK_PROCESSOR_GC = this.config.getBoolean("chunk-processor.auto-unload");
-        Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT = this.config.getBoolean("chunk-processor.experimental-fast-async-worldedit");
-        Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES = this.config.getInt("chunk-processor.max-blockstates");
-        Settings.CHUNK_PROCESSOR_MAX_ENTITIES = this.config.getInt("chunk-processor.max-entities");
-        Settings.CHUNK_PROCESSOR_DISABLE_PHYSICS = this.config.getBoolean("chunk-processor.disable-physics");
-
-        // Comments
-        Settings.COMMENT_NOTIFICATIONS = this.config.getBoolean("comments.notifications.enabled");
-
-        // Plot limits
-        Settings.MAX_AUTO_SIZE = this.config.getInt("claim.max-auto-area");
-        Settings.MAX_PLOTS = this.config.getInt("max_plots");
-        if (Settings.MAX_PLOTS > 32767) {
-            PS.log("&c`max_plots` Is set too high! This is a per player setting and does not need to be very large.");
-            Settings.MAX_PLOTS = 32767;
-        }
-        Settings.GLOBAL_LIMIT = this.config.getBoolean("global_limit");
-
-        // Misc
-        Settings.DEBUG = this.config.getBoolean("debug");
-        if (Settings.DEBUG) {
-            PS.log(C.PREFIX + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
-        }
-        Settings.CONSOLE_COLOR = this.config.getBoolean("console.color");
-        if (!this.config.getBoolean("chat.fancy") || !checkVersion(this.IMP.getServerVersion(), 1, 8, 0)) {
-            Settings.FANCY_CHAT = false;
-        }
-        Settings.METRICS = this.config.getBoolean("metrics");
-        Settings.UPDATE_NOTIFICATIONS = this.config.getBoolean("update-notifications");
-        Settings.MERGE_REMOVES_ROADS = this.config.getBoolean("merge.remove-terrain");
-        Settings.AUTO_PURGE = this.config.getBoolean("auto-purge", false);
+        Settings.VERSION = StringMan.join(this.version, ".");
+        Settings.PLATFORM = platform;
+        Settings.save(configFile);
+        config = YamlConfiguration.loadConfiguration(configFile);
     }
 
     /**
@@ -2076,7 +1879,17 @@ public class PS {
             PS.log(C.PREFIX + "&cFailed to create the /plugins/config folder. Please create it manually.");
         }
         try {
-            this.styleFile = new File(this.IMP.getDirectory() + File.separator + "translations" + File.separator + "style.yml");
+            this.configFile = new File(folder,"settings.yml");
+            if (!this.configFile.exists() && !this.configFile.createNewFile()) {
+                PS.log("Could not create the settings file, please create \"settings.yml\" manually.");
+            }
+            this.config = YamlConfiguration.loadConfiguration(this.configFile);
+            setupConfig();
+        } catch (IOException ignored) {
+            PS.log("Failed to save settings.yml");
+        }
+        try {
+            this.styleFile = MainUtil.getFile(IMP.getDirectory(), Settings.PATHS.TRANSLATIONS +File.separator + "style.yml" );
             if (!this.styleFile.exists()) {
                 if (!this.styleFile.getParentFile().exists()) {
                     this.styleFile.getParentFile().mkdirs();
@@ -2092,12 +1905,11 @@ public class PS {
             PS.log("failed to save style.yml");
         }
         try {
-            this.configFile = new File(folder,"settings.yml");
-            if (!this.configFile.exists() && !this.configFile.createNewFile()) {
-                PS.log("Could not create the settings file, please create \"settings.yml\" manually.");
+            this.worldsFile = new File(folder,"worlds.yml");
+            if (!this.worldsFile.exists() && !this.worldsFile.createNewFile()) {
+                PS.log("Could not create the worlds file, please create \"worlds.yml\" manually.");
             }
-            this.config = YamlConfiguration.loadConfiguration(this.configFile);
-            setupConfig();
+            this.worlds = YamlConfiguration.loadConfiguration(this.worldsFile);
         } catch (IOException ignored) {
             PS.log("Failed to save settings.yml");
         }
@@ -2117,14 +1929,11 @@ public class PS {
                 PS.log("Could not the storage settings file, please create \"commands.yml\" manually.");
             }
             this.commands = YamlConfiguration.loadConfiguration(this.commandsFile);
-            setupStorage();
         } catch (IOException ignored) {
             PS.log("Failed to save commands.yml");
         }
         try {
             this.style.save(this.styleFile);
-            this.config.save(this.configFile);
-            this.storage.save(this.storageFile);
             this.commands.save(this.commandsFile);
         } catch (IOException e) {
             PS.log("Configuration file saving failed");
@@ -2137,30 +1946,9 @@ public class PS {
      */
     private void setupStorage() {
         this.storage.set("version", StringMan.join(this.version, "."));
-        Map<String, Object> options = new HashMap<>(9);
-        options.put("mysql.use", false);
-        options.put("sqlite.use", true);
-        options.put("sqlite.db", "storage");
-        options.put("mysql.host", "localhost");
-        options.put("mysql.port", "3306");
-        options.put("mysql.user", "root");
-        options.put("mysql.password", "password");
-        options.put("mysql.database", "plot_db");
-        options.put("prefix", "");
-        for (Entry<String, Object> node : options.entrySet()) {
-            if (!this.storage.contains(node.getKey())) {
-                this.storage.set(node.getKey(), node.getValue());
-            }
-        }
-        Settings.DB.USE_MYSQL = this.storage.getBoolean("mysql.use");
-        Settings.DB.USER = this.storage.getString("mysql.user");
-        Settings.DB.PASSWORD = this.storage.getString("mysql.password");
-        Settings.DB.HOST_NAME = this.storage.getString("mysql.host");
-        Settings.DB.PORT = this.storage.getString("mysql.port");
-        Settings.DB.DATABASE = this.storage.getString("mysql.database");
-        Settings.DB.USE_SQLITE = this.storage.getBoolean("sqlite.use");
-        Settings.DB.SQLITE_DB = this.storage.getString("sqlite.db");
-        Settings.DB.PREFIX = this.storage.getString("prefix");
+        Storage.load(storageFile);
+        Storage.save(storageFile);
+        storage = YamlConfiguration.loadConfiguration(storageFile);
     }
 
     /**
@@ -2168,17 +1956,9 @@ public class PS {
      */
     private void showDebug() {
         if (Settings.DEBUG) {
-            Map<String, String> settings = new HashMap<>(9);
-            settings.put("Kill Road Mobs", "" + Settings.KILL_ROAD_MOBS);
-            settings.put("Use Metrics", "" + Settings.METRICS);
-            settings.put("Delete Plots On Ban", "" + Settings.DELETE_PLOTS_ON_BAN);
-            settings.put("DB Mysql Enabled", "" + Settings.DB.USE_MYSQL);
-            settings.put("DB SQLite Enabled", "" + Settings.DB.USE_SQLITE);
-            settings.put("Auto Clear Enabled", "" + Settings.AUTO_CLEAR);
-            settings.put("Auto Clear Days", "" + Settings.AUTO_CLEAR_DAYS);
-            settings.put("Schematics Save Path", "" + Settings.SCHEMATIC_SAVE_PATH);
-            for (Entry<String, String> setting : settings.entrySet()) {
-                PS.log(C.PREFIX + String.format("&cKey: &6%s&c, Value: &6%s", setting.getKey(), setting.getValue()));
+            Map<String, Object> components = Settings.getFields(Settings.ENABLED_COMPONENTS.class);
+            for (Entry<String, Object> component : components.entrySet()) {
+                PS.log(C.PREFIX + String.format("&cKey: &6%s&c, Value: &6%s", component.getKey(), component.getValue()));
             }
         }
     }

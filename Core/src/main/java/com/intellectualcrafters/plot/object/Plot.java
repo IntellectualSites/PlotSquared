@@ -22,6 +22,7 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.expiry.PlotAnalysis;
 import com.plotsquared.listener.PlotListener;
 
 import java.awt.Rectangle;
@@ -785,7 +786,7 @@ public class Plot {
                     return;
                 }
                 Plot current = queue.poll();
-                if (Plot.this.area.TERRAIN != 0 || Settings.FAST_CLEAR) {
+                if (Plot.this.area.TERRAIN != 0) {
                     ChunkManager.manager.regenerateRegion(current.getBottomAbs(), current.getTopAbs(), false, this);
                     return;
                 }
@@ -925,8 +926,8 @@ public class Plot {
      * This will return null if the plot hasn't been analyzed
      * @return analysis of plot
      */
-    public PlotAnalysis getComplexity() {
-        return PlotAnalysis.getAnalysis(this);
+    public PlotAnalysis getComplexity(Settings.AUTO_CLEAR settings) {
+        return PlotAnalysis.getAnalysis(this, settings);
     }
 
     public void analyze(RunnableVal<PlotAnalysis> whenDone) {
@@ -1736,7 +1737,7 @@ public class Plot {
                         public void run() {
                             String name = Plot.this.id + "," + Plot.this.area + ',' + MainUtil.getName(Plot.this.owner);
                             boolean result =
-                                    SchematicHandler.manager.save(value, Settings.SCHEMATIC_SAVE_PATH + File.separator + name + ".schematic");
+                                    SchematicHandler.manager.save(value, Settings.PATHS.SCHEMATICS + File.separator + name + ".schematic");
                             if (whenDone != null) {
                                 whenDone.value = result;
                                 TaskManager.runTask(whenDone);
@@ -2548,12 +2549,12 @@ public class Plot {
             } else {
                 location = this.getDefaultHome();
             }
-            if (Settings.TELEPORT_DELAY == 0 || Permissions.hasPermission(player, "plots.teleport.delay.bypass")) {
+            if (Settings.TELEPORT.DELAY == 0 || Permissions.hasPermission(player, "plots.teleport.delay.bypass")) {
                 MainUtil.sendMessage(player, C.TELEPORTED_TO_PLOT);
                 player.teleport(location);
                 return true;
             }
-            MainUtil.sendMessage(player, C.TELEPORT_IN_SECONDS, Settings.TELEPORT_DELAY + "");
+            MainUtil.sendMessage(player, C.TELEPORT_IN_SECONDS, Settings.TELEPORT.DELAY + "");
             final String name = player.getName();
             TaskManager.TELEPORT_QUEUE.add(name);
             TaskManager.runTaskLater(new Runnable() {
@@ -2569,7 +2570,7 @@ public class Plot {
                         player.teleport(location);
                     }
                 }
-            }, Settings.TELEPORT_DELAY * 20);
+            }, Settings.TELEPORT.DELAY * 20);
             return true;
         }
         return false;

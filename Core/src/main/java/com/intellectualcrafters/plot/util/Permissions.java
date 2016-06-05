@@ -31,7 +31,7 @@ public class Permissions {
      * @return
      */
     public static boolean hasPermission(PlotPlayer player, String permission) {
-        if (!Settings.PERMISSION_CACHING) {
+        if (!Settings.ENABLED_COMPONENTS.PERMISSION_CACHE) {
             return hasPermission((CommandCaller) player, permission);
         }
         HashMap<String, Boolean> map = player.getMeta("perm");
@@ -93,7 +93,7 @@ public class Permissions {
     /**
      * Check the the highest permission a PlotPlayer has within a specified range.<br>
      *  - Excessively high values will lag<br>
-     *  - The default range that is checked is {@link Settings#MAX_PLOTS}<br>
+     *  - The default range that is checked is {@link Settings#LIMIT#MAX_PLOTS}<br>
      * @param player
      * @param stub The permission stub to check e.g. for `plots.plot.#` the stub is `plots.plot`
      * @param range The range to check

@@ -75,7 +75,7 @@ public class SchematicCmd extends SubCommand {
                         if (location.startsWith("url:")) {
                             try {
                                 UUID uuid = UUID.fromString(location.substring(4));
-                                URL base = new URL(Settings.WEB_URL);
+                                URL base = new URL(Settings.WEB.URL);
                                 URL url = new URL(base, "uploads/" + uuid + ".schematic");
                                 schematic = SchematicHandler.manager.getSchematic(url);
                             } catch (Exception e) {

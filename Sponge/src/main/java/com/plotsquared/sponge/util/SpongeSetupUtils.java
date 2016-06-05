@@ -69,10 +69,10 @@ public class SpongeSetupUtils extends SetupUtils {
         String world = object.world;
         int type = object.type;
         String worldPath = "worlds." + object.world;
-        if (!PS.get().config.contains(worldPath)) {
-            PS.get().config.createSection(worldPath);
+        if (!PS.get().worlds.contains(worldPath)) {
+            PS.get().worlds.createSection(worldPath);
         }
-        ConfigurationSection worldSection = PS.get().config.getConfigurationSection(worldPath);
+        ConfigurationSection worldSection = PS.get().worlds.getConfigurationSection(worldPath);
         switch (type) {
             case 2: {
                 if (object.id != null) {
@@ -115,11 +115,11 @@ public class SpongeSetupUtils extends SetupUtils {
                 for (ConfigurationNode step : steps) {
                     worldSection.set(step.getConstant(), step.getValue());
                 }
-                PS.get().config.set("worlds." + world + ".generator.type", object.type);
-                PS.get().config.set("worlds." + world + ".generator.terrain", object.terrain);
-                PS.get().config.set("worlds." + world + ".generator.plugin", object.plotManager);
+                PS.get().worlds.set("worlds." + world + ".generator.type", object.type);
+                PS.get().worlds.set("worlds." + world + ".generator.terrain", object.terrain);
+                PS.get().worlds.set("worlds." + world + ".generator.plugin", object.plotManager);
                 if (object.setupGenerator != null && !object.setupGenerator.equals(object.plotManager)) {
-                    PS.get().config.set("worlds." + world + ".generator.init", object.setupGenerator);
+                    PS.get().worlds.set("worlds." + world + ".generator.init", object.setupGenerator);
                 }
                 GeneratorWrapper<?> gen = SetupUtils.generators.get(object.setupGenerator);
                 if (gen != null && gen.isFull()) {
@@ -133,7 +133,7 @@ public class SpongeSetupUtils extends SetupUtils {
                 break;
         }
         try {
-            PS.get().config.save(PS.get().configFile);
+            PS.get().worlds.save(PS.get().worldsFile);
         } catch (IOException e) {
             e.printStackTrace();
         }

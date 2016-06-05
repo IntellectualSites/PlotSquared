@@ -95,7 +95,7 @@ public class MainListener {
                 if (source == null) {
                     return;
                 }
-                if (Settings.USE_PLOTME_ALIAS) {
+                if (Settings.PLOTME.ALIAS) {
                     SpongeMain.THIS.getGame().getCommandManager().process(source, ("plots " + event.getArguments()).trim());
                 } else {
                     source.sendMessage(SpongeUtil.getText(C.NOT_USING_PLOTME.s()));

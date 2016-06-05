@@ -8,7 +8,7 @@ import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotAnalysis;
+import com.intellectualcrafters.plot.util.expiry.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;

@@ -14,7 +14,7 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.CommentManager;
 import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.PlotGameMode;

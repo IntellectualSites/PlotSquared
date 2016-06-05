@@ -77,7 +77,7 @@ public class Merge extends SubCommand {
             return false;
         }
         final int size = plot.getConnectedPlots().size();
-        final int maxSize = Permissions.hasPermissionRange(player, "plots.merge", Settings.MAX_PLOTS);
+        final int maxSize = Permissions.hasPermissionRange(player, "plots.merge", Settings.LIMIT.MAX_PLOTS);
         if (size - 1 > maxSize) {
             MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.merge." + (size + 1));
             return false;
@@ -100,7 +100,7 @@ public class Merge extends SubCommand {
             }
         } else {
             if ("all".equalsIgnoreCase(args[0]) || "auto".equalsIgnoreCase(args[0])) {
-                boolean terrain = Settings.MERGE_REMOVES_ROADS;
+                boolean terrain = true;
                 if (args.length == 2) {
                     terrain = "true".equalsIgnoreCase(args[1]);
                 }
@@ -132,7 +132,7 @@ public class Merge extends SubCommand {
         if (args.length == 2) {
             terrain = "true".equalsIgnoreCase(args[1]);
         } else {
-            terrain = Settings.MERGE_REMOVES_ROADS;
+            terrain = true;
         }
         if (plot.autoMerge(direction, maxSize - size, uuid, terrain)) {
             if (EconHandler.manager != null && plotArea.USE_ECONOMY && price > 0d) {

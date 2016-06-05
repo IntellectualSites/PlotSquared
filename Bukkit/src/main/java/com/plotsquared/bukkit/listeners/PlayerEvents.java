@@ -200,7 +200,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     event.setNewCurrent(0);
                     return;
                 }
-                if (Settings.REDSTONE_DISABLER) {
+                if (Settings.REDSTONE.DISABLE_OFFLINE) {
                     if (UUIDHandler.getPlayer(plot.owner) == null) {
                         boolean disable = true;
                         for (UUID trusted : plot.getTrusted()) {
@@ -215,7 +215,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                         }
                     }
                 }
-                if (Settings.REDSTONE_DISABLER_UNOCCUPIED) {
+                if (Settings.REDSTONE.DISABLE_UNOCCUPIED) {
                     for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
                         if (plot.equals(entry.getValue().getCurrentPlot())) {
                             return;
@@ -350,7 +350,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         if (cmd == null) {
             if (split[0].equals("plotme") || split[0].equals("ap")) {
                 Player player = event.getPlayer();
-                if (Settings.USE_PLOTME_ALIAS) {
+                if (Settings.PLOTME.ALIAS) {
                     player.performCommand("plots " + StringMan.join(Arrays.copyOfRange(split, 1, split.length), " "));
                 } else {
                     MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_USING_PLOTME);
@@ -647,7 +647,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 }
                 MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
                 event.setCancelled(true);
-            } else if (Settings.DONE_RESTRICTS_BUILDING && plot.getFlags().containsKey(Flags.DONE)) {
+            } else if (Settings.DONE.RESTRICT_BUILDING && plot.getFlags().containsKey(Flags.DONE)) {
                 if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_BUILD_OTHER)) {
                     MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
                     event.setCancelled(true);
@@ -741,7 +741,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 }
             }
         }
-        if (Settings.PERMISSION_CACHING) {
+        if (Settings.ENABLED_COMPONENTS.PERMISSION_CACHE) {
             pp.deleteMeta("perm");
         }
     }
@@ -1883,7 +1883,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             entity.remove();
             return;
         }
-        if (Settings.KILL_ROAD_VEHICLES) {
+        if (Settings.ENABLED_COMPONENTS.KILL_ROAD_VEHICLES) {
             entity.setMetadata("plot", new FixedMetadataValue((Plugin) PS.get().IMP, plot));
         }
     }
@@ -2302,7 +2302,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
-            } else if (Settings.DONE_RESTRICTS_BUILDING && plot.getFlags().containsKey(Flags.DONE)) {
+            } else if (Settings.DONE.RESTRICT_BUILDING && plot.getFlags().containsKey(Flags.DONE)) {
                 if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
                     event.setCancelled(true);

@@ -23,8 +23,8 @@ public class SQLite extends Database {
      *
      * @param dbLocation Location of the Database (Must end in .db)
      */
-    public SQLite(String dbLocation) {
-        this.dbLocation = dbLocation;
+    public SQLite(File dbLocation) {
+        this.dbLocation = dbLocation.getAbsolutePath();
     }
 
     @Override

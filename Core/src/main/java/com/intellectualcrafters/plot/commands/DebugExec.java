@@ -12,7 +12,7 @@ import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotAnalysis;
+import com.intellectualcrafters.plot.util.expiry.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -25,7 +25,7 @@ import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.SchematicHandler;
@@ -68,11 +68,11 @@ public class DebugExec extends SubCommand {
     public DebugExec() {
         try {
             if (PS.get() != null) {
-                File file = new File(PS.get().IMP.getDirectory(), "scripts" + File.separator + "start.js");
+                File file = new File(PS.get().IMP.getDirectory(), Settings.PATHS.SCRIPTS + File.separator + "start.js");
                 if (file.exists()) {
                     init();
                     String script = StringMan.join(Files
-                                    .readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), "start.js"),
+                                    .readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + Settings.PATHS.SCRIPTS), "start.js"),
                                             StandardCharsets.UTF_8),
                             System.getProperty("line.separator"));
                     this.scope.put("THIS", this);
@@ -160,11 +160,9 @@ public class DebugExec extends SubCommand {
                         MainUtil.sendMessage(player, C.NOT_IN_PLOT);
                         return false;
                     }
-                    PlotAnalysis analysis = plot.getComplexity();
+                    PlotAnalysis analysis = plot.getComplexity(null);
                     if (analysis != null) {
-                        int complexity = analysis.getComplexity();
                         MainUtil.sendMessage(player, "Changes/column: " + analysis.changes / 1.0);
-                        MainUtil.sendMessage(player, "Complexity: " + complexity);
                         return true;
                     }
                     MainUtil.sendMessage(player, "$1Starting task...");
@@ -251,13 +249,7 @@ public class DebugExec extends SubCommand {
                     if (ExpireManager.IMP == null) {
                         ExpireManager.IMP = new ExpireManager();
                     }
-                    boolean result;
-                    if (Settings.AUTO_CLEAR_CONFIRMATION) {
-                        result = ExpireManager.IMP.runConfirmedTask();
-                    } else {
-                        result = ExpireManager.IMP.runAutomatedTask();
-                    }
-                    if (result) {
+                    if (ExpireManager.IMP.runAutomatedTask()) {
                         return MainUtil.sendMessage(player, "Started plot expiry task");
                     } else {
                         return MainUtil.sendMessage(player, "Plot expiry task already started");
@@ -291,7 +283,7 @@ public class DebugExec extends SubCommand {
                 case "addcmd":
                     try {
                         final String cmd = StringMan.join(Files
-                                        .readLines(MainUtil.getFile(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]),
+                                        .readLines(MainUtil.getFile(new File(PS.get().IMP.getDirectory() + File.separator + Settings.PATHS.SCRIPTS), args[1]),
                                                 StandardCharsets.UTF_8),
                                 System.getProperty("line.separator"));
                         new Command(MainCommand.getInstance(), true, args[1].split("\\.")[0], null, RequiredType.NONE, CommandCategory.DEBUG) {
@@ -318,7 +310,7 @@ public class DebugExec extends SubCommand {
                 case "run":
                     try {
                         script = StringMan.join(Files
-                                        .readLines(MainUtil.getFile(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]),
+                                        .readLines(MainUtil.getFile(new File(PS.get().IMP.getDirectory() + File.separator + Settings.PATHS.SCRIPTS), args[1]),
                                                 StandardCharsets.UTF_8),
                                 System.getProperty("line.separator"));
                         if (args.length > 2) {
@@ -334,7 +326,7 @@ public class DebugExec extends SubCommand {
                     }
                     break;
                 case "list-scripts":
-                    String path = PS.get().IMP.getDirectory() + File.separator + "scripts";
+                    String path = PS.get().IMP.getDirectory() + File.separator + Settings.PATHS.SCRIPTS;
                     File folder = new File(path);
                     File[] filesArray = folder.listFiles();
 

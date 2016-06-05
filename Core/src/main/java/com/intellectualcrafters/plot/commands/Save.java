@@ -30,7 +30,7 @@ public class Save extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer player, String[] args) {
 
-        if (!Settings.METRICS) {
+        if (!Settings.ENABLED_COMPONENTS.METRICS) {
             MainUtil.sendMessage(player,
                     "&cPlease enable metrics in order to use this command.\n&7 - Or host it yourself if you don't like the free service");
             return false;

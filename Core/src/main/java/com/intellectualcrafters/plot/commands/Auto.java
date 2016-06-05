@@ -86,11 +86,11 @@ public class Auto extends SubCommand {
                 // return false;
             }
         }
-        if (size_x * size_z > Settings.MAX_AUTO_SIZE) {
-            MainUtil.sendMessage(player, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.MAX_AUTO_SIZE + "");
+        if (size_x * size_z > Settings.CLAIM.MAX_AUTO_AREA) {
+            MainUtil.sendMessage(player, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.CLAIM.MAX_AUTO_AREA + "");
             return false;
         }
-        int currentPlots = Settings.GLOBAL_LIMIT ? player.getPlotCount() : player.getPlotCount(plotarea.worldname);
+        int currentPlots = Settings.LIMIT.GLOBAL ? player.getPlotCount() : player.getPlotCount(plotarea.worldname);
         int diff = currentPlots - player.getAllowedPlots();
         if (diff + size_x * size_z > 0) {
             if (diff < 0) {
@@ -173,7 +173,7 @@ public class Auto extends SubCommand {
                     }
                 }
                 if (size_x != 1 || size_z != 1) {
-                    if (!plotarea.mergePlots(MainUtil.getPlotSelectionIds(start, end), Settings.MERGE_REMOVES_ROADS, true)) {
+                    if (!plotarea.mergePlots(MainUtil.getPlotSelectionIds(start, end), true, true)) {
                         return false;
                     }
                 }

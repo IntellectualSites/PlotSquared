@@ -289,9 +289,9 @@ public class BO3Handler {
     }
 
     public static File getBaseFile(String category) {
-        File base = MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.BO3_SAVE_PATH + File.separator + category + File.separator + "base.yml");
+        File base = MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.PATHS.BO3 + File.separator + category + File.separator + "base.yml");
         if (!base.exists()) {
-            PS.get().copyFile("base.yml", Settings.BO3_SAVE_PATH + File.separator + category);
+            PS.get().copyFile("base.yml", Settings.PATHS.BO3 + File.separator + category);
         }
         return base;
     }

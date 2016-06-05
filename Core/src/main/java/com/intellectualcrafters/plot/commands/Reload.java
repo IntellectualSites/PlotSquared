@@ -1,7 +1,6 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.configuration.ConfigurationSection;
-import com.intellectualcrafters.configuration.InvalidConfigurationException;
 import com.intellectualcrafters.configuration.MemorySection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
@@ -11,7 +10,6 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.io.IOException;
 import java.util.Objects;
 
@@ -27,14 +25,12 @@ public class Reload extends SubCommand {
         try {
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.
-            PS.get().style.load(PS.get().styleFile);
-            PS.get().config.load(PS.get().configFile);
-            PS.get().setupConfig();
+            PS.get().setupConfigs();
             C.load(PS.get().translationFile);
             PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
                 @Override
                 public void run(PlotArea area) {
-                    ConfigurationSection worldSection = PS.get().config.getConfigurationSection("worlds." + area.worldname);
+                    ConfigurationSection worldSection = PS.get().worlds.getConfigurationSection("worlds." + area.worldname);
                     if (area.TYPE != 2 || !worldSection.contains("areas")) {
                         area.saveConfiguration(worldSection);
                         area.loadDefaultConfiguration(worldSection);
@@ -77,9 +73,9 @@ public class Reload extends SubCommand {
                     }
                 }
             });
-            PS.get().config.save(PS.get().configFile);
+            PS.get().worlds.save(PS.get().worldsFile);
             MainUtil.sendMessage(player, C.RELOADED_CONFIGS);
-        } catch (InvalidConfigurationException | IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             MainUtil.sendMessage(player, C.RELOAD_FAILED);
         }

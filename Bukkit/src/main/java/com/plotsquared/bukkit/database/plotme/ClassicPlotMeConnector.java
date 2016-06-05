@@ -40,7 +40,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                 String con = plotConfig.getString("mySQLconn");
                 return DriverManager.getConnection(con, user, password);
             } else {
-                return new SQLite(dataFolder + File.separator + "plots.db").openConnection();
+                return new SQLite(new File(dataFolder + File.separator + "plots.db")).openConnection();
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -64,7 +64,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         } else if (checkUUID2) {
             column = "ownerId";
         }
-        boolean merge = !"plotme".equalsIgnoreCase(this.plugin) && Settings.CONVERT_PLOTME;
+        boolean merge = !"plotme".equalsIgnoreCase(this.plugin) && Settings.ENABLED_COMPONENTS.PLOTME_CONVERTER;
         int missing = 0;
         while (resultSet.next()) {
             PlotId id = new PlotId(resultSet.getInt("idX"), resultSet.getInt("idZ"));
@@ -73,8 +73,8 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             if (!plots.containsKey(world)) {
                 plots.put(world, new HashMap<PlotId, Plot>());
                 if (merge) {
-                    int plot = PS.get().config.getInt("worlds." + world + ".plot.size");
-                    int path = PS.get().config.getInt("worlds." + world + ".road.width");
+                    int plot = PS.get().worlds.getInt("worlds." + world + ".plot.size");
+                    int path = PS.get().worlds.getInt("worlds." + world + ".road.width");
                     plotWidth.put(world, plot);
                     roadWidth.put(world, path);
                     merges.put(world, new HashMap<PlotId, boolean[]>());

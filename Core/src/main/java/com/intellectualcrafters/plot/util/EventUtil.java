@@ -15,6 +15,7 @@ import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.Rating;
+import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.plotsquared.listener.PlayerBlockEventType;
 
 import java.util.ArrayList;
@@ -66,11 +67,11 @@ public abstract class EventUtil {
                 MainUtil.sendMessage(player, C.WORLDEDIT_BYPASSED);
             }
         }
-        if (PS.get().update != null && Permissions.hasPermission(player, C.PERMISSION_ADMIN_UPDATE) && Settings.UPDATE_NOTIFICATIONS) {
+        if (PS.get().update != null && Permissions.hasPermission(player, C.PERMISSION_ADMIN_UPDATE) && Settings.ENABLED_COMPONENTS.UPDATER) {
             MainUtil.sendMessage(player, "&6An update for PlotSquared is available: &7/plot update");
         }
         final Plot plot = player.getCurrentPlot();
-        if (Settings.TELEPORT_ON_LOGIN && plot != null) {
+        if (Settings.TELEPORT.ON_LOGIN && plot != null) {
             TaskManager.runTask(new Runnable() {
                 @Override
                 public void run() {
@@ -83,7 +84,7 @@ public abstract class EventUtil {
 
     public void doRespawnTask(final PlotPlayer player) {
         final Plot plot = player.getCurrentPlot();
-        if (Settings.TELEPORT_ON_DEATH && plot != null) {
+        if (Settings.TELEPORT.ON_DEATH && plot != null) {
             TaskManager.runTask(new Runnable() {
                 @Override
                 public void run() {

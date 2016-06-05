@@ -183,7 +183,7 @@ public abstract class PlotArea {
      * @return
      */
     public boolean isCompatible(PlotArea plotArea) {
-        ConfigurationSection section = PS.get().config.getConfigurationSection("worlds");
+        ConfigurationSection section = PS.get().worlds.getConfigurationSection("worlds");
         for (ConfigurationNode setting : plotArea.getSettingNodes()) {
             Object constant = section.get(plotArea.worldname + '.' + setting.getConstant());
             if (constant == null || !constant.equals(section.get(this.worldname + '.' + setting.getConstant()))) {
@@ -491,7 +491,7 @@ public abstract class PlotArea {
     }
     
     public int getPlotCount(UUID uuid) {
-        if (!Settings.DONE_COUNTS_TOWARDS_LIMIT) {
+        if (!Settings.DONE.COUNTS_TOWARDS_LIMIT) {
             int count = 0;
             for (Plot plot : getPlotsAbs(uuid)) {
                 if (!plot.hasFlag(Flags.DONE)) {

@@ -16,13 +16,13 @@ public final class Flags {
 
     public static final IntegerFlag MUSIC = new IntegerFlag("music");
     public static final StringFlag DESCRIPTION = new StringFlag("description");
-    public static final IntegerListFlag ANALYSIS = new IntegerListFlag("analysis");
+    public static final IntegerListFlag ANALYSIS = (IntegerListFlag) new IntegerListFlag("analysis").reserve();
     public static final StringFlag GREETING = new StringFlag("greeting");
     public static final StringFlag FAREWELL = new StringFlag("farewell");
     public static final IntervalFlag FEED = new IntervalFlag("feed");
     public static final IntervalFlag HEAL = new IntervalFlag("heal");
     public static final GameModeFlag GAMEMODE = new GameModeFlag("gamemode");
-    public static final StringFlag DONE = new StringFlag("done");
+    public static final StringFlag DONE = (StringFlag) new StringFlag("done").reserve();
     public static final BooleanFlag REDSTONE = new BooleanFlag("redstone");
     public static final BooleanFlag FLY = new BooleanFlag("fly");
     public static final BooleanFlag NOTIFY_LEAVE = new BooleanFlag("notify-leave");

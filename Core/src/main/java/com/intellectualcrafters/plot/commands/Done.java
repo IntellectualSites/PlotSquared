@@ -6,11 +6,12 @@ import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.expiry.ExpireManager;
+import com.intellectualcrafters.plot.util.expiry.PlotAnalysis;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(command = "done",
@@ -42,19 +43,30 @@ public class Done extends SubCommand {
         }
         plot.addRunning();
         MainUtil.sendMessage(player, C.GENERATING_LINK);
-        HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
-            @Override
-            public void run(PlotAnalysis value) {
-                plot.removeRunning();
-                if ((value == null) || (value.getComplexity() >= Settings.CLEAR_THRESHOLD)) {
-                    long flagValue = System.currentTimeMillis() / 1000;
-                    plot.setFlag(Flags.DONE,flagValue);
-                    MainUtil.sendMessage(player, C.DONE_SUCCESS);
-                } else {
-                    MainUtil.sendMessage(player, C.DONE_INSUFFICIENT_COMPLEXITY);
+        final Settings.AUTO_CLEAR doneRequirements = Settings.AUTO_CLEAR.get("done");
+        if (ExpireManager.IMP == null || doneRequirements == null) {
+            finish(plot, player, true);
+            plot.removeRunning();
+        } else {
+            HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
+                @Override
+                public void run(PlotAnalysis value) {
+                    plot.removeRunning();
+                    boolean result = value.getComplexity(doneRequirements) <= doneRequirements.THRESHOLD;
+                    finish(plot, player, result);
                 }
-            }
-        });
+            });
+        }
         return true;
+    }
+
+    private void finish(Plot plot, PlotPlayer pp, boolean success) {
+        if (success) {
+            long flagValue = System.currentTimeMillis() / 1000;
+            plot.setFlag(Flags.DONE, flagValue);
+            MainUtil.sendMessage(pp, C.DONE_SUCCESS);
+        } else {
+            MainUtil.sendMessage(pp, C.DONE_INSUFFICIENT_COMPLEXITY);
+        }
     }
 }

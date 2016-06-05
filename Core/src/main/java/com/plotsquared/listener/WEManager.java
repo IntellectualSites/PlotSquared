@@ -46,11 +46,11 @@ public class WEManager {
             return regions;
         }
         for (Plot plot : area.getPlots()) {
-            if (!plot.isBasePlot() || (Settings.DONE_RESTRICTS_BUILDING && (plot.getFlag(Flags.DONE).isPresent()))) {
+            if (!plot.isBasePlot() || (Settings.DONE.RESTRICT_BUILDING && (plot.getFlag(Flags.DONE).isPresent()))) {
                 continue;
             }
-            if (Settings.WE_ALLOW_HELPER && plot.isAdded(uuid) || !Settings.WE_ALLOW_HELPER && (plot.isOwner(uuid) || plot.getTrusted()
-                    .contains(uuid))) {
+            boolean allowMember = player.hasPermission("plots.worldedit.member");
+            if (allowMember && plot.isAdded(uuid) || !allowMember && (plot.isOwner(uuid) || plot.getTrusted().contains(uuid))) {
                 regions.addAll(plot.getRegions());
             }
         }

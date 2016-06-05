@@ -8,6 +8,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
@@ -41,7 +42,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
 
     public SQLUUIDHandler(UUIDWrapper wrapper) {
         super(wrapper);
-        this.sqlite = new SQLite("./plugins/PlotSquared/usercache.db");
+        this.sqlite = new SQLite(MainUtil.getFile(PS.get().IMP.getDirectory(), "usercache.db"));
         try {
             this.sqlite.openConnection();
         } catch (ClassNotFoundException | SQLException e) {
@@ -104,7 +105,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                         public void run() {
                             // If the file based UUID handler didn't cache it, then we can't cache offline mode
                             // Also, trying to cache based on files again, is useless as that's what the file based uuid cacher does
-                            if (Settings.OFFLINE_MODE) {
+                            if (Settings.UUID.OFFLINE) {
                                 if (whenDone != null) {
                                     whenDone.run();
                                 }

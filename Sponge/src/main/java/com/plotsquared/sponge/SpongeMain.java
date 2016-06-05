@@ -134,7 +134,7 @@ public class SpongeMain implements IPlotMain {
     @Override
     public void log(String message) {
         message = C.format(message, C.replacements);
-        if (!Settings.CONSOLE_COLOR) {
+        if (!Settings.CHAT.CONSOLE_COLOR) {
             message = message.replaceAll('\u00a7' + "[a-z|0-9]", "");
         }
         if (this.server == null) {
@@ -262,7 +262,7 @@ public class SpongeMain implements IPlotMain {
     @Override
     public UUIDHandlerImplementation initUUIDHandler() {
         UUIDWrapper wrapper;
-        if (Settings.OFFLINE_MODE) {
+        if (Settings.UUID.OFFLINE) {
             wrapper = new SpongeLowerOfflineUUIDWrapper();
         } else {
             wrapper = new SpongeOnlineUUIDWrapper();
@@ -307,7 +307,7 @@ public class SpongeMain implements IPlotMain {
         World world = SpongeUtil.getWorld(worldName);
         if (world == null) {
             // create world
-            ConfigurationSection worldConfig = PS.get().config.getConfigurationSection("worlds." + worldName);
+            ConfigurationSection worldConfig = PS.get().worlds.getConfigurationSection("worlds." + worldName);
             String manager = worldConfig.getString("generator.plugin", "PlotSquared");
             String generator = worldConfig.getString("generator.init", manager);
 

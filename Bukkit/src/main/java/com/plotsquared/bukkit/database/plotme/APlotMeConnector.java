@@ -25,21 +25,21 @@ public abstract class APlotMeConnector {
 
     public void copyConfig(FileConfiguration plotConfig, String world, String actualWorldName) {
         int pathWidth = plotConfig.getInt("worlds." + world + ".PathWidth"); //
-        PS.get().config.set("worlds." + actualWorldName + ".road.width", pathWidth);
+        PS.get().worlds.set("worlds." + actualWorldName + ".road.width", pathWidth);
         int plotSize = plotConfig.getInt("worlds." + world + ".PlotSize"); //
-        PS.get().config.set("worlds." + actualWorldName + ".plot.size", plotSize);
+        PS.get().worlds.set("worlds." + actualWorldName + ".plot.size", plotSize);
         String wallBlock = plotConfig.getString("worlds." + world + ".WallBlockId"); //
-        PS.get().config.set("worlds." + actualWorldName + ".wall.block", wallBlock);
+        PS.get().worlds.set("worlds." + actualWorldName + ".wall.block", wallBlock);
         String floor = plotConfig.getString("worlds." + world + ".PlotFloorBlockId"); //
-        PS.get().config.set("worlds." + actualWorldName + ".plot.floor", Collections.singletonList(floor));
+        PS.get().worlds.set("worlds." + actualWorldName + ".plot.floor", Collections.singletonList(floor));
         String filling = plotConfig.getString("worlds." + world + ".PlotFillingBlockId"); //
-        PS.get().config.set("worlds." + actualWorldName + ".plot.filling", Collections.singletonList(filling));
+        PS.get().worlds.set("worlds." + actualWorldName + ".plot.filling", Collections.singletonList(filling));
         String road = plotConfig.getString("worlds." + world + ".RoadMainBlockId");
-        PS.get().config.set("worlds." + actualWorldName + ".road.block", road);
+        PS.get().worlds.set("worlds." + actualWorldName + ".road.block", road);
         int height = plotConfig.getInt("worlds." + world + ".RoadHeight"); //
-        PS.get().config.set("worlds." + actualWorldName + ".road.height", height);
-        PS.get().config.set("worlds." + actualWorldName + ".plot.height", height);
-        PS.get().config.set("worlds." + actualWorldName + ".wall.height", height);
+        PS.get().worlds.set("worlds." + actualWorldName + ".road.height", height);
+        PS.get().worlds.set("worlds." + actualWorldName + ".plot.height", height);
+        PS.get().worlds.set("worlds." + actualWorldName + ".wall.height", height);
     }
 
     public Location getPlotTopLocAbs(int path, int plot, PlotId plotId) {

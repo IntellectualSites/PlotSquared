@@ -90,7 +90,7 @@ public class Database extends SubCommand {
                         return false;
                     }
                     MainUtil.sendMessage(player, "&6Starting...");
-                    implementation = new SQLite(file.getPath());
+                    implementation = new SQLite(file);
                     SQLManager manager = new SQLManager(implementation, args.length == 3 ? args[2] : "", true);
                     HashMap<String, HashMap<PlotId, Plot>> map = manager.getPlots();
                     plots = new ArrayList<>();
@@ -141,7 +141,8 @@ public class Database extends SubCommand {
                     if (args.length < 2) {
                         return MainUtil.sendMessage(player, "/plot database sqlite [file]");
                     }
-                    implementation = new SQLite(PS.get().IMP.getDirectory() + File.separator + args[1] + ".db");
+                    File sqliteFile = MainUtil.getFile(PS.get().IMP.getDirectory(), args[1] + ".db");
+                    implementation = new SQLite(sqliteFile);
                     break;
                 default:
                     return MainUtil.sendMessage(player, "/plot database [sqlite/mysql]");

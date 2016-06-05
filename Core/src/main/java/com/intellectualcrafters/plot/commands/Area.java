@@ -117,10 +117,10 @@ public class Area extends SubCommand {
                                     @Override
                                     public void run() {
                                         if (offsetX != 0) {
-                                            PS.get().config.set(path + ".road.offset.x", offsetX);
+                                            PS.get().worlds.set(path + ".road.offset.x", offsetX);
                                         }
                                         if (offsetZ != 0) {
-                                            PS.get().config.set(path + ".road.offset.z", offsetZ);
+                                            PS.get().worlds.set(path + ".road.offset.z", offsetZ);
                                         }
                                         final String world = SetupUtils.manager.setupWorld(object);
                                         if (WorldUtil.IMP.isWorld(world)) {
@@ -231,10 +231,10 @@ public class Area extends SubCommand {
                                 @Override
                                 public void run() {
                                     String path = "worlds." + pa.worldname;
-                                    if (!PS.get().config.contains(path)) {
-                                        PS.get().config.createSection(path);
+                                    if (!PS.get().worlds.contains(path)) {
+                                        PS.get().worlds.createSection(path);
                                     }
-                                    ConfigurationSection section = PS.get().config.getConfigurationSection(path);
+                                    ConfigurationSection section = PS.get().worlds.getConfigurationSection(path);
                                     pa.saveConfiguration(section);
                                     pa.loadConfiguration(section);
                                     object.plotManager = "PlotSquared";
@@ -247,7 +247,7 @@ public class Area extends SubCommand {
                                         MainUtil.sendMessage(player, "An error occurred while creating the world: " + pa.worldname);
                                     }
                                     try {
-                                        PS.get().config.save(PS.get().configFile);
+                                        PS.get().worlds.save(PS.get().worldsFile);
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }

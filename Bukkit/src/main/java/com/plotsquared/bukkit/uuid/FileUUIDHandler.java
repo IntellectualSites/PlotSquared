@@ -10,7 +10,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
@@ -82,7 +82,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                         e.printStackTrace();
                     }
                 }
-                if (Settings.TWIN_MODE_UUID) {
+                if (Settings.UUID.NATIVE_UUID_PROVIDER) {
                     HashBiMap<StringWrapper, UUID> toAdd = HashBiMap.create(new HashMap<StringWrapper, UUID>());
                     toAdd.put(new StringWrapper("*"), DBFunc.everyone);
                     HashSet<UUID> all = UUIDHandler.getAllUUIDS();
@@ -173,8 +173,8 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                             NbtFactory.NbtCompound bukkit = (NbtFactory.NbtCompound) compound.get("bukkit");
                             String name = (String) bukkit.get("lastKnownName");
                             long last = (long) bukkit.get("lastPlayed");
-                            if (Settings.OFFLINE_MODE) {
-                                if (Settings.UUID_LOWERCASE && !name.toLowerCase().equals(name)) {
+                            if (Settings.UUID.OFFLINE) {
+                                if (Settings.UUID.FORCE_LOWERCASE && !name.toLowerCase().equals(name)) {
                                     uuid = FileUUIDHandler.this.uuidWrapper.getUUID(name);
                                 } else {
                                     long most = (long) compound.get("UUIDMost");

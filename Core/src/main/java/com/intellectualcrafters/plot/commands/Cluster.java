@@ -127,12 +127,12 @@ public class Cluster extends SubCommand {
                 // Check allowed cluster size
                 cluster = new PlotCluster(area, pos1, pos2, player.getUUID());
                 int current;
-                if (Settings.GLOBAL_LIMIT) {
+                if (Settings.LIMIT.GLOBAL) {
                     current = player.getPlayerClusterCount();
                 } else {
                     current = player.getPlayerClusterCount(player.getLocation().getWorld());
                 }
-                int allowed = Permissions.hasPermissionRange(player, "plots.cluster", Settings.MAX_PLOTS);
+                int allowed = Permissions.hasPermissionRange(player, "plots.cluster", Settings.LIMIT.MAX_PLOTS);
                 if (current + cluster.getArea() > allowed) {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster." + (current + cluster.getArea()));
                     return false;
@@ -257,13 +257,13 @@ public class Cluster extends SubCommand {
                 }
                 // Check allowed cluster size
                 int current;
-                if (Settings.GLOBAL_LIMIT) {
+                if (Settings.LIMIT.GLOBAL) {
                     current = player.getPlayerClusterCount();
                 } else {
                     current = player.getPlayerClusterCount(player.getLocation().getWorld());
                 }
                 current -= cluster.getArea() + (1 + pos2.x - pos1.x) * (1 + pos2.y - pos1.y);
-                int allowed = Permissions.hasPermissionRange(player, "plots.cluster", Settings.MAX_PLOTS);
+                int allowed = Permissions.hasPermissionRange(player, "plots.cluster", Settings.LIMIT.MAX_PLOTS);
                 if (current + cluster.getArea() > allowed) {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster." + (current + cluster.getArea()));
                     return false;

@@ -26,7 +26,7 @@ public class DebugPaste extends SubCommand {
             @Override
             public void run() {
                 try {
-                    String settingsYML = HastebinUtility.upload(PS.get().configFile);
+                    String settingsYML = HastebinUtility.upload(PS.get().worldsFile);
                     String latestLOG;
                     try {
                         latestLOG = HastebinUtility.upload(new File(PS.get().IMP.getDirectory(), "../../logs/latest.log"));
@@ -43,7 +43,7 @@ public class DebugPaste extends SubCommand {
                     b.append("\n# Server Information\n");
                     int[] sVersion = PS.get().IMP.getServerVersion();
                     b.append("version.server: ").append(sVersion[0]).append('.').append(sVersion[1]).append('.').append(sVersion[2]).append('\n');
-                    b.append("online_mode: ").append(UUIDHandler.getUUIDWrapper()).append(';').append(!Settings.OFFLINE_MODE).append('\n');
+                    b.append("online_mode: ").append(UUIDHandler.getUUIDWrapper()).append(';').append(!Settings.UUID.OFFLINE).append('\n');
                     b.append("plugins:");
                     for (String id : PS.get().IMP.getPluginIds()) {
                         String[] split = id.split(":");

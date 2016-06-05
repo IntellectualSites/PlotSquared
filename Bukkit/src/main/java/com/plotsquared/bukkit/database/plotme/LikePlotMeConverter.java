@@ -144,7 +144,7 @@ public class LikePlotMeConverter {
             sendMessage(" - " + dbPrefix + "Plots");
             final Set<String> worlds = getPlotMeWorlds(plotConfig);
 
-            if (Settings.CONVERT_PLOTME) {
+            if (Settings.ENABLED_COMPONENTS.PLOTME_CONVERTER) {
                 sendMessage("Updating bukkit.yml");
                 updateWorldYml("bukkit.yml");
                 updateWorldYml("plugins/Multiverse-Core/worlds.yml");
@@ -153,7 +153,7 @@ public class LikePlotMeConverter {
                     try {
                         String actualWorldName = getWorld(world);
                         connector.copyConfig(plotConfig, world, actualWorldName);
-                        PS.get().config.save(PS.get().configFile);
+                        PS.get().worlds.save(PS.get().worldsFile);
                     } catch (IOException e) {
                         e.printStackTrace();
                         sendMessage("&c-- &lFailed to save configuration for world '" + world
@@ -166,7 +166,7 @@ public class LikePlotMeConverter {
             for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
                 plotCount += entry.getValue().size();
             }
-            if (!Settings.CONVERT_PLOTME) {
+            if (!Settings.ENABLED_COMPONENTS.PLOTME_CONVERTER) {
                 return false;
             }
 
@@ -181,30 +181,30 @@ public class LikePlotMeConverter {
                         String actualWorldName = getWorld(world);
                         String plotMeWorldName = world.toLowerCase();
                         Integer pathWidth = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".PathWidth"); //
-                        PS.get().config.set("worlds." + world + ".road.width", pathWidth);
+                        PS.get().worlds.set("worlds." + world + ".road.width", pathWidth);
 
                         int pathHeight = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".RoadHeight", 64); //
-                        PS.get().config.set("worlds." + world + ".road.height", pathHeight);
-                        PS.get().config.set("worlds." + world + ".wall.height", pathHeight);
-                        PS.get().config.set("worlds." + world + ".plot.height", pathHeight);
+                        PS.get().worlds.set("worlds." + world + ".road.height", pathHeight);
+                        PS.get().worlds.set("worlds." + world + ".wall.height", pathHeight);
+                        PS.get().worlds.set("worlds." + world + ".plot.height", pathHeight);
                         int plotSize = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".PlotSize", 32); //
-                        PS.get().config.set("worlds." + world + ".plot.size", plotSize);
+                        PS.get().worlds.set("worlds." + world + ".plot.size", plotSize);
                         String wallblock = plotmeDgYml.getString("worlds." + plotMeWorldName + ".WallBlock", "44"); //
-                        PS.get().config.set("worlds." + world + ".wall.block", wallblock);
+                        PS.get().worlds.set("worlds." + world + ".wall.block", wallblock);
                         String floor = plotmeDgYml.getString("worlds." + plotMeWorldName + ".PlotFloorBlock", "2"); //
-                        PS.get().config.set("worlds." + world + ".plot.floor", Collections.singletonList(floor));
+                        PS.get().worlds.set("worlds." + world + ".plot.floor", Collections.singletonList(floor));
                         String filling = plotmeDgYml.getString("worlds." + plotMeWorldName + ".FillBlock", "3"); //
-                        PS.get().config.set("worlds." + world + ".plot.filling", Collections.singletonList(filling));
+                        PS.get().worlds.set("worlds." + world + ".plot.filling", Collections.singletonList(filling));
                         String road = plotmeDgYml.getString("worlds." + plotMeWorldName + ".RoadMainBlock", "5");
-                        PS.get().config.set("worlds." + world + ".road.block", road);
+                        PS.get().worlds.set("worlds." + world + ".road.block", road);
                         int height = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".RoadHeight"); //
                         if (height == 0) {
                             height = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".GroundHeight", 64); //
                         }
-                        PS.get().config.set("worlds." + actualWorldName + ".road.height", height);
-                        PS.get().config.set("worlds." + actualWorldName + ".plot.height", height);
-                        PS.get().config.set("worlds." + actualWorldName + ".wall.height", height);
-                        PS.get().config.save(PS.get().configFile);
+                        PS.get().worlds.set("worlds." + actualWorldName + ".road.height", height);
+                        PS.get().worlds.set("worlds." + actualWorldName + ".plot.height", height);
+                        PS.get().worlds.set("worlds." + actualWorldName + ".wall.height", height);
+                        PS.get().worlds.save(PS.get().worldsFile);
                     }
                 } catch (IOException ignored) {}
             }
@@ -267,7 +267,7 @@ public class LikePlotMeConverter {
             });
             sendMessage("Saving configuration...");
             try {
-                PS.get().config.save(PS.get().configFile);
+                PS.get().worlds.save(PS.get().worldsFile);
             } catch (IOException ignored) {
                 sendMessage(" - &cFailed to save configuration.");
             }

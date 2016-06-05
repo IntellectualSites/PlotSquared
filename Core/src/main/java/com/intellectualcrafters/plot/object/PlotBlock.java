@@ -1,5 +1,7 @@
 package com.intellectualcrafters.plot.object;
 
+import com.intellectualcrafters.plot.config.Settings;
+
 public class PlotBlock {
 
     public static final PlotBlock EVERYTHING = new PlotBlock((short) 0, (byte) 0);
@@ -13,7 +15,7 @@ public class PlotBlock {
     }
 
     public static PlotBlock get(int id, int data) {
-        return CACHE[(id << 4) + data];
+        return Settings.ENABLED_COMPONENTS.BLOCK_CACHE && data > 0 ? CACHE[(id << 4) + data] : new PlotBlock((short) id, (byte) data);
     }
 
     public final short id;

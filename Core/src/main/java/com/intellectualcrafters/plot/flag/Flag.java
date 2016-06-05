@@ -30,6 +30,10 @@ public abstract class Flag<V> {
         this.reserved = false;
     }
 
+    public void register() {
+        Flags.registerFlag(this);
+    }
+
     public abstract String valueToString(Object value);
 
     @Override

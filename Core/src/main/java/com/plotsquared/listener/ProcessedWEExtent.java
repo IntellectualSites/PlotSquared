@@ -2,9 +2,7 @@ package com.plotsquared.listener;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.util.SetQueue;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.Vector2D;
 import com.sk89q.worldedit.WorldEditException;
@@ -16,7 +14,6 @@ import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.extent.NullExtent;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.biome.BaseBiome;
-
 import java.lang.reflect.Field;
 import java.util.HashSet;
 
@@ -87,7 +84,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                     return false;
                 }
                 this.BScount++;
-                if (this.BScount > Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES) {
+                if (this.BScount > Settings.CHUNK_PROCESSOR.MAX_TILES) {
                     this.BSblocked = true;
                     PS.debug("&cPlotSquared detected unsafe WorldEdit: " + location.getBlockX() + "," + location.getBlockZ());
                 }
@@ -209,16 +206,18 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                         case 190:
                         case 191:
                         case 192:
-                            if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
-                                SetQueue.IMP.setBlock(this.world, x, y, z, id);
-                            } else {
+//                            if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
+//                                SetQueue.IMP.setBlock(this.world, x, y, z, id);
+//                            } else
+                            {
                                 super.setBlock(location, block);
                             }
                             break;
                         default:
-                            if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
-                                SetQueue.IMP.setBlock(this.world, x, y, z, PlotBlock.get((short) id, (byte) block.getData()));
-                            } else {
+//                            if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
+//                                SetQueue.IMP.setBlock(this.world, x, y, z, PlotBlock.get((short) id, (byte) block.getData()));
+//                            } else
+                            {
                                 super.setBlock(location, block);
                             }
                             break;
@@ -236,7 +235,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
             return null;
         }
         this.Ecount++;
-        if (this.Ecount > Settings.CHUNK_PROCESSOR_MAX_ENTITIES) {
+        if (this.Ecount > Settings.CHUNK_PROCESSOR.MAX_ENTITIES) {
             this.Eblocked = true;
             PS.debug("&cPlotSquared detected unsafe WorldEdit: " + location.getBlockX() + "," + location.getBlockZ());
         }

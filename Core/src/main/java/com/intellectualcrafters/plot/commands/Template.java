@@ -6,6 +6,7 @@ import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.FileBytes;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotManager;
@@ -38,7 +39,7 @@ public class Template extends SubCommand {
 
     public static boolean extractAllFiles(String world, String template) {
         try {
-            File folder = new File(PS.get().IMP.getDirectory() + File.separator + "templates");
+            File folder = MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.PATHS.TEMPLATES);
             if (!folder.exists()) {
                 return false;
             }
@@ -75,7 +76,7 @@ public class Template extends SubCommand {
     }
 
     public static byte[] getBytes(PlotArea plotArea) {
-        ConfigurationSection section = PS.get().config.getConfigurationSection("worlds." + plotArea.worldname);
+        ConfigurationSection section = PS.get().worlds.getConfigurationSection("worlds." + plotArea.worldname);
         YamlConfiguration config = new YamlConfiguration();
         String generator = SetupUtils.manager.getGenerator(plotArea);
         if (generator != null) {
@@ -88,7 +89,7 @@ public class Template extends SubCommand {
     }
 
     public static void zipAll(String world, Set<FileBytes> files) throws IOException {
-        File output = new File(PS.get().IMP.getDirectory() + File.separator + "templates");
+        File output = MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.PATHS.TEMPLATES);
         output.mkdirs();
         try (FileOutputStream fos = new FileOutputStream(output + File.separator + world + ".template");
                 ZipOutputStream zos = new ZipOutputStream(fos)) {
@@ -133,12 +134,12 @@ public class Template extends SubCommand {
                     MainUtil.sendMessage(player, "&cInvalid template file: " + args[2] + ".template");
                     return false;
                 }
-                File worldFile = new File(PS.get().IMP.getDirectory() + File.separator + "templates" + File.separator + "tmp-data.yml");
+                File worldFile = MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.PATHS.TEMPLATES + File.separator + "tmp-data.yml");
                 YamlConfiguration worldConfig = YamlConfiguration.loadConfiguration(worldFile);
-                PS.get().config.set("worlds." + world, worldConfig.get(""));
+                PS.get().worlds.set("worlds." + world, worldConfig.get(""));
                 try {
-                    PS.get().config.save(PS.get().configFile);
-                    PS.get().config.load(PS.get().configFile);
+                    PS.get().worlds.save(PS.get().worldsFile);
+                    PS.get().worlds.load(PS.get().worldsFile);
                 } catch (InvalidConfigurationException | IOException e) {
                     e.printStackTrace();
                 }

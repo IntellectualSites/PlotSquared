@@ -1,14 +1,14 @@
-package com.intellectualcrafters.plot.object;
+package com.intellectualcrafters.plot.util.expiry;
 
 import com.google.common.base.Optional;
-import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.generator.HybridUtils;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
-
-import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlotAnalysis {
-
-    public static final PlotAnalysis MODIFIERS = new PlotAnalysis();
     public static boolean running = false;
     public int changes;
     public int faces;
@@ -33,7 +31,7 @@ public class PlotAnalysis {
     public int variety_sd;
     private int complexity;
 
-    public static PlotAnalysis getAnalysis(Plot plot) {
+    public static PlotAnalysis getAnalysis(Plot plot, Settings.AUTO_CLEAR settings) {
         Optional<List<Integer>> flag = plot.getFlag(Flags.ANALYSIS);
         if (flag.isPresent()) {
             PlotAnalysis analysis = new PlotAnalysis();
@@ -50,7 +48,7 @@ public class PlotAnalysis {
             analysis.air_sd = values.get(8); // 18909
             analysis.variety_sd = values.get(9); // 263
 
-            analysis.complexity = analysis.getComplexity();
+            analysis.complexity = settings != null ? analysis.getComplexity(settings) : 0;
             return analysis;
         }
         return null;
@@ -182,7 +180,7 @@ public class PlotAnalysis {
                 for (int i = 0; i < plots.size(); i++) {
                     Plot plot = plots.get(i);
                     PS.debug(" | " + plot);
-                    PlotAnalysis analysis = plot.getComplexity();
+                    PlotAnalysis analysis = plot.getComplexity(null);
 
                     changes[i] = analysis.changes;
                     faces[i] = analysis.faces;
@@ -208,12 +206,14 @@ public class PlotAnalysis {
                 PS.debug(" - The analyzed plots which were processed and put into bulk data will be compared and correlated to the plot ranking");
                 PS.debug(" - The calculated correlation constant will then be used to calibrate the threshold for auto plot clearing");
 
+                Settings.AUTO_CLEAR settings = new Settings.AUTO_CLEAR();
+                
                 int[] rankChanges = rank(changes);
                 int[] sdChanges = getSD(rankChanges, rankRatings);
                 int[] varianceChanges = square(sdChanges);
                 int sumChanges = sum(varianceChanges);
                 double factorChanges = getCC(n, sumChanges);
-                PlotAnalysis.MODIFIERS.changes = factorChanges == 1 ? 0 : (int) (factorChanges * 1000 / MathMan.getMean(changes));
+                settings.CALIBRATION.CHANGES = factorChanges == 1 ? 0 : (int) (factorChanges * 1000 / MathMan.getMean(changes));
                 PS.debug(" - | changes " + factorChanges);
 
                 int[] rankFaces = rank(faces);
@@ -221,7 +221,7 @@ public class PlotAnalysis {
                 int[] varianceFaces = square(sdFaces);
                 int sumFaces = sum(varianceFaces);
                 double factorFaces = getCC(n, sumFaces);
-                PlotAnalysis.MODIFIERS.faces = factorFaces == 1 ? 0 : (int) (factorFaces * 1000 / MathMan.getMean(faces));
+                settings.CALIBRATION.FACES = factorFaces == 1 ? 0 : (int) (factorFaces * 1000 / MathMan.getMean(faces));
                 PS.debug(" - | faces " + factorFaces);
 
                 int[] rankData = rank(data);
@@ -229,7 +229,7 @@ public class PlotAnalysis {
                 int[] variance_data = square(sdData);
                 int sum_data = sum(variance_data);
                 double factor_data = getCC(n, sum_data);
-                PlotAnalysis.MODIFIERS.data = factor_data == 1 ? 0 : (int) (factor_data * 1000 / MathMan.getMean(data));
+                settings.CALIBRATION.DATA = factor_data == 1 ? 0 : (int) (factor_data * 1000 / MathMan.getMean(data));
                 PS.debug(" - | data " + factor_data);
 
                 int[] rank_air = rank(air);
@@ -237,7 +237,7 @@ public class PlotAnalysis {
                 int[] variance_air = square(sd_air);
                 int sum_air = sum(variance_air);
                 double factor_air = getCC(n, sum_air);
-                PlotAnalysis.MODIFIERS.air = factor_air == 1 ? 0 : (int) (factor_air * 1000 / MathMan.getMean(air));
+                settings.CALIBRATION.AIR = factor_air == 1 ? 0 : (int) (factor_air * 1000 / MathMan.getMean(air));
                 PS.debug(" - | air " + factor_air);
 
                 int[] rank_variety = rank(variety);
@@ -245,7 +245,7 @@ public class PlotAnalysis {
                 int[] variance_variety = square(sd_variety);
                 int sum_variety = sum(variance_variety);
                 double factor_variety = getCC(n, sum_variety);
-                PlotAnalysis.MODIFIERS.variety = factor_variety == 1 ? 0 : (int) (factor_variety * 1000 / MathMan.getMean(variety));
+                settings.CALIBRATION.VARIETY = factor_variety == 1 ? 0 : (int) (factor_variety * 1000 / MathMan.getMean(variety));
                 PS.debug(" - | variety " + factor_variety);
 
                 int[] rank_changes_sd = rank(changes_sd);
@@ -253,7 +253,7 @@ public class PlotAnalysis {
                 int[] variance_changes_sd = square(sd_changes_sd);
                 int sum_changes_sd = sum(variance_changes_sd);
                 double factor_changes_sd = getCC(n, sum_changes_sd);
-                PlotAnalysis.MODIFIERS.changes_sd = factor_changes_sd == 1 ? 0 : (int) (factor_changes_sd * 1000 / MathMan.getMean(changes_sd));
+                settings.CALIBRATION.CHANGES_SD = factor_changes_sd == 1 ? 0 : (int) (factor_changes_sd * 1000 / MathMan.getMean(changes_sd));
                 PS.debug(" - | changes_sd " + factor_changes_sd);
 
                 int[] rank_faces_sd = rank(faces_sd);
@@ -261,7 +261,7 @@ public class PlotAnalysis {
                 int[] variance_faces_sd = square(sd_faces_sd);
                 int sum_faces_sd = sum(variance_faces_sd);
                 double factor_faces_sd = getCC(n, sum_faces_sd);
-                PlotAnalysis.MODIFIERS.faces_sd = factor_faces_sd == 1 ? 0 : (int) (factor_faces_sd * 1000 / MathMan.getMean(faces_sd));
+                settings.CALIBRATION.FACES_SD = factor_faces_sd == 1 ? 0 : (int) (factor_faces_sd * 1000 / MathMan.getMean(faces_sd));
                 PS.debug(" - | faces_sd " + factor_faces_sd);
 
                 int[] rank_data_sd = rank(data_sd);
@@ -269,7 +269,7 @@ public class PlotAnalysis {
                 int[] variance_data_sd = square(sd_data_sd);
                 int sum_data_sd = sum(variance_data_sd);
                 double factor_data_sd = getCC(n, sum_data_sd);
-                PlotAnalysis.MODIFIERS.data_sd = factor_data_sd == 1 ? 0 : (int) (factor_data_sd * 1000 / MathMan.getMean(data_sd));
+                settings.CALIBRATION.DATA_SD = factor_data_sd == 1 ? 0 : (int) (factor_data_sd * 1000 / MathMan.getMean(data_sd));
                 PS.debug(" - | data_sd " + factor_data_sd);
 
                 int[] rank_air_sd = rank(air_sd);
@@ -277,7 +277,7 @@ public class PlotAnalysis {
                 int[] variance_air_sd = square(sd_air_sd);
                 int sum_air_sd = sum(variance_air_sd);
                 double factor_air_sd = getCC(n, sum_air_sd);
-                PlotAnalysis.MODIFIERS.air_sd = factor_air_sd == 1 ? 0 : (int) (factor_air_sd * 1000 / MathMan.getMean(air_sd));
+                settings.CALIBRATION.AIR_SD = factor_air_sd == 1 ? 0 : (int) (factor_air_sd * 1000 / MathMan.getMean(air_sd));
                 PS.debug(" - | air_sd " + factor_air_sd);
 
                 int[] rank_variety_sd = rank(variety_sd);
@@ -285,7 +285,7 @@ public class PlotAnalysis {
                 int[] variance_variety_sd = square(sd_variety_sd);
                 int sum_variety_sd = sum(variance_variety_sd);
                 double factor_variety_sd = getCC(n, sum_variety_sd);
-                PlotAnalysis.MODIFIERS.variety_sd = factor_variety_sd == 1 ? 0 : (int) (factor_variety_sd * 1000 / MathMan.getMean(variety_sd));
+                settings.CALIBRATION.VARIETY_SD = factor_variety_sd == 1 ? 0 : (int) (factor_variety_sd * 1000 / MathMan.getMean(variety_sd));
                 PS.debug(" - | variety_sd " + factor_variety_sd);
 
                 int[] complexity = new int[n];
@@ -295,7 +295,7 @@ public class PlotAnalysis {
                 int min = 0;
                 for (int i = 0; i < n; i++) {
                     Plot plot = plots.get(i);
-                    PlotAnalysis analysis = plot.getComplexity();
+                    PlotAnalysis analysis = plot.getComplexity(settings);
                     complexity[i] = analysis.complexity;
                     if (analysis.complexity < min) {
                         min = analysis.complexity;
@@ -338,24 +338,8 @@ public class PlotAnalysis {
 
                 // Save calibration
                 PS.debug(" $1Saving calibration");
-                YamlConfiguration config = PS.get().config;
-                config.set("clear.auto.threshold", optimalComplexity);
-                config.set("clear.auto.calibration.changes", PlotAnalysis.MODIFIERS.changes);
-                config.set("clear.auto.calibration.faces", PlotAnalysis.MODIFIERS.faces);
-                config.set("clear.auto.calibration.data", PlotAnalysis.MODIFIERS.data);
-                config.set("clear.auto.calibration.air", PlotAnalysis.MODIFIERS.air);
-                config.set("clear.auto.calibration.variety", PlotAnalysis.MODIFIERS.variety);
-                config.set("clear.auto.calibration.changes_sd", PlotAnalysis.MODIFIERS.changes_sd);
-                config.set("clear.auto.calibration.faces_sd", PlotAnalysis.MODIFIERS.faces_sd);
-                config.set("clear.auto.calibration.data_sd", PlotAnalysis.MODIFIERS.data_sd);
-                config.set("clear.auto.calibration.air_sd", PlotAnalysis.MODIFIERS.air_sd);
-                config.set("clear.auto.calibration.variety_sd", PlotAnalysis.MODIFIERS.variety_sd);
-                try {
-                    PS.get().config.save(PS.get().configFile);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
+                Settings.AUTO_CLEAR.put("auto-calibrated", settings);
+                Settings.save(PS.get().worldsFile);
                 PS.debug("$1Done!");
                 running = false;
                 for (Plot plot : plots) {
@@ -544,20 +528,21 @@ public class PlotAnalysis {
                 this.variety_sd);
     }
 
-    public int getComplexity() {
+    public int getComplexity(Settings.AUTO_CLEAR settings) {
+        Settings.AUTO_CLEAR.CALIBRATION modifiers = settings.CALIBRATION;
         if (this.complexity != 0) {
             return this.complexity;
         }
-        this.complexity = this.changes * MODIFIERS.changes
-                + this.faces * MODIFIERS.faces
-                + this.data * MODIFIERS.data
-                + this.air * MODIFIERS.air
-                + this.variety * MODIFIERS.variety
-                + this.changes_sd * MODIFIERS.changes_sd
-                + this.faces_sd * MODIFIERS.faces_sd
-                + this.data_sd * MODIFIERS.data_sd
-                + this.air_sd * MODIFIERS.air_sd
-                + this.variety_sd * MODIFIERS.variety_sd;
+        this.complexity = this.changes * modifiers.CHANGES
+                + this.faces * modifiers.FACES
+                + this.data * modifiers.DATA
+                + this.air * modifiers.AIR
+                + this.variety * modifiers.VARIETY
+                + this.changes_sd * modifiers.CHANGES_SD
+                + this.faces_sd * modifiers.FACES_SD
+                + this.data_sd * modifiers.DATA_SD
+                + this.air_sd * modifiers.AIR_SD
+                + this.variety_sd * modifiers.VARIETY_SD;
         return this.complexity;
     }
 }

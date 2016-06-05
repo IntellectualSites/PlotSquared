@@ -7,7 +7,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.PlotGameMode;
 import com.intellectualcrafters.plot.util.PlotWeather;
@@ -121,7 +121,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      * @return number of allowed plots within the scope (globally, or in the player's current world as defined in the settings.yml)
      */
     public int getAllowedPlots() {
-        return Permissions.hasPermissionRange(this, "plots.plot", Settings.MAX_PLOTS);
+        return Permissions.hasPermissionRange(this, "plots.plot", Settings.LIMIT.MAX_PLOTS);
     }
 
     /**
@@ -133,7 +133,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      * @return number of plots within the scope (globally, or in the player's current world as defined in the settings.yml)
      */
     public int getPlotCount() {
-        if (!Settings.GLOBAL_LIMIT) {
+        if (!Settings.LIMIT.GLOBAL) {
             return getPlotCount(getLocation().getWorld());
         }
         final AtomicInteger count = new AtomicInteger(0);
@@ -141,7 +141,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
             @Override
             public void run(PlotArea value) {
-                if (!Settings.DONE_COUNTS_TOWARDS_LIMIT) {
+                if (!Settings.DONE.COUNTS_TOWARDS_LIMIT) {
                     for (Plot plot : value.getPlotsAbs(uuid)) {
                         if (!plot.hasFlag(Flags.DONE)) {
                             count.incrementAndGet();
@@ -164,7 +164,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         UUID uuid = getUUID();
         int count = 0;
         for (PlotArea area : PS.get().getPlotAreas(world)) {
-            if (!Settings.DONE_COUNTS_TOWARDS_LIMIT) {
+            if (!Settings.DONE.COUNTS_TOWARDS_LIMIT) {
                 for (Plot plot : area.getPlotsAbs(uuid)) {
                     if (!plot.getFlag(Flags.DONE).isPresent()) {
                         count++;
@@ -343,7 +343,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         if (plot != null) {
             EventUtil.manager.callLeave(this, plot);
         }
-        if (Settings.DELETE_PLOTS_ON_BAN && isBanned()) {
+        if (Settings.ENABLED_COMPONENTS.BAN_DELETER && isBanned()) {
             for (Plot owned : getPlots()) {
                 owned.deletePlot(null);
                 PS.debug(String.format("&cPlot &6%s &cwas deleted + cleared due to &6%s&c getting banned", plot.getId(), getName()));

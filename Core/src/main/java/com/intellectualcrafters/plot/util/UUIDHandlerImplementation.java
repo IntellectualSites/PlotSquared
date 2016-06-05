@@ -110,7 +110,7 @@ public abstract class UUIDHandlerImplementation {
          *  - Useful if the person misconfigured the database, or settings before
           *   PlotMe conversion
          */
-        if (!Settings.OFFLINE_MODE && !this.unknown.isEmpty()) {
+        if (!Settings.UUID.OFFLINE && !this.unknown.isEmpty()) {
             TaskManager.runTaskAsync(new Runnable() {
                 @Override
                 public void run() {
@@ -213,12 +213,12 @@ public abstract class UUIDHandlerImplementation {
             return uuid;
         }
         // Read from disk OR convert directly to offline UUID
-        if (Settings.OFFLINE_MODE) {
+        if (Settings.UUID.OFFLINE) {
             uuid = this.uuidWrapper.getUUID(name);
             add(new StringWrapper(name), uuid);
             return uuid;
         }
-        if (Settings.UUID_FROM_DISK && (ifFetch != null)) {
+        if ((ifFetch != null)) {
             fetchUUID(name, ifFetch);
             return null;
         }

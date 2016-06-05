@@ -71,6 +71,12 @@ import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.sk89q.worldedit.WorldEdit;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -86,13 +92,6 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
 
 public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
@@ -136,7 +135,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     public void log(String message) {
         try {
             message = C.color(message);
-            if (!Settings.CONSOLE_COLOR) {
+            if (!Settings.CHAT.CONSOLE_COLOR) {
                 message = ChatColor.stripColor(message);
             }
             this.getServer().getConsoleSender().sendMessage(message);
@@ -242,7 +241,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                     case MINECART_MOB_SPAWNER:
                                     case MINECART_TNT:
                                     case BOAT: {
-                                        if (!Settings.KILL_ROAD_VEHICLES) {
+                                        if (!Settings.ENABLED_COMPONENTS.KILL_ROAD_VEHICLES) {
                                             continue;
                                         }
                                         com.intellectualcrafters.plot.object.Location location = BukkitUtil.getLocation(entity.getLocation());
@@ -309,7 +308,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                     case ZOMBIE:
                                     case SHULKER:
                                     default:
-                                        if (!Settings.KILL_ROAD_MOBS) {
+                                        if (!Settings.ENABLED_COMPONENTS.KILL_ROAD_MOBS) {
                                             continue;
                                         }
                                         Location location = entity.getLocation();
@@ -506,23 +505,23 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     public UUIDHandlerImplementation initUUIDHandler() {
         boolean checkVersion = PS.get().checkVersion(getServerVersion(), 1, 7, 6);
         UUIDWrapper wrapper;
-        if (Settings.OFFLINE_MODE) {
-            if (Settings.UUID_LOWERCASE) {
+        if (Settings.UUID.OFFLINE) {
+            if (Settings.UUID.FORCE_LOWERCASE) {
                 wrapper = new LowerOfflineUUIDWrapper();
             } else {
                 wrapper = new OfflineUUIDWrapper();
             }
-            Settings.OFFLINE_MODE = true;
+            Settings.UUID.OFFLINE = true;
         } else if (checkVersion) {
             wrapper = new DefaultUUIDWrapper();
-            Settings.OFFLINE_MODE = false;
+            Settings.UUID.OFFLINE = false;
         } else {
-            if (Settings.UUID_LOWERCASE) {
+            if (Settings.UUID.FORCE_LOWERCASE) {
                 wrapper = new LowerOfflineUUIDWrapper();
             } else {
                 wrapper = new OfflineUUIDWrapper();
             }
-            Settings.OFFLINE_MODE = true;
+            Settings.UUID.OFFLINE = true;
         }
         if (!checkVersion) {
             PS.log(C.PREFIX + " &c[WARN] Titles are disabled - please update your version of Bukkit to support this feature.");
@@ -530,17 +529,17 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         } else {
             AbstractTitle.TITLE_CLASS = new DefaultTitle_19();
             if (wrapper instanceof DefaultUUIDWrapper || wrapper.getClass() == OfflineUUIDWrapper.class && !Bukkit.getOnlineMode()) {
-                Settings.TWIN_MODE_UUID = true;
+                Settings.UUID.NATIVE_UUID_PROVIDER = true;
             }
         }
-        if (Settings.OFFLINE_MODE) {
+        if (Settings.UUID.OFFLINE) {
             PS.log(C.PREFIX
                     + " &6PlotSquared is using Offline Mode UUIDs either because of user preference, or because you are using an old version of "
                     + "Bukkit");
         } else {
             PS.log(C.PREFIX + " &6PlotSquared is using online UUIDs");
         }
-        if (Settings.USE_SQLUUIDHANDLER) {
+        if (Settings.UUID.USE_SQLUUIDHANDLER) {
             return new SQLUUIDHandler(wrapper);
         } else {
             return new FileUUIDHandler(wrapper);
@@ -594,7 +593,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         World world = BukkitUtil.getWorld(worldName);
         if (world == null) {
             // create world
-            ConfigurationSection worldConfig = PS.get().config.getConfigurationSection("worlds." + worldName);
+            ConfigurationSection worldConfig = PS.get().worlds.getConfigurationSection("worlds." + worldName);
             String manager = worldConfig.getString("generator.plugin", "PlotSquared");
             SetupObject setup = new SetupObject();
             setup.plotManager = manager;
@@ -620,7 +619,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             PS.get().loadWorld(worldName, (BukkitPlotGenerator) gen);
         } else if (gen != null) {
             PS.get().loadWorld(worldName, new BukkitPlotGenerator(worldName, gen));
-        } else if (PS.get().config.contains("worlds." + worldName)) {
+        } else if (PS.get().worlds.contains("worlds." + worldName)) {
             PS.get().loadWorld(worldName, null);
         }
     }
@@ -661,7 +660,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override
     public ChatManager<?> initChatManager() {
-        if (Settings.FANCY_CHAT) {
+        if (Settings.CHAT.INTERACTIVE) {
             return new BukkitChatManager();
         } else {
             return new BukkitPlainChatManager();

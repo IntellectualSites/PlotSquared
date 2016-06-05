@@ -2,7 +2,7 @@ package com.plotsquared.bukkit.util;
 
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.PlotAnalysis;
+import com.intellectualcrafters.plot.util.expiry.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;

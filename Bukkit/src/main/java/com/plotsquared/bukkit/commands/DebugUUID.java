@@ -266,14 +266,14 @@ public class DebugUUID extends SubCommand {
                 }
 
                 if (newWrapper instanceof OfflineUUIDWrapper) {
-                    PS.get().config.set("UUID.force-lowercase", false);
-                    PS.get().config.set("UUID.offline", true);
+                    PS.get().worlds.set("UUID.force-lowercase", false);
+                    PS.get().worlds.set("UUID.offline", true);
                 } else if (newWrapper instanceof DefaultUUIDWrapper) {
-                    PS.get().config.set("UUID.force-lowercase", false);
-                    PS.get().config.set("UUID.offline", false);
+                    PS.get().worlds.set("UUID.force-lowercase", false);
+                    PS.get().worlds.set("UUID.offline", false);
                 }
                 try {
-                    PS.get().config.save(PS.get().configFile);
+                    PS.get().worlds.save(PS.get().worldsFile);
                 } catch (IOException ignored) {
                     MainUtil.sendMessage(player, "Could not save configuration. It will need to be manual set!");
                 }
