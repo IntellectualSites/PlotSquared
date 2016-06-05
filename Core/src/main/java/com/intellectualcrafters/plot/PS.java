@@ -1840,13 +1840,13 @@ public class PS {
     /**
      * Setup the default configuration (settings.yml)
      */
-    public void setupConfig() {
+    public void setupConfig() throws IOException {
         String lastVersionString = this.config.getString("version");
         if (lastVersionString != null) {
             String[] split = lastVersionString.split("\\.");
             this.lastVersion = new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])};
         }
-        if (checkVersion(new int[]{3,4,0}, version)) {
+        if (checkVersion(lastVersion, new int[]{3,4,0})) {
             Settings.convertLegacy(configFile);
             if (config.contains("worlds")) {
                 ConfigurationSection worldSection = config.getConfigurationSection("worlds");
@@ -1879,6 +1879,15 @@ public class PS {
             PS.log(C.PREFIX + "&cFailed to create the /plugins/config folder. Please create it manually.");
         }
         try {
+            this.worldsFile = new File(folder,"worlds.yml");
+            if (!this.worldsFile.exists() && !this.worldsFile.createNewFile()) {
+                PS.log("Could not create the worlds file, please create \"worlds.yml\" manually.");
+            }
+            this.worlds = YamlConfiguration.loadConfiguration(this.worldsFile);
+        } catch (IOException ignored) {
+            PS.log("Failed to save settings.yml");
+        }
+        try {
             this.configFile = new File(folder,"settings.yml");
             if (!this.configFile.exists() && !this.configFile.createNewFile()) {
                 PS.log("Could not create the settings file, please create \"settings.yml\" manually.");
@@ -1903,15 +1912,6 @@ public class PS {
         } catch (IOException err) {
             err.printStackTrace();
             PS.log("failed to save style.yml");
-        }
-        try {
-            this.worldsFile = new File(folder,"worlds.yml");
-            if (!this.worldsFile.exists() && !this.worldsFile.createNewFile()) {
-                PS.log("Could not create the worlds file, please create \"worlds.yml\" manually.");
-            }
-            this.worlds = YamlConfiguration.loadConfiguration(this.worldsFile);
-        } catch (IOException ignored) {
-            PS.log("Failed to save settings.yml");
         }
         try {
             this.storageFile = new File(folder,"storage.yml");

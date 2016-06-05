@@ -29,7 +29,7 @@ public class Settings extends Config {
     public static boolean TITLES = true;
 
     @Create // This value will be generated automatically
-    public static final ConfigBlock<AUTO_CLEAR> AUTO_CLEAR = null; // A ConfigBlock is a section that can have multiple instances e.g. multiple expiry tasks
+    public static ConfigBlock<AUTO_CLEAR> AUTO_CLEAR = null; // A ConfigBlock is a section that can have multiple instances e.g. multiple expiry tasks
 
     @Comment("This is an auto clearing task called `task1`")
     @BlockName("task1") // The name for the default block
@@ -236,7 +236,7 @@ public class Settings extends Config {
         ENABLED_COMPONENTS.PLOT_EXPIRY = config.getBoolean("clear.auto.enabled", ENABLED_COMPONENTS.PLOT_EXPIRY);
         if (ENABLED_COMPONENTS.PLOT_EXPIRY) {
             ENABLED_COMPONENTS.BAN_DELETER = config.getBoolean("clear.on.ban");
-
+            AUTO_CLEAR = new ConfigBlock<>();
             AUTO_CLEAR.put("task1", new AUTO_CLEAR());
             AUTO_CLEAR task = AUTO_CLEAR.get("task1");
             task.CALIBRATION = new AUTO_CLEAR.CALIBRATION();
