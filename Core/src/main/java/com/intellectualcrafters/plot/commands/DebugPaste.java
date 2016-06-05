@@ -26,7 +26,9 @@ public class DebugPaste extends SubCommand {
             @Override
             public void run() {
                 try {
-                    String settingsYML = HastebinUtility.upload(PS.get().worldsFile);
+                    String settingsYML = HastebinUtility.upload(PS.get().configFile);
+                    String worldsYML = HastebinUtility.upload(PS.get().worldsFile);
+                    String commandsYML = HastebinUtility.upload(PS.get().commandsFile);
                     String latestLOG;
                     try {
                         latestLOG = HastebinUtility.upload(new File(PS.get().IMP.getDirectory(), "../../logs/latest.log"));
@@ -39,6 +41,8 @@ public class DebugPaste extends SubCommand {
                             "# Welcome to this paste\n# It is meant to provide us at IntellectualSites with better information about your "
                                     + "problem\n\n# We will start with some informational files\n");
                     b.append("links.settings_yml: ").append(settingsYML).append('\n');
+                    b.append("links.worlds_yml: ").append(worldsYML).append('\n');
+                    b.append("links.commands_yml: ").append(commandsYML).append('\n');
                     b.append("links.latest_log: ").append(latestLOG).append('\n');
                     b.append("\n# Server Information\n");
                     int[] sVersion = PS.get().IMP.getServerVersion();
