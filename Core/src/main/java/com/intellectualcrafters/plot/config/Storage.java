@@ -4,9 +4,6 @@ import java.io.File;
 
 public class Storage extends Config {
 
-    @Final
-    public static final String VERSION = null; // This value is set from PS before loading
-
     @Comment("MySQL section")
     public static final class MYSQL {
         @Comment("Should MySQL be used?")
