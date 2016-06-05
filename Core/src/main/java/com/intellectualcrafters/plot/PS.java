@@ -666,8 +666,8 @@ public class PS {
      * @see #removePlotArea(PlotArea) To remove the reference
      */
     public void addPlotArea(PlotArea plotArea) {
-        HashMap<PlotId, Plot> plots = this.plots_tmp.remove(plotArea.toString());
-        if (plots == null) {
+        HashMap<PlotId, Plot> plots;
+        if (plots_tmp == null || (plots = plots_tmp.remove(plotArea.toString())) == null) {
             if (plotArea.TYPE == 2) {
                 plots = this.plots_tmp.get(plotArea.worldname);
                 if (plots != null) {
@@ -687,8 +687,8 @@ public class PS {
                 entry.setArea(plotArea);
             }
         }
-        Set<PlotCluster> clusters = this.clusters_tmp.remove(plotArea.toString());
-        if (clusters == null) {
+        Set<PlotCluster> clusters;
+        if (clusters_tmp == null || (clusters = clusters_tmp.remove(plotArea.toString())) == null) {
             if (plotArea.TYPE == 2) {
                 clusters = this.clusters_tmp.get(plotArea.worldname);
                 if (clusters != null) {
