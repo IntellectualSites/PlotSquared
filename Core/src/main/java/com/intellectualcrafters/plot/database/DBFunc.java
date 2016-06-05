@@ -13,6 +13,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -29,6 +30,40 @@ public class DBFunc {
      * Abstract Database Manager
      */
     public static AbstractDB dbManager;
+
+    public static void updateTables(int[] oldVersion) {
+        if (dbManager != null) {
+            dbManager.updateTables(oldVersion);
+        }
+    }
+
+    public static void addPersistentMeta(UUID uuid, String key, byte[] meta, boolean delete) {
+        if (dbManager != null) {
+            dbManager.addPersistentMeta(uuid, key, meta, delete);
+        }
+    }
+
+    public static void getPersistentMeta(UUID uuid, RunnableVal<Map<String, byte[]>> result) {
+        if (dbManager != null) {
+            dbManager.getPersistentMeta(uuid, result);
+        }
+    }
+
+    public static void removePersistentMeta(UUID uuid, String key) {
+        if (dbManager != null) {
+            dbManager.removePersistentMeta(uuid, key);
+        }
+    }
+
+    public static void swapPlots(Plot plot1, Plot plot2) {
+        if (dbManager != null) {
+            dbManager.swapPlots(plot1, plot2);
+        }
+    }
+
+    public static boolean deleteTables() {
+        return dbManager != null && dbManager.deleteTables();
+    }
 
     public static void movePlot(Plot originalPlot, Plot newPlot) {
         if (originalPlot.temp == -1 || newPlot.temp == -1) {
@@ -119,7 +154,7 @@ public class DBFunc {
      *
      * @throws Exception
      */
-    public static void createTables(String database) throws Exception {
+    public static void createTables() throws Exception {
         if (dbManager == null) {
             return;
         }

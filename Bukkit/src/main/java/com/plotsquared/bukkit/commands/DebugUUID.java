@@ -6,7 +6,6 @@ import com.intellectualcrafters.plot.commands.CommandCategory;
 import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.commands.SubCommand;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.database.AbstractDB;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
@@ -24,7 +23,6 @@ import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -237,13 +235,12 @@ public class DebugUUID extends SubCommand {
                 }
 
                 MainUtil.sendMessage(player, "&7 - Deleting database");
-                final AbstractDB database = DBFunc.dbManager;
-                boolean result = database.deleteTables();
+                boolean result = DBFunc.deleteTables();
 
                 MainUtil.sendMessage(player, "&7 - Creating tables");
 
                 try {
-                    database.createTables();
+                    DBFunc.createTables();
                     if (!result) {
                         MainUtil.sendMessage(player, "&cConversion failed! Attempting recovery");
                         for (Plot plot : PS.get().getPlots()) {
@@ -252,7 +249,7 @@ public class DebugUUID extends SubCommand {
                                 plot.owner = value;
                             }
                         }
-                        database.createPlotsAndData(new ArrayList<>(PS.get().getPlots()), new Runnable() {
+                        DBFunc.createPlotsAndData(new ArrayList<>(PS.get().getPlots()), new Runnable() {
                             @Override
                             public void run() {
                                 MainUtil.sendMessage(player, "&6Recovery was successful!");
@@ -284,7 +281,7 @@ public class DebugUUID extends SubCommand {
                     @Override
                     public void run() {
                         ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlots());
-                        database.createPlotsAndData(plots, new Runnable() {
+                        DBFunc.createPlotsAndData(plots, new Runnable() {
                             @Override
                             public void run() {
                                 MainUtil.sendMessage(player, "&aConversion complete!");

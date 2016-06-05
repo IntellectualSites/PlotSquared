@@ -47,7 +47,7 @@ public class Grant extends SubCommand {
                         } else { // add
                             int amount = 1 + (array == null ? 0 : ByteArrayUtilities.bytesToInteger(array));
                             boolean replace = array != null;
-                            DBFunc.dbManager.addPersistentMeta(uuid, "grantedPlots", ByteArrayUtilities.integerToBytes(amount), replace);
+                            DBFunc.addPersistentMeta(uuid, "grantedPlots", ByteArrayUtilities.integerToBytes(amount), replace);
                         }
                     }
                 });

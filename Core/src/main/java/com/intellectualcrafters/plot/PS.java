@@ -252,7 +252,7 @@ public class PS {
                         } else if (!get().checkVersion(PS.this.lastVersion, PS.this.version)) {
                             PS.log("&aThanks for updating from " + StringMan.join(PS.this.lastVersion, ".") + " to " + StringMan
                                     .join(PS.this.version, ".") + "!");
-                            DBFunc.dbManager.updateTables(PS.this.lastVersion);
+                            DBFunc.updateTables(PS.this.lastVersion);
                         }
                     }
                 });

@@ -1441,7 +1441,7 @@ public class Plot {
         this.area.addPlotAbs(this);
         plot.area.addPlotAbs(plot);
         // Swap database
-        DBFunc.dbManager.swapPlots(plot, this);
+        DBFunc.swapPlots(plot, this);
         TaskManager.runTaskLater(whenDone, 1);
         return true;
     }

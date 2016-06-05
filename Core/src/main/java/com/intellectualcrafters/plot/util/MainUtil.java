@@ -859,7 +859,7 @@ public class MainUtil {
         if (player != null) {
             result.run(player.getPersistentMeta(key));
         } else {
-            DBFunc.dbManager.getPersistentMeta(uuid, new RunnableVal<Map<String, byte[]>>() {
+            DBFunc.getPersistentMeta(uuid, new RunnableVal<Map<String, byte[]>>() {
                 @Override
                 public void run(Map<String, byte[]> value) {
                     result.run(value.get(key));
