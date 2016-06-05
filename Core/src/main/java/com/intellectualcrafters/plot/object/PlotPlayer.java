@@ -112,7 +112,11 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      * @return the plot the player is standing on or null if standing on a road or not in a {@link PlotArea}
      */
     public Plot getCurrentPlot() {
-        return (Plot) getMeta("lastplot");
+        Plot value = (Plot) getMeta("lastplot");
+        if (value == null && !Settings.ENABLED_COMPONENTS.EVENTS) {
+            return getLocation().getPlot();
+        }
+        return value;
     }
 
     /**
@@ -216,7 +220,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         if (location != null) {
             return location;
         }
-        return null;
+        return getLocationFull();
     }
 
     ////////////////////////////////////////////////
@@ -437,7 +441,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     public abstract void stopSpectating();
 
     /**
-     * The amount of money this playe
+     * The amount of money this player has
      * @return
      */
     public double getMoney() {
