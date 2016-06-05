@@ -8,11 +8,13 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
-
+import com.sk89q.worldedit.blocks.BaseBlock;
 import java.util.HashSet;
 import java.util.UUID;
 
 public class WEManager {
+
+    public static BaseBlock AIR = new BaseBlock(0, 0);
 
     public static boolean maskContains(HashSet<RegionWrapper> mask, int x, int y, int z) {
         for (RegionWrapper region : mask) {

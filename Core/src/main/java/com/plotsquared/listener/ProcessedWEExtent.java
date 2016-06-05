@@ -42,6 +42,14 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
     }
 
     @Override
+    public BaseBlock getBlock(Vector location) {
+        if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
+            return super.getBlock(location);
+        }
+        return WEManager.AIR;
+    }
+
+    @Override
     public boolean setBlock(Vector location, BaseBlock block) throws WorldEditException {
         int id = block.getType();
         switch (id) {
