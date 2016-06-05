@@ -1945,7 +1945,6 @@ public class PS {
      * Setup the storage file (load + save missing nodes)
      */
     private void setupStorage() {
-        this.storage.set("version", StringMan.join(this.version, "."));
         Storage.load(storageFile);
         Storage.save(storageFile);
         storage = YamlConfiguration.loadConfiguration(storageFile);
