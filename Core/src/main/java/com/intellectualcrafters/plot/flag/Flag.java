@@ -18,8 +18,9 @@ public abstract class Flag<V> {
         this.name = name;
     }
 
-    public void reserve() {
+    public Flag<V> reserve() {
         this.reserved = true;
+        return this;
     }
 
     public boolean isReserved() {
