@@ -49,6 +49,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.area.QuadMap;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
+import com.intellectualcrafters.plot.util.expiry.ExpiryTask;
 import com.plotsquared.listener.WESubscriber;
 import com.sk89q.worldedit.WorldEdit;
 import java.io.File;
@@ -386,6 +387,10 @@ public class PS {
         if (Settings.ENABLED_COMPONENTS.PLOT_EXPIRY) {
             ExpireManager.IMP = new ExpireManager();
             ExpireManager.IMP.runAutomatedTask();
+            for (Settings.AUTO_CLEAR settings : Settings.AUTO_CLEAR.getInstances()) {
+                ExpiryTask task = new ExpiryTask(settings);
+                ExpireManager.IMP.addTask(task);
+            }
         }
     }
 

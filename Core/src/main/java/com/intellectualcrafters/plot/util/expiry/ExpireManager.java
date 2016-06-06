@@ -44,6 +44,7 @@ public class ExpireManager {
     }
 
     public void addTask(ExpiryTask task) {
+        PS.debug("Adding new expiry task!");
         this.tasks.add(task);
     }
 
@@ -242,7 +243,7 @@ public class ExpireManager {
                             passesComplexity(changed, expired, new RunnableVal<Boolean>() {
                                 @Override
                                 public void run(Boolean confirmation) {
-                                    expiredTask.run(plot, this, confirmation);
+                                    expiredTask.run(plot, task, confirmation);
                                 }
                             }, new Runnable() {
                                 @Override

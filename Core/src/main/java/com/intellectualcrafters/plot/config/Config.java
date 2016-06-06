@@ -159,7 +159,15 @@ public class Config {
             INSTANCES.put(key, value);
         }
 
-        public Map<String, T> getRaw() {
+        public Collection<T> getInstances() {
+            return INSTANCES.values();
+        }
+
+        public Collection<String> getSections() {
+            return INSTANCES.keySet();
+        }
+
+        private Map<String, T> getRaw() {
             return INSTANCES;
         }
     }
