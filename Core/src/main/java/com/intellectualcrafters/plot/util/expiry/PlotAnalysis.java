@@ -9,6 +9,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
+
 import java.lang.reflect.Array;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -420,15 +421,13 @@ public class PlotAnalysis {
         if (ranks.length == 0) {
             return null;
         }
-        int size = ranks[0].length;
-        int arrays = ranks.length;
-        int[] result = new int[size];
-        for (int j = 0; j < size; j++) {
+        int[] result = new int[ranks[0].length];
+        for (int j = 0; j < ranks[0].length; j++) {
             int sum = 0;
             for (int[] rank : ranks) {
                 sum += rank[j];
             }
-            int mean = sum / arrays;
+            int mean = sum / ranks.length;
             int sd = 0;
             for (int[] rank : ranks) {
                 int value = rank[j];

@@ -11,6 +11,7 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.world.World;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,7 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class SpongeCommand implements CommandCallable {
-    
+
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
         TaskManager.runTask(() -> {
@@ -40,9 +41,10 @@ public class SpongeCommand implements CommandCallable {
         });
         return CommandResult.success();
     }
-    
+
     @Override
-    public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
+    public List<String> getSuggestions(CommandSource source, String arguments, org.spongepowered.api.world.Location<World> targetPosition)
+            throws CommandException {
         if (!(source instanceof Player)) {
             return null;
         }
@@ -60,26 +62,26 @@ public class SpongeCommand implements CommandCallable {
             result.add(o.toString());
         }
         return result.isEmpty() ? null : result;
-}
-    
+    }
+
     @Override
     public boolean testPermission(CommandSource source) {
         return true;
     }
-    
+
     @Override
     public Optional<Text> getShortDescription(CommandSource source) {
         return Optional.of(Text.of("Shows plot help"));
     }
-    
+
     @Override
     public Optional<Text> getHelp(CommandSource source) {
         return Optional.of(Text.of("/plot"));
     }
-    
+
     @Override
     public Text getUsage(CommandSource source) {
         return Text.of("/plot <command>");
     }
-    
+
 }

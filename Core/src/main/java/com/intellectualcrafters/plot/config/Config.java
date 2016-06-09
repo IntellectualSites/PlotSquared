@@ -4,6 +4,7 @@ import com.intellectualcrafters.configuration.MemorySection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.util.StringMan;
+
 import java.io.File;
 import java.io.PrintWriter;
 import java.lang.annotation.ElementType;
@@ -98,77 +99,11 @@ public class Config {
                 file.createNewFile();
             }
             PrintWriter writer = new PrintWriter(file);
-            Class clazz = root;
             Object instance = root.newInstance();
-            save(writer, clazz, instance, 0);
+            save(writer, root, instance, 0);
             writer.close();
         } catch (Throwable e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * Indicates that a field should be instantiated / created
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.FIELD})
-    public  @interface Create {}
-
-    /**
-     * Indicates that a field cannot be modified
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.FIELD})
-    public @interface Final {}
-
-    /**
-     * Creates a comment
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.FIELD,ElementType.TYPE})
-    public @interface Comment {
-        String[] value();
-    }
-
-    /**
-     * The names of any default blocks
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.FIELD,ElementType.TYPE})
-    public @interface BlockName {
-        String[] value();
-    }
-
-    /**
-     * Any field or class with is not part of the config
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.FIELD,ElementType.TYPE})
-    public @interface Ignore {}
-
-    @Ignore // This is not part of the config
-    public static class ConfigBlock<T> {
-
-        private HashMap<String, T> INSTANCES = new HashMap<>();
-
-        public T get(String key) {
-            return INSTANCES.get(key);
-        }
-
-        public void put(String key, T value) {
-            INSTANCES.put(key, value);
-        }
-
-        public Collection<T> getInstances() {
-            return INSTANCES.values();
-        }
-
-        public Collection<String> getSections() {
-            return INSTANCES.keySet();
-        }
-
-        private Map<String, T> getRaw() {
-            return INSTANCES;
         }
     }
 
@@ -412,5 +347,70 @@ public class Config {
         Field modifiersField = Field.class.getDeclaredField("modifiers");
         modifiersField.setAccessible(true);
         modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+    }
+
+    /**
+     * Indicates that a field should be instantiated / created
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD})
+    public  @interface Create {}
+
+    /**
+     * Indicates that a field cannot be modified
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD})
+    public @interface Final {}
+
+    /**
+     * Creates a comment
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD,ElementType.TYPE})
+    public @interface Comment {
+        String[] value();
+    }
+
+    /**
+     * The names of any default blocks
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD,ElementType.TYPE})
+    public @interface BlockName {
+        String[] value();
+    }
+
+    /**
+     * Any field or class with is not part of the config
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD,ElementType.TYPE})
+    public @interface Ignore {}
+
+    @Ignore // This is not part of the config
+    public static class ConfigBlock<T> {
+
+        private HashMap<String, T> INSTANCES = new HashMap<>();
+
+        public T get(String key) {
+            return INSTANCES.get(key);
+        }
+
+        public void put(String key, T value) {
+            INSTANCES.put(key, value);
+        }
+
+        public Collection<T> getInstances() {
+            return INSTANCES.values();
+        }
+
+        public Collection<String> getSections() {
+            return INSTANCES.keySet();
+        }
+
+        private Map<String, T> getRaw() {
+            return INSTANCES;
+        }
     }
 }

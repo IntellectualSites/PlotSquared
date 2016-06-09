@@ -18,10 +18,11 @@ import com.intellectualcrafters.plot.object.RunnableVal3;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
@@ -32,11 +33,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ExpireManager {
 
     public static ExpireManager IMP;
-
-    private volatile HashSet<Plot> plotsToDelete;
     private final ConcurrentHashMap<UUID, Long> dates_cache;
-
+    private volatile HashSet<Plot> plotsToDelete;
     private ArrayDeque<ExpiryTask> tasks;
+    /**
+     * 0 = stopped, 1 = stopping, 2 = running
+     */
+    private int running;
 
     public ExpireManager() {
         tasks = new ArrayDeque<>();
@@ -47,12 +50,6 @@ public class ExpireManager {
         PS.debug("Adding new expiry task!");
         this.tasks.add(task);
     }
-
-
-    /**
-     * 0 = stopped, 1 = stopping, 2 = running
-     */
-    private int running;
 
     public void handleJoin(PlotPlayer pp) {
         storeDate(pp.getUUID(), System.currentTimeMillis());
@@ -154,21 +151,21 @@ public class ExpireManager {
         }
         // Run applicable non confirming tasks
         for (int i = 0; i < applicable.size(); i++) {
-            ExpiryTask et = applicable.poll();
-            if (!et.needsAnalysis() || plot.getArea().TYPE != 0) {
-                if (!et.requiresConfirmation()) {
-                    return Arrays.asList(et);
+            ExpiryTask expiryTask = applicable.poll();
+            if (!expiryTask.needsAnalysis() || plot.getArea().TYPE != 0) {
+                if (!expiryTask.requiresConfirmation()) {
+                    return Collections.singletonList(expiryTask);
                 }
             }
-            applicable.add(et);
+            applicable.add(expiryTask);
         }
         // Run applicable confirming tasks
         for (int i = 0; i < applicable.size(); i++) {
-            ExpiryTask et = applicable.poll();
-            if (!et.needsAnalysis() || plot.getArea().TYPE != 0) {
-                return Arrays.asList(et);
+            ExpiryTask expiryTask = applicable.poll();
+            if (!expiryTask.needsAnalysis() || plot.getArea().TYPE != 0) {
+                return Collections.singletonList(expiryTask);
             }
-            applicable.add(et);
+            applicable.add(expiryTask);
         }
         return applicable;
     }
@@ -231,9 +228,9 @@ public class ExpireManager {
                     if (expired.isEmpty()) {
                         continue;
                     }
-                    for (ExpiryTask et : expired) {
-                        if (!et.needsAnalysis()) {
-                            expiredTask.run(plot, this, et.requiresConfirmation());
+                    for (ExpiryTask expiryTask : expired) {
+                        if (!expiryTask.needsAnalysis()) {
+                            expiredTask.run(plot, this, expiryTask.requiresConfirmation());
                         }
                     }
                     final Runnable task = this;
@@ -358,8 +355,7 @@ public class ExpireManager {
             if (last == 0) {
                 return 0;
             }
-            long compared = System.currentTimeMillis() - last;
-            return compared;
+            return System.currentTimeMillis() - last;
         }
         return 0;
     }
