@@ -78,7 +78,7 @@ public class FastQueue_1_9 extends SlowQueue {
     }
 
     /**
-     * This should be overridden by any specialized queues
+     * This should be overridden by any specialized queues.
      * @param plotChunk
      */
     @Override

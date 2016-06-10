@@ -52,6 +52,7 @@ public class SendChunk {
         this.methodInitLighting = classChunk.getMethod("initLighting");
         RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
         if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 4)) {
+            //this works for 1.9.4 and 1.10
             tempMapChunk = classMapChunk.getConstructor(classChunk.getRealClass(),int.class);
         } else {
             try {

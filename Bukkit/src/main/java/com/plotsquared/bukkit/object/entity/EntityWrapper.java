@@ -57,6 +57,7 @@ public class EntityWrapper {
     private TameableStats tamed;
     private ArmorStandStats stand;
     private HorseStats horse;
+    private boolean noGravity;
 
     public EntityWrapper(Entity entity, short depth) {
         this.hash = entity.getEntityId();
@@ -84,6 +85,9 @@ public class EntityWrapper {
         this.base.v_z = velocity.getZ();
         if (depth == 1) {
             return;
+        }
+        if (!entity.hasGravity()) {
+            this.noGravity = true;
         }
         switch (entity.getType()) {
             case ARROW:
@@ -136,25 +140,25 @@ public class EntityWrapper {
                 this.stack = item.getItemStack();
                 return;
             case ITEM_FRAME:
-                ItemFrame itemframe = (ItemFrame) entity;
                 this.x = Math.floor(this.x);
                 this.y = Math.floor(this.y);
                 this.z = Math.floor(this.z);
-                this.dataByte = getOrdinal(Rotation.values(), itemframe.getRotation());
-                this.stack = itemframe.getItem().clone();
+                ItemFrame itemFrame = (ItemFrame) entity;
+                this.dataByte = getOrdinal(Rotation.values(), itemFrame.getRotation());
+                this.stack = itemFrame.getItem().clone();
                 return;
             case PAINTING:
-                Painting painting = (Painting) entity;
                 this.x = Math.floor(this.x);
                 this.y = Math.floor(this.y);
                 this.z = Math.floor(this.z);
-                Art a = painting.getArt();
+                Painting painting = (Painting) entity;
+                Art art = painting.getArt();
                 this.dataByte = getOrdinal(BlockFace.values(), painting.getFacing());
-                int h = a.getBlockHeight();
+                int h = art.getBlockHeight();
                 if (h % 2 == 0) {
                     this.y -= 1;
                 }
-                this.dataString = a.name();
+                this.dataString = art.name();
                 return;
             // END MISC //
             // INVENTORY HOLDER //
@@ -212,7 +216,7 @@ public class EntityWrapper {
                 storeLiving((LivingEntity) entity);
                 return;
             case SKELETON:
-                this.dataByte = (byte) ((Skeleton) entity).getSkeletonType().getId();
+                this.dataByte = getOrdinal(SkeletonType.values(),((Skeleton)entity).getSkeletonType());
                 storeLiving((LivingEntity) entity);
                 return;
             case ARMOR_STAND:
@@ -257,9 +261,6 @@ public class EntityWrapper {
                 }
                 if (!stand.hasBasePlate()) {
                     this.stand.noplate = true;
-                }
-                if (!stand.hasGravity()) {
-                    this.stand.nogravity = true;
                 }
                 if (!stand.isVisible()) {
                     this.stand.invisible = true;
@@ -464,7 +465,7 @@ public class EntityWrapper {
         if (this.base.passenger != null) {
             try {
                 entity.setPassenger(this.base.passenger.spawn(world, x_offset, z_offset));
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) { }
         }
         if (this.base.fall != 0) {
             entity.setFallDistance(this.base.fall);
@@ -478,6 +479,9 @@ public class EntityWrapper {
         entity.setVelocity(new Vector(this.base.v_x, this.base.v_y, this.base.v_z));
         if (this.depth == 1) {
             return entity;
+        }
+        if (this.noGravity) {
+            entity.setGravity(false);
         }
         switch (entity.getType()) {
             case ARROW:
@@ -583,6 +587,7 @@ public class EntityWrapper {
             case VILLAGER:
             case CHICKEN:
             case COW:
+            case POLAR_BEAR:
             case MUSHROOM_COW:
             case PIG:
                 restoreAgeable((Ageable) entity);
@@ -656,9 +661,6 @@ public class EntityWrapper {
                 if (this.stand.arms) {
                     stand.setArms(true);
                 }
-                if (this.stand.nogravity) {
-                    stand.setGravity(false);
-                }
                 if (this.stand.noplate) {
                     stand.setBasePlate(false);
                 }
@@ -704,7 +706,7 @@ public class EntityWrapper {
                 }
                 restoreLiving((LivingEntity) entity);
                 return entity;
-            // END LIVING //
+                // END LIVING
         }
     }
 
