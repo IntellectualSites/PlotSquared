@@ -155,7 +155,8 @@ public class PS {
             }
             this.TASK = this.IMP.getTaskManager();
             setupConfigs();
-            this.translationFile = MainUtil.getFile(this.IMP.getDirectory(), Settings.Paths.TRANSLATIONS + File.separator + "PlotSquared.use_THIS.yml");
+            this.translationFile =
+                    MainUtil.getFile(this.IMP.getDirectory(), Settings.Paths.TRANSLATIONS + File.separator + "PlotSquared.use_THIS.yml");
             C.load(this.translationFile);
 
             // Database
@@ -340,9 +341,9 @@ public class PS {
     }
 
     /**
-     * Get the current logger
+     * Get the current logger.
      *
-     * @return
+     * @return The assigned logger
      */
     public ILogger getLogger() {
         return logger;
@@ -352,7 +353,7 @@ public class PS {
      * Set the Logger.
      * @see DelegateLogger
      * @see #getLogger()
-     * @param logger
+     * @param logger the logger the plugin should use
      */
     public void setLogger(ILogger logger) {
         this.logger = logger;
@@ -463,14 +464,15 @@ public class PS {
     }
 
     /**
-     * Get the relevant plot area for a location.
+     * Get the relevant plot area for a specified location.
      * <ul>
-     *     <li>If there is only one plot area globally that will be returned</li>
-     *     <li>If there is only one plot area in the world, it will return that</li>
-     *     <li>If the plot area for a location cannot be unambiguously resolved; null will be returned</li>
+     *     <li>If there is only one plot area globally that will be returned.
+     *     <li>If there is only one plot area in the world, it will return that.
+     *     <li>If the plot area for a location cannot be unambiguously
+     *         resolved, null will be returned.
      * </ul>
      * Note: An applicable plot area may not include the location i.e. clusters
-     * @param location
+     * @param location the location
      * @return
      */
     public PlotArea getApplicablePlotArea(Location location) {
@@ -559,46 +561,15 @@ public class PS {
         return null;
     }
 
-    public PlotArea getPlotAreaByString(String search) {
-        String[] split = search.split(";|,");
-        PlotArea[] areas = this.plotAreaMap.get(split[0]);
-        if (areas == null) {
-            for (PlotArea area : this.plotAreas) {
-                if (area.worldname.equalsIgnoreCase(split[0])) {
-                    if (area.id == null || split.length == 2 && area.id.equalsIgnoreCase(split[1])) {
-                        return area;
-                    }
-                }
-            }
-            return null;
-        }
-        if (areas.length == 1) {
-            return areas[0];
-        } else if (split.length == 1) {
-            return null;
-        } else {
-            for (PlotArea area : areas) {
-                if (StringMan.isEqual(split[1], area.id)) {
-                    return area;
-                }
-            }
-            return null;
-        }
-    }
-
-    public Set<PlotArea> getPlotAreas(String world, RegionWrapper region) {
-        QuadMap<PlotArea> areas = this.plotAreaGrid.get(world);
-        return areas != null ? areas.get(region) : new HashSet<PlotArea>();
-    }
-
     /**
-     * Get the plot area which contains a location.
+     * Get the {@code PlotArea} which contains a location.
      * <ul>
-     *     <li>If the plot area does not contain a location, null will be returned.</li>
+     *     <li>If the plot area does not contain a location, null
+     *         will be returned.
      * </ul>
      *
-     * @param location
-     * @return
+     * @param location the location
+     * @return the {@link PlotArea} in the location, null if non existent
      */
     public PlotArea getPlotAreaAbs(Location location) {
         switch (this.plotAreas.length) {
@@ -655,6 +626,38 @@ public class PS {
                         return search.get(location.getX(), location.getZ());
                 }
         }
+    }
+
+    public PlotArea getPlotAreaByString(String search) {
+        String[] split = search.split(";|,");
+        PlotArea[] areas = this.plotAreaMap.get(split[0]);
+        if (areas == null) {
+            for (PlotArea area : this.plotAreas) {
+                if (area.worldname.equalsIgnoreCase(split[0])) {
+                    if (area.id == null || split.length == 2 && area.id.equalsIgnoreCase(split[1])) {
+                        return area;
+                    }
+                }
+            }
+            return null;
+        }
+        if (areas.length == 1) {
+            return areas[0];
+        } else if (split.length == 1) {
+            return null;
+        } else {
+            for (PlotArea area : areas) {
+                if (StringMan.isEqual(split[1], area.id)) {
+                    return area;
+                }
+            }
+            return null;
+        }
+    }
+
+    public Set<PlotArea> getPlotAreas(String world, RegionWrapper region) {
+        QuadMap<PlotArea> areas = this.plotAreaGrid.get(world);
+        return areas != null ? areas.get(region) : new HashSet<PlotArea>();
     }
 
     public PlotManager getPlotManager(Plot plot) {
@@ -786,75 +789,8 @@ public class PS {
     }
 
     /**
-     * A more generic way to filter plots - make your own method if you need complex filters.
-     * @param filters
-     * @return
-     */
-    public Set<Plot> getPlots(final PlotFilter... filters) {
-        final HashSet<Plot> set = new HashSet<>();
-        foreachPlotArea(new RunnableVal<PlotArea>() {
-            @Override
-            public void run(PlotArea value) {
-                for (PlotFilter filter : filters) {
-                    if (!filter.allowsArea(value)) {
-                        continue;
-                    }
-                }
-                for (Entry<PlotId, Plot> entry2 : value.getPlotEntries()) {
-                    Plot plot = entry2.getValue();
-                    for (PlotFilter filter : filters) {
-                        if (!filter.allowsPlot(plot)) {
-                            continue;
-                        }
-                    }
-                    set.add(plot);
-                }
-            }
-        });
-        return set;
-    }
-
-    /**
-     * Get all the plots in a single set.
-     * @return Set of Plots
-     */
-    public Set<Plot> getPlots() {
-        int size = getPlotCount();
-        final Set<Plot> result = new HashSet<>(size);
-        foreachPlotArea(new RunnableVal<PlotArea>() {
-            @Override
-            public void run(PlotArea value) {
-                result.addAll(value.getPlots());
-            }
-        });
-        return result;
-    }
-
-    public void setPlots(HashMap<String, HashMap<PlotId, Plot>> plots) {
-        if (this.plots_tmp == null) {
-            this.plots_tmp = new HashMap<>();
-        }
-        for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
-            String world = entry.getKey();
-            PlotArea area = getPlotArea(world, null);
-            if (area == null) {
-                HashMap<PlotId, Plot> map = this.plots_tmp.get(world);
-                if (map == null) {
-                    map = new HashMap<>();
-                    this.plots_tmp.put(world, map);
-                }
-                map.putAll(entry.getValue());
-            } else {
-                for (Plot plot : entry.getValue().values()) {
-                    plot.setArea(area);
-                    area.addPlot(plot);
-                }
-            }
-        }
-    }
-
-    /**
-     * Get all the base plots in a single set (for merged plots it just returns the bottom plot).
+     * Get all the base plots in a single set (for merged plots it just returns
+     * the bottom plot).
      * @return Set of base Plots
      */
     public Set<Plot> getBasePlots() {
@@ -913,9 +849,11 @@ public class PS {
 
     /**
      * Sort plots by hashcode.
-     * @param plots
-     * @return
-     * @deprecated Unchecked, please use {@link #sortPlots(Collection, SortType, PlotArea)} which has additional checks before calling this
+     * @param plots the collection of plots to sort
+     * @return the sorted collection
+     * @deprecated Unchecked, please use
+     *             {@link #sortPlots(Collection, SortType, PlotArea)} which has
+     *             additional checks before calling this
      */
     @Deprecated
     public ArrayList<Plot> sortPlotsByHash(Collection<Plot> plots) {
@@ -963,6 +901,38 @@ public class PS {
             result.add(plot);
         }
         return result;
+    }
+
+    /**
+     * Unchecked, use {@link #sortPlots(Collection, SortType, PlotArea)} instead which will in turn call this.
+     * @param input an array of plots to sort
+     */
+    @Deprecated
+    public void sortPlotsByHash(Plot[] input) {
+        List<Plot>[] bucket = new ArrayList[32];
+        for (int i = 0; i < bucket.length; i++) {
+            bucket[i] = new ArrayList<>();
+        }
+        boolean maxLength = false;
+        int placement = 1;
+        while (!maxLength) {
+            maxLength = true;
+            for (Plot i : input) {
+                int tmp = MathMan.getPositiveId(i.hashCode()) / placement;
+                bucket[tmp & 31].add(i);
+                if (maxLength && tmp > 0) {
+                    maxLength = false;
+                }
+            }
+            int a = 0;
+            for (int b = 0; b < 32; b++) {
+                for (Plot i : bucket[b]) {
+                    input[a++] = i;
+                }
+                bucket[b].clear();
+            }
+            placement *= 32;
+        }
     }
 
     @Deprecated
@@ -1037,50 +1007,20 @@ public class PS {
     }
 
     /**
-     * @deprecated Unchecked, use {@link #sortPlots(Collection, SortType, PlotArea)}  instead which will in turn call this
-     * @param input
-     */
-    @Deprecated
-    public void sortPlotsByHash(Plot[] input) {
-        List<Plot>[] bucket = new ArrayList[32];
-        for (int i = 0; i < bucket.length; i++) {
-            bucket[i] = new ArrayList<>();
-        }
-        boolean maxLength = false;
-        int placement = 1;
-        while (!maxLength) {
-            maxLength = true;
-            for (Plot i : input) {
-                int tmp = MathMan.getPositiveId(i.hashCode()) / placement;
-                bucket[tmp & 31].add(i);
-                if (maxLength && tmp > 0) {
-                    maxLength = false;
-                }
-            }
-            int a = 0;
-            for (int b = 0; b < 32; b++) {
-                for (Plot i : bucket[b]) {
-                    input[a++] = i;
-                }
-                bucket[b].clear();
-            }
-            placement *= 32;
-        }
-    }
-
-    /**
-     * Sort a collection of plots by world (with a priority world), then by hashcode.
-     * @param myPlots
+     * Sort a collection of plots by world (with a priority world), then
+     * by hashcode.
+     * @param plots the plots to sort
      * @param type The sorting method to use for each world (timestamp, or hash)
-     * @param priorityArea Use null, "world", or "gibberish" if you want default world order
+     * @param priorityArea Use null, "world", or "gibberish" if you
+     *        want default world order
      * @return ArrayList of plot
      */
-    public ArrayList<Plot> sortPlots(Collection<Plot> myPlots, SortType type, final PlotArea priorityArea) {
+    public ArrayList<Plot> sortPlots(Collection<Plot> plots, SortType type, final PlotArea priorityArea) {
         // group by world
         // sort each
         HashMap<PlotArea, Collection<Plot>> map = new HashMap<>();
         int totalSize = getPlotCount();
-        if (myPlots.size() == totalSize) {
+        if (plots.size() == totalSize) {
             for (PlotArea area : this.plotAreas) {
                 map.put(area, area.getPlots());
             }
@@ -1090,7 +1030,7 @@ public class PS {
             }
             Collection<Plot> lastList = null;
             PlotArea lastWorld = null;
-            for (Plot plot : myPlots) {
+            for (Plot plot : plots) {
                 if (lastWorld == plot.getArea()) {
                     lastList.add(plot);
                 } else {
@@ -1110,7 +1050,7 @@ public class PS {
                 return a.hashCode() - b.hashCode();
             }
         });
-        ArrayList<Plot> toReturn = new ArrayList<>(myPlots.size());
+        ArrayList<Plot> toReturn = new ArrayList<>(plots.size());
         for (PlotArea area : areas) {
             switch (type) {
                 case CREATION_DATE:
@@ -1124,6 +1064,7 @@ public class PS {
                     break;
                 case LAST_MODIFIED:
                     toReturn.addAll(sortPlotsByModified(map.get(area)));
+                    break;
                 default:
                     break;
             }
@@ -1132,9 +1073,78 @@ public class PS {
     }
 
     /**
+     * A more generic way to filter plots - make your own method
+     * if you need complex filters.
+     * @param filters the filter
+     * @return a filtered set of plots
+     */
+    public Set<Plot> getPlots(final PlotFilter... filters) {
+        final HashSet<Plot> set = new HashSet<>();
+        foreachPlotArea(new RunnableVal<PlotArea>() {
+            @Override
+            public void run(PlotArea value) {
+                for (PlotFilter filter : filters) {
+                    if (!filter.allowsArea(value)) {
+                        continue;
+                    }
+                }
+                for (Entry<PlotId, Plot> entry2 : value.getPlotEntries()) {
+                    Plot plot = entry2.getValue();
+                    for (PlotFilter filter : filters) {
+                        if (!filter.allowsPlot(plot)) {
+                            continue;
+                        }
+                    }
+                    set.add(plot);
+                }
+            }
+        });
+        return set;
+    }
+
+    /**
+     * Get all the plots in a single set.
+     * @return Set of Plots
+     */
+    public Set<Plot> getPlots() {
+        int size = getPlotCount();
+        final Set<Plot> result = new HashSet<>(size);
+        foreachPlotArea(new RunnableVal<PlotArea>() {
+            @Override
+            public void run(PlotArea value) {
+                result.addAll(value.getPlots());
+            }
+        });
+        return result;
+    }
+
+    public void setPlots(HashMap<String, HashMap<PlotId, Plot>> plots) {
+        if (this.plots_tmp == null) {
+            this.plots_tmp = new HashMap<>();
+        }
+        for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
+            String world = entry.getKey();
+            PlotArea area = getPlotArea(world, null);
+            if (area == null) {
+                HashMap<PlotId, Plot> map = this.plots_tmp.get(world);
+                if (map == null) {
+                    map = new HashMap<>();
+                    this.plots_tmp.put(world, map);
+                }
+                map.putAll(entry.getValue());
+            } else {
+                for (Plot plot : entry.getValue().values()) {
+                    plot.setArea(area);
+                    area.addPlot(plot);
+                }
+            }
+        }
+    }
+
+    /**
      * Get all the plots owned by a player name.
-     * @param world
-     * @param player
+     * @param world the world
+     * @param player the plot owner
      * @return Set of Plot
      */
     public Set<Plot> getPlots(String world, String player) {
@@ -1144,8 +1154,8 @@ public class PS {
 
     /**
      * Get all the plots owned by a player name.
-     * @param area
-     * @param player
+     * @param area the PlotArea
+     * @param player the plot owner
      * @return Set of Plot
      */
     public Set<Plot> getPlots(PlotArea area, String player) {
@@ -1155,8 +1165,8 @@ public class PS {
 
     /**
      * Get all plots by a PlotPlayer.
-     * @param world
-     * @param player
+     * @param world the world
+     * @param player the plot owner
      * @return Set of plot
      */
     public Set<Plot> getPlots(String world, PlotPlayer player) {
@@ -1165,8 +1175,8 @@ public class PS {
 
     /**
      * Get all plots by a PlotPlayer.
-     * @param area
-     * @param player
+     * @param area the PlotArea
+     * @param player the plot owner
      * @return Set of plot
      */
     public Set<Plot> getPlots(PlotArea area, PlotPlayer player) {
@@ -1175,8 +1185,8 @@ public class PS {
 
     /**
      * Get all plots by a UUID in a world.
-     * @param world
-     * @param uuid
+     * @param world the world
+     * @param uuid the plot owner
      * @return Set of plot
      */
     public Set<Plot> getPlots(String world, UUID uuid) {
@@ -1193,8 +1203,8 @@ public class PS {
 
     /**
      * Get all plots by a UUID in an area.
-     * @param area
-     * @param uuid
+     * @param area the {@code PlotArea}
+     * @param uuid the plot owner
      * @return Set of plot
      */
     public Set<Plot> getPlots(PlotArea area, UUID uuid) {
@@ -1213,8 +1223,8 @@ public class PS {
      * Use {@link #hasPlotArea(String)}.
      * Note: Worlds may have more than one plot area
      * @deprecated
-     * @param world
-     * @return
+     * @param world the world
+     * @return if the world is a plotworld
      */
     @Deprecated
     public boolean isPlotWorld(String world) {
@@ -1223,7 +1233,7 @@ public class PS {
 
     /**
      * Check if a plot world.
-     * @param world
+     * @param world the world
      * @see #getPlotAreaByString(String) to get the PlotArea object
      * @return if a plot world is registered
      */
@@ -1264,6 +1274,15 @@ public class PS {
         return set;
     }
 
+    /**
+     * Get the plots for a PlotPlayer.
+     * @param player the player to retrieve the plots for
+     * @return Set of Plot
+     */
+    public Set<Plot> getPlots(PlotPlayer player) {
+        return getPlots(player.getUUID());
+    }
+
     public Collection<Plot> getPlots(PlotArea area) {
         return area == null ? new HashSet<Plot>() : area.getPlots();
     }
@@ -1272,23 +1291,14 @@ public class PS {
         return area == null ? null : id == null ? null : area.getPlot(id);
     }
 
-    /**
-     * Get the plots for a PlotPlayer.
-     * @param player
-     * @return Set of Plot
-     */
-    public Set<Plot> getPlots(PlotPlayer player) {
-        return getPlots(player.getUUID());
-    }
-
     public Set<Plot> getBasePlots(PlotPlayer player) {
         return getBasePlots(player.getUUID());
     }
 
     /**
      * Get the plots for a UUID.
-     * @param uuid
-     * @return Set of Plot
+     * @param uuid the plot owner
+     * @return Set of Plot's owned by the player
      */
     public Set<Plot> getPlots(final UUID uuid) {
         final ArrayList<Plot> myPlots = new ArrayList<>();
@@ -1318,7 +1328,7 @@ public class PS {
 
     /**
      * Get the plots for a UUID.
-     * @param uuid The UUID of the owner
+     * @param uuid the UUID of the owner
      * @return Set of Plot
      */
     public Set<Plot> getPlotsAbs(final UUID uuid) {
@@ -1335,8 +1345,8 @@ public class PS {
     }
 
     /**
-     * Unregister a plot from local memory (does not call DB)
-     * @param plot
+     * Unregister a plot from local memory (does not call DB).
+     * @param plot the plot to remove
      * @param callEvent If to call an event about the plot being removed
      * @return true if plot existed | false if it didn't
      */
@@ -1362,18 +1372,19 @@ public class PS {
     /**
      * This method is called by the PlotGenerator class normally.
      * <ul>
-     *     <li>Initializes the PlotArea and PlotManager classes</li>
-     *     <li>Registers the PlotArea and PlotManager classes</li>
-     *     <li>Loads (and/or generates) the PlotArea configuration</li>
-     *     <li>Sets up the world border if configured</li>
+     *     <li>Initializes the PlotArea and PlotManager classes
+     *     <li>Registers the PlotArea and PlotManager classes
+     *     <li>Loads (and/or generates) the PlotArea configuration
+     *     <li>Sets up the world border if configured
      * </ul>
-     *  If loading an augmented plot world:
-     *  <ul>
-     *      <li>Creates the AugmentedPopulator classes</li>
-     *      <li>Injects the AugmentedPopulator classes if required</li>
-     *  </ul>
-     * @param world The world to load
-     * @param baseGenerator The generator for that world, or null if no generator
+     *
+     * <p>If loading an augmented plot world:
+     * <ul>
+     *      <li>Creates the AugmentedPopulator classes
+     *      <li>Injects the AugmentedPopulator classes if required
+     * </ul>
+     * @param world the world to load
+     * @param baseGenerator The generator for that world, or null
      */
     public void loadWorld(String world, GeneratorWrapper<?> baseGenerator) {
         if (world.equals("CheckingPlotSquaredGenerator")) {
@@ -1594,11 +1605,13 @@ public class PS {
 
     /**
      * Setup the configuration for a plot world based on world arguments.
+     *
      * <p>
-     *     <i>e.g. /mv create <world> normal -g PlotSquared:<args></i>
-     * </p>
+     * <i>e.g. /mv create &lt;world&gt; normal -g PlotSquared:&lt;args&gt;</i>
+     *
      * @param world The name of the world
      * @param args The arguments
+     * @param generator the plot generator
      * @return boolean | if valid arguments were provided
      */
     public boolean setupPlotWorld(String world, String args, IndependentPlotGenerator generator) {
@@ -1785,7 +1798,7 @@ public class PS {
     }
 
     /**
-     * Close the database connection
+     * Close the database connection.
      */
     public void disable() {
         try {
@@ -1810,13 +1823,14 @@ public class PS {
     }
 
     /**
-     * Setup the database connection
+     * Setup the database connection.
      */
     public void setupDatabase() {
         try {
             if (DBFunc.dbManager == null) {
                 if (Storage.MySQL.USE) {
-                    this.database = new com.intellectualcrafters.plot.database.MySQL(Storage.MySQL.HOST, Storage.MySQL.PORT, Storage.MySQL.DATABASE, Storage.MySQL.USER, Storage.MySQL.PASSWORD);
+                    this.database = new com.intellectualcrafters.plot.database.MySQL(Storage.MySQL.HOST, Storage.MySQL.PORT, Storage.MySQL.DATABASE,
+                            Storage.MySQL.USER, Storage.MySQL.PASSWORD);
                 } else if (Storage.SQLite.USE) {
                     File file = MainUtil.getFile(IMP.getDirectory(), Storage.SQLite.DB + ".db");
                     this.database = new com.intellectualcrafters.plot.database.SQLite(file);
@@ -1845,7 +1859,8 @@ public class PS {
     }
 
     /**
-     * Setup the default configuration (settings.yml)
+     * Setup the default configuration.
+     * @throws IOException if the config failed to save
      */
     public void setupConfig() throws IOException {
         String lastVersionString = this.config.getString("version");
@@ -1853,7 +1868,7 @@ public class PS {
             String[] split = lastVersionString.split("\\.");
             this.lastVersion = new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])};
         }
-        if (lastVersion != null && checkVersion(new int[]{3,4,0}, lastVersion)) {
+        if (lastVersion != null && checkVersion(new int[]{3, 4, 0}, lastVersion)) {
             Settings.convertLegacy(configFile);
             if (config.contains("worlds")) {
                 ConfigurationSection worldSection = config.getConfigurationSection("worlds");
@@ -1881,12 +1896,12 @@ public class PS {
      *  - Translation: PlotSquared.use_THIS.yml, style.yml<br>
      */
     public void setupConfigs() {
-        File folder = new File(this.IMP.getDirectory(),"config");
+        File folder = new File(this.IMP.getDirectory(), "config");
         if (!folder.exists() && !folder.mkdirs()) {
             PS.log(C.PREFIX + "&cFailed to create the /plugins/config folder. Please create it manually.");
         }
         try {
-            this.worldsFile = new File(folder,"worlds.yml");
+            this.worldsFile = new File(folder, "worlds.yml");
             if (!this.worldsFile.exists() && !this.worldsFile.createNewFile()) {
                 PS.log("Could not create the worlds file, please create \"worlds.yml\" manually.");
             }
@@ -1895,7 +1910,7 @@ public class PS {
             PS.log("Failed to save settings.yml");
         }
         try {
-            this.configFile = new File(folder,"settings.yml");
+            this.configFile = new File(folder, "settings.yml");
             if (!this.configFile.exists() && !this.configFile.createNewFile()) {
                 PS.log("Could not create the settings file, please create \"settings.yml\" manually.");
             }
@@ -1905,7 +1920,7 @@ public class PS {
             PS.log("Failed to save settings.yml");
         }
         try {
-            this.styleFile = MainUtil.getFile(IMP.getDirectory(), Settings.Paths.TRANSLATIONS +File.separator + "style.yml" );
+            this.styleFile = MainUtil.getFile(IMP.getDirectory(), Settings.Paths.TRANSLATIONS + File.separator + "style.yml");
             if (!this.styleFile.exists()) {
                 if (!this.styleFile.getParentFile().exists()) {
                     this.styleFile.getParentFile().mkdirs();
@@ -1921,7 +1936,7 @@ public class PS {
             PS.log("failed to save style.yml");
         }
         try {
-            this.storageFile = new File(folder,"storage.yml");
+            this.storageFile = new File(folder, "storage.yml");
             if (!this.storageFile.exists() && !this.storageFile.createNewFile()) {
                 PS.log("Could not the storage settings file, please create \"storage.yml\" manually.");
             }
@@ -1931,7 +1946,7 @@ public class PS {
             PS.log("Failed to save storage.yml");
         }
         try {
-            this.commandsFile = new File(folder,"commands.yml");
+            this.commandsFile = new File(folder, "commands.yml");
             if (!this.commandsFile.exists() && !this.commandsFile.createNewFile()) {
                 PS.log("Could not the storage settings file, please create \"commands.yml\" manually.");
             }
@@ -1949,7 +1964,7 @@ public class PS {
     }
 
     /**
-     * Setup the storage file (load + save missing nodes)
+     * Setup the storage file (load + save missing nodes).
      */
     private void setupStorage() {
         Storage.load(storageFile);
@@ -2000,6 +2015,16 @@ public class PS {
         }
     }
 
+    public void foreachPlotArea(String world, RunnableVal<PlotArea> runnable) {
+        PlotArea[] array = this.plotAreaMap.get(world);
+        if (array == null) {
+            return;
+        }
+        for (PlotArea area : array) {
+            runnable.run(area);
+        }
+    }
+
     public void foreachPlot(RunnableVal<Plot> runnable) {
         for (PlotArea area : this.plotAreas) {
             for (Plot plot : area.getPlots()) {
@@ -2029,16 +2054,6 @@ public class PS {
         }
     }
 
-    public void foreachPlotArea(String world, RunnableVal<PlotArea> runnable) {
-        PlotArea[] array = this.plotAreaMap.get(world);
-        if (array == null) {
-            return;
-        }
-        for (PlotArea area : array) {
-            runnable.run(area);
-        }
-    }
-
     public PlotArea getFirstPlotArea() {
         return this.plotAreas.length > 0 ? this.plotAreas[0] : null;
     }
@@ -2062,7 +2077,7 @@ public class PS {
     }
 
     /**
-     * @deprecated Since worlds can have multiple plot areas
+     * Not recommended for use since worlds can have multiple PlotAreas.
      * @return Set of world names
      */
     @Deprecated
@@ -2087,7 +2102,7 @@ public class PS {
 
     /**
      * Get a list of PlotArea objects.
-     * @param world
+     * @param world the world
      * @return Collection of PlotArea objects
      */
     public Set<PlotArea> getPlotAreas(String world) {
