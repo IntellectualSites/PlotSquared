@@ -67,11 +67,11 @@ public abstract class EventUtil {
                 MainUtil.sendMessage(player, C.WORLDEDIT_BYPASSED);
             }
         }
-        if (PS.get().update != null && Permissions.hasPermission(player, C.PERMISSION_ADMIN_UPDATE) && Settings.ENABLED_COMPONENTS.UPDATER) {
+        if (PS.get().update != null && Permissions.hasPermission(player, C.PERMISSION_ADMIN_UPDATE) && Settings.Enabled_Components.UPDATER) {
             MainUtil.sendMessage(player, "&6An update for PlotSquared is available: &7/plot update");
         }
         final Plot plot = player.getCurrentPlot();
-        if (Settings.TELEPORT.ON_LOGIN && plot != null) {
+        if (Settings.Teleport.ON_LOGIN && plot != null) {
             TaskManager.runTask(new Runnable() {
                 @Override
                 public void run() {
@@ -84,7 +84,7 @@ public abstract class EventUtil {
 
     public void doRespawnTask(final PlotPlayer player) {
         final Plot plot = player.getCurrentPlot();
-        if (Settings.TELEPORT.ON_DEATH && plot != null) {
+        if (Settings.Teleport.ON_DEATH && plot != null) {
             TaskManager.runTask(new Runnable() {
                 @Override
                 public void run() {

@@ -144,7 +144,7 @@ public class LikePlotMeConverter {
             sendMessage(" - " + dbPrefix + "Plots");
             final Set<String> worlds = getPlotMeWorlds(plotConfig);
 
-            if (Settings.ENABLED_COMPONENTS.PLOTME_CONVERTER) {
+            if (Settings.Enabled_Components.PLOTME_CONVERTER) {
                 sendMessage("Updating bukkit.yml");
                 updateWorldYml("bukkit.yml");
                 updateWorldYml("plugins/Multiverse-Core/worlds.yml");
@@ -166,7 +166,7 @@ public class LikePlotMeConverter {
             for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
                 plotCount += entry.getValue().size();
             }
-            if (!Settings.ENABLED_COMPONENTS.PLOTME_CONVERTER) {
+            if (!Settings.Enabled_Components.PLOTME_CONVERTER) {
                 return false;
             }
 

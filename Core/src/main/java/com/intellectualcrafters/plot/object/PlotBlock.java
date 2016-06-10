@@ -14,16 +14,15 @@ public class PlotBlock {
         }
     }
 
-    public static PlotBlock get(int id, int data) {
-        return Settings.ENABLED_COMPONENTS.BLOCK_CACHE && data > 0 ? CACHE[(id << 4) + data] : new PlotBlock((short) id, (byte) data);
-    }
-
     public final short id;
     public final byte data;
-
     public PlotBlock(short id, byte data) {
         this.id = id;
         this.data = data;
+    }
+
+    public static PlotBlock get(int id, int data) {
+        return Settings.Enabled_Components.BLOCK_CACHE && data > 0 ? CACHE[(id << 4) + data] : new PlotBlock((short) id, (byte) data);
     }
 
     @Override

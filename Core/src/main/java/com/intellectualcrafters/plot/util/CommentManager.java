@@ -21,7 +21,7 @@ public class CommentManager {
     public static final HashMap<String, CommentInbox> inboxes = new HashMap<>();
 
     public static void sendTitle(final PlotPlayer player, final Plot plot) {
-        if (!Settings.ENABLED_COMPONENTS.COMMENT_NOTIFIER || !plot.isOwner(player.getUUID())) {
+        if (!Settings.Enabled_Components.COMMENT_NOTIFIER || !plot.isOwner(player.getUUID())) {
             return;
         }
         TaskManager.runTaskLaterAsync(new Runnable() {

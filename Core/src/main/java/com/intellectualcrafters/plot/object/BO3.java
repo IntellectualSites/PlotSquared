@@ -59,7 +59,7 @@ public class BO3 {
     }
 
     public File getFile() {
-        return MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.PATHS.BO3 + File.separator + getWorld() + File.separator + getFilename());
+        return MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.Paths.BO3 + File.separator + getWorld() + File.separator + getFilename());
     }
 
     public String getFilename() {

@@ -18,15 +18,15 @@ public class Rating {
     public Rating(int value) {
         this.initial = value;
         this.ratingMap = new HashMap<>();
-        if (Settings.RATINGS.CATEGORIES != null && Settings.RATINGS.CATEGORIES.size() > 1) {
+        if (Settings.Ratings.CATEGORIES != null && Settings.Ratings.CATEGORIES.size() > 1) {
             if (value < 10) {
-                for (String ratingCategory : Settings.RATINGS.CATEGORIES) {
+                for (String ratingCategory : Settings.Ratings.CATEGORIES) {
                     this.ratingMap.put(ratingCategory, value);
                 }
                 this.changed = true;
                 return;
             }
-            for (String ratingCategory : Settings.RATINGS.CATEGORIES) {
+            for (String ratingCategory : Settings.Ratings.CATEGORIES) {
                 this.ratingMap.put(ratingCategory, value % 10 - 1);
                 value = value / 10;
             }
@@ -66,10 +66,10 @@ public class Rating {
         if (!this.changed) {
             return this.initial;
         }
-        if (Settings.RATINGS.CATEGORIES != null && Settings.RATINGS.CATEGORIES.size() > 1) {
+        if (Settings.Ratings.CATEGORIES != null && Settings.Ratings.CATEGORIES.size() > 1) {
             int val = 0;
-            for (int i = 0; i < Settings.RATINGS.CATEGORIES.size(); i++) {
-                val += (i + 1) * Math.pow(10, this.ratingMap.get(Settings.RATINGS.CATEGORIES.get(i)));
+            for (int i = 0; i < Settings.Ratings.CATEGORIES.size(); i++) {
+                val += (i + 1) * Math.pow(10, this.ratingMap.get(Settings.Ratings.CATEGORIES.get(i)));
             }
             return val;
         } else {

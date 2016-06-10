@@ -10,7 +10,7 @@ import java.net.URL;
 public class HttpUtil {
 
     public static String readUrl(String urlString) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(urlString).openStream()))){
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(urlString).openStream()))) {
             StringBuilder buffer = new StringBuilder();
             int read;
             char[] chars = new char[1024];

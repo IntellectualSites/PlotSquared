@@ -32,7 +32,7 @@ public class Continue extends SubCommand {
             return false;
         }
         int size = plot.getConnectedPlots().size();
-        if (Settings.DONE.COUNTS_TOWARDS_LIMIT && (player.getAllowedPlots() < player.getPlotCount() + size)) {
+        if (Settings.Done.COUNTS_TOWARDS_LIMIT && (player.getAllowedPlots() < player.getPlotCount() + size)) {
             MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.admin.command.continue");
             return false;
         }

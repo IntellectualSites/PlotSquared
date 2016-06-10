@@ -65,7 +65,7 @@ public class Owner extends SetCommand {
                 return false;
             }
             int size = plots.size();
-            int currentPlots = (Settings.LIMIT.GLOBAL ? other.getPlotCount() : other.getPlotCount(plot.getArea().worldname)) + size;
+            int currentPlots = (Settings.Limit.GLOBAL ? other.getPlotCount() : other.getPlotCount(plot.getArea().worldname)) + size;
             if (currentPlots > other.getAllowedPlots()) {
                 sendMessage(player, C.CANT_TRANSFER_MORE_PLOTS);
                 return false;

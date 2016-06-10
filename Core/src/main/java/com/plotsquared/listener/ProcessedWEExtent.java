@@ -14,6 +14,7 @@ import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.extent.NullExtent;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.biome.BaseBiome;
+
 import java.lang.reflect.Field;
 import java.util.HashSet;
 
@@ -92,7 +93,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                     return false;
                 }
                 this.BScount++;
-                if (this.BScount > Settings.CHUNK_PROCESSOR.MAX_TILES) {
+                if (this.BScount > Settings.Chunk_Processor.MAX_TILES) {
                     this.BSblocked = true;
                     PS.debug("&cPlotSquared detected unsafe WorldEdit: " + location.getBlockX() + "," + location.getBlockZ());
                 }
@@ -243,7 +244,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
             return null;
         }
         this.Ecount++;
-        if (this.Ecount > Settings.CHUNK_PROCESSOR.MAX_ENTITIES) {
+        if (this.Ecount > Settings.Chunk_Processor.MAX_ENTITIES) {
             this.Eblocked = true;
             PS.debug("&cPlotSquared detected unsafe WorldEdit: " + location.getBlockX() + "," + location.getBlockZ());
         }

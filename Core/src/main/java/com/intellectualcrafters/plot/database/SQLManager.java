@@ -18,6 +18,7 @@ import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -1321,7 +1322,7 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public void deleteRatings(final Plot plot) {
-        if (Settings.ENABLED_COMPONENTS.RATING_CACHE && plot.getSettings().getRatings().isEmpty()) {
+        if (Settings.Enabled_Components.RATING_CACHE && plot.getSettings().getRatings().isEmpty()) {
             return;
         }
         addPlotTask(plot, new UniqueStatement("delete_plot_ratings") {
@@ -1479,7 +1480,7 @@ public class SQLManager implements AbstractDB {
                     rs.close();
                     try (Statement statement = this.connection.createStatement()) {
                         statement.addBatch("DROP TABLE `" + this.prefix + "plot_comments`");
-                        if (Storage.MYSQL.USE) {
+                        if (Storage.MySQL.USE) {
                             statement.addBatch("CREATE TABLE IF NOT EXISTS `"
                                     + this.prefix
                                     + "plot_comments` ("
@@ -1625,7 +1626,7 @@ public class SQLManager implements AbstractDB {
                         id = resultSet.getInt("id");
                         String areaid = resultSet.getString("world");
                         if (!areas.contains(areaid)) {
-                            if (Settings.ENABLED_COMPONENTS.DATABASE_PURGER) {
+                            if (Settings.Enabled_Components.DATABASE_PURGER) {
                                 toDelete.add(id);
                                 continue;
                             } else {
@@ -1652,7 +1653,7 @@ public class SQLManager implements AbstractDB {
                             Plot last = map.put(p.getId(), p);
                             if (last != null) {
                                 map.put(last.getId(), last);
-                                if (Settings.ENABLED_COMPONENTS.DATABASE_PURGER) {
+                                if (Settings.Enabled_Components.DATABASE_PURGER) {
                                     toDelete.add(id);
                                 } else {
                                     PS.debug("&cPLOT " + id + " in `" + this.prefix
@@ -1669,7 +1670,7 @@ public class SQLManager implements AbstractDB {
                     }
                     deleteRows(toDelete, this.prefix + "plot", "id");
                 }
-                if (Settings.ENABLED_COMPONENTS.RATING_CACHE) {
+                if (Settings.Enabled_Components.RATING_CACHE) {
                     try (ResultSet r = statement.executeQuery("SELECT `plot_plot_id`, `player`, `rating` FROM `" + this.prefix + "plot_rating`")) {
                         ArrayList<Integer> toDelete = new ArrayList<>();
                         while (r.next()) {
@@ -1683,7 +1684,7 @@ public class SQLManager implements AbstractDB {
                             Plot plot = plots.get(id);
                             if (plot != null) {
                                 plot.getSettings().getRatings().put(user, r.getInt("rating"));
-                            } else if (Settings.ENABLED_COMPONENTS.DATABASE_PURGER) {
+                            } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                                 toDelete.add(id);
                             } else {
                                 PS.debug("&cENTRY " + id + " in `plot_rating` does not exist. Create this plot or set `auto-purge: true` in the "
@@ -1710,7 +1711,7 @@ public class SQLManager implements AbstractDB {
                         Plot plot = plots.get(id);
                         if (plot != null) {
                             plot.getTrusted().add(user);
-                        } else if (Settings.ENABLED_COMPONENTS.DATABASE_PURGER) {
+                        } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
                         } else {
                             PS.debug("&cENTRY " + id + " in `plot_helpers` does not exist. Create this plot or set `auto-purge: true` in the settings"
@@ -1736,7 +1737,7 @@ public class SQLManager implements AbstractDB {
                         Plot plot = plots.get(id);
                         if (plot != null) {
                             plot.getMembers().add(user);
-                        } else if (Settings.ENABLED_COMPONENTS.DATABASE_PURGER) {
+                        } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
                         } else {
                             PS.debug("&cENTRY " + id + " in `plot_trusted` does not exist. Create this plot or set `auto-purge: true` in the settings"
@@ -1762,7 +1763,7 @@ public class SQLManager implements AbstractDB {
                         Plot plot = plots.get(id);
                         if (plot != null) {
                             plot.getDenied().add(user);
-                        } else if (Settings.ENABLED_COMPONENTS.DATABASE_PURGER) {
+                        } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
                         } else {
                             PS.debug("&cENTRY " + id
@@ -1851,7 +1852,7 @@ public class SQLManager implements AbstractDB {
                                 this.setFlags(plot, flags);
                             }
                             plot.getSettings().flags = flags;
-                        } else if (Settings.ENABLED_COMPONENTS.DATABASE_PURGER) {
+                        } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
                         } else {
                             PS.debug(

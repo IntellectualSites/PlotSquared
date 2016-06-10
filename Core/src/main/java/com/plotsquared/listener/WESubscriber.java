@@ -17,6 +17,7 @@ import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
 import com.sk89q.worldedit.world.World;
+
 import java.util.HashSet;
 
 public class WESubscriber {
@@ -61,7 +62,7 @@ public class WESubscriber {
                     return;
                 }
             }
-            if (Settings.ENABLED_COMPONENTS.CHUNK_PROCESSOR) {
+            if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
                 if (PS.get().hasPlotArea(world)) {
                     event.setExtent(new ProcessedWEExtent(world, mask, event.getMaxBlocks(), event.getExtent(), event.getExtent()));
                 }

@@ -31,7 +31,7 @@ public class Load extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer player, String[] args) {
 
-        if (!Settings.ENABLED_COMPONENTS.METRICS) {
+        if (!Settings.Enabled_Components.METRICS) {
             MainUtil.sendMessage(player,
                     "&cPlease enable metrics in order to use this command.\n&7 - Or host it yourself if you don't like the free service");
             return false;
@@ -75,7 +75,7 @@ public class Load extends SubCommand {
                 }
                 final URL url;
                 try {
-                    url = new URL(Settings.WEB.URL + "saves/" + player.getUUID() + '/' + schematic + ".schematic");
+                    url = new URL(Settings.Web.URL + "saves/" + player.getUUID() + '/' + schematic + ".schematic");
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                     MainUtil.sendMessage(player, C.LOAD_FAILED);

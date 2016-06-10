@@ -30,7 +30,7 @@ public class HybridPlotManager extends ClassicPlotManager {
     @Override
     public void exportTemplate(PlotArea plotArea) throws IOException {
         HashSet<FileBytes> files = new HashSet<>(
-                Collections.singletonList(new FileBytes(Settings.PATHS.TEMPLATES + "/tmp-data.yml", Template.getBytes(plotArea))));
+                Collections.singletonList(new FileBytes(Settings.Paths.TEMPLATES + "/tmp-data.yml", Template.getBytes(plotArea))));
         String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plotArea.worldname + File.separator;
         String newDir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + "__TEMP_DIR__" + File.separator;
         try {

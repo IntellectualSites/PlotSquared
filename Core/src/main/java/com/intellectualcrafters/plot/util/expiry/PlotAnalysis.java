@@ -32,7 +32,7 @@ public class PlotAnalysis {
     public int variety_sd;
     private int complexity;
 
-    public static PlotAnalysis getAnalysis(Plot plot, Settings.AUTO_CLEAR settings) {
+    public static PlotAnalysis getAnalysis(Plot plot, Settings.Auto_Clear settings) {
         Optional<List<Integer>> flag = plot.getFlag(Flags.ANALYSIS);
         if (flag.isPresent()) {
             PlotAnalysis analysis = new PlotAnalysis();
@@ -207,7 +207,7 @@ public class PlotAnalysis {
                 PS.debug(" - The analyzed plots which were processed and put into bulk data will be compared and correlated to the plot ranking");
                 PS.debug(" - The calculated correlation constant will then be used to calibrate the threshold for auto plot clearing");
 
-                Settings.AUTO_CLEAR settings = new Settings.AUTO_CLEAR();
+                Settings.Auto_Clear settings = new Settings.Auto_Clear();
                 
                 int[] rankChanges = rank(changes);
                 int[] sdChanges = getSD(rankChanges, rankRatings);
@@ -527,8 +527,8 @@ public class PlotAnalysis {
                 this.variety_sd);
     }
 
-    public int getComplexity(Settings.AUTO_CLEAR settings) {
-        Settings.AUTO_CLEAR.CALIBRATION modifiers = settings.CALIBRATION;
+    public int getComplexity(Settings.Auto_Clear settings) {
+        Settings.Auto_Clear.CALIBRATION modifiers = settings.CALIBRATION;
         if (this.complexity != 0) {
             return this.complexity;
         }

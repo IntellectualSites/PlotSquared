@@ -24,8 +24,8 @@ public interface AbstractDB {
     /**
      * Set Plot owner.
      *
-     * @param plot Plot in which the owner should be set
-     * @param uuid The uuid of the new owner
+     * @param plot the plot
+     * @param uuid the uuid of the new owner
      */
     void setOwner(Plot plot, UUID uuid);
     
@@ -33,14 +33,14 @@ public interface AbstractDB {
      * Create all settings, and create default helpers, trusted + denied lists.
      *
      * @param plots Plots for which the default table entries should be created
-     * @param whenDone
+     * @param whenDone the task to run when the method is finished executing
      */
     void createPlotsAndData(List<Plot> plots, Runnable whenDone);
     
     /**
-     * Create a plot
+     * Create a plot.
      *
-     * @param plot That should be created
+     * @param plot the plot to create
      */
     void createPlot(Plot plot);
     
@@ -54,7 +54,7 @@ public interface AbstractDB {
     /**
      * Delete a plot.
      *
-     * @param plot The plot to delete.
+     * @param plot the plot to delete
      */
     void delete(Plot plot);
     
@@ -63,9 +63,17 @@ public interface AbstractDB {
     void deleteHelpers(Plot plot);
     
     void deleteTrusted(Plot plot);
-    
+
+    /**
+     * Remove all denied players from the plot.
+     * @param plot the plot
+     */
     void deleteDenied(Plot plot);
-    
+
+    /**
+     * Delete all comments from the plot.
+     * @param plot the plot
+     */
     void deleteComments(Plot plot);
     
     void deleteRatings(Plot plot);
@@ -79,19 +87,19 @@ public interface AbstractDB {
     void getPersistentMeta(UUID uuid, RunnableVal<Map<String, byte[]>> result);
 
     /**
-     * Create plot settings.
+     * Create the plot settings.
      *
-     * @param id   Plot Entry ID
-     * @param plot Plot Object
+     * @param id the plot entry id
+     * @param plot the plot
      */
     void createPlotSettings(int id, Plot plot);
     
     /**
      * Get the table entry ID.
      *
-     * @param plot Plot Object
+     * @param plot the plot
      *
-     * @return Integer = Plot Entry Id
+     * @return {@code Integer} = Plot Entry Id
      */
     int getId(Plot plot);
     
@@ -138,7 +146,7 @@ public interface AbstractDB {
     /**
      * Set plot flags.
      * @param plot  Plot Object
-     * @param flags flags to set (flag[])
+     * @param flags flags to set
      */
     void setFlags(Plot plot, HashMap<Flag<?>, Object> flags);
     
@@ -149,9 +157,11 @@ public interface AbstractDB {
      * @param flags flags to set (flag[])
      */
     void setFlags(PlotCluster cluster, HashMap<Flag<?>, Object> flags);
-    
+
     /**
-     * Rename a cluster.
+     * Rename a cluster to the given name.
+     * @param cluster the cluster to rename
+     * @param name the new cluster name
      */
     void setClusterName(PlotCluster cluster, String name);
     
@@ -174,15 +184,15 @@ public interface AbstractDB {
      * Purge a whole world.
      *
      * @param area World in which the plots should be purged
-     * @param plotIds
+     * @param plotIds the {@code PlotId}s of {@code Plot}s to purge
      */
     void purge(PlotArea area, Set<PlotId> plotIds);
     
     /**
-     * Set Plot Home Position.
+     * Set the plot home position.
      *
-     * @param plot     Plot Object
-     * @param position Plot Home Position
+     * @param plot the plot
+     * @param position the position of plot home
      */
     void setPosition(Plot plot, String position);
     
@@ -194,11 +204,12 @@ public interface AbstractDB {
     void setPosition(PlotCluster cluster, String position);
     
     /**
-     * @param plot   Plot Object
-     * @param uuid Player that should be removed
+     * Remove the specified player from the trust list of the specified plot.
+     * @param plot the plot
+     * @param uuid the uuid of the player to remove
      */
     void removeTrusted(Plot plot, UUID uuid);
-    
+
     /**
      * @param cluster   PlotCluster Object
      * @param uuid Player that should be removed
@@ -206,7 +217,7 @@ public interface AbstractDB {
     void removeHelper(PlotCluster cluster, UUID uuid);
     
     /**
-     * @param plot   Plot Object
+     * @param plot the plot
      * @param uuid Player that should be removed
      */
     void removeMember(Plot plot, UUID uuid);
@@ -242,25 +253,27 @@ public interface AbstractDB {
      * @param uuid
      */
     void setInvited(PlotCluster cluster, UUID uuid);
-    
+
     /**
-     * @param plot   Plot Object
-     * @param uuid   Player uuid
+     * Remove the specified player from the denied list of the specified plot.
+     * @param plot the plot
+     * @param uuid the uuid of the player to remove
      */
     void removeDenied(Plot plot, UUID uuid);
     
     /**
+     * Deny the specified player from the given plot.
      * @param plot the plot
      * @param uuid the uuid of the player to deny
      */
     void setDenied(Plot plot, UUID uuid);
     
     /**
-     * Get Plots ratings.
+     * Get the ratings from the specified plot.
      *
-     * @param plot Plot Object
+     * @param plot the plot
      *
-     * @return Plot Ratings (pre-calculated)
+     * @return the plot ratings (pre-calculated)
      */
     HashMap<UUID, Integer> getRatings(Plot plot);
     
@@ -273,26 +286,26 @@ public interface AbstractDB {
     void setRating(Plot plot, UUID rater, int value);
     
     /**
-     * Remove a plot comment.
+     * Remove the specified comment from the given plot.
      *
-     * @param plot    Plot Object
-     * @param comment Comment to remove
+     * @param plot the plot
+     * @param comment the comment to remove
      */
     void removeComment(Plot plot, PlotComment comment);
     
     /**
-     * Clear an inbox.
+     * Clear the specified inbox on the given plot.
      *
-     * @param plot
-     * @param inbox
+     * @param plot the plot
+     * @param inbox the inbox to clear
      */
     void clearInbox(Plot plot, String inbox);
     
     /**
-     * Set a plot comment.
+     * Add the specified comment to the given plot.
      *
-     * @param plot    Plot Object
-     * @param comment Comment to add
+     * @param plot the plot
+     * @param comment the comment to add
      */
     void setComment(Plot plot, PlotComment comment);
     
@@ -328,7 +341,10 @@ public interface AbstractDB {
      * @return true if the tables were deleted, false when an error is encountered
      */
     boolean deleteTables();
-    
+
+    /**
+     * Close the database. Generally not recommended to be used by add-ons.
+     */
     void close();
     
     void replaceWorld(String oldWorld, String newWorld, PlotId min, PlotId max);

@@ -43,7 +43,7 @@ public class Done extends SubCommand {
         }
         plot.addRunning();
         MainUtil.sendMessage(player, C.GENERATING_LINK);
-        final Settings.AUTO_CLEAR doneRequirements = Settings.AUTO_CLEAR.get("done");
+        final Settings.Auto_Clear doneRequirements = Settings.AUTO_CLEAR.get("done");
         if (ExpireManager.IMP == null || doneRequirements == null) {
             finish(plot, player, true);
             plot.removeRunning();

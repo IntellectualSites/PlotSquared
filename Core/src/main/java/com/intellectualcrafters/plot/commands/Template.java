@@ -39,7 +39,7 @@ public class Template extends SubCommand {
 
     public static boolean extractAllFiles(String world, String template) {
         try {
-            File folder = MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.PATHS.TEMPLATES);
+            File folder = MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.Paths.TEMPLATES);
             if (!folder.exists()) {
                 return false;
             }
@@ -89,7 +89,7 @@ public class Template extends SubCommand {
     }
 
     public static void zipAll(String world, Set<FileBytes> files) throws IOException {
-        File output = MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.PATHS.TEMPLATES);
+        File output = MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.Paths.TEMPLATES);
         output.mkdirs();
         try (FileOutputStream fos = new FileOutputStream(output + File.separator + world + ".template");
                 ZipOutputStream zos = new ZipOutputStream(fos)) {
@@ -134,7 +134,7 @@ public class Template extends SubCommand {
                     MainUtil.sendMessage(player, "&cInvalid template file: " + args[2] + ".template");
                     return false;
                 }
-                File worldFile = MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.PATHS.TEMPLATES + File.separator + "tmp-data.yml");
+                File worldFile = MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.Paths.TEMPLATES + File.separator + "tmp-data.yml");
                 YamlConfiguration worldConfig = YamlConfiguration.loadConfiguration(worldFile);
                 PS.get().worlds.set("worlds." + world, worldConfig.get(""));
                 try {

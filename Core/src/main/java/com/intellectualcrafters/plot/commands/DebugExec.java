@@ -12,7 +12,6 @@ import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.expiry.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -25,7 +24,6 @@ import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.SchematicHandler;
@@ -35,6 +33,8 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.expiry.ExpireManager;
+import com.intellectualcrafters.plot.util.expiry.PlotAnalysis;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 import com.plotsquared.listener.WEManager;
@@ -68,11 +68,11 @@ public class DebugExec extends SubCommand {
     public DebugExec() {
         try {
             if (PS.get() != null) {
-                File file = new File(PS.get().IMP.getDirectory(), Settings.PATHS.SCRIPTS + File.separator + "start.js");
+                File file = new File(PS.get().IMP.getDirectory(), Settings.Paths.SCRIPTS + File.separator + "start.js");
                 if (file.exists()) {
                     init();
                     String script = StringMan.join(Files
-                                    .readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + Settings.PATHS.SCRIPTS), "start.js"),
+                                    .readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS), "start.js"),
                                             StandardCharsets.UTF_8),
                             System.getProperty("line.separator"));
                     this.scope.put("THIS", this);
@@ -283,7 +283,8 @@ public class DebugExec extends SubCommand {
                 case "addcmd":
                     try {
                         final String cmd = StringMan.join(Files
-                                        .readLines(MainUtil.getFile(new File(PS.get().IMP.getDirectory() + File.separator + Settings.PATHS.SCRIPTS), args[1]),
+                                        .readLines(MainUtil.getFile(new File(PS.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS),
+                                                args[1]),
                                                 StandardCharsets.UTF_8),
                                 System.getProperty("line.separator"));
                         new Command(MainCommand.getInstance(), true, args[1].split("\\.")[0], null, RequiredType.NONE, CommandCategory.DEBUG) {
@@ -310,7 +311,8 @@ public class DebugExec extends SubCommand {
                 case "run":
                     try {
                         script = StringMan.join(Files
-                                        .readLines(MainUtil.getFile(new File(PS.get().IMP.getDirectory() + File.separator + Settings.PATHS.SCRIPTS), args[1]),
+                                        .readLines(MainUtil.getFile(new File(PS.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS),
+                                                args[1]),
                                                 StandardCharsets.UTF_8),
                                 System.getProperty("line.separator"));
                         if (args.length > 2) {
@@ -326,7 +328,7 @@ public class DebugExec extends SubCommand {
                     }
                     break;
                 case "list-scripts":
-                    String path = PS.get().IMP.getDirectory() + File.separator + Settings.PATHS.SCRIPTS;
+                    String path = PS.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS;
                     File folder = new File(path);
                     File[] filesArray = folder.listFiles();
 

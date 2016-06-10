@@ -19,6 +19,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -123,15 +124,15 @@ public class MainUtil {
         final String website;
         if (uuid == null) {
             uuid = UUID.randomUUID();
-            website = Settings.WEB.URL + "upload.php?" + uuid;
+            website = Settings.Web.URL + "upload.php?" + uuid;
             filename = "plot." + extension;
         } else {
-            website = Settings.WEB.URL + "save.php?" + uuid;
+            website = Settings.Web.URL + "save.php?" + uuid;
             filename = file + '.' + extension;
         }
         final URL url;
         try {
-            url = new URL(Settings.WEB.URL + "?key=" + uuid + "&ip=" + Settings.WEB.SERVER_IP + "&type=" + extension);
+            url = new URL(Settings.Web.URL + "?key=" + uuid + "&ip=" + Settings.Web.SERVER_IP + "&type=" + extension);
         } catch (MalformedURLException e) {
             e.printStackTrace();
             whenDone.run();
@@ -663,14 +664,14 @@ public class MainUtil {
         HashMap<UUID, Integer> rating;
         if (plot.getSettings().ratings != null) {
             rating = plot.getSettings().ratings;
-        } else if (Settings.ENABLED_COMPONENTS.RATING_CACHE) {
+        } else if (Settings.Enabled_Components.RATING_CACHE) {
             rating = new HashMap<>();
         } else {
             rating = DBFunc.getRatings(plot);
         }
         int size = 1;
-        if (!Settings.RATINGS.CATEGORIES.isEmpty()) {
-            size = Math.max(1, Settings.RATINGS.CATEGORIES.size());
+        if (!Settings.Ratings.CATEGORIES.isEmpty()) {
+            size = Math.max(1, Settings.Ratings.CATEGORIES.size());
         }
         double[] ratings = new double[size];
         if (rating == null || rating.isEmpty()) {
@@ -678,10 +679,10 @@ public class MainUtil {
         }
         for (Entry<UUID, Integer> entry : rating.entrySet()) {
             int current = entry.getValue();
-            if (Settings.RATINGS.CATEGORIES.isEmpty()) {
+            if (Settings.Ratings.CATEGORIES.isEmpty()) {
                 ratings[0] += current;
             } else {
-                for (int i = 0; i < Settings.RATINGS.CATEGORIES.size(); i++) {
+                for (int i = 0; i < Settings.Ratings.CATEGORIES.size(); i++) {
                     ratings[i] += current % 10 - 1;
                     current /= 10;
                 }
@@ -739,7 +740,7 @@ public class MainUtil {
         String members = getPlayerList(plot.getMembers());
         String denied = getPlayerList(plot.getDenied());
         String expires = C.UNKNOWN.s();
-        if (Settings.ENABLED_COMPONENTS.PLOT_EXPIRY) {
+        if (Settings.Enabled_Components.PLOT_EXPIRY) {
             if (plot.hasOwner()) {
                 Optional<?> keep = plot.getFlag(Flags.KEEP);
                 if (keep.isPresent()) {
@@ -803,11 +804,11 @@ public class MainUtil {
                 @Override
                 public void run() {
                     int max = 10;
-                    if (Settings.RATINGS.CATEGORIES != null && !Settings.RATINGS.CATEGORIES.isEmpty()) {
+                    if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES.isEmpty()) {
                         max = 8;
                     }
                     String info;
-                    if (full && Settings.RATINGS.CATEGORIES != null && Settings.RATINGS.CATEGORIES.size() > 1) {
+                    if (full && Settings.Ratings.CATEGORIES != null && Settings.Ratings.CATEGORIES.size() > 1) {
                         double[] ratings = MainUtil.getAverageRatings(plot);
                         for (double v : ratings) {
 
@@ -816,7 +817,7 @@ public class MainUtil {
                         String rating = "";
                         String prefix = "";
                         for (int i = 0; i < ratings.length; i++) {
-                            rating += prefix + Settings.RATINGS.CATEGORIES.get(i) + '=' + String.format("%.1f", ratings[i]);
+                            rating += prefix + Settings.Ratings.CATEGORIES.get(i) + '=' + String.format("%.1f", ratings[i]);
                             prefix = ",";
                         }
                         info = newInfo.replaceAll("%rating%", rating);

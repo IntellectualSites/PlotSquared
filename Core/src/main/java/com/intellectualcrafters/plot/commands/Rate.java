@@ -62,7 +62,7 @@ public class Rate extends SubCommand {
                 });
                 UUID uuid = player.getUUID();
                 for (Plot p : plots) {
-                    if ((!Settings.DONE.REQUIRED_FOR_RATINGS || p.hasFlag(Flags.DONE)) && p.isBasePlot() && (p.hasRatings() || !p.getRatings()
+                    if ((!Settings.Done.REQUIRED_FOR_RATINGS || p.hasFlag(Flags.DONE)) && p.isBasePlot() && (p.hasRatings() || !p.getRatings()
                             .containsKey(uuid)) && !p.isAdded(uuid)) {
                         p.teleportPlayer(player);
                         MainUtil.sendMessage(player, C.RATE_THIS);
@@ -85,11 +85,11 @@ public class Rate extends SubCommand {
             sendMessage(player, C.RATING_NOT_YOUR_OWN);
             return false;
         }
-        if (Settings.DONE.REQUIRED_FOR_RATINGS && !plot.hasFlag(Flags.DONE)) {
+        if (Settings.Done.REQUIRED_FOR_RATINGS && !plot.hasFlag(Flags.DONE)) {
             sendMessage(player, C.RATING_NOT_DONE);
             return false;
         }
-        if (Settings.RATINGS.CATEGORIES != null && !Settings.RATINGS.CATEGORIES.isEmpty()) {
+        if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES.isEmpty()) {
             final Runnable run = new Runnable() {
                 @Override
                 public void run() {
@@ -99,13 +99,13 @@ public class Rate extends SubCommand {
                     }
                     final MutableInt index = new MutableInt(0);
                     final MutableInt rating = new MutableInt(0);
-                    String title = Settings.RATINGS.CATEGORIES.get(0);
+                    String title = Settings.Ratings.CATEGORIES.get(0);
                     PlotInventory inventory = new PlotInventory(player, 1, title) {
                         @Override
                         public boolean onClick(int i) {
                             rating.add((i + 1) * Math.pow(10, index.getValue()));
                             index.increment();
-                            if (index.getValue() >= Settings.RATINGS.CATEGORIES.size()) {
+                            if (index.getValue() >= Settings.Ratings.CATEGORIES.size()) {
                                 int rV = rating.getValue();
                                 Rating result = EventUtil.manager.callRating(this.player, plot, new Rating(rV));
                                 plot.addRating(this.player.getUUID(), result);
@@ -118,7 +118,7 @@ public class Rate extends SubCommand {
                                 }
                                 return false;
                             }
-                            setTitle(Settings.RATINGS.CATEGORIES.get(index.getValue()));
+                            setTitle(Settings.Ratings.CATEGORIES.get(index.getValue()));
                             return true;
                         }
                     };
@@ -135,7 +135,7 @@ public class Rate extends SubCommand {
                 }
             };
             if (plot.getSettings().ratings == null) {
-                if (!Settings.ENABLED_COMPONENTS.RATING_CACHE) {
+                if (!Settings.Enabled_Components.RATING_CACHE) {
                     TaskManager.runTaskAsync(new Runnable() {
                         @Override
                         public void run() {
@@ -180,7 +180,7 @@ public class Rate extends SubCommand {
             }
         };
         if (plot.getSettings().ratings == null) {
-            if (!Settings.ENABLED_COMPONENTS.RATING_CACHE) {
+            if (!Settings.Enabled_Components.RATING_CACHE) {
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {

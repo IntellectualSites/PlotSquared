@@ -1,5 +1,7 @@
 package com.plotsquared.bukkit.listeners;
 
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
@@ -8,8 +10,6 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 import com.intellectualcrafters.plot.util.TaskManager;
-import java.lang.reflect.Method;
-import java.util.HashSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -28,8 +28,8 @@ import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
-
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+import java.lang.reflect.Method;
+import java.util.HashSet;
 
 public class ChunkListener implements Listener {
 
@@ -39,7 +39,7 @@ public class ChunkListener implements Listener {
 
     
     public ChunkListener() {
-        if (Settings.CHUNK_PROCESSOR.AUTO_TRIM) {
+        if (Settings.Chunk_Processor.AUTO_TRIM) {
             try {
                 RefClass classChunk = getRefClass("{nms}.Chunk");
                 RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
@@ -47,10 +47,10 @@ public class ChunkListener implements Listener {
                 this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
             } catch (Throwable ignored) {
                 PS.debug("PlotSquared/Server not compatible for chunk processor trim/gc");
-                Settings.CHUNK_PROCESSOR.AUTO_TRIM = false;
+                Settings.Chunk_Processor.AUTO_TRIM = false;
             }
         }
-        if (!Settings.CHUNK_PROCESSOR.AUTO_TRIM) {
+        if (!Settings.Chunk_Processor.AUTO_TRIM) {
             return;
         }
         for (World world : Bukkit.getWorlds()) {
@@ -139,7 +139,7 @@ public class ChunkListener implements Listener {
 
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
-        if (Settings.CHUNK_PROCESSOR.AUTO_TRIM) {
+        if (Settings.Chunk_Processor.AUTO_TRIM) {
             Chunk chunk = event.getChunk();
             String world = chunk.getWorld().getName();
             if (PS.get().hasPlotArea(world)) {
@@ -171,7 +171,7 @@ public class ChunkListener implements Listener {
             return;
         }
         Entity[] entities = chunk.getEntities();
-        if (entities.length > Settings.CHUNK_PROCESSOR.MAX_ENTITIES) {
+        if (entities.length > Settings.Chunk_Processor.MAX_ENTITIES) {
             event.getEntity().remove();
             event.setCancelled(true);
             this.lastChunk = chunk;
@@ -182,7 +182,7 @@ public class ChunkListener implements Listener {
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPhysics(BlockPhysicsEvent event) {
-        if (Settings.CHUNK_PROCESSOR.DISABLE_PHYSICS) {
+        if (Settings.Chunk_Processor.DISABLE_PHYSICS) {
             event.setCancelled(true);
         }
     }
@@ -200,7 +200,7 @@ public class ChunkListener implements Listener {
             return;
         }
         Entity[] entities = chunk.getEntities();
-        if (entities.length > Settings.CHUNK_PROCESSOR.MAX_ENTITIES) {
+        if (entities.length > Settings.Chunk_Processor.MAX_ENTITIES) {
             event.getEntity().remove();
             event.setCancelled(true);
             this.lastChunk = chunk;
@@ -254,7 +254,7 @@ public class ChunkListener implements Listener {
         }
         Entity[] entities = chunk.getEntities();
         BlockState[] tiles = chunk.getTileEntities();
-        if (entities.length > Settings.CHUNK_PROCESSOR.MAX_ENTITIES) {
+        if (entities.length > Settings.Chunk_Processor.MAX_ENTITIES) {
             for (Entity ent : entities) {
                 if (!(ent instanceof Player)) {
                     ent.remove();
@@ -262,7 +262,7 @@ public class ChunkListener implements Listener {
             }
             PS.debug("[PlotSquared] &a detected unsafe chunk and processed: " + (chunk.getX() << 4) + "," + (chunk.getX() << 4));
         }
-        if (tiles.length > Settings.CHUNK_PROCESSOR.MAX_TILES) {
+        if (tiles.length > Settings.Chunk_Processor.MAX_TILES) {
             if (unload) {
                 PS.debug("[PlotSquared] &c detected unsafe chunk: " + (chunk.getX() << 4) + "," + (chunk.getX() << 4));
                 cleanChunk(chunk);

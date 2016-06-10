@@ -87,7 +87,7 @@ public abstract class SchematicHandler {
                 }
                 final String directory;
                 if (outputDir == null) {
-                    directory = Settings.PATHS.SCHEMATICS;
+                    directory = Settings.Paths.SCHEMATICS;
                 } else {
                     directory = outputDir.getAbsolutePath();
                 }
@@ -451,14 +451,14 @@ public abstract class SchematicHandler {
      * @return schematic if found, else null
      */
     public Schematic getSchematic(String name) {
-        File parent = MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.PATHS.SCHEMATICS);
+        File parent = MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS);
         if (!parent.exists()) {
             if (!parent.mkdir()) {
                 throw new RuntimeException("Could not create schematic parent directory");
             }
         }
         File file = MainUtil.getFile(PS.get().IMP.getDirectory(),
-                Settings.PATHS.SCHEMATICS + File.separator + name + (name.endsWith(".schematic") ? "" : ".schematic"));
+                Settings.Paths.SCHEMATICS + File.separator + name + (name.endsWith(".schematic") ? "" : ".schematic"));
         return getSchematic(file);
     }
     
@@ -512,7 +512,7 @@ public abstract class SchematicHandler {
     public List<String> getSaves(UUID uuid) {
         StringBuilder rawJSON = new StringBuilder();
         try {
-            String website = Settings.WEB.URL + "list.php?" + uuid.toString();
+            String website = Settings.Web.URL + "list.php?" + uuid.toString();
             URL url = new URL(website);
             URLConnection connection = new URL(url.toString()).openConnection();
             connection.setRequestProperty("User-Agent", "Mozilla/5.0");

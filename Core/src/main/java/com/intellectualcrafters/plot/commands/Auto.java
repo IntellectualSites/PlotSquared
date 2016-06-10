@@ -86,11 +86,11 @@ public class Auto extends SubCommand {
                 // return false;
             }
         }
-        if (size_x * size_z > Settings.CLAIM.MAX_AUTO_AREA) {
-            MainUtil.sendMessage(player, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.CLAIM.MAX_AUTO_AREA + "");
+        if (size_x * size_z > Settings.Claim.MAX_AUTO_AREA) {
+            MainUtil.sendMessage(player, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.Claim.MAX_AUTO_AREA + "");
             return false;
         }
-        int currentPlots = Settings.LIMIT.GLOBAL ? player.getPlotCount() : player.getPlotCount(plotarea.worldname);
+        int currentPlots = Settings.Limit.GLOBAL ? player.getPlotCount() : player.getPlotCount(plotarea.worldname);
         int diff = currentPlots - player.getAllowedPlots();
         if (diff + size_x * size_z > 0) {
             if (diff < 0) {

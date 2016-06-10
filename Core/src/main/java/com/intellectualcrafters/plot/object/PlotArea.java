@@ -491,7 +491,7 @@ public abstract class PlotArea {
     }
     
     public int getPlotCount(UUID uuid) {
-        if (!Settings.DONE.COUNTS_TOWARDS_LIMIT) {
+        if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
             int count = 0;
             for (Plot plot : getPlotsAbs(uuid)) {
                 if (!plot.hasFlag(Flags.DONE)) {

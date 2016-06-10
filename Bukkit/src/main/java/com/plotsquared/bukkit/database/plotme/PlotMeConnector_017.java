@@ -67,7 +67,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
             return null;
         }
         boolean checkUUID = DBFunc.hasColumn(resultSet, "ownerID");
-        boolean merge = !this.plugin.equals("plotme") && Settings.ENABLED_COMPONENTS.PLOTME_CONVERTER;
+        boolean merge = !this.plugin.equals("plotme") && Settings.Enabled_Components.PLOTME_CONVERTER;
         while (resultSet.next()) {
             int key = resultSet.getInt("plot_id");
             PlotId id = new PlotId(resultSet.getInt("plotX"), resultSet.getInt("plotZ"));

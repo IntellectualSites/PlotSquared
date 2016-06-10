@@ -71,12 +71,6 @@ import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.sk89q.worldedit.WorldEdit;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -92,6 +86,13 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 
 public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
@@ -135,7 +136,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     public void log(String message) {
         try {
             message = C.color(message);
-            if (!Settings.CHAT.CONSOLE_COLOR) {
+            if (!Settings.Chat.CONSOLE_COLOR) {
                 message = ChatColor.stripColor(message);
             }
             this.getServer().getConsoleSender().sendMessage(message);
@@ -241,7 +242,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                     case MINECART_MOB_SPAWNER:
                                     case MINECART_TNT:
                                     case BOAT: {
-                                        if (!Settings.ENABLED_COMPONENTS.KILL_ROAD_VEHICLES) {
+                                        if (!Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
                                             continue;
                                         }
                                         com.intellectualcrafters.plot.object.Location location = BukkitUtil.getLocation(entity.getLocation());
@@ -308,7 +309,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                     case ZOMBIE:
                                     case SHULKER:
                                     default:
-                                        if (!Settings.ENABLED_COMPONENTS.KILL_ROAD_MOBS) {
+                                        if (!Settings.Enabled_Components.KILL_ROAD_MOBS) {
                                             continue;
                                         }
                                         Location location = entity.getLocation();
@@ -660,7 +661,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override
     public ChatManager<?> initChatManager() {
-        if (Settings.CHAT.INTERACTIVE) {
+        if (Settings.Chat.INTERACTIVE) {
             return new BukkitChatManager();
         } else {
             return new BukkitPlainChatManager();

@@ -64,7 +64,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         } else if (checkUUID2) {
             column = "ownerId";
         }
-        boolean merge = !"plotme".equalsIgnoreCase(this.plugin) && Settings.ENABLED_COMPONENTS.PLOTME_CONVERTER;
+        boolean merge = !"plotme".equalsIgnoreCase(this.plugin) && Settings.Enabled_Components.PLOTME_CONVERTER;
         int missing = 0;
         while (resultSet.next()) {
             PlotId id = new PlotId(resultSet.getInt("idX"), resultSet.getInt("idZ"));

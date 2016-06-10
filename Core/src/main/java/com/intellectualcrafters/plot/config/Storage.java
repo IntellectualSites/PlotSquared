@@ -4,8 +4,18 @@ import java.io.File;
 
 public class Storage extends Config {
 
+    public static final String PREFIX = "";
+
+    public static void save(File file) {
+        save(file, Storage.class);
+    }
+
+    public static void load(File file) {
+        load(file, Storage.class);
+    }
+
     @Comment("MySQL section")
-    public static final class MYSQL {
+    public static final class MySQL {
         @Comment("Should MySQL be used?")
         public static boolean USE = false;
         public static String HOST = "localhost";
@@ -16,21 +26,11 @@ public class Storage extends Config {
     }
 
     @Comment("SQLite section")
-    public static final class SQLITE {
+    public static final class SQLite {
         @Comment("Should SQLite be used?")
         public static boolean USE = true;
         @Comment("The file to use")
         public static String DB = "storage";
-    }
-
-    public static final String PREFIX = "";
-
-    public static void save(File file) {
-        save(file, Storage.class);
-    }
-
-    public static void load(File file) {
-        load(file, Storage.class);
     }
 
 }

@@ -26,6 +26,7 @@ public class Config {
      * Get the value for a node<br>
      *     Probably throws some error if you try to get a non existent key
      * @param key
+     * @param root
      * @param <T>
      * @return
      */
@@ -51,6 +52,7 @@ public class Config {
      *     Probably throws some error if you supply non existing keys or invalid values
      * @param key config node
      * @param value value
+     * @param root
      *
      */
     public static void set(String key, Object value, Class root) {
@@ -91,6 +93,7 @@ public class Config {
     /**
      * Set all values in the file (load first to avoid overwriting)
      * @param file
+     * @param root
      */
     public static void save(File file, Class root) {
         try {
@@ -108,7 +111,7 @@ public class Config {
     }
 
     /**
-     * Get the static fields in a section
+     * Get the static fields in a section.
      * @param clazz
      * @return
      */
@@ -150,7 +153,7 @@ public class Config {
 
     private static void save(PrintWriter writer, Class clazz, Object instance, int indent) {
         try {
-            String CTRF = System.lineSeparator();
+            String lineSeparator = System.lineSeparator();
             String spacing = StringMan.repeat(" ", indent);
             for (Field field : clazz.getFields()) {
                 if (field.getAnnotation(Ignore.class) != null) {
@@ -159,7 +162,7 @@ public class Config {
                 Comment comment = field.getAnnotation(Comment.class);
                 if (comment != null) {
                     for (String commentLine : comment.value()) {
-                        writer.write(spacing + "# " + commentLine + CTRF);
+                        writer.write(spacing + "# " + commentLine + lineSeparator);
                     }
                 }
                 Create create = field.getAnnotation(Create.class);
@@ -177,7 +180,7 @@ public class Config {
                     }
                     continue;
                 } else {
-                    writer.write(spacing + toNodeName(field.getName() + ": ") + toYamlString(field.get(instance), spacing) + CTRF);
+                    writer.write(spacing + toNodeName(field.getName() + ": ") + toYamlString(field.get(instance), spacing) + lineSeparator);
                 }
             }
             for (Class<?> current : clazz.getClasses()) {
@@ -185,15 +188,15 @@ public class Config {
                     continue;
                 }
                 if (indent == 0) {
-                    writer.write(CTRF);
+                    writer.write(lineSeparator);
                 }
                 Comment comment = current.getAnnotation(Comment.class);
                 if (comment != null) {
                     for (String commentLine : comment.value()) {
-                        writer.write(spacing + "# " + commentLine + CTRF);
+                        writer.write(spacing + "# " + commentLine + lineSeparator);
                     }
                 }
-                writer.write(spacing + toNodeName(current.getSimpleName()) + ":" + CTRF);
+                writer.write(spacing + toNodeName(current.getSimpleName()) + ":" + lineSeparator);
                 BlockName blockNames = current.getAnnotation(BlockName.class);
                 if (blockNames != null) {
                     Field instanceField = clazz.getDeclaredField(toFieldName(current.getSimpleName()));
@@ -209,7 +212,7 @@ public class Config {
                     // Save each instance
                     for (Map.Entry<String, Object> entry: ((Map<String, Object>) value.getRaw()).entrySet()) {
                         String key = entry.getKey();
-                        writer.write(spacing + "  " + toNodeName(key) + ":" + CTRF);
+                        writer.write(spacing + "  " + toNodeName(key) + ":" + lineSeparator);
                         save(writer, current, entry.getValue(), indent + 4);
                     }
                     continue;
@@ -223,8 +226,9 @@ public class Config {
     }
 
     /**
-     * Get the field for a specific config node
+     * Get the field for a specific config node.
      * @param split the node (split by period)
+     * @param root
      * @return
      */
     private static Field getField(String[] split, Class root) {
@@ -254,8 +258,9 @@ public class Config {
     }
 
     /**
-     * Get the instance for a specific config node
+     * Get the instance for a specific config node.
      * @param split the node (split by period)
+     * @param root
      * @return The instance or null
      */
     private static Object getInstance(String[] split, Class root) {
@@ -270,7 +275,7 @@ public class Config {
                         Class found = null;
                         Class<?>[] classes = clazz.getDeclaredClasses();
                         for (Class current : classes) {
-                            if (StringMan.isEqual(current.getSimpleName(), toFieldName(split[0]))) {
+                            if (current.getSimpleName().equalsIgnoreCase(toFieldName(split[0]))) {
                                 found = current;
                                 break;
                             }
@@ -302,7 +307,7 @@ public class Config {
                             clazz = found;
                             split = Arrays.copyOfRange(split, 2, split.length);
                             continue;
-                        } catch (NoSuchFieldException ignore) {}
+                        } catch (NoSuchFieldException ignore) { }
                         if (found != null) {
                             split = Arrays.copyOfRange(split, 1, split.length);
                             clazz = found;
@@ -319,7 +324,7 @@ public class Config {
     }
 
     /**
-     * Translate a node to a java field name
+     * Translate a node to a java field name.
      * @param node
      * @return
      */
@@ -328,7 +333,7 @@ public class Config {
     }
 
     /**
-     * Translate a field to a config node
+     * Translate a field to a config node.
      * @param field
      * @return
      */
@@ -337,7 +342,7 @@ public class Config {
     }
 
     /**
-     * Set some field to be accesible
+     * Set some field to be accessible.
      * @param field
      * @throws NoSuchFieldException
      * @throws IllegalAccessException
@@ -350,21 +355,21 @@ public class Config {
     }
 
     /**
-     * Indicates that a field should be instantiated / created
+     * Indicates that a field should be instantiated / created.
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD})
     public  @interface Create {}
 
     /**
-     * Indicates that a field cannot be modified
+     * Indicates that a field cannot be modified.
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD})
     public @interface Final {}
 
     /**
-     * Creates a comment
+     * Creates a comment.
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD,ElementType.TYPE})
@@ -373,7 +378,7 @@ public class Config {
     }
 
     /**
-     * The names of any default blocks
+     * The names of any default blocks.
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD,ElementType.TYPE})
@@ -382,7 +387,7 @@ public class Config {
     }
 
     /**
-     * Any field or class with is not part of the config
+     * Any field or class with is not part of the config.
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD,ElementType.TYPE})

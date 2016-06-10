@@ -30,7 +30,7 @@ public class Claim extends SubCommand {
         if (plot == null) {
             return sendMessage(player, C.NOT_IN_PLOT);
         }
-        int currentPlots = Settings.LIMIT.GLOBAL ? player.getPlotCount() : player.getPlotCount(loc.getWorld());
+        int currentPlots = Settings.Limit.GLOBAL ? player.getPlotCount() : player.getPlotCount(loc.getWorld());
         int grants = 0;
         if (currentPlots >= player.getAllowedPlots()) {
             if (player.hasPersistentMeta("grantedPlots")) {

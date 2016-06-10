@@ -2,12 +2,13 @@ package com.intellectualcrafters.plot.util.expiry;
 
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.PlotArea;
+
 import java.util.concurrent.TimeUnit;
 
 public class ExpiryTask {
-    private final Settings.AUTO_CLEAR settings;
+    private final Settings.Auto_Clear settings;
 
-    public ExpiryTask(Settings.AUTO_CLEAR settings) {
+    public ExpiryTask(Settings.Auto_Clear settings) {
         this.settings = settings;
     }
 

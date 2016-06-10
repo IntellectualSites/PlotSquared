@@ -52,12 +52,6 @@ import com.plotsquared.sponge.util.block.SlowQueue;
 import com.plotsquared.sponge.uuid.SpongeLowerOfflineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeOnlineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeUUIDHandler;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
@@ -74,7 +68,14 @@ import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gen.GenerationPopulator;
 import org.spongepowered.api.world.gen.WorldGenerator;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
+
+import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Plugin(id = "plotsquared", name = "PlotSquared", description = "Easy, yet powerful Plot World generation and management.",
         url = "https://github.com/IntellectualSites/PlotSquared", version = "3.3.3")
@@ -134,7 +135,7 @@ public class SpongeMain implements IPlotMain {
     @Override
     public void log(String message) {
         message = C.format(message, C.replacements);
-        if (!Settings.CHAT.CONSOLE_COLOR) {
+        if (!Settings.Chat.CONSOLE_COLOR) {
             message = message.replaceAll('\u00a7' + "[a-z|0-9]", "");
         }
         if (this.server == null) {

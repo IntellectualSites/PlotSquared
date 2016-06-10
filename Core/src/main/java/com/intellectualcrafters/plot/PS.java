@@ -10,9 +10,7 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.config.Storage;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.Database;
-import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.SQLManager;
-import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridUtils;
@@ -52,6 +50,7 @@ import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.util.expiry.ExpiryTask;
 import com.plotsquared.listener.WESubscriber;
 import com.sk89q.worldedit.WorldEdit;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -156,21 +155,21 @@ public class PS {
             }
             this.TASK = this.IMP.getTaskManager();
             setupConfigs();
-            this.translationFile = MainUtil.getFile(this.IMP.getDirectory(), Settings.PATHS.TRANSLATIONS + File.separator + "PlotSquared.use_THIS.yml");
+            this.translationFile = MainUtil.getFile(this.IMP.getDirectory(), Settings.Paths.TRANSLATIONS + File.separator + "PlotSquared.use_THIS.yml");
             C.load(this.translationFile);
 
             // Database
-            if (Settings.ENABLED_COMPONENTS.DATABASE) {
+            if (Settings.Enabled_Components.DATABASE) {
                 setupDatabase();
             }
             // Comments
             CommentManager.registerDefaultInboxes();
             // Kill entities
-            if (Settings.ENABLED_COMPONENTS.KILL_ROAD_MOBS || Settings.ENABLED_COMPONENTS.KILL_ROAD_VEHICLES) {
+            if (Settings.Enabled_Components.KILL_ROAD_MOBS || Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
                 this.IMP.runEntityTask();
             }
             // WorldEdit
-            if (Settings.ENABLED_COMPONENTS.WORLDEDIT_RESTRICTIONS) {
+            if (Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
                 try {
                     if (this.IMP.initWorldEdit()) {
                         this.worldedit = WorldEdit.getInstance();
@@ -183,10 +182,10 @@ public class PS {
                 }
             }
             // Commands
-            if (Settings.ENABLED_COMPONENTS.COMMANDS) {
+            if (Settings.Enabled_Components.COMMANDS) {
                 this.IMP.registerCommands();
             }
-            if (Settings.ENABLED_COMPONENTS.EVENTS) {
+            if (Settings.Enabled_Components.EVENTS) {
                 this.IMP.registerPlayerEvents();
                 this.IMP.registerInventoryEvents();
                 this.IMP.registerPlotPlusEvents();
@@ -194,17 +193,17 @@ public class PS {
             }
             // Required
             this.IMP.registerWorldEvents();
-            if (Settings.ENABLED_COMPONENTS.METRICS) {
+            if (Settings.Enabled_Components.METRICS) {
                 this.IMP.startMetrics();
             } else {
                 PS.log(C.CONSOLE_PLEASE_ENABLE_METRICS);
             }
-            if (Settings.ENABLED_COMPONENTS.CHUNK_PROCESSOR) {
+            if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
                 this.IMP.registerChunkProcessor();
             }
             // create UUIDWrapper
             UUIDHandler.implementation = this.IMP.initUUIDHandler();
-            if (Settings.ENABLED_COMPONENTS.UUID_CACHE) {
+            if (Settings.Enabled_Components.UUID_CACHE) {
                 startUuidCatching();
             } else {
                 // Start these separately
@@ -233,7 +232,7 @@ public class PS {
             // Chat
             ChatManager.manager = this.IMP.initChatManager();
             // Economy
-            if (Settings.ENABLED_COMPONENTS.ECONOMY) {
+            if (Settings.Enabled_Components.ECONOMY) {
                 TaskManager.runTask(new Runnable() {
                     @Override
                     public void run() {
@@ -243,7 +242,7 @@ public class PS {
             }
 
             // Check for updates
-            if (Settings.ENABLED_COMPONENTS.UPDATER) {
+            if (Settings.Enabled_Components.UPDATER) {
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
@@ -293,13 +292,13 @@ public class PS {
             }
 
             // Copy files
-            copyFile("automerge.js", Settings.PATHS.SCRIPTS);
-            copyFile("town.template", Settings.PATHS.TEMPLATES);
-            copyFile("skyblock.template", Settings.PATHS.TEMPLATES);
-            copyFile("german.yml", Settings.PATHS.TRANSLATIONS);
-            copyFile("s_chinese_unescaped.yml", Settings.PATHS.TRANSLATIONS);
-            copyFile("s_chinese.yml", Settings.PATHS.TRANSLATIONS);
-            copyFile("italian.yml", Settings.PATHS.TRANSLATIONS);
+            copyFile("automerge.js", Settings.Paths.SCRIPTS);
+            copyFile("town.template", Settings.Paths.TEMPLATES);
+            copyFile("skyblock.template", Settings.Paths.TEMPLATES);
+            copyFile("german.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("s_chinese_unescaped.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("s_chinese.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("italian.yml", Settings.Paths.TRANSLATIONS);
             showDebug();
         } catch (Throwable e) {
             e.printStackTrace();
@@ -384,10 +383,10 @@ public class PS {
     }
 
     private void startExpiryTasks() {
-        if (Settings.ENABLED_COMPONENTS.PLOT_EXPIRY) {
+        if (Settings.Enabled_Components.PLOT_EXPIRY) {
             ExpireManager.IMP = new ExpireManager();
             ExpireManager.IMP.runAutomatedTask();
-            for (Settings.AUTO_CLEAR settings : Settings.AUTO_CLEAR.getInstances()) {
+            for (Settings.Auto_Clear settings : Settings.AUTO_CLEAR.getInstances()) {
                 ExpiryTask task = new ExpiryTask(settings);
                 ExpireManager.IMP.addTask(task);
             }
@@ -395,13 +394,13 @@ public class PS {
     }
 
     private void startPlotMeConversion() {
-        if (Settings.ENABLED_COMPONENTS.PLOTME_CONVERTER || Settings.PLOTME.CACHE_UUDS) {
+        if (Settings.Enabled_Components.PLOTME_CONVERTER || Settings.PlotMe.CACHE_UUDS) {
             TaskManager.runTaskLater(new Runnable() {
                 @Override
                 public void run() {
                     if (PS.this.IMP.initPlotMeConverter()) {
                         PS.log("&c=== IMPORTANT ===");
-                        PS.log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
+                        PS.log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PlotMe!");
                         PS.log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
                         PS.log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
                         PS.log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the "
@@ -1816,11 +1815,11 @@ public class PS {
     public void setupDatabase() {
         try {
             if (DBFunc.dbManager == null) {
-                if (Storage.MYSQL.USE) {
-                    this.database = new MySQL(Storage.MYSQL.HOST, Storage.MYSQL.PORT, Storage.MYSQL.DATABASE, Storage.MYSQL.USER, Storage.MYSQL.PASSWORD);
-                } else if (Storage.SQLITE.USE) {
-                    File file = MainUtil.getFile(IMP.getDirectory(), Storage.SQLITE.DB + ".db");
-                    this.database = new SQLite(file);
+                if (Storage.MySQL.USE) {
+                    this.database = new com.intellectualcrafters.plot.database.MySQL(Storage.MySQL.HOST, Storage.MySQL.PORT, Storage.MySQL.DATABASE, Storage.MySQL.USER, Storage.MySQL.PASSWORD);
+                } else if (Storage.SQLite.USE) {
+                    File file = MainUtil.getFile(IMP.getDirectory(), Storage.SQLite.DB + ".db");
+                    this.database = new com.intellectualcrafters.plot.database.SQLite(file);
                 } else {
                     PS.log(C.PREFIX + "&cNo storage type is set!");
                     this.IMP.disable();
@@ -1832,9 +1831,9 @@ public class PS {
             this.clusters_tmp = DBFunc.getClusters();
         } catch (ClassNotFoundException | SQLException e) {
             PS.log(C.PREFIX + "&cFailed to open DATABASE connection. The plugin will disable itself.");
-            if (Storage.MYSQL.USE) {
+            if (Storage.MySQL.USE) {
                 PS.log("$4MYSQL");
-            } else if (Storage.SQLITE.USE) {
+            } else if (Storage.SQLite.USE) {
                 PS.log("$4SQLITE");
             }
             PS.log("&d==== Here is an ugly stacktrace, if you are interested in those things ===");
@@ -1906,7 +1905,7 @@ public class PS {
             PS.log("Failed to save settings.yml");
         }
         try {
-            this.styleFile = MainUtil.getFile(IMP.getDirectory(), Settings.PATHS.TRANSLATIONS +File.separator + "style.yml" );
+            this.styleFile = MainUtil.getFile(IMP.getDirectory(), Settings.Paths.TRANSLATIONS +File.separator + "style.yml" );
             if (!this.styleFile.exists()) {
                 if (!this.styleFile.getParentFile().exists()) {
                     this.styleFile.getParentFile().mkdirs();
@@ -1963,7 +1962,7 @@ public class PS {
      */
     private void showDebug() {
         if (Settings.DEBUG) {
-            Map<String, Object> components = Settings.getFields(Settings.ENABLED_COMPONENTS.class);
+            Map<String, Object> components = Settings.getFields(Settings.Enabled_Components.class);
             for (Entry<String, Object> component : components.entrySet()) {
                 PS.log(C.PREFIX + String.format("&cKey: &6%s&c, Value: &6%s", component.getKey(), component.getValue()));
             }
