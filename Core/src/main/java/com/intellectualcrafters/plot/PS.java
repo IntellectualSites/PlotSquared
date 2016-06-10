@@ -1853,7 +1853,7 @@ public class PS {
             String[] split = lastVersionString.split("\\.");
             this.lastVersion = new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])};
         }
-        if (checkVersion(new int[]{3,4,0}, lastVersion)) {
+        if (lastVersion != null && checkVersion(new int[]{3,4,0}, lastVersion)) {
             Settings.convertLegacy(configFile);
             if (config.contains("worlds")) {
                 ConfigurationSection worldSection = config.getConfigurationSection("worlds");
