@@ -7,7 +7,7 @@ class EntityBaseStats {
     float fall;
     short fire;
     int age;
-    double v_z;
-    double v_y;
-    double v_x;
+    double vZ;
+    double vY;
+    double vX;
 }

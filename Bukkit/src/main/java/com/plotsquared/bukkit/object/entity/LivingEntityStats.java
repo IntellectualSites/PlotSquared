@@ -14,9 +14,9 @@ class LivingEntityStats {
     short air;
     boolean persistent;
     boolean leashed;
-    short leash_x;
-    short leash_y;
-    short leash_z;
+    short leashX;
+    short leashY;
+    short leashZ;
     boolean equipped;
     ItemStack mainHand;
     ItemStack helmet;
