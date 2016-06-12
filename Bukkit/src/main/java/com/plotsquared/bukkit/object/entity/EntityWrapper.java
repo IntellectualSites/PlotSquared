@@ -80,14 +80,16 @@ public class EntityWrapper {
         this.base.fire = (short) entity.getFireTicks();
         this.base.age = entity.getTicksLived();
         Vector velocity = entity.getVelocity();
-        this.base.v_x = velocity.getX();
-        this.base.v_y = velocity.getY();
-        this.base.v_z = velocity.getZ();
+        this.base.vX = velocity.getX();
+        this.base.vY = velocity.getY();
+        this.base.vZ = velocity.getZ();
         if (depth == 1) {
             return;
         }
-        if (!entity.hasGravity()) {
-            this.noGravity = true;
+        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 10, 0) || entity instanceof ArmorStand) {
+            if (!entity.hasGravity()) {
+                this.noGravity = true;
+            }
         }
         switch (entity.getType()) {
             case ARROW:
@@ -202,6 +204,7 @@ public class EntityWrapper {
             case COW:
             case MUSHROOM_COW:
             case PIG:
+            case POLAR_BEAR:
                 storeAgeable((Ageable) entity);
                 storeLiving((LivingEntity) entity);
                 return;
@@ -260,7 +263,7 @@ public class EntityWrapper {
                     this.stand.arms = true;
                 }
                 if (!stand.hasBasePlate()) {
-                    this.stand.noplate = true;
+                    this.stand.noPlate = true;
                 }
                 if (!stand.isVisible()) {
                     this.stand.invisible = true;
@@ -342,8 +345,8 @@ public class EntityWrapper {
         if (this.lived.leashed) {
             // TODO leashes
             //            World world = entity.getWorld();
-            //            Entity leash = world.spawnEntity(new Location(world, Math.floor(x) + lived.leash_x, Math.floor(y) + lived.leash_y, Math
-            // .floor(z) + lived.leash_z), EntityType.LEASH_HITCH);
+            //            Entity leash = world.spawnEntity(new Location(world, Math.floor(x) + lived.leashX, Math.floor(y) + lived.leashY, Math
+            // .floor(z) + lived.leashZ), EntityType.LEASH_HITCH);
             //            entity.setLeashHolder(leash);
         }
     }
@@ -378,9 +381,9 @@ public class EntityWrapper {
         this.lived.leashed = lived.isLeashed();
         if (this.lived.leashed) {
             Location location = lived.getLeashHolder().getLocation();
-            this.lived.leash_x = (short) (this.x - location.getBlockX());
-            this.lived.leash_y = (short) (this.y - location.getBlockY());
-            this.lived.leash_z = (short) (this.z - location.getBlockZ());
+            this.lived.leashX = (short) (this.x - location.getBlockX());
+            this.lived.leashY = (short) (this.y - location.getBlockY());
+            this.lived.leashZ = (short) (this.z - location.getBlockZ());
         }
         EntityEquipment equipment = lived.getEquipment();
         this.lived.equipped = equipment != null;
@@ -435,8 +438,8 @@ public class EntityWrapper {
         this.tamed.tamed = tamed.isTamed();
     }
 
-    public Entity spawn(World world, int x_offset, int z_offset) {
-        Location location = new Location(world, this.x + x_offset, this.y, this.z + z_offset);
+    public Entity spawn(World world, int xOffset, int zOffset) {
+        Location location = new Location(world, this.x + xOffset, this.y, this.z + zOffset);
         location.setYaw(this.yaw);
         location.setPitch(this.pitch);
         if (!this.type.isSpawnable()) {
@@ -464,7 +467,7 @@ public class EntityWrapper {
         }
         if (this.base.passenger != null) {
             try {
-                entity.setPassenger(this.base.passenger.spawn(world, x_offset, z_offset));
+                entity.setPassenger(this.base.passenger.spawn(world, xOffset, zOffset));
             } catch (Exception ignored) { }
         }
         if (this.base.fall != 0) {
@@ -476,12 +479,14 @@ public class EntityWrapper {
         if (this.base.age != 0) {
             entity.setTicksLived(this.base.age);
         }
-        entity.setVelocity(new Vector(this.base.v_x, this.base.v_y, this.base.v_z));
+        entity.setVelocity(new Vector(this.base.vX, this.base.vY, this.base.vZ));
         if (this.depth == 1) {
             return entity;
         }
-        if (this.noGravity) {
-            entity.setGravity(false);
+        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 10, 0) || entity instanceof ArmorStand) {
+            if (this.noGravity) {
+                entity.setGravity(false);
+            }
         }
         switch (entity.getType()) {
             case ARROW:
@@ -661,7 +666,7 @@ public class EntityWrapper {
                 if (this.stand.arms) {
                     stand.setArms(true);
                 }
-                if (this.stand.noplate) {
+                if (this.stand.noPlate) {
                     stand.setBasePlate(false);
                 }
                 if (this.stand.small) {

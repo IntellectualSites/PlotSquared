@@ -9,8 +9,7 @@ class ArmorStandStats {
     final float[] leftArm = new float[3];
     final float[] rightArm = new float[3];
     boolean arms;
-    boolean noplate;
-    boolean nogravity;
+    boolean noPlate;
     boolean invisible;
     boolean small;
 }
