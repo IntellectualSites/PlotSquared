@@ -182,10 +182,6 @@ public class PS {
                     PS.debug("Incompatible version of WorldEdit, please upgrade: http://builds.enginehub.org/job/worldedit?branch=master");
                 }
             }
-            // Commands
-            if (Settings.Enabled_Components.COMMANDS) {
-                this.IMP.registerCommands();
-            }
             if (Settings.Enabled_Components.EVENTS) {
                 this.IMP.registerPlayerEvents();
                 this.IMP.registerInventoryEvents();
@@ -232,6 +228,10 @@ public class PS {
             AbstractTitle.TITLE_CLASS = this.IMP.initTitleManager();
             // Chat
             ChatManager.manager = this.IMP.initChatManager();
+            // Commands
+            if (Settings.Enabled_Components.COMMANDS) {
+                this.IMP.registerCommands();
+            }
             // Economy
             if (Settings.Enabled_Components.ECONOMY) {
                 TaskManager.runTask(new Runnable() {

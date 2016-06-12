@@ -59,6 +59,9 @@ public abstract class Command {
         this.required = required;
         this.category = cat;
         this.aliases = Arrays.asList(id);
+        if (this.parent != null) {
+            this.parent.register(this);
+        }
     }
 
     public Command(Command parent, boolean isStatic) {

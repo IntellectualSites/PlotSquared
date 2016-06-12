@@ -60,10 +60,14 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      * @param value
      */
     public void setMeta(String key, Object value) {
-        if (this.meta == null) {
-            this.meta = new ConcurrentHashMap<>();
+        if (value == null) {
+            deleteMeta(key);
+        } else {
+            if (this.meta == null) {
+                this.meta = new ConcurrentHashMap<>();
+            }
+            this.meta.put(key, value);
         }
-        this.meta.put(key, value);
     }
 
     /**
