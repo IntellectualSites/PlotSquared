@@ -15,9 +15,9 @@ import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.PlotGameMode;
 import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.area.QuadMap;
-
+import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
+import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,7 +48,7 @@ public abstract class PlotArea {
     public boolean ALLOW_SIGNS = true;
     public boolean MOB_SPAWNING = false;
     public boolean MOB_SPAWNER_SPAWNING = false;
-    public int PLOT_BIOME = 1;
+    public String PLOT_BIOME = "FOREST";
     public boolean PLOT_CHAT = false;
     public boolean SCHEMATIC_CLAIM_SPECIFY = false;
     public boolean SCHEMATIC_ON_CLAIM = false;
@@ -89,6 +89,10 @@ public abstract class PlotArea {
             this.max = max;
         }
         this.worldhash = worldName.hashCode();
+    }
+
+    public LocalBlockQueue getQueue(boolean autoQueue) {
+        return GlobalBlockQueue.IMP.getNewQueue(worldname, autoQueue);
     }
 
     /**
@@ -211,7 +215,7 @@ public abstract class PlotArea {
         this.AUTO_MERGE = config.getBoolean("plot.auto_merge");
         this.MAX_PLOT_MEMBERS = config.getInt("limits.max-members");
         this.ALLOW_SIGNS = config.getBoolean("plot.create_signs");
-        this.PLOT_BIOME = WorldUtil.IMP.getBiomeFromString(Configuration.BIOME.parseString(config.getString("plot.biome")));
+        this.PLOT_BIOME = Configuration.BIOME.parseString(config.getString("plot.biome"));
         this.SCHEMATIC_ON_CLAIM = config.getBoolean("schematic.on_claim");
         this.SCHEMATIC_FILE = config.getString("schematic.file");
         this.SCHEMATIC_CLAIM_SPECIFY = config.getBoolean("schematic.specify_on_claim");

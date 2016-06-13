@@ -24,7 +24,7 @@ import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
-
+import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -136,8 +136,7 @@ public abstract class SchematicHandler {
      *
      * @return boolean true if succeeded
      */
-    public void paste(final Schematic schematic, final Plot plot, final int xOffset, final int yOffset, final int zOffset, final boolean autoHeight,
-            final RunnableVal<Boolean> whenDone) {
+    public void paste(final Schematic schematic, final Plot plot, final int xOffset, final int yOffset, final int zOffset, final boolean autoHeight, final RunnableVal<Boolean> whenDone) {
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
@@ -160,7 +159,7 @@ public abstract class SchematicHandler {
 
                         }
                     }
-
+                    final LocalBlockQueue queue = plot.getArea().getQueue(false);
                     Dimension dimension = schematic.getSchematicDimension();
                     final int WIDTH = dimension.getX();
                     final int LENGTH = dimension.getZ();
@@ -322,10 +321,10 @@ public abstract class SchematicHandler {
                                                 case 190:
                                                 case 191:
                                                 case 192:
-                                                    SetQueue.IMP.setBlock(plot.getArea().worldname, xx, yy, zz, id);
+                                                    queue.setBlock(xx, yy, zz, id);
                                                     break;
                                                 default:
-                                                    SetQueue.IMP.setBlock(plot.getArea().worldname, xx, yy, zz, PlotBlock.get((short) id, datas[i]));
+                                                    queue.setBlock(xx, yy, zz, PlotBlock.get((short) id, datas[i]));
                                                     break;
                                             }
                                         }
@@ -333,31 +332,17 @@ public abstract class SchematicHandler {
                                 }
                             }
                             if (!chunks.isEmpty()) {
-                                final Runnable task = this;
-                                // Run when the queue is free
-                                SetQueue.IMP.addTask(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        System.gc();
-                                        TaskManager.runTaskLaterAsync(task, 80);
-                                    }
-                                });
+                                this.run();
                             } else {
-                                System.gc();
-                                // Finished
-                                SetQueue.IMP.addTask(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        for (Map.Entry<BlockLoc, CompoundTag> entry : schematic.getTiles().entrySet()) {
-                                            BlockLoc loc = entry.getKey();
-                                            restoreTile(plot.getArea().worldname, entry.getValue(), p1x + xOffset + loc.x, loc.y + y_offset_actual, p1z + zOffset + loc.z);
-                                        }
-                                        if (whenDone != null) {
-                                            whenDone.value = true;
-                                            whenDone.run();
-                                        }
-                                    }
-                                });
+                                queue.flush();
+                                for (Map.Entry<BlockLoc, CompoundTag> entry : schematic.getTiles().entrySet()) {
+                                    BlockLoc loc = entry.getKey();
+                                    restoreTile(plot.getArea().worldname, entry.getValue(), p1x + xOffset + loc.x, loc.y + y_offset_actual, p1z + zOffset + loc.z);
+                                }
+                                if (whenDone != null) {
+                                    whenDone.value = true;
+                                    whenDone.run();
+                                }
                             }
                         }
                     });

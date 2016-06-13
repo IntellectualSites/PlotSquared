@@ -6,7 +6,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.SetupObject;
-import com.intellectualcrafters.plot.util.PlotChunk;
+import com.intellectualcrafters.plot.util.block.ScopedLocalBlockQueue;
 
 /**
  * This class allows for implementation independent world generation.
@@ -28,9 +28,9 @@ public abstract class IndependentPlotGenerator {
      * @param settings
      * @param random
      */
-    public abstract void generateChunk(PlotChunk<?> result, PlotArea settings, PseudoRandom random);
+    public abstract void generateChunk(ScopedLocalBlockQueue result, PlotArea settings, PseudoRandom random);
 
-    public boolean populateChunk(PlotChunk<?> result, PlotArea settings, PseudoRandom random) {
+    public boolean populateChunk(ScopedLocalBlockQueue result, PlotArea settings, PseudoRandom random) {
         return false;
     }
 

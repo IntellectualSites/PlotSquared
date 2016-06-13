@@ -27,18 +27,17 @@ import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.util.expiry.PlotAnalysis;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 import com.plotsquared.listener.WEManager;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -48,7 +47,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -119,12 +117,12 @@ public class DebugExec extends SubCommand {
 
         // Instances
         this.scope.put("PS", PS.get());
-        this.scope.put("SetQueue", SetQueue.IMP);
+        this.scope.put("GlobalBlockQueue", GlobalBlockQueue.IMP);
         this.scope.put("ExpireManager", ExpireManager.IMP);
         if (PS.get().worldedit != null) {
             this.scope.put("WEManager", new WEManager());
         }
-        this.scope.put("TaskManager", PS.get().TASK);
+        this.scope.put("TaskManager", TaskManager.IMP);
         this.scope.put("TitleManager", AbstractTitle.TITLE_CLASS);
         this.scope.put("ConsolePlayer", ConsolePlayer.getConsole());
         this.scope.put("SchematicHandler", SchematicHandler.manager);

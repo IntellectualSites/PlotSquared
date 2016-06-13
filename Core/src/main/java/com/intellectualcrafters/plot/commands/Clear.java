@@ -10,7 +10,7 @@ import com.intellectualcrafters.plot.object.RunnableVal2;
 import com.intellectualcrafters.plot.object.RunnableVal3;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.SetQueue;
+import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 
@@ -45,7 +45,7 @@ public class Clear extends Command {
                     @Override
                     public void run() {
                         plot.unlink();
-                        SetQueue.IMP.addTask(new Runnable() {
+                        GlobalBlockQueue.IMP.addTask(new Runnable() {
                             @Override
                             public void run() {
                                 plot.removeRunning();

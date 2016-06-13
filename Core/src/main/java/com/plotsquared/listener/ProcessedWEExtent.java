@@ -215,17 +215,11 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                         case 190:
                         case 191:
                         case 192:
-//                            if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
-//                                SetQueue.IMP.setBlock(this.world, x, y, z, id);
-//                            } else
                             {
                                 super.setBlock(location, block);
                             }
                             break;
                         default:
-//                            if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
-//                                SetQueue.IMP.setBlock(this.world, x, y, z, PlotBlock.get((short) id, (byte) block.getData()));
-//                            } else
                             {
                                 super.setBlock(location, block);
                             }

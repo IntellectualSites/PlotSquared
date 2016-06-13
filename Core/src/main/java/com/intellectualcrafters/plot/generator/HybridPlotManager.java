@@ -3,7 +3,6 @@ package com.intellectualcrafters.plot.generator;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.Template;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.FileBytes;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -14,9 +13,8 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.SetQueue;
-import com.intellectualcrafters.plot.util.WorldUtil;
-
+import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
+import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -72,6 +70,7 @@ public class HybridPlotManager extends ClassicPlotManager {
 
     private void createSchemAbs(HybridPlotWorld hpw, Location pos1, Location pos2, boolean clear) {
         int size = hpw.SIZE;
+        LocalBlockQueue queue = hpw.getQueue(false);
         for (int x = pos1.getX(); x <= pos2.getX(); x++) {
             short absX = (short) ((x - hpw.ROAD_OFFSET_X) % size);
             if (absX < 0) {
@@ -85,16 +84,17 @@ public class HybridPlotManager extends ClassicPlotManager {
                 HashMap<Integer, PlotBlock> blocks = hpw.G_SCH.get(MathMan.pair(absX, absZ));
                 if (clear) {
                     for (short y = (short) 0; y <= hpw.SCHEMATIC_HEIGHT; y++) {
-                        SetQueue.IMP.setBlock(hpw.worldname, x, y, z, 0);
+                        queue.setBlock(x, y, z, 0);
                     }
                 }
                 if (blocks != null) {
                     for (Entry<Integer, PlotBlock> entry : blocks.entrySet()) {
-                        SetQueue.IMP.setBlock(hpw.worldname, x, entry.getKey(), z, entry.getValue());
+                        queue.setBlock(x, entry.getKey(), z, entry.getValue());
                     }
                 }
             }
         }
+        queue.enqueue();
     }
 
     @Override
@@ -157,13 +157,14 @@ public class HybridPlotManager extends ClassicPlotManager {
             bedrock = PlotBlock.get((short) 0, (byte) 0);
         }
         final PlotBlock air = PlotBlock.get((short) 0, (byte) 0);
-        final String biome = WorldUtil.IMP.getBiomeList()[dpw.PLOT_BIOME];
+        final String biome = dpw.PLOT_BIOME;
+        final LocalBlockQueue queue = plotArea.getQueue(false);
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override
             public void run(int[] value) {
                 // If the chunk isn't near the edge and it isn't an augmented world we can just regen the whole chunk
                 if (canRegen && (value[6] == 0)) {
-                    ChunkManager.manager.regenerateChunk(world, new ChunkLoc(value[0], value[1]));
+                    queue.regenChunk(value[0], value[1]);
                     return;
                 }
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -174,25 +175,26 @@ public class HybridPlotManager extends ClassicPlotManager {
                 // These two locations are for each component (e.g. bedrock, main block, floor, air)
                 Location bot = new Location(world, value[2], 0, value[3]);
                 Location top = new Location(world, value[4], 1, value[5]);
-                MainUtil.setSimpleCuboidAsync(world, bot, top, bedrock);
+                queue.setCuboid(bot, top, bedrock);
                 // Each component has a different layer
                 bot.setY(1);
                 top.setY(dpw.PLOT_HEIGHT);
-                MainUtil.setCuboidAsync(world, bot, top, filling);
+                queue.setCuboid(bot, top, filling);
                 bot.setY(dpw.PLOT_HEIGHT);
                 top.setY(dpw.PLOT_HEIGHT + 1);
-                MainUtil.setCuboidAsync(world, bot, top, plotfloor);
+                queue.setCuboid(bot, top, plotfloor);
                 bot.setY(dpw.PLOT_HEIGHT + 1);
                 top.setY(256);
-                MainUtil.setSimpleCuboidAsync(world, bot, top, air);
+                queue.setCuboid(bot, top, air);
                 // And finally set the schematic, the y value is unimportant for this function
                 pastePlotSchematic(dpw, bot, top);
             }
         }, new Runnable() {
             @Override
             public void run() {
+                queue.enqueue();
                 // And notify whatever called this when plot clearing is done
-                SetQueue.IMP.addTask(whenDone);
+                GlobalBlockQueue.IMP.addTask(whenDone);
             }
         }, 10);
         return true;

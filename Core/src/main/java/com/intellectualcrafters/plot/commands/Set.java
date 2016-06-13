@@ -12,10 +12,10 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 
@@ -114,7 +114,7 @@ public class Set extends SubCommand {
                             current.setComponent(component, blocks);
                         }
                         MainUtil.sendMessage(player, C.GENERATING_COMPONENT);
-                        SetQueue.IMP.addTask(new Runnable() {
+                        GlobalBlockQueue.IMP.addTask(new Runnable() {
                             @Override
                             public void run() {
                                 plot.removeRunning();

@@ -8,8 +8,7 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.RunnableVal2;
 import com.intellectualcrafters.plot.object.RunnableVal3;
 import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.PlotChunk;
-import com.intellectualcrafters.plot.util.SetQueue;
+import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 import java.util.HashSet;
@@ -28,12 +27,11 @@ public class Relight extends Command {
             return;
         }
         HashSet<RegionWrapper> regions = plot.getRegions();
+        final LocalBlockQueue queue = plot.getArea().getQueue(false);
         ChunkManager.chunkTask(plot, new RunnableVal<int[]>() {
             @Override
             public void run(int[] value) {
-                SetQueue.ChunkWrapper cw = SetQueue.IMP.new ChunkWrapper(plot.getArea().worldname, value[0], value[1]);
-                PlotChunk<?> pc = SetQueue.IMP.queue.getChunk(cw);
-                pc.fixLighting();
+                queue.fixChunkLighting(value[0], value[1]);
             }
         }, new Runnable() {
             @Override

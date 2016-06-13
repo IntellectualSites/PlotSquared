@@ -23,7 +23,6 @@ import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.InventoryUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.PlotQueue;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.StringMan;
@@ -31,6 +30,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.block.QueueProvider;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.database.plotme.ClassicPlotMeConnector;
 import com.plotsquared.bukkit.database.plotme.LikePlotMeConverter;
@@ -60,20 +60,25 @@ import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.Metrics;
 import com.plotsquared.bukkit.util.SendChunk;
 import com.plotsquared.bukkit.util.SetGenCB;
-import com.plotsquared.bukkit.util.block.FastQueue_1_7;
-import com.plotsquared.bukkit.util.block.FastQueue_1_8;
-import com.plotsquared.bukkit.util.block.FastQueue_1_8_3;
-import com.plotsquared.bukkit.util.block.FastQueue_1_9;
-import com.plotsquared.bukkit.util.block.SlowQueue;
+import com.plotsquared.bukkit.util.block.BukkitLocalQueue;
+import com.plotsquared.bukkit.util.block.BukkitLocalQueue_1_7;
+import com.plotsquared.bukkit.util.block.BukkitLocalQueue_1_8;
+import com.plotsquared.bukkit.util.block.BukkitLocalQueue_1_8_3;
+import com.plotsquared.bukkit.util.block.BukkitLocalQueue_1_9;
 import com.plotsquared.bukkit.uuid.DefaultUUIDWrapper;
 import com.plotsquared.bukkit.uuid.FileUUIDHandler;
 import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.sk89q.worldedit.WorldEdit;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -86,13 +91,6 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
 
 public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
@@ -417,7 +415,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     @Override
-    public PlotQueue<Chunk> initPlotQueue() {
+    public QueueProvider initBlockQueue() {
         try {
             new SendChunk();
             MainUtil.canSendChunk = true;
@@ -426,32 +424,15 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             MainUtil.canSendChunk = false;
         }
         if (PS.get().checkVersion(getServerVersion(), 1, 9, 0)) {
-            try {
-                return new FastQueue_1_9();
-            } catch (ClassNotFoundException | NoSuchFieldException | NoSuchMethodException e) {
-                e.printStackTrace();
-                return new SlowQueue();
-            }
+            return QueueProvider.of(BukkitLocalQueue_1_9.class, BukkitLocalQueue.class);
+        }
+        if (PS.get().checkVersion(getServerVersion(), 1, 8, 3)) {
+            return QueueProvider.of(BukkitLocalQueue_1_8_3.class, BukkitLocalQueue.class);
         }
         if (PS.get().checkVersion(getServerVersion(), 1, 8, 0)) {
-            try {
-                return new FastQueue_1_8_3();
-            } catch (NoSuchMethodException | ClassNotFoundException | NoSuchFieldException e) {
-                e.printStackTrace();
-                try {
-                    return new FastQueue_1_8();
-                } catch (NoSuchMethodException | NoSuchFieldException | ClassNotFoundException e2) {
-                    e2.printStackTrace();
-                    return new SlowQueue();
-                }
-            }
+            return QueueProvider.of(BukkitLocalQueue_1_8.class, BukkitLocalQueue.class);
         }
-        try {
-            return new FastQueue_1_7();
-        } catch (ClassNotFoundException | NoSuchFieldException | NoSuchMethodException e) {
-            e.printStackTrace();
-            return new SlowQueue();
-        }
+        return QueueProvider.of(BukkitLocalQueue_1_7.class, BukkitLocalQueue.class);
     }
 
     @Override

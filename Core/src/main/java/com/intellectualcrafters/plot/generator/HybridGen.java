@@ -1,14 +1,15 @@
 package com.intellectualcrafters.plot.generator;
 
 import com.intellectualcrafters.jnbt.CompoundTag;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.PlotChunk;
 import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.block.ScopedLocalBlockQueue;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -20,12 +21,12 @@ public class HybridGen extends IndependentPlotGenerator {
     }
 
     @Override
-    public void generateChunk(PlotChunk<?> result, PlotArea settings, PseudoRandom random) {
+    public void generateChunk(ScopedLocalBlockQueue result, PlotArea settings, PseudoRandom random) {
         HybridPlotWorld hpw = (HybridPlotWorld) settings;
         // Biome
         for (short x = 0; x < 16; x++) {
             for (short z = 0; z < 16; z++) {
-                result.setBiome(x, z, hpw.PLOT_BIOME);
+                result.fillBiome(hpw.PLOT_BIOME);
             }
         }
         // Bedrock
@@ -37,10 +38,11 @@ public class HybridGen extends IndependentPlotGenerator {
             }
         }
         // Coords
-        int cx = result.getX();
-        int cz = result.getZ();
-        int bx = (cx << 4) - hpw.ROAD_OFFSET_X;
-        int bz = (cz << 4) - hpw.ROAD_OFFSET_Z;
+        Location min = result.getMin();
+        int cx = min.getX() >> 4;
+        int cz = min.getZ() >> 4;
+        int bx = (min.getX()) - hpw.ROAD_OFFSET_X;
+        int bz = (min.getZ()) - hpw.ROAD_OFFSET_Z;
         short rbx;
         if (bx < 0) {
             rbx = (short) (hpw.SIZE + (bx % hpw.SIZE));
@@ -183,11 +185,12 @@ public class HybridGen extends IndependentPlotGenerator {
     }
 
     @Override
-    public boolean populateChunk(PlotChunk<?> result, PlotArea settings, PseudoRandom random) {
+    public boolean populateChunk(ScopedLocalBlockQueue result, PlotArea settings, PseudoRandom random) {
         HybridPlotWorld hpw = (HybridPlotWorld) settings;
         if (hpw.G_SCH_STATE != null) {
-            int cx = result.getX();
-            int cz = result.getZ();
+            Location min = result.getMin();
+            int cx = min.getX() >> 4;
+            int cz = min.getZ() >> 4;
             int p1x = cx << 4;
             int p1z = cz << 4;
             int bx = p1x - hpw.ROAD_OFFSET_X;

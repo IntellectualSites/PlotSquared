@@ -9,17 +9,22 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotLoc;
-import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.PlotChunk;
-import com.intellectualcrafters.plot.util.SetQueue;
-import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
+import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
+import com.intellectualcrafters.plot.util.block.ScopedLocalBlockQueue;
 import com.plotsquared.bukkit.object.entity.EntityWrapper;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.DyeColor;
@@ -52,16 +57,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 public class BukkitChunkManager extends ChunkManager {
 
     public static boolean isIn(RegionWrapper region, int x, int z) {
@@ -91,6 +86,9 @@ public class BukkitChunkManager extends ChunkManager {
         String worldName1 = world1.getName();
         String worldName2 = world2.getName();
 
+        LocalBlockQueue queue1 = GlobalBlockQueue.IMP.getNewQueue(worldName1, false);
+        LocalBlockQueue queue2 = GlobalBlockQueue.IMP.getNewQueue(worldName2, false);
+
         for (int x = Math.max(r1.minX, sx); x <= Math.min(r1.maxX, sx + 15); x++) {
             for (int z = Math.max(r1.minZ, sz); z <= Math.min(r1.maxZ, sz + 15); z++) {
                 map.saveBlocks(world1, 256, sx, sz, relX, relZ, false);
@@ -105,24 +103,26 @@ public class BukkitChunkManager extends ChunkManager {
                     byte data2 = block2.getData();
                     if (id1 == 0) {
                         if (id2 != 0) {
-                            SetQueue.IMP.setBlock(worldName1, x, y, z, (short) id2, data2);
-                            SetQueue.IMP.setBlock(worldName2, xx, y, zz, (short) 0, (byte) 0);
+                            queue1.setBlock(x, y, z, (short) id2, data2);
+                            queue2.setBlock(xx, y, zz, (short) 0, (byte) 0);
                         }
                     } else if (id2 == 0) {
-                        SetQueue.IMP.setBlock(worldName1, x, y, z, (short) 0, (byte) 0);
-                        SetQueue.IMP.setBlock(worldName2, xx, y, zz, (short) id1, data1);
+                        queue1.setBlock(x, y, z, (short) 0, (byte) 0);
+                        queue2.setBlock(xx, y, zz, (short) id1, data1);
                     } else if (id1 == id2) {
                         if (data1 != data2) {
                             block1.setData(data2);
                             block2.setData(data1);
                         }
                     } else {
-                        SetQueue.IMP.setBlock(worldName1, x, y, z, (short) id2, data2);
-                        SetQueue.IMP.setBlock(worldName2, xx, y, zz, (short) id1, data1);
+                        queue1.setBlock(x, y, z, (short) id2, data2);
+                        queue2.setBlock(xx, y, zz, (short) id1, data1);
                     }
                 }
             }
         }
+        queue1.enqueue();
+        queue2.enqueue();
         return map;
     }
 
@@ -139,22 +139,6 @@ public class BukkitChunkManager extends ChunkManager {
     }
 
     @Override
-    public void regenerateChunk(String world, ChunkLoc loc) {
-        World worldObj = Bukkit.getWorld(world);
-        worldObj.regenerateChunk(loc.x, loc.z);
-        SetQueue.IMP.queue.sendChunk(world, Collections.singletonList(loc));
-        for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
-            PlotPlayer pp = entry.getValue();
-            Location pLoc = pp.getLocation();
-            if (!StringMan.isEqual(world, pLoc.getWorld()) || !pLoc.getChunkLoc().equals(loc)) {
-                continue;
-            }
-            pLoc.setY(WorldUtil.IMP.getHighestBlock(world, pLoc.getX(), pLoc.getZ()));
-            pp.teleport(pLoc);
-        }
-    }
-
-    @Override
     public boolean copyRegion(Location pos1, Location pos2, Location newPos, final Runnable whenDone) {
         final int relX = newPos.getX() - pos1.getX();
         final int relZ = newPos.getZ() - pos1.getZ();
@@ -166,6 +150,7 @@ public class BukkitChunkManager extends ChunkManager {
         final String newWorldName = newWorld.getName();
         List<ChunkLoc> chunks = new ArrayList<>();
         final ContentMap map = new ContentMap();
+        final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(newWorldName, false);
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override
             public void run(int[] value) {
@@ -193,11 +178,12 @@ public class BukkitChunkManager extends ChunkManager {
                     for (int y = 0; y < blocks.length; y++) {
                         PlotBlock block = blocks[y];
                         if (block != null) {
-                            SetQueue.IMP.setBlock(newWorldName, loc.x, y, loc.z, block);
+                            queue.setBlock(loc.x, y, loc.z, block);
                         }
                     }
                 }
-                SetQueue.IMP.addTask(new Runnable() {
+                queue.enqueue();
+                GlobalBlockQueue.IMP.addTask(new Runnable() {
                     @Override
                     public void run() {
                         map.restoreBlocks(newWorld, 0, 0);
@@ -247,12 +233,13 @@ public class BukkitChunkManager extends ChunkManager {
                     if (!chunkObj.load(false)) {
                         continue;
                     }
+                    final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
                     RegionWrapper currentPlotClear = new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
                     if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z) {
                         AugmentedUtils.bypass(ignoreAugment, new Runnable() {
                             @Override
                             public void run() {
-                                regenerateChunk(world, chunk);
+                                queue.regenChunkSafe(chunk.x, chunk.z);
                             }
                         });
                         continue;
@@ -320,13 +307,12 @@ public class BukkitChunkManager extends ChunkManager {
                     AugmentedUtils.bypass(ignoreAugment, new Runnable() {
                         @Override
                         public void run() {
-                            setChunkInPlotArea(null, new RunnableVal<PlotChunk<?>>() {
+                            setChunkInPlotArea(null, new RunnableVal<ScopedLocalBlockQueue>() {
                                 @Override
-                                public void run(PlotChunk<?> value) {
-                                    int cx = value.getX();
-                                    int cz = value.getZ();
-                                    int bx = cx << 4;
-                                    int bz = cz << 4;
+                                public void run(ScopedLocalBlockQueue value) {
+                                    Location min = value.getMin();
+                                    int bx = min.getX();
+                                    int bz = min.getZ();
                                     for (int x = 0; x < 16; x++) {
                                         for (int z = 0; z < 16; z++) {
                                             PlotLoc loc = new PlotLoc(bx + x, bz + z);
@@ -424,7 +410,7 @@ public class BukkitChunkManager extends ChunkManager {
                 maps.add(swapChunk(world1, world2, chunk1, chunk2, region1, region2));
             }
         }
-        SetQueue.IMP.addTask(new Runnable() {
+        GlobalBlockQueue.IMP.addTask(new Runnable() {
             @Override
             public void run() {
                 for (ContentMap map : maps) {

@@ -13,6 +13,8 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
+import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.io.File;
@@ -189,10 +191,11 @@ public class Trim extends SubCommand {
                                     }
                                 }
                             }
+                            final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
                             TaskManager.objectTask(chunks, new RunnableVal<ChunkLoc>() {
                                 @Override
                                 public void run(ChunkLoc value) {
-                                    ChunkManager.manager.regenerateChunk(world, value);
+                                    queue.regenChunk(value.x, value.z);
                                 }
                             }, this);
                         }

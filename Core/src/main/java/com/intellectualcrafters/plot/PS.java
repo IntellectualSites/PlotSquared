@@ -39,18 +39,17 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.ReflectionUtils;
 import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.area.QuadMap;
+import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.util.expiry.ExpiryTask;
 import com.plotsquared.listener.WESubscriber;
 import com.sk89q.worldedit.WorldEdit;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -112,7 +111,6 @@ public class PS {
     public YamlConfiguration worlds;
     public YamlConfiguration storage;
     public YamlConfiguration commands;
-    public TaskManager TASK;
     public WorldEdit worldedit;
     public URL update;
     private ILogger logger;
@@ -153,7 +151,7 @@ public class PS {
             if (getJavaVersion() < 1.8) {
                 PS.log(C.CONSOLE_JAVA_OUTDATED_1_8);
             }
-            this.TASK = this.IMP.getTaskManager();
+            TaskManager.IMP = this.IMP.getTaskManager();
             setupConfigs();
             this.translationFile =
                     MainUtil.getFile(this.IMP.getDirectory(), Settings.Paths.TRANSLATIONS + File.separator + "PlotSquared.use_THIS.yml");
@@ -219,7 +217,8 @@ public class PS {
             // World Util
             WorldUtil.IMP = this.IMP.initWorldUtil();
             // Set block
-            SetQueue.IMP.queue = this.IMP.initPlotQueue();
+            GlobalBlockQueue.IMP = new GlobalBlockQueue(IMP.initBlockQueue(), 1);
+            GlobalBlockQueue.IMP.runTask();
             // Set chunk
             ChunkManager.manager = this.IMP.initChunkManager();
             // Schematic handler
@@ -1802,7 +1801,7 @@ public class PS {
      */
     public void disable() {
         try {
-            this.TASK = null;
+            TaskManager.IMP = null;
             this.database = null;
             // Validate that all data in the db is correct
             final HashSet<Plot> plots = new HashSet<>();

@@ -1,6 +1,7 @@
 package com.plotsquared.bukkit.util;
 
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotMessage;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -45,7 +46,7 @@ public class BukkitChatManager extends ChatManager<FancyMessage> {
 
     @Override
     public void send(PlotMessage plotMessage, PlotPlayer player) {
-        if (player instanceof ConsolePlayer) {
+        if (player instanceof ConsolePlayer || !Settings.Chat.INTERACTIVE) {
             player.sendMessage(plotMessage.$(this).toOldMessageFormat());
         } else {
             plotMessage.$(this).send(((BukkitPlayer) player).player);

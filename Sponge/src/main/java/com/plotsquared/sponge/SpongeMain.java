@@ -20,7 +20,6 @@ import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.InventoryUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.PlotQueue;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.StringMan;
@@ -28,6 +27,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.block.QueueProvider;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.sponge.generator.SpongePlotGenerator;
 import com.plotsquared.sponge.listener.ChunkProcessor;
@@ -47,11 +47,17 @@ import com.plotsquared.sponge.util.SpongeSetupUtils;
 import com.plotsquared.sponge.util.SpongeTaskManager;
 import com.plotsquared.sponge.util.SpongeTitleManager;
 import com.plotsquared.sponge.util.SpongeUtil;
-import com.plotsquared.sponge.util.block.FastQueue;
-import com.plotsquared.sponge.util.block.SlowQueue;
+import com.plotsquared.sponge.util.block.SpongeLocalQueue;
 import com.plotsquared.sponge.uuid.SpongeLowerOfflineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeOnlineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeUUIDHandler;
+import java.io.File;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
@@ -63,19 +69,10 @@ import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.profile.GameProfileManager;
-import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gen.GenerationPopulator;
 import org.spongepowered.api.world.gen.WorldGenerator;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
-
-import java.io.File;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Plugin(id = "plotsquared", name = "PlotSquared", description = "Easy, yet powerful Plot World generation and management.",
         url = "https://github.com/IntellectualSites/PlotSquared", version = "3.3.3")
@@ -364,14 +361,9 @@ public class SpongeMain implements IPlotMain {
     }
 
     @Override
-    public PlotQueue<Chunk> initPlotQueue() {
-        try {
-            MainUtil.canSendChunk = true;
-            return new FastQueue();
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        }
-        return new SlowQueue();
+    public QueueProvider initBlockQueue() {
+        MainUtil.canSendChunk = true;
+        return QueueProvider.of(SpongeLocalQueue.class, null);
     }
 
     @Override

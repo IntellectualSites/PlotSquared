@@ -2,7 +2,6 @@ package com.plotsquared.bukkit.util;
 
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.util.expiry.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
@@ -10,18 +9,19 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
+import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
+import com.intellectualcrafters.plot.util.expiry.PlotAnalysis;
+import java.util.HashSet;
+import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.material.Directional;
 import org.bukkit.material.MaterialData;
-
-import java.util.HashSet;
-import java.util.Random;
 
 public class BukkitHybridUtils extends HybridUtils {
 
@@ -42,6 +42,7 @@ public class BukkitHybridUtils extends HybridUtils {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
+                final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
                 final World worldObj = Bukkit.getWorld(world);
                 final ChunkGenerator gen = worldObj.getGenerator();
                 if (gen == null) {
@@ -254,10 +255,10 @@ public class BukkitHybridUtils extends HybridUtils {
                             for (int z = minZ; z <= maxZ; z++) {
                                 int zz = cbz + z;
                                 for (int y = 0; y < 256; y++) {
-                                    Block block = worldObj.getBlockAt(xx, y, zz);
+                                    PlotBlock block = queue.getBlock(xx, y, zz);
                                     int xr = xb + x;
                                     int zr = zb + z;
-                                    newBlocks[y][xr][zr] = (short) block.getTypeId();
+                                    newBlocks[y][xr][zr] = block.id;
                                 }
                             }
                         }
@@ -271,51 +272,5 @@ public class BukkitHybridUtils extends HybridUtils {
                 }, 5);
             }
         });
-    }
-
-    @Override
-    public int checkModified(String worldName, int x1, int x2, int y1, int y2, int z1, int z2,
-            PlotBlock[] blocks) {
-        World world = BukkitUtil.getWorld(worldName);
-        int count = 0;
-        for (int y = y1; y <= y2; y++) {
-            for (int x = x1; x <= x2; x++) {
-                for (int z = z1; z <= z2; z++) {
-                    Block block = world.getBlockAt(x, y, z);
-                    int id = block.getTypeId();
-                    boolean same = false;
-                    for (PlotBlock p : blocks) {
-                        if (id == p.id) {
-                            same = true;
-                            break;
-                        }
-                    }
-                    if (!same) {
-                        count++;
-                    }
-                }
-            }
-        }
-        return count;
-    }
-
-    @Override
-    public int get_ey(String worldName, int sx, int ex, int sz, int ez, int sy) {
-        World world = BukkitUtil.getWorld(worldName);
-        int maxY = world.getMaxHeight();
-        int ey = sy;
-        for (int x = sx; x <= ex; x++) {
-            for (int z = sz; z <= ez; z++) {
-                for (int y = sy; y < maxY; y++) {
-                    if (y > ey) {
-                        Block block = world.getBlockAt(x, y, z);
-                        if (!block.getType().equals(Material.AIR)) {
-                            ey = y;
-                        }
-                    }
-                }
-            }
-        }
-        return ey;
     }
 }

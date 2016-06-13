@@ -1,19 +1,17 @@
 package com.plotsquared.sponge.generator;
 
+import com.flowpowered.math.vector.Vector3i;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
+import com.intellectualcrafters.plot.object.ChunkWrapper;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PseudoRandom;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.plotsquared.sponge.util.block.GenChunk;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.ImmutableBiomeArea;
 import org.spongepowered.api.world.extent.MutableBlockVolume;
 import org.spongepowered.api.world.gen.GenerationPopulator;
-
-import com.flowpowered.math.vector.Vector3i;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PseudoRandom;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.SetQueue;
-import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
-import com.plotsquared.sponge.util.block.GenChunk;
 
 public class SpongeTerrainGen implements GenerationPopulator {
     
@@ -36,7 +34,7 @@ public class SpongeTerrainGen implements GenerationPopulator {
         Vector3i min = terrain.getBlockMin();
         int cx = min.getX() >> 4;
         int cz = min.getZ() >> 4;
-        ChunkWrapper wrap = SetQueue.IMP.new ChunkWrapper(worldname, cx, cz);
+        ChunkWrapper wrap = new ChunkWrapper(worldname, cx, cz);
         // Create the result object
         GenChunk result = new GenChunk(terrain, null, wrap);
         // Catch any exceptions

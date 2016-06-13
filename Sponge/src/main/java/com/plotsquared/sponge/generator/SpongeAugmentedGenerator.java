@@ -2,18 +2,16 @@ package com.plotsquared.sponge.generator;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.intellectualcrafters.plot.generator.AugmentedUtils;
-import com.intellectualcrafters.plot.object.LazyResult;
-import com.intellectualcrafters.plot.util.PlotChunk;
-import com.intellectualcrafters.plot.util.SetQueue;
-import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.util.block.DelegateLocalBlockQueue;
 import com.plotsquared.sponge.util.SpongeUtil;
+import java.util.List;
+import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.ImmutableBiomeArea;
 import org.spongepowered.api.world.extent.MutableBlockVolume;
 import org.spongepowered.api.world.gen.GenerationPopulator;
 import org.spongepowered.api.world.gen.WorldGenerator;
-
-import java.util.List;
 
 public class SpongeAugmentedGenerator implements GenerationPopulator {
     
@@ -43,38 +41,28 @@ public class SpongeAugmentedGenerator implements GenerationPopulator {
         int bz = min.getZ();
         int cx = bx >> 4;
         int cz = bz >> 4;
-        AugmentedUtils.generate(world.getName(), cx, cz, new LazyResult<PlotChunk<?>>() {
+        AugmentedUtils.generate(world.getName(), cx, cz, new DelegateLocalBlockQueue(null) {
             @Override
-            public PlotChunk<?> create() {
-                ChunkWrapper wrap = SetQueue.IMP.new ChunkWrapper(world.getName(), cx, cz);
-                return new PlotChunk<ChunkWrapper>(wrap) {
-                    @Override
-                    public ChunkWrapper getChunkAbs() {
-                        return getChunkWrapper();
-                    }
-                    @Override
-                    public void setBlock(int x, int y, int z, int id, byte data) {
-                        terrain.setBlock(bx + x, y, bz + z, SpongeUtil.getBlockState(id, data));
-                    }
-                    @Override
-                    public void setBiome(int x, int z, int biome) {
-                        // TODO FIXME
-                    }
-                    @Override
-                    public PlotChunk clone() {
-                        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
-                    }
-                    @Override
-                    public PlotChunk shallowClone() {
-                        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
-                    }
-                    @Override
-                    public void addToQueue() {}
-                    @Override
-                    public void flush(boolean fixLighting) {}
-                };
+            public boolean setBlock(int x, int y, int z, int id, int data) {
+                terrain.setBlock(bx + x, y, bz + z, SpongeUtil.getBlockState(id, data));
+                return true;
+            }
+
+            @Override
+            public PlotBlock getBlock(int x, int y, int z) {
+                BlockState block = terrain.getBlock(bx + x, y, bz + z);
+                return block == null ? PlotBlock.get(0, 0) : SpongeUtil.getPlotBlock(block);
+            }
+
+            @Override
+            public boolean setBiome(int x, int z, String biome) {
+                return false; // TODO ?
+            }
+
+            @Override
+            public String getWorld() {
+                return world.getName();
             }
         });
     }
-    
 }

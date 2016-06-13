@@ -1,16 +1,16 @@
 package com.intellectualcrafters.plot.generator;
 
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.LazyResult;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.util.PlotChunk;
-import com.intellectualcrafters.plot.util.SetQueue;
-import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
-
+import com.intellectualcrafters.plot.util.block.DelegateLocalBlockQueue;
+import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
+import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
+import com.intellectualcrafters.plot.util.block.ScopedLocalBlockQueue;
 import java.util.Set;
 
 public class AugmentedUtils {
@@ -23,17 +23,9 @@ public class AugmentedUtils {
         enabled = true;
     }
 
-    public static boolean generate(final String world, final int cx, final int cz, LazyResult<PlotChunk<?>> lazyChunk) {
+    public static boolean generate(final String world, final int cx, final int cz, LocalBlockQueue queue) {
         if (!enabled) {
             return false;
-        }
-        if (lazyChunk == null) {
-            lazyChunk = new LazyResult<PlotChunk<?>>() {
-                @Override
-                public PlotChunk<?> create() {
-                    return SetQueue.IMP.queue.getChunk(SetQueue.IMP.new ChunkWrapper(world, cx, cz));
-                }
-            };
         }
         final int bx = cx << 4;
         final int bz = cz << 4;
@@ -44,7 +36,6 @@ public class AugmentedUtils {
         }
         PseudoRandom r = new PseudoRandom();
         r.state = (cx << 16) | (cz & 0xFFFF);
-        ChunkWrapper wrap = SetQueue.IMP.new ChunkWrapper(world, cx, cz);
         boolean toReturn = false;
         for (final PlotArea area : areas) {
             if (area.TYPE == 0) {
@@ -57,8 +48,11 @@ public class AugmentedUtils {
             if (generator == null) {
                 continue;
             }
-            final PlotChunk<?> result = lazyChunk.getOrCreate();
-            final PlotChunk<?> primaryMask;
+            // Mask
+            if (queue == null) {
+                queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
+            }
+            LocalBlockQueue primaryMask;
             // coords
             int bxx;
             int bzz;
@@ -70,42 +64,29 @@ public class AugmentedUtils {
                 bzz = Math.max(0, area.getRegion().minZ - bz);
                 txx = Math.min(15, area.getRegion().maxX - bx);
                 tzz = Math.min(15, area.getRegion().maxZ - bz);
-                primaryMask = new PlotChunk<Object>(wrap) {
+                primaryMask = new DelegateLocalBlockQueue(queue) {
                     @Override
-                    public Object getChunkAbs() {
-                        return null;
-                    }
-
-                    @Override
-                    public void setBlock(int x, int y, int z, int id, byte data) {
-                        if (area.contains(bx + x, bz + z)) {
-                            result.setBlock(x, y, z, id, data);
+                    public boolean setBlock(int x, int y, int z, int id, int data) {
+                        if (area.contains(x, z)) {
+                            return super.setBlock(x, y, z, id, data);
                         }
+                        return false;
                     }
 
                     @Override
-                    public void setBiome(int x, int z, int biome) {
-                        if (area.contains(bx + x, bz + z)) {
-                            result.setBiome(x, z, biome);
+                    public boolean setBiome(int x, int z, String biome) {
+                        if (area.contains(x, z)) {
+                            return super.setBiome(x, z, biome);
                         }
-                    }
-
-                    @Override
-                    public PlotChunk clone() {
-                        return null;
-                    }
-
-                    @Override
-                    public PlotChunk shallowClone() {
-                        return null;
+                        return false;
                     }
                 };
             } else {
                 bxx = bzz = 0;
                 txx = tzz = 15;
-                primaryMask = result;
+                primaryMask = queue;
             }
-            PlotChunk<?> secondaryMask;
+            LocalBlockQueue secondaryMask;
             PlotBlock air = PlotBlock.get((short) 0, (byte) 0);
             if (area.TERRAIN == 2) {
                 PlotManager manager = area.getPlotManager();
@@ -118,7 +99,7 @@ public class AugmentedUtils {
                         boolean can = manager.getPlotId(area, rx, 0, rz) == null;
                         if (can) {
                             for (int y = 1; y < 128; y++) {
-                                result.setBlock(x, y, z, air);
+                                queue.setBlock(x, y, z, air);
                             }
                             canPlace[x][z] = can;
                             has = true;
@@ -129,30 +110,18 @@ public class AugmentedUtils {
                     continue;
                 }
                 toReturn = true;
-                secondaryMask = new PlotChunk<Object>(wrap) {
+                secondaryMask = new DelegateLocalBlockQueue(primaryMask) {
                     @Override
-                    public Object getChunkAbs() {
-                        return null;
-                    }
-
-                    @Override
-                    public void setBlock(int x, int y, int z, int id, byte data) {
+                    public boolean setBlock(int x, int y, int z, int id, int data) {
                         if (canPlace[x][z]) {
-                            primaryMask.setBlock(x, y, z, id, data);
+                            return super.setBlock(x, y, z, id, data);
                         }
+                        return false;
                     }
 
                     @Override
-                    public void setBiome(int x, int z, int biome) {}
-
-                    @Override
-                    public PlotChunk clone() {
-                        return null;
-                    }
-
-                    @Override
-                    public PlotChunk shallowClone() {
-                        return null;
+                    public boolean setBiome(int x, int y, String biome) {
+                        return super.setBiome(x, y, biome);
                     }
                 };
             } else {
@@ -160,19 +129,17 @@ public class AugmentedUtils {
                 for (int x = bxx; x <= txx; x++) {
                     for (int z = bzz; z <= tzz; z++) {
                         for (int y = 1; y < 128; y++) {
-                            result.setBlock(x, y, z, air);
+                            queue.setBlock(x, y, z, air);
                         }
                     }
                 }
                 toReturn = true;
             }
-            generator.generateChunk(secondaryMask, area, r);
-            generator.populateChunk(secondaryMask, area, r);
+            ScopedLocalBlockQueue scoped = new ScopedLocalBlockQueue(secondaryMask, new Location(area.worldname, bx, 0, bz), new Location(area.worldname, bx + 15, 255, bz + 15));
+            generator.generateChunk(scoped, area, r);
+            generator.populateChunk(scoped, area, r);
         }
-        if (lazyChunk.get() != null) {
-            lazyChunk.get().addToQueue();
-            lazyChunk.get().flush(false);
-        }
+        queue.flush();
         return toReturn;
     }
 }

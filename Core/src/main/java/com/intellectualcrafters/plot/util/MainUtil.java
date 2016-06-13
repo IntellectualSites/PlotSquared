@@ -8,18 +8,14 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.Flags;
-import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -202,7 +198,7 @@ public class MainUtil {
      * @return true if any changes were made
      */
     public static boolean resetBiome(PlotArea area, Location pos1, Location pos2) {
-        String biome = WorldUtil.IMP.getBiomeList()[area.PLOT_BIOME];
+        String biome = area.PLOT_BIOME;
         if (!StringMan.isEqual(WorldUtil.IMP.getBiome(area.worldname, (pos1.getX() + pos2.getX()) / 2, (pos1.getZ() + pos2.getZ()) / 2), biome)) {
             MainUtil.setBiome(area.worldname, pos1.getX(), pos1.getZ(), pos2.getX(), pos2.getZ(), biome);
             return true;
@@ -491,60 +487,11 @@ public class MainUtil {
         return area.getPlotAbs(id);
     }
 
-    /**
-     * Resend the chunk at a location.
-     * @param world
-     * @param loc
-     */
-    public static void update(String world, ChunkLoc loc) {
-        SetQueue.IMP.queue.sendChunk(world, Collections.singletonList(loc));
-    }
-
     public static File getFile(File base, String path) {
         if (Paths.get(path).isAbsolute()) {
             return new File(path);
         }
         return new File(base, path);
-    }
-
-    /**
-     * Set a cuboid asynchronously to a set of blocks.
-     * @param world
-     * @param pos1
-     * @param pos2
-     * @param blocks
-     */
-    public static void setCuboidAsync(String world, Location pos1, Location pos2, PlotBlock[] blocks) {
-        if (blocks.length == 1) {
-            setSimpleCuboidAsync(world, pos1, pos2, blocks[0]);
-            return;
-        }
-        for (int y = pos1.getY(); y <= Math.min(255, pos2.getY()); y++) {
-            for (int x = pos1.getX(); x <= pos2.getX(); x++) {
-                for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
-                    int i = PseudoRandom.random.random(blocks.length);
-                    PlotBlock block = blocks[i];
-                    SetQueue.IMP.setBlock(world, x, y, z, block);
-                }
-            }
-        }
-    }
-
-    /**
-     * Set a cuboid asynchronously to a block.
-     * @param world
-     * @param pos1
-     * @param pos2
-     * @param newBlock
-     */
-    public static void setSimpleCuboidAsync(String world, Location pos1, Location pos2, PlotBlock newBlock) {
-        for (int y = pos1.getY(); y <= Math.min(255, pos2.getY()); y++) {
-            for (int x = pos1.getX(); x <= pos2.getX(); x++) {
-                for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
-                    SetQueue.IMP.setBlock(world, x, y, z, newBlock);
-                }
-            }
-        }
     }
 
     /**

@@ -1,73 +1,67 @@
 package com.plotsquared.bukkit.util.block;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
-
 import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.ChunkWrapper;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.PlotChunk;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefConstructor;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod.RefExecutor;
-import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
-import com.plotsquared.bukkit.util.BukkitUtil;
-import org.bukkit.Chunk;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.block.Biome;
-
+import com.intellectualcrafters.plot.util.ReflectionUtils;
+import com.intellectualcrafters.plot.util.block.BasicLocalBlockQueue;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Set;
+import org.bukkit.Chunk;
+import org.bukkit.Material;
+import org.bukkit.World;
 
-public class FastQueue_1_9 extends SlowQueue {
+
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+
+public class BukkitLocalQueue_1_9 extends BukkitLocalQueue<char[]> {
 
     private final Object air;
-//    private final HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
-    private final RefMethod methodGetHandleChunk;
-    private final RefMethod methodInitLighting;
-    private final RefConstructor classBlockPositionConstructor;
-    private final RefConstructor classChunkSectionConstructor;
-    private final RefMethod methodW;
-    private final RefMethod methodAreNeighborsLoaded;
-    private final RefField fieldSections;
-    private final RefField fieldWorld;
-    private final RefMethod methodGetBlocks;
-    private final RefMethod methodGetType;
-    private final RefMethod methodSetType;
-    private final RefMethod methodGetCombinedId;
-    private final RefMethod methodGetByCombinedId;
-    private final RefMethod methodGetWorld;
+    //    private final HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
+    private final ReflectionUtils.RefMethod methodGetHandleChunk;
+    private final ReflectionUtils.RefMethod methodInitLighting;
+    private final ReflectionUtils.RefConstructor classBlockPositionConstructor;
+    private final ReflectionUtils.RefConstructor classChunkSectionConstructor;
+    private final ReflectionUtils.RefMethod methodW;
+    private final ReflectionUtils.RefMethod methodAreNeighborsLoaded;
+    private final ReflectionUtils.RefField fieldSections;
+    private final ReflectionUtils.RefField fieldWorld;
+    private final ReflectionUtils.RefMethod methodGetBlocks;
+    private final ReflectionUtils.RefMethod methodGetType;
+    private final ReflectionUtils.RefMethod methodSetType;
+    private final ReflectionUtils.RefMethod methodGetCombinedId;
+    private final ReflectionUtils.RefMethod methodGetByCombinedId;
+    private final ReflectionUtils.RefMethod methodGetWorld;
 
-    private final RefField tileEntityListTick;
+    private final ReflectionUtils.RefField tileEntityListTick;
 
-
-    public FastQueue_1_9() throws NoSuchFieldException, NoSuchMethodException, ClassNotFoundException {
-        RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
+    public BukkitLocalQueue_1_9(String world) throws NoSuchMethodException, ClassNotFoundException, NoSuchFieldException {
+        super(world);
+        ReflectionUtils.RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
         this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
-        RefClass classChunk = getRefClass("{nms}.Chunk");
+        ReflectionUtils.RefClass classChunk = getRefClass("{nms}.Chunk");
         this.methodInitLighting = classChunk.getMethod("initLighting");
-        RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
+        ReflectionUtils.RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
         this.classBlockPositionConstructor = classBlockPosition.getConstructor(int.class, int.class, int.class);
-        RefClass classWorld = getRefClass("{nms}.World");
+        ReflectionUtils.RefClass classWorld = getRefClass("{nms}.World");
         this.tileEntityListTick = classWorld.getField("tileEntityListTick");
         this.methodGetWorld = classChunk.getMethod("getWorld");
         this.methodW = classWorld.getMethod("w", classBlockPosition.getRealClass());
         this.fieldSections = classChunk.getField("sections");
         this.fieldWorld = classChunk.getField("world");
-        RefClass classBlock = getRefClass("{nms}.Block");
-        RefClass classIBlockData = getRefClass("{nms}.IBlockData");
+        ReflectionUtils.RefClass classBlock = getRefClass("{nms}.Block");
+        ReflectionUtils.RefClass classIBlockData = getRefClass("{nms}.IBlockData");
         this.methodGetCombinedId = classBlock.getMethod("getCombinedId", classIBlockData.getRealClass());
         this.methodGetByCombinedId = classBlock.getMethod("getByCombinedId", int.class);
-        RefClass classChunkSection = getRefClass("{nms}.ChunkSection");
+        ReflectionUtils.RefClass classChunkSection = getRefClass("{nms}.ChunkSection");
         this.methodGetBlocks = classChunkSection.getMethod("getBlocks");
         this.methodGetType = classChunkSection.getMethod("getType", int.class, int.class, int.class);
         this.methodSetType = classChunkSection.getMethod("setType", int.class, int.class, int.class, classIBlockData.getRealClass());
@@ -77,19 +71,180 @@ public class FastQueue_1_9 extends SlowQueue {
         MainUtil.initCache();
     }
 
-    /**
-     * This should be overridden by any specialized queues.
-     * @param plotChunk
-     */
     @Override
-    public void execute(PlotChunk<Chunk> plotChunk) {
-        final FastChunk_1_9 fs = (FastChunk_1_9) plotChunk;
-        Chunk chunk = plotChunk.getChunk();
-        World world = chunk.getWorld();
-        ChunkWrapper wrapper = plotChunk.getChunkWrapper();
+    public LocalChunk<char[]> getLocalChunk(int x, int z) {
+        return new CharLocalChunk_1_8_3(this, x, z);
+    }
+
+    public class CharLocalChunk_1_8_3 extends CharLocalChunk {
+        public short[] count;
+        public short[] air;
+        public short[] relight;
+
+        public CharLocalChunk_1_8_3(BasicLocalBlockQueue parent, int x, int z) {
+            super(parent, x, z);
+            this.count = new short[16];
+            this.air = new short[16];
+            this.relight = new short[16];
+        }
+
+        @Override
+        public void setBlock(int x, int y, int z, int id, int data) {
+            int i = MainUtil.CACHE_I[y][x][z];
+            int j = MainUtil.CACHE_J[y][x][z];
+            char[] vs = this.blocks[i];
+            if (vs == null) {
+                vs = this.blocks[i] = new char[4096];
+                this.count[i]++;
+            } else if (vs[j] == 0) {
+                this.count[i]++;
+            }
+            switch (id) {
+                case 0:
+                    this.air[i]++;
+                    vs[j] = (char) 1;
+                    return;
+                case 10:
+                case 11:
+                case 39:
+                case 40:
+                case 51:
+                case 74:
+                case 89:
+                case 122:
+                case 124:
+                case 138:
+                case 169:
+                    this.relight[i]++;
+                case 2:
+                case 4:
+                case 13:
+                case 14:
+                case 15:
+                case 20:
+                case 21:
+                case 22:
+                case 30:
+                case 32:
+                case 37:
+                case 41:
+                case 42:
+                case 45:
+                case 46:
+                case 47:
+                case 48:
+                case 49:
+                case 55:
+                case 56:
+                case 57:
+                case 58:
+                case 60:
+                case 7:
+                case 8:
+                case 9:
+                case 73:
+                case 78:
+                case 79:
+                case 80:
+                case 81:
+                case 82:
+                case 83:
+                case 85:
+                case 87:
+                case 88:
+                case 101:
+                case 102:
+                case 103:
+                case 110:
+                case 112:
+                case 113:
+                case 121:
+                case 129:
+                case 133:
+                case 165:
+                case 166:
+                case 170:
+                case 172:
+                case 173:
+                case 174:
+                case 181:
+                case 182:
+                case 188:
+                case 189:
+                case 190:
+                case 191:
+                case 192:
+                    vs[j] = (char) (id << 4);
+                    return;
+                case 130:
+                case 76:
+                case 62:
+                    this.relight[i]++;
+                case 54:
+                case 146:
+                case 61:
+                case 65:
+                case 68:
+                case 50:
+                    if (data < 2) {
+                        data = 2;
+                    }
+                default:
+                    vs[j] = (char) ((id << 4) + data);
+                    return;
+            }
+        }
+
+        public char[] getIdArray(int i) {
+            return this.blocks[i];
+        }
+
+        public int getCount(int i) {
+            return this.count[i];
+        }
+
+        public int getAir(int i) {
+            return this.air[i];
+        }
+
+        public void setCount(int i, short value) {
+            this.count[i] = value;
+        }
+
+        public int getRelight(int i) {
+            return this.relight[i];
+        }
+
+        public int getTotalCount() {
+            int total = 0;
+            for (int i = 0; i < 16; i++) {
+                total += this.count[i];
+            }
+            return total;
+        }
+
+        public int getTotalRelight() {
+            if (getTotalCount() == 0) {
+                Arrays.fill(this.count, (short) 1);
+                Arrays.fill(this.relight, Short.MAX_VALUE);
+                return Short.MAX_VALUE;
+            }
+            int total = 0;
+            for (int i = 0; i < 16; i++) {
+                total += this.relight[i];
+            }
+            return total;
+        }
+    }
+
+    @Override
+    public void setBlocks(LocalChunk lc) {
+        CharLocalChunk_1_8_3 fs = (CharLocalChunk_1_8_3) lc;
+        Chunk chunk = getChunk(lc.getX(), lc.getZ());
         chunk.load(true);
+        World world = chunk.getWorld();
         try {
-            boolean flag = world.getEnvironment() == Environment.NORMAL;
+            boolean flag = world.getEnvironment() == World.Environment.NORMAL;
 
             // Sections
             Method getHandle = chunk.getClass().getDeclaredMethod("getHandle");
@@ -109,10 +264,10 @@ public class FastQueue_1_9 extends SlowQueue {
             Method zm = null;
             // Trim tiles
             boolean removed = false;
-            Set<Entry<?, ?>> entrySet = (Set<Entry<?, ?>>) (Set<?>) tiles.entrySet();
-            Iterator<Entry<?, ?>> iterator = entrySet.iterator();
+            Set<Map.Entry<?, ?>> entrySet = (Set<Map.Entry<?, ?>>) (Set<?>) tiles.entrySet();
+            Iterator<Map.Entry<?, ?>> iterator = entrySet.iterator();
             while (iterator.hasNext()) {
-                Entry<?, ?> tile = iterator.next();
+                Map.Entry<?, ?> tile = iterator.next();
                 Object pos = tile.getKey();
                 if (xm == null) {
                     Class<?> clazz2 = pos.getClass().getSuperclass();
@@ -125,7 +280,7 @@ public class FastQueue_1_9 extends SlowQueue {
                 int lz = (int) zm.invoke(pos) & 15;
                 int j = MainUtil.CACHE_I[ly][lx][lz];
                 int k = MainUtil.CACHE_J[ly][lx][lz];
-                int[] array = fs.getIdArray(j);
+                char[] array = fs.getIdArray(j);
                 if (array == null) {
                     continue;
                 }
@@ -150,32 +305,25 @@ public class FastQueue_1_9 extends SlowQueue {
                 if (fs.getCount(j) == 0) {
                     continue;
                 }
-                int[] newArray = fs.getIdArray(j);
+                char[] newArray = fs.getIdArray(j);
                 if (newArray == null) {
                     continue;
                 }
                 Object section = sections[j];
                 if (section == null || fs.getCount(j) >= 4096) {
-                    char[] array = new char[4096];
-                    for (int i = 0; i < newArray.length; i++) {
-                        int combined = newArray[i];
-                        int id = combined & 4095;
-                        int data = combined >> 12;
-                        array[i] = (char) ((id << 4) + data);
-                    }
-                    section = sections[j] = newChunkSection(j << 4, flag, array);
+                    section = sections[j] = newChunkSection(j << 4, flag, fs.getIdArray(j));
                     continue;
                 }
                 Object currentArray = getBlocks(section);
-                RefExecutor setType = this.methodSetType.of(section);
+                ReflectionUtils.RefMethod.RefExecutor setType = this.methodSetType.of(section);
                 boolean fill = true;
                 for (int k = 0; k < newArray.length; k++) {
-                    int n = newArray[k];
+                    char n = newArray[k];
                     switch (n) {
                         case 0:
                             fill = false;
                             continue;
-                        case -1: {
+                        case 1: {
                             fill = false;
                             int x = MainUtil.x_loc[j][k];
                             int y = MainUtil.y_loc[j][k];
@@ -187,7 +335,9 @@ public class FastQueue_1_9 extends SlowQueue {
                             int x = MainUtil.x_loc[j][k];
                             int y = MainUtil.y_loc[j][k];
                             int z = MainUtil.z_loc[j][k];
-                            Object iBlock = this.methodGetByCombinedId.call((int) n);
+                            int id = n >> 4;
+                            int data = n & 15;
+                            Object iBlock = this.methodGetByCombinedId.call((int) (id & 0xFFF) + (data << 12));
                             setType.call(x, y & 15, z, iBlock);
                     }
                 }
@@ -199,24 +349,8 @@ public class FastQueue_1_9 extends SlowQueue {
         } catch (IllegalArgumentException | SecurityException | ReflectiveOperationException e) {
             e.printStackTrace();
         }
-        int[][] biomes = fs.biomes;
-        Biome[] values = Biome.values();
-        if (biomes != null) {
-            for (int x = 0; x < 16; x++) {
-                int[] array = biomes[x];
-                if (array == null) {
-                    continue;
-                }
-                for (int z = 0; z < 16; z++) {
-                    int biome = array[z];
-                    if (biome == 0) {
-                        continue;
-                    }
-                    chunk.getBlock(x, 0, z).setBiome(values[biome]);
-                }
-            }
-        }
-        world.refreshChunk(fs.getX(), fs.getZ());
+        fixLighting(chunk, fs, true);
+        refreshChunk(fs.getX(), fs.getZ());
     }
 
     public Object newChunkSection(int i, boolean flag, char[] ids) throws ReflectiveOperationException {
@@ -227,38 +361,27 @@ public class FastQueue_1_9 extends SlowQueue {
         return this.methodGetBlocks.of(obj).call();
     }
 
-    /**
-     * This should be overridden by any specialized queues
-     * @param wrap
-     */
     @Override
-    public PlotChunk<Chunk> getChunk(ChunkWrapper wrap) {
-        return new FastChunk_1_9(wrap);
+    public void fixChunkLighting(int x, int z) {
+        Object c = this.methodGetHandleChunk.of(getChunk(x, z)).call();
+        this.methodInitLighting.of(c).call();
     }
 
-    /**
-     * This should be overridden by any specialized queues
-     * @param pc
-     */
-    @Override
-    public boolean fixLighting(PlotChunk<Chunk> pc, boolean fixAll) {
+    public boolean fixLighting(Chunk chunk, CharLocalChunk_1_8_3 bc, boolean fixAll) {
         try {
-            FastChunk_1_9 bc = (FastChunk_1_9) pc;
-            Chunk chunk = bc.getChunk();
             if (!chunk.isLoaded()) {
                 chunk.load(false);
             } else {
-                chunk.unload(true, true);
+                chunk.unload(true, false);
                 chunk.load(false);
             }
 
             // Initialize lighting
             Object c = this.methodGetHandleChunk.of(chunk).call();
 
+            ChunkWrapper wrapper = new ChunkWrapper(getWorld(), bc.getX(), bc.getZ());
             if (fixAll && !(boolean) this.methodAreNeighborsLoaded.of(c).call(1)) {
                 World world = chunk.getWorld();
-                ChunkWrapper wrapper = bc.getChunkWrapper();
-                String worldName = wrapper.world;
                 for (int x = wrapper.x - 1; x <= wrapper.x + 1; x++) {
                     for (int z = wrapper.z - 1; z <= wrapper.z + 1; z++) {
                         if (x != 0 && z != 0) {
@@ -266,7 +389,7 @@ public class FastQueue_1_9 extends SlowQueue {
                             while (!other.isLoaded()) {
                                 other.load(true);
                             }
-                            ChunkManager.manager.loadChunk(worldName, new ChunkLoc(x, z), true);
+                            ChunkManager.manager.loadChunk(getWorld(), new ChunkLoc(x, z), true);
                         }
                     }
                 }
@@ -284,7 +407,7 @@ public class FastQueue_1_9 extends SlowQueue {
             int X = chunk.getX() << 4;
             int Z = chunk.getZ() << 4;
 
-            RefExecutor relight = this.methodW.of(w);
+            ReflectionUtils.RefMethod.RefExecutor relight = this.methodW.of(w);
             for (int j = 0; j < sections.length; j++) {
                 Object section = sections[j];
                 if (section == null) {
@@ -293,7 +416,7 @@ public class FastQueue_1_9 extends SlowQueue {
                 if (bc.getRelight(j) == 0 && !fixAll || bc.getCount(j) == 0 || bc.getCount(j) >= 4096 && bc.getAir(j) == 0) {
                     continue;
                 }
-                int[] array = bc.getIdArray(j);
+                char[] array = bc.getIdArray(j);
                 if (array != null) {
                     int l = PseudoRandom.random.random(2);
                     for (int k = 0; k < array.length; k++) {
@@ -329,7 +452,7 @@ public class FastQueue_1_9 extends SlowQueue {
                                 int x = MainUtil.x_loc[j][k];
                                 int y = MainUtil.y_loc[j][k];
                                 int z = MainUtil.z_loc[j][k];
-                                if (isSurrounded(bc.getIdArrays(), x, y, z)) {
+                                if (isSurrounded(bc.blocks, x, y, z)) {
                                     continue;
                                 }
                                 Object pos = this.classBlockPositionConstructor.create(X + x, y, Z + z);
@@ -345,7 +468,12 @@ public class FastQueue_1_9 extends SlowQueue {
         return false;
     }
 
-    public boolean isSurrounded(int[][] sections, int x, int y, int z) {
+    @Override
+    public void refreshChunk(int x, int z) {
+        getBukkitWorld().refreshChunk(x, z);
+    }
+
+    public boolean isSurrounded(char[][] sections, int x, int y, int z) {
         return isSolid(getId(sections, x, y + 1, z))
                 && isSolid(getId(sections, x + 1, y - 1, z))
                 && isSolid(getId(sections, x - 1, y, z))
@@ -361,29 +489,15 @@ public class FastQueue_1_9 extends SlowQueue {
         return false;
     }
 
-    public int getId(int[][] sections, int x, int y, int z) {
-        if (x < 0 || x > 15 || z < 0 || z > 15) {
-            return 1;
-        }
-        if (y < 0 || y > 255) {
-            return 1;
-        }
-        int i = MainUtil.CACHE_I[y][x][z];
-        int[] section = sections[i];
+    public int getId(char[] section, int x, int y, int z) {
         if (section == null) {
             return 0;
         }
         int j = MainUtil.CACHE_J[y][x][z];
-        return section[j];
+        return section[j] >> 4;
     }
 
-    public int getId(Object section, int x, int y, int z) {
-        int j = MainUtil.CACHE_J[y][x][z];
-        Object iBlock = this.methodGetType.of(section).call(x, y & 15, z);
-        return (int) this.methodGetCombinedId.call(iBlock);
-    }
-
-    public int getId(Object[] sections, int x, int y, int z) {
+    public int getId(char[][] sections, int x, int y, int z) {
         if (x < 0 || x > 15 || z < 0 || z > 15) {
             return 1;
         }
@@ -391,23 +505,10 @@ public class FastQueue_1_9 extends SlowQueue {
             return 1;
         }
         int i = MainUtil.CACHE_I[y][x][z];
-        Object section = sections[i];
+        char[] section = sections[i];
         if (section == null) {
             return 0;
         }
         return getId(section, x, y, z);
-    }
-
-    /**
-     * This should be overridden by any specialized queues
-     * @param world
-     * @param locations
-     */
-    @Override
-    public void sendChunk(String world, Collection<ChunkLoc> locations) {
-        World worldObj = BukkitUtil.getWorld(world);
-        for (ChunkLoc loc : locations) {
-            worldObj.refreshChunk(loc.x, loc.z);
-        }
     }
 }

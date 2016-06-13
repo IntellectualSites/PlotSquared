@@ -20,7 +20,6 @@ apply plugin: 'com.github.johnrengelman.shadow'
 dependencies {
     compile project(':Core')
     compile 'org.spongepowered:spongeapi:5.0.0-SNAPSHOT'
-    //compile 'org.mcstats.sponge:metrics:R8-SNAPSHOT'
 }
 
 sourceCompatibility = 1.8

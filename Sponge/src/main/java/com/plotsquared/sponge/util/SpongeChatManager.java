@@ -1,5 +1,6 @@
 package com.plotsquared.sponge.util;
 
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotMessage;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -139,7 +140,7 @@ public class SpongeChatManager extends ChatManager<Text.Builder> {
 
     @Override
     public void send(PlotMessage plotMessage, PlotPlayer player) {
-        if (player instanceof ConsolePlayer) {
+        if (player instanceof ConsolePlayer || !Settings.Chat.INTERACTIVE) {
             player.sendMessage(plotMessage.$(this).build().toPlain());
         } else {
             ((SpongePlayer) player).player.sendMessage(plotMessage.$(this).build());

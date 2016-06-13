@@ -17,14 +17,14 @@ import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
+import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import com.intellectualcrafters.plot.util.expiry.PlotAnalysis;
 import com.plotsquared.listener.PlotListener;
-
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
@@ -782,7 +782,7 @@ public class Plot {
                             manager.claimPlot(Plot.this.area, current);
                         }
                     }
-                    SetQueue.IMP.addTask(run);
+                    GlobalBlockQueue.IMP.addTask(run);
                     return;
                 }
                 Plot current = queue.poll();
@@ -794,10 +794,11 @@ public class Plot {
             }
         };
         if (!isMerged() && this.area.getRegion().equals(getLargestRegion())) {
+            final LocalBlockQueue blockQueue = area.getQueue(false);
             ChunkManager.largeRegionTask(this.area.worldname, this.area.getRegion(), new RunnableVal<ChunkLoc>() {
                 @Override
                 public void run(ChunkLoc value) {
-                    ChunkManager.manager.regenerateChunk(Plot.this.area.worldname, value);
+                    blockQueue.regenChunk(value.x, value.z);
                 }
             }, whenDone);
         } else {
@@ -1246,20 +1247,17 @@ public class Plot {
      * This should not need to be called
      */
     public void refreshChunks() {
-        TaskManager.runTask(new Runnable() {
-            @Override
-            public void run() {
-                HashSet<ChunkLoc> chunks = new HashSet<>();
-                for (RegionWrapper region : Plot.this.getRegions()) {
-                    for (int x = region.minX >> 4; x <= region.maxX >> 4; x++) {
-                        for (int z = region.minZ >> 4; z <= region.maxZ >> 4; z++) {
-                            chunks.add(new ChunkLoc(x, z));
-                        }
+        LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(area.worldname, false);
+        HashSet<ChunkLoc> chunks = new HashSet<>();
+        for (RegionWrapper region : Plot.this.getRegions()) {
+            for (int x = region.minX >> 4; x <= region.maxX >> 4; x++) {
+                for (int z = region.minZ >> 4; z <= region.maxZ >> 4; z++) {
+                    if (chunks.add(new ChunkLoc(x, z))) {
+                        queue.refreshChunk(x, z);
                     }
                 }
-                SetQueue.IMP.queue.sendChunk(Plot.this.area.worldname, chunks);
             }
-        });
+        }
     }
 
     /** Remove the plot sign if it is set. */
@@ -1269,7 +1267,9 @@ public class Plot {
             return;
         }
         Location loc = manager.getSignLoc(this.area, this);
-        SetQueue.IMP.setBlock(this.area.worldname, loc.getX(), loc.getY(), loc.getZ(), 0);
+        LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(area.worldname, false);
+        queue.setBlock(loc.getX(), loc.getY(), loc.getZ(), 0);
+        queue.flush();
     }
 
     /** Set the plot sign if plot signs are enabled. */

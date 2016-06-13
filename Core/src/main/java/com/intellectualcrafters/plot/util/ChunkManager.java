@@ -4,24 +4,23 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
-
+import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
+import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
+import com.intellectualcrafters.plot.util.block.OffsetLocalBlockQueue;
+import com.intellectualcrafters.plot.util.block.ScopedLocalBlockQueue;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public abstract class ChunkManager {
     
     public static ChunkManager manager = null;
-    private static RunnableVal<PlotChunk<?>> CURRENT_FORCE_CHUNK;
-    private static RunnableVal<PlotChunk<?>> CURRENT_ADD_CHUNK;
+    private static RunnableVal<ScopedLocalBlockQueue> CURRENT_FORCE_CHUNK;
+    private static RunnableVal<ScopedLocalBlockQueue> CURRENT_ADD_CHUNK;
 
     public static ChunkLoc getChunkChunk(Location location) {
         int x = location.getX() >> 9;
@@ -29,40 +28,41 @@ public abstract class ChunkManager {
         return new ChunkLoc(x, z);
     }
     
-    public static void setChunkInPlotArea(RunnableVal<PlotChunk<?>> force, RunnableVal<PlotChunk<?>> add, String world, ChunkLoc loc) {
+    public static void setChunkInPlotArea(RunnableVal<ScopedLocalBlockQueue> force, RunnableVal<ScopedLocalBlockQueue> add, String world, ChunkLoc loc) {
+        LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
         if (PS.get().isAugmented(world)) {
-            ChunkWrapper wrap = SetQueue.IMP.new ChunkWrapper(world, loc.x, loc.z);
-            PlotChunk<?> chunk = SetQueue.IMP.queue.getChunk(wrap);
+            OffsetLocalBlockQueue offset = new OffsetLocalBlockQueue(queue, loc.x >> 4, 0, loc.z >> 4);
+            ScopedLocalBlockQueue scoped = new ScopedLocalBlockQueue(offset, new Location(world, 0, 0, 0), new Location(world, 15, 255, 15));
             if (force != null) {
-                force.run(chunk);
+                force.run(scoped);
+            } else {
+                scoped.regenChunk(loc.x, loc.z);
+                if (add != null) {
+                    add.run(scoped);
+                }
             }
-            manager.regenerateChunk(world, loc);
-            if (add != null) {
-                add.run(chunk);
-            }
-            chunk.addToQueue();
-            chunk.flush(true);
+            queue.flush();
         } else {
             CURRENT_FORCE_CHUNK = force;
             CURRENT_ADD_CHUNK = add;
-            manager.regenerateChunk(world, loc);
+            queue.regenChunk(loc.x, loc.z);
             CURRENT_FORCE_CHUNK = null;
             CURRENT_ADD_CHUNK = null;
         }
     }
     
-    public static boolean preProcessChunk(PlotChunk<?> chunk) {
+    public static boolean preProcessChunk(ScopedLocalBlockQueue queue) {
         if (CURRENT_FORCE_CHUNK != null) {
-            CURRENT_FORCE_CHUNK.run(chunk);
+            CURRENT_FORCE_CHUNK.run(queue);
             CURRENT_FORCE_CHUNK = null;
             return true;
         }
         return false;
     }
     
-    public static boolean postProcessChunk(PlotChunk<?> chunk) {
+    public static boolean postProcessChunk(ScopedLocalBlockQueue queue) {
         if (CURRENT_ADD_CHUNK != null) {
-            CURRENT_ADD_CHUNK.run(chunk);
+            CURRENT_ADD_CHUNK.run(queue);
             CURRENT_ADD_CHUNK = null;
             return true;
         }
@@ -228,20 +228,6 @@ public abstract class ChunkManager {
         return chunks;
     }
 
-    public void regenerateChunk(String world, ChunkLoc loc) {
-        SetQueue.IMP.regenerateChunk(world, loc);
-        SetQueue.IMP.queue.sendChunk(world, Collections.singletonList(loc));
-        for (Map.Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
-            PlotPlayer pp = entry.getValue();
-            Location pLoc = pp.getLocation();
-            if (!StringMan.isEqual(world, pLoc.getWorld()) || !pLoc.getChunkLoc().equals(loc)) {
-                continue;
-            }
-            pLoc.setY(WorldUtil.IMP.getHighestBlock(world, pLoc.getX(), pLoc.getZ()));
-            pp.teleport(pLoc);
-        }
-    }
-    
     public void deleteRegionFiles(String world, Collection<ChunkLoc> chunks) {
         deleteRegionFiles(world, chunks, null);
     }

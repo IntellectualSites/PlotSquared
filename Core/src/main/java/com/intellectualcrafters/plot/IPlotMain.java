@@ -11,13 +11,12 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.InventoryUtil;
-import com.intellectualcrafters.plot.util.PlotQueue;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.util.WorldUtil;
-
+import com.intellectualcrafters.plot.util.block.QueueProvider;
 import java.io.File;
 import java.util.List;
 
@@ -135,10 +134,10 @@ public interface IPlotMain extends ILogger {
     EconHandler getEconomyHandler();
 
     /**
-     * Get the {@link PlotQueue} class.
+     * Get the {@link com.intellectualcrafters.plot.util.block.QueueProvider} class.
      * @return
      */
-    PlotQueue initPlotQueue();
+    QueueProvider initBlockQueue();
 
     /**
      * Get the {@link WorldUtil} class.
