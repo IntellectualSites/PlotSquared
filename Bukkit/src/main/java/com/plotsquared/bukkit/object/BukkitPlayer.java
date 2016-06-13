@@ -9,7 +9,6 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.WeatherType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -176,7 +175,8 @@ public class BukkitPlayer extends PlotPlayer {
     
     @Override
     public void playMusic(Location location, int id) {
-        this.player.playEffect(BukkitUtil.getLocation(location), Effect.RECORD_PLAY, Material.getMaterial(id));
+        //noinspection deprecation
+        this.player.playEffect(BukkitUtil.getLocation(location), Effect.RECORD_PLAY, id);
     }
     
     @Override
