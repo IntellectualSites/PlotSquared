@@ -25,6 +25,8 @@ import java.util.Map.Entry;
 
 public class HybridPlotManager extends ClassicPlotManager {
 
+    public static boolean REGENERATIVE_CLEAR = true;
+
     @Override
     public void exportTemplate(PlotArea plotArea) throws IOException {
         HashSet<FileBytes> files = new HashSet<>(
@@ -146,7 +148,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         Location pos1 = plot.getBottomAbs();
         Location pos2 = plot.getExtendedTopAbs();
         // If augmented
-        final boolean canRegen = (plotArea.TYPE == 0) && (plotArea.TERRAIN == 0);
+        final boolean canRegen = (plotArea.TYPE == 0) && (plotArea.TERRAIN == 0) && REGENERATIVE_CLEAR;
         // The component blocks
         final PlotBlock[] plotfloor = dpw.TOP_BLOCK;
         final PlotBlock[] filling = dpw.MAIN_BLOCK;

@@ -231,7 +231,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                     case ARMOR_STAND:
                                     case ITEM_FRAME:
                                     case PAINTING:
-                                        // TEMPORARILY CLASSIFY AS VEHICLE
+                                        // Not vehicles
+                                        continue;
                                     case MINECART:
                                     case MINECART_CHEST:
                                     case MINECART_COMMAND:

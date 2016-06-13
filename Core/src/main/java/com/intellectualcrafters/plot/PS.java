@@ -84,45 +84,45 @@ import java.util.zip.ZipInputStream;
  * An implementation of the core, with a static getter for easy access.
  */
 public class PS {
-
     private static PS instance;
+    // Implementation
     public final IPlotMain IMP;
-    private final HashSet<Integer> plotAreaHashCheck = new HashSet<>();
-    /**
-     * All plot areas mapped by world (quick world access).
-     */
-    private final HashMap<String, PlotArea[]> plotAreaMap = new HashMap<>();
-    /**
-     * All plot areas mapped by location (quick location based access).
-     */
-    private final HashMap<String, QuadMap<PlotArea>> plotAreaGrid = new HashMap<>();
-    private final int[] version;
-    private final String platform;
+    // Implementation logger
+    private ILogger logger;
+    // Current thread
     private final Thread thread;
-    public HashMap<String, Set<PlotCluster>> clusters_tmp;
-    public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
+    // Platform / Version / Update URL
+    private final String platform;
+    private final int[] version;
+    private int[] lastVersion;
+    public URL update;
+    // WorldEdit instance
+    public WorldEdit worldedit;
+    // Files and configuration
+    private File jarFile = null; // This file
     public File styleFile;
     public File configFile;
     public File worldsFile;
     public File commandsFile;
     public File translationFile;
+    private File storageFile;
     public YamlConfiguration style;
     public YamlConfiguration config;
     public YamlConfiguration worlds;
     public YamlConfiguration storage;
     public YamlConfiguration commands;
-    public WorldEdit worldedit;
-    public URL update;
-    private ILogger logger;
-    private boolean plotAreaHasCollision = false;
-    /**
-     * All plot areas (quick global access).
-     */
+     // Temporary hold the plots/clusters before the worlds load
+    public HashMap<String, Set<PlotCluster>> clusters_tmp;
+    public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
+    // All plot areas
     private PlotArea[] plotAreas = new PlotArea[0];
-    private File storageFile;
-    private File file = null; // This file
-    private int[] lastVersion;
-    private Database database;
+    // All plot areas mapped by world
+    private final HashMap<String, PlotArea[]> plotAreaMap = new HashMap<>();
+    // All plot areas mapped by position
+    private final HashMap<String, QuadMap<PlotArea>> plotAreaGrid = new HashMap<>();
+    // Optimization if there are no hash collisions
+    private boolean plotAreaHasCollision = false;
+    private final HashSet<Integer> plotAreaHashCheck = new HashSet<>();
 
     /**
      * Initialize PlotSquared with the desired Implementation class.
@@ -140,12 +140,12 @@ public class PS {
             new ReflectionUtils(this.IMP.getNMSPackage());
             try {
                 URL url = PS.class.getProtectionDomain().getCodeSource().getLocation();
-                this.file = new File(new URL(url.toURI().toString().split("\\!")[0].replaceAll("jar:file", "file")).toURI().getPath());
+                this.jarFile = new File(new URL(url.toURI().toString().split("\\!")[0].replaceAll("jar:file", "file")).toURI().getPath());
             } catch (MalformedURLException | URISyntaxException | SecurityException e) {
                 e.printStackTrace();
-                this.file = new File(this.IMP.getDirectory().getParentFile(), "PlotSquared.jar");
-                if (!this.file.exists()) {
-                    this.file = new File(this.IMP.getDirectory().getParentFile(), "PlotSquared-" + platform + ".jar");
+                this.jarFile = new File(this.IMP.getDirectory().getParentFile(), "PlotSquared.jar");
+                if (!this.jarFile.exists()) {
+                    this.jarFile = new File(this.IMP.getDirectory().getParentFile(), "PlotSquared-" + platform + ".jar");
                 }
             }
             if (getJavaVersion() < 1.8) {
@@ -450,16 +450,6 @@ public class PS {
      */
     public String getPlatform() {
         return this.platform;
-    }
-
-    /**
-     * Get the {@link Database} object.
-     *
-     * @return the database
-     * @see Database#getConnection() to get the database connection
-     */
-    public Database getDatabase() {
-        return this.database;
     }
 
     /**
@@ -1701,7 +1691,7 @@ public class PS {
 
     public boolean update(PlotPlayer sender, URL url) {
         try {
-            String name = this.file.getName();
+            String name = this.jarFile.getName();
             File newJar = new File("plugins/update/" + name);
             MainUtil.sendMessage(sender, "$1Downloading from provided URL: &7" + url);
             URLConnection con = url.openConnection();
@@ -1748,7 +1738,7 @@ public class PS {
             try (InputStream stream = this.IMP.getClass().getResourceAsStream(file)) {
                 byte[] buffer = new byte[2048];
                 if (stream == null) {
-                    try (ZipInputStream zis = new ZipInputStream(new FileInputStream(this.file))) {
+                    try (ZipInputStream zis = new ZipInputStream(new FileInputStream(this.jarFile))) {
                         ZipEntry ze = zis.getNextEntry();
                         while (ze != null) {
                             String name = ze.getName();
@@ -1801,8 +1791,6 @@ public class PS {
      */
     public void disable() {
         try {
-            TaskManager.IMP = null;
-            this.database = null;
             // Validate that all data in the db is correct
             final HashSet<Plot> plots = new HashSet<>();
             foreachPlotRaw(new RunnableVal<Plot>() {
@@ -1826,20 +1814,22 @@ public class PS {
      */
     public void setupDatabase() {
         try {
-            if (DBFunc.dbManager == null) {
-                if (Storage.MySQL.USE) {
-                    this.database = new com.intellectualcrafters.plot.database.MySQL(Storage.MySQL.HOST, Storage.MySQL.PORT, Storage.MySQL.DATABASE,
-                            Storage.MySQL.USER, Storage.MySQL.PASSWORD);
-                } else if (Storage.SQLite.USE) {
-                    File file = MainUtil.getFile(IMP.getDirectory(), Storage.SQLite.DB + ".db");
-                    this.database = new com.intellectualcrafters.plot.database.SQLite(file);
-                } else {
-                    PS.log(C.PREFIX + "&cNo storage type is set!");
-                    this.IMP.disable();
-                    return;
-                }
+            if (DBFunc.dbManager != null) {
+                DBFunc.dbManager.close();
             }
-            DBFunc.dbManager = new SQLManager(this.database, Storage.PREFIX, false);
+            Database database;
+            if (Storage.MySQL.USE) {
+                database = new com.intellectualcrafters.plot.database.MySQL(Storage.MySQL.HOST, Storage.MySQL.PORT, Storage.MySQL.DATABASE,
+                        Storage.MySQL.USER, Storage.MySQL.PASSWORD);
+            } else if (Storage.SQLite.USE) {
+                File file = MainUtil.getFile(IMP.getDirectory(), Storage.SQLite.DB + ".db");
+                database = new com.intellectualcrafters.plot.database.SQLite(file);
+            } else {
+                PS.log(C.PREFIX + "&cNo storage type is set!");
+                this.IMP.disable();
+                return;
+            }
+            DBFunc.dbManager = new SQLManager(database, Storage.PREFIX, false);
             this.plots_tmp = DBFunc.getPlots();
             this.clusters_tmp = DBFunc.getClusters();
         } catch (ClassNotFoundException | SQLException e) {
