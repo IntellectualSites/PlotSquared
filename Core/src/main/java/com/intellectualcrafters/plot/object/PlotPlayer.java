@@ -324,6 +324,8 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      */
     public abstract void setFlight(boolean fly);
 
+    public abstract  boolean getFlight();
+
     /**
      * Play music at a location for the player.
      * @param location where to play the music

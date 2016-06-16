@@ -15,4 +15,11 @@ public class ByteArrayUtilities {
         return (bytes[0]<<24)&0xff000000|(bytes[1]<<16)&0x00ff0000|(bytes[2]<<8)&0x0000ff00|(bytes[3])&0x000000ff;
     }
 
+    public static boolean bytesToBoolean(byte[] bytes) {
+        return bytes[0] == 1;
+    }
+
+    public static byte[] booleanToBytes(boolean b) {
+        return new byte[] {(byte)(b ? 1 : 0)};
+    }
 }

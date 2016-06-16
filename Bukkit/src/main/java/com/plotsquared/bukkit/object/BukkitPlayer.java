@@ -172,7 +172,12 @@ public class BukkitPlayer extends PlotPlayer {
     public void setFlight(boolean fly) {
         this.player.setAllowFlight(fly);
     }
-    
+
+    @Override
+    public boolean getFlight() {
+        return player.getAllowFlight();
+    }
+
     @Override
     public void playMusic(Location location, int id) {
         //noinspection deprecation

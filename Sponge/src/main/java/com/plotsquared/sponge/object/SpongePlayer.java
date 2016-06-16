@@ -167,7 +167,13 @@ public class SpongePlayer extends PlotPlayer {
         this.player.offer(Keys.IS_FLYING, fly);
         this.player.offer(Keys.CAN_FLY, fly);
     }
-    
+
+    @Override
+    public boolean getFlight() {
+        Optional<Boolean> flying = player.get(Keys.CAN_FLY);
+        return flying.isPresent() && flying.get();
+    }
+
     @Override
     public void playMusic(Location location, int id) {
         switch (id) {

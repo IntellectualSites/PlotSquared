@@ -11,16 +11,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.AbstractTitle;
-import com.intellectualcrafters.plot.util.CommentManager;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.PlotGameMode;
-import com.intellectualcrafters.plot.util.PlotWeather;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 
 import java.util.HashMap;
@@ -94,7 +85,10 @@ public class PlotListener {
                 }
                 Optional<Boolean> flyFlag = plot.getFlag(Flags.FLY);
                 if (flyFlag.isPresent()) {
-                    player.setFlight(flyFlag.get());
+                    if (flyFlag.get() != player.getFlight()) {
+                        player.setPersistentMeta("flight", ByteArrayUtilities.booleanToBytes(player.getFlight()));
+                        player.setFlight(flyFlag.get());
+                    }
                 }
                 Optional<Long> timeFlag = plot.getFlag(Flags.TIME);
                 if (timeFlag.isPresent()) {
@@ -204,9 +198,13 @@ public class PlotListener {
                 }
             }
             if (plot.getFlag(Flags.FLY).isPresent()) {
-                PlotGameMode gamemode = player.getGameMode();
-                if (gamemode == PlotGameMode.SURVIVAL || (gamemode == PlotGameMode.ADVENTURE)) {
-                    player.setFlight(false);
+                if (player.hasPersistentMeta("flight")) {
+                    player.setFlight(ByteArrayUtilities.bytesToBoolean(player.getPersistentMeta("flight")));
+                } else {
+                    PlotGameMode gameMode = player.getGameMode();
+                    if (gameMode == PlotGameMode.SURVIVAL || gameMode == PlotGameMode.ADVENTURE) {
+                        player.setFlight(false);
+                    }
                 }
             }
             if (plot.getFlag(Flags.TIME).isPresent()) {

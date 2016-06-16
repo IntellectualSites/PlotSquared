@@ -112,7 +112,12 @@ public class ConsolePlayer extends PlotPlayer {
     
     @Override
     public void setFlight(boolean fly) {}
-    
+
+    @Override
+    public boolean getFlight() {
+        return true;
+    }
+
     @Override
     public void playMusic(Location location, int id) {}
     
