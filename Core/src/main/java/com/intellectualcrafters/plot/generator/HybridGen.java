@@ -9,6 +9,8 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
+import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import com.intellectualcrafters.plot.util.block.ScopedLocalBlockQueue;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -223,13 +225,17 @@ public class HybridGen extends IndependentPlotGenerator {
                 }
                 rz[i] = v;
             }
+            LocalBlockQueue queue = null;
             for (short x = 0; x < 16; x++) {
                 for (short z = 0; z < 16; z++) {
                     int pair = MathMan.pair(rx[x], rz[z]);
                     HashMap<Integer, CompoundTag> map = hpw.G_SCH_STATE.get(pair);
                     if (map != null) {
                         for (Entry<Integer, CompoundTag> entry : map.entrySet()) {
-                            SchematicHandler.manager.restoreTile(hpw.worldname, entry.getValue(), p1x + x, entry.getKey(), p1z + z);
+                            if (queue == null) {
+                                queue = GlobalBlockQueue.IMP.getNewQueue(hpw.worldname, false);
+                            }
+                            SchematicHandler.manager.restoreTile(queue, entry.getValue(), p1x + x, entry.getKey(), p1z + z);
                         }
                     }
                 }

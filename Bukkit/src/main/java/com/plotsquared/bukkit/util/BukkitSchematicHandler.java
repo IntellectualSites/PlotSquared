@@ -14,6 +14,7 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import com.plotsquared.bukkit.object.schematic.StateWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -303,7 +304,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
     }
 
     @Override
-    public void restoreTile(String world, CompoundTag ct, int x, int y, int z) {
-        new StateWrapper(ct).restoreTag(world, x, y, z);
+    public boolean restoreTile(LocalBlockQueue queue, CompoundTag ct, int x, int y, int z) {
+        return new StateWrapper(ct).restoreTag(queue.getWorld(), x, y, z);
     }
 }

@@ -6,6 +6,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.PlotGameMode;
 import com.intellectualcrafters.plot.util.PlotWeather;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.sponge.util.SpongeUtil;
 import org.spongepowered.api.Sponge;
@@ -73,7 +74,10 @@ public class SpongePlayer extends PlotPlayer {
     
     @Override
     public void sendMessage(String message) {
-        this.player.sendMessage(ChatTypes.CHAT, TextSerializers.LEGACY_FORMATTING_CODE.deserialize(message));
+        if (!StringMan.isEqual(this.<String>getMeta("lastMessage"), message)) {
+            setMeta("lastMessage", message);
+            this.player.sendMessage(ChatTypes.CHAT, TextSerializers.LEGACY_FORMATTING_CODE.deserialize(message));
+        }
     }
     
     @Override

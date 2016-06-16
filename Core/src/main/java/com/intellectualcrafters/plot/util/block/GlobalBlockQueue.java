@@ -57,7 +57,11 @@ public class GlobalBlockQueue {
         }
     };
 
-    public void GlobalBlockQueueProvider(QueueProvider provider) {
+    public QueueProvider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(QueueProvider provider) {
         this.provider = provider;
     }
 

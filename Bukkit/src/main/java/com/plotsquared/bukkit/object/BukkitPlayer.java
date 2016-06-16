@@ -5,6 +5,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.PlotGameMode;
 import com.intellectualcrafters.plot.util.PlotWeather;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import org.bukkit.Effect;
@@ -66,7 +67,10 @@ public class BukkitPlayer extends PlotPlayer {
 
     @Override
     public void sendMessage(String message) {
-        this.player.sendMessage(message);
+        if (!StringMan.isEqual(this.<String>getMeta("lastMessage"), message)) {
+            setMeta("lastMessage", message);
+            this.player.sendMessage(message);
+        }
     }
     
     @Override

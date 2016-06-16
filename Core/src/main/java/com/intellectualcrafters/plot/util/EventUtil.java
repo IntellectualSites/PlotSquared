@@ -137,7 +137,7 @@ public abstract class EventUtil {
                         return true;
                     }
                 }
-                if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
+                if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false)) {
                     return true;
                 }
                 return !(!notifyPerms || MainUtil.sendMessage(player, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s() + '/' + C.FLAG_BREAK.s()));
@@ -149,8 +149,7 @@ public abstract class EventUtil {
                     return true;
                 }
                 if (plot.hasOwner()) {
-                    return Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms) || !(!notifyPerms || MainUtil
-                            .sendMessage(player, C.FLAG_TUTORIAL_USAGE, C.FLAG_HANGING_BREAK.s()));
+                    return Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false) || !(!notifyPerms || MainUtil.sendMessage(player, C.FLAG_TUTORIAL_USAGE, C.FLAG_HANGING_BREAK.s()));
                 }
                 return Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
             case BREAK_MISC:
@@ -161,7 +160,7 @@ public abstract class EventUtil {
                     return true;
                 }
                 if (plot.hasOwner()) {
-                    return Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms) || !(!notifyPerms || MainUtil
+                    return Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false) || !(!notifyPerms || MainUtil
                             .sendMessage(player, C.FLAG_TUTORIAL_USAGE, C.FLAG_MISC_BREAK.s()));
                 }
                 return Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
@@ -173,7 +172,7 @@ public abstract class EventUtil {
                     return true;
                 }
                 if (plot.hasOwner()) {
-                    if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
+                    if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false)) {
                         return true;
                     }
                     return !(!notifyPerms || MainUtil.sendMessage(player, C.FLAG_TUTORIAL_USAGE, C.FLAG_VEHICLE_BREAK.s()));
@@ -194,7 +193,7 @@ public abstract class EventUtil {
                     value = null;
                 }
                 if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
-                    return Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms) || !(!notifyPerms || MainUtil
+                    return Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false) || !(!notifyPerms || MainUtil
                             .sendMessage(player, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s()));
                 }
                 return true;
@@ -214,7 +213,7 @@ public abstract class EventUtil {
                     value = null;
                 }
                 if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
-                    if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_BUILD_OTHER.s(), notifyPerms)) {
+                    if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_BUILD_OTHER.s(), false)) {
                         return true;
                     }
                     return !(!notifyPerms || MainUtil.sendMessage(player, C.FLAG_TUTORIAL_USAGE, C.FLAG_PLACE.s()));
@@ -264,7 +263,7 @@ public abstract class EventUtil {
                     value = null;
                 }
                 if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
-                    if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
+                    if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false)) {
                         return true;
                     }
                     return !(!notifyPerms || MainUtil.sendMessage(player, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s() + '/' + C.FLAG_HANGING_INTERACT.s()));
@@ -289,7 +288,7 @@ public abstract class EventUtil {
                     value = null;
                 }
                 if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
-                    if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
+                    if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false)) {
                         return true;
                     }
                     return !(!notifyPerms || MainUtil.sendMessage(player, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s() + '/' + C.FLAG_MISC_INTERACT.s()));
@@ -314,7 +313,7 @@ public abstract class EventUtil {
                     value = null;
                 }
                 if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
-                    if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
+                    if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false)) {
                         return true;
                     }
                     return !(!notifyPerms || MainUtil.sendMessage(player, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s() + '/' + C.FLAG_VEHICLE_USE.s()));
@@ -339,7 +338,7 @@ public abstract class EventUtil {
                     value = null;
                 }
                 if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
-                    if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
+                    if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false)) {
                         return true;
                     }
                     return !(!notifyPerms || MainUtil.sendMessage(player, C.FLAG_TUTORIAL_USAGE, C.FLAG_MOB_PLACE.s() + '/' + C.FLAG_PLACE.s()));
@@ -366,7 +365,7 @@ public abstract class EventUtil {
                     value = null;
                 }
                 if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
-                    if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
+                    if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false)) {
                         return true;
                     }
                     return !(!notifyPerms || MainUtil.sendMessage(player, C.FLAG_TUTORIAL_USAGE, C.FLAG_MISC_PLACE.s() + '/' + C.FLAG_PLACE.s()));
@@ -392,7 +391,7 @@ public abstract class EventUtil {
                     value = null;
                 }
                 if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
-                    if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
+                    if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false)) {
                         return true;
                     }
                     return !(!notifyPerms || MainUtil.sendMessage(player, C.FLAG_TUTORIAL_USAGE, C.FLAG_VEHICLE_PLACE.s() + '/' + C.FLAG_PLACE.s()));

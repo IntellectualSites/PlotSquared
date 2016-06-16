@@ -334,15 +334,15 @@ public abstract class SchematicHandler {
                             if (!chunks.isEmpty()) {
                                 this.run();
                             } else {
-                                queue.flush();
                                 for (Map.Entry<BlockLoc, CompoundTag> entry : schematic.getTiles().entrySet()) {
                                     BlockLoc loc = entry.getKey();
-                                    restoreTile(plot.getArea().worldname, entry.getValue(), p1x + xOffset + loc.x, loc.y + y_offset_actual, p1z + zOffset + loc.z);
+                                    restoreTile(queue, entry.getValue(), p1x + xOffset + loc.x, loc.y + y_offset_actual, p1z + zOffset + loc.z);
                                 }
                                 if (whenDone != null) {
                                     whenDone.value = true;
                                     whenDone.run();
                                 }
+                                queue.flush();
                             }
                         }
                     });
@@ -426,7 +426,7 @@ public abstract class SchematicHandler {
         return schem;
     }
 
-    public abstract void restoreTile(String world, CompoundTag tag, int x, int y, int z);
+    public abstract boolean restoreTile(LocalBlockQueue queue, CompoundTag tag, int x, int y, int z);
 
     /**
      * Get a schematic

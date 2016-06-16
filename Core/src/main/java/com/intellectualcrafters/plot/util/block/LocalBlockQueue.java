@@ -1,10 +1,12 @@
 package com.intellectualcrafters.plot.util.block;
 
+import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PseudoRandom;
+import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
@@ -42,6 +44,11 @@ public abstract class LocalBlockQueue {
 
     public final boolean setBlock(int x, int y, int z, PlotBlock block) {
         return setBlock(x, y, z, block.id, block.data);
+    }
+
+    public boolean setTile(int x, int y, int z, CompoundTag tag) {
+        SchematicHandler.manager.restoreTile(this, tag, x, y, z);
+        return true;
     }
 
     public abstract PlotBlock getBlock(int x, int y, int z);
