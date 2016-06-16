@@ -1,8 +1,9 @@
 package com.intellectualcrafters.plot.flag;
 
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.util.StringComparison;
 
-public abstract class Flag<V> {
+public abstract class Flag<V> implements StringComparison.StringComparable {
 
     private final String name;
     private boolean reserved = false;
@@ -52,5 +53,10 @@ public abstract class Flag<V> {
 
     public boolean isSet(Plot plot) {
         return FlagManager.getPlotFlagRaw(plot, this) != null;
+    }
+
+    @Override
+    public String getComparableString() {
+        return getName();
     }
 }

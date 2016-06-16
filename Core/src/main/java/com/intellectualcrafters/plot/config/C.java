@@ -553,6 +553,7 @@ public enum C {
     FLAG_TYPE("$2Type: %s", "Flag"),
     FLAG_DESC("$2Desc: %s", "Flag"),
     NOT_VALID_FLAG("$2That is not a valid flag", "Flag"),
+    NOT_VALID_FLAG_SUGGESTED("$2That is not a valid flag. Did you mean: $1%s", "Flag"),
     NOT_VALID_VALUE("$2Flag values must be alphanumerical", "Flag"),
     FLAG_NOT_IN_PLOT("$2The plot does not have that flag", "Flag"),
     FLAG_NOT_REMOVED("$2The flag could not be removed", "Flag"),

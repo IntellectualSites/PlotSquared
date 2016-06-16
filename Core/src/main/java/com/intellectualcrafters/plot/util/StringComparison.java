@@ -99,6 +99,9 @@ public class StringComparison<T> {
     }
 
     public String getString(T o) {
+        if (o instanceof StringComparable) {
+            return ((StringComparable) o).getComparableString();
+        }
         return o.toString();
     }
     
@@ -146,5 +149,9 @@ public class StringComparison<T> {
             this.match = match;
             this.best = best;
         }
+    }
+
+    public interface StringComparable {
+        String getComparableString();
     }
 }
