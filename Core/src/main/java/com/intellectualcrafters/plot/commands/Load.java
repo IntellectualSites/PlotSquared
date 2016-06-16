@@ -13,7 +13,6 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -68,14 +67,14 @@ public class Load extends SubCommand {
                 String schematic;
                 try {
                     schematic = schematics.get(Integer.parseInt(args[0]) - 1);
-                } catch (NumberFormatException ignored) {
+                } catch (Exception ignored) {
                     // use /plot load <index>
                     MainUtil.sendMessage(player, C.NOT_VALID_NUMBER, "(1, " + schematics.size() + ')');
                     return false;
                 }
                 final URL url;
                 try {
-                    url = new URL(Settings.Web.URL + "saves/" + player.getUUID() + '/' + schematic + ".schematic");
+                    url = new URL(Settings.Web.URL + "saves/" + player.getUUID() + '/' + schematic);
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                     MainUtil.sendMessage(player, C.LOAD_FAILED);

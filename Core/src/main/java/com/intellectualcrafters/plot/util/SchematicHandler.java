@@ -1,6 +1,5 @@
 package com.intellectualcrafters.plot.util;
 
-import com.google.common.collect.Lists;
 import com.intellectualcrafters.jnbt.ByteArrayTag;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.jnbt.IntTag;
@@ -247,12 +246,9 @@ public abstract class SchematicHandler {
                                         int i2 = (rz * WIDTH) + i1;
                                         for (int rx = xxb - p1x; rx <= (xxt - p1x); rx++) {
                                             int i = i2 + rx;
-
                                             int xx = p1x + rx;
                                             int zz = p1z + rz;
-
                                             int id = ids[i];
-
                                             switch (id) {
                                                 case 0:
                                                 case 2:
@@ -338,11 +334,11 @@ public abstract class SchematicHandler {
                                     BlockLoc loc = entry.getKey();
                                     restoreTile(queue, entry.getValue(), p1x + xOffset + loc.x, loc.y + y_offset_actual, p1z + zOffset + loc.z);
                                 }
+                                queue.flush();
                                 if (whenDone != null) {
                                     whenDone.value = true;
                                     whenDone.run();
                                 }
-                                queue.flush();
                             }
                         }
                     });
@@ -513,7 +509,7 @@ public abstract class SchematicHandler {
                 String schematic = array.getString(i);
                 schematics.add(schematic);
             }
-            return Lists.reverse(schematics);
+            return schematics;
         } catch (JSONException | IOException e) {
             e.printStackTrace();
             PS.debug("ERROR PARSING: " + rawJSON);
