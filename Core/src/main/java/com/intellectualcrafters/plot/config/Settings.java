@@ -285,6 +285,8 @@ public class Settings extends Config {
         public static boolean UUID_CACHE = true;
         @Comment("Notify players of updates")
         public static boolean UPDATER = true;
+        @Comment("Stores user metadata in a database")
+        public static boolean PERSISTENT_META = true;
         @Comment("Optimizes permission checks")
         public static boolean PERMISSION_CACHE = true;
         @Comment("Optimizes block changing code")

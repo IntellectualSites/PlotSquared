@@ -415,12 +415,14 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     public void populatePersistentMetaMap() {
-        DBFunc.getPersistentMeta(getUUID(), new RunnableVal<Map<String, byte[]>>() {
-            @Override
-            public void run(Map<String, byte[]> value) {
-                PlotPlayer.this.metaMap = value;
-            }
-        });
+        if (Settings.Enabled_Components.PERSISTENT_META) {
+            DBFunc.getPersistentMeta(getUUID(), new RunnableVal<Map<String, byte[]>>() {
+                @Override
+                public void run(Map<String, byte[]> value) {
+                    PlotPlayer.this.metaMap = value;
+                }
+            });
+        }
     }
 
     public byte[] getPersistentMeta(String key) {
@@ -431,13 +433,17 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         if (this.metaMap.containsKey(key)) {
             this.metaMap.remove(key);
         }
-        DBFunc.removePersistentMeta(getUUID(), key);
+        if (Settings.Enabled_Components.PERSISTENT_META) {
+            DBFunc.removePersistentMeta(getUUID(), key);
+        }
     }
 
     public void setPersistentMeta(String key, byte[] value) {
         boolean delete = hasPersistentMeta(key);
         this.metaMap.put(key, value);
-        DBFunc.addPersistentMeta(getUUID(), key, value, delete);
+        if (Settings.Enabled_Components.PERSISTENT_META) {
+            DBFunc.addPersistentMeta(getUUID(), key, value, delete);
+        }
     }
 
     public boolean hasPersistentMeta(String key) {

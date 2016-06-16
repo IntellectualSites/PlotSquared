@@ -72,6 +72,17 @@ public class PlotListener {
                         }
                     }
                 }
+                Optional<Boolean> flyFlag = plot.getFlag(Flags.FLY);
+                if (flyFlag.isPresent()) {
+                    boolean flight = player.getFlight();
+                    if (flyFlag.get() != player.getFlight()) {
+                        PlotGameMode gamemode = player.getGameMode();
+                        if (flight != (gamemode == PlotGameMode.CREATIVE || gamemode == PlotGameMode.SPECTATOR)) {
+                            player.setPersistentMeta("flight", ByteArrayUtilities.booleanToBytes(player.getFlight()));
+                        }
+                        player.setFlight(flyFlag.get());
+                    }
+                }
                 Optional<PlotGameMode> gamemodeFlag = plot.getFlag(Flags.GAMEMODE);
                 if (gamemodeFlag.isPresent()) {
                     if (player.getGameMode() != gamemodeFlag.get()) {
@@ -81,13 +92,6 @@ public class PlotListener {
                             MainUtil.sendMessage(player,
                                     StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.getId(), "{gamemode}", gamemodeFlag.get()));
                         }
-                    }
-                }
-                Optional<Boolean> flyFlag = plot.getFlag(Flags.FLY);
-                if (flyFlag.isPresent()) {
-                    if (flyFlag.get() != player.getFlight()) {
-                        player.setPersistentMeta("flight", ByteArrayUtilities.booleanToBytes(player.getFlight()));
-                        player.setFlight(flyFlag.get());
                     }
                 }
                 Optional<Long> timeFlag = plot.getFlag(Flags.TIME);
@@ -200,6 +204,7 @@ public class PlotListener {
             if (plot.getFlag(Flags.FLY).isPresent()) {
                 if (player.hasPersistentMeta("flight")) {
                     player.setFlight(ByteArrayUtilities.bytesToBoolean(player.getPersistentMeta("flight")));
+                    player.removePersistentMeta("flight");
                 } else {
                     PlotGameMode gameMode = player.getGameMode();
                     if (gameMode == PlotGameMode.SURVIVAL || gameMode == PlotGameMode.ADVENTURE) {

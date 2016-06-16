@@ -2102,14 +2102,16 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         Entity victim = event.getEntity();
         if (!entityDamage(damager, victim)) {
-            event.setCancelled(true);
-            if (victim instanceof Ageable) {
-                Ageable ageable = (Ageable) victim;
-                if (ageable.getAge() == -24000) {
-                    ageable.setAge(0);
-                    ageable.setAdult();
+            if (event.isCancelled()) {
+                if (victim instanceof Ageable) {
+                    Ageable ageable = (Ageable) victim;
+                    if (ageable.getAge() == -24000) {
+                        ageable.setAge(0);
+                        ageable.setAdult();
+                    }
                 }
             }
+            event.setCancelled(true);
         }
     }
 

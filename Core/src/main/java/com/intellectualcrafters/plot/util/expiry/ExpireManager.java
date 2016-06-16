@@ -57,9 +57,13 @@ public class ExpireManager {
     }
 
     public void handleEntry(PlotPlayer pp, Plot plot) {
-        if (plotsToDelete != null && !plotsToDelete.isEmpty() && pp.hasPermission("plots.admin.command.autoclear") && plotsToDelete.contains(plot) && !isExpired(new ArrayDeque<>(tasks), plot).isEmpty()) {
-            plotsToDelete.remove(plot);
-            confirmExpiry(pp);
+        if (plotsToDelete != null && !plotsToDelete.isEmpty() && pp.hasPermission("plots.admin.command.autoclear") && plotsToDelete.contains(plot)) {
+            if (!isExpired(new ArrayDeque<>(tasks), plot).isEmpty()) {
+                confirmExpiry(pp);
+            } else {
+                plotsToDelete.remove(plot);
+                confirmExpiry(pp);
+            }
         }
     }
 
@@ -69,29 +73,37 @@ public class ExpireManager {
     }
 
     public void confirmExpiry(final PlotPlayer pp) {
-        if (plotsToDelete != null && !plotsToDelete.isEmpty() && pp
-                .hasPermission("plots.admin.command.autoclear")) {
+        if (pp.getMeta("ignoreExpireTask") != null) {
+            return;
+        }
+        if (plotsToDelete != null && !plotsToDelete.isEmpty() && pp.hasPermission("plots.admin.command.autoclear")) {
             final int num = plotsToDelete.size();
-            for (final Plot current : plotsToDelete) {
+            while (!plotsToDelete.isEmpty()) {
+                Iterator<Plot> iter = plotsToDelete.iterator();
+                final Plot current = iter.next();
                 if (!isExpired(new ArrayDeque<>(tasks), current).isEmpty()) {
                     TaskManager.runTask(new Runnable() {
                         @Override
                         public void run() {
+                            pp.setMeta("ignoreExpireTask", true);
                             pp.teleport(current.getCenter());
+                            pp.deleteMeta("ignoreExpireTask");
                             PlotMessage msg = new PlotMessage()
-                                    .text(num + " " + (num > 1 ? "plots are" : "plot is") + " expired:").color("$1").command("/plot list expired")
+                                    .text(num + " " + (num > 1 ? "plots are" : "plot is") + " expired: ").color("$1").text(current.toString()).color("$2").suggest("/plot list expired")
                                     .tooltip("/plot list expired")
                                     //.text("\n - ").color("$3").text("Delete all (/plot delete expired)").color("$2").command("/plot delete expired")
-                                    .text("\n - ").color("$3").text("Delete this (/plot delete)").color("$2").command("/plot delete")
+                                    .text("\n - ").color("$3").text("Delete this (/plot delete)").color("$2").suggest("/plot delete")
                                     .tooltip("/plot delete")
-                                    .text("\n - ").color("$3").text("Remind later (/plot set keep 1d)").color("$2").command("/plot set keep 1d")
+                                    .text("\n - ").color("$3").text("Remind later (/plot set keep 1d)").color("$2").suggest("/plot set keep 1d")
                                     .tooltip("/plot set keep 1d")
-                                    .text("\n - ").color("$3").text("Keep this (/plot set keep true)").color("$2").command("/plot set keep true")
+                                    .text("\n - ").color("$3").text("Keep this (/plot set keep true)").color("$2").suggest("/plot set keep true")
                                     .tooltip("/plot set keep true");
                             msg.send(pp);
                         }
                     });
                     return;
+                } else {
+                    iter.remove();
                 }
             }
             plotsToDelete.clear();
