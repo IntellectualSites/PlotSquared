@@ -217,18 +217,22 @@ public class FlagManager {
      * @param id the flag to remove
      * @return true if the plot contained the flag and was removed successfully
      */
-    public static boolean removePlotFlag(Plot plot, Flag<?> id) {
-        Object value = plot.getFlags().remove(id);
-        if (value == null) {
-            return false;
+    public static boolean removePlotFlag(Plot origin, Flag<?> id) {
+        for (Plot plot : origin.getConnectedPlots()) {
+            Object value = plot.getFlags().remove(id);
+            if (value == null) {
+                return false;
+            }
+            if (plot == origin) {
+                boolean result = EventUtil.manager.callFlagRemove(id, plot, value);
+                if (!result) {
+                    plot.getFlags().put(id, value);
+                    return false;
+                }
+            }
+            plot.reEnter();
+            DBFunc.setFlags(plot, plot.getFlags());
         }
-        boolean result = EventUtil.manager.callFlagRemove(id, plot, value);
-        if (!result) {
-            plot.getFlags().put(id, value);
-            return false;
-        }
-        plot.reEnter();
-        DBFunc.setFlags(plot, plot.getFlags());
         return true;
     }
 
