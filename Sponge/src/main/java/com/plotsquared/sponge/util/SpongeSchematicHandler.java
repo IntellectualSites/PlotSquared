@@ -15,6 +15,7 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.item.inventory.Carrier;
 import org.spongepowered.api.item.inventory.type.CarriedInventory;
@@ -31,7 +32,7 @@ import java.util.Set;
 public class SpongeSchematicHandler extends SchematicHandler {
 
     @Override
-    public void restoreTile(String world, CompoundTag tag, int x, int y, int z) {
+    public boolean restoreTile(LocalBlockQueue queue, CompoundTag tag, int x, int y, int z) {
         // TODO Auto-generated method stub
         // This method should place the compound tag at a location e.g. chest contents
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
