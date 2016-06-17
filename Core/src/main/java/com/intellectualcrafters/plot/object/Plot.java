@@ -850,7 +850,7 @@ public class Plot {
         if (!this.isMerged()) {
             return false;
         }
-        Set<Plot> plots = this.getConnectedPlots();
+        final Set<Plot> plots = this.getConnectedPlots();
         ArrayList<PlotId> ids = new ArrayList<>(plots.size());
         for (Plot current : plots) {
             current.setHome(null);
@@ -886,9 +886,16 @@ public class Plot {
         for (Plot current : plots) {
             boolean[] merged = new boolean[]{false, false, false, false};
             current.setMerged(merged);
-            if (createSign) {
-                current.setSign(MainUtil.getName(current.owner));
-            }
+        }
+        if (createSign) {
+            GlobalBlockQueue.IMP.addTask(new Runnable() {
+                @Override
+                public void run() {
+                    for (Plot current : plots) {
+                        current.setSign(MainUtil.getName(current.owner));
+                    }
+                }
+            });
         }
         if (createRoad) {
             manager.finishPlotUnlink(this.area, ids);

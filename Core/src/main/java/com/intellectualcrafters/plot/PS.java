@@ -171,6 +171,7 @@ public class PS {
             if (Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
                 try {
                     if (this.IMP.initWorldEdit()) {
+                        PS.debug("PlotSquared hooked into WorldEdit.");
                         this.worldedit = WorldEdit.getInstance();
                         WorldEdit.getInstance().getEventBus().register(new WESubscriber());
                         new WE_Anywhere();

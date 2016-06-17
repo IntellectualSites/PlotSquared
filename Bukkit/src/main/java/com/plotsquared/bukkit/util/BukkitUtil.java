@@ -8,10 +8,11 @@ import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.bukkit.object.BukkitPlayer;
+import java.util.Arrays;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -31,9 +32,6 @@ import org.bukkit.material.Step;
 import org.bukkit.material.Tree;
 import org.bukkit.material.WoodenStep;
 import org.bukkit.material.Wool;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class BukkitUtil extends WorldUtil {
 
@@ -136,12 +134,6 @@ public class BukkitUtil extends WorldUtil {
                 sign.setLine(i, lines[i]);
             }
             sign.update(true);
-            TaskManager.runTaskLater(new Runnable() {
-                @Override
-                public void run() {
-                    sign.update(true);
-                }
-            }, 20);
         }
     }
 
