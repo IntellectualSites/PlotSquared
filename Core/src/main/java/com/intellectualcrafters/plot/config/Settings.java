@@ -153,6 +153,7 @@ public class Settings extends Config {
         @Create // This value has to be generated since an instance isn't static
         public CALIBRATION CALIBRATION = null;
         public int THRESHOLD = 1;
+        public int REQUIRED_PLOTS = -1;
         public boolean CONFIRMATION = true;
         public int DAYS = 7;
         public List<String> WORLDS = new ArrayList<>(Collections.singletonList("*"));
