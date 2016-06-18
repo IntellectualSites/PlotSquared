@@ -4,7 +4,7 @@ import java.io.File;
 
 public class Storage extends Config {
 
-    public static final String PREFIX = "";
+    public static String PREFIX = "";
 
     public static void save(File file) {
         save(file, Storage.class);
