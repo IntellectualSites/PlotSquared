@@ -96,8 +96,6 @@ public abstract class UUIDHandlerImplementation {
         if (name == null) {
             try {
                 this.unknown.add(uuid);
-                PS.debug("UUID of: " + uuid.toString() + " was added to unknown list because the name provided was null.");
-                Thread.dumpStack();
             } catch (Exception e) {
                 PS.log("&c(minor) Invalid UUID mapping: " + uuid);
                 e.printStackTrace();
