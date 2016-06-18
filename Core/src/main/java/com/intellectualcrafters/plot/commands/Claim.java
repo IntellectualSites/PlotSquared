@@ -2,6 +2,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.object.Expression;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -48,7 +49,8 @@ public class Claim extends SubCommand {
         }
         PlotArea world = plot.getArea();
         if ((EconHandler.manager != null) && world.USE_ECONOMY) {
-            double cost = world.PRICES.get("claim");
+            Expression<Double> costExr = world.PRICES.get("claim");
+            double cost = costExr.evalute((double) currentPlots);
             if (cost > 0d) {
                 if (EconHandler.manager.getMoney(player) < cost) {
                     return sendMessage(player, C.CANNOT_AFFORD_PLOT, "" + cost);

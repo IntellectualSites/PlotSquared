@@ -2,6 +2,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.object.Expression;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -71,12 +72,13 @@ public class Merge extends SubCommand {
             }
         }
         final PlotArea plotArea = plot.getArea();
-        final double price = plotArea.PRICES.containsKey("merge") ? plotArea.PRICES.get("merge") : 0;
+        Expression<Double> priceExr = plotArea.PRICES.containsKey("merge") ? plotArea.PRICES.get("merge") : null;
+        final int size = plot.getConnectedPlots().size();
+        double price = priceExr == null ? 0d : priceExr.evalute((double) size);
         if (EconHandler.manager != null && plotArea.USE_ECONOMY && price > 0d && EconHandler.manager.getMoney(player) < price) {
             sendMessage(player, C.CANNOT_AFFORD_MERGE, String.valueOf(price));
             return false;
         }
-        final int size = plot.getConnectedPlots().size();
         final int maxSize = Permissions.hasPermissionRange(player, "plots.merge", Settings.Limit.MAX_PLOTS);
         if (size - 1 > maxSize) {
             MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.merge." + (size + 1));

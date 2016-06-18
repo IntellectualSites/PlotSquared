@@ -1,6 +1,8 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.object.Expression;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -39,6 +41,7 @@ public class Delete extends SubCommand {
         }
         final PlotArea plotArea = plot.getArea();
         final java.util.Set<Plot> plots = plot.getConnectedPlots();
+        final int currentPlots = Settings.Limit.GLOBAL ? player.getPlotCount() : player.getPlotCount(loc.getWorld());
         Runnable run = new Runnable() {
             @Override
             public void run() {
@@ -52,7 +55,8 @@ public class Delete extends SubCommand {
                     public void run() {
                         plot.removeRunning();
                         if ((EconHandler.manager != null) && plotArea.USE_ECONOMY) {
-                            double value = plotArea.PRICES.get("sell") * plots.size();
+                            Expression<Double> valueExr = plotArea.PRICES.get("sell");
+                            double value = plots.size() * valueExr.evalute((double) currentPlots);
                             if (value > 0d) {
                                 EconHandler.manager.depositMoney(player, value);
                                 sendMessage(player, C.ADDED_BALANCE, String.valueOf(value));

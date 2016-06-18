@@ -56,7 +56,7 @@ public abstract class PlotArea {
     public List<String> SCHEMATICS = null;
     public Map<Flag<?>, Object> DEFAULT_FLAGS;
     public boolean USE_ECONOMY = false;
-    public Map<String, Double> PRICES = new HashMap<>();
+    public Map<String, Expression<Double>> PRICES = new HashMap<>();
     public boolean SPAWN_EGGS = false;
     public boolean SPAWN_CUSTOM = true;
     public boolean SPAWN_BREEDING = false;
@@ -225,7 +225,7 @@ public abstract class PlotArea {
         if (this.USE_ECONOMY) {
             this.PRICES = new HashMap<>();
             for (String key : priceSection.getKeys(false)) {
-                this.PRICES.put(key, priceSection.getDouble(key));
+                this.PRICES.put(key, Expression.doubleExpression(priceSection.getString(key)));
             }
         }
         this.PLOT_CHAT = config.getBoolean("chat.enabled");

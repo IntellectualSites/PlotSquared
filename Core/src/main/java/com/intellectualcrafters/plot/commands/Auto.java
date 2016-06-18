@@ -2,6 +2,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.object.Expression;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -116,7 +117,8 @@ public class Auto extends SubCommand {
             }
         }
         if (EconHandler.manager != null && plotarea.USE_ECONOMY) {
-            double cost = plotarea.PRICES.get("claim");
+            Expression<Double> costExp = plotarea.PRICES.get("claim");
+            double cost = costExp.evalute((double) currentPlots);
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
                 if (EconHandler.manager.getMoney(player) < cost) {

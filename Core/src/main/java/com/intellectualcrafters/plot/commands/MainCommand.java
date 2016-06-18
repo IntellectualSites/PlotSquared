@@ -139,7 +139,7 @@ public class MainCommand extends Command {
                                 if (EconHandler.manager != null) {
                                     PlotArea area = player.getApplicablePlotArea();
                                     if (area != null) {
-                                        Double price = area.PRICES.get(cmd.getFullId());
+                                        Double price = area.PRICES.get(cmd.getFullId()).evalute(0d);
                                         if (price != null && EconHandler.manager.getMoney(player) < price) {
                                             if (failure != null) {
                                                 failure.run();
@@ -158,7 +158,7 @@ public class MainCommand extends Command {
                     if (EconHandler.manager != null) {
                         PlotArea area = player.getApplicablePlotArea();
                         if (area != null) {
-                            Double price = area.PRICES.get(cmd.getFullId());
+                            Double price = area.PRICES.get(cmd.getFullId()).evalute(0d);
                             if (price != null && EconHandler.manager.getMoney(player) < price) {
                                 if (failure != null) {
                                     failure.run();
