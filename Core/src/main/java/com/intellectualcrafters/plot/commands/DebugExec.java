@@ -78,7 +78,9 @@ public class DebugExec extends SubCommand {
                     this.engine.eval(script, this.scope);
                 }
             }
-        } catch (IOException | ScriptException ignored) {}
+        } catch (IOException | ScriptException ignored) {
+            ignored.printStackTrace();
+        }
     }
 
     public ScriptEngine getEngine() {

@@ -167,20 +167,6 @@ public class PS {
             if (Settings.Enabled_Components.KILL_ROAD_MOBS || Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
                 this.IMP.runEntityTask();
             }
-            // WorldEdit
-            if (Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
-                try {
-                    if (this.IMP.initWorldEdit()) {
-                        PS.debug("PlotSquared hooked into WorldEdit.");
-                        this.worldedit = WorldEdit.getInstance();
-                        WorldEdit.getInstance().getEventBus().register(new WESubscriber());
-                        new WE_Anywhere();
-
-                    }
-                } catch (Throwable e) {
-                    PS.debug("Incompatible version of WorldEdit, please upgrade: http://builds.enginehub.org/job/worldedit?branch=master");
-                }
-            }
             if (Settings.Enabled_Components.EVENTS) {
                 this.IMP.registerPlayerEvents();
                 this.IMP.registerInventoryEvents();
@@ -231,6 +217,22 @@ public class PS {
             // Commands
             if (Settings.Enabled_Components.COMMANDS) {
                 this.IMP.registerCommands();
+            }
+            // WorldEdit
+            if (Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
+                try {
+                    if (this.IMP.initWorldEdit()) {
+                        PS.debug("PlotSquared hooked into WorldEdit.");
+                        this.worldedit = WorldEdit.getInstance();
+                        WorldEdit.getInstance().getEventBus().register(new WESubscriber());
+                        if (Settings.Enabled_Components.COMMANDS) {
+                            new WE_Anywhere();
+                        }
+
+                    }
+                } catch (Throwable e) {
+                    PS.debug("Incompatible version of WorldEdit, please upgrade: http://builds.enginehub.org/job/worldedit?branch=master");
+                }
             }
             // Economy
             if (Settings.Enabled_Components.ECONOMY) {

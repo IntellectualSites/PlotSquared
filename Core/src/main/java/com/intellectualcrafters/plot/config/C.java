@@ -751,7 +751,7 @@ public enum C {
             // HashMap<String, String> replacements = new HashMap<>();
             replacements.clear();
             for (String style : styles) {
-                replacements.put('$' + style, '§' + config.getString(style));
+                replacements.put('$' + style, '\u00A7' + config.getString(style));
             }
             for (char letter : "1234567890abcdefklmnor".toCharArray()) {
                 replacements.put("&" + letter, "\u00a7" + letter);
