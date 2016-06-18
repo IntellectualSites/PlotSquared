@@ -42,8 +42,8 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
     }
 
     public void fillBiome(String biome) {
-        for (int x = minX; x <= maxX; x++) {
-            for (int z = minZ; z < maxZ; z++) {
+        for (int x = 0; x <= dx; x++) {
+            for (int z = 0; z < dz; z++) {
                 setBiome(x, z, biome);
             }
         }

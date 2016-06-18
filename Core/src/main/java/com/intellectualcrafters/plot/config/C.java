@@ -317,6 +317,10 @@ public enum C {
     HOME_ARGUMENT("$2Use /plot set home [none]", "Position"),
     INVALID_POSITION("$2That is not a valid position value", "Position"),
     /*
+     * Cap
+     */
+    ENTITY_CAP("$2You are not allowed to spawn more mobs", "cap"),
+    /*
      * Time
      */
     TIME_FORMAT("$1%hours%, %min%, %sec%", "Time"),
