@@ -8,7 +8,6 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
-import com.intellectualcrafters.plot.util.block.OffsetLocalBlockQueue;
 import com.intellectualcrafters.plot.util.block.ScopedLocalBlockQueue;
 import java.io.File;
 import java.util.ArrayList;
@@ -31,8 +30,9 @@ public abstract class ChunkManager {
     public static void setChunkInPlotArea(RunnableVal<ScopedLocalBlockQueue> force, RunnableVal<ScopedLocalBlockQueue> add, String world, ChunkLoc loc) {
         LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
         if (PS.get().isAugmented(world)) {
-            OffsetLocalBlockQueue offset = new OffsetLocalBlockQueue(queue, loc.x >> 4, 0, loc.z >> 4);
-            ScopedLocalBlockQueue scoped = new ScopedLocalBlockQueue(offset, new Location(world, 0, 0, 0), new Location(world, 15, 255, 15));
+            int bx = loc.x << 4;
+            int bz = loc.z << 4;
+            ScopedLocalBlockQueue scoped = new ScopedLocalBlockQueue(queue, new Location(world, bx, 0, bz), new Location(world, bx + 15, 255, bz + 15));
             if (force != null) {
                 force.run(scoped);
             } else {

@@ -19,7 +19,9 @@ public abstract class LocalBlockQueue {
     }
 
     public ScopedLocalBlockQueue getForChunk(int x, int z) {
-        return new ScopedLocalBlockQueue(this, new Location(getWorld(), x << 4, 0, z << 4), new Location(getWorld(), 15 + (x << 4), 255, 15 + (z << 4)));
+        int bx = x << 4;
+        int bz = z << 4;
+        ScopedLocalBlockQueue scoped = new ScopedLocalBlockQueue(this, new Location(getWorld(), bx, 0, bz), new Location(getWorld(), bx + 15, 255, bz + 15));
     }
 
     public abstract boolean next();

@@ -16,6 +16,10 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
     private final int maxY;
     private final int maxZ;
 
+    private final int dx;
+    private final int dy;
+    private final int dz;
+
     public ScopedLocalBlockQueue(LocalBlockQueue parent, Location min, Location max) {
         super(parent);
         this.minX = min.getX();
@@ -25,12 +29,16 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
         this.maxX = max.getX();
         this.maxY = max.getY();
         this.maxZ = max.getZ();
+
+        this.dx = maxX - minX;
+        this.dy = maxY - minY;
+        this.dz = maxZ - minZ;
     }
 
 
     @Override
     public boolean setBiome(int x, int z, String biome) {
-        return x >= minX && x <= maxX && z >= minZ && z <= maxZ && super.setBiome(x + minX, z + minZ, biome);
+        return x >= 0 && x <= dx && z >= 0 && z <= dz && super.setBiome(x + minX, z + minZ, biome);
     }
 
     public void fillBiome(String biome) {
@@ -43,7 +51,7 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
 
     @Override
     public boolean setBlock(int x, int y, int z, int id, int data) {
-        return x >= minX && x <= maxX && y >= minY && y <= maxY && z >= minZ && z <= maxZ && super.setBlock(x + minX, y + minY, z + minZ, id, data);
+        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super.setBlock(x + minX, y + minY, z + minZ, id, data);
     }
 
     public Location getMin() {

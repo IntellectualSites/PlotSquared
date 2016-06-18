@@ -27,6 +27,7 @@ public class AugmentedUtils {
         if (!enabled) {
             return false;
         }
+
         final int bx = cx << 4;
         final int bz = cz << 4;
         RegionWrapper region = new RegionWrapper(bx, bx + 15, bz, bz + 15);
