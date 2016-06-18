@@ -71,8 +71,8 @@ public class GenChunk extends ScopedLocalBlockQueue {
             return;
         }
         Biome biome = Biome.valueOf(biomeName.toUpperCase());
-        for (int x = 0; x <= 15; x++) {
-            for (int z = 0; z < 15; z++) {
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
                 this.grid.setBiome(x, z, biome);
             }
         }
