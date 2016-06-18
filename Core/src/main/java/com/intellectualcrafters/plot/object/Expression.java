@@ -32,7 +32,7 @@ public abstract class Expression<T> {
         } catch (Exception ignore) {}
         if (expression.endsWith("*{arg}")) {
             try {
-                return linearDouble(Double.parseDouble(expression.substring(0, expression.length() - 8)));
+                return linearDouble(Double.parseDouble(expression.substring(0, expression.length() - 6)));
             } catch (Exception ignore) {}
         }
         return new Expression<Double>() {
