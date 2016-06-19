@@ -36,7 +36,7 @@ public class Clear extends Command {
         final Plot plot = check(player.getCurrentPlot(), C.NOT_IN_PLOT);
         checkTrue(plot.isOwner(player.getUUID()) || Permissions.hasPermission(player, "plots.admin.command.clear"), C.NO_PLOT_PERMS);
         checkTrue(plot.getRunning() == 0, C.WAIT_FOR_TIMER);
-        checkTrue(!Settings.Done.RESTRICT_BUILDING ||(!Flags.DONE.isSet(plot) || Permissions.hasPermission(player, "plots.continue"), C.DONE_ALREADY_DONE);
+        checkTrue(!Settings.Done.RESTRICT_BUILDING || !Flags.DONE.isSet(plot) || Permissions.hasPermission(player, "plots.continue"), C.DONE_ALREADY_DONE);
         confirm.run(this, new Runnable() {
             @Override
             public void run() {
