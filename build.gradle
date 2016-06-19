@@ -19,7 +19,7 @@ ext {
     git = Grgit.open(file(".git"))
     revision = "-${git.head().abbreviatedId}"
 }
-version = "3.4.1${revision}"
+version = "3.4.2${revision}"
 description = """PlotSquared"""
 
 subprojects {

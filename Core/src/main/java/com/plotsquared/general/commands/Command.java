@@ -1,5 +1,6 @@
 package com.plotsquared.general.commands;
 
+import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.CommandCategory;
 import com.intellectualcrafters.plot.commands.MainCommand;
@@ -176,25 +177,26 @@ public abstract class Command {
         options.put("usage", declaration.usage());
         options.put("confirmation", declaration.confirmation());
         boolean set = false;
+        YamlConfiguration commands = PS.get() == null ? new YamlConfiguration() : PS.get().commands;
         for (Map.Entry<String, Object> entry : options.entrySet()) {
             String key = this.getFullId() + "." + entry.getKey();
-            if (!PS.get().commands.contains(key)) {
-                PS.get().commands.set(key, entry.getValue());
+            if (!commands.contains(key)) {
+                commands.set(key, entry.getValue());
                 set = true;
             }
         }
-        if (set) {
+        if (set && PS.get() != null) {
             try {
-                PS.get().commands.save(PS.get().commandsFile);
+                commands.save(PS.get().commandsFile);
             } catch (IOException e) {
                 e.printStackTrace();
 
             }
         }
-        this.aliases = PS.get().commands.getStringList(this.getFullId() + ".aliases");
-        this.description = PS.get().commands.getString(this.getFullId() + ".description");
-        this.usage = PS.get().commands.getString(this.getFullId() + ".usage");
-        this.confirmation = PS.get().commands.getBoolean(this.getFullId() + ".confirmation");
+        this.aliases = commands.getStringList(this.getFullId() + ".aliases");
+        this.description = commands.getString(this.getFullId() + ".description");
+        this.usage = commands.getString(this.getFullId() + ".usage");
+        this.confirmation = commands.getBoolean(this.getFullId() + ".confirmation");
         if (this.parent != null) {
             this.parent.register(this);
         }
@@ -432,6 +434,9 @@ public abstract class Command {
     }
 
     public boolean canExecute(PlotPlayer player, boolean message) {
+        if (player == null) {
+            return true;
+        }
         if (!this.required.allows(player)) {
             if (message) {
                 MainUtil.sendMessage(player, this.required == RequiredType.PLAYER ? C.IS_CONSOLE : C.NOT_CONSOLE);
