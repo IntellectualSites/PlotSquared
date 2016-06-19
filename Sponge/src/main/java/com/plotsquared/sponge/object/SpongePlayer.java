@@ -74,8 +74,9 @@ public class SpongePlayer extends PlotPlayer {
     
     @Override
     public void sendMessage(String message) {
-        if (!StringMan.isEqual(this.<String>getMeta("lastMessage"), message)) {
+        if (!StringMan.isEqual(this.<String>getMeta("lastMessage"), message) || (System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
             setMeta("lastMessage", message);
+            setMeta("lastMessageTime", System.currentTimeMillis());
             this.player.sendMessage(ChatTypes.CHAT, TextSerializers.LEGACY_FORMATTING_CODE.deserialize(message));
         }
     }
