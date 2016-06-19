@@ -100,7 +100,7 @@ public class AugmentedUtils {
                         boolean can = manager.getPlotId(area, rx, 0, rz) == null;
                         if (can) {
                             for (int y = 1; y < 128; y++) {
-                                queue.setBlock(x, y, z, air);
+                                queue.setBlock(rx, y, rz, air);
                             }
                             canPlace[x][z] = can;
                             has = true;
@@ -114,7 +114,7 @@ public class AugmentedUtils {
                 secondaryMask = new DelegateLocalBlockQueue(primaryMask) {
                     @Override
                     public boolean setBlock(int x, int y, int z, int id, int data) {
-                        if (canPlace[x][z]) {
+                        if (canPlace[x - bx][z - bz]) {
                             return super.setBlock(x, y, z, id, data);
                         }
                         return false;
