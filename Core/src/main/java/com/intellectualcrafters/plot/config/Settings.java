@@ -261,10 +261,6 @@ public class Settings extends Config {
         public static boolean DISABLE_OFFLINE = false;
     }
 
-    /*
-    END OF CONFIGURATION SECTION:
-     */
-
     public static final class Claim {
         @Comment("The max plots claimed in a single `/plot auto <size>` command")
         public static int MAX_AUTO_AREA = 4;
