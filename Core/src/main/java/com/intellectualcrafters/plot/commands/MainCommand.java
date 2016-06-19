@@ -3,6 +3,7 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
+import com.intellectualcrafters.plot.object.Expression;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -158,8 +159,9 @@ public class MainCommand extends Command {
                     if (EconHandler.manager != null) {
                         PlotArea area = player.getApplicablePlotArea();
                         if (area != null) {
-                            Double price = area.PRICES.get(cmd.getFullId()).evalute(0d);
-                            if (price != null && EconHandler.manager.getMoney(player) < price) {
+                            Expression<Double> priceEval = area.PRICES.get(cmd.getFullId());
+                            Double price = priceEval != null ? priceEval.evalute(0d) : 0d;
+                            if (price != 0d && EconHandler.manager.getMoney(player) < price) {
                                 if (failure != null) {
                                     failure.run();
                                 }
