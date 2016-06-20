@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -69,7 +70,12 @@ public class Remove extends SubCommand {
                 Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
                 if (!uuids.isEmpty()) {
                     for (UUID uuid : uuids) {
-                        if (plot.getTrusted().contains(uuid)) {
+                        if (uuid == DBFunc.everyone) {
+                            if (plot.removeTrusted(uuid) | plot.removeMember(uuid) | plot.removeDenied(uuid)) {
+                                count++;
+                            }
+                        }
+                        else if (plot.getTrusted().contains(uuid)) {
                             if (plot.removeTrusted(uuid)) {
                                 count++;
                             }
