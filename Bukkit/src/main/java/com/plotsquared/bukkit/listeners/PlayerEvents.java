@@ -898,8 +898,19 @@ public class PlayerEvents extends PlotListener implements Listener {
         if (plot != null) {
             if (Flags.DISABLE_PHYSICS.isFalse(plot)) {
                 event.setCancelled(true);
+                return;
             } else if (!area.contains(fLocation.getX(), fLocation.getZ()) || !Objects.equals(plot, area.getOwnedPlot(fLocation))) {
                 event.setCancelled(true);
+                return;
+            }
+            if (Flags.LIQUID_FLOW.isFalse(plot)) {
+                switch (to.getType()) {
+                    case WATER:
+                    case STATIONARY_WATER:
+                    case LAVA:
+                    case STATIONARY_LAVA:
+                        event.setCancelled(true);
+                }
             }
         } else if (!area.contains(fLocation.getX(), fLocation.getZ()) || !Objects.equals(plot, area.getOwnedPlot(fLocation))) {
             event.setCancelled(true);
