@@ -668,6 +668,7 @@ public class PS {
      * @see #removePlotArea(PlotArea) To remove the reference
      */
     public void addPlotArea(PlotArea plotArea) {
+        plotArea.setupBorder();
         HashMap<PlotId, Plot> plots;
         if (plots_tmp == null || (plots = plots_tmp.remove(plotArea.toString())) == null) {
             if (plotArea.TYPE == 2) {
@@ -1445,7 +1446,6 @@ public class PS {
             // Now add it
             addPlotArea(plotArea);
             plotGenerator.initialize(plotArea);
-            plotArea.setupBorder();
         } else {
             if (!worlds.contains(world)) {
                 return;
