@@ -22,7 +22,7 @@ import java.util.UUID;
         permission = "plots.kick",
         usage = "<player>",
         category = CommandCategory.TELEPORT,
-        requiredType = RequiredType.PLAYER)
+        requiredType = RequiredType.NONE)
 public class Kick extends SubCommand {
 
     public Kick() {

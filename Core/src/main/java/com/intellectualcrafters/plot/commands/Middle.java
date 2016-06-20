@@ -17,7 +17,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         description = "Teleports you to the center of the current plot",
         usage = "/plot middle",
         category = CommandCategory.TELEPORT,
-        requiredType = RequiredType.PLAYER)
+        requiredType = RequiredType.NONE)
 public class Middle extends SubCommand {
 
     @Override

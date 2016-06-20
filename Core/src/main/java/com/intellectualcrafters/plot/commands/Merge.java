@@ -22,7 +22,7 @@ import java.util.UUID;
         description = "Merge the plot you are standing on, with another plot",
         permission = "plots.merge", usage = "/plot merge <all|n|e|s|w> [removeroads]",
         category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         confirmation = true)
 public class Merge extends SubCommand {
 

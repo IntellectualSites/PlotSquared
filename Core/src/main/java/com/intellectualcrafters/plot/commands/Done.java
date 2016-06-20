@@ -19,7 +19,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         description = "Mark a plot as done",
         permission = "plots.done",
         category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.PLAYER)
+        requiredType = RequiredType.NONE)
 public class Done extends SubCommand {
 
     @Override

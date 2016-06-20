@@ -28,7 +28,7 @@ import java.util.Map;
         usage = "/plot flag <set|remove|add|list|info> <flag> <value>",
         description = "Set plot flags",
         category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         permission = "plots.flag")
 public class FlagCmd extends SubCommand {
 

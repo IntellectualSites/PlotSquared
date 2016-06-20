@@ -22,7 +22,7 @@ import java.net.URL;
         command = "download",
         aliases = {"dl"},
         category = CommandCategory.SCHEMATIC,
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         description = "Download your plot",
         permission = "plots.download")
 public class Download extends SubCommand {

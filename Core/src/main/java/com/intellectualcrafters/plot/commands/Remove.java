@@ -22,7 +22,7 @@ import java.util.UUID;
         description = "Remove a player from a plot",
         usage = "/plot remove <player>",
         category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         permission = "plots.remove")
 public class Remove extends SubCommand {
 

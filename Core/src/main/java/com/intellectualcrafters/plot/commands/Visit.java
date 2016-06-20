@@ -22,7 +22,7 @@ import java.util.UUID;
         description = "Visit someones plot",
         usage = "/plot visit [player|alias|world|id] [#]",
         aliases = {"v", "tp", "teleport", "goto", "home", "h"},
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         category = CommandCategory.TELEPORT)
 public class Visit extends SubCommand {
 

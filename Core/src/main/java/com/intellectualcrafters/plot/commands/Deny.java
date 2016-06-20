@@ -23,7 +23,7 @@ import java.util.UUID;
         description = "Deny a user from a plot",
         usage = "/plot deny <player>",
         category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.PLAYER)
+        requiredType = RequiredType.NONE)
 public class Deny extends SubCommand {
 
     public Deny() {
