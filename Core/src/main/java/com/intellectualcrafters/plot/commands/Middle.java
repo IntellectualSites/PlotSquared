@@ -7,14 +7,12 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 /**
- * Legally stolen from https://github.com/manuelgu/PlotSquaredMiddle
- *
  * @author manuelgu, altered by Citymonstret
  */
 @CommandDeclaration(
         command = "middle",
         aliases = {"center"},
-        description = "Teleports you to the center of the current plot",
+        description = "Teleports you to the center of the plot",
         usage = "/plot middle",
         category = CommandCategory.TELEPORT,
         requiredType = RequiredType.PLAYER)
