@@ -250,6 +250,17 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      */
     public abstract UUID getUUID();
 
+    public boolean canTeleport(Location loc) {
+        Location current = getLocationFull();
+        teleport(loc);
+        boolean result = true;
+        if (!getLocation().equals(loc)) {
+            result = false;
+        }
+        teleport(current);
+        return result;
+    }
+
     /**
      * Teleport the player to a location.
      * @param location the target location

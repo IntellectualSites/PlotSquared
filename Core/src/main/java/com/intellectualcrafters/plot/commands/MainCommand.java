@@ -206,13 +206,18 @@ public class MainCommand extends Command {
             PlotArea area = player.getApplicablePlotArea();
             Plot newPlot = Plot.fromString(area, args[0]);
             if (newPlot != null && (player instanceof ConsolePlayer || newPlot.getArea().equals(area) || Permissions.hasPermission(player, C.PERMISSION_ADMIN)) && !newPlot.isDenied(player.getUUID())) {
-                // Save meta
-                loc = player.getMeta("location");
-                plot = player.getMeta("lastplot");
-                tp = true;
-                // Set loc
-                player.setMeta("location", newPlot.getBottomAbs());
-                player.setMeta("lastplot", newPlot);
+                Location newLoc = newPlot.getCenter();
+                if (player.canTeleport(newLoc)) {
+                    // Save meta
+                    loc = player.getMeta("location");
+                    plot = player.getMeta("lastplot");
+                    tp = true;
+                    // Set loc
+                    player.setMeta("location", newLoc);
+                    player.setMeta("lastplot", newPlot);
+                } else {
+                    C.BORDER.send(player);
+                }
                 // Trim command
                 args = Arrays.copyOfRange(args, 1, args.length);
             }
