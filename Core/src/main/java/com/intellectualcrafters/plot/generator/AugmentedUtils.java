@@ -140,7 +140,9 @@ public class AugmentedUtils {
             generator.generateChunk(scoped, area, r);
             generator.populateChunk(scoped, area, r);
         }
-        queue.flush();
+        if (queue != null) {
+            queue.flush();
+        }
         return toReturn;
     }
 }
