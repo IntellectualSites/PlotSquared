@@ -4,12 +4,14 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.RunnableVal2;
+import com.intellectualcrafters.plot.object.RunnableVal3;
 import com.intellectualcrafters.plot.util.ByteArrayUtilities;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.UUID;
 
 @CommandDeclaration(
@@ -18,17 +20,22 @@ import java.util.UUID;
         usage = "/plot grant <check|add> [player]",
         permission = "plots.grant",
         requiredType = RequiredType.NONE)
-public class Grant extends SubCommand {
+public class Grant extends Command {
+
+    public Grant() {
+        super(MainCommand.getInstance(), true);
+    }
 
     @Override
-    public boolean onCommand(final PlotPlayer player, String[] args) {
+    public void execute(PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
+        checkTrue(args.length == 1, C.COMMAND_SYNTAX, getUsage());
         final String arg0 = args[0].toLowerCase();
         switch (arg0) {
             case "add":
             case "check":
                 if (Permissions.hasPermission(player, "plots.grant." + arg0)) {
                     C.NO_PERMISSION.send(player, "plots.grant." + arg0);
-                    return false;
+                    return;
                 }
                 if (args.length > 2) {
                     break;
@@ -36,7 +43,7 @@ public class Grant extends SubCommand {
                 final UUID uuid = args.length == 2 ? UUIDHandler.getUUIDFromString(args[1]) : player.getUUID();
                 if (uuid == null) {
                     C.INVALID_PLAYER.send(player, args[1]);
-                    return false;
+                    return;
                 }
                 MainUtil.getPersistentMeta(uuid, "grantedPlots", new RunnableVal<byte[]>() {
                     @Override
@@ -51,10 +58,7 @@ public class Grant extends SubCommand {
                         }
                     }
                 });
-                return true;
         }
         C.COMMAND_SYNTAX.send(player, getUsage());
-        return false;
     }
-
 }
