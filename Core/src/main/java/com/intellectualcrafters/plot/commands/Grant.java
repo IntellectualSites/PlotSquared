@@ -27,8 +27,8 @@ public class Grant extends Command {
     }
 
     @Override
-    public void execute(PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
-        checkTrue(args.length == 1, C.COMMAND_SYNTAX, getUsage());
+    public void execute(final PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
+        checkTrue(args.length >= 1 && args.length <= 2, C.COMMAND_SYNTAX, getUsage());
         final String arg0 = args[0].toLowerCase();
         switch (arg0) {
             case "add":
