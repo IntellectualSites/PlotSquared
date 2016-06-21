@@ -65,9 +65,13 @@ public class Config {
                     if (field.getAnnotation(Final.class) != null) {
                         return;
                     }
+                    if (field.getType() == String.class && !(value instanceof String)) {
+                        value = value + "";
+                    }
                     field.set(instance, value);
                     return;
-                } catch (IllegalAccessException e) {
+                } catch (Throwable e) {
+                    PS.debug("Invalid configuration value: " + key + ": " + value + " in " + root.getSimpleName());
                     e.printStackTrace();
                 }
             }
