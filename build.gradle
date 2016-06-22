@@ -16,7 +16,7 @@ buildscript {
 group = 'com.intellectualcrafters'
 def revision = ""
 ext {
-    git = Grgit.open(file(".git"))
+    git = Grgit.open()
     revision = "-${git.head().abbreviatedId}"
 }
 version = "3.4.3${revision}"
