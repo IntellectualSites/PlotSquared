@@ -26,8 +26,8 @@ public class PlotMeConnector_017 extends APlotMeConnector {
     private String plugin;
 
     @Override
-    public Connection getPlotMeConnection(FileConfiguration plotConfig, String dataFolder) {
-        this.plugin = this.plugin.toLowerCase();
+    public Connection getPlotMeConnection(String plugin, FileConfiguration plotConfig, String dataFolder) {
+        this.plugin = plugin.toLowerCase();
         try {
             if (plotConfig.getBoolean("usemySQL")) {
                 String user = plotConfig.getString("mySQLuname");

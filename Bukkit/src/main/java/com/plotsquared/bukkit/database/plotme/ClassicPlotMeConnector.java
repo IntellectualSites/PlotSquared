@@ -26,12 +26,12 @@ import java.util.UUID;
 
 public class ClassicPlotMeConnector extends APlotMeConnector {
 
-    private String plugin;
+    private String plugin = "PlotMe";
     private String prefix;
 
     @Override
-    public Connection getPlotMeConnection(FileConfiguration plotConfig, String dataFolder) {
-        this.plugin = this.plugin.toLowerCase();
+    public Connection getPlotMeConnection(String plugin, FileConfiguration plotConfig, String dataFolder) {
+        this.plugin = plugin.toLowerCase();
         this.prefix = plotConfig.getString("mySQLprefix", this.plugin.toLowerCase());
         try {
             if (plotConfig.getBoolean("usemySQL")) {

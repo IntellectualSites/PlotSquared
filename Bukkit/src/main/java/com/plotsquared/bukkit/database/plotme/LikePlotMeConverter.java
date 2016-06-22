@@ -123,7 +123,7 @@ public class LikePlotMeConverter {
 
             PS.debug("&3Using connector: " + connector.getClass().getCanonicalName());
 
-            Connection connection = connector.getPlotMeConnection(plotConfig, dataFolder);
+            Connection connection = connector.getPlotMeConnection(plugin,plotConfig, dataFolder);
 
             if (!connector.isValidConnection(connection)) {
                 sendMessage("Cannot connect to PlotMe DB. Conversion process will not continue");
