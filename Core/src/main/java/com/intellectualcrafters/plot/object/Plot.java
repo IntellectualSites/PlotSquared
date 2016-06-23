@@ -1397,7 +1397,7 @@ public class Plot {
      * @return the name of the biome
      */
     public String getBiome() {
-        Location loc = this.getBottomAbs();
+        Location loc = this.getCenter();
         return WorldUtil.IMP.getBiome(loc.getWorld(), loc.getX(), loc.getZ());
     }
 
