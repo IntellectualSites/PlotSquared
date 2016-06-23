@@ -1078,14 +1078,14 @@ public class PS {
             public void run(PlotArea value) {
                 for (PlotFilter filter : filters) {
                     if (!filter.allowsArea(value)) {
-                        continue;
+                        return;
                     }
                 }
                 for (Entry<PlotId, Plot> entry2 : value.getPlotEntries()) {
                     Plot plot = entry2.getValue();
                     for (PlotFilter filter : filters) {
                         if (!filter.allowsPlot(plot)) {
-                            continue;
+                            return;
                         }
                     }
                     set.add(plot);
