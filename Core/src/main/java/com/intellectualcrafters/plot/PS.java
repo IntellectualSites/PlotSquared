@@ -1081,11 +1081,12 @@ public class PS {
                         return;
                     }
                 }
+                loop:
                 for (Entry<PlotId, Plot> entry2 : value.getPlotEntries()) {
                     Plot plot = entry2.getValue();
                     for (PlotFilter filter : filters) {
                         if (!filter.allowsPlot(plot)) {
-                            return;
+                            continue loop;
                         }
                     }
                     set.add(plot);
