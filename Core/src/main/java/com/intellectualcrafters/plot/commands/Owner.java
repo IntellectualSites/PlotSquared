@@ -40,7 +40,7 @@ public class Owner extends SetCommand {
             name = UUIDHandler.getName(uuid);
             name = name == null ? value : name;
         }
-        if (uuid == null) {
+        if (uuid == null || value.equalsIgnoreCase("-")) {
             if (value.equalsIgnoreCase("none") || value.equalsIgnoreCase("null") || value.equalsIgnoreCase("-")) {
                 Set<Plot> connected = plot.getConnectedPlots();
                 plot.unlinkPlot(false, false);
