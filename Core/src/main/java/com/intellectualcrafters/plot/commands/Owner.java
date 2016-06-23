@@ -41,7 +41,7 @@ public class Owner extends SetCommand {
             name = name == null ? value : name;
         }
         if (uuid == null) {
-            if (value.equalsIgnoreCase("none")) {
+            if (value.equalsIgnoreCase("none") || value.equalsIgnoreCase("null") || value.equalsIgnoreCase("-")) {
                 Set<Plot> connected = plot.getConnectedPlots();
                 plot.unlinkPlot(false, false);
                 for (Plot current : connected) {
