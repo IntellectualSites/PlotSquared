@@ -11,7 +11,6 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -48,7 +47,12 @@ public class Kick extends SubCommand {
         Set<PlotPlayer> players = new HashSet<>();
         for (UUID uuid : uuids) {
             if (uuid == DBFunc.everyone) {
-                players.addAll(plot.getPlayersInPlot());
+                for (PlotPlayer pp : plot.getPlayersInPlot()) {
+                    if (pp == player || pp.hasPermission("plots.admin.entry.denied")) {
+                        continue;
+                    }
+                    players.add(pp);
+                }
                 break;
             }
             PlotPlayer pp = UUIDHandler.getPlayer(uuid);
