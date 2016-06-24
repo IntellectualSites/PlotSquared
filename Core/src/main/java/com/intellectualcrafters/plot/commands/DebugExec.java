@@ -84,6 +84,9 @@ public class DebugExec extends SubCommand {
     }
 
     public ScriptEngine getEngine() {
+        if (this.engine == null) {
+            init();
+        }
         return this.engine;
     }
 
