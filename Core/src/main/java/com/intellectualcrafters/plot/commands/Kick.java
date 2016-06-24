@@ -11,6 +11,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -68,11 +69,11 @@ public class Kick extends SubCommand {
         for (PlotPlayer player2 : players) {
             Location location2 = player2.getLocation();
             if (!player2.getLocation().getWorld().equals(location2.getWorld()) || !plot.equals(location2.getPlot())) {
-                MainUtil.sendMessage(player2, C.INVALID_PLAYER, args[0]);
+                MainUtil.sendMessage(player, C.INVALID_PLAYER, args[0]);
                 return false;
             }
             if (player2.hasPermission("plots.admin.entry.denied")) {
-                C.CANNOT_KICK_PLAYER.send(player2, player2.getName());
+                C.CANNOT_KICK_PLAYER.send(player, player2.getName());
                 return false;
             }
             Location spawn = WorldUtil.IMP.getSpawn(location.getWorld());
