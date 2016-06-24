@@ -12,6 +12,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.Set;
 
 @CommandDeclaration(
@@ -43,7 +44,9 @@ public class Buy extends Command {
         Set<Plot> plots = plot.getConnectedPlots();
         checkTrue(player.getPlotCount() + plots.size() <= player.getAllowedPlots(), C.CANT_CLAIM_MORE_PLOTS);
         Optional<Double> flag = plot.getFlag(Flags.PRICE);
-        checkTrue(flag.isPresent(), C.NOT_FOR_SALE);
+        if (!flag.isPresent()) {
+            throw new CommandException(C.NOT_FOR_SALE);
+        }
         final double price = flag.get();
         checkTrue(player.getMoney() >= price, C.CANNOT_AFFORD_PLOT);
         player.withdraw(price);

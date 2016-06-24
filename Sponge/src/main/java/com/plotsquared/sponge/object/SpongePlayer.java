@@ -74,7 +74,7 @@ public class SpongePlayer extends PlotPlayer {
     
     @Override
     public void sendMessage(String message) {
-        if (!StringMan.isEqual(this.<String>getMeta("lastMessage"), message) || (System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
+        if (!StringMan.isEqual(this.getMeta("lastMessage"), message) || (System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
             setMeta("lastMessage", message);
             setMeta("lastMessageTime", System.currentTimeMillis());
             this.player.sendMessage(ChatTypes.CHAT, TextSerializers.LEGACY_FORMATTING_CODE.deserialize(message));
@@ -162,21 +162,19 @@ public class SpongePlayer extends PlotPlayer {
     
     @Override
     public void setTime(long time) {
-        // TODO Auto-generated method stub
-        if (time != Long.MAX_VALUE) {} else {}
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
     
     @Override
-    public void setFlight(boolean fly) {
-        this.player.offer(Keys.IS_FLYING, fly);
-        this.player.offer(Keys.CAN_FLY, fly);
-    }
-
-    @Override
     public boolean getFlight() {
         Optional<Boolean> flying = player.get(Keys.CAN_FLY);
         return flying.isPresent() && flying.get();
+    }
+
+    @Override
+    public void setFlight(boolean fly) {
+        this.player.offer(Keys.IS_FLYING, fly);
+        this.player.offer(Keys.CAN_FLY, fly);
     }
 
     @Override

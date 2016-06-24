@@ -28,16 +28,6 @@ import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.listener.PlayerBlockEventType;
 import com.plotsquared.listener.PlotListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -120,6 +110,17 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * Player Events involving plots.
@@ -279,8 +280,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         if (!(shooter instanceof Player)) {
             return;
         }
-        ThrownPotion potion = (ThrownPotion) entity;
-        Location l = BukkitUtil.getLocation(potion);
+        Location l = BukkitUtil.getLocation(entity);
         if (!PS.get().hasPlotArea(l.getWorld())) {
             return;
         }
@@ -1283,7 +1283,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void MobSpawn(CreatureSpawnEvent event) {
+    public void creatureSpawnEvent(CreatureSpawnEvent event) {
         Entity entity = event.getEntity();
         Location location = BukkitUtil.getLocation(entity.getLocation());
         PlotArea area = location.getPlotArea();

@@ -71,12 +71,6 @@ import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.sk89q.worldedit.WorldEdit;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -91,6 +85,13 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 
 public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
@@ -113,7 +114,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 e.printStackTrace();
                 PS.debug(StringMan.getString(Bukkit.getBukkitVersion()));
                 PS.debug(StringMan.getString(Bukkit.getBukkitVersion().split("-")[0].split("\\.")));
-                return new int[]{1, 9, 2};
+                return new int[]{1, 10, 0};
             }
         }
         return this.version;
@@ -156,6 +157,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
         String[] split = ver.split("\\.");
         return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])};
+    }
+
+    @Override public String getPluginVersionString() {
+        return getDescription().getVersion();
     }
 
     @Override
@@ -275,6 +280,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                     case FALLING_BLOCK:
                                         // managed elsewhere
                                         continue;
+                                    case POLAR_BEAR:
                                     case BAT:
                                     case BLAZE:
                                     case CAVE_SPIDER:

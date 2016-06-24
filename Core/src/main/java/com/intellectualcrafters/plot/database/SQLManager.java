@@ -1583,7 +1583,7 @@ public class SQLManager implements AbstractDB {
     }
 
     /**
-     * Load all plots, helpers, denied, trusted, and every setting from DB into a hashmap
+     * Load all plots, helpers, denied, trusted, and every setting from DB into a {@link HashMap}.
      */
     @Override
     public HashMap<String, HashMap<PlotId, Plot>> getPlots() {
@@ -2560,9 +2560,7 @@ public class SQLManager implements AbstractDB {
                     }
                     set.add(cluster);
                 }
-            /*
-             * Getting helpers
-             */
+                //Getting helpers
                 resultSet = stmt.executeQuery("SELECT `user_uuid`, `cluster_id` FROM `" + this.prefix + "cluster_helpers`");
                 while (resultSet.next()) {
                     id = resultSet.getInt("cluster_id");
@@ -2579,9 +2577,7 @@ public class SQLManager implements AbstractDB {
                         PS.debug("&cCluster " + id + " in cluster_helpers does not exist. Please create the cluster or remove this entry.");
                     }
                 }
-            /*
-             * Getting invited
-             */
+                // Getting invited
                 resultSet = stmt.executeQuery("SELECT `user_uuid`, `cluster_id` FROM `" + this.prefix + "cluster_invited`");
                 while (resultSet.next()) {
                     id = resultSet.getInt("cluster_id");

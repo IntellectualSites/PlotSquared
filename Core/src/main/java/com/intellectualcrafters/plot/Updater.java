@@ -1,5 +1,7 @@
 package com.intellectualcrafters.plot;
 
+import static com.intellectualcrafters.plot.PS.log;
+
 import com.intellectualcrafters.json.JSONArray;
 import com.intellectualcrafters.json.JSONObject;
 import com.intellectualcrafters.plot.util.HttpUtil;
@@ -7,8 +9,7 @@ import com.intellectualcrafters.plot.util.StringMan;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import static com.intellectualcrafters.plot.PS.log;
+import java.util.Arrays;
 
 public class Updater {
 
@@ -31,8 +32,10 @@ public class Updater {
                     }
                     // If current version >= update
                     if (PS.get().checkVersion(PS.get().getVersion(), version)) {
-                        PS.debug("&7PlotSquared is already up to date!");
-                        return null;
+                        if (!PS.get().IMP.getPluginVersionString().contains("-SNAPSHOT") || !Arrays.equals(PS.get().getVersion(), version)) {
+                            PS.debug("&7PlotSquared is already up to date!");
+                            return null;
+                        }
                     }
                     log("&6PlotSquared " + StringMan.join(split, ".") + " is available:");
                     log("&8 - &3Use: &7/plot update");

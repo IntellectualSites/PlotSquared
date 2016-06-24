@@ -1,12 +1,12 @@
 package com.plotsquared.bukkit.listeners;
 
+import com.google.common.collect.Iterables;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
@@ -19,9 +19,9 @@ public class ForceFieldListener implements Listener {
 
     private static Set<PlotPlayer> getNearbyPlayers(Player player, Plot plot) {
         Set<PlotPlayer> players = new HashSet<>();
-        for (Entity entity : player.getNearbyEntities(5d, 5d, 5d)) {
+        for (Player nearPlayer : Iterables.filter(player.getNearbyEntities(5d, 5d, 5d),Player.class)) {
             PlotPlayer plotPlayer;
-            if (!(entity instanceof Player) || ((plotPlayer = BukkitUtil.getPlayer((Player) entity)) == null) || !plot.equals(plotPlayer.getCurrentPlot())) {
+            if ((plotPlayer = BukkitUtil.getPlayer(nearPlayer)) == null || !plot.equals(plotPlayer.getCurrentPlot())) {
                 continue;
             }
             if (!plot.isAdded(plotPlayer.getUUID())) {
@@ -32,15 +32,9 @@ public class ForceFieldListener implements Listener {
     }
 
     private static PlotPlayer hasNearbyPermitted(Player player, Plot plot) {
-        for (Entity entity : player.getNearbyEntities(5d, 5d, 5d)) {
-            if (!(entity instanceof Player)) {
-                continue;
-            }
+        for (Player nearPlayer : Iterables.filter(player.getNearbyEntities(5d, 5d, 5d),Player.class)) {
             PlotPlayer plotPlayer;
-            if ((plotPlayer = BukkitUtil.getPlayer((Player) entity)) == null) {
-                continue;
-            }
-            if (!plot.equals(plotPlayer.getCurrentPlot())) {
+            if ((plotPlayer = BukkitUtil.getPlayer(nearPlayer)) == null || !plot.equals(plotPlayer.getCurrentPlot())) {
                 continue;
             }
             if (plot.isAdded(plotPlayer.getUUID())) {

@@ -2,10 +2,10 @@ package com.intellectualcrafters.configuration;
 
 /**
  * Various settings for controlling the input and output of a {@link
- * MemoryConfiguration}
+ * MemoryConfiguration}.
  */
 public class MemoryConfigurationOptions extends ConfigurationOptions {
-    protected MemoryConfigurationOptions(final MemoryConfiguration configuration) {
+    protected MemoryConfigurationOptions(MemoryConfiguration configuration) {
         super(configuration);
     }
     
@@ -15,13 +15,13 @@ public class MemoryConfigurationOptions extends ConfigurationOptions {
     }
     
     @Override
-    public MemoryConfigurationOptions copyDefaults(final boolean value) {
+    public MemoryConfigurationOptions copyDefaults(boolean value) {
         super.copyDefaults(value);
         return this;
     }
     
     @Override
-    public MemoryConfigurationOptions pathSeparator(final char value) {
+    public MemoryConfigurationOptions pathSeparator(char value) {
         super.pathSeparator(value);
         return this;
     }

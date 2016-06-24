@@ -20,16 +20,17 @@ import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import com.intellectualcrafters.plot.util.block.ScopedLocalBlockQueue;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.block.GenChunk;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrapper<ChunkGenerator> {
     
@@ -255,7 +256,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
 
     @Override
     public ChunkData generateChunkData(World world, Random random, int cx, int cz, BiomeGrid grid) {
-        GenChunk result = (GenChunk) this.chunkSetter;
+        GenChunk result = this.chunkSetter;
         // Set the chunk location
         result.setChunk(new ChunkWrapper(world.getName(), cx, cz));
         // Set the result data
@@ -303,7 +304,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     
     @Override
     public short[][] generateExtBlockSections(World world, Random r, int cx, int cz, BiomeGrid grid) {
-        GenChunk result = (GenChunk) this.chunkSetter;
+        GenChunk result = this.chunkSetter;
         // Set the chunk location
         result.setChunk(new ChunkWrapper(world.getName(), cx, cz));
         // Set the result data

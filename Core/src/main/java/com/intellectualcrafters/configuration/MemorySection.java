@@ -21,8 +21,8 @@ public class MemorySection implements ConfigurationSection {
     /**
      * Creates an empty MemorySection for use as a root {@link Configuration}
      * section.
-     * <p>
-     * Note that calling this without being yourself a {@link Configuration}
+     *
+     * <p>Note that calling this without being yourself a {@link Configuration}
      * will throw an exception!
      *
      * @throws IllegalStateException Thrown if this is not a {@link
@@ -121,8 +121,8 @@ public class MemorySection implements ConfigurationSection {
     /**
      * Creates a full path to the given {@link ConfigurationSection} from its
      * root {@link Configuration}.
-     * <p>
-     * You may use this method for any given {@link ConfigurationSection}, not
+     *
+     * <p>You may use this method for any given {@link ConfigurationSection}, not
      * only {@link MemorySection}.
      *
      * @param section Section to create a path for.
@@ -136,8 +136,8 @@ public class MemorySection implements ConfigurationSection {
     /**
      * Creates a relative path to the given {@link ConfigurationSection} from
      * the given relative section.
-     * <p>
-     * You may use this method for any given {@link ConfigurationSection}, not
+     *
+     * <p>You may use this method for any given {@link ConfigurationSection}, not
      * only {@link MemorySection}.
      *
      * @param section Section to create a path for.
@@ -292,7 +292,8 @@ public class MemorySection implements ConfigurationSection {
         char separator = root.options().pathSeparator();
         // i1 is the leading (higher) index
         // i2 is the trailing (lower) index
-        int i1 = -1, i2;
+        int i1 = -1;
+        int i2;
         ConfigurationSection section = this;
         while ((i1 = path.indexOf(separator, i2 = i1 + 1)) != -1) {
             String node = path.substring(i2, i1);
@@ -374,7 +375,8 @@ public class MemorySection implements ConfigurationSection {
         char separator = root.options().pathSeparator();
         // i1 is the leading (higher) index
         // i2 is the trailing (lower) index
-        int i1 = -1, i2;
+        int i1 = -1;
+        int i2;
         ConfigurationSection section = this;
         while ((i1 = path.indexOf(separator, i2 = i1 + 1)) != -1) {
             String node = path.substring(i2, i1);

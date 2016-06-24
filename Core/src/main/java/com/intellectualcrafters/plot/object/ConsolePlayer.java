@@ -34,7 +34,7 @@ public class ConsolePlayer extends PlotPlayer {
 
     @Override
     public Location getLocation() {
-        return this.<Location>getMeta("location");
+        return this.getMeta("location");
     }
     
     @Override
@@ -111,12 +111,12 @@ public class ConsolePlayer extends PlotPlayer {
     public void setTime(long time) {}
     
     @Override
-    public void setFlight(boolean fly) {}
-
-    @Override
     public boolean getFlight() {
         return true;
     }
+
+    @Override
+    public void setFlight(boolean fly) {}
 
     @Override
     public void playMusic(Location location, int id) {}

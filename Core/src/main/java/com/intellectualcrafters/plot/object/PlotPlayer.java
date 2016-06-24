@@ -116,7 +116,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      * @return the plot the player is standing on or null if standing on a road or not in a {@link PlotArea}
      */
     public Plot getCurrentPlot() {
-        Plot value = (Plot) getMeta("lastplot");
+        Plot value = getMeta("lastplot");
         if (value == null && !Settings.Enabled_Components.EVENTS) {
             return getLocation().getPlot();
         }
@@ -248,7 +248,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      *
      * @return UUID
      */
-    public abstract UUID getUUID();
+    @Override public abstract UUID getUUID();
 
     public boolean canTeleport(Location loc) {
         Location current = getLocationFull();
@@ -285,7 +285,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
 
 
     /**
-     * Retrieves the player attribute.
+     * Retrieves t player attribute.
      *
      * @param key
      * @return the attribute will be either true or false
@@ -306,7 +306,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     /**
-     * Set the player's local weather.
+     * Sets the local weather for this Player.
      * @param weather the weather visible to the player
      */
     public abstract void setWeather(PlotWeather weather);
@@ -329,13 +329,13 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      */
     public abstract void setTime(long time);
 
+    public abstract  boolean getFlight();
+
     /**
      * Set the player's fly mode.
      * @param fly if the player can fly
      */
     public abstract void setFlight(boolean fly);
-
-    public abstract  boolean getFlight();
 
     /**
      * Play music at a location for the player.
@@ -464,7 +464,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     public abstract void stopSpectating();
 
     /**
-     * The amount of money this player has
+     * The amount of money this Player has.
      * @return
      */
     public double getMoney() {

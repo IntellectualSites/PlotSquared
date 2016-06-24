@@ -443,7 +443,7 @@ public class MainListener {
     public void onBlockBreak(ChangeBlockEvent.Break event) {
         Player player = SpongeUtil.getCause(event.getCause(), Player.class);
         if (player == null) {
-//            SpongeUtil.printCause("break", event.getCause());
+            //SpongeUtil.printCause("break", event.getCause());
             return;
         }
         PlotPlayer pp = SpongeUtil.getPlayer(player);
@@ -486,36 +486,29 @@ public class MainListener {
                 }
             }
         }
-        event.filter(new Predicate<org.spongepowered.api.world.Location<World>>() {
-
-            @Override
-            public boolean test(org.spongepowered.api.world.Location<World> l) {
-                Location loc = SpongeUtil.getLocation(worldName, l);
-                Plot plot = loc.getPlot();
-                if (plot == null) {
-                    if (loc.getPlotAbs() == null) {
-                        return true;
-                    }
-                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_ROAD);
-                }
-                if (!plot.hasOwner()) {
-                    if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
-                        return true;
-                    }
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_UNOWNED);
-                    return false;
-                }
-                if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
+        event.filter(l -> {
+            Location loc1 = SpongeUtil.getLocation(worldName, l);
+            Plot plot1 = loc1.getPlot();
+            if (plot1 == null) {
+                return loc1.getPlotAbs() == null || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_ROAD);
+            }
+            if (!plot1.hasOwner()) {
+                if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
                     return true;
-                } else {
-                    com.google.common.base.Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
-                    BlockState state = l.getBlock();
-                    if (destroy.isPresent() && destroy.get().contains(SpongeUtil.getPlotBlock(state))) {
-                        return true;
-                    }
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
-                    return false;
                 }
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_UNOWNED);
+                return false;
+            }
+            if (plot1.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
+                return true;
+            } else {
+                com.google.common.base.Optional<HashSet<PlotBlock>> destroy = plot1.getFlag(Flags.BREAK);
+                BlockState state = l.getBlock();
+                if (destroy.isPresent() && destroy.get().contains(SpongeUtil.getPlotBlock(state))) {
+                    return true;
+                }
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
+                return false;
             }
         });
     }
@@ -524,7 +517,7 @@ public class MainListener {
     public void onBlockPlace(ChangeBlockEvent.Place event) {
         Player player = SpongeUtil.getCause(event.getCause(), Player.class);
         if (player == null) {
-//            SpongeUtil.printCause("place", event.getCause());
+            //SpongeUtil.printCause("place", event.getCause());
             return;
         }
         PlotPlayer pp = SpongeUtil.getPlayer(player);
@@ -552,9 +545,9 @@ public class MainListener {
                     return;
                 } else {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
-                    com.google.common.base.Optional<HashSet<PlotBlock>> BUILD = plot.getFlag(Flags.PLACE);
+                    com.google.common.base.Optional<HashSet<PlotBlock>> place = plot.getFlag(Flags.PLACE);
                     BlockState state = pos.getState();
-                    if (!BUILD.isPresent() || !BUILD.get().contains(SpongeUtil.getPlotBlock(state))) {
+                    if (!place.isPresent() || !place.get().contains(SpongeUtil.getPlotBlock(state))) {
                         event.setCancelled(true);
                         return;
                     }
@@ -575,10 +568,7 @@ public class MainListener {
                 Location loc = SpongeUtil.getLocation(worldName, l);
                 Plot plot = loc.getPlot();
                 if (plot == null) {
-                    if (loc.getPlotAbs() == null) {
-                        return true;
-                    }
-                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD);
+                    return loc.getPlotAbs() == null || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD);
                 }
                 if (!plot.hasOwner()) {
                     if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_UNOWNED)) {
@@ -590,9 +580,9 @@ public class MainListener {
                 if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
                     return true;
                 } else {
-                    com.google.common.base.Optional<HashSet<PlotBlock>> build = plot.getFlag(Flags.PLACE);
+                    com.google.common.base.Optional<HashSet<PlotBlock>> place = plot.getFlag(Flags.PLACE);
                     BlockState state = l.getBlock();
-                    if (build.isPresent() && build.get().contains(SpongeUtil.getPlotBlock(state))) {
+                    if (place.isPresent() && place.get().contains(SpongeUtil.getPlotBlock(state))) {
                         return true;
                     }
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
@@ -627,12 +617,7 @@ public class MainListener {
         // Delayed
 
         // Async
-        TaskManager.runTaskLaterAsync(new Runnable() {
-            @Override
-            public void run() {
-                EventUtil.manager.doJoinTask(pp);
-            }
-        }, 20);
+        TaskManager.runTaskLaterAsync(() -> EventUtil.manager.doJoinTask(pp), 20);
     }
     
     @Listener

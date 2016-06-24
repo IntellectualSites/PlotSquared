@@ -52,7 +52,7 @@ public abstract class TitleManager {
     abstract void loadClasses();
 
     /**
-     * Get title text.
+     * Gets title text.
      *
      * @return Title text
      */
@@ -61,7 +61,7 @@ public abstract class TitleManager {
     }
 
     /**
-     * Set title text.
+     * Sets the text for the title.
      *
      * @param title Title
      */
@@ -70,7 +70,7 @@ public abstract class TitleManager {
     }
 
     /**
-     * Get subtitle text.
+     * Gets the subtitle text.
      *
      * @return Subtitle text
      */
@@ -79,7 +79,7 @@ public abstract class TitleManager {
     }
 
     /**
-     * Set subtitle text.
+     * Sets subtitle text.
      *
      * @param subtitle Subtitle text
      */
@@ -88,7 +88,7 @@ public abstract class TitleManager {
     }
 
     /**
-     * Set the title color.
+     * Sets the title color.
      *
      * @param color Chat color
      */
@@ -97,7 +97,7 @@ public abstract class TitleManager {
     }
 
     /**
-     * Set the subtitle color.
+     * Sets the subtitle color.
      *
      * @param color Chat color
      */
@@ -106,7 +106,7 @@ public abstract class TitleManager {
     }
 
     /**
-     * Set title fade in time.
+     * Sets title fade in time.
      *
      * @param time Time
      */
@@ -115,7 +115,7 @@ public abstract class TitleManager {
     }
 
     /**
-     * Set title fade out time.
+     * Sets title fade out time.
      *
      * @param time Time
      */
@@ -124,7 +124,7 @@ public abstract class TitleManager {
     }
 
     /**
-     * Set title stay time.
+     * Sets title stay time.
      *
      * @param time Time
      */
@@ -133,21 +133,21 @@ public abstract class TitleManager {
     }
 
     /**
-     * Set timings to ticks.
+     * Sets timings to ticks.
      */
     public final void setTimingsToTicks() {
         this.ticks = true;
     }
 
     /**
-     * Set timings to seconds.
+     * Sets timings to seconds.
      */
     public final void setTimingsToSeconds() {
         this.ticks = false;
     }
 
     /**
-     * Send the title to a player.
+     * Sends the title to a player.
      *
      * @param player Player
      * @throws IllegalArgumentException
@@ -157,18 +157,18 @@ public abstract class TitleManager {
     public abstract void send(Player player) throws IllegalArgumentException, ReflectiveOperationException, SecurityException;
 
     /**
-     * Broadcast the title to all players.
+     * Broadcasts the title to all players.
      *
      * @throws Exception
      */
     public final void broadcast() throws Exception {
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            send(p);
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            send(player);
         }
     }
 
     /**
-     * Clear the title.
+     * Clears the title.
      *
      * @param player Player
      * @throws IllegalArgumentException
@@ -178,7 +178,7 @@ public abstract class TitleManager {
     public abstract void clearTitle(Player player) throws IllegalArgumentException, ReflectiveOperationException, SecurityException;
 
     /**
-     * Reset the title settings.
+     * Resets the title settings.
      *
      * @param player Player
      * @throws IllegalArgumentException
@@ -195,7 +195,7 @@ public abstract class TitleManager {
         }
     }
 
-    final Class<?>[] toPrimitiveTypeArray(Class<?>[] classes) {
+    private Class<?>[] toPrimitiveTypeArray(Class<?>[] classes) {
         int a;
         if (classes != null) {
             a = classes.length;
@@ -229,7 +229,7 @@ public abstract class TitleManager {
         return null;
     }
 
-    final boolean equalsTypeArray(Class<?>[] a, Class<?>[] o) {
+    private boolean equalsTypeArray(Class<?>[] a, Class<?>[] o) {
         if (a.length != o.length) {
             return false;
         }

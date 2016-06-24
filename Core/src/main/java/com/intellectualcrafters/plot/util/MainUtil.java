@@ -16,6 +16,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -702,11 +703,11 @@ public class MainUtil {
                             expires = String.format("%d days", TimeUnit.MILLISECONDS.toDays(l));
                         }
                     }
-//                } else if (ExpireManager.IMP != null) {
-//                    long timestamp = ExpireManager.IMP.getTimestamp(plot.owner);
-//                    long compared = System.currentTimeMillis() - timestamp;
-//                    long l = Settings.AUTO_CLEAR_DAYS - TimeUnit.MILLISECONDS.toDays(compared);
-//                    expires = String.format("%d days", l);
+                    //} else if (ExpireManager.IMP != null) {
+                    //long timestamp = ExpireManager.IMP.getTimestamp(plot.owner);
+                    //long compared = System.currentTimeMillis() - timestamp;
+                    //long l = Settings.AUTO_CLEAR_DAYS - TimeUnit.MILLISECONDS.toDays(compared);
+                    //expires = String.format("%d days", l);
                 }
             }
         } else {

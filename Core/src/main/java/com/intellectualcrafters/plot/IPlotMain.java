@@ -17,6 +17,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.block.QueueProvider;
+
 import java.io.File;
 import java.util.List;
 
@@ -51,16 +52,22 @@ public interface IPlotMain extends ILogger {
      * Disable the implementation.
      *
      * <ul>
-     *     <li>If a full disable isn't feasibly, just disable what it can.</li>
+     *     <li>If a full disable isn't feasibly, just disable what it can.
      * </ul>
      */
     void disable();
 
     /**
      * Get the version of the PlotSquared being used.
-     * @return
+     * @return the plugin version
      */
     int[] getPluginVersion();
+
+    /**
+     * Get the version of the PlotSquared being used as a string.
+     * @return the plugin version as a string
+     */
+    String getPluginVersionString();
 
     /**
      * Get the version of Minecraft that is running.
@@ -231,7 +238,7 @@ public interface IPlotMain extends ILogger {
 
     /**
      * Get the name of the server.
-     * @return The server name
+     * @return the server name
      */
     String getServerName();
 

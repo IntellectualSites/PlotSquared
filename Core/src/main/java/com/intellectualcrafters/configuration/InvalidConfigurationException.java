@@ -1,7 +1,7 @@
 package com.intellectualcrafters.configuration;
 
 /**
- * Exception thrown when attempting to load an invalid {@link Configuration}
+ * Exception thrown when attempting to load an invalid {@link Configuration}.
  */
 @SuppressWarnings("serial")
 public class InvalidConfigurationException extends Exception {
@@ -18,7 +18,7 @@ public class InvalidConfigurationException extends Exception {
      *
      * @param msg The details of the exception.
      */
-    public InvalidConfigurationException(final String msg) {
+    public InvalidConfigurationException(String msg) {
         super(msg);
     }
     
@@ -28,7 +28,7 @@ public class InvalidConfigurationException extends Exception {
      *
      * @param cause The cause of the exception.
      */
-    public InvalidConfigurationException(final Throwable cause) {
+    public InvalidConfigurationException(Throwable cause) {
         super(cause);
     }
     
@@ -39,7 +39,7 @@ public class InvalidConfigurationException extends Exception {
      * @param cause The cause of the exception.
      * @param msg The details of the exception.
      */
-    public InvalidConfigurationException(final String msg, final Throwable cause) {
+    public InvalidConfigurationException(String msg, Throwable cause) {
         super(msg, cause);
     }
 }

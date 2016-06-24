@@ -9,19 +9,7 @@ public class MathMan {
     private static final int ATAN2_DIM = (int) Math.sqrt(ATAN2_COUNT);
     private static final float INV_ATAN2_DIM_MINUS_1 = 1.0f / (ATAN2_DIM - 1);
     private static final float[] atan2 = new float[ATAN2_COUNT];
-
-    static {
-        for (int i = 0; i < ATAN2_DIM; i++) {
-            for (int j = 0; j < ATAN2_DIM; j++) {
-                float x0 = (float) i / ATAN2_DIM;
-                float y0 = (float) j / ATAN2_DIM;
-
-                atan2[(j * ATAN2_DIM) + i] = (float) Math.atan2(y0, x0);
-            }
-        }
-    }
-
-    private final static int[] table = {
+    private static final int[] table = {
             0,    16,  22,  27,  32,  35,  39,  42,  45,  48,  50,  53,  55,  57,
             59,   61,  64,  65,  67,  69,  71,  73,  75,  76,  78,  80,  81,  83,
             84,   86,  87,  89,  90,  91,  93,  94,  96,  97,  98,  99, 101, 102,
@@ -42,6 +30,17 @@ public class MathMan {
             246, 247, 247, 248, 248, 249, 249, 250, 250, 251, 251, 252, 252, 253,
             253, 254, 254, 255
     };
+
+    static {
+        for (int i = 0; i < ATAN2_DIM; i++) {
+            for (int j = 0; j < ATAN2_DIM; j++) {
+                float x0 = (float) i / ATAN2_DIM;
+                float y0 = (float) j / ATAN2_DIM;
+
+                atan2[(j * ATAN2_DIM) + i] = (float) Math.atan2(y0, x0);
+            }
+        }
+    }
 
     public static long pairInt(int x, int y) {
         return (((long)x) << 32) | (y & 0xffffffffL);
@@ -191,7 +190,8 @@ public class MathMan {
     }
 
     public static final float atan2(float y, float x) {
-        float add, mul;
+        float add;
+        float mul;
 
         if (x < 0.0f) {
             if (y < 0.0f) {
@@ -229,7 +229,7 @@ public class MathMan {
     }
 
     public static double sqrtApprox(double d) {
-        return Double.longBitsToDouble(((Double.doubleToLongBits(d) - (1l << 52)) >> 1) + (1l << 61));
+        return Double.longBitsToDouble(((Double.doubleToLongBits(d) - (1L << 52)) >> 1) + (1L << 61));
     }
 
     public static float invSqrt(float x) {
@@ -302,7 +302,7 @@ public class MathMan {
         return x % y;
     }
 
-    public static boolean isPowerOfTwo(int x) {
-        return (x & (x - 1)) == 0;
+    public static boolean isPowerOfTwo(int number) {
+        return (number & (number - 1)) == 0;
     }
 }

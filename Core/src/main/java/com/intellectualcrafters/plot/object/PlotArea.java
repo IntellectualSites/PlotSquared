@@ -18,6 +18,7 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.area.QuadMap;
 import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -91,10 +92,6 @@ public abstract class PlotArea {
         this.worldhash = worldName.hashCode();
     }
 
-    public LocalBlockQueue getQueue(boolean autoQueue) {
-        return GlobalBlockQueue.IMP.getNewQueue(worldname, autoQueue);
-    }
-
     /**
      * Create a new PlotArea object with no functionality/information.
      *     - Mainly used during startup before worlds are created as a temporary object
@@ -106,8 +103,14 @@ public abstract class PlotArea {
             @Override
             public void loadConfiguration(ConfigurationSection config) {}
             @Override
-            public ConfigurationNode[] getSettingNodes() {return null;}
+            public ConfigurationNode[] getSettingNodes() {
+                return null;
+            }
         };
+    }
+
+    public LocalBlockQueue getQueue(boolean autoQueue) {
+        return GlobalBlockQueue.IMP.getNewQueue(worldname, autoQueue);
     }
 
     /**
@@ -142,7 +145,7 @@ public abstract class PlotArea {
 
     /**
      * Returns the minimum value of a {@link PlotId}.
-     * @return
+     * @return the minimum value for a {@link PlotId}
      */
     public PlotId getMin() {
         return this.min == null ? new PlotId(Integer.MIN_VALUE, Integer.MIN_VALUE) : this.min;
@@ -150,7 +153,7 @@ public abstract class PlotArea {
 
     /**
      * Returns the max PlotId.
-     * @return
+     * @return the maximum value for a {@link PlotId}
      */
     public PlotId getMax() {
         return this.max == null ? new PlotId(Integer.MAX_VALUE, Integer.MAX_VALUE) : this.max;
@@ -159,7 +162,7 @@ public abstract class PlotArea {
     /**
      * Get the implementation independent generator for this area.
      *
-     * @return
+     * @return the {@link IndependentPlotGenerator}
      */
     public IndependentPlotGenerator getGenerator() {
         return this.generator;
@@ -183,8 +186,8 @@ public abstract class PlotArea {
 
     /**
      * Check if a PlotArea is compatible (move/copy etc).
-     * @param plotArea
-     * @return
+     * @param plotArea the {@code PlotArea} to compare
+     * @return true if both areas are compatible
      */
     public boolean isCompatible(PlotArea plotArea) {
         ConfigurationSection section = PS.get().worlds.getConfigurationSection("worlds");
@@ -303,7 +306,7 @@ public abstract class PlotArea {
     public abstract void loadConfiguration(ConfigurationSection config);
     
     /**
-     * Saving core PlotArea settings
+     * Saving core PlotArea settings.
      *
      * @param config Configuration Section
      */
@@ -381,9 +384,9 @@ public abstract class PlotArea {
     public abstract ConfigurationNode[] getSettingNodes();
 
     /**
-     * Get the Plot at a location.
-     * @param location
-     * @return Plot
+     * Gets the {@code Plot} at a location.
+     * @param location the location
+     * @return the {@code Plot} or null if none exists
      */
     public Plot getPlotAbs(Location location) {
         PlotId pid = this.manager.getPlotId(this, location.getX(), location.getY(), location.getZ());
@@ -394,8 +397,8 @@ public abstract class PlotArea {
     }
 
     /**
-     * Get the base plot at a location.
-     * @param location
+     * Gets the base plot at a location.
+     * @param location the location
      * @return base Plot
      */
     public Plot getPlot(Location location) {
@@ -407,9 +410,9 @@ public abstract class PlotArea {
     }
 
     /**
-     * Get the base owned plot at a location.
-     * @param location
-     * @return base Plot or null
+     * Get the owned base plot at a location.
+     * @param location the location
+     * @return the base plot or null
      */
     public Plot getOwnedPlot(Location location) {
         PlotId pid = this.manager.getPlotId(this, location.getX(), location.getY(), location.getZ());
@@ -422,7 +425,7 @@ public abstract class PlotArea {
 
     /**
      * Get the owned plot at a location.
-     * @param location
+     * @param location the location
      * @return Plot or null
      */
     public Plot getOwnedPlotAbs(Location location) {
@@ -435,8 +438,8 @@ public abstract class PlotArea {
 
     /**
      * Get the owned Plot at a PlotId.
-     * @param id
-     * @return Plot or null
+     * @param id the {@code PlotId}
+     * @return the plot or null
      */
     public Plot getOwnedPlotAbs(PlotId id) {
         return this.plots.get(id);
@@ -473,8 +476,8 @@ public abstract class PlotArea {
         return myPlots;
     }
     
-    public Set<Plot> getPlots(final UUID uuid) {
-        final HashSet<Plot> myplots = new HashSet<>();
+    public Set<Plot> getPlots(UUID uuid) {
+        HashSet<Plot> myplots = new HashSet<>();
         for (Plot plot : getPlots()) {
             if (plot.isBasePlot()) {
                 if (plot.isOwner(uuid)) {
@@ -488,11 +491,19 @@ public abstract class PlotArea {
     public Set<Plot> getPlots(PlotPlayer player) {
         return getPlots(player.getUUID());
     }
-    
+
+    /**
+     * A collection of the claimed plots in this {@code PlotArea}.
+     * @return a collection of claimed plots
+     */
+    public Collection<Plot> getPlots() {
+        return this.plots.values();
+    }
+
     public Set<Plot> getPlotsAbs(PlotPlayer player) {
         return player != null ? getPlotsAbs(player.getUUID()) : new HashSet<Plot>();
     }
-    
+
     public int getPlotCount(UUID uuid) {
         if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
             int count = 0;
@@ -520,7 +531,7 @@ public abstract class PlotArea {
         }
         return plot;
     }
-    
+
     public Plot getPlot(PlotId id) {
         Plot plot = getOwnedPlotAbs(id);
         if (plot == null) {
@@ -548,7 +559,7 @@ public abstract class PlotArea {
         }
         return this.clusters != null ? this.clusters.get(plot.getId().x, plot.getId().y) : null;
     }
-    
+
     public PlotCluster getFirstIntersectingCluster(PlotId pos1, PlotId pos2) {
         if (this.clusters == null) {
             return null;
@@ -564,13 +575,13 @@ public abstract class PlotArea {
     public PlotCluster getCluster(PlotId id) {
         return this.clusters != null ? this.clusters.get(id.x, id.y) : null;
     }
-    
+
     public PlotManager getPlotManager() {
         return this.manager;
     }
-    
+
     /**
-     * Session only plot metadata (session is until the server stops)<br>
+     * Session only plot metadata (session is until the server stops).
      * <br>
      * For persistent metadata use the flag system
      * @see FlagManager
@@ -583,7 +594,7 @@ public abstract class PlotArea {
         }
         this.meta.put(key, value);
     }
-    
+
     /**
      * Get the metadata for a key<br>
      * <br>
@@ -598,14 +609,6 @@ public abstract class PlotArea {
         return null;
     }
 
-    /**
-     * A collection of the claimed plots in this {@code PlotArea}.
-     * @return
-     */
-    public Collection<Plot> getPlots() {
-        return this.plots.values();
-    }
-    
     public Set<Plot> getBasePlots() {
         HashSet<Plot> myPlots = new HashSet<>(getPlots());
         Iterator<Plot> iterator = myPlots.iterator();
@@ -662,10 +665,10 @@ public abstract class PlotArea {
     }
 
     /**
-     * Check if the plots in a selection are unowned
-     * @param pos1
-     * @param pos2
-     * @return
+     * Check if the plots in a selection are unowned.
+     * @param pos1 first corner of selection
+     * @param pos2 second corner of selection
+     * @return are plots in selection unowned
      */
     public boolean isUnowned(PlotId pos1, PlotId pos2) {
         int area = (pos2.x - pos1.x + 1) * (pos2.y - pos1.y + 1);
@@ -706,7 +709,7 @@ public abstract class PlotArea {
     }
     
     /**
-     * Setup the plot border for a world (usually done when the world is created)
+     * Setup the plot border for a world (usually done when the world is created).
      */
     public void setupBorder() {
         if (!this.WORLD_BORDER) {
@@ -722,7 +725,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Delete the metadata for a key<br>
+     * Delete the metadata for a key.
      *  - metadata is session only
      *  - deleting other plugin's metadata may cause issues
      * @param key
@@ -819,11 +822,11 @@ public abstract class PlotArea {
     }
     
     /**
-     * Get a set of owned plots within a selection (chooses the best algorithm based on selection size.<br>
+     * Get a set of owned plots within a selection (chooses the best algorithm based on selection size.
      * i.e. A selection of billions of plots will work fine
-     * @param pos1
-     * @param pos2
-     * @return
+     * @param pos1 first corner of selection
+     * @param pos2 second corner of selection
+     * @return the plots in the selection which are owned
      */
     public HashSet<Plot> getPlotSelectionOwned(PlotId pos1, PlotId pos2) {
         int size = (1 + pos2.x - pos1.x) * (1 + pos2.y - pos1.y);

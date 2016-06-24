@@ -2,14 +2,14 @@ package com.intellectualcrafters.configuration;
 
 /**
  * Various settings for controlling the input and output of a {@link
- * Configuration}
+ * Configuration}.
  */
 class ConfigurationOptions {
     private final Configuration configuration;
     private char pathSeparator = '.';
     private boolean copyDefaults = false;
     
-    protected ConfigurationOptions(final Configuration configuration) {
+    protected ConfigurationOptions(Configuration configuration) {
         this.configuration = configuration;
     }
     
@@ -24,9 +24,9 @@ class ConfigurationOptions {
     
     /**
      * Gets the char that will be used to separate {@link
-     * ConfigurationSection}s
-     * <p>
-     * This value does not affect how the {@link Configuration} is stored,
+     * ConfigurationSection}s.
+     *
+     * <p>This value does not affect how the {@link Configuration} is stored,
      * only in how you access the data. The default value is '.'.
      *
      * @return Path separator
@@ -37,15 +37,15 @@ class ConfigurationOptions {
     
     /**
      * Sets the char that will be used to separate {@link
-     * ConfigurationSection}s
-     * <p>
-     * This value does not affect how the {@link Configuration} is stored,
+     * ConfigurationSection}s.
+     *
+     * <p>This value does not affect how the {@link Configuration} is stored,
      * only in how you access the data. The default value is '.'.
      *
      * @param value Path separator
      * @return This object, for chaining
      */
-    public ConfigurationOptions pathSeparator(final char value) {
+    public ConfigurationOptions pathSeparator(char value) {
         pathSeparator = value;
         return this;
     }
@@ -53,8 +53,8 @@ class ConfigurationOptions {
     /**
      * Checks if the {@link Configuration} should copy values from its default
      * {@link Configuration} directly.
-     * <p>
-     * If this is true, all values in the default Configuration will be
+     *
+     * <p>If this is true, all values in the default Configuration will be
      * directly copied, making it impossible to distinguish between values
      * that were set and values that are provided by default. As a result,
      * {@link ConfigurationSection#contains(String)} will always
@@ -71,8 +71,8 @@ class ConfigurationOptions {
     /**
      * Sets if the {@link Configuration} should copy values from its default
      * {@link Configuration} directly.
-     * <p>
-     * If this is true, all values in the default Configuration will be
+     *
+     * <p>If this is true, all values in the default Configuration will be
      * directly copied, making it impossible to distinguish between values
      * that were set and values that are provided by default. As a result,
      * {@link ConfigurationSection#contains(String)} will always
@@ -83,7 +83,7 @@ class ConfigurationOptions {
      * @param value Whether or not defaults are directly copied
      * @return This object, for chaining
      */
-    public ConfigurationOptions copyDefaults(final boolean value) {
+    public ConfigurationOptions copyDefaults(boolean value) {
         copyDefaults = value;
         return this;
     }

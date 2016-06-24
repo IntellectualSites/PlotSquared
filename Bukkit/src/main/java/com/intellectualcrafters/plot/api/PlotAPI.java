@@ -20,17 +20,18 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * PlotSquared API.
@@ -378,9 +379,9 @@ public class PlotAPI {
     }
 
     /**
-     * Register a flag for use in plots.
+     * Registers a flag for use in plots.
      *
-     * @param flag the flag being registered
+     * @param flag the flag to register
      *
      */
     public void addFlag(Flag<?> flag) {
@@ -388,7 +389,7 @@ public class PlotAPI {
     }
 
     /**
-     * Get a plot based on the ID.
+     * Gets a plot based on the ID.
      *
      * @param world the world the plot is located in
      * @param x The PlotID x coordinate
@@ -617,7 +618,7 @@ public class PlotAPI {
     }
 
     /**
-     * Get the PlotSquared class.
+     * Gets the PlotSquared class.
      *
      * @return PlotSquared Class
      *
@@ -628,7 +629,7 @@ public class PlotAPI {
     }
 
     /**
-     * Get the player plot count.
+     * Gets the player plot count.
      *
      * @param world  Specify the world we want to select the plots from
      * @param player Player, for whom we're getting the plot count
@@ -644,7 +645,7 @@ public class PlotAPI {
     }
 
     /**
-     * Get a collection containing the players plots.
+     * Gets a collection containing the players plots.
      *
      * @param world  Specify the world we want to select the plots from
      * @param player Player, for whom we're getting the plots
@@ -663,7 +664,7 @@ public class PlotAPI {
     }
 
     /**
-     * Get the numbers of plots, which the player is able to build in.
+     * Gets the number of plots, which the player is able to build in.
      *
      * @param player player, for whom we're getting the plots
      *
@@ -676,7 +677,7 @@ public class PlotAPI {
     }
 
     /**
-     * Get the PlotPlayer for a player. The PlotPlayer is usually cached and
+     * Gets the PlotPlayer for a player. The PlotPlayer is usually cached and
      * will provide useful functions relating to players.
      *
      * @see PlotPlayer#wrap(Object)

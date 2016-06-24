@@ -29,12 +29,12 @@ public class YamlConfiguration extends FileConfiguration {
 
     /**
      * Creates a new {@link YamlConfiguration}, loading from the given file.
-     * <p>
-     * Any errors loading the Configuration will be logged and then ignored.
+     *
+     * <p>Any errors loading the Configuration will be logged and then ignored.
      * If the specified input is not a valid config, a blank config will be
      * returned.
-     * <p>
-     * The encoding used may follow the system dependent default.
+     *
+     * <p>The encoding used may follow the system dependent default.
      *
      * @param file Input file
      * @return Resulting configuration
@@ -45,7 +45,7 @@ public class YamlConfiguration extends FileConfiguration {
             throw new NullPointerException("File cannot be null");
         }
 
-        final YamlConfiguration config = new YamlConfiguration();
+        YamlConfiguration config = new YamlConfiguration();
 
         try {
             config.load(file);
@@ -62,7 +62,7 @@ public class YamlConfiguration extends FileConfiguration {
                 PS.debug("&c============ Full stacktrace ============");
                 ex.printStackTrace();
                 PS.debug("&c=========================================");
-            } catch (final IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -72,8 +72,8 @@ public class YamlConfiguration extends FileConfiguration {
 
     /**
      * Creates a new {@link YamlConfiguration}, loading from the given reader.
-     * <p>
-     * Any errors loading the Configuration will be logged and then ignored.
+     *
+     * <p>Any errors loading the Configuration will be logged and then ignored.
      * If the specified input is not a valid config, a blank config will be
      * returned.
      *
@@ -81,16 +81,16 @@ public class YamlConfiguration extends FileConfiguration {
      * @return resulting configuration
      * @throws IllegalArgumentException Thrown if stream is null
      */
-    public static YamlConfiguration loadConfiguration(final Reader reader) {
+    public static YamlConfiguration loadConfiguration(Reader reader) {
         if (reader == null) {
             throw new NullPointerException("Reader cannot be null");
         }
 
-        final YamlConfiguration config = new YamlConfiguration();
+        YamlConfiguration config = new YamlConfiguration();
 
         try {
             config.load(reader);
-        } catch (final IOException | InvalidConfigurationException ex) {
+        } catch (IOException | InvalidConfigurationException ex) {
             PS.debug("Cannot load configuration from stream");
             ex.printStackTrace();
         }
@@ -104,7 +104,7 @@ public class YamlConfiguration extends FileConfiguration {
         yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 
-        final String header = buildHeader();
+        String header = buildHeader();
         String dump = yaml.dump(getValues(false));
 
         if (dump.equals(BLANK_CONFIG)) {
@@ -115,7 +115,7 @@ public class YamlConfiguration extends FileConfiguration {
     }
     
     @Override
-    public void loadFromString(final String contents) throws InvalidConfigurationException {
+    public void loadFromString(String contents) throws InvalidConfigurationException {
         if (contents == null) {
             throw new NullPointerException("Contents cannot be null");
         }
@@ -123,13 +123,13 @@ public class YamlConfiguration extends FileConfiguration {
         Map<?, ?> input;
         try {
             input = (Map<?, ?>) yaml.load(contents);
-        } catch (final YAMLException e) {
+        } catch (YAMLException e) {
             throw new InvalidConfigurationException(e);
-        } catch (final ClassCastException ignored) {
+        } catch (ClassCastException ignored) {
             throw new InvalidConfigurationException("Top level is not a Map.");
         }
 
-        final String header = parseHeader(contents);
+        String header = parseHeader(contents);
         if (!header.isEmpty()) {
             options().header(header);
         }
@@ -139,10 +139,10 @@ public class YamlConfiguration extends FileConfiguration {
         }
     }
     
-    protected void convertMapsToSections(final Map<?, ?> input, final ConfigurationSection section) {
-        for (final Map.Entry<?, ?> entry : input.entrySet()) {
-            final String key = entry.getKey().toString();
-            final Object value = entry.getValue();
+    protected void convertMapsToSections(Map<?, ?> input, ConfigurationSection section) {
+        for (Map.Entry<?, ?> entry : input.entrySet()) {
+            String key = entry.getKey().toString();
+            Object value = entry.getValue();
 
             if (value instanceof Map) {
                 convertMapsToSections((Map<?, ?>) value, section.createSection(key));
@@ -152,14 +152,14 @@ public class YamlConfiguration extends FileConfiguration {
         }
     }
     
-    protected String parseHeader(final String input) {
-        final String[] lines = input.split("\r?\n", -1);
-        final StringBuilder result = new StringBuilder();
+    protected String parseHeader(String input) {
+        String[] lines = input.split("\r?\n", -1);
+        StringBuilder result = new StringBuilder();
         boolean readingHeader = true;
         boolean foundHeader = false;
 
         for (int i = 0; (i < lines.length) && readingHeader; i++) {
-            final String line = lines[i];
+            String line = lines[i];
 
             if (line.startsWith(COMMENT_PREFIX)) {
                 if (i > 0) {
@@ -183,14 +183,14 @@ public class YamlConfiguration extends FileConfiguration {
     
     @Override
     protected String buildHeader() {
-        final String header = options().header();
+        String header = options().header();
 
         if (options().copyHeader()) {
-            final Configuration def = getDefaults();
+            Configuration def = getDefaults();
 
             if (def instanceof FileConfiguration) {
-                final FileConfiguration fileDefaults = (FileConfiguration) def;
-                final String defaultsHeader = fileDefaults.buildHeader();
+                FileConfiguration fileDefaults = (FileConfiguration) def;
+                String defaultsHeader = fileDefaults.buildHeader();
 
                 if ((defaultsHeader != null) && !defaultsHeader.isEmpty()) {
                     return defaultsHeader;
@@ -202,8 +202,8 @@ public class YamlConfiguration extends FileConfiguration {
             return "";
         }
 
-        final StringBuilder builder = new StringBuilder();
-        final String[] lines = header.split("\r?\n", -1);
+        StringBuilder builder = new StringBuilder();
+        String[] lines = header.split("\r?\n", -1);
         boolean startedHeader = false;
 
         for (int i = lines.length - 1; i >= 0; i--) {

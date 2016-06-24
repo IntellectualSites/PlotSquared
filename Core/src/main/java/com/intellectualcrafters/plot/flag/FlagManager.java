@@ -213,7 +213,7 @@ public class FlagManager {
 
     /**
      * Removes a flag from a certain plot.
-     * @param plot the plot to remove the flag from
+     * @param origin the plot to remove the flag from
      * @param id the flag to remove
      * @return true if the plot contained the flag and was removed successfully
      */
