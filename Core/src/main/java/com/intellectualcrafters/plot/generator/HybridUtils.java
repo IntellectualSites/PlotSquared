@@ -447,10 +447,10 @@ public abstract class HybridUtils {
                         }
                     }
                 }
+                queue.enqueue();
                 return true;
             }
         }
-        queue.enqueue();
         return false;
     }
 }
