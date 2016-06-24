@@ -25,6 +25,7 @@ import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import com.intellectualcrafters.plot.util.expiry.PlotAnalysis;
 import com.plotsquared.listener.PlotListener;
+
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
@@ -738,8 +739,7 @@ public class Plot {
     }
 
     /**
-     * Clear a plot
-     * @see this#clear(Runnable)
+     * Clear a plot.
      * @see this#clear(boolean, boolean, Runnable)
      * @see #deletePlot(Runnable) to clear and delete a plot
      * @param whenDone A runnable to execute when clearing finishes, or null

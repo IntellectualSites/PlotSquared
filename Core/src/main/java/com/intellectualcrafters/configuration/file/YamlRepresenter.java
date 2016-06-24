@@ -11,7 +11,7 @@ import java.util.Map;
 
 class YamlRepresenter extends Representer {
 
-    public YamlRepresenter() {
+    YamlRepresenter() {
         this.multiRepresenters.put(ConfigurationSection.class, new RepresentConfigurationSection());
         this.multiRepresenters.put(ConfigurationSerializable.class, new RepresentConfigurationSerializable());
     }

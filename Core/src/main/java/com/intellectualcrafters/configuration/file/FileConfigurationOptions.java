@@ -42,8 +42,8 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
      * automatically be applied, but you may include one if you wish for extra
      * spacing.
      *
-     * <p><code>null</code> is a valid value which will indicate that no header]
-     * is to be applied. The default value is <code>null</code>.
+     * <p>{@code null} is a valid value which will indicate that no header]
+     * is to be applied. The default value is {@code null}.
      *
      * @return Header
      */
@@ -60,7 +60,7 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
      * automatically be applied, but you may include one if you wish for extra
      * spacing.
      *
-     * <p><code>null</code> is a valid value which will indicate that no header
+     * <p>{@code null} is a valid value which will indicate that no header
      * is to be applied.
      *
      * @param value New header
