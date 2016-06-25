@@ -16,7 +16,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
-
+import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -38,7 +38,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * plot functions
@@ -205,6 +204,39 @@ public class MainUtil {
             return true;
         }
         return false;
+    }
+
+    public static String secToTime(long time) {
+        StringBuilder toreturn = new StringBuilder();
+        if (time>=33868800) {
+            int years = (int) (time/33868800);
+            time-=years*33868800;
+            toreturn.append(years+"y ");
+        }
+        if (time>=604800) {
+            int weeks = (int) (time/604800);
+            time-=weeks*604800;
+            toreturn.append(weeks+"w ");
+        }
+        if (time>=86400) {
+            int days = (int) (time/86400);
+            time-=days*86400;
+            toreturn.append(days+"d ");
+        }
+        if (time>=3600) {
+            int hours = (int) (time/3600);
+            time-=hours*3600;
+            toreturn.append(hours+"h ");
+        }
+        if (time>=60) {
+            int minutes = (int) (time/60);
+            time-=minutes*60;
+            toreturn.append(minutes+"m ");
+        }
+        if (toreturn.equals("")||time>0){
+            toreturn.append((time)+"s ");
+        }
+        return toreturn.toString().trim();
     }
 
     public static long timeToSec(String string) {
@@ -687,31 +719,12 @@ public class MainUtil {
         String trusted = getPlayerList(plot.getTrusted());
         String members = getPlayerList(plot.getMembers());
         String denied = getPlayerList(plot.getDenied());
-        String expires = C.UNKNOWN.s();
+        String seen = C.UNKNOWN.s();
         if (Settings.Enabled_Components.PLOT_EXPIRY) {
-            if (plot.hasOwner()) {
-                Optional<?> keep = plot.getFlag(Flags.KEEP);
-                if (keep.isPresent()) {
-                    Object value = keep.get();
-                    if (value instanceof Boolean) {
-                        if (Boolean.TRUE.equals(value)) {
-                            expires = C.NONE.s();
-                        }
-                    } else if (value instanceof Long) {
-                        if ((Long) value > System.currentTimeMillis()) {
-                            long l = System.currentTimeMillis() - (long) value;
-                            expires = String.format("%d days", TimeUnit.MILLISECONDS.toDays(l));
-                        }
-                    }
-                    //} else if (ExpireManager.IMP != null) {
-                    //long timestamp = ExpireManager.IMP.getTimestamp(plot.owner);
-                    //long compared = System.currentTimeMillis() - timestamp;
-                    //long l = Settings.AUTO_CLEAR_DAYS - TimeUnit.MILLISECONDS.toDays(compared);
-                    //expires = String.format("%d days", l);
-                }
-            }
+            int time = (int) (ExpireManager.IMP.getAge(plot) / 1000);
+            seen = MainUtil.secToTime(time);
         } else {
-            expires = C.NEVER.s();
+            seen = C.NEVER.s();
         }
         Optional<String> descriptionFlag = plot.getFlag(Flags.DESCRIPTION);
         String description = !descriptionFlag.isPresent() ? C.NONE.s() : Flags.DESCRIPTION.valueToString(descriptionFlag.get());
@@ -742,7 +755,7 @@ public class MainUtil {
         info = info.replace("%trusted%", trusted);
         info = info.replace("%helpers%", members);
         info = info.replace("%denied%", denied);
-        info = info.replace("%expires%", expires);
+        info = info.replace("%seen%", seen);
         info = info.replace("%flags%", flags);
         info = info.replace("%build%", String.valueOf(build));
         info = info.replace("%desc%", "No description set.");

@@ -1329,10 +1329,6 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         if (checkEntity(entity, plot)) {
-            PlotPlayer owner = UUIDHandler.getPlayer(plot.owner);
-            if (owner != null) {
-                C.ENTITY_CAP.send(owner);
-            }
             event.setCancelled(true);
         }
     }

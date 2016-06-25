@@ -466,7 +466,7 @@ public enum C {
             + "$1Biome: $2%biome%$1&-"
             + "$1Can Build: $2%build%$1&-"
             + "$1Rating: $2%rating%&-"
-            + "$1Expires: $2%expires%&-"
+            + "$1Seen: $2%seen%&-"
             + "$1Trusted: $2%trusted%$1&-"
             + "$1Members: $2%members%$1&-"
             + "$1Denied: $2%denied%$1&-"
@@ -482,7 +482,7 @@ public enum C {
     PLOT_INFO_ID("$1ID:$2 %id%", "Info"),
     PLOT_INFO_ALIAS("$1Alias:$2 %alias%", "Info"),
     PLOT_INFO_SIZE("$1Size:$2 %size%", "Info"),
-    PLOT_INFO_EXPIRES("$1Expires:$2 %expires%", "Info"),
+    PLOT_INFO_SEEN("$1Seen:$2 %seen%", "Info"),
     PLOT_USER_LIST(" $1%user%$2,", "Info"),
     PLOT_FLAG_LIST("$1%s0:%s1$2", "Info"),
     INFO_SYNTAX_CONSOLE("$2/plot info X;Y", "Info"),
@@ -682,7 +682,7 @@ public enum C {
     }
 
     public static String format(C caption, Object... args) {
-        if (caption.usePrefix()) {
+        if (caption.usePrefix() && caption.s.length() > 0) {
             return C.PREFIX.s() + format(caption.s, args);
         } else {
             return format(caption.s, args);

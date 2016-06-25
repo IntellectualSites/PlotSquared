@@ -8,6 +8,7 @@ import com.intellectualcrafters.plot.object.PlotItemStack;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.util.UUID;
@@ -35,6 +36,7 @@ public class Info extends SubCommand {
                 case "id":
                 case "size":
                 case "members":
+                case "seen":
                 case "owner":
                 case "rating":
                     plot = MainUtil.getPlotFromString(player, null, false);
@@ -82,7 +84,7 @@ public class Info extends SubCommand {
                     "&cAlias: &6" + plot.getAlias(),
                     "&cBiome: &6" + plot.getBiome().replaceAll("_", "").toLowerCase(),
                     "&cCan Build: &6" + plot.isAdded(uuid),
-                    "&cExpires: &6" + plot.isAdded(uuid),
+                    "&cSeen: &6" + MainUtil.secToTime((int) (ExpireManager.IMP.getAge(plot) / 1000)),
                     "&cIs Denied: &6" + plot.isDenied(uuid)));
             inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cTrusted", "&cAmount: &6" + plot.getTrusted().size(),
                     "&8Click to view a list of the trusted users"));
@@ -110,7 +112,7 @@ public class Info extends SubCommand {
             info = getCaption(arg);
             if (info == null) {
                 MainUtil.sendMessage(player,
-                        "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &aexpires&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, "
+                        "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &aseen&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, "
                                 + "&aowner&7, &arating");
                 return false;
             }
@@ -149,8 +151,8 @@ public class Info extends SubCommand {
                 return C.PLOT_INFO_OWNER.s();
             case "rating":
                 return C.PLOT_INFO_RATING.s();
-            case "expires":
-                return C.PLOT_INFO_EXPIRES.s();
+            case "seen":
+                return C.PLOT_INFO_SEEN.s();
             default:
                 return null;
         }
