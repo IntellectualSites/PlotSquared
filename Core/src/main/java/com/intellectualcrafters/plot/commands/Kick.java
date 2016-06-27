@@ -54,7 +54,7 @@ public class Kick extends SubCommand {
                     }
                     players.add(pp);
                 }
-                break;
+                continue;
             }
             PlotPlayer pp = UUIDHandler.getPlayer(uuid);
             if (pp != null) {
@@ -67,8 +67,7 @@ public class Kick extends SubCommand {
             return false;
         }
         for (PlotPlayer player2 : players) {
-            Location location2 = player2.getLocation();
-            if (!player2.getLocation().getWorld().equals(location2.getWorld()) || !plot.equals(location2.getPlot())) {
+            if (!plot.equals(player2.getCurrentPlot())) {
                 MainUtil.sendMessage(player, C.INVALID_PLAYER, args[0]);
                 return false;
             }

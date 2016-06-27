@@ -26,9 +26,8 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 
 /**
- * An utility that can be used to send chunks, rather than using bukkit code to do so (uses heavy NMS)
- *
-
+ * An utility that can be used to send chunks, rather than using bukkit code
+ * to do so (uses heavy NMS).
  */
 public class SendChunk {
 
@@ -40,7 +39,7 @@ public class SendChunk {
     private final RefMethod methodInitLighting;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public SendChunk() throws ClassNotFoundException, NoSuchMethodException, NoSuchFieldException {
         RefConstructor tempMapChunk;

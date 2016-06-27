@@ -30,7 +30,6 @@ public class DefaultTitleManager_183 extends DefaultTitleManager {
         this.chatBaseComponent = Reflection.getNMSClass("IChatBaseComponent");
         this.packetActions = Reflection.getNMSClass("PacketPlayOutTitle$EnumTitleAction");
         this.nmsChatSerializer = Reflection.getNMSClass("IChatBaseComponent$ChatSerializer");
-
     }
 
     @Override

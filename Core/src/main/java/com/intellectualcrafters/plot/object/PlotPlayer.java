@@ -55,7 +55,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     /**
-     * Set some session only metadata for the player.
+     * Set some session only metadata for this player.
      * @param key
      * @param value
      */
@@ -102,7 +102,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     /**
-     * The player's name.
+     * This player's name.
      *
      * @return the name of the player
      */
@@ -112,7 +112,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     /**
-     * Get the player's current plot.
+     * Get this player's current plot.
      * @return the plot the player is standing on or null if standing on a road or not in a {@link PlotArea}
      */
     public Plot getCurrentPlot() {
@@ -133,7 +133,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     /**
-     * Get the number of plots the player owns.
+     * Get the number of plots this player owns.
      *
      * @see #getPlotCount(String);
      * @see #getPlots()
@@ -164,7 +164,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     /**
-     * Get the number of plots the player owns in the world.
+     * Get the number of plots this player owns in the world.
      * @param world the name of the plotworld to check.
      * @return
      */
@@ -196,7 +196,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     /**
-     * Return the PlotArea the player is currently in, or null.
+     * Return the PlotArea this player is currently in, or null.
      * @return
      */
     public PlotArea getPlotAreaAbs() {
@@ -216,7 +216,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
 
     ////////////// PARTIALLY IMPLEMENTED ///////////
     /**
-     * Get the player's last recorded location or null if they don't any plot relevant location.
+     * Get this player's last recorded location or null if they don't any plot relevant location.
      * @return The location
      */
     public Location getLocation() {
@@ -235,13 +235,13 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     /**
-     * Get the player's full location (including yaw/pitch)
+     * Get this player's full location (including yaw/pitch)
      * @return
      */
     public abstract Location getLocationFull();
 
     /**
-     * Get the player's UUID.
+     * Get this player's UUID.
      * === !IMPORTANT ===<br>
      * The UUID is dependent on the mode chosen in the settings.yml and may not be the same as Bukkit has
      * (especially if using an old version of Bukkit that does not support UUIDs)
@@ -262,13 +262,13 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     /**
-     * Teleport the player to a location.
+     * Teleport this player to a location.
      * @param location the target location
      */
     public abstract void teleport(Location location);
 
     /**
-     * Set the compass target.
+     * Set this compass target.
      * @param location the target location
      */
     public abstract void setCompassTarget(Location location);
@@ -285,7 +285,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
 
 
     /**
-     * Retrieves t player attribute.
+     * Retrieves the attribute of this player.
      *
      * @param key
      * @return the attribute will be either true or false
@@ -312,19 +312,19 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     public abstract void setWeather(PlotWeather weather);
 
     /**
-     * Get the player's gamemode.
+     * Get this player's gamemode.
      * @return the gamemode of the player.
      */
     public abstract PlotGameMode getGameMode();
 
     /**
-     * Set the player's gameMode.
+     * Set this player's gameMode.
      * @param gameMode the gamemode to set
      */
     public abstract void setGameMode(PlotGameMode gameMode);
 
     /**
-     * Set the player's local time (ticks).
+     * Set this player's local time (ticks).
      * @param time the time visible to the player
      */
     public abstract void setTime(long time);
@@ -332,32 +332,32 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     public abstract  boolean getFlight();
 
     /**
-     * Set the player's fly mode.
+     * Set this player's fly mode.
      * @param fly if the player can fly
      */
     public abstract void setFlight(boolean fly);
 
     /**
-     * Play music at a location for the player.
+     * Play music at a location for this player.
      * @param location where to play the music
      * @param id the numerical record item id
      */
     public abstract void playMusic(Location location, int id);
 
     /**
-     * Check if the player is banned.
+     * Check if this player is banned.
      * @return true if the player is banned, false otherwise.
      */
     public abstract boolean isBanned();
 
     /**
-     * Kick the player from the game.
+     * Kick this player from the game.
      * @param message the reason for the kick
      */
     public abstract void kick(String message);
 
     /**
-     * Called when the player quits.
+     * Called when this player quits.
      */
     public void unregister() {
         Plot plot = getCurrentPlot();
@@ -379,7 +379,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     /**
-     * Get the amount of clusters a player owns in the specific world.
+     * Get the amount of clusters this player owns in the specific world.
      * @param world
      * @return
      */
@@ -395,7 +395,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     /**
-     * Get the amount of clusters a player owns.
+     * Get the amount of clusters this player owns.
      * @return the number of clusters this player owns
      */
     public int getPlayerClusterCount() {
@@ -410,9 +410,9 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     /**
-     * Return a {@code Set} of all plots a player owns in a certain world.
+     * Return a {@code Set} of all plots this player owns in a certain world.
      * @param world the world to retrieve plots from
-     * @return a {@code Set} of plots the player owns in the provided world
+     * @return a {@code Set} of plots this player owns in the provided world
      */
     public Set<Plot> getPlots(String world) {
         UUID uuid = getUUID();

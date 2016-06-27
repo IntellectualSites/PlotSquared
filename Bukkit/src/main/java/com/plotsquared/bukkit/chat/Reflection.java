@@ -14,6 +14,20 @@ import java.util.Map;
  */
 public final class Reflection {
 
+	/**
+	 * Stores loaded classes from the {@code net.minecraft.server} package.
+	 */
+	private static final Map<String, Class<?>> _loadedNMSClasses = new HashMap<String, Class<?>>();
+	/**
+	 * Stores loaded classes from the {@code org.bukkit.craftbukkit} package (and subpackages).
+	 */
+	private static final Map<String, Class<?>> _loadedOBCClasses = new HashMap<String, Class<?>>();
+	private static final Map<Class<?>, Map<String, Field>> _loadedFields = new HashMap<Class<?>, Map<String, Field>>();
+	/**
+	 * Contains loaded methods in a cache.
+	 * The map maps [types to maps of [method names to maps of [parameter types to method instances]]].
+	 */
+	private static final Map<Class<?>, Map<String, Map<ArrayWrapper<Class<?>>, Method>>> _loadedMethods = new HashMap<Class<?>, Map<String, Map<ArrayWrapper<Class<?>>, Method>>>();
 	private static String _versionString;
 
 	private Reflection() { }
@@ -38,16 +52,6 @@ public final class Reflection {
 	}
 
 	/**
-	 * Stores loaded classes from the {@code net.minecraft.server} package.
-	 */
-	private static final Map<String, Class<?>> _loadedNMSClasses = new HashMap<String, Class<?>>();
-
-	/**
-	 * Stores loaded classes from the {@code org.bukkit.craftbukkit} package (and subpackages).
-	 */
-	private static final Map<String, Class<?>> _loadedOBCClasses = new HashMap<String, Class<?>>();
-
-	/**
 	 * Gets a {@link Class} object representing a type contained within the {@code net.minecraft.server} versioned package.
 	 * The class instances returned by this method are cached, such that no lookup will be done twice (unless multiple threads are accessing this method simultaneously).
 	 *
@@ -64,9 +68,8 @@ public final class Reflection {
 		try {
 			clazz = Class.forName(fullName);
 		} catch (Exception e) {
-			e.printStackTrace();
 			_loadedNMSClasses.put(className, null);
-			return null;
+			throw new RuntimeException(e);
 		}
 		_loadedNMSClasses.put(className, clazz);
 		return clazz;
@@ -89,9 +92,8 @@ public final class Reflection {
 		try {
 			clazz = Class.forName(fullName);
 		} catch (Exception e) {
-			e.printStackTrace();
 			_loadedOBCClasses.put(className, null);
-			return null;
+			throw new RuntimeException(e);
 		}
 		_loadedOBCClasses.put(className, clazz);
 		return clazz;
@@ -110,12 +112,9 @@ public final class Reflection {
 		try {
 			return getMethod(obj.getClass(), "getHandle").invoke(obj);
 		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+			throw new RuntimeException(e);
 		}
 	}
-
-	private static final Map<Class<?>, Map<String, Field>> _loadedFields = new HashMap<Class<?>, Map<String, Field>>();
 
 	/**
 	 * Retrieves a {@link Field} instance declared by the specified class with the specified name.
@@ -160,12 +159,6 @@ public final class Reflection {
 			return null;
 		}
 	}
-
-	/**
-	 * Contains loaded methods in a cache.
-	 * The map maps [types to maps of [method names to maps of [parameter types to method instances]]].
-	 */
-	private static final Map<Class<?>, Map<String, Map<ArrayWrapper<Class<?>>, Method>>> _loadedMethods = new HashMap<Class<?>, Map<String, Map<ArrayWrapper<Class<?>>, Method>>>();
 
 	/**
 	 * Retrieves a {@link Method} instance declared by the specified class with the specified name and argument types.

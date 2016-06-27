@@ -85,7 +85,7 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
                     if (block != null) {
                         int x = MainUtil.x_loc[layer][j];
                         int y = MainUtil.y_loc[layer][j];
-                        int z = MainUtil.y_loc[layer][j];
+                        int z = MainUtil.z_loc[layer][j];
                         Block existing = chunk.getBlock(x, y, z);
                         int existingId = existing.getTypeId();
                         if (existingId == block.id) {

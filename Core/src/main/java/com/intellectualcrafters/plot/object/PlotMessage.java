@@ -1,6 +1,8 @@
 package com.intellectualcrafters.plot.object;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.chat.PlainChatManager;
 import com.intellectualcrafters.plot.util.ChatManager;
 
 public class PlotMessage {
@@ -8,7 +10,13 @@ public class PlotMessage {
     private Object builder;
     
     public PlotMessage() {
+        try {
+            reset(ChatManager.manager);
+        } catch (Throwable e) {
+            PS.debug("PlotSquared doesn't support fancy chat for " + PS.get().IMP.getServerVersion());
+            ChatManager.manager = new PlainChatManager();
         reset(ChatManager.manager);
+    }
     }
 
     public PlotMessage(String text) {

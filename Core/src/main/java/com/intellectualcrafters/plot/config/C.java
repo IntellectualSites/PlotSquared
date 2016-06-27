@@ -454,6 +454,7 @@ public enum C {
      * Info
      */
     NONE("None", "Info"),
+    NOW("Now", "Info"),
     NEVER("Never", "Info"),
     UNKNOWN("Unknown", "Info"),
     EVERYONE("Everyone", "Info"),

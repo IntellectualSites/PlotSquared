@@ -65,7 +65,7 @@ public class Settings extends Config {
         Enabled_Components.KILL_ROAD_VEHICLES = config.getBoolean("kill_road_vehicles", Enabled_Components.KILL_ROAD_VEHICLES);
 
         // Clearing + Expiry
-//        FAST_CLEAR = config.getBoolean("clear.fastmode");
+        //FAST_CLEAR = config.getBoolean("clear.fastmode");
         Enabled_Components.PLOT_EXPIRY = config.getBoolean("clear.auto.enabled", Enabled_Components.PLOT_EXPIRY);
         if (Enabled_Components.PLOT_EXPIRY) {
             Enabled_Components.BAN_DELETER = config.getBoolean("clear.on.ban");
@@ -119,7 +119,7 @@ public class Settings extends Config {
         Teleport.ON_DEATH = config.getBoolean("teleport.on_death", Teleport.ON_DEATH);
 
         // WorldEdit
-//        WE_ALLOW_HELPER = config.getBoolean("worldedit.enable-for-helpers");
+        //WE_ALLOW_HELPER = config.getBoolean("worldedit.enable-for-helpers");
 
         // Chunk processor
         Enabled_Components.CHUNK_PROCESSOR = config.getBoolean("chunk-processor.enabled", Enabled_Components.CHUNK_PROCESSOR);

@@ -17,6 +17,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -208,29 +209,29 @@ public class MainUtil {
 
     public static String secToTime(long time) {
         StringBuilder toreturn = new StringBuilder();
-        if (time>=33868800) {
-            int years = (int) (time/33868800);
-            time-=years*33868800;
+        if (time >= 33868800) {
+            int years = (int) (time / 33868800);
+            time -= years * 33868800;
             toreturn.append(years+"y ");
         }
-        if (time>=604800) {
-            int weeks = (int) (time/604800);
-            time-=weeks*604800;
+        if (time >= 604800) {
+            int weeks = (int) (time / 604800);
+            time -= weeks * 604800;
             toreturn.append(weeks+"w ");
         }
-        if (time>=86400) {
-            int days = (int) (time/86400);
-            time-=days*86400;
+        if (time >= 86400) {
+            int days = (int) (time / 86400);
+            time -= days * 86400;
             toreturn.append(days+"d ");
         }
-        if (time>=3600) {
-            int hours = (int) (time/3600);
-            time-=hours*3600;
+        if (time >= 3600) {
+            int hours = (int) (time / 3600);
+            time -= hours * 3600;
             toreturn.append(hours+"h ");
         }
         if (time>=60) {
-            int minutes = (int) (time/60);
-            time-=minutes*60;
+            int minutes = (int) (time / 60);
+            time -= minutes * 60;
             toreturn.append(minutes+"m ");
         }
         if (toreturn.equals("")||time>0){
@@ -719,10 +720,18 @@ public class MainUtil {
         String trusted = getPlayerList(plot.getTrusted());
         String members = getPlayerList(plot.getMembers());
         String denied = getPlayerList(plot.getDenied());
-        String seen = C.UNKNOWN.s();
+        String seen;
         if (Settings.Enabled_Components.PLOT_EXPIRY) {
-            int time = (int) (ExpireManager.IMP.getAge(plot) / 1000);
-            seen = MainUtil.secToTime(time);
+            if (plot.isOnline()) {
+                seen = C.NOW.s();
+            } else {
+                int time = (int) (ExpireManager.IMP.getAge(plot) / 1000);
+                if (time != 0) {
+                    seen = MainUtil.secToTime(time);
+                } else {
+                    seen = C.UNKNOWN.s();
+                }
+            }
         } else {
             seen = C.NEVER.s();
         }
@@ -741,9 +750,7 @@ public class MainUtil {
             }
         }
         boolean build = plot.isAdded(player.getUUID());
-
         String owner = plot.getOwners().isEmpty() ? "unowned" : getPlayerList(plot.getOwners());
-
         info = info.replace("%id%", plot.getId().toString());
         info = info.replace("%alias%", alias);
         info = info.replace("%num%", String.valueOf(num));
@@ -771,10 +778,6 @@ public class MainUtil {
                     String info;
                     if (full && Settings.Ratings.CATEGORIES != null && Settings.Ratings.CATEGORIES.size() > 1) {
                         double[] ratings = MainUtil.getAverageRatings(plot);
-                        for (double v : ratings) {
-
-                        }
-
                         String rating = "";
                         String prefix = "";
                         for (int i = 0; i < ratings.length; i++) {

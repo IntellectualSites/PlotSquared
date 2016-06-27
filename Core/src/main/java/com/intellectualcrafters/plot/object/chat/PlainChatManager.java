@@ -1,14 +1,14 @@
-package com.plotsquared.bukkit.util;
+package com.intellectualcrafters.plot.object.chat;
 
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotMessage;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.ChatManager;
-import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BukkitPlainChatManager extends ChatManager<List<StringBuilder>> {
+public class PlainChatManager extends ChatManager<List<StringBuilder>> {
 
     @Override
     public List<StringBuilder> builder() {
@@ -29,7 +29,7 @@ public class BukkitPlainChatManager extends ChatManager<List<StringBuilder>> {
 
     @Override
     public void text(PlotMessage message, String text) {
-        message.$(this).add(new StringBuilder(ChatColor.stripColor(text)));
+        message.$(this).add(new StringBuilder(C.color(text)));
     }
 
     @Override
