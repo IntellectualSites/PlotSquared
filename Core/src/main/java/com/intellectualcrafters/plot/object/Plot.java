@@ -2681,7 +2681,7 @@ public class Plot {
                 greaterPlot.setMerged(3, true);
                 lesserPlot.mergeData(greaterPlot);
                 if (removeRoads) {
-                    Plot diagonal = greaterPlot.getRelative(1);
+                    Plot diagonal = greaterPlot.getRelative(2);
                     if (diagonal.getMerged(7)) {
                         lesserPlot.removeRoadSouthEast();
                     }
