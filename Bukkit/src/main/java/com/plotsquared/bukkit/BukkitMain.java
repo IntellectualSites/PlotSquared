@@ -52,7 +52,7 @@ import com.plotsquared.bukkit.util.BukkitEconHandler;
 import com.plotsquared.bukkit.util.BukkitEventUtil;
 import com.plotsquared.bukkit.util.BukkitHybridUtils;
 import com.plotsquared.bukkit.util.BukkitInventoryUtil;
-import com.plotsquared.bukkit.util.BukkitPlainChatManager;
+import com.intellectualcrafters.plot.object.chat.PlainChatManager;
 import com.plotsquared.bukkit.util.BukkitSchematicHandler;
 import com.plotsquared.bukkit.util.BukkitSetupUtils;
 import com.plotsquared.bukkit.util.BukkitTaskManager;
@@ -428,7 +428,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             new SendChunk();
             MainUtil.canSendChunk = true;
         } catch (ClassNotFoundException | NoSuchFieldException | NoSuchMethodException e) {
-            e.printStackTrace();
+            PS.debug(SendChunk.class + " does not support " + StringMan.getString(getServerVersion()));
             MainUtil.canSendChunk = false;
         }
         if (PS.get().checkVersion(getServerVersion(), 1, 9, 0)) {
@@ -653,7 +653,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         if (Settings.Chat.INTERACTIVE) {
             return new BukkitChatManager();
         } else {
-            return new BukkitPlainChatManager();
+            return new PlainChatManager();
         }
     }
 

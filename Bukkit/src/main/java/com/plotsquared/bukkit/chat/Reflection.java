@@ -64,9 +64,8 @@ public final class Reflection {
 		try {
 			clazz = Class.forName(fullName);
 		} catch (Exception e) {
-			e.printStackTrace();
 			_loadedNMSClasses.put(className, null);
-			return null;
+			throw new RuntimeException(e);
 		}
 		_loadedNMSClasses.put(className, clazz);
 		return clazz;
@@ -89,9 +88,8 @@ public final class Reflection {
 		try {
 			clazz = Class.forName(fullName);
 		} catch (Exception e) {
-			e.printStackTrace();
 			_loadedOBCClasses.put(className, null);
-			return null;
+			throw new RuntimeException(e);
 		}
 		_loadedOBCClasses.put(className, clazz);
 		return clazz;
@@ -110,8 +108,7 @@ public final class Reflection {
 		try {
 			return getMethod(obj.getClass(), "getHandle").invoke(obj);
 		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+			throw new RuntimeException(e);
 		}
 	}
 

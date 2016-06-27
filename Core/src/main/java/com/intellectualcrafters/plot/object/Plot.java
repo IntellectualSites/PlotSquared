@@ -1650,7 +1650,7 @@ public class Plot {
         if (uuid == DBFunc.everyone) {
             boolean result = false;
             for (UUID other : new HashSet<>(getDenied())) {
-                result = result || rmvDenied(other);
+                result = rmvDenied(other) || result;
             }
             return result;
         }
@@ -1677,7 +1677,7 @@ public class Plot {
         if (uuid == DBFunc.everyone) {
             boolean result = false;
             for (UUID other : new HashSet<>(getTrusted())) {
-                result = result || rmvTrusted(other);
+                result = rmvTrusted(other) || result;
             }
             return result;
         }
@@ -1707,7 +1707,7 @@ public class Plot {
         if (uuid == DBFunc.everyone) {
             boolean result = false;
             for (UUID other : new HashSet<>(this.members)) {
-                result = result || rmvMember(other);
+                result = rmvMember(other) || result;
             }
             return result;
         }
