@@ -719,10 +719,18 @@ public class MainUtil {
         String trusted = getPlayerList(plot.getTrusted());
         String members = getPlayerList(plot.getMembers());
         String denied = getPlayerList(plot.getDenied());
-        String seen = C.UNKNOWN.s();
+        String seen;
         if (Settings.Enabled_Components.PLOT_EXPIRY) {
-            int time = (int) (ExpireManager.IMP.getAge(plot) / 1000);
-            seen = MainUtil.secToTime(time);
+            if (plot.isOnline()) {
+                seen = C.NOW.s();
+            } else {
+                int time = (int) (ExpireManager.IMP.getAge(plot) / 1000);
+                if (time != 0) {
+                    seen = MainUtil.secToTime(time);
+                } else {
+                    seen = C.UNKNOWN.s();
+                }
+            }
         } else {
             seen = C.NEVER.s();
         }
@@ -741,9 +749,7 @@ public class MainUtil {
             }
         }
         boolean build = plot.isAdded(player.getUUID());
-
         String owner = plot.getOwners().isEmpty() ? "unowned" : getPlayerList(plot.getOwners());
-
         info = info.replace("%id%", plot.getId().toString());
         info = info.replace("%alias%", alias);
         info = info.replace("%num%", String.valueOf(num));
@@ -771,10 +777,6 @@ public class MainUtil {
                     String info;
                     if (full && Settings.Ratings.CATEGORIES != null && Settings.Ratings.CATEGORIES.size() > 1) {
                         double[] ratings = MainUtil.getAverageRatings(plot);
-                        for (double v : ratings) {
-
-                        }
-
                         String rating = "";
                         String prefix = "";
                         for (int i = 0; i < ratings.length; i++) {
