@@ -38,6 +38,7 @@ import com.plotsquared.bukkit.database.plotme.LikePlotMeConverter;
 import com.plotsquared.bukkit.database.plotme.PlotMeConnector_017;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.listeners.ChunkListener;
+import com.plotsquared.bukkit.listeners.EntitySpawnListener;
 import com.plotsquared.bukkit.listeners.ForceFieldListener;
 import com.plotsquared.bukkit.listeners.PlayerEvents;
 import com.plotsquared.bukkit.listeners.PlayerEvents183;
@@ -361,6 +362,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     public void registerPlayerEvents() {
         PlayerEvents main = new PlayerEvents();
         getServer().getPluginManager().registerEvents(main, this);
+        try {
+            getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
+        } catch (Throwable ignore) {}
         if (PS.get().checkVersion(getServerVersion(), 1, 8, 0)) {
             try {
                 getServer().getPluginManager().registerEvents(new PlayerEvents_1_8(), this);
