@@ -1,7 +1,5 @@
 package com.plotsquared.bukkit.listeners;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
@@ -10,6 +8,8 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 import com.intellectualcrafters.plot.util.TaskManager;
+import java.lang.reflect.Method;
+import java.util.HashSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -28,8 +28,8 @@ import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
-import java.lang.reflect.Method;
-import java.util.HashSet;
+
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 public class ChunkListener implements Listener {
 
@@ -100,14 +100,21 @@ public class ChunkListener implements Listener {
         }, 1);
     }
 
+    private boolean ignoreUnload = false;
+
     public boolean unloadChunk(String world, Chunk chunk, boolean safe) {
         if (safe && shouldSave(world, chunk.getX(), chunk.getZ())) {
             return false;
         }
         Object c = this.methodGetHandleChunk.of(chunk).call();
-        this.mustSave.of(c).set(false);
-        if (chunk.isLoaded()) {
-            chunk.unload(false, false);
+        RefField.RefExecutor field = this.mustSave.of(c);
+        if (field.get() == true) {
+            field.set(false);
+            if (chunk.isLoaded()) {
+                ignoreUnload = true;
+                chunk.unload(false, false);
+                ignoreUnload = false;
+            }
         }
         return true;
     }
@@ -139,6 +146,9 @@ public class ChunkListener implements Listener {
 
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
+        if (ignoreUnload) {
+            return;
+        }
         if (Settings.Chunk_Processor.AUTO_TRIM) {
             Chunk chunk = event.getChunk();
             String world = chunk.getWorld().getName();

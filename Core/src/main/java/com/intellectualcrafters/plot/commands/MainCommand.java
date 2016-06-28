@@ -223,7 +223,12 @@ public class MainCommand extends Command {
                 args = Arrays.copyOfRange(args, 1, args.length);
             }
         }
-        super.execute(player, args, confirm, whenDone);
+        try {
+            super.execute(player, args, confirm, whenDone);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            C.ERROR.send(player, e.getLocalizedMessage());
+        }
         // Reset command scope //
         if (tp && !(player instanceof ConsolePlayer)) {
             if (loc == null) {

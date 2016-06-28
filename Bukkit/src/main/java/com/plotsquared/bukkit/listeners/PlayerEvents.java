@@ -1374,7 +1374,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         this.lastRadius = event.getRadius() + 1;
     }
 
-    public boolean checkEntity(Plot plot, IntegerFlag... flags) {
+    public static boolean checkEntity(Plot plot, IntegerFlag... flags) {
         int[] mobs = null;
         for (IntegerFlag flag : flags) {
             int i;

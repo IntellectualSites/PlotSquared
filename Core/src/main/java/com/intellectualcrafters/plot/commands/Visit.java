@@ -4,10 +4,13 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal2;
+import com.intellectualcrafters.plot.object.RunnableVal3;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.util.Collection;
@@ -20,14 +23,23 @@ import java.util.UUID;
         command = "visit",
         permission = "plots.visit",
         description = "Visit someones plot",
-        usage = "/plot visit [player|alias|world|id] [#]",
+        usage = "/plot visit [<player>|<alias>|<world>|<id>] [#]",
         aliases = {"v", "tp", "teleport", "goto", "home", "h"},
         requiredType = RequiredType.NONE,
         category = CommandCategory.TELEPORT)
-public class Visit extends SubCommand {
+public class Visit extends Command {
+
+    public Visit() {
+        super(MainCommand.getInstance(), true);
+    }
 
     @Override
-    public boolean onCommand(PlotPlayer player, String[] args) {
+    public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
+        return tabOf(player, args, space, getUsage());
+    }
+
+    @Override
+    public void execute(final PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, final RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         if (args.length == 1 && args[0].contains(":")) {
             args = args[0].split(":");
         }
@@ -36,9 +48,9 @@ public class Visit extends SubCommand {
         switch (args.length) {
             case 2:
                 if (!MathMan.isInteger(args[1])) {
-                    sendMessage(player, C.NOT_VALID_NUMBER, "(1, ∞)");
-                    sendMessage(player, C.COMMAND_SYNTAX, "/plot visit " + args[0] + " [#]");
-                    return false;
+                    C.NOT_VALID_NUMBER.send(player, "(1, ∞)");
+                    C.COMMAND_SYNTAX.send(player, getUsage());;
+                    return;
                 }
                 page = Integer.parseInt(args[1]);
             case 1:
@@ -68,8 +80,8 @@ public class Visit extends SubCommand {
             page = 1;
         }
         if (unsorted == null || unsorted.isEmpty()) {
-            sendMessage(player, C.FOUND_NO_PLOTS);
-            return false;
+            C.FOUND_NO_PLOTS.send(player);
+            return;
         }
         Iterator<Plot> iterator = unsorted.iterator();
         while (iterator.hasNext()) {
@@ -78,34 +90,47 @@ public class Visit extends SubCommand {
             }
         }
         if (page < 1 || page > unsorted.size()) {
-            sendMessage(player, C.NOT_VALID_NUMBER, "(1, " + unsorted.size() + ')');
-            return false;
+            C.NOT_VALID_NUMBER.send(player, "(1, " + unsorted.size() + ")");
+            return;
         }
         List<Plot> plots = PS.get().sortPlotsByTemp(unsorted);
-        Plot plot = plots.get(page - 1);
+        final Plot plot = plots.get(page - 1);
         if (!plot.hasOwner()) {
             if (!Permissions.hasPermission(player, "plots.visit.unowned")) {
-                sendMessage(player, C.NO_PERMISSION, "plots.visit.unowned");
-                return false;
+                C.NO_PERMISSION.send(player, "plots.visit.unowned");
+                return;
             }
         } else if (plot.isOwner(player.getUUID())) {
             if (!Permissions.hasPermission(player, "plots.visit.owned") && !Permissions.hasPermission(player, "plots.home")) {
-                sendMessage(player, C.NO_PERMISSION, "plots.visit.owned, plots.home");
-                return false;
+                C.NO_PERMISSION.send(player, "plots.visit.owned, plots.home");
+                return;
             }
         } else if (plot.isAdded(player.getUUID())) {
             if (!Permissions.hasPermission(player, "plots.visit.shared")) {
-                sendMessage(player, C.NO_PERMISSION, "plots.visit.shared");
-                return false;
+                C.NO_PERMISSION.send(player, "plots.visit.shared");
+                return;
             }
         } else {
             if (!Permissions.hasPermission(player, "plots.visit.other")) {
-                sendMessage(player, C.NO_PERMISSION, "plots.visit.other");
-                return false;
+                C.NO_PERMISSION.send(player, "plots.visit.other");
+                return;
             }
         }
-        plot.teleportPlayer(player);
-        return true;
+        confirm.run(this, new Runnable() {
+            @Override
+            public void run() {
+                if (plot.teleportPlayer(player)) {
+                    whenDone.run(Visit.this, CommandResult.SUCCESS);
+                } else {
+                    whenDone.run(Visit.this, CommandResult.SUCCESS);
+                }
+            }
+        }, new Runnable() {
+            @Override
+            public void run() {
+                whenDone.run(Visit.this, CommandResult.FAILURE);
+            }
+        });
     }
 
 }

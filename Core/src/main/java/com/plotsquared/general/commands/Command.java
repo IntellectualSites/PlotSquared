@@ -484,6 +484,23 @@ public abstract class Command {
         return getCommandString() + " " + args + "]";
     }
 
+    public Collection<Command> tabOf(PlotPlayer player, String[] input, boolean space, String... args) {
+        /*
+        <player>
+        <alias>
+        <world>
+        <id>
+        <#>
+         */
+//        int index = input.length - (space ? 0 : 1);
+//        List<Command> result = new ArrayList<>();
+//        for (String arg : args) {
+//            String[] split = arg.split(" ");
+//        }
+        // TODO
+        return new ArrayList<>();
+    }
+
     public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
         switch (args.length) {
             case 0:

@@ -365,6 +365,10 @@ public enum C {
     INVALID_PLAYER_WAIT("$2Player not found: $1%s$2, fetching it. Try again soon.", "Errors"),
     INVALID_PLAYER("$2Player not found: $1%s$2.", "Errors"),
     INVALID_PLAYER_OFFLINE("$2The player must be online: $1%s.", "Errors"),
+    /*
+     * Unknown Error
+     */
+    ERROR("$2An error occured: %s", "Errors"),
     // SETTINGS_PASTE_UPLOADED("$2settings.yml was uploaded to: $1%url%", "Paste"),
     // LATEST_LOG_UPLOADED("$2latest.log was uploaded to: $1%url%", "Paste"),
     DEBUG_REPORT_CREATED("$1Uploaded a full debug to: $1%url%", "Paste"),

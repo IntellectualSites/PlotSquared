@@ -75,11 +75,11 @@ public class PlotListener {
                 Optional<Boolean> flyFlag = plot.getFlag(Flags.FLY);
                 if (flyFlag.isPresent()) {
                     boolean flight = player.getFlight();
+                    PlotGameMode gamemode = player.getGameMode();
+                    if (flight != (gamemode == PlotGameMode.CREATIVE || gamemode == PlotGameMode.SPECTATOR)) {
+                        player.setPersistentMeta("flight", ByteArrayUtilities.booleanToBytes(player.getFlight()));
+                    }
                     if (flyFlag.get() != player.getFlight()) {
-                        PlotGameMode gamemode = player.getGameMode();
-                        if (flight != (gamemode == PlotGameMode.CREATIVE || gamemode == PlotGameMode.SPECTATOR)) {
-                            player.setPersistentMeta("flight", ByteArrayUtilities.booleanToBytes(player.getFlight()));
-                        }
                         player.setFlight(flyFlag.get());
                     }
                 }
@@ -209,6 +209,8 @@ public class PlotListener {
                     PlotGameMode gameMode = player.getGameMode();
                     if (gameMode == PlotGameMode.SURVIVAL || gameMode == PlotGameMode.ADVENTURE) {
                         player.setFlight(false);
+                    } else if (player.getFlight() != true) {
+                        player.setFlight(true);
                     }
                 }
             }

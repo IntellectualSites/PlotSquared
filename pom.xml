@@ -73,12 +73,16 @@
       <id>vault-repo</id>
       <url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
     </repository>
+    <repository>
+      <id>empcraft-repo</id>
+      <url>http://empcraft.com/maven2</url>
+    </repository>
   </repositories>
   <dependencies>
     <dependency>
       <groupId>org.bukkit</groupId>
-      <artifactId>bukkit</artifactId>
-      <version>1.10-R0.1-SNAPSHOT</version>
+      <artifactId>Spigot</artifactId>
+      <version>1.10</version>
     </dependency>
     <dependency>
       <groupId>com.sk89q</groupId>
