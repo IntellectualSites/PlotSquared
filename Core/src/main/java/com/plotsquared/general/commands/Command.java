@@ -485,20 +485,22 @@ public abstract class Command {
     }
 
     public Collection<Command> tabOf(PlotPlayer player, String[] input, boolean space, String... args) {
-        /*
-        <player>
-        <alias>
-        <world>
-        <id>
-        <#>
-         */
-//        int index = input.length - (space ? 0 : 1);
-//        List<Command> result = new ArrayList<>();
-//        for (String arg : args) {
-//            String[] split = arg.split(" ");
-//        }
-        // TODO
-        return new ArrayList<>();
+        if (!space) {
+            return null;
+        }
+        List<Command> result = new ArrayList<>();
+        int index = input.length - (space ? 0 : 1);
+        for (String arg : args) {
+            arg = arg.replace(getCommandString() + " ", "");
+            String[] split = arg.split(" ");
+            if (split.length <= index) {
+                continue;
+            }
+            arg = StringMan.join(Arrays.copyOfRange(split, index, split.length), " ");
+            Command cmd = new Command(null, false, arg, getPermission(), getRequiredType(), null) {};
+            result.add(cmd);
+        }
+        return result;
     }
 
     public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {

@@ -108,7 +108,7 @@ public class ChunkListener implements Listener {
         }
         Object c = this.methodGetHandleChunk.of(chunk).call();
         RefField.RefExecutor field = this.mustSave.of(c);
-        if (field.get() == true) {
+        if ((Boolean) field.get() == true) {
             field.set(false);
             if (chunk.isLoaded()) {
                 ignoreUnload = true;

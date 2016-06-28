@@ -122,7 +122,7 @@ public class Visit extends Command {
                 if (plot.teleportPlayer(player)) {
                     whenDone.run(Visit.this, CommandResult.SUCCESS);
                 } else {
-                    whenDone.run(Visit.this, CommandResult.SUCCESS);
+                    whenDone.run(Visit.this, CommandResult.FAILURE);
                 }
             }
         }, new Runnable() {

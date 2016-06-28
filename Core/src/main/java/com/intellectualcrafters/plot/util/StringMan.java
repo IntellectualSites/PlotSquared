@@ -265,7 +265,7 @@ public class StringMan {
         return sb.toString();
     }
 
-    public Collection match(Collection col, String startsWith) {
+    public <T> Collection<T> match(Collection<T> col, String startsWith) {
         if (col == null) {
             return null;
         }
