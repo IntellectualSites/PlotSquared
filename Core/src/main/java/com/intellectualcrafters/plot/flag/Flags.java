@@ -6,7 +6,6 @@ import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
-
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
@@ -114,6 +113,8 @@ public final class Flags {
         }
     };
     public static final BooleanFlag SLEEP = new BooleanFlag("sleep");
+    public static final TeleportDenyFlag DENY_TELEPORT = new TeleportDenyFlag("teleport-deny");
+
 
     private static final HashMap<String, Flag<?>> flags;
     static {

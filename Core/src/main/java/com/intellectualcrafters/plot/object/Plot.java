@@ -1109,6 +1109,15 @@ public class Plot {
         return loc;
     }
 
+    public Location getSide() {
+        RegionWrapper largest = getLargestRegion();
+        int x = (largest.maxX >> 1) - (largest.minX >> 1) + largest.minX;
+        int z = largest.minZ - 1;
+        PlotManager manager = getManager();
+        int y = Math.max(WorldUtil.IMP.getHighestBlock(area.worldname, x, z), manager.getSignLoc(area, this).getY());
+        return new Location(area.worldname, x, y + 1, z);
+    }
+
     /**
      * Return the home location for the plot
      * @return Home location
@@ -1169,12 +1178,7 @@ public class Plot {
             return new Location(plot.area.worldname, x, y + 1, z);
         }
         // Side
-        RegionWrapper largest = plot.getLargestRegion();
-        int x = (largest.maxX >> 1) - (largest.minX >> 1) + largest.minX;
-        int z = largest.minZ - 1;
-        PlotManager manager = plot.getManager();
-        int y = Math.max(WorldUtil.IMP.getHighestBlock(plot.area.worldname, x, z), manager.getSignLoc(plot.area, plot).getY());
-        return new Location(plot.area.worldname, x, y + 1, z);
+        return plot.getSide();
     }
 
     public double getVolume() {

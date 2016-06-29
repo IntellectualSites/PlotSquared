@@ -225,9 +225,16 @@ public class MainCommand extends Command {
         }
         try {
             super.execute(player, args, confirm, whenDone);
+        } catch (CommandException e) {
+            throw e;
         } catch (Throwable e) {
             e.printStackTrace();
-            C.ERROR.send(player, e.getLocalizedMessage());
+            String message = e.getLocalizedMessage();
+            if (message != null) {
+                C.ERROR.send(player, message);
+            } else {
+                C.ERROR.send(player);
+            }
         }
         // Reset command scope //
         if (tp && !(player instanceof ConsolePlayer)) {

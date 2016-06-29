@@ -1668,6 +1668,9 @@ public class PlayerEvents extends PlotListener implements Listener {
                     return;
                 }
             } else if (lastPlot != null && now.equals(lastPlot)) {
+                if (!Flags.DENY_TELEPORT.allowsTeleport(pp, lastPlot)) {
+                    event.setTo(BukkitUtil.getLocation(lastPlot.getSide()));
+                }
                 return;
             } else if (!plotEntry(pp, now) && this.tmpTeleport) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
@@ -1738,6 +1741,9 @@ public class PlayerEvents extends PlotListener implements Listener {
                     return;
                 }
             } else if (lastPlot != null && now.equals(lastPlot)) {
+                if (!Flags.DENY_TELEPORT.allowsTeleport(pp, lastPlot)) {
+                    event.setTo(BukkitUtil.getLocation(lastPlot.getSide()));
+                }
                 return;
             } else if (!plotEntry(pp, now) && this.tmpTeleport) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
