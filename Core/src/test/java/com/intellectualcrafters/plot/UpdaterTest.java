@@ -1,18 +1,15 @@
 package com.intellectualcrafters.plot;
 
-import static com.intellectualcrafters.plot.PS.log;
-
 import com.intellectualcrafters.json.JSONArray;
 import com.intellectualcrafters.json.JSONObject;
 import com.intellectualcrafters.plot.util.StringMan;
-import org.junit.Test;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import org.junit.Test;
 
 public class UpdaterTest {
 
@@ -30,7 +27,7 @@ public class UpdaterTest {
 
             return buffer.toString();
         } catch (IOException e) {
-            log("&dCould not check for updates (0)");
+            System.out.println("&dCould not check for updates (0)");
             e.printStackTrace();
         } finally {
             try {

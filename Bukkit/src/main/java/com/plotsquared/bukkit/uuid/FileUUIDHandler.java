@@ -108,7 +108,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                                         toAdd.put(new StringWrapper(name), uuid);
                                     }
                                 }
-                            } catch (IOException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                                 PS.debug(C.PREFIX + "Invalid playerdata: " + current);
                             }
