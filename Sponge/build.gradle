@@ -15,7 +15,6 @@ buildscript {
 }
 
 apply plugin: 'net.minecrell.vanilla.server.library'
-apply plugin: 'com.github.johnrengelman.shadow'
 
 dependencies {
     compile project(':Core')
@@ -34,14 +33,10 @@ repositories {
         name = "Sponge"
         url = "https://repo.spongepowered.org/maven"
     }
-    maven {
-        name = "Sponge Metrics"
-        url = "http://repo.mcstats.org/content/repositories/releases/"
-    }
 }
 minecraft {
-    version = "1.9.4"
-    mappings = "snapshot_20160530"
+    version = "1.10.2"
+    mappings = "snapshot_20160629"
     runDir = 'run'
 }
 

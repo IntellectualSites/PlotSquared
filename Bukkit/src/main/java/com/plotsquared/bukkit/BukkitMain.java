@@ -208,7 +208,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                 Entity entity = iterator.next();
                                 switch (entity.getType()) {
                                     case EGG:
-                                    case ENDER_CRYSTAL:
                                     case COMPLEX_PART:
                                     case FISHING_HOOK:
                                     case ENDER_SIGNAL:
@@ -239,37 +238,39 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                         // Not vehicles
                                         continue;
                                     case ARMOR_STAND:
-                                        // Tempirarily classify as vehicle
+                                        // Temporarily classify as vehicle
                                     case MINECART:
                                     case MINECART_CHEST:
                                     case MINECART_COMMAND:
                                     case MINECART_FURNACE:
                                     case MINECART_HOPPER:
                                     case MINECART_MOB_SPAWNER:
+                                    case ENDER_CRYSTAL:
                                     case MINECART_TNT:
                                     case BOAT: {
-                                        if (!Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
-                                            continue;
-                                        }
-                                        com.intellectualcrafters.plot.object.Location location = BukkitUtil.getLocation(entity.getLocation());
-                                        Plot plot = location.getPlot();
-                                        if (plot == null) {
-                                            if (location.isPlotArea()) {
+                                        if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
+                                            com.intellectualcrafters.plot.object.Location location = BukkitUtil.getLocation(entity.getLocation());
+                                            Plot plot = location.getPlot();
+                                            if (plot == null) {
+                                                if (location.isPlotArea()) {
+                                                    iterator.remove();
+                                                    entity.remove();
+                                                }
+                                                continue;
+                                            }
+                                            List<MetadataValue> meta = entity.getMetadata("plot");
+                                            if (meta.isEmpty()) {
+                                                continue;
+                                            }
+                                            Plot origin = (Plot) meta.get(0).value();
+                                            if (!plot.equals(origin.getBasePlot(false))) {
                                                 iterator.remove();
                                                 entity.remove();
                                             }
                                             continue;
-                                        }
-                                        List<MetadataValue> meta = entity.getMetadata("plot");
-                                        if (meta.isEmpty()) {
+                                        } else {
                                             continue;
                                         }
-                                        Plot origin = (Plot) meta.get(0).value();
-                                        if (!plot.equals(origin.getBasePlot(false))) {
-                                            iterator.remove();
-                                            entity.remove();
-                                        }
-                                        continue;
                                     }
                                     case SMALL_FIREBALL:
                                     case FIREBALL:
@@ -316,25 +317,24 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                     case ZOMBIE:
                                     case SHULKER:
                                     default:
-                                        if (!Settings.Enabled_Components.KILL_ROAD_MOBS) {
-                                            continue;
-                                        }
-                                        Location location = entity.getLocation();
-                                        if (BukkitUtil.getLocation(location).isPlotRoad()) {
-                                            if (entity instanceof LivingEntity) {
-                                                LivingEntity livingEntity = (LivingEntity) entity;
-                                                if (!livingEntity.isLeashed() || !entity.hasMetadata("keep")) {
+                                        if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
+                                            Location location = entity.getLocation();
+                                            if (BukkitUtil.getLocation(location).isPlotRoad()) {
+                                                if (entity instanceof LivingEntity) {
+                                                    LivingEntity livingEntity = (LivingEntity) entity;
+                                                    if (!livingEntity.isLeashed() || !entity.hasMetadata("keep")) {
+                                                        Entity passenger = entity.getPassenger();
+                                                        if (!(passenger instanceof Player) && entity.getMetadata("keep").isEmpty()) {
+                                                            iterator.remove();
+                                                            entity.remove();
+                                                        }
+                                                    }
+                                                } else {
                                                     Entity passenger = entity.getPassenger();
                                                     if (!(passenger instanceof Player) && entity.getMetadata("keep").isEmpty()) {
                                                         iterator.remove();
                                                         entity.remove();
                                                     }
-                                                }
-                                            } else {
-                                                Entity passenger = entity.getPassenger();
-                                                if (!(passenger instanceof Player) && entity.getMetadata("keep").isEmpty()) {
-                                                    iterator.remove();
-                                                    entity.remove();
                                                 }
                                             }
                                         }

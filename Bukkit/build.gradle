@@ -1,6 +1,12 @@
+repositories {
+    maven {url "https://hub.spigotmc.org/nexus/content/groups/public/"}
+    maven { url = "https://oss.sonatype.org/content/repositories/snapshots/"}
+    maven {url "http://nexus.theyeticave.net/content/repositories/pub_releases"}
+}
+
 dependencies {
     compile project(':Core')
-    compile 'org.bukkit:Spigot:1.10'
+    compile 'org.spigotmc:spigot-api:1.10.2-R0.1-SNAPSHOT'
     compile 'org.mcstats.bukkit:metrics:R7'
     compile 'net.milkbowl.vault:VaultAPI:1.6'
 }
@@ -17,19 +23,19 @@ processResources {
         )
     }
 }
-
-apply plugin: 'com.github.johnrengelman.shadow'
 // We only want the shadow jar produced
 jar.enabled = false
+
 shadowJar {
     dependencies {
         include(dependency(':Core'))
         include(dependency('org.mcstats.bukkit:metrics:R7'))
     }
-    relocate 'org.mcstats', 'com.plotsquared.stats'
+    relocate('org.mcstats', 'com.plotsquared.stats')
     archiveName = "${parent.name}-${project.name}-${parent.version}.jar"
     destinationDir = file '../target'
 }
+
 shadowJar.doLast {
     task ->
     ant.checksum file: task.archivePath
