@@ -294,11 +294,6 @@ public class SpongeMain implements IPlotMain {
     }
 
     @Override
-    public String getServerName() {
-        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
-    }
-
-    @Override
     public void startMetrics() {
         SpongeMetrics metrics = new SpongeMetrics(this.game, this.plugin);
         metrics.start();

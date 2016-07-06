@@ -571,11 +571,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     @Override
-    public String getServerName() {
-        return Bukkit.getServerName();
-    }
-
-    @Override
     public void startMetrics() {
         Metrics metrics = new Metrics(this);
         metrics.start();

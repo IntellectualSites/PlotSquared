@@ -237,12 +237,6 @@ public interface IPlotMain extends ILogger {
     void registerWorldEvents();
 
     /**
-     * Get the name of the server.
-     * @return the server name
-     */
-    String getServerName();
-
-    /**
      * Get the class that will manage player titles.
      * @return
      */
