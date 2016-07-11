@@ -238,7 +238,7 @@ public abstract class EventUtil {
                     value = null;
                 }
                 if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
-                    if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_BUILD_OTHER.s(), false)) {
+                    if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false)) {
                         return true;
                     }
                     return false;
