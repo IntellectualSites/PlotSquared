@@ -152,35 +152,25 @@ public final class Flags {
 
     public static void registerFlag(final Flag<?> flag) {
         final Flag<?> duplicate = flags.put(flag.getName(), flag);
-        PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
-            @Override public void run(PlotArea value) {
-                if (duplicate != null) {
+        if (duplicate != null) {
+            PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
+                @Override public void run(PlotArea value) {
                     Object remove;
                     if (value.DEFAULT_FLAGS.containsKey(duplicate)) {
                         remove = value.DEFAULT_FLAGS.remove(duplicate);
-                        if (!(remove instanceof String)) {
-                            //error message? maybe?
-                            return;
-                        }
-                        value.DEFAULT_FLAGS.put(flag,flag.parseValue((String) remove));
+                        value.DEFAULT_FLAGS.put(flag,flag.parseValue("" + remove));
                     }
                 }
-            }
-        });
-        PS.get().foreachPlotRaw(new RunnableVal<Plot>() {
-            @Override public void run(Plot value) {
-                if (duplicate != null) {
+            });
+            PS.get().foreachPlotRaw(new RunnableVal<Plot>() {
+                @Override public void run(Plot value) {
                     Object remove = null;
                     if (value.getFlags().containsKey(duplicate)) {
                         remove = value.getFlags().remove(duplicate);
                     }
-                    if (!(remove instanceof String)) {
-                        //error message? maybe?
-                        return;
-                    }
-                    value.getFlags().put(flag,flag.parseValue((String) remove));
+                    value.getFlags().put(flag,flag.parseValue("" + remove));
                 }
-            }
-        });
+            });
+        }
     }
 }
