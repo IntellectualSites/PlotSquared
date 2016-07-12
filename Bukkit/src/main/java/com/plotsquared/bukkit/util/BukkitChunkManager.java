@@ -534,6 +534,7 @@ public class BukkitChunkManager extends ChunkManager {
             case PAINTING:
             case ARMOR_STAND:
                 count[5]++;
+                break;
                 // misc
             case MINECART:
             case MINECART_CHEST:
