@@ -9,11 +9,7 @@ public class BooleanFlag extends Flag<Boolean> {
     }
 
     @Override public String valueToString(Object value) {
-        if (((boolean) value)) {
-            return "true";
-        } else {
-            return "false";
-        }
+        return value + "";
     }
 
     @Override public Boolean parseValue(String value) {
