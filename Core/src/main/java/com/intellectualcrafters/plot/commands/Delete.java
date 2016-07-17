@@ -56,7 +56,7 @@ public class Delete extends SubCommand {
                         plot.removeRunning();
                         if ((EconHandler.manager != null) && plotArea.USE_ECONOMY) {
                             Expression<Double> valueExr = plotArea.PRICES.get("sell");
-                            double value = plots.size() * valueExr.evalute((double) currentPlots);
+                            double value = plots.size() * valueExr.evaluate((double) currentPlots);
                             if (value > 0d) {
                                 EconHandler.manager.depositMoney(player, value);
                                 sendMessage(player, C.ADDED_BALANCE, String.valueOf(value));

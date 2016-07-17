@@ -123,7 +123,14 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override
     public void onEnable() {
+        getServer().getName();
         new PS(this, "Bukkit");
+        if (Settings.Enabled_Components.METRICS) {
+            new Metrics(this).start();
+            PS.log(C.PREFIX + "&6Metrics enabled.");
+        } else {
+            PS.log(C.CONSOLE_PLEASE_ENABLE_METRICS);
+        }
     }
 
     @Override
@@ -572,8 +579,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override
     public void startMetrics() {
-        Metrics metrics = new Metrics(this);
-        metrics.start();
+        new Metrics(this).start();
         PS.log(C.PREFIX + "&6Metrics enabled.");
     }
 

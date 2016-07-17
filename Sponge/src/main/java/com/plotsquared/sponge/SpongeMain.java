@@ -41,7 +41,6 @@ import com.plotsquared.sponge.util.SpongeEconHandler;
 import com.plotsquared.sponge.util.SpongeEventUtil;
 import com.plotsquared.sponge.util.SpongeHybridUtils;
 import com.plotsquared.sponge.util.SpongeInventoryUtil;
-import com.plotsquared.sponge.util.SpongeMetrics;
 import com.plotsquared.sponge.util.SpongeSchematicHandler;
 import com.plotsquared.sponge.util.SpongeSetupUtils;
 import com.plotsquared.sponge.util.SpongeTaskManager;
@@ -51,6 +50,7 @@ import com.plotsquared.sponge.util.block.SpongeLocalQueue;
 import com.plotsquared.sponge.uuid.SpongeLowerOfflineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeOnlineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeUUIDHandler;
+import net.minecrell.mcstats.SpongeStatsLite;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
@@ -59,6 +59,7 @@ import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
+import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.profile.GameProfileManager;
@@ -90,6 +91,9 @@ public class SpongeMain implements IPlotMain {
     @Inject
     private Game game;
 
+    @Inject
+    public SpongeStatsLite stats;
+
     private Server server;
 
     @Inject
@@ -98,8 +102,7 @@ public class SpongeMain implements IPlotMain {
 
     private GameProfileManager resolver;
 
-    //    @Override
-    public Logger getLogger() {
+    private Logger getLogger() {
         return this.logger;
     }
 
@@ -120,6 +123,12 @@ public class SpongeMain implements IPlotMain {
 
     public SpongeMain getPlugin() {
         return THIS;
+    }
+
+    @Listener
+    public void onPreInitialize(GamePreInitializationEvent event) {
+        getLogger().info("The metrics section in PlotSquared is ignored in favor of the actual metrics reporter configurations.");
+        this.stats.start();
     }
 
     @Listener
@@ -295,9 +304,6 @@ public class SpongeMain implements IPlotMain {
 
     @Override
     public void startMetrics() {
-        SpongeMetrics metrics = new SpongeMetrics(this.game, this.plugin);
-        metrics.start();
-        PS.log(C.PREFIX.s() + "&6Metrics enabled.");
     }
 
     @Override
