@@ -209,7 +209,7 @@ public class PlotListener {
                     PlotGameMode gameMode = player.getGameMode();
                     if (gameMode == PlotGameMode.SURVIVAL || gameMode == PlotGameMode.ADVENTURE) {
                         player.setFlight(false);
-                    } else if (player.getFlight() != true) {
+                    } else if (!player.getFlight()) {
                         player.setFlight(true);
                     }
                 }
