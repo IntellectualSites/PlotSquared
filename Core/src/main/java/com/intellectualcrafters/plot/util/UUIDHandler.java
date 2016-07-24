@@ -59,15 +59,18 @@ public class UUIDHandler {
     }
 
     public static HashSet<UUID> getAllUUIDS() {
-        HashSet<UUID> uuids = new HashSet<>();
-        for (Plot plot : PS.get().getPlots()) {
-            if (plot.hasOwner()) {
-                uuids.add(plot.owner);
-                uuids.addAll(plot.getTrusted());
-                uuids.addAll(plot.getMembers());
-                uuids.addAll(plot.getDenied());
+        final HashSet<UUID> uuids = new HashSet<>();
+        PS.get().foreachPlotRaw(new RunnableVal<Plot>() {
+            @Override
+            public void run(Plot plot) {
+                if (plot.hasOwner()) {
+                    uuids.add(plot.owner);
+                    uuids.addAll(plot.getTrusted());
+                    uuids.addAll(plot.getMembers());
+                    uuids.addAll(plot.getDenied());
+                }
             }
-        }
+        });
         return uuids;
     }
 
