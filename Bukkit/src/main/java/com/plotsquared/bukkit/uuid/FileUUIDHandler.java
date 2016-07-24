@@ -164,7 +164,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                         ByteSource is = com.google.common.io.Files.asByteSource(file);
                         NbtFactory.NbtCompound compound = NbtFactory.fromStream(is, NbtFactory.StreamOptions.GZIP_COMPRESSION);
                         if (!compound.containsKey("bukkit")) {
-                            PS.debug("ERROR: Player data does not contain the the key \"bukkit\"");
+                            PS.debug("ERROR: Player data (" + uuid.toString() + ".dat) does not contain the the key \"bukkit\"");
                         } else {
                             NbtFactory.NbtCompound bukkit = (NbtFactory.NbtCompound) compound.get("bukkit");
                             String name = (String) bukkit.get("lastKnownName");
