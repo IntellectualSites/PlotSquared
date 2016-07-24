@@ -4,6 +4,7 @@ import com.intellectualcrafters.plot.object.ChunkWrapper;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.block.ScopedLocalBlockQueue;
+import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.util.SpongeUtil;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.extent.MutableBiomeArea;
@@ -52,7 +53,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
     @Override
     public boolean setBlock(int x, int y, int z, int id, int data) {
         modified = true;
-        this.terrain.setBlock(this.bx + x, y, this.bz + z, SpongeUtil.getBlockState(id, data));
+        this.terrain.setBlock(this.bx + x, y, this.bz + z, SpongeUtil.getBlockState(id, data), SpongeMain.CAUSE);
         return true;
     }
 

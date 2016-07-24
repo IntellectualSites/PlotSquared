@@ -58,6 +58,8 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
@@ -80,6 +82,7 @@ import java.util.stream.Collectors;
 public class SpongeMain implements IPlotMain {
 
     public static SpongeMain THIS;
+    public static final Cause CAUSE = Cause.of(NamedCause.of("PlotSquared", SpongeMain.THIS));
 
     @Inject
     public PluginContainer plugin;

@@ -6,6 +6,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.block.BasicLocalBlockQueue;
+import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.util.SpongeUtil;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -441,7 +442,7 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
         World worldObj = getSpongeWorld();
         org.spongepowered.api.world.Chunk spongeChunk = (org.spongepowered.api.world.Chunk) getChunk(worldObj, lc.getX(), lc.getZ());
         char[][] ids = ((CharLocalChunk) lc).blocks;
-        MutableBlockVolumeWorker<? extends org.spongepowered.api.world.Chunk> blockWorker = spongeChunk.getBlockWorker();
+        MutableBlockVolumeWorker<? extends org.spongepowered.api.world.Chunk> blockWorker = spongeChunk.getBlockWorker(SpongeMain.CAUSE);
         blockWorker.map(new BlockVolumeMapper() {
             @Override
             public BlockState map(UnmodifiableBlockVolume volume, int xx, int y, int zz) {

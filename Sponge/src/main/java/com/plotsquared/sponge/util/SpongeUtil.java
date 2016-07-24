@@ -15,6 +15,7 @@ import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
+import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
 import net.minecraft.block.Block;
 import net.minecraft.world.biome.Biome;
@@ -429,7 +430,7 @@ public class SpongeUtil extends WorldUtil {
     @Override
     public void setSign(String worldName, int x, int y, int z, String[] lines) {
         World world = SpongeUtil.getWorld(worldName);
-        world.setBlock(x, y, z, BlockTypes.WALL_SIGN.getDefaultState());
+        world.setBlock(x, y, z, BlockTypes.WALL_SIGN.getDefaultState(), SpongeMain.CAUSE);
         Optional<TileEntity> block = world.getTileEntity(x, y, z);
         if (!block.isPresent()) {
             return;

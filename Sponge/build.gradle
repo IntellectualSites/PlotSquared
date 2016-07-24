@@ -14,7 +14,7 @@ buildscript {
     }
 }
 
-apply plugin: 'net.minecrell.vanilla.server.library'
+apply plugin: 'net.minecraftforge.gradle.forge'
 
 dependencies {
     compile project(':Core')
@@ -35,7 +35,7 @@ repositories {
     }
 }
 minecraft {
-    version = "1.10.2"
+    version = "2014"
     mappings = "snapshot_20160629"
     runDir = 'run'
 }
