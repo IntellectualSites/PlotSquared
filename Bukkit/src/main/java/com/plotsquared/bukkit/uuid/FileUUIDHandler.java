@@ -168,20 +168,23 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                         } else {
                             NbtFactory.NbtCompound bukkit = (NbtFactory.NbtCompound) compound.get("bukkit");
                             String name = (String) bukkit.get("lastKnownName");
-                            long last = (long) bukkit.get("lastPlayed");
-                            if (Settings.UUID.OFFLINE) {
-                                if (Settings.UUID.FORCE_LOWERCASE && !name.toLowerCase().equals(name)) {
-                                    uuid = FileUUIDHandler.this.uuidWrapper.getUUID(name);
-                                } else {
-                                    long most = (long) compound.get("UUIDMost");
-                                    long least = (long) compound.get("UUIDLeast");
-                                    uuid = new UUID(most, least);
+                            StringWrapper wrap = new StringWrapper(name);
+                            if (!toAdd.containsKey(wrap)) {
+                                long last = (long) bukkit.get("lastPlayed");
+                                if (Settings.UUID.OFFLINE) {
+                                    if (Settings.UUID.FORCE_LOWERCASE && !name.toLowerCase().equals(name)) {
+                                        uuid = FileUUIDHandler.this.uuidWrapper.getUUID(name);
+                                    } else {
+                                        long most = (long) compound.get("UUIDMost");
+                                        long least = (long) compound.get("UUIDLeast");
+                                        uuid = new UUID(most, least);
+                                    }
                                 }
+                                if (ExpireManager.IMP != null) {
+                                    ExpireManager.IMP.storeDate(uuid, last);
+                                }
+                                toAdd.put(wrap, uuid);
                             }
-                            if (ExpireManager.IMP != null) {
-                                ExpireManager.IMP.storeDate(uuid, last);
-                            }
-                            toAdd.put(new StringWrapper(name), uuid);
                         }
                     } catch (Exception ignored) {
                         PS.debug(C.PREFIX + "&6Invalid PlayerData: " + uuid.toString() + ".dat");
@@ -199,10 +202,12 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                         if (last != 0) {
                             String name = op.getName();
                             StringWrapper wrap = new StringWrapper(name);
-                            UUID uuid = FileUUIDHandler.this.uuidWrapper.getUUID(op);
-                            toAdd.put(wrap, uuid);
-                            if (ExpireManager.IMP != null) {
-                                ExpireManager.IMP.storeDate(uuid, last);
+                            if (!toAdd.containsKey(wrap)) {
+                                UUID uuid = FileUUIDHandler.this.uuidWrapper.getUUID(op);
+                                toAdd.put(wrap, uuid);
+                                if (ExpireManager.IMP != null) {
+                                    ExpireManager.IMP.storeDate(uuid, last);
+                                }
                             }
                         }
                     }
