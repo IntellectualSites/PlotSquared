@@ -35,6 +35,7 @@ import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.text.translation.Translation;
+import org.spongepowered.api.world.BlockChangeFlag;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
@@ -303,7 +304,8 @@ public class SpongeUtil extends WorldUtil {
             StringComparison<PlotBlock> outer = new StringComparison<PlotBlock>();
             return outer.new ComparisonResult(match, block);
 
-        } catch (NumberFormatException ignored) {}
+        } catch (NumberFormatException ignored) {
+        }
         return null;
     }
 
@@ -429,7 +431,7 @@ public class SpongeUtil extends WorldUtil {
     @Override
     public void setSign(String worldName, int x, int y, int z, String[] lines) {
         World world = SpongeUtil.getWorld(worldName);
-        world.setBlock(x, y, z, BlockTypes.WALL_SIGN.getDefaultState());
+        world.setBlock(x, y, z, BlockTypes.WALL_SIGN.getDefaultState(), BlockChangeFlag.NONE, CAUSE);
         Optional<TileEntity> block = world.getTileEntity(x, y, z);
         if (!block.isPresent()) {
             return;
