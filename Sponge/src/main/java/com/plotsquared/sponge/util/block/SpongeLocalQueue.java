@@ -7,9 +7,6 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.block.BasicLocalBlockQueue;
 import com.plotsquared.sponge.util.SpongeUtil;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -34,6 +31,10 @@ import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.extent.UnmodifiableBlockVolume;
 import org.spongepowered.api.world.extent.worker.MutableBlockVolumeWorker;
 import org.spongepowered.api.world.extent.worker.procedure.BlockVolumeMapper;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.HashSet;
 
 public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
 
@@ -441,7 +442,7 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
         World worldObj = getSpongeWorld();
         org.spongepowered.api.world.Chunk spongeChunk = (org.spongepowered.api.world.Chunk) getChunk(worldObj, lc.getX(), lc.getZ());
         char[][] ids = ((CharLocalChunk) lc).blocks;
-        MutableBlockVolumeWorker<? extends org.spongepowered.api.world.Chunk> blockWorker = spongeChunk.getBlockWorker();
+        MutableBlockVolumeWorker<? extends org.spongepowered.api.world.Chunk> blockWorker = spongeChunk.getBlockWorker(SpongeUtil.CAUSE);
         blockWorker.map(new BlockVolumeMapper() {
             @Override
             public BlockState map(UnmodifiableBlockVolume volume, int xx, int y, int zz) {
