@@ -333,7 +333,11 @@ public abstract class Command {
         if (!cmd.checkArgs(player, newArgs) || !cmd.canExecute(player, true)) {
             return;
         }
-        cmd.execute(player, newArgs, confirm, whenDone);
+        try {
+            cmd.execute(player, newArgs, confirm, whenDone);
+        } catch (CommandException e) {
+            e.perform(player);
+        }
     }
 
     public boolean checkArgs(PlotPlayer player, String[] args) {

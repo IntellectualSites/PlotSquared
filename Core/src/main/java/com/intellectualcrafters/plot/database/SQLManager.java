@@ -1816,14 +1816,7 @@ public class SQLManager implements AbstractDB {
                                     String[] split = element.split(":");
                                     try {
                                         String flag_str = split[1].replaceAll("¯", ":").replaceAll("\u00B4", ",");
-                                        Flag<?> flag = FlagManager.getFlag(split[0],true);
-                                        if (flag == null) {
-                                            flag = new StringFlag(split[0]) {
-                                                @Override public String getValueDescription() {
-                                                    return "Generic Filler Flag";
-                                                }
-                                            };
-                                        }
+                                        Flag<?> flag = FlagManager.getOrCreateFlag(split[0]);
                                         flags.put(flag, flag.parseValue(flag_str));
                                     } catch (Exception e) {
                                         e.printStackTrace();
@@ -1832,7 +1825,7 @@ public class SQLManager implements AbstractDB {
                                 } else {
                                     element = element.replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
                                     if (StringMan.isAlpha(element.replaceAll("_", "").replaceAll("-", ""))) {
-                                        Flag flag = FlagManager.getFlag(element,true);
+                                        Flag flag = FlagManager.getOrCreateFlag(element);
                                         if (flag == null) {
                                             flag = new StringFlag(element) {
                                                 @Override public String getValueDescription() {
@@ -2634,7 +2627,7 @@ public class SQLManager implements AbstractDB {
                             if (element.contains(":")) {
                                 String[] split = element.split(":");
                                 String flag_str = split[1].replaceAll("\u00AF", ":").replaceAll("�", ",");
-                                Flag flag = FlagManager.getFlag(split[0],true);
+                                Flag flag = FlagManager.getOrCreateFlag(split[0]);
                                 if (flag == null) {
                                     flag = new StringFlag(split[0]) {
                                         @Override public String getValueDescription() {
@@ -2644,7 +2637,7 @@ public class SQLManager implements AbstractDB {
                                 }
                                 flags.put(flag, flag.parseValue(flag_str));
                             } else {
-                                Flag flag = FlagManager.getFlag(element,true);
+                                Flag flag = FlagManager.getOrCreateFlag(element);
                                 if (flag == null) {
                                     flag = new StringFlag(element) {
                                         @Override public String getValueDescription() {

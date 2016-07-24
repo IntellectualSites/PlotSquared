@@ -112,12 +112,17 @@ public class FlagManager {
         StringBuilder flag_string = new StringBuilder();
         int i = 0;
         for (Map.Entry<Flag<?>, Object> entry : flags.entrySet()) {
-            Flag flag = entry.getKey();
-            if (i != 0) {
-                flag_string.append(',');
+            try {
+                Flag flag = entry.getKey();
+                if (i != 0) {
+                    flag_string.append(',');
+                }
+                flag_string.append(flag.getName() + ':' + flag.valueToString(entry.getValue()).replaceAll(":", "¯").replaceAll(",", "´"));
+                i++;
+            } catch (Exception e) {
+                PS.debug("Failed to parse flag: " + entry.getKey() + "->" + entry.getValue());
+                e.printStackTrace();
             }
-            flag_string.append(flag.getName() + ':' + flag.valueToString(entry.getValue()).replaceAll(":", "¯").replaceAll(",", "´"));
-            i++;
         }
         return flag_string.toString();
     }
@@ -313,6 +318,19 @@ public class FlagManager {
         Flag<?> flag = Flags.getFlag(string);
         if (!ignoreReserved && flag != null && flag.isReserved()) {
             return null;
+        }
+        return flag;
+    }
+
+    public static Flag<?> getOrCreateFlag(String string) {
+        Flag<?> flag = Flags.getFlag(string);
+        if (flag == null) {
+            flag = new StringFlag(string) {
+                @Override public String getValueDescription() {
+                    return "Generic Filler Flag";
+                }
+            };
+            flag.register();
         }
         return flag;
     }

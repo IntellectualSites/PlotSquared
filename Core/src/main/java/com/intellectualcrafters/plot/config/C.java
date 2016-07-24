@@ -670,7 +670,7 @@ public enum C {
         Map<String, String> map = new LinkedHashMap<>();
         if (args.length > 0) {
             for (int i = args.length - 1; i >= 0; i--) {
-                String arg = args[i].toString();
+                String arg = "" + args[i];
                 if (arg == null || arg.isEmpty()) {
                     map.put("%s" + i, "");
                 } else {
