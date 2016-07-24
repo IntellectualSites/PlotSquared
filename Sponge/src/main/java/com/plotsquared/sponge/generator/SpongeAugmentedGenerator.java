@@ -4,8 +4,11 @@ import com.flowpowered.math.vector.Vector3i;
 import com.intellectualcrafters.plot.generator.AugmentedUtils;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.block.DelegateLocalBlockQueue;
+import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.util.SpongeUtil;
 import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.ImmutableBiomeArea;
 import org.spongepowered.api.world.extent.MutableBlockVolume;
@@ -34,7 +37,9 @@ public class SpongeAugmentedGenerator implements GenerationPopulator {
         populators.add(generator);
         return generator;
     }
-    
+
+    private Cause cause = Cause.of(NamedCause.of("PlotSquared", SpongeMain.THIS));
+
     @Override
     public void populate(World world, MutableBlockVolume terrain, ImmutableBiomeArea biome) {
         Vector3i min = terrain.getBlockMin();
