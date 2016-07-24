@@ -4,7 +4,6 @@ import com.flowpowered.math.vector.Vector3i;
 import com.intellectualcrafters.plot.generator.AugmentedUtils;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.block.DelegateLocalBlockQueue;
-import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.util.SpongeUtil;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.world.World;
