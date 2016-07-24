@@ -7,7 +7,6 @@ repositories {
 dependencies {
     compile project(':Core')
     compile 'org.spigotmc:spigot-api:1.10.2-R0.1-SNAPSHOT'
-    compile 'org.mcstats.bukkit:metrics:R7'
     compile 'net.milkbowl.vault:VaultAPI:1.6'
 }
 
@@ -29,7 +28,6 @@ jar.enabled = false
 shadowJar {
     dependencies {
         include(dependency(':Core'))
-        include(dependency('org.mcstats.bukkit:metrics:R7'))
     }
     relocate('org.mcstats', 'com.plotsquared.stats')
     archiveName = "${parent.name}-${project.name}-${parent.version}.jar"
