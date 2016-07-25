@@ -1,6 +1,7 @@
 package com.plotsquared.sponge.object;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -111,8 +112,12 @@ public class SpongePlayer extends PlotPlayer {
     
     @Override
     public void setCompassTarget(Location location) {
-        TargetedLocationData target = this.player.getOrCreate(TargetedLocationData.class).get();
-        target.set(Keys.TARGETED_LOCATION, SpongeUtil.getLocation(location).getPosition());
+        Optional<TargetedLocationData> target = this.player.getOrCreate(TargetedLocationData.class);
+        if (target.isPresent()) {
+            target.get().set(Keys.TARGETED_LOCATION, SpongeUtil.getLocation(location).getPosition());
+        } else {
+            PS.debug("Failed to set compass target.");
+        }
     }
 
     @Override
