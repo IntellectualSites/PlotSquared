@@ -662,6 +662,7 @@ public class MainListener {
                     return;
                 }
             } else if (now.equals(lastPlot)) {
+                ForceFieldListener.handleForcefield(player, pp, now);
                 return;
             } else if (!PlotListener.plotEntry(pp, now)) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
@@ -711,6 +712,7 @@ public class MainListener {
                     return;
                 }
             } else if (now.equals(lastPlot)) {
+                ForceFieldListener.handleForcefield(player, pp, now);
                 return;
             } else if (!PlotListener.plotEntry(pp, now)) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
