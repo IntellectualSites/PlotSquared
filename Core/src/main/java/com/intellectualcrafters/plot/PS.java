@@ -171,7 +171,6 @@ public class PS {
                 this.IMP.registerPlayerEvents();
                 this.IMP.registerInventoryEvents();
                 this.IMP.registerPlotPlusEvents();
-                this.IMP.registerForceFieldEvents();
             }
             // Required
             this.IMP.registerWorldEvents();

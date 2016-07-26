@@ -242,14 +242,11 @@ public class SpongeMain implements IPlotMain {
 
     @Override
     public void registerPlotPlusEvents() {
-        // TODO Auto-generated method stub
         PS.log("registerPlotPlusEvents is not implemented!");
     }
 
     @Override
     public void registerForceFieldEvents() {
-        // TODO Auto-generated method stub
-        PS.log("registerForceFieldEvents is not implemented!");
     }
 
     @Override
