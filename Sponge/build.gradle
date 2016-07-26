@@ -51,9 +51,7 @@ processResources {
 shadowJar {
     dependencies {
         include(dependency(':Core'))
-        //include(dependency('org.mcstats.sponge:metrics:R8-SNAPSHOT'))
     }
-    //relocate 'org.mcstats', 'com.plotsquared.stats'
     archiveName = "${parent.name}-${project.name}-${parent.version}.jar"
     destinationDir = file '../target'
 }

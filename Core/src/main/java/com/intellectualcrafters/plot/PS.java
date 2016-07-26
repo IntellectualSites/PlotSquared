@@ -369,13 +369,16 @@ public class PS {
                     @Override
                     public void run() {
                         UUIDHandler.add(new StringWrapper("*"), DBFunc.everyone);
-                        for (Plot plot : getPlots()) {
-                            if (plot.hasOwner() && plot.temp != -1) {
-                                if (UUIDHandler.getName(plot.owner) == null) {
-                                    UUIDHandler.implementation.unknown.add(plot.owner);
+                        foreachPlotRaw(new RunnableVal<Plot>() {
+                            @Override
+                            public void run(Plot plot) {
+                                if (plot.hasOwner() && plot.temp != -1) {
+                                    if (UUIDHandler.getName(plot.owner) == null) {
+                                        UUIDHandler.implementation.unknown.add(plot.owner);
+                                    }
                                 }
                             }
-                        }
+                        });
                         startExpiryTasks();
                         startPlotMeConversion();
                     }

@@ -34,7 +34,7 @@ public class SpongeAugmentedGenerator implements GenerationPopulator {
         populators.add(generator);
         return generator;
     }
-    
+
     @Override
     public void populate(World world, MutableBlockVolume terrain, ImmutableBiomeArea biome) {
         Vector3i min = terrain.getBlockMin();

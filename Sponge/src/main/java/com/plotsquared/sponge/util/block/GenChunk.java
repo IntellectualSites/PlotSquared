@@ -52,7 +52,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
     @Override
     public boolean setBlock(int x, int y, int z, int id, int data) {
         modified = true;
-        this.terrain.setBlock(this.bx + x, y, this.bz + z, SpongeUtil.getBlockState(id, data),SpongeUtil.CAUSE);
+        this.terrain.setBlock(this.bx + x, y, this.bz + z, SpongeUtil.getBlockState(id, data), SpongeUtil.CAUSE);
         return true;
     }
 

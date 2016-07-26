@@ -21,6 +21,7 @@ public final class Flags {
     public static final IntervalFlag FEED = new IntervalFlag("feed");
     public static final IntervalFlag HEAL = new IntervalFlag("heal");
     public static final GameModeFlag GAMEMODE = new GameModeFlag("gamemode");
+    public static final GameModeFlag GUEST_GAMEMODE = new GameModeFlag("guest-gamemode");
     public static final StringFlag DONE = (StringFlag) new StringFlag("done").reserve();
     public static final BooleanFlag REDSTONE = new BooleanFlag("redstone");
     public static final BooleanFlag FLY = new BooleanFlag("fly");
@@ -147,8 +148,8 @@ public final class Flags {
     }
 
     public static Flag<?> getFlag(String flag) {
-        return flags.get(flag);
-    }
+    return flags.get(flag);
+}
 
     public static void registerFlag(final Flag<?> flag) {
         final Flag<?> duplicate = flags.put(flag.getName(), flag);
@@ -164,11 +165,10 @@ public final class Flags {
             });
             PS.get().foreachPlotRaw(new RunnableVal<Plot>() {
                 @Override public void run(Plot value) {
-                    Object remove = null;
                     if (value.getFlags().containsKey(duplicate)) {
-                        remove = value.getFlags().remove(duplicate);
+                        Object remove = value.getFlags().remove(duplicate);
+                        value.getFlags().put(flag,flag.parseValue("" + remove));
                     }
-                    value.getFlags().put(flag,flag.parseValue("" + remove));
                 }
             });
         }
