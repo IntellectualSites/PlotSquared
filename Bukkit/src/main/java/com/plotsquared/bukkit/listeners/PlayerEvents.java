@@ -1376,6 +1376,9 @@ public class PlayerEvents extends PlotListener implements Listener {
     }
 
     public static boolean checkEntity(Plot plot, IntegerFlag... flags) {
+        if (Settings.Done.RESTRICT_BUILDING && Flags.DONE.isSet(plot)) {
+            return true;
+        }
         int[] mobs = null;
         for (IntegerFlag flag : flags) {
             int i;

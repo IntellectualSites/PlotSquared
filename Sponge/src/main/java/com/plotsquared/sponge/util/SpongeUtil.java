@@ -430,7 +430,7 @@ public class SpongeUtil extends WorldUtil {
     @Override
     public void setSign(String worldName, int x, int y, int z, String[] lines) {
         World world = SpongeUtil.getWorld(worldName);
-        world.setBlock(x, y, z, BlockTypes.WALL_SIGN.getDefaultState(), BlockChangeFlag.NONE, CAUSE);
+        world.setBlock(x, y, z, BlockTypes.WALL_SIGN.getDefaultState(), CAUSE);
         Optional<TileEntity> block = world.getTileEntity(x, y, z);
         if (!block.isPresent()) {
             return;

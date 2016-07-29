@@ -35,8 +35,6 @@ public class SpongeAugmentedGenerator implements GenerationPopulator {
         return generator;
     }
 
-    private Cause cause = Cause.of(NamedCause.of("PlotSquared", SpongeMain.THIS));
-
     @Override
     public void populate(World world, MutableBlockVolume terrain, ImmutableBiomeArea biome) {
         Vector3i min = terrain.getBlockMin();
