@@ -166,6 +166,9 @@ public class FlagCmd extends SubCommand {
                         return false;
                     }
                 }
+                if(flag == Flags.TIME) {
+                    player.setTime(Long.MAX_VALUE);
+                }
                 MainUtil.sendMessage(player, C.FLAG_REMOVED);
                 return true;
             }
