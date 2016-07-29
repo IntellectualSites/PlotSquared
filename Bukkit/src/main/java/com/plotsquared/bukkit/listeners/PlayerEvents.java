@@ -1850,6 +1850,9 @@ public class PlayerEvents extends PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onLeave(PlayerQuitEvent event) {
+        if (TaskManager.TELEPORT_QUEUE.contains(event.getPlayer().getName())) {
+            TaskManager.TELEPORT_QUEUE.remove(event.getPlayer().getName());
+        }
         PlotPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
         pp.unregister();
     }

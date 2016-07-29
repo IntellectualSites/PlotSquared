@@ -207,7 +207,8 @@ public class PlotListener {
                     for (UUID uuid : plot.getOwners()) {
                         PlotPlayer owner = UUIDHandler.getPlayer(uuid);
                         if ((owner != null) && !owner.getUUID().equals(player.getUUID())) {
-                            MainUtil.sendMessage(player, C.NOTIFY_LEAVE.s().replace("%player", player.getName()).replace("%plot", plot.getId().toString()));
+                            MainUtil.sendMessage(owner, C.NOTIFY_LEAVE.s().replace("%player", player.getName()).replace("%plot", plot.getId()
+                                    .toString()));
                         }
                     }
                 }
