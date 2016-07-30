@@ -332,7 +332,7 @@ public class SpongeMain implements IPlotMain {
         if (gen instanceof SpongePlotGenerator) {
             PS.get().loadWorld(worldName, (SpongePlotGenerator) gen);
         } else {
-            throw new UnsupportedOperationException("NOT IMPLEMENTED YET!");
+            throw new UnsupportedOperationException("NOT IMPLEMENTED YET! " + worldName + " | " + gen);
         }
     }
 
@@ -345,6 +345,8 @@ public class SpongeMain implements IPlotMain {
     public PlotPlayer wrapPlayer(Object player) {
         if (player instanceof Player) {
             return SpongeUtil.getPlayer((Player) player);
+        } else if (UUIDHandler.implementation == null) {
+            return null;
         } else if (player instanceof String) {
             return UUIDHandler.getPlayer((String) player);
         } else if (player instanceof UUID) {

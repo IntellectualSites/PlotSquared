@@ -15,6 +15,7 @@ import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
+import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -52,7 +53,7 @@ import org.spongepowered.api.world.extent.Extent;
 
 public class SpongeUtil extends WorldUtil {
 
-    public static Cause CAUSE = Cause.of(NamedCause.source("PlotSquared"));
+    public static Cause CAUSE = Cause.of(NamedCause.source(Sponge.getPluginManager().fromInstance(SpongeMain.THIS).get()));
     private static BiomeType[] biomes;
     private static HashMap<String, Integer> biomeMap;
     private static HashMap<BlockState, PlotBlock> stateMap;

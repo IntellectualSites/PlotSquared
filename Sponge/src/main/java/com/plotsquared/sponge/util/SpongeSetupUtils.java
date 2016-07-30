@@ -141,7 +141,7 @@ public class SpongeSetupUtils extends SetupUtils {
             // create world with generator
             GeneratorWrapper<?> gw = SetupUtils.generators.get(object.setupGenerator);
             WorldGeneratorModifier wgm = (WorldGeneratorModifier) gw.getPlatformGenerator();
-            
+
             WorldArchetype settings = WorldArchetype.builder()
             .loadsOnStartup(true)
             .keepsSpawnLoaded(true)
@@ -149,7 +149,7 @@ public class SpongeSetupUtils extends SetupUtils {
             .generator(GeneratorTypes.OVERWORLD)
             .usesMapFeatures(false)
             .enabled(true)
-            //.generatorModifiers(wgm)
+            .generatorModifiers(wgm)
             .build("PS",object.world);
             WorldProperties properties = null;
             try {

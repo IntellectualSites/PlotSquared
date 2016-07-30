@@ -17,6 +17,7 @@ import net.minecraft.entity.EntityTracker;
 import net.minecraft.entity.EntityTrackerEntry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.network.play.server.SPacketChunkData;
 import net.minecraft.network.play.server.SPacketDestroyEntities;
 import net.minecraft.server.management.PlayerChunkMap;
@@ -31,9 +32,6 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.biome.BiomeType;
-import org.spongepowered.api.world.extent.UnmodifiableBlockVolume;
-import org.spongepowered.api.world.extent.worker.MutableBlockVolumeWorker;
-import org.spongepowered.api.world.extent.worker.procedure.BlockVolumeMapper;
 
 public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
 
@@ -59,7 +57,6 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
 
     @Override
     public PlotBlock getBlock(int x, int y, int z) {
-
         World worldObj = getSpongeWorld();
         BlockState block = worldObj.getBlock(x, y, z);
         if (block == null) {
@@ -440,24 +437,28 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
     public void setBlocks(LocalChunk<char[]> lc) {
         World worldObj = getSpongeWorld();
         org.spongepowered.api.world.Chunk spongeChunk = (org.spongepowered.api.world.Chunk) getChunk(worldObj, lc.getX(), lc.getZ());
+        Chunk nmsChunk = (Chunk) spongeChunk;
         char[][] ids = ((CharLocalChunk) lc).blocks;
-        MutableBlockVolumeWorker<? extends org.spongepowered.api.world.Chunk> blockWorker = spongeChunk.getBlockWorker(SpongeUtil.CAUSE);
-        blockWorker.map(new BlockVolumeMapper() {
-            @Override
-            public BlockState map(UnmodifiableBlockVolume volume, int xx, int y, int zz) {
-                int x = xx & 15;
-                int z = zz & 15;
-                int i = MainUtil.CACHE_I[y][x][z];
-                char[] array = ids[i];
-                if (array == null) {
-                    return null;
-                }
-                int combinedId = array[MainUtil.CACHE_J[y][x][z]];
+        for (int layer = 0; layer < 16; layer++) {
+            char[] array = ids[layer];
+            if (array == null) {
+                continue;
+            }
+            ExtendedBlockStorage section = nmsChunk.getBlockStorageArray()[layer];
+            short[] cacheX = MainUtil.x_loc[0];
+            short[] cacheY = MainUtil.y_loc[0];
+            short[] cacheZ = MainUtil.z_loc[0];
+            for (int j = 0; j < array.length; j++) {
+                int combinedId = array[j];
                 switch (combinedId) {
                     case 0:
-                        return null;
+                        continue;
                     case 1:
-                        return AIR;
+                        int x = cacheX[j];
+                        int y = cacheY[j];
+                        int z = cacheZ[j];
+                        section.set(x, y, z, Blocks.AIR.getDefaultState());
+                        continue;
                     default:
                         int id = combinedId >> 4;
                         Block block = Block.getBlockById(id);
@@ -468,10 +469,15 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
                         } else {
                             ibd = block.getDefaultState();
                         }
-                        return (BlockState) ibd;
+                        x = cacheX[j];
+                        y = cacheY[j];
+                        z = cacheZ[j];
+                        section.set(x, y, z, ibd);
+                        continue;
                 }
             }
-        });
+        }
+        refreshChunk(nmsChunk.xPosition, nmsChunk.zPosition);
     }
 
     public void setBiomes(LocalChunk<char[]> lc) {
