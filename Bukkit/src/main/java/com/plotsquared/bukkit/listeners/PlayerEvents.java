@@ -951,12 +951,12 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         List<Block> blocks = event.getBlocks();
         for (Block b : blocks) {
-            Location bloc = BukkitUtil.getLocation(b.getLocation().add(relative));
-            if (!area.contains(bloc.getX(), bloc.getZ())) {
+            Location bloc = BukkitUtil.getLocation(b.getLocation());
+            if (!area.contains(bloc.getX(), bloc.getZ()) || !area.contains(bloc.getX() + relative.getBlockX(), bloc.getZ() + relative.getBlockZ())) {
                 event.setCancelled(true);
                 return;
             }
-            if (!plot.equals(area.getOwnedPlot(bloc))) {
+            if (!plot.equals(area.getOwnedPlot(bloc)) || !plot.equals(area.getOwnedPlot(bloc.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())))) {
                 event.setCancelled(true);
                 return;
             }
@@ -1671,7 +1671,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     return;
                 }
             } else if (lastPlot != null && now.equals(lastPlot)) {
-                if (!Flags.DENY_TELEPORT.allowsTeleport(pp, lastPlot)) {
+                if (!Flags.TELEPORT_DENY.allowsTeleport(pp, lastPlot)) {
                     event.setTo(BukkitUtil.getLocation(lastPlot.getSide()));
                 }
                 return;
@@ -1744,7 +1744,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     return;
                 }
             } else if (lastPlot != null && now.equals(lastPlot)) {
-                if (!Flags.DENY_TELEPORT.allowsTeleport(pp, lastPlot)) {
+                if (!Flags.TELEPORT_DENY.allowsTeleport(pp, lastPlot)) {
                     event.setTo(BukkitUtil.getLocation(lastPlot.getSide()));
                 }
                 return;
