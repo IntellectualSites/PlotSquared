@@ -207,7 +207,8 @@ public class PlotListener {
                     for (UUID uuid : plot.getOwners()) {
                         PlotPlayer owner = UUIDHandler.getPlayer(uuid);
                         if ((owner != null) && !owner.getUUID().equals(player.getUUID())) {
-                            MainUtil.sendMessage(player, C.NOTIFY_LEAVE.s().replace("%player", player.getName()).replace("%plot", plot.getId().toString()));
+                            MainUtil.sendMessage(owner, C.NOTIFY_LEAVE.s().replace("%player", player.getName()).replace("%plot", plot.getId()
+                                    .toString()));
                         }
                     }
                 }
@@ -220,7 +221,7 @@ public class PlotListener {
                     PlotGameMode gameMode = player.getGameMode();
                     if (gameMode == PlotGameMode.SURVIVAL || gameMode == PlotGameMode.ADVENTURE) {
                         player.setFlight(false);
-                    } else if (player.getFlight() != true) {
+                    } else if (!player.getFlight()) {
                         player.setFlight(true);
                     }
                 }

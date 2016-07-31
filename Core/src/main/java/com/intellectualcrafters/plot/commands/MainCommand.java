@@ -141,7 +141,7 @@ public class MainCommand extends Command {
                                     PlotArea area = player.getApplicablePlotArea();
                                     if (area != null) {
                                         Expression<Double> priceEval = area.PRICES.get(cmd.getFullId());
-                                        Double price = priceEval != null ? priceEval.evalute(0d) : 0d;
+                                        Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
                                         if (price != null && EconHandler.manager.getMoney(player) < price) {
                                             if (failure != null) {
                                                 failure.run();
@@ -161,7 +161,7 @@ public class MainCommand extends Command {
                         PlotArea area = player.getApplicablePlotArea();
                         if (area != null) {
                             Expression<Double> priceEval = area.PRICES.get(cmd.getFullId());
-                            Double price = priceEval != null ? priceEval.evalute(0d) : 0d;
+                            Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
                             if (price != 0d && EconHandler.manager.getMoney(player) < price) {
                                 if (failure != null) {
                                     failure.run();

@@ -26,7 +26,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class SpongeSetupUtils extends SetupUtils {
-    
+
     @Override
     public void updateGenerators() {
         if (!SetupUtils.generators.isEmpty()) {
@@ -48,7 +48,7 @@ public class SpongeSetupUtils extends SetupUtils {
             }
         }
     }
-    
+
     @Override
     public String getGenerator(PlotArea plotArea) {
         if (SetupUtils.generators.isEmpty()) {
@@ -61,7 +61,7 @@ public class SpongeSetupUtils extends SetupUtils {
         WorldGenerator generator = world.getWorldGenerator();
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
-    
+
     @Override
     public String setupWorld(SetupObject object) {
         SetupUtils.manager.updateGenerators();
@@ -146,7 +146,7 @@ public class SpongeSetupUtils extends SetupUtils {
             .loadsOnStartup(true)
             .keepsSpawnLoaded(true)
             .dimension(DimensionTypes.OVERWORLD)
-            .generator(GeneratorTypes.OVERWORLD)
+            .generator(GeneratorTypes.FLAT)
             .usesMapFeatures(false)
             .enabled(true)
             .generatorModifiers(wgm)

@@ -3,6 +3,7 @@ package com.plotsquared.bukkit.chat;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,17 +18,17 @@ public final class Reflection {
 	/**
 	 * Stores loaded classes from the {@code net.minecraft.server} package.
 	 */
-	private static final Map<String, Class<?>> _loadedNMSClasses = new HashMap<String, Class<?>>();
+	private static final Map<String, Class<?>> _loadedNMSClasses = new HashMap<>();
 	/**
 	 * Stores loaded classes from the {@code org.bukkit.craftbukkit} package (and subpackages).
 	 */
-	private static final Map<String, Class<?>> _loadedOBCClasses = new HashMap<String, Class<?>>();
-	private static final Map<Class<?>, Map<String, Field>> _loadedFields = new HashMap<Class<?>, Map<String, Field>>();
+	private static final Map<String, Class<?>> _loadedOBCClasses = new HashMap<>();
+	private static final Map<Class<?>, Map<String, Field>> _loadedFields = new HashMap<>();
 	/**
 	 * Contains loaded methods in a cache.
 	 * The map maps [types to maps of [method names to maps of [parameter types to method instances]]].
 	 */
-	private static final Map<Class<?>, Map<String, Map<ArrayWrapper<Class<?>>, Method>>> _loadedMethods = new HashMap<Class<?>, Map<String, Map<ArrayWrapper<Class<?>>, Method>>>();
+	private static final Map<Class<?>, Map<String, Map<ArrayWrapper<Class<?>>, Method>>> _loadedMethods = new HashMap<>();
 	private static String _versionString;
 
 	private Reflection() { }
@@ -64,10 +65,10 @@ public final class Reflection {
 		}
 
 		String fullName = "net.minecraft.server." + getVersion() + className;
-		Class<?> clazz = null;
+		Class<?> clazz;
 		try {
 			clazz = Class.forName(fullName);
-		} catch (Exception e) {
+		} catch (ClassNotFoundException e) {
 			_loadedNMSClasses.put(className, null);
 			throw new RuntimeException(e);
 		}
@@ -88,10 +89,10 @@ public final class Reflection {
 		}
 
 		String fullName = "org.bukkit.craftbukkit." + getVersion() + className;
-		Class<?> clazz = null;
+		Class<?> clazz;
 		try {
 			clazz = Class.forName(fullName);
-		} catch (Exception e) {
+		} catch (ClassNotFoundException e) {
 			_loadedOBCClasses.put(className, null);
 			throw new RuntimeException(e);
 		}
@@ -108,12 +109,8 @@ public final class Reflection {
 	 * @param obj The object for which to retrieve an NMS handle.
 	 * @return The NMS handle of the specified object, or {@code null} if it could not be retrieved using {@code getHandle()}.
 	 */
-	public synchronized static Object getHandle(Object obj) {
-		try {
+	public synchronized static Object getHandle(Object obj) throws InvocationTargetException, IllegalAccessException, IllegalArgumentException {
 			return getMethod(obj.getClass(), "getHandle").invoke(obj);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	/**
@@ -137,7 +134,7 @@ public final class Reflection {
 	public synchronized static Field getField(Class<?> clazz, String name) {
 		Map<String, Field> loaded;
 		if (!_loadedFields.containsKey(clazz)) {
-			loaded = new HashMap<String, Field>();
+			loaded = new HashMap<>();
 			_loadedFields.put(clazz, loaded);
 		} else {
 			loaded = _loadedFields.get(clazz);
@@ -146,19 +143,19 @@ public final class Reflection {
 			// If the field is loaded (or cached as not existing), return the relevant value, which might be null
 			return loaded.get(name);
 		}
-		try {
-			Field field = clazz.getDeclaredField(name);
-			field.setAccessible(true);
-			loaded.put(name, field);
-			return field;
-		} catch (Exception e) {
-			// Error loading
-			e.printStackTrace();
-			// Cache field as not existing
-			loaded.put(name, null);
-			return null;
-		}
-	}
+        try {
+            Field field = clazz.getDeclaredField(name);
+            field.setAccessible(true);
+            loaded.put(name, field);
+            return field;
+        } catch (NoSuchFieldException | SecurityException e) {
+            // Error loading
+            e.printStackTrace();
+            // Cache field as not existing
+            loaded.put(name, null);
+            return null;
+        }
+    }
 
 	/**
 	 * Retrieves a {@link Method} instance declared by the specified class with the specified name and argument types.
@@ -167,11 +164,9 @@ public final class Reflection {
 	 * <p>
 	 * A global caching mechanism within this class is used to store method. Combined with synchronization, this guarantees that
 	 * no method will be reflectively looked up twice.
-	 * </p>
 	 * <p>
 	 * If a method is deemed suitable for return, {@link Method#setAccessible(boolean) setAccessible} will be invoked with an argument of {@code true} before it is returned.
 	 * This ensures that callers do not have to check or worry about Java access modifiers when dealing with the returned instance.
-	 * </p>
 	 * <p>
 	 * This method does <em>not</em> search superclasses of the specified type for methods with the specified signature.
 	 * Callers wishing this behavior should use {@link Class#getDeclaredMethod(String, Class...)}.
@@ -192,7 +187,7 @@ public final class Reflection {
 		}
 
 		Map<ArrayWrapper<Class<?>>, Method> loadedSignatures = loadedMethodNames.get(name);
-		ArrayWrapper<Class<?>> wrappedArg = new ArrayWrapper<Class<?>>(args);
+		ArrayWrapper<Class<?>> wrappedArg = new ArrayWrapper<>(args);
 		if (loadedSignatures.containsKey(wrappedArg)) {
 			return loadedSignatures.get(wrappedArg);
 		}

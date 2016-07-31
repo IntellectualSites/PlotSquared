@@ -50,7 +50,7 @@ public class Claim extends SubCommand {
         PlotArea world = plot.getArea();
         if ((EconHandler.manager != null) && world.USE_ECONOMY) {
             Expression<Double> costExr = world.PRICES.get("claim");
-            double cost = costExr.evalute((double) currentPlots);
+            double cost = costExr.evaluate((double) currentPlots);
             if (cost > 0d) {
                 if (EconHandler.manager.getMoney(player) < cost) {
                     return sendMessage(player, C.CANNOT_AFFORD_PLOT, "" + cost);
