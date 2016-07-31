@@ -28,16 +28,6 @@ import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.listener.PlayerBlockEventType;
 import com.plotsquared.listener.PlotListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -120,6 +110,17 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * Player Events involving plots.
@@ -483,7 +484,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 pp.deleteMeta("lastplot");
                 return;
             }
-            Plot now = area.getPlot(loc);
+            Plot now = area.getPlotAbs(loc);
             Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
                 if (lastPlot != null && !plotExit(pp, lastPlot)) {
@@ -1470,6 +1471,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             case MINECART_TNT:
             case BOAT:
                 return checkEntity(plot, Flags.ENTITY_CAP, Flags.VEHICLE_CAP);
+            case POLAR_BEAR:
             case RABBIT:
             case SHEEP:
             case MUSHROOM_COW:
@@ -1848,6 +1850,9 @@ public class PlayerEvents extends PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onLeave(PlayerQuitEvent event) {
+        if (TaskManager.TELEPORT_QUEUE.contains(event.getPlayer().getName())) {
+            TaskManager.TELEPORT_QUEUE.remove(event.getPlayer().getName());
+        }
         PlotPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
         pp.unregister();
     }

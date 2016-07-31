@@ -75,7 +75,7 @@ public enum C {
      */
     CONSOLE_JAVA_OUTDATED_1_8("&cYour version of java is outdated. It is highly recommended that you update to Java 8 as it increases performance "
             + "and security. PlotSquared will require Java 9 in a future update.", "static.console"),
-    CONSOLE_PLEASE_ENABLE_METRICS("&dPlease enable metrics for PlotSquared. Using metrics improves plugin stabability, performance, and features. "
+    CONSOLE_PLEASE_ENABLE_METRICS("&dPlease enable metrics for PlotSquared. Using metrics improves plugin stability, performance, and features. "
             + "Bug fixes and new features are influenced on metrics.", "static.console"),
     /*
      * Confirm
@@ -368,7 +368,7 @@ public enum C {
     /*
      * Unknown Error
      */
-    ERROR("$2An error occured: %s", "Errors"),
+    ERROR("$2An error occurred: %s", "Errors"),
     // SETTINGS_PASTE_UPLOADED("$2settings.yml was uploaded to: $1%url%", "Paste"),
     // LATEST_LOG_UPLOADED("$2latest.log was uploaded to: $1%url%", "Paste"),
     DEBUG_REPORT_CREATED("$1Uploaded a full debug to: $1%url%", "Paste"),

@@ -1,10 +1,25 @@
 package com.plotsquared.bukkit.chat;
 
+import static com.plotsquared.bukkit.chat.TextualComponent.rawText;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
+import org.bukkit.Achievement;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.Statistic;
+import org.bukkit.Statistic.Type;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
@@ -19,21 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import org.bukkit.Achievement;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Statistic;
-import org.bukkit.Statistic.Type;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-
-import static com.plotsquared.bukkit.chat.TextualComponent.rawText;
 
 /**
  * Represents a formattable message. Such messages can use elements such as colors, formatting codes, hover and click data, and other features provided by the vanilla Minecraft <a href="http://minecraft.gamepedia.com/Tellraw#Raw_JSON_Text">JSON message formatter</a>.
@@ -60,7 +60,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	@Override
 	public FancyMessage clone() throws CloneNotSupportedException {
 		FancyMessage instance = (FancyMessage) super.clone();
-		instance.messageParts = new ArrayList<MessagePart>(messageParts.size());
+		instance.messageParts = new ArrayList<>(messageParts.size());
 		for (int i = 0; i < messageParts.size(); i++) {
 			instance.messageParts.add(i, messageParts.get(i).clone());
 		}
@@ -78,15 +78,15 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 		this(rawText(firstPartText));
 	}
 
-	public FancyMessage(final com.plotsquared.bukkit.chat.TextualComponent firstPartText) {
-		messageParts = new ArrayList<MessagePart>();
+	public FancyMessage(final TextualComponent firstPartText) {
+		messageParts = new ArrayList<>();
 		messageParts.add(new MessagePart(firstPartText));
 		jsonString = null;
 		dirty = false;
 
 		if (nmsPacketPlayOutChatConstructor == null) {
 			try {
-				nmsPacketPlayOutChatConstructor = com.plotsquared.bukkit.chat.Reflection.getNMSClass("PacketPlayOutChat").getDeclaredConstructor(com.plotsquared.bukkit.chat.Reflection.getNMSClass("IChatBaseComponent"));
+				nmsPacketPlayOutChatConstructor = Reflection.getNMSClass("PacketPlayOutChat").getDeclaredConstructor(Reflection.getNMSClass("IChatBaseComponent"));
 				nmsPacketPlayOutChatConstructor.setAccessible(true);
 			} catch (NoSuchMethodException e) {
 				Bukkit.getLogger().log(Level.SEVERE, "Could not find Minecraft method or constructor.", e);
@@ -100,7 +100,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 * Creates a JSON message without text.
 	 */
 	public FancyMessage() {
-		this((com.plotsquared.bukkit.chat.TextualComponent) null);
+		this((TextualComponent) null);
 	}
 
 	/**
@@ -122,7 +122,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 * @param text The new text of the current editing component.
 	 * @return This builder instance.
 	 */
-	public FancyMessage text(com.plotsquared.bukkit.chat.TextualComponent text) {
+	public FancyMessage text(TextualComponent text) {
 		MessagePart latest = latest();
 		latest.text = text;
 		dirty = true;
@@ -243,8 +243,8 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 */
 	public FancyMessage achievementTooltip(final Achievement which) {
 		try {
-			Object achievement = com.plotsquared.bukkit.chat.Reflection.getMethod(com.plotsquared.bukkit.chat.Reflection.getOBCClass("CraftStatistic"), "getNMSAchievement", Achievement.class).invoke(null, which);
-			return achievementTooltip((String) com.plotsquared.bukkit.chat.Reflection.getField(com.plotsquared.bukkit.chat.Reflection.getNMSClass("Achievement"), "name").get(achievement));
+			Object achievement = Reflection.getMethod(Reflection.getOBCClass("CraftStatistic"), "getNMSAchievement", Achievement.class).invoke(null, which);
+			return achievementTooltip((String) Reflection.getField(Reflection.getNMSClass("Achievement"), "name").get(achievement));
 		} catch (IllegalAccessException e) {
 			Bukkit.getLogger().log(Level.WARNING, "Could not access method.", e);
 			return this;
@@ -252,7 +252,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 			Bukkit.getLogger().log(Level.WARNING, "Argument could not be passed.", e);
 			return this;
 		} catch (InvocationTargetException e) {
-			Bukkit.getLogger().log(Level.WARNING, "A error has occured durring invoking of method.", e);
+			Bukkit.getLogger().log(Level.WARNING, "A error has occurred during invoking of method.", e);
 			return this;
 		}
 	}
@@ -271,8 +271,8 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 			throw new IllegalArgumentException("That statistic requires an additional " + type + " parameter!");
 		}
 		try {
-			Object statistic = com.plotsquared.bukkit.chat.Reflection.getMethod(com.plotsquared.bukkit.chat.Reflection.getOBCClass("CraftStatistic"), "getNMSStatistic", Statistic.class).invoke(null, which);
-			return achievementTooltip((String) com.plotsquared.bukkit.chat.Reflection.getField(com.plotsquared.bukkit.chat.Reflection.getNMSClass("Statistic"), "name").get(statistic));
+			Object statistic = Reflection.getMethod(Reflection.getOBCClass("CraftStatistic"), "getNMSStatistic", Statistic.class).invoke(null, which);
+			return achievementTooltip((String) Reflection.getField(Reflection.getNMSClass("Statistic"), "name").get(statistic));
 		} catch (IllegalAccessException e) {
 			Bukkit.getLogger().log(Level.WARNING, "Could not access method.", e);
 			return this;
@@ -280,7 +280,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 			Bukkit.getLogger().log(Level.WARNING, "Argument could not be passed.", e);
 			return this;
 		} catch (InvocationTargetException e) {
-			Bukkit.getLogger().log(Level.WARNING, "A error has occured durring invoking of method.", e);
+			Bukkit.getLogger().log(Level.WARNING, "A error has occurred during invoking of method.", e);
 			return this;
 		}
 	}
@@ -303,8 +303,8 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 			throw new IllegalArgumentException("Wrong parameter type for that statistic - needs " + type + "!");
 		}
 		try {
-			Object statistic = com.plotsquared.bukkit.chat.Reflection.getMethod(com.plotsquared.bukkit.chat.Reflection.getOBCClass("CraftStatistic"), "getMaterialStatistic", Statistic.class, Material.class).invoke(null, which, item);
-			return achievementTooltip((String) com.plotsquared.bukkit.chat.Reflection.getField(com.plotsquared.bukkit.chat.Reflection.getNMSClass("Statistic"), "name").get(statistic));
+			Object statistic = Reflection.getMethod(Reflection.getOBCClass("CraftStatistic"), "getMaterialStatistic", Statistic.class, Material.class).invoke(null, which, item);
+			return achievementTooltip((String) Reflection.getField(Reflection.getNMSClass("Statistic"), "name").get(statistic));
 		} catch (IllegalAccessException e) {
 			Bukkit.getLogger().log(Level.WARNING, "Could not access method.", e);
 			return this;
@@ -312,7 +312,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 			Bukkit.getLogger().log(Level.WARNING, "Argument could not be passed.", e);
 			return this;
 		} catch (InvocationTargetException e) {
-			Bukkit.getLogger().log(Level.WARNING, "A error has occured durring invoking of method.", e);
+			Bukkit.getLogger().log(Level.WARNING, "A error has occurred during invoking of method.", e);
 			return this;
 		}
 	}
@@ -335,8 +335,8 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 			throw new IllegalArgumentException("Wrong parameter type for that statistic - needs " + type + "!");
 		}
 		try {
-			Object statistic = com.plotsquared.bukkit.chat.Reflection.getMethod(com.plotsquared.bukkit.chat.Reflection.getOBCClass("CraftStatistic"), "getEntityStatistic", Statistic.class, EntityType.class).invoke(null, which, entity);
-			return achievementTooltip((String) com.plotsquared.bukkit.chat.Reflection.getField(com.plotsquared.bukkit.chat.Reflection.getNMSClass("Statistic"), "name").get(statistic));
+			Object statistic = Reflection.getMethod(Reflection.getOBCClass("CraftStatistic"), "getEntityStatistic", Statistic.class, EntityType.class).invoke(null, which, entity);
+			return achievementTooltip((String) Reflection.getField(Reflection.getNMSClass("Statistic"), "name").get(statistic));
 		} catch (IllegalAccessException e) {
 			Bukkit.getLogger().log(Level.WARNING, "Could not access method.", e);
 			return this;
@@ -344,7 +344,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 			Bukkit.getLogger().log(Level.WARNING, "Argument could not be passed.", e);
 			return this;
 		} catch (InvocationTargetException e) {
-			Bukkit.getLogger().log(Level.WARNING, "A error has occured durring invoking of method.", e);
+			Bukkit.getLogger().log(Level.WARNING, "A error has occurred during invoking of method.", e);
 			return this;
 		}
 	}
@@ -370,8 +370,8 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 */
 	public FancyMessage itemTooltip(final ItemStack itemStack) {
 		try {
-			Object nmsItem = com.plotsquared.bukkit.chat.Reflection.getMethod(com.plotsquared.bukkit.chat.Reflection.getOBCClass("inventory.CraftItemStack"), "asNMSCopy", ItemStack.class).invoke(null, itemStack);
-			return itemTooltip(com.plotsquared.bukkit.chat.Reflection.getMethod(com.plotsquared.bukkit.chat.Reflection.getNMSClass("ItemStack"), "save", com.plotsquared.bukkit.chat.Reflection.getNMSClass("NBTTagCompound")).invoke(nmsItem, com.plotsquared.bukkit.chat.Reflection.getNMSClass("NBTTagCompound").newInstance()).toString());
+			Object nmsItem = Reflection.getMethod(Reflection.getOBCClass("inventory.CraftItemStack"), "asNMSCopy", ItemStack.class).invoke(null, itemStack);
+			return itemTooltip(Reflection.getMethod(Reflection.getNMSClass("ItemStack"), "save", Reflection.getNMSClass("NBTTagCompound")).invoke(nmsItem, Reflection.getNMSClass("NBTTagCompound").newInstance()).toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return this;
@@ -565,7 +565,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 * @param text The text which will populate the new message component.
 	 * @return This builder instance.
 	 */
-	public FancyMessage then(final com.plotsquared.bukkit.chat.TextualComponent text) {
+	public FancyMessage then(final TextualComponent text) {
 		if (!latest().hasText()) {
 			throw new IllegalStateException("previous message part has no text");
 		}
@@ -641,9 +641,9 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 		}
 		Player player = (Player) sender;
 		try {
-			Object handle = com.plotsquared.bukkit.chat.Reflection.getHandle(player);
-			Object connection = com.plotsquared.bukkit.chat.Reflection.getField(handle.getClass(), "playerConnection").get(handle);
-			com.plotsquared.bukkit.chat.Reflection.getMethod(connection.getClass(), "sendPacket", com.plotsquared.bukkit.chat.Reflection.getNMSClass("Packet")).invoke(connection, createChatPacket(jsonString));
+			Object handle = Reflection.getHandle(player);
+			Object connection = Reflection.getField(handle.getClass(), "playerConnection").get(handle);
+			Reflection.getMethod(connection.getClass(), "sendPacket", Reflection.getNMSClass("Packet")).invoke(connection, createChatPacket(jsonString));
 		} catch (IllegalArgumentException e) {
 			Bukkit.getLogger().log(Level.WARNING, "Argument could not be passed.", e);
 		} catch (IllegalAccessException e) {
@@ -651,7 +651,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 		} catch (InstantiationException e) {
 			Bukkit.getLogger().log(Level.WARNING, "Underlying class is abstract.", e);
 		} catch (InvocationTargetException e) {
-			Bukkit.getLogger().log(Level.WARNING, "A error has occured durring invoking of method.", e);
+			Bukkit.getLogger().log(Level.WARNING, "A error has occurred during invoking of method.", e);
 		} catch (NoSuchMethodException e) {
 			Bukkit.getLogger().log(Level.WARNING, "Could not find method.", e);
 		} catch (ClassNotFoundException e) {
@@ -673,16 +673,16 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 			//   X = major
 			//   Y = minor
 			//   Z = revision
-			final String version = com.plotsquared.bukkit.chat.Reflection.getVersion();
+			final String version = Reflection.getVersion();
 			String[] split = version.substring(1, version.length() - 1).split("_"); // Remove trailing dot
 			//int majorVersion = Integer.parseInt(split[0]);
 			int minorVersion = Integer.parseInt(split[1]);
 			int revisionVersion = Integer.parseInt(split[2].substring(1)); // Substring to ignore R
 
 			if (minorVersion < 8 || (minorVersion == 8 && revisionVersion == 1)) {
-				chatSerializerClazz = com.plotsquared.bukkit.chat.Reflection.getNMSClass("ChatSerializer");
+				chatSerializerClazz = Reflection.getNMSClass("ChatSerializer");
 			} else {
-				chatSerializerClazz = com.plotsquared.bukkit.chat.Reflection.getNMSClass("IChatBaseComponent$ChatSerializer");
+				chatSerializerClazz = Reflection.getNMSClass("IChatBaseComponent$ChatSerializer");
 			}
 
 			if (chatSerializerClazz == null) {
@@ -702,7 +702,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 
 		// Since the method is so simple, and all the obfuscated methods have the same name, it's easier to reimplement 'IChatBaseComponent a(String)' than to reflectively call it
 		// Of course, the implementation may change, but fuzzy matches might break with signature changes
-		Object serializedChatComponent = fromJsonMethod.invoke(nmsChatSerializerGsonInstance, json, com.plotsquared.bukkit.chat.Reflection.getNMSClass("IChatBaseComponent"));
+		Object serializedChatComponent = fromJsonMethod.invoke(nmsChatSerializerGsonInstance, json, Reflection.getNMSClass("IChatBaseComponent"));
 
 		return nmsPacketPlayOutChatConstructor.newInstance(serializedChatComponent);
 	}
@@ -781,7 +781,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 
 	// Doc copied from interface
 	public Map<String, Object> serialize() {
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		HashMap<String, Object> map = new HashMap<>();
 		map.put("messageParts", messageParts);
 //		map.put("JSON", toJSONString());
 		return map;
@@ -829,9 +829,9 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 			JsonObject messagePart = mPrt.getAsJsonObject();
 			for (Map.Entry<String, JsonElement> entry : messagePart.entrySet()) {
 				// Deserialize text
-				if (com.plotsquared.bukkit.chat.TextualComponent.isTextKey(entry.getKey())) {
+				if (TextualComponent.isTextKey(entry.getKey())) {
 					// The map mimics the YAML serialization, which has a "key" field and one or more "value" fields
-					Map<String, Object> serializedMapForm = new HashMap<String, Object>(); // Must be object due to Bukkit serializer API compliance
+					Map<String, Object> serializedMapForm = new HashMap<>(); // Must be object due to Bukkit serializer API compliance
 					serializedMapForm.put("key", entry.getKey());
 					if (entry.getValue().isJsonPrimitive()) {
 						// Assume string
@@ -842,7 +842,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 							serializedMapForm.put("value." + compositeNestedElement.getKey(), compositeNestedElement.getValue().getAsString());
 						}
 					}
-					component.text = com.plotsquared.bukkit.chat.TextualComponent.deserialize(serializedMapForm);
+					component.text = TextualComponent.deserialize(serializedMapForm);
 				} else if (MessagePart.stylesToNames.inverse().containsKey(entry.getKey())) {
 					if (entry.getValue().getAsBoolean()) {
 						component.styles.add(MessagePart.stylesToNames.inverse().get(entry.getKey()));

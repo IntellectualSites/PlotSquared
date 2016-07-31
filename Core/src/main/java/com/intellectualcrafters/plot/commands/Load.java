@@ -148,13 +148,7 @@ public class Load extends SubCommand {
                 String world = split[1];
                 PlotId id = PlotId.fromString(split[2] + ';' + split[3]);
                 String size = split[4];
-                String server = split[5].replaceAll(".schematic", "");
-                String color;
-                if (PS.get().IMP.getServerName().replaceAll("[^A-Za-z0-9]", "").equals(server)) {
-                    color = "$4";
-                } else {
-                    color = "$1";
-                }
+                String color = "$4";
                 MainUtil.sendMessage(player,
                         "$3[$2" + (i + 1) + "$3] " + color + time + "$3 | " + color + world + ';' + id + "$3 | " + color + size + 'x' + size);
             } catch (Exception e) {
@@ -191,7 +185,7 @@ public class Load extends SubCommand {
             time -= minutes * 60;
             toreturn.append(minutes + "m ");
         }
-        if (toreturn.equals("") || (time > 0)) {
+        if (toreturn.length() == 0 || (time > 0)) {
             toreturn.append(time + "s ");
         }
         return toreturn.toString().trim();

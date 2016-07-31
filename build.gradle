@@ -6,19 +6,19 @@ buildscript {
         maven { url = "https://oss.sonatype.org/content/repositories/snapshots/"}
         jcenter()
     }
-	dependencies {
+    dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
         classpath 'org.ajoberstar:grgit:1.7.0'
     }
 }
 
 group = 'com.intellectualcrafters'
-def revision = ""
+
 ext {
     git = Grgit.open()
-    revision = "-${git.head().abbreviatedId}"
+    revision = "${git.head().abbreviatedId}"
 }
-version = "3.4.5-SNAPSHOT${revision}"
+version = "3.4.5-SNAPSHOT-${revision}"
 description = """PlotSquared"""
 
 subprojects {

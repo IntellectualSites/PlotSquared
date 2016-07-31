@@ -7,9 +7,6 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.block.BasicLocalBlockQueue;
 import com.plotsquared.sponge.util.SpongeUtil;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -32,6 +29,10 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.biome.BiomeType;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.HashSet;
 
 public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
 

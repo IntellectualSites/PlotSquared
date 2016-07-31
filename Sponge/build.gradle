@@ -14,17 +14,23 @@ buildscript {
     }
 }
 
-apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'net.minecrell.vanilla.server.library'
 
 dependencies {
     compile project(':Core')
     compile 'org.spongepowered:spongeapi:5.0.0-SNAPSHOT'
+    compile 'net.minecrell.mcstats:statslite-sponge:0.2.2'
+
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
+    maven {
+        name = 'minecrell'
+        url = 'http://repo.minecrell.net/releases'
+    }
     maven {
         name = 'forge'
         url = 'http://files.minecraftforge.net/maven'
@@ -35,7 +41,7 @@ repositories {
     }
 }
 minecraft {
-    version = "2014"
+    version = "1.10.2"
     mappings = "snapshot_20160629"
     runDir = 'run'
 }
@@ -51,9 +57,9 @@ processResources {
 shadowJar {
     dependencies {
         include(dependency(':Core'))
-        //include(dependency('org.mcstats.sponge:metrics:R8-SNAPSHOT'))
+        include dependency('net.minecrell.mcstats:statslite-sponge')
     }
-    //relocate 'org.mcstats', 'com.plotsquared.stats'
+    relocate 'net.minecrell.mcstats', 'com.plotsquared.util.mcstats'
     archiveName = "${parent.name}-${project.name}-${parent.version}.jar"
     destinationDir = file '../target'
 }

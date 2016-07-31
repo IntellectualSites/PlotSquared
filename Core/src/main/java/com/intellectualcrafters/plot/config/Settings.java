@@ -296,7 +296,7 @@ public class Settings extends Config {
         public static boolean WORLDEDIT_RESTRICTIONS = true;
         @Comment("Allow economy to be used")
         public static boolean ECONOMY = true;
-        @Comment("Send anonymous usage statistics")
+        @Comment("Send anonymous usage statistics. Bukkit only setting.")
         public static boolean METRICS = true;
         @Comment("Expiry will clear old or simplistic plots")
         public static boolean PLOT_EXPIRY = false;
