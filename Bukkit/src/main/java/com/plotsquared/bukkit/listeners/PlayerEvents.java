@@ -1673,7 +1673,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     return;
                 }
             } else if (lastPlot != null && now.equals(lastPlot)) {
-                if (!Flags.TELEPORT_DENY.allowsTeleport(pp, lastPlot)) {
+                if (!Flags.DENY_TELEPORT.allowsTeleport(pp, lastPlot)) {
                     event.setTo(BukkitUtil.getLocation(lastPlot.getSide()));
                 }
                 return;
@@ -1746,7 +1746,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     return;
                 }
             } else if (lastPlot != null && now.equals(lastPlot)) {
-                if (!Flags.TELEPORT_DENY.allowsTeleport(pp, lastPlot)) {
+                if (!Flags.DENY_TELEPORT.allowsTeleport(pp, lastPlot)) {
                     event.setTo(BukkitUtil.getLocation(lastPlot.getSide()));
                 }
                 return;
