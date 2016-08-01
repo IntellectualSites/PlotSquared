@@ -366,7 +366,11 @@ public class EntityWrapper {
     }
 
     private void restoreInventory(InventoryHolder entity) {
-        entity.getInventory().setContents(this.inventory);
+        try {
+            entity.getInventory().setContents(this.inventory);
+        } catch (IllegalArgumentException e) {
+            PS.debug("&c[WARN] Failed to restore inventory.\n Reason: " + e.getMessage());
+        }
     }
 
     public void storeLiving(LivingEntity lived) {

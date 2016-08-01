@@ -699,7 +699,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 if (this.lastRadius != 0) {
                     List<Entity> nearby = event.getEntity().getNearbyEntities(this.lastRadius, this.lastRadius, this.lastRadius);
                     for (Entity near : nearby) {
-                        if (near instanceof TNTPrimed || near.getType() == EntityType.MINECART_TNT) {
+                        if (near instanceof TNTPrimed || near.getType().equals(EntityType.MINECART_TNT)) {
                             if (!near.hasMetadata("plot")) {
                                 near.setMetadata("plot", new FixedMetadataValue((Plugin) PS.get().IMP, plot));
                             }
@@ -952,12 +952,12 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         List<Block> blocks = event.getBlocks();
         for (Block b : blocks) {
-            Location bloc = BukkitUtil.getLocation(b.getLocation().add(relative));
-            if (!area.contains(bloc.getX(), bloc.getZ())) {
+            Location bloc = BukkitUtil.getLocation(b.getLocation());
+            if (!area.contains(bloc.getX(), bloc.getZ()) || !area.contains(bloc.getX() + relative.getBlockX(), bloc.getZ() + relative.getBlockZ())) {
                 event.setCancelled(true);
                 return;
             }
-            if (!plot.equals(area.getOwnedPlot(bloc))) {
+            if (!plot.equals(area.getOwnedPlot(bloc)) || !plot.equals(area.getOwnedPlot(bloc.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())))) {
                 event.setCancelled(true);
                 return;
             }
