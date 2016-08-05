@@ -17,7 +17,7 @@ is to provide a lag-free and smooth experience.
 
 ### Developer Resources
 * [JavaDocs]  Link Temporarily Unavailable 
-* [Build Server]  Link Temporarily Unavailable 
+* [Build Server] [![Build Status](http://ci.plotsquared.com/buildStatus/icon?job=PlotSquared)](http://ci.plotsquared.com/job/PlotSquared)
 * [Maven Repo] Link Temporarily Unavailable 
 
 # Building
