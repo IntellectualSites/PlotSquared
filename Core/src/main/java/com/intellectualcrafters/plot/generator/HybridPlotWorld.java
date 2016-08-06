@@ -64,7 +64,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             case 185:
             case 186:
             case 187:
-            case 107:
             case 53:
             case 67:
             case 108:
@@ -80,11 +79,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             case 180:
             case 64:
             case 71:
-            case 193:
-            case 194:
-            case 195:
-            case 196:
-            case 197:
             case 93:
             case 94:
             case 131:
@@ -101,6 +95,13 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
             case 26:
             case 86:
+            // All fences gates
+            case 107:
+            case 193:
+            case 194:
+            case 195:
+            case 196:
+            case 197:
                 data = wrap(data, 0);
                 return data;
             case 28:
