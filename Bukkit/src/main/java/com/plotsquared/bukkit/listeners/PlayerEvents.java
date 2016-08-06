@@ -1409,15 +1409,20 @@ public class PlayerEvents extends PlotListener implements Listener {
                 continue;
             }
             if (cap == 0) {
-                return false;
+                return true;
             }
             if (mobs == null) {
                 mobs = plot.countEntities();
             }
-            if (mobs[i] >= cap) {
+            if (mobs[i]++ >= cap) {
                 return true;
             }
         }
+        if (mobs != null) {
+            plot.setMeta("EntityCount", mobs);
+            plot.setMeta("EntityCountTime", System.currentTimeMillis());
+        }
+
         return false;
     }
 

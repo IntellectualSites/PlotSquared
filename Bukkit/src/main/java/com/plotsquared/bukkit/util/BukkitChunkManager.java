@@ -425,6 +425,10 @@ public class BukkitChunkManager extends ChunkManager {
 
     @Override
     public int[] countEntities(Plot plot) {
+        int[] existing = (int[]) plot.getMeta("EntityCount");
+        if (existing != null && (System.currentTimeMillis() - (long) plot.getMeta("EntityCountTime") < 1000)) {
+            return existing;
+        }
         PlotArea area = plot.getArea();
         World world = BukkitUtil.getWorld(area.worldname);
 
