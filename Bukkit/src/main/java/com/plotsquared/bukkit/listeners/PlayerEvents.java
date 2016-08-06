@@ -1408,6 +1408,9 @@ public class PlayerEvents extends PlotListener implements Listener {
             if (cap == Integer.MAX_VALUE) {
                 continue;
             }
+            if (cap == 0) {
+                return false;
+            }
             if (mobs == null) {
                 mobs = plot.countEntities();
             }

@@ -449,9 +449,9 @@ public class BukkitChunkManager extends ChunkManager {
 
         boolean doWhole = false;
         List<Entity> entities = null;
-        if (size > 200) {
+        if (size > 200 && chunks.size() > 200) {
             entities = world.getEntities();
-            if (entities.size() < 16 + size * size / 64) {
+            if (entities.size() < 16 + size / 8) {
                 doWhole = true;
             }
         }
