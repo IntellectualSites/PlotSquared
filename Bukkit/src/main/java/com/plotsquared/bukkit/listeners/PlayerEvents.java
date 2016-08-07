@@ -1420,33 +1420,33 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return true;
             }
         }
-        for (IntegerFlag flag : flags) {
-            int i;
-            switch (flag.getName()) {
-                case "entity-cap":
-                    i = 0;
-                    break;
-                case "mob-cap":
-                    i = 3;
-                    break;
-                case "hostile-cap":
-                    i = 2;
-                    break;
-                case "animal-cap":
-                    i = 1;
-                    break;
-                case "vehicle-cap":
-                    i = 4;
-                    break;
-                case "misc-cap":
-                    i = 5;
-                    break;
-                default:
-                    i = 0;
-            }
-            mobs[i]++;
-        }
         if (mobs != null) {
+            for (IntegerFlag flag : flags) {
+                int i;
+                switch (flag.getName()) {
+                    case "entity-cap":
+                        i = 0;
+                        break;
+                    case "mob-cap":
+                        i = 3;
+                        break;
+                    case "hostile-cap":
+                        i = 2;
+                        break;
+                    case "animal-cap":
+                        i = 1;
+                        break;
+                    case "vehicle-cap":
+                        i = 4;
+                        break;
+                    case "misc-cap":
+                        i = 5;
+                        break;
+                    default:
+                        i = 0;
+                }
+                mobs[i]++;
+            }
             plot.setMeta("EntityCount", mobs);
             plot.setMeta("EntityCountTime", System.currentTimeMillis());
         }

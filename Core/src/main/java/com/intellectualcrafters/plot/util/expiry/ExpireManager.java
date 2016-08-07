@@ -18,7 +18,6 @@ import com.intellectualcrafters.plot.object.RunnableVal3;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,9 +25,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class ExpireManager {
 
@@ -217,7 +216,7 @@ public class ExpireManager {
             return false;
         }
         this.running = 2;
-        final Set<Plot> plots = PS.get().getPlots();
+        final ConcurrentLinkedDeque<Plot> plots = new ConcurrentLinkedDeque<Plot>(PS.get().getPlots());
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -226,14 +225,12 @@ public class ExpireManager {
                     return;
                 }
                 long start = System.currentTimeMillis();
-                Iterator<Plot> iterator = plots.iterator();
-                while (iterator.hasNext() && System.currentTimeMillis() - start < 2) {
+                while (!plots.isEmpty()) {
                     if (ExpireManager.this.running != 2) {
                         ExpireManager.this.running = 0;
                         return;
                     }
-                    final Plot plot = iterator.next();
-                    iterator.remove();
+                    final Plot plot = plots.poll();
                     PlotArea area = plot.getArea();
                     final ArrayDeque<ExpiryTask> applicable = new ArrayDeque<>(tasks);
                     final Collection<ExpiryTask> expired = isExpired(applicable, plot);
@@ -242,7 +239,13 @@ public class ExpireManager {
                     }
                     for (ExpiryTask expiryTask : expired) {
                         if (!expiryTask.needsAnalysis()) {
-                            expiredTask.run(plot, this, expiryTask.requiresConfirmation());
+                            expiredTask.run(plot, new Runnable() {
+                                @Override
+                                public void run() {
+                                    TaskManager.IMP.taskLaterAsync(this, 1);
+                                }
+                            }, expiryTask.requiresConfirmation());
+                            return;
                         }
                     }
                     final Runnable task = this;
@@ -252,7 +255,12 @@ public class ExpireManager {
                             passesComplexity(changed, expired, new RunnableVal<Boolean>() {
                                 @Override
                                 public void run(Boolean confirmation) {
-                                    expiredTask.run(plot, task, confirmation);
+                                    expiredTask.run(plot, new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            TaskManager.IMP.taskLaterAsync(task, 1);
+                                        }
+                                    }, confirmation);
                                 }
                             }, new Runnable() {
                                 @Override
@@ -280,7 +288,7 @@ public class ExpireManager {
                         }, new Runnable() {
                             @Override
                             public void run() {
-                                task.run();
+                                TaskManager.IMP.taskLaterAsync(task, 1);
                             }
                         });
                     } else {
