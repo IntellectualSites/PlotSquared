@@ -45,6 +45,19 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         return data;
     }
+    
+    /**
+     * rotation for pumkin, bed and fences gates
+     * @param data data Id in block
+     * @param start
+     * @return new data Id
+     */
+    public static byte wrap3(byte data, int start) {
+        byte index = (byte) (data & 4);
+        data = (byte) ((((data - start) + 1) & 3) + start);
+        
+        return (byte) (index + data);
+    }
 
     // FIXME depends on block ids
     // Possibly make abstract?
@@ -102,7 +115,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             case 195:
             case 196:
             case 197:
-                data = wrap(data, 0);
+                data = wrap3(data, 0);
                 return data;
             case 28:
             case 66:
