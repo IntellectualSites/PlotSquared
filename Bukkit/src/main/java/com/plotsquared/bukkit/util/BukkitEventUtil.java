@@ -1,30 +1,9 @@
 package com.plotsquared.bukkit.util;
 
 import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.Rating;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.EventUtil;
-import com.plotsquared.bukkit.events.ClusterFlagRemoveEvent;
-import com.plotsquared.bukkit.events.PlayerClaimPlotEvent;
-import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
-import com.plotsquared.bukkit.events.PlayerLeavePlotEvent;
-import com.plotsquared.bukkit.events.PlayerPlotDeniedEvent;
-import com.plotsquared.bukkit.events.PlayerPlotHelperEvent;
-import com.plotsquared.bukkit.events.PlayerPlotTrustedEvent;
-import com.plotsquared.bukkit.events.PlayerTeleportToPlotEvent;
-import com.plotsquared.bukkit.events.PlotClearEvent;
-import com.plotsquared.bukkit.events.PlotComponentSetEvent;
-import com.plotsquared.bukkit.events.PlotDeleteEvent;
-import com.plotsquared.bukkit.events.PlotFlagAddEvent;
-import com.plotsquared.bukkit.events.PlotFlagRemoveEvent;
-import com.plotsquared.bukkit.events.PlotMergeEvent;
-import com.plotsquared.bukkit.events.PlotRateEvent;
-import com.plotsquared.bukkit.events.PlotUnlinkEvent;
+import com.plotsquared.bukkit.events.*;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -110,12 +89,12 @@ public class BukkitEventUtil extends EventUtil {
 
     @Override
     public void callTrusted(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
-        callEvent(new PlayerPlotHelperEvent(getPlayer(initiator), plot, player, added));
+        callEvent(new PlayerPlotTrustedEvent(getPlayer(initiator), plot, player, added));
     }
 
     @Override
     public void callMember(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
-        callEvent(new PlayerPlotTrustedEvent(getPlayer(initiator), plot, player, added));
+        callEvent(new PlayerPlotHelperEvent(getPlayer(initiator), plot, player, added));
     }
 
     @Override

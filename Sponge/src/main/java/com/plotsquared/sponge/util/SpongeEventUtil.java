@@ -106,12 +106,12 @@ public class SpongeEventUtil extends EventUtil {
     
     @Override
     public void callTrusted(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
-        callEvent(new PlayerPlotHelperEvent(SpongeUtil.getPlayer(initiator), plot, player, added));
+        callEvent(new PlayerPlotTrustedEvent(SpongeUtil.getPlayer(initiator), plot, player, added));
     }
     
     @Override
     public void callMember(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
-        callEvent(new PlayerPlotTrustedEvent(SpongeUtil.getPlayer(initiator), plot, player, added));
+        callEvent(new PlayerPlotHelperEvent(SpongeUtil.getPlayer(initiator), plot, player, added));
     }
     
     @Override
