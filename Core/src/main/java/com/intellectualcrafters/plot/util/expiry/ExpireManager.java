@@ -220,6 +220,7 @@ public class ExpireManager {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
+                final Runnable task = this;
                 if (ExpireManager.this.running != 2) {
                     ExpireManager.this.running = 0;
                     return;
@@ -242,13 +243,12 @@ public class ExpireManager {
                             expiredTask.run(plot, new Runnable() {
                                 @Override
                                 public void run() {
-                                    TaskManager.IMP.taskLaterAsync(this, 1);
+                                    TaskManager.IMP.taskLaterAsync(task, 1);
                                 }
                             }, expiryTask.requiresConfirmation());
                             return;
                         }
                     }
-                    final Runnable task = this;
                     final RunnableVal<PlotAnalysis> handleAnalysis = new RunnableVal<PlotAnalysis>() {
                         @Override
                         public void run(final PlotAnalysis changed) {
@@ -308,7 +308,7 @@ public class ExpireManager {
                         }
                     }, 86400000);
                 } else {
-                    TaskManager.runTaskLaterAsync(this, 20 * 10);
+                    TaskManager.runTaskLaterAsync(task, 20 * 10);
                 }
             }
         });
