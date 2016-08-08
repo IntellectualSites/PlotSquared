@@ -22,6 +22,9 @@ public class EntitySpawnListener implements Listener {
             return;
         }
         Plot plot = area.getOwnedPlotAbs(location);
+        if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
+            event.setCancelled(true);
+        }
         switch (entity.getType()) {
             case ENDER_CRYSTAL:
                 if (plot == null) {
@@ -33,9 +36,6 @@ public class EntitySpawnListener implements Listener {
                 if (PlayerEvents.checkEntity(entity, plot)) {
                     event.setCancelled(true);
                 }
-        }
-        if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
-            event.setCancelled(true);
         }
     }
 }

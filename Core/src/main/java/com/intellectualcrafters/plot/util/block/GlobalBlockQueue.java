@@ -291,7 +291,7 @@ public class GlobalBlockQueue {
         if (this.runnables.isEmpty()) {
             return false;
         }
-        final ConcurrentLinkedDeque<Runnable> tmp = new ConcurrentLinkedDeque<>(this.runnables);
+        final ArrayList<Runnable> tmp = new ArrayList<>(this.runnables);
         this.runnables.clear();
         for (final Runnable runnable : tmp) {
             runnable.run();
