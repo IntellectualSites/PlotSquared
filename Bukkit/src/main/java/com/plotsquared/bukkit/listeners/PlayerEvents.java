@@ -76,7 +76,9 @@ import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
@@ -2150,6 +2152,13 @@ public class PlayerEvents extends PlotListener implements Listener {
         if ((count > 0 && count == event.getAffectedEntities().size()) || !onProjectileHit(event)) {
             event.setCancelled(true);
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onEntityCombustByEntity(EntityCombustByEntityEvent event) {
+        EntityDamageByEntityEvent eventChange = new EntityDamageByEntityEvent(event.getCombuster(), event.getEntity(), EntityDamageEvent.DamageCause.FIRE_TICK, event.getDuration());
+        onEntityDamageByEntityEvent(eventChange);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
