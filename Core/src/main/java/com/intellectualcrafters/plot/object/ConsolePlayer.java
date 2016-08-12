@@ -33,6 +33,11 @@ public class ConsolePlayer extends PlotPlayer {
     }
 
     @Override
+    public boolean canTeleport(Location loc) {
+        return true;
+    }
+
+    @Override
     public Location getLocation() {
         return this.getMeta("location");
     }
