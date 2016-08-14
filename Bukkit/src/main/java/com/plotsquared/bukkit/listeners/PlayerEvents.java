@@ -1187,14 +1187,13 @@ public class PlayerEvents extends PlotListener implements Listener {
                 }
                 lb = new BukkitLazyBlock(blockId, block);
                 ItemStack hand = player.getItemInHand();
-                if (eventType != null) {
+                if (eventType != null && (eventType != PlayerBlockEventType.INTERACT_BLOCK || !player.isSneaking())) {
                     break;
                 }
                 Material type = (hand == null) ? null : hand.getType();
                 int id = (type == null) ? 0 : type.getId();
                 if (id == 0) {
                     eventType = PlayerBlockEventType.INTERACT_BLOCK;
-                    lb = new BukkitLazyBlock(0, block);
                     break;
                 }
                 if (id < 198) {
@@ -1689,7 +1688,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             if (area == null) {
                 return;
             }
-            Plot now = area.getPlotAbs(loc);
+            Plot now = area.getPlot(loc);
             Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
                 if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
@@ -1762,7 +1761,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             if (area == null) {
                 return;
             }
-            Plot now = area.getPlotAbs(loc);
+            Plot now = area.getPlot(loc);
             Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
                 if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
