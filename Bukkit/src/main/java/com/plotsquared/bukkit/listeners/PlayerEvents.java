@@ -486,7 +486,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 pp.deleteMeta("lastplot");
                 return;
             }
-            Plot now = area.getPlotAbs(loc);
+            Plot now = area.getPlot(loc);
             Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
                 if (lastPlot != null && !plotExit(pp, lastPlot)) {
