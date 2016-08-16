@@ -66,13 +66,14 @@ public class HybridPlotManager extends ClassicPlotManager {
         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
             return true;
         }
-        createSchemAbs(hpw, pos1, pos2, true);
+        LocalBlockQueue queue = hpw.getQueue(false);
+        createSchemAbs(hpw, queue, pos1, pos2, true);
+        queue.enqueue();
         return true;
     }
 
-    private void createSchemAbs(HybridPlotWorld hpw, Location pos1, Location pos2, boolean clear) {
+    private void createSchemAbs(HybridPlotWorld hpw, LocalBlockQueue queue, Location pos1, Location pos2, boolean clear) {
         int size = hpw.SIZE;
-        LocalBlockQueue queue = hpw.getQueue(false);
         for (int x = pos1.getX(); x <= pos2.getX(); x++) {
             short absX = (short) ((x - hpw.ROAD_OFFSET_X) % size);
             if (absX < 0) {
@@ -96,7 +97,6 @@ public class HybridPlotManager extends ClassicPlotManager {
                 }
             }
         }
-        queue.enqueue();
     }
 
     @Override
@@ -113,7 +113,9 @@ public class HybridPlotManager extends ClassicPlotManager {
         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
             return true;
         }
-        createSchemAbs(hpw, pos1, pos2, true);
+        LocalBlockQueue queue = hpw.getQueue(false);
+        createSchemAbs(hpw, queue, pos1, pos2, true);
+        queue.enqueue();
         return true;
     }
 
@@ -127,11 +129,12 @@ public class HybridPlotManager extends ClassicPlotManager {
         Location pos2 = getPlotBottomLocAbs(hpw, id2);
         pos1.setY(0);
         pos2.setY(256);
-        createSchemAbs(hpw, pos1, pos2, true);
-        if (!hpw.ROAD_SCHEMATIC_ENABLED) {
-            return true;
+        LocalBlockQueue queue = hpw.getQueue(false);
+        createSchemAbs(hpw, queue, pos1, pos2, true);
+        if (hpw.ROAD_SCHEMATIC_ENABLED) {
+            createSchemAbs(hpw, queue, pos1, pos2, true);
         }
-        createSchemAbs(hpw, pos1, pos2, true);
+        queue.enqueue();
         return true;
     }
 
@@ -189,7 +192,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                 top.setY(256);
                 queue.setCuboid(bot, top, air);
                 // And finally set the schematic, the y value is unimportant for this function
-                pastePlotSchematic(dpw, bot, top);
+                pastePlotSchematic(dpw, queue, bot, top);
             }
         }, new Runnable() {
             @Override
@@ -202,10 +205,10 @@ public class HybridPlotManager extends ClassicPlotManager {
         return true;
     }
 
-    public void pastePlotSchematic(HybridPlotWorld plotWorld, Location l1, Location l2) {
+    public void pastePlotSchematic(HybridPlotWorld plotWorld, LocalBlockQueue queue, Location l1, Location l2) {
         if (!plotWorld.PLOT_SCHEMATIC) {
             return;
         }
-        createSchemAbs(plotWorld, l1, l2, false);
+        createSchemAbs(plotWorld, queue, l1, l2, false);
     }
 }
