@@ -412,7 +412,6 @@ public class PlayerEvents extends PlotListener implements Listener {
                     pattern = RegExUtil.compiledPatterns.get(s);
                 }
                 if (pattern.matcher(msg).matches()) {
-                    MainUtil.sendMessage(pp, C.COMMAND_BLOCKED);
                     String perm;
                     if (plot.isAdded(pp.getUUID())) {
                         perm = "plots.admin.command.blocked-cmds.shared";
@@ -420,6 +419,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                         perm = "plots.admin.command.blocked-cmds.other";
                     }
                     if (!Permissions.hasPermission(pp, perm)) {
+                        MainUtil.sendMessage(pp, C.COMMAND_BLOCKED);
                         event.setCancelled(true);
                     }
                     return;
