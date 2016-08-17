@@ -346,7 +346,7 @@ public class FlagManager {
             } else {
                 split = key.split(":");
             }
-            Flag<?> flag = getFlag(split[0]);
+            Flag<?> flag = getOrCreateFlag(split[0]);
             Object value = flag.parseValue(split[1]);
             map.put(flag, value);
         }

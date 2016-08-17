@@ -149,8 +149,8 @@ public final class Flags {
     }
 
     public static Flag<?> getFlag(String flag) {
-    return flags.get(flag);
-}
+        return flags.get(flag);
+    }
 
     public static void registerFlag(final Flag<?> flag) {
         final Flag<?> duplicate = flags.put(flag.getName(), flag);
