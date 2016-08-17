@@ -115,6 +115,7 @@ public final class Flags {
     };
     public static final BooleanFlag SLEEP = new BooleanFlag("sleep");
     public static final TeleportDenyFlag DENY_TELEPORT = new TeleportDenyFlag("deny-teleport");
+    public static final BooleanFlag DENY_EXIT = new BooleanFlag("deny-exit");
 
 
     private static final HashMap<String, Flag<?>> flags;

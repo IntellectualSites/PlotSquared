@@ -182,6 +182,9 @@ public class PlotListener {
             if (pw == null) {
                 return true;
             }
+            if (Flags.DENY_EXIT.isTrue(plot)) {
+                return false;
+            }
             if (plot.getFlag(Flags.GAMEMODE).isPresent() || plot.getFlag(Flags.GUEST_GAMEMODE).isPresent()) {
                 if (player.getGameMode() != pw.GAMEMODE) {
                     if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
