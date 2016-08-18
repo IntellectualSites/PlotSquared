@@ -18,7 +18,7 @@ ext {
     git = Grgit.open()
     revision = "${git.head().abbreviatedId}"
 }
-version = "3.4.5-SNAPSHOT-${revision}"
+version = "3.4.6-SNAPSHOT-${revision}"
 description = """PlotSquared"""
 
 subprojects {
