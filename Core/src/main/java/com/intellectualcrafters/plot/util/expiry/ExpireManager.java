@@ -366,7 +366,7 @@ public class ExpireManager {
                 } else {
                     opp = UUIDHandler.getUUIDWrapper().getOfflinePlayer(name);
                 }
-                if ((last = opp.getLastPlayed()) != 0) {
+                if (opp != null && (last = opp.getLastPlayed()) != 0) {
                     this.dates_cache.put(uuid, last);
                 } else {
                     return 0;
