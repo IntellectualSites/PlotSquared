@@ -49,13 +49,14 @@ public class WEManager {
             return regions;
         }
         boolean allowMember = player.hasPermission("plots.worldedit.member");
-        for (Plot plot : area.getPlots()) {
-            if (!plot.isBasePlot() || (Settings.Done.RESTRICT_BUILDING && (plot.getFlag(Flags.DONE).isPresent()))) {
-                continue;
-            }
-            if (allowMember && plot.isAdded(uuid) || !allowMember && (plot.isOwner(uuid) || plot.getTrusted().contains(uuid))) {
-                regions.addAll(plot.getRegions());
-            }
+        Plot plot = player.getCurrentPlot();
+        HashSet<RegionWrapper> allowed = new HashSet<>();
+        if (plot == null) {
+            plot = player.getMeta("WorldEditRegionPlot");
+        }
+        if (plot != null && (!Settings.Done.RESTRICT_BUILDING || !Flags.DONE.isSet(plot)) && ((allowMember && plot.isAdded(uuid)) || (!allowMember && (plot.isOwner(uuid)) || plot.getTrusted().contains(uuid)))) {
+            regions.addAll(plot.getRegions());
+            player.setMeta("WorldEditRegionPlot", plot);
         }
         return regions;
     }
