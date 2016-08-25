@@ -4,6 +4,8 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.block.BasicLocalBlockQueue;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -124,6 +126,62 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
                     }
                 }
             }
+        }
+    }
+
+    private Field fieldNeighbors;
+    private Method chunkGetHandle;
+
+    /**
+     * Exploiting a bug in the vanilla lighting algorithm for faster block placement
+     *  - Could have been achieved without reflection by force unloading specific chunks
+     *  - Much faster just setting the variable manually though
+     * @param chunk
+     * @return
+     */
+    protected Object[] disableLighting(Chunk chunk) {
+        try {
+            if (chunkGetHandle == null) {
+                chunkGetHandle = chunk.getClass().getDeclaredMethod("getHandle");
+                chunkGetHandle.setAccessible(true);
+            }
+            Object nmsChunk = chunkGetHandle.invoke(chunk);
+            if (fieldNeighbors == null) {
+                fieldNeighbors = nmsChunk.getClass().getDeclaredField("neighbors");
+                fieldNeighbors.setAccessible(true);
+            }
+            Object value = fieldNeighbors.get(nmsChunk);
+            fieldNeighbors.set(nmsChunk, 0);
+            return new Object[] {nmsChunk, value};
+        } catch (Throwable ignore) {}
+        return null;
+    }
+
+    protected void disableLighting(Object[] disableResult) {
+        if (disableResult != null) {
+            try {
+                fieldNeighbors.set(disableResult[0], 0);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    protected void resetLighting(Object[] disableResult) {
+        if (disableResult != null) {
+            try {
+                fieldNeighbors.set(disableResult[0], disableResult[1]);
+            } catch (Throwable ignore) {
+                ignore.printStackTrace();
+            }
+        }
+    }
+
+    protected void enableLighting(Object[] disableResult) {
+        if (disableResult != null) {
+            try {
+                fieldNeighbors.set(disableResult[0], 0x739C0);
+            } catch (Throwable ignore) {}
         }
     }
 }

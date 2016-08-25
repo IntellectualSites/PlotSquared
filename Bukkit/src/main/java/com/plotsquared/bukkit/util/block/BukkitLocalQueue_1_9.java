@@ -1,9 +1,7 @@
 package com.plotsquared.bukkit.util.block;
 
-import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.ChunkWrapper;
 import com.intellectualcrafters.plot.object.PseudoRandom;
-import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.ReflectionUtils;
 import com.intellectualcrafters.plot.util.block.BasicLocalBlockQueue;
@@ -380,87 +378,73 @@ public class BukkitLocalQueue_1_9 extends BukkitLocalQueue<char[]> {
             Object c = this.methodGetHandleChunk.of(chunk).call();
 
             ChunkWrapper wrapper = new ChunkWrapper(getWorld(), bc.getX(), bc.getZ());
-            if (fixAll && !(boolean) this.methodAreNeighborsLoaded.of(c).call(1)) {
-                World world = chunk.getWorld();
-                for (int x = wrapper.x - 1; x <= wrapper.x + 1; x++) {
-                    for (int z = wrapper.z - 1; z <= wrapper.z + 1; z++) {
-                        if (x != 0 && z != 0) {
-                            Chunk other = world.getChunkAt(x, z);
-                            while (!other.isLoaded()) {
-                                other.load(true);
-                            }
-                            ChunkManager.manager.loadChunk(getWorld(), new ChunkLoc(x, z), true);
-                        }
-                    }
-                }
-            }
+            Object[] result = disableLighting(chunk);
+            enableLighting(result);
 
             this.methodInitLighting.of(c).call();
 
-            if (bc.getTotalRelight() == 0 && !fixAll) {
-                return true;
-            }
+            if (bc.getTotalRelight() != 0 || fixAll) {
+                Object[] sections = (Object[]) this.fieldSections.of(c).get();
+                Object w = this.fieldWorld.of(c).get();
 
-            Object[] sections = (Object[]) this.fieldSections.of(c).get();
-            Object w = this.fieldWorld.of(c).get();
-
-            int X = chunk.getX() << 4;
-            int Z = chunk.getZ() << 4;
-
-            ReflectionUtils.RefMethod.RefExecutor relight = this.methodW.of(w);
-            for (int j = 0; j < sections.length; j++) {
-                Object section = sections[j];
-                if (section == null) {
-                    continue;
-                }
-                if (bc.getRelight(j) == 0 && !fixAll || bc.getCount(j) == 0 || bc.getCount(j) >= 4096 && bc.getAir(j) == 0) {
-                    continue;
-                }
-                char[] array = bc.getIdArray(j);
-                if (array != null) {
-                    int l = PseudoRandom.random.random(2);
-                    for (int k = 0; k < array.length; k++) {
-                        int i = array[k];
-                        if (i < 16) {
-                            continue;
-                        }
-                        short id = (short) (i >> 4);
-                        switch (id) { // Lighting
-                            default:
-                                if (!fixAll) {
-                                    continue;
-                                }
-                                if ((k & 1) == l) {
-                                    l = 1 - l;
-                                    continue;
-                                }
-                            case 10:
-                            case 11:
-                            case 39:
-                            case 40:
-                            case 50:
-                            case 51:
-                            case 62:
-                            case 74:
-                            case 76:
-                            case 89:
-                            case 122:
-                            case 124:
-                            case 130:
-                            case 138:
-                            case 169:
-                                int x = MainUtil.x_loc[j][k];
-                                int y = MainUtil.y_loc[j][k];
-                                int z = MainUtil.z_loc[j][k];
-                                if (isSurrounded(bc.blocks, x, y, z)) {
-                                    continue;
-                                }
-                                Object pos = this.classBlockPositionConstructor.create(X + x, y, Z + z);
-                                relight.call(pos);
+                int X = chunk.getX() << 4;
+                int Z = chunk.getZ() << 4;
+                ReflectionUtils.RefMethod.RefExecutor relight = this.methodW.of(w);
+                for (int j = 0; j < sections.length; j++) {
+                    Object section = sections[j];
+                    if (section == null) {
+                        continue;
+                    }
+                    if (bc.getRelight(j) == 0 && !fixAll || bc.getCount(j) == 0 || bc.getCount(j) >= 4096 && bc.getAir(j) == 0) {
+                        continue;
+                    }
+                    char[] array = bc.getIdArray(j);
+                    if (array != null) {
+                        int l = PseudoRandom.random.random(2);
+                        for (int k = 0; k < array.length; k++) {
+                            int i = array[k];
+                            if (i < 16) {
+                                continue;
+                            }
+                            short id = (short) (i >> 4);
+                            switch (id) { // Lighting
+                                default:
+                                    if (!fixAll) {
+                                        continue;
+                                    }
+                                    if ((k & 1) == l) {
+                                        l = 1 - l;
+                                        continue;
+                                    }
+                                case 10:
+                                case 11:
+                                case 39:
+                                case 40:
+                                case 50:
+                                case 51:
+                                case 62:
+                                case 74:
+                                case 76:
+                                case 89:
+                                case 122:
+                                case 124:
+                                case 130:
+                                case 138:
+                                case 169:
+                                    int x = MainUtil.x_loc[j][k];
+                                    int y = MainUtil.y_loc[j][k];
+                                    int z = MainUtil.z_loc[j][k];
+                                    if (isSurrounded(bc.blocks, x, y, z)) {
+                                        continue;
+                                    }
+                                    Object pos = this.classBlockPositionConstructor.create(X + x, y, Z + z);
+                                    relight.call(pos);
+                            }
                         }
                     }
                 }
             }
+            resetLighting(result);
             return true;
         } catch (Throwable e) {
             e.printStackTrace();
