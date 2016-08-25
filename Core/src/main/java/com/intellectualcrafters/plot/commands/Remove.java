@@ -5,6 +5,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
@@ -71,20 +72,30 @@ public class Remove extends SubCommand {
                 if (!uuids.isEmpty()) {
                     for (UUID uuid : uuids) {
                         if (uuid == DBFunc.everyone) {
-                            if (plot.removeTrusted(uuid) | plot.removeMember(uuid) | plot.removeDenied(uuid)) {
+                            if (plot.removeTrusted(uuid)){
+                                EventUtil.manager.callTrusted(player, plot, uuid, false);
+                                count++;
+                            }else if (plot.removeMember(uuid)) {
+                                EventUtil.manager.callMember(player, plot, uuid, false);
+                                count++;
+                            }else if (plot.removeDenied(uuid)) {
+                                EventUtil.manager.callDenied(player, plot, uuid, false);
                                 count++;
                             }
                         }
                         else if (plot.getTrusted().contains(uuid)) {
                             if (plot.removeTrusted(uuid)) {
+                                EventUtil.manager.callTrusted(player, plot, uuid, false);
                                 count++;
                             }
                         } else if (plot.getMembers().contains(uuid)) {
                             if (plot.removeMember(uuid)) {
+                                EventUtil.manager.callMember(player, plot, uuid, false);
                                 count++;
                             }
                         } else if (plot.getDenied().contains(uuid)) {
                             if (plot.removeDenied(uuid)) {
+                                EventUtil.manager.callDenied(player, plot, uuid, false);
                                 count++;
                             }
                         }
