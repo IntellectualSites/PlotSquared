@@ -28,6 +28,16 @@ import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.listener.PlayerBlockEventType;
 import com.plotsquared.listener.PlotListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -112,17 +122,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
 
 /**
  * Player Events involving plots.
@@ -469,6 +468,16 @@ public class PlayerEvents extends PlotListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onTeleport(PlayerTeleportEvent event) {
+        if (event.getTo() == null || event.getFrom() == null) {
+            BukkitUtil.getPlayer(event.getPlayer()).deleteMeta("location");
+            BukkitUtil.getPlayer(event.getPlayer()).deleteMeta("lastplot");
+            return;
+        }
+        playerMove(event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void playerMove(PlayerMoveEvent event) {
         org.bukkit.Location from = event.getFrom();
         org.bukkit.Location to = event.getTo();
@@ -489,35 +498,45 @@ public class PlayerEvents extends PlotListener implements Listener {
             Plot now = area.getPlot(loc);
             Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
-                if (lastPlot != null && !plotExit(pp, lastPlot)) {
+                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
+                    this.tmpTeleport = false;
                     if (lastPlot.equals(BukkitUtil.getLocation(from).getPlot())) {
                         player.teleport(from);
                     } else {
                         player.teleport(player.getWorld().getSpawnLocation());
                     }
+                    this.tmpTeleport = true;
                     event.setCancelled(true);
                     return;
                 }
             } else if (now.equals(lastPlot)) {
                 ForceFieldListener.handleForcefield(player, pp, now);
                 return;
-            } else if (!plotEntry(pp, now)) {
+            } else if (!plotEntry(pp, now) && this.tmpTeleport) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
-                player.teleport(from);
-                event.setCancelled(true);
+                this.tmpTeleport = false;
+                to.setX(from.getBlockX());
+                to.setY(from.getBlockY());
+                to.setZ(from.getBlockZ());
+                player.teleport(event.getTo());
+                this.tmpTeleport = true;
                 return;
             }
             Integer border = area.getBorder();
             if (x2 > border) {
                 to.setX(border - 4);
+                this.tmpTeleport = false;
                 player.teleport(event.getTo());
+                this.tmpTeleport = true;
                 MainUtil.sendMessage(pp, C.BORDER);
                 return;
             }
             if (x2 < -border) {
                 to.setX(-border + 4);
+                this.tmpTeleport = false;
                 player.teleport(event.getTo());
+                this.tmpTeleport = true;
                 MainUtil.sendMessage(pp, C.BORDER);
                 return;
             }
@@ -540,33 +559,44 @@ public class PlayerEvents extends PlotListener implements Listener {
             Plot now = area.getPlot(loc);
             Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
-                if (lastPlot != null && !plotExit(pp, lastPlot)) {
+                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
+                    this.tmpTeleport = false;
                     if (lastPlot.equals(BukkitUtil.getLocation(from).getPlot())) {
                         player.teleport(from);
                     } else {
                         player.teleport(player.getWorld().getSpawnLocation());
                     }
+                    this.tmpTeleport = true;
                     event.setCancelled(true);
                     return;
                 }
             } else if (now.equals(lastPlot)) {
                 ForceFieldListener.handleForcefield(player, pp, now);
                 return;
-            } else if (!plotEntry(pp, now)) {
+            } else if (!plotEntry(pp, now) && this.tmpTeleport) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
+                this.tmpTeleport = false;
                 player.teleport(from);
-                event.setCancelled(true);
+                to.setX(from.getBlockX());
+                to.setY(from.getBlockY());
+                to.setZ(from.getBlockZ());
+                player.teleport(event.getTo());
+                this.tmpTeleport = true;
                 return;
             }
             Integer border = area.getBorder();
             if (z2 > border) {
                 to.setZ(border - 4);
+                this.tmpTeleport = false;
                 player.teleport(event.getTo());
+                this.tmpTeleport = true;
                 MainUtil.sendMessage(pp, C.BORDER);
             } else if (z2 < -border) {
                 to.setZ(-border + 4);
+                this.tmpTeleport = false;
                 player.teleport(event.getTo());
+                this.tmpTeleport = true;
                 MainUtil.sendMessage(pp, C.BORDER);
             }
         }
@@ -1664,159 +1694,6 @@ public class PlayerEvents extends PlotListener implements Listener {
                         || (igniteCause == BlockIgniteEvent.IgniteCause.SPREAD || igniteCause == BlockIgniteEvent.IgniteCause.LAVA) && (
                         !plot.getFlag(Flags.BLOCK_IGNITION).or(false) || plotIgnited == null || !plotIgnited.equals(plot))) {
                     event.setCancelled(true);
-                }
-            }
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onTeleport(PlayerTeleportEvent event) {
-        if (event.getTo() == null || event.getFrom() == null) {
-            BukkitUtil.getPlayer(event.getPlayer()).deleteMeta("location");
-            BukkitUtil.getPlayer(event.getPlayer()).deleteMeta("lastplot");
-            return;
-        }
-        org.bukkit.Location from = event.getFrom();
-        org.bukkit.Location to = event.getTo();
-        int x2;
-        if (MathMan.roundInt(from.getX()) != (x2 = MathMan.roundInt(to.getX()))) {
-            Player player = event.getPlayer();
-            PlotPlayer pp = BukkitUtil.getPlayer(player);
-            Location loc = BukkitUtil.getLocation(to);
-            pp.setMeta("location", loc);
-            PlotArea area = loc.getPlotArea();
-            if (area == null) {
-                return;
-            }
-            Plot now = area.getPlot(loc);
-            Plot lastPlot = pp.getMeta("lastplot");
-            if (now == null) {
-                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
-                    if (lastPlot.equals(area.getPlot(BukkitUtil.getLocation(from)))) {
-                        this.tmpTeleport = false;
-                        player.teleport(from);
-                        this.tmpTeleport = true;
-                    } else {
-                        Location spawn = BukkitUtil.getLocation(player.getWorld().getSpawnLocation());
-                        if (spawn.getEuclideanDistanceSquared(pp.getLocation()) > 2) {
-                            this.tmpTeleport = false;
-                            player.teleport(player.getWorld().getSpawnLocation());
-                            this.tmpTeleport = true;
-                        }
-                    }
-                    event.setCancelled(true);
-                    return;
-                }
-            } else if (lastPlot != null && now.equals(lastPlot)) {
-                if (!Flags.DENY_TELEPORT.allowsTeleport(pp, lastPlot)) {
-                    event.setTo(BukkitUtil.getLocation(lastPlot.getSide()));
-                }
-                return;
-            } else if (!plotEntry(pp, now) && this.tmpTeleport) {
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
-                if (!now.equals(area.getPlot(BukkitUtil.getLocation(from)))) {
-                    this.tmpTeleport = false;
-                    player.teleport(from);
-                    this.tmpTeleport = true;
-                } else {
-                    Location spawn = BukkitUtil.getLocation(player.getWorld().getSpawnLocation());
-                    if (spawn.getEuclideanDistanceSquared(pp.getLocation()) > 2) {
-                        this.tmpTeleport = false;
-                        player.teleport(player.getWorld().getSpawnLocation());
-                        this.tmpTeleport = true;
-                    }
-                }
-                event.setCancelled(true);
-                return;
-            }
-            Integer border = area.getBorder();
-            if (this.tmpTeleport) {
-                if (x2 > border) {
-                    to.setX(border - 4);
-                    this.tmpTeleport = false;
-                    player.teleport(event.getTo());
-                    this.tmpTeleport = true;
-                    MainUtil.sendMessage(pp, C.BORDER);
-                    return;
-                } else if (x2 < -border) {
-                    to.setX(-border + 4);
-                    this.tmpTeleport = false;
-                    player.teleport(event.getTo());
-                    this.tmpTeleport = true;
-                    MainUtil.sendMessage(pp, C.BORDER);
-                    return;
-                }
-            }
-            return;
-        }
-        int z2;
-        if (MathMan.roundInt(from.getZ()) != (z2 = MathMan.roundInt(to.getZ()))) {
-            Player player = event.getPlayer();
-            PlotPlayer pp = BukkitUtil.getPlayer(player);
-            // Set last location
-            Location loc = BukkitUtil.getLocation(to);
-            pp.setMeta("location", loc);
-            PlotArea area = loc.getPlotArea();
-            if (area == null) {
-                return;
-            }
-            Plot now = area.getPlot(loc);
-            Plot lastPlot = pp.getMeta("lastplot");
-            if (now == null) {
-                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
-                    if (lastPlot.equals(area.getPlot(BukkitUtil.getLocation(from)))) {
-                        this.tmpTeleport = false;
-                        player.teleport(from);
-                        this.tmpTeleport = true;
-                    } else {
-                        Location spawn = BukkitUtil.getLocation(player.getWorld().getSpawnLocation());
-                        if (spawn.getEuclideanDistanceSquared(pp.getLocation()) > 2) {
-                            this.tmpTeleport = false;
-                            player.teleport(player.getWorld().getSpawnLocation());
-                            this.tmpTeleport = true;
-                        }
-                    }
-                    event.setCancelled(true);
-                    return;
-                }
-            } else if (lastPlot != null && now.equals(lastPlot)) {
-                if (!Flags.DENY_TELEPORT.allowsTeleport(pp, lastPlot)) {
-                    event.setTo(BukkitUtil.getLocation(lastPlot.getSide()));
-                }
-                return;
-            } else if (!plotEntry(pp, now) && this.tmpTeleport) {
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
-                if (!now.equals(area.getPlot(BukkitUtil.getLocation(from)))) {
-                    this.tmpTeleport = false;
-                    player.teleport(from);
-                    this.tmpTeleport = true;
-                } else {
-                    Location spawn = BukkitUtil.getLocation(player.getWorld().getSpawnLocation());
-                    if (spawn.getEuclideanDistanceSquared(pp.getLocation()) > 2) {
-                        this.tmpTeleport = false;
-                        player.teleport(player.getWorld().getSpawnLocation());
-                        this.tmpTeleport = true;
-                    }
-                }
-                event.setCancelled(true);
-                return;
-            }
-            Integer border = area.getBorder();
-            if (this.tmpTeleport) {
-                if (z2 > border) {
-                    to.setZ(border - 4);
-                    this.tmpTeleport = false;
-                    player.teleport(event.getTo());
-                    this.tmpTeleport = true;
-                    MainUtil.sendMessage(pp, C.BORDER);
-                } else if (z2 < -border) {
-                    to.setZ(-border + 4);
-                    this.tmpTeleport = false;
-                    player.teleport(event.getTo());
-                    this.tmpTeleport = true;
-                    MainUtil.sendMessage(pp, C.BORDER);
                 }
             }
         }
