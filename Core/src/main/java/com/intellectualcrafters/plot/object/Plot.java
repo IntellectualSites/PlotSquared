@@ -15,6 +15,7 @@ import com.intellectualcrafters.plot.util.BO3Handler;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.StringMan;
@@ -25,10 +26,9 @@ import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import com.intellectualcrafters.plot.util.expiry.PlotAnalysis;
 import com.plotsquared.listener.PlotListener;
-
-import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -2529,15 +2529,16 @@ public class Plot {
     public List<Location> getAllCorners() {
         Area area = new Area();
         for (RegionWrapper region : this.getRegions()) {
-            Area rectArea = new Area(new Rectangle(region.minX, region.minZ, region.maxX - region.minX + 1, region.maxZ - region.minZ + 1));
+            Rectangle2D rect = new Rectangle2D.Double(region.minX - 0.6, region.minZ - 0.6, region.maxX - region.minX + 1.2, region.maxZ - region.minZ + 1.2);
+            Area rectArea = new Area(rect);
             area.add(rectArea);
         }
         List<Location> locs = new ArrayList<>();
         double[] coords = new double[6];
         for (PathIterator pi = area.getPathIterator(null); !pi.isDone(); pi.next()) {
             int type = pi.currentSegment(coords);
-            int x = (int) coords[0];
-            int z = (int) coords[1];
+            int x = (int) MathMan.inverseRound(coords[0]);
+            int z = (int) MathMan.inverseRound(coords[1]);
             if (type != 4) {
                 locs.add(new Location(this.area.worldname, x, 0, z));
             }

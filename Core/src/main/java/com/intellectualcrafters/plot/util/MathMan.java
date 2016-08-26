@@ -66,6 +66,11 @@ public class MathMan {
         return (byte) ((value >> 4) & 0xF);
     }
 
+    public static long inverseRound(double val) {
+        long round = Math.round(val);
+        return (long) (round + Math.signum(val - round));
+    }
+
     public static int sqrt(int x) {
         int xn;
 
