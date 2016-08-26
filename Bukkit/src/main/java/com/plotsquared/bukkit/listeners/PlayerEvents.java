@@ -607,7 +607,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         PlotPlayer plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
         Location location = plotPlayer.getLocation();
         PlotArea area = location.getPlotArea();
-        if (area == null || (!area.PLOT_CHAT && !plotPlayer.getAttribute("chat"))) {
+        if (area == null || (!area.PLOT_CHAT != plotPlayer.getAttribute("chat"))) {
             return;
         }
         Plot plot = area.getPlot(location);

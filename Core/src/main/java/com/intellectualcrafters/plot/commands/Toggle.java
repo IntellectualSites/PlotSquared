@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal2;
 import com.intellectualcrafters.plot.object.RunnableVal3;
@@ -67,7 +68,9 @@ public class Toggle extends Command {
             description = "Toggle plot title messages")
     public void titles(Command command, PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm,
             RunnableVal2<Command, CommandResult> whenDone) {
-        if (toggle(player, "disabletitles")) {
+        PlotArea area = player.getApplicablePlotArea();
+        boolean chat = area == null ? false : area.PLOT_CHAT;
+        if (toggle(player, "disabletitles") != chat) {
             MainUtil.sendMessage(player, C.TOGGLE_ENABLED, command.toString());
         } else {
             MainUtil.sendMessage(player, C.TOGGLE_DISABLED, command.toString());
