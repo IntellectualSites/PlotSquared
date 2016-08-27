@@ -71,7 +71,7 @@
     </repository>
     <repository>
       <id>vault</id>
-      <url>http://maven.elmakers.com/repository/net/milkbowl/vault/Vault/</url>
+      <url>http://maven.elmakers.com/repository/</url>
     </repository>
     <repository>
       <id>empcraft-repo</id>
