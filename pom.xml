@@ -70,6 +70,10 @@
       <url>http://maven.sk89q.com/artifactory/repo/</url>
     </repository>
     <repository>
+      <id>vault</id>
+      <url>http://maven.elmakers.com/repository/net/milkbowl/vault/Vault/</url>
+    </repository>
+    <repository>
       <id>empcraft-repo</id>
       <url>http://empcraft.com/maven2</url>
     </repository>
