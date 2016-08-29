@@ -59,12 +59,20 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     return (byte) (data + 4);
                 }
                 return data;
-            case 183:
+            case 26: // bed
+            case 86: // pumpkin
+            case 91:
+            case 183: // fence gate
             case 184:
             case 185:
             case 186:
             case 187:
             case 107:
+                data = wrap2(data, 0);
+                data = wrap2(data, 2);
+                data = wrap2(data, 4);
+                data = wrap2(data, 6);
+                return data;
             case 53:
             case 67:
             case 108:
@@ -97,11 +105,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 data = wrap(data, 4);
                 data = wrap(data, 8);
                 data = wrap(data, 12);
-                return data;
-
-            case 26:
-            case 86:
-                data = wrap(data, 0);
                 return data;
             case 28:
             case 66:
