@@ -51,13 +51,18 @@ public class Template extends SubCommand {
                 ZipEntry ze = zis.getNextEntry();
                 byte[] buffer = new byte[2048];
                 while (ze != null) {
-                    String name = ze.getName().replace('\\', File.separatorChar).replace('/', File.separatorChar);
-                    File newFile = new File((output + File.separator + name).replaceAll("__TEMP_DIR__", world));
-                    new File(newFile.getParent()).mkdirs();
-                    try (FileOutputStream fos = new FileOutputStream(newFile)) {
-                        int len;
-                        while ((len = zis.read(buffer)) > 0) {
-                            fos.write(buffer, 0, len);
+                    if (!ze.isDirectory()) {
+                        String name = ze.getName().replace('\\', File.separatorChar).replace('/', File.separatorChar);
+                        File newFile = new File((output + File.separator + name).replaceAll("__TEMP_DIR__", world));
+                        File parent = newFile.getParentFile();
+                        if (parent != null) {
+                            parent.mkdirs();
+                        }
+                        try (FileOutputStream fos = new FileOutputStream(newFile)) {
+                            int len;
+                            while ((len = zis.read(buffer)) > 0) {
+                                fos.write(buffer, 0, len);
+                            }
                         }
                     }
                     ze = zis.getNextEntry();
