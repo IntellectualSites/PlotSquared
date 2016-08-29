@@ -71,7 +71,7 @@
     </repository>
     <repository>
       <id>vault</id>
-      <url>http://maven.elmakers.com/repository/</url>
+      <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
     </repository>
     <repository>
       <id>empcraft-repo</id>
