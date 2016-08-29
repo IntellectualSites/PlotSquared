@@ -22,6 +22,9 @@ public class EntitySpawnListener implements Listener {
             return;
         }
         Plot plot = area.getOwnedPlotAbs(location);
+        if (plot == null) {
+            return;
+        }
         if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
             event.setCancelled(true);
         }
