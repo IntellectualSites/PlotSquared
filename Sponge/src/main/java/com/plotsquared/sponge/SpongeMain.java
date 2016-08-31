@@ -170,9 +170,12 @@ public class SpongeMain implements IPlotMain {
 
     @Override
     public int[] getPluginVersion() {
-        String version = this.plugin.getVersion().orElse("");
-        String[] split = version.split("\\.");
-        return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), split.length == 3 ? Integer.parseInt(split[2]) : 0};
+        String ver = this.plugin.getVersion().orElse("");
+        if (ver.contains("-")) {
+            ver = ver.split("-")[0];
+        }
+        String[] split = ver.split("\\.");
+        return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])};
     }
 
     @Override public String getPluginVersionString() {
@@ -262,10 +265,10 @@ public class SpongeMain implements IPlotMain {
     public boolean initWorldEdit() {
         try {
             Class.forName("com.sk89q.worldedit.WorldEdit");
-            return true;
         } catch (ClassNotFoundException ignored) {
             return false;
         }
+        return true;
     }
 
     @Override
