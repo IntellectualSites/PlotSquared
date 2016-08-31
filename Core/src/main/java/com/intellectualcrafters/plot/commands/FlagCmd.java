@@ -134,7 +134,7 @@ public class FlagCmd extends SubCommand {
                     return false;
                 }
                 if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
-                    if (args.length != 2) {
+                    if (args.length != 3) {
                         MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
                         return false;
                     }
