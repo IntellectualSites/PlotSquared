@@ -639,6 +639,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         for (Player receiver : recipients) {
             receiver.sendMessage(full);
         }
+        PS.debug(full);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
