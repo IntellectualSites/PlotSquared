@@ -71,7 +71,7 @@ public class SpongePlotGenerator implements WorldGeneratorModifier, GeneratorWra
     @Override
     public void modifyWorldGenerator(WorldProperties world, DataContainer settings, WorldGenerator worldGenerator) {
         String worldName = world.getWorldName();
-        worldGenerator.setBaseGenerationPopulator(new SpongeTerrainGen(this, this.plotGenerator));
+        worldGenerator.setBaseGenerationPopulator(new SpongeTerrainGen(this.plotGenerator));
         worldGenerator.setBiomeGenerator(new BiomeGenerator() {
             @Override
             public void generateBiomes(MutableBiomeArea buffer) {

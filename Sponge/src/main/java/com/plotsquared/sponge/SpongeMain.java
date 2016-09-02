@@ -171,10 +171,7 @@ public class SpongeMain implements IPlotMain {
     @Override
     public int[] getPluginVersion() {
         String ver = this.plugin.getVersion().orElse("");
-        if (ver.contains("-")) {
-            ver = ver.split("-")[0];
-        }
-        String[] split = ver.split("\\.");
+        String[] split = ver.split("[\\.|-]");
         return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])};
     }
 
@@ -331,10 +328,10 @@ public class SpongeMain implements IPlotMain {
         }
         WorldGenerator wg = world.getWorldGenerator();
         GenerationPopulator gen = wg.getBaseGenerationPopulator();
-        if (gen instanceof SpongePlotGenerator) {
-            PS.get().loadWorld(worldName, (SpongePlotGenerator) gen);
+        if (gen instanceof GeneratorWrapper) {
+            PS.get().loadWorld(worldName, (GeneratorWrapper) gen);
         } else {
-            throw new UnsupportedOperationException("NOT IMPLEMENTED YET! " + worldName + " | " + gen);
+            throw new UnsupportedOperationException("NOT IMPLEMENTED YET2! " + worldName + " | " + gen);
         }
     }
 

@@ -2,30 +2,47 @@ package com.plotsquared.sponge.generator;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
 import com.intellectualcrafters.plot.object.ChunkWrapper;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.plotsquared.sponge.util.SpongeUtil;
 import com.plotsquared.sponge.util.block.GenChunk;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.ImmutableBiomeArea;
 import org.spongepowered.api.world.extent.MutableBlockVolume;
 import org.spongepowered.api.world.gen.GenerationPopulator;
 
-public class SpongeTerrainGen implements GenerationPopulator {
+public class SpongeTerrainGen implements GenerationPopulator, GeneratorWrapper<GenerationPopulator> {
     
-    public final SpongePlotGenerator parent;
     public final IndependentPlotGenerator child;
+    private final boolean full;
+    private final GenerationPopulator platformGenerator;
     private final PseudoRandom random = new PseudoRandom();
     
-    public SpongeTerrainGen(SpongePlotGenerator parent, IndependentPlotGenerator ipg) {
-        this.parent = parent;
+    public SpongeTerrainGen(IndependentPlotGenerator ipg) {
         this.child = ipg;
+        this.full = true;
+        this.platformGenerator = this;
+        MainUtil.initCache();
+    }
+
+    public SpongeTerrainGen(GenerationPopulator populator) {
+        this.child = null;
+        this.platformGenerator = populator;
+        this.full = false;
+        MainUtil.initCache();
     }
     
     @Override
     public void populate(World world, MutableBlockVolume terrain, ImmutableBiomeArea biomes) {
+        if (platformGenerator != this) {
+            platformGenerator.populate(world, terrain, biomes);
+            return;
+        }
         Vector3i size = terrain.getBlockSize();
         if (size.getX() != 16 || size.getZ() != 16) {
             throw new UnsupportedOperationException("NON CHUNK POPULATION NOT SUPPORTED");
@@ -56,5 +73,25 @@ public class SpongeTerrainGen implements GenerationPopulator {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public IndependentPlotGenerator getPlotGenerator() {
+        return child;
+    }
+
+    @Override
+    public GenerationPopulator getPlatformGenerator() {
+        return platformGenerator;
+    }
+
+    @Override
+    public void augment(PlotArea area) {
+        SpongeAugmentedGenerator.get(SpongeUtil.getWorld(area.worldname));
+    }
+
+    @Override
+    public boolean isFull() {
+        return this.full;
     }
 }

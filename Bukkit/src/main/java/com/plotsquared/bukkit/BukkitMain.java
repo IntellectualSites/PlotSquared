@@ -599,17 +599,18 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             setup.step = new ConfigurationNode[0];
             setup.world = worldName;
             SetupUtils.manager.setupWorld(setup);
+            world = Bukkit.getWorld(worldName);
         } else {
             try {
                 if (!PS.get().hasPlotArea(worldName)) {
                     SetGenCB.setGenerator(BukkitUtil.getWorld(worldName));
                 }
             } catch (Exception ignored) {
-                PS.log("Failed to reload world: " + world);
+                PS.log("Failed to reload world: " + world + " | " + ignored.getMessage());
                 Bukkit.getServer().unloadWorld(world, false);
+                return;
             }
         }
-        world = Bukkit.getWorld(worldName);
         ChunkGenerator gen = world.getGenerator();
         if (gen instanceof BukkitPlotGenerator) {
             PS.get().loadWorld(worldName, (BukkitPlotGenerator) gen);
