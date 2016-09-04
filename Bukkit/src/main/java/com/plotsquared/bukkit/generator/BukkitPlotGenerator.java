@@ -37,7 +37,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     private final GenChunk chunkSetter;
     private final PseudoRandom random = new PseudoRandom();
     private final IndependentPlotGenerator plotGenerator;
-    private final List<BlockPopulator> populators = new ArrayList<>();
+    private List<BlockPopulator> populators;
     private final ChunkGenerator platformGenerator;
     private final boolean full;
     private final HashMap<ChunkLoc, byte[][]> dataMap = new HashMap<>();
@@ -49,6 +49,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         }
         this.plotGenerator = generator;
         this.platformGenerator = this;
+        populators = new ArrayList<>();
         this.populators.add(new BlockPopulator() {
 
             private LocalBlockQueue queue;
@@ -188,9 +189,6 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
             }
         };
         this.chunkSetter = new GenChunk(null, new ChunkWrapper(world, 0, 0));
-        if (cg != null) {
-            this.populators.addAll(cg.getDefaultPopulators(BukkitUtil.getWorld(world)));
-        }
         MainUtil.initCache();
     }
     
@@ -246,6 +244,10 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         }
         ArrayList<BlockPopulator> toAdd = new ArrayList<>();
         List<BlockPopulator> existing = world.getPopulators();
+        if (populators == null && platformGenerator != null) {
+            populators = new ArrayList<>();
+            this.populators.addAll(platformGenerator.getDefaultPopulators(world));
+        }
         for (BlockPopulator populator : this.populators) {
             if (!existing.contains(populator)) {
                 toAdd.add(populator);

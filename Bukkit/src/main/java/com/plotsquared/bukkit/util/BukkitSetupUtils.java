@@ -31,19 +31,23 @@ public class BukkitSetupUtils extends SetupUtils {
         }
         String testWorld = "CheckingPlotSquaredGenerator";
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-            if (plugin.isEnabled()) {
-                ChunkGenerator generator = plugin.getDefaultWorldGenerator(testWorld, "");
-                if (generator != null) {
-                    PS.get().removePlotAreas(testWorld);
-                    String name = plugin.getDescription().getName();
-                    GeneratorWrapper<?> wrapped;
-                    if (generator instanceof GeneratorWrapper<?>) {
-                        wrapped = (GeneratorWrapper<?>) generator;
-                    } else {
-                        wrapped = new BukkitPlotGenerator(testWorld, generator);
+            try {
+                if (plugin.isEnabled()) {
+                    ChunkGenerator generator = plugin.getDefaultWorldGenerator(testWorld, "");
+                    if (generator != null) {
+                        PS.get().removePlotAreas(testWorld);
+                        String name = plugin.getDescription().getName();
+                        GeneratorWrapper<?> wrapped;
+                        if (generator instanceof GeneratorWrapper<?>) {
+                            wrapped = (GeneratorWrapper<?>) generator;
+                        } else {
+                            wrapped = new BukkitPlotGenerator(testWorld, generator);
+                        }
+                        SetupUtils.generators.put(name, wrapped);
                     }
-                    SetupUtils.generators.put(name, wrapped);
                 }
+            } catch (Throwable e) { // Recover from third party generator error
+                e.printStackTrace();
             }
         }
     }
