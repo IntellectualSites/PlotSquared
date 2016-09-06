@@ -1,0 +1,51 @@
+repositories {
+    maven {url "https://hub.spigotmc.org/nexus/content/groups/public/"}
+    maven { url = "https://oss.sonatype.org/content/repositories/snapshots/"}
+    maven {url "http://nexus.hc.to/content/repositories/pub_releases"}
+}
+
+dependencies {
+    compile project(':Core')
+    compile 'cn.nukkit:nukkit:1.0-SNAPSHOT'
+    compile 'com.google.guava:guava:17.0'
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'com.google.guava:guava:17.0'
+    }
+}
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+processResources {
+    from('src/main/resources') {
+        include 'plugin.yml'
+        expand(
+            name: project.parent.name,
+            version: project.parent.version
+        )
+    }
+}
+// We only want the shadow jar produced
+jar.enabled = false
+
+shadowJar {
+    dependencies {
+        include(dependency(':Core'))
+    }
+    archiveName = "${parent.name}-${project.name}-${parent.version}.jar"
+    destinationDir = file '../target'
+
+    relocate('com.google.gson', 'com.sk89q.worldedit.internal.gson')
+    relocate 'org.yaml.snakeyaml', 'com.boydti.fawe.yaml'
+    relocate 'com.google.common', 'com.sk89q.worldedit.internal.common'
+}
+
+shadowJar.doLast {
+    task ->
+    ant.checksum file: task.archivePath
+}
+
+build.dependsOn(shadowJar);

@@ -1,0 +1,6 @@
+name: "${name}"
+version: "${version}"
+author: Empire92
+api: ["1.0.0"]
+main: com.plotsquared.nukkit.NukkitMain
+load: STARTUP

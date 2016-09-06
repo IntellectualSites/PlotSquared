@@ -26,11 +26,7 @@ public class HybridGen extends IndependentPlotGenerator {
     public void generateChunk(ScopedLocalBlockQueue result, PlotArea settings, PseudoRandom random) {
         HybridPlotWorld hpw = (HybridPlotWorld) settings;
         // Biome
-        for (short x = 0; x < 16; x++) {
-            for (short z = 0; z < 16; z++) {
-                result.fillBiome(hpw.PLOT_BIOME);
-            }
-        }
+        result.fillBiome(hpw.PLOT_BIOME);
         // Bedrock
         if (hpw.PLOT_BEDROCK) {
             for (short x = 0; x < 16; x++) {

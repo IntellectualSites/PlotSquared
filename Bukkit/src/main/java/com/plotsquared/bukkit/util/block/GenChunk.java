@@ -168,8 +168,6 @@ public class GenChunk extends ScopedLocalBlockQueue {
         return new Location(getWorld(), getX() << 4, 0, getZ() << 4);
     }
 
-
-
     public GenChunk clone() {
         GenChunk toReturn = new GenChunk(chunk, new ChunkWrapper(getWorld(), chunk.getX(), chunk.getZ()));
         if (this.result != null) {

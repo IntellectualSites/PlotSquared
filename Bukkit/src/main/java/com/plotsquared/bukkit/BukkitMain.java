@@ -361,7 +361,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         if (!PS.get().setupPlotWorld(world, id, result)) {
             return null;
         }
-        return (ChunkGenerator) result.specify();
+        return (ChunkGenerator) result.specify(world);
     }
 
     @Override
@@ -665,7 +665,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     @Override
-    public GeneratorWrapper<?> wrapPlotGenerator(IndependentPlotGenerator generator) {
+    public GeneratorWrapper<?> wrapPlotGenerator(String world, IndependentPlotGenerator generator) {
         return new BukkitPlotGenerator(generator);
     }
 

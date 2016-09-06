@@ -61,7 +61,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         Location bot = getPlotBottomLocAbs(hpw, id2);
         Location top = getPlotTopLocAbs(hpw, id);
         Location pos1 = new Location(plotArea.worldname, top.getX() + 1, 0, bot.getZ() - 1);
-        Location pos2 = new Location(plotArea.worldname, bot.getX(), 255, top.getZ() + 1);
+        Location pos2 = new Location(plotArea.worldname, bot.getX(), Math.min(plotArea.MAX_BUILD_HEIGHT, 255), top.getZ() + 1);
         MainUtil.resetBiome(plotArea, pos1, pos2);
         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
             return true;
@@ -108,7 +108,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         Location bot = getPlotBottomLocAbs(hpw, id2);
         Location top = getPlotTopLocAbs(hpw, id);
         Location pos1 = new Location(plotArea.worldname, bot.getX() - 1, 0, top.getZ() + 1);
-        Location pos2 = new Location(plotArea.worldname, top.getX() + 1, 255, bot.getZ());
+        Location pos2 = new Location(plotArea.worldname, top.getX() + 1, Math.min(plotArea.MAX_BUILD_HEIGHT, 255), bot.getZ());
         MainUtil.resetBiome(plotArea, pos1, pos2);
         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
             return true;
@@ -128,7 +128,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         Location pos1 = getPlotTopLocAbs(hpw, id).add(1, 0, 1);
         Location pos2 = getPlotBottomLocAbs(hpw, id2);
         pos1.setY(0);
-        pos2.setY(256);
+        pos2.setY(Math.min(plotArea.MAX_BUILD_HEIGHT, 255));
         LocalBlockQueue queue = hpw.getQueue(false);
         createSchemAbs(hpw, queue, pos1, pos2, true);
         if (hpw.ROAD_SCHEMATIC_ENABLED) {
@@ -145,7 +145,7 @@ public class HybridPlotManager extends ClassicPlotManager {
      * to have 512x512 sized plots. </p>
      */
     @Override
-    public boolean clearPlot(PlotArea plotArea, Plot plot, final Runnable whenDone) {
+    public boolean clearPlot(final PlotArea plotArea, Plot plot, final Runnable whenDone) {
         final String world = plotArea.worldname;
         final HybridPlotWorld dpw = (HybridPlotWorld) plotArea;
         Location pos1 = plot.getBottomAbs();
@@ -189,7 +189,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                 top.setY(dpw.PLOT_HEIGHT + 1);
                 queue.setCuboid(bot, top, plotfloor);
                 bot.setY(dpw.PLOT_HEIGHT + 1);
-                top.setY(256);
+                top.setY(plotArea.MAX_BUILD_HEIGHT);
                 queue.setCuboid(bot, top, air);
                 // And finally set the schematic, the y value is unimportant for this function
                 pastePlotSchematic(dpw, queue, bot, top);

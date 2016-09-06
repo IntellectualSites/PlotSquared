@@ -222,7 +222,7 @@ public interface IPlotMain extends ILogger {
      */
     GeneratorWrapper<?> getGenerator(String world, String name);
 
-    GeneratorWrapper<?> wrapPlotGenerator(IndependentPlotGenerator generator);
+    GeneratorWrapper<?> wrapPlotGenerator(String world, IndependentPlotGenerator generator);
 
     /**
      * Register the chunk processor which will clean out chunks that have too

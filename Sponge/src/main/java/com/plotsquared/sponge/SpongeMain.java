@@ -136,7 +136,7 @@ public class SpongeMain implements IPlotMain {
         THIS = this;
         new PS(this, "Sponge");
         this.server = this.game.getServer();
-        this.game.getRegistry().register(WorldGeneratorModifier.class, (WorldGeneratorModifier) new HybridGen().specify());
+        this.game.getRegistry().register(WorldGeneratorModifier.class, (WorldGeneratorModifier) new HybridGen().specify(null));
     }
 
     @Override
@@ -394,7 +394,7 @@ public class SpongeMain implements IPlotMain {
     }
 
     @Override
-    public GeneratorWrapper<?> wrapPlotGenerator(IndependentPlotGenerator generator) {
+    public GeneratorWrapper<?> wrapPlotGenerator(String world, IndependentPlotGenerator generator) {
         return new SpongePlotGenerator(generator);
     }
 

@@ -1,0 +1,6 @@
+name: "PlotSquared"
+version: "3.4.6-SNAPSHOT-0557671"
+author: Empire92
+api: ["1.0.0"]
+main: com.plotsquared.nukkit.NukkitMain
+load: STARTUP
