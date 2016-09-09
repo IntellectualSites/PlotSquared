@@ -65,6 +65,7 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -1964,6 +1965,9 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return;
             }
             if (entity instanceof Player && plot.getFlag(Flags.PLAYER_INTERACT, false)) {
+                return;
+            }
+            if (entity instanceof Villager && plot.getFlag(Flags.VILLAGER_INTERACT, false)) {
                 return;
             }
             if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER)) {

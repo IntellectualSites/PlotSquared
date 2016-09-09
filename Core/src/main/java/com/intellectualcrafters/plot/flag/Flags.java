@@ -68,6 +68,7 @@ public final class Flags {
     public static final BooleanFlag MISC_PLACE = new BooleanFlag("misc-place");
     public static final BooleanFlag MISC_BREAK = new BooleanFlag("misc-break");
     public static final BooleanFlag MISC_INTERACT = new BooleanFlag("misc-interact");
+    public static final BooleanFlag VILLAGER_INTERACT = new BooleanFlag("villager-interact");
     public static final BooleanFlag PLAYER_INTERACT = new BooleanFlag("player-interact");
     public static final BooleanFlag TAMED_ATTACK = new BooleanFlag("tamed-attack");
     public static final BooleanFlag TAMED_INTERACT = new BooleanFlag("tamed-interact");
