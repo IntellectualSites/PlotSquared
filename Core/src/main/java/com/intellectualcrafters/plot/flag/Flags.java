@@ -6,6 +6,7 @@ import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.StringMan;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
@@ -161,7 +162,10 @@ public final class Flags {
                     Object remove;
                     if (value.DEFAULT_FLAGS.containsKey(duplicate)) {
                         remove = value.DEFAULT_FLAGS.remove(duplicate);
-                        value.DEFAULT_FLAGS.put(flag,flag.parseValue("" + remove));
+                        if (remove instanceof Collection)
+                            value.DEFAULT_FLAGS.put(flag, flag.parseValue(StringMan.join((Collection) remove, ',')));
+                        else
+                            value.DEFAULT_FLAGS.put(flag,flag.parseValue("" + remove));
                     }
                 }
             });
@@ -169,7 +173,10 @@ public final class Flags {
                 @Override public void run(Plot value) {
                     if (value.getFlags().containsKey(duplicate)) {
                         Object remove = value.getFlags().remove(duplicate);
-                        value.getFlags().put(flag,flag.parseValue("" + remove));
+                        if (remove instanceof Collection)
+                            value.getFlags().put(flag, flag.parseValue(StringMan.join((Collection) remove, ',')));
+                        else
+                            value.getFlags().put(flag,flag.parseValue("" + remove));
                     }
                 }
             });
