@@ -12,6 +12,7 @@ import cn.nukkit.entity.item.EntityPotion;
 import cn.nukkit.entity.item.EntityVehicle;
 import cn.nukkit.entity.mob.EntityMob;
 import cn.nukkit.entity.passive.EntityAnimal;
+import cn.nukkit.entity.passive.EntityTameable;
 import cn.nukkit.entity.passive.EntityWaterAnimal;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.Cancellable;
@@ -552,7 +553,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         PlotPlayer plotPlayer = NukkitUtil.getPlayer(event.getPlayer());
         Location location = plotPlayer.getLocation();
         PlotArea area = location.getPlotArea();
-        if (area == null || (!area.PLOT_CHAT != plotPlayer.getAttribute("chat"))) {
+        if (area == null || (area.PLOT_CHAT == plotPlayer.getAttribute("chat"))) {
             return;
         }
         Plot plot = area.getPlot(location);
@@ -1052,9 +1053,7 @@ public void blockDestroy(BlockBreakEvent event) {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClose(InventoryCloseEvent event) {
-        Player closer = event.getPlayer();
-        Player player = (Player) closer;
-        NukkitUtil.getPlayer(player).deleteMeta("inventory");
+        NukkitUtil.getPlayer(event.getPlayer()).deleteMeta("inventory");
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -1224,7 +1223,7 @@ public void blockDestroy(BlockBreakEvent event) {
                     MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, "plots.admin.pve." + stub);
                     return false;
                 }
-            } else if (false) { // TODO victim is tameable
+            } else if (victim instanceof EntityTameable) {
                 if (plot != null && (plot.getFlag(Flags.TAMED_ATTACK, false) || plot.getFlag(Flags.PVE, false) || plot.isAdded(plotPlayer.getUUID()))) {
                     return true;
                 }

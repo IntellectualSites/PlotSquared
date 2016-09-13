@@ -17,7 +17,7 @@ public class DefaultTitleManager_183 extends DefaultTitleManager {
      * @param stayTime Stay on screen time
      * @param fadeOutTime Fade out time
      */
-    public DefaultTitleManager_183(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) {
+    DefaultTitleManager_183(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) {
         super(title, subtitle, fadeInTime, stayTime, fadeOutTime);
     }
 
@@ -67,15 +67,4 @@ public class DefaultTitleManager_183 extends DefaultTitleManager {
             }
         }
     }
-
-    private Method getMethod(Class<?> clazz, String name, Class<?>... args) {
-        for (Method m : clazz.getMethods()) {
-            if (m.getName().equals(name) && ((args.length == 0) || ClassListEqual(args, m.getParameterTypes()))) {
-                m.setAccessible(true);
-                return m;
-            }
-        }
-        return null;
-    }
-
 }

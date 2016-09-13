@@ -18,7 +18,7 @@ public class DefaultTitleManager extends TitleManager {
      * @param stayTime Stay on screen time
      * @param fadeOutTime Fade out time
      */
-    public DefaultTitleManager(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) {
+    DefaultTitleManager(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) {
         super(title, subtitle, fadeInTime, stayTime, fadeOutTime);
     }
 
@@ -106,9 +106,9 @@ public class DefaultTitleManager extends TitleManager {
         }
     }
 
-    private Method getMethod(Class<?> clazz, String name, Class<?>... args) {
+    Method getMethod(Class<?> clazz, String name, Class<?>... args) {
         for (Method m : clazz.getMethods()) {
-            if (m.getName().equals(name) && (args.length == 0 || ClassListEqual(args, m.getParameterTypes()))) {
+            if (m.getName().equals(name) && (args.length == 0 || classListEqual(args, m.getParameterTypes()))) {
                 m.setAccessible(true);
                 return m;
             }
@@ -116,17 +116,4 @@ public class DefaultTitleManager extends TitleManager {
         return null;
     }
 
-    boolean ClassListEqual(Class<?>[] l1, Class<?>[] l2) {
-        if (l1.length != l2.length) {
-            return false;
-        }
-        boolean equal = true;
-        for (int i = 0; i < l1.length; i++) {
-            if (l1[i] != l2[i]) {
-                equal = false;
-                break;
-            }
-        }
-        return equal;
-    }
 }

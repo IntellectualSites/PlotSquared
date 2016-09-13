@@ -79,7 +79,7 @@ public class NukkitSchematicHandler extends SchematicHandler {
                                 public void run() {
                                     schematic.put("Blocks", new ByteArrayTag("Blocks", blocks));
                                     schematic.put("Data", new ByteArrayTag("Data", blockData));
-                                    schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<Tag>()));
+                                    schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<>()));
                                     schematic.put("TileEntities", new ListTag("TileEntities", CompoundTag.class, tileEntities));
                                     whenDone.value = new CompoundTag("Schematic", schematic);
                                     TaskManager.runTask(whenDone);

@@ -1,5 +1,5 @@
 repositories {
-    maven {url "https://hub.spigotmc.org/nexus/content/groups/public/"}
+    maven {url "http://ci.regularbox.com/plugin/repository/everything/"}
     maven { url = "https://oss.sonatype.org/content/repositories/snapshots/"}
     maven {url "http://nexus.hc.to/content/repositories/pub_releases"}
 }
@@ -16,9 +16,8 @@ configurations.all {
     }
 }
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
-
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 processResources {
     from('src/main/resources') {
         include 'plugin.yml'

@@ -8,7 +8,6 @@ import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.math.Vector3;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.block.BasicLocalBlockQueue;
 import com.plotsquared.nukkit.NukkitMain;
 
@@ -112,9 +111,7 @@ public class NukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
                     for (int y = 0; y < biomes2.length; y++) {
                         String biomeStr = biomes2[y];
                         if (biomeStr != null) {
-                            if (last == null || !StringMan.isEqual(last, biomeStr)) {
-                                biome = Biome.getBiome(biomeStr.toUpperCase()).getId();
-                            }
+                            biome = Biome.getBiome(biomeStr.toUpperCase()).getId();
                             level.setBiomeId(bx + x, bz + y, biome);
                         }
                     }

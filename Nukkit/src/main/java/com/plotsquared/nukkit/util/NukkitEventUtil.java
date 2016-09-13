@@ -50,7 +50,7 @@ public class NukkitEventUtil extends EventUtil {
 
     public boolean callEvent(Event event) {
         plugin.getServer().getPluginManager().callEvent(event);
-        return !(event instanceof Cancellable) || !((Cancellable) event).isCancelled();
+        return !(event instanceof Cancellable) || !event.isCancelled();
     }
 
     @Override

@@ -19,7 +19,7 @@ public class HackTitleManager extends TitleManager {
      * @param stayTime Stay on screen time
      * @param fadeOutTime Fade out time
      */
-    public HackTitleManager(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) {
+    HackTitleManager(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) {
         super(title, subtitle, fadeInTime, stayTime, fadeOutTime);
     }
 
@@ -160,20 +160,6 @@ public class HackTitleManager extends TitleManager {
             }
         }
         return null;
-    }
-
-    private boolean classListEqual(Class<?>[] l1, Class<?>[] l2) {
-        if (l1.length != l2.length) {
-            return false;
-        }
-        boolean equal = true;
-        for (int i = 0; i < l1.length; i++) {
-            if (l1[i] != l2[i]) {
-                equal = false;
-                break;
-            }
-        }
-        return equal;
     }
 
 }
