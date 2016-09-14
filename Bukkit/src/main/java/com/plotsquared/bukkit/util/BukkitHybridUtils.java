@@ -12,8 +12,6 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import com.intellectualcrafters.plot.util.expiry.PlotAnalysis;
-import java.util.HashSet;
-import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -22,6 +20,9 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.material.Directional;
 import org.bukkit.material.MaterialData;
+
+import java.util.HashSet;
+import java.util.Random;
 
 public class BukkitHybridUtils extends HybridUtils {
 
@@ -50,7 +51,8 @@ public class BukkitHybridUtils extends HybridUtils {
                 }
                 final BiomeGrid nullBiomeGrid = new BiomeGrid() {
                     @Override
-                    public void setBiome(int a, int b, Biome c) {}
+                    public void setBiome(int a, int b, Biome c) {
+                    }
 
                     @Override
                     public Biome getBiome(int a, int b) {

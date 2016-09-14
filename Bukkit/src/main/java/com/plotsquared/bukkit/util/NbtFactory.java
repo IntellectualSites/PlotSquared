@@ -8,7 +8,6 @@ import com.google.common.collect.MapMaker;
 import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Closeables;
-import com.google.common.io.Files;
 import com.google.common.primitives.Primitives;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,7 +19,6 @@ import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -161,7 +159,6 @@ public class NbtFactory {
     /**
      * Load the content of a file from a stream.
      *
-     * Use {@link Files#newInputStreamSupplier(File)} to provide a stream from a file.
      * @param stream - the stream supplier.
      * @param option - whether or not to decompress the input stream.
      * @return The decoded NBT compound.
@@ -196,7 +193,6 @@ public class NbtFactory {
     /**
      * Save the content of a NBT compound to a stream.
      *
-     * Use {@link Files#newOutputStreamSupplier(File)} to provide a stream supplier to a file.
      * @param source - the NBT compound to save.
      * @param stream - the stream.
      * @param option - whether or not to compress the output.
@@ -445,8 +441,7 @@ public class NbtFactory {
 
     /**
      * Convert a given NBT element to a primitive wrapper or List/Map equivalent.
-     * <p>
-     * All changes to any mutable objects will be reflected in the underlying NBT element(s).
+     * <p> All changes to any mutable objects will be reflected in the underlying NBT element(s).
      * @param nms - the NBT element.
      * @return The wrapper equivalent.
      */
@@ -605,7 +600,7 @@ public class NbtFactory {
      */
     private static class LoadMethodWorldUpdate extends LoadCompoundMethod {
 
-        public LoadMethodWorldUpdate(Class<?> streamClass) {
+        LoadMethodWorldUpdate(Class<?> streamClass) {
             setMethod(getMethod(Modifier.STATIC, 0, streamClass, null, DataInput.class));
         }
 
@@ -622,7 +617,7 @@ public class NbtFactory {
 
         private Object readLimiter;
 
-        public LoadMethodSkinUpdate(Class<?> streamClass, Class<?> readLimiterClass) {
+        LoadMethodSkinUpdate(Class<?> streamClass, Class<?> readLimiterClass) {
             setMethod(getMethod(Modifier.STATIC, 0, streamClass, null, DataInput.class, readLimiterClass));
 
             // Find the unlimited read limiter
@@ -645,8 +640,7 @@ public class NbtFactory {
 
     /**
      * Represents a root NBT compound.
-     * <p>
-     * All changes to this map will be reflected in the underlying NBT compound. Values may only be one of the following:
+     * <p> All changes to this map will be reflected in the underlying NBT compound. Values may only be one of the following:
      * <ul>
      *   <li>Primitive types</li>
      *   <li>{@link String String}</li>
@@ -769,8 +763,6 @@ public class NbtFactory {
 
         /**
          * Save the content of a NBT compound to a stream.
-         * <p>
-         * Use {@link Files#newOutputStreamSupplier(File)} to provide a stream supplier to a file.
          * @param stream - the output stream.
          * @param option - whether or not to compress the output.
          * @throws IOException If anything went wrong.

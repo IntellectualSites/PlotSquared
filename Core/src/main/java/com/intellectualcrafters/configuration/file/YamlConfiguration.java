@@ -11,7 +11,6 @@ import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Map;
@@ -38,13 +37,8 @@ public class YamlConfiguration extends FileConfiguration {
      *
      * @param file Input file
      * @return Resulting configuration
-     * @throws IllegalArgumentException Thrown if file is null
      */
     public static YamlConfiguration loadConfiguration(File file) {
-        if (file == null) {
-            throw new NullPointerException("File cannot be null");
-        }
-
         YamlConfiguration config = new YamlConfiguration();
 
         try {
@@ -70,34 +64,6 @@ public class YamlConfiguration extends FileConfiguration {
         return config;
     }
 
-    /**
-     * Creates a new {@link YamlConfiguration}, loading from the given reader.
-     *
-     * <p>Any errors loading the Configuration will be logged and then ignored.
-     * If the specified input is not a valid config, a blank config will be
-     * returned.
-     *
-     * @param reader input
-     * @return resulting configuration
-     * @throws IllegalArgumentException Thrown if stream is null
-     */
-    public static YamlConfiguration loadConfiguration(Reader reader) {
-        if (reader == null) {
-            throw new NullPointerException("Reader cannot be null");
-        }
-
-        YamlConfiguration config = new YamlConfiguration();
-
-        try {
-            config.load(reader);
-        } catch (IOException | InvalidConfigurationException ex) {
-            PS.debug("Cannot load configuration from stream");
-            ex.printStackTrace();
-        }
-
-        return config;
-    }
-
     @Override
     public String saveToString() {
         yamlOptions.setIndent(options().indent());
@@ -116,9 +82,6 @@ public class YamlConfiguration extends FileConfiguration {
     
     @Override
     public void loadFromString(String contents) throws InvalidConfigurationException {
-        if (contents == null) {
-            throw new NullPointerException("Contents cannot be null");
-        }
 
         Map<?, ?> input;
         try {
