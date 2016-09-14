@@ -527,11 +527,11 @@ public abstract class SchematicHandler {
             @Override
             public void run(OutputStream output) {
                 try {
-                    GZIPOutputStream gzip = new GZIPOutputStream(output, true);
-                    NBTOutputStream nos = new NBTOutputStream(gzip);
-                    nos.writeTag(tag);
-                    nos.flush();
-                    gzip.flush();
+                    try (GZIPOutputStream gzip = new GZIPOutputStream(output, true)) {
+                        try (NBTOutputStream nos = new NBTOutputStream(gzip)) {
+                            nos.writeTag(tag);
+                        }
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

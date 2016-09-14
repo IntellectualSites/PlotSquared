@@ -29,6 +29,7 @@ import cn.nukkit.event.block.BlockSpreadEvent;
 import cn.nukkit.event.block.BlockUpdateEvent;
 import cn.nukkit.event.entity.EntityBlockChangeEvent;
 import cn.nukkit.event.entity.EntityCombustByEntityEvent;
+import cn.nukkit.event.entity.EntityCombustEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityExplodeEvent;
@@ -148,9 +149,11 @@ public class PlayerEvents extends PlotListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onEntityCombustByEntity(EntityCombustByEntityEvent event) {
-        EntityDamageByEntityEvent eventChange = new EntityDamageByEntityEvent(event.getCombuster(), event.getEntity(), EntityDamageEvent.CAUSE_FIRE_TICK, event.getDuration());
-        onEntityDamageByEntityEvent(eventChange);
+    public void onEntityCombustByEntity(EntityCombustEvent event) {
+        if (event instanceof EntityCombustByEntityEvent) {
+            EntityDamageByEntityEvent eventChange = new EntityDamageByEntityEvent(((EntityCombustByEntityEvent) event).getCombuster(), event.getEntity(), EntityDamageEvent.CAUSE_FIRE_TICK, event.getDuration());
+            onEntityDamageByEntityEvent(eventChange);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

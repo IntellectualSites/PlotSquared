@@ -16,6 +16,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.stream.AbstractDelegateOutputStream;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 
 import java.io.File;
@@ -156,7 +157,11 @@ public class MainUtil {
                         writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(filename)).append(CRLF);
                         writer.append("Content-Transfer-Encoding: binary").append(CRLF);
                         writer.append(CRLF).flush();
-                        writeTask.value = output;
+                        OutputStream nonClosable = new AbstractDelegateOutputStream(output) {
+                            @Override
+                            public void close() throws IOException {  } // Don't close
+                        };
+                        writeTask.value = nonClosable;
                         writeTask.run();
                         output.flush();
                         writer.append(CRLF).flush();
