@@ -162,10 +162,15 @@ public final class Flags {
                     Object remove;
                     if (value.DEFAULT_FLAGS.containsKey(duplicate)) {
                         remove = value.DEFAULT_FLAGS.remove(duplicate);
-                        if (remove instanceof Collection)
-                            value.DEFAULT_FLAGS.put(flag, flag.parseValue(StringMan.join((Collection) remove, ',')));
-                        else
-                            value.DEFAULT_FLAGS.put(flag,flag.parseValue("" + remove));
+                        try {
+                            if (remove instanceof Collection && remove.getClass().getMethod("toString").getDeclaringClass() == Object.class) {
+                                value.DEFAULT_FLAGS.put(flag, flag.parseValue(StringMan.join((Collection) remove, ',')));
+                            } else {
+                                value.DEFAULT_FLAGS.put(flag, flag.parseValue("" + remove));
+                            }
+                        } catch (NoSuchMethodException neverHappens) {
+                            neverHappens.printStackTrace();
+                        }
                     }
                 }
             });
@@ -173,10 +178,15 @@ public final class Flags {
                 @Override public void run(Plot value) {
                     if (value.getFlags().containsKey(duplicate)) {
                         Object remove = value.getFlags().remove(duplicate);
-                        if (remove instanceof Collection)
-                            value.getFlags().put(flag, flag.parseValue(StringMan.join((Collection) remove, ',')));
-                        else
-                            value.getFlags().put(flag,flag.parseValue("" + remove));
+                        try {
+                            if (remove instanceof Collection && remove.getClass().getMethod("toString").getDeclaringClass() == Object.class) {
+                                value.getFlags().put(flag, flag.parseValue(StringMan.join((Collection) remove, ',')));
+                            } else {
+                                value.getFlags().put(flag, flag.parseValue("" + remove));
+                            }
+                        } catch (NoSuchMethodException neverHappens) {
+                            neverHappens.printStackTrace();
+                        }
                     }
                 }
             });
