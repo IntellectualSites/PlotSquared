@@ -1,6 +1,7 @@
 package com.plotsquared.bukkit.object.entity;
 
 import com.intellectualcrafters.plot.PS;
+import com.plotsquared.bukkit.util.BukkitVersion;
 import org.bukkit.Art;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -86,7 +87,7 @@ public class EntityWrapper {
         if (depth == 1) {
             return;
         }
-        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 10, 0) || entity instanceof ArmorStand) {
+        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_10_0) || entity instanceof ArmorStand) {
             if (!entity.hasGravity()) {
                 this.noGravity = true;
             }
@@ -94,7 +95,7 @@ public class EntityWrapper {
         switch (entity.getType()) {
             case ARROW:
             case BOAT:
-                if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 0)) {
+                if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
                     Boat boat = (Boat) entity;
                     this.dataByte = getOrdinal(TreeSpecies.values(), boat.getWoodType());
                 }
@@ -353,7 +354,7 @@ public class EntityWrapper {
 
     void restoreEquipment(LivingEntity entity) {
         EntityEquipment equipment = entity.getEquipment();
-        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 0)) {
+        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
             equipment.setItemInMainHand(this.lived.mainHand);
             equipment.setItemInOffHand(this.lived.offHand);
         } else {
@@ -397,7 +398,7 @@ public class EntityWrapper {
     }
 
     void storeEquipment(EntityEquipment equipment) {
-        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 0)) {
+        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
             this.lived.mainHand = equipment.getItemInMainHand().clone();
             this.lived.offHand = equipment.getItemInOffHand().clone();
         } else {
@@ -487,7 +488,7 @@ public class EntityWrapper {
         if (this.depth == 1) {
             return entity;
         }
-        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 10, 0) || entity instanceof ArmorStand) {
+        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_10_0) || entity instanceof ArmorStand) {
             if (this.noGravity) {
                 entity.setGravity(false);
             }
@@ -495,7 +496,7 @@ public class EntityWrapper {
         switch (entity.getType()) {
             case ARROW:
             case BOAT:
-                if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 0)) {
+                if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
                     Boat boat = (Boat) entity;
                     boat.setWoodType(TreeSpecies.values()[dataByte]);
                 }

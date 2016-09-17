@@ -103,7 +103,7 @@ public class MainListener {
                 event.setCancelled(true);
         }
     }
-    
+
     @Listener
     public void onChat(MessageEvent event) {
         // TODO
@@ -126,7 +126,7 @@ public class MainListener {
             return;
         }
         Text message = event.getMessage();
-        
+
         // TODO use display name rather than username
         //  - Getting displayname currently causes NPE, so wait until sponge fixes that
 
@@ -160,7 +160,7 @@ public class MainListener {
         }
         //event.setMessage(null);
     }
-    
+
     @Listener
     public void onBreedEntity(BreedEntityEvent.Breed event) {
         Location loc = SpongeUtil.getLocation(event.getTargetEntity());
@@ -364,7 +364,7 @@ public class MainListener {
             return;
         }
     }
-    
+
     @Listener
     public void onExplosion(ExplosionEvent e) {
         if (e instanceof ExplosionEvent.Detonate) {
@@ -376,7 +376,7 @@ public class MainListener {
             }
             Optional<Explosive> source = event.getExplosion().getSourceExplosive();
             if (!source.isPresent()) {
-                event.filterAll();
+                event.setCancelled(true);
                 return;
             }
             Explosive tnt = source.get();
@@ -385,25 +385,26 @@ public class MainListener {
             Plot currentPlot = current.getPlot();
             if (currentPlot == null) {
                 if (current.isPlotArea()) {
-                    event.filterAll();
+                    event.setCancelled(true);
                 }
                 return;
             }
             if (creator != null) {
                 if (!currentPlot.isAdded(creator)) {
-                    event.filterAll();
+                    event.setCancelled(true);
                     return;
                 }
             }
             if (!currentPlot.getFlag(Flags.EXPLOSION).or(false)) {
-                event.filterAll();
+                event.setCancelled(true);
                 return;
             }
-            event.filter(loc -> currentPlot.equals(SpongeUtil.getLocation(loc.getExtent().getName(), loc).getPlot()));
+
+            event.getAffectedLocations().removeIf(worldLocation -> currentPlot.equals(SpongeUtil.getLocation(worldLocation.getExtent().getName(), worldLocation).getPlot()));
             event.filterEntities(entity -> currentPlot.equals(SpongeUtil.getLocation(entity).getPlot()));
         }
     }
-    
+
     public void onChangeBlock(ChangeBlockEvent event) {
         World world = event.getTargetWorld();
         String worldName = world.getName();
@@ -428,17 +429,17 @@ public class MainListener {
     public void onBlockBreak(ChangeBlockEvent.Decay event) {
         onChangeBlock(event);
     }
-    
+
     @Listener
     public void onBlockBreak(ChangeBlockEvent.Grow event) {
         onChangeBlock(event);
     }
-    
+
     @Listener
     public void onBlockBreak(ChangeBlockEvent.Modify event) {
         onChangeBlock(event);
     }
-    
+
     @Listener
     public void onBlockBreak(ChangeBlockEvent.Break event) {
         Player player = SpongeUtil.getCause(event.getCause(), Player.class);
@@ -512,7 +513,7 @@ public class MainListener {
             }
         });
     }
-    
+
     @Listener
     public void onBlockPlace(ChangeBlockEvent.Place event) {
         Player player = SpongeUtil.getCause(event.getCause(), Player.class);
@@ -591,7 +592,7 @@ public class MainListener {
             }
         });
     }
-    
+
     @Listener
     public void onJoin(ClientConnectionEvent.Join event) {
         Player player = event.getTargetEntity();
@@ -619,14 +620,14 @@ public class MainListener {
         // Async
         TaskManager.runTaskLaterAsync(() -> EventUtil.manager.doJoinTask(pp), 20);
     }
-    
+
     @Listener
     public void onQuit(ClientConnectionEvent.Disconnect event) {
         Player player = event.getTargetEntity();
         PlotPlayer pp = SpongeUtil.getPlayer(player);
         pp.unregister();
     }
-    
+
     @Listener
     public void onMove(MoveEntityEvent event) {
         if (!(event.getTargetEntity() instanceof Player)) {

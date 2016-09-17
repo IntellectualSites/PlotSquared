@@ -49,13 +49,6 @@ public class MemorySection implements ConfigurationSection {
      *     if parent contains no root Configuration.
      */
     protected MemorySection(ConfigurationSection parent, String path) {
-        if (parent == null) {
-            throw new NullPointerException("Parent may not be null");
-        }
-        if (path == null) {
-            throw new NullPointerException("Path may not be null");
-        }
-
         this.path = path;
         this.parent = parent;
         this.root = parent.getRoot();
@@ -133,7 +126,7 @@ public class MemorySection implements ConfigurationSection {
      * @return Full path of the section from its root.
      */
     public static String createPath(ConfigurationSection section, String key) {
-        return createPath(section, key, (section == null) ? null : section.getRoot());
+        return createPath(section, key, section.getRoot());
     }
 
     /**
@@ -149,9 +142,6 @@ public class MemorySection implements ConfigurationSection {
      * @return Full path of the section from its root.
      */
     public static String createPath(ConfigurationSection section, String key, ConfigurationSection relativeTo) {
-        if (section == null) {
-            throw new NullPointerException("Cannot create path without a section");
-        }
         Configuration root = section.getRoot();
         if (root == null) {
             throw new IllegalStateException("Cannot create path without a root");
@@ -253,10 +243,6 @@ public class MemorySection implements ConfigurationSection {
 
     @Override
     public void addDefault(String path, Object value) {
-        if (path == null) {
-            throw new NullPointerException("Path cannot be null");
-        }
-
         Configuration root = getRoot();
         if (root == null) {
             throw new IllegalStateException("Cannot add default without root");
@@ -283,10 +269,6 @@ public class MemorySection implements ConfigurationSection {
 
     @Override
     public void set(String path, Object value) {
-        if (path == null) {
-            throw new NullPointerException("Cannot set to an empty path");
-        }
-
         Configuration root = getRoot();
         if (root == null) {
             throw new IllegalStateException("Cannot use section without a root");
@@ -367,9 +349,6 @@ public class MemorySection implements ConfigurationSection {
 
     @Override
     public ConfigurationSection createSection(String path) {
-        if (path == null) {
-            throw new NullPointerException("Cannot create section at empty path");
-        }
         Configuration root = getRoot();
         if (root == null) {
             throw new IllegalStateException("Cannot create section without a root");
@@ -787,10 +766,6 @@ public class MemorySection implements ConfigurationSection {
     }
 
     protected Object getDefault(String path) {
-        if (path == null) {
-            throw new NullPointerException("Path may not be null");
-        }
-
         Configuration root = getRoot();
         Configuration defaults = root == null ? null : root.getDefaults();
         return (defaults == null) ? null : defaults.get(createPath(this, path));

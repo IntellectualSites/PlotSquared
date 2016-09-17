@@ -57,6 +57,7 @@ import com.plotsquared.bukkit.util.BukkitSchematicHandler;
 import com.plotsquared.bukkit.util.BukkitSetupUtils;
 import com.plotsquared.bukkit.util.BukkitTaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.bukkit.util.BukkitVersion;
 import com.plotsquared.bukkit.util.Metrics;
 import com.plotsquared.bukkit.util.SendChunk;
 import com.plotsquared.bukkit.util.SetGenCB;
@@ -374,21 +375,21 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         } catch (NoSuchMethodException ignored) {
             PS.debug("Not running Spigot. Skipping EntitySpawnListener event.");
         }
-        if (PS.get().checkVersion(getServerVersion(), 1, 8, 0)) {
+        if (PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_8_0)) {
             try {
                 getServer().getPluginManager().registerEvents(new PlayerEvents_1_8(), this);
             } catch (Throwable e) {
                 e.printStackTrace();
             }
         }
-        if (PS.get().checkVersion(getServerVersion(), 1, 8, 3)) {
+        if (PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_8_3)) {
             try {
                 getServer().getPluginManager().registerEvents(new PlayerEvents183(), this);
             } catch (Throwable e) {
                 e.printStackTrace();
             }
         }
-        if (PS.get().checkVersion(getServerVersion(), 1, 9, 0)) {
+        if (PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_9_0)) {
             try {
                 getServer().getPluginManager().registerEvents(new PlayerEvents_1_9(main), this);
             } catch (Throwable e) {
@@ -443,13 +444,13 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             PS.debug(SendChunk.class + " does not support " + StringMan.getString(getServerVersion()));
             MainUtil.canSendChunk = false;
         }
-        if (PS.get().checkVersion(getServerVersion(), 1, 9, 0)) {
+        if (PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_9_0)) {
             return QueueProvider.of(BukkitLocalQueue_1_9.class, BukkitLocalQueue.class);
         }
-        if (PS.get().checkVersion(getServerVersion(), 1, 8, 3)) {
+        if (PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_8_3)) {
             return QueueProvider.of(BukkitLocalQueue_1_8_3.class, BukkitLocalQueue.class);
         }
-        if (PS.get().checkVersion(getServerVersion(), 1, 8, 0)) {
+        if (PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_8_0)) {
             return QueueProvider.of(BukkitLocalQueue_1_8.class, BukkitLocalQueue.class);
         }
         return QueueProvider.of(BukkitLocalQueue_1_7.class, BukkitLocalQueue.class);
@@ -505,7 +506,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override
     public UUIDHandlerImplementation initUUIDHandler() {
-        boolean checkVersion = PS.get().checkVersion(getServerVersion(), 1, 7, 6);
+        boolean checkVersion = PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_7_6);
         UUIDWrapper wrapper;
         if (Settings.UUID.OFFLINE) {
             if (Settings.UUID.FORCE_LOWERCASE) {

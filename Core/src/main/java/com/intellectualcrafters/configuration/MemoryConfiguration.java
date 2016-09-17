@@ -29,9 +29,6 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
     
     @Override
     public void addDefault(String path, Object value) {
-        if (path == null) {
-            throw new NullPointerException("Path may not be null");
-        }
         if (this.defaults == null) {
             this.defaults = new MemoryConfiguration();
         }
@@ -41,10 +38,6 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
     
     @Override
     public void addDefaults(Map<String, Object> defaults) {
-        if (defaults == null) {
-            throw new NullPointerException("Defaults may not be null");
-        }
-
         for (Map.Entry<String, Object> entry : defaults.entrySet()) {
             addDefault(entry.getKey(), entry.getValue());
         }
@@ -52,10 +45,6 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
     
     @Override
     public void addDefaults(Configuration defaults) {
-        if (defaults == null) {
-            throw new NullPointerException("Defaults may not be null");
-        }
-        
         addDefaults(defaults.getValues(true));
     }
     

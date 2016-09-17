@@ -87,9 +87,6 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      * @throws IllegalArgumentException Thrown when file is null.
      */
     public void load(File file) throws IOException, InvalidConfigurationException {
-        if (file == null) {
-            throw new NullPointerException("File cannot be null");
-        }
 
         FileInputStream stream = new FileInputStream(file);
         
@@ -123,33 +120,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
         
         loadFromString(builder.toString());
     }
-    
-    /**
-     * Loads this {@link FileConfiguration} from the specified location.
-     *
-     * <p>All the values contained within this configuration will be removed,
-     * leaving only settings and defaults, and the new values will be loaded
-     * from the given file.
-     *
-     * <p>If the file cannot be loaded for any reason, an exception will be
-     * thrown.
-     *
-     * @param file File to load from.
-     * @throws FileNotFoundException Thrown when the given file cannot be
-     *     opened.
-     * @throws IOException Thrown when the given file cannot be read.
-     * @throws InvalidConfigurationException Thrown when the given file is not
-     *     a valid Configuration.
-     * @throws IllegalArgumentException Thrown when file is null.
-     */
-    public void load(String file) throws IOException, InvalidConfigurationException {
-        if (file == null) {
-            throw new NullPointerException("File cannot be null");
-        }
-        
-        load(new File(file));
-    }
-    
+
     /**
      * Loads this {@link FileConfiguration} from the specified string, as
      * opposed to from file.

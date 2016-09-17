@@ -2,44 +2,12 @@ package com.intellectualcrafters.plot.object.comment;
 
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 import java.util.List;
 
 public class InboxReport extends CommentInbox {
-
-    @Override
-    public boolean canRead(Plot plot, PlotPlayer player) {
-        if (Permissions.hasPermission(player, "plots.inbox.read." + toString())) {
-            if (plot.isOwner(player.getUUID()) || Permissions
-                    .hasPermission(player, "plots.inbox.read." + toString() + ".other")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean canWrite(Plot plot, PlotPlayer player) {
-        if (plot == null) {
-            return Permissions.hasPermission(player, "plots.inbox.write." + toString());
-        }
-        return Permissions.hasPermission(player, "plots.inbox.write." + toString()) && (plot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, "plots.inbox.write." + toString() + ".other"));
-    }
-
-    @Override
-    public boolean canModify(Plot plot, PlotPlayer player) {
-        if (Permissions.hasPermission(player, "plots.inbox.modify." + toString())) {
-            if (plot.isOwner(player.getUUID()) || Permissions.hasPermission(player, "plots.inbox.modify." + toString() + ".other")) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     @Override
     public boolean getComments(Plot plot, final RunnableVal<List<PlotComment>> whenDone) {

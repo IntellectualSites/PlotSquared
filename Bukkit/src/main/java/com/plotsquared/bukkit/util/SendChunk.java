@@ -50,7 +50,7 @@ public class SendChunk {
         RefClass classChunk = getRefClass("{nms}.Chunk");
         this.methodInitLighting = classChunk.getMethod("initLighting");
         RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
-        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 4)) {
+        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_9_4)) {
             //this works for 1.9.4 and 1.10
             tempMapChunk = classMapChunk.getConstructor(classChunk.getRealClass(),int.class);
         } else {
@@ -116,7 +116,7 @@ public class SendChunk {
                 chunks.remove(chunk);
                 Object con = this.connection.of(entity).get();
                 Object packet = null;
-                if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 4)) {
+                if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_9_4)) {
                     try {
                         packet = this.mapChunk.create(c,65535);
                     } catch (Exception ignored) {}
