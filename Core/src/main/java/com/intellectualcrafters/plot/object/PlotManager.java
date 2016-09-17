@@ -73,4 +73,8 @@ public abstract class PlotManager {
         Template.zipAll(plotArea.worldname, files);
     }
 
+    public int getWorldHeight() {
+        return 255;
+    }
+
 }

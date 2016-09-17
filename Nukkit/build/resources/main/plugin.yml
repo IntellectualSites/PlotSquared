@@ -1,5 +1,5 @@
 name: "PlotSquared"
-version: "3.4.6-SNAPSHOT-a95b68b"
+version: "3.4.6-SNAPSHOT-56227a6"
 author: Empire92
 api: ["1.0.0"]
 main: com.plotsquared.nukkit.NukkitMain

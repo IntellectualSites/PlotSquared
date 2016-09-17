@@ -36,7 +36,7 @@ public class NukkitSetupUtils extends SetupUtils {
         String testWorld = "CheckingPlotSquaredGenerator";
         HashMap<String, Object> map = new HashMap<>();
         map.put("world", testWorld);
-        map.put("plot-generator", new HybridGen());
+        map.put("plot-generator", PS.get().IMP.getDefaultGenerator());
         NukkitPlotGenerator gen = new NukkitPlotGenerator(map);
         SetupUtils.generators.put("PlotSquared", gen);
     }
@@ -119,7 +119,7 @@ public class NukkitSetupUtils extends SetupUtils {
         if (object.setupGenerator != null) {
             HashMap<String, Object> map = new HashMap<>();
             map.put("world", object.world);
-            map.put("plot-generator", new HybridGen());
+            map.put("plot-generator", PS.get().IMP.getDefaultGenerator());
             plugin.getServer().generateLevel(object.world, object.world.hashCode(), NukkitPlotGenerator.class, map);
         } else {
             plugin.getServer().generateLevel(object.world, object.world.hashCode());

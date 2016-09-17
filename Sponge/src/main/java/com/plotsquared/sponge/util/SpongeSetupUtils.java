@@ -32,7 +32,7 @@ public class SpongeSetupUtils extends SetupUtils {
         if (!SetupUtils.generators.isEmpty()) {
             return;
         }
-        SetupUtils.generators.put("PlotSquared", new SpongePlotGenerator(new HybridGen()));
+        SetupUtils.generators.put("PlotSquared", new SpongePlotGenerator(PS.get().IMP.getDefaultGenerator()));
         // TODO get external world generators
         Collection<WorldGeneratorModifier> wgms = Sponge.getRegistry().getAllOf(WorldGeneratorModifier.class);
         for (WorldGeneratorModifier wgm : wgms) {

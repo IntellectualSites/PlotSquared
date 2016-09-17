@@ -318,7 +318,7 @@ public class LikePlotMeConverter {
                                 // Load using Bukkit API
                                 // - User must set generator manually
                                 Bukkit.getServer().unloadWorld(world, true);
-                                World myWorld = WorldCreator.name(actualWorldName).generator(new BukkitPlotGenerator(new HybridGen())).createWorld();
+                                World myWorld = WorldCreator.name(actualWorldName).generator(new BukkitPlotGenerator(PS.get().IMP.getDefaultGenerator())).createWorld();
                                 myWorld.save();
                             }
                         }

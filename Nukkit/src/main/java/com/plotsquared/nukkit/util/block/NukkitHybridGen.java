@@ -24,7 +24,7 @@ public class NukkitHybridGen extends NukkitPlotGenerator {
                 }
             }
         }
-        existing.put("plot-generator", new HybridGen());
+        existing.put("plot-generator", PS.get().IMP.getDefaultGenerator());
         return existing;
     }
 }

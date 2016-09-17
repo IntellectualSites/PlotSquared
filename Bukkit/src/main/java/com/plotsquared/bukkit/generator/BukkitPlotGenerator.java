@@ -120,7 +120,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
             
             @Override
             public PlotManager getNewPlotManager() {
-                return new HybridGen().getNewPlotManager();
+                return PS.get().IMP.getDefaultGenerator().getNewPlotManager();
             }
             
             @Override
@@ -130,7 +130,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
             
             @Override
             public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
-                return new HybridGen().getNewPlotArea(world, id, min, max);
+                return PS.get().IMP.getDefaultGenerator().getNewPlotArea(world, id, min, max);
             }
             
             @Override

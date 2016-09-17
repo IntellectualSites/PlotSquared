@@ -247,7 +247,7 @@ public class HybridGen extends IndependentPlotGenerator {
 
     @Override
     public PlotManager getNewPlotManager() {
-        return new HybridPlotManager();
+        return  new HybridPlotManager();
     }
 
     @Override

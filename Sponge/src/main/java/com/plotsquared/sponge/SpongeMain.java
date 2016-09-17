@@ -136,7 +136,7 @@ public class SpongeMain implements IPlotMain {
         THIS = this;
         new PS(this, "Sponge");
         this.server = this.game.getServer();
-        this.game.getRegistry().register(WorldGeneratorModifier.class, (WorldGeneratorModifier) new HybridGen().specify(null));
+        this.game.getRegistry().register(WorldGeneratorModifier.class, (WorldGeneratorModifier) PS.get().IMP.getDefaultGenerator().specify(null));
     }
 
     @Override
@@ -390,7 +390,7 @@ public class SpongeMain implements IPlotMain {
                 return new SpongePlotGenerator(wgm);
             }
         }
-        return new SpongePlotGenerator(new HybridGen());
+        return new SpongePlotGenerator(PS.get().IMP.getDefaultGenerator());
     }
 
     @Override
@@ -402,5 +402,10 @@ public class SpongeMain implements IPlotMain {
     public List<String> getPluginIds() {
         return this.game.getPluginManager().getPlugins().stream().map(plugin1 -> plugin1.getName() + ';' + plugin1.getVersion() + ':' + true)
                 .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    @Override
+    public IndependentPlotGenerator getDefaultGenerator() {
+        return new HybridGen();
     }
 }

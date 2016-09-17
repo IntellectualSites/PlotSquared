@@ -57,7 +57,7 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
 
                 @Override
                 public PlotManager getNewPlotManager() {
-                    return new HybridGen().getNewPlotManager();
+                    return PS.get().IMP.getDefaultGenerator().getNewPlotManager();
                 }
 
                 @Override
@@ -67,7 +67,7 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
 
                 @Override
                 public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
-                    return new HybridGen().getNewPlotArea(world, id, min, max);
+                    return PS.get().IMP.getDefaultGenerator().getNewPlotArea(world, id, min, max);
                 }
 
                 @Override

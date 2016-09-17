@@ -15,10 +15,13 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
+import com.intellectualcrafters.plot.generator.HybridGen;
+import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.chat.PlainChatManager;
@@ -406,5 +409,20 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
             names.add(entry.getKey() + ';' + plugin.getDescription().getVersion() + ':' + plugin.isEnabled());
         }
         return names;
+    }
+
+    @Override
+    public IndependentPlotGenerator getDefaultGenerator() {
+        return new HybridGen() {
+            @Override
+            public PlotManager getNewPlotManager() {
+                return new HybridPlotManager() {
+                    @Override
+                    public int getWorldHeight() {
+                        return 127;
+                    }
+                };
+            }
+        };
     }
 }

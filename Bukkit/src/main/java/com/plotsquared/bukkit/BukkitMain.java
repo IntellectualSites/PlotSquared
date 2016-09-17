@@ -357,7 +357,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override
     public final ChunkGenerator getDefaultWorldGenerator(String world, String id) {
-        HybridGen result = new HybridGen();
+        IndependentPlotGenerator result = PS.get().IMP.getDefaultGenerator();
         if (!PS.get().setupPlotWorld(world, id, result)) {
             return null;
         }
@@ -489,7 +489,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             }
             return new BukkitPlotGenerator(world, gen);
         } else {
-            return new BukkitPlotGenerator(new HybridGen());
+            return new BukkitPlotGenerator(PS.get().IMP.getDefaultGenerator());
         }
     }
 
@@ -571,6 +571,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Override
     public void registerWorldEvents() {
         getServer().getPluginManager().registerEvents(new WorldEvents(), this);
+    }
+
+    @Override
+    public IndependentPlotGenerator getDefaultGenerator() {
+        return new HybridGen();
     }
 
     @Override

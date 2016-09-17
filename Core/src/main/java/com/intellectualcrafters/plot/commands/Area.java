@@ -157,7 +157,7 @@ public class Area extends SubCommand {
                             id = null;
                         }
                         object.world = split[0];
-                        final HybridPlotWorld pa = new HybridPlotWorld(object.world, id, new HybridGen(), null, null);
+                        final HybridPlotWorld pa = new HybridPlotWorld(object.world, id, PS.get().IMP.getDefaultGenerator(), null, null);
                         PlotArea other = PS.get().getPlotArea(pa.worldname, id);
                         if (other != null && Objects.equals(pa.id, other.id)) {
                             C.SETUP_WORLD_TAKEN.send(player, pa.toString());

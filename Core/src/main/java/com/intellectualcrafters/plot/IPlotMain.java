@@ -237,6 +237,12 @@ public interface IPlotMain extends ILogger {
     void registerWorldEvents();
 
     /**
+     * Usually HybridGen
+     * @return Default implementation generator
+     */
+    IndependentPlotGenerator getDefaultGenerator();
+
+    /**
      * Get the class that will manage player titles.
      * @return
      */
