@@ -195,7 +195,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 if (area == null) {
                     return;
                 }
-                Plot plot = area.getOwnedPlotAbs(loc);
+                Plot plot = area.getOwnedPlot(loc);
                 if (plot == null) {
                     return;
                 }
