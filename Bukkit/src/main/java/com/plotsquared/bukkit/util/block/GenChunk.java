@@ -28,12 +28,6 @@ public class GenChunk extends ScopedLocalBlockQueue {
 
     public GenChunk(Chunk chunk, ChunkWrapper wrap) {
         super(null, new Location(null, 0, 0, 0), new Location(null, 15, 255, 15));
-        if ((this.chunk = chunk) == null && (wrap) != null) {
-            World world = BukkitUtil.getWorld(wrap.world);
-            if (world != null) {
-                this.chunk = world.getChunkAt(wrap.x, wrap.z);
-            }
-        }
         this.biomes = Biome.values();
     }
 
@@ -191,7 +185,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
     }
 
     public GenChunk shallowClone() {
-        GenChunk toReturn = new GenChunk(chunk, new ChunkWrapper(getWorld(), chunk.getX(), chunk.getZ()));
+        GenChunk toReturn = new GenChunk(chunk, new ChunkWrapper(getWorld(), getX(), getZ()));
         toReturn.result = this.result;
         toReturn.result_data = this.result_data;
         toReturn.cd = this.cd;
