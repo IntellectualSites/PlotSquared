@@ -115,6 +115,7 @@ public enum C {
     CLUSTER_LIST_HEADING("$2There are $1%s$2 clusters in this world", "Cluster"),
     CLUSTER_LIST_ELEMENT("$2 - $1%s&-", "Cluster"),
     CLUSTER_INTERSECTION("$2The proposed area overlaps with: %s0", "Cluster"),
+    CLUSTER_OUTSIDE("$2The proposed area is outside the plot area: %s0", "Cluster"),
     CLUSTER_ADDED("$4Successfully created the cluster.", "Cluster"),
     CLUSTER_DELETED("$4Successfully deleted the cluster.", "Cluster"),
     CLUSTER_RESIZED("$4Successfully resized the cluster.", "Cluster"),

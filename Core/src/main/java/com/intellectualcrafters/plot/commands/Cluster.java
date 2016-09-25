@@ -115,6 +115,10 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 // Check if it occupies existing plots
+                if (!area.contains(pos1) || !area.contains(pos2)) {
+                    C.CLUSTER_OUTSIDE.send(player, area);
+                    return false;
+                }
                 Set<Plot> plots = area.getPlotSelectionOwned(pos1, pos2);
                 if (!plots.isEmpty()) {
                     if (!Permissions.hasPermission(player, "plots.cluster.create.other")) {
