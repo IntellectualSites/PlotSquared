@@ -4,3 +4,142 @@ author: Empire92
 api: ["1.0.0"]
 main: com.plotsquared.nukkit.NukkitMain
 load: STARTUP
+permissions:
+  plots.use:
+    default: true
+  plots.permpack.basicflags:
+    default: op
+    children:
+      plots.set.flag: true
+      plots.flag: true
+      plots.flag.add: true
+      plots.flag.remove: true
+      plots.flag.list: true
+      plots.flag.info: true
+      plots.set.flag.titles.*: true
+      plots.set.flag.greeting.*: true
+      plots.set.flag.farewell.*: true
+      plots.set.flag.notify-enter.*: true
+      plots.set.flag.notify-leave.*: true
+      plots.set.flag.feed.*: true
+      plots.set.flag.heal.*: true
+      plots.set.flag.invincible.*: true
+      plots.set.flag.instabreak.*: true
+      plots.set.flag.fly.*: true
+      plots.set.flag.gamemode: true
+      plots.set.flag.gamemode.creative: true
+      plots.set.flag.gamemode.survival: true
+      plots.set.flag.gamemode.adventure: true
+      plots.set.flag.time.*: true
+      plots.set.flag.weather.*: true
+      plots.set.flag.music.*: true
+      plots.set.flag.disable-physics.*: true
+      plots.set.flag.pve.*: true
+      plots.set.flag.pvp.*: true
+      plots.set.flag.explosion.*: true
+      plots.set.flag.hostile-interact.*: true
+      plots.set.flag.hostile-attack.*: true
+      plots.set.flag.player-interact.*: true
+      plots.set.flag.animal-interact.*: true
+      plots.set.flag.animal-attack.*: true
+      plots.set.flag.tamed-interact.*: true
+      plots.set.flag.tamed-attack.*: true
+      plots.set.flag.misc-interact.*: true
+      plots.set.flag.hanging-place.*: true
+      plots.set.flag.hanging-break.*: true
+      plots.set.flag.vehicle-use.*: true
+      plots.set.flag.vehicle-place.*: true
+      plots.set.flag.vehicle-break.*: true
+      plots.set.flag.player-interact.*: true
+      plots.set.flag.place.*: true
+      plots.set.flag.break.*: true
+      plots.set.flag.use.*: true
+      plots.set.flag.forcefield.*: true
+      plots.set.flag.price.*: true
+      plots.set.flag.no-worldedit.*: true
+  plots.permpack.basicinbox:
+    default: op
+    children:
+      comments.notifications.enabled  : true
+      plots.inbox.read.public: true
+      plots.inbox.modify.public: true
+      plots.inbox.modify.public: true
+      plots.inbox.write.public: true
+      plots.inbox.read.public: true
+      plots.inbox.read.report: true
+      plots.inbox.write.report: true
+      plots.inbox.read.report: true
+      plots.inbox.read.owner: true
+      plots.inbox.modify.owner: true
+      plots.inbox.write.owner: true
+      plots.inbox.read.owner: true
+      plots.comment: true
+      plots.inbox: true
+  plots.permpack.wilderness:
+    default: op
+    children:
+      plots.admin.interact.unowned: true
+      plots.admin.destroy.unowned: true
+      plots.admin.build.unowned: true
+      plots.projectile.unowned: true
+      plots.admin.vehicle.break.unowned: true
+      plots.admin.pve.unowned: true
+  plots.permpack.basic:
+    default: op
+    children:
+      plots.use: true
+      plots.info: true
+      plots.claim: true
+      plots.auto: true
+      plots.home: true
+      plots.clear: true
+      plots.delete: true
+      plots.list: true
+      plots.list.mine: true
+      plots.list.shared: true
+      plots.list.world: true
+      plots.list.all: true
+      plots.list.forsale: true
+      plots.list.unowned: true
+      plots.list.unknown: true
+      plots.set: true
+      plots.visit: true
+      plots.visit.owned: true
+      plots.visit.shared: true
+      plots.set.flag: true
+      plots.flag.add: true
+      plots.flag.remove: true
+      plots.flag.list: true
+      plots.flag.info: true
+      plots.flag: true
+      plots.buy: true
+      plots.chat: true
+      plots.confirm: true
+      plots.toggle: true
+      plots.toggle.titles: true
+      plots.toggle.chat: true
+      plots.set.biome: true
+      plots.set.home: true
+      plots.merge: true
+      plots.merge.other: true
+      plots.merge.4: true
+      plots.unlink: true
+      plots.denied: true
+      plots.add: true
+      plots.trust: true
+      plots.deny: true
+      plots.remove: true
+      plots.untrust: true
+      plots.undeny: true
+      plots.kick: true
+      plots.download: true
+      plots.save: true
+      plots.done: true
+      plots.continue: true
+      plots.middle: true
+  plots.worldedit.bypass:
+    default: false
+  plots.gamemode.bypass:
+    default: op
+  plots.confirm.bypass:
+    default: false
