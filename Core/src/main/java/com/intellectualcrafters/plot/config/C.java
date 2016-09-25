@@ -455,6 +455,10 @@ public enum C {
     NEED_PLOT_WORLD("$2You've got to specify a plot area.", "Need"),
     NEED_USER("$2You need to specify a username", "Need"),
     /*
+     * Near
+     */
+    PLOT_NEAR("$1Players: %s0", "Near"),
+    /*
      * Info
      */
     NONE("None", "Info"),

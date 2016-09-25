@@ -64,6 +64,7 @@ public class MainCommand extends Command {
             new Deny();
             new Remove();
             new Info();
+            new Near();
             new ListCmd();
             new Debug();
             new SchematicCmd();
