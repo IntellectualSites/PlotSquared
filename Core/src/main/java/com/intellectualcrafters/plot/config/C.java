@@ -332,6 +332,7 @@ public enum C {
     NO_PERMISSION_EVENT("$2You are lacking the permission node: $1%s", "Permission"),
     NO_PLOT_PERMS("$2You must be the plot owner to perform this action", "Permission"),
     CANT_CLAIM_MORE_PLOTS("$2You can't claim more plots.", "Permission"),
+    CANT_CLAIM_MORE_CLUSTERS("$2You can't claim more clusters.", "Permission"),
     CANT_TRANSFER_MORE_PLOTS("$2You can't send more plots to that user", "Permission"),
     CANT_CLAIM_MORE_PLOTS_NUM("$2You can't claim more than $1%s $2plots at once", "Permission"),
     YOU_BE_DENIED("$2You are not allowed to enter this plot", "Permission"),

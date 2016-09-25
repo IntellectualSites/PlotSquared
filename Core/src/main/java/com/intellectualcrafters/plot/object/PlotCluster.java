@@ -63,6 +63,10 @@ public class PlotCluster {
         return this.region;
     }
 
+    public boolean isOwner(UUID uuid) {
+        return uuid.equals(owner);
+    }
+
     public boolean isAdded(UUID uuid) {
         return this.owner.equals(uuid) || this.invited.contains(uuid) || this.invited.contains(DBFunc.everyone) || this.helpers.contains(uuid)
                 || this.helpers

@@ -133,6 +133,14 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     /**
+     * Get the total number of allowed clusters
+     * @return number of allowed clusters within the scope (globally, or in the player's current world as defined in the settings.yml)
+     */
+    public int getAllowedClusters() {
+        return Permissions.hasPermissionRange(this, "plots.cluster", Settings.Limit.MAX_PLOTS);
+    }
+
+    /**
      * Get the number of plots this player owns.
      *
      * @see #getPlotCount(String);
@@ -163,6 +171,25 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         return count.get();
     }
 
+    public int getClusterCount() {
+        if (!Settings.Limit.GLOBAL) {
+            return getClusterCount(getLocation().getWorld());
+        }
+        final AtomicInteger count = new AtomicInteger(0);
+        final UUID uuid = getUUID();
+        PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
+            @Override
+            public void run(PlotArea value) {
+                for (PlotCluster cluster : value.getClusters()) {
+                    if (cluster.isOwner(getUUID())) {
+                        count.incrementAndGet();
+                    }
+                }
+            }
+        });
+        return count.get();
+    }
+
     /**
      * Get the number of plots this player owns in the world.
      * @param world the name of the plotworld to check.
@@ -180,6 +207,19 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                 }
             } else {
                 count += area.getPlotsAbs(uuid).size();
+            }
+        }
+        return count;
+    }
+
+    public int getClusterCount(String world) {
+        UUID uuid = getUUID();
+        int count = 0;
+        for (PlotArea area : PS.get().getPlotAreas(world)) {
+            for (PlotCluster cluster : area.getClusters()) {
+                if (cluster.isOwner(getUUID())) {
+                    count++;
+                }
             }
         }
         return count;

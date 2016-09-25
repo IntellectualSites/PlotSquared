@@ -15,7 +15,6 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -87,6 +86,10 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot cluster create <name> <id-bot> <id-top>");
                     return false;
                 }
+                int currentClusters = Settings.Limit.GLOBAL ? player.getClusterCount() : player.getPlotCount(player.getLocation().getWorld());
+                if (currentClusters >= player.getAllowedPlots()) {
+                    return sendMessage(player, C.CANT_CLAIM_MORE_CLUSTERS);
+                }
                 // check pos1 / pos2
                 PlotId pos1 = PlotId.fromString(args[2]);
                 PlotId pos2 = PlotId.fromString(args[3]);
@@ -132,9 +135,9 @@ public class Cluster extends SubCommand {
                 } else {
                     current = player.getPlayerClusterCount(player.getLocation().getWorld());
                 }
-                int allowed = Permissions.hasPermissionRange(player, "plots.cluster", Settings.Limit.MAX_PLOTS);
+                int allowed = Permissions.hasPermissionRange(player, "plots.cluster.size", Settings.Limit.MAX_PLOTS);
                 if (current + cluster.getArea() > allowed) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster." + (current + cluster.getArea()));
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.size." + (current + cluster.getArea()));
                     return false;
                 }
                 // create cluster
