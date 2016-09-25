@@ -430,6 +430,7 @@ public class Cluster extends SubCommand {
                 }
                 return true;
             }
+            case "members":
             case "admin":
             case "helper":
             case "helpers": {
