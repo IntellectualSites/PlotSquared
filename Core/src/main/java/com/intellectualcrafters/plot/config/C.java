@@ -253,7 +253,7 @@ public enum C {
      */
     SWAP_OVERLAP("$2The proposed areas are not allowed to overlap", "Swap"),
     SWAP_DIMENSIONS("$2The proposed areas must have comparable dimensions", "Swap"),
-    SWAP_SYNTAX("$2/plots swap <id>", "Swap"),
+    SWAP_SYNTAX("$2/plot swap <id>", "Swap"),
     SWAP_SUCCESS("$4Successfully swapped plots", "Swap"),
     STARTED_SWAP("$2Started plot swap task. You will be notified when it finishes", "Swap"),
     /*
@@ -262,7 +262,7 @@ public enum C {
     INBOX_NOTIFICATION("%s unread messages. Use /plot inbox", "Comment"),
     NOT_VALID_INBOX_INDEX("$2No comment at index %s", "Comment"),
     INBOX_ITEM("$2 - $4%s", "Comment"),
-    COMMENT_SYNTAX("$2Use /plots comment [X;Z] <%s> <comment>", "Comment"),
+    COMMENT_SYNTAX("$2Use /plot comment [X;Z] <%s> <comment>", "Comment"),
     INVALID_INBOX("$2That is not a valid inbox.&-$1Accepted values: %s", "Comment"),
     NO_PERM_INBOX("$2You do not have permission for that inbox", "Comment"),
     NO_PERM_INBOX_MODIFY("$2You do not have permission to modify that inbox", "Comment"),
@@ -691,7 +691,7 @@ public enum C {
     HELP_PAGE_HEADER("$1Category: $2%category%$2,$1 Page: $2%current%$3/$2%max%$2", "Help"),
     HELP_FOOTER("$3&m---------&r $1Plot\u00B2 Help $3&m---------", "Help"),
 
-    HELP_INFO_ITEM("$1/plots help %category% $3- $2%category_desc%", "Help"),
+    HELP_INFO_ITEM("$1/plot help %category% $3- $2%category_desc%", "Help"),
     HELP_ITEM("$1%usage% [%alias%]&- $3- $2%desc%&-", "Help"),
     /*
      * Direction

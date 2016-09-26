@@ -28,7 +28,7 @@ import java.util.Map.Entry;
         permission = "plots.database",
         description = "Convert/Backup Storage",
         requiredType = RequiredType.CONSOLE,
-        usage = "/plots database [area] <sqlite|mysql|import>")
+        usage = "/plot database [area] <sqlite|mysql|import>")
 public class Database extends SubCommand {
 
     public static void insertPlots(final SQLManager manager, final List<Plot> plots, final PlotPlayer player) {

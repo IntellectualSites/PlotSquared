@@ -73,14 +73,14 @@ records:
 swap:
   swap_overlap: $2해당 구역은 덮어쓰기가 허용되지 않습니다.
   swap_dimensions: $2해당 지역은 반드시 비교 가능한 차원이 있어야 합니다.
-  swap_syntax: $2/plots swap <plot id>
+  swap_syntax: $2/plot swap <plot id>
   swap_success: $4성공적으로 땅이 교환되었습니다
   started_swap: $2땅 교환이 시작되었습니다. 작업 완료시 장신에게 통보 될 예정입니다.
 comment:
   inbox_notification: '%s 읽지않은 메세지가 있습니다. 다음 명령어를 사용해주세요 /plot inbox'
   not_valid_inbox_index: $2메일함에 comment가 존재하지 않습니다 %s
   inbox_item: $2 - $4%s
-  comment_syntax: $2다음 명령어를 사용해주세요 /plots comment [X;Z] <%s> <comment>
+  comment_syntax: $2다음 명령어를 사용해주세요 /plot comment [X;Z] <%s> <comment>
   invalid_inbox: '$2올바르지 않은 메일함 입니다..&-$1Accepted values: %s'
   no_perm_inbox: $2당신은 해당 메일함에 권한이 없습니다
   no_perm_inbox_modify: $2당신은 해당 메일함을 수정할 권한이 없습니다
@@ -224,7 +224,7 @@ errors:
   not_valid_world: $2옳바르지 않은 World 입니다
   not_valid_plot_world: $2올바르지 않은 plot world 입니다 (case sensitive)
   no_plots: $2당신은 어떤 땅도 가지고 있지 않습니다
-  not_using_plotme: $2이 서버는 상위버전의  $1PlotSquared $2plot 관리 시스템을 사용합니다. Please use the $1/ps $2or $1/p2 $2or $1/plots $2instead
+  not_using_plotme: $2이 서버는 상위버전의  $1PlotSquared $2plot 관리 시스템을 사용합니다. Please use the $1/ps $2or $1/p2 $2or $1/plot $2instead
   wait_for_timer: $2A setblock 타이머는 현재의 땅 또는 당신에게 묶여있습니다. 완료까지 잠시 기다려주시기 바랍니다
 paste:
   debug_report_created: '$1Uploaded a full debug to: $1%url%'
@@ -364,7 +364,7 @@ help:
   help_header: "$3&m---------&r $1Plot\xb2 도움말 $3&m---------"
   help_page_header: '$1Category: $2%category%$2,$1 Page: $2%current%$3/$2%max%$2'
   help_footer: "$3&m---------&r $1Plot\xb2 도움말 $3&m---------"
-  help_info_item: $1/plots help %category% $3- $2%category_desc%
+  help_info_item: $1/plot help %category% $3- $2%category_desc%
   help_item: $1%usage% [%alias%]&- $3- $2%desc%&-
   direction: '$1Current direction: %dir%'
 '-':

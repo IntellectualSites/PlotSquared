@@ -146,7 +146,7 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 if (args.length != 2) {
-                    MainUtil.sendMessage(player, "&cNeed world argument. Use &7/plots sch exportall <area>");
+                    MainUtil.sendMessage(player, "&cNeed world argument. Use &7/plot sch exportall <area>");
                     return false;
                 }
                 PlotArea area = PS.get().getPlotAreaByString(args[1]);
@@ -156,7 +156,7 @@ public class SchematicCmd extends SubCommand {
                 }
                 Collection<Plot> plots = area.getPlots();
                 if (plots.isEmpty()) {
-                    MainUtil.sendMessage(player, "&cInvalid world. Use &7/plots sch exportall <area>");
+                    MainUtil.sendMessage(player, "&cInvalid world. Use &7/plot sch exportall <area>");
                     return false;
                 }
                 boolean result = SchematicHandler.manager.exportAll(plots, null, null, new Runnable() {

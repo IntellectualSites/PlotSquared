@@ -77,7 +77,7 @@ locale:
     invalid_player: '$2Giocatore non trovato: $1%s.'
     command_went_wrong: $2Ops qualcosa è andato storto...
     no_plots: $2Non hai nessun lotto. Se prima lo avevi contatta lo staff.
-    not_using_plotme: $2Questo server usa il sistema lotti $2PlotSquared. Digita $1/plots $2oppure $1/p
+    not_using_plotme: $2Questo server usa il sistema lotti $2PlotSquared. Digita $1/plot $2oppure $1/p
     not_in_plot: $2Non sei in un lotto.
     no_free_plots: $2Non ci sono lotti liberi disponibili
     not_valid_plot_world: $2Quello non è un mondo lotti (case sensitive)
@@ -99,7 +99,7 @@ locale:
       Mostra: $2%dis%$3/$2%total%'
     help_info: $3====== $1Scegli una categoria $3======
     direction: '$1Direzione corrente: %dir%'
-    help_info_item: $1/plots help %category% $3- $2%category_desc%
+    help_info_item: $1/plot help %category% $3- $2%category_desc%
   titles:
     title_left_plot_color: GOLD
     title_entered_plot_sub_color: RED
@@ -113,7 +113,7 @@ locale:
     title_left_plot: Hai lasciato il lotto %s
   comment:
     comment_added: $4Un commento è stato lasciato
-    comment_syntax: $2Usa /plots comment <everyone|trusted|helper|owner|admin> <comment>
+    comment_syntax: $2Usa /plot comment <everyone|trusted|helper|owner|admin> <comment>
     comment_removed: $4Cancellato con successo %s.
     invalid_inbox: '$2Non è un valido inbox.&-$1Valori accettati: %s'
     comment_header: $2====== Comments ======
@@ -304,7 +304,7 @@ locale:
     not_console: $2Per ragioni di sicurezza, questo commando può essere eseguito solo dalla console.
   swap:
     swap_success: $4Lotti scambiati con successo
-    swap_syntax: $2/plots swap <plot id>
+    swap_syntax: $2/plot swap <plot id>
     swap_overlap: $2La area proposta è una sopra al altra
     swap_dimensions: $2La area proposta deve avere le stesse dimensioni
     started_swap: $2Inizio processo. Sarai avvisato al termine
