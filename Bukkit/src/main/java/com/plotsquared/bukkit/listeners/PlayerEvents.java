@@ -202,8 +202,19 @@ public class PlayerEvents extends PlotListener implements Listener {
                     return;
                 }
                 if (Settings.Redstone.DISABLE_OFFLINE) {
-                    if (UUIDHandler.getPlayer(plot.owner) == null) {
-                        boolean disable = true;
+                    boolean disable;
+                    if (plot.isMerged()) {
+                        disable = true;
+                        for (UUID owner : plot.getOwners()) {
+                            if (UUIDHandler.getPlayer(owner) != null) {
+                                disable = false;
+                                break;
+                            }
+                        }
+                    } else {
+                        disable = UUIDHandler.getPlayer(plot.owner) == null;
+                    }
+                    if (disable) {
                         for (UUID trusted : plot.getTrusted()) {
                             if (UUIDHandler.getPlayer(trusted) != null) {
                                 disable = false;

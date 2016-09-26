@@ -117,8 +117,10 @@ public class LikePlotMeConverter {
         PS.get().worlds.set("worlds." + world + ".plot.height", height);
         int plotSize = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".PlotSize", 32); //
         PS.get().worlds.set("worlds." + world + ".plot.size", plotSize);
-        String wallblock = plotmeDgYml.getString("worlds." + plotMeWorldName + ".WallBlock", "44"); //
+        String wallblock = plotmeDgYml.getString("worlds." + plotMeWorldName + ".WallBlock", plotmeDgYml.getString("worlds." + plotMeWorldName + ".UnclaimedBorder", "44")); //
         PS.get().worlds.set("worlds." + world + ".wall.block", wallblock);
+        String claimed = plotmeDgYml.getString("worlds." + plotMeWorldName + ".ProtectedWallBlock", "44:1"); //
+        PS.get().worlds.set("worlds." + world + ".wall.block_claimed", claimed);
         String floor = plotmeDgYml.getString("worlds." + plotMeWorldName + ".PlotFloorBlock", "2"); //
         PS.get().worlds.set("worlds." + world + ".plot.floor", Collections.singletonList(floor));
         String filling = plotmeDgYml.getString("worlds." + plotMeWorldName + ".FillBlock", "3"); //
