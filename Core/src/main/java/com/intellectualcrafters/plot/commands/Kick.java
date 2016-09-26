@@ -36,7 +36,7 @@ public class Kick extends SubCommand {
         if (plot == null) {
             return !sendMessage(player, C.NOT_IN_PLOT);
         }
-        if ((!plot.hasOwner() || !plot.isOwner(player.getUUID())) && !Permissions.hasPermission(player, "plots.admin.command.kick")) {
+        if ((!plot.hasOwner() || !plot.isOwner(player.getUUID())) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_KICK)) {
             MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return false;
         }
@@ -49,7 +49,7 @@ public class Kick extends SubCommand {
         for (UUID uuid : uuids) {
             if (uuid == DBFunc.everyone) {
                 for (PlotPlayer pp : plot.getPlayersInPlot()) {
-                    if (pp == player || pp.hasPermission("plots.admin.entry.denied")) {
+                    if (pp == player || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_ENTRY_DENIED)) {
                         continue;
                     }
                     players.add(pp);

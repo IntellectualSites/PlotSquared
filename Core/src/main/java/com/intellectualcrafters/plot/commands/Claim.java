@@ -72,7 +72,7 @@ public class Claim extends SubCommand {
                 if (!world.SCHEMATICS.contains(schematic.toLowerCase())) {
                     return sendMessage(player, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
                 }
-                if (!Permissions.hasPermission(player, "plots.claim." + schematic) && !Permissions.hasPermission(player, "plots.admin.command.schematic")) {
+                if (!Permissions.hasPermission(player, C.PERMISSION_CLAIM_SCHEMATIC.f(schematic)) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {
                     return sendMessage(player, C.NO_SCHEMATIC_PERMISSION, schematic);
                 }
             }

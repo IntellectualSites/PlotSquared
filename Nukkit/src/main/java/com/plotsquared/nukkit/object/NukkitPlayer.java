@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.plugin.RegisteredListener;
 import cn.nukkit.utils.EventException;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EconHandler;
@@ -62,7 +63,7 @@ public class NukkitPlayer extends PlotPlayer {
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, PlayerTeleportEvent.TeleportCause.PLUGIN);
         RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
         for (RegisteredListener listener : listeners) {
-            if (listener.getPlugin().getName().equals("PlotSquared")) {
+            if (listener.getPlugin().getName().equals(PS.imp().getPluginName())) {
                 continue;
             }
             try {
@@ -76,7 +77,7 @@ public class NukkitPlayer extends PlotPlayer {
         }
         event = new PlayerTeleportEvent(player, to, from, PlayerTeleportEvent.TeleportCause.PLUGIN);
         for (RegisteredListener listener : listeners) {
-            if (listener.getPlugin().getName().equals("PlotSquared")) {
+            if (listener.getPlugin().getName().equals(PS.imp().getPluginName())) {
                 continue;
             }
             try {

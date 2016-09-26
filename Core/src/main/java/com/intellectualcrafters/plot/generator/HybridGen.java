@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.generator;
 
 import com.intellectualcrafters.jnbt.CompoundTag;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -19,7 +20,7 @@ public class HybridGen extends IndependentPlotGenerator {
 
     @Override
     public String getName() {
-        return "PlotSquared";
+        return PS.imp().getPluginName();
     }
 
     @Override

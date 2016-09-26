@@ -147,7 +147,7 @@ public class Template extends SubCommand {
                 } catch (InvalidConfigurationException | IOException e) {
                     e.printStackTrace();
                 }
-                String manager = worldConfig.getString("generator.plugin", "PlotSquared");
+                String manager = worldConfig.getString("generator.plugin", PS.imp().getPluginName());
                 String generator = worldConfig.getString("generator.init", manager);
                 int type = worldConfig.getInt("generator.type");
                 int terrain = worldConfig.getInt("generator.terrain");

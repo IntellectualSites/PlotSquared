@@ -29,7 +29,7 @@ public class BO3 extends SubCommand {
         if (plot == null || !plot.hasOwner()) {
             return !sendMessage(player, C.NOT_IN_PLOT);
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.bo3")) {
+        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_BO3)) {
             MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return false;
         }

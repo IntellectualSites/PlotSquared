@@ -196,7 +196,7 @@ public class DebugExec extends SubCommand {
                     PlotAnalysis.calcOptimalModifiers(new Runnable() {
                         @Override
                         public void run() {
-                            MainUtil.sendMessage(player, "$1Thank you for calibrating PlotSquared plot expiry");
+                            MainUtil.sendMessage(player, "$1Thank you for calibrating plot expiry");
                         }
                     }, threshold);
                     return true;

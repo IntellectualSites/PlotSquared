@@ -70,12 +70,97 @@ public enum C {
     PERMISSION_ADMIN_INTERACT_OTHER("plots.admin.interact.other", "static.permissions"),
     PERMISSION_ADMIN_BUILD_HEIGHTLIMIT("plots.admin.build.heightlimit", "static.permissions"),
     PERMISSION_ADMIN_UPDATE("plots.admin.command.update", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_TRUST("plots.admin.command.trust", "static.permissions"),
+    PERMISSION_TRUST_EVERYONE("plots.trust.everyone", "static.permissions"),
+    PERMISSION_AREA_CREATE("plots.area.create", "static.permissions"),
+    PERMISSION_AREA_INFO("plots.area.info", "static.permissions"),
+    PERMISSION_AREA_LIST("plots.area.list", "static.permissions"),
+    PERMISSION_AREA_REGEN("plots.area.regen", "static.permissions"),
+    PERMISSION_AREA_TP("plots.area.tp", "static.permissions"),
+    PERMISSION_AUTO_MEGA("plots.atuo.mega", "static.permissions"),
+    PERMISSION_CLAIM_SCHEMATIC("plots.claim.%s0", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_SCHEMATIC("plots.admin.command.schematic", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_BO3("plots.admin.command.bo3", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_CLEAR("plots.admin.command.clear", "static.permissions"),
+    PERMISSION_CONTINUE("plots.continue", "static.permissions"),
+    PERMISSION_CLUSTER_LIST("plots.cluster.list", "static.permissions"),
+    PERMISSION_CLUSTER_CREATE("plots.cluster.create", "static.permissions"),
+    PERMISSION_CLUSTER_CREATE_OTHER("plots.cluster.create.other", "static.permissions"),
+    PERMISSION_CLUSTER_SIZE("plots.cluster.size", "static.permissions"),
+    PERMISSION_CLUSTER_DELETE("plots.cluster.delete", "static.permissions"),
+    PERMISSION_CLUSTER_DELETE_OTHER("plots.cluster.delete.other", "static.permissions"),
+    PERMISSION_CLUSTER_RESIZE("plots.cluster.resize", "static.permissions"),
+    PERMISSION_CLUSTER_RESIZE_OTHER("plots.cluster.resize.other", "static.permissions"),
+    PERMISSION_CLUSTER_RESIZE_SHRINK("plots.cluster.resize.shrink", "static.permissions"),
+    PERMISSION_CLUSTER_RESIZE_EXPAND("plots.cluster.resize.expand", "static.permissions"),
+    PERMISSION_CLUSTER("plots.cluster", "static.permissions"),
+    PERMISSION_CLUSTER_INVITE("plots.cluster.invite", "static.permissions"),
+    PERMISSION_CLUSTER_INVITE_OTHER("plots.cluster.invite.other", "static.permissions"),
+    PERMISSION_CLUSTER_KICK("plots.cluster.kick", "static.permissions"),
+    PERMISSION_CLUSTER_KICK_OTHER("plots.cluster.kick.other", "static.permissions"),
+    PERMISSION_CLUSTER_LEAVE("plots.cluster.leave", "static.permissions"),
+    PERMISSION_CLUSTER_HELPERS("plots.cluster.helpers", "static.permissions"),
+    PERMISSION_CLUSTER_TP("plots.cluster.tp", "static.permissions"),
+    PERMISSION_CLUSTER_TP_OTHER("plots.cluster.tp.other", "static.permissions"),
+    PERMISSION_CLUSTER_INFO("plots.cluster.info", "static.permissions"),
+    PERMISSION_CLUSTER_SETHOME("plots.cluster.sethome", "static.permissions"),
+    PERMISSION_CLUSTER_SETHOME_OTHER("plots.cluster.sethome.other", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_CONTINUE("plots.admin.command.continue", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_DELETE("plots.admin.command.delete", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_DENY("plots.admin.command.deny", "static.permissions"),
+    PERMISSION_DENY_EVERYONE("plots.deny.everyone", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_DONE("plots.admin.command.done", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_DOWNLOAD("plots.admin.command.download", "static.permissions"),
+    PERMISSION_DOWNLOAD_BO3("plots.download.bo3", "static.permissions"),
+    PERMISSION_DOWNLOAD_WORLD("plots.download.world", "static.permissions"),
+    PERMISSION_SET_FLAG_OTHER("plots.set.flag.other", "static.permissions"),
+    PERMISSION_SET_FLAG("plots.set.flag", "static.permissions"),
+    PERMISSION_SET_FLAG_KEY("plots.set.flag.%s0", "static.permissions"),
+    PERMISSION_SET_FLAG_KEY_VALUE("plots.set.flag.%s0.%s1", "static.permissions"),
+    PERMISSION_FLAG_REMOVE("plots.flag.remove", "static.permissions"),
+    PERMISSION_FLAG_ADD("plots.flag.add", "static.permissions"),
+    PERMISSION_FLAG_LIST("plots.flag.list", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_KICK("plots.admin.command.kick", "static.permissions"),
+    PERMISSION_GRANT("plots.grant.%s0", "static.permissions"),
+    PERMISSION_LIST_FORSALE("plots.list.forsale", "static.permissions"),
+    PERMISSION_LIST_MINE("plots.list.mine", "static.permissions"),
+    PERMISSION_LIST_SHARED("plots.list.shared", "static.permissions"),
+    PERMISSION_LIST_WORLD("plots.list.world", "static.permissions"),
+    PERMISSION_LIST_WORLD_NAME("plots.list.world.%s0", "static.permissions"),
+    PERMISSION_LIST_TOP("plots.list.top", "static.permissions"),
+    PERMISSION_LIST_ALL("plots.list.all", "static.permissions"),
+    PERMISSION_LIST_UNOWNED("plots.list.unowned", "static.permissions"),
+    PERMISSION_LIST_UNKNOWN("plots.list.unknown", "static.permissions"),
+    PERMISSION_LIST_PLAYER("plots.list.player", "static.permissions"),
+    PERMISSION_LIST_DONE("plots.list.done", "static.permissions"),
+    PERMISSION_LIST_EXPIRED("plots.list.expired", "static.permissions"),
+    PERMISSION_LIST_FUZZY("plots.list.fuzzy", "static.permissions"),
+    PERMISSION_LIST_AREA("plots.list.area", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_LOAD("plots.admin.command.load", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_MERGE("plots.admin.command.merge", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_SETOWNER("plots.admin.command.setowner", "static.permissions"),
+    PERMISSION_COMMENT("plots.comment", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_REMOVE("plots.admin.command.remove", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_SAVE("plots.admin.command.save", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_SCHEMATIC_PASTE("plots.admin.command.schematic.paste", "static.permissions"),
+    PERMISSION_SCHEMATIC_PASTE("plots.schematic.paste", "static.permissions"),
+    PERMISSION_SCHEMATIC_SAVE("plots.schematic.save", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_SCHEMATIC_SAVE("plots.admin.command.schematic.save", "static.permissions"),
+    PERMISSION_SET_COMPONENT("plots.set.%s0", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND("plots.admin.command.%s0", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_UNLINK("", "static.permissions"),
+    PERMISSION_VISIT_UNOWNED("plots.visit.unowned", "static.permissions"),
+    PERMISSION_VISIT_OWNED("plots.visit.owned", "static.permissions"),
+    PERMISSION_SHARED("plots.visit.shared", "static.permissions"),
+    PERMISSION_VISIT_OTHER("plots.visit.other", "static.permissions"),
+    PERMISSION_HOME("plots.home", "static.permissions"),
+
     /*
      * Static console
      */
     CONSOLE_JAVA_OUTDATED_1_8("&cYour version of java is outdated. It is highly recommended that you update to Java 8 as it increases performance "
-            + "and security. PlotSquared will require Java 9 in a future update.", "static.console"),
-    CONSOLE_PLEASE_ENABLE_METRICS("&dPlease enable metrics for PlotSquared. Using metrics improves plugin stability, performance, and features. "
+            + "and security. %s0 will require Java 9 in a future update.", "static.console"),
+    CONSOLE_PLEASE_ENABLE_METRICS("&dPlease enable metrics for %s0. Using metrics improves plugin stability, performance, and features. "
             + "Bug fixes and new features are influenced on metrics.", "static.console"),
     /*
      * Confirm
@@ -288,7 +373,7 @@ public enum C {
      */
     TASK_START("Starting task...", "Core"),
     PREFIX("$3[$1P2$3] $2", "Core"),
-    ENABLED("$1PlotSquared is now enabled", "Core"),
+    ENABLED("$1%s0 is now enabled", "Core"),
     /*
      * Reload
      */
@@ -527,12 +612,6 @@ public enum C {
      * Left
      */
     LEFT_PLOT("$2You left a plot", "Left"),
-    /*
-     * PlotMe
-     */
-    NOT_USING_PLOTME(
-            "$2This server uses the far superior $1PlotSquared $2plot management system. Please use the $1/ps $2or $1/p2 $2or $1/plots $2instead",
-            "Errors"),
     /*
      * Wait
      */

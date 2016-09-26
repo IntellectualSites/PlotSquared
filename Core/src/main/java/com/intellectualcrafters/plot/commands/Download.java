@@ -42,7 +42,7 @@ public class Download extends SubCommand {
             return false;
         }
         if ((Settings.Done.REQUIRED_FOR_DOWNLOAD && (!plot.getFlag(Flags.DONE).isPresent())) && !Permissions
-                .hasPermission(player, "plots.admin.command.download")) {
+                .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_DOWNLOAD)) {
             MainUtil.sendMessage(player, C.DONE_NOT_DONE);
             return false;
         }
@@ -73,8 +73,8 @@ public class Download extends SubCommand {
                 }
             });
         } else if (args.length == 1 && StringMan.isEqualIgnoreCaseToAny(args[0], "bo3", "bo2", "b03", "b02")) {
-            if (!Permissions.hasPermission(player, "plots.download.bo3")) {
-                C.NO_PERMISSION.send(player, "plots.download.bo3");
+            if (!Permissions.hasPermission(player, C.PERMISSION_DOWNLOAD_BO3)) {
+                C.NO_PERMISSION.send(player, C.PERMISSION_DOWNLOAD_BO3);
             }
             if (plot.getVolume() > 128d * 128d * 256) {
                 C.SCHEMATIC_TOO_LARGE.send(player);
@@ -93,8 +93,8 @@ public class Download extends SubCommand {
                 }
             });
         } else if (args.length == 1 && StringMan.isEqualIgnoreCaseToAny(args[0], "mcr", "world", "mca")) {
-            if (!Permissions.hasPermission(player, "plots.download.world")) {
-                C.NO_PERMISSION.send(player, "plots.download.world");
+            if (!Permissions.hasPermission(player, C.PERMISSION_DOWNLOAD_WORLD)) {
+                C.NO_PERMISSION.send(player, C.PERMISSION_DOWNLOAD_WORLD);
             }
             MainUtil.sendMessage(player, "&cNote: The `.mca` files are 512x512");
             plot.addRunning();

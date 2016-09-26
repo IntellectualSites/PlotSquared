@@ -13,7 +13,7 @@ import java.net.URL;
 @CommandDeclaration(
         command = "update",
         permission = "plots.admin.command.update",
-        description = "Update PlotSquared",
+        description = "Update the plugin",
         usage = "/plot update",
         requiredType = RequiredType.NONE,
         aliases = {"updateplugin"},

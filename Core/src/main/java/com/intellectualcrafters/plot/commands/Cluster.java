@@ -41,8 +41,8 @@ public class Cluster extends SubCommand {
         switch (sub) {
             case "l":
             case "list": {
-                if (!Permissions.hasPermission(player, "plots.cluster.list")) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.list");
+                if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_LIST)) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_LIST);
                     return false;
                 }
                 if (args.length != 1) {
@@ -73,8 +73,8 @@ public class Cluster extends SubCommand {
             }
             case "c":
             case "create": {
-                if (!Permissions.hasPermission(player, "plots.cluster.create")) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.create");
+                if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_CREATE)) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_CREATE);
                     return false;
                 }
                 PlotArea area = player.getApplicablePlotArea();
@@ -121,11 +121,11 @@ public class Cluster extends SubCommand {
                 }
                 Set<Plot> plots = area.getPlotSelectionOwned(pos1, pos2);
                 if (!plots.isEmpty()) {
-                    if (!Permissions.hasPermission(player, "plots.cluster.create.other")) {
+                    if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_CREATE_OTHER)) {
                         UUID uuid = player.getUUID();
                         for (Plot plot : plots) {
                             if (!plot.isOwner(uuid)) {
-                                MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.create.other");
+                                MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_CREATE_OTHER);
                                 return false;
                             }
                         }
@@ -139,9 +139,9 @@ public class Cluster extends SubCommand {
                 } else {
                     current = player.getPlayerClusterCount(player.getLocation().getWorld());
                 }
-                int allowed = Permissions.hasPermissionRange(player, "plots.cluster.size", Settings.Limit.MAX_PLOTS);
+                int allowed = Permissions.hasPermissionRange(player, C.PERMISSION_CLUSTER_SIZE, Settings.Limit.MAX_PLOTS);
                 if (current + cluster.getArea() > allowed) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.size." + (current + cluster.getArea()));
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_SIZE + "." + (current + cluster.getArea()));
                     return false;
                 }
                 // create cluster
@@ -163,8 +163,8 @@ public class Cluster extends SubCommand {
             case "disband":
             case "del":
             case "delete": {
-                if (!Permissions.hasPermission(player, "plots.cluster.delete")) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.delete");
+                if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_DELETE)) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_DELETE);
                     return false;
                 }
                 if (args.length != 1 && args.length != 2) {
@@ -191,8 +191,8 @@ public class Cluster extends SubCommand {
                     }
                 }
                 if (!cluster.owner.equals(player.getUUID())) {
-                    if (!Permissions.hasPermission(player, "plots.cluster.delete.other")) {
-                        MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.delete.other");
+                    if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_DELETE_OTHER)) {
+                        MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_DELETE_OTHER);
                         return false;
                     }
                 }
@@ -202,8 +202,8 @@ public class Cluster extends SubCommand {
             }
             case "res":
             case "resize": {
-                if (!Permissions.hasPermission(player, "plots.cluster.resize")) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.resize");
+                if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_RESIZE)) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_RESIZE);
                     return false;
                 }
                 if (args.length != 3) {
@@ -233,8 +233,8 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 if (!cluster.hasHelperRights(player.getUUID())) {
-                    if (!Permissions.hasPermission(player, "plots.cluster.resize.other")) {
-                        MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.resize.other");
+                    if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_RESIZE_OTHER)) {
+                        MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_RESIZE_OTHER);
                         return false;
                     }
                 }
@@ -250,15 +250,15 @@ public class Cluster extends SubCommand {
                 removed.removeAll(newPlots);
                 // Check expand / shrink
                 if (!removed.isEmpty()) {
-                    if (!Permissions.hasPermission(player, "plots.cluster.resize.shrink")) {
-                        MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.resize.shrink");
+                    if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_RESIZE_SHRINK)) {
+                        MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_RESIZE_SHRINK);
                         return false;
                     }
                 }
                 newPlots.removeAll(existing);
                 if (!newPlots.isEmpty()) {
-                    if (!Permissions.hasPermission(player, "plots.cluster.resize.expand")) {
-                        MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.resize.expand");
+                    if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_RESIZE_EXPAND)) {
+                        MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_RESIZE_EXPAND);
                         return false;
                     }
                 }
@@ -270,9 +270,9 @@ public class Cluster extends SubCommand {
                     current = player.getPlayerClusterCount(player.getLocation().getWorld());
                 }
                 current -= cluster.getArea() + (1 + pos2.x - pos1.x) * (1 + pos2.y - pos1.y);
-                int allowed = Permissions.hasPermissionRange(player, "plots.cluster", Settings.Limit.MAX_PLOTS);
+                int allowed = Permissions.hasPermissionRange(player, C.PERMISSION_CLUSTER, Settings.Limit.MAX_PLOTS);
                 if (current + cluster.getArea() > allowed) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster." + (current + cluster.getArea()));
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER.s() + "." + (current + cluster.getArea()));
                     return false;
                 }
                 // resize cluster
@@ -283,8 +283,8 @@ public class Cluster extends SubCommand {
             case "add":
             case "inv":
             case "invite": {
-                if (!Permissions.hasPermission(player, "plots.cluster.invite")) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.invite");
+                if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_INVITE)) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_INVITE);
                     return false;
                 }
                 if (args.length != 2) {
@@ -302,8 +302,8 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 if (!cluster.hasHelperRights(player.getUUID())) {
-                    if (!Permissions.hasPermission(player, "plots.cluster.invite.other")) {
-                        MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.invite.other");
+                    if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_INVITE_OTHER)) {
+                        MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_INVITE_OTHER);
                         return false;
                     }
                 }
@@ -328,8 +328,8 @@ public class Cluster extends SubCommand {
             case "k":
             case "remove":
             case "kick": {
-                if (!Permissions.hasPermission(player, "plots.cluster.kick")) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.kick");
+                if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_KICK)) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_KICK);
                     return false;
                 }
                 if (args.length != 2) {
@@ -346,8 +346,8 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 if (!cluster.hasHelperRights(player.getUUID())) {
-                    if (!Permissions.hasPermission(player, "plots.cluster.kick.other")) {
-                        MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.kick.other");
+                    if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_KICK_OTHER)) {
+                        MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_KICK_OTHER);
                         return false;
                     }
                 }
@@ -383,8 +383,8 @@ public class Cluster extends SubCommand {
             }
             case "quit":
             case "leave": {
-                if (!Permissions.hasPermission(player, "plots.cluster.leave")) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.leave");
+                if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_LEAVE)) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_LEAVE);
                     return false;
                 }
                 if (args.length != 1 && args.length != 2) {
@@ -438,8 +438,8 @@ public class Cluster extends SubCommand {
             case "admin":
             case "helper":
             case "helpers": {
-                if (!Permissions.hasPermission(player, "plots.cluster.helpers")) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.helpers");
+                if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_HELPERS)) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_HELPERS);
                     return false;
                 }
                 if (args.length != 3) {
@@ -476,8 +476,8 @@ public class Cluster extends SubCommand {
             case "spawn":
             case "home":
             case "tp": {
-                if (!Permissions.hasPermission(player, "plots.cluster.tp")) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.tp");
+                if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_TP)) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_TP);
                     return false;
                 }
                 if (args.length != 2) {
@@ -496,8 +496,8 @@ public class Cluster extends SubCommand {
                 }
                 UUID uuid = player.getUUID();
                 if (!cluster.isAdded(uuid)) {
-                    if (!Permissions.hasPermission(player, "plots.cluster.tp.other")) {
-                        MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.tp.other");
+                    if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_TP_OTHER)) {
+                        MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_TP_OTHER);
                         return false;
                     }
                 }
@@ -508,8 +508,8 @@ public class Cluster extends SubCommand {
             case "info":
             case "show":
             case "information": {
-                if (!Permissions.hasPermission(player, "plots.cluster.info")) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.info");
+                if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_INFO)) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_INFO);
                     return false;
                 }
                 if (args.length != 1 && args.length != 2) {
@@ -554,8 +554,8 @@ public class Cluster extends SubCommand {
             case "sh":
             case "setspawn":
             case "sethome":
-                if (!Permissions.hasPermission(player, "plots.cluster.sethome")) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.sethome");
+                if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_SETHOME)) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_SETHOME);
                     return false;
                 }
                 if (args.length != 1 && args.length != 2) {
@@ -572,8 +572,8 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 if (!cluster.hasHelperRights(player.getUUID())) {
-                    if (!Permissions.hasPermission(player, "plots.cluster.sethome.other")) {
-                        MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.cluster.sethome.other");
+                    if (!Permissions.hasPermission(player, C.PERMISSION_CLUSTER_SETHOME_OTHER)) {
+                        MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLUSTER_SETHOME_OTHER);
                         return false;
                     }
                 }

@@ -1,6 +1,7 @@
 package com.plotsquared.listener;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.sk89q.worldedit.Vector;
@@ -95,7 +96,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                 this.BScount++;
                 if (this.BScount > Settings.Chunk_Processor.MAX_TILES) {
                     this.BSblocked = true;
-                    PS.debug("&cPlotSquared detected unsafe WorldEdit: " + location.getBlockX() + "," + location.getBlockZ());
+                    PS.debug(C.PREFIX + "&cdetected unsafe WorldEdit: " + location.getBlockX() + "," + location.getBlockZ());
                 }
                 if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
                     if (this.count++ > this.max) {
@@ -240,7 +241,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         this.Ecount++;
         if (this.Ecount > Settings.Chunk_Processor.MAX_ENTITIES) {
             this.Eblocked = true;
-            PS.debug("&cPlotSquared detected unsafe WorldEdit: " + location.getBlockX() + "," + location.getBlockZ());
+            PS.debug(C.PREFIX + "&cdetected unsafe WorldEdit: " + location.getBlockX() + "," + location.getBlockZ());
         }
         if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
             return super.createEntity(location, entity);

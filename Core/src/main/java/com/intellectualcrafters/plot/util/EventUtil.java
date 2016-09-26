@@ -68,8 +68,8 @@ public abstract class EventUtil {
             }
         }
         if (PS.get().update != null && Permissions.hasPermission(player, C.PERMISSION_ADMIN_UPDATE) && Settings.Enabled_Components.UPDATER) {
-            MainUtil.sendMessage(player,C.CONSOLE_JAVA_OUTDATED_1_8.s());
-            MainUtil.sendMessage(player, "&6An update for PlotSquared is available: &7/plot update");
+            MainUtil.sendMessage(player,C.CONSOLE_JAVA_OUTDATED_1_8.f(PS.get().IMP.getPluginName()));
+            MainUtil.sendMessage(player, "&6An update for " + PS.imp().getPluginName() + " is available: &7/plot update");
         }
         final Plot plot = player.getCurrentPlot();
         if (Settings.Teleport.ON_LOGIN && plot != null) {

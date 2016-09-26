@@ -110,7 +110,7 @@ public class Rate extends SubCommand {
                                 Rating result = EventUtil.manager.callRating(this.player, plot, new Rating(rV));
                                 plot.addRating(this.player.getUUID(), result);
                                 sendMessage(this.player, C.RATING_APPLIED, plot.getId().toString());
-                                if (Permissions.hasPermission(this.player, "plots.comment")) {
+                                if (Permissions.hasPermission(this.player, C.PERMISSION_COMMENT)) {
                                     Command command = MainCommand.getInstance().getCommand(Comment.class);
                                     if (command != null) {
                                         MainUtil.sendMessage(this.player, C.COMMENT_THIS, command.getUsage());

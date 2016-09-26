@@ -89,7 +89,11 @@ public class Permissions {
         }
         return true;
     }
-    
+
+    public static int hasPermissionRange(PlotPlayer player, C perm, int range) {
+        return hasPermissionRange(player, perm.s(), range);
+    }
+
     /**
      * Check the the highest permission a PlotPlayer has within a specified range.<br>
      *  - Excessively high values will lag<br>

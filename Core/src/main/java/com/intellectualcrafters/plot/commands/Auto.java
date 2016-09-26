@@ -62,7 +62,7 @@ public class Auto extends SubCommand {
         int size_z = 1;
         String schematic = null;
         if (args.length > 0) {
-            if (Permissions.hasPermission(player, "plots.auto.mega")) {
+            if (Permissions.hasPermission(player, C.PERMISSION_AUTO_MEGA)) {
                 try {
                     String[] split = args[0].split(",|;");
                     size_x = Integer.parseInt(split[0]);
@@ -134,8 +134,8 @@ public class Auto extends SubCommand {
                 sendMessage(player, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
                 return true;
             }
-            if (!Permissions.hasPermission(player, "plots.claim." + schematic) && !Permissions.hasPermission(player, "plots.admin.command.schematic")) {
-                MainUtil.sendMessage(player, C.NO_SCHEMATIC_PERMISSION, schematic);
+            if (!Permissions.hasPermission(player, C.PERMISSION_CLAIM_SCHEMATIC.f(schematic)) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {
+                MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLAIM_SCHEMATIC.f(schematic));
                 return true;
             }
         }

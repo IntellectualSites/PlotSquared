@@ -31,7 +31,7 @@ public class Unlink extends SubCommand {
         if (!plot.hasOwner()) {
             return !sendMessage(player, C.PLOT_UNOWNED);
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.unlink")) {
+        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_UNLINK)) {
             return sendMessage(player, C.NO_PLOT_PERMS);
         }
         if (!plot.isMerged()) {

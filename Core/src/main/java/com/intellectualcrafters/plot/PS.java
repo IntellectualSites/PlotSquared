@@ -149,12 +149,12 @@ public class PS {
                 }
             }
             if (getJavaVersion() < 1.8) {
-                PS.log(C.CONSOLE_JAVA_OUTDATED_1_8);
+                PS.log(C.CONSOLE_JAVA_OUTDATED_1_8.f(IMP.getPluginName()));
             }
             TaskManager.IMP = this.IMP.getTaskManager();
             setupConfigs();
             this.translationFile =
-                    MainUtil.getFile(this.IMP.getDirectory(), Settings.Paths.TRANSLATIONS + File.separator + "PlotSquared.use_THIS.yml");
+                    MainUtil.getFile(this.IMP.getDirectory(), Settings.Paths.TRANSLATIONS + File.separator + IMP.getPluginName() + ".use_THIS.yml");
             C.load(this.translationFile);
 
             // Database
@@ -177,7 +177,7 @@ public class PS {
             if (Settings.Enabled_Components.METRICS) {
                 this.IMP.startMetrics();
             } else {
-                PS.log(C.CONSOLE_PLEASE_ENABLE_METRICS);
+                PS.log(C.CONSOLE_PLEASE_ENABLE_METRICS.f(IMP.getPluginName()));
             }
             if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
                 this.IMP.registerChunkProcessor();
@@ -221,7 +221,7 @@ public class PS {
             if (Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
                 try {
                     if (this.IMP.initWorldEdit()) {
-                        PS.debug("PlotSquared hooked into WorldEdit.");
+                        PS.debug(IMP.getPluginName() + " hooked into WorldEdit.");
                         this.worldedit = WorldEdit.getInstance();
                         WorldEdit.getInstance().getEventBus().register(new WESubscriber());
                         if (Settings.Enabled_Components.COMMANDS) {
@@ -252,7 +252,7 @@ public class PS {
                         if (url != null) {
                             PS.this.update = url;
                         } else if (PS.this.lastVersion == null) {
-                            PS.log("&aThanks for installing PlotSquared!");
+                            PS.log("&aThanks for installing " + IMP.getPluginName() + "!");
                         } else if (!get().checkVersion(PS.this.lastVersion, PS.this.version)) {
                             PS.log("&aThanks for updating from " + StringMan.join(PS.this.lastVersion, ".") + " to " + StringMan
                                     .join(PS.this.version, ".") + "!");
@@ -281,7 +281,7 @@ public class PS {
                                 continue;
                             }
                             if (!WorldUtil.IMP.isWorld(world)) {
-                                debug("&c`" + world + "` was not properly loaded - PlotSquared will now try to load it properly: ");
+                                debug("&c`" + world + "` was not properly loaded - " + IMP.getPluginName() + " will now try to load it properly: ");
                                 debug(
                                         "&8 - &7Are you trying to delete this world? Remember to remove it from the settings.yml, bukkit.yml and "
                                                 + "multiverse worlds.yml");
@@ -305,9 +305,7 @@ public class PS {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        if (!C.ENABLED.s().isEmpty()) {
-            PS.log(C.ENABLED);
-        }
+        PS.log(C.ENABLED.f(IMP.getPluginName()));
     }
 
     /**
@@ -319,6 +317,13 @@ public class PS {
         return PS.instance;
     }
 
+    public static IPlotMain imp() {
+        if (instance != null) {
+            return instance.IMP;
+        }
+        return null;
+    }
+
     /**
      * Log a message to the IPlotMain logger.
      *
@@ -326,6 +331,9 @@ public class PS {
      * @see IPlotMain#log(String)
      */
     public static void log(Object message) {
+        if (message == null || message.toString().isEmpty()) {
+            return;
+        }
         PS.get().getLogger().log(StringMan.getString(message));
     }
 
@@ -400,7 +408,7 @@ public class PS {
 
     private void startPlotMeConversion() {
         if (Settings.Enabled_Components.PLOTME_CONVERTER || Settings.PlotMe.CACHE_UUDS) {
-            TaskManager.runTaskLater(new Runnable() {
+            TaskManager.IMP.taskAsync(new Runnable() {
                 @Override
                 public void run() {
                     if (PS.this.IMP.initPlotMeConverter()) {
@@ -411,8 +419,9 @@ public class PS {
                         PS.log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the "
                                 + "'settings.yml'");
                     }
+                    Settings.Enabled_Components.PLOTME_CONVERTER = false;
                 }
-            }, 20);
+            });
         }
     }
 
@@ -737,7 +746,7 @@ public class PS {
      * @param area the {@code PlotArea} to remove
      */
     public void removePlotArea(PlotArea area) {
-        Set<PlotArea> areas = getPlotAreas(area.worldname);
+        Set<PlotArea> areas = getPlotAreas();
         areas.remove(area);
         this.plotAreas = areas.toArray(new PlotArea[areas.size()]);
         if (areas.isEmpty()) {
@@ -1460,7 +1469,7 @@ public class PS {
                     return;
                 }
                 PS.log(C.PREFIX + "&aDetected world load for '" + world + "'");
-                String gen_string = worldSection.getString("generator.plugin", "PlotSquared");
+                String gen_string = worldSection.getString("generator.plugin", IMP.getPluginName());
                 if (type == 2) {
                     Set<PlotCluster> clusters = this.clusters_tmp != null ? this.clusters_tmp.get(world) : new HashSet<PlotCluster>();
                     if (clusters == null) {
@@ -1557,7 +1566,7 @@ public class PS {
                         clone.set(key, worldSection.get(key));
                     }
                 }
-                String gen_string = clone.getString("generator.plugin", "PlotSquared");
+                String gen_string = clone.getString("generator.plugin", IMP.getPluginName());
                 GeneratorWrapper<?> areaGen = this.IMP.getGenerator(world, gen_string);
                 if (areaGen == null) {
                     throw new IllegalArgumentException("Invalid Generator: " + gen_string);
@@ -1705,7 +1714,7 @@ public class PS {
                 }
                 MainUtil.sendMessage(sender, "$2 - Output: " + newJar);
                 if (!newJar.delete()) {
-                    MainUtil.sendMessage(sender, "Failed to update PlotSquared");
+                    MainUtil.sendMessage(sender, "Failed to update " + IMP.getPluginName() + "");
                     MainUtil.sendMessage(sender, "Jar file failed to delete.");
                     MainUtil.sendMessage(sender, " - Please update manually");
                 }
@@ -1714,7 +1723,7 @@ public class PS {
             MainUtil.sendMessage(sender, "$1The update will take effect when the server is restarted next");
             return true;
         } catch (IOException e) {
-            MainUtil.sendMessage(sender, "Failed to update PlotSquared");
+            MainUtil.sendMessage(sender, "Failed to update " + IMP.getPluginName() + "");
             MainUtil.sendMessage(sender, " - Please update manually");
             PS.log("============ Stacktrace ============");
             e.printStackTrace();
@@ -1845,7 +1854,7 @@ public class PS {
             PS.log("&d==== Here is an ugly stacktrace, if you are interested in those things ===");
             e.printStackTrace();
             PS.log("&d==== End of stacktrace ====");
-            PS.log("&6Please go to the PlotSquared 'storage.yml' and configure the database correctly.");
+            PS.log("&6Please go to the " + IMP.getPluginName() + " 'storage.yml' and configure the database correctly.");
             this.IMP.disable();
         }
     }
@@ -1868,7 +1877,7 @@ public class PS {
                 try {
                     worlds.save(worldsFile);
                 } catch (IOException e) {
-                    PS.debug("Failed to save PlotSquared worlds.yml");
+                    PS.debug("Failed to save " + IMP.getPluginName() + " worlds.yml");
                     e.printStackTrace();
                 }
             }

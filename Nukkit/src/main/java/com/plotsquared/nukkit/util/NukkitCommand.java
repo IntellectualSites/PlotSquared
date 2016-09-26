@@ -11,7 +11,7 @@ import com.intellectualcrafters.plot.object.ConsolePlayer;
 public class NukkitCommand extends Command {
 
     public NukkitCommand(String cmd, String[] aliases) {
-        super(cmd, "PlotSquared command", "/plot", aliases);
+        super(cmd, "Plot command", "/plot", aliases);
     }
 
 

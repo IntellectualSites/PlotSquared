@@ -33,8 +33,8 @@ public class Grant extends Command {
         switch (arg0) {
             case "add":
             case "check":
-                if (!Permissions.hasPermission(player, "plots.grant." + arg0)) {
-                    C.NO_PERMISSION.send(player, "plots.grant." + arg0);
+                if (!Permissions.hasPermission(player, C.PERMISSION_GRANT.f(arg0))) {
+                    C.NO_PERMISSION.send(player, C.PERMISSION_GRANT.f(arg0));
                     return;
                 }
                 if (args.length > 2) {

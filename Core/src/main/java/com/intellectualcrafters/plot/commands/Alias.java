@@ -15,7 +15,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         permission = "plots.set.alias",
         description = "Set the plot name",
         usage = "/plot alias <alias>",
-        aliases = {"alias", "sa", "name", "rename", "setname", "seta"},
+        aliases = {"alias", "sa", "name", "rename", "setname", "seta", "nameplot"},
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.NONE)
 public class Alias extends SetCommand {

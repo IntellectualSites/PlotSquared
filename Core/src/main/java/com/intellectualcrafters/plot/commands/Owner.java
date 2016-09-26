@@ -59,7 +59,7 @@ public class Owner extends SetCommand {
             return false;
         }
         final PlotPlayer other = UUIDHandler.getPlayer(uuid);
-        if (!Permissions.hasPermission(player, "plots.admin.command.setowner")) {
+        if (!Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SETOWNER)) {
             if (other == null) {
                 C.INVALID_PLAYER_OFFLINE.send(player, value);
                 return false;

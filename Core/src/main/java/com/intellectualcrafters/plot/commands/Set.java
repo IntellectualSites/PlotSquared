@@ -58,8 +58,8 @@ public class Set extends SubCommand {
 
                 for (String component : components) {
                     if (component.equalsIgnoreCase(args[0])) {
-                        if (!Permissions.hasPermission(player, "plots.set." + component)) {
-                            MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set." + component);
+                        if (!Permissions.hasPermission(player, C.PERMISSION_SET_COMPONENT.f(component))) {
+                            MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SET_COMPONENT.f(component));
                             return false;
                         }
                         PlotBlock[] blocks;

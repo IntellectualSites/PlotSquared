@@ -1,15 +1,15 @@
 package com.intellectualcrafters.plot;
 
-import static com.intellectualcrafters.plot.PS.log;
-
 import com.intellectualcrafters.json.JSONArray;
 import com.intellectualcrafters.json.JSONObject;
 import com.intellectualcrafters.plot.util.HttpUtil;
 import com.intellectualcrafters.plot.util.StringMan;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+
+
+import static com.intellectualcrafters.plot.PS.log;
 
 public class Updater {
 
@@ -17,7 +17,7 @@ public class Updater {
         String str = HttpUtil.readUrl("https://api.github.com/repos/IntellectualSites/PlotSquared/releases/latest");
         JSONObject release = new JSONObject(str);
         JSONArray assets = (JSONArray) release.get("assets");
-        String downloadURL = String.format("PlotSquared-%s.jar", PS.get().getPlatform());
+        String downloadURL = String.format(PS.imp().getPluginName() + "-%s.jar", PS.get().getPlatform());
         for (int i = 0; i < assets.length(); i++) {
             JSONObject asset = assets.getJSONObject(i);
             String name = asset.getString("name");
@@ -33,11 +33,11 @@ public class Updater {
                     // If current version >= update
                     if (PS.get().checkVersion(PS.get().getVersion(), version)) {
                         if (!PS.get().IMP.getPluginVersionString().contains("-SNAPSHOT") || !Arrays.equals(PS.get().getVersion(), version)) {
-                            PS.debug("&7PlotSquared is already up to date!");
+                            PS.debug("&7" + PS.imp().getPluginName() + " is already up to date!");
                             return null;
                         }
                     }
-                    log("&6PlotSquared " + StringMan.join(split, ".") + " is available:");
+                    log("&6" + PS.imp().getPluginName() + " " + StringMan.join(split, ".") + " is available:");
                     log("&8 - &3Use: &7/plot update");
                     log("&8 - &3Or: &7" + downloadURL);
                     return new URL(asset.getString("browser_download_url"));
@@ -48,7 +48,7 @@ public class Updater {
                 }
             }
         }
-        log("You are running the latest version of PlotSquared");
+        log("You are running the latest version of " + PS.imp().getPluginName() + "!");
         return null;
     }
 }

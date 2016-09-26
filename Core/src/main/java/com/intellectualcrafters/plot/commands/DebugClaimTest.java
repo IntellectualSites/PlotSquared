@@ -56,8 +56,8 @@ public class DebugClaimTest extends SubCommand {
                     "&cInvalid min/max values. &7The values are to Plot IDs in the format &cX;Y &7where X;Y are the plot coords\nThe conversion "
                             + "will only check the plots in the selected area.");
         }
-        MainUtil.sendMessage(player, "&3Sign Block&8->&3PlotSquared&8: &7Beginning sign to plot conversion. This may take a while...");
-        MainUtil.sendMessage(player, "&3Sign Block&8->&3PlotSquared&8: Found an excess of 250,000 chunks. Limiting search radius... (~3.8 min)");
+        MainUtil.sendMessage(player, "&3Sign Block&8->&3Plot&8: &7Beginning sign to plot conversion. This may take a while...");
+        MainUtil.sendMessage(player, "&3Sign Block&8->&3Plot&8: Found an excess of 250,000 chunks. Limiting search radius... (~3.8 min)");
         PlotManager manager = area.getPlotManager();
         ArrayList<Plot> plots = new ArrayList<>();
         for (PlotId id : MainUtil.getPlotSelectionIds(min, max)) {
@@ -101,7 +101,7 @@ public class DebugClaimTest extends SubCommand {
             }
         }
         if (!plots.isEmpty()) {
-            MainUtil.sendMessage(player, "&3Sign Block&8->&3PlotSquared&8: &7Updating '" + plots.size() + "' plots!");
+            MainUtil.sendMessage(player, "&3Sign Block&8->&3Plot&8: &7Updating '" + plots.size() + "' plots!");
             DBFunc.createPlotsAndData(plots, new Runnable() {
                 @Override
                 public void run() {
@@ -111,7 +111,7 @@ public class DebugClaimTest extends SubCommand {
             for (Plot plot : plots) {
                 plot.create();
             }
-            MainUtil.sendMessage(player, "&3Sign Block&8->&3PlotSquared&8: &7Complete!");
+            MainUtil.sendMessage(player, "&3Sign Block&8->&3Plot&8: &7Complete!");
         } else {
             MainUtil.sendMessage(player, "No plots were found for the given search.");
         }

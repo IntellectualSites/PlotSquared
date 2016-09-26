@@ -129,7 +129,7 @@ public abstract class UUIDHandlerImplementation {
                             DBFunc.replaceUUID(offline, uuid);
                             PS.debug("&cDetected invalid UUID stored for: " + name.value);
                             PS.debug("&7 - Did you recently switch to online-mode storage without running `uuidconvert`?");
-                            PS.debug("&6PlotSquared will update incorrect entries when the user logs in, or you can reconstruct your database.");
+                            PS.debug("&6" + PS.imp().getPluginName() + " will update incorrect entries when the user logs in, or you can reconstruct your database.");
                         }
                     }
                 }
@@ -146,10 +146,7 @@ public abstract class UUIDHandlerImplementation {
                             for (Plot plot : plots) {
                                 plot.owner = uuid;
                             }
-                            DBFunc.replaceUUID(offlineUpper, uuid);
-                            PS.debug("&cDetected invalid UUID stored for: " + name.value);
-                            PS.debug("&7 - Did you recently switch to online-mode storage without running `uuidconvert`?");
-                            PS.debug("&6PlotSquared will update incorrect entries when the user logs in, or you can reconstruct your database.");
+                            replace(offlineUpper, uuid, name.value);
                         }
                     }
                 }
@@ -164,10 +161,7 @@ public abstract class UUIDHandlerImplementation {
                         for (Plot plot : plots) {
                             plot.owner = uuid;
                         }
-                        DBFunc.replaceUUID(offline, uuid);
-                        PS.debug("&cDetected invalid UUID stored for (1): " + name.value);
-                        PS.debug("&7 - Did you recently switch to online-mode storage without running `uuidconvert`?");
-                        PS.debug("&6PlotSquared will update incorrect entries when the user logs in, or you can reconstruct your database.");
+                        replace(offline, uuid, name.value);
                     }
                     return true;
                 }
@@ -185,6 +179,13 @@ public abstract class UUIDHandlerImplementation {
             this.uuidMap.put(name, uuid);
         }
         return true;
+    }
+
+    private void replace(UUID from, UUID to, String name) {
+        DBFunc.replaceUUID(from, to);
+        PS.debug("&cDetected invalid UUID stored for: " + name);
+        PS.debug("&7 - Did you recently switch to online-mode storage without running `uuidconvert`?");
+        PS.debug("&6" + PS.imp().getPluginName() + " will update incorrect entries when the user logs in, or you can reconstruct your database.");
     }
 
     public boolean uuidExists(UUID uuid) {

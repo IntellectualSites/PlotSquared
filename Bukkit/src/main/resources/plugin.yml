@@ -10,8 +10,8 @@ loadbefore: [MultiWorld, Multiverse-Core]
 database: false
 commands:
   plots:
-    description: PlotSquared PlotSquared command.
-    aliases: [p,plot,ps,plotsquared,p2,2]
+    description: Plot command.
+    aliases: [p,plot,ps,plotsquared,p2,2,plotme]
     permission: plots.use
     permission-message: "You are lacking the permission node 'plots.use'"
 permissions:
@@ -153,3 +153,156 @@ permissions:
     default: op
   plots.confirm.bypass:
     default: false
+  plotme.use:
+    description: Gives default user commands
+    children:
+      plots.permpack.basic: true
+      plots.plot.1: true
+  plotme.admin:
+    description: Gives default administrator commands
+    children:
+      plots.admin: true
+  plotme.use.middle:
+    children:
+      plots.middle: true
+  plotme.use.buy:
+    children:
+      plots.buy: true
+  plotme.use.sell:
+    children:
+      plots.set: true
+      plots.flag: true
+      plots.set.flag: true
+      plots.set.price.*: true
+  plotme.use.dispose:
+    children:
+      plots.delete: true
+  plotme.use.done:
+    children:
+      plots.done: true
+  plotme.use.claim:
+    children:
+      plots.claim: true
+  plotme.use.auto:
+    children:
+      plots.auto: true
+  plotme.use.reset:
+    children:
+      plots.delete: true
+  plotme.use.home:
+    children:
+      plots.home: true
+  plotme.use.info:
+    children:
+      plots.info: true
+  plotme.use.biome:
+    children:
+      plots.set: true
+      plots.set.biome: true
+  plotme.use.clear:
+    children:
+      plots.clear: true
+  plotme.use.list:
+    children:
+      plots.list: true
+      plots.list.forsale: true
+      plots.list.mine: true
+      plots.list.shared: true
+  plotme.use.add:
+    children:
+      plots.add: true
+      plots.trust: true
+      plots.add.everyone: true
+      plots.trust.everyone: true
+  plotme.use.deny:
+    children:
+      plots.deny: true
+      plots.deny.everyone: true
+  plotme.use.remove:
+    children:
+      plots.remove: true
+  plotme.use.undeny:
+    children:
+      plots.remove: true
+  plotme.use.protect:
+    children:
+      plots.set: true
+      plots.flag: true
+      plots.set.flag: true
+      plots.set.keep.*: true
+  plotme.use.nameplot:
+    children:
+      plots.set.alias: true
+  plotme.limit.*:
+    children:
+      plots.plot.*: true
+  plotme.limit.1:
+    children:
+      plots.plot.1: true
+  plotme.limit.5:
+    children:
+      plots.plot.5: true
+  plotme.limit.10:
+    children:
+      plots.plot.10: true
+  plotme.admin.home.other:
+    children:
+      plots.plot.: true
+  plotme.admin.clear:
+    children:
+      plots.admin.command.clear: true
+  plotme.admin.reset:
+    children:
+      plots.admin.command.delete: true
+  plotme.admin.add:
+    children:
+      plots.admin.command.add: true
+  plotme.admin.deny:
+    children:
+      plots.admin.command.deny: true
+  plotme.admin.remove:
+    children:
+      plots.admin.command.remove: true
+  plotme.admin.undeny:
+    children:
+      plots.admin.command.remove: true
+  plotme.admin.bypassdeny:
+    children:
+      plots.admin.entry.denied: true
+  plotme.admin.setowner:
+    children:
+      plots.admin.command.setowner: true
+  plotme.admin.move:
+    children:
+      plots.admin.command.move: true
+  plotme.admin.weanywhere:
+    children:
+      plots.worldedit.bypass: true
+  plotme.admin.list:
+    children:
+      plots.list.world: true
+      plots.list.world.*: true
+      plots.list.top: true
+      plots.list.all: true
+      plots.list.unowned: true
+      plots.list.unknown: true
+      plots.list.player: true
+      plots.list.done: true
+      plots.list.expired: true
+      plots.list.fuzzy: true
+      plots.list.area: true
+  plotme.admin.dispose:
+    children:
+      plots.admin.command.delete: true
+  plotme.admin.done:
+    children:
+      plots.admin.command.done: true
+  plotme.admin.expired:
+    children:
+      plots.list.expired: true
+  plotme.admin.buildanywhere:
+    children:
+      plots.admin.vehicle.*: true
+      plots.admin.interact.*: true
+      plots.admin.build.*: true
+      plots.admin.destroy.*: true

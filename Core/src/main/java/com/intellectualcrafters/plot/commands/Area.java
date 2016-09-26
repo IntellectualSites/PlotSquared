@@ -5,7 +5,6 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.generator.AugmentedUtils;
-import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
@@ -26,7 +25,6 @@ import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -52,8 +50,8 @@ public class Area extends SubCommand {
             case "c":
             case "setup":
             case "create":
-                if (!Permissions.hasPermission(player, "plots.area.create")) {
-                    C.NO_PERMISSION.send(player, "plots.area.create");
+                if (!Permissions.hasPermission(player, C.PERMISSION_AREA_CREATE)) {
+                    C.NO_PERMISSION.send(player, C.PERMISSION_AREA_CREATE);
                     return false;
                 }
                 switch (args.length) {
@@ -109,8 +107,8 @@ public class Area extends SubCommand {
                                 object.type = area.TYPE;
                                 object.min = new PlotId(1, 1);
                                 object.max = new PlotId(numX, numZ);
-                                object.plotManager = "PlotSquared";
-                                object.setupGenerator = "PlotSquared";
+                                object.plotManager = PS.imp().getPluginName();
+                                object.setupGenerator = PS.imp().getPluginName();
                                 object.step = area.getSettingNodes();
                                 final String path = "worlds." + area.worldname + ".areas." + area.id + '-' + object.min + '-' + object.max;
                                 Runnable run = new Runnable() {
@@ -237,8 +235,8 @@ public class Area extends SubCommand {
                                     ConfigurationSection section = PS.get().worlds.getConfigurationSection(path);
                                     pa.saveConfiguration(section);
                                     pa.loadConfiguration(section);
-                                    object.plotManager = "PlotSquared";
-                                    object.setupGenerator = "PlotSquared";
+                                    object.plotManager = PS.imp().getPluginName();
+                                    object.setupGenerator = PS.imp().getPluginName();
                                     String world = SetupUtils.manager.setupWorld(object);
                                     if (WorldUtil.IMP.isWorld(world)) {
                                         C.SETUP_FINISHED.send(player);
@@ -281,8 +279,8 @@ public class Area extends SubCommand {
                 return true;
             case "i":
             case "info": {
-                if (!Permissions.hasPermission(player, "plots.area.info")) {
-                    C.NO_PERMISSION.send(player, "plots.area.info");
+                if (!Permissions.hasPermission(player, C.PERMISSION_AREA_INFO)) {
+                    C.NO_PERMISSION.send(player, C.PERMISSION_AREA_INFO);
                     return false;
                 }
                 PlotArea area;
@@ -336,8 +334,8 @@ public class Area extends SubCommand {
             }
             case "l":
             case "list":
-                if (!Permissions.hasPermission(player, "plots.area.list")) {
-                    C.NO_PERMISSION.send(player, "plots.area.list");
+                if (!Permissions.hasPermission(player, C.PERMISSION_AREA_LIST)) {
+                    C.NO_PERMISSION.send(player, C.PERMISSION_AREA_LIST);
                     return false;
                 }
                 int page;
@@ -398,8 +396,8 @@ public class Area extends SubCommand {
             case "clear":
             case "reset":
             case "regenerate": {
-                if (!Permissions.hasPermission(player, "plots.area.regen")) {
-                    C.NO_PERMISSION.send(player, "plots.area.regen");
+                if (!Permissions.hasPermission(player, C.PERMISSION_AREA_REGEN)) {
+                    C.NO_PERMISSION.send(player, C.PERMISSION_AREA_REGEN);
                     return false;
                 }
                 final PlotArea area = player.getApplicablePlotArea();
@@ -424,8 +422,8 @@ public class Area extends SubCommand {
             case "teleport":
             case "visit":
             case "tp":
-                if (!Permissions.hasPermission(player, "plots.area.tp")) {
-                    C.NO_PERMISSION.send(player, "plots.area.tp");
+                if (!Permissions.hasPermission(player, C.PERMISSION_AREA_TP)) {
+                    C.NO_PERMISSION.send(player, C.PERMISSION_AREA_TP);
                     return false;
                 }
                 if (args.length != 2) {
@@ -452,7 +450,7 @@ public class Area extends SubCommand {
             case "remove":
                 MainUtil.sendMessage(player, "$1World creation settings may be stored in multiple locations:"
                         + "\n$3 - $2Bukkit bukkit.yml"
-                        + "\n$3 - $2PlotSquared settings.yml"
+                        + "\n$3 - $2" + PS.imp().getPluginName() + " settings.yml"
                         + "\n$3 - $2Multiverse worlds.yml (or any world management plugin)"
                         + "\n$1Stop the server and delete it from these locations.");
                 return true;

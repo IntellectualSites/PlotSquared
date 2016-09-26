@@ -19,7 +19,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         permission = "plots.delete",
         description = "Delete a plot",
         usage = "/plot delete",
-        aliases = {"dispose", "del"},
+        aliases = {"dispose", "del", "reset"},
         category = CommandCategory.CLAIMING,
         requiredType = RequiredType.NONE,
         confirmation = true)
@@ -36,7 +36,7 @@ public class Delete extends SubCommand {
         if (!plot.hasOwner()) {
             return !sendMessage(player, C.PLOT_UNOWNED);
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.delete")) {
+        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_DELETE)) {
             return !sendMessage(player, C.NO_PLOT_PERMS);
         }
         final PlotArea plotArea = plot.getArea();

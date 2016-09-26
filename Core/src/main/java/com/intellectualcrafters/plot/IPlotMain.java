@@ -70,6 +70,12 @@ public interface IPlotMain extends ILogger {
     String getPluginVersionString();
 
     /**
+     * Usually PlotSquared
+     * @return
+     */
+    String getPluginName();
+
+    /**
      * Get the version of Minecraft that is running.
      * @return
      */

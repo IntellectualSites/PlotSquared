@@ -33,7 +33,7 @@ public class Trust extends Command {
     public void execute(final PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         final Plot plot = check(player.getCurrentPlot(), C.NOT_IN_PLOT);
         checkTrue(plot.hasOwner(), C.PLOT_UNOWNED);
-        checkTrue(plot.isOwner(player.getUUID()) || Permissions.hasPermission(player, "plots.admin.command.trust"), C.NO_PLOT_PERMS);
+        checkTrue(plot.isOwner(player.getUUID()) || Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_TRUST), C.NO_PLOT_PERMS);
         checkTrue(args.length == 1, C.COMMAND_SYNTAX, getUsage());
         final Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
         checkTrue(!uuids.isEmpty(), C.INVALID_PLAYER, args[0]);
@@ -41,7 +41,7 @@ public class Trust extends Command {
         int size = plot.getTrusted().size() + plot.getMembers().size();
         while (iter.hasNext()) {
             UUID uuid = iter.next();
-            if (uuid == DBFunc.everyone && !(Permissions.hasPermission(player, "plots.trust.everyone") || Permissions.hasPermission(player, "plots.admin.command.trust"))) {
+            if (uuid == DBFunc.everyone && !(Permissions.hasPermission(player, C.PERMISSION_TRUST_EVERYONE) || Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_TRUST))) {
                 MainUtil.sendMessage(player, C.INVALID_PLAYER, MainUtil.getName(uuid));
                 iter.remove();
                 continue;
@@ -59,7 +59,7 @@ public class Trust extends Command {
             size += plot.getMembers().contains(uuid) ? 0 : 1;
         }
         checkTrue(!uuids.isEmpty(), null);
-        checkTrue(size <= plot.getArea().MAX_PLOT_MEMBERS || Permissions.hasPermission(player, "plots.admin.command.trust"), C.PLOT_MAX_MEMBERS);
+        checkTrue(size <= plot.getArea().MAX_PLOT_MEMBERS || Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_TRUST), C.PLOT_MAX_MEMBERS);
         confirm.run(this, new Runnable() {
             @Override // Success
             public void run() {

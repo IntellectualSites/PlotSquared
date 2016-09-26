@@ -4,11 +4,16 @@ import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
-import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.plotsquared.sponge.generator.SpongePlotGenerator;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.DimensionTypes;
 import org.spongepowered.api.world.GeneratorTypes;
@@ -18,13 +23,6 @@ import org.spongepowered.api.world.gen.WorldGenerator;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 import org.spongepowered.api.world.storage.WorldProperties;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-
 public class SpongeSetupUtils extends SetupUtils {
 
     @Override
@@ -32,7 +30,7 @@ public class SpongeSetupUtils extends SetupUtils {
         if (!SetupUtils.generators.isEmpty()) {
             return;
         }
-        SetupUtils.generators.put("PlotSquared", new SpongePlotGenerator(PS.get().IMP.getDefaultGenerator()));
+        SetupUtils.generators.put(PS.imp().getPluginName(), new SpongePlotGenerator(PS.get().IMP.getDefaultGenerator()));
         // TODO get external world generators
         Collection<WorldGeneratorModifier> wgms = Sponge.getRegistry().getAllOf(WorldGeneratorModifier.class);
         for (WorldGeneratorModifier wgm : wgms) {

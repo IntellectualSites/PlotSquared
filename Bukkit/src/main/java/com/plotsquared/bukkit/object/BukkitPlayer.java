@@ -1,5 +1,6 @@
 package com.plotsquared.bukkit.object;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EconHandler;
@@ -67,7 +68,7 @@ public class BukkitPlayer extends PlotPlayer {
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to);
         RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
         for (RegisteredListener listener : listeners) {
-            if (listener.getPlugin().getName().equals("PlotSquared")) {
+            if (listener.getPlugin().getName().equals(PS.imp().getPluginName())) {
                 continue;
             }
             try {
@@ -81,7 +82,7 @@ public class BukkitPlayer extends PlotPlayer {
         }
         event = new PlayerTeleportEvent(player, to, from);
         for (RegisteredListener listener : listeners) {
-            if (listener.getPlugin().getName().equals("PlotSquared")) {
+            if (listener.getPlugin().getName().equals(PS.imp().getPluginName())) {
                 continue;
             }
             try {

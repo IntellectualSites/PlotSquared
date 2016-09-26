@@ -64,7 +64,7 @@ public class Merge extends SubCommand {
         }
         UUID uuid = player.getUUID();
         if (!plot.isOwner(uuid)) {
-            if (!Permissions.hasPermission(player, "plots.admin.command.merge")) {
+            if (!Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_MERGE)) {
                 MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
                 return false;
             } else {

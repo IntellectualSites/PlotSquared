@@ -32,7 +32,7 @@ public class Setup extends SubCommand {
         StringBuilder message = new StringBuilder();
         message.append("&6What generator do you want?");
         for (Entry<String, GeneratorWrapper<?>> entry : SetupUtils.generators.entrySet()) {
-            if (entry.getKey().equals("PlotSquared")) {
+            if (entry.getKey().equals(PS.imp().getPluginName())) {
                 message.append("\n&8 - &2").append(entry.getKey()).append(" (Default Generator)");
             } else if (entry.getValue().isFull()) {
                 message.append("\n&8 - &7").append(entry.getKey()).append(" (Plot Generator)");
@@ -79,7 +79,7 @@ public class Setup extends SubCommand {
                 if (args.length != 1 || !SetupUtils.generators.containsKey(args[0])) {
                     String prefix = "\n&8 - &7";
                     MainUtil.sendMessage(player, "&cYou must choose a generator!" + prefix + StringMan.join(SetupUtils.generators.keySet(), prefix)
-                            .replaceAll("PlotSquared", "&2PlotSquared"));
+                            .replaceAll(PS.imp().getPluginName(), "&2" + PS.imp().getPluginName()));
                     sendMessage(player, C.SETUP_INIT);
                     return false;
                 }
@@ -137,7 +137,7 @@ public class Setup extends SubCommand {
                                 .getNewPlotArea("CheckingPlotSquaredGenerator", null, null, null).getSettingNodes();
                         SetupUtils.generators.get(object.plotManager).getPlotGenerator().processSetup(object);
                     } else {
-                        object.plotManager = "PlotSquared";
+                        object.plotManager = PS.imp().getPluginName();
                         MainUtil.sendMessage(player, "&c[WARNING] The specified generator does not identify as BukkitPlotGenerator");
                         MainUtil.sendMessage(player, "&7 - You may need to manually configure the other plugin");
                         object.step = SetupUtils.generators.get(object.plotManager).getPlotGenerator()
@@ -263,7 +263,7 @@ public class Setup extends SubCommand {
                         return false;
                     }
                     MainUtil.sendMessage(player,
-                            "&cThe world you specified already exists. After restarting, new terrain will use PlotSquared, however you may need to "
+                            "&cThe world you specified already exists. After restarting, new terrain will use " + PS.imp().getPluginName() + ", however you may need to "
                                     + "reset the world for it to generate correctly!");
                 }
                 object.world = args[0];

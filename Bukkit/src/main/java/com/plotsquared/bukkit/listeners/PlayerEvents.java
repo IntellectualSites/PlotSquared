@@ -20,7 +20,6 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.RegExUtil;
-import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.object.BukkitLazyBlock;
@@ -29,7 +28,6 @@ import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.listener.PlayerBlockEventType;
 import com.plotsquared.listener.PlotListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -346,20 +344,6 @@ public class PlayerEvents extends PlotListener implements Listener {
         String msg = event.getMessage().toLowerCase().replaceAll("/", "").trim();
         if (msg.isEmpty()) {
             return;
-        }
-        String[] split = msg.split(" ");
-        PluginCommand cmd = Bukkit.getServer().getPluginCommand(split[0]);
-        if (cmd == null) {
-            if (split[0].equals("plotme") || split[0].equals("ap")) {
-                Player player = event.getPlayer();
-                if (Settings.PlotMe.ALIAS) {
-                    player.performCommand("plots " + StringMan.join(Arrays.copyOfRange(split, 1, split.length), " "));
-                } else {
-                    MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_USING_PLOTME);
-                }
-                event.setCancelled(true);
-                return;
-            }
         }
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);

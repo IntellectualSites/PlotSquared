@@ -96,23 +96,23 @@ public class Visit extends Command {
         List<Plot> plots = PS.get().sortPlotsByTemp(unsorted);
         final Plot plot = plots.get(page - 1);
         if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(player, "plots.visit.unowned")) {
-                C.NO_PERMISSION.send(player, "plots.visit.unowned");
+            if (!Permissions.hasPermission(player, C.PERMISSION_VISIT_UNOWNED)) {
+                C.NO_PERMISSION.send(player, C.PERMISSION_VISIT_UNOWNED);
                 return;
             }
         } else if (plot.isOwner(player.getUUID())) {
-            if (!Permissions.hasPermission(player, "plots.visit.owned") && !Permissions.hasPermission(player, "plots.home")) {
-                C.NO_PERMISSION.send(player, "plots.visit.owned, plots.home");
+            if (!Permissions.hasPermission(player, C.PERMISSION_VISIT_OWNED) && !Permissions.hasPermission(player, C.PERMISSION_HOME)) {
+                C.NO_PERMISSION.send(player, C.PERMISSION_VISIT_OWNED);
                 return;
             }
         } else if (plot.isAdded(player.getUUID())) {
-            if (!Permissions.hasPermission(player, "plots.visit.shared")) {
-                C.NO_PERMISSION.send(player, "plots.visit.shared");
+            if (!Permissions.hasPermission(player, C.PERMISSION_SHARED)) {
+                C.NO_PERMISSION.send(player, C.PERMISSION_SHARED);
                 return;
             }
         } else {
-            if (!Permissions.hasPermission(player, "plots.visit.other")) {
-                C.NO_PERMISSION.send(player, "plots.visit.other");
+            if (!Permissions.hasPermission(player, C.PERMISSION_VISIT_OTHER)) {
+                C.NO_PERMISSION.send(player, C.PERMISSION_VISIT_OTHER);
                 return;
             }
         }

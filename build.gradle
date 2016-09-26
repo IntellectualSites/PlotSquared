@@ -19,7 +19,7 @@ ext {
     revision = "${git.head().abbreviatedId}"
 }
 version = "3.4.6-SNAPSHOT-${revision}"
-description = """PlotSquared"""
+description = rootProject.name
 
 subprojects {
     apply plugin: 'java'

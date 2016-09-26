@@ -47,7 +47,7 @@ public class Load extends SubCommand {
             MainUtil.sendMessage(player, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.load")) {
+        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_LOAD)) {
             MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return false;
         }

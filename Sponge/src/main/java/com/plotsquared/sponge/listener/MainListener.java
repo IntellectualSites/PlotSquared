@@ -88,23 +88,6 @@ public class MainListener {
      */
 
     @Listener
-    public void onCommand(SendCommandEvent event) {
-        switch (event.getCommand().toLowerCase()) {
-            case "plotme":
-                Player source = SpongeUtil.getCause(event.getCause(), Player.class);
-                if (source == null) {
-                    return;
-                }
-                if (Settings.PlotMe.ALIAS) {
-                    SpongeMain.THIS.getGame().getCommandManager().process(source, ("plots " + event.getArguments()).trim());
-                } else {
-                    source.sendMessage(SpongeUtil.getText(C.NOT_USING_PLOTME.s()));
-                }
-                event.setCancelled(true);
-        }
-    }
-
-    @Listener
     public void onChat(MessageEvent event) {
         // TODO
         Player player = SpongeUtil.getCause(event.getCause(), Player.class);
@@ -295,7 +278,7 @@ public class MainListener {
         //                    return true;
         //                }
         //                org.spongepowered.api.world.Location<World> loc = relatives.get(dir);
-        //                com.intellectualcrafters.plot.object.Location plotloc = SpongeUtil.getLocation(loc.getExtent().getName(), loc);
+        //                com.intellectualcrafters.plot.object.Location plotloc = SpongeUtil.getLocation(loc.getExtent().getPluginName(), loc);
         //                if (area == null) {
         //                    return true;
         //                }
@@ -310,7 +293,7 @@ public class MainListener {
         //                    return true;
         //                }
         //                org.spongepowered.api.world.Location<World> relative = loc.getRelative(dir);
-        //                com.intellectualcrafters.plot.object.Location relLoc = SpongeUtil.getLocation(relative.getExtent().getName(), relative);
+        //                com.intellectualcrafters.plot.object.Location relLoc = SpongeUtil.getLocation(relative.getExtent().getPluginName(), relative);
         //                if (plot.equals(MainUtil.getPlot(relLoc))) {
         //                    return true;
         //                }

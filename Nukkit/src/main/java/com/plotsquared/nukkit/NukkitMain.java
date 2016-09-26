@@ -70,6 +70,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
     public static WorldEdit worldEdit;
 
     private int[] version;
+    private String name;
 
     @Override
     public int[] getServerVersion() {
@@ -92,15 +93,16 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
     @Override
     public void onEnable() {
         try {
+            this.name = getDescription().getName();
             getServer().getName();
             new PS(this, "Nukkit");
             if (Settings.Enabled_Components.METRICS) {
                 new Metrics(this).start();
                 PS.log(C.PREFIX + "&6Metrics enabled.");
             } else {
-                PS.log(C.CONSOLE_PLEASE_ENABLE_METRICS);
+                PS.log(C.CONSOLE_PLEASE_ENABLE_METRICS.f(getPluginName()));
             }
-            Generator.addGenerator(NukkitHybridGen.class, "PlotSquared", 1);
+            Generator.addGenerator(NukkitHybridGen.class, getPluginName(), 1);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -142,6 +144,11 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
 
     @Override public String getPluginVersionString() {
         return getDescription().getVersion();
+    }
+
+    @Override
+    public String getPluginName() {
+        return name;
     }
 
     @Override

@@ -91,7 +91,7 @@ public class DebugUUID extends SubCommand {
         MainUtil.sendMessage(player, "&6Beginning UUID mode conversion");
         MainUtil.sendMessage(player, "&7 - Disconnecting players");
         for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
-            entry.getValue().kick("PlotSquared UUID conversion has been initiated. You may reconnect when finished.");
+            entry.getValue().kick("UUID conversion has been initiated. You may reconnect when finished.");
         }
 
         MainUtil.sendMessage(player, "&7 - Initializing map");
@@ -155,7 +155,7 @@ public class DebugUUID extends SubCommand {
             MainUtil.sendMessage(player, "&c - Error! Attempting to repopulate");
             for (OfflinePlotPlayer op : currentUUIDWrapper.getOfflinePlayers()) {
                 if (op.getLastPlayed() != 0) {
-                    //                    String name = op.getName();
+                    //                    String name = op.getPluginName();
                     //                    StringWrapper wrap = new StringWrapper(name);
                     UUID uuid = currentUUIDWrapper.getUUID(op);
                     uuid2 = newWrapper.getUUID(op);

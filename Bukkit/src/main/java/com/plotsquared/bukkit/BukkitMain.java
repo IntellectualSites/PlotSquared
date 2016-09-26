@@ -72,6 +72,12 @@ import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.sk89q.worldedit.WorldEdit;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -87,18 +93,12 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-
 public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     public static WorldEdit worldEdit;
 
     private int[] version;
+    private String name;
 
     @Override
     public int[] getServerVersion() {
@@ -123,13 +123,14 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override
     public void onEnable() {
+        this.name = getDescription().getName();
         getServer().getName();
         new PS(this, "Bukkit");
         if (Settings.Enabled_Components.METRICS) {
             new Metrics(this).start();
             PS.log(C.PREFIX + "&6Metrics enabled.");
         } else {
-            PS.log(C.CONSOLE_PLEASE_ENABLE_METRICS);
+            PS.log(C.CONSOLE_PLEASE_ENABLE_METRICS.f(getPluginName()));
         }
     }
 
@@ -169,6 +170,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override public String getPluginVersionString() {
         return getDescription().getVersion();
+    }
+
+    @Override
+    public String getPluginName() {
+        return name;
     }
 
     @Override
@@ -463,18 +469,13 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override
     public boolean initPlotMeConverter() {
-        TaskManager.runTaskLaterAsync(new Runnable() {
-            @Override
-            public void run() {
-                if (new LikePlotMeConverter("PlotMe").run(new ClassicPlotMeConnector())) {
-                    return;
-                }
-                if (new LikePlotMeConverter("PlotMe").run(new PlotMeConnector_017())) {
-                    return;
-                }
-            }
-        }, 20);
-        return Bukkit.getPluginManager().getPlugin("PlotMe") != null;
+        if (new LikePlotMeConverter("PlotMe").run(new ClassicPlotMeConnector())) {
+            return true;
+        }
+        else if (new LikePlotMeConverter("PlotMe").run(new PlotMeConnector_017())) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -537,10 +538,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
         if (Settings.UUID.OFFLINE) {
             PS.log(C.PREFIX
-                    + " &6PlotSquared is using Offline Mode UUIDs either because of user preference, or because you are using an old version of "
+                    + " &6" + getPluginName() + " is using Offline Mode UUIDs either because of user preference, or because you are using an old version of "
                     + "Bukkit");
         } else {
-            PS.log(C.PREFIX + " &6PlotSquared is using online UUIDs");
+            PS.log(C.PREFIX + " &6" + getPluginName() + " is using online UUIDs");
         }
         if (Settings.UUID.USE_SQLUUIDHANDLER) {
             return new SQLUUIDHandler(wrapper);
@@ -596,7 +597,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         if (world == null) {
             // create world
             ConfigurationSection worldConfig = PS.get().worlds.getConfigurationSection("worlds." + worldName);
-            String manager = worldConfig.getString("generator.plugin", "PlotSquared");
+            String manager = worldConfig.getString("generator.plugin", getPluginName());
             SetupObject setup = new SetupObject();
             setup.plotManager = manager;
             setup.setupGenerator = worldConfig.getString("generator.init", manager);

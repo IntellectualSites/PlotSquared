@@ -7,7 +7,6 @@ import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
-import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.SetupUtils;
@@ -38,7 +37,7 @@ public class NukkitSetupUtils extends SetupUtils {
         map.put("world", testWorld);
         map.put("plot-generator", PS.get().IMP.getDefaultGenerator());
         NukkitPlotGenerator gen = new NukkitPlotGenerator(map);
-        SetupUtils.generators.put("PlotSquared", gen);
+        SetupUtils.generators.put(PS.imp().getPluginName(), gen);
     }
 
     @Override
@@ -160,7 +159,7 @@ public class NukkitSetupUtils extends SetupUtils {
                     return entry.getKey();
                 }
             }
-            return "PlotSquared";
+            return PS.imp().getPluginName();
         } catch (Throwable e) {
             e.printStackTrace();
         }

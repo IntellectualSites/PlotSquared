@@ -51,7 +51,6 @@ public class Settings extends Config {
         Redstone.DISABLE_UNOCCUPIED = config.getBoolean("protection.redstone.disable-unoccupied", Redstone.DISABLE_UNOCCUPIED);
 
         // PlotMe
-        PlotMe.ALIAS = config.getBoolean("plotme-alias", PlotMe.ALIAS);
         Enabled_Components.PLOTME_CONVERTER = config.getBoolean("plotme-convert.enabled", Enabled_Components.PLOTME_CONVERTER);
         PlotMe.CACHE_UUDS = config.getBoolean("plotme-convert.cache-uuids", PlotMe.CACHE_UUDS);
 
@@ -185,9 +184,9 @@ public class Settings extends Config {
     }
 
     public static class UUID {
-        @Comment("Force PlotSquared to use offline UUIDs (it usually detects the right mode)")
+        @Comment("Force using offline UUIDs (it usually detects the right mode)")
         public static boolean OFFLINE = false;
-        @Comment("Force PlotSquared to use lowercase UUIDs")
+        @Comment("Force using lowercase UUIDs")
         public static boolean FORCE_LOWERCASE = false;
         @Comment("Use a database to store UUID/name info")
         public static boolean USE_SQLUUIDHANDLER = false;
@@ -195,7 +194,7 @@ public class Settings extends Config {
         public static boolean NATIVE_UUID_PROVIDER = false;
     }
 
-    @Comment("Configure the paths PlotSquared will use")
+    @Comment("Configure the paths that will be used")
     public static final class Paths {
         public static String SCHEMATICS = "schematics";
         public static String BO3 = "bo3";
@@ -241,8 +240,6 @@ public class Settings extends Config {
     public static final class PlotMe {
         @Comment("Cache the uuids from the PlotMe database")
         public static boolean CACHE_UUDS = false;
-        @Comment("Have `/plotme` as a command alias")
-        public static boolean ALIAS = false;
     }
 
     public static final class Teleport {

@@ -7,5 +7,5 @@ dependencies {
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
-jar.archiveName = "PlotSquared-Core-${parent.version}.jar"
+jar.archiveName = rootProject.name + "-Core-${parent.version}.jar"
 jar.destinationDir = file '../target'

@@ -180,6 +180,11 @@ public class SpongeMain implements IPlotMain {
     }
 
     @Override
+    public String getPluginName() {
+        return "PlotSquared";
+    }
+
+    @Override
     public int[] getServerVersion() {
         PS.log("Checking minecraft version: Sponge: ");
         String version = this.game.getPlatform().getMinecraftVersion().getName();

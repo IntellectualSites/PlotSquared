@@ -41,8 +41,8 @@ public class SchematicCmd extends SubCommand {
         String arg = args[0].toLowerCase();
         switch (arg) {
             case "paste": {
-                if (!Permissions.hasPermission(player, "plots.schematic.paste")) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.schematic.paste");
+                if (!Permissions.hasPermission(player, C.PERMISSION_SCHEMATIC_PASTE)) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SCHEMATIC_PASTE);
                     return false;
                 }
                 if (args.length < 2) {
@@ -58,7 +58,7 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.PLOT_UNOWNED);
                     return false;
                 }
-                if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.schematic.paste")) {
+                if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SCHEMATIC_PASTE)) {
                     MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
                     return false;
                 }
@@ -169,15 +169,15 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(player, "&cTask is already running.");
                     return false;
                 } else {
-                    MainUtil.sendMessage(player, "&3PlotSquared&8->&3Schematic&8: &7Mass export has started. This may take a while.");
-                    MainUtil.sendMessage(player, "&3PlotSquared&8->&3Schematic&8: &7Found &c" + plots.size() + "&7 plots...");
+                    MainUtil.sendMessage(player, "&3Plot&8->&3Schematic&8: &7Mass export has started. This may take a while.");
+                    MainUtil.sendMessage(player, "&3Plot&8->&3Schematic&8: &7Found &c" + plots.size() + "&7 plots...");
                 }
                 break;
             }
             case "export":
             case "save":
-                if (!Permissions.hasPermission(player, "plots.schematic.save")) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.schematic.save");
+                if (!Permissions.hasPermission(player, C.PERMISSION_SCHEMATIC_SAVE)) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SCHEMATIC_SAVE);
                     return false;
                 }
                 if (this.running) {
@@ -193,7 +193,7 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.PLOT_UNOWNED);
                     return false;
                 }
-                if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.schematic.save")) {
+                if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SCHEMATIC_SAVE)) {
                     MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
                     return false;
                 }

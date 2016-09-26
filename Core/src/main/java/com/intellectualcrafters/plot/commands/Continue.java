@@ -23,7 +23,7 @@ public class Continue extends SubCommand {
         if ((plot == null) || !plot.hasOwner()) {
             return !sendMessage(player, C.NOT_IN_PLOT);
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.continue")) {
+        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_CONTINUE)) {
             MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return false;
         }
@@ -33,7 +33,7 @@ public class Continue extends SubCommand {
         }
         int size = plot.getConnectedPlots().size();
         if (Settings.Done.COUNTS_TOWARDS_LIMIT && (player.getAllowedPlots() < player.getPlotCount() + size)) {
-            MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.admin.command.continue");
+            MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_ADMIN_COMMAND_CONTINUE);
             return false;
         }
         if (plot.getRunning() > 0) {
