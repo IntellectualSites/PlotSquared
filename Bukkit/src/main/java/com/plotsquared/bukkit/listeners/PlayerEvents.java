@@ -73,6 +73,7 @@ import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
@@ -830,6 +831,27 @@ public class PlayerEvents extends PlotListener implements Listener {
                     event.setCancelled(true);
                 }
                 break;
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockSpread(BlockFormEvent event) {
+        Block block = event.getBlock();
+        Location location = BukkitUtil.getLocation(block.getLocation());
+        if (location.isPlotRoad()) {
+            event.setCancelled(true);
+            return;
+        }
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = area.getOwnedPlot(location);
+        if (plot == null) {
+            return;
+        }
+        if (Flags.SNOW_FORM.isFalse(plot)) {
+            event.setCancelled(true);
         }
     }
 
