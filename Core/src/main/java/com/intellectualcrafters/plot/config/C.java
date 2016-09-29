@@ -344,7 +344,7 @@ public enum C {
             "$4You should have been teleported to the created world. Otherwise you will need to set the generator manually using the bukkit.yml or "
                     + "your chosen world management plugin.",
             "Setup"),
-    SETUP_WORLD_TAKEN("$2%s is already a registered plotworld", "Setup"),
+    SETUP_WORLD_TAKEN("$2%s is already a world", "Setup"),
     SETUP_MISSING_WORLD(
             "$2You need to specify a world name ($1/plot setup &l<world>$1 <generator>$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 -"
                     + " $1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),

@@ -315,7 +315,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         if (area == null) {
             return true;
         }
-        Plot plot = area.getPlotAbs(loc);
+        Plot plot = area.getPlot(loc);
         ProjectileSource shooter = entity.getShooter();
         if (shooter instanceof Player) {
             PlotPlayer pp = BukkitUtil.getPlayer((Player) shooter);
@@ -647,7 +647,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         if (area == null) {
             return;
         }
-        Plot plot = area.getPlotAbs(location);
+        Plot plot = area.getPlot(location);
         if (plot != null) {
             PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
             if (event.getBlock().getY() == 0) {
@@ -869,7 +869,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         if (area == null) {
             return;
         }
-        Plot plot = area.getPlotAbs(location);
+        Plot plot = area.getPlot(location);
         if (plot != null) {
             if (location.getY() == 0) {
                 event.setCancelled(true);
@@ -1129,7 +1129,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 }
             }
         }
-        Plot origin = area.getPlotAbs(location);
+        Plot origin = area.getPlot(location);
         if (origin == null) {
             event.setCancelled(true);
             return;
@@ -1728,7 +1728,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         PlotPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
-        Plot plot = area.getPlotAbs(location);
+        Plot plot = area.getPlot(location);
         if (plot == null) {
             if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD)) {
                 return;
@@ -1799,7 +1799,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         Player player = event.getPlayer();
         PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
-        Plot plot = area.getPlotAbs(location);
+        Plot plot = area.getPlot(location);
         if (plot == null) {
             if (Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_BUILD_ROAD)) {
                 return;
@@ -1854,7 +1854,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         Player p = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(p);
-        Plot plot = area.getPlotAbs(location);
+        Plot plot = area.getPlot(location);
         if (plot == null) {
             if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD)) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_ROAD);
@@ -1895,7 +1895,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return;
             }
             PlotPlayer pp = BukkitUtil.getPlayer(p);
-            Plot plot = area.getPlotAbs(location);
+            Plot plot = area.getPlot(location);
             if (plot == null) {
                 if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_ROAD)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_ROAD);
@@ -1925,7 +1925,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     return;
                 }
                 PlotPlayer player = BukkitUtil.getPlayer(shooter);
-                Plot plot = area.getPlotAbs(BukkitUtil.getLocation(event.getEntity()));
+                Plot plot = area.getPlot(BukkitUtil.getLocation(event.getEntity()));
                 if (plot != null) {
                     if (!plot.hasOwner()) {
                         if (!Permissions.hasPermission(player, C.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
@@ -1956,7 +1956,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         Player p = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(p);
-        Plot plot = area.getPlotAbs(location);
+        Plot plot = area.getPlot(location);
         if (plot == null) {
             if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD)) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_INTERACT_ROAD);
@@ -2005,7 +2005,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         if (d instanceof Player) {
             Player p = (Player) d;
             PlotPlayer pp = BukkitUtil.getPlayer(p);
-            Plot plot = area.getPlotAbs(l);
+            Plot plot = area.getPlot(l);
             if (plot == null) {
                 if (!Permissions.hasPermission(pp, "plots.admin.vehicle.break.road")) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.vehicle.break.road");
@@ -2256,7 +2256,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
-        Plot plot = area.getPlotAbs(location);
+        Plot plot = area.getPlot(location);
         if (plot != null) {
             if (!plot.hasOwner()) {
                 if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_UNOWNED)) {
