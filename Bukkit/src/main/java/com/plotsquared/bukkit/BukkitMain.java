@@ -125,6 +125,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                         @Override
                         public boolean add(Plugin plugin) {
                             if (plugin.getName().startsWith("PlotMe")) {
+                                System.out.print("Disabling `" + plugin.getName() + "` for PlotMe conversion (configure in PlotSquared settings.yml)");
                             } else {
                                 return super.add(plugin);
                             }
