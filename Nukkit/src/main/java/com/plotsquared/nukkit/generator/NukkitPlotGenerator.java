@@ -6,7 +6,6 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
-import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -43,10 +42,10 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
         if (map.containsKey("generator")) {
             final Generator cg = (Generator) map.get("generator");
             if (cg instanceof NukkitPlotGenerator) {
-                throw new IllegalArgumentException("Generator: " + cg.getClass().getName() + " is already a BukkitPlotGenerator!");
+                throw new IllegalArgumentException("Generator: " + cg.getClass().getName() + " is already a NukkitPlotGenerator!");
             }
             this.full = false;
-            PS.debug("BukkitPlotGenerator does not fully support: " + cg);
+            PS.debug("NukkitPlotGenerator does not fully support: " + cg);
             this.platformGenerator = cg;
             this.plotGenerator = new IndependentPlotGenerator() {
                 @Override

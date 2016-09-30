@@ -10,9 +10,11 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginBase;
+import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.IPlotMain;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.HybridGen;
@@ -24,6 +26,7 @@ import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.object.chat.PlainChatManager;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.ChatManager;
@@ -278,7 +281,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
             Class<? extends Generator> gen = Generator.getGenerator(name);
             if (gen != null) {
                 Generator instance = gen.getConstructor(Map.class).newInstance(map);
-                if (GeneratorWrapper.class.isAssignableFrom(gen.getClass())) {
+                if (instance instanceof GeneratorWrapper) {
                     return (GeneratorWrapper<?>) instance;
                 }
                 map.put("generator", instance);
@@ -346,7 +349,42 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
 
     @Override
     public void setGenerator(String worldName) {
-        throw new UnsupportedOperationException("Not implemented: setGenerator");
+        Level world = getServer().getLevelByName(worldName);
+        if (world == null) {
+            // create world
+            ConfigurationSection worldConfig = PS.get().worlds.getConfigurationSection("worlds." + worldName);
+            String manager = worldConfig.getString("generator.plugin", getPluginName());
+            SetupObject setup = new SetupObject();
+            setup.plotManager = manager;
+            setup.setupGenerator = worldConfig.getString("generator.init", manager);
+            setup.type = worldConfig.getInt("generator.type");
+            setup.terrain = worldConfig.getInt("generator.terrain");
+            setup.step = new ConfigurationNode[0];
+            setup.world = worldName;
+            SetupUtils.manager.setupWorld(setup);
+            world = getServer().getLevelByName(worldName);
+        } else {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("world", world.getName());
+            map.put("plot-generator", PS.get().IMP.getDefaultGenerator());
+            setGenerator(world, new NukkitPlotGenerator(map));
+        }
+        if (world != null) {
+            try {
+                Field fieldInstance = Level.class.getDeclaredField("generatorInstance");
+                fieldInstance.setAccessible(true);
+                Generator gen = (Generator) fieldInstance.get(world);
+                if (gen instanceof NukkitPlotGenerator) {
+                    PS.get().loadWorld(worldName, (NukkitPlotGenerator) gen);
+                } else if (gen instanceof GeneratorWrapper) {
+                    PS.get().loadWorld(worldName, (GeneratorWrapper) gen);
+                } else if (PS.get().worlds.contains("worlds." + worldName)) {
+                    PS.get().loadWorld(worldName, null);
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void setGenerator(Level level, Generator generator) {

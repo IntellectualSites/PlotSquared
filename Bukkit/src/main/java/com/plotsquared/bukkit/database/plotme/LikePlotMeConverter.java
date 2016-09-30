@@ -213,8 +213,6 @@ public class LikePlotMeConverter {
                 } catch (IOException ignored) {
                     ignored.printStackTrace();
                 }
-            } else {
-                System.out.println("FILE NOT EXIST " + plotmeDgFile.getAbsolutePath());
             }
             for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
                 String world = entry.getKey();

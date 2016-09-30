@@ -52,7 +52,10 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      *     any reason.
      */
     public void save(File file) throws IOException {
-        file.getParentFile().mkdirs();
+        File parent = file.getParentFile();
+        if (parent != null) {
+            parent.mkdirs();
+        }
 
         String data = saveToString();
 

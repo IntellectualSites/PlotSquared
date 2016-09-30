@@ -119,9 +119,21 @@ public class NukkitSetupUtils extends SetupUtils {
             HashMap<String, Object> map = new HashMap<>();
             map.put("world", object.world);
             map.put("plot-generator", PS.get().IMP.getDefaultGenerator());
-            plugin.getServer().generateLevel(object.world, object.world.hashCode(), NukkitPlotGenerator.class, map);
+            if (!plugin.getServer().generateLevel(object.world, object.world.hashCode(), NukkitPlotGenerator.class, map)) {
+                plugin.getServer().loadLevel(object.world);
+            }
+            try {
+                File nukkitFile = new File("nukkit.yml");
+                YamlConfiguration nukkitYml = YamlConfiguration.loadConfiguration(nukkitFile);
+                nukkitYml.set("worlds." + object.world + ".generator", object.setupGenerator);
+                nukkitYml.save(nukkitFile);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         } else {
-            plugin.getServer().generateLevel(object.world, object.world.hashCode());
+            if (!plugin.getServer().generateLevel(object.world, object.world.hashCode())) {
+                plugin.getServer().loadLevel(object.world);
+            }
         }
         return object.world;
     }
