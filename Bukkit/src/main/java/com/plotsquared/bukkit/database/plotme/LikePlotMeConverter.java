@@ -294,6 +294,7 @@ public class LikePlotMeConverter {
                             World world = Bukkit.getWorld(getWorld(worldName));
                             if (world == null) {
                                 sendMessage("&cInvalid world in PlotMe configuration: " + worldName);
+                                continue;
                             }
                             String actualWorldName = world.getName();
                             sendMessage("Reloading generator for world: '" + actualWorldName + "'...");
