@@ -761,7 +761,9 @@ public class PS {
 
     public void removePlotAreas(String world) {
         for (PlotArea area : getPlotAreas(world)) {
-            removePlotArea(area);
+            if (area.worldname.equals(world)) {
+                removePlotArea(area);
+            }
         }
     }
 
