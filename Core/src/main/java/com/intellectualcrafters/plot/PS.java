@@ -416,7 +416,7 @@ public class PS {
                         PS.log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PlotMe!");
                         PS.log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
                         PS.log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
-                        PS.log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the "
+                        PS.log("&c - After the conversion is finished, please set 'plotme-converter' to false in the "
                                 + "'settings.yml'");
                     }
                     Settings.Enabled_Components.PLOTME_CONVERTER = false;
