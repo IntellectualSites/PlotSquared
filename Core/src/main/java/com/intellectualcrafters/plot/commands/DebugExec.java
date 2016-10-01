@@ -151,7 +151,7 @@ public class DebugExec extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer player, String[] args) {
         List<String> allowed_params =
-                Arrays.asList("calibrate-analysis", "remove-flag", "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "list-scripts");
+                Arrays.asList("calibrate-analysis", "remove-flag", "stop-expire", "start-expire", "show-expired", "seen", "list-scripts");
         if (args.length > 0) {
             String arg = args[0].toLowerCase();
             String script;

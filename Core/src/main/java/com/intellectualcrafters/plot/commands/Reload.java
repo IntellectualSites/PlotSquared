@@ -32,7 +32,7 @@ public class Reload extends SubCommand {
                 public void run(PlotArea area) {
                     ConfigurationSection worldSection = PS.get().worlds.getConfigurationSection("worlds." + area.worldname);
                     if (worldSection == null) {
-                        worldSection = PS.get().worlds.createSection("worlds." + area.worldname);
+                        return;
                     }
                     if (area.TYPE != 2 || !worldSection.contains("areas")) {
                         area.saveConfiguration(worldSection);

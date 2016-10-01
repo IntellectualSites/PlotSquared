@@ -54,8 +54,21 @@ public class Toggle extends Command {
             permission = "plots.toggle.chat",
             description = "Toggle plot chat")
     public void chat(Command command, PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm,
-            RunnableVal2<Command, CommandResult> whenDone) {
+                     RunnableVal2<Command, CommandResult> whenDone) {
         if (toggle(player, "chat")) {
+            MainUtil.sendMessage(player, C.TOGGLE_DISABLED, command.toString());
+        } else {
+            MainUtil.sendMessage(player, C.TOGGLE_ENABLED, command.toString());
+        }
+    }
+
+    @CommandDeclaration(
+            command = "clear-confirmation",
+            permission = "plots.admin.command.autoclear",
+            description = "Toggle autoclear confirmation")
+    public void clearConfirmation(Command command, PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm,
+                     RunnableVal2<Command, CommandResult> whenDone) {
+        if (toggle(player, "clear-confirmation")) {
             MainUtil.sendMessage(player, C.TOGGLE_DISABLED, command.toString());
         } else {
             MainUtil.sendMessage(player, C.TOGGLE_ENABLED, command.toString());
@@ -70,7 +83,7 @@ public class Toggle extends Command {
             RunnableVal2<Command, CommandResult> whenDone) {
         PlotArea area = player.getApplicablePlotArea();
         boolean chat = area == null ? false : area.PLOT_CHAT;
-        if (toggle(player, "disabletitles") != chat) {
+        if (toggle(player, "ignoreExpireTask") != chat) {
             MainUtil.sendMessage(player, C.TOGGLE_ENABLED, command.toString());
         } else {
             MainUtil.sendMessage(player, C.TOGGLE_DISABLED, command.toString());

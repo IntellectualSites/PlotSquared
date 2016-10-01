@@ -15,6 +15,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
+import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.io.File;
@@ -101,6 +102,9 @@ public class Trim extends SubCommand {
         MainUtil.sendMessage(null, "Collecting region data...");
         ArrayList<Plot> plots = new ArrayList<>();
         plots.addAll(PS.get().getPlots(world));
+        if (ExpireManager.IMP != null) {
+            plots.removeAll(ExpireManager.IMP.getPendingExpired());
+        }
         result.value1 = new HashSet<>(ChunkManager.manager.getChunkChunks(world));
         result.value2 = new HashSet<>();
         MainUtil.sendMessage(null, " - MCA #: " + result.value1.size());
