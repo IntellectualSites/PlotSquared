@@ -52,6 +52,11 @@ public class ExpireManager {
 
     public void handleJoin(PlotPlayer pp) {
         storeDate(pp.getUUID(), System.currentTimeMillis());
+        if (!plotsToDelete.isEmpty()) {
+            for (Plot plot : pp.getPlots()) {
+                plotsToDelete.remove(plot);
+            }
+        }
         confirmExpiry(pp);
     }
 
@@ -399,13 +404,13 @@ public class ExpireManager {
                 return 0;
             }
         }
-        long max = 0;
+        long min = Long.MAX_VALUE;
         for (UUID owner : plot.getOwners()) {
             long age = getAge(owner);
-            if (age > max) {
-                max = age;
+            if (age < min) {
+                min = age;
             }
         }
-        return max;
+        return min;
     }
 }

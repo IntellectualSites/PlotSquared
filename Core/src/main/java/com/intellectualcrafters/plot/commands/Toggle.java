@@ -68,7 +68,7 @@ public class Toggle extends Command {
             description = "Toggle autoclear confirmation")
     public void clearConfirmation(Command command, PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm,
                      RunnableVal2<Command, CommandResult> whenDone) {
-        if (toggle(player, "clear-confirmation")) {
+        if (toggle(player, "ignoreExpireTask")) {
             MainUtil.sendMessage(player, C.TOGGLE_DISABLED, command.toString());
         } else {
             MainUtil.sendMessage(player, C.TOGGLE_ENABLED, command.toString());
@@ -83,7 +83,7 @@ public class Toggle extends Command {
             RunnableVal2<Command, CommandResult> whenDone) {
         PlotArea area = player.getApplicablePlotArea();
         boolean chat = area == null ? false : area.PLOT_CHAT;
-        if (toggle(player, "ignoreExpireTask") != chat) {
+        if (toggle(player, "disabletitles") != chat) {
             MainUtil.sendMessage(player, C.TOGGLE_ENABLED, command.toString());
         } else {
             MainUtil.sendMessage(player, C.TOGGLE_DISABLED, command.toString());
