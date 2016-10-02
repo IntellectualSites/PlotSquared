@@ -75,6 +75,7 @@ public class Download extends SubCommand {
         } else if (args.length == 1 && StringMan.isEqualIgnoreCaseToAny(args[0], "bo3", "bo2", "b03", "b02")) {
             if (!Permissions.hasPermission(player, C.PERMISSION_DOWNLOAD_BO3)) {
                 C.NO_PERMISSION.send(player, C.PERMISSION_DOWNLOAD_BO3);
+                return false;
             }
             if (plot.getVolume() > 128d * 128d * 256) {
                 C.SCHEMATIC_TOO_LARGE.send(player);
@@ -95,6 +96,7 @@ public class Download extends SubCommand {
         } else if (args.length == 1 && StringMan.isEqualIgnoreCaseToAny(args[0], "mcr", "world", "mca")) {
             if (!Permissions.hasPermission(player, C.PERMISSION_DOWNLOAD_WORLD)) {
                 C.NO_PERMISSION.send(player, C.PERMISSION_DOWNLOAD_WORLD);
+                return false;
             }
             MainUtil.sendMessage(player, "&cNote: The `.mca` files are 512x512");
             plot.addRunning();
