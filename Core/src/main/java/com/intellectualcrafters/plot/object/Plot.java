@@ -11,6 +11,7 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.util.BO3Handler;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EventUtil;
@@ -24,6 +25,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
+import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.util.expiry.PlotAnalysis;
 import com.plotsquared.listener.PlotListener;
 import java.awt.geom.Area;
@@ -948,6 +950,9 @@ public class Plot {
      * @param value
      */
     public <V> boolean setFlag(Flag<V> flag, Object value) {
+        if (flag == Flags.KEEP && ExpireManager.IMP != null) {
+            ExpireManager.IMP.updateExpired(this);
+        }
         return FlagManager.addPlotFlag(this, flag, value);
     }
 
@@ -1103,7 +1108,7 @@ public class Plot {
         Location[] corners = getCorners();
         Location top = corners[0];
         Location bot = corners[1];
-        Location loc = new Location(this.area.worldname, (top.getX() + bot.getX()) / 2, (top.getY() + bot.getY()) / 2, (top.getZ() + bot.getZ()) / 2);
+        Location loc = new Location(this.area.worldname, MathMan.average(bot.getX(), top.getX()), MathMan.average(bot.getY(), top.getY()), MathMan.average(bot.getZ(), top.getZ()));
         loc.setY(1 + Math.max(WorldUtil.IMP.getHighestBlock(this.area.worldname, loc.getX(), loc.getZ()),
                 getManager().getSignLoc(this.area, this).getY()));
         return loc;

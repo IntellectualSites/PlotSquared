@@ -7,6 +7,7 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import java.util.ArrayList;
@@ -130,8 +131,10 @@ public class ClassicPlotManager extends SquarePlotManager {
         Location[] corners = plot.getCorners();
         ClassicPlotWorld dpw = (ClassicPlotWorld) plotArea;
         LocalBlockQueue queue = plotArea.getQueue(false);
-        queue.setBlock((corners[0].getX() + corners[1].getX()) / 2, dpw.PLOT_HEIGHT,
-                (corners[0].getZ() + corners[1].getZ()) / 2, blocks[0]);
+
+        int x = MathMan.average(corners[0].getX(), corners[1].getX());
+        int z = MathMan.average(corners[0].getZ(), corners[1].getZ());
+        queue.setBlock(x, dpw.PLOT_HEIGHT,z, blocks[0]);
         queue.enqueue();
         return true;
     }

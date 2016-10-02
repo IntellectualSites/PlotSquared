@@ -159,6 +159,10 @@ public class MathMan {
         return (x << 16) | (y & 0xFFFF);
     }
 
+    public static final int average(int a, int b) {
+        return (a&b) + (a^b)/2;
+    }
+
     public static short unpairX(int hash) {
         return (short) (hash >> 16);
     }

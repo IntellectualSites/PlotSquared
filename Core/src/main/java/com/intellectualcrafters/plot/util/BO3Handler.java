@@ -84,8 +84,8 @@ public class BO3Handler {
         ClassicPlotWorld cpw = (ClassicPlotWorld) plotworld;
         int height = cpw.PLOT_HEIGHT;
 
-        int cx = (bot.getX() + top.getX()) / 2;
-        int cz = (bot.getZ() + top.getZ()) / 2;
+        int cx = MathMan.average(bot.getX(), top.getX());
+        int cz = MathMan.average(bot.getZ(), top.getZ());
 
         HashMap<ChunkLoc, BO3> map = new HashMap<>();
 
@@ -193,6 +193,7 @@ public class BO3Handler {
         return true;
     }
 
+
     public static void upload(final Plot plot, UUID uuid, String file, RunnableVal<URL> whenDone) {
         if (plot == null) {
             throw new IllegalArgumentException("Arguments may not be null!");
@@ -250,6 +251,10 @@ public class BO3Handler {
     public static boolean save(Plot plot, BO3 bo3) {
         try {
             File bo3File = bo3.getFile();
+            File parent = bo3File.getParentFile();
+            if (parent != null) {
+                parent.mkdirs();
+            }
             bo3File.createNewFile();
             bo3File.getParentFile().mkdirs();
             try (FileOutputStream fos = new FileOutputStream(bo3File)) {

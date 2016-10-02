@@ -10,6 +10,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.ByteArrayUtilities;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
@@ -143,7 +144,7 @@ public class Auto extends SubCommand {
         if (plotarea.TYPE == 2) {
             PlotId bot = plotarea.getMin();
             PlotId top = plotarea.getMax();
-            PlotId origin = new PlotId((bot.x + top.x) / 2, (bot.y + top.y) / 2);
+            PlotId origin = new PlotId(MathMan.average(bot.x, top.x), MathMan.average(bot.y, top.y));
             PlotId id = new PlotId(0, 0);
             int width = Math.max(top.x - bot.x + 1, top.y - bot.y + 1);
             int max = width * width;

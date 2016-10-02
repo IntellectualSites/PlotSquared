@@ -76,6 +76,14 @@ public class ExpireManager {
         return value == null ? 0 : value;
     }
 
+    public void updateExpired(Plot plot) {
+        if (!plotsToDelete.isEmpty() && plotsToDelete.contains(plot)) {
+            if (isExpired(new ArrayDeque<>(tasks), plot).isEmpty()) {
+                plotsToDelete.remove(plot);
+            }
+        }
+    }
+
     public void confirmExpiry(final PlotPlayer pp) {
         if (pp.getMeta("ignoreExpireTask") != null) {
             return;

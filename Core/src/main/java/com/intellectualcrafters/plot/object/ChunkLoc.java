@@ -12,11 +12,7 @@ public class ChunkLoc {
 
     @Override
     public int hashCode() {
-        int prime = 31;
-        int result = 1;
-        result = (prime * result) + this.x;
-        result = (prime * result) + this.z;
-        return result;
+        return (x << 16) | (z & 0xFFFF);
     }
 
     @Override
