@@ -453,6 +453,10 @@ public enum C {
     INVALID_PLAYER("$2Player not found: $1%s$2.", "Errors"),
     INVALID_PLAYER_OFFLINE("$2The player must be online: $1%s.", "Errors"),
     /*
+     * Command flag
+     */
+    INVALID_COMMAND_FLAG("$2Invalid command flag: %s0", "Errors"),
+    /*
      * Unknown Error
      */
     ERROR("$2An error occurred: %s", "Errors"),

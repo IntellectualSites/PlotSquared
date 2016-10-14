@@ -197,7 +197,7 @@ public class MainCommand extends Command {
     }
 
     @Override
-    public void execute(PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) {
+    public void execute(final PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) {
         // Clear perm caching //
         player.deleteMeta("perm");
         // Optional command scope //
@@ -222,6 +222,37 @@ public class MainCommand extends Command {
                 }
                 // Trim command
                 args = Arrays.copyOfRange(args, 1, args.length);
+            }
+            if (args.length >= 2 && args[0].charAt(0) == '-') {
+                switch (args[0].substring(1)) {
+                    case "f":
+                        confirm = new RunnableVal3<Command, Runnable, Runnable>() {
+                            @Override
+                            public void run(final Command cmd, final Runnable success, final Runnable failure) {
+                                if (EconHandler.manager != null) {
+                                    PlotArea area = player.getApplicablePlotArea();
+                                    if (area != null) {
+                                        Expression<Double> priceEval = area.PRICES.get(cmd.getFullId());
+                                        Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
+                                        if (price != 0d && EconHandler.manager.getMoney(player) < price) {
+                                            if (failure != null) {
+                                                failure.run();
+                                            }
+                                            return;
+                                        }
+                                    }
+                                }
+                                if (success != null) {
+                                    success.run();
+                                }
+                            }
+                        };
+                        args = Arrays.copyOfRange(args, 1, args.length);
+                        break;
+                    default:
+                        C.INVALID_COMMAND_FLAG.send(player);
+                        return;
+                }
             }
         }
         try {

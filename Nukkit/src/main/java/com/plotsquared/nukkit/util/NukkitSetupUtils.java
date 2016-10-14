@@ -3,7 +3,6 @@ package com.plotsquared.nukkit.util;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.generator.Generator;
 import com.intellectualcrafters.configuration.ConfigurationSection;
-import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
@@ -12,7 +11,7 @@ import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.plotsquared.nukkit.NukkitMain;
 import com.plotsquared.nukkit.generator.NukkitPlotGenerator;
-import java.io.File;
+import com.plotsquared.nukkit.util.block.NukkitHybridGen;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -25,6 +24,7 @@ public class NukkitSetupUtils extends SetupUtils {
 
     public NukkitSetupUtils(NukkitMain plugin) {
         this.plugin = plugin;
+        Generator.addGenerator(NukkitHybridGen.class, "PlotSquared", 1);
     }
 
     @Override
@@ -119,14 +119,16 @@ public class NukkitSetupUtils extends SetupUtils {
             HashMap<String, Object> map = new HashMap<>();
             map.put("world", object.world);
             map.put("plot-generator", PS.get().IMP.getDefaultGenerator());
-            if (!plugin.getServer().generateLevel(object.world, object.world.hashCode(), NukkitPlotGenerator.class, map)) {
+            if (!plugin.getServer().generateLevel(object.world, object.world.hashCode(), NukkitHybridGen.class, map)) {
                 plugin.getServer().loadLevel(object.world);
             }
             try {
-                File nukkitFile = new File("nukkit.yml");
-                YamlConfiguration nukkitYml = YamlConfiguration.loadConfiguration(nukkitFile);
-                nukkitYml.set("worlds." + object.world + ".generator", object.setupGenerator);
-                nukkitYml.save(nukkitFile);
+//                File nukkitFile = new File("nukkit.yml");
+//                YamlConfiguration nukkitYml = YamlConfiguration.loadConfiguration(nukkitFile);
+//                if (!nukkitYml.contains("worlds." + object.world + ".generator")) {
+//                    nukkitYml.set("worlds." + object.world + ".generator", object.setupGenerator);
+//                    nukkitYml.save(nukkitFile);
+//                }
             } catch (Throwable e) {
                 e.printStackTrace();
             }
@@ -136,17 +138,6 @@ public class NukkitSetupUtils extends SetupUtils {
             }
         }
         return object.world;
-    }
-
-    public void setGenerator(String world, String generator) {
-        File file = new File("nukkit.yml").getAbsoluteFile();
-        YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
-        yml.set("worlds." + world + ".generator", generator);
-        try {
-            yml.save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
