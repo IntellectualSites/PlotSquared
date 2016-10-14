@@ -59,8 +59,11 @@ public abstract class EventUtil {
     public abstract void callMember(PlotPlayer initiator, Plot plot, UUID player, boolean added);
 
     public void doJoinTask(final PlotPlayer player) {
+        if (player == null) {
+            return; //possible future warning message to figure out where we are retrieving null
+        }
         if (ExpireManager.IMP != null) {
-            ExpireManager.IMP.handleJoin(player);
+                ExpireManager.IMP.handleJoin(player);
         }
         if (PS.get().worldedit != null) {
             if (player.getAttribute("worldedit")) {
