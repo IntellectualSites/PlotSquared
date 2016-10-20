@@ -52,7 +52,7 @@ public class ExpireManager {
 
     public void handleJoin(PlotPlayer pp) {
         storeDate(pp.getUUID(), System.currentTimeMillis());
-        if (!plotsToDelete.isEmpty()) {
+        if (plotsToDelete != null && !plotsToDelete.isEmpty()) {
             for (Plot plot : pp.getPlots()) {
                 plotsToDelete.remove(plot);
             }
@@ -77,7 +77,7 @@ public class ExpireManager {
     }
 
     public void updateExpired(Plot plot) {
-        if (!plotsToDelete.isEmpty() && plotsToDelete.contains(plot)) {
+        if (plotsToDelete != null && !plotsToDelete.isEmpty() && plotsToDelete.contains(plot)) {
             if (isExpired(new ArrayDeque<>(tasks), plot).isEmpty()) {
                 plotsToDelete.remove(plot);
             }
