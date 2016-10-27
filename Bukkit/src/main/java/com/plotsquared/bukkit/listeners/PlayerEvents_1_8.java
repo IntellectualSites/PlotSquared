@@ -2,6 +2,7 @@ package com.plotsquared.bukkit.listeners;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -10,6 +11,9 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.listener.PlotListener;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.ArmorStand;
@@ -25,10 +29,6 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
 
 public class PlayerEvents_1_8 extends PlotListener implements Listener {
     
@@ -141,6 +141,9 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
         } else {
             UUID uuid = pp.getUUID();
             if (!plot.isAdded(uuid)) {
+                if (Flags.MISC_INTERACT.isTrue(plot)) {
+                    return;
+                }
                 if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.other");
                     e.setCancelled(true);

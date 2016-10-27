@@ -2,7 +2,6 @@ package com.plotsquared.nukkit.util.block;
 
 import cn.nukkit.level.Level;
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.generator.HybridGen;
 import com.plotsquared.nukkit.NukkitMain;
 import com.plotsquared.nukkit.generator.NukkitPlotGenerator;
 import java.util.Map;

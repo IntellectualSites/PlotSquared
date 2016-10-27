@@ -83,7 +83,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         int maxY = plotArea.getPlotManager().getWorldHeight();
         for (RegionWrapper region : plot.getRegions()) {
             Location pos1 = new Location(plotArea.worldname, region.minX, 1, region.minZ);
-            Location pos2 = new Location(plotArea.worldname, region.maxX, Math.min(maxY, 255), region.maxZ);
+            Location pos2 = new Location(plotArea.worldname, region.maxX, maxY, region.maxZ);
             queue.setCuboid(pos1, pos2, blocks);
         }
         queue.enqueue();
@@ -100,7 +100,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         int maxY = plotArea.getPlotManager().getWorldHeight();
         for (RegionWrapper region : plot.getRegions()) {
             Location pos1 = new Location(plotArea.worldname, region.minX, dpw.PLOT_HEIGHT + 1, region.minZ);
-            Location pos2 = new Location(plotArea.worldname, region.maxX, Math.min(maxY, 255), region.maxZ);
+            Location pos2 = new Location(plotArea.worldname, region.maxX,maxY, region.maxZ);
             queue.setCuboid(pos1, pos2, blocks);
         }
         queue.enqueue();
@@ -153,7 +153,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         if (!plot.getMerged(0)) {
             int z = bottom.getZ();
             for (int x = bottom.getX(); x <= top.getX(); x++) {
-                for (int y = dpw.PLOT_HEIGHT; y <= Math.min(maxY, 255); y++) {
+                for (int y = dpw.PLOT_HEIGHT; y <= maxY; y++) {
                     queue.setBlock(x, y, z, blocks[random.random(blocks.length)]);
                 }
             }
@@ -161,7 +161,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         if (!plot.getMerged(3)) {
             int x = bottom.getX();
             for (int z = bottom.getZ(); z <= top.getZ(); z++) {
-                for (int y = dpw.PLOT_HEIGHT; y <= Math.min(maxY, 255); y++) {
+                for (int y = dpw.PLOT_HEIGHT; y <= maxY; y++) {
                     queue.setBlock(x, y, z, blocks[random.random(blocks.length)]);
                 }
             }
@@ -170,7 +170,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         if (!plot.getMerged(2)) {
             int z = top.getZ();
             for (int x = bottom.getX(); x <= top.getX(); x++) {
-                for (int y = dpw.PLOT_HEIGHT; y <= Math.min(maxY, 255); y++) {
+                for (int y = dpw.PLOT_HEIGHT; y <= maxY; y++) {
                     queue.setBlock(x, y, z, blocks[random.random(blocks.length)]);
                 }
             }
@@ -178,15 +178,15 @@ public class ClassicPlotManager extends SquarePlotManager {
         if (!plot.getMerged(1)) {
             int x = top.getX();
             for (int z = bottom.getZ(); z <= top.getZ(); z++) {
-                for (int y = dpw.PLOT_HEIGHT; y <= Math.min(maxY, 255); y++) {
+                for (int y = dpw.PLOT_HEIGHT; y <= maxY; y++) {
                     queue.setBlock(x, y, z, blocks[random.random(blocks.length)]);
                 }
             }
         }
         if (plot.isBasePlot()) {
             for (RegionWrapper region : plot.getRegions()) {
-                Location pos1 = new Location(plotArea.worldname, region.minX, Math.min(maxY, 255), region.minZ);
-                Location pos2 = new Location(plotArea.worldname, region.maxX, Math.min(maxY, 255), region.maxZ);
+                Location pos1 = new Location(plotArea.worldname, region.minX, maxY, region.minZ);
+                Location pos2 = new Location(plotArea.worldname, region.maxX, maxY, region.maxZ);
                 queue.setCuboid(pos1, pos2, blocks);
             }
         }
@@ -295,7 +295,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         int maxY = plotArea.getPlotManager().getWorldHeight();
         queue.setCuboid(
                 new Location(plotArea.worldname, sx, Math.min(dpw.WALL_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz + 1),
-                new Location(plotArea.worldname, ex, Math.min(maxY, 255), ez - 1), PlotBlock.get((short) 0, (byte) 0));
+                new Location(plotArea.worldname, ex, maxY, ez - 1), PlotBlock.get((short) 0, (byte) 0));
         queue.setCuboid(new Location(plotArea.worldname, sx, 0, sz + 1),
                 new Location(plotArea.worldname, ex, 0, ez - 1), PlotBlock.get((short) 7,
                         (byte) 0));
@@ -325,10 +325,9 @@ public class ClassicPlotManager extends SquarePlotManager {
         int sx = pos1.getX() - 2;
         int ex = pos2.getX() + 2;
         LocalBlockQueue queue = plotArea.getQueue(false);
-        int maxY = plotArea.getPlotManager().getWorldHeight();
         queue.setCuboid(
                 new Location(plotArea.worldname, sx + 1, Math.min(dpw.WALL_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz),
-                new Location(plotArea.worldname, ex - 1, Math.min(maxY, 255), ez), PlotBlock.get((short) 0, (byte) 0));
+                new Location(plotArea.worldname, ex - 1, plotArea.getPlotManager().getWorldHeight(), ez), PlotBlock.get((short) 0, (byte) 0));
         queue.setCuboid(new Location(plotArea.worldname, sx + 1, 0, sz),
                 new Location(plotArea.worldname, ex - 1, 0, ez), PlotBlock.get((short) 7, (byte) 0));
         queue.setCuboid(new Location(plotArea.worldname, sx + 1, 1, sz),
@@ -357,7 +356,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         int ez = sz + dpw.ROAD_WIDTH - 1;
         LocalBlockQueue queue = plotArea.getQueue(false);
         queue.setCuboid(new Location(plotArea.worldname, sx + 1, dpw.ROAD_HEIGHT + 1, sz + 1),
-                new Location(plotArea.worldname, ex - 1, 255, ez - 1), PlotBlock.get(
+                new Location(plotArea.worldname, ex - 1, dpw.getPlotManager().getWorldHeight(), ez - 1), PlotBlock.get(
                         (short) 0, (byte) 0));
         queue.setCuboid(new Location(plotArea.worldname, sx + 1, 0, sz + 1),
                 new Location(plotArea.worldname, ex - 1, 0, ez - 1), PlotBlock.get((short) 7, (byte) 0));
@@ -377,9 +376,8 @@ public class ClassicPlotManager extends SquarePlotManager {
         int sz = pos1.getZ() - 1;
         int ez = pos2.getZ() + 1;
         LocalBlockQueue queue = plotArea.getQueue(false);
-        int maxY = plotArea.getPlotManager().getWorldHeight();
         queue.setCuboid(new Location(plotArea.worldname, sx, Math.min(dpw.PLOT_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz),
-                new Location(plotArea.worldname, ex, Math.min(maxY, 255), ez), PlotBlock.get((short) 0, (byte) 0));
+                new Location(plotArea.worldname, ex, plotArea.getPlotManager().getWorldHeight(), ez), PlotBlock.get((short) 0, (byte) 0));
         queue.setCuboid(new Location(plotArea.worldname, sx, 1, sz + 1),
                 new Location(plotArea.worldname, ex, dpw.PLOT_HEIGHT - 1, ez - 1), dpw.MAIN_BLOCK);
         queue.setCuboid(new Location(plotArea.worldname, sx, dpw.PLOT_HEIGHT, sz + 1),
@@ -398,9 +396,8 @@ public class ClassicPlotManager extends SquarePlotManager {
         int sx = pos1.getX() - 1;
         int ex = pos2.getX() + 1;
         LocalBlockQueue queue = plotArea.getQueue(false);
-        int maxY = plotArea.getPlotManager().getWorldHeight();
         queue.setCuboid(new Location(plotArea.worldname, sx, Math.min(dpw.PLOT_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz),
-                new Location(plotArea.worldname, ex, Math.min(maxY, 255), ez), PlotBlock.get((short) 0, (byte) 0));
+                new Location(plotArea.worldname, ex, plotArea.getPlotManager().getWorldHeight(), ez), PlotBlock.get((short) 0, (byte) 0));
         queue.setCuboid(new Location(plotArea.worldname, sx + 1, 1, sz),
                 new Location(plotArea.worldname, ex - 1, dpw.PLOT_HEIGHT - 1, ez), dpw.MAIN_BLOCK);
         queue.setCuboid(new Location(plotArea.worldname, sx + 1, dpw.PLOT_HEIGHT, sz),
@@ -419,7 +416,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         int ez = sz + dpw.ROAD_WIDTH - 1;
         LocalBlockQueue queue = plotArea.getQueue(false);
         queue.setCuboid(new Location(plotArea.worldname, sx, dpw.ROAD_HEIGHT + 1, sz),
-                new Location(plotArea.worldname, ex, 255, ez), PlotBlock.get((short) 0, (byte) 0));
+                new Location(plotArea.worldname, ex, plotArea.getPlotManager().getWorldHeight(), ez), PlotBlock.get((short) 0, (byte) 0));
         queue.setCuboid(new Location(plotArea.worldname, sx, 1, sz),
                 new Location(plotArea.worldname, ex, dpw.ROAD_HEIGHT - 1, ez), dpw.MAIN_BLOCK);
         queue.setCuboid(new Location(plotArea.worldname, sx, dpw.ROAD_HEIGHT, sz),

@@ -322,15 +322,16 @@ public abstract class HybridUtils {
         Location bot = plot.getBottomAbs().subtract(1, 0, 1);
         Location top = plot.getTopAbs();
         final HybridPlotWorld plotworld = (HybridPlotWorld) plot.getArea();
+        PlotManager plotManager = plotworld.getPlotManager();
         int sx = bot.getX() - plotworld.ROAD_WIDTH + 1;
         int sz = bot.getZ() + 1;
         int sy = plotworld.ROAD_HEIGHT;
         int ex = bot.getX();
         int ez = top.getZ();
-        int ey = get_ey(queue, sx, ex, sz, ez, sy);
+        int ey = get_ey(plotManager, queue, sx, ex, sz, ez, sy);
         int bz = sz - plotworld.ROAD_WIDTH;
         int tz = sz - 1;
-        int ty = get_ey(queue, sx, ex, bz, tz, sy);
+        int ty = get_ey(plotManager, queue, sx, ex, bz, tz, sy);
 
         Set<RegionWrapper> sideRoad = new HashSet<>(Collections.singletonList(new RegionWrapper(sx, ex, sy, ey, sz, ez)));
         final Set<RegionWrapper> intersection = new HashSet<>(Collections.singletonList(new RegionWrapper(sx, ex, sy, ty, bz, tz)));
@@ -354,11 +355,11 @@ public abstract class HybridUtils {
         return true;
     }
 
-    public int get_ey(LocalBlockQueue queue, int sx, int ex, int sz, int ez, int sy) {
+    public int get_ey(final PlotManager pm, LocalBlockQueue queue, int sx, int ex, int sz, int ez, int sy) {
         int ey = sy;
         for (int x = sx; x <= ex; x++) {
             for (int z = sz; z <= ez; z++) {
-                for (int y = sy; y < 256; y++) {
+                for (int y = sy; y <= pm.getWorldHeight(); y++) {
                     if (y > ey) {
                         PlotBlock block = queue.getBlock(x, y, z);
                         if (block.id != 0) {
