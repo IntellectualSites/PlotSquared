@@ -1,5 +1,4 @@
 ### Others ###
-*.bat
 *.cmd
 *.sh
 *.prefs
@@ -132,3 +131,8 @@ local.properties
 # STS (Spring Tool Suite)
 .springBeans
 /target/
+Nukkit/build/classes/
+Nukkit/build/dependency-cache/
+checkstyle.xml
+classes/
+p2error.txt
