@@ -14,8 +14,8 @@ public abstract class CommentInbox {
     public abstract String toString();
 
     public boolean canRead(Plot plot, PlotPlayer player) {
-        if (Permissions.hasPermission(player, "plots.inbox.read." + toString())) {
-            if (plot.isOwner(player.getUUID()) || Permissions.hasPermission(player, "plots.inbox.read." + toString() + ".other")) {
+        if (Permissions.hasPermission(player, "plots.inbox.read." + toString(), true)) {
+            if (plot.isOwner(player.getUUID()) || Permissions.hasPermission(player, "plots.inbox.read." + toString() + ".other", true)) {
                 return true;
             }
         }
@@ -24,15 +24,15 @@ public abstract class CommentInbox {
 
     public boolean canWrite(Plot plot, PlotPlayer player) {
         if (plot == null) {
-            return Permissions.hasPermission(player, "plots.inbox.write." + toString());
+            return Permissions.hasPermission(player, "plots.inbox.write." + toString(), true);
         }
-        return Permissions.hasPermission(player, "plots.inbox.write." + toString()) && (plot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, "plots.inbox.write." + toString() + ".other"));
+        return Permissions.hasPermission(player, "plots.inbox.write." + toString(), true) && (plot.isOwner(player.getUUID()) || Permissions
+                .hasPermission(player, "plots.inbox.write." + toString() + ".other", true));
     }
 
     public boolean canModify(Plot plot, PlotPlayer player) {
-        if (Permissions.hasPermission(player, "plots.inbox.modify." + toString())) {
-            if (plot.isOwner(player.getUUID()) || Permissions.hasPermission(player, "plots.inbox.modify." + toString() + ".other")) {
+        if (Permissions.hasPermission(player, "plots.inbox.modify." + toString(), true)) {
+            if (plot.isOwner(player.getUUID()) || Permissions.hasPermission(player, "plots.inbox.modify." + toString() + ".other", true)) {
                 return true;
             }
         }
