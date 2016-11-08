@@ -595,6 +595,7 @@ public enum C {
      */
     CLEARING_PLOT("$2Clearing plot async.", "Working"),
     CLEARING_DONE("$4Clear completed! Took %sms.", "Working"),
+    DELETING_DONE("$4Delete completed! Took %sms.", "Working"),
     /*
      * Claiming
      */

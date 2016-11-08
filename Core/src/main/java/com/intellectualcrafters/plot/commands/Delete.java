@@ -62,7 +62,7 @@ public class Delete extends SubCommand {
                                 sendMessage(player, C.ADDED_BALANCE, String.valueOf(value));
                             }
                         }
-                        MainUtil.sendMessage(player, C.CLEARING_DONE, System.currentTimeMillis() - start);
+                        MainUtil.sendMessage(player, C.DELETING_DONE, System.currentTimeMillis() - start);
                     }
                 });
                 if (result) {
