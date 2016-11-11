@@ -55,14 +55,17 @@ public class WEManager {
             plot = player.getMeta("WorldEditRegionPlot");
         }
         if (plot != null && (!Settings.Done.RESTRICT_BUILDING || !Flags.DONE.isSet(plot)) && ((allowMember && plot.isAdded(uuid)) || (!allowMember && (plot.isOwner(uuid)) || plot.getTrusted().contains(uuid)))) {
-            regions.addAll(plot.getRegions());
+            for (RegionWrapper region : plot.getRegions()) {
+                RegionWrapper copy = new RegionWrapper(region.minX, region.maxX, area.MIN_BUILD_HEIGHT, area.MAX_BUILD_HEIGHT, region.minZ, region.maxZ);
+                regions.add(copy);
+            }
             player.setMeta("WorldEditRegionPlot", plot);
         }
         return regions;
     }
 
     public static boolean intersects(RegionWrapper region1, RegionWrapper region2) {
-        return (region1.minX <= region2.maxX) && (region1.maxX >= region2.minX) && (region1.minZ <= region2.maxZ) && (region1.maxZ >= region2.minZ);
+        return region1.intersects(region2);
     }
 
     public static boolean regionContains(RegionWrapper selection, HashSet<RegionWrapper> mask) {
