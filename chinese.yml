@@ -1,0 +1,375 @@
+confirm:
+  failed_confirm: $2你当前没有可以接受的行动！
+  requires_confirm: '$2你是否要执行: $1%s$2?&-$2该操作不可逆! 如果确定请输入: $1/plot confirm'
+move:
+  move_success: $4成功的移动了地皮。
+  copy_success: $4成功的复制了地皮。
+  requires_unowned: $2你指定的位置已被占用。
+set:
+  set_attribute: $4成功将 %s0 设置为 %s1
+web:
+  generating_link: $1处理地皮中...
+  generating_link_failed: $2创建下载链接失败了！
+  save_failed: $2保存失败
+  load_null: $2请使用 $4/plot load $2来获取模型列表
+  load_failed: $2读取模型失败
+  load_list: '$2若要读取一个模型，请使用 $1/plot load #'
+  save_success: $1成功保存！
+compass:
+  compass_target: $4成功的用指南针指向了地皮！
+cluster:
+  cluster_available_args: "'$1下面的子指令是可行的: $4list$2, $4create$2,
+    $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4members$2, $4info$2,
+    $4tp$2, $4sethome'"
+  cluster_list_heading: "$2在这个世界中有 $1%s$2 个地皮群"
+  cluster_list_element: "$2 - $1%s&-"
+  cluster_intersection: "$2目标区域被 %s0 覆盖'"
+  cluster_added: "$4成功的创建了群。"
+  cluster_deleted: "$4成功的删除了群。"
+  cluster_resized: "$4成功为群重新设置大小。"
+  cluster_added_user: "$4成功为群增加用户。"
+  cannot_kick_player: "$2你不能从地皮中移除那位玩家！"
+  cluster_invited: "$1你被邀请去下列群： $2%s"
+  cluster_removed: "$1你被该群移除： $2%s"
+  cluster_kicked_user: "$4成功移除了用户。"
+  invalid_cluster: "'$1不合法的群名称： $2%s'"
+  cluster_not_added: "$2那个玩家没有被添加到地皮群中"
+  cluster_cannot_leave: "$1你在离开之前必须删除或转让群"
+  cluster_added_helper: "$4成功为地皮群增加了援建者"
+  cluster_removed_helper: "$4成功为地皮群移除了一位援建者"
+  cluster_regenerated: "$4成功的开始了地皮群重建任务"
+  cluster_teleporting: "$4传送中..."
+  cluster_info: "'$1当前群： $2%id%&-$1名称： $2%name%&-$1所有者： $2%owner%&-$1大小：
+    $2%size%&-$1权利： $2%rights%'"
+border:
+  border: $2你在当前地图边界之外
+unclaim:
+  unclaim_success: $4你成功的放弃了地皮
+  unclaim_failed: $2不能放弃地皮
+worldedit masks:
+  worldedit_delayed: "$2请等待我们处理你的 Worldedit 行动..."
+  worldedit_run: "'$2请等待当前任务完成。当前正在进行的任务：%s'"
+  require_selection_in_mask: "$2你当前选择范围中 %s 不是你的地皮，你只能在你自己的地皮上更改。"
+  worldedit_volume: "$2你目前选区中有 %current%个方块，你最大可以一次性编辑的方块数目为 %max%。"
+  worldedit_iterations: "$2你不能重复 %current% 次。你可以重复的最大次数为 %max%次。"
+  worldedit_unsafe: "$2那个指令已被禁用"
+  worldedit_bypass: "$2&o若要解除你的 Worldedit 限制，输入 $4/plot wea"
+  worldedit_bypassed: "$2当前解除了你的 WorldEdit 限制"
+  worldedit_unmasked: "$1你的 WorldEdit 现在被解除限制。"
+  worldedit_restricted: "$1你的 WorldEdit 现在被限制。"
+gamemode:
+  gamemode_was_bypassed: $1你为地皮 $2{plot} $1跳过了游戏模式 —— ($2{gamemode}$1) $1
+height limit:
+  height_limit: $1这个地皮的建筑高度限制为 $2{limit}
+records:
+  record_play: $2%player $2开始了 $1%name 的记录
+  notify_enter: $2%player $2进入了你的地皮 ($1%plot$2)
+  notify_leave: $2%player $2离开了你的地皮 ($1%plot$2)
+swap:
+  swap_overlap: $2目标区域不允许被覆盖
+  swap_dimensions: $2和目标区域必须拥有相同的世界类型
+  swap_syntax: $2/plots swap <id>
+  swap_success: $4成功的交换了地皮
+  started_swap: $2交换地皮任务已开始，你将会在完成后收到通知。
+comment:
+  inbox_notification: '%s 条未读信息。使用 /plot inbox 来读取'
+  not_valid_inbox_index: $2在第 %s 页没有信息
+  inbox_item: $2 - $4%s
+  comment_syntax: $2请使用 /plots comment [X;Z] <%s> <comment>
+  invalid_inbox: '$2那不是一个正确的收件箱&-$1允许的值： %s'
+  no_perm_inbox: $2你没有查看那个收件箱的权限
+  no_perm_inbox_modify: $2你没有更改那个收件箱的权限
+  no_plot_inbox: $2你必须站在或指定一个地皮参数
+  comment_removed: $4成功的删除了评论：$2 - '$3%s$2'
+  comment_added: $4一条评论被留下
+  comment_header: $2&m---------&r $1评论 $2&m---------&r
+  inbox_empty: $2没有评论
+console:
+  not_console: $2为了安全，这个指令只能由控制台执行。
+  is_console: $2这个指令只能由玩家执行。
+inventory:
+  inventory_usage: '&c使用： &6{usage}'
+  inventory_desc: '&c描述： &6{desc}'
+  inventory_category: '&c类型： &6{category}'
+clipboard:
+  clipboard_set: $2当前地皮已被复制到你的剪切板中，使用 $1/plot paste$2 来粘贴。
+  pasted: $4地皮已被成功粘贴。它从你的剪切板中被移除。
+  paste_failed: '$2粘贴选中区域时失败了，失败原因： $2%s'
+  no_clipboard: $2你的剪切板中没有选择。
+  clipboard_info: '$2当前选择 - 地皮ID: $1%id$2, 宽度: $1%width$2, 总计方块数：$1%total$2'
+toggle:
+  toggle_enabled: '$2启用设置： %s'
+  toggle_disabled: '$2禁用设置： %s'
+blocked command:
+  command_blocked: $2在这个地皮中那个指令不被允许
+done:
+  done_already_done: $2这个地皮已经被标记完成。
+  done_not_done: $2这个地皮没有被标记完成。
+  done_insufficient_complexity: $2这个地皮太过于简单。请在使用这个指令之前增加增加更多细节。
+  done_success: $1成功将地皮标记完成。
+  done_removed: $1你现在可以继续在地皮中建筑了。
+ratings:
+  rating_not_valid: $2你需要在 1 - 10 之前指定一个数字
+  rating_already_exists: $2你已经为地皮 $2%s 投过票了
+  rating_applied: $4你成功的为地皮 $2%s 投了一票
+  rating_not_your_own: $2你不能为自己的地皮投票
+  rating_not_done: $2你只能为完成的地皮投票。
+  rating_not_owned: $2你不能为无主的地皮投票。
+tutorial:
+  rate_this: $2为这个地皮投票！
+  comment_this: '$2为这个地皮留一些反馈： %s'
+economy:
+  econ_disabled: $2现在没有启动经济系统
+  cannot_afford_plot: $2你没有足够的钱买这块地皮。它需要花费 $1%s
+  not_for_sale: $2这块地皮没有出售
+  cannot_buy_own: $2你不能购买你自己的地皮
+  plot_sold: $4你的地皮 $1%s0$4，以 $1$%s2 的价格被卖给了 $1%s1$4 
+  cannot_afford_merge: $2你没有足够的钱来合并地皮。它需要花费 $1%s
+  added_balance: $1%s $2被打入你的账户
+  removed_balance: $1%s $2从你的账户取出
+  removed_granted_plot: $2你使用了 %s 个地皮授权，你还剩下 $1%s $2个
+setup:
+  setup_init: '$1请使用： $2/plot setup <value>'
+  setup_step: '$3[$1第 %s0 $1步$3] $1%s1 $2- $1参数类型： $2%s2 $1默认值： $2%s3'
+  setup_invalid_arg: '$2%s0 不是对于第 %s1 步的正确的参数。要想取消设置使用： $1/plot setup cancel'
+  setup_valid_arg: $2你将值 $1%s0 $2设置为了 %s1
+  setup_finished: $4你应该被传送到了创建的世界。否则你需要手动设置在 bukkit.yml 中的世界创建器或者你选择的世界的管理插件。
+  setup_world_taken: $2%s 是一个已经创建的地皮世界
+  setup_missing_world: $2你需要指定一个世界名($1/plot setup &l<world>$1 <generator>$2)&-$1附加指令：&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel
+  setup_missing_generator: $2你需要指定一个世界生成器 ($1/plot setup <world> &l<generator>&r$2)&-$1附加指令：&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel
+  setup_invalid_generator: '$2错误的生成器。正确的生成器有： %s'
+schematics:
+  schematic_too_large: $2这个地皮对此行动太大了！
+  schematic_missing_arg: '$2你需要制定一个参数。正确的值： $1test <name>$2 , $1save$2 , $1paste $2, $1exportall'
+  schematic_invalid: '$2那不是一个正确的模板。原因： $2%s'
+  schematic_valid: $2那是一个正确的模板
+  schematic_paste_failed: $2粘贴模板失败了
+  schematic_paste_success: $4成功的粘贴了模板
+titles:
+  title_entered_plot: '$1地皮： %world%;%x%;%z%'
+  title_entered_plot_sub: $4地皮主人 %s
+  prefix_greeting: '$1%id%$2> '
+  prefix_farewell: '$1%id%$2> '
+core:
+  task_start: 任务开始...
+  prefix: $3[$1地皮系统$3] $2
+  enabled: $1PlotSquared 现已开启
+reload:
+  reloaded_configs: $1翻译和世界设置被重新读取
+  reload_failed: $2读取文件配置失败
+desc:
+  desc_set: $2地皮的描述被设置
+  desc_unset: $2地皮的描述被重置
+  missing_desc: $2你需要指定一个描述
+alias:
+  alias_set_to: $2地皮简称设置为 $1%alias%
+  missing_alias: $2你需要指定一个简称
+  alias_too_long: $2在长度上简称必须小于50字符
+  alias_is_taken: $2已经有地皮命名为那个简称了
+position:
+  missing_position: '$2你需要指定一个方位。正确的值： ×无×'
+  position_set: $1将家设置为当前位置
+  position_unset: $1家的位置重置到默认位置
+  home_argument: $2请使用 /plot set home [none]
+  invalid_position: $2那不是一个正确的位置的值
+cap:
+  entity_cap: $2你不能再生成更多怪物了！
+time:
+  time_format: $1%hours%, %min%, %sec%
+permission:
+  no_schematic_permission: $2你没有权限来使用模板 $1%s
+  no_permission: '$2你没有权限！ ($1%s)'
+  no_permission_event: '$2你没有权限这样做！ ($1%s)'
+  no_plot_perms: $2你需要地皮主人权限
+  cant_claim_more_plots: $2你不能再领取更多地皮了
+  cant_transfer_more_plots: $2你不能给那个玩家更多地皮了
+  cant_claim_more_plots_num: $2你不能同时领取超过 $1%s $2个地皮
+  you_be_denied: $2你不能进入那个地皮
+  merge_request_confirm: 来自 %s 的地皮合并申请
+merge:
+  merge_not_valid: $2这个合并请求不再合法
+  merge_accepted: $2合并请求被接受
+  success_merge: $2地皮成功被合并！
+  merge_requested: $2成功的发送了一个合并请求
+  no_perm_merge: '$2你不是地皮 $1%plot% 的主人'
+  no_available_automerge: $2你在指定位置没有邻近的地皮或不允许你合并成那样大小。
+  unlink_required: $2你需要先解除地皮的合并。
+  unlink_impossible: $2你只能解除超级地皮的合并
+  unlink_success: $2成功的解除了地皮的合并。
+commandconfig:
+  not_valid_subcommand: $2那不是一个正确的子命令
+  did_you_mean: '$2你想输入： $1%s$2吗'
+  name_little: $2%s0 的名字太短了，$1%s1$2<$1%s3
+  no_commands: $2很抱歉，你没有权限使用任何子指令。
+  subcommand_set_options_header: '$2正确的值： '
+  command_syntax: '$1请使用： $2%s'
+  flag_tutorial_usage: '$1使一位管理员设置标志： $2%s'
+errors:
+  invalid_player_wait: '$2没有找到玩家：$1%s$2。请稍后再试。'
+  invalid_player: '$2没有找到玩家： $1%s$2.'
+  invalid_player_offline: '$2这个玩家必须在线： $1%s.'
+  error: '$2发生了一个错误： %s'
+  command_went_wrong: $2当使用指令时发生了错误...
+  no_free_plots: $2现在没有可获得的免费地皮
+  not_in_plot: $2你不在一个地皮中
+  not_in_cluster: $2你必须在一个地皮群组中才能使用这个命令
+  not_in_plot_world: $2你不在一个地皮世界中
+  plotworld_incompatible: $2两个世界必须是兼容的
+  not_valid_world: $2那不是一个正确的世界(区分大小写)
+  not_valid_plot_world: $2那不是一个正确的地皮世界(区分大小写)
+  no_plots: $2你不拥有任何地皮
+  not_using_plotme: $2This server uses the far superior $1PlotSquared $2plot management system. Please use the $1/ps $2or $1/p2 $2or $1/plots $2instead
+  wait_for_timer: $2A setblock timer is bound to either the current plot or you. Please wait for it to finish
+paste:
+  debug_report_created: '$1U将DEBUG信息粘贴到了： $1%url%'
+purge:
+  purge_success: $4成功的合并了 %s 块地皮
+trim:
+  trim_in_progress: 已经有一个地皮清理任务在进行！
+  not_valid_hybrid_plot_world: 要进行这个行动，你需要立方体地皮管理系统。
+block list:
+  block_list_separater: '$1,$2 '
+biome:
+  need_biome: $2你需要指定一个正确的生物群系
+  biome_set_to: $2地皮的生物群系设置为 $2
+teleport:
+  teleported_to_plot: $1你已被传送
+  teleported_to_road: $2你被传送到了道路上
+  teleport_in_seconds: $1传送将在 %s 秒后进行。不要移动...
+  teleport_failed: $2传送因移动或伤害被取消
+set block:
+  set_block_action_finished: $1上一个方块设置行动现在完成了。
+unsafe:
+  debugallowunsafe_on: $2允许了不安全的行动
+  debugallowunsafe_off: $2不安全的行动被禁用
+debug:
+  debug_header: $1Debug 信息&-
+  debug_section: $2>> $1&l%val%
+  debug_line: $2>> $1%var%$2:$1 %val%&-
+invalid:
+  not_valid_data: $2那不是一个正确的数据ID
+  not_valid_block: '$2%s 不是一个正确的方块'
+  not_allowed_block: '$2这个方块被禁用： %s'
+  not_valid_number: '$2在范围上这不是一个正确的数值： %s'
+  not_valid_plot_id: $2那不是一个正确的地皮ID
+  plot_id_form: '$2地皮 ID 的格式必须为： $1X;Y $2例如： $1-5;7'
+  not_your_plot: $2那不是你的地皮
+  no_such_plot: $2没有这个地皮
+  player_has_not_been_on: $2那位玩家不在地皮中
+  found_no_plots: $2在你的搜索请求中找不到匹配的地皮
+camera:
+  camera_started: $2你进入了地皮 $1%s 的摄像机模式
+  camera_stopped: $2你退出了摄像机模式
+need:
+  need_plot_number: $2你需要指定一个地皮ID或地皮简称
+  need_block: $2你需要指定一个方块
+  need_plot_id: $2你需要指定一个方块 ID。
+  need_plot_world: $2你需要指定一个地皮区域。
+  need_user: $2你需要指定一个用户名
+info:
+  none: 无
+  now: 现在
+  never: 从不
+  unknown: 未知
+  everyone: 所有人
+  plot_unowned: $2执行这个行动当前地皮必须有主人
+  plot_info_unclaimed: $2地皮 $1%s$2 还没有被领取
+  plot_info_header: $3&m---------&r $1信息 $3&m---------
+  plot_info: '$1ID： $2%id%$1&-$1别称： $2%alias%$1&-$1地皮主人： $2%owner%$1&-$1生物群系：
+    $2%biome%$1&-$1是否可建筑： $2%build%$1&-$1评级： $2%rating%&-$1可见： $2%seen%&-$1援建者：
+    $2%trusted%$1&-$1成员： $2%members%$1&-$1黑名单： $2%denied%$1&-$1标志： $2%flags%'
+  plot_info_footer: $3&m---------&r $1信息 $3&m---------
+  plot_info_trusted: $1援建者：$2 %trusted%
+  plot_info_members: $1成员：$2 %members%
+  plot_info_denied: $1黑名单：$2 %denied%
+  plot_info_flags: $1标志：$2 %flags%
+  plot_info_biome: $1生物群系：$2 %biome%
+  plot_info_rating: $1评级：$2 %rating%
+  plot_info_owner: $1地皮主人：$2 %owner%
+  plot_info_id: $1地皮ID：$2 %id%
+  plot_info_alias: $1地皮别称：$2 %alias%
+  plot_info_size: $1地皮大小：$2 %size%
+  plot_info_seen: $1地皮可见：$2 %seen%
+  plot_user_list: ' $1%user%$2,'
+  plot_flag_list: $1%s0:%s1$2
+  info_syntax_console: $2/plot info X;Y
+working:
+  generating_component: $1从您的设置中开始组成部件
+  clearing_plot: $2清除地皮异步处理。
+  clearing_done: $4清理完成！花费了 %s 毫秒。
+  plot_not_claimed: $2地皮没有被领取
+  plot_is_claimed: $2这个地皮已经被领取
+  claimed: $4你成功的领取了地皮
+list:
+  comment_list_header_paged: $2(第 $1%cur$2 页/共 $1%max$2 页) $1列出了 %amount% 条评论
+  clickable: ' （可点击）'
+  area_list_header_paged: $2(第 $1%cur$2 页/共 $1%max$2 页) $1列出了 %amount% 片区域
+  plot_list_header_paged: $2(第 $1%cur$2 页/共 $1%max$2 页) $1列出了 %amount% 块地皮
+  plot_list_header: $1列出了 %word% 地皮
+  plot_list_item: $2>> $1%id$2:$1%world $2- $1%owner
+  plot_list_item_ordered: $2[$1%in$2] >> $1%id$2:$1%world $2- $1%owner
+  plot_list_footer: $2>> $1%word% 总计有块 $2%num% $1领取的 %plot%.
+left:
+  left_plot: $2你离开了一个地皮
+chat:
+  plot_chat_format: '$2[$1地皮聊天$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
+  plot_chat_forced: $2这个世界强制所有人使用地皮聊天
+  plot_chat_on: $4开启了地皮聊天。
+  plot_chat_off: $4关闭了地皮聊天。
+deny:
+  denied_removed: $4Y你成功的从此地皮黑名单解除了一位玩家
+  denied_added: $4你成功的将这位玩家加入此地皮的黑名单中
+  denied_need_argument: $2缺少参数。请使用$1/plot denied add <name> $2或者 $1/plot denied remove <name>
+  was_not_denied: $2那位玩家不在此地皮的黑名单中
+  you_got_denied: $4你被所在的地皮加入了黑名单，所以你被传送到了出生点。
+kick:
+  you_got_kicked: $4你被踢出了地皮！
+rain:
+  need_on_off: '$2你需要指定一个值。正确的值： $1on$2, $1off'
+  setting_updated: $4你成功的更新了设置。
+flag:
+  flag_key: '$2关键词： %s'
+  flag_type: '$2类型： %s'
+  flag_desc: '$2描述： %s'
+  not_valid_flag: $2那不是一个正确的标志
+  not_valid_flag_suggested: '$2那不是一个正确的标志。你想用： $1%s 吗？'
+  not_valid_value: $2地皮值必须为代数
+  flag_not_in_plot: $2这个地皮目前没有标志
+  flag_not_removed: $2这个标志不能被移除
+  flag_not_added: $2这个标志不能被添加
+  flag_removed: $4成功的移除了标志
+  flag_added: $4成功的添加了标志
+trusted:
+  trusted_added: $4你成功的为地皮添加了一位信任玩家
+  trusted_removed: $4你成功的为地皮移除了一位信任玩家
+  was_not_added: $2那位玩家在这个地皮中不是信任玩家
+  plot_removed_user: $1因为地皮主人的长期不在线，你所作为信任玩家的地皮 %s 已被删除
+member:
+  removed_players: $2Removed %s players from this plot.
+  already_owner: '$2玩家 %s0 已经是地皮主人了'
+  already_added: '$2玩家 %s0 已经被添加到此类了'
+  member_added: $4那位玩家现在在地皮主人在线时可以编辑地皮
+  member_removed: $1你成功的为地皮移除了一位成员
+  member_was_not_added: $2那位玩家不是地皮的一位成员
+  plot_max_members: $2你不被允许再为地皮增加成员了
+owner:
+  set_owner: $4你成功的设置了地皮主人
+  now_owner: $4你现在是地皮 %s 的主人了
+signs:
+  owner_sign_line_1: '$1地皮ID： $1%id%'
+  owner_sign_line_2: '$1所有者:'
+  owner_sign_line_3: $2%plr%
+  owner_sign_line_4: $3被领取
+help:
+  help_header: $3&m---------&r $1地皮系统②帮助文件 $3&m---------
+  help_page_header: '$1类型: $2%category%$2,$1 页面： $2%current%$3/$2%max%$2'
+  help_footer: $3&m---------&r $1地皮系统②帮助文件 $3&m---------
+  help_info_item: $1/plots help %category% $3- $2%category_desc%
+  help_item: $1%usage% [%alias%]&- $3- $2%desc%&-
+  direction: '$1当前路径： %dir%'
+grants:
+  granted_plots: '$1结果： $1剩余 $2%s'
+  granted_plot: $1你将 %s0 地皮赠予 $2%s1
+  granted_plot_failed: '$1赠予失败了：$2%s'
+'-':
+  custom_string: '-'
