@@ -108,45 +108,7 @@ public class SQLManager implements AbstractDB {
         this.plotTasks = new ConcurrentHashMap<>();
         this.playerTasks = new ConcurrentHashMap<>();
         this.clusterTasks = new ConcurrentHashMap<>();
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
-                long last = System.currentTimeMillis();
-                while (true) {
-                    if (SQLManager.this.closed) {
-                        break;
-                    }
-                    // schedule reconnect
-                    if (SQLManager.this.mySQL && System.currentTimeMillis() - last > 550000) {
-                        last = System.currentTimeMillis();
-                        try {
-                            close();
-                            SQLManager.this.closed = false;
-                            SQLManager.this.connection = database.forceConnection();
-                        } catch (SQLException | ClassNotFoundException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if (!sendBatch()) {
-                        try {
-                            if (!getNotifyTasks().isEmpty()) {
-                                for (Runnable task : getNotifyTasks()) {
-                                    TaskManager.runTask(task);
-                                }
-                                getNotifyTasks().clear();
-                            }
-                            Thread.sleep(50);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        });
         this.prefix = p;
-        // Set timout
-        // setTimout();
-        // Public final
         this.SET_OWNER = "UPDATE `" + this.prefix + "plot` SET `owner` = ? WHERE `plot_id_x` = ? AND `plot_id_z` = ? AND `world` = ?";
         this.GET_ALL_PLOTS = "SELECT `id`, `plot_id_x`, `plot_id_z`, `world` FROM `" + this.prefix + "plot`";
         this.CREATE_PLOTS = "INSERT INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) values ";
@@ -155,7 +117,62 @@ public class SQLManager implements AbstractDB {
         this.CREATE_PLOT = "INSERT INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) VALUES(?, ?, ?, ?, ?)";
         this.CREATE_CLUSTER =
                 "INSERT INTO `" + this.prefix + "cluster`(`pos1_x`, `pos1_z`, `pos2_x`, `pos2_z`, `owner`, `world`) VALUES(?, ?, ?, ?, ?, ?)";
-        createTables();
+        TaskManager.runTaskAsync(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    createTables();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                long last = System.currentTimeMillis();
+                while (true) {
+                    if (SQLManager.this.closed) {
+                        break;
+                    }
+                    boolean hasTask = !globalTasks.isEmpty() || !playerTasks.isEmpty() || !plotTasks.isEmpty() || !clusterTasks.isEmpty();
+                    if (hasTask) {
+                        try {
+                            if (SQLManager.this.mySQL && System.currentTimeMillis() - last > 550000 || !connection.isValid(10000)) {
+                                last = System.currentTimeMillis();
+                                reconnect();
+                            }
+                        } catch (SQLException impossible) {
+                            impossible.printStackTrace();
+                        }
+                        if (!sendBatch()) {
+                            try {
+                                if (!getNotifyTasks().isEmpty()) {
+                                    for (Runnable task : getNotifyTasks()) {
+                                        TaskManager.runTask(task);
+                                    }
+                                    getNotifyTasks().clear();
+                                }
+                                Thread.sleep(50);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } else {
+                        try {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    public void reconnect() {
+        try {
+            close();
+            SQLManager.this.closed = false;
+            SQLManager.this.connection = database.forceConnection();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized Queue<Runnable> getGlobalTasks() {
