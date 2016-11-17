@@ -18,7 +18,6 @@ import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
-
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -26,7 +25,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1661,8 +1663,19 @@ public class SQLManager implements AbstractDB {
                             user = UUID.fromString(o);
                             uuids.put(o, user);
                         }
-                        Timestamp timestamp = resultSet.getTimestamp("timestamp");
-                        long time = timestamp.getTime();
+                        long time;
+                        try {
+                            Timestamp timestamp = resultSet.getTimestamp("timestamp");
+                            time = timestamp.getTime();
+                        } catch (SQLException exception) {
+                            String parsable = resultSet.getString("timestamp");
+                            try {
+                                time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(parsable).getTime();
+                            } catch (ParseException e) {
+                                PS.debug("Could not parse date for plot: " + id + " (" + parsable + ")");
+                                time = System.currentTimeMillis() + id;
+                            }
+                        }
                         Plot p = new Plot(plot_id, user, new HashSet<UUID>(), new HashSet<UUID>(), new HashSet<UUID>(), "", null, null, null,
                                 new boolean[]{false, false, false, false}, time, id);
                         HashMap<PlotId, Plot> map = newPlots.get(areaid);
