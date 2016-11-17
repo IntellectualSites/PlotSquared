@@ -47,9 +47,9 @@ public class Help extends Command {
             case 2:
                 if (MathMan.isInteger(args[1])) {
                     try {
-                        displayHelp(player, args[1], Integer.parseInt(args[1]));
+                        displayHelp(player, args[0], Integer.parseInt(args[1]));
                     } catch (NumberFormatException ignored) {
-                        displayHelp(player, args[1], 1);
+                        displayHelp(player, args[0], 1);
                     }
                 }
                 return;
