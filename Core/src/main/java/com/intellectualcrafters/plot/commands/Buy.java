@@ -17,7 +17,6 @@ import java.util.Set;
 
 @CommandDeclaration(
         command = "buy",
-        aliases = {"b"},
         description = "Buy the plot you are standing on",
         usage = "/plot buy",
         permission = "plots.buy",
