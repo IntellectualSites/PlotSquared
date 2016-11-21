@@ -2,7 +2,6 @@ package com.plotsquared.bukkit.generator;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
-import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.ChunkWrapper;
@@ -245,8 +244,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         ArrayList<BlockPopulator> toAdd = new ArrayList<>();
         List<BlockPopulator> existing = world.getPopulators();
         if (populators == null && platformGenerator != null) {
-            populators = new ArrayList<>();
-            this.populators.addAll(platformGenerator.getDefaultPopulators(world));
+            populators = new ArrayList<>(platformGenerator.getDefaultPopulators(world));
         }
         for (BlockPopulator populator : this.populators) {
             if (!existing.contains(populator)) {

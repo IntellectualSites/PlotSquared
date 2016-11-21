@@ -6,6 +6,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import org.bukkit.entity.Player;
 
+@SuppressWarnings("deprecation")
 public class DefaultTitle_19 extends AbstractTitle {
 
     @Override

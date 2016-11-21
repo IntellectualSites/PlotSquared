@@ -25,17 +25,9 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.object.BukkitLazyBlock;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.bukkit.util.BukkitVersion;
 import com.plotsquared.listener.PlayerBlockEventType;
 import com.plotsquared.listener.PlotListener;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -123,6 +115,18 @@ import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
+
 /**
  * Player Events involving plots.
  *
@@ -160,6 +164,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     public void onRedstoneEvent(BlockRedstoneEvent event) {
         Block block = event.getBlock();
         switch (block.getType()) {
+            case OBSERVER:
             case REDSTONE_LAMP_OFF:
             case REDSTONE_WIRE:
             case REDSTONE_LAMP_ON:
@@ -604,7 +609,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         PlotPlayer plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
         Location location = plotPlayer.getLocation();
         PlotArea area = location.getPlotArea();
-        if (area == null || (!area.PLOT_CHAT != plotPlayer.getAttribute("chat"))) {
+        if (area == null || (area.PLOT_CHAT == plotPlayer.getAttribute("chat"))) {
             return;
         }
         Plot plot = area.getPlot(location);
@@ -1223,6 +1228,25 @@ public class PlayerEvents extends PlotListener implements Listener {
                     case NOTE_BLOCK:
                     case JUKEBOX:
                     case WORKBENCH:
+                    case SILVER_SHULKER_BOX:
+                    case BLACK_SHULKER_BOX:
+                    case BLUE_SHULKER_BOX:
+                    case RED_SHULKER_BOX:
+                    case PINK_SHULKER_BOX:
+                    case ORANGE_SHULKER_BOX:
+                    case WHITE_SHULKER_BOX:
+                    case YELLOW_SHULKER_BOX:
+                    case BROWN_SHULKER_BOX:
+                    case CYAN_SHULKER_BOX:
+                    case GREEN_SHULKER_BOX:
+                    case PURPLE_SHULKER_BOX:
+                    case GRAY_SHULKER_BOX:
+                    case LIME_SHULKER_BOX:
+                    case LIGHT_BLUE_SHULKER_BOX:
+                    case MAGENTA_SHULKER_BOX:
+                    case COMMAND_REPEATING:
+                    case COMMAND_CHAIN:
+
                         eventType = PlayerBlockEventType.INTERACT_BLOCK;
                         break;
                     case DRAGON_EGG:
@@ -1241,7 +1265,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 }
                 Material type = (hand == null) ? null : hand.getType();
                 int id = (type == null) ? 0 : type.getId();
-                if (id == 0) {
+                if (type == Material.AIR) {
                     eventType = PlayerBlockEventType.INTERACT_BLOCK;
                     break;
                 }
@@ -1258,18 +1282,15 @@ public class PlayerEvents extends PlotListener implements Listener {
                     case MONSTER_EGGS:
                         eventType = PlayerBlockEventType.SPAWN_MOB;
                         break;
-
                     case ARMOR_STAND:
                         location = BukkitUtil.getLocation(block.getRelative(event.getBlockFace()).getLocation());
                         eventType = PlayerBlockEventType.PLACE_MISC;
                         break;
-
                     case WRITTEN_BOOK:
                     case BOOK_AND_QUILL:
                     case BOOK:
                         eventType = PlayerBlockEventType.READ;
                         break;
-
                     case APPLE:
                     case BAKED_POTATO:
                     case MUSHROOM_SOUP:
@@ -1510,6 +1531,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         switch (entity.getType()) {
             case PLAYER:
                 return false;
+            case LLAMA_SPIT:
             case SMALL_FIREBALL:
             case FIREBALL:
             case DROPPED_ITEM:
@@ -1539,6 +1561,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             case AREA_EFFECT_CLOUD:
             case LIGHTNING:
             case WITHER_SKULL:
+            case EVOKER_FANGS:
             case UNKNOWN:
                 // non moving / unmovable
                 return checkEntity(plot, Flags.ENTITY_CAP);
@@ -1571,6 +1594,11 @@ public class PlayerEvents extends PlotListener implements Listener {
             case SNOWMAN:
             case BAT:
             case HORSE:
+            case DONKEY:
+            case LLAMA:
+            case MULE:
+            case ZOMBIE_HORSE:
+            case SKELETON_HORSE:
                 // animal
                 return checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.ANIMAL_CAP);
             case BLAZE:
@@ -1592,6 +1620,14 @@ public class PlayerEvents extends PlotListener implements Listener {
             case WITHER:
             case ZOMBIE:
             case SHULKER:
+            case HUSK:
+            case STRAY:
+            case ELDER_GUARDIAN:
+            case WITHER_SKELETON:
+            case VINDICATOR:
+            case EVOKER:
+            case VEX:
+            case ZOMBIE_VILLAGER:
                 // monster
                 return checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.HOSTILE_CAP);
             default:
@@ -2055,7 +2091,23 @@ public class PlayerEvents extends PlotListener implements Listener {
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityCombustByEntity(EntityCombustByEntityEvent event) {
-        EntityDamageByEntityEvent eventChange = new EntityDamageByEntityEvent(event.getCombuster(), event.getEntity(), EntityDamageEvent.DamageCause.FIRE_TICK, event.getDuration());
+        EntityDamageByEntityEvent eventChange = null;
+        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_11_0)) {
+            eventChange = new EntityDamageByEntityEvent(event.getCombuster(), event.getEntity(),
+                    EntityDamageEvent.DamageCause.FIRE_TICK, (double)event.getDuration());
+        } else {
+            try {
+                Constructor<EntityDamageByEntityEvent> constructor = EntityDamageByEntityEvent.class.getConstructor(Entity.class,
+                        Entity.class, EntityDamageEvent.DamageCause.class, Integer.TYPE);
+                eventChange = constructor.newInstance(event.getCombuster(), event.getEntity(),
+                        EntityDamageEvent.DamageCause.FIRE_TICK, event.getDuration());
+            } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+        if (eventChange == null) {
+            return;
+        }
         onEntityDamageByEntityEvent(eventChange);
     }
 

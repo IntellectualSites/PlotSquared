@@ -2,12 +2,15 @@ repositories {
     maven {url "https://hub.spigotmc.org/nexus/content/groups/public/"}
     maven { url = "https://oss.sonatype.org/content/repositories/snapshots/"}
     maven {url "http://nexus.hc.to/content/repositories/pub_releases"}
+    mavenLocal()
 }
 
 dependencies {
     compile project(':Core')
-    compile 'org.spigotmc:spigot-api:1.10.2-R0.1-SNAPSHOT'
-    compile 'net.milkbowl.vault:VaultAPI:1.6'
+    compile 'org.spigotmc:spigot-api:1.11-R0.1-SNAPSHOT'
+    compile("net.milkbowl.vault:VaultAPI:1.6") {
+        exclude module: 'bukkit'
+    }
 }
 
 sourceCompatibility = 1.7

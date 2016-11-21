@@ -72,15 +72,6 @@ import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.sk89q.worldedit.WorldEdit;
-import java.io.File;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -97,54 +88,63 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     private static ConcurrentHashMap<String, Plugin> pluginMap;
 
     static {
-        {   // Disable AWE as otherwise both fail to load
-            PluginManager manager = Bukkit.getPluginManager();
-            try {
-                Settings.load(new File("plugins/PlotSquared/config/settings.yml"));
-                if (Settings.Enabled_Components.PLOTME_CONVERTER) { // Only disable PlotMe if conversion is enabled
-                    Field pluginsField = manager.getClass().getDeclaredField("plugins");
-                    Field lookupNamesField = manager.getClass().getDeclaredField("lookupNames");
-                    pluginsField.setAccessible(true);
-                    lookupNamesField.setAccessible(true);
-                    List<Plugin> plugins = (List<Plugin>) pluginsField.get(manager);
-                    Iterator<Plugin> iter = plugins.iterator();
-                    while (iter.hasNext()) {
-                        if (iter.next().getName().startsWith("PlotMe")) {
-                            iter.remove();
-                        }
+        // Disable AWE as otherwise both fail to load
+        PluginManager manager = Bukkit.getPluginManager();
+        try {
+            Settings.load(new File("plugins/PlotSquared/config/settings.yml"));
+            if (Settings.Enabled_Components.PLOTME_CONVERTER) { // Only disable PlotMe if conversion is enabled
+                Field pluginsField = manager.getClass().getDeclaredField("plugins");
+                Field lookupNamesField = manager.getClass().getDeclaredField("lookupNames");
+                pluginsField.setAccessible(true);
+                lookupNamesField.setAccessible(true);
+                List<Plugin> plugins = (List<Plugin>) pluginsField.get(manager);
+                Iterator<Plugin> iter = plugins.iterator();
+                while (iter.hasNext()) {
+                    if (iter.next().getName().startsWith("PlotMe")) {
+                        iter.remove();
                     }
-                    Map<String, Plugin> lookupNames = (Map<String, Plugin>) lookupNamesField.get(manager);
-                    lookupNames.remove("PlotMe");
-                    lookupNames.remove("PlotMe-DefaultGenerator");
-                    pluginsField.set(manager, new ArrayList<Plugin>(plugins) {
-                        @Override
-                        public boolean add(Plugin plugin) {
-                            if (plugin.getName().startsWith("PlotMe")) {
-                                System.out.print("Disabling `" + plugin.getName() + "` for PlotMe conversion (configure in PlotSquared settings.yml)");
-                            } else {
-                                return super.add(plugin);
-                            }
-                            return false;
-                        }
-                    });
-                    pluginMap = new ConcurrentHashMap<String, Plugin>(lookupNames) {
-                        @Override
-                        public Plugin put(String key, Plugin plugin) {
-                            if (!plugin.getName().startsWith("PlotMe")) {
-                                return super.put(key, plugin);
-                            }
-                            return null;
-                        }
-                    };
-                    lookupNamesField.set(manager, pluginMap);
                 }
-            } catch (Throwable ignore) {}
-        }
+                Map<String, Plugin> lookupNames = (Map<String, Plugin>) lookupNamesField.get(manager);
+                lookupNames.remove("PlotMe");
+                lookupNames.remove("PlotMe-DefaultGenerator");
+                pluginsField.set(manager, new ArrayList<Plugin>(plugins) {
+                    @Override
+                    public boolean add(Plugin plugin) {
+                        if (plugin.getName().startsWith("PlotMe")) {
+                            System.out.print("Disabling `" + plugin.getName() + "` for PlotMe conversion (configure in PlotSquared settings.yml)");
+                        } else {
+                            return super.add(plugin);
+                        }
+                        return false;
+                    }
+                });
+                pluginMap = new ConcurrentHashMap<String, Plugin>(lookupNames) {
+                    @Override
+                    public Plugin put(String key, Plugin plugin) {
+                        if (!plugin.getName().startsWith("PlotMe")) {
+                            return super.put(key, plugin);
+                        }
+                        return null;
+                    }
+                };
+                lookupNamesField.set(manager, pluginMap);
+            }
+        } catch (Throwable ignore) {}
     }
 
     public static WorldEdit worldEdit;
@@ -299,6 +299,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                     case TIPPED_ARROW:
                                     case ENDER_PEARL:
                                     case ARROW:
+                                    case LLAMA_SPIT:
                                         // managed elsewhere | projectile
                                         continue;
                                     case ITEM_FRAME:
@@ -315,7 +316,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                     case MINECART_MOB_SPAWNER:
                                     case ENDER_CRYSTAL:
                                     case MINECART_TNT:
-                                    case BOAT: {
+                                    case BOAT:
                                         if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
                                             com.intellectualcrafters.plot.object.Location location = BukkitUtil.getLocation(entity.getLocation());
                                             Plot plot = location.getPlot();
@@ -339,7 +340,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                         } else {
                                             continue;
                                         }
-                                    }
                                     case SMALL_FIREBALL:
                                     case FIREBALL:
                                     case DRAGON_FIREBALL:
@@ -350,6 +350,20 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                     case FALLING_BLOCK:
                                         // managed elsewhere
                                         continue;
+                                    case LLAMA:
+                                    case DONKEY:
+                                    case MULE:
+                                    case ZOMBIE_HORSE:
+                                    case SKELETON_HORSE:
+                                    case HUSK:
+                                    case ELDER_GUARDIAN:
+                                    case WITHER_SKELETON:
+                                    case STRAY:
+                                    case ZOMBIE_VILLAGER:
+                                    case EVOKER:
+                                    case EVOKER_FANGS:
+                                    case VEX:
+                                    case VINDICATOR:
                                     case POLAR_BEAR:
                                     case BAT:
                                     case BLAZE:
@@ -530,8 +544,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     public boolean initPlotMeConverter() {
         if (new LikePlotMeConverter("PlotMe").run(new ClassicPlotMeConnector())) {
             return true;
-        }
-        else if (new LikePlotMeConverter("PlotMe").run(new PlotMeConnector_017())) {
+        } else if (new LikePlotMeConverter("PlotMe").run(new PlotMeConnector_017())) {
             return true;
         }
         return false;
