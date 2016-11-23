@@ -249,6 +249,8 @@ public class Settings extends Config {
         public static boolean ON_LOGIN = false;
         @Comment("Add a teleportation delay to all commands")
         public static int DELAY = 0;
+        @Comment("The visit command is ordered by world instead of globally")
+        public static boolean PER_WORLD_VISIT = false;
     }
 
     public static final class Redstone {

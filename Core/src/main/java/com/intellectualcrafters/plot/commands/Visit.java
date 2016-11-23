@@ -2,6 +2,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal2;
@@ -49,7 +50,7 @@ public class Visit extends Command {
             case 2:
                 if (!MathMan.isInteger(args[1])) {
                     C.NOT_VALID_NUMBER.send(player, "(1, ∞)");
-                    C.COMMAND_SYNTAX.send(player, getUsage());;
+                    C.COMMAND_SYNTAX.send(player, getUsage());
                     return;
                 }
                 page = Integer.parseInt(args[1]);
@@ -93,7 +94,12 @@ public class Visit extends Command {
             C.NOT_VALID_NUMBER.send(player, "(1, " + unsorted.size() + ")");
             return;
         }
-        List<Plot> plots = PS.get().sortPlotsByTemp(unsorted);
+        List<Plot> plots;
+        if (Settings.Teleport.PER_WORLD_VISIT) {
+            plots = PS.get().sortPlots(unsorted, PS.SortType.CREATION_DATE, player.getApplicablePlotArea());
+        }  else {
+            plots = PS.get().sortPlotsByTemp(unsorted);
+        }
         final Plot plot = plots.get(page - 1);
         if (!plot.hasOwner()) {
             if (!Permissions.hasPermission(player, C.PERMISSION_VISIT_UNOWNED)) {
