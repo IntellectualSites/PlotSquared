@@ -4,6 +4,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal2;
 import com.intellectualcrafters.plot.object.RunnableVal3;
@@ -46,16 +47,36 @@ public class Visit extends Command {
         }
         int page = Integer.MIN_VALUE;
         Collection<Plot> unsorted = null;
+        PlotArea sortByArea = player.getApplicablePlotArea();
+        boolean shouldSortByArea = Settings.Teleport.PER_WORLD_VISIT;
         switch (args.length) {
-            case 2:
+            case 3:
                 if (!MathMan.isInteger(args[1])) {
                     C.NOT_VALID_NUMBER.send(player, "(1, ∞)");
                     C.COMMAND_SYNTAX.send(player, getUsage());
                     return;
                 }
+                page = Integer.parseInt(args[2]);
+            case 2:
+                if (!MathMan.isInteger(args[1])) {
+                    sortByArea = PS.get().getPlotAreaByString(args[1]);
+                    if (sortByArea == null) {
+                        C.NOT_VALID_NUMBER.send(player, "(1, ∞)");
+                        C.COMMAND_SYNTAX.send(player, getUsage());
+                        return;
+                    }
+                    UUID user = UUIDHandler.getUUIDFromString(args[0]);
+                    if (user == null) {
+                        C.COMMAND_SYNTAX.send(player, getUsage());
+                        return;
+                    }
+                    unsorted = PS.get().getBasePlots(user);
+                    shouldSortByArea = true;
+                    break;
+                }
                 page = Integer.parseInt(args[1]);
             case 1:
-                UUID user = (args.length == 2 || !MathMan.isInteger(args[0])) ? UUIDHandler.getCachedUUID(args[0], null) : null;
+                UUID user = (args.length == 2 || !MathMan.isInteger(args[0])) ? UUIDHandler.getUUIDFromString(args[0]) : null;
                 if (page == Integer.MIN_VALUE && user == null && MathMan.isInteger(args[0])) {
                     page = Integer.parseInt(args[0]);
                     unsorted = PS.get().getBasePlots(player);
@@ -95,8 +116,8 @@ public class Visit extends Command {
             return;
         }
         List<Plot> plots;
-        if (Settings.Teleport.PER_WORLD_VISIT) {
-            plots = PS.get().sortPlots(unsorted, PS.SortType.CREATION_DATE, player.getApplicablePlotArea());
+        if (shouldSortByArea) {
+            plots = PS.get().sortPlots(unsorted, PS.SortType.CREATION_DATE, sortByArea);
         }  else {
             plots = PS.get().sortPlotsByTemp(unsorted);
         }
