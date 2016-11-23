@@ -135,7 +135,7 @@ public class SQLManager implements AbstractDB {
                     boolean hasTask = !globalTasks.isEmpty() || !playerTasks.isEmpty() || !plotTasks.isEmpty() || !clusterTasks.isEmpty();
                     if (hasTask) {
                         try {
-                            if (SQLManager.this.mySQL && System.currentTimeMillis() - last > 550000 || !connection.isValid(10000)) {
+                            if (SQLManager.this.mySQL && System.currentTimeMillis() - last > 550000 || !isValid()) {
                                 last = System.currentTimeMillis();
                                 reconnect();
                             }
@@ -165,6 +165,15 @@ public class SQLManager implements AbstractDB {
                 }
             }
         });
+    }
+
+    public boolean isValid() {
+        try (PreparedStatement stmt = this.connection.prepareStatement("SELECT 1")) {
+            stmt.executeQuery();
+            return true;
+        } catch (Throwable e) {
+            return false;
+        }
     }
 
     public void reconnect() {
