@@ -134,13 +134,9 @@ public class SQLManager implements AbstractDB {
                     }
                     boolean hasTask = !globalTasks.isEmpty() || !playerTasks.isEmpty() || !plotTasks.isEmpty() || !clusterTasks.isEmpty();
                     if (hasTask) {
-                        try {
-                            if (SQLManager.this.mySQL && System.currentTimeMillis() - last > 550000 || !isValid()) {
-                                last = System.currentTimeMillis();
-                                reconnect();
-                            }
-                        } catch (SQLException impossible) {
-                            impossible.printStackTrace();
+                        if (SQLManager.this.mySQL && System.currentTimeMillis() - last > 550000 || !isValid()) {
+                            last = System.currentTimeMillis();
+                            reconnect();
                         }
                         if (!sendBatch()) {
                             try {
