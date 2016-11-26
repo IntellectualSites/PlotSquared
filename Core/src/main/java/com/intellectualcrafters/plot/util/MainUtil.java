@@ -157,11 +157,10 @@ public class MainUtil {
                         writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(filename)).append(CRLF);
                         writer.append("Content-Transfer-Encoding: binary").append(CRLF);
                         writer.append(CRLF).flush();
-                        OutputStream nonClosable = new AbstractDelegateOutputStream(output) {
+                        writeTask.value = new AbstractDelegateOutputStream(output) {
                             @Override
-                            public void close() throws IOException {  } // Don't close
+                            public void close() {  } // Don't close
                         };
-                        writeTask.value = nonClosable;
                         writeTask.run();
                         output.flush();
                         writer.append(CRLF).flush();
@@ -486,11 +485,11 @@ public class MainUtil {
         String[] split = arg.split(";|,");
         PlotId id;
         if (split.length == 4) {
-            area = PS.get().getPlotAreaByString(split[0] + ";" + split[1]);
-            id = PlotId.fromString(split[2] + ";" + split[3]);
+            area = PS.get().getPlotAreaByString(split[0] + ';' + split[1]);
+            id = PlotId.fromString(split[2] + ';' + split[3]);
         } else if (split.length == 3) {
             area = PS.get().getPlotAreaByString(split[0]);
-            id = PlotId.fromString(split[1] + ";" + split[2]);
+            id = PlotId.fromString(split[1] + ';' + split[2]);
         } else if (split.length == 2) {
             id = PlotId.fromString(arg);
         } else {
@@ -688,7 +687,7 @@ public class MainUtil {
                 // Invalid
                 return Collections.emptySet();
             }
-            if (name.equals("*")) {
+            if ("*".equals(name)) {
                 result.add(DBFunc.everyone);
                 continue;
             }
@@ -726,7 +725,7 @@ public class MainUtil {
         String members = getPlayerList(plot.getMembers());
         String denied = getPlayerList(plot.getDenied());
         String seen;
-        if (Settings.Enabled_Components.PLOT_EXPIRY) {
+        if (Settings.Enabled_Components.PLOT_EXPIRY && ExpireManager.IMP != null) {
             if (plot.isOnline()) {
                 seen = C.NOW.s();
             } else {
