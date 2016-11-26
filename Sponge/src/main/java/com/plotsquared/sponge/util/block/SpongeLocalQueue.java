@@ -60,9 +60,6 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
     public PlotBlock getBlock(int x, int y, int z) {
         World worldObj = getSpongeWorld();
         BlockState block = worldObj.getBlock(x, y, z);
-        if (block == null) {
-            return PlotBlock.get(0, 0);
-        }
         return SpongeUtil.getPlotBlock(block);
     }
 
@@ -89,7 +86,7 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
                     }
                 }
             }
-            if (players.size() == 0) {
+            if (players.isEmpty()) {
                 return;
             }
             HashSet<EntityTrackerEntry> entities = new HashSet<>();
@@ -323,7 +320,7 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
     }
 
     public boolean isSolid(int i) {
-        return i != 0 && Block.getBlockById(i).isVisuallyOpaque();
+        return i != 0 && Block.getBlockById(i).isFullyOpaque(Block.getBlockById(i).getDefaultState());
     }
 
     public int getId(char[][] sections, int x, int y, int z) {
@@ -497,7 +494,7 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
                             if (last == null || !StringMan.isEqual(last, biomeStr)) {
                                 biome = SpongeUtil.getBiome(biomeStr.toUpperCase());
                             }
-                            worldObj.setBiome(bx, bz, biome);
+                            worldObj.setBiome(bx, 0, bz, biome);
                         }
                     }
                 }
