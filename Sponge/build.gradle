@@ -7,18 +7,21 @@ buildscript {
             url = "http://files.minecraftforge.net/maven"
         }
         maven {url = "http://repo.minecrell.net/releases"}
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
-        classpath 'net.minecrell:VanillaGradle:2.0.3_1'
+        classpath 'gradle.plugin.net.minecrell:vanillagradle:2.2-3'
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
 
-apply plugin: 'net.minecrell.vanilla.server.library'
+apply plugin: 'net.minecrell.vanillagradle.server'
 
 dependencies {
     compile project(':Core')
-    compile 'org.spongepowered:spongeapi:5.0.0-SNAPSHOT'
+    compile 'org.spongepowered:spongeapi:6.0.0-SNAPSHOT'
     compile 'net.minecrell.mcstats:statslite-sponge:0.2.2'
 
 }
@@ -41,8 +44,8 @@ repositories {
     }
 }
 minecraft {
-    version = "1.10.2"
-    mappings = "snapshot_20160629"
+    version = "1.11"
+    mappings = "snapshot_20161126"
     runDir = 'run'
 }
 
