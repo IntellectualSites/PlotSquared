@@ -54,11 +54,11 @@ public class Owner extends SetCommand {
             C.INVALID_PLAYER.send(player, value);
             return false;
         }
+        final PlotPlayer other = UUIDHandler.getPlayer(uuid);
         if (plot.isOwner(uuid)) {
-            C.ALREADY_OWNER.send(player);
+            C.ALREADY_OWNER.send(player, MainUtil.getName(uuid));
             return false;
         }
-        final PlotPlayer other = UUIDHandler.getPlayer(uuid);
         if (!Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SETOWNER)) {
             if (other == null) {
                 C.INVALID_PLAYER_OFFLINE.send(player, value);
