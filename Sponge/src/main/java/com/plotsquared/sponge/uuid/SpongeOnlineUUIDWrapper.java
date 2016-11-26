@@ -2,77 +2,70 @@ package com.plotsquared.sponge.uuid;
 
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
-import com.plotsquared.sponge.SpongeMain;
+import com.plotsquared.sponge.object.SpongeOfflinePlayer;
 import com.plotsquared.sponge.object.SpongePlayer;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.service.user.UserStorageService;
+import org.spongepowered.api.util.Identifiable;
 
+import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 public class SpongeOnlineUUIDWrapper extends UUIDWrapper {
-    
+
+    private UserStorageService userStorageService;
+    public SpongeOnlineUUIDWrapper() {
+        Optional<UserStorageService> userStorage = Sponge.getServiceManager().provide(UserStorageService.class);
+        userStorage.ifPresent(userStorageService -> this.userStorageService = userStorageService);
+
+    }
+
     @Override
-    public UUID getUUID(final PlotPlayer player) {
+    public UUID getUUID(PlotPlayer player) {
         return ((SpongePlayer) player).player.getUniqueId();
     }
     
     @Override
-    public UUID getUUID(final OfflinePlotPlayer player) {
+    public UUID getUUID(OfflinePlotPlayer player) {
         return player.getUUID();
     }
     
     @Override
-    public UUID getUUID(final String name) {
-        try {
-            return SpongeMain.THIS.getResolver().get(name, true).get().getUniqueId();
-        } catch (final Exception e) {
-            e.printStackTrace();
+    public UUID getUUID(String name) {
+        Optional<Player> player = Sponge.getServer().getPlayer(name);
+        if (player.isPresent()) {
+            return player.get().getUniqueId();
         }
-        return null;
+        Optional<User> user = userStorageService.get(name);
+        return user.map(Identifiable::getUniqueId).orElse(null);
     }
     
     @Override
-    public OfflinePlotPlayer getOfflinePlayer(final UUID uuid) {
-        String name;
-        try {
-            name = SpongeMain.THIS.getResolver().get(uuid, true).get().getName().orElse(null);
-        } catch (InterruptedException | ExecutionException ignored) {
-            name = null;
+    public OfflinePlotPlayer getOfflinePlayer(UUID uuid) {
+        Optional<Player> player = Sponge.getServer().getPlayer(uuid);
+        if (player.isPresent()) {
+            return new SpongeOfflinePlayer(player.get());
         }
-        final String username = name;
-        return new OfflinePlotPlayer() {
-            @Override
-            public boolean isOnline() {
-                return UUIDHandler.getPlayer(uuid) != null;
-            }
-            
-            @Override
-            public UUID getUUID() {
-                return uuid;
-            }
-            
-            @Override
-            public String getName() {
-                return username;
-            }
-            
-            @Override
-            public long getLastPlayed() {
-                // TODO FIXME
-                throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
-            }
-        };
+        Optional<User> user = userStorageService.get(uuid);
+        return user.map(SpongeOfflinePlayer::new).orElse(null);
     }
     
     @Override
     public OfflinePlotPlayer[] getOfflinePlayers() {
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
-    
+
     @Override
     public OfflinePlotPlayer getOfflinePlayer(String name) {
-        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
+        Optional<Player> player = Sponge.getServer().getPlayer(name);
+        if (player.isPresent()) {
+            return new SpongeOfflinePlayer(player.get());
+        }
+        Optional<User> user = userStorageService.get(name);
+        return user.map(SpongeOfflinePlayer::new).orElse(null);
     }
     
 }

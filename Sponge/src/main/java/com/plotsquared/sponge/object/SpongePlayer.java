@@ -159,9 +159,6 @@ public class SpongePlayer extends PlotPlayer {
                 return;
             case NOT_SET:
                 this.player.offer(Keys.GAME_MODE, GameModes.NOT_SET);
-                return;
-            default:
-                this.player.offer(Keys.GAME_MODE, GameModes.NOT_SET);
         }
     }
     
@@ -186,7 +183,8 @@ public class SpongePlayer extends PlotPlayer {
     public void playMusic(Location location, int id) {
         switch (id) {
             case 0:
-                this.player.playSound(null, SpongeUtil.getLocation(location).getPosition(), 1);
+                //Placeholder because Sponge doesn't have a stopSound() implemented yet.
+                this.player.playSound(SoundTypes.BLOCK_CLOTH_PLACE, SpongeUtil.getLocation(location).getPosition(), 0);
                 break;
             case 2256:
                 this.player.playSound(SoundTypes.RECORD_11, SpongeUtil.getLocation(location).getPosition(), 1);

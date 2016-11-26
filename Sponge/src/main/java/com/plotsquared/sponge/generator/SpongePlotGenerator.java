@@ -1,6 +1,6 @@
 package com.plotsquared.sponge.generator;
 
-import com.flowpowered.math.vector.Vector2i;
+import com.flowpowered.math.vector.Vector3i;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
@@ -13,7 +13,7 @@ import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.world.biome.BiomeGenerationSettings;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
-import org.spongepowered.api.world.extent.MutableBiomeArea;
+import org.spongepowered.api.world.extent.MutableBiomeVolume;
 import org.spongepowered.api.world.gen.BiomeGenerator;
 import org.spongepowered.api.world.gen.GenerationPopulator;
 import org.spongepowered.api.world.gen.WorldGenerator;
@@ -74,15 +74,15 @@ public class SpongePlotGenerator implements WorldGeneratorModifier, GeneratorWra
         worldGenerator.setBaseGenerationPopulator(new SpongeTerrainGen(this.plotGenerator));
         worldGenerator.setBiomeGenerator(new BiomeGenerator() {
             @Override
-            public void generateBiomes(MutableBiomeArea buffer) {
+            public void generateBiomes(MutableBiomeVolume buffer) {
                 PlotArea area = PS.get().getPlotArea(worldName, null);
                 if (area != null) {
                     BiomeType biome = SpongeUtil.getBiome(area.PLOT_BIOME);
-                    Vector2i min = buffer.getBiomeMin();
-                    Vector2i max = buffer.getBiomeMax();
+                    Vector3i min = buffer.getBiomeMin();
+                    Vector3i max = buffer.getBiomeMax();
                     for (int x = min.getX(); x <= max.getX(); x++) {
-                        for (int z = min.getY(); z <= max.getY(); z++) {
-                            buffer.setBiome(x, z, biome);
+                        for (int z = min.getZ(); z <= max.getZ(); z++) {
+                            buffer.setBiome(x, 0, z, biome);
                     }
                 }
                 }

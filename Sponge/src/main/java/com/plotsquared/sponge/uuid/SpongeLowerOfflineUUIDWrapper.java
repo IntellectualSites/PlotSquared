@@ -42,7 +42,7 @@ public class SpongeLowerOfflineUUIDWrapper extends UUIDWrapper {
             }
         }
         if (name == null) {
-            for (GameProfile profile : SpongeMain.THIS.getResolver().getCachedProfiles()) {
+            for (GameProfile profile : SpongeMain.THIS.getResolver().getCache().getProfiles()) {
                 String tmp = profile.getName().orElse(null);
                 if (tmp != null) {
                     if (getUUID(name).equals(uuid)) {

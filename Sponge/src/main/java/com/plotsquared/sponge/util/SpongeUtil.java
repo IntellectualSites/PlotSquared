@@ -339,7 +339,7 @@ public class SpongeUtil extends WorldUtil {
 
     @Override
     public String getBiome(String world, int x, int z) {
-        return SpongeUtil.getWorld(world).getBiome(x, z).getName().toUpperCase();
+        return SpongeUtil.getWorld(world).getBiome(x, 0, z).getName().toUpperCase();
     }
 
     @Override
@@ -454,7 +454,7 @@ public class SpongeUtil extends WorldUtil {
         BiomeType biome = SpongeUtil.getBiome(biomename);
         for (int x = region.minX; x <= region.maxX; x++) {
             for (int z = region.minZ; z <= region.maxZ; z++) {
-                world.setBiome(x, z, biome);
+                world.setBiome(x, 0, z, biome);
             }
         }
     }

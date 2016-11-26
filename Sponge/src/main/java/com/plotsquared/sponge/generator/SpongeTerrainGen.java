@@ -12,7 +12,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.sponge.util.SpongeUtil;
 import com.plotsquared.sponge.util.block.GenChunk;
 import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.extent.ImmutableBiomeArea;
+import org.spongepowered.api.world.extent.ImmutableBiomeVolume;
 import org.spongepowered.api.world.extent.MutableBlockVolume;
 import org.spongepowered.api.world.gen.GenerationPopulator;
 
@@ -38,7 +38,7 @@ public class SpongeTerrainGen implements GenerationPopulator, GeneratorWrapper<G
     }
     
     @Override
-    public void populate(World world, MutableBlockVolume terrain, ImmutableBiomeArea biomes) {
+    public void populate(World world, MutableBlockVolume terrain, ImmutableBiomeVolume biomes) {
         if (platformGenerator != this) {
             platformGenerator.populate(world, terrain, biomes);
             return;

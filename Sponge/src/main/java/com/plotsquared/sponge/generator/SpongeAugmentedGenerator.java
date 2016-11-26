@@ -7,7 +7,7 @@ import com.intellectualcrafters.plot.util.block.DelegateLocalBlockQueue;
 import com.plotsquared.sponge.util.SpongeUtil;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.extent.ImmutableBiomeArea;
+import org.spongepowered.api.world.extent.ImmutableBiomeVolume;
 import org.spongepowered.api.world.extent.MutableBlockVolume;
 import org.spongepowered.api.world.gen.GenerationPopulator;
 import org.spongepowered.api.world.gen.WorldGenerator;
@@ -36,7 +36,7 @@ public class SpongeAugmentedGenerator implements GenerationPopulator {
     }
 
     @Override
-    public void populate(World world, MutableBlockVolume terrain, ImmutableBiomeArea biome) {
+    public void populate(World world, MutableBlockVolume terrain, ImmutableBiomeVolume biome) {
         Vector3i min = terrain.getBlockMin();
         int bx = min.getX();
         int bz = min.getZ();

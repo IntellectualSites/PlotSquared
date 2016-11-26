@@ -11,11 +11,10 @@ import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Carrier;
 import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.item.inventory.custom.CustomInventory;
-import org.spongepowered.api.item.inventory.property.SlotIndex;
 import org.spongepowered.api.item.inventory.type.CarriedInventory;
 
 import java.util.ArrayList;
+
 
 public class SpongeInventoryUtil extends InventoryUtil {
 
@@ -27,11 +26,15 @@ public class SpongeInventoryUtil extends InventoryUtil {
 
     @Override
     public void open(final PlotInventory inv) {
+/*
         // TODO Auto-generated method stub
         final SpongePlayer sp = (SpongePlayer) inv.player;
         final Player player = sp.player;
 
-        final CustomInventory inventory = SpongeMain.THIS.getGame().getRegistry().createBuilder(CustomInventory.Builder.class).name(SpongeUtil.getTranslation(inv.getTitle())).size(inv.size).build();
+        final CustomInventory inventory = Inventory.builder().of(InventoryArchetypes.MENU_ROW)property("test",
+                InventoryTitle.of(org.spongepowered.api.text.Text.of(inv.getTitle())))
+                .property("size",org.spongepowered.api.item.inventory.property.InventoryDimension.)
+        //name(SpongeUtil.getTranslation(inv.getTitle())).size(inv.size).build();
         final PlotItemStack[] items = inv.getItems();
         for (int i = 0; i < (inv.size * 9); i++) {
             final PlotItemStack item = items[i];
@@ -41,6 +44,9 @@ public class SpongeInventoryUtil extends InventoryUtil {
         }
         inv.player.setMeta("inventory", inv);
         player.openInventory(inventory, SpongeUtil.CAUSE);
+*/
+        throw new UnsupportedOperationException("Broken as of 1.11");
+
     }
 
     public ItemStack getItem(final PlotItemStack item) {

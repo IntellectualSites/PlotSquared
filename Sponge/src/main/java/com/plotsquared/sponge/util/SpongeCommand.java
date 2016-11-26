@@ -11,6 +11,7 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class SpongeCommand implements CommandCallable {
     }
 
     @Override
-    public List<String> getSuggestions(CommandSource source, String arguments, org.spongepowered.api.world.Location<World> targetPosition)
+    public List<String> getSuggestions(CommandSource source, String arguments, Location<World> targetPosition)
             throws CommandException {
         if (!(source instanceof Player)) {
             return null;
