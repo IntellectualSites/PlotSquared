@@ -149,7 +149,7 @@ public class PS {
                 }
             }
             if (getJavaVersion() < 1.8) {
-                PS.log(C.CONSOLE_JAVA_OUTDATED_1_8.f(IMP.getPluginName()));
+                PS.log(C.CONSOLE_JAVA_OUTDATED.f(IMP.getPluginName()));
             }
             TaskManager.IMP = this.IMP.getTaskManager();
             setupConfigs();
@@ -2008,7 +2008,7 @@ public class PS {
      * Get the Java version.
      * @return the java version
      */
-    private double getJavaVersion() {
+    public double getJavaVersion() {
         return Double.parseDouble(System.getProperty("java.specification.version"));
     }
 
