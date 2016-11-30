@@ -817,7 +817,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        if (!Flags.FROST_WALKER.isTrue(plot)) {
+        if (!Flags.ICE_FORM.isTrue(plot)) {
             event.setCancelled(true);
         }
     }
