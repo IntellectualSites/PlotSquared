@@ -71,6 +71,7 @@ public enum C {
     PERMISSION_ADMIN_INTERACT_OTHER("plots.admin.interact.other", "static.permissions"),
     PERMISSION_ADMIN_BUILD_HEIGHTLIMIT("plots.admin.build.heightlimit", "static.permissions"),
     PERMISSION_ADMIN_UPDATE("plots.admin.command.update", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_RATE("plots.admin.command.rate", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_TRUST("plots.admin.command.trust", "static.permissions"),
     PERMISSION_TRUST_EVERYONE("plots.trust.everyone", "static.permissions"),
     PERMISSION_AREA_CREATE("plots.area.create", "static.permissions"),
@@ -311,6 +312,7 @@ public enum C {
     /*
      * Ratings
      */
+    RATINGS_PURGED("$2Purged ratings for this plot", "Ratings"),
     RATING_NOT_VALID("$2You need to specify a number between 1 and 10", "Ratings"),
     RATING_ALREADY_EXISTS("$2You have already rated plot $2%s", "Ratings"),
     RATING_APPLIED("$4You successfully rated plot $2%s", "Ratings"),

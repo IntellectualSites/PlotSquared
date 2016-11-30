@@ -13,7 +13,11 @@ import java.util.HashMap;
  *  - Checking the PlotPlayer class directly will not take the above into account<br> 
  */
 public class Permissions {
-    
+
+    public static boolean hasPermission(PlotPlayer player, C caption, boolean notify) {
+        return hasPermission(player, caption.s(), notify);
+    }
+
     /**
      * Check if a player has a permission (C class helps keep track of permissions).
      * @param player

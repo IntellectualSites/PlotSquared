@@ -28,7 +28,7 @@ import java.util.UUID;
 @CommandDeclaration(command = "rate",
         permission = "plots.rate",
         description = "Rate the plot",
-        usage = "/plot rate [#|next]",
+        usage = "/plot rate [#|next|purge]",
         aliases = "rt",
         category = CommandCategory.INFO,
         requiredType = RequiredType.NONE)
@@ -37,40 +37,54 @@ public class Rate extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("next")) {
-                ArrayList<Plot> plots = new ArrayList<>(PS.get().getBasePlots());
-                Collections.sort(plots, new Comparator<Plot>() {
-                    @Override
-                    public int compare(Plot p1, Plot p2) {
-                        double v1 = 0;
-                        if (!p1.getRatings().isEmpty()) {
-                            for (Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
-                                v1 -= 11 - entry.getValue().getAverageRating();
+            switch (args[0].toLowerCase()) {
+                case "next": {
+                    ArrayList<Plot> plots = new ArrayList<>(PS.get().getBasePlots());
+                    Collections.sort(plots, new Comparator<Plot>() {
+                        @Override
+                        public int compare(Plot p1, Plot p2) {
+                            double v1 = 0;
+                            if (!p1.getRatings().isEmpty()) {
+                                for (Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
+                                    v1 -= 11 - entry.getValue().getAverageRating();
+                                }
                             }
-                        }
-                        double v2 = 0;
-                        if (!p2.getRatings().isEmpty()) {
-                            for (Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
-                                v2 -= 11 - entry.getValue().getAverageRating();
+                            double v2 = 0;
+                            if (!p2.getRatings().isEmpty()) {
+                                for (Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
+                                    v2 -= 11 - entry.getValue().getAverageRating();
+                                }
                             }
+                            if (v1 == v2) {
+                                return -0;
+                            }
+                            return v2 > v1 ? 1 : -1;
                         }
-                        if (v1 == v2) {
-                            return -0;
+                    });
+                    UUID uuid = player.getUUID();
+                    for (Plot p : plots) {
+                        if ((!Settings.Done.REQUIRED_FOR_RATINGS || p.hasFlag(Flags.DONE)) && p.isBasePlot() && (p.hasRatings() || !p.getRatings()
+                                .containsKey(uuid)) && !p.isAdded(uuid)) {
+                            p.teleportPlayer(player);
+                            MainUtil.sendMessage(player, C.RATE_THIS);
+                            return true;
                         }
-                        return v2 > v1 ? 1 : -1;
                     }
-                });
-                UUID uuid = player.getUUID();
-                for (Plot p : plots) {
-                    if ((!Settings.Done.REQUIRED_FOR_RATINGS || p.hasFlag(Flags.DONE)) && p.isBasePlot() && (p.hasRatings() || !p.getRatings()
-                            .containsKey(uuid)) && !p.isAdded(uuid)) {
-                        p.teleportPlayer(player);
-                        MainUtil.sendMessage(player, C.RATE_THIS);
-                        return true;
-                    }
+                    MainUtil.sendMessage(player, C.FOUND_NO_PLOTS);
+                    return false;
                 }
-                MainUtil.sendMessage(player, C.FOUND_NO_PLOTS);
-                return false;
+                case "purge": {
+                    final Plot plot = player.getCurrentPlot();
+                    if (plot == null) {
+                        return !sendMessage(player, C.NOT_IN_PLOT);
+                    }
+                    if (!Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_RATE, true)) {
+                        return false;
+                    }
+                    plot.clearRatings();
+                    C.RATINGS_PURGED.send(player);
+                    return true;
+                }
             }
         }
         final Plot plot = player.getCurrentPlot();
