@@ -112,12 +112,14 @@ public class BukkitLocalQueue_1_7 extends BukkitLocalQueue<PlotBlock[]> {
                 int y = MainUtil.y_loc[i][j];
                 int z = MainUtil.z_loc[i][j];
                 PlotBlock newBlock = result2[j];
-                if (newBlock.id == -1) {
-                    chunk.getBlock(x, y, z).setData(newBlock.data, false);
-                    continue;
+                if (newBlock != null) {
+                    if (newBlock.id == -1) {
+                        chunk.getBlock(x, y, z).setData(newBlock.data, false);
+                        continue;
+                    }
+                    Object block = this.methodGetById.call(newBlock.id);
+                    this.methodA.of(c).call(x, y, z, block, newBlock.data);
                 }
-                Object block = this.methodGetById.call(newBlock.id);
-                this.methodA.of(c).call(x, y, z, block, newBlock.data);
             }
         }
         fixChunkLighting(lc.getX(), lc.getZ());
