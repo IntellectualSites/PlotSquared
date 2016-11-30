@@ -817,6 +817,27 @@ public class PlayerEvents extends PlotListener implements Listener {
             event.setCancelled(true);
             return;
         }
+        Entity entity = event.getEntity();
+        if (entity instanceof Player) {
+            Player player = (Player) entity;
+            if (!plot.hasOwner()) {
+                PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
+                if (Flags.ICE_FORM.isTrue(plot)) {
+                    return;
+                }
+                event.setCancelled(true);
+                return;
+            }
+            PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
+            if (!plot.isAdded(plotPlayer.getUUID())) {
+                if (Flags.ICE_FORM.isTrue(plot)) {
+                    return;
+                }
+                event.setCancelled(true);
+                return;
+            }
+            return;
+        }
         if (!Flags.ICE_FORM.isTrue(plot)) {
             event.setCancelled(true);
         }
