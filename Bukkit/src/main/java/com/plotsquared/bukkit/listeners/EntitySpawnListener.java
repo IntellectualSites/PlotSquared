@@ -23,6 +23,9 @@ public class EntitySpawnListener implements Listener {
         }
         Plot plot = area.getOwnedPlotAbs(location);
         if (plot == null) {
+            if (!area.MOB_SPAWNING) {
+                event.setCancelled(true);
+            }
             return;
         }
         if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
@@ -30,12 +33,6 @@ public class EntitySpawnListener implements Listener {
         }
         switch (entity.getType()) {
             case ENDER_CRYSTAL:
-                if (plot == null) {
-                    if (!area.MOB_SPAWNING) {
-                        event.setCancelled(true);
-                    }
-                    return;
-                }
                 if (PlayerEvents.checkEntity(entity, plot)) {
                     event.setCancelled(true);
                 }
