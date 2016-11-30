@@ -4,7 +4,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 
-public class DefaultTitle_110 extends AbstractTitle {
+public class DefaultTitle_180 extends AbstractTitle {
 
     @Override
     public void sendTitle(PlotPlayer player, String head, String sub, int in, int delay, int out) {
