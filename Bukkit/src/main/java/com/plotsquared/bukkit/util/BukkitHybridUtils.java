@@ -173,11 +173,13 @@ public class BukkitHybridUtils extends HybridUtils {
                                                         }
 
                                                         Material material = Material.getMaterial(now);
-                                                        Class<? extends MaterialData> md = material.getData();
-                                                        if (md.equals(Directional.class)) {
-                                                            data[i] += 8;
-                                                        } else if (!md.equals(MaterialData.class)) {
-                                                            data[i]++;
+                                                        if (material != null) {
+                                                            Class<? extends MaterialData> md = material.getData();
+                                                            if (md.equals(Directional.class)) {
+                                                                data[i] += 8;
+                                                            } else if (!md.equals(MaterialData.class)) {
+                                                                data[i]++;
+                                                            }
                                                         }
                                                         types.add(now);
                                                     }
