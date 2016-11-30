@@ -12,6 +12,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.Flags;
+import com.intellectualcrafters.plot.generator.SquarePlotWorld;
 import com.intellectualcrafters.plot.util.BO3Handler;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EventUtil;
@@ -816,6 +817,12 @@ public class Plot {
      */
     public void setBiome(final String biome, final Runnable whenDone) {
         final ArrayDeque<RegionWrapper> regions = new ArrayDeque<>(this.getRegions());
+        final int extendBiome;
+        if (area instanceof SquarePlotWorld) {
+            extendBiome = (((SquarePlotWorld) area).ROAD_WIDTH > 0) ? 1 : 0;
+        } else {
+            extendBiome = 0;
+        }
         Runnable run = new Runnable() {
             @Override
             public void run() {
@@ -825,8 +832,8 @@ public class Plot {
                     return;
                 }
                 RegionWrapper region = regions.poll();
-                Location pos1 = new Location(Plot.this.area.worldname, region.minX, region.minY, region.minZ);
-                Location pos2 = new Location(Plot.this.area.worldname, region.maxX, region.maxY, region.maxZ);
+                Location pos1 = new Location(Plot.this.area.worldname, region.minX - extendBiome, region.minY, region.minZ - extendBiome);
+                Location pos2 = new Location(Plot.this.area.worldname, region.maxX + extendBiome, region.maxY, region.maxZ + extendBiome);
                 ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
                     @Override
                     public void run(int[] value) {
