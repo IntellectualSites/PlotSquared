@@ -94,6 +94,7 @@ permissions:
       plots.home: true
       plots.clear: true
       plots.delete: true
+      plots.music: true
       plots.list: true
       plots.list.mine: true
       plots.list.shared: true
@@ -120,6 +121,10 @@ permissions:
       plots.toggle.chat: true
       plots.set.biome: true
       plots.set.home: true
+      plots.set.alias: true
+      plots.set.description: true
+      plots.description: true
+      plots.alias: true
       plots.merge: true
       plots.merge.other: true
       plots.merge.4: true
