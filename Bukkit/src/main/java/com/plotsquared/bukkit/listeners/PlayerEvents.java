@@ -807,7 +807,17 @@ public class PlayerEvents extends PlotListener implements Listener {
         if (!PS.get().hasPlotArea(world)) {
             return;
         }
-        if (BukkitUtil.getLocation(event.getBlock().getLocation()).getPlotArea() != null) {
+        Location location = BukkitUtil.getLocation(event.getBlock().getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = area.getOwnedPlot(location);
+        if (plot == null) {
+            event.setCancelled(true);
+            return;
+        }
+        if (!Flags.FROST_WALKER.isTrue(plot)) {
             event.setCancelled(true);
         }
     }

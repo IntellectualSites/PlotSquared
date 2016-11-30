@@ -54,6 +54,7 @@ public final class Flags {
     public static final BooleanFlag ICE_MELT = new BooleanFlag("ice-melt");
     public static final BooleanFlag FIRE_SPREAD = new BooleanFlag("fire-spread");
     public static final BooleanFlag BLOCK_BURN = new BooleanFlag("block-burn");
+    public static final BooleanFlag FROST_WALKER = new BooleanFlag("frost-walker");
     public static final BooleanFlag BLOCK_IGNITION = new BooleanFlag("block-ignition");
     public static final BooleanFlag SOIL_DRY = new BooleanFlag("soil-dry");
     public static final StringListFlag BLOCKED_CMDS = new StringListFlag("blocked-cmds");
