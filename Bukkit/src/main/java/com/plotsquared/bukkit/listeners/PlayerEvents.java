@@ -622,13 +622,12 @@ public class PlayerEvents extends PlotListener implements Listener {
         String sender = event.getPlayer().getDisplayName();
         PlotId id = plot.getId();
         Set<Player> recipients = event.getRecipients();
+        Set<Player> spies = new HashSet<>();
         recipients.clear();
         for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
             PlotPlayer pp = entry.getValue();
             if (pp.getAttribute("chatspy")) {
-                String spy = event.getFormat();
-                spy = String.format(spy, sender, message);
-                pp.sendMessage(spy);
+                spies.add(((BukkitPlayer) pp).player);
             } else {
                 Plot current = pp.getCurrentPlot();
                 if (current != null && current.getBasePlot(false).equals(plot)) {
@@ -637,9 +636,18 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
         }
         String partial = ChatColor.translateAlternateColorCodes('&',format.replace("%plot_id%", id.x + ";" + id.y).replace("%sender%", sender));
+        if (plotPlayer.hasPermission("plots.chat.color")) {
+            message = C.color(message);
+        }
         String full = partial.replace("%msg%", message);
         for (Player receiver : recipients) {
             receiver.sendMessage(full);
+        }
+        if (!spies.isEmpty()) {
+            String spyMessage = C.PLOT_CHAT_SPY_FORMAT.s().replace("%plot_id%", id.x + ";" + id.y).replace("%sender%", sender).replace("%msg%", message);
+            for (Player player : spies) {
+                player.sendMessage(spyMessage);
+            }
         }
         PS.debug(full);
     }

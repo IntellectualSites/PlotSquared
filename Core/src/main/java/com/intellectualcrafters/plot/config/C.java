@@ -624,6 +624,7 @@ public enum C {
     /*
      * Chat
      */
+    PLOT_CHAT_SPY_FORMAT("$2[$1Plot Spy$2][$1%plot_id%$2] $1%sender%$2: $1%msg%", "Chat"),
     PLOT_CHAT_FORMAT("$2[$1Plot Chat$2][$1%plot_id%$2] $1%sender%$2: $1%msg%", "Chat"),
     PLOT_CHAT_FORCED("$2This world forces everyone to use plot chat.", "Chat"),
     PLOT_CHAT_ON("$4Plot chat enabled.", "Chat"),
