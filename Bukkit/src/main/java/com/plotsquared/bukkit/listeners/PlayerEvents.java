@@ -2109,6 +2109,9 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         onEntityDamageByEntityEvent(eventChange);
+        if (eventChange.isCancelled()) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
