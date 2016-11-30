@@ -1,18 +1,19 @@
 package com.plotsquared.bukkit.listeners;
 
 import com.google.common.collect.Iterables;
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class ForceFieldListener {
 
@@ -79,14 +80,18 @@ public class ForceFieldListener {
             if (plot.isAdded(uuid)) {
                 Set<PlotPlayer> players = getNearbyPlayers(player, plot);
                 for (PlotPlayer oPlayer : players) {
-                    ((BukkitPlayer) oPlayer).player.setVelocity(calculateVelocity(plotPlayer, oPlayer));
+                    if (!Permissions.hasPermission(oPlayer, C.PERMISSION_ADMIN_ENTRY_FORCEFIELD)) {
+                        ((BukkitPlayer) oPlayer).player.setVelocity(calculateVelocity(plotPlayer, oPlayer));
+                    }
                 }
             } else {
                 PlotPlayer oPlayer = hasNearbyPermitted(player, plot);
                 if (oPlayer == null) {
                     return;
                 }
-                player.setVelocity(calculateVelocity(oPlayer, plotPlayer));
+                if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_ENTRY_FORCEFIELD)) {
+                    player.setVelocity(calculateVelocity(oPlayer, plotPlayer));
+                }
             }
         }
     }
