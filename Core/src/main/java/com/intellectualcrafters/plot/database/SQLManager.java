@@ -28,7 +28,6 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -119,14 +118,14 @@ public class SQLManager implements AbstractDB {
         this.CREATE_PLOT = "INSERT INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) VALUES(?, ?, ?, ?, ?)";
         this.CREATE_CLUSTER =
                 "INSERT INTO `" + this.prefix + "cluster`(`pos1_x`, `pos1_z`, `pos2_x`, `pos2_z`, `owner`, `world`) VALUES(?, ?, ?, ?, ?, ?)";
+        try {
+            createTables();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                try {
-                    createTables();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
                 long last = System.currentTimeMillis();
                 while (true) {
                     if (SQLManager.this.closed) {
