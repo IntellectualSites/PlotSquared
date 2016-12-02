@@ -22,6 +22,7 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.RegExUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.object.BukkitLazyBlock;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -364,14 +365,32 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
+        Location loc = pp.getLocation();
+        PlotArea area = loc.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        String[] parts = msg.split(" ");
         Plot plot = pp.getCurrentPlot();
+        System.out.println(parts[0]);
+        if (BukkitMain.worldEdit != null) { // Check WorldEdit
+            switch (parts[0].toLowerCase()) {
+                case "up":
+                case "/up":
+                case "worldedit:up":
+                case "worldedit:/up":
+                    if (plot == null || (!plot.isAdded(pp.getUUID()) && Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER, true))) {
+                        event.setCancelled(true);
+                        return;
+                    }
+            }
+        }
         if (plot == null) {
             return;
         }
         Optional<List<String>> flag = plot.getFlag(Flags.BLOCKED_CMDS);
         if (flag.isPresent() && !Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS)) {
             List<String> blocked_cmds = flag.get();
-            String[] parts = msg.split(" ");
             String c = parts[0];
             if (parts[0].contains(":")) {
                 c = parts[0].split(":")[1];
