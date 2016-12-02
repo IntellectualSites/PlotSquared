@@ -379,7 +379,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 case "/up":
                 case "worldedit:up":
                 case "worldedit:/up":
-                    if (plot == null || (!plot.isAdded(pp.getUUID()) && Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER, true))) {
+                    if (plot == null || (!plot.isAdded(pp.getUUID()) && !Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER, true))) {
                         event.setCancelled(true);
                         return;
                     }
