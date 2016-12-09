@@ -2641,7 +2641,6 @@ public class Plot {
         if (border == Integer.MAX_VALUE) {
             return;
         }
-        PlotId id = new PlotId(Math.abs(this.getId().x), Math.abs(this.getId().x));
         PlotManager manager = this.getManager();
         Location bot = manager.getPlotBottomLocAbs(this.area, id);
         Location top = manager.getPlotTopLocAbs(this.area, id);
