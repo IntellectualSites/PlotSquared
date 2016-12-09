@@ -47,9 +47,23 @@ public class Claim extends SubCommand {
         if (!plot.canClaim(player)) {
             return sendMessage(player, C.PLOT_IS_CLAIMED);
         }
-        PlotArea world = plot.getArea();
-        if ((EconHandler.manager != null) && world.USE_ECONOMY) {
-            Expression<Double> costExr = world.PRICES.get("claim");
+        PlotArea area = plot.getArea();
+        if (!schematic.isEmpty()) {
+            if (area.SCHEMATIC_CLAIM_SPECIFY) {
+                if (!area.SCHEMATICS.contains(schematic.toLowerCase())) {
+                    return sendMessage(player, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
+                }
+                if (!Permissions.hasPermission(player, C.PERMISSION_CLAIM_SCHEMATIC.f(schematic)) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {
+                    return sendMessage(player, C.NO_SCHEMATIC_PERMISSION, schematic);
+                }
+            }
+        }
+        int border = area.getBorder();
+        if (border != Integer.MAX_VALUE && plot.getDistanceFromOrigin() > border) {
+            return !sendMessage(player, C.BORDER);
+        }
+        if ((EconHandler.manager != null) && area.USE_ECONOMY) {
+            Expression<Double> costExr = area.PRICES.get("claim");
             double cost = costExr.evaluate((double) currentPlots);
             if (cost > 0d) {
                 if (EconHandler.manager.getMoney(player) < cost) {
@@ -66,16 +80,6 @@ public class Claim extends SubCommand {
                 player.setPersistentMeta("grantedPlots", ByteArrayUtilities.integerToBytes(grants - 1));
             }
             sendMessage(player, C.REMOVED_GRANTED_PLOT, "1", "" + (grants - 1));
-        }
-        if (!schematic.isEmpty()) {
-            if (world.SCHEMATIC_CLAIM_SPECIFY) {
-                if (!world.SCHEMATICS.contains(schematic.toLowerCase())) {
-                    return sendMessage(player, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
-                }
-                if (!Permissions.hasPermission(player, C.PERMISSION_CLAIM_SCHEMATIC.f(schematic)) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {
-                    return sendMessage(player, C.NO_SCHEMATIC_PERMISSION, schematic);
-                }
-            }
         }
         return plot.claim(player, false, schematic) || sendMessage(player, C.PLOT_NOT_CLAIMED);
     }

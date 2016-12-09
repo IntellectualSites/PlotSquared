@@ -2630,6 +2630,12 @@ public class Plot {
         return this.getManager().setComponent(this.area, this.getId(), component, blocks);
     }
 
+    public int getDistanceFromOrigin() {
+        Location bot = getManager().getPlotBottomLocAbs(this.area, id);
+        Location top = getManager().getPlotTopLocAbs(this.area, id);
+        return Math.max(Math.max(Math.abs(bot.getX()), Math.abs(bot.getZ())), Math.max(Math.abs(top.getX()), Math.abs(top.getZ())));
+    }
+
     /**
      * Expand the world border to include the provided plot (if applicable).
      */
@@ -2641,12 +2647,7 @@ public class Plot {
         if (border == Integer.MAX_VALUE) {
             return;
         }
-        PlotManager manager = this.getManager();
-        Location bot = manager.getPlotBottomLocAbs(this.area, id);
-        Location top = manager.getPlotTopLocAbs(this.area, id);
-        int botmax = Math.max(Math.abs(bot.getX()), Math.abs(bot.getZ()));
-        int topmax = Math.max(Math.abs(top.getX()), Math.abs(top.getZ()));
-        int max = Math.max(botmax, topmax);
+        int max = getDistanceFromOrigin();
         if (max > border) {
             this.area.setMeta("worldBorder", max);
         }
