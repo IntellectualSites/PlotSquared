@@ -545,7 +545,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
             Integer border = area.getBorder();
             if (x2 > border) {
-                to.setX(border - 4);
+                to.setX(x2 - 1);
                 this.tmpTeleport = false;
                 player.teleport(event.getTo());
                 this.tmpTeleport = true;
@@ -553,7 +553,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return;
             }
             if (x2 < -border) {
-                to.setX(-border + 4);
+                to.setX(x2 + 1);
                 this.tmpTeleport = false;
                 player.teleport(event.getTo());
                 this.tmpTeleport = true;
@@ -607,13 +607,13 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
             Integer border = area.getBorder();
             if (z2 > border) {
-                to.setZ(border - 4);
+                to.setZ(z2 - 1);
                 this.tmpTeleport = false;
                 player.teleport(event.getTo());
                 this.tmpTeleport = true;
                 MainUtil.sendMessage(pp, C.BORDER);
             } else if (z2 < -border) {
-                to.setZ(-border + 4);
+                to.setZ(z2 + 1);
                 this.tmpTeleport = false;
                 player.teleport(event.getTo());
                 this.tmpTeleport = true;

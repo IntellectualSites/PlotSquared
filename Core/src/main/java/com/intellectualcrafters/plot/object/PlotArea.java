@@ -698,7 +698,7 @@ public abstract class PlotArea {
     public int getBorder() {
         Integer meta = (Integer) getMeta("worldBorder");
         if (meta != null) {
-            int border = meta + 16;
+            int border = meta + 1;
             if (border == 0) {
                 return Integer.MAX_VALUE;
             } else {
