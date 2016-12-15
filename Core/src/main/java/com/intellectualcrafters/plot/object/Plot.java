@@ -1091,11 +1091,15 @@ public class Plot {
             return false;
         }
         for (Plot current : getConnectedPlots()) {
+            List<PlotPlayer> players = current.getPlayersInPlot();
+            for (PlotPlayer pp : players) {
+                PlotListener.plotExit(pp, current);
+            }
             getArea().removePlot(getId());
             DBFunc.delete(current);
             current.owner = null;
             current.settings = null;
-            for (PlotPlayer pp : current.getPlayersInPlot()) {
+            for (PlotPlayer pp : players) {
                 PlotListener.plotEntry(pp, current);
             }
         }
