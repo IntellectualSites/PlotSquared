@@ -223,12 +223,12 @@ public class MainCommand extends Command {
                 // Trim command
                 args = Arrays.copyOfRange(args, 1, args.length);
             }
-            if (args.length >= 2 && args[0].charAt(0) == '-') {
+            if (args.length >= 2 && !args[0].isEmpty() && args[0].charAt(0) == '-') {
                 switch (args[0].substring(1)) {
                     case "f":
                         confirm = new RunnableVal3<Command, Runnable, Runnable>() {
                             @Override
-                            public void run(final Command cmd, final Runnable success, final Runnable failure) {
+                            public void run(Command cmd, Runnable success, Runnable failure) {
                                 if (EconHandler.manager != null) {
                                     PlotArea area = player.getApplicablePlotArea();
                                     if (area != null) {

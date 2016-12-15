@@ -163,6 +163,13 @@ public class SQLManager implements AbstractDB {
     }
 
     public boolean isValid() {
+        try {
+            if (connection.isClosed()) {
+                return false;
+            }
+        } catch (SQLException e) {
+            return false;
+        }
         try (PreparedStatement stmt = this.connection.prepareStatement("SELECT 1")) {
             stmt.executeQuery();
             return true;
@@ -2934,13 +2941,8 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public void validateAllPlots(Set<Plot> toValidate) {
-        try {
-            if (this.connection.isClosed() || this.closed) {
-                this.closed = false;
-                this.connection = this.database.forceConnection();
-            }
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+        if (!isValid()) {
+            reconnect();
         }
         PS.debug("$1All DB transactions during this session are being validated (This may take a while if corrections need to be made)");
         commit();

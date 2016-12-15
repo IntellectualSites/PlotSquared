@@ -21,6 +21,7 @@ import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -464,11 +465,14 @@ public abstract class PlotArea {
     }
     
     public Set<Plot> getPlotsAbs(final UUID uuid) {
+        if (uuid == null) {
+            return Collections.emptySet();
+        }
         final HashSet<Plot> myPlots = new HashSet<>();
         foreachPlotAbs(new RunnableVal<Plot>() {
             @Override
             public void run(Plot value) {
-                if (value.owner.equals(uuid)) {
+                if (uuid.equals(value.owner)) {
                     myPlots.add(value);
                 }
             }

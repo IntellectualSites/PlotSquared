@@ -29,6 +29,7 @@ import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.util.expiry.PlotAnalysis;
 import com.plotsquared.listener.PlotListener;
+
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
@@ -46,7 +47,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The plot class<br>
@@ -767,7 +767,6 @@ public class Plot {
             @Override
             public void run() {
                 if (queue.isEmpty()) {
-                    AtomicInteger finished = new AtomicInteger(0);
                     Runnable run = new Runnable() {
                         @Override
                         public void run() {
