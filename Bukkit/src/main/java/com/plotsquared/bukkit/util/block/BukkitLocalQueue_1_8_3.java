@@ -1,7 +1,5 @@
 package com.plotsquared.bukkit.util.block;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
-
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.ChunkWrapper;
 import com.intellectualcrafters.plot.object.PseudoRandom;
@@ -11,11 +9,6 @@ import com.intellectualcrafters.plot.util.ReflectionUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.block.BasicLocalBlockQueue;
 import com.plotsquared.bukkit.util.SendChunk;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Material;
-import org.bukkit.World;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -25,6 +18,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Material;
+import org.bukkit.World;
+
+
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 public class BukkitLocalQueue_1_8_3 extends BukkitLocalQueue<char[]> {
 
@@ -276,7 +276,7 @@ public class BukkitLocalQueue_1_8_3 extends BukkitLocalQueue<char[]> {
             Field tileEntities = clazz.getDeclaredField("tileEntities");
             Field entitySlices = clazz.getDeclaredField("entitySlices");
             Object[] sections = (Object[]) sections1.get(c);
-            HashMap<?, ?> tiles = (HashMap<?, ?>) tileEntities.get(c);
+            Map<?, ?> tiles = (Map<?, ?>) tileEntities.get(c);
             Collection<?>[] entities = (Collection<?>[]) entitySlices.get(c);
 
             Method getX = null;
