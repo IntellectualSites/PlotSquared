@@ -117,6 +117,16 @@ public class Auto extends SubCommand {
                 return false;
             }
         }
+        if (schematic != null && !schematic.isEmpty()) {
+            if (!plotarea.SCHEMATICS.contains(schematic.toLowerCase())) {
+                sendMessage(player, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
+                return true;
+            }
+            if (!Permissions.hasPermission(player, C.PERMISSION_CLAIM_SCHEMATIC.f(schematic)) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {
+                MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLAIM_SCHEMATIC.f(schematic));
+                return true;
+            }
+        }
         if (EconHandler.manager != null && plotarea.USE_ECONOMY) {
             Expression<Double> costExp = plotarea.PRICES.get("claim");
             double cost = costExp.evaluate((double) currentPlots);
@@ -128,16 +138,6 @@ public class Auto extends SubCommand {
                 }
                 EconHandler.manager.withdrawMoney(player, cost);
                 sendMessage(player, C.REMOVED_BALANCE, cost + "");
-            }
-        }
-        if (schematic != null && !schematic.isEmpty()) {
-            if (!plotarea.SCHEMATICS.contains(schematic.toLowerCase())) {
-                sendMessage(player, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
-                return true;
-            }
-            if (!Permissions.hasPermission(player, C.PERMISSION_CLAIM_SCHEMATIC.f(schematic)) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {
-                MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_CLAIM_SCHEMATIC.f(schematic));
-                return true;
             }
         }
         // TODO handle type 2 the same as normal worlds!
