@@ -19,9 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map.Entry;
 
 public class HybridPlotManager extends ClassicPlotManager {
 
@@ -84,15 +82,13 @@ public class HybridPlotManager extends ClassicPlotManager {
                 if (absZ < 0) {
                     absZ += size;
                 }
-                HashMap<Integer, PlotBlock> blocks = hpw.G_SCH.get(MathMan.pair(absX, absZ));
-                if (clear) {
-                    for (short y = (short) 0; y <= hpw.SCHEMATIC_HEIGHT; y++) {
-                        queue.setBlock(x, y, z, 0);
-                    }
-                }
+                char[] blocks = hpw.G_SCH.get(MathMan.pair(absX, absZ));
                 if (blocks != null) {
-                    for (Entry<Integer, PlotBlock> entry : blocks.entrySet()) {
-                        queue.setBlock(x, entry.getKey(), z, entry.getValue());
+                    for (int y = 0; y < blocks.length; y++) {
+                        PlotBlock block = PlotBlock.get(blocks[y]);
+                        if (block != null) {
+                            queue.setBlock(x, y, z, block);
+                        }
                     }
                 }
             }

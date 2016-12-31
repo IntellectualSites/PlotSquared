@@ -21,6 +21,17 @@ public class PlotBlock {
         this.data = data;
     }
 
+    public static PlotBlock get(char combinedId) {
+        switch (combinedId) {
+            case 0:
+                return null;
+            case 1:
+                return get(0, 0);
+            default:
+                return get(combinedId >> 4, combinedId & 15);
+        }
+    }
+
     public static PlotBlock get(int id, int data) {
         return Settings.Enabled_Components.BLOCK_CACHE && data > 0 ? CACHE[(id << 4) + data] : new PlotBlock((short) id, (byte) data);
     }

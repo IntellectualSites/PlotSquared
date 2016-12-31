@@ -23,6 +23,18 @@ public class HybridGen extends IndependentPlotGenerator {
         return PS.imp().getPluginName();
     }
 
+    private void placeSchem(HybridPlotWorld world, ScopedLocalBlockQueue result, short relativeX, short relativeZ, int x, int z) {
+        char[] blocks = world.G_SCH.get(MathMan.pair(relativeX, relativeZ));
+        if (blocks != null) {
+            for (int y = 0; y < blocks.length; y++) {
+                PlotBlock block = PlotBlock.get(blocks[y]);
+                if (block != null) {
+                    result.setBlock(x, y, z, block);
+                }
+            }
+        }
+    }
+
     @Override
     public void generateChunk(ScopedLocalBlockQueue result, PlotArea settings, PseudoRandom random) {
         HybridPlotWorld hpw = (HybridPlotWorld) settings;
@@ -83,7 +95,7 @@ public class HybridGen extends IndependentPlotGenerator {
             }
         }
         // generation
-        HashMap<Integer, HashMap<Integer, PlotBlock>> sch = hpw.G_SCH;
+        HashMap<Integer, char[]> sch = hpw.G_SCH;
         for (short x = 0; x < 16; x++) {
             if (gx[x]) {
                 for (short z = 0; z < 16; z++) {
@@ -92,12 +104,7 @@ public class HybridGen extends IndependentPlotGenerator {
                         result.setBlock(x, y, z, hpw.ROAD_BLOCK);
                     }
                     if (hpw.ROAD_SCHEMATIC_ENABLED) {
-                        HashMap<Integer, PlotBlock> map = sch.get(MathMan.pair(rx[x], rz[z]));
-                        if (map != null) {
-                            for (Entry<Integer, PlotBlock> entry : map.entrySet()) {
-                                result.setBlock(x, entry.getKey(), z, entry.getValue());
-                            }
-                        }
+                        placeSchem(hpw, result, rx[x], rz[z], x, z);
                     }
                 }
             } else if (wx[x]) {
@@ -108,12 +115,7 @@ public class HybridGen extends IndependentPlotGenerator {
                             result.setBlock(x, y, z, hpw.ROAD_BLOCK);
                         }
                         if (hpw.ROAD_SCHEMATIC_ENABLED) {
-                            HashMap<Integer, PlotBlock> map = sch.get(MathMan.pair(rx[x], rz[z]));
-                            if (map != null) {
-                                for (Entry<Integer, PlotBlock> entry : map.entrySet()) {
-                                    result.setBlock(x, entry.getKey(), z, entry.getValue());
-                                }
-                            }
+                            placeSchem(hpw, result, rx[x], rz[z], x, z);
                         }
                     } else {
                         // wall
@@ -123,12 +125,7 @@ public class HybridGen extends IndependentPlotGenerator {
                         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
                             result.setBlock(x, hpw.WALL_HEIGHT + 1, z, hpw.WALL_BLOCK);
                         } else {
-                            HashMap<Integer, PlotBlock> map = sch.get(MathMan.pair(rx[x], rz[z]));
-                            if (map != null) {
-                                for (Entry<Integer, PlotBlock> entry : map.entrySet()) {
-                                    result.setBlock(x, entry.getKey(), z, entry.getValue());
-                                }
-                            }
+                            placeSchem(hpw, result, rx[x], rz[z], x, z);
                         }
                     }
                 }
@@ -140,12 +137,7 @@ public class HybridGen extends IndependentPlotGenerator {
                             result.setBlock(x, y, z, hpw.ROAD_BLOCK);
                         }
                         if (hpw.ROAD_SCHEMATIC_ENABLED) {
-                            HashMap<Integer, PlotBlock> map = sch.get(MathMan.pair(rx[x], rz[z]));
-                            if (map != null) {
-                                for (Entry<Integer, PlotBlock> entry : map.entrySet()) {
-                                    result.setBlock(x, entry.getKey(), z, entry.getValue());
-                                }
-                            }
+                            placeSchem(hpw, result, rx[x], rz[z], x, z);
                         }
                     } else if (wz[z]) {
                         // wall
@@ -155,12 +147,7 @@ public class HybridGen extends IndependentPlotGenerator {
                         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
                             result.setBlock(x, hpw.WALL_HEIGHT + 1, z, hpw.WALL_BLOCK);
                         } else {
-                            HashMap<Integer, PlotBlock> map = sch.get(MathMan.pair(rx[x], rz[z]));
-                            if (map != null) {
-                                for (Entry<Integer, PlotBlock> entry : map.entrySet()) {
-                                    result.setBlock(x, entry.getKey(), z, entry.getValue());
-                                }
-                            }
+                            placeSchem(hpw, result, rx[x], rz[z], x, z);
                         }
                     } else {
                         // plot
@@ -169,13 +156,7 @@ public class HybridGen extends IndependentPlotGenerator {
                         }
                         result.setBlock(x, hpw.PLOT_HEIGHT, z, hpw.TOP_BLOCK[random.random(hpw.TOP_BLOCK.length)]);
                         if (hpw.PLOT_SCHEMATIC) {
-                            int pair = MathMan.pair(rx[x], rz[z]);
-                            HashMap<Integer, PlotBlock> map = sch.get(pair);
-                            if (map != null) {
-                                for (Entry<Integer, PlotBlock> entry : map.entrySet()) {
-                                    result.setBlock(x, entry.getKey(), z, entry.getValue());
-                                }
-                            }
+                            placeSchem(hpw, result, rx[x], rz[z], x, z);
                         }
                     }
                 }
