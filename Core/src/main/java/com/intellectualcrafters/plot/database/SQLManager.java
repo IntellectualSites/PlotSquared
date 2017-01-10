@@ -1683,7 +1683,7 @@ public class SQLManager implements AbstractDB {
                             try {
                                 time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(parsable).getTime();
                             } catch (ParseException e) {
-                                PS.debug("Could not parse date for plot: " + id + " (" + parsable + ")");
+                                PS.debug("Could not parse date for plot: #" + id + "(" + areaid + ";" + plot_id + ") (" + parsable + ")");
                                 time = System.currentTimeMillis() + id;
                             }
                         }
@@ -1693,11 +1693,10 @@ public class SQLManager implements AbstractDB {
                         if (map != null) {
                             Plot last = map.put(p.getId(), p);
                             if (last != null) {
-                                map.put(last.getId(), last);
                                 if (Settings.Enabled_Components.DATABASE_PURGER) {
-                                    toDelete.add(id);
+                                    toDelete.add(last.temp);
                                 } else {
-                                    PS.debug("&cPLOT " + id + " in `" + this.prefix
+                                    PS.debug("&cPLOT #" + id + "(" + last + ") in `" + this.prefix
                                             + "plot` is a duplicate. Delete this plot or set `auto-purge: true` in the settings.yml.");
                                 }
                                 continue;
@@ -1728,7 +1727,7 @@ public class SQLManager implements AbstractDB {
                             } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                                 toDelete.add(id);
                             } else {
-                                PS.debug("&cENTRY " + id + " in `plot_rating` does not exist. Create this plot or set `auto-purge: true` in the "
+                                PS.debug("&cENTRY #" + id + "(" + plot + ") in `plot_rating` does not exist. Create this plot or set `auto-purge: true` in the "
                                         + "settings.yml.");
                             }
                         }
@@ -1755,7 +1754,7 @@ public class SQLManager implements AbstractDB {
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
                         } else {
-                            PS.debug("&cENTRY " + id + " in `plot_helpers` does not exist. Create this plot or set `auto-purge: true` in the settings"
+                            PS.debug("&cENTRY #" + id + "(" + plot + ") in `plot_helpers` does not exist. Create this plot or set `auto-purge: true` in the settings"
                                     + ".yml.");
                         }
                     }
@@ -1781,7 +1780,7 @@ public class SQLManager implements AbstractDB {
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
                         } else {
-                            PS.debug("&cENTRY " + id + " in `plot_trusted` does not exist. Create this plot or set `auto-purge: true` in the settings"
+                            PS.debug("&cENTRY #" + id + "(" + plot + ") in `plot_trusted` does not exist. Create this plot or set `auto-purge: true` in the settings"
                                     + ".yml.");
                         }
                     }
@@ -1881,7 +1880,7 @@ public class SQLManager implements AbstractDB {
                                 }
                             }
                             if (exception) {
-                                PS.debug("&cPlot " + id + " | " + plot + " had an invalid flag. A fix has been attempted.");
+                                PS.debug("&cPlot #" + id + "(" + plot + ") | " + plot + " had an invalid flag. A fix has been attempted.");
                                 PS.debug("&c" + myflags);
                                 this.setFlags(plot, flags);
                             }
@@ -1890,7 +1889,7 @@ public class SQLManager implements AbstractDB {
                             toDelete.add(id);
                         } else {
                             PS.debug(
-                                    "&cENTRY " + id + " in `plot_settings` does not exist. Create this plot or set `auto-purge: true` in the settings"
+                                    "&cENTRY #" + id + "(" + plot + ") in `plot_settings` does not exist. Create this plot or set `auto-purge: true` in the settings"
                                             + ".yml.");
                         }
                     }
@@ -2608,7 +2607,7 @@ public class SQLManager implements AbstractDB {
                     if (cluster != null) {
                         cluster.helpers.add(user);
                     } else {
-                        PS.debug("&cCluster " + id + " in cluster_helpers does not exist. Please create the cluster or remove this entry.");
+                        PS.debug("&cCluster #" + id + "(" + cluster + ") in cluster_helpers does not exist. Please create the cluster or remove this entry.");
                     }
                 }
                 // Getting invited
@@ -2625,7 +2624,7 @@ public class SQLManager implements AbstractDB {
                     if (cluster != null) {
                         cluster.invited.add(user);
                     } else {
-                        PS.debug("&cCluster " + id + " in cluster_invited does not exist. Please create the cluster or remove this entry.");
+                        PS.debug("&cCluster #" + id + "(" + cluster + ") in cluster_invited does not exist. Please create the cluster or remove this entry.");
                     }
                 }
                 resultSet = stmt.executeQuery("SELECT * FROM `" + this.prefix + "cluster_settings`");
@@ -2691,7 +2690,7 @@ public class SQLManager implements AbstractDB {
                         }
                         cluster.settings.flags = flags;
                     } else {
-                        PS.debug("&cCluster " + id + " in cluster_settings does not exist. Please create the cluster or remove this entry.");
+                        PS.debug("&cCluster #" + id + "(" + cluster + ") in cluster_settings does not exist. Please create the cluster or remove this entry.");
                     }
                 }
                 resultSet.close();
