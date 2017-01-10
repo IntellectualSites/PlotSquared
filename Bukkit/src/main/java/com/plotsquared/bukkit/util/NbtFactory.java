@@ -6,14 +6,9 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.io.ByteSink;
-import com.google.common.io.ByteSource;
 import com.google.common.io.Closeables;
+import com.google.common.io.InputSupplier;
 import com.google.common.primitives.Primitives;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.Server;
-import org.bukkit.inventory.ItemStack;
-
 import java.io.BufferedInputStream;
 import java.io.DataInput;
 import java.io.DataInputStream;
@@ -39,6 +34,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.Server;
+import org.bukkit.inventory.ItemStack;
 
 public class NbtFactory {
 
@@ -164,13 +163,11 @@ public class NbtFactory {
      * @return The decoded NBT compound.
      * @throws IOException If anything went wrong.
      */
-    public static NbtCompound fromStream(ByteSource stream, StreamOptions option) throws IOException {
-        InputStream input = null;
+    public static NbtCompound fromStream(InputStream input, StreamOptions option) throws IOException {
         DataInputStream data = null;
         boolean suppress = true;
 
         try {
-            input = stream.openStream();
             if (option == StreamOptions.GZIP_COMPRESSION) {
                 data = new DataInputStream(new BufferedInputStream(new GZIPInputStream(input)));
             } else {

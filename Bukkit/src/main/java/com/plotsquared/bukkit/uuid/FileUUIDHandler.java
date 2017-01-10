@@ -3,6 +3,7 @@ package com.plotsquared.bukkit.uuid;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
+import com.google.common.io.InputSupplier;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -17,6 +18,7 @@ import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.util.NbtFactory;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -94,8 +96,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                                 UUID uuid = UUID.fromString(s);
                                 if (check || all.remove(uuid)) {
                                     File file = new File(playerDataFolder, current);
-                                    ByteSource is = com.google.common.io.Files.asByteSource(file);
-                                    NbtFactory.NbtCompound compound = NbtFactory.fromStream(is, NbtFactory.StreamOptions.GZIP_COMPRESSION);
+                                    NbtFactory.NbtCompound compound = NbtFactory.fromStream(new FileInputStream(file), NbtFactory.StreamOptions.GZIP_COMPRESSION);
                                     if (!compound.containsKey("bukkit")) {
                                         PS.debug("ERROR: Player data (" + uuid.toString() + ".dat) does not contain the the key \"bukkit\"");
                                     } else {
@@ -160,8 +161,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                         if (!file.exists()) {
                             continue;
                         }
-                        ByteSource is = com.google.common.io.Files.asByteSource(file);
-                        NbtFactory.NbtCompound compound = NbtFactory.fromStream(is, NbtFactory.StreamOptions.GZIP_COMPRESSION);
+                        NbtFactory.NbtCompound compound = NbtFactory.fromStream(new FileInputStream(file), NbtFactory.StreamOptions.GZIP_COMPRESSION);
                         if (!compound.containsKey("bukkit")) {
                             PS.debug("ERROR: Player data (" + uuid.toString() + ".dat) does not contain the the key \"bukkit\"");
                         } else {
