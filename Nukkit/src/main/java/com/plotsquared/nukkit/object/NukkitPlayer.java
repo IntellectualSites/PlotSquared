@@ -98,6 +98,11 @@ public class NukkitPlayer extends PlotPlayer {
     }
 
     @Override
+    public boolean isPermissionSet(String permission) {
+        return this.player.isPermissionSet(permission);
+    }
+
+    @Override
     public void sendMessage(String message) {
         if (!StringMan.isEqual(this.<String>getMeta("lastMessage"), message) || (System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
             setMeta("lastMessage", message);

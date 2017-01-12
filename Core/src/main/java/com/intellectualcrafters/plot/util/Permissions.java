@@ -60,7 +60,12 @@ public class Permissions {
      * @return
      */
     public static boolean hasPermission(CommandCaller caller, String permission) {
-        if (caller.hasPermission(permission) || caller.hasPermission(C.PERMISSION_ADMIN.s())) {
+        if (caller.hasPermission(permission)) {
+            return true;
+        } else if (caller.isPermissionSet(permission)) {
+            return false;
+        }
+        if (caller.hasPermission(C.PERMISSION_ADMIN.s())) {
             return true;
         }
         permission = permission.toLowerCase().replaceAll("^[^a-z|0-9|\\.|_|-]", "");
@@ -68,9 +73,12 @@ public class Permissions {
         StringBuilder n = new StringBuilder();
         for (int i = 0; i <= (nodes.length - 1); i++) {
             n.append(nodes[i] + ".");
-            if (!permission.equals(n + C.PERMISSION_STAR.s())) {
-                if (caller.hasPermission(n + C.PERMISSION_STAR.s())) {
+            String combined = n + C.PERMISSION_STAR.s();
+            if (!permission.equals(combined)) {
+                if (caller.hasPermission(combined)) {
                     return true;
+                } else if (caller.isPermissionSet(combined)) {
+                    return false;
                 }
             }
         }

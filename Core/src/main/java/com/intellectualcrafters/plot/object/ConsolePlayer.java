@@ -60,7 +60,12 @@ public class ConsolePlayer extends PlotPlayer {
     public boolean hasPermission(String permission) {
         return true;
     }
-    
+
+    @Override
+    public boolean isPermissionSet(String permission) {
+        return true;
+    }
+
     @Override
     public void sendMessage(String message) {
         PS.log(message);

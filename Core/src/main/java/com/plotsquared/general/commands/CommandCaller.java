@@ -15,6 +15,8 @@ public interface CommandCaller {
      * @param permission the name of the permission
      */
     boolean hasPermission(String permission);
+
+    boolean isPermissionSet(String permission);
     
     RequiredType getSuperCaller();
 }

@@ -20,6 +20,7 @@ import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.service.ban.BanService;
 import org.spongepowered.api.text.chat.ChatTypes;
 import org.spongepowered.api.text.serializer.TextSerializers;
+import org.spongepowered.api.util.Tristate;
 import org.spongepowered.api.world.World;
 
 import java.util.Optional;
@@ -72,7 +73,13 @@ public class SpongePlayer extends PlotPlayer {
     public boolean hasPermission(String permission) {
         return this.player.hasPermission(permission);
     }
-    
+
+    @Override
+    public boolean isPermissionSet(String permission) {
+        Tristate state = this.player.getPermissionValue(this.player.getActiveContexts(), permission);
+        return state != Tristate.UNDEFINED;
+    }
+
     @Override
     public void sendMessage(String message) {
         if (!StringMan.isEqual(this.getMeta("lastMessage"), message) || (System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
