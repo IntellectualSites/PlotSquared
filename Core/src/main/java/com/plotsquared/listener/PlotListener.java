@@ -35,9 +35,15 @@ public class PlotListener {
         EventUtil.manager.callEntry(player, plot);
         if (plot.hasOwner()) {
             Map<Flag<?>, Object> flags = FlagManager.getPlotFlags(plot);
-            boolean titles = Settings.TITLES;
-            final String greeting;
 
+            boolean titles;
+            if (!plot.getArea().DEFAULT_FLAGS.isEmpty()) {
+                Boolean value = (Boolean) plot.getArea().DEFAULT_FLAGS.get(Flags.TITLES);
+                titles = value != null ? value : Settings.TITLES;
+            } else {
+                titles = Settings.TITLES;
+            }
+            final String greeting;
             if (flags.isEmpty()) {
                 if (titles) {
                     greeting = "";
@@ -45,9 +51,7 @@ public class PlotListener {
                     return true;
                 }
             } else {
-                if (Settings.TITLES) {
-                    titles = plot.getFlag(Flags.TITLES, true);
-                }
+                titles = plot.getFlag(Flags.TITLES, titles);
                 Optional<String> greetingFlag = plot.getFlag(Flags.GREETING);
                 if (greetingFlag.isPresent()) {
                     greeting = greetingFlag.get();
