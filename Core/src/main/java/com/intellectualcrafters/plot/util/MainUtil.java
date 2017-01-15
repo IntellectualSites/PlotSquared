@@ -811,13 +811,18 @@ public class MainUtil {
         if (l.size() < 1) {
             return C.NONE.s();
         }
+        List<String> users = new ArrayList<>();
+        for (UUID u : l) {
+            users.add(getName(u));
+        }
+        Collections.sort(users);
         String c = C.PLOT_USER_LIST.s();
         StringBuilder list = new StringBuilder();
-        for (int x = 0; x < l.size(); x++) {
+        for (int x = 0; x < users.size(); x++) {
             if (x + 1 == l.size()) {
-                list.append(c.replace("%user%", getName(l.get(x))).replace(",", ""));
+                list.append(c.replace("%user%",users.get(x)).replace(",", ""));
             } else {
-                list.append(c.replace("%user%", getName(l.get(x))));
+                list.append(c.replace("%user%", users.get(x)));
             }
         }
         return list.toString();
