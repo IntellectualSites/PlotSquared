@@ -279,4 +279,13 @@ public class StringMan {
         }
         return col;
     }
+
+    public static boolean contains(String name, char c) {
+        for (char current : name.toCharArray()) {
+            if (c == current) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

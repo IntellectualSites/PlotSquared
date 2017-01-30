@@ -232,7 +232,7 @@ public abstract class UUIDHandlerImplementation {
             return uuid;
         }
         // Read from disk OR convert directly to offline UUID
-        if (Settings.UUID.OFFLINE) {
+        if (Settings.UUID.OFFLINE && !StringMan.contains(name, ';')) {
             uuid = this.uuidWrapper.getUUID(name);
             add(new StringWrapper(name), uuid);
             return uuid;
