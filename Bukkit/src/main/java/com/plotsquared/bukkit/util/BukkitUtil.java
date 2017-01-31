@@ -181,8 +181,19 @@ public class BukkitUtil extends WorldUtil {
         World bukkitWorld = getWorld(world);
         for (int y = bukkitWorld.getMaxHeight() - 1; y > 0; y--) {
             Block block = bukkitWorld.getBlockAt(x, y, z);
-            if (block != null && block.getType().isSolid()) {
-                return y+1;
+            if (block != null) {
+                Material type = block.getType();
+                if (type.isSolid()) {
+                    return y + 1;
+                } else {
+                    switch (type) {
+                        case WATER:
+                        case LAVA:
+                        case STATIONARY_LAVA:
+                        case STATIONARY_WATER:
+                            return y;
+                    }
+                }
             }
         }
         return 0;
