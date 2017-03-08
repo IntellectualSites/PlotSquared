@@ -7,6 +7,7 @@ Core/build
 Bukkit/build
 
 ### Maven ###
+/mvn
 /target/lib
 /target/maven-archiver
 /target/classes
