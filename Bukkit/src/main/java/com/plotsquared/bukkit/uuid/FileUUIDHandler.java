@@ -2,8 +2,6 @@ package com.plotsquared.bukkit.uuid;
 
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
-import com.google.common.io.ByteSource;
-import com.google.common.io.InputSupplier;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
