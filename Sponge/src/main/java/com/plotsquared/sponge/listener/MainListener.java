@@ -444,6 +444,7 @@ public class MainListener {
                 return;
             }
             if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_ROAD)) {
+                MainUtil.sendMessage(pp, C.PERMISSION_ADMIN_DESTROY_ROAD);
                 event.setCancelled(true);
                 return;
             }
@@ -519,6 +520,7 @@ public class MainListener {
         Plot plot = area.getPlot(loc);
         if (plot == null) {
             if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD)) {
+                MainUtil.sendMessage(pp, C.PERMISSION_ADMIN_BUILD_ROAD);
                 event.setCancelled(true);
                 return;
             }
@@ -527,10 +529,10 @@ public class MainListener {
                 if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
                     return;
                 } else {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
                     com.google.common.base.Optional<HashSet<PlotBlock>> place = plot.getFlag(Flags.PLACE);
                     BlockState state = pos.getState();
                     if (!place.isPresent() || !place.get().contains(SpongeUtil.getPlotBlock(state))) {
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
                         event.setCancelled(true);
                         return;
                     }
@@ -543,36 +545,36 @@ public class MainListener {
                 event.setCancelled(true);
                 return;
             }
+        } else {
+            event.filter(new Predicate<org.spongepowered.api.world.Location<World>>() {
+                @Override
+                public boolean test(org.spongepowered.api.world.Location<World> l) {
+                    Location loc = SpongeUtil.getLocation(worldName, l);
+                    Plot plot = loc.getPlot();
+                    if (plot == null) {
+                        return loc.getPlotArea() != null && !Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD, true);
+                    }
+                    if (!plot.hasOwner()) {
+                        if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_UNOWNED)) {
+                            return false;
+                        }
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_UNOWNED);
+                        return true;
+                    }
+                    if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER, true)) {
+                        return false;
+                    } else {
+                        com.google.common.base.Optional<HashSet<PlotBlock>> place = plot.getFlag(Flags.PLACE);
+                        BlockState state = l.getBlock();
+                        if (place.isPresent() && place.get().contains(SpongeUtil.getPlotBlock(state))) {
+                            return false;
+                        }
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
+                        return true;
+                    }
+                }
+            });
         }
-        event.filter(new Predicate<org.spongepowered.api.world.Location<World>>() {
-
-            @Override
-            public boolean test(org.spongepowered.api.world.Location<World> l) {
-                Location loc = SpongeUtil.getLocation(worldName, l);
-                Plot plot = loc.getPlot();
-                if (plot == null) {
-                    return loc.getPlotAbs() == null || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD);
-                }
-                if (!plot.hasOwner()) {
-                    if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_UNOWNED)) {
-                        return true;
-                    }
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_UNOWNED);
-                    return false;
-                }
-                if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
-                    return true;
-                } else {
-                    com.google.common.base.Optional<HashSet<PlotBlock>> place = plot.getFlag(Flags.PLACE);
-                    BlockState state = l.getBlock();
-                    if (place.isPresent() && place.get().contains(SpongeUtil.getPlotBlock(state))) {
-                        return true;
-                    }
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
-                    return false;
-                }
-            }
-        });
     }
 
     @Listener
