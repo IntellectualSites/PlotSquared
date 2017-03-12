@@ -311,13 +311,13 @@ public class MainListener {
             return;
         }
         Location loc = SpongeUtil.getLocation(player.getWorld().getName(), target.get());
-        org.spongepowered.api.world.Location l = SpongeUtil.getLocation(loc);
-        Plot plot = loc.getPlot();
+        PlotArea area = loc.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = area.getPlot(loc);
         PlotPlayer pp = SpongeUtil.getPlayer(player);
         if (plot == null) {
-            if (loc.getPlotAbs() == null) {
-                return;
-            }
             if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD)) {
                 event.setCancelled(true);
                 return;
@@ -336,6 +336,7 @@ public class MainListener {
             return;
         } else {
             com.google.common.base.Optional<HashSet<PlotBlock>> flag = plot.getFlag(Flags.USE);
+            org.spongepowered.api.world.Location l = SpongeUtil.getLocation(loc);
             if (flag.isPresent() && flag.get().contains(SpongeUtil.getPlotBlock(l.getBlock()))) {
                 return;
             }
@@ -511,11 +512,12 @@ public class MainListener {
         Transaction<BlockSnapshot> first = transactions.get(0);
         BlockSnapshot pos = first.getOriginal();
         Location loc = SpongeUtil.getLocation(worldName, pos.getPosition());
-        Plot plot = loc.getPlot();
+        PlotArea area = loc.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = area.getPlot(loc);
         if (plot == null) {
-            if (loc.getPlotAbs() == null) {
-                return;
-            }
             if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD)) {
                 event.setCancelled(true);
                 return;
