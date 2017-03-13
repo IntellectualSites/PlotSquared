@@ -1,6 +1,5 @@
 package com.plotsquared.sponge.listener;
 
-import com.flowpowered.math.vector.Vector3d;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flags;
@@ -21,6 +20,14 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.listener.PlotListener;
 import com.plotsquared.sponge.object.SpongePlayer;
 import com.plotsquared.sponge.util.SpongeUtil;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.Transaction;
@@ -34,8 +41,8 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.vehicle.Boat;
 import org.spongepowered.api.entity.vehicle.minecart.Minecart;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.action.InteractEvent;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.block.NotifyNeighborBlockEvent;
 import org.spongepowered.api.event.entity.BreedEntityEvent;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
@@ -46,15 +53,6 @@ import org.spongepowered.api.event.world.ExplosionEvent;
 import org.spongepowered.api.event.world.ExplosionEvent.Detonate;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.World;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Predicate;
 
 @SuppressWarnings("Guava")
 public class MainListener {
@@ -300,17 +298,17 @@ public class MainListener {
     }
 
     @Listener
-    public void onInteract(InteractEvent event) {
+    public void onInteract(InteractBlockEvent event) {
         Player player = SpongeUtil.getCause(event.getCause(), Player.class);
         if (player == null) {
             event.setCancelled(true);
             return;
         }
-        Optional<Vector3d> target = event.getInteractionPoint();
-        if (!target.isPresent()) {
+        BlockSnapshot block = event.getTargetBlock();
+        if (block == null) {
             return;
         }
-        Location loc = SpongeUtil.getLocation(player.getWorld().getName(), target.get());
+        Location loc = SpongeUtil.getLocation(player.getWorld().getName(), block.getLocation().get());
         PlotArea area = loc.getPlotArea();
         if (area == null) {
             return;
@@ -318,7 +316,7 @@ public class MainListener {
         Plot plot = area.getPlot(loc);
         PlotPlayer pp = SpongeUtil.getPlayer(player);
         if (plot == null) {
-            if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD)) {
+            if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD, true)) {
                 event.setCancelled(true);
                 return;
             }
@@ -519,8 +517,7 @@ public class MainListener {
         }
         Plot plot = area.getPlot(loc);
         if (plot == null) {
-            if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD)) {
-                MainUtil.sendMessage(pp, C.PERMISSION_ADMIN_BUILD_ROAD);
+            if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD, true)) {
                 event.setCancelled(true);
                 return;
             }
@@ -555,10 +552,9 @@ public class MainListener {
                         return loc.getPlotArea() != null && !Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD, true);
                     }
                     if (!plot.hasOwner()) {
-                        if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_UNOWNED)) {
+                        if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_UNOWNED, true)) {
                             return false;
                         }
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_UNOWNED);
                         return true;
                     }
                     if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER, true)) {
