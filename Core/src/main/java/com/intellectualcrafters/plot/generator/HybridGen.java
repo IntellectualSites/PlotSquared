@@ -24,12 +24,13 @@ public class HybridGen extends IndependentPlotGenerator {
     }
 
     private void placeSchem(HybridPlotWorld world, ScopedLocalBlockQueue result, short relativeX, short relativeZ, int x, int z) {
+        int minY = Math.min(world.PLOT_HEIGHT, world.ROAD_HEIGHT);
         char[] blocks = world.G_SCH.get(MathMan.pair(relativeX, relativeZ));
         if (blocks != null) {
             for (int y = 0; y < blocks.length; y++) {
                 PlotBlock block = PlotBlock.get(blocks[y]);
                 if (block != null) {
-                    result.setBlock(x, y, z, block);
+                    result.setBlock(x, minY + y, z, block);
                 }
             }
         }

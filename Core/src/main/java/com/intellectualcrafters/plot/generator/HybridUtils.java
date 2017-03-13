@@ -433,11 +433,12 @@ public abstract class HybridUtils {
                         }
                         if (condition) {
                             char[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
+                            int minY = Math.min(plotWorld.PLOT_HEIGHT, plotWorld.ROAD_HEIGHT);
                             if (blocks != null) {
                                 for (int y = 0; y < blocks.length; y++) {
                                     PlotBlock block = PlotBlock.get(blocks[y]);
                                     if (block != null) {
-                                        queue.setBlock(x + X + plotWorld.ROAD_OFFSET_X, y, z + Z + plotWorld.ROAD_OFFSET_Z, block);
+                                        queue.setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y, z + Z + plotWorld.ROAD_OFFSET_Z, block);
                                     }
                                 }
                             }
