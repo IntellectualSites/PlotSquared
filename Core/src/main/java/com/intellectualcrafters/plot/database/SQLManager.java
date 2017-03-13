@@ -1697,7 +1697,7 @@ public class SQLManager implements AbstractDB {
                                     toDelete.add(last.temp);
                                 } else {
                                     PS.debug("&cPLOT #" + id + "(" + last + ") in `" + this.prefix
-                                            + "plot` is a duplicate. Delete this plot or set `auto-purge: true` in the settings.yml.");
+                                            + "plot` is a duplicate. Delete this plot or set `database-purger: true` in the settings.yml.");
                                 }
                                 continue;
                             }
@@ -1727,7 +1727,7 @@ public class SQLManager implements AbstractDB {
                             } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                                 toDelete.add(id);
                             } else {
-                                PS.debug("&cENTRY #" + id + "(" + plot + ") in `plot_rating` does not exist. Create this plot or set `auto-purge: true` in the "
+                                PS.debug("&cENTRY #" + id + "(" + plot + ") in `plot_rating` does not exist. Create this plot or set `database-purger: true` in the "
                                         + "settings.yml.");
                             }
                         }
@@ -1754,7 +1754,7 @@ public class SQLManager implements AbstractDB {
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
                         } else {
-                            PS.debug("&cENTRY #" + id + "(" + plot + ") in `plot_helpers` does not exist. Create this plot or set `auto-purge: true` in the settings"
+                            PS.debug("&cENTRY #" + id + "(" + plot + ") in `plot_helpers` does not exist. Create this plot or set `database-purger: true` in the settings"
                                     + ".yml.");
                         }
                     }
@@ -1780,7 +1780,7 @@ public class SQLManager implements AbstractDB {
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
                         } else {
-                            PS.debug("&cENTRY #" + id + "(" + plot + ") in `plot_trusted` does not exist. Create this plot or set `auto-purge: true` in the settings"
+                            PS.debug("&cENTRY #" + id + "(" + plot + ") in `plot_trusted` does not exist. Create this plot or set `database-purger: true` in the settings"
                                     + ".yml.");
                         }
                     }
@@ -1807,7 +1807,7 @@ public class SQLManager implements AbstractDB {
                             toDelete.add(id);
                         } else {
                             PS.debug("&cENTRY " + id
-                                    + " in `plot_denied` does not exist. Create this plot or set `auto-purge: true` in the settings.yml.");
+                                    + " in `plot_denied` does not exist. Create this plot or set `database-purger: true` in the settings.yml.");
                         }
                     }
                     deleteRows(toDelete, this.prefix + "plot_denied", "plot_plot_id");
@@ -1889,7 +1889,7 @@ public class SQLManager implements AbstractDB {
                             toDelete.add(id);
                         } else {
                             PS.debug(
-                                    "&cENTRY #" + id + "(" + plot + ") in `plot_settings` does not exist. Create this plot or set `auto-purge: true` in the settings"
+                                    "&cENTRY #" + id + "(" + plot + ") in `plot_settings` does not exist. Create this plot or set `database-purger: true` in the settings"
                                             + ".yml.");
                         }
                     }
