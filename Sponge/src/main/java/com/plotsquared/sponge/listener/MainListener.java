@@ -517,28 +517,28 @@ public class MainListener {
         if (plot == null) {
             if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD, true)) {
                 event.setCancelled(true);
-                return;
             }
-            if (plot.hasOwner()) {
-                if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
-                    return;
-                } else {
-                    com.google.common.base.Optional<HashSet<PlotBlock>> place = plot.getFlag(Flags.PLACE);
-                    BlockState state = first.getBlock();
-                    if (!place.isPresent() || !place.get().contains(SpongeUtil.getPlotBlock(state))) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
-                        event.setCancelled(true);
-                        return;
-                    }
-                }
+            return;
+        }
+        if (plot.hasOwner()) {
+            if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
+                return;
             } else {
-                if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_UNOWNED)) {
+                com.google.common.base.Optional<HashSet<PlotBlock>> place = plot.getFlag(Flags.PLACE);
+                BlockState state = first.getBlock();
+                if (!place.isPresent() || !place.get().contains(SpongeUtil.getPlotBlock(state))) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
+                    event.setCancelled(true);
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_UNOWNED);
-                event.setCancelled(true);
+            }
+        } else {
+            if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_UNOWNED)) {
                 return;
             }
+            MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_UNOWNED);
+            event.setCancelled(true);
+            return;
         }
     }
 
