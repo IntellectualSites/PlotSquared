@@ -495,10 +495,57 @@ public class MainListener {
     }
 
     @Listener
+    public void onBlockPlace(ChangeBlockEvent.Pre event) {
+        Player player = SpongeUtil.getCause(event.getCause(), Player.class);
+        if (player == null) {
+            return;
+        }
+        PlotPlayer pp = SpongeUtil.getPlayer(player);
+        World world = event.getTargetWorld();
+        String worldName = world.getName();
+        if (!PS.get().hasPlotArea(worldName)) {
+            return;
+        }
+        List<org.spongepowered.api.world.Location<World>> locs = event.getLocations();
+        org.spongepowered.api.world.Location<World> first = locs.get(0);
+        Location loc = SpongeUtil.getLocation(worldName, first);
+        PlotArea area = loc.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = area.getPlot(loc);
+        if (plot == null) {
+            if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD, true)) {
+                event.setCancelled(true);
+                return;
+            }
+            if (plot.hasOwner()) {
+                if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
+                    return;
+                } else {
+                    com.google.common.base.Optional<HashSet<PlotBlock>> place = plot.getFlag(Flags.PLACE);
+                    BlockState state = first.getBlock();
+                    if (!place.isPresent() || !place.get().contains(SpongeUtil.getPlotBlock(state))) {
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            } else {
+                if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_UNOWNED)) {
+                    return;
+                }
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_UNOWNED);
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
+
+    @Listener
     public void onBlockPlace(ChangeBlockEvent.Place event) {
         Player player = SpongeUtil.getCause(event.getCause(), Player.class);
         if (player == null) {
-            //SpongeUtil.printCause("place", event.getCause());
             return;
         }
         PlotPlayer pp = SpongeUtil.getPlayer(player);
