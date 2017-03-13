@@ -185,8 +185,8 @@ public class ListCmd extends SubCommand {
                 Collections.sort(plots, new Comparator<Plot>() {
                     @Override
                     public int compare(Plot a, Plot b) {
-                        String va = (String) a.getFlags().get(Flags.DONE);
-                        String vb = (String) b.getFlags().get(Flags.DONE);
+                        String va = "" + a.getFlags().get(Flags.DONE);
+                        String vb = "" + b.getFlags().get(Flags.DONE);
                         if (MathMan.isInteger(va)) {
                             if (MathMan.isInteger(vb)) {
                                 return Integer.parseInt(vb) - Integer.parseInt(va);
