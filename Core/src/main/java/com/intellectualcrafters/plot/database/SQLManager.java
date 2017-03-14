@@ -2038,38 +2038,51 @@ public class SQLManager implements AbstractDB {
             public void run() {
                 if (!uniqueIds.isEmpty()) {
                     try {
+                        ArrayList<Integer> uniqueIdsList = new ArrayList<Integer>(uniqueIds);
                         String stmt_prefix = "";
                         StringBuilder idstr2 = new StringBuilder("");
-                        for (Integer id : uniqueIds) {
-                            idstr2.append(stmt_prefix).append(id);
-                            stmt_prefix = " OR `id` = ";
+                        int size = uniqueIdsList.size();
+                        int packet = 5000;
+                        int amount = size / packet;
+                        int count = 0;
+                        int last = -1;
+                        for (int j = 0; j <= amount; j++) {
+                            PS.debug("Purging " + (j * packet) + " / " + size);
+                            List<Integer> subList = uniqueIdsList.subList(j * packet, Math.min(size, (j + 1) * packet));
+                            if (subList.isEmpty()) {
+                                break;
+                            }
+                            for (Integer id : subList) {
+                                idstr2.append(stmt_prefix).append(id);
+                                stmt_prefix = " OR `id` = ";
+                            }
+                            stmt_prefix = "";
+                            StringBuilder idstr = new StringBuilder();
+                            for (Integer id : subList) {
+                                idstr.append(stmt_prefix).append(id);
+                                stmt_prefix = " OR `plot_plot_id` = ";
+                            }
+                            PreparedStatement stmt = SQLManager.this.connection
+                                    .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_helpers` WHERE `plot_plot_id` = " + idstr);
+                            stmt.executeUpdate();
+                            stmt.close();
+                            stmt = SQLManager.this.connection
+                                    .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_denied` WHERE `plot_plot_id` = " + idstr);
+                            stmt.executeUpdate();
+                            stmt.close();
+                            stmt = SQLManager.this.connection
+                                    .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_settings` WHERE `plot_plot_id` = " + idstr);
+                            stmt.executeUpdate();
+                            stmt.close();
+                            stmt = SQLManager.this.connection
+                                    .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_trusted` WHERE `plot_plot_id` = " + idstr);
+                            stmt.executeUpdate();
+                            stmt.close();
+                            stmt = SQLManager.this.connection
+                                    .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot` WHERE `id` = " + idstr2);
+                            stmt.executeUpdate();
+                            stmt.close();
                         }
-                        stmt_prefix = "";
-                        StringBuilder idstr = new StringBuilder();
-                        for (Integer id : uniqueIds) {
-                            idstr.append(stmt_prefix).append(id);
-                            stmt_prefix = " OR `plot_plot_id` = ";
-                        }
-                        PreparedStatement stmt = SQLManager.this.connection
-                                .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_helpers` WHERE `plot_plot_id` = " + idstr);
-                        stmt.executeUpdate();
-                        stmt.close();
-                        stmt = SQLManager.this.connection
-                                .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_denied` WHERE `plot_plot_id` = " + idstr);
-                        stmt.executeUpdate();
-                        stmt.close();
-                        stmt = SQLManager.this.connection
-                                .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_settings` WHERE `plot_plot_id` = " + idstr);
-                        stmt.executeUpdate();
-                        stmt.close();
-                        stmt = SQLManager.this.connection
-                                .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_trusted` WHERE `plot_plot_id` = " + idstr);
-                        stmt.executeUpdate();
-                        stmt.close();
-                        stmt = SQLManager.this.connection
-                                .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot` WHERE `id` = " + idstr2);
-                        stmt.executeUpdate();
-                        stmt.close();
                     } catch (SQLException e) {
                         e.printStackTrace();
                         PS.debug("&c[ERROR] FAILED TO PURGE PLOTS!");
