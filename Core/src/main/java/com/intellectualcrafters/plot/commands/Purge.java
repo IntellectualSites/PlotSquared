@@ -146,6 +146,7 @@ public class Purge extends SubCommand {
         Runnable run = new Runnable() {
             @Override
             public void run() {
+                PS.debug("Calculating plots to purge, please wait...");
                 HashSet<Integer> ids = new HashSet<>();
                 for (Plot plot : toDelete) {
                     if (plot.temp != Integer.MAX_VALUE) {

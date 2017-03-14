@@ -2040,9 +2040,8 @@ public class SQLManager implements AbstractDB {
                     try {
                         ArrayList<Integer> uniqueIdsList = new ArrayList<Integer>(uniqueIds);
                         String stmt_prefix = "";
-                        StringBuilder idstr2 = new StringBuilder("");
                         int size = uniqueIdsList.size();
-                        int packet = 5000;
+                        int packet = 990;
                         int amount = size / packet;
                         int count = 0;
                         int last = -1;
@@ -2052,6 +2051,8 @@ public class SQLManager implements AbstractDB {
                             if (subList.isEmpty()) {
                                 break;
                             }
+                            StringBuilder idstr2 = new StringBuilder("");
+                            stmt_prefix = "";
                             for (Integer id : subList) {
                                 idstr2.append(stmt_prefix).append(id);
                                 stmt_prefix = " OR `id` = ";
@@ -2082,6 +2083,7 @@ public class SQLManager implements AbstractDB {
                                     .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot` WHERE `id` = " + idstr2);
                             stmt.executeUpdate();
                             stmt.close();
+                            commit();
                         }
                     } catch (SQLException e) {
                         e.printStackTrace();
