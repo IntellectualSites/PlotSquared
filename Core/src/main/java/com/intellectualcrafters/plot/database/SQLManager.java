@@ -304,7 +304,16 @@ public class SQLManager implements AbstractDB {
                 }
                 Runnable task = getGlobalTasks().remove();
                 if (task != null) {
-                    task.run();
+                    try {
+                        task.run();
+                    } catch (Throwable e) {
+                        PS.debug("============ DATABASE ERROR ============");
+                        PS.debug("There was an error updating the database.");
+                        PS.debug(" - It will be correct on shutdown");
+                        PS.debug("========================================");
+                        e.printStackTrace();
+                        PS.debug("========================================");
+                    }
                 }
                 commit();
                 return true;
@@ -320,26 +329,35 @@ public class SQLManager implements AbstractDB {
                 UniqueStatement task = null;
                 UniqueStatement lastTask = null;
                 for (Entry<Plot, Queue<UniqueStatement>> entry : this.plotTasks.entrySet()) {
-                    Plot plot = entry.getKey();
-                    if (this.plotTasks.get(plot).isEmpty()) {
-                        this.plotTasks.remove(plot);
-                        continue;
-                    }
-                    task = this.plotTasks.get(plot).remove();
-                    count++;
-                    if (task != null) {
-                        if (task.method == null || !task.method.equals(method)) {
-                            if (statement != null) {
-                                lastTask.execute(statement);
-                                statement.close();
-                            }
-                            method = task.method;
-                            statement = task.get();
+                    try {
+                        Plot plot = entry.getKey();
+                        if (this.plotTasks.get(plot).isEmpty()) {
+                            this.plotTasks.remove(plot);
+                            continue;
                         }
-                        task.set(statement);
-                        task.addBatch(statement);
+                        task = this.plotTasks.get(plot).remove();
+                        count++;
+                        if (task != null) {
+                            if (task.method == null || !task.method.equals(method)) {
+                                if (statement != null) {
+                                    lastTask.execute(statement);
+                                    statement.close();
+                                }
+                                method = task.method;
+                                statement = task.get();
+                            }
+                            task.set(statement);
+                            task.addBatch(statement);
+                        }
+                        lastTask = task;
+                    } catch (Throwable e) {
+                        PS.debug("============ DATABASE ERROR ============");
+                        PS.debug("There was an error updating the database.");
+                        PS.debug(" - It will be correct on shutdown");
+                        PS.debug("========================================");
+                        e.printStackTrace();
+                        PS.debug("========================================");
                     }
-                    lastTask = task;
                 }
                 if (statement != null && task != null) {
                     task.execute(statement);
@@ -356,26 +374,35 @@ public class SQLManager implements AbstractDB {
                 UniqueStatement task = null;
                 UniqueStatement lastTask = null;
                 for (Entry<UUID, Queue<UniqueStatement>> entry : this.playerTasks.entrySet()) {
-                    UUID uuid = entry.getKey();
-                    if (this.playerTasks.get(uuid).isEmpty()) {
-                        this.playerTasks.remove(uuid);
-                        continue;
-                    }
-                    task = this.playerTasks.get(uuid).remove();
-                    count++;
-                    if (task != null) {
-                        if (task.method == null || !task.method.equals(method)) {
-                            if (statement != null) {
-                                lastTask.execute(statement);
-                                statement.close();
-                            }
-                            method = task.method;
-                            statement = task.get();
+                    try {
+                        UUID uuid = entry.getKey();
+                        if (this.playerTasks.get(uuid).isEmpty()) {
+                            this.playerTasks.remove(uuid);
+                            continue;
                         }
-                        task.set(statement);
-                        task.addBatch(statement);
+                        task = this.playerTasks.get(uuid).remove();
+                        count++;
+                        if (task != null) {
+                            if (task.method == null || !task.method.equals(method)) {
+                                if (statement != null) {
+                                    lastTask.execute(statement);
+                                    statement.close();
+                                }
+                                method = task.method;
+                                statement = task.get();
+                            }
+                            task.set(statement);
+                            task.addBatch(statement);
+                        }
+                        lastTask = task;
+                    } catch (Throwable e) {
+                        PS.debug("============ DATABASE ERROR ============");
+                        PS.debug("There was an error updating the database.");
+                        PS.debug(" - It will be correct on shutdown");
+                        PS.debug("========================================");
+                        e.printStackTrace();
+                        PS.debug("========================================");
                     }
-                    lastTask = task;
                 }
                 if (statement != null && task != null) {
                     task.execute(statement);
@@ -392,26 +419,35 @@ public class SQLManager implements AbstractDB {
                 UniqueStatement task = null;
                 UniqueStatement lastTask = null;
                 for (Entry<PlotCluster, Queue<UniqueStatement>> entry : this.clusterTasks.entrySet()) {
-                    PlotCluster cluster = entry.getKey();
-                    if (this.clusterTasks.get(cluster).isEmpty()) {
-                        this.clusterTasks.remove(cluster);
-                        continue;
-                    }
-                    task = this.clusterTasks.get(cluster).remove();
-                    count++;
-                    if (task != null) {
-                        if (task.method == null || !task.method.equals(method)) {
-                            if (statement != null) {
-                                lastTask.execute(statement);
-                                statement.close();
-                            }
-                            method = task.method;
-                            statement = task.get();
+                    try {
+                        PlotCluster cluster = entry.getKey();
+                        if (this.clusterTasks.get(cluster).isEmpty()) {
+                            this.clusterTasks.remove(cluster);
+                            continue;
                         }
-                        task.set(statement);
-                        task.addBatch(statement);
+                        task = this.clusterTasks.get(cluster).remove();
+                        count++;
+                        if (task != null) {
+                            if (task.method == null || !task.method.equals(method)) {
+                                if (statement != null) {
+                                    lastTask.execute(statement);
+                                    statement.close();
+                                }
+                                method = task.method;
+                                statement = task.get();
+                            }
+                            task.set(statement);
+                            task.addBatch(statement);
+                        }
+                        lastTask = task;
+                    } catch (Throwable e) {
+                        PS.debug("============ DATABASE ERROR ============");
+                        PS.debug("There was an error updating the database.");
+                        PS.debug(" - It will be correct on shutdown");
+                        PS.debug("========================================");
+                        e.printStackTrace();
+                        PS.debug("========================================");
                     }
-                    lastTask = task;
                 }
                 if (statement != null && task != null) {
                     task.execute(statement);
@@ -433,8 +469,13 @@ public class SQLManager implements AbstractDB {
             if (!this.plotTasks.isEmpty()) {
                 this.plotTasks.clear();
             }
-        } catch (SQLException e) {
+        } catch (Throwable e) {
+            PS.debug("============ DATABASE ERROR ============");
+            PS.debug("There was an error updating the database.");
+            PS.debug(" - It will be correct on shutdown");
+            PS.debug("========================================");
             e.printStackTrace();
+            PS.debug("========================================");
         }
         return false;
     }
@@ -993,9 +1034,11 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public void createPlotAndSettings(final Plot plot, Runnable whenDone) {
+        System.out.println("Create plot!");
         addPlotTask(plot, new UniqueStatement("createPlotAndSettings_" + plot.hashCode()) {
             @Override
             public void set(PreparedStatement stmt) throws SQLException {
+                System.out.println("Set and run!");
                 stmt.setInt(1, plot.getId().x);
                 stmt.setInt(2, plot.getId().y);
                 stmt.setString(3, plot.owner.toString());
