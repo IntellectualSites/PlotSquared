@@ -1730,8 +1730,7 @@ public class SQLManager implements AbstractDB {
                                 time = System.currentTimeMillis() + id;
                             }
                         }
-                        Plot p = new Plot(plot_id, user, new HashSet<UUID>(), new HashSet<UUID>(), new HashSet<UUID>(), "", null, null, null,
-                                new boolean[]{false, false, false, false}, time, id);
+                        Plot p = new Plot(plot_id, user, new HashSet<UUID>(), new HashSet<UUID>(), new HashSet<UUID>(), "", null, null, null, new boolean[]{false, false, false, false}, time, id);
                         HashMap<PlotId, Plot> map = newPlots.get(areaid);
                         if (map != null) {
                             Plot last = map.put(p.getId(), p);
@@ -1742,7 +1741,6 @@ public class SQLManager implements AbstractDB {
                                     PS.debug("&cPLOT #" + id + "(" + last + ") in `" + this.prefix
                                             + "plot` is a duplicate. Delete this plot or set `database-purger: true` in the settings.yml.");
                                 }
-                                continue;
                             }
                         } else {
                             map = new HashMap<>();
