@@ -1034,11 +1034,9 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public void createPlotAndSettings(final Plot plot, Runnable whenDone) {
-        System.out.println("Create plot!");
         addPlotTask(plot, new UniqueStatement("createPlotAndSettings_" + plot.hashCode()) {
             @Override
             public void set(PreparedStatement stmt) throws SQLException {
-                System.out.println("Set and run!");
                 stmt.setInt(1, plot.getId().x);
                 stmt.setInt(2, plot.getId().y);
                 stmt.setString(3, plot.owner.toString());

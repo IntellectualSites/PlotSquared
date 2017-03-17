@@ -28,6 +28,8 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.object.worlds.DefaultPlotAreaManager;
+import com.intellectualcrafters.plot.object.worlds.PlotAreaManager;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.ChatManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -44,7 +46,6 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
-import com.intellectualcrafters.plot.util.area.QuadMap;
 import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.util.expiry.ExpiryTask;
@@ -83,7 +84,7 @@ import java.util.zip.ZipInputStream;
 /**
  * An implementation of the core, with a static getter for easy access.
  */
-public class PS {
+public class PS{
     private static PS instance;
     // Implementation
     public final IPlotMain IMP;
@@ -114,15 +115,8 @@ public class PS {
      // Temporary hold the plots/clusters before the worlds load
     public HashMap<String, Set<PlotCluster>> clusters_tmp;
     public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
-    // All plot areas
-    private PlotArea[] plotAreas = new PlotArea[0];
-    // All plot areas mapped by world
-    private final HashMap<String, PlotArea[]> plotAreaMap = new HashMap<>();
-    // All plot areas mapped by position
-    private final HashMap<String, QuadMap<PlotArea>> plotAreaGrid = new HashMap<>();
-    // Optimization if there are no hash collisions
-    private boolean plotAreaHasCollision = false;
-    private final HashSet<Integer> plotAreaHashCheck = new HashSet<>();
+
+    private PlotAreaManager manager;
 
     /**
      * Initialize PlotSquared with the desired Implementation class.
@@ -131,6 +125,7 @@ public class PS {
      */
     public PS(IPlotMain iPlotMain, String platform) {
         PS.instance = this;
+        this.manager = new DefaultPlotAreaManager();
         this.thread = Thread.currentThread();
         this.IMP = iPlotMain;
         this.logger = iPlotMain;
@@ -466,203 +461,6 @@ public class PS {
         return this.platform;
     }
 
-    /**
-     * Get the relevant plot area for a specified location.
-     * <ul>
-     *     <li>If there is only one plot area globally that will be returned.
-     *     <li>If there is only one plot area in the world, it will return that.
-     *     <li>If the plot area for a location cannot be unambiguously
-     *         resolved, null will be returned.
-     * </ul>
-     * Note: An applicable plot area may not include the location i.e. clusters
-     * @param location the location
-     * @return
-     */
-    public PlotArea getApplicablePlotArea(Location location) {
-        switch (this.plotAreas.length) {
-            case 0:
-                return null;
-            case 1:
-                return this.plotAreas[0];
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-                String world = location.getWorld();
-                int hash = world.hashCode();
-                for (PlotArea area : this.plotAreas) {
-                    if (hash == area.worldhash) {
-                        if (area.contains(location.getX(), location.getZ()) && (!this.plotAreaHasCollision || world.equals(area.worldname))) {
-                            return area;
-                        }
-                    }
-                }
-                return null;
-            default:
-                PlotArea[] areas = this.plotAreaMap.get(location.getWorld());
-                if (areas == null) {
-                    return null;
-                }
-                int y;
-                int x;
-                switch (areas.length) {
-                    case 1:
-                        return areas[0];
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                        x = location.getX();
-                        y = location.getY();
-                        for (PlotArea area : areas) {
-                            if (area.contains(x, y)) {
-                                return area;
-                            }
-                        }
-                        return null;
-                    default:
-                        QuadMap<PlotArea> search = this.plotAreaGrid.get(location.getWorld());
-                        return search.get(location.getX(), location.getZ());
-                }
-        }
-    }
-
-    public PlotArea getPlotArea(String world, String id) {
-        PlotArea[] areas = this.plotAreaMap.get(world);
-        if (areas == null) {
-            return null;
-        }
-        if (areas.length == 1) {
-            return areas[0];
-        } else if (id == null) {
-            return null;
-        }
-        for (PlotArea area : areas) {
-            if (StringMan.isEqual(id, area.id)) {
-                return area;
-            }
-        }
-        return null;
-    }
-
-    public PlotArea getPlotAreaAbs(String world, String id) {
-        PlotArea[] areas = this.plotAreaMap.get(world);
-        if (areas == null) {
-            return null;
-        }
-        for (PlotArea area : areas) {
-            if (StringMan.isEqual(id, area.id)) {
-                return area;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Get the {@code PlotArea} which contains a location.
-     * <ul>
-     *     <li>If the plot area does not contain a location, null
-     *         will be returned.
-     * </ul>
-     *
-     * @param location the location
-     * @return the {@link PlotArea} in the location, null if non existent
-     */
-    public PlotArea getPlotAreaAbs(Location location) {
-        switch (this.plotAreas.length) {
-            case 0:
-                return null;
-            case 1:
-                PlotArea pa = this.plotAreas[0];
-                return pa.contains(location) ? pa : null;
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-                String world = location.getWorld();
-                int hash = world.hashCode();
-                for (PlotArea area : this.plotAreas) {
-                    if (hash == area.worldhash) {
-                        if (area.contains(location.getX(), location.getZ()) && (!this.plotAreaHasCollision || world.equals(area.worldname))) {
-                            return area;
-                        }
-                    }
-                }
-                return null;
-            default:
-                PlotArea[] areas = this.plotAreaMap.get(location.getWorld());
-                if (areas == null) {
-                    return null;
-                }
-                int x;
-                int y;
-                switch (areas.length) {
-                    case 0:
-                        PlotArea a = areas[0];
-                        return a.contains(location.getX(), location.getZ()) ? a : null;
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                        x = location.getX();
-                        y = location.getY();
-                        for (PlotArea area : areas) {
-                            if (area.contains(x, y)) {
-                                return area;
-                            }
-                        }
-                        return null;
-                    default:
-                        QuadMap<PlotArea> search = this.plotAreaGrid.get(location.getWorld());
-                        return search.get(location.getX(), location.getZ());
-                }
-        }
-    }
-
-    public PlotArea getPlotAreaByString(String search) {
-        String[] split = search.split(";|,");
-        PlotArea[] areas = this.plotAreaMap.get(split[0]);
-        if (areas == null) {
-            for (PlotArea area : this.plotAreas) {
-                if (area.worldname.equalsIgnoreCase(split[0])) {
-                    if (area.id == null || split.length == 2 && area.id.equalsIgnoreCase(split[1])) {
-                        return area;
-                    }
-                }
-            }
-            return null;
-        }
-        if (areas.length == 1) {
-            return areas[0];
-        } else if (split.length == 1) {
-            return null;
-        } else {
-            for (PlotArea area : areas) {
-                if (StringMan.isEqual(split[1], area.id)) {
-                    return area;
-                }
-            }
-            return null;
-        }
-    }
-
-    public Set<PlotArea> getPlotAreas(String world, RegionWrapper region) {
-        QuadMap<PlotArea> areas = this.plotAreaGrid.get(world);
-        return areas != null ? areas.get(region) : new HashSet<PlotArea>();
-    }
-
     public PlotManager getPlotManager(Plot plot) {
         return plot.getArea().manager;
     }
@@ -720,23 +518,7 @@ public class PS {
                 cluster.setArea(plotArea);
             }
         }
-        Set<PlotArea> localAreas = getPlotAreas(plotArea.worldname);
-        Set<PlotArea> globalAreas = getPlotAreas();
-        localAreas.add(plotArea);
-        globalAreas.add(plotArea);
-        this.plotAreas = globalAreas.toArray(new PlotArea[globalAreas.size()]);
-        this.plotAreaMap.put(plotArea.worldname, localAreas.toArray(new PlotArea[localAreas.size()]));
-        QuadMap<PlotArea> map = this.plotAreaGrid.get(plotArea.worldname);
-        if (map == null) {
-            map = new QuadMap<PlotArea>(Integer.MAX_VALUE, 0, 0) {
-                @Override
-                public RegionWrapper getRegion(PlotArea value) {
-                    return value.getRegion();
-                }
-            };
-            this.plotAreaGrid.put(plotArea.worldname, map);
-        }
-        map.add(plotArea);
+        manager.addPlotArea(plotArea);
         plotArea.setupBorder();
     }
 
@@ -746,16 +528,7 @@ public class PS {
      * @param area the {@code PlotArea} to remove
      */
     public void removePlotArea(PlotArea area) {
-        Set<PlotArea> areas = getPlotAreas();
-        areas.remove(area);
-        this.plotAreas = areas.toArray(new PlotArea[areas.size()]);
-        if (areas.isEmpty()) {
-            this.plotAreaMap.remove(area.worldname);
-            this.plotAreaGrid.remove(area.worldname);
-        } else {
-            this.plotAreaMap.put(area.worldname, areas.toArray(new PlotArea[areas.size()]));
-            this.plotAreaGrid.get(area.worldname).remove(area);
-        }
+        manager.removePlotArea(area);
         setPlotsTmp(area);
     }
 
@@ -1027,11 +800,11 @@ public class PS {
         HashMap<PlotArea, Collection<Plot>> map = new HashMap<>();
         int totalSize = getPlotCount();
         if (plots.size() == totalSize) {
-            for (PlotArea area : this.plotAreas) {
+            for (PlotArea area : manager.getAllPlotAreas()) {
                 map.put(area, area.getPlots());
             }
         } else {
-            for (PlotArea area : this.plotAreas) {
+            for (PlotArea area : manager.getAllPlotAreas()) {
                 map.put(area, new ArrayList<Plot>(0));
             }
             Collection<Plot> lastList = null;
@@ -1046,7 +819,7 @@ public class PS {
                 }
             }
         }
-        List<PlotArea> areas = Arrays.asList(this.plotAreas);
+        List<PlotArea> areas = Arrays.asList(manager.getAllPlotAreas());
         Collections.sort(areas, new Comparator<PlotArea>() {
             @Override
             public int compare(PlotArea a, PlotArea b) {
@@ -1235,7 +1008,7 @@ public class PS {
      */
     @Deprecated
     public boolean isPlotWorld(String world) {
-        return this.plotAreaMap.containsKey(world);
+        return hasPlotArea(world);
     }
 
     /**
@@ -1245,29 +1018,7 @@ public class PS {
      * @return if a plot world is registered
      */
     public boolean hasPlotArea(String world) {
-        switch (this.plotAreas.length) {
-            case 0:
-                return false;
-            case 1:
-                PlotArea a = this.plotAreas[0];
-                return world.hashCode() == a.worldhash && (!this.plotAreaHasCollision || a.worldname.equals(world));
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-                int hash = world.hashCode();
-                for (PlotArea area : this.plotAreas) {
-                    if (area.worldhash == hash && (!this.plotAreaHasCollision || area.worldname.equals(world))) {
-                        return true;
-                    }
-                }
-                return false;
-            default:
-                return this.plotAreaMap.containsKey(world);
-        }
+        return manager.getPlotAreas(world, null).length != 0;
     }
 
     public Collection<Plot> getPlots(String world) {
@@ -1397,9 +1148,7 @@ public class PS {
         if (world.equals("CheckingPlotSquaredGenerator")) {
             return;
         }
-        if (!this.plotAreaHasCollision && !this.plotAreaHashCheck.add(world.hashCode())) {
-            this.plotAreaHasCollision = true;
-        }
+        this.manager.addWorld(world);
         Set<String> worlds;
         if (this.worlds.contains("worlds")) {
             worlds = this.worlds.getConfigurationSection("worlds").getKeys(false);
@@ -1415,7 +1164,7 @@ public class PS {
             type = 0;
         }
         if (type == 0) {
-            if (this.plotAreaMap.containsKey(world)) {
+            if (manager.getPlotAreas(world, null).length != 0) {
                 debug("World possibly already loaded: " + world);
                 return;
             }
@@ -1466,7 +1215,7 @@ public class PS {
             }
             ConfigurationSection areasSection = worldSection.getConfigurationSection("areas");
             if (areasSection == null) {
-                if (this.plotAreaMap.containsKey(world)) {
+                if (manager.getPlotAreas(world, null).length != 0) {
                     debug("World possibly already loaded: " + world);
                     return;
                 }
@@ -1547,7 +1296,8 @@ public class PS {
                 if (pos1 == null || pos2 == null || name.isEmpty()) {
                     throw new IllegalArgumentException("Invalid Area identifier: " + areaId + ". Expected form `<name>-<x1;z1>-<x2;z2>`");
                 }
-                if (getPlotAreaAbs(world, name) != null) {
+                PlotArea existing = getPlotArea(world, name);
+                if (existing != null && name.equals(existing.id)) {
                     continue;
                 }
                 ConfigurationSection section = areasSection.getConfigurationSection(areaId);
@@ -1789,7 +1539,7 @@ public class PS {
 
     private Map<String, Map<PlotId, Plot>> getPlotsRaw() {
         HashMap<String, Map<PlotId, Plot>> map = new HashMap<>();
-        for (PlotArea area : this.plotAreas) {
+        for (PlotArea area : this.manager.getAllPlotAreas()) {
             Map<PlotId, Plot> map2 = map.get(area.toString());
             if (map2 == null) {
                 map.put(area.toString(), area.getPlotsRaw());
@@ -2013,13 +1763,13 @@ public class PS {
     }
 
     public void foreachPlotArea(RunnableVal<PlotArea> runnable) {
-        for (PlotArea area : this.plotAreas) {
+        for (PlotArea area : this.manager.getAllPlotAreas()) {
             runnable.run(area);
         }
     }
 
     public void foreachPlotArea(String world, RunnableVal<PlotArea> runnable) {
-        PlotArea[] array = this.plotAreaMap.get(world);
+        PlotArea[] array = this.manager.getPlotAreas(world, null);
         if (array == null) {
             return;
         }
@@ -2029,7 +1779,7 @@ public class PS {
     }
 
     public void foreachPlot(RunnableVal<Plot> runnable) {
-        for (PlotArea area : this.plotAreas) {
+        for (PlotArea area : this.manager.getAllPlotAreas()) {
             for (Plot plot : area.getPlots()) {
                 runnable.run(plot);
             }
@@ -2037,7 +1787,7 @@ public class PS {
     }
 
     public void foreachPlotRaw(RunnableVal<Plot> runnable) {
-        for (PlotArea area : this.plotAreas) {
+        for (PlotArea area : this.manager.getAllPlotAreas()) {
             for (Plot plot : area.getPlots()) {
                 runnable.run(plot);
             }
@@ -2052,30 +1802,31 @@ public class PS {
     }
 
     public void foreachBasePlot(RunnableVal<Plot> run) {
-        for (PlotArea area : this.plotAreas) {
+        for (PlotArea area : this.manager.getAllPlotAreas()) {
             area.foreachBasePlot(run);
         }
     }
 
     public PlotArea getFirstPlotArea() {
-        return this.plotAreas.length > 0 ? this.plotAreas[0] : null;
+        PlotArea[] areas = manager.getAllPlotAreas();
+        return areas.length > 0 ? areas[0] : null;
     }
 
     public int getPlotAreaCount() {
-        return this.plotAreas.length;
+        return this.manager.getAllPlotAreas().length;
     }
 
     public int getPlotCount() {
         int count = 0;
-        for (PlotArea area : this.plotAreas) {
+        for (PlotArea area : this.manager.getAllPlotAreas()) {
             count += area.getPlotCount();
         }
         return count;
     }
 
     public Set<PlotArea> getPlotAreas() {
-        HashSet<PlotArea> set = new HashSet<>(this.plotAreas.length);
-        Collections.addAll(set, this.plotAreas);
+        HashSet<PlotArea> set = new HashSet<>();
+        Collections.addAll(set, manager.getAllPlotAreas());
         return set;
     }
 
@@ -2085,15 +1836,17 @@ public class PS {
      */
     @Deprecated
     public Set<String> getPlotWorldStrings() {
-        HashSet<String> set = new HashSet<>(this.plotAreaMap.size());
-        for (String entry : this.plotAreaMap.keySet()) {
-            set.add(entry);
+        HashSet<String> set = new HashSet<>(manager.getAllPlotAreas().length);
+        for (String world : manager.getAllWorlds()) {
+            if (manager.getPlotAreas(world, null).length != 0) {
+                set.add(world);
+            }
         }
         return set;
     }
 
     public boolean isAugmented(String world) {
-        PlotArea[] areas = this.plotAreaMap.get(world);
+        PlotArea[] areas = manager.getPlotAreas(world, null);
         if (areas == null) {
             return false;
         }
@@ -2109,11 +1862,75 @@ public class PS {
      * @return Collection of PlotArea objects
      */
     public Set<PlotArea> getPlotAreas(String world) {
-        PlotArea[] areas = this.plotAreaMap.get(world);
+        Set<PlotArea> set = new HashSet<>();
+        Collections.addAll(set, manager.getPlotAreas(world, null));
+        return set;
+    }
+
+    /**
+     * Get the relevant plot area for a specified location.
+     * <ul>
+     *     <li>If there is only one plot area globally that will be returned.
+     *     <li>If there is only one plot area in the world, it will return that.
+     *     <li>If the plot area for a location cannot be unambiguously
+     *         resolved, null will be returned.
+     * </ul>
+     * Note: An applicable plot area may not include the location i.e. clusters
+     * @param location the location
+     * @return
+     */
+    public PlotArea getApplicablePlotArea(Location location) {
+        return manager.getApplicablePlotArea(location);
+    }
+
+    public PlotArea getPlotArea(String world, String id) {
+        return manager.getPlotArea(world, id);
+    }
+
+    /**
+     * Get the {@code PlotArea} which contains a location.
+     * <ul>
+     *     <li>If the plot area does not contain a location, null
+     *         will be returned.
+     * </ul>
+     *
+     * @param location the location
+     * @return the {@link PlotArea} in the location, null if non existent
+     */
+    public PlotArea getPlotAreaAbs(Location location) {
+        return manager.getPlotArea(location);
+    }
+
+    public PlotArea getPlotAreaByString(String search) {
+        String[] split = search.split(";|,");
+        PlotArea[] areas = manager.getPlotAreas(split[0], null);
         if (areas == null) {
-            return new HashSet<>(0);
+            for (PlotArea area : manager.getAllPlotAreas()) {
+                if (area.worldname.equalsIgnoreCase(split[0])) {
+                    if (area.id == null || split.length == 2 && area.id.equalsIgnoreCase(split[1])) {
+                        return area;
+                    }
+                }
+            }
+            return null;
         }
-        HashSet<PlotArea> set = new HashSet<>(areas.length);
+        if (areas.length == 1) {
+            return areas[0];
+        } else if (split.length == 1) {
+            return null;
+        } else {
+            for (PlotArea area : areas) {
+                if (StringMan.isEqual(split[1], area.id)) {
+                    return area;
+                }
+            }
+            return null;
+        }
+    }
+
+    public Set<PlotArea> getPlotAreas(String world, RegionWrapper region) {
+        PlotArea[] areas = manager.getPlotAreas(world, region);
+        Set<PlotArea> set = new HashSet<>();
         Collections.addAll(set, areas);
         return set;
     }

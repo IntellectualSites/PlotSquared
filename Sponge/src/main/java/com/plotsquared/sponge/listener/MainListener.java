@@ -308,7 +308,11 @@ public class MainListener {
         if (block == null) {
             return;
         }
-        Location loc = SpongeUtil.getLocation(player.getWorld().getName(), block.getLocation().get());
+        Optional<org.spongepowered.api.world.Location<World>> bloc = block.getLocation();
+        if (!bloc.isPresent()) {
+            return;
+        }
+        Location loc = SpongeUtil.getLocation(player.getWorld().getName(), bloc.get());
         PlotArea area = loc.getPlotArea();
         if (area == null) {
             return;
@@ -393,7 +397,11 @@ public class MainListener {
         List<Transaction<BlockSnapshot>> transactions = event.getTransactions();
         Transaction<BlockSnapshot> first = transactions.get(0);
         Location loc = SpongeUtil.getLocation(worldName, first.getOriginal().getPosition());
-        Plot plot = loc.getPlot();
+        PlotArea area = loc.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = area.getPlot(loc);
         if (plot == null) {
             if (!loc.isPlotArea()) {
                 return;
@@ -469,19 +477,22 @@ public class MainListener {
         }
         event.filter(l -> {
             Location loc1 = SpongeUtil.getLocation(worldName, l);
-            Plot plot1 = loc1.getPlot();
+            PlotArea area = loc1.getPlotArea();
+            if (area == null) {
+                return true;
+            }
+            Plot plot1 = area.getPlot(loc1);
             if (plot1 == null) {
-                return loc1.getPlotAbs() == null || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_ROAD);
+                return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_ROAD, true);
             }
             if (!plot1.hasOwner()) {
-                if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
-                    return true;
+                if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_UNOWNED, true)) {
+                    return false;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_UNOWNED);
-                return false;
-            }
-            if (plot1.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
                 return true;
+            }
+            if (!plot1.isAdded(pp.getUUID()) || !Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER, true)) {
+                return false;
             } else {
                 com.google.common.base.Optional<HashSet<PlotBlock>> destroy = plot1.getFlag(Flags.BREAK);
                 BlockState state = l.getBlock();
@@ -596,24 +607,24 @@ public class MainListener {
                     Location loc = SpongeUtil.getLocation(worldName, l);
                     Plot plot = loc.getPlot();
                     if (plot == null) {
-                        return loc.getPlotArea() != null && !Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD, true);
+                        return loc.getPlotArea() == null || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD, true);
                     }
                     if (!plot.hasOwner()) {
                         if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_UNOWNED, true)) {
-                            return false;
+                            return true;
                         }
-                        return true;
+                        return false;
                     }
                     if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER, true)) {
-                        return false;
+                        return true;
                     } else {
                         com.google.common.base.Optional<HashSet<PlotBlock>> place = plot.getFlag(Flags.PLACE);
                         BlockState state = l.getBlock();
                         if (place.isPresent() && place.get().contains(SpongeUtil.getPlotBlock(state))) {
-                            return false;
+                            return true;
                         }
                         MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
-                        return true;
+                        return false;
                     }
                 }
             });
