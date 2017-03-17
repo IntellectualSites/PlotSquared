@@ -492,8 +492,6 @@ public class MainListener {
                 return true;
             }
             if (!plot1.isAdded(pp.getUUID()) || !Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER, true)) {
-                return false;
-            } else {
                 com.google.common.base.Optional<HashSet<PlotBlock>> destroy = plot1.getFlag(Flags.BREAK);
                 BlockState state = l.getBlock();
                 if (destroy.isPresent() && destroy.get().contains(SpongeUtil.getPlotBlock(state))) {
@@ -502,6 +500,7 @@ public class MainListener {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
                 return false;
             }
+            return true;
         });
     }
 
