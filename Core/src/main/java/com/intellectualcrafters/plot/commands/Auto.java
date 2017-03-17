@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Expression;
@@ -56,8 +57,21 @@ public class Auto extends SubCommand {
     public boolean onCommand(PlotPlayer player, String[] args) {
         PlotArea plotarea = player.getApplicablePlotArea();
         if (plotarea == null) {
-            MainUtil.sendMessage(player, C.NOT_IN_PLOT_WORLD);
-            return false;
+            if (EconHandler.manager != null) {
+                for (PlotArea area : PS.get().getPlotAreaManager().getAllPlotAreas()) {
+                    if (EconHandler.manager.hasPermission(area.worldname, player.getName(), "plots.auto")) {
+                        if (plotarea != null) {
+                            plotarea = null;
+                            break;
+                        }
+                        plotarea = area;
+                    }
+                }
+            }
+            if (plotarea == null) {
+                MainUtil.sendMessage(player, C.NOT_IN_PLOT_WORLD);
+                return false;
+            }
         }
         int size_x = 1;
         int size_z = 1;

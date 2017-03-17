@@ -353,6 +353,10 @@ public class PS{
         return logger;
     }
 
+    public PlotAreaManager getPlotAreaManager() {
+        return manager;
+    }
+
     /**
      * Set the Logger.
      * @see DelegateLogger
