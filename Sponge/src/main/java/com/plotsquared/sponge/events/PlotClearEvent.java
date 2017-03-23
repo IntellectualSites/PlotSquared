@@ -36,7 +36,7 @@ public class PlotClearEvent extends AbstractEvent implements Cancellable {
      * @return String
      */
     public String getWorld() {
-        return this.plot.getArea().worldname;
+        return this.plot.getWorldName();
     }
     
     @Override

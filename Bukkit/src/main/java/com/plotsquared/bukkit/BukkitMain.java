@@ -16,6 +16,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.object.chat.PlainChatManager;
+import com.intellectualcrafters.plot.object.worlds.SingleWorldGenerator;
 import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.block.QueueProvider;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
@@ -408,9 +409,14 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             initPlotMeConverter();
             Settings.Enabled_Components.PLOTME_CONVERTER = false;
         }
-        IndependentPlotGenerator result = PS.get().IMP.getDefaultGenerator();
-        if (!PS.get().setupPlotWorld(world, id, result)) {
-            return null;
+        IndependentPlotGenerator result;
+        if (id != null && id.equalsIgnoreCase("single")) {
+            result = new SingleWorldGenerator();
+        } else {
+            result = PS.get().IMP.getDefaultGenerator();
+            if (!PS.get().setupPlotWorld(world, id, result)) {
+                return null;
+            }
         }
         return (ChunkGenerator) result.specify(world);
     }

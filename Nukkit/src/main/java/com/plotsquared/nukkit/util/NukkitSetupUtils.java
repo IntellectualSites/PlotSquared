@@ -28,6 +28,11 @@ public class NukkitSetupUtils extends SetupUtils {
     }
 
     @Override
+    public void unload(String world, boolean save) {
+        plugin.getServer().unloadLevel(plugin.getServer().getLevelByName(world), save);
+    }
+
+    @Override
     public void updateGenerators() {
         if (!SetupUtils.generators.isEmpty()) {
             return;

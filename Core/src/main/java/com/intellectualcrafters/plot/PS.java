@@ -30,6 +30,8 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.object.worlds.DefaultPlotAreaManager;
 import com.intellectualcrafters.plot.object.worlds.PlotAreaManager;
+import com.intellectualcrafters.plot.object.worlds.SinglePlotArea;
+import com.intellectualcrafters.plot.object.worlds.SinglePlotAreaManager;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.ChatManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -125,7 +127,6 @@ public class PS{
      */
     public PS(IPlotMain iPlotMain, String platform) {
         PS.instance = this;
-        this.manager = new DefaultPlotAreaManager();
         this.thread = Thread.currentThread();
         this.IMP = iPlotMain;
         this.logger = iPlotMain;
@@ -151,6 +152,13 @@ public class PS{
             this.translationFile =
                     MainUtil.getFile(this.IMP.getDirectory(), Settings.Paths.TRANSLATIONS + File.separator + IMP.getPluginName() + ".use_THIS.yml");
             C.load(this.translationFile);
+
+            // Setup manager
+            if (Settings.Enabled_Components.WORLDS) {
+                this.manager = new SinglePlotAreaManager();
+            } else {
+                this.manager = new DefaultPlotAreaManager();
+            }
 
             // Database
             if (Settings.Enabled_Components.DATABASE) {
@@ -275,11 +283,9 @@ public class PS{
                             if (world.equals("CheckingPlotSquaredGenerator")) {
                                 continue;
                             }
-                            if (!WorldUtil.IMP.isWorld(world)) {
+                            if (!WorldUtil.IMP.isWorld(world) && !world.equals("*")) {
                                 debug("&c`" + world + "` was not properly loaded - " + IMP.getPluginName() + " will now try to load it properly: ");
-                                debug(
-                                        "&8 - &7Are you trying to delete this world? Remember to remove it from the settings.yml, bukkit.yml and "
-                                                + "multiverse worlds.yml");
+                                debug("&8 - &7Are you trying to delete this world? Remember to remove it from the settings.yml, bukkit.yml and multiverse worlds.yml");
                                 debug("&8 - &7Your world management plugin may be faulty (or non existent)");
                                 PS.this.IMP.setGenerator(world);
                             }
@@ -1599,6 +1605,16 @@ public class PS{
             }
             DBFunc.dbManager = new SQLManager(database, Storage.PREFIX, false);
             this.plots_tmp = DBFunc.getPlots();
+            if (manager instanceof SinglePlotAreaManager) {
+                SinglePlotArea area = ((SinglePlotAreaManager) manager).getArea();
+                addPlotArea(area);
+                ConfigurationSection section = worlds.getConfigurationSection("worlds.*");
+                if (section == null) {
+                    section = worlds.createSection("worlds.*");
+                }
+                area.saveConfiguration(section);
+                area.loadDefaultConfiguration(section);
+            }
             this.clusters_tmp = DBFunc.getClusters();
         } catch (ClassNotFoundException | SQLException e) {
             PS.log(C.PREFIX + "&cFailed to open DATABASE connection. The plugin will disable itself.");

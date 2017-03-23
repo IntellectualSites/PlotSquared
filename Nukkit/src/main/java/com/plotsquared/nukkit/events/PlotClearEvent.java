@@ -36,7 +36,7 @@ public class PlotClearEvent extends PlotEvent implements Cancellable {
      * @return String
      */
     public String getWorld() {
-        return getPlot().getArea().worldname;
+        return getPlot().getWorldName();
     }
 
 

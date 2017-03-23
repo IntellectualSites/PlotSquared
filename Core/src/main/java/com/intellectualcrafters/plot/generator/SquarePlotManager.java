@@ -31,8 +31,8 @@ public abstract class SquarePlotManager extends GridPlotManager {
                 Iterator<RegionWrapper> iterator = regions.iterator();
                 RegionWrapper region = iterator.next();
                 iterator.remove();
-                Location pos1 = new Location(plot.getArea().worldname, region.minX, region.minY, region.minZ);
-                Location pos2 = new Location(plot.getArea().worldname, region.maxX, region.maxY, region.maxZ);
+                Location pos1 = new Location(plot.getWorldName(), region.minX, region.minY, region.minZ);
+                Location pos2 = new Location(plot.getWorldName(), region.maxX, region.maxY, region.maxZ);
                 ChunkManager.manager.regenerateRegion(pos1, pos2, false, this);
             }
         };

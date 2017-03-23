@@ -81,7 +81,7 @@ public class SpongeEventUtil extends EventUtil {
     
     @Override
     public boolean callMerge(Plot plot, ArrayList<PlotId> plots) {
-        return callEvent(new PlotMergeEvent(SpongeUtil.getWorld(plot.getArea().worldname), plot, plots));
+        return callEvent(new PlotMergeEvent(SpongeUtil.getWorld(plot.getWorldName()), plot, plots));
     }
     
     @Override

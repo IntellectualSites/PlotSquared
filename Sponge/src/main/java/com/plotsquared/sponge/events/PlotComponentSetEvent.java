@@ -36,7 +36,7 @@ public class PlotComponentSetEvent extends AbstractEvent {
      * @return String
      */
     public String getWorld() {
-        return this.plot.getArea().worldname;
+        return this.plot.getWorldName();
     }
 
     /**

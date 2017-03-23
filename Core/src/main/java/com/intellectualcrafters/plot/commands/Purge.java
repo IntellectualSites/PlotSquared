@@ -92,7 +92,7 @@ public class Purge extends SubCommand {
         }
         final HashSet<Plot> toDelete = new HashSet<>();
         for (Plot plot : PS.get().getBasePlots()) {
-            if (world != null && !plot.getArea().worldname.equalsIgnoreCase(world)) {
+            if (world != null && !plot.getWorldName().equalsIgnoreCase(world)) {
                 continue;
             }
             if (area != null && !plot.getArea().equals(area)) {

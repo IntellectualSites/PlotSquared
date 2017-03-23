@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
@@ -98,7 +99,19 @@ public class Deny extends SubCommand {
         if (player.getGameMode() == PlotGameMode.SPECTATOR) {
             player.stopSpectating();
         }
-        player.teleport(WorldUtil.IMP.getSpawn(player.getLocation().getWorld()));
+        Location loc = player.getLocation();
+        Location spawn = WorldUtil.IMP.getSpawn(loc.getWorld());
         MainUtil.sendMessage(player, C.YOU_GOT_DENIED);
+        if (plot.equals(spawn.getPlot())) {
+            Location newSpawn = WorldUtil.IMP.getSpawn(PS.get().getPlotAreaManager().getAllWorlds()[0]);
+            if (plot.equals(newSpawn.getPlot())) {
+                // Kick from server if you can't be teleported to spawn
+                player.kick(C.YOU_GOT_DENIED.s());
+            } else {
+                player.teleport(newSpawn);
+            }
+        } else {
+            player.teleport(spawn);
+        }
     }
 }

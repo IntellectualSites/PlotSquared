@@ -9,18 +9,20 @@ import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.WorldCreator;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.Plugin;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Objects;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.World.Environment;
+import org.bukkit.WorldCreator;
+import org.bukkit.WorldType;
+import org.bukkit.entity.Player;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.Plugin;
 
 public class BukkitSetupUtils extends SetupUtils {
 
@@ -53,19 +55,41 @@ public class BukkitSetupUtils extends SetupUtils {
     }
 
     @Override
+    public void unload(String worldName, boolean save) {
+        World world = Bukkit.getWorld(worldName);
+        if (world == null) {
+            return;
+        }
+        World dw = Bukkit.getWorlds().get(0);
+        for (Player player : world.getPlayers()) {
+            player.teleport(dw.getSpawnLocation());
+        }
+        if (save) {
+            for (Chunk chunk : world.getLoadedChunks()) {
+                chunk.unload(true, false);
+            }
+        } else {
+            for (Chunk chunk : world.getLoadedChunks()) {
+                chunk.unload(false, false);
+            }
+        }
+        Bukkit.unloadWorld(world, false);
+    }
+
+    @Override
     public String setupWorld(SetupObject object) {
         SetupUtils.manager.updateGenerators();
         ConfigurationNode[] steps = object.step == null ? new ConfigurationNode[0] : object.step;
         String world = object.world;
         int type = object.type;
         String worldPath = "worlds." + object.world;
-        if (!PS.get().worlds.contains(worldPath)) {
-            PS.get().worlds.createSection(worldPath);
-        }
-        ConfigurationSection worldSection = PS.get().worlds.getConfigurationSection(worldPath);
         switch (type) {
             case 2: {
                 if (object.id != null) {
+                    if (!PS.get().worlds.contains(worldPath)) {
+                        PS.get().worlds.createSection(worldPath);
+                    }
+                    ConfigurationSection worldSection = PS.get().worlds.getConfigurationSection(worldPath);
                     String areaName = object.id + "-" + object.min + "-" + object.max;
                     String areaPath = "areas." + areaName;
                     if (!worldSection.contains(areaPath)) {
@@ -101,7 +125,11 @@ public class BukkitSetupUtils extends SetupUtils {
                 }
                 break;
             }
-            case 1:
+            case 1: {
+                if (!PS.get().worlds.contains(worldPath)) {
+                    PS.get().worlds.createSection(worldPath);
+                }
+                ConfigurationSection worldSection = PS.get().worlds.getConfigurationSection(worldPath);
                 for (ConfigurationNode step : steps) {
                     worldSection.set(step.getConstant(), step.getValue());
                 }
@@ -116,11 +144,19 @@ public class BukkitSetupUtils extends SetupUtils {
                     object.setupGenerator = null;
                 }
                 break;
-            case 0:
-                for (ConfigurationNode step : steps) {
-                    worldSection.set(step.getConstant(), step.getValue());
+            }
+            case 0: {
+                if (steps.length != 0) {
+                    if (!PS.get().worlds.contains(worldPath)) {
+                        PS.get().worlds.createSection(worldPath);
+                    }
+                    ConfigurationSection worldSection = PS.get().worlds.getConfigurationSection(worldPath);
+                    for (ConfigurationNode step : steps) {
+                        worldSection.set(step.getConstant(), step.getValue());
+                    }
                 }
                 break;
+            }
         }
         try {
             PS.get().worlds.save(PS.get().worldsFile);
@@ -147,6 +183,7 @@ public class BukkitSetupUtils extends SetupUtils {
             WorldCreator wc = new WorldCreator(object.world);
             wc.generator(object.setupGenerator);
             wc.environment(Environment.NORMAL);
+            wc.type(WorldType.FLAT);
             Bukkit.createWorld(wc);
             setGenerator(world, object.setupGenerator);
         } else {
@@ -163,7 +200,7 @@ public class BukkitSetupUtils extends SetupUtils {
                     return world;
                 }
             }
-            Bukkit.createWorld(new WorldCreator(object.world).environment(World.Environment.NORMAL));
+            World bw = Bukkit.createWorld(new WorldCreator(object.world).environment(Environment.NORMAL));
         }
         return object.world;
     }

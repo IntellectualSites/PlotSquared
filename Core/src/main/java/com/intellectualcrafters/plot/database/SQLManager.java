@@ -152,7 +152,7 @@ public class SQLManager implements AbstractDB {
                         }
                     } else {
                         try {
-                            Thread.sleep(5000);
+                            Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -1040,7 +1040,7 @@ public class SQLManager implements AbstractDB {
                 stmt.setInt(1, plot.getId().x);
                 stmt.setInt(2, plot.getId().y);
                 stmt.setString(3, plot.owner.toString());
-                stmt.setString(4, plot.getArea().toString());
+                stmt.setString(4, plot.getArea().worldname);
                 stmt.setTimestamp(5, new Timestamp(plot.getTimestamp()));
             }
 

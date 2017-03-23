@@ -1,47 +1,57 @@
 package com.intellectualcrafters.plot.object.worlds;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.SetupUtils;
+import java.io.File;
 import java.util.ArrayList;
 
 public class SinglePlotManager extends PlotManager {
     @Override
     public PlotId getPlotIdAbs(PlotArea plotArea, int x, int y, int z) {
-        return null;
+        return new PlotId(0, 0);
     }
 
     @Override
     public PlotId getPlotId(PlotArea plotArea, int x, int y, int z) {
-        return null;
+        return new PlotId(0, 0);
     }
 
     @Override
     public Location getPlotBottomLocAbs(PlotArea plotArea, PlotId plotId) {
-        return null;
+        return new Location(plotId.toCommaSeparatedString(), -30000000, 0, -30000000);
     }
 
     @Override
     public Location getPlotTopLocAbs(PlotArea plotArea, PlotId plotId) {
-        return null;
+        return new Location(plotId.toCommaSeparatedString(), 30000000, 0, 30000000);
     }
 
     @Override
     public boolean clearPlot(PlotArea plotArea, Plot plot, Runnable whenDone) {
-        return false;
+        SetupUtils.manager.unload(plot.getWorldName(), false);
+        File worldFolder = new File(PS.get().IMP.getWorldContainer(), plot.getWorldName());
+        MainUtil.deleteDirectory(worldFolder);
+        if (whenDone != null) whenDone.run();
+        return true;
     }
 
     @Override
     public boolean claimPlot(PlotArea plotArea, Plot plot) {
-        return false;
+        // TODO
+        return true;
     }
 
     @Override
     public boolean unclaimPlot(PlotArea plotArea, Plot plot, Runnable whenDone) {
-        return false;
+        if (whenDone != null) whenDone.run();
+        return true;
     }
 
     @Override

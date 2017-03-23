@@ -99,7 +99,7 @@ public class BO3Handler {
             }
         }
         for (ChunkLoc loc : chunks) {
-            ChunkManager.manager.loadChunk(plot.getArea().worldname, loc, false);
+            ChunkManager.manager.loadChunk(plot.getWorldName(), loc, false);
         }
 
         boolean content = false;
@@ -115,7 +115,7 @@ public class BO3Handler {
                     ChunkLoc loc = new ChunkLoc(X, Z);
                     BO3 bo3 = map.get(loc);
                     for (int y = 1; y < height; y++) {
-                        PlotBlock block = WorldUtil.IMP.getBlock(new Location(plot.getArea().worldname, x, y, z));
+                        PlotBlock block = WorldUtil.IMP.getBlock(new Location(plot.getWorldName(), x, y, z));
                         if (!contains(cpw.MAIN_BLOCK, block)) {
                             if (bo3 == null) {
                                 bo3 = new BO3(alias, plotworld.worldname, loc);
@@ -125,7 +125,7 @@ public class BO3Handler {
                             bo3.addBlock(xx, y - height - 1, zz, block);
                         }
                     }
-                    PlotBlock floor = WorldUtil.IMP.getBlock(new Location(plot.getArea().worldname, x, height, z));
+                    PlotBlock floor = WorldUtil.IMP.getBlock(new Location(plot.getWorldName(), x, height, z));
                     if (!contains(cpw.TOP_BLOCK, floor)) {
                         if (bo3 == null) {
                             bo3 = new BO3(alias, plotworld.worldname, loc);
@@ -135,7 +135,7 @@ public class BO3Handler {
                         bo3.addBlock(xx, -1, zz, floor);
                     }
                     for (int y = height + 1; y < 256; y++) {
-                        PlotBlock block = WorldUtil.IMP.getBlock(new Location(plot.getArea().worldname, x, y, z));
+                        PlotBlock block = WorldUtil.IMP.getBlock(new Location(plot.getWorldName(), x, y, z));
                         if (block.id != 0) {
                             if (bo3 == null) {
                                 bo3 = new BO3(alias, plotworld.worldname, loc);
@@ -265,7 +265,7 @@ public class BO3Handler {
             return false;
         }
 
-        File base = getBaseFile(plot.getArea().worldname);
+        File base = getBaseFile(plot.getWorldName());
         try {
             List<String> lines = Files.readAllLines(base.toPath(), StandardCharsets.UTF_8);
             for (int i = 0; i < lines.size(); i++) {

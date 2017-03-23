@@ -209,6 +209,10 @@ public class Plot {
         this.temp = temp;
     }
 
+    public String getWorldName() {
+        return area.worldname;
+    }
+
     /**
      * Get a plot from a string e.g. [area];[id]
      * @param defaultArea If no area is specified
@@ -771,7 +775,7 @@ public class Plot {
                         @Override
                         public void run() {
                             for (RegionWrapper region : regions) {
-                                Location[] corners = region.getCorners(Plot.this.area.worldname);
+                                Location[] corners = region.getCorners(getWorldName());
                                 ChunkManager.manager.clearAllEntities(corners[0], corners[1]);
                             }
                             TaskManager.runTask(whenDone);
@@ -797,7 +801,7 @@ public class Plot {
         };
         if (!isMerged() && this.area.getRegion().equals(getLargestRegion())) {
             final LocalBlockQueue blockQueue = area.getQueue(false);
-            ChunkManager.largeRegionTask(this.area.worldname, this.area.getRegion(), new RunnableVal<ChunkLoc>() {
+            ChunkManager.largeRegionTask(this.getWorldName(), this.area.getRegion(), new RunnableVal<ChunkLoc>() {
                 @Override
                 public void run(ChunkLoc value) {
                     blockQueue.regenChunk(value.x, value.z);
@@ -831,15 +835,15 @@ public class Plot {
                     return;
                 }
                 RegionWrapper region = regions.poll();
-                Location pos1 = new Location(Plot.this.area.worldname, region.minX - extendBiome, region.minY, region.minZ - extendBiome);
-                Location pos2 = new Location(Plot.this.area.worldname, region.maxX + extendBiome, region.maxY, region.maxZ + extendBiome);
+                Location pos1 = new Location(getWorldName(), region.minX - extendBiome, region.minY, region.minZ - extendBiome);
+                Location pos2 = new Location(getWorldName(), region.maxX + extendBiome, region.maxY, region.maxZ + extendBiome);
                 ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
                     @Override
                     public void run(int[] value) {
                         ChunkLoc loc = new ChunkLoc(value[0], value[1]);
-                        ChunkManager.manager.loadChunk(Plot.this.area.worldname, loc, false);
-                        MainUtil.setBiome(Plot.this.area.worldname, value[2], value[3], value[4], value[5], biome);
-                        ChunkManager.manager.unloadChunk(Plot.this.area.worldname, loc, true, true);
+                        ChunkManager.manager.loadChunk(getWorldName(), loc, false);
+                        MainUtil.setBiome(getWorldName(), value[2], value[3], value[4], value[5], biome);
+                        ChunkManager.manager.unloadChunk(getWorldName(), loc, true, true);
                     }
                 }, this, 5);
 
@@ -916,6 +920,7 @@ public class Plot {
      * @param name
      */
     public void setSign(final String name) {
+        if (!isLoaded()) return;
         if (!PS.get().isMainThread(Thread.currentThread())) {
             TaskManager.runTask(new Runnable() {
                 @Override
@@ -934,8 +939,12 @@ public class Plot {
                     C.OWNER_SIGN_LINE_2.formatted().replaceAll("%id%", id).replaceAll("%plr%", name),
                     C.OWNER_SIGN_LINE_3.formatted().replaceAll("%id%", id).replaceAll("%plr%", name),
                     C.OWNER_SIGN_LINE_4.formatted().replaceAll("%id%", id).replaceAll("%plr%", name)};
-            WorldUtil.IMP.setSign(this.area.worldname, loc.getX(), loc.getY(), loc.getZ(), lines);
+            WorldUtil.IMP.setSign(this.getWorldName(), loc.getX(), loc.getY(), loc.getZ(), lines);
         }
+    }
+
+    protected boolean isLoaded() {
+        return WorldUtil.IMP.isWorld(getWorldName());
     }
 
     /**
@@ -1118,9 +1127,13 @@ public class Plot {
         Location[] corners = getCorners();
         Location top = corners[0];
         Location bot = corners[1];
-        Location loc = new Location(this.area.worldname, MathMan.average(bot.getX(), top.getX()), MathMan.average(bot.getY(), top.getY()), MathMan.average(bot.getZ(), top.getZ()));
-        loc.setY(1 + Math.max(WorldUtil.IMP.getHighestBlock(this.area.worldname, loc.getX(), loc.getZ()),
-                getManager().getSignLoc(this.area, this).getY()));
+        Location loc = new Location(this.getWorldName(), MathMan.average(bot.getX(), top.getX()), MathMan.average(bot.getY(), top.getY()), MathMan.average(bot.getZ(), top.getZ()));
+        if (!isLoaded()) return loc;
+        int y = isLoaded() ? WorldUtil.IMP.getHighestBlock(getWorldName(), loc.getX(), loc.getZ()) : 64;
+        if (area.ALLOW_SIGNS) {
+            y = Math.max(y, getManager().getSignLoc(area, this).getY());
+        }
+        loc.setY(1 + y);
         return loc;
     }
 
@@ -1129,8 +1142,11 @@ public class Plot {
         int x = (largest.maxX >> 1) - (largest.minX >> 1) + largest.minX;
         int z = largest.minZ - 1;
         PlotManager manager = getManager();
-        int y = Math.max(WorldUtil.IMP.getHighestBlock(area.worldname, x, z), manager.getSignLoc(area, this).getY());
-        return new Location(area.worldname, x, y + 1, z);
+        int y = isLoaded() ? WorldUtil.IMP.getHighestBlock(getWorldName(), x, z) : 64;
+        if (area.ALLOW_SIGNS) {
+            y = Math.max(y, manager.getSignLoc(area, this).getY());
+        }
+        return new Location(getWorldName(), x, y + 1, z);
     }
 
     /**
@@ -1144,8 +1160,9 @@ public class Plot {
         } else {
             Location bot = this.getBottomAbs();
             Location loc = new Location(bot.getWorld(), bot.getX() + home.x, bot.getY() + home.y, bot.getZ() + home.z, home.yaw, home.pitch);
+            if (!isLoaded()) return loc;
             if (WorldUtil.IMP.getBlock(loc).id != 0) {
-                loc.setY(Math.max(WorldUtil.IMP.getHighestBlock(this.area.worldname, loc.getX(), loc.getZ()), bot.getY()));
+                loc.setY(Math.max(WorldUtil.IMP.getHighestBlock(this.getWorldName(), loc.getX(), loc.getZ()), bot.getY()));
             }
             return loc;
         }
@@ -1189,8 +1206,8 @@ public class Plot {
                 x = bot.getX() + this.area.DEFAULT_HOME.x;
                 z = bot.getZ() + this.area.DEFAULT_HOME.z;
             }
-            int y = WorldUtil.IMP.getHighestBlock(plot.area.worldname, x, z);
-            return new Location(plot.area.worldname, x, y + 1, z);
+            int y = isLoaded() ? WorldUtil.IMP.getHighestBlock(plot.getWorldName(), x, z) : 64;
+            return new Location(plot.getWorldName(), x, y + 1, z);
         }
         // Side
         return plot.getSide();
@@ -1273,7 +1290,7 @@ public class Plot {
      * This should not need to be called
      */
     public void refreshChunks() {
-        LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(area.worldname, false);
+        LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(getWorldName(), false);
         HashSet<ChunkLoc> chunks = new HashSet<>();
         for (RegionWrapper region : Plot.this.getRegions()) {
             for (int x = region.minX >> 4; x <= region.maxX >> 4; x++) {
@@ -1293,7 +1310,7 @@ public class Plot {
             return;
         }
         Location loc = manager.getSignLoc(this.area, this);
-        LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(area.worldname, false);
+        LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(getWorldName(), false);
         queue.setBlock(loc.getX(), loc.getY(), loc.getZ(), 0);
         queue.flush();
     }
@@ -1425,7 +1442,9 @@ public class Plot {
      * @return
      */
     public Location getTopAbs() {
-        return this.area.getPlotManager().getPlotTopLocAbs(this.area, this.id);
+        Location top = this.area.getPlotManager().getPlotTopLocAbs(this.area, this.id);
+        top.setWorld(getWorldName());
+        return top;
     }
 
     /**
@@ -1433,7 +1452,9 @@ public class Plot {
      * @return
      */
     public Location getBottomAbs() {
-        return this.area.getPlotManager().getPlotBottomLocAbs(this.area, this.id);
+        Location loc = this.area.getPlotManager().getPlotBottomLocAbs(this.area, this.id);
+        loc.setWorld(getWorldName());
+        return loc;
     }
 
     /**
@@ -1552,7 +1573,7 @@ public class Plot {
         if (!this.isMerged()) {
             return new Location[]{this.getBottomAbs(), this.getTopAbs()};
         }
-        return MainUtil.getCorners(this.area.worldname, this.getRegions());
+        return MainUtil.getCorners(this.getWorldName(), this.getRegions());
     }
 
     /**
@@ -1567,8 +1588,8 @@ public class Plot {
             Plot other = this.getRelative(1);
             Location bot = other.getBottomAbs();
             Location top = this.getTopAbs();
-            Location pos1 = new Location(this.area.worldname, top.getX(), 0, bot.getZ());
-            Location pos2 = new Location(this.area.worldname, bot.getX(), 256, top.getZ());
+            Location pos1 = new Location(this.getWorldName(), top.getX(), 0, bot.getZ());
+            Location pos2 = new Location(this.getWorldName(), bot.getX(), 256, top.getZ());
             ChunkManager.manager.regenerateRegion(pos1, pos2, true, null);
         } else {
             this.area.getPlotManager().removeRoadEast(this.area, this);
@@ -1659,6 +1680,7 @@ public class Plot {
         }
         return this.area + ";" + this.id.x + ";" + this.id.y;
     }
+
 
     /**
      * Remove a denied player (use DBFunc as well)<br>
@@ -2070,8 +2092,8 @@ public class Plot {
             Plot other = this.getRelative(2);
             Location bot = other.getBottomAbs();
             Location top = this.getTopAbs();
-            Location pos1 = new Location(this.area.worldname, bot.getX(), 0, top.getZ());
-            Location pos2 = new Location(this.area.worldname, top.getX(), 256, bot.getZ());
+            Location pos1 = new Location(this.getWorldName(), bot.getX(), 0, top.getZ());
+            Location pos2 = new Location(this.getWorldName(), top.getX(), 256, bot.getZ());
             ChunkManager.manager.regenerateRegion(pos1, pos2, true, null);
         } else {
             this.getManager().removeRoadSouth(this.area, this);
@@ -2555,7 +2577,7 @@ public class Plot {
             int x = (int) MathMan.inverseRound(coords[0]);
             int z = (int) MathMan.inverseRound(coords[1]);
             if (type != 4) {
-                locs.add(new Location(this.area.worldname, x, 0, z));
+                locs.add(new Location(this.getWorldName(), x, 0, z));
             }
         }
         return locs;
@@ -2772,11 +2794,11 @@ public class Plot {
                 }
                 final Runnable task = this;
                 RegionWrapper region = regions.poll();
-                Location[] corners = region.getCorners(Plot.this.area.worldname);
+                Location[] corners = region.getCorners(getWorldName());
                 final Location pos1 = corners[0];
                 final Location pos2 = corners[1];
                 Location newPos = pos1.clone().add(offsetX, 0, offsetZ);
-                newPos.setWorld(destination.area.worldname);
+                newPos.setWorld(destination.getWorldName());
                 ChunkManager.manager.copyRegion(pos1, pos2, newPos, new Runnable() {
                     @Override
                     public void run() {
@@ -2793,13 +2815,13 @@ public class Plot {
                     return;
                 }
                 RegionWrapper region = regions.poll();
-                Location[] corners = region.getCorners(Plot.this.area.worldname);
+                Location[] corners = region.getCorners(getWorldName());
                 Location pos1 = corners[0];
                 Location pos2 = corners[1];
                 Location pos3 = pos1.clone().add(offsetX, 0, offsetZ);
                 Location pos4 = pos2.clone().add(offsetX, 0, offsetZ);
-                pos3.setWorld(destination.area.worldname);
-                pos4.setWorld(destination.area.worldname);
+                pos3.setWorld(destination.getWorldName());
+                pos4.setWorld(destination.getWorldName());
                 ChunkManager.manager.swap(pos1, pos2, pos3, pos4, this);
             }
         };
@@ -2881,11 +2903,11 @@ public class Plot {
                     return;
                 }
                 RegionWrapper region = regions.poll();
-                Location[] corners = region.getCorners(Plot.this.area.worldname);
+                Location[] corners = region.getCorners(getWorldName());
                 Location pos1 = corners[0];
                 Location pos2 = corners[1];
                 Location newPos = pos1.clone().add(offsetX, 0, offsetZ);
-                newPos.setWorld(destination.area.worldname);
+                newPos.setWorld(destination.getWorldName());
                 ChunkManager.manager.copyRegion(pos1, pos2, newPos, this);
             }
         };

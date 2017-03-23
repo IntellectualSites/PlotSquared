@@ -137,3 +137,4 @@ Nukkit/build/dependency-cache/
 checkstyle.xml
 classes/
 p2error.txt
+*.bat

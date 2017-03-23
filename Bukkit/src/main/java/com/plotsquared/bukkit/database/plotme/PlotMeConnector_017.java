@@ -126,7 +126,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
             plots.put(key, plot);
         }
         for (Plot plot : plots.values()) {
-            HashMap<PlotId, boolean[]> mergeMap = merges.get(plot.getArea().worldname);
+            HashMap<PlotId, boolean[]> mergeMap = merges.get(plot.getWorldName());
             if (mergeMap != null) {
                 if (mergeMap.containsKey(plot.getId())) {
                     plot.setMerged(mergeMap.get(plot.getId()));
@@ -174,10 +174,10 @@ public class PlotMeConnector_017 extends APlotMeConnector {
         HashMap<String, HashMap<PlotId, Plot>> processed = new HashMap<>();
 
         for (Plot plot : plots.values()) {
-            HashMap<PlotId, Plot> map = processed.get(plot.getArea().worldname);
+            HashMap<PlotId, Plot> map = processed.get(plot.getWorldName());
             if (map == null) {
                 map = new HashMap<>();
-                processed.put(plot.getArea().worldname, map);
+                processed.put(plot.getWorldName(), map);
             }
             map.put(plot.getId(), plot);
         }

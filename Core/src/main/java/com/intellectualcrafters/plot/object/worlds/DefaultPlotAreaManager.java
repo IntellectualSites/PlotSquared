@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class DefaultPlotAreaManager implements PlotAreaManager {
@@ -23,7 +24,7 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
     // Optimization if there are no hash collisions
     private boolean plotAreaHasCollision = false;
     private final HashSet<Integer> plotAreaHashCheck = new HashSet<>();
-    private final PlotArea[] noPlotAreas = new PlotArea[0];
+    protected final PlotArea[] noPlotAreas = new PlotArea[0];
     private String[] worlds = new String[0];
 
     @Override
@@ -222,7 +223,7 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         if (!this.plotAreaHasCollision && !this.plotAreaHashCheck.add(worldName.hashCode())) {
             this.plotAreaHasCollision = true;
         }
-        Set<String> tmp = new HashSet<>();
+        Set<String> tmp = new LinkedHashSet<>();
         Collections.addAll(tmp, worlds);
         tmp.add(worldName);
         worlds = tmp.toArray(new String[tmp.size()]);
@@ -230,7 +231,7 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
 
     @Override
     public void removeWorld(String worldName) {
-        Set<String> tmp = new HashSet<>();
+        Set<String> tmp = new LinkedHashSet<>();
         Collections.addAll(tmp, worlds);
         tmp.remove(worldName);
         worlds = tmp.toArray(new String[tmp.size()]);

@@ -130,7 +130,7 @@ public class MainUtil {
         }
         final URL url;
         try {
-            url = new URL(Settings.Web.URL + "?key=" + uuid + "&ip=" + Settings.Web.SERVER_IP + "&type=" + extension);
+            url = new URL(Settings.Web.URL + "?key=" + uuid + "&type=" + extension);
         } catch (MalformedURLException e) {
             e.printStackTrace();
             whenDone.run();
@@ -720,7 +720,7 @@ public class MainUtil {
         int num = plot.getConnectedPlots().size();
         String alias = !plot.getAlias().isEmpty() ? plot.getAlias() : C.NONE.s();
         Location bot = plot.getCorners()[0];
-        String biome = WorldUtil.IMP.getBiome(plot.getArea().worldname, bot.getX(), bot.getZ());
+        String biome = WorldUtil.IMP.getBiome(plot.getWorldName(), bot.getX(), bot.getZ());
         String trusted = getPlayerList(plot.getTrusted());
         String members = getPlayerList(plot.getMembers());
         String denied = getPlayerList(plot.getDenied());
@@ -798,6 +798,23 @@ public class MainUtil {
             return;
         }
         whenDone.run(info);
+    }
+
+    public static boolean deleteDirectory(File directory) {
+        if (directory.exists()) {
+            File[] files = directory.listFiles();
+            if (null != files) {
+                for (int i = 0; i < files.length; i++) {
+                    File file = files[i];
+                    if (file.isDirectory()) {
+                        deleteDirectory(files[i]);
+                    } else {
+                        PS.debug("Deleting file: " + file + " | " + file.delete());
+                    }
+                }
+            }
+        }
+        return (directory.delete());
     }
 
     /**

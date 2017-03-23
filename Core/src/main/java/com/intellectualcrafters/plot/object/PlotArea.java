@@ -43,7 +43,7 @@ public abstract class PlotArea {
     public final int worldhash;
     private final PlotId min;
     private final PlotId max;
-    private final ConcurrentHashMap<PlotId, Plot> plots = new ConcurrentHashMap<>();
+    protected final ConcurrentHashMap<PlotId, Plot> plots = new ConcurrentHashMap<>();
     private final IndependentPlotGenerator generator;
     public int MAX_PLOT_MEMBERS = 128;
     public boolean AUTO_MERGE = false;

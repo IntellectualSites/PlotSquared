@@ -33,7 +33,7 @@ public class PlotDeleteEvent extends AbstractEvent {
      * @return String
      */
     public String getWorld() {
-        return plot.getArea().worldname;
+        return plot.getWorldName();
     }
     
     @Override

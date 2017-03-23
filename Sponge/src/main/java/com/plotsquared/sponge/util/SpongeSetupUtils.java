@@ -48,6 +48,14 @@ public class SpongeSetupUtils extends SetupUtils {
     }
 
     @Override
+    public void unload(String worldName, boolean safe) {
+        Optional<World> world = Sponge.getServer().getWorld(worldName);
+        if (world.isPresent()) {
+            Sponge.getServer().unloadWorld(world.get());
+        }
+    }
+
+    @Override
     public String getGenerator(PlotArea plotArea) {
         if (SetupUtils.generators.isEmpty()) {
             updateGenerators();

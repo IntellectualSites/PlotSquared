@@ -90,7 +90,7 @@ public class NukkitEventUtil extends EventUtil {
 
     @Override
     public boolean callMerge(Plot plot, ArrayList<PlotId> plots) {
-        return callEvent(new PlotMergeEvent(NukkitUtil.getWorld(plot.getArea().worldname), plot, plots));
+        return callEvent(new PlotMergeEvent(NukkitUtil.getWorld(plot.getWorldName()), plot, plots));
     }
 
     @Override

@@ -4,40 +4,90 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.ArrayUtil;
+import com.intellectualcrafters.plot.util.SetupUtils;
 
 public class SinglePlotAreaManager extends DefaultPlotAreaManager {
     private final SinglePlotArea area;
     private final SinglePlotArea[] array;
     private PlotArea[] all;
 
-    public SinglePlotAreaManager(SinglePlotArea area) {
-        this.area = area;
+    public SinglePlotAreaManager() {
+        this.area = new SinglePlotArea();
         this.array = new SinglePlotArea[] { area };
         this.all = new PlotArea[] { area };
+        SetupUtils.generators.put("PlotSquared:single", new SingleWorldGenerator().specify("CheckingPlotSquaredGenerator"));
+    }
+
+    public SinglePlotArea getArea() {
+        return area;
+    }
+
+    public boolean isWorld(String id) {
+        int mode = 0;
+        char[] chars = id.toCharArray();
+        if (chars.length == 1 && chars[0] == '*') {
+            return true;
+        }
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            switch (mode) {
+                case 0:
+                    mode = 1;
+                    if (c == '-') {
+                        continue;
+                    }
+                case 1:
+                    if ((c <= '/') || (c >= ':')) {
+                        if (c == ';' || c == ',') {
+                            mode = 2;
+                            continue;
+                        }
+                        return false;
+                    } else {
+                        continue;
+                    }
+                case 2:
+                    mode = 3;
+                    if (c == '-') {
+                        continue;
+                    }
+                case 3:
+                    if ((c <= '/') || (c >= ':')) {
+                        return false;
+                    }
+                    continue;
+            }
+        }
+        return true;
     }
 
     @Override
     public PlotArea getApplicablePlotArea(Location location) {
         PlotArea found = super.getApplicablePlotArea(location);
-        return found != null ? found : area;
+        if (found != null) return found;
+        String world = location.getWorld();
+        return isWorld(world) || world.equals("*") || super.getAllPlotAreas().length == 0 ? area : null;
     }
 
     @Override
     public PlotArea getPlotArea(Location location) {
         PlotArea found = super.getPlotArea(location);
-        return found != null ? found : area;
+        if (found != null) return found;
+        return isWorld(location.getWorld()) ? area : null;
     }
 
     @Override
     public PlotArea getPlotArea(String world, String id) {
         PlotArea found = super.getPlotArea(world, id);
-        return found != null ? found : area;
+        if (found != null) return found;
+        return isWorld(world) || world.equals("*") ? area : null;
     }
 
     @Override
     public PlotArea[] getPlotAreas(String world, RegionWrapper region) {
         PlotArea[] found = super.getPlotAreas(world, region);
-        return found != null ? found : array;
+        if (found != null && found.length != 0) return found;
+        return isWorld(world) || world.equals("*") ? array : noPlotAreas;
     }
 
     @Override
@@ -52,6 +102,9 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
 
     @Override
     public void addPlotArea(PlotArea area) {
+        if(area == this.area) {
+            return;
+        }
         super.addPlotArea(area);
         all = ArrayUtil.concatAll(super.getAllPlotAreas(), array);
     }
@@ -73,5 +126,4 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
     public void removeWorld(String worldName) {
         super.removeWorld(worldName);
     }
-
 }

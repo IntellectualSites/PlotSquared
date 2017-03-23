@@ -110,7 +110,7 @@ public class Auto extends SubCommand {
         int diff = currentPlots - player.getAllowedPlots();
         if (diff + size_x * size_z > 0) {
             if (diff < 0) {
-                MainUtil.sendMessage(player, C.CANT_CLAIM_MORE_PLOTS_NUM, -diff + "");
+                    MainUtil.sendMessage(player, C.CANT_CLAIM_MORE_PLOTS_NUM, -diff + "");
                 return false;
             } else if (player.hasPersistentMeta("grantedPlots")) {
                 int grantedPlots = ByteArrayUtilities.bytesToInteger(player.getPersistentMeta("grantedPlots"));
@@ -176,7 +176,6 @@ public class Auto extends SubCommand {
             MainUtil.sendMessage(player, C.NO_FREE_PLOTS);
             return false;
         }
-        plotarea.setMeta("lastPlot", new PlotId(0, 0));
         while (true) {
             PlotId start = getNextPlotId(getLastPlotId(plotarea), 1);
             PlotId end = new PlotId(start.x + size_x - 1, start.y + size_z - 1);
@@ -197,7 +196,6 @@ public class Auto extends SubCommand {
                 break;
             }
         }
-        plotarea.setMeta("lastPlot", new PlotId(0, 0));
         return true;
     }
 
