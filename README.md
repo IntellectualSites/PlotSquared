@@ -1,4 +1,6 @@
 # PlotSquared [![forthebadge](http://forthebadge.com/images/badges/built-by-developers.svg)](http://forthebadge.com)
+
+[![Join the chat at https://gitter.im/PlotSquared/Lobby](https://badges.gitter.im/PlotSquared/Lobby.svg)](https://gitter.im/PlotSquared/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 For the end user, PlotSquared is packed with a tonne of cool features.
 It allows you to merge plots, and build together with your friends. 
 You can also change a lot of plot specific settings in the form of
