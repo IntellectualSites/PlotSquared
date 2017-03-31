@@ -8,7 +8,6 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotLoc;
-import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.SetupUtils;
@@ -87,14 +86,31 @@ public class SinglePlotArea extends GridPlotWorld {
         return getPlotAbs(pid);
     }
 
-    public boolean addPlot(Plot p) {
+    public boolean addPlot(Plot plot) {
+        plot = adapt(plot);
+        return super.addPlot(plot);
+    }
+
+    @Override
+    public boolean addPlotAbs(Plot plot) {
+        plot = adapt(plot);
+        return super.addPlotAbs(plot);
+    }
+
+    @Override
+    public boolean addPlotIfAbsent(Plot plot) {
+        plot = adapt(plot);
+        return super.addPlotIfAbsent(plot);
+    }
+
+    private Plot adapt(Plot p) {
+        if (p instanceof SinglePlot) {
+            return p;
+        }
         PlotSettings s = p.getSettings();
         p = new SinglePlot(p.getId(), p.owner, p.getTrusted(), p.getMembers(), p.getDenied(), s.alias,  s.getPosition(), null, this, s.merged, p.getTimestamp(), p.temp);
-        p.getSettings().flags = s.flags;
-        for (PlotPlayer pp : p.getPlayersInPlot()) {
-            pp.setMeta("lastplot", p);
-        }
-        return this.plots.put(p.getId(), p) == null;
+        s.flags = s.flags;
+        return p;
     }
 
     public Plot getPlotAbs(PlotId id) {

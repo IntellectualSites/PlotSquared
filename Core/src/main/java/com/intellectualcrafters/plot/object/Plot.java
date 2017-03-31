@@ -799,17 +799,7 @@ public class Plot {
                 manager.clearPlot(Plot.this.area, current, this);
             }
         };
-        if (!isMerged() && this.area.getRegion().equals(getLargestRegion())) {
-            final LocalBlockQueue blockQueue = area.getQueue(false);
-            ChunkManager.largeRegionTask(this.getWorldName(), this.area.getRegion(), new RunnableVal<ChunkLoc>() {
-                @Override
-                public void run(ChunkLoc value) {
-                    blockQueue.regenChunk(value.x, value.z);
-                }
-            }, whenDone);
-        } else {
-            run.run();
-        }
+        run.run();
         return true;
     }
 

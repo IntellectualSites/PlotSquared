@@ -6,6 +6,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RegionWrapper;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
@@ -47,5 +48,16 @@ public class SinglePlot extends Plot {
         getArea().loadWorld(getId());
         return super.isLoaded();
     }
+    private HashSet<RegionWrapper> regions;
+    {
+        regions = new HashSet<>();
+        regions.add(new RegionWrapper(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE));
+    }
+
+    @Override
+    public HashSet<RegionWrapper> getRegions() {
+        return regions;
+    }
+
     // getCenter getSide getHome getDefaultHome getBiome
 }
