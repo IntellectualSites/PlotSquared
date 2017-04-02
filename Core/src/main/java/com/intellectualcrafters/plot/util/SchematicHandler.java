@@ -185,14 +185,14 @@ public abstract class SchematicHandler {
                             if (pw instanceof ClassicPlotWorld) {
                                 y_offset_actual = yOffset + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
                             } else {
-                                y_offset_actual = yOffset + MainUtil.getHeighestBlock(plot.getArea().worldname, region.minX + 1, region.minZ + 1);
+                                y_offset_actual = yOffset + MainUtil.getHeighestBlock(plot.getWorldName(), region.minX + 1, region.minZ + 1);
                             }
                         }
                     }
                     else {
                         y_offset_actual = yOffset;
                     }
-                    Location pos1 = new Location(plot.getArea().worldname, region.minX + xOffset, y_offset_actual, region.minZ + zOffset);
+                    Location pos1 = new Location(plot.getWorldName(), region.minX + xOffset, y_offset_actual, region.minZ + zOffset);
                     Location pos2 = pos1.clone().add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
                     // TODO switch to ChunkManager.chunkTask(pos1, pos2, task, whenDone, allocate);
                     final int p1x = pos1.getX();
@@ -597,7 +597,7 @@ public abstract class SchematicHandler {
     public abstract void getCompoundTag(String world, Set<RegionWrapper> regions, RunnableVal<CompoundTag> whenDone);
     
     public void getCompoundTag(final Plot plot, final RunnableVal<CompoundTag> whenDone) {
-        getCompoundTag(plot.getArea().worldname, plot.getRegions(), new RunnableVal<CompoundTag>() {
+        getCompoundTag(plot.getWorldName(), plot.getRegions(), new RunnableVal<CompoundTag>() {
             @Override
             public void run(CompoundTag value) {
                 if (!plot.getFlags().isEmpty()) {

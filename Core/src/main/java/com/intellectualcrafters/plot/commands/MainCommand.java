@@ -91,7 +91,6 @@ public class MainCommand extends Command {
             new DebugFixFlags();
             new Move();
             new Condense();
-            new Condense();
             new Copy();
             new Chat();
             new Trim();
@@ -107,6 +106,7 @@ public class MainCommand extends Command {
             new Alias();
             new SetHome();
             new Cluster();
+            new DebugImportWorlds();
             // Referenced commands
             instance.toggle = new Toggle();
             instance.help = new Help(instance);

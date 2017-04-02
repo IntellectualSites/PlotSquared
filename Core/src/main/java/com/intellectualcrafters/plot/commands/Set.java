@@ -146,6 +146,9 @@ public class Set extends SubCommand {
         }
         Command cmd = MainCommand.getInstance().getCommand("set" + args[0]);
         if (cmd != null) {
+            if (!Permissions.hasPermission(player, cmd.getPermission(), true)) {
+                return false;
+            }
             cmd.execute(player, Arrays.copyOfRange(args, 1, args.length), null, null);
             return true;
         }

@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.util;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -14,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.Set;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -66,8 +68,8 @@ public abstract class WorldUtil {
             @Override
             public void run(OutputStream output) {
                 try (final ZipOutputStream zos = new ZipOutputStream(output)) {
-                    File dat = getDat(plot.getArea().worldname);
-                    Location spawn = getSpawn(plot.getArea().worldname);
+                    File dat = getDat(plot.getWorldName());
+                    Location spawn = getSpawn(plot.getWorldName());
                     setSpawn(home);
                     byte[] buffer = new byte[1024];
                     if (dat != null) {
@@ -87,20 +89,22 @@ public abstract class WorldUtil {
                         int brz = bot.getZ() >> 9;
                         int trx = top.getX() >> 9;
                         int trz = top.getZ() >> 9;
-                        for (int x = brx; x <= trx; x++) {
-                            for (int z = brz; z <= trz; z++) {
-                                File file = getMcr(plot.getArea().worldname, x, z);
+                        Set<ChunkLoc> files = ChunkManager.manager.getChunkChunks(bot.getWorld());
+                        for (ChunkLoc mca : files) {
+                            if (mca.x >= brx && mca.x <= trx && mca.z >= brz && mca.z <= trz) {
+                                final File file = getMcr(plot.getWorldName(), mca.x, mca.z);
                                 if (file != null) {
                                     //final String name = "r." + (x - cx) + "." + (z - cz) + ".mca";
                                     String name = file.getName();
-                                    ZipEntry ze = new ZipEntry("world" + File.separator + "region" + File.separator + name);
+                                    final ZipEntry ze = new ZipEntry("world" + File.separator + "region" + File.separator + name);
                                     zos.putNextEntry(ze);
-                                    FileInputStream in = new FileInputStream(file);
+                                    final FileInputStream in = new FileInputStream(file);
                                     int len;
                                     while ((len = in.read(buffer)) > 0) {
                                         zos.write(buffer, 0, len);
                                     }
                                     in.close();
+                                    zos.closeEntry();
                                 }
                             }
                         }

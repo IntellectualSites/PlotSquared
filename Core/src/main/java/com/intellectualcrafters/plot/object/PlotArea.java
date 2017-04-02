@@ -43,11 +43,12 @@ public abstract class PlotArea {
     public final int worldhash;
     private final PlotId min;
     private final PlotId max;
-    private final ConcurrentHashMap<PlotId, Plot> plots = new ConcurrentHashMap<>();
+    protected final ConcurrentHashMap<PlotId, Plot> plots = new ConcurrentHashMap<>();
     private final IndependentPlotGenerator generator;
     public int MAX_PLOT_MEMBERS = 128;
     public boolean AUTO_MERGE = false;
     public boolean ALLOW_SIGNS = true;
+    public boolean MISC_SPAWN_UNOWNED = false;
     public boolean MOB_SPAWNING = false;
     public boolean MOB_SPAWNER_SPAWNING = false;
     public String PLOT_BIOME = "FOREST";
@@ -215,6 +216,7 @@ public abstract class PlotArea {
             this.TYPE = config.getInt("generator.type");
         }
         this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
+        this.MISC_SPAWN_UNOWNED = config.getBoolean("misc_spawn_unowned");
         this.MOB_SPAWNER_SPAWNING = config.getBoolean("mob_spawner_spawning");
         this.AUTO_MERGE = config.getBoolean("plot.auto_merge");
         this.MAX_PLOT_MEMBERS = config.getInt("limits.max-members");
@@ -314,6 +316,7 @@ public abstract class PlotArea {
     public void saveConfiguration(ConfigurationSection config) {
         HashMap<String, Object> options = new HashMap<>();
         options.put("natural_mob_spawning", this.MOB_SPAWNING);
+        options.put("misc_spawn_unowned", this.MISC_SPAWN_UNOWNED);
         options.put("mob_spawner_spawning", this.MOB_SPAWNER_SPAWNING);
         options.put("plot.auto_merge", this.AUTO_MERGE);
         options.put("plot.create_signs", this.ALLOW_SIGNS);

@@ -24,7 +24,9 @@ public class EntitySpawnListener implements Listener {
         Plot plot = area.getOwnedPlotAbs(location);
         if (plot == null) {
             if (!area.MOB_SPAWNING) {
-                event.setCancelled(true);
+                if (event.getEntityType().isAlive() || !area.MISC_SPAWN_UNOWNED) {
+                    event.setCancelled(true);
+                }
             }
             return;
         }

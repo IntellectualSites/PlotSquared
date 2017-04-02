@@ -7,10 +7,10 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.StringComparison;
-import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.bukkit.object.BukkitPlayer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.bukkit.Bukkit;
@@ -80,15 +80,7 @@ public class BukkitUtil extends WorldUtil {
     }
 
     public static World getWorld(String string) {
-        if (StringMan.isEqual(string, lastString)) {
-            if (lastWorld != null) {
-                return lastWorld;
-            }
-        }
-        World world = Bukkit.getWorld(string);
-        lastString = string;
-        lastWorld = world;
-        return world;
+        return Bukkit.getWorld(string);
     }
 
     public static String getWorld(Entity entity) {
@@ -96,7 +88,8 @@ public class BukkitUtil extends WorldUtil {
     }
 
     public static List<Entity> getEntities(String worldName) {
-        return getWorld(worldName).getEntities();
+        World world = getWorld(worldName);
+        return world != null ? world.getEntities() : new ArrayList<Entity>();
     }
 
     public static Location getLocation(Entity entity) {

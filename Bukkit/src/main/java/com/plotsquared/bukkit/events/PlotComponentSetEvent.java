@@ -37,7 +37,7 @@ public class PlotComponentSetEvent extends PlotEvent {
      * @return String
      */
     public String getWorld() {
-        return getPlot().getArea().worldname;
+        return getPlot().getWorldName();
     }
 
     /**

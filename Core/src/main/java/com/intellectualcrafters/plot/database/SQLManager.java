@@ -152,7 +152,7 @@ public class SQLManager implements AbstractDB {
                         }
                     } else {
                         try {
-                            Thread.sleep(5000);
+                            Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -304,7 +304,16 @@ public class SQLManager implements AbstractDB {
                 }
                 Runnable task = getGlobalTasks().remove();
                 if (task != null) {
-                    task.run();
+                    try {
+                        task.run();
+                    } catch (Throwable e) {
+                        PS.debug("============ DATABASE ERROR ============");
+                        PS.debug("There was an error updating the database.");
+                        PS.debug(" - It will be correct on shutdown");
+                        PS.debug("========================================");
+                        e.printStackTrace();
+                        PS.debug("========================================");
+                    }
                 }
                 commit();
                 return true;
@@ -320,26 +329,35 @@ public class SQLManager implements AbstractDB {
                 UniqueStatement task = null;
                 UniqueStatement lastTask = null;
                 for (Entry<Plot, Queue<UniqueStatement>> entry : this.plotTasks.entrySet()) {
-                    Plot plot = entry.getKey();
-                    if (this.plotTasks.get(plot).isEmpty()) {
-                        this.plotTasks.remove(plot);
-                        continue;
-                    }
-                    task = this.plotTasks.get(plot).remove();
-                    count++;
-                    if (task != null) {
-                        if (task.method == null || !task.method.equals(method)) {
-                            if (statement != null) {
-                                lastTask.execute(statement);
-                                statement.close();
-                            }
-                            method = task.method;
-                            statement = task.get();
+                    try {
+                        Plot plot = entry.getKey();
+                        if (this.plotTasks.get(plot).isEmpty()) {
+                            this.plotTasks.remove(plot);
+                            continue;
                         }
-                        task.set(statement);
-                        task.addBatch(statement);
+                        task = this.plotTasks.get(plot).remove();
+                        count++;
+                        if (task != null) {
+                            if (task.method == null || !task.method.equals(method)) {
+                                if (statement != null) {
+                                    lastTask.execute(statement);
+                                    statement.close();
+                                }
+                                method = task.method;
+                                statement = task.get();
+                            }
+                            task.set(statement);
+                            task.addBatch(statement);
+                        }
+                        lastTask = task;
+                    } catch (Throwable e) {
+                        PS.debug("============ DATABASE ERROR ============");
+                        PS.debug("There was an error updating the database.");
+                        PS.debug(" - It will be correct on shutdown");
+                        PS.debug("========================================");
+                        e.printStackTrace();
+                        PS.debug("========================================");
                     }
-                    lastTask = task;
                 }
                 if (statement != null && task != null) {
                     task.execute(statement);
@@ -356,26 +374,35 @@ public class SQLManager implements AbstractDB {
                 UniqueStatement task = null;
                 UniqueStatement lastTask = null;
                 for (Entry<UUID, Queue<UniqueStatement>> entry : this.playerTasks.entrySet()) {
-                    UUID uuid = entry.getKey();
-                    if (this.playerTasks.get(uuid).isEmpty()) {
-                        this.playerTasks.remove(uuid);
-                        continue;
-                    }
-                    task = this.playerTasks.get(uuid).remove();
-                    count++;
-                    if (task != null) {
-                        if (task.method == null || !task.method.equals(method)) {
-                            if (statement != null) {
-                                lastTask.execute(statement);
-                                statement.close();
-                            }
-                            method = task.method;
-                            statement = task.get();
+                    try {
+                        UUID uuid = entry.getKey();
+                        if (this.playerTasks.get(uuid).isEmpty()) {
+                            this.playerTasks.remove(uuid);
+                            continue;
                         }
-                        task.set(statement);
-                        task.addBatch(statement);
+                        task = this.playerTasks.get(uuid).remove();
+                        count++;
+                        if (task != null) {
+                            if (task.method == null || !task.method.equals(method)) {
+                                if (statement != null) {
+                                    lastTask.execute(statement);
+                                    statement.close();
+                                }
+                                method = task.method;
+                                statement = task.get();
+                            }
+                            task.set(statement);
+                            task.addBatch(statement);
+                        }
+                        lastTask = task;
+                    } catch (Throwable e) {
+                        PS.debug("============ DATABASE ERROR ============");
+                        PS.debug("There was an error updating the database.");
+                        PS.debug(" - It will be correct on shutdown");
+                        PS.debug("========================================");
+                        e.printStackTrace();
+                        PS.debug("========================================");
                     }
-                    lastTask = task;
                 }
                 if (statement != null && task != null) {
                     task.execute(statement);
@@ -392,26 +419,35 @@ public class SQLManager implements AbstractDB {
                 UniqueStatement task = null;
                 UniqueStatement lastTask = null;
                 for (Entry<PlotCluster, Queue<UniqueStatement>> entry : this.clusterTasks.entrySet()) {
-                    PlotCluster cluster = entry.getKey();
-                    if (this.clusterTasks.get(cluster).isEmpty()) {
-                        this.clusterTasks.remove(cluster);
-                        continue;
-                    }
-                    task = this.clusterTasks.get(cluster).remove();
-                    count++;
-                    if (task != null) {
-                        if (task.method == null || !task.method.equals(method)) {
-                            if (statement != null) {
-                                lastTask.execute(statement);
-                                statement.close();
-                            }
-                            method = task.method;
-                            statement = task.get();
+                    try {
+                        PlotCluster cluster = entry.getKey();
+                        if (this.clusterTasks.get(cluster).isEmpty()) {
+                            this.clusterTasks.remove(cluster);
+                            continue;
                         }
-                        task.set(statement);
-                        task.addBatch(statement);
+                        task = this.clusterTasks.get(cluster).remove();
+                        count++;
+                        if (task != null) {
+                            if (task.method == null || !task.method.equals(method)) {
+                                if (statement != null) {
+                                    lastTask.execute(statement);
+                                    statement.close();
+                                }
+                                method = task.method;
+                                statement = task.get();
+                            }
+                            task.set(statement);
+                            task.addBatch(statement);
+                        }
+                        lastTask = task;
+                    } catch (Throwable e) {
+                        PS.debug("============ DATABASE ERROR ============");
+                        PS.debug("There was an error updating the database.");
+                        PS.debug(" - It will be correct on shutdown");
+                        PS.debug("========================================");
+                        e.printStackTrace();
+                        PS.debug("========================================");
                     }
-                    lastTask = task;
                 }
                 if (statement != null && task != null) {
                     task.execute(statement);
@@ -433,8 +469,13 @@ public class SQLManager implements AbstractDB {
             if (!this.plotTasks.isEmpty()) {
                 this.plotTasks.clear();
             }
-        } catch (SQLException e) {
+        } catch (Throwable e) {
+            PS.debug("============ DATABASE ERROR ============");
+            PS.debug("There was an error updating the database.");
+            PS.debug(" - It will be correct on shutdown");
+            PS.debug("========================================");
             e.printStackTrace();
+            PS.debug("========================================");
         }
         return false;
     }
@@ -999,7 +1040,7 @@ public class SQLManager implements AbstractDB {
                 stmt.setInt(1, plot.getId().x);
                 stmt.setInt(2, plot.getId().y);
                 stmt.setString(3, plot.owner.toString());
-                stmt.setString(4, plot.getArea().toString());
+                stmt.setString(4, plot.getArea().worldname);
                 stmt.setTimestamp(5, new Timestamp(plot.getTimestamp()));
             }
 
@@ -1687,8 +1728,7 @@ public class SQLManager implements AbstractDB {
                                 time = System.currentTimeMillis() + id;
                             }
                         }
-                        Plot p = new Plot(plot_id, user, new HashSet<UUID>(), new HashSet<UUID>(), new HashSet<UUID>(), "", null, null, null,
-                                new boolean[]{false, false, false, false}, time, id);
+                        Plot p = new Plot(plot_id, user, new HashSet<UUID>(), new HashSet<UUID>(), new HashSet<UUID>(), "", null, null, null, new boolean[]{false, false, false, false}, time, id);
                         HashMap<PlotId, Plot> map = newPlots.get(areaid);
                         if (map != null) {
                             Plot last = map.put(p.getId(), p);
@@ -1697,9 +1737,8 @@ public class SQLManager implements AbstractDB {
                                     toDelete.add(last.temp);
                                 } else {
                                     PS.debug("&cPLOT #" + id + "(" + last + ") in `" + this.prefix
-                                            + "plot` is a duplicate. Delete this plot or set `auto-purge: true` in the settings.yml.");
+                                            + "plot` is a duplicate. Delete this plot or set `database-purger: true` in the settings.yml.");
                                 }
-                                continue;
                             }
                         } else {
                             map = new HashMap<>();
@@ -1727,7 +1766,7 @@ public class SQLManager implements AbstractDB {
                             } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                                 toDelete.add(id);
                             } else {
-                                PS.debug("&cENTRY #" + id + "(" + plot + ") in `plot_rating` does not exist. Create this plot or set `auto-purge: true` in the "
+                                PS.debug("&cENTRY #" + id + "(" + plot + ") in `plot_rating` does not exist. Create this plot or set `database-purger: true` in the "
                                         + "settings.yml.");
                             }
                         }
@@ -1754,7 +1793,7 @@ public class SQLManager implements AbstractDB {
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
                         } else {
-                            PS.debug("&cENTRY #" + id + "(" + plot + ") in `plot_helpers` does not exist. Create this plot or set `auto-purge: true` in the settings"
+                            PS.debug("&cENTRY #" + id + "(" + plot + ") in `plot_helpers` does not exist. Create this plot or set `database-purger: true` in the settings"
                                     + ".yml.");
                         }
                     }
@@ -1780,7 +1819,7 @@ public class SQLManager implements AbstractDB {
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
                         } else {
-                            PS.debug("&cENTRY #" + id + "(" + plot + ") in `plot_trusted` does not exist. Create this plot or set `auto-purge: true` in the settings"
+                            PS.debug("&cENTRY #" + id + "(" + plot + ") in `plot_trusted` does not exist. Create this plot or set `database-purger: true` in the settings"
                                     + ".yml.");
                         }
                     }
@@ -1807,7 +1846,7 @@ public class SQLManager implements AbstractDB {
                             toDelete.add(id);
                         } else {
                             PS.debug("&cENTRY " + id
-                                    + " in `plot_denied` does not exist. Create this plot or set `auto-purge: true` in the settings.yml.");
+                                    + " in `plot_denied` does not exist. Create this plot or set `database-purger: true` in the settings.yml.");
                         }
                     }
                     deleteRows(toDelete, this.prefix + "plot_denied", "plot_plot_id");
@@ -1889,7 +1928,7 @@ public class SQLManager implements AbstractDB {
                             toDelete.add(id);
                         } else {
                             PS.debug(
-                                    "&cENTRY #" + id + "(" + plot + ") in `plot_settings` does not exist. Create this plot or set `auto-purge: true` in the settings"
+                                    "&cENTRY #" + id + "(" + plot + ") in `plot_settings` does not exist. Create this plot or set `database-purger: true` in the settings"
                                             + ".yml.");
                         }
                     }
@@ -2038,38 +2077,53 @@ public class SQLManager implements AbstractDB {
             public void run() {
                 if (!uniqueIds.isEmpty()) {
                     try {
+                        ArrayList<Integer> uniqueIdsList = new ArrayList<Integer>(uniqueIds);
                         String stmt_prefix = "";
-                        StringBuilder idstr2 = new StringBuilder("");
-                        for (Integer id : uniqueIds) {
-                            idstr2.append(stmt_prefix).append(id);
-                            stmt_prefix = " OR `id` = ";
+                        int size = uniqueIdsList.size();
+                        int packet = 990;
+                        int amount = size / packet;
+                        int count = 0;
+                        int last = -1;
+                        for (int j = 0; j <= amount; j++) {
+                            PS.debug("Purging " + (j * packet) + " / " + size);
+                            List<Integer> subList = uniqueIdsList.subList(j * packet, Math.min(size, (j + 1) * packet));
+                            if (subList.isEmpty()) {
+                                break;
+                            }
+                            StringBuilder idstr2 = new StringBuilder("");
+                            stmt_prefix = "";
+                            for (Integer id : subList) {
+                                idstr2.append(stmt_prefix).append(id);
+                                stmt_prefix = " OR `id` = ";
+                            }
+                            stmt_prefix = "";
+                            StringBuilder idstr = new StringBuilder();
+                            for (Integer id : subList) {
+                                idstr.append(stmt_prefix).append(id);
+                                stmt_prefix = " OR `plot_plot_id` = ";
+                            }
+                            PreparedStatement stmt = SQLManager.this.connection
+                                    .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_helpers` WHERE `plot_plot_id` = " + idstr);
+                            stmt.executeUpdate();
+                            stmt.close();
+                            stmt = SQLManager.this.connection
+                                    .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_denied` WHERE `plot_plot_id` = " + idstr);
+                            stmt.executeUpdate();
+                            stmt.close();
+                            stmt = SQLManager.this.connection
+                                    .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_settings` WHERE `plot_plot_id` = " + idstr);
+                            stmt.executeUpdate();
+                            stmt.close();
+                            stmt = SQLManager.this.connection
+                                    .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_trusted` WHERE `plot_plot_id` = " + idstr);
+                            stmt.executeUpdate();
+                            stmt.close();
+                            stmt = SQLManager.this.connection
+                                    .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot` WHERE `id` = " + idstr2);
+                            stmt.executeUpdate();
+                            stmt.close();
+                            commit();
                         }
-                        stmt_prefix = "";
-                        StringBuilder idstr = new StringBuilder();
-                        for (Integer id : uniqueIds) {
-                            idstr.append(stmt_prefix).append(id);
-                            stmt_prefix = " OR `plot_plot_id` = ";
-                        }
-                        PreparedStatement stmt = SQLManager.this.connection
-                                .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_helpers` WHERE `plot_plot_id` = " + idstr);
-                        stmt.executeUpdate();
-                        stmt.close();
-                        stmt = SQLManager.this.connection
-                                .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_denied` WHERE `plot_plot_id` = " + idstr);
-                        stmt.executeUpdate();
-                        stmt.close();
-                        stmt = SQLManager.this.connection
-                                .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_settings` WHERE `plot_plot_id` = " + idstr);
-                        stmt.executeUpdate();
-                        stmt.close();
-                        stmt = SQLManager.this.connection
-                                .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_trusted` WHERE `plot_plot_id` = " + idstr);
-                        stmt.executeUpdate();
-                        stmt.close();
-                        stmt = SQLManager.this.connection
-                                .prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot` WHERE `id` = " + idstr2);
-                        stmt.executeUpdate();
-                        stmt.close();
                     } catch (SQLException e) {
                         e.printStackTrace();
                         PS.debug("&c[ERROR] FAILED TO PURGE PLOTS!");

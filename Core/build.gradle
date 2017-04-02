@@ -7,5 +7,46 @@ dependencies {
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
-jar.archiveName = rootProject.name + "-Core-${parent.version}.jar"
-jar.destinationDir = file '../target'
+
+processResources {
+    from('src/main/resources') {
+        include 'plotsquared.properties'
+        expand(
+                version: "${project.parent.version}",
+                name: project.parent.name,
+        )
+    }
+}
+
+jar.archiveName="plotsquared-api-${project.parent.version}.jar"
+jar.destinationDir = file '../mvn/com/plotsquared/plotsquared-api/' + project.parent.version
+task createPom << {
+    pom {
+        project {
+            groupId 'com.plotsquared'
+            artifactId 'plotsquared-api'
+            version project.parent.version
+        }
+    }.writeTo("../mvn/com/plotsquared/plotsquared-api/${project.parent.version}/plotsquared-api-${project.parent.version}.pom")
+    pom {
+        project {
+            groupId 'com.plotsquared'
+            artifactId 'plotsquared-api'
+            version 'latest'
+        }
+    }.writeTo("../mvn/com/plotsquared/plotsquared-api/latest/plotsquared-api-latest.pom")
+}
+
+task copyFiles {
+    doLast {
+        copy {
+            from "../mvn/com/plotsquared/plotsquared-api/${project.parent.version}/"
+            into '../mvn/com/plotsquared/plotsquared-api/latest/'
+            include('*.jar')
+            rename ("plotsquared-api-${project.parent.version}.jar", 'plotsquared-api-latest.jar')
+        }
+    }
+}
+
+build.finalizedBy(copyFiles)
+copyFiles.dependsOn(createPom)

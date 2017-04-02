@@ -15,6 +15,8 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotInventory;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.object.worlds.PlotAreaManager;
+import com.intellectualcrafters.plot.object.worlds.SinglePlotAreaManager;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
@@ -29,6 +31,18 @@ import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.BukkitVersion;
 import com.plotsquared.listener.PlayerBlockEventType;
 import com.plotsquared.listener.PlotListener;
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -92,6 +106,7 @@ import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -100,6 +115,7 @@ import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -115,18 +131,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
 
 /**
  * Player Events involving plots.
@@ -489,9 +493,23 @@ public class PlayerEvents extends PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTeleport(PlayerTeleportEvent event) {
-        if (event.getTo() == null || event.getFrom() == null) {
+        if (event.getTo() == null || event.getFrom() == null || !event.getFrom().getWorld().equals(event.getTo().getWorld())) {
             BukkitUtil.getPlayer(event.getPlayer()).deleteMeta("location");
             BukkitUtil.getPlayer(event.getPlayer()).deleteMeta("lastplot");
+            org.bukkit.Location to = event.getTo();
+            if (to != null) {
+                Player player = event.getPlayer();
+                PlotPlayer pp = PlotPlayer.wrap(player);
+                Location loc = BukkitUtil.getLocation(to);
+                PlotArea area = PS.get().getPlotAreaAbs(loc);
+                if (area == null) {
+                    return;
+                }
+                Plot plot = area.getPlot(loc);
+                if (plot != null) {
+                    plotEntry(pp, plot);
+                }
+            }
             return;
         }
         playerMove(event);
@@ -786,15 +804,12 @@ public class PlayerEvents extends PlotListener implements Listener {
     public void onWorldChanged(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
-
-
         // Delete last location
         pp.deleteMeta("location");
         Plot plot = (Plot) pp.deleteMeta("lastplot");
         if (plot != null) {
             plotExit(pp, plot);
         }
-
         if (PS.get().worldedit != null) {
             if (!Permissions.hasPermission(pp, C.PERMISSION_WORLDEDIT_BYPASS)) {
                 if (pp.getAttribute("worldedit")) {
@@ -804,6 +819,15 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         if (Settings.Enabled_Components.PERMISSION_CACHE) {
             pp.deleteMeta("perm");
+        }
+        Location loc = pp.getLocation();
+        PlotArea area = PS.get().getPlotAreaAbs(loc);
+        if (area == null) {
+            return;
+        }
+        plot = area.getPlot(loc);
+        if (plot != null) {
+            plotEntry(pp, plot);
         }
     }
 

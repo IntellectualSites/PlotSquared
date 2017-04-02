@@ -25,7 +25,9 @@ public class BukkitLocalQueue_1_7 extends BukkitLocalQueue<PlotBlock[]> {
     private final ReflectionUtils.RefClass classChunk = getRefClass("{nms}.Chunk");
     private final ReflectionUtils.RefClass classWorld = getRefClass("{nms}.World");
     private final ReflectionUtils.RefClass classCraftWorld = getRefClass("{cb}.CraftWorld");
+    private final ReflectionUtils.RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
     private final ReflectionUtils.RefMethod methodGetHandle;
+    private final ReflectionUtils.RefMethod methodGetHandleChunk;
     private final ReflectionUtils.RefMethod methodGetChunkAt;
     private final ReflectionUtils.RefMethod methodA;
     private final ReflectionUtils.RefMethod methodGetById;
@@ -40,6 +42,7 @@ public class BukkitLocalQueue_1_7 extends BukkitLocalQueue<PlotBlock[]> {
         this.methodGetChunkAt = this.classWorld.getMethod("getChunkAt", int.class, int.class);
         this.methodA = this.classChunk.getMethod("a", int.class, int.class, int.class, this.classBlock, int.class);
         this.methodGetById = this.classBlock.getMethod("getById", int.class);
+        this.methodGetHandleChunk = this.classCraftChunk.getMethod("getHandle");
         this.methodInitLighting = this.classChunk.getMethod("initLighting");
         this.sendChunk = new SendChunk();
         TaskManager.runTaskRepeat(new Runnable() {
@@ -87,7 +90,7 @@ public class BukkitLocalQueue_1_7 extends BukkitLocalQueue<PlotBlock[]> {
 
     @Override
     public void fixChunkLighting(int x, int z) {
-        Object c = this.methodGetHandle.of(getChunk(x, z)).call();
+        Object c = this.methodGetHandleChunk.of(getChunk(x, z)).call();
         this.methodInitLighting.of(c).call();
     }
 

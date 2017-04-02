@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
@@ -78,7 +79,7 @@ public class Kick extends SubCommand {
             Location spawn = WorldUtil.IMP.getSpawn(location.getWorld());
             C.YOU_GOT_KICKED.send(player2);
             if (plot.equals(spawn.getPlot())) {
-                Location newSpawn = WorldUtil.IMP.getSpawn(player2);
+                Location newSpawn = WorldUtil.IMP.getSpawn(PS.get().getPlotAreaManager().getAllWorlds()[0]);
                 if (plot.equals(newSpawn.getPlot())) {
                     // Kick from server if you can't be teleported to spawn
                     player2.kick(C.YOU_GOT_KICKED.s());

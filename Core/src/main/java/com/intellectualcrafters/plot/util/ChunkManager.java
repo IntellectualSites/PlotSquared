@@ -119,8 +119,8 @@ public abstract class ChunkManager {
                     return;
                 }
                 RegionWrapper value = regions.remove(0);
-                Location pos1 = new Location(plot.getArea().worldname, value.minX, 0, value.minZ);
-                Location pos2 = new Location(plot.getArea().worldname, value.maxX, 0, value.maxZ);
+                Location pos1 = new Location(plot.getWorldName(), value.minX, 0, value.minZ);
+                Location pos2 = new Location(plot.getWorldName(), value.maxX, 0, value.maxZ);
                 chunkTask(pos1, pos2, task, this, allocate);
             }
         };

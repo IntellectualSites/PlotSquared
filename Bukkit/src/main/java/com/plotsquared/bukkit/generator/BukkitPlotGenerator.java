@@ -19,17 +19,16 @@ import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import com.intellectualcrafters.plot.util.block.ScopedLocalBlockQueue;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.block.GenChunk;
-import org.bukkit.Chunk;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-import org.bukkit.generator.BlockPopulator;
-import org.bukkit.generator.ChunkGenerator;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
+import org.bukkit.generator.BlockPopulator;
+import org.bukkit.generator.ChunkGenerator;
 
 public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrapper<ChunkGenerator> {
     

@@ -141,7 +141,7 @@ public class Load extends SubCommand {
             try {
                 String schematic = schematics.get(i);
                 String[] split = schematic.split("_");
-                if (split.length != 6) {
+                if (split.length < 5) {
                     continue;
                 }
                 String time = secToTime((System.currentTimeMillis() / 1000) - Long.parseLong(split[0]));

@@ -13,6 +13,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -123,15 +124,17 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                                             HttpURLConnection connection =
                                                     (HttpURLConnection) new URL(SQLUUIDHandler.this.PROFILE_URL + uuid.toString().replace("-", ""))
                                                             .openConnection();
-                                            InputStreamReader reader = new InputStreamReader(connection.getInputStream());
-                                            JSONObject response = (JSONObject) SQLUUIDHandler.this.jsonParser.parse(reader);
-                                            String name = (String) response.get("name");
-                                            if (name != null) {
-                                                add(new StringWrapper(name), uuid);
+                                            try (InputStream con = connection.getInputStream()) {
+                                                InputStreamReader reader = new InputStreamReader(con);
+                                                JSONObject response = (JSONObject) SQLUUIDHandler.this.jsonParser.parse(reader);
+                                                String name = (String) response.get("name");
+                                                if (name != null) {
+                                                    add(new StringWrapper(name), uuid);
+                                                }
                                             }
                                         }
                                     } catch (IOException | ParseException e) {
-                                        e.printStackTrace();
+                                        PS.debug("Invalid response from Mojang: Some UUIDs will be cached later. (`unknown` until then or player joins)");
                                     }
                                     TaskManager.runTaskLaterAsync(this, SQLUUIDHandler.this.INTERVAL);
                                 }

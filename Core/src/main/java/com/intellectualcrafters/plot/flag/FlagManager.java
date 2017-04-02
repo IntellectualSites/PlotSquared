@@ -208,8 +208,12 @@ public class FlagManager {
                 flags.put(flag.getKey(), flag.getValue());
             }
             return flags;
+        } else if (flags == null) {
+            return settings.flags;
+        } else {
+            flags.putAll(settings.flags);
         }
-        return settings.flags;
+        return flags;
     }
 
     public static Map<Flag<?>, Object> getSettingFlags(PlotArea area, PlotSettings settings) {

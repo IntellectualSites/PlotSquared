@@ -13,7 +13,6 @@ import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.plotsquared.general.commands.CommandCaller;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

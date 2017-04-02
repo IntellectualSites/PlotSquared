@@ -33,7 +33,7 @@ public class PlotId {
         if (string == null) {
             return null;
         }
-        String[] parts = string.split(";");
+        String[] parts = string.split("[;|,]");
         if (parts.length < 2) {
             return null;
         }
@@ -118,6 +118,12 @@ public class PlotId {
     public String toString() {
         return this.x + ";" + this.y;
     }
+
+    public String toCommaSeparatedString() {
+        return this.x + "," + this.y;
+    }
+
+
 
     /**
      * The PlotId object caches the hashcode for faster mapping/fetching/sorting<br>

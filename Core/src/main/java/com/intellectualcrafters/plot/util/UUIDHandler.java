@@ -9,6 +9,7 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
@@ -91,26 +92,44 @@ public class UUIDHandler {
     }
 
     public static UUID getUUID(PlotPlayer player) {
+        if (implementation == null) {
+            return null;
+        }
         return implementation.getUUID(player);
     }
 
     public static UUID getUUID(OfflinePlotPlayer player) {
+        if (implementation == null) {
+            return null;
+        }
         return implementation.getUUID(player);
     }
 
     public static String getName(UUID uuid) {
+        if (implementation == null) {
+            return null;
+        }
         return implementation.getName(uuid);
     }
 
     public static PlotPlayer getPlayer(UUID uuid) {
+        if (implementation == null) {
+            return null;
+        }
         return implementation.getPlayer(uuid);
     }
 
     public static PlotPlayer getPlayer(String name) {
+        if (implementation == null) {
+            return null;
+        }
         return implementation.getPlayer(name);
     }
 
     public static UUID getUUIDFromString(String nameOrUUIDString) {
+        if (implementation == null) {
+            return null;
+        }
         if (nameOrUUIDString.length() > 16) {
             return UUID.fromString(nameOrUUIDString);
         }
@@ -118,18 +137,30 @@ public class UUIDHandler {
     }
 
     public static UUID getUUID(String name, RunnableVal<UUID> ifFetch) {
+        if (implementation == null) {
+            return null;
+        }
         return implementation.getUUID(name, ifFetch);
     }
 
     public static UUID getCachedUUID(String name, RunnableVal<UUID> ifFetch) {
+        if (implementation == null) {
+            return null;
+        }
         return implementation.getUUIDMap().get(new StringWrapper(name));
     }
 
     public static Map<String, PlotPlayer> getPlayers() {
+        if (implementation == null) {
+            return new HashMap<>();
+        }
         return implementation.getPlayers();
     }
 
     public static void handleShutdown() {
+        if (implementation == null) {
+            return;
+        }
         implementation.handleShutdown();
     }
 }

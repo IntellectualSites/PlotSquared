@@ -209,6 +209,7 @@ public class Trim extends SubCommand {
                         @Override
                         public void run() {
                             Trim.TASK = false;
+                            player.sendMessage("Trim done!");
                         }
                     };
                 }

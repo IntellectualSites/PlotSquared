@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Expression;
@@ -56,8 +57,21 @@ public class Auto extends SubCommand {
     public boolean onCommand(PlotPlayer player, String[] args) {
         PlotArea plotarea = player.getApplicablePlotArea();
         if (plotarea == null) {
-            MainUtil.sendMessage(player, C.NOT_IN_PLOT_WORLD);
-            return false;
+            if (EconHandler.manager != null) {
+                for (PlotArea area : PS.get().getPlotAreaManager().getAllPlotAreas()) {
+                    if (EconHandler.manager.hasPermission(area.worldname, player.getName(), "plots.auto")) {
+                        if (plotarea != null) {
+                            plotarea = null;
+                            break;
+                        }
+                        plotarea = area;
+                    }
+                }
+            }
+            if (plotarea == null) {
+                MainUtil.sendMessage(player, C.NOT_IN_PLOT_WORLD);
+                return false;
+            }
         }
         int size_x = 1;
         int size_z = 1;
@@ -96,7 +110,7 @@ public class Auto extends SubCommand {
         int diff = currentPlots - player.getAllowedPlots();
         if (diff + size_x * size_z > 0) {
             if (diff < 0) {
-                MainUtil.sendMessage(player, C.CANT_CLAIM_MORE_PLOTS_NUM, -diff + "");
+                    MainUtil.sendMessage(player, C.CANT_CLAIM_MORE_PLOTS_NUM, -diff + "");
                 return false;
             } else if (player.hasPersistentMeta("grantedPlots")) {
                 int grantedPlots = ByteArrayUtilities.bytesToInteger(player.getPersistentMeta("grantedPlots"));
@@ -162,7 +176,6 @@ public class Auto extends SubCommand {
             MainUtil.sendMessage(player, C.NO_FREE_PLOTS);
             return false;
         }
-        plotarea.setMeta("lastPlot", new PlotId(0, 0));
         while (true) {
             PlotId start = getNextPlotId(getLastPlotId(plotarea), 1);
             PlotId end = new PlotId(start.x + size_x - 1, start.y + size_z - 1);
@@ -183,7 +196,6 @@ public class Auto extends SubCommand {
                 break;
             }
         }
-        plotarea.setMeta("lastPlot", new PlotId(0, 0));
         return true;
     }
 

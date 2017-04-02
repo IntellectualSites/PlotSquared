@@ -93,7 +93,7 @@ public abstract class HybridUtils {
                 }
                 RegionWrapper region = zones.poll();
                 final Runnable task = this;
-                analyzeRegion(origin.getArea().worldname, region, new RunnableVal<PlotAnalysis>() {
+                analyzeRegion(origin.getWorldName(), region, new RunnableVal<PlotAnalysis>() {
                     @Override
                     public void run(PlotAnalysis value) {
                         analysis.add(value);
@@ -167,13 +167,13 @@ public abstract class HybridUtils {
                     return;
                 }
                 RegionWrapper region = zones.poll();
-                Location pos1 = new Location(plot.getArea().worldname, region.minX, region.minY, region.minZ);
-                Location pos2 = new Location(plot.getArea().worldname, region.maxX, region.maxY, region.maxZ);
+                Location pos1 = new Location(plot.getWorldName(), region.minX, region.minY, region.minZ);
+                Location pos2 = new Location(plot.getWorldName(), region.maxX, region.maxY, region.maxZ);
                 ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
                     @Override
                     public void run(int[] value) {
                         ChunkLoc loc = new ChunkLoc(value[0], value[1]);
-                        ChunkManager.manager.loadChunk(plot.getArea().worldname, loc, false);
+                        ChunkManager.manager.loadChunk(plot.getWorldName(), loc, false);
                         int bx = value[2];
                         int bz = value[3];
                         int ex = value[4];
@@ -314,7 +314,7 @@ public abstract class HybridUtils {
     }
 
     public boolean setupRoadSchematic(Plot plot) {
-        final String world = plot.getArea().worldname;
+        final String world = plot.getWorldName();
         final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
         Location bot = plot.getBottomAbs().subtract(1, 0, 1);
         Location top = plot.getTopAbs();
@@ -433,11 +433,12 @@ public abstract class HybridUtils {
                         }
                         if (condition) {
                             char[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
+                            int minY = Math.min(plotWorld.PLOT_HEIGHT, plotWorld.ROAD_HEIGHT);
                             if (blocks != null) {
                                 for (int y = 0; y < blocks.length; y++) {
                                     PlotBlock block = PlotBlock.get(blocks[y]);
                                     if (block != null) {
-                                        queue.setBlock(x + X + plotWorld.ROAD_OFFSET_X, y, z + Z + plotWorld.ROAD_OFFSET_Z, block);
+                                        queue.setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y, z + Z + plotWorld.ROAD_OFFSET_Z, block);
                                     }
                                 }
                             }

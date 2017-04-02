@@ -85,7 +85,7 @@ public class BukkitEventUtil extends EventUtil {
 
     @Override
     public boolean callMerge(Plot plot, ArrayList<PlotId> plots) {
-        return callEvent(new PlotMergeEvent(BukkitUtil.getWorld(plot.getArea().worldname), plot, plots));
+        return callEvent(new PlotMergeEvent(BukkitUtil.getWorld(plot.getWorldName()), plot, plots));
     }
 
     @Override

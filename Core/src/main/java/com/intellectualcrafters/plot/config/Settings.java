@@ -100,7 +100,6 @@ public class Settings extends Config {
 
         // Web
         Web.URL = config.getString("web.url", Web.URL);
-        Web.SERVER_IP = config.getString("web.server-ip", Web.SERVER_IP);
 
         // Caching
         Enabled_Components.PERMISSION_CACHE = config.getBoolean("cache.permissions", Enabled_Components.PERMISSION_CACHE);
@@ -204,10 +203,20 @@ public class Settings extends Config {
     }
 
     public static class Web {
-        @Comment("We are already hosting a web interface for you:")
+        @Comment({
+                "The web interface for schematics",
+                " - All schematics are anonymous and private",
+                " - Downloads can be deleted by the user",
+                " - Supports plot uploads, downloads and saves",
+        })
         public static String URL = "http://empcraft.com/plots/";
-        @Comment("The ip that will show up in the interface")
-        public static String SERVER_IP = "your.ip.here";
+        @Comment({
+                "The web interface for assets",
+                " - All schematics are organized and public",
+                " - Assets can be searched, selected and downloaded",
+        })
+        public static String ASSETS = "http://empcraft.com/assetpack/";
+
     }
 
     public static final class Done {
@@ -306,6 +315,8 @@ public class Settings extends Config {
         public static boolean KILL_ROAD_VEHICLES = false;
         @Comment("Notify a player of any missed comments upon plot entry")
         public static boolean COMMENT_NOTIFIER = false;
+        @Comment("Let player's claim entire worlds with PlotSquared")
+        public static boolean WORLDS = false;
         @Comment("Actively purge invalid database entries")
         public static boolean DATABASE_PURGER = false;
         @Comment("Delete plots when a player is banned")
