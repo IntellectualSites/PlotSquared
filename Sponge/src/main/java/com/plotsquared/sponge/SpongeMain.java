@@ -11,8 +11,13 @@ import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.SetupObject;
+import com.intellectualcrafters.plot.object.worlds.PlotAreaManager;
+import com.intellectualcrafters.plot.object.worlds.SinglePlotArea;
+import com.intellectualcrafters.plot.object.worlds.SinglePlotAreaManager;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.ChatManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -63,6 +68,7 @@ import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.profile.GameProfileManager;
+import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gen.GenerationPopulator;
 import org.spongepowered.api.world.gen.WorldGenerator;
@@ -137,6 +143,41 @@ public class SpongeMain implements IPlotMain {
         new PS(this, "Sponge");
         this.server = this.game.getServer();
         this.game.getRegistry().register(WorldGeneratorModifier.class, (WorldGeneratorModifier) PS.get().IMP.getDefaultGenerator().specify(null));
+        if (Settings.Enabled_Components.WORLDS) {
+            TaskManager.IMP.taskRepeat(new Runnable() {
+                @Override
+                public void run() {
+                    unload();
+                }
+            }, 20);
+        }
+    }
+
+    public void unload() {
+        PlotAreaManager manager = PS.get().getPlotAreaManager();
+        if (manager instanceof SinglePlotAreaManager) {
+            long start = System.currentTimeMillis();
+            SinglePlotArea area = ((SinglePlotAreaManager) manager).getArea();
+            for (World world : Sponge.getServer().getWorlds()) {
+                String name = world.getName();
+                PlotId id = PlotId.fromString(name);
+                if (id != null) {
+                    Plot plot = area.getOwnedPlot(id);
+                    if (plot != null) {
+                        List<PlotPlayer> players = plot.getPlayersInPlot();
+                        if (players.isEmpty() && PlotPlayer.wrap(plot.owner) == null) {
+                            for (Chunk chunk : world.getLoadedChunks()) {
+                                chunk.unloadChunk();
+                                if (System.currentTimeMillis() - start > 20) {
+                                    return;
+                                }
+                            }
+                            Sponge.getServer().unloadWorld(world);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override

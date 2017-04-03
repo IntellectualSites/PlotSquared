@@ -12,12 +12,30 @@ import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.object.chat.PlainChatManager;
+import com.intellectualcrafters.plot.object.worlds.PlotAreaManager;
+import com.intellectualcrafters.plot.object.worlds.SinglePlotArea;
+import com.intellectualcrafters.plot.object.worlds.SinglePlotAreaManager;
 import com.intellectualcrafters.plot.object.worlds.SingleWorldGenerator;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.AbstractTitle;
+import com.intellectualcrafters.plot.util.ChatManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.ConsoleColors;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.InventoryUtil;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.SetupUtils;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.block.QueueProvider;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.database.plotme.ClassicPlotMeConnector;
@@ -33,7 +51,21 @@ import com.plotsquared.bukkit.listeners.PlayerEvents_1_9;
 import com.plotsquared.bukkit.listeners.PlotPlusListener;
 import com.plotsquared.bukkit.listeners.WorldEvents;
 import com.plotsquared.bukkit.titles.DefaultTitle_111;
-import com.plotsquared.bukkit.util.*;
+import com.plotsquared.bukkit.util.BukkitChatManager;
+import com.plotsquared.bukkit.util.BukkitChunkManager;
+import com.plotsquared.bukkit.util.BukkitCommand;
+import com.plotsquared.bukkit.util.BukkitEconHandler;
+import com.plotsquared.bukkit.util.BukkitEventUtil;
+import com.plotsquared.bukkit.util.BukkitHybridUtils;
+import com.plotsquared.bukkit.util.BukkitInventoryUtil;
+import com.plotsquared.bukkit.util.BukkitSchematicHandler;
+import com.plotsquared.bukkit.util.BukkitSetupUtils;
+import com.plotsquared.bukkit.util.BukkitTaskManager;
+import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.bukkit.util.BukkitVersion;
+import com.plotsquared.bukkit.util.Metrics;
+import com.plotsquared.bukkit.util.SendChunk;
+import com.plotsquared.bukkit.util.SetGenCB;
 import com.plotsquared.bukkit.util.block.BukkitLocalQueue;
 import com.plotsquared.bukkit.util.block.BukkitLocalQueue_1_7;
 import com.plotsquared.bukkit.util.block.BukkitLocalQueue_1_8;
@@ -56,6 +88,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -158,6 +191,41 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             PS.log(C.PREFIX + "&6Metrics enabled.");
         } else {
             PS.log(C.CONSOLE_PLEASE_ENABLE_METRICS.f(getPluginName()));
+        }
+        if (Settings.Enabled_Components.WORLDS) {
+            TaskManager.IMP.taskRepeat(new Runnable() {
+                @Override
+                public void run() {
+                    unload();
+                }
+            }, 20);
+        }
+    }
+
+    public void unload() {
+        PlotAreaManager manager = PS.get().getPlotAreaManager();
+        if (manager instanceof SinglePlotAreaManager) {
+            long start = System.currentTimeMillis();
+            SinglePlotArea area = ((SinglePlotAreaManager) manager).getArea();
+            for (World world : Bukkit.getWorlds()) {
+                String name = world.getName();
+                PlotId id = PlotId.fromString(name);
+                if (id != null) {
+                    Plot plot = area.getOwnedPlot(id);
+                    if (plot != null) {
+                        List<PlotPlayer> players = plot.getPlayersInPlot();
+                        if (players.isEmpty() && PlotPlayer.wrap(plot.owner) == null) {
+                            for (Chunk chunk : world.getLoadedChunks()) {
+                                chunk.unload(true, false);
+                                if (System.currentTimeMillis() - start > 20) {
+                                    return;
+                                }
+                            }
+                            Bukkit.unloadWorld(world, false);
+                        }
+                    }
+                }
+            }
         }
     }
 

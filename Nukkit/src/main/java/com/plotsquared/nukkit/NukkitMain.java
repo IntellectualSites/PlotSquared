@@ -6,6 +6,7 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Listener;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.plugin.Plugin;
@@ -23,11 +24,15 @@ import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.object.chat.PlainChatManager;
+import com.intellectualcrafters.plot.object.worlds.PlotAreaManager;
+import com.intellectualcrafters.plot.object.worlds.SinglePlotArea;
+import com.intellectualcrafters.plot.object.worlds.SinglePlotAreaManager;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.ChatManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -106,8 +111,51 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
                 PS.log(C.CONSOLE_PLEASE_ENABLE_METRICS.f(getPluginName()));
             }
             Generator.addGenerator(NukkitHybridGen.class, getPluginName(), 1);
+            if (Settings.Enabled_Components.WORLDS) {
+                TaskManager.IMP.taskRepeat(new Runnable() {
+                    @Override
+                    public void run() {
+                        unload();
+                    }
+                }, 20);
+            }
         } catch (Throwable e) {
             e.printStackTrace();
+        }
+    }
+
+    public void unload() {
+        PlotAreaManager manager = PS.get().getPlotAreaManager();
+        if (manager instanceof SinglePlotAreaManager) {
+            long start = System.currentTimeMillis();
+            SinglePlotArea area = ((SinglePlotAreaManager) manager).getArea();
+            Map<Integer, Level> worlds = getServer().getLevels();
+            Level unload = null;
+            for (Level world : getServer().getLevels().values()) {
+                String name = world.getName();
+                PlotId id = PlotId.fromString(name);
+                if (id != null) {
+                    Plot plot = area.getOwnedPlot(id);
+                    if (plot != null) {
+                        List<PlotPlayer> players = plot.getPlayersInPlot();
+                        if (players.isEmpty() && PlotPlayer.wrap(plot.owner) == null) {
+                            unload = world;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (unload != null) {
+                Map<String, BaseFullChunk> chunks = unload.getChunks();
+                BaseFullChunk[] toUnload = chunks.values().toArray(new BaseFullChunk[chunks.size()]);
+                for (BaseFullChunk chunk : toUnload) {
+                    chunk.unload(true, false);
+                    if (System.currentTimeMillis() - start > 20) {
+                        return;
+                    }
+                }
+                getServer().unloadLevel(unload, true);
+            }
         }
     }
 

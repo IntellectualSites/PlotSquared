@@ -41,7 +41,19 @@ public class SinglePlotArea extends GridPlotWorld {
         setup.step = new ConfigurationNode[0];
         setup.world = worldName;
         SetupUtils.manager.setupWorld(setup);
+//        String worldName = plot.getWorldName();
+//        World world = Bukkit.getWorld(worldName);
+//        if (world != null) {
+//            return world;
+//        }
+//        WorldCreator wc = new WorldCreator(worldName);
+//        wc.generator("PlotSquared:single");
+//        wc.environment(World.Environment.NORMAL);
+//        wc.type(WorldType.FLAT);
+//        return AsyncWorld.create(wc);
     }
+
+
 
     @Override
     public ConfigurationNode[] getSettingNodes() {

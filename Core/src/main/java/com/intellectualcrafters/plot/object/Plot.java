@@ -1678,7 +1678,7 @@ public class Plot {
      * @param uuid
      */
     public boolean removeDenied(UUID uuid) {
-        if (uuid == DBFunc.everyone) {
+        if (uuid == DBFunc.everyone && !denied.contains(uuid)) {
             boolean result = false;
             for (UUID other : new HashSet<>(getDenied())) {
                 result = rmvDenied(other) || result;
@@ -1705,7 +1705,7 @@ public class Plot {
      * @param uuid
      */
     public boolean removeTrusted(UUID uuid) {
-        if (uuid == DBFunc.everyone) {
+        if (uuid == DBFunc.everyone && !trusted.contains(uuid)) {
             boolean result = false;
             for (UUID other : new HashSet<>(getTrusted())) {
                 result = rmvTrusted(other) || result;
@@ -1735,7 +1735,7 @@ public class Plot {
         if (this.members == null) {
             return false;
         }
-        if (uuid == DBFunc.everyone) {
+        if (uuid == DBFunc.everyone && !members.contains(uuid)) {
             boolean result = false;
             for (UUID other : new HashSet<>(this.members)) {
                 result = rmvMember(other) || result;

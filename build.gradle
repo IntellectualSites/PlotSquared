@@ -20,6 +20,9 @@ ext {
 }
 version = "3.5.1-SNAPSHOT-${revision}"
 description = rootProject.name
+if ( project.hasProperty("lzNoVersion") ) { // gradle build -PlzNoVersion
+    version = "unknown";
+}
 
 subprojects {
     apply plugin: 'java'
