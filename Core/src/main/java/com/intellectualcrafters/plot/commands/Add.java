@@ -64,9 +64,11 @@ public class Add extends Command {
             @Override // Success
             public void run() {
                 for (UUID uuid : uuids) {
-                    if (!plot.removeTrusted(uuid)) {
-                        if (plot.getDenied().contains(uuid)) {
-                            plot.removeDenied(uuid);
+                    if (uuid != DBFunc.everyone) {
+                        if (!plot.removeTrusted(uuid)) {
+                            if (plot.getDenied().contains(uuid)) {
+                                plot.removeDenied(uuid);
+                            }
                         }
                     }
                     plot.addMember(uuid);

@@ -64,9 +64,11 @@ public class Trust extends Command {
             @Override // Success
             public void run() {
                 for (UUID uuid : uuids) {
-                    if (!plot.removeMember(uuid)) {
-                        if (plot.getDenied().contains(uuid)) {
-                            plot.removeDenied(uuid);
+                    if (uuid != DBFunc.everyone) {
+                        if (!plot.removeMember(uuid)) {
+                            if (plot.getDenied().contains(uuid)) {
+                                plot.removeDenied(uuid);
+                            }
                         }
                     }
                     plot.addTrusted(uuid);

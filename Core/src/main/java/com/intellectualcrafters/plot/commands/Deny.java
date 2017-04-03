@@ -68,8 +68,10 @@ public class Deny extends SubCommand {
                 MainUtil.sendMessage(player, C.ALREADY_ADDED, MainUtil.getName(uuid));
                 return false;
             }
-            plot.removeMember(uuid);
-            plot.removeTrusted(uuid);
+            if (uuid != DBFunc.everyone) {
+                plot.removeMember(uuid);
+                plot.removeTrusted(uuid);
+            }
             plot.addDenied(uuid);
             EventUtil.manager.callDenied(player, plot, uuid, true);
             if (!uuid.equals(DBFunc.everyone)) {

@@ -394,16 +394,17 @@ public class Plot {
         if (this.owner == null || getDenied().contains(uuid)) {
             return false;
         }
-        if (getTrusted().contains(uuid) || getTrusted().contains(DBFunc.everyone)) {
-            return true;
-        }
         if (isOwner(uuid)) {
             return true;
         }
-        if (getMembers().contains(uuid) || getMembers().contains(DBFunc.everyone)) {
-            if (isOnline()) {
-                return true;
-            }
+        if (getMembers().contains(uuid)) {
+            return isOnline();
+        }
+        if (getTrusted().contains(uuid) || getTrusted().contains(DBFunc.everyone)) {
+            return true;
+        }
+        if (getMembers().contains(DBFunc.everyone)) {
+            return isOnline();
         }
         return false;
     }
