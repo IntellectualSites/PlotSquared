@@ -18,6 +18,7 @@ import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.object.worlds.PlotAreaManager;
 import com.intellectualcrafters.plot.object.worlds.SinglePlotArea;
 import com.intellectualcrafters.plot.object.worlds.SinglePlotAreaManager;
+import com.intellectualcrafters.plot.object.worlds.SingleWorldGenerator;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.ChatManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -143,6 +144,7 @@ public class SpongeMain implements IPlotMain {
         new PS(this, "Sponge");
         this.server = this.game.getServer();
         this.game.getRegistry().register(WorldGeneratorModifier.class, (WorldGeneratorModifier) PS.get().IMP.getDefaultGenerator().specify(null));
+        this.game.getRegistry().register(WorldGeneratorModifier.class, (WorldGeneratorModifier) new SingleWorldGenerator().specify(null));
         if (Settings.Enabled_Components.WORLDS) {
             TaskManager.IMP.taskRepeat(new Runnable() {
                 @Override
@@ -172,6 +174,7 @@ public class SpongeMain implements IPlotMain {
                                     return;
                                 }
                             }
+                            System.out.println("Unload " + world);
                             Sponge.getServer().unloadWorld(world);
                         }
                     }
@@ -200,7 +203,7 @@ public class SpongeMain implements IPlotMain {
 
     @Override
     public File getWorldContainer() {
-        return game.getSavesDirectory().toFile();
+        return new File(game.getSavesDirectory().toFile(), "world");
     }
 
     @Override

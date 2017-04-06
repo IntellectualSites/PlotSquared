@@ -6,6 +6,7 @@ import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.SetupObject;
+import com.intellectualcrafters.plot.object.worlds.SingleWorldGenerator;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.plotsquared.sponge.generator.SpongePlotGenerator;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.DimensionTypes;
 import org.spongepowered.api.world.GeneratorTypes;
@@ -31,6 +33,7 @@ public class SpongeSetupUtils extends SetupUtils {
             return;
         }
         SetupUtils.generators.put(PS.imp().getPluginName(), new SpongePlotGenerator(PS.get().IMP.getDefaultGenerator()));
+        SetupUtils.generators.put(PS.imp().getPluginName() + ":single", new SpongePlotGenerator(new SingleWorldGenerator()));
         // TODO get external world generators
         Collection<WorldGeneratorModifier> wgms = Sponge.getRegistry().getAllOf(WorldGeneratorModifier.class);
         for (WorldGeneratorModifier wgm : wgms) {
@@ -75,12 +78,12 @@ public class SpongeSetupUtils extends SetupUtils {
         String world = object.world;
         int type = object.type;
         String worldPath = "worlds." + object.world;
-        if (!PS.get().worlds.contains(worldPath)) {
-            PS.get().worlds.createSection(worldPath);
-        }
-        ConfigurationSection worldSection = PS.get().worlds.getConfigurationSection(worldPath);
         switch (type) {
             case 2: {
+                if (!PS.get().worlds.contains(worldPath)) {
+                    PS.get().worlds.createSection(worldPath);
+                }
+                ConfigurationSection worldSection = PS.get().worlds.getConfigurationSection(worldPath);
                 if (object.id != null) {
                     String areaName = object.id + "-" + object.min + "-" + object.max;
                     String areaPath = "areas." + areaName;
@@ -117,7 +120,11 @@ public class SpongeSetupUtils extends SetupUtils {
                 }
                 break;
             }
-            case 1:
+            case 1: {
+                if (!PS.get().worlds.contains(worldPath)) {
+                    PS.get().worlds.createSection(worldPath);
+                }
+                ConfigurationSection worldSection = PS.get().worlds.getConfigurationSection(worldPath);
                 for (ConfigurationNode step : steps) {
                     worldSection.set(step.getConstant(), step.getValue());
                 }
@@ -132,11 +139,19 @@ public class SpongeSetupUtils extends SetupUtils {
                     object.setupGenerator = null;
                 }
                 break;
-            case 0:
-                for (ConfigurationNode step : steps) {
-                    worldSection.set(step.getConstant(), step.getValue());
+            }
+            case 0: {
+                if (steps.length != 0) {
+                    if (!PS.get().worlds.contains(worldPath)) {
+                        PS.get().worlds.createSection(worldPath);
+                    }
+                    ConfigurationSection worldSection = PS.get().worlds.getConfigurationSection(worldPath);
+                    for (ConfigurationNode step : steps) {
+                        worldSection.set(step.getConstant(), step.getValue());
+                    }
                 }
                 break;
+            }
         }
         try {
             PS.get().worlds.save(PS.get().worldsFile);
@@ -147,6 +162,7 @@ public class SpongeSetupUtils extends SetupUtils {
             // create world with generator
             GeneratorWrapper<?> gw = SetupUtils.generators.get(object.setupGenerator);
             WorldGeneratorModifier wgm = (WorldGeneratorModifier) gw.getPlatformGenerator();
+            System.out.println("GW " + gw + " | " + wgm);
 
             WorldArchetype settings = WorldArchetype.builder()
             .loadsOnStartup(true)
@@ -156,7 +172,7 @@ public class SpongeSetupUtils extends SetupUtils {
             .usesMapFeatures(false)
             .enabled(true)
             .generatorModifiers(wgm)
-            .build("PS",object.world);
+            .build("PS-" + UUID.randomUUID(),object.world);
             WorldProperties properties = null;
             try {
                 properties = Sponge.getServer().createWorldProperties(object.world, settings);
@@ -168,7 +184,9 @@ public class SpongeSetupUtils extends SetupUtils {
             if (world1.isPresent()) {
                 worldObj = world1.get();
             }
+            System.out.println("Create normal world");
         } else {
+            System.out.println("Create vanilla world");
             // create vanilla world
             WorldArchetype settings = WorldArchetype.builder()
             .loadsOnStartup(true)
@@ -177,7 +195,7 @@ public class SpongeSetupUtils extends SetupUtils {
             .generator(GeneratorTypes.OVERWORLD)
             .usesMapFeatures(true)
             .enabled(true)
-            .build("PS",object.world);
+            .build("PS-" + UUID.randomUUID(),object.world);
             WorldProperties properties = null;
             try {
                 properties = Sponge.getServer().createWorldProperties(object.world, settings);

@@ -36,11 +36,7 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
             result.setCuboid(dirt1, dirt2, PlotBlock.get(3, 0));
             result.setCuboid(grass1, grass2, PlotBlock.get(2, 0));
         }
-        for (int x = 0; x < 16; x++) {
-            for (int z = 0; z < 16; z++) {
-                result.setBiome(x, z, "PLAINS");
-            }
-        }
+        result.fillBiome("PLAINS");
     }
 
     @Override

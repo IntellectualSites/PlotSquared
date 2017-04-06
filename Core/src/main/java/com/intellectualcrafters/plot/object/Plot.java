@@ -2033,7 +2033,7 @@ public class Plot {
             for (int i = 4; i > 0; i--) {
                 String caption = C.valueOf("OWNER_SIGN_LINE_" + i).s();
                 int index = caption.indexOf("%plr%");
-                if (index == -1) {
+                if (index < 0) {
                     continue;
                 }
                 String line = lines[i - 1];

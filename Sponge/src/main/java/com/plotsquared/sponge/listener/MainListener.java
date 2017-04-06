@@ -18,6 +18,7 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.listener.PlotListener;
+import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
 import com.plotsquared.sponge.util.SpongeUtil;
 import java.util.ArrayList;
@@ -161,7 +162,6 @@ public class MainListener {
 
     @Listener
     public void onSpawnEntity(SpawnEntityEvent event) {
-        World world = event.getTargetWorld();
         event.filterEntities(entity -> {
             if (entity instanceof Player) {
                 return true;
@@ -389,14 +389,12 @@ public class MainListener {
     }
 
     public void onChangeBlock(ChangeBlockEvent event) {
-        World world = event.getTargetWorld();
-        String worldName = world.getName();
-        if (!PS.get().hasPlotArea(worldName)) {
-            return;
-        }
         List<Transaction<BlockSnapshot>> transactions = event.getTransactions();
         Transaction<BlockSnapshot> first = transactions.get(0);
-        Location loc = SpongeUtil.getLocation(worldName, first.getOriginal().getPosition());
+        BlockSnapshot original = first.getOriginal();
+        Optional<World> world = SpongeMain.THIS.getServer().getWorld(original.getWorldUniqueId());
+        String worldName = world.get().getName();
+        Location loc = SpongeUtil.getLocation(worldName, original.getPosition());
         PlotArea area = loc.getPlotArea();
         if (area == null) {
             return;
@@ -435,15 +433,12 @@ public class MainListener {
             return;
         }
         PlotPlayer pp = SpongeUtil.getPlayer(player);
-        World world = event.getTargetWorld();
-        String worldName = world.getName();
-        if (!PS.get().hasPlotArea(worldName)) {
-            return;
-        }
         List<Transaction<BlockSnapshot>> transactions = event.getTransactions();
         Transaction<BlockSnapshot> first = transactions.get(0);
-        BlockSnapshot pos = first.getOriginal();
-        Location loc = SpongeUtil.getLocation(worldName, pos.getPosition());
+        BlockSnapshot original = first.getOriginal();
+        Optional<World> world = SpongeMain.THIS.getServer().getWorld(original.getWorldUniqueId());
+        String worldName = world.get().getName();
+        Location loc = SpongeUtil.getLocation(worldName, original.getPosition());
         Plot plot = loc.getPlot();
         if (plot == null) {
             if (!loc.isPlotArea()) {
@@ -468,7 +463,7 @@ public class MainListener {
             } else {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
                 com.google.common.base.Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
-                BlockState state = pos.getState();
+                BlockState state = original.getState();
                 if (!destroy.isPresent() || !destroy.get().contains(SpongeUtil.getPlotBlock(state))) {
                     event.setCancelled(true);
                     return;
@@ -511,14 +506,10 @@ public class MainListener {
             return;
         }
         PlotPlayer pp = SpongeUtil.getPlayer(player);
-        World world = event.getTargetWorld();
-        String worldName = world.getName();
-        if (!PS.get().hasPlotArea(worldName)) {
-            return;
-        }
         List<org.spongepowered.api.world.Location<World>> locs = event.getLocations();
         org.spongepowered.api.world.Location<World> first = locs.get(0);
-        Location loc = SpongeUtil.getLocation(worldName, first);
+        String worldName = first.getExtent().getName();
+        Location loc = SpongeUtil.getLocation(worldName, first.getPosition());
         PlotArea area = loc.getPlotArea();
         if (area == null) {
             return;
@@ -559,14 +550,11 @@ public class MainListener {
             return;
         }
         PlotPlayer pp = SpongeUtil.getPlayer(player);
-        World world = event.getTargetWorld();
-        String worldName = world.getName();
-        if (!PS.get().hasPlotArea(worldName)) {
-            return;
-        }
         List<Transaction<BlockSnapshot>> transactions = event.getTransactions();
         Transaction<BlockSnapshot> first = transactions.get(0);
         BlockSnapshot pos = first.getOriginal();
+        Optional<World> world = SpongeMain.THIS.getServer().getWorld(pos.getWorldUniqueId());
+        String worldName = world.get().getName();
         Location loc = SpongeUtil.getLocation(worldName, pos.getPosition());
         PlotArea area = loc.getPlotArea();
         if (area == null) {
