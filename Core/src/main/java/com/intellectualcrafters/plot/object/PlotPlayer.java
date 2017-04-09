@@ -496,7 +496,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                             if (manager instanceof SinglePlotAreaManager) {
                                 PlotArea area = ((SinglePlotAreaManager) manager).getArea();
                                 byte[] arr = PlotPlayer.this.getPersistentMeta("quitLoc");
-                                if (arr != null) {
+                                if (arr != null && getMeta("teleportOnLogin", true)) {
                                     ByteBuffer quitWorld = ByteBuffer.wrap(arr);
                                     PlotId id = new PlotId(quitWorld.getShort(), quitWorld.getShort());
                                     int x = quitWorld.getInt();
