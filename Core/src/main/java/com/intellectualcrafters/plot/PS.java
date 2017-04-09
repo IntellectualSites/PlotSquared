@@ -1579,6 +1579,7 @@ public class PS{
             DBFunc.close();
             UUIDHandler.handleShutdown();
         } catch (NullPointerException ignored) {
+            ignored.printStackTrace();
             PS.log("&cCould not close database connection!");
         }
     }
