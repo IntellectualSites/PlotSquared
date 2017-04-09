@@ -1417,6 +1417,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void delete(final Plot plot) {
+        PS.debug("Deleting plot... Id: " + plot.getId() + " World: " + plot.getWorldName() + " Owner: " + plot.owner + " Index: " + plot.temp);
         deleteSettings(plot);
         deleteDenied(plot);
         deleteHelpers(plot);
@@ -1444,6 +1445,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void createPlotSettings(final int id, Plot plot) {
+        PS.debug("Creating plot... Id: " + plot.getId() + " World: " + plot.getWorldName() + " Owner: " + plot.owner + " Index: " + id);
         addPlotTask(plot, new UniqueStatement("createPlotSettings") {
             @Override
             public void set(PreparedStatement stmt) throws SQLException {
