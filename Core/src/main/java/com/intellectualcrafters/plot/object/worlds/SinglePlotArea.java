@@ -9,8 +9,10 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotSettings;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.SetupUtils;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.WorldUtil;
 
 public class SinglePlotArea extends GridPlotWorld {
@@ -30,17 +32,22 @@ public class SinglePlotArea extends GridPlotWorld {
         VOID = config.getBoolean("void", false);
     }
 
-    public void loadWorld(PlotId id) {
-        String worldName = id.toCommaSeparatedString();
-        if (WorldUtil.IMP.isWorld(worldName)) return;
-        SetupObject setup = new SetupObject();
-        setup.plotManager = "PlotSquared:single";
-        setup.setupGenerator = "PlotSquared:single";
-        setup.type = 0;
-        setup.terrain = 0;
-        setup.step = new ConfigurationNode[0];
-        setup.world = worldName;
-        SetupUtils.manager.setupWorld(setup);
+    public void loadWorld(final PlotId id) {
+        TaskManager.IMP.sync(new RunnableVal<Object>() {
+            @Override
+            public void run(Object value) {
+                String worldName = id.toCommaSeparatedString();
+                if (WorldUtil.IMP.isWorld(worldName)) return;
+                SetupObject setup = new SetupObject();
+                setup.plotManager = "PlotSquared:single";
+                setup.setupGenerator = "PlotSquared:single";
+                setup.type = 0;
+                setup.terrain = 0;
+                setup.step = new ConfigurationNode[0];
+                setup.world = worldName;
+                SetupUtils.manager.setupWorld(setup);
+            }
+        });
 //        String worldName = plot.getWorldName();
 //        World world = Bukkit.getWorld(worldName);
 //        if (world != null) {
