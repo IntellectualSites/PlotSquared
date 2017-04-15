@@ -1330,9 +1330,17 @@ public class Plot {
         if (!canClaim(player)) {
             return false;
         }
+        return claim(player, teleport, schematic, true);
+    }
+
+    public boolean claim(final PlotPlayer player, boolean teleport, String schematic, boolean updateDB) {
         boolean result = EventUtil.manager.callClaim(player, this, false);
-        if (!result || !create(player.getUUID(), true)) {
-            return false;
+        if (updateDB) {
+            if (!result || (!create(player.getUUID(), true))) {
+                return false;
+            }
+        } else {
+            area.addPlot(this);
         }
         setSign(player.getName());
         MainUtil.sendMessage(player, C.CLAIMED);

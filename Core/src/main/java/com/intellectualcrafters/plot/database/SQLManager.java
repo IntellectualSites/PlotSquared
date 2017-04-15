@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.database;
 
+import com.google.common.base.Charsets;
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
@@ -53,6 +54,7 @@ public class SQLManager implements AbstractDB {
     public final String CREATE_SETTINGS;
     public final String CREATE_TIERS;
     public final String CREATE_PLOT;
+    public final String CREATE_PLOT_SAFE;
     public final String CREATE_CLUSTER;
     private final String prefix;
     // Private Final
@@ -116,6 +118,12 @@ public class SQLManager implements AbstractDB {
         this.CREATE_SETTINGS = "INSERT INTO `" + this.prefix + "plot_settings` (`plot_plot_id`) values ";
         this.CREATE_TIERS = "INSERT INTO `" + this.prefix + "plot_%tier%` (`plot_plot_id`, `user_uuid`) values ";
         this.CREATE_PLOT = "INSERT INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) VALUES(?, ?, ?, ?, ?)";
+
+        if (mySQL) {
+            this.CREATE_PLOT_SAFE = "INSERT OR IGNORE INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) SELECT ?, ?, ?, ?, ? FROM DUAL WHERE NOT EXISTS (SELECT null FROM `" + this.prefix + "plot` WHERE `world` = ? AND `plot_id_x` = ? AND `plot_id_z` = ?)";
+        } else {
+            this.CREATE_PLOT_SAFE = "INSERT OR IGNORE INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) SELECT ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT null FROM `" + this.prefix + "plot` WHERE `world` = ? AND `plot_id_x` = ? AND `plot_id_z` = ?)";
+        }
         this.CREATE_CLUSTER =
                 "INSERT INTO `" + this.prefix + "cluster`(`pos1_x`, `pos1_z`, `pos2_x`, `pos2_z`, `owner`, `world`) VALUES(?, ?, ?, ?, ?, ?)";
         try {
@@ -994,14 +1002,9 @@ public class SQLManager implements AbstractDB {
         });
     }
 
-    /**
-     * Create a plot.
-     *
-     * @param plot
-     */
-    @Override
-    public void createPlot(final Plot plot) {
-        addPlotTask(plot, new UniqueStatement("createPlot") {
+    public void createPlotSafe(final Plot plot, final Runnable success, final Runnable failure) {
+        final long timestamp = plot.getTimestamp();
+        addPlotTask(plot, new UniqueStatement("createPlotSafe_" + plot.hashCode()) {
             @Override
             public void set(PreparedStatement stmt) throws SQLException {
                 stmt.setInt(1, plot.getId().x);
@@ -1009,11 +1012,45 @@ public class SQLManager implements AbstractDB {
                 stmt.setString(3, plot.owner.toString());
                 stmt.setString(4, plot.getArea().toString());
                 stmt.setTimestamp(5, new Timestamp(plot.getTimestamp()));
+                stmt.setString(6, plot.getArea().toString());
+                stmt.setInt(7, plot.getId().x);
+                stmt.setInt(8, plot.getId().y);
             }
 
             @Override
             public PreparedStatement get() throws SQLException {
-                return SQLManager.this.connection.prepareStatement(SQLManager.this.CREATE_PLOT);
+                return SQLManager.this.connection.prepareStatement(SQLManager.this.CREATE_PLOT_SAFE, Statement.KEEP_CURRENT_RESULT  );
+            }
+
+            @Override
+            public void execute(PreparedStatement statement) {
+
+            }
+
+            @Override
+            public void addBatch(PreparedStatement statement) throws SQLException {
+                int inserted = statement.executeUpdate();
+                if (inserted > 0) {
+                    try (ResultSet keys = statement.getGeneratedKeys()) {
+                        if (keys.next()) {
+                            plot.temp = keys.getInt(1);
+                            addPlotTask(plot, new UniqueStatement("createPlotAndSettings_settings_" + plot.hashCode()) {
+                                @Override
+                                public void set(PreparedStatement stmt) throws SQLException {
+                                    stmt.setInt(1, getId(plot));
+                                }
+
+                                @Override
+                                public PreparedStatement get() throws SQLException {
+                                    return SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_settings`(`plot_plot_id`) VALUES(?)");
+                                }
+                            });
+                            if (success != null) addNotifyTask(success);
+                            return;
+                        }
+                    }
+                }
+                if (failure != null) failure.run();
             }
         });
     }
@@ -1040,7 +1077,7 @@ public class SQLManager implements AbstractDB {
                 stmt.setInt(1, plot.getId().x);
                 stmt.setInt(2, plot.getId().y);
                 stmt.setString(3, plot.owner.toString());
-                stmt.setString(4, plot.getArea().worldname);
+                stmt.setString(4, plot.getArea().toString());
                 stmt.setTimestamp(5, new Timestamp(plot.getTimestamp()));
             }
 
@@ -1055,9 +1092,10 @@ public class SQLManager implements AbstractDB {
             @Override
             public void addBatch(PreparedStatement statement) throws SQLException {
                 statement.executeUpdate();
-                ResultSet keys = statement.getGeneratedKeys();
-                if (keys.next()) {
-                    plot.temp = keys.getInt(1);
+                try (ResultSet keys = statement.getGeneratedKeys()) {
+                    if (keys.next()) {
+                        plot.temp = keys.getInt(1);
+                    }
                 }
             }
         });
@@ -1069,8 +1107,7 @@ public class SQLManager implements AbstractDB {
 
             @Override
             public PreparedStatement get() throws SQLException {
-                return SQLManager.this.connection
-                        .prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_settings`(`plot_plot_id`) VALUES(?)");
+                return SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_settings`(`plot_plot_id`) VALUES(?)");
             }
         });
         addNotifyTask(whenDone);
@@ -1714,7 +1751,15 @@ public class SQLManager implements AbstractDB {
                         o = resultSet.getString("owner");
                         user = uuids.get(o);
                         if (user == null) {
-                            user = UUID.fromString(o);
+                            try {
+                                user = UUID.fromString(o);
+                            } catch (IllegalArgumentException e) {
+                                if (Settings.UUID.FORCE_LOWERCASE) {
+                                    user = UUID.nameUUIDFromBytes(("OfflinePlayer:" + o.toLowerCase()).getBytes(Charsets.UTF_8));
+                                } else {
+                                    user = UUID.nameUUIDFromBytes(("OfflinePlayer:" + o).getBytes(Charsets.UTF_8));
+                                }
+                            }
                             uuids.put(o, user);
                         }
                         long time;
@@ -2722,7 +2767,7 @@ public class SQLManager implements AbstractDB {
                         for (String element : flags_string) {
                             if (element.contains(":")) {
                                 String[] split = element.split(":");
-                                String flag_str = split[1].replaceAll("\u00AF", ":").replaceAll("�", ",");
+                                String flag_str = split[1].replaceAll("\u00AF", ":").replaceAll("´", ",");
                                 Flag flag = FlagManager.getOrCreateFlag(split[0]);
                                 if (flag == null) {
                                     flag = new StringFlag(split[0]) {
@@ -2776,7 +2821,7 @@ public class SQLManager implements AbstractDB {
                 flag_string.append(',');
             }
             flag_string.append(flag.getKey().getName()).append(':')
-                    .append(flag.getKey().valueToString(flag.getValue()).replaceAll(":", "¯").replaceAll(",", "´"));
+                    .append(flag.getKey().valueToString(flag.getValue()).replaceAll(":", "\u00AF").replaceAll(",", "´"));
             i++;
         }
         addClusterTask(cluster, new UniqueStatement("setFlags") {

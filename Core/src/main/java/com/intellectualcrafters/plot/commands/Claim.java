@@ -2,6 +2,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Expression;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -21,13 +22,13 @@ import com.plotsquared.general.commands.CommandDeclaration;
 public class Claim extends SubCommand {
 
     @Override
-    public boolean onCommand(PlotPlayer player, String[] args) {
+    public boolean onCommand(final PlotPlayer player, String[] args) {
         String schematic = "";
         if (args.length >= 1) {
             schematic = args[0];
         }
         Location loc = player.getLocation();
-        Plot plot = loc.getPlotAbs();
+        final Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return sendMessage(player, C.NOT_IN_PLOT);
         }
@@ -47,7 +48,7 @@ public class Claim extends SubCommand {
         if (!plot.canClaim(player)) {
             return sendMessage(player, C.PLOT_IS_CLAIMED);
         }
-        PlotArea area = plot.getArea();
+        final PlotArea area = plot.getArea();
         if (!schematic.isEmpty()) {
             if (area.SCHEMATIC_CLAIM_SPECIFY) {
                 if (!area.SCHEMATICS.contains(schematic.toLowerCase())) {
@@ -81,6 +82,24 @@ public class Claim extends SubCommand {
             }
             sendMessage(player, C.REMOVED_GRANTED_PLOT, "1", "" + (grants - 1));
         }
-        return plot.claim(player, false, schematic) || sendMessage(player, C.PLOT_NOT_CLAIMED);
+        plot.owner = player.getUUID();
+        if (plot.canClaim(player)) {
+            final String finalSchematic = schematic;
+            DBFunc.createPlotSafe(plot, new Runnable() {
+                @Override
+                public void run() {
+                    plot.claim(player, true, finalSchematic, false);
+                }
+            }, new Runnable() {
+                @Override
+                public void run() {
+                    sendMessage(player, C.PLOT_NOT_CLAIMED);
+                }
+            });
+            return true;
+        } else {
+            sendMessage(player, C.PLOT_NOT_CLAIMED);
+        }
+        return false;
     }
 }

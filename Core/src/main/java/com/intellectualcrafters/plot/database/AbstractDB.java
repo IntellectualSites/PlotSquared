@@ -42,7 +42,7 @@ public interface AbstractDB {
      *
      * @param plot the plot to create
      */
-    void createPlot(Plot plot);
+    void createPlotSafe(final Plot plot, final Runnable success, final Runnable failure);
     
     /**
      * Create tables.

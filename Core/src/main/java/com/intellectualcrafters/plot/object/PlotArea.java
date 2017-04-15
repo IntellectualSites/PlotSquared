@@ -744,10 +744,19 @@ public abstract class PlotArea {
     }
 
     public boolean canClaim(PlotPlayer player, PlotId pos1, PlotId pos2) {
+        if (pos1.x == pos2.x && pos1.y == pos2.y) {
+            if (getOwnedPlot(pos1) != null) {
+                return false;
+            }
+            Plot plot = getPlotAbs(pos1);
+            if (plot == null) return false;
+            return plot.canClaim(player);
+        }
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
                 PlotId id = new PlotId(x, y);
                 Plot plot = getPlotAbs(id);
+                if (plot == null) return false;
                 if (!plot.canClaim(player)) {
                     return false;
                 }

@@ -16,6 +16,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.RunnableVal3;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import java.util.ArrayDeque;
@@ -25,6 +26,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -244,16 +246,17 @@ public class ExpireManager {
                         ExpireManager.this.running = 0;
                         return;
                     }
-                    final Plot plot = plots.poll();
+                    Plot plot = plots.poll();
                     PlotArea area = plot.getArea();
+                    final Plot newPlot = area.getPlot(plot.getId());
                     final ArrayDeque<ExpiryTask> applicable = new ArrayDeque<>(tasks);
-                    final Collection<ExpiryTask> expired = isExpired(applicable, plot);
+                    final Collection<ExpiryTask> expired = isExpired(applicable, newPlot);
                     if (expired.isEmpty()) {
                         continue;
                     }
                     for (ExpiryTask expiryTask : expired) {
                         if (!expiryTask.needsAnalysis()) {
-                            expiredTask.run(plot, new Runnable() {
+                            expiredTask.run(newPlot, new Runnable() {
                                 @Override
                                 public void run() {
                                     TaskManager.IMP.taskLaterAsync(task, 1);
@@ -268,7 +271,7 @@ public class ExpireManager {
                             passesComplexity(changed, expired, new RunnableVal<Boolean>() {
                                 @Override
                                 public void run(Boolean confirmation) {
-                                    expiredTask.run(plot, new Runnable() {
+                                    expiredTask.run(newPlot, new Runnable() {
                                         @Override
                                         public void run() {
                                             TaskManager.IMP.taskLaterAsync(task, 1);
@@ -278,7 +281,7 @@ public class ExpireManager {
                             }, new Runnable() {
                                 @Override
                                 public void run() {
-                                    FlagManager.addPlotFlag(plot, Flags.ANALYSIS, changed.asList());
+                                    FlagManager.addPlotFlag(newPlot, Flags.ANALYSIS, changed.asList());
                                     TaskManager.runTaskLaterAsync(task, 20);
                                 }
                             });
@@ -287,11 +290,11 @@ public class ExpireManager {
                     final Runnable doAnalysis = new Runnable() {
                         @Override
                         public void run() {
-                            HybridUtils.manager.analyzePlot(plot, handleAnalysis);
+                            HybridUtils.manager.analyzePlot(newPlot, handleAnalysis);
                         }
                     };
 
-                    PlotAnalysis analysis = plot.getComplexity(null);
+                    PlotAnalysis analysis = newPlot.getComplexity(null);
                     if (analysis != null) {
                         passesComplexity(analysis, expired, new RunnableVal<Boolean>() {
                             @Override
@@ -352,11 +355,12 @@ public class ExpireManager {
                 MainUtil.sendMessage(player, C.PLOT_REMOVED_USER, plot.toString());
             }
         }
+        Set<Plot> plots = plot.getConnectedPlots();
         plot.deletePlot(whenDone);
         PlotAnalysis changed = plot.getComplexity(null);
         int changes = changed == null ? 0 : changed.changes_sd;
         int modified = changed == null ? 0 : changed.changes;
-        PS.debug("$2[&5Expire&dManager$2] &cDeleted expired plot: " + plot + " User:" + plot.owner + " Delta:" + changes + "/" + modified);
+        PS.debug("$2[&5Expire&dManager$2] &cDeleted expired plot: " + plot + " User:" + plot.owner + " Delta:" + changes + "/" + modified + " Connected: " + StringMan.getString(plots));
         PS.debug("$4 - Area: " + plot.getArea());
         if (plot.hasOwner()) {
             PS.debug("$4 - Owner: " + UUIDHandler.getName(plot.owner));

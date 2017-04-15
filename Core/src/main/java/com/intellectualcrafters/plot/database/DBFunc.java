@@ -125,16 +125,11 @@ public class DBFunc {
         DBFunc.dbManager.createPlotsAndData(plots, whenDone);
     }
     
-    /**
-     * Create a plot
-     *
-     * @param plot Plot to create
-     */
-    public static void createPlot(Plot plot) {
-        if (plot.temp == -1 || dbManager == null) {
+    public static void createPlotSafe(final Plot plot, final Runnable success, final Runnable failure) {
+        if (dbManager == null) {
             return;
         }
-        DBFunc.dbManager.createPlot(plot);
+        DBFunc.dbManager.createPlotSafe(plot, success, failure);
     }
     
     /**
