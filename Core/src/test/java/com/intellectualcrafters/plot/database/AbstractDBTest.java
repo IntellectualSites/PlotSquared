@@ -20,7 +20,7 @@ public class AbstractDBTest implements AbstractDB {
 
     @Override public void createPlotsAndData(List<Plot> plots, Runnable whenDone) {}
 
-    @Override public void createPlot(Plot plot) {}
+    @Override public void createPlotSafe(Plot plot, Runnable success, Runnable failure) {}
 
     @Override public void createTables() {}
 
