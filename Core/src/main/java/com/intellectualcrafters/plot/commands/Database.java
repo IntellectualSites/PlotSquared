@@ -9,10 +9,10 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.worlds.SinglePlotArea;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -81,7 +81,7 @@ public class Database extends SubCommand {
             switch (args[0].toLowerCase()) {
                 case "import":
                     if (args.length < 2) {
-                        MainUtil.sendMessage(player, "/plot database import [sqlite file] [prefix]");
+                        MainUtil.sendMessage(player, "/plot database import <sqlite file> [prefix]");
                         return false;
                     }
                     File file = MainUtil.getFile(PS.get().IMP.getDirectory(), args[1].endsWith(".db") ? args[1] : args[1] + ".db");
@@ -101,11 +101,29 @@ public class Database extends SubCommand {
                             for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
                                 Plot plot = entry2.getValue();
                                 if (pa.getOwnedPlotAbs(plot.getId()) != null) {
+                                    if (pa instanceof SinglePlotArea) {
+                                        Plot newPlot = pa.getNextFreePlot(null, plot.getId());
+                                        if (newPlot != null) {
+                                            PlotId newId = newPlot.getId();
+                                            PlotId id = plot.getId();
+                                            File worldFile = new File(PS.imp().getWorldContainer(), id.toCommaSeparatedString());
+                                            if (worldFile.exists()) {
+                                                File newFile = new File(PS.imp().getWorldContainer(), newId.toCommaSeparatedString());
+                                                worldFile.renameTo(newFile);
+                                            }
+                                            id.x = newId.x;
+                                            id.y = newId.y;
+                                            id.recalculateHash();
+                                            plot.setArea(pa);
+                                            plots.add(plot);
+                                            continue;
+                                        }
+                                    }
                                     MainUtil.sendMessage(player, "Skipping duplicate plot: " + plot + " | id=" + plot.temp);
                                     continue;
                                 }
-                                plot.create();
-                                plots.add(entry2.getValue());
+                                plot.setArea(pa);
+                                plots.add(plot);
                             }
                         } else {
                             HashMap<PlotId, Plot> plotmap = PS.get().plots_tmp.get(areaname);

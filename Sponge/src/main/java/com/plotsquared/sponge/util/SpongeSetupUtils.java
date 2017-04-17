@@ -162,8 +162,6 @@ public class SpongeSetupUtils extends SetupUtils {
             // create world with generator
             GeneratorWrapper<?> gw = SetupUtils.generators.get(object.setupGenerator);
             WorldGeneratorModifier wgm = (WorldGeneratorModifier) gw.getPlatformGenerator();
-            System.out.println("GW " + gw + " | " + wgm);
-
             WorldArchetype settings = WorldArchetype.builder()
             .loadsOnStartup(true)
             .keepsSpawnLoaded(true)

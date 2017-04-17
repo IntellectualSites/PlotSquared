@@ -7,7 +7,7 @@ import com.intellectualcrafters.plot.util.ArrayUtil;
 import com.intellectualcrafters.plot.util.SetupUtils;
 
 public class SinglePlotAreaManager extends DefaultPlotAreaManager {
-    private final SinglePlotArea area;
+    private SinglePlotArea area;
     private final SinglePlotArea[] array;
     private PlotArea[] all;
 
@@ -61,6 +61,12 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
         return true;
     }
 
+    public void setArea(SinglePlotArea area) {
+        this.area = area;
+        array[0] = area;
+        all = ArrayUtil.concatAll(super.getAllPlotAreas(), array);
+    }
+
     @Override
     public PlotArea getApplicablePlotArea(Location location) {
         PlotArea found = super.getApplicablePlotArea(location);
@@ -73,7 +79,7 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
     public PlotArea getPlotArea(Location location) {
         PlotArea found = super.getPlotArea(location);
         if (found != null) return found;
-        return isWorld(location.getWorld()) ? area : null;
+        return isWorld(location.getWorld()) || location.getWorld().equals("*") ? area : null;
     }
 
     @Override

@@ -122,13 +122,13 @@ public class SinglePlotArea extends GridPlotWorld {
         return super.addPlotIfAbsent(plot);
     }
 
-    private Plot adapt(Plot p) {
+    protected Plot adapt(Plot p) {
         if (p instanceof SinglePlot) {
             return p;
         }
         PlotSettings s = p.getSettings();
         p = new SinglePlot(p.getId(), p.owner, p.getTrusted(), p.getMembers(), p.getDenied(), s.alias,  s.getPosition(), null, this, s.merged, p.getTimestamp(), p.temp);
-        s.flags = s.flags;
+        p.getSettings().flags = s.flags;
         return p;
     }
 

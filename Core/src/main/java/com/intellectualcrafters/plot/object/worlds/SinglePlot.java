@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.object.worlds;
 
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Plot;
@@ -39,8 +40,12 @@ public class SinglePlot extends Plot {
     }
 
     public boolean teleportPlayer(final PlotPlayer player) {
-        getArea().loadWorld(getId());
-        return super.teleportPlayer(player);
+        if (isLoaded()) {
+            return super.teleportPlayer(player);
+        } else {
+            C.NOT_LOADED.send(player);
+            return false;
+        }
     }
 
     @Override

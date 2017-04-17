@@ -25,33 +25,9 @@ import com.plotsquared.general.commands.CommandDeclaration;
         usage = "/plot auto [length,width]")
 public class Auto extends SubCommand {
 
+    @Deprecated
     public static PlotId getNextPlotId(PlotId id, int step) {
-        int absX = Math.abs(id.x);
-        int absY = Math.abs(id.y);
-        if (absX > absY) {
-            if (id.x > 0) {
-                return new PlotId(id.x, id.y + 1);
-            } else {
-                return new PlotId(id.x, id.y - 1);
-            }
-        } else if (absY > absX) {
-            if (id.y > 0) {
-                return new PlotId(id.x - 1, id.y);
-            } else {
-                return new PlotId(id.x + 1, id.y);
-            }
-        } else {
-            if (id.x == id.y && id.x > 0) {
-                return new PlotId(id.x, id.y + step);
-            }
-            if (id.x == absX) {
-                return new PlotId(id.x, id.y + 1);
-            }
-            if (id.y == absY) {
-                return new PlotId(id.x, id.y - 1);
-            }
-            return new PlotId(id.x + 1, id.y);
-        }
+        return id.getNextId(step);
     }
 
     @Override
@@ -176,10 +152,10 @@ public class Auto extends SubCommand {
                 return false;
             }
             while (true) {
-                PlotId start = getNextPlotId(getLastPlotId(plotarea), 1);
+                PlotId start = plotarea.getMeta("lastPlot", new PlotId(0, 0)).getNextId(1);
                 PlotId end = new PlotId(start.x + size_x - 1, start.y + size_z - 1);
-                plotarea.setMeta("lastPlot", start);
                 if (plotarea.canClaim(player, start, end)) {
+                    plotarea.setMeta("lastPlot", start);
                     for (int i = start.x; i <= end.x; i++) {
                         for (int j = start.y; j <= end.y; j++) {
                             Plot plot = plotarea.getPlotAbs(new PlotId(i, j));
@@ -187,10 +163,8 @@ public class Auto extends SubCommand {
                             plot.claim(player, teleport, null);
                         }
                     }
-                    if (size_x != 1 || size_z != 1) {
-                        if (!plotarea.mergePlots(MainUtil.getPlotSelectionIds(start, end), true, true)) {
-                            return false;
-                        }
+                    if (!plotarea.mergePlots(MainUtil.getPlotSelectionIds(start, end), true, true)) {
+                        return false;
                     }
                     break;
                 }
@@ -199,51 +173,39 @@ public class Auto extends SubCommand {
         }
     }
 
-    public void autoClaimSafe(final PlotPlayer player, final PlotArea area, PlotId start, final RunnableVal<Plot> whenDone) {
-        if (area.TYPE == 2) {
-            PlotId min = area.getMin();
-            PlotId max = area.getMax();
-            if (start == null) start = new PlotId(min.x, min.y);
-            while (!area.canClaim(player, start, start)) {
-                if (++start.x > max.x) {
-                    start.x = min.x;
-                    if (++start.y > max.y) {
-                        whenDone.run(null);
-                        return;
-                    }
-                }
-                start.recalculateHash();
+    public static PlotId getNextPlot(PlotId start) {
+        int plots;
+        PlotId center;
+        center = new PlotId(0, 0);
+        plots = Integer.MAX_VALUE;
+        PlotId currentId = new PlotId(0, 0);
+        for (int i = 0; i < plots; i++) {
+            if (start == null) {
+                start = new PlotId(0, 0);
+            } else {
+                start = start.getNextId(1);
             }
-        } else {
-            if (start == null) start = getLastPlotId(area);
-            while (!area.canClaim(player, start, start)) {
-                start = getNextPlotId(start, 1);
-            }
+            currentId.x = center.x + start.x;
+            currentId.y = center.y + start.y;
+            currentId.recalculateHash();
+            return start;
         }
-        Plot plot = area.getPlotAbs(start);
-        if (plot.canClaim(player)) {
-            plot.owner = player.getUUID();
-            final PlotId finalStart = getNextPlotId(start, 1);
-            area.setMeta("lastPlot", finalStart);
-            whenDone.value = plot;
-            DBFunc.createPlotSafe(plot, whenDone, new Runnable() {
-                @Override
-                public void run() {
-                    autoClaimSafe(player, area, finalStart, whenDone);
-                }
-            });
-            return;
-        }
-        autoClaimSafe(player, area, start, whenDone);
+        return null;
     }
 
-    public PlotId getLastPlotId(PlotArea area) {
-        PlotId value = (PlotId) area.getMeta("lastPlot");
-        if (value == null) {
-            value = new PlotId(0, 0);
-            area.setMeta("lastPlot", value);
-            return value;
+    public void autoClaimSafe(final PlotPlayer player, final PlotArea area, PlotId start, final RunnableVal<Plot> whenDone) {
+        final Plot plot = area.getNextFreePlot(player, start);
+        if (plot == null) {
+            whenDone.run(null);
+            return;
         }
-        return value;
+        whenDone.value = plot;
+        plot.owner = player.getUUID();
+        DBFunc.createPlotSafe(plot, whenDone, new Runnable() {
+            @Override
+            public void run() {
+                autoClaimSafe(player, area, plot.getId(), whenDone);
+            }
+        });
     }
 }

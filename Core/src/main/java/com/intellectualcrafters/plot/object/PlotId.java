@@ -48,6 +48,35 @@ public class PlotId {
         return new PlotId(x, y);
     }
 
+    public PlotId getNextId(int step) {
+        int absX = Math.abs(x);
+        int absY = Math.abs(y);
+        if (absX > absY) {
+            if (x > 0) {
+                return new PlotId(x, y + 1);
+            } else {
+                return new PlotId(x, y - 1);
+            }
+        } else if (absY > absX) {
+            if (y > 0) {
+                return new PlotId(x - 1, y);
+            } else {
+                return new PlotId(x + 1, y);
+            }
+        } else {
+            if (x == y && x > 0) {
+                return new PlotId(x, y + step);
+            }
+            if (x == absX) {
+                return new PlotId(x, y + 1);
+            }
+            if (y == absY) {
+                return new PlotId(x, y - 1);
+            }
+            return new PlotId(x + 1, y);
+        }
+    }
+
     /**
      * Get the PlotId from the HashCode<br>
      * Note: Only accurate for small x,z values (short)

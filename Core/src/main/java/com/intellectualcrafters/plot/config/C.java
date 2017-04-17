@@ -484,6 +484,7 @@ public enum C {
      */
     NO_FREE_PLOTS("$2There are no free plots available", "Errors"),
     NOT_IN_PLOT("$2You're not in a plot", "Errors"),
+    NOT_LOADED("$2The plot could not be loaded", "Errors"),
     NOT_IN_CLUSTER("$2You must be within a plot cluster to perform that action", "Errors"),
     NOT_IN_PLOT_WORLD("$2You're not in a plot area", "Errors"),
     PLOTWORLD_INCOMPATIBLE("$2The two worlds must be compatible", "Errors"),

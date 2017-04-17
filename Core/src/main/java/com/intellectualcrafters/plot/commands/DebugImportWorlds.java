@@ -15,7 +15,6 @@ import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 import java.io.File;
 import java.util.UUID;
-import java.util.zip.DeflaterOutputStream;
 
 @CommandDeclaration(
         command = "debugimportworlds",

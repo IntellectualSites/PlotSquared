@@ -13,12 +13,12 @@ import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.PlotGameMode;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.area.QuadMap;
 import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,6 +31,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.annotation.Nullable;
 
 /**
  * @author Jesse Boyd
@@ -602,6 +603,11 @@ public abstract class PlotArea {
         this.meta.put(key, value);
     }
 
+    public <T> T getMeta(String key, T def) {
+        Object v = getMeta(key);
+        return v == null ? def : (T) v;
+    }
+
     /**
      * Get the metadata for a key<br>
      * <br>
@@ -655,6 +661,38 @@ public abstract class PlotArea {
             pp.setMeta("lastplot", plot);
         }
         return this.plots.put(plot.getId(), plot) == null;
+    }
+
+    public Plot getNextFreePlot(PlotPlayer player, @Nullable  PlotId start) {
+        int plots;
+        PlotId center;
+        PlotId min = getMin();
+        PlotId max = getMax();
+        if (TYPE == 2) {
+            center = new PlotId(MathMan.average(min.x, max.x), MathMan.average(min.y, max.y));
+            plots = Math.max(max.x - min.x, max.y - min.y) + 1;
+            if (start != null) start = new PlotId(start.x - center.x, start.y - center.y);
+        } else {
+            center = new PlotId(0, 0);
+            plots = Integer.MAX_VALUE;
+        }
+        PlotId currentId = new PlotId(0, 0);
+        for (int i = 0; i < plots; i++) {
+            if (start == null) {
+                start = getMeta("lastPlot", new PlotId(0, 0));
+            } else {
+                start = start.getNextId(1);
+            }
+            currentId.x = center.x + start.x;
+            currentId.y = center.y + start.y;
+            currentId.recalculateHash();
+            Plot plot = getPlotAbs(currentId);
+            if (plot != null && plot.canClaim(player)) {
+                setMeta("lastPlot", currentId);
+                return plot;
+            }
+        }
+        return null;
     }
     
     public boolean addPlotIfAbsent(Plot plot) {

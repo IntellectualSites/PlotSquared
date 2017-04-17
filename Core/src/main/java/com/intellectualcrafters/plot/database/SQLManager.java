@@ -120,9 +120,9 @@ public class SQLManager implements AbstractDB {
         this.CREATE_PLOT = "INSERT INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) VALUES(?, ?, ?, ?, ?)";
 
         if (mySQL) {
-            this.CREATE_PLOT_SAFE = "INSERT OR IGNORE INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) SELECT ?, ?, ?, ?, ? FROM DUAL WHERE NOT EXISTS (SELECT null FROM `" + this.prefix + "plot` WHERE `world` = ? AND `plot_id_x` = ? AND `plot_id_z` = ?)";
+            this.CREATE_PLOT_SAFE = "INSERT IGNORE INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) SELECT ?, ?, ?, ?, ? FROM DUAL WHERE NOT EXISTS (SELECT null FROM `" + this.prefix + "plot` WHERE `world` = ? AND `plot_id_x` = ? AND `plot_id_z` = ?)";
         } else {
-            this.CREATE_PLOT_SAFE = "INSERT OR IGNORE INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) SELECT ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT null FROM `" + this.prefix + "plot` WHERE `world` = ? AND `plot_id_x` = ? AND `plot_id_z` = ?)";
+            this.CREATE_PLOT_SAFE = "INSERT INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) SELECT ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT null FROM `" + this.prefix + "plot` WHERE `world` = ? AND `plot_id_x` = ? AND `plot_id_z` = ?)";
         }
         this.CREATE_CLUSTER =
                 "INSERT INTO `" + this.prefix + "cluster`(`pos1_x`, `pos1_z`, `pos2_x`, `pos2_z`, `owner`, `world`) VALUES(?, ?, ?, ?, ?, ?)";
@@ -1019,7 +1019,7 @@ public class SQLManager implements AbstractDB {
 
             @Override
             public PreparedStatement get() throws SQLException {
-                return SQLManager.this.connection.prepareStatement(SQLManager.this.CREATE_PLOT_SAFE, Statement.KEEP_CURRENT_RESULT  );
+                return SQLManager.this.connection.prepareStatement(SQLManager.this.CREATE_PLOT_SAFE, Statement.RETURN_GENERATED_KEYS );
             }
 
             @Override

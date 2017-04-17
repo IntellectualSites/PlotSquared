@@ -2010,7 +2010,7 @@ public class Plot {
      */
     public boolean canClaim(PlotPlayer player) {
         PlotCluster cluster = this.getCluster();
-        if (cluster != null) {
+        if (cluster != null && player != null) {
             if (!cluster.isAdded(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.claim")) {
                 return false;
             }

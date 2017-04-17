@@ -174,7 +174,6 @@ public class SpongeMain implements IPlotMain {
                                     return;
                                 }
                             }
-                            System.out.println("Unload " + world);
                             Sponge.getServer().unloadWorld(world);
                         }
                     }
