@@ -8,9 +8,11 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.ByteArrayUtilities;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(command = "claim",
@@ -88,7 +90,12 @@ public class Claim extends SubCommand {
             DBFunc.createPlotSafe(plot, new Runnable() {
                 @Override
                 public void run() {
-                    plot.claim(player, true, finalSchematic, false);
+                    TaskManager.IMP.sync(new RunnableVal<Object>() {
+                        @Override
+                        public void run(Object value) {
+                            plot.claim(player, true, finalSchematic, false);
+                        }
+                    });
                 }
             }, new Runnable() {
                 @Override

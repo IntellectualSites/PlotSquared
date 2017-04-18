@@ -508,7 +508,9 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                                         TaskManager.IMP.sync(new RunnableVal<Object>() {
                                             @Override
                                             public void run(Object o) {
-                                                teleport(loc);
+                                                if (getMeta("teleportOnLogin", true)) {
+                                                    teleport(loc);
+                                                }
                                             }
                                         });
                                     }

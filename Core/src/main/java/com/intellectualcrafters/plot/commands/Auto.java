@@ -14,6 +14,7 @@ import com.intellectualcrafters.plot.util.ByteArrayUtilities;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(command = "auto",
@@ -136,12 +137,17 @@ public class Auto extends SubCommand {
             final String finalSchematic = schematic;
             autoClaimSafe(player, plotarea, null, new RunnableVal<Plot>() {
                 @Override
-                public void run(Plot value) {
-                    if (value == null) {
-                        MainUtil.sendMessage(player, C.NO_FREE_PLOTS);
-                    } else {
-                        value.claim(player, true, finalSchematic, false);
-                    }
+                public void run(final Plot plot) {
+                    TaskManager.IMP.sync(new RunnableVal<Object>() {
+                        @Override
+                        public void run(Object ignore) {
+                            if (value == null) {
+                                MainUtil.sendMessage(player, C.NO_FREE_PLOTS);
+                            } else {
+                                plot.claim(player, true, finalSchematic, false);
+                            }
+                        }
+                    });
                 }
             });
             return true;
