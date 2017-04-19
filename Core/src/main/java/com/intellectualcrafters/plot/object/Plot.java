@@ -2031,9 +2031,14 @@ public class Plot {
             return null;
         }
         try {
-            Location loc = this.getManager().getSignLoc(this.area, this);
+            final Location loc = this.getManager().getSignLoc(this.area, this);
             ChunkManager.manager.loadChunk(loc.getWorld(), loc.getChunkLoc(), false);
-            String[] lines = WorldUtil.IMP.getSign(loc);
+            String[] lines = TaskManager.IMP.sync(new RunnableVal<String[]>() {
+                @Override
+                public void run(String[] value) {
+                    this.value = WorldUtil.IMP.getSign(loc);
+                }
+            });
             if (lines == null) {
                 return null;
             }
