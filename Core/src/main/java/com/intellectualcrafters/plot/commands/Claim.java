@@ -84,8 +84,8 @@ public class Claim extends SubCommand {
             }
             sendMessage(player, C.REMOVED_GRANTED_PLOT, "1", "" + (grants - 1));
         }
-        plot.owner = player.getUUID();
         if (plot.canClaim(player)) {
+            plot.owner = player.getUUID();
             final String finalSchematic = schematic;
             DBFunc.createPlotSafe(plot, new Runnable() {
                 @Override

@@ -141,7 +141,7 @@ public class Auto extends SubCommand {
                     TaskManager.IMP.sync(new RunnableVal<Object>() {
                         @Override
                         public void run(Object ignore) {
-                            if (value == null) {
+                            if (plot == null) {
                                 MainUtil.sendMessage(player, C.NO_FREE_PLOTS);
                             } else {
                                 plot.claim(player, true, finalSchematic, false);
@@ -184,17 +184,15 @@ public class Auto extends SubCommand {
         PlotId center;
         center = new PlotId(0, 0);
         plots = Integer.MAX_VALUE;
-        PlotId currentId = new PlotId(0, 0);
+        PlotId currentId;
         for (int i = 0; i < plots; i++) {
             if (start == null) {
                 start = new PlotId(0, 0);
             } else {
                 start = start.getNextId(1);
             }
-            currentId.x = center.x + start.x;
-            currentId.y = center.y + start.y;
-            currentId.recalculateHash();
-            return start;
+            currentId = new PlotId(center.x + start.x, center.y + start.y);
+            return currentId;
         }
         return null;
     }

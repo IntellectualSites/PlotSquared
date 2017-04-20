@@ -2032,10 +2032,10 @@ public class Plot {
         }
         try {
             final Location loc = this.getManager().getSignLoc(this.area, this);
-            ChunkManager.manager.loadChunk(loc.getWorld(), loc.getChunkLoc(), false);
             String[] lines = TaskManager.IMP.sync(new RunnableVal<String[]>() {
                 @Override
                 public void run(String[] value) {
+                    ChunkManager.manager.loadChunk(loc.getWorld(), loc.getChunkLoc(), false);
                     this.value = WorldUtil.IMP.getSign(loc);
                 }
             });

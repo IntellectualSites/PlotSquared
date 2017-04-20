@@ -336,14 +336,17 @@ public class SQLManager implements AbstractDB {
                 PreparedStatement statement = null;
                 UniqueStatement task = null;
                 UniqueStatement lastTask = null;
-                for (Entry<Plot, Queue<UniqueStatement>> entry : this.plotTasks.entrySet()) {
+                Iterator<Entry<Plot, Queue<UniqueStatement>>> iter = this.plotTasks.entrySet().iterator();
+                while (iter.hasNext()) {
                     try {
+                        Entry<Plot, Queue<UniqueStatement>> entry = iter.next();
                         Plot plot = entry.getKey();
-                        if (this.plotTasks.get(plot).isEmpty()) {
-                            this.plotTasks.remove(plot);
+                        Queue<UniqueStatement> tasks = entry.getValue();
+                        if (tasks.isEmpty()) {
+                            iter.remove();
                             continue;
                         }
-                        task = this.plotTasks.get(plot).remove();
+                        task = tasks.remove();
                         count++;
                         if (task != null) {
                             if (task.method == null || !task.method.equals(method)) {

@@ -683,9 +683,7 @@ public abstract class PlotArea {
             } else {
                 start = start.getNextId(1);
             }
-            currentId.x = center.x + start.x;
-            currentId.y = center.y + start.y;
-            currentId.recalculateHash();
+            currentId = new PlotId(center.x + start.x, center.y + start.y);
             Plot plot = getPlotAbs(currentId);
             if (plot != null && plot.canClaim(player)) {
                 setMeta("lastPlot", currentId);
