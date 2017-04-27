@@ -17,7 +17,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 public class PluginCmd extends SubCommand {
 
     @Override
-    public boolean onCommand(PlotPlayer player, String[] args) {
+    public boolean onCommand(final PlotPlayer player, String[] args) {
         TaskManager.IMP.taskAsync(new Runnable() {
             @Override
             public void run() {
