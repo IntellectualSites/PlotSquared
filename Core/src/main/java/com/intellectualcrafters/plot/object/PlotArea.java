@@ -238,7 +238,7 @@ public abstract class PlotArea {
         this.PLOT_CHAT = config.getBoolean("chat.enabled");
         this.WORLD_BORDER = config.getBoolean("world.border");
         this.MAX_BUILD_HEIGHT = config.getInt("world.max_height");
-        this.MIN_BUILD_HEIGHT = config.getInt("min.max_height");
+        this.MIN_BUILD_HEIGHT = config.getInt("world.min_height");
 
         switch (config.getString("world.gamemode").toLowerCase()) {
             case "survival":
