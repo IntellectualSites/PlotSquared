@@ -16,6 +16,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+import java.util.Set;
 
 @CommandDeclaration(command = "auto",
         permission = "plots.auto",
@@ -134,22 +135,7 @@ public class Auto extends SubCommand {
         }
         // TODO handle type 2 the same as normal worlds!
         if (size_x == 1 && size_z == 1) {
-            final String finalSchematic = schematic;
-            autoClaimSafe(player, plotarea, null, new RunnableVal<Plot>() {
-                @Override
-                public void run(final Plot plot) {
-                    TaskManager.IMP.sync(new RunnableVal<Object>() {
-                        @Override
-                        public void run(Object ignore) {
-                            if (plot == null) {
-                                MainUtil.sendMessage(player, C.NO_FREE_PLOTS);
-                            } else {
-                                plot.claim(player, true, finalSchematic, false);
-                            }
-                        }
-                    });
-                }
-            });
+            autoClaimSafe(player, plotarea, null, schematic);
             return true;
         } else {
             if (plotarea.TYPE == 2) {
@@ -179,6 +165,12 @@ public class Auto extends SubCommand {
         }
     }
 
+    /**
+     * Get the next plot id (spiral out from 0,0)
+     * @param start
+     * @return
+     */
+    @Deprecated
     public static PlotId getNextPlot(PlotId start) {
         int plots;
         PlotId center;
@@ -197,7 +189,48 @@ public class Auto extends SubCommand {
         return null;
     }
 
-    public void autoClaimSafe(final PlotPlayer player, final PlotArea area, PlotId start, final RunnableVal<Plot> whenDone) {
+    /**
+     * Teleport the player home, or claim a new plot
+     * @param player
+     * @param area
+     * @param start
+     * @param schem
+     */
+    public static void homeOrAuto(final PlotPlayer player, final PlotArea area, PlotId start, final String schem) {
+        Set<Plot> plots = player.getPlots();
+        if (!plots.isEmpty()) {
+            plots.iterator().next().teleportPlayer(player);
+        } else {
+            autoClaimSafe(player, area, start, schem);
+        }
+    }
+
+    /**
+     * Claim a new plot for a player
+     * @param player
+     * @param area
+     * @param start
+     * @param schem
+     */
+    public static void autoClaimSafe(final PlotPlayer player, final PlotArea area, PlotId start, final String schem) {
+        autoClaimFromDatabase(player, area, start, new RunnableVal<Plot>() {
+            @Override
+            public void run(final Plot plot) {
+                TaskManager.IMP.sync(new RunnableVal<Object>() {
+                    @Override
+                    public void run(Object ignore) {
+                        if (plot == null) {
+                            MainUtil.sendMessage(player, C.NO_FREE_PLOTS);
+                        } else {
+                            plot.claim(player, true, schem, false);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    private static void autoClaimFromDatabase(final PlotPlayer player, final PlotArea area, PlotId start, final RunnableVal<Plot> whenDone) {
         final Plot plot = area.getNextFreePlot(player, start);
         if (plot == null) {
             whenDone.run(null);
@@ -208,7 +241,7 @@ public class Auto extends SubCommand {
         DBFunc.createPlotSafe(plot, whenDone, new Runnable() {
             @Override
             public void run() {
-                autoClaimSafe(player, area, plot.getId(), whenDone);
+                autoClaimFromDatabase(player, area, plot.getId(), whenDone);
             }
         });
     }

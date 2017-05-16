@@ -17,7 +17,16 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.world.biome.Biome;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
@@ -41,24 +50,11 @@ import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
 import org.spongepowered.api.world.extent.Extent;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-
 public class SpongeUtil extends WorldUtil {
 
     public static Cause CAUSE = Cause.of(NamedCause.source(Sponge.getPluginManager().fromInstance(SpongeMain.THIS).get()));
     private static BiomeType[] biomes;
     private static HashMap<String, Integer> biomeMap;
-    private static HashMap<BlockState, PlotBlock> stateMap;
-    private static BlockState[] stateArray;
     private static Player lastPlayer = null;
     private static PlotPlayer lastPlotPlayer = null;
     private static World lastWorld;
@@ -141,40 +137,19 @@ public class SpongeUtil extends WorldUtil {
         };
     }
 
-    private static void initBlockCache() {
-        try {
-            PS.debug("Caching block id/data: Please wait...");
-            stateArray = new BlockState[Character.MAX_VALUE];
-            stateMap = new HashMap<>();
-            Method methodGetByCombinedId = ReflectionUtils
-                    .findMethod(Class.forName("net.minecraft.block.Block"), true, Class.forName("net.minecraft.block.state.IBlockState"), int.class);
-            for (int i = 0; i < Character.MAX_VALUE; i++) {
-                try {
-                    BlockState state = (BlockState) methodGetByCombinedId.invoke(null, i);
-                    if (state.getType() == BlockTypes.AIR) {
-                        continue;
-                    }
-                    PlotBlock plotBlock = PlotBlock.get((short) (i & 0xFFF), (byte) (i >> 12 & 0xF));
-                    stateArray[i] = state;
-                    stateMap.put(state, plotBlock);
-                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ignored) {
-                }
-            }
-            PS.debug("Done!");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static BlockState getBlockState(int id, int data) {
         return (BlockState) Block.getBlockById(id).getStateFromMeta(data);
     }
 
     public static PlotBlock getPlotBlock(BlockState state) {
-        if (stateMap == null) {
-            initBlockCache();
+        if (state == null) {
+            return PlotBlock.get(0, 0);
         }
-        return stateMap.get(state);
+        IBlockState ibs = ((IBlockState) state);
+        Block block = ibs.getBlock();
+        int id = Block.getIdFromBlock(block);
+        int data = block.getMetaFromState(ibs);
+        return PlotBlock.get(id, data);
     }
 
     public static Location getLocation(org.spongepowered.api.world.Location<World> block) {

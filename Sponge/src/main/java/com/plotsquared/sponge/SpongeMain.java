@@ -56,6 +56,7 @@ import com.plotsquared.sponge.util.block.SpongeLocalQueue;
 import com.plotsquared.sponge.uuid.SpongeLowerOfflineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeOnlineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeUUIDHandler;
+import java.io.IOException;
 import net.minecrell.mcstats.SpongeStatsLite;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
@@ -158,7 +159,6 @@ public class SpongeMain implements IPlotMain {
     public void unload() {
         PlotAreaManager manager = PS.get().getPlotAreaManager();
         if (manager instanceof SinglePlotAreaManager) {
-            long start = System.currentTimeMillis();
             SinglePlotArea area = ((SinglePlotAreaManager) manager).getArea();
             for (World world : Sponge.getServer().getWorlds()) {
                 String name = world.getName();
@@ -168,13 +168,21 @@ public class SpongeMain implements IPlotMain {
                     if (plot != null) {
                         List<PlotPlayer> players = plot.getPlayersInPlot();
                         if (players.isEmpty() && PlotPlayer.wrap(plot.owner) == null) {
+                            try {
+                                world.save();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                return;
+                            }
+                            long start = System.currentTimeMillis();
                             for (Chunk chunk : world.getLoadedChunks()) {
                                 chunk.unloadChunk();
-                                if (System.currentTimeMillis() - start > 20) {
+                                if (System.currentTimeMillis() - start > 10) {
                                     return;
                                 }
                             }
                             Sponge.getServer().unloadWorld(world);
+                            return;
                         }
                     }
                 }
