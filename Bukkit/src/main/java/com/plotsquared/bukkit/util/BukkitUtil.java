@@ -172,7 +172,8 @@ public class BukkitUtil extends WorldUtil {
     @Override
     public int getHighestBlock(String world, int x, int z) {
         World bukkitWorld = getWorld(world);
-        for (int y = bukkitWorld.getMaxHeight() - 1; y > 0; y--) {
+        // Skip top and bottom block
+        for (int y = bukkitWorld.getMaxHeight() - 2; y > 0; y--) {
             Block block = bukkitWorld.getBlockAt(x, y, z);
             if (block != null) {
                 Material type = block.getType();
@@ -189,7 +190,7 @@ public class BukkitUtil extends WorldUtil {
                 }
             }
         }
-        return 0;
+        return bukkitWorld.getMaxHeight();
     }
 
     @Override
