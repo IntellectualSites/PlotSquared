@@ -251,7 +251,7 @@ public abstract class HybridUtils {
                                 }
                                 if (!chunks.isEmpty()) {
                                     long diff = System.currentTimeMillis() + 1;
-                                    if (System.currentTimeMillis() - baseTime - last.get() > 2000 && last.get() != 0) {
+                                    if (System.currentTimeMillis() - baseTime - last.get() > 2200 && last.get() != 0) {
                                         last.set(0);
                                         PS.debug(C.PREFIX.s() + "Detected low TPS. Rescheduling in 30s");
                                         Iterator<ChunkLoc> iterator = chunks.iterator();
