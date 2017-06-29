@@ -46,7 +46,7 @@ public class Download extends SubCommand {
             MainUtil.sendMessage(player, C.DONE_NOT_DONE);
             return false;
         }
-        if ((!plot.isOwner(player.getUUID()))) {
+        if ((!plot.isOwner(player.getUUID())) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN.s())) {
             MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return false;
         }
