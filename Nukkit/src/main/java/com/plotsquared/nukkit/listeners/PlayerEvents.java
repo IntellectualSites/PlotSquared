@@ -779,10 +779,10 @@ public void blockDestroy(BlockBreakEvent event) {
         if (area == null) {
             return;
         }
-        switch (event.getAction()) {
-            case PlayerInteractEvent.RIGHT_CLICK_BLOCK:
-            case PlayerInteractEvent.LEFT_CLICK_BLOCK:
-            case PlayerInteractEvent.PHYSICAL: {
+        switch (event.getAction().name()) {
+            case "RIGHT_CLICK_BLOCK":
+            case "LEFT_CLICK_BLOCK":
+            case "PHYSICAL": {
                 Plot plot = pp.getCurrentPlot();
                 if (plot == null || !plot.isAdded(pp.getUUID())) {
                     Block block = event.getBlock();
@@ -807,8 +807,8 @@ public void blockDestroy(BlockBreakEvent event) {
                 }
                 return;
             }
-            case PlayerInteractEvent.LEFT_CLICK_AIR:
-            case PlayerInteractEvent.RIGHT_CLICK_AIR: {
+            case "LEFT_CLICK_AIR":
+            case "RIGHT_CLICK_AIR": {
                 Plot plot = pp.getCurrentPlot();
                 if (plot == null || !plot.isAdded(pp.getUUID())) {
                     if (plot == null) {
