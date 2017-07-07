@@ -151,7 +151,8 @@ public class PlayerEvents extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityCombustByEntity(EntityCombustEvent event) {
         if (event instanceof EntityCombustByEntityEvent) {
-            EntityDamageByEntityEvent eventChange = new EntityDamageByEntityEvent(((EntityCombustByEntityEvent) event).getCombuster(), event.getEntity(), EntityDamageEvent.CAUSE_FIRE_TICK, event.getDuration());
+            EntityDamageByEntityEvent eventChange =
+        new EntityDamageByEntityEvent(((EntityCombustByEntityEvent) event).getCombuster(), event.getEntity(), EntityDamageEvent.DamageCause.FIRE_TICK, event.getDuration());
             onEntityDamageByEntityEvent(eventChange);
         }
     }
@@ -780,9 +781,9 @@ public void blockDestroy(BlockBreakEvent event) {
             return;
         }
         switch (event.getAction()) {
-            case PlayerInteractEvent.RIGHT_CLICK_BLOCK:
-            case PlayerInteractEvent.LEFT_CLICK_BLOCK:
-            case PlayerInteractEvent.PHYSICAL: {
+            case RIGHT_CLICK_BLOCK:
+            case LEFT_CLICK_BLOCK:
+            case PHYSICAL: {
                 Plot plot = pp.getCurrentPlot();
                 if (plot == null || !plot.isAdded(pp.getUUID())) {
                     Block block = event.getBlock();
@@ -807,8 +808,8 @@ public void blockDestroy(BlockBreakEvent event) {
                 }
                 return;
             }
-            case PlayerInteractEvent.LEFT_CLICK_AIR:
-            case PlayerInteractEvent.RIGHT_CLICK_AIR: {
+            case LEFT_CLICK_AIR:
+            case RIGHT_CLICK_AIR: {
                 Plot plot = pp.getCurrentPlot();
                 if (plot == null || !plot.isAdded(pp.getUUID())) {
                     if (plot == null) {

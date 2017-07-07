@@ -1,12 +1,12 @@
 repositories {
-    maven {url "http://ci.regularbox.com/plugin/repository/everything/"}
+    maven {url "http://ci.mengcraft.com:8080/plugin/repository/everything"}
     maven { url = "https://oss.sonatype.org/content/repositories/snapshots/"}
     maven {url "http://nexus.hc.to/content/repositories/pub_releases"}
 }
 
 dependencies {
     compile project(':Core')
-    compile 'cn.nukkit:nukkit:1.0-SNAPSHOT'
+    compile group: "cn.nukkit", name: "nukkit", version: "1.0-20170704.231613-609", changing: true
     compile 'com.google.guava:guava:17.0'
 }
 
