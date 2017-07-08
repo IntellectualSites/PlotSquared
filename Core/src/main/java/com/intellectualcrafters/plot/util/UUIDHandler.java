@@ -8,7 +8,6 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -131,7 +130,11 @@ public class UUIDHandler {
             return null;
         }
         if (nameOrUUIDString.length() > 16) {
-            return UUID.fromString(nameOrUUIDString);
+            try {
+                return UUID.fromString(nameOrUUIDString);
+            } catch (IllegalArgumentException  e) {
+                return null;
+            }
         }
         return UUIDHandler.getUUID(nameOrUUIDString, null);
     }

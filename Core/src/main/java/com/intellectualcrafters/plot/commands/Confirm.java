@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.CmdInstance;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.CmdConfirm;
@@ -22,8 +23,8 @@ public class Confirm extends SubCommand {
             return false;
         }
         CmdConfirm.removePending(player);
-        if ((System.currentTimeMillis() - command.timestamp) > 20000) {
-            MainUtil.sendMessage(player, C.FAILED_CONFIRM);
+        if ((System.currentTimeMillis() - command.timestamp) > Settings.Confirmation.CONFIRMATION_TIMEOUT_SECONDS * 1000) {
+            MainUtil.sendMessage(player, C.EXPIRED_CONFIRM);
             return false;
         }
         TaskManager.runTask(command.command);

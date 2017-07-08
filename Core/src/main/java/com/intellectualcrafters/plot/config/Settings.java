@@ -251,6 +251,11 @@ public class Settings extends Config {
         public static boolean CACHE_UUDS = false;
     }
 
+    public static final class Confirmation {
+        @Comment("Teleport to your plot on death")
+        public static int CONFIRMATION_TIMEOUT_SECONDS = 20;
+    }
+
     public static final class Teleport {
         @Comment("Teleport to your plot on death")
         public static boolean ON_DEATH = false;

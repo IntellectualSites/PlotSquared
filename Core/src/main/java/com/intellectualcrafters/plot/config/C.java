@@ -167,6 +167,7 @@ public enum C {
     /*
      * Confirm
      */
+    EXPIRED_CONFIRM("$2Confirmation has expired, please run the command again!", "Confirm"),
     FAILED_CONFIRM("$2You have no pending actions to confirm!", "Confirm"),
     REQUIRES_CONFIRM("$2Are you sure you wish to execute: $1%s$2?&-$2This cannot be undone! If you are sure: $1/plot confirm", "Confirm"),
     /*
