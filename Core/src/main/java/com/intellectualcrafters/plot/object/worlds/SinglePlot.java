@@ -3,6 +3,7 @@ package com.intellectualcrafters.plot.object.worlds;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -46,6 +47,11 @@ public class SinglePlot extends Plot {
             C.NOT_LOADED.send(player);
             return false;
         }
+    }
+
+    @Override
+    public Location getSide() {
+        return getCenter();
     }
 
     @Override
