@@ -146,7 +146,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
                 }
             }
             if (unload != null) {
-                Map<String, BaseFullChunk> chunks = unload.getChunks();
+                Map<Long, BaseFullChunk> chunks = unload.getChunks();
                 BaseFullChunk[] toUnload = chunks.values().toArray(new BaseFullChunk[chunks.size()]);
                 for (BaseFullChunk chunk : toUnload) {
                     chunk.unload(true, false);
