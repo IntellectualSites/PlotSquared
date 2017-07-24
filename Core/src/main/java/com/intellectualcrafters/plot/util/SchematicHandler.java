@@ -123,8 +123,6 @@ public abstract class SchematicHandler {
         return true;
     }
 
-
-    
     /**
      * Paste a schematic.
      *
@@ -352,12 +350,10 @@ public abstract class SchematicHandler {
 
     public Schematic getSchematic(CompoundTag tag) {
         Map<String, Tag> tagMap = tag.getValue();
-        // Slow
-        //        byte[] addId = new byte[0];
-        //        if (tagMap.containsKey("AddBlocks")) {
-        //            addId = ByteArrayTag.class.cast(tagMap.get("AddBlocks")).getValue();
-        //        }
-        // end slow
+        byte[] addBlocks = null;
+        if (tagMap.containsKey("AddBlocks")) {
+            addBlocks = ByteArrayTag.class.cast(tagMap.get("AddBlocks")).getValue();
+        }
 
         short width = ShortTag.class.cast(tagMap.get("Width")).getValue();
         short length = ShortTag.class.cast(tagMap.get("Length")).getValue();
@@ -379,19 +375,26 @@ public abstract class SchematicHandler {
             }
             block[i] = id;
         }
-        
-        // Slow + has code for exceptions (addId) inside the loop rather than outside
-        //        for (int index = 0; index < b.length; index++) {
-        //            if ((index >> 1) >= addId.length) {
-        //                blocks[index] = (short) (b[index] & 0xFF);
-        //            } else {
-        //                if ((index & 1) == 0) {
-        //                    blocks[index] = (short) (((addId[index >> 1] & 0x0F) << 8) + (b[index] & 0xFF));
-        //                } else {
-        //                    blocks[index] = (short) (((addId[index >> 1] & 0xF0) << 4) + (b[index] & 0xFF));
-        //                }
-        //            }
-        //        }
+
+        if (addBlocks != null) {
+            if (addBlocks.length == block.length) {
+                for (int i = 0; i < addBlocks.length; i++) {
+                    byte val = addBlocks[i];
+                    if (val != 0) {
+                        block[i] |= (val << 8);
+                    }
+                }
+            } else {
+                for (int index = 0; index < block.length; index++) {
+                    if ((index & 1) == 0) {
+                        block[index] = (short) (((addBlocks[index >> 1] & 0x0F) << 8) + (block[index]));
+                    } else {
+                        block[index] = (short) (((addBlocks[index >> 1] & 0xF0) << 4) + (block[index]));
+                    }
+                }
+            }
+        }
+
         // Slow as wrapper for each block
         //        final DataCollection[] collection = new DataCollection[b.length];
         //        for (int x = 0; x < b.length; x++) {

@@ -61,6 +61,7 @@ public class MainCommand extends Command {
             new Delete();
             new Trust();
             new Add();
+            new Leave();
             new Deny();
             new Remove();
             new Info();
