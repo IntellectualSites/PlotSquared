@@ -260,7 +260,7 @@ public class BukkitLocalQueue_1_9 extends BukkitLocalQueue<char[]> {
             Method ym = null;
             Method zm = null;
             // Trim tiles
-            boolean removed = false;
+            Collection tickList = ((Collection) this.tileEntityListTick.of(w).get());
             Set<Map.Entry<?, ?>> entrySet = (Set<Map.Entry<?, ?>>) (Set<?>) tiles.entrySet();
             Iterator<Map.Entry<?, ?>> iterator = entrySet.iterator();
             while (iterator.hasNext()) {
@@ -282,12 +282,9 @@ public class BukkitLocalQueue_1_9 extends BukkitLocalQueue<char[]> {
                     continue;
                 }
                 if (array[k] != 0) {
-                    removed = true;
+                    tickList.remove(tile.getValue());
                     iterator.remove();
                 }
-            }
-            if (removed) {
-                ((Collection) this.tileEntityListTick.of(w).get()).clear();
             }
 
             // Trim entities
