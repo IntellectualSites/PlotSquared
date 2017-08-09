@@ -5,6 +5,7 @@
 Sponge/build
 Core/build
 Bukkit/build
+Nukkit/build
 
 ### Maven ###
 /mvn
@@ -138,3 +139,4 @@ checkstyle.xml
 classes/
 p2error.txt
 *.bat
+Nukkit/build/resources/main/plugin.yml

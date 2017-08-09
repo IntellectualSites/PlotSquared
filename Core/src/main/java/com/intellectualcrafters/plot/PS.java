@@ -70,6 +70,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -95,10 +96,8 @@ public class PS{
     // Current thread
     private final Thread thread;
     // Platform / Version / Update URL
-    private final String platform;
-    private final int[] version;
-    private int[] lastVersion;
-    public URL update;
+    private Updater updater;
+    private PlotVersion version;
     // WorldEdit instance
     public WorldEdit worldedit;
     // Files and configuration
@@ -130,8 +129,7 @@ public class PS{
         this.thread = Thread.currentThread();
         this.IMP = iPlotMain;
         this.logger = iPlotMain;
-        this.platform = platform;
-        this.version = this.IMP.getPluginVersion();
+        Settings.PLATFORM = platform;
         try {
             new ReflectionUtils(this.IMP.getNMSPackage());
             try {
@@ -248,21 +246,19 @@ public class PS{
 
             // Check for updates
             if (Settings.Enabled_Components.UPDATER) {
-                TaskManager.runTaskAsync(new Runnable() {
+                updater = new Updater();
+                TaskManager.IMP.taskAsync(new Runnable() {
                     @Override
                     public void run() {
-                        URL url = Updater.getUpdate();
-                        if (url != null) {
-                            PS.this.update = url;
-                        } else if (PS.this.lastVersion == null) {
-                            PS.log("&aThanks for installing " + IMP.getPluginName() + "!");
-                        } else if (!get().checkVersion(PS.this.lastVersion, PS.this.version)) {
-                            PS.log("&aThanks for updating from " + StringMan.join(PS.this.lastVersion, ".") + " to " + StringMan
-                                    .join(PS.this.version, ".") + "!");
-                            DBFunc.updateTables(PS.this.lastVersion);
-                        }
+                        updater.update(getPlatform(), getVersion());
                     }
                 });
+                TaskManager.IMP.taskRepeatAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        updater.update(getPlatform(), getVersion());
+                    }
+                }, 36000);
             }
 
             // World generators:
@@ -359,6 +355,14 @@ public class PS{
         return logger;
     }
 
+    /**
+     * The plugin updater
+     * @return
+     */
+    public Updater getUpdater() {
+        return updater;
+    }
+
     public PlotAreaManager getPlotAreaManager() {
         return manager;
     }
@@ -446,18 +450,10 @@ public class PS{
     }
 
     /**
-     * Get the last PlotSquared version.
-     * @return last version in config or null
-     */
-    public int[] getLastVersion() {
-        return this.lastVersion;
-    }
-
-    /**
      * Get the current PlotSquared version.
      * @return current version in config or null
      */
-    public int[] getVersion() {
+    public PlotVersion getVersion() {
         return this.version;
     }
 
@@ -468,7 +464,7 @@ public class PS{
      * @return the server implementation
      */
     public String getPlatform() {
-        return this.platform;
+        return Settings.PLATFORM;
     }
 
     public PlotManager getPlotManager(Plot plot) {
@@ -1463,6 +1459,10 @@ public class PS{
         return sb.toString();
     }
 
+    public File getJarFile() {
+        return jarFile;
+    }
+
     public boolean update(PlotPlayer sender, URL url) {
         try {
             String name = this.jarFile.getName();
@@ -1640,25 +1640,36 @@ public class PS{
         String lastVersionString = this.config.getString("version");
         if (lastVersionString != null) {
             String[] split = lastVersionString.split("\\.");
-            this.lastVersion = new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])};
-        }
-        if (lastVersion != null && checkVersion(new int[]{3, 4, 0}, lastVersion)) {
-            Settings.convertLegacy(configFile);
-            if (config.contains("worlds")) {
-                ConfigurationSection worldSection = config.getConfigurationSection("worlds");
-                worlds.set("worlds", worldSection);
-                try {
-                    worlds.save(worldsFile);
-                } catch (IOException e) {
-                    PS.debug("Failed to save " + IMP.getPluginName() + " worlds.yml");
-                    e.printStackTrace();
+            int[] lastVersion = new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])};
+            if (checkVersion(new int[]{3, 4, 0}, lastVersion)) {
+                Settings.convertLegacy(configFile);
+                if (config.contains("worlds")) {
+                    ConfigurationSection worldSection = config.getConfigurationSection("worlds");
+                    worlds.set("worlds", worldSection);
+                    try {
+                        worlds.save(worldsFile);
+                    } catch (IOException e) {
+                        PS.debug("Failed to save " + IMP.getPluginName() + " worlds.yml");
+                        e.printStackTrace();
+                    }
                 }
+                Settings.save(configFile);
             }
-        } else {
-            Settings.load(configFile);
         }
-        Settings.VERSION = StringMan.join(this.version, ".");
-        Settings.PLATFORM = platform;
+        Settings.load(configFile);
+        try {
+            InputStream stream = getClass().getResourceAsStream("/plugin.properties");
+            java.util.Scanner scanner = new java.util.Scanner(stream).useDelimiter("\\A");
+            String versionString = scanner.next().trim();
+            scanner.close();
+            this.version = new PlotVersion(versionString);
+            Settings.DATE = new Date(100 + version.year, version.month, version.day).toGMTString();
+            Settings.BUILD = "https://ci.athion.net/job/PlotSquared/" + version.build;
+            Settings.COMMIT = "https://github.com/IntellectualSites/PlotSquared/commit/" + Integer.toHexString(version.hash);
+            System.out.println("Version is " + this.version);
+        } catch (Throwable ignore) {
+            ignore.printStackTrace();
+        }
         Settings.save(configFile);
         config = YamlConfiguration.loadConfiguration(configFile);
     }
@@ -1762,7 +1773,9 @@ public class PS{
      * Setup the style.yml file
      */
     private void setupStyle() {
-        this.style.set("version", StringMan.join(this.version, "."));
+        if (this.version != null) {
+            this.style.set("version", this.version.toString());
+        }
         Map<String, Object> o = new HashMap<>(4);
         o.put("color.1", "6");
         o.put("color.2", "7");

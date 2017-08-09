@@ -10,7 +10,7 @@ targetCompatibility = 1.7
 
 processResources {
     from('src/main/resources') {
-        include 'plotsquared.properties'
+        include 'plugin.properties'
         expand(
                 version: "${project.parent.version}",
                 name: project.parent.name,

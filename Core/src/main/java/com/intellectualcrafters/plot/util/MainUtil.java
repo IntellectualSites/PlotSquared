@@ -112,6 +112,15 @@ public class MainUtil {
         }
     }
 
+    public static void sendAdmin(final String s) {
+        for (final PlotPlayer player : UUIDHandler.getPlayers().values()) {
+            if (player.hasPermission(C.PERMISSION_ADMIN.s())) {
+                player.sendMessage(s);
+            }
+        }
+        PS.debug(s);
+    }
+
     public static void upload(UUID uuid, String file, String extension, final RunnableVal<OutputStream> writeTask, final RunnableVal<URL> whenDone) {
         if (writeTask == null) {
             PS.debug("&cWrite task cannot be null");

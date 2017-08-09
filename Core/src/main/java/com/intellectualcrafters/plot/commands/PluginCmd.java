@@ -5,7 +5,6 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.HttpUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
@@ -21,7 +20,7 @@ public class PluginCmd extends SubCommand {
         TaskManager.IMP.taskAsync(new Runnable() {
             @Override
             public void run() {
-                MainUtil.sendMessage(player, String.format("$2>> $1&l" + PS.imp().getPluginName() + " $2($1Version$2: $1%s$2)", StringMan.join(PS.get().getVersion(), ".")));
+                MainUtil.sendMessage(player, String.format("$2>> $1&l" + PS.imp().getPluginName() + " $2($1Version$2: $1%s$2)", PS.get().getVersion()));
                 MainUtil.sendMessage(player, "$2>> $1&lAuthors$2: $1Citymonstret $2& $1Empire92 $2& $1MattBDev");
                 MainUtil.sendMessage(player, "$2>> $1&lWiki$2: $1https://github.com/IntellectualCrafters/PlotSquared/wiki");
                 MainUtil.sendMessage(player, "$2>> $1&lNewest Version$2: $1" + getNewestVersionString());

@@ -70,12 +70,6 @@ public abstract class EventUtil {
                 MainUtil.sendMessage(player, C.WORLDEDIT_BYPASSED);
             }
         }
-        if (PS.get().update != null && Permissions.hasPermission(player, C.PERMISSION_ADMIN_UPDATE) && Settings.Enabled_Components.UPDATER) {
-            if (PS.get().getJavaVersion() < 1.8) {
-                MainUtil.sendMessage(player, C.CONSOLE_JAVA_OUTDATED.f(PS.get().IMP.getPluginName()));
-            }
-            MainUtil.sendMessage(player, "&6An update for " + PS.imp().getPluginName() + " is available: &7/plot update");
-        }
         final Plot plot = player.getCurrentPlot();
         if (Settings.Teleport.ON_LOGIN && plot != null) {
             TaskManager.runTask(new Runnable() {

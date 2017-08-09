@@ -405,22 +405,22 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      */
     public void unregister() {
         Plot plot = getCurrentPlot();
+        if (plot != null && Settings.Enabled_Components.PERSISTENT_META && plot.getArea() instanceof SinglePlotArea) {
+            PlotId id = plot.getId();
+            int x = id.x;
+            int z = id.y;
+            ByteBuffer buffer = ByteBuffer.allocate(13);
+            buffer.putShort((short) x);
+            buffer.putShort((short) z);
+            Location loc = getLocation();
+            buffer.putInt(loc.getX());
+            buffer.put((byte) loc.getY());
+            buffer.putInt(loc.getZ());
+            setPersistentMeta("quitLoc", buffer.array());
+        } else if (hasPersistentMeta("quitLoc")) {
+            removePersistentMeta("quitLoc");
+        }
         if (plot != null) {
-            if (Settings.Enabled_Components.PERSISTENT_META) {
-                if (plot.getArea() instanceof SinglePlotArea) {
-                    PlotId id = plot.getId();
-                    int x = id.x;
-                    int z = id.y;
-                    ByteBuffer buffer = ByteBuffer.allocate(13);
-                    buffer.putShort((short) x);
-                    buffer.putShort((short) z);
-                    Location loc = getLocation();
-                    buffer.putInt(loc.getX());
-                    buffer.put((byte) loc.getY());
-                    buffer.putInt(loc.getZ());
-                    setPersistentMeta("quitLoc", buffer.array());
-                }
-            }
             EventUtil.manager.callLeave(this, plot);
         }
         if (Settings.Enabled_Components.BAN_DELETER && isBanned()) {

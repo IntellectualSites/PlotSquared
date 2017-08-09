@@ -20,9 +20,13 @@ public class Settings extends Config {
     @Final
     public static final String WIKI = "https://github.com/IntellectualSites/PlotSquared/wiki";
     @Final
-    public static String VERSION = null; // These values are set from PS before loading
+    public static String DATE; // These values are set from P2 before loading
     @Final
-    public static String PLATFORM = null; // These values are set from PS before loading
+    public static String BUILD; // These values are set from P2 before loading
+    @Final
+    public static String COMMIT; // These values are set from P2 before loading
+    @Final
+    public static String PLATFORM; // These values are set from P2 before loading
 
     @Comment("Show additional information in console")
     public static boolean DEBUG = true;
@@ -293,7 +297,7 @@ public class Settings extends Config {
         public static boolean COMMANDS = true;
         @Comment("The UUID cacher is used to resolve player names")
         public static boolean UUID_CACHE = true;
-        @Comment("Notify players of updates")
+        @Comment("The plugin auto updater")
         public static boolean UPDATER = true;
         @Comment("Stores user metadata in a database")
         public static boolean PERSISTENT_META = true;
