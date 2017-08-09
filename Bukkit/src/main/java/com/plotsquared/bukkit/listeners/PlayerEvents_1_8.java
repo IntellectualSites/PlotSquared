@@ -11,6 +11,10 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.listener.PlotListener;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.ArmorStand;
@@ -26,10 +30,6 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
 
 public class PlayerEvents_1_8 extends PlotListener implements Listener {
     
@@ -70,7 +70,7 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
         if (!"[(+NBT)]".equals(newLore) || (current.equals(newItem) && newLore.equals(oldLore))) {
             return;
         }
-        HashSet<Byte> blocks = null;
+        HashSet<Material> blocks = null;
         Block block = player.getTargetBlock(blocks, 7);
         BlockState state = block.getState();
         if (state == null) {
