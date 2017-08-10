@@ -328,11 +328,19 @@ public abstract class SchematicHandler {
                             if (!chunks.isEmpty()) {
                                 this.run();
                             } else {
-                                for (Map.Entry<BlockLoc, CompoundTag> entry : schematic.getTiles().entrySet()) {
-                                    BlockLoc loc = entry.getKey();
-                                    restoreTile(queue, entry.getValue(), p1x + xOffset + loc.x, loc.y + y_offset_actual, p1z + zOffset + loc.z);
-                                }
                                 queue.flush();
+                                HashMap<BlockLoc, CompoundTag> tiles = schematic.getTiles();
+                                if (!tiles.isEmpty()) {
+                                    TaskManager.IMP.sync(new RunnableVal<Object>() {
+                                        @Override
+                                        public void run(Object value) {
+                                            for (Map.Entry<BlockLoc, CompoundTag> entry : schematic.getTiles().entrySet()) {
+                                                BlockLoc loc = entry.getKey();
+                                                restoreTile(queue, entry.getValue(), p1x + xOffset + loc.x, loc.y + y_offset_actual, p1z + zOffset + loc.z);
+                                            }
+                                        }
+                                    });
+                                }
                                 if (whenDone != null) {
                                     whenDone.value = true;
                                     whenDone.run();
