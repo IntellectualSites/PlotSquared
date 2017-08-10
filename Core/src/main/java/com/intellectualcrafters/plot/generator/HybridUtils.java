@@ -204,13 +204,10 @@ public abstract class HybridUtils {
         HybridUtils.area = area;
         chunks = new HashSet<>();
         final AtomicInteger count = new AtomicInteger(0);
-        final long baseTime = System.currentTimeMillis();
-        final AtomicInteger last = new AtomicInteger();
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 if (!UPDATE) {
-                    last.set(0);
                     Iterator<ChunkLoc> iter = chunks.iterator();
                     while (iter.hasNext()) {
                         ChunkLoc chunk = iter.next();
@@ -232,12 +229,10 @@ public abstract class HybridUtils {
                 } else {
                     final Runnable task = this;
                     TaskManager.runTaskAsync(new Runnable() {
+                        private long last = System.currentTimeMillis();
                         @Override
                         public void run() {
                             try {
-                                if (last.get() == 0) {
-                                    last.set((int) (System.currentTimeMillis() - baseTime));
-                                }
                                 if (chunks.size() < 1024) {
                                     if (!regions.isEmpty()) {
                                         Iterator<ChunkLoc> iterator = regions.iterator();
@@ -250,37 +245,17 @@ public abstract class HybridUtils {
                                     }
                                 }
                                 if (!chunks.isEmpty()) {
-                                    long diff = System.currentTimeMillis() + 1;
-                                    if (System.currentTimeMillis() - baseTime - last.get() > 2200 && last.get() != 0) {
-                                        last.set(0);
-                                        PS.debug(C.PREFIX.s() + "Detected low TPS. Rescheduling in 30s");
+                                    while (System.currentTimeMillis() < 10 && !chunks.isEmpty()) {
                                         Iterator<ChunkLoc> iterator = chunks.iterator();
                                         final ChunkLoc chunk = iterator.next();
                                         iterator.remove();
-                                        TaskManager.runTask(new Runnable() {
+                                        TaskManager.IMP.sync(new RunnableVal<Object>() {
                                             @Override
-                                            public void run() {
+                                            public void run(Object value) {
                                                 regenerateRoad(area, chunk, extend);
                                             }
                                         });
-                                        // DELAY TASK
-                                        TaskManager.runTaskLater(task, 600);
-                                        return;
                                     }
-                                    if (System.currentTimeMillis() - baseTime - last.get() < 1500 && last.get() != 0) {
-                                        while (System.currentTimeMillis() < diff && !chunks.isEmpty()) {
-                                            Iterator<ChunkLoc> iterator = chunks.iterator();
-                                            final ChunkLoc chunk = iterator.next();
-                                            iterator.remove();
-                                            TaskManager.runTask(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    regenerateRoad(area, chunk, extend);
-                                                }
-                                            });
-                                        }
-                                    }
-                                    last.set((int) (System.currentTimeMillis() - baseTime));
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
