@@ -245,17 +245,18 @@ public abstract class HybridUtils {
                                     }
                                 }
                                 if (!chunks.isEmpty()) {
-                                    while (System.currentTimeMillis() < 10 && !chunks.isEmpty()) {
-                                        Iterator<ChunkLoc> iterator = chunks.iterator();
-                                        final ChunkLoc chunk = iterator.next();
-                                        iterator.remove();
-                                        TaskManager.IMP.sync(new RunnableVal<Object>() {
-                                            @Override
-                                            public void run(Object value) {
+                                    TaskManager.IMP.sync(new RunnableVal<Object>() {
+                                        @Override
+                                        public void run(Object value) {
+                                            long start = System.currentTimeMillis();
+                                            while (System.currentTimeMillis() - start < 20 && !chunks.isEmpty()) {
+                                                Iterator<ChunkLoc> iterator = chunks.iterator();
+                                                final ChunkLoc chunk = iterator.next();
+                                                iterator.remove();
                                                 regenerateRoad(area, chunk, extend);
                                             }
-                                        });
-                                    }
+                                        }
+                                    });
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
