@@ -147,7 +147,8 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                     PS.log("&6Denied (" + key + ") references deleted plot; ignoring entry.");
                     continue;
                 }
-                UUID denied = UUID.fromString(resultSet.getString("player"));
+                String player = resultSet.getString("player");
+                UUID denied = player.equals("*") ? DBFunc.everyone : UUID.fromString(player);
                 plot.getDenied().add(denied);
             }
 
@@ -162,7 +163,8 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                     PS.log("&6Allowed (" + key + ") references deleted plot; ignoring entry.");
                     continue;
                 }
-                UUID allowed = UUID.fromString(resultSet.getString("player"));
+                String player = resultSet.getString("player");
+                UUID allowed = player.equals("*") ? DBFunc.everyone : UUID.fromString(player);
                 plot.getTrusted().add(allowed);
             }
             resultSet.close();
