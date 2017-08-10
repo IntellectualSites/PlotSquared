@@ -49,6 +49,8 @@ import com.plotsquared.bukkit.listeners.PlayerEvents183;
 import com.plotsquared.bukkit.listeners.PlayerEvents_1_8;
 import com.plotsquared.bukkit.listeners.PlayerEvents_1_9;
 import com.plotsquared.bukkit.listeners.PlotPlusListener;
+import com.plotsquared.bukkit.listeners.PlotPlusListener_1_12;
+import com.plotsquared.bukkit.listeners.PlotPlusListener_Legacy;
 import com.plotsquared.bukkit.listeners.WorldEvents;
 import com.plotsquared.bukkit.titles.DefaultTitle_111;
 import com.plotsquared.bukkit.util.BukkitChatManager;
@@ -532,6 +534,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     public void registerPlotPlusEvents() {
         PlotPlusListener.startRunnable(this);
         getServer().getPluginManager().registerEvents(new PlotPlusListener(), this);
+        if (PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_12_0)) {
+            getServer().getPluginManager().registerEvents(new PlotPlusListener_1_12(), this);
+        } else {
+            getServer().getPluginManager().registerEvents(new PlotPlusListener_Legacy(), this);
+        }
     }
 
     @Override

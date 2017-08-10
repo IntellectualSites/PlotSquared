@@ -24,7 +24,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -110,20 +109,6 @@ public class PlotPlusListener extends PlotListener implements Listener {
             return;
         }
         if (Flags.INVINCIBLE.isTrue(plot)) {
-            event.setCancelled(true);
-        }
-    }
-    
-    @EventHandler
-    public void onItemPickup(PlayerPickupItemEvent event) {
-        Player player = event.getPlayer();
-        PlotPlayer pp = BukkitUtil.getPlayer(player);
-        Plot plot = BukkitUtil.getLocation(player).getOwnedPlot();
-        if (plot == null) {
-            return;
-        }
-        UUID uuid = pp.getUUID();
-        if (plot.isAdded(uuid) && Flags.DROP_PROTECTION.isTrue(plot)) {
             event.setCancelled(true);
         }
     }
