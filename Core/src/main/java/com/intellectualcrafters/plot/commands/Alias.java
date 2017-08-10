@@ -6,7 +6,6 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
@@ -30,7 +29,7 @@ public class Alias extends SetCommand {
             MainUtil.sendMessage(player, C.ALIAS_TOO_LONG);
             return false;
         }
-        if (alias.contains(" ") || !StringMan.isAsciiPrintable(alias)) {
+        if (alias.contains(" ")) {
             C.NOT_VALID_VALUE.send(player);
             return false;
         }
