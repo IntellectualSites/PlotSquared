@@ -88,6 +88,9 @@ public class Purge extends SubCommand {
                 case "u":
                     unknown = Boolean.parseBoolean(split[1]);
                     break;
+                default:
+                    C.COMMAND_SYNTAX.send(player, getUsage());
+                    return false;
             }
         }
         final HashSet<Plot> toDelete = new HashSet<>();
