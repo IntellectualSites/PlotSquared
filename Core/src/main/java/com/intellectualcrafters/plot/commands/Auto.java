@@ -160,6 +160,7 @@ public class Auto extends SubCommand {
                     }
                     break;
                 }
+                plotarea.setMeta("lastPlot", start);
             }
             return true;
         }
