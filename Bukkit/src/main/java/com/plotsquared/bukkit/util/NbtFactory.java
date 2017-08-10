@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.io.ByteSink;
 import com.google.common.io.Closeables;
-import com.google.common.io.InputSupplier;
 import com.google.common.primitives.Primitives;
 import java.io.BufferedInputStream;
 import java.io.DataInput;
@@ -158,7 +157,7 @@ public class NbtFactory {
     /**
      * Load the content of a file from a stream.
      *
-     * @param stream - the stream supplier.
+     * @param input - the stream.
      * @param option - whether or not to decompress the input stream.
      * @return The decoded NBT compound.
      * @throws IOException If anything went wrong.
