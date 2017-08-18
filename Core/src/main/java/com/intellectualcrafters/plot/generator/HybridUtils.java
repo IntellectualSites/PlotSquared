@@ -249,8 +249,8 @@ public abstract class HybridUtils {
                                         @Override
                                         public void run(Object value) {
                                             long start = System.currentTimeMillis();
+                                            Iterator<ChunkLoc> iterator = chunks.iterator();
                                             while (System.currentTimeMillis() - start < 20 && !chunks.isEmpty()) {
-                                                Iterator<ChunkLoc> iterator = chunks.iterator();
                                                 final ChunkLoc chunk = iterator.next();
                                                 iterator.remove();
                                                 regenerateRoad(area, chunk, extend);

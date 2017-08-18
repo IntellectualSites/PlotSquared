@@ -112,31 +112,37 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                             TaskManager.runTaskAsync(new Runnable() {
                                 @Override
                                 public void run() {
-                                    try {
-                                        if (toFetch.isEmpty()) {
-                                            if (whenDone != null) {
-                                                whenDone.run();
-                                            }
-                                            return;
-                                        }
-                                        for (int i = 0; i < Math.min(500, toFetch.size()); i++) {
-                                            UUID uuid = toFetch.pop();
-                                            HttpURLConnection connection =
-                                                    (HttpURLConnection) new URL(SQLUUIDHandler.this.PROFILE_URL + uuid.toString().replace("-", ""))
-                                                            .openConnection();
-                                            try (InputStream con = connection.getInputStream()) {
-                                                InputStreamReader reader = new InputStreamReader(con);
-                                                JSONObject response = (JSONObject) SQLUUIDHandler.this.jsonParser.parse(reader);
-                                                String name = (String) response.get("name");
-                                                if (name != null) {
-                                                    add(new StringWrapper(name), uuid);
+                                    while (!toFetch.isEmpty()) {
+                                        try {
+                                            for (int i = 0; i < Math.min(500, toFetch.size()); i++) {
+                                                UUID uuid = toFetch.pop();
+                                                HttpURLConnection connection =
+                                                        (HttpURLConnection) new URL(SQLUUIDHandler.this.PROFILE_URL + uuid.toString().replace("-", ""))
+                                                                .openConnection();
+                                                try (InputStream con = connection.getInputStream()) {
+                                                    InputStreamReader reader = new InputStreamReader(con);
+                                                    JSONObject response = (JSONObject) SQLUUIDHandler.this.jsonParser.parse(reader);
+                                                    String name = (String) response.get("name");
+                                                    if (name != null) {
+                                                        add(new StringWrapper(name), uuid);
+                                                    }
                                                 }
+                                                connection.disconnect();
                                             }
+                                        }catch(IOException | ParseException e){
+                                            PS.debug("Invalid response from Mojang: Some UUIDs will be cached later. (`unknown` until then or player joins)");
                                         }
-                                    } catch (IOException | ParseException e) {
-                                        PS.debug("Invalid response from Mojang: Some UUIDs will be cached later. (`unknown` until then or player joins)");
+                                        try {
+                                            Thread.sleep(INTERVAL * 50);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                            break;
+                                        }
                                     }
-                                    TaskManager.runTaskLaterAsync(this, SQLUUIDHandler.this.INTERVAL);
+                                    if (whenDone != null) {
+                                        whenDone.run();
+                                    }
+                                    return;
                                 }
                             });
                         }

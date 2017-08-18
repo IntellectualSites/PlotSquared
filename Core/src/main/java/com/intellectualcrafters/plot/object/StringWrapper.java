@@ -33,6 +33,9 @@ public class StringWrapper {
             return false;
         }
         if (getClass() != obj.getClass()) {
+            if (obj.getClass() == String.class) {
+                return obj.toString().equalsIgnoreCase(this.value);
+            }
             return false;
         }
         if (obj.hashCode() != hashCode()) {
@@ -42,7 +45,7 @@ public class StringWrapper {
         if ((other.value == null) || (this.value == null)) {
             return false;
         }
-        return other.value.equalsIgnoreCase(this.value.toLowerCase());
+        return other.value.equalsIgnoreCase(this.value);
     }
 
     /**

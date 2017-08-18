@@ -28,6 +28,7 @@ public abstract class UUIDHandlerImplementation {
     public UUIDWrapper uuidWrapper;
     private boolean cached = false;
     private BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
+    private BiMap<UUID, StringWrapper> nameMap = uuidMap.inverse();
 
     public UUIDHandlerImplementation(UUIDWrapper wrapper) {
         this.uuidWrapper = wrapper;
@@ -61,7 +62,7 @@ public abstract class UUIDHandlerImplementation {
     }
 
     public void rename(UUID uuid, StringWrapper name) {
-        this.uuidMap.inverse().remove(uuid);
+        this.nameMap.remove(uuid);
         this.uuidMap.put(name, uuid);
     }
 
@@ -75,7 +76,7 @@ public abstract class UUIDHandlerImplementation {
             if (uuid == null || name == null) {
                 continue;
             }
-            BiMap<UUID, StringWrapper> inverse = this.uuidMap.inverse();
+            BiMap<UUID, StringWrapper> inverse = this.nameMap;
             if (inverse.containsKey(uuid)) {
                 if (this.uuidMap.containsKey(name)) {
                     continue;
@@ -164,11 +165,17 @@ public abstract class UUIDHandlerImplementation {
                         replace(offline, uuid, name.value);
                     }
                     return true;
+                } else {
+                    StringWrapper oName = this.nameMap.get(offline);
+                    if (!oName.equals(name)) {
+                        this.uuidMap.remove(name);
+                        this.uuidMap.put(name, uuid);
+                    }
                 }
                 return false;
             }
         } catch (Exception ignored) {
-            BiMap<UUID, StringWrapper> inverse = this.uuidMap.inverse();
+            BiMap<UUID, StringWrapper> inverse = this.nameMap;
             if (inverse.containsKey(uuid)) {
                 if (this.uuidMap.containsKey(name)) {
                     return false;
@@ -209,7 +216,7 @@ public abstract class UUIDHandlerImplementation {
         if (uuid == null) {
             return null;
         }
-        StringWrapper name = this.uuidMap.inverse().get(uuid);
+        StringWrapper name = this.nameMap.get(uuid);
         if (name != null) {
             return name.value;
         }
