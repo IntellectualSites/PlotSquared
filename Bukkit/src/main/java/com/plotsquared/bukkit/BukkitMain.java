@@ -223,7 +223,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                     return;
                                 }
                             }
-                            Bukkit.unloadWorld(world, false);
+                            Bukkit.unloadWorld(world, true);
                         }
                     }
                 }
