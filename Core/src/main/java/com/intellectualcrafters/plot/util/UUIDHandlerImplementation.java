@@ -76,11 +76,14 @@ public abstract class UUIDHandlerImplementation {
             if (uuid == null || name == null) {
                 continue;
             }
-            if (this.uuidMap.inverse().containsKey(uuid)) {
+            StringWrapper oldName = this.uuidMap.inverse().get(uuid);
+            if (oldName != null) {
                 if (this.uuidMap.containsKey(name)) {
                     continue;
                 }
-                rename(uuid, name);
+                if (getPlayer(uuid) == null) {
+                    rename(uuid, name);
+                }
                 continue;
             }
             this.uuidMap.put(name, uuid);
@@ -167,7 +170,6 @@ public abstract class UUIDHandlerImplementation {
                 } else {
                     StringWrapper oName = this.uuidMap.inverse().get(offline);
                     if (!oName.equals(name)) {
-                        System.out.println("Remove " + name);
                         this.uuidMap.remove (name);
                         this.uuidMap.put(name, uuid);
                     }
@@ -176,11 +178,15 @@ public abstract class UUIDHandlerImplementation {
             }
         } catch (Exception ignored) {
             BiMap<UUID, StringWrapper> inverse = this.uuidMap.inverse();
-            if (inverse.containsKey(uuid)) {
+            StringWrapper oldName = inverse.get(uuid);
+            if (oldName != null) {
                 if (this.uuidMap.containsKey(name)) {
                     return false;
                 }
-                rename(uuid, name);
+                PlotPlayer player = getPlayer(uuid);
+                if (player == null || player.getName().equalsIgnoreCase(name.value)) {
+                    rename(uuid, name);
+                }
                 return false;
             }
             this.uuidMap.put(name, uuid);
