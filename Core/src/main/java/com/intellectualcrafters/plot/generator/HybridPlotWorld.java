@@ -194,6 +194,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             short w3 = (short) d3.getX();
             short l3 = (short) d3.getZ();
             short h3 = (short) d3.getY();
+            if (w3 > PLOT_WIDTH || h3 > PLOT_WIDTH) {
+                this.ROAD_SCHEMATIC_ENABLED = true;
+            }
             int centerShiftZ = 0;
             if (l3 < this.PLOT_WIDTH) {
                 centerShiftZ = (this.PLOT_WIDTH - l3) / 2;
@@ -202,6 +205,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             if (w3 < this.PLOT_WIDTH) {
                 centerShiftX = (this.PLOT_WIDTH - w3) / 2;
             }
+
             int startY = minY - PLOT_HEIGHT;
             for (short x = 0; x < w3; x++) {
                 for (short z = 0; z < l3; z++) {
@@ -288,9 +292,13 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public void addOverlayBlock(short x, short y, short z, short id, byte data, boolean rotate, int height) {
         if (z < 0) {
             z += this.SIZE;
+        } else if (z >= this.SIZE) {
+            z -= this.SIZE;
         }
         if (x < 0) {
             x += this.SIZE;
+        } else if (x >= this.SIZE) {
+            x -= this.SIZE;
         }
         if (rotate) {
             byte newData = rotate(id, data);
