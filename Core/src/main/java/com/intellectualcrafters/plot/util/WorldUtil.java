@@ -1,5 +1,10 @@
 package com.intellectualcrafters.plot.util;
 
+import com.intellectualcrafters.jnbt.CompoundTag;
+import com.intellectualcrafters.jnbt.IntTag;
+import com.intellectualcrafters.jnbt.NBTInputStream;
+import com.intellectualcrafters.jnbt.NBTOutputStream;
+import com.intellectualcrafters.jnbt.Tag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
@@ -9,14 +14,17 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
-
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -70,15 +78,22 @@ public abstract class WorldUtil {
                 try (final ZipOutputStream zos = new ZipOutputStream(output)) {
                     File dat = getDat(plot.getWorldName());
                     Location spawn = getSpawn(plot.getWorldName());
-                    setSpawn(home);
                     byte[] buffer = new byte[1024];
                     if (dat != null) {
                         ZipEntry ze = new ZipEntry("world" + File.separator + dat.getName());
                         zos.putNextEntry(ze);
-                        FileInputStream in = new FileInputStream(dat);
-                        int len;
-                        while ((len = in.read(buffer)) > 0) {
-                            zos.write(buffer, 0, len);
+                        try (NBTInputStream nis = new NBTInputStream(new GZIPInputStream(new FileInputStream(dat)))) {
+                            CompoundTag tag = (CompoundTag) nis.readTag();
+                            CompoundTag data = (CompoundTag) tag.getValue().get("Data");
+                            Map<String, Tag> map = ReflectionUtils.getMap(data.getValue());
+                            map.put("SpawnX", new IntTag("SpawnX", home.getX()));
+                            map.put("SpawnY", new IntTag("SpawnY", home.getY()));
+                            map.put("SpawnZ", new IntTag("SpawnZ", home.getZ()));
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            try (NBTOutputStream out = new NBTOutputStream(new GZIPOutputStream(baos, true))) {
+                                out.writeTag(tag);
+                            }
+                            zos.write(baos.toByteArray());
                         }
                     }
                     setSpawn(spawn);

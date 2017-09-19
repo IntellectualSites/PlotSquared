@@ -10,9 +10,7 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.Set;
 
 @CommandDeclaration(
@@ -41,7 +39,7 @@ public class RegenAllRoads extends SubCommand {
             return false;
         }
         PlotArea area = PS.get().getPlotAreaByString(args[0]);
-        if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
+        if (area == null) {
             C.NOT_VALID_PLOT_WORLD.send(player, args[0]);
             return false;
         }

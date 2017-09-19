@@ -218,7 +218,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                         List<PlotPlayer> players = plot.getPlayersInPlot();
                         if (players.isEmpty() && PlotPlayer.wrap(plot.owner) == null) {
                             for (Chunk chunk : world.getLoadedChunks()) {
-                                chunk.unload(true, false);
+                                if (!chunk.unload(true, false)) return;
                                 if (System.currentTimeMillis() - start > 20) {
                                     return;
                                 }
