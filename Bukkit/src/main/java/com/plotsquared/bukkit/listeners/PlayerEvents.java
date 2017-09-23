@@ -701,6 +701,10 @@ public class PlayerEvents extends PlotListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
+            } else if ((location.getY() > area.MAX_BUILD_HEIGHT || location.getY() < area.MIN_BUILD_HEIGHT) && !Permissions
+                    .hasPermission(plotPlayer, C.PERMISSION_ADMIN_BUILD_HEIGHTLIMIT)) {
+                event.setCancelled(true);
+                MainUtil.sendMessage(plotPlayer, C.HEIGHT_LIMIT.s().replace("{limit}", String.valueOf(area.MAX_BUILD_HEIGHT)));
             }
             if (!plot.hasOwner()) {
                 if (Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
@@ -2390,6 +2394,11 @@ public class PlayerEvents extends PlotListener implements Listener {
         PlotPlayer pp = BukkitUtil.getPlayer(player);
         Plot plot = area.getPlot(location);
         if (plot != null) {
+            if ((location.getY() > area.MAX_BUILD_HEIGHT || location.getY() < area.MIN_BUILD_HEIGHT) && !Permissions
+                    .hasPermission(pp, C.PERMISSION_ADMIN_BUILD_HEIGHTLIMIT)) {
+                event.setCancelled(true);
+                MainUtil.sendMessage(pp, C.HEIGHT_LIMIT.s().replace("{limit}", String.valueOf(area.MAX_BUILD_HEIGHT)));
+            }
             if (!plot.hasOwner()) {
                 if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_UNOWNED)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_UNOWNED);
@@ -2421,11 +2430,6 @@ public class PlayerEvents extends PlotListener implements Listener {
                 if (block.getType().hasGravity()) {
                     sendBlockChange(block.getLocation(), block.getType(), block.getData());
                 }
-            }
-            if (location.getY() > area.MAX_BUILD_HEIGHT && location.getY() < area.MIN_BUILD_HEIGHT && !Permissions
-                    .hasPermission(pp, C.PERMISSION_ADMIN_BUILD_HEIGHTLIMIT)) {
-                event.setCancelled(true);
-                MainUtil.sendMessage(pp, C.HEIGHT_LIMIT.s().replace("{limit}", String.valueOf(area.MAX_BUILD_HEIGHT)));
             }
         } else if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD)) {
             MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_ROAD);
