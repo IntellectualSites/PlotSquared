@@ -201,13 +201,13 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             if (l3 < this.PLOT_WIDTH) {
                 centerShiftZ = (this.PLOT_WIDTH - l3) / 2;
             } else {
-                centerShiftZ = (PLOT_WIDTH + ROAD_WIDTH - l3) / 2;
+                centerShiftZ = (PLOT_WIDTH - l3) / 2;
             }
             int centerShiftX = 0;
             if (w3 < this.PLOT_WIDTH) {
                 centerShiftX = (this.PLOT_WIDTH - w3) / 2;
             } else {
-                centerShiftX = (PLOT_WIDTH + ROAD_WIDTH - w3) / 2;
+                centerShiftX = (PLOT_WIDTH - w3) / 2;
             }
 
             int startY = minY - PLOT_HEIGHT;
