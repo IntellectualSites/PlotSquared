@@ -68,6 +68,7 @@ public abstract class PlotArea {
     public int TYPE = 0;
     public int TERRAIN = 0;
     public boolean HOME_ALLOW_NONMEMBER = false;
+    public PlotLoc NONMEMBER_HOME;
     public PlotLoc DEFAULT_HOME;
     public int MAX_BUILD_HEIGHT = 256;
     public int MIN_BUILD_HEIGHT = 1;
@@ -265,8 +266,17 @@ public abstract class PlotArea {
                 break;
         }
 
-        this.HOME_ALLOW_NONMEMBER = config.getBoolean("home.allow-nonmembers");
+        String homeNonMembers = config.getString("home.nonmembers");
         String homeDefault = config.getString("home.default");
+        this.DEFAULT_HOME = PlotLoc.fromString(homeDefault);
+        this.HOME_ALLOW_NONMEMBER = homeNonMembers.equalsIgnoreCase(homeDefault);
+        if (this.HOME_ALLOW_NONMEMBER) {
+            this.NONMEMBER_HOME = DEFAULT_HOME;
+        } else {
+            this.NONMEMBER_HOME = PlotLoc.fromString(homeNonMembers);
+        }
+
+
         if ("side".equalsIgnoreCase(homeDefault)) {
             this.DEFAULT_HOME = null;
         } else if (StringMan.isEqualIgnoreCaseToAny(homeDefault, "center", "middle")) {
@@ -338,7 +348,8 @@ public abstract class PlotArea {
         options.put("world.border", this.WORLD_BORDER);
         options.put("limits.max-members", this.MAX_PLOT_MEMBERS);
         options.put("home.default", "side");
-        options.put("home.allow-nonmembers", false);
+        String position = config.getString("home.nonmembers", config.getBoolean("home.allow-nonmembers", false) ? config.getString("home.default", "side") : "side");
+        options.put("home.nonmembers", position);
         options.put("world.max_height", this.MAX_BUILD_HEIGHT);
         options.put("world.min_height", this.MIN_BUILD_HEIGHT);
         options.put("world.gamemode", this.GAMEMODE.name().toLowerCase());

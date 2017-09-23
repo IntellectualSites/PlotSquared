@@ -1147,7 +1147,7 @@ public class Plot {
     public Location getHome() {
         BlockLoc home = this.getPosition();
         if (home == null || home.x == 0 && home.z == 0) {
-            return this.getDefaultHome();
+            return this.getDefaultHome(true);
         } else {
             Location bot = this.getBottomAbs();
             Location loc = new Location(bot.getWorld(), bot.getX() + home.x, bot.getY() + home.y, bot.getZ() + home.z, home.yaw, home.pitch);
@@ -1182,11 +1182,16 @@ public class Plot {
      * @return
      */
     public Location getDefaultHome() {
+        return getDefaultHome(false);
+    }
+
+    public Location getDefaultHome(boolean member) {
         Plot plot = this.getBasePlot(false);
-        if (this.area.DEFAULT_HOME != null) {
+        PlotLoc loc = member ? area.DEFAULT_HOME : area.NONMEMBER_HOME;
+        if (loc != null) {
             int x;
             int z;
-            if (this.area.DEFAULT_HOME.x == Integer.MAX_VALUE && this.area.DEFAULT_HOME.z == Integer.MAX_VALUE) {
+            if (loc.x == Integer.MAX_VALUE && loc.z == Integer.MAX_VALUE) {
                 // center
                 RegionWrapper largest = plot.getLargestRegion();
                 x = (largest.maxX >> 1) - (largest.minX >> 1) + largest.minX;
@@ -1194,8 +1199,8 @@ public class Plot {
             } else {
                 // specific
                 Location bot = plot.getBottomAbs();
-                x = bot.getX() + this.area.DEFAULT_HOME.x;
-                z = bot.getZ() + this.area.DEFAULT_HOME.z;
+                x = bot.getX() + loc.x;
+                z = bot.getZ() + loc.z;
             }
             int y = isLoaded() ? WorldUtil.IMP.getHighestBlock(plot.getWorldName(), x, z) : 64;
             return new Location(plot.getWorldName(), x, y + 1, z);
@@ -2600,7 +2605,7 @@ public class Plot {
             if (this.area.HOME_ALLOW_NONMEMBER || plot.isAdded(player.getUUID())) {
                 location = this.getHome();
             } else {
-                location = this.getDefaultHome();
+                location = this.getDefaultHome(false);
             }
             if (Settings.Teleport.DELAY == 0 || Permissions.hasPermission(player, "plots.teleport.delay.bypass")) {
                 MainUtil.sendMessage(player, C.TELEPORTED_TO_PLOT);
