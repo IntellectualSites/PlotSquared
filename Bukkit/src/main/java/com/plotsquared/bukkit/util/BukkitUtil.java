@@ -173,12 +173,14 @@ public class BukkitUtil extends WorldUtil {
     public int getHighestBlock(String world, int x, int z) {
         World bukkitWorld = getWorld(world);
         // Skip top and bottom block
-        for (int y = bukkitWorld.getMaxHeight() - 2; y > 0; y--) {
+        int air = 1;
+        for (int y = bukkitWorld.getMaxHeight() - 1; y >= 0; y--) {
             Block block = bukkitWorld.getBlockAt(x, y, z);
             if (block != null) {
                 Material type = block.getType();
                 if (type.isSolid()) {
-                    return y + 1;
+                    if (air > 1) return y + 1;
+                    air = 0;
                 } else {
                     switch (type) {
                         case WATER:
@@ -187,6 +189,7 @@ public class BukkitUtil extends WorldUtil {
                         case STATIONARY_WATER:
                             return y;
                     }
+                    air++;
                 }
             }
         }
