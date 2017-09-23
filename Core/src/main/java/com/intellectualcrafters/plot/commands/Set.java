@@ -88,14 +88,14 @@ public class Set extends SubCommand {
                                         }
                                     }
                                     return false;
-                                } else if (!allowUnsafe && !WorldUtil.IMP.isBlockSolid(block)) {
+                                } else if (!allowUnsafe && (block.id == 0 || !WorldUtil.IMP.isBlockSolid(block))) {
                                     MainUtil.sendMessage(player, C.NOT_ALLOWED_BLOCK, block.toString());
                                     return false;
                                 }
                             }
                             if (!allowUnsafe) {
                                 for (PlotBlock block : blocks) {
-                                    if (!WorldUtil.IMP.isBlockSolid(block)) {
+                                    if (block.id == 0 || !WorldUtil.IMP.isBlockSolid(block)) {
                                         MainUtil.sendMessage(player, C.NOT_ALLOWED_BLOCK, block.toString());
                                         return false;
                                     }
