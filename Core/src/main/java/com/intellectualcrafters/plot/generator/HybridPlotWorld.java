@@ -2,18 +2,21 @@ package com.intellectualcrafters.plot.generator;
 
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.jnbt.CompoundTag;
+import com.intellectualcrafters.jnbt.Tag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.ReflectionUtils;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +29,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public short PATH_WIDTH_UPPER;
     public HashMap<Integer, char[]> G_SCH;
     public HashMap<Integer, HashMap<Integer, CompoundTag>> G_SCH_STATE;
+    private Location SIGN_LOCATION;
 
     public HybridPlotWorld(String worldName, String id, IndependentPlotGenerator generator, PlotId min, PlotId max) {
         super(worldName, id, generator, min, max);
@@ -43,6 +47,19 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             data = (byte) ((((data - start) + 1) & 1) + start);
         }
         return data;
+    }
+
+    public Location getSignLocation(Plot plot) {
+        plot = plot.getBasePlot(false);
+        Location bot = plot.getBottomAbs();
+        if (SIGN_LOCATION == null) {
+            bot.setY(ROAD_HEIGHT + 1);
+            return bot.add(-1, ROAD_HEIGHT, -2);
+        } else {
+            bot.setY(0);
+            Location loc = bot.add(SIGN_LOCATION.getX(), SIGN_LOCATION.getY(), SIGN_LOCATION.getZ());
+            return loc;
+        }
     }
 
     // FIXME depends on block ids
@@ -228,6 +245,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             HashMap<BlockLoc, CompoundTag> items = schematic3.getTiles();
             if (!items.isEmpty()) {
                 this.G_SCH_STATE = new HashMap<>();
+                outer:
                 for (Map.Entry<BlockLoc, CompoundTag> entry : items.entrySet()) {
                     BlockLoc loc = entry.getKey();
                     short x = (short) (loc.x + shift + oddshift + centerShiftX);
@@ -240,6 +258,16 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                         this.G_SCH_STATE.put(pair, existing);
                     }
                     existing.put((int) y, entry.getValue());
+
+                    CompoundTag tag = entry.getValue();
+                    Map<String, Tag> map = ReflectionUtils.getMap(tag.getValue());
+                    for (int i = 1; i <= 4; i++) {
+                        String ln = tag.getString("Line" + i);
+                        if (ln == null || ln.length() > 11) continue outer;
+                    }
+                    SIGN_LOCATION = new Location(worldname, loc.x + centerShiftX, this.PLOT_HEIGHT + loc.y, loc.z + centerShiftZ);
+                    ALLOW_SIGNS = true;
+                    continue outer;
                 }
             }
         }

@@ -96,6 +96,30 @@ public abstract class SquarePlotManager extends GridPlotManager {
         }
     }
 
+    public PlotId getNearestPlotId(PlotArea plotArea, int x, int y, int z) {
+        SquarePlotWorld dpw = (SquarePlotWorld) plotArea;
+        if (dpw.ROAD_OFFSET_X != 0) {
+            x -= dpw.ROAD_OFFSET_X;
+        }
+        if (dpw.ROAD_OFFSET_Z != 0) {
+            z -= dpw.ROAD_OFFSET_Z;
+        }
+        int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
+        int idx;
+        if (x < 0) {
+            idx = x / size;
+        } else {
+            idx = (x / size) + 1;
+        }
+        int idz;
+        if (z < 0) {
+            idz = z / size;
+        } else {
+            idz = (z / size) + 1;
+        }
+        return new PlotId(idx, idz);
+    }
+
     @Override
     public PlotId getPlotId(PlotArea plotArea, int x, int y, int z) {
         try {

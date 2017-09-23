@@ -119,7 +119,15 @@ public class BukkitUtil extends WorldUtil {
         World world = getWorld(worldName);
         Block block = world.getBlockAt(x, y, z);
         //        block.setType(Material.AIR);
-        block.setTypeIdAndData(Material.WALL_SIGN.getId(), (byte) 2, false);
+        Material type = block.getType();
+        if (type != Material.SIGN && type != Material.SIGN_POST) {
+            int data = 2;
+            if (world.getBlockAt(x, y, z + 1).getType().isSolid()) data = 2;
+            else if (world.getBlockAt(x + 1, y, z).getType().isSolid()) data = 4;
+            else if (world.getBlockAt(x, y, z - 1).getType().isSolid()) data = 3;
+            else if (world.getBlockAt(x - 1, y, z).getType().isSolid()) data = 5;
+            block.setTypeIdAndData(Material.WALL_SIGN.getId(), (byte) data, false);
+        }
         BlockState blockstate = block.getState();
         if (blockstate instanceof Sign) {
             final Sign sign = (Sign) blockstate;

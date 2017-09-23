@@ -208,4 +208,13 @@ public class HybridPlotManager extends ClassicPlotManager {
         }
         createSchemAbs(plotWorld, queue, l1, l2, false);
     }
+
+    /**
+     * Remove sign for a plot.
+     */
+    @Override
+    public Location getSignLoc(PlotArea plotArea, Plot plot) {
+        HybridPlotWorld dpw = (HybridPlotWorld) plotArea;
+        return dpw.getSignLocation(plot);
+    }
 }

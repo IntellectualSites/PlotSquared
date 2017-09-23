@@ -200,7 +200,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 public void run() {
                     unload();
                 }
-            }, 20);
+            }, 5);
         }
     }
 
@@ -211,19 +211,26 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             SinglePlotArea area = ((SinglePlotAreaManager) manager).getArea();
             for (World world : Bukkit.getWorlds()) {
                 String name = world.getName();
+                char char0 = name.charAt(0);
+                if (!Character.isDigit(char0) && char0 != '-') continue;
+                if (!world.getPlayers().isEmpty()) continue;
+
                 PlotId id = PlotId.fromString(name);
                 if (id != null) {
                     Plot plot = area.getOwnedPlot(id);
                     if (plot != null) {
-                        List<PlotPlayer> players = plot.getPlayersInPlot();
-                        if (players.isEmpty() && PlotPlayer.wrap(plot.owner) == null) {
-                            for (Chunk chunk : world.getLoadedChunks()) {
-                                if (!chunk.unload(true, false)) return;
-                                if (System.currentTimeMillis() - start > 20) {
-                                    return;
-                                }
+                        if (PlotPlayer.wrap(plot.owner) == null) {
+                            if (world.getKeepSpawnInMemory()) {
+                                world.setKeepSpawnInMemory(false);
+                                return;
                             }
-                            Bukkit.unloadWorld(world, true);
+                            Chunk[] chunks = world.getLoadedChunks();
+                            if (chunks.length == 0) {
+                                if (!Bukkit.unloadWorld(world, true)) {
+                                    PS.debug("Failed to unload " + world.getName());
+                                }
+                                return;
+                            }
                         }
                     }
                 }

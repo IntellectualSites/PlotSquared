@@ -214,10 +214,14 @@ public class HybridGen extends IndependentPlotGenerator {
                             if (queue == null) {
                                 queue = GlobalBlockQueue.IMP.getNewQueue(hpw.worldname, false);
                             }
-                            SchematicHandler.manager.restoreTile(queue, entry.getValue(), p1x + x, entry.getKey(), p1z + z);
+                            CompoundTag tag = entry.getValue();
+                            SchematicHandler.manager.restoreTile(queue, tag, p1x + x, entry.getKey(), p1z + z);
                         }
                     }
                 }
+            }
+            if (queue != null) {
+                queue.flush();
             }
         }
         return false;

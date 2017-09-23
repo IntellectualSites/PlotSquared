@@ -182,6 +182,12 @@ public class MathMan {
         return new float[]{(float) (pitch_sin * Math.cos(yaw)), (float) (pitch_sin * Math.sin(yaw)), (float) Math.cos(pitch)};
     }
 
+    public static int floorMod(int x, int y) {
+        int i = x % y;
+        if (i < 0) i += y;
+        return i;
+    }
+
     public static int roundInt(double value) {
         return (int) (value < 0 ? (value == (int) value) ? value : value - 1 : value);
     }
