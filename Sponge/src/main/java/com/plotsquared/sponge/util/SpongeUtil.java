@@ -332,7 +332,7 @@ public class SpongeUtil extends WorldUtil {
     @Override
     public Location getSpawn(String world) {
         Location result = SpongeUtil.getLocation(world, SpongeUtil.getWorld(world).getSpawnLocation());
-        result.setY(getHighestBlock(world, result.getX(), result.getZ()));
+        result.setY(1 + getHighestBlock(world, result.getX(), result.getZ()));
         return result;
     }
 
@@ -392,15 +392,15 @@ public class SpongeUtil extends WorldUtil {
     public int getHighestBlock(String worldName, int x, int z) {
         World world = SpongeUtil.getWorld(worldName);
         if (world == null) {
-            return 64;
+            return 63;
         }
         for (int y = 255; y > 0; y--) {
             BlockState block = world.getBlock(x, y, z);
             if (block.getType() != BlockTypes.AIR) {
-                return y + 1;
+                return y;
             }
         }
-        return 64;
+        return 63;
     }
 
     @Override

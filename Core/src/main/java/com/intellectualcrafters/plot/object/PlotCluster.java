@@ -139,7 +139,7 @@ public class PlotCluster {
         }
         int max = MainUtil.getHeighestBlock(this.area.worldname, toReturn.getX(), toReturn.getZ());
         if (max > toReturn.getY()) {
-            toReturn.setY(max);
+            toReturn.setY(1 + max);
         }
         return toReturn;
     }

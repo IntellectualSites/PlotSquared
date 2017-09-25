@@ -38,7 +38,6 @@ public class ChunkListener implements Listener {
     private RefField mustSave;
     private Chunk lastChunk;
 
-    
     public ChunkListener() {
         if (Settings.Chunk_Processor.AUTO_TRIM) {
             try {

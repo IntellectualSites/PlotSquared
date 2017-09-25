@@ -11,6 +11,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.SetupObject;
+import com.intellectualcrafters.plot.object.worlds.SingleWorldGenerator;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
@@ -57,9 +58,8 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
                 if (queue == null) {
                     queue = GlobalBlockQueue.IMP.getNewQueue(world.getName(), false);
                 }
-                ChunkLoc loc = new ChunkLoc(c.getX(), c.getZ());
-                byte[][] resultData;
-                if (!BukkitPlotGenerator.this.dataMap.containsKey(loc)) {
+                byte[][] resultData = dataMap.isEmpty() ? null : dataMap.remove(new ChunkLoc(c.getX(), c.getZ()));
+                if (resultData == null) {
                     GenChunk result = BukkitPlotGenerator.this.chunkSetter;
                     // Set the chunk location
                     result.setChunk(c);
@@ -69,10 +69,8 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
                     result.grid = null;
                     result.cd = null;
                     // Catch any exceptions (as exceptions usually thrown)
-                    generate(world, loc.x, loc.z, result);
+                    generate(world, c.getX(), c.getZ(), result);
                     resultData = result.result_data;
-                } else {
-                    resultData = BukkitPlotGenerator.this.dataMap.remove(loc);
                 }
                 if (resultData != null) {
                     for (int i = 0; i < resultData.length; i++) {
@@ -256,6 +254,9 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     @Override
     public ChunkData generateChunkData(World world, Random random, int cx, int cz, BiomeGrid grid) {
         GenChunk result = this.chunkSetter;
+        if (this.getPlotGenerator() instanceof SingleWorldGenerator) {
+            if (result.cd != null) return result.cd;
+        }
         // Set the chunk location
         result.setChunk(new ChunkWrapper(world.getName(), cx, cz));
         // Set the result data
@@ -318,8 +319,12 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
                 return this.platformGenerator.generateExtBlockSections(world, r, cx, cz, grid);
             } else {
                 generate(world, cx, cz, result);
-                this.dataMap.put(new ChunkLoc(cx, cz), result.result_data);
-
+                for (int i = 0; i < result.result_data.length; i++) {
+                    if (result.result_data[i] != null) {
+                        this.dataMap.put(new ChunkLoc(cx, cz), result.result_data);
+                        break;
+                    }
+                }
             }
         } catch (Throwable e) {
             e.printStackTrace();

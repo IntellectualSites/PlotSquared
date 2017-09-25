@@ -54,7 +54,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         Location bot = plot.getBottomAbs();
         if (SIGN_LOCATION == null) {
             bot.setY(ROAD_HEIGHT + 1);
-            return bot.add(-1, ROAD_HEIGHT, -2);
+            return bot.add(-1, 1, -2);
         } else {
             bot.setY(0);
             Location loc = bot.add(SIGN_LOCATION.getX(), SIGN_LOCATION.getY(), SIGN_LOCATION.getZ());

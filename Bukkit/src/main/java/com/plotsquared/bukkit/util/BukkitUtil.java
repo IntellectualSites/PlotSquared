@@ -187,7 +187,7 @@ public class BukkitUtil extends WorldUtil {
             if (block != null) {
                 Material type = block.getType();
                 if (type.isSolid()) {
-                    if (air > 1) return y + 1;
+                    if (air > 1) return y;
                     air = 0;
                 } else {
                     switch (type) {
@@ -201,7 +201,7 @@ public class BukkitUtil extends WorldUtil {
                 }
             }
         }
-        return bukkitWorld.getMaxHeight();
+        return bukkitWorld.getMaxHeight() - 1;
     }
 
     @Override

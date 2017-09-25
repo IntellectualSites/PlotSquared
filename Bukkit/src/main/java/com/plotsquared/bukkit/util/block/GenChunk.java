@@ -6,6 +6,7 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.block.ScopedLocalBlockQueue;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import java.util.Arrays;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -69,6 +70,24 @@ public class GenChunk extends ScopedLocalBlockQueue {
             for (int z = 0; z < 16; z++) {
                 this.grid.setBiome(x, z, biome);
             }
+        }
+    }
+
+    @Override
+    public void setCuboid(Location pos1, Location pos2, PlotBlock block) {
+        if (block.data == 0 && result != null && pos1.getX() == 0 && pos1.getZ() == 0 && pos2.getX() == 15 && pos2.getZ() == 15) {
+            for (int y = pos1.getY(); y <= pos2.getY(); y++) {
+                int layer = y >> 4;
+                short[] data = result[layer];
+                if (data == null) {
+                    result[layer] = data = new short[4096];
+                }
+                int start = y << 8;
+                int end = start + 256;
+                Arrays.fill(data, start, end, block.id);
+            }
+        } else {
+            super.setCuboid(pos1, pos2, block);
         }
     }
 

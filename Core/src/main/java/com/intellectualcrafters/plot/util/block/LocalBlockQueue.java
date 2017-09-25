@@ -90,7 +90,7 @@ public abstract class LocalBlockQueue {
         GlobalBlockQueue.IMP.enqueue(this);
     }
 
-    public final void setCuboid(Location pos1, Location pos2, PlotBlock block) {
+    public void setCuboid(Location pos1, Location pos2, PlotBlock block) {
         for (int y = pos1.getY(); y <= Math.min(255, pos2.getY()); y++) {
             for (int x = pos1.getX(); x <= pos2.getX(); x++) {
                 for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
@@ -100,7 +100,7 @@ public abstract class LocalBlockQueue {
         }
     }
 
-    public final void setCuboid(Location pos1, Location pos2, PlotBlock[] blocks) {
+    public void setCuboid(Location pos1, Location pos2, PlotBlock[] blocks) {
         for (int y = pos1.getY(); y <= Math.min(255, pos2.getY()); y++) {
             for (int x = pos1.getX(); x <= pos2.getX(); x++) {
                 for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {

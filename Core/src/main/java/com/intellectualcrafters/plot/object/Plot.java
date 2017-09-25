@@ -1134,8 +1134,8 @@ public class Plot {
         int z = largest.minZ - 1;
         PlotManager manager = getManager();
         int y = isLoaded() ? WorldUtil.IMP.getHighestBlock(getWorldName(), x, z) : 64;
-        if (area.ALLOW_SIGNS) {
-            y = Math.max(y, manager.getSignLoc(area, this).getY());
+        if (area.ALLOW_SIGNS && (y <= 0 || y >= 255)) {
+            y = Math.max(y, manager.getSignLoc(area, this).getY() - 1);
         }
         return new Location(getWorldName(), x, y + 1, z);
     }
@@ -1147,13 +1147,15 @@ public class Plot {
     public Location getHome() {
         BlockLoc home = this.getPosition();
         if (home == null || home.x == 0 && home.z == 0) {
+            System.out.println("Default");
             return this.getDefaultHome(true);
         } else {
+            System.out.println("Custom");
             Location bot = this.getBottomAbs();
             Location loc = new Location(bot.getWorld(), bot.getX() + home.x, bot.getY() + home.y, bot.getZ() + home.z, home.yaw, home.pitch);
             if (!isLoaded()) return loc;
             if (WorldUtil.IMP.getBlock(loc).id != 0) {
-                loc.setY(Math.max(WorldUtil.IMP.getHighestBlock(this.getWorldName(), loc.getX(), loc.getZ()), bot.getY()));
+                loc.setY(Math.max(1 + WorldUtil.IMP.getHighestBlock(this.getWorldName(), loc.getX(), loc.getZ()), bot.getY()));
             }
             return loc;
         }

@@ -51,6 +51,7 @@ import com.plotsquared.bukkit.listeners.PlayerEvents_1_9;
 import com.plotsquared.bukkit.listeners.PlotPlusListener;
 import com.plotsquared.bukkit.listeners.PlotPlusListener_1_12;
 import com.plotsquared.bukkit.listeners.PlotPlusListener_Legacy;
+import com.plotsquared.bukkit.listeners.SingleWorldListener;
 import com.plotsquared.bukkit.listeners.WorldEvents;
 import com.plotsquared.bukkit.titles.DefaultTitle_111;
 import com.plotsquared.bukkit.util.BukkitChatManager;
@@ -158,6 +159,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     private int[] version;
     private String name;
+    private SingleWorldListener singleWorldListener;
 
     @Override
     public int[] getServerVersion() {
@@ -200,8 +202,17 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 public void run() {
                     unload();
                 }
-            }, 5);
+            }, 20);
+            try {
+                singleWorldListener = new SingleWorldListener(this);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    public SingleWorldListener getSingleWorldListener() {
+        return singleWorldListener;
     }
 
     public void unload() {

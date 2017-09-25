@@ -565,7 +565,7 @@ public class MainUtil {
     public static int getHeighestBlock(String world, int x, int z) {
         int result = WorldUtil.IMP.getHighestBlock(world, x, z);
         if (result == 0) {
-            return 64;
+            return 63;
         }
         return result;
     }

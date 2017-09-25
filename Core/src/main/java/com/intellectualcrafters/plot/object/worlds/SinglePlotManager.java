@@ -9,6 +9,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SetupUtils;
+import com.intellectualcrafters.plot.util.TaskManager;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -34,11 +35,16 @@ public class SinglePlotManager extends PlotManager {
     }
 
     @Override
-    public boolean clearPlot(PlotArea plotArea, Plot plot, Runnable whenDone) {
+    public boolean clearPlot(PlotArea plotArea, Plot plot, final Runnable whenDone) {
         SetupUtils.manager.unload(plot.getWorldName(), false);
-        File worldFolder = new File(PS.get().IMP.getWorldContainer(), plot.getWorldName());
-        MainUtil.deleteDirectory(worldFolder);
-        if (whenDone != null) whenDone.run();
+        final File worldFolder = new File(PS.get().IMP.getWorldContainer(), plot.getWorldName());
+        TaskManager.IMP.taskAsync(new Runnable() {
+            @Override
+            public void run() {
+                MainUtil.deleteDirectory(worldFolder);
+                if (whenDone != null) whenDone.run();
+            }
+        });
         return true;
     }
 
