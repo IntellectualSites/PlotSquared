@@ -104,6 +104,7 @@ public class Download extends SubCommand {
             }
             MainUtil.sendMessage(player, "&cNote: The `.mca` files are 512x512");
             plot.addRunning();
+            WorldUtil.IMP.saveWorld(world);
             WorldUtil.IMP.upload(plot, null, null, new RunnableVal<URL>() {
                 @Override
                 public void run(URL url) {
