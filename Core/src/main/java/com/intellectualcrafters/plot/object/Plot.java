@@ -1147,10 +1147,8 @@ public class Plot {
     public Location getHome() {
         BlockLoc home = this.getPosition();
         if (home == null || home.x == 0 && home.z == 0) {
-            System.out.println("Default");
             return this.getDefaultHome(true);
         } else {
-            System.out.println("Custom");
             Location bot = this.getBottomAbs();
             Location loc = new Location(bot.getWorld(), bot.getX() + home.x, bot.getY() + home.y, bot.getZ() + home.z, home.yaw, home.pitch);
             if (!isLoaded()) return loc;
