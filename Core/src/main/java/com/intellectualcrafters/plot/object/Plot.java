@@ -1340,42 +1340,45 @@ public class Plot {
 
     public boolean claim(final PlotPlayer player, boolean teleport, String schematic, boolean updateDB) {
         boolean result = EventUtil.manager.callClaim(player, this, false);
-        if (updateDB) {
-            if (!result || (!create(player.getUUID(), true))) {
-                return false;
-            }
-        } else {
-            area.addPlot(this);
-        }
-        setSign(player.getName());
-        MainUtil.sendMessage(player, C.CLAIMED);
-        if (teleport) {
-            teleportPlayer(player);
-        }
-        PlotArea plotworld = getArea();
-        if (plotworld.SCHEMATIC_ON_CLAIM) {
-            SchematicHandler.Schematic sch;
-            if (schematic == null || schematic.isEmpty()) {
-                sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
-            } else {
-                sch = SchematicHandler.manager.getSchematic(schematic);
-                if (sch == null) {
-                    sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
+        if (result) {
+            if (updateDB) {
+                if (!result || (!create(player.getUUID(), true))) {
+                    return false;
                 }
+            } else {
+                area.addPlot(this);
             }
-            SchematicHandler.manager.paste(sch, this, 0, 0, 0, true, new RunnableVal<Boolean>() {
-                @Override
-                public void run(Boolean value) {
-                    if (value) {
-                        MainUtil.sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);
-                    } else {
-                        MainUtil.sendMessage(player, C.SCHEMATIC_PASTE_FAILED);
+            setSign(player.getName());
+            MainUtil.sendMessage(player, C.CLAIMED);
+            if (teleport) {
+                teleportPlayer(player);
+            }
+            PlotArea plotworld = getArea();
+            if (plotworld.SCHEMATIC_ON_CLAIM) {
+                SchematicHandler.Schematic sch;
+                if (schematic == null || schematic.isEmpty()) {
+                    sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
+                } else {
+                    sch = SchematicHandler.manager.getSchematic(schematic);
+                    if (sch == null) {
+                        sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
                     }
                 }
-            });
+                SchematicHandler.manager.paste(sch, this, 0, 0, 0, true, new RunnableVal<Boolean>() {
+                    @Override
+                    public void run(Boolean value) {
+                        if (value) {
+                            MainUtil.sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);
+                        } else {
+                            MainUtil.sendMessage(player, C.SCHEMATIC_PASTE_FAILED);
+                        }
+                    }
+                });
+            }
+            plotworld.getPlotManager().claimPlot(plotworld, this);
+            return true;
         }
-        plotworld.getPlotManager().claimPlot(plotworld, this);
-        return true;
+        return false;
     }
 
     /**
