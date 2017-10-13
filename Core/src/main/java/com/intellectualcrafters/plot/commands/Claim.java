@@ -9,10 +9,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.ByteArrayUtilities;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(command = "claim",
@@ -85,25 +82,28 @@ public class Claim extends SubCommand {
             sendMessage(player, C.REMOVED_GRANTED_PLOT, "1", "" + (grants - 1));
         }
         if (plot.canClaim(player)) {
-            plot.owner = player.getUUID();
-            final String finalSchematic = schematic;
-            DBFunc.createPlotSafe(plot, new Runnable() {
-                @Override
-                public void run() {
-                    TaskManager.IMP.sync(new RunnableVal<Object>() {
-                        @Override
-                        public void run(Object value) {
-                            plot.claim(player, true, finalSchematic, false);
-                        }
-                    });
-                }
-            }, new Runnable() {
-                @Override
-                public void run() {
-                    sendMessage(player, C.PLOT_NOT_CLAIMED);
-                }
-            });
-            return true;
+            boolean result = EventUtil.manager.callClaim(player, plot, false);
+            if(result) {
+                plot.owner = player.getUUID();
+                final String finalSchematic = schematic;
+                DBFunc.createPlotSafe(plot, new Runnable() {
+                    @Override
+                    public void run() {
+                        TaskManager.IMP.sync(new RunnableVal<Object>() {
+                            @Override
+                            public void run(Object value) {
+                                plot.claim(player, true, finalSchematic, false);
+                            }
+                        });
+                    }
+                }, new Runnable() {
+                    @Override
+                    public void run() {
+                        sendMessage(player, C.PLOT_NOT_CLAIMED);
+                    }
+                });
+                return true;
+            }
         } else {
             sendMessage(player, C.PLOT_NOT_CLAIMED);
         }

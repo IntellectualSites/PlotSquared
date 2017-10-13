@@ -30,6 +30,8 @@ public abstract class EventUtil {
 
     public abstract boolean callClaim(PlotPlayer player, Plot plot, boolean auto);
 
+    public abstract boolean callClaimSuccess(PlotPlayer player, Plot plot, boolean auto);
+
     public abstract boolean callTeleport(PlotPlayer player, Location from, Plot plot);
 
     public abstract boolean callComponentSet(Plot plot, String component);
