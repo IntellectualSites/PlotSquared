@@ -79,7 +79,7 @@ public enum C {
     PERMISSION_AREA_LIST("plots.area.list", "static.permissions"),
     PERMISSION_AREA_REGEN("plots.area.regen", "static.permissions"),
     PERMISSION_AREA_TP("plots.area.tp", "static.permissions"),
-    PERMISSION_AUTO_MEGA("plots.atuo.mega", "static.permissions"),
+    PERMISSION_AUTO_MEGA("plots.auto.mega", "static.permissions"),
     PERMISSION_CLAIM_SCHEMATIC("plots.claim.%s0", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_SCHEMATIC("plots.admin.command.schematic", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_BO3("plots.admin.command.bo3", "static.permissions"),
