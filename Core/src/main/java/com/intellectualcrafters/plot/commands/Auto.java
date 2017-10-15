@@ -10,11 +10,7 @@ import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.ByteArrayUtilities;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.general.commands.CommandDeclaration;
 import java.util.Set;
 
@@ -152,7 +148,8 @@ public class Auto extends SubCommand {
                         for (int j = start.y; j <= end.y; j++) {
                             Plot plot = plotarea.getPlotAbs(new PlotId(i, j));
                             boolean teleport = i == end.x && j == end.y;
-                            plot.claim(player, teleport, null);
+                            boolean result = EventUtil.manager.callClaim(player, plot, true);
+                            if(result) plot.claim(player, teleport, null);
                         }
                     }
                     if (!plotarea.mergePlots(MainUtil.getPlotSelectionIds(start, end), true, true)) {
@@ -223,7 +220,8 @@ public class Auto extends SubCommand {
                         if (plot == null) {
                             MainUtil.sendMessage(player, C.NO_FREE_PLOTS);
                         } else {
-                            plot.claim(player, true, schem, false);
+                            boolean result = EventUtil.manager.callClaim(player, plot, true);
+                            if(result) plot.claim(player, true, schem, false);
                         }
                     }
                 });
@@ -237,13 +235,16 @@ public class Auto extends SubCommand {
             whenDone.run(null);
             return;
         }
-        whenDone.value = plot;
-        plot.owner = player.getUUID();
-        DBFunc.createPlotSafe(plot, whenDone, new Runnable() {
-            @Override
-            public void run() {
-                autoClaimFromDatabase(player, area, plot.getId(), whenDone);
-            }
-        });
+        boolean result = EventUtil.manager.callClaim(player, plot, true);
+        if(result) {
+            whenDone.value = plot;
+            plot.owner = player.getUUID();
+            DBFunc.createPlotSafe(plot, whenDone, new Runnable() {
+                @Override
+                public void run() {
+                    autoClaimFromDatabase(player, area, plot.getId(), whenDone);
+                }
+            });
+        }
     }
 }
