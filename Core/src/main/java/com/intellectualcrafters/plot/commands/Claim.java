@@ -82,7 +82,7 @@ public class Claim extends SubCommand {
             sendMessage(player, C.REMOVED_GRANTED_PLOT, "1", "" + (grants - 1));
         }
         if (plot.canClaim(player)) {
-            boolean result = EventUtil.manager.callClaim(player, plot, false);
+            boolean result = EventUtil.manager.callClaim(player, plot, false, 0);
             if(result) {
                 plot.owner = player.getUUID();
                 final String finalSchematic = schematic;

@@ -28,7 +28,7 @@ public abstract class EventUtil {
 
     public abstract Rating callRating(PlotPlayer player, Plot plot, Rating rating);
 
-    public abstract boolean callClaim(PlotPlayer player, Plot plot, boolean auto);
+    public abstract boolean callClaim(PlotPlayer player, Plot plot, boolean auto, int autoIndex);
 
     public abstract boolean callClaimSuccess(PlotPlayer player, Plot plot, boolean auto);
 

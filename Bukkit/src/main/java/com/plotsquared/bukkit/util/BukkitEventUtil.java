@@ -34,8 +34,8 @@ public class BukkitEventUtil extends EventUtil {
     }
 
     @Override
-    public boolean callClaim(PlotPlayer player, Plot plot, boolean auto) {
-        return callEvent(new PlayerClaimPlotEvent(getPlayer(player), plot, auto));
+    public boolean callClaim(PlotPlayer player, Plot plot, boolean auto, int autoIndex) {
+        return callEvent(new PlayerClaimPlotEvent(getPlayer(player), plot, auto, autoIndex));
     }
 
     @Override

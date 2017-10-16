@@ -11,6 +11,7 @@ public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private final Plot plot;
     private final boolean auto;
+    private final int autoIndex;
     private boolean cancelled;
 
     /**
@@ -19,10 +20,11 @@ public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
      * @param player Player that claimed the plot
      * @param plot   Plot that was claimed
      */
-    public PlayerClaimPlotEvent(Player player, Plot plot, boolean auto) {
+    public PlayerClaimPlotEvent(Player player, Plot plot, boolean auto, int autoIndex) {
         super(player);
         this.plot = plot;
         this.auto = auto;
+        this.autoIndex = autoIndex;
     }
 
     public static HandlerList getHandlerList() {
@@ -43,6 +45,13 @@ public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
      */
     public boolean wasAuto() {
         return this.auto;
+    }
+
+    /**
+     * @return index if multiple plots were claimed together (eg. /plot auto 2,2 -> 0,1,2,3)
+     */
+    public int getAutoIndex() {
+        return this.autoIndex;
     }
 
     @Override

@@ -140,19 +140,21 @@ public class Auto extends SubCommand {
                 return false;
             }
             while (true) {
+                boolean result = true;
                 PlotId start = plotarea.getMeta("lastPlot", new PlotId(0, 0)).getNextId(1);
                 PlotId end = new PlotId(start.x + size_x - 1, start.y + size_z - 1);
                 if (plotarea.canClaim(player, start, end)) {
                     plotarea.setMeta("lastPlot", start);
+                    int count = 0;
                     for (int i = start.x; i <= end.x; i++) {
                         for (int j = start.y; j <= end.y; j++) {
                             Plot plot = plotarea.getPlotAbs(new PlotId(i, j));
                             boolean teleport = i == end.x && j == end.y;
-                            boolean result = EventUtil.manager.callClaim(player, plot, true);
+                            result = EventUtil.manager.callClaim(player, plot, true, count++);
                             if(result) plot.claim(player, teleport, null);
                         }
                     }
-                    if (!plotarea.mergePlots(MainUtil.getPlotSelectionIds(start, end), true, true)) {
+                    if (!result || !plotarea.mergePlots(MainUtil.getPlotSelectionIds(start, end), true, true)) {
                         return false;
                     }
                     break;
@@ -220,7 +222,7 @@ public class Auto extends SubCommand {
                         if (plot == null) {
                             MainUtil.sendMessage(player, C.NO_FREE_PLOTS);
                         } else {
-                            boolean result = EventUtil.manager.callClaim(player, plot, true);
+                            boolean result = EventUtil.manager.callClaim(player, plot, true, 0);
                             if(result) plot.claim(player, true, schem, false);
                         }
                     }
@@ -235,7 +237,7 @@ public class Auto extends SubCommand {
             whenDone.run(null);
             return;
         }
-        boolean result = EventUtil.manager.callClaim(player, plot, true);
+        boolean result = EventUtil.manager.callClaim(player, plot, true, 0);
         if(result) {
             whenDone.value = plot;
             plot.owner = player.getUUID();
