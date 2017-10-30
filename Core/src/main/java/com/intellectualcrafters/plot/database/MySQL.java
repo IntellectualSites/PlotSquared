@@ -31,13 +31,15 @@ public class MySQL extends Database {
      * @param database Database name
      * @param username Username
      * @param password Password
+     * @param ssl      SSL
      */
-    public MySQL(String hostname, String port, String database, String username, String password) {
+    public MySQL(String hostname, String port, String database, String username, String password, String ssl) {
         this.hostname = hostname;
         this.port = port;
         this.database = database;
         this.user = username;
         this.password = password;
+        this.ssl = ssl;
         this.connection = null;
     }
 
@@ -45,7 +47,7 @@ public class MySQL extends Database {
     public Connection forceConnection() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
         this.connection =
-                DriverManager.getConnection("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?useSSL=false", this.user, this.password);
+                DriverManager.getConnection("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?useSSL=" + this.ssl, this.user, this.password);
         return this.connection;
     }
 
@@ -55,9 +57,9 @@ public class MySQL extends Database {
             return this.connection;
         }
         Class.forName("com.mysql.jdbc.Driver");
-        PS.debug("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?useSSL=false");
+        PS.debug("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?useSSL=" + this.ssl);
         this.connection =
-                DriverManager.getConnection("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?useSSL=false", this.user, this.password);
+                DriverManager.getConnection("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?useSSL=" + this.ssl, this.user, this.password);
         return this.connection;
     }
 
