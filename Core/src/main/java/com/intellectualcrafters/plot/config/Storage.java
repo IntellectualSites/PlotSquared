@@ -21,9 +21,10 @@ public class Storage extends Config {
         public static String HOST = "localhost";
         public static String PORT = "3306";
         public static String USER = "root";
-        public static String SSL = "false";
         public static String PASSWORD = "password";
         public static String DATABASE = "plot_db";
+        @Comment("Only enable this if your MySQL Database has SSL set up. If its not set up on your MySQL server, leave it as false.")
+        public static String SSL = "false";
     }
 
     @Comment("SQLite section")
