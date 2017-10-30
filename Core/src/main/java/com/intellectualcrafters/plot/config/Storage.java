@@ -21,6 +21,7 @@ public class Storage extends Config {
         public static String HOST = "localhost";
         public static String PORT = "3306";
         public static String USER = "root";
+        public static String SSL = "false";
         public static String PASSWORD = "password";
         public static String DATABASE = "plot_db";
     }
