@@ -21,25 +21,29 @@ public class MySQL extends Database {
     private final String password;
     private final String port;
     private final String hostname;
+    private final String ssl;
+    private final String verifyssl;
     private Connection connection;
 
     /**
      * Creates a new MySQL instance.
      *
-     * @param hostname Name of the host
-     * @param port     Port number
-     * @param database Database name
-     * @param username Username
-     * @param password Password
-     * @param ssl      SSL
+     * @param hostname  Name of the host
+     * @param port      Port number
+     * @param database  Database name
+     * @param username  Username
+     * @param password  Password
+     * @param ssl       SSL
+     * @param verifyssl verifySSL
      */
-    public MySQL(String hostname, String port, String database, String username, String password, String ssl) {
+    public MySQL(String hostname, String port, String database, String username, String password, String ssl, String verifyssl) {
         this.hostname = hostname;
         this.port = port;
         this.database = database;
         this.user = username;
         this.password = password;
         this.ssl = ssl;
+        this.verifyssl = verifyssl;
         this.connection = null;
     }
 
@@ -47,7 +51,7 @@ public class MySQL extends Database {
     public Connection forceConnection() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
         this.connection =
-                DriverManager.getConnection("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?useSSL=" + this.ssl, this.user, this.password);
+                DriverManager.getConnection("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?useSSL=" + this.ssl + "&verifyServerCertificate=" + this.verifyssl, this.user, this.password);
         return this.connection;
     }
 
@@ -57,9 +61,9 @@ public class MySQL extends Database {
             return this.connection;
         }
         Class.forName("com.mysql.jdbc.Driver");
-        PS.debug("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?useSSL=" + this.ssl);
+        PS.debug("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?useSSL=" + this.ssl + "&verifyServerCertificate=" + this.verifyssl);
         this.connection =
-                DriverManager.getConnection("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?useSSL=" + this.ssl, this.user, this.password);
+                DriverManager.getConnection("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?useSSL=" + this.ssl + "&verifyServerCertificate=" + this.verifyssl, this.user, this.password);
         return this.connection;
     }
 
