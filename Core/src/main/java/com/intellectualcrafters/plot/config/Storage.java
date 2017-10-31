@@ -1,6 +1,9 @@
 package com.intellectualcrafters.plot.config;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Storage extends Config {
 
@@ -23,6 +26,9 @@ public class Storage extends Config {
         public static String USER = "root";
         public static String PASSWORD = "password";
         public static String DATABASE = "plot_db";
+
+        @Comment("Set additional properties: https://goo.gl/wngtN8")
+        public static List<String> PROPERTIES = new ArrayList<>(Collections.singletonList("useSSL=false"));
     }
 
     @Comment("SQLite section")

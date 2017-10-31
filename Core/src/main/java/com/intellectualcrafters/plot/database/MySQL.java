@@ -1,7 +1,7 @@
 package com.intellectualcrafters.plot.database;
 
-import com.intellectualcrafters.plot.PS;
-
+import com.intellectualcrafters.plot.config.Storage;
+import com.intellectualcrafters.plot.util.StringMan;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -45,7 +45,7 @@ public class MySQL extends Database {
     public Connection forceConnection() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
         this.connection =
-                DriverManager.getConnection("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?useSSL=false", this.user, this.password);
+                DriverManager.getConnection("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?" + StringMan.join(Storage.MySQL.PROPERTIES, "&"), this.user, this.password);
         return this.connection;
     }
 
@@ -54,11 +54,7 @@ public class MySQL extends Database {
         if (checkConnection()) {
             return this.connection;
         }
-        Class.forName("com.mysql.jdbc.Driver");
-        PS.debug("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?useSSL=false");
-        this.connection =
-                DriverManager.getConnection("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?useSSL=false", this.user, this.password);
-        return this.connection;
+        return forceConnection();
     }
 
     @Override
