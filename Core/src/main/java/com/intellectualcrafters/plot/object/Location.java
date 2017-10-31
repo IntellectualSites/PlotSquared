@@ -207,7 +207,7 @@ public class Location implements Cloneable, Comparable<Location> {
             return false;
         }
         Location l = (Location) o;
-        return this.x == l.getX() && this.y == l.getY() && this.z == l.getZ() && this.world.equals(l.getWorld()) && this.yaw == l.getY()
+        return this.x == l.getX() && this.y == l.getY() && this.z == l.getZ() && this.world.equals(l.getWorld()) && this.yaw == l.getYaw()
                 && this.pitch == l.getPitch();
     }
 
