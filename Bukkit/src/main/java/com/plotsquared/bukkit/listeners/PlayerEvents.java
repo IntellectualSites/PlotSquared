@@ -1359,6 +1359,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 Material handType = hand.getType();
                 lb = new BukkitLazyBlock(PlotBlock.get((short) handType.getId(), (byte) 0));
                 switch (handType) {
+                    case FIREWORK:
                     case MONSTER_EGG:
                     case MONSTER_EGGS:
                         eventType = PlayerBlockEventType.SPAWN_MOB;
