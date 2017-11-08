@@ -23,7 +23,7 @@ public class PlotPlusListener_1_12 implements Listener {
                 return;
             }
             UUID uuid = pp.getUUID();
-            if (plot.isAdded(uuid) && Flags.DROP_PROTECTION.isTrue(plot)) {
+            if (!plot.isAdded(uuid) && Flags.DROP_PROTECTION.isTrue(plot)) {
                 event.setCancelled(true);
             }
         }
