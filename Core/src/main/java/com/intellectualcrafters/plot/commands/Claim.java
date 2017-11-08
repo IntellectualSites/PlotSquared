@@ -94,6 +94,9 @@ public class Claim extends SubCommand {
                         @Override
                         public void run(Object value) {
                             plot.claim(player, true, finalSchematic, false);
+                            if (area.AUTO_MERGE) {
+                                plot.autoMerge(-1, Integer.MAX_VALUE, player.getUUID(), true);
+                            }
                         }
                     });
                 }

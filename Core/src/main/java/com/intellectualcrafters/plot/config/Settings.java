@@ -319,8 +319,9 @@ public class Settings extends Config {
         public static boolean PLOT_EXPIRY = false;
         @Comment("Processes chunks (trimming, or entity/tile limits) ")
         public static boolean CHUNK_PROCESSOR = false;
-        @Comment("Kill mobs or vehicles on roads")
+        @Comment("Kill mobs on roads")
         public static boolean KILL_ROAD_MOBS = false;
+        @Comment("Kill vehicles on roads")
         public static boolean KILL_ROAD_VEHICLES = false;
         @Comment("Notify a player of any missed comments upon plot entry")
         public static boolean COMMENT_NOTIFIER = false;

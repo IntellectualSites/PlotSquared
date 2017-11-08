@@ -6,8 +6,22 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.flag.IntegerFlag;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotHandler;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotInventory;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.RegExUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.object.BukkitLazyBlock;
 import com.plotsquared.bukkit.object.BukkitPlayer;
@@ -15,6 +29,18 @@ import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.BukkitVersion;
 import com.plotsquared.listener.PlayerBlockEventType;
 import com.plotsquared.listener.PlotListener;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -23,17 +49,74 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Creature;
+import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Fireball;
+import org.bukkit.entity.Hanging;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Tameable;
+import org.bukkit.entity.ThrownPotion;
+import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.*;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockDispenseEvent;
+import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockFormEvent;
+import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockGrowEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.block.EntityBlockFormEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityCombustByEntityEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.ExplosionPrimeEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerEggThrowEvent;
+import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
@@ -46,12 +129,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.regex.Pattern;
 
 /**
  * Player Events involving plots.
@@ -437,35 +514,91 @@ public class PlayerEvents extends PlotListener implements Listener {
         playerMove(event);
     }
 
-    private boolean shallowEquals(final org.bukkit.Location location1, final org.bukkit.Location location2)
+    private Field fieldPlayer;
     {
-        final double allowedVariance = 0.005d;
-        return Math.abs(location1.getX() - location2.getX()) <= allowedVariance &&
-               Math.abs(location1.getY() - location2.getY()) <= allowedVariance &&
-               Math.abs(location1.getZ() - location2.getZ()) <= allowedVariance;
+        try {
+            fieldPlayer = PlayerEvent.class.getDeclaredField("player");
+            fieldPlayer.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
     }
+    private PlayerMoveEvent moveTmp;
+    private boolean v112 = PS.get().checkVersion(PS.imp().getServerVersion(), BukkitVersion.v1_12_0);
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void vehicleMove(VehicleMoveEvent event) {
+    public void vehicleMove(VehicleMoveEvent event) throws IllegalAccessException {
         final org.bukkit.Location from = event.getFrom();
         final org.bukkit.Location to = event.getTo();
-        final List<Entity> passengers = new ArrayList<>(event.getVehicle().getPassengers());
-        for (final Entity passenger : passengers) {
+
+        int toX, toZ;
+        if ((toX = MathMan.roundInt(to.getX())) != MathMan.roundInt(from.getX()) | (toZ = MathMan.roundInt(to.getZ())) != MathMan.roundInt(from.getZ())) {
+            Vehicle vehicle = event.getVehicle();
+
+            // Check allowed
+
+
+            Entity passenger = vehicle.getPassenger();
+
             if (passenger instanceof Player) {
-                final org.bukkit.Location toCopy = new org.bukkit.Location(to.getWorld(),
-                        to.getX(), to.getY(), to.getZ());
                 final Player player = (Player) passenger;
-                final PlayerMoveEvent playerMoveEvent = new PlayerMoveEvent(player, from, toCopy);
-                this.playerMove(playerMoveEvent);
-                if (!shallowEquals(toCopy, to) || playerMoveEvent.isCancelled())
-                {
-                    event.getVehicle().eject();
-                    event.getVehicle().setVelocity(new Vector( 0d, 0d, 0d ));
-                    event.getVehicle().teleport(from);
-                    for (final Entity entity : passengers) {
-                        event.getVehicle().addPassenger(entity);
+                // reset
+                if (moveTmp == null) moveTmp = new PlayerMoveEvent(null, from, to);
+                moveTmp.setFrom(from);
+                moveTmp.setTo(to);
+                moveTmp.setCancelled(false);
+                fieldPlayer.set(moveTmp, player);
+
+                List<Entity> passengers;
+                if (v112) passengers = vehicle.getPassengers();
+                else passengers = null;
+
+                this.playerMove(moveTmp);
+                org.bukkit.Location dest;
+                if (moveTmp.isCancelled()) {
+                    dest = from;
+                } else if (MathMan.roundInt(moveTmp.getTo().getX()) != toX || MathMan.roundInt(moveTmp.getTo().getZ()) != toZ) {
+                    dest = to;
+                } else {
+                    dest = null;
+                }
+                if (dest != null) {
+                    if (passengers != null) {
+                        vehicle.eject();
+                        vehicle.setVelocity(new Vector(0d, 0d, 0d));
+                        vehicle.teleport(dest);
+                        for (final Entity entity : passengers) vehicle.addPassenger(entity);
+                    } else {
+                        vehicle.eject();
+                        vehicle.setVelocity(new Vector(0d, 0d, 0d));
+                        vehicle.teleport(dest);
+                        vehicle.setPassenger(player);
                     }
                     return;
+                }
+            }
+            if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
+                switch (vehicle.getType()) {
+                    case MINECART:
+                    case MINECART_CHEST:
+                    case MINECART_COMMAND:
+                    case MINECART_FURNACE:
+                    case MINECART_HOPPER:
+                    case MINECART_MOB_SPAWNER:
+                    case ENDER_CRYSTAL:
+                    case MINECART_TNT:
+                    case BOAT: {
+                        List<MetadataValue> meta = vehicle.getMetadata("plot");
+                        Plot toPlot = BukkitUtil.getLocation(to).getPlot();
+                        if (!meta.isEmpty()) {
+                            Plot origin = (Plot) meta.get(0).value();
+                            if (origin.getBasePlot(false).equals(toPlot)) {
+                                vehicle.remove();
+                            }
+                        } else if (toPlot != null) {
+                            vehicle.setMetadata("plot", new FixedMetadataValue((Plugin) PS.get().IMP, toPlot));
+                        }
+                    }
                 }
             }
         }
