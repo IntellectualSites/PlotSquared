@@ -68,15 +68,33 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
             }
         }
         if (!"[(+NBT)]".equals(newLore) || (current.equals(newItem) && newLore.equals(oldLore))) {
-            return;
+            switch (newItem.getType()) {
+                case BANNER:
+                case SKULL_ITEM:
+                    if (newMeta != null) break;
+                default:
+                    return;
+            }
         }
+
         HashSet<Material> blocks = null;
         Block block = player.getTargetBlock(blocks, 7);
         BlockState state = block.getState();
         if (state == null) {
             return;
         }
-        if (state.getType() != newItem.getType()) {
+        Material stateType = state.getType();
+        Material itemType = newItem.getType();
+        if (stateType != itemType) {
+            switch (stateType) {
+                case STANDING_BANNER:
+                case WALL_BANNER:
+                    if (itemType == Material.BANNER) break;
+                case SKULL:
+                    if (itemType == Material.SKULL_ITEM) break;
+                default:
+                    return;
+            }
             return;
         }
         Location l = BukkitUtil.getLocation(state.getLocation());
