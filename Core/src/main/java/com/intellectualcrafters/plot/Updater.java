@@ -63,7 +63,7 @@ public class Updater {
                         }
                         outFile.renameTo(finalFile);
                         PS.debug("Updated PlotSquared to " + versionString);
-                        MainUtil.sendAdmin("&7Restart to update PlotSquared with these changes: &c/plot changelog &7or&c " + "http://empcraft.com/plot/cl?" + Integer.toHexString(currentVersion.hash));
+                        MainUtil.sendAdmin("&7Restart to update PlotSquared with these changes: &c/plot changelog &7or&c " + "http://empcraft.com/plots/cl?" + Integer.toHexString(currentVersion.hash));
                     }
                 }
             }
