@@ -2198,6 +2198,9 @@ public class PlayerEvents extends PlotListener implements Listener {
             if (entity instanceof Villager && plot.getFlag(Flags.VILLAGER_INTERACT, false)) {
                 return;
             }
+            if (entity instanceof ItemFrame && plot.getFlag(Flags.MISC_INTERACT, false)) {
+                return;
+            }
             if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER)) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_INTERACT_OTHER);
                 event.setCancelled(true);
