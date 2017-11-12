@@ -60,7 +60,6 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -2197,9 +2196,6 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return;
             }
             if (entity instanceof Villager && plot.getFlag(Flags.VILLAGER_INTERACT, false)) {
-                return;
-            }
-            if (entity instanceof ItemFrame && plot.getFlag(Flags.MISC_INTERACT, false)) {
                 return;
             }
             if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER)) {
