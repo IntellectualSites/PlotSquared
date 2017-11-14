@@ -593,7 +593,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                         Plot toPlot = BukkitUtil.getLocation(to).getPlot();
                         if (!meta.isEmpty()) {
                             Plot origin = (Plot) meta.get(0).value();
-                            if (origin.getBasePlot(false).equals(toPlot)) {
+                            if (!origin.getBasePlot(false).equals(toPlot)) {
                                 vehicle.remove();
                             }
                         } else if (toPlot != null) {
