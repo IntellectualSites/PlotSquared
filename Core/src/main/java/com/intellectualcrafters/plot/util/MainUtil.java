@@ -18,7 +18,6 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.stream.AbstractDelegateOutputStream;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -115,7 +114,7 @@ public class MainUtil {
     public static void sendAdmin(final String s) {
         for (final PlotPlayer player : UUIDHandler.getPlayers().values()) {
             if (player.hasPermission(C.PERMISSION_ADMIN.s())) {
-                player.sendMessage(s);
+                player.sendMessage(C.color(s));
             }
         }
         PS.debug(s);

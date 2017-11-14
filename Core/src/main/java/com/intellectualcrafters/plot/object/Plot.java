@@ -2304,10 +2304,11 @@ public class Plot {
             return connected_cache;
         }
         regions_cache = null;
-        connected_cache = new HashSet<>();
+
+        HashSet<Plot> tmpSet = new HashSet<>();
         ArrayDeque<Plot> frontier = new ArrayDeque<>();
         HashSet<Object> queuecache = new HashSet<>();
-        connected_cache.add(this);
+        tmpSet.add(this);
         Plot tmp;
         if (merged[0]) {
             tmp = this.area.getPlotAbs(this.id.getRelative(0));
@@ -2381,39 +2382,40 @@ public class Plot {
                 PS.debug("Ignoring invalid merged plot: " + current + " | " + current.owner);
                 continue;
             }
-            connected_cache.add(current);
+            tmpSet.add(current);
             queuecache.remove(current);
             merged = current.getMerged();
             if (merged[0]) {
                 tmp = current.area.getPlotAbs(current.id.getRelative(0));
-                if (tmp != null && !queuecache.contains(tmp) && !connected_cache.contains(tmp)) {
+                if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
                     queuecache.add(tmp);
                     frontier.add(tmp);
                 }
             }
             if (merged[1]) {
                 tmp = current.area.getPlotAbs(current.id.getRelative(1));
-                if (tmp != null && !queuecache.contains(tmp) && !connected_cache.contains(tmp)) {
+                if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
                     queuecache.add(tmp);
                     frontier.add(tmp);
                 }
             }
             if (merged[2]) {
                 tmp = current.area.getPlotAbs(current.id.getRelative(2));
-                if (tmp != null && !queuecache.contains(tmp) && !connected_cache.contains(tmp)) {
+                if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
                     queuecache.add(tmp);
                     frontier.add(tmp);
                 }
             }
             if (merged[3]) {
                 tmp = current.area.getPlotAbs(current.id.getRelative(3));
-                if (tmp != null && !queuecache.contains(tmp) && !connected_cache.contains(tmp)) {
+                if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
                     queuecache.add(tmp);
                     frontier.add(tmp);
                 }
             }
         }
-        return connected_cache;
+        connected_cache = tmpSet;
+        return tmpSet;
     }
 
     /**
