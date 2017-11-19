@@ -99,8 +99,10 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Shulker;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -469,6 +471,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                                         if (!(passenger instanceof Player) && entity.getMetadata("keep").isEmpty()) {
                                                             iterator.remove();
                                                             entity.remove();
+                                                            entity = null;
                                                         }
                                                     }
                                                 } else {
@@ -476,10 +479,32 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                                     if (!(passenger instanceof Player) && entity.getMetadata("keep").isEmpty()) {
                                                         iterator.remove();
                                                         entity.remove();
+                                                        entity = null;
                                                     }
                                                 }
                                             }
                                         }
+                                        
+                                        if (entity != null && BukkitUtil.getLocation(entity.getLocation()).isPlotArea()) {
+                                        	if (entity instanceof Shulker) {
+                                        		LivingEntity livingEntity = (LivingEntity) entity;
+                                        		if (entity.hasMetadata("ownerplot")) {
+                                        			if(!livingEntity.isLeashed() || !entity.hasMetadata("keep")) {
+                                        				PlotId originalPlotId = (PlotId) (!entity.getMetadata("ownerplot").isEmpty() ? entity.getMetadata("ownerplot").get(0).value() : null);
+                                        				PlotId currentPlotId = BukkitUtil.getLocation(entity.getLocation()).getPlot().getId();
+                                        				if(!originalPlotId.equals(currentPlotId)) {
+                                        					iterator.remove();
+                                        					entity.remove();
+                                        				}
+                                        				
+                                        			}
+                                        		}
+                                        		else {
+                                        			//This is to apply the metadata to already spawned shulkers (see EntitySpawnListener.java)
+                                        			entity.setMetadata("ownerplot", new FixedMetadataValue((Plugin) PS.get().IMP, BukkitUtil.getLocation(entity.getLocation()).getPlot().getId()));
+                                        		}
+    										}
+    									}
                                 }
                             }
                         } catch (Throwable e) {
