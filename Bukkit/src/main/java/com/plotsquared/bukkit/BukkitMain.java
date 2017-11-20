@@ -492,7 +492,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                         			if(!livingEntity.isLeashed() || !entity.hasMetadata("keep")) {
                                         				PlotId originalPlotId = (PlotId) (!entity.getMetadata("ownerplot").isEmpty() ? entity.getMetadata("ownerplot").get(0).value() : null);
                                         				PlotId currentPlotId = BukkitUtil.getLocation(entity.getLocation()).getPlot().getId();
-                                        				if(!originalPlotId.equals(currentPlotId)) {
+                                        				if(!currentPlotId.equals(originalPlotId)) {
                                         					iterator.remove();
                                         					entity.remove();
                                         				}
@@ -500,8 +500,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                         			}
                                         		}
                                         		else {
-                                        			//This is to apply the metadata to already spawned shulkers (see EntitySpawnListener.java)
-                                        			entity.setMetadata("ownerplot", new FixedMetadataValue((Plugin) PS.get().IMP, BukkitUtil.getLocation(entity.getLocation()).getPlot().getId()));
+                                                    if(!entity.hasMetadata("ownerplot")) {
+                                        				//This is to apply the metadata to already spawned shulkers (see EntitySpawnListener.java)
+                                            			entity.setMetadata("ownerplot", new FixedMetadataValue((Plugin) PS.get().IMP, BukkitUtil.getLocation(entity.getLocation()).getPlot().getId()));                                        				
+                                        			}
                                         		}
     										}
     									}
