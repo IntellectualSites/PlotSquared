@@ -1961,6 +1961,31 @@ public class PS{
             return null;
         }
     }
+    
+    /**
+     * Get Plots based on alias
+     *
+     * @param alias to search plots
+     * @param worldname to filter alias to a specific world [optional] null means all worlds
+     *
+     * @return Set<{@link Plot}> null if nothing found
+     */
+    public Set<Plot> getPlotsByAlias(String alias, String worldname) {
+    	Set<Plot> result = null;
+    	
+    	if (alias != null) {
+    		for (Plot plot : getPlots()) {
+    			if (alias.equals(plot.getAlias()) && (worldname == null || worldname.equals(plot.getWorldName()))) {
+    				if (result == null) {
+    					result = new HashSet<>();
+    				}
+    				result.add(plot);    				
+    			}
+    		}
+    	}
+    	
+    	return result;
+    }
 
     public Set<PlotArea> getPlotAreas(String world, RegionWrapper region) {
         PlotArea[] areas = manager.getPlotAreas(world, region);
