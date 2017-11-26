@@ -18,6 +18,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +33,7 @@ import java.util.UUID;
         category = CommandCategory.TELEPORT)
 public class Visit extends Command {
 
-	private final int PageOutOfRange = -998899; // this is to flag Page argument is to long. Can occur if someone enters a large number (some player uses numeric names)
+	private static final int PAGE_OUT_OF_RANGE = -998899; // this is to flag Page argument is to long. Can occur if someone enters a large number (some player uses numeric names)
 	private final int MaxPageRange = 100;
 	
     public Visit() {
@@ -64,16 +65,16 @@ public class Visit extends Command {
         		// don't add break here. we handle the first argument in case 1
         	case 1:
         		boolean isCorrectSyntaxWithoutResults = false;
-        		Collection<Plot> plots = null;
+        		Collection<Plot> plots = new HashSet<Plot>();
         		if (args[0] != null) {
-        			plots = getPlotsFromSingleArgument(args[0], sortByArea);
-            		if (plots != null) {
+        			plots = getPlotsFromSingleArgument(args[0], sortByArea); 
+            		if (!plots.isEmpty()) {
             			unsorted = plots;        			
             		} else {
             			if (MathMan.isInteger(args[0])) {
             				page = tryReadPageIdFromArg(player, args[0]);
             				
-            				if (page != PageOutOfRange && page != Integer.MIN_VALUE) {
+            				if (page != PAGE_OUT_OF_RANGE && page != Integer.MIN_VALUE) {
             					unsorted = PS.get().getPlots(player);
             				}
             			} else {
@@ -83,7 +84,7 @@ public class Visit extends Command {
             		}
         		}
         		
-        		if (!isCorrectSyntaxWithoutResults && plots == null && page == Integer.MIN_VALUE) {        			
+        		if (!isCorrectSyntaxWithoutResults && plots.isEmpty() && page == Integer.MIN_VALUE) {        			
         			C.COMMAND_SYNTAX.send(player, getUsage());
         			return;
         		}
@@ -170,11 +171,11 @@ public class Visit extends Command {
      * p h 1:1		= plotId [numeric] (1,1|1;2)      [PlotId]
      * </pre>
      * @param applicablePlotArea the area from the player invoked the command
-     * @return Collection<{@link Plot}> null if nothing found
+     * @return Collection<{@link Plot}> empty if nothing found
      */
-    private Collection<Plot> getPlotsFromSingleArgument(String argument, PlotArea applicablePlotArea) {    	
+    private Collection<Plot> getPlotsFromSingleArgument(String argument, PlotArea applicablePlotArea) {
     	
-    	Collection<Plot> result = null;    	
+    	Collection<Plot> result = new HashSet<Plot>();
 		UUID user = UUIDHandler.getUUIDFromString(argument);
 		if (user != null) {
 			result = PS.get().getBasePlots(user);
@@ -182,21 +183,24 @@ public class Visit extends Command {
 			result = PS.get().getPlotsByAlias(argument, applicablePlotArea.worldname);
 		}
 		
-		if (result == null) {
+		if (result.isEmpty()) {
 			PlotArea plotArea = PS.get().getPlotArea(argument, "0,0");
 			if (plotArea != null) {
 				result = plotArea.getBasePlots();
+				if(result.isEmpty()) {
+					result = Collections.singletonList(plotArea.getPlot(new PlotId(0, 0)));
+				}
 			}
 		}
 		
-		if (result == null) {
+		if (result.isEmpty()) {
 			PlotId plotId = PlotId.fromString(argument);
 			if (plotId != null) {
-				result = Collections.singletonList(applicablePlotArea.getPlot(plotId));				
+				result = Collections.singletonList(applicablePlotArea.getPlot(plotId));
 			}			
 		}
 				
-		return result != null && result.size() > 0 ? result : null;
+		return result;
     }
     
     private int tryReadPageIdFromArg(PlotPlayer player, String arg) {
@@ -206,11 +210,11 @@ public class Visit extends Command {
     		if (MathMan.isInteger(arg)) {
     			page = Integer.parseInt(arg);
     			if (page > MaxPageRange) {
-    				page = PageOutOfRange;
+    				page = PAGE_OUT_OF_RANGE;
     			}
     		}
     	} catch (Exception ignored) {
-    		page = PageOutOfRange;
+    		page = PAGE_OUT_OF_RANGE;
     		C.NOT_VALID_NUMBER.send(player, "(1, ∞)");
     	}
     	

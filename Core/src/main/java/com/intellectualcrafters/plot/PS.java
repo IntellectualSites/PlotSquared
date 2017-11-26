@@ -1968,17 +1968,14 @@ public class PS{
      * @param alias to search plots
      * @param worldname to filter alias to a specific world [optional] null means all worlds
      *
-     * @return Set<{@link Plot}> null if nothing found
+     * @return Set<{@link Plot}> empty if nothing found
      */
     public Set<Plot> getPlotsByAlias(String alias, String worldname) {
-    	Set<Plot> result = null;
+    	Set<Plot> result = new HashSet<>();
     	
     	if (alias != null) {
     		for (Plot plot : getPlots()) {
-    			if (alias.equals(plot.getAlias()) && (worldname == null || worldname.equals(plot.getWorldName()))) {
-    				if (result == null) {
-    					result = new HashSet<>();
-    				}
+    			if (alias.equals(plot.getAlias()) && (worldname == null || worldname.equals(plot.getWorldName()))) {    				
     				result.add(plot);    				
     			}
     		}
