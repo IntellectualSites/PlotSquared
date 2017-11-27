@@ -8,11 +8,8 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import de.schlichtherle.util.Arrays;
 
 @CommandDeclaration(
         command = "setalias",
@@ -57,7 +54,7 @@ public class Alias extends SubCommand {
 					return false;
 				}
 				
-				if(canExecuteCommand(player, C.PERMISSION_ALIAS_SET)) {
+				if(canExecuteCommand(player, C.PERMISSION_ALIAS_SET) || canExecuteCommand(player, C.PERMISSION_ALIAS_SET_OBSOLETE)) {
 					result = setAlias(player, plot, args[1]);
 				}
 				break;

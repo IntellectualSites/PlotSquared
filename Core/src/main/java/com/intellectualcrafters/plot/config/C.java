@@ -156,6 +156,7 @@ public enum C {
     PERMISSION_SHARED("plots.visit.shared", "static.permissions"),
     PERMISSION_VISIT_OTHER("plots.visit.other", "static.permissions"),
     PERMISSION_HOME("plots.home", "static.permissions"),
+    PERMISSION_ALIAS_SET_OBSOLETE("plots.set.alias", "static.permissions"), // Note this is for backwards compatibility
     PERMISSION_ALIAS_SET("plots.alias.set", "static.permissions"),
     PERMISSION_ALIAS_REMOVE("plots.alias.remove", "static.permissions"),
 

@@ -131,6 +131,7 @@ permissions:
       plots.toggle.chat: true
       plots.set.biome: true
       plots.set.home: true
+      plots.set.alias: true
       plots.alias.set: true
       plots.alias.remove: true
       plots.set.description: true
@@ -238,6 +239,7 @@ permissions:
       plots.set.keep.*: true
   plotme.use.nameplot:
     children:
+      plots.set.alias: true
       plots.alias.set: true
       plots.alias.remove: true
   plotme.limit.*:
