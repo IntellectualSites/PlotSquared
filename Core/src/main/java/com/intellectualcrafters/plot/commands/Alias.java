@@ -25,7 +25,7 @@ public class Alias extends SubCommand {
 	public boolean onCommand(PlotPlayer player, String[] args) {	
 		
 		if (args.length == 0) {
-			C.COMMAND_SYNTAX.send(player, "/plot alias <set> <value>");
+			C.COMMAND_SYNTAX.send(player, "/plot alias <set|remove> <value>");
             return false;
         }
 		
@@ -54,12 +54,15 @@ public class Alias extends SubCommand {
 					return false;
 				}
 				
-				if(canExecuteCommand(player, C.PERMISSION_ALIAS_SET) || canExecuteCommand(player, C.PERMISSION_ALIAS_SET_OBSOLETE)) {
+				if(canExecuteCommand(player, C.PERMISSION_ALIAS_SET, false) || canExecuteCommand(player, C.PERMISSION_ALIAS_SET_OBSOLETE, false)) {
 					result = setAlias(player, plot, args[1]);
+				} else {
+					MainUtil.sendMessage(player, C.NO_PERMISSION);
 				}
+				
 				break;
 			case "remove":
-				if(canExecuteCommand(player, C.PERMISSION_ALIAS_REMOVE)) {
+				if(canExecuteCommand(player, C.PERMISSION_ALIAS_REMOVE, true)) {
 					result = removeAlias(player, plot);
 				}
 				break;
@@ -107,10 +110,12 @@ public class Alias extends SubCommand {
     	return true;
     }
     
-    private boolean canExecuteCommand(PlotPlayer player, C caption) {
+    private boolean canExecuteCommand(PlotPlayer player, C caption, boolean sendMessage) {
     	if (!Permissions.hasPermission(player, caption)) {
-    		 MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
-             return false;
+    		if(sendMessage) {
+    			MainUtil.sendMessage(player, C.NO_PERMISSION);
+    		}
+    		return false;
     	}
     	return true;
     }
