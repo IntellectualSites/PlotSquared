@@ -1,5 +1,6 @@
 package com.plotsquared.bukkit.listeners;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Location;
@@ -11,6 +12,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.plugin.Plugin;
 
 public class EntitySpawnListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -38,6 +41,10 @@ public class EntitySpawnListener implements Listener {
                 if (PlayerEvents.checkEntity(entity, plot)) {
                     event.setCancelled(true);
                 }
+            case SHULKER:
+            	if(!entity.hasMetadata("ownerplot")) {
+            		entity.setMetadata("ownerplot", new FixedMetadataValue((Plugin) PS.get().IMP, plot.getId()));
+            	}
         }
     }
 }

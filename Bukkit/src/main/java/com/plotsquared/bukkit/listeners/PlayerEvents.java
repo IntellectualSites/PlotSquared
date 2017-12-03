@@ -1263,7 +1263,8 @@ public class PlayerEvents extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockDispense(BlockDispenseEvent event) {
         Material type = event.getItem().getType();
-        if (type != Material.WATER_BUCKET && type != Material.LAVA_BUCKET) {
+        Material dispenserType = event.getBlock().getType();
+        if (dispenserType == Material.DROPPER || (type != Material.WATER_BUCKET && type != Material.LAVA_BUCKET)) {
             return;
         }
         Location location = BukkitUtil.getLocation(event.getVelocity().toLocation(event.getBlock().getWorld()));
