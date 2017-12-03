@@ -156,6 +156,9 @@ public enum C {
     PERMISSION_SHARED("plots.visit.shared", "static.permissions"),
     PERMISSION_VISIT_OTHER("plots.visit.other", "static.permissions"),
     PERMISSION_HOME("plots.home", "static.permissions"),
+    PERMISSION_ALIAS_SET_OBSOLETE("plots.set.alias", "static.permissions"), // Note this is for backwards compatibility
+    PERMISSION_ALIAS_SET("plots.alias.set", "static.permissions"),
+    PERMISSION_ALIAS_REMOVE("plots.alias.remove", "static.permissions"),
 
     /*
      * Static console
@@ -395,6 +398,7 @@ public enum C {
      * Alias
      */
     ALIAS_SET_TO("$2Plot alias set to $1%alias%", "Alias"),
+    ALIAS_REMOVED("$2Plot alias removed", "Alias"),
     MISSING_ALIAS("$2You need to specify an alias", "Alias"),
     ALIAS_TOO_LONG("$2The alias must be < 50 characters in length", "Alias"),
     ALIAS_IS_TAKEN("$2That alias is already taken", "Alias"),

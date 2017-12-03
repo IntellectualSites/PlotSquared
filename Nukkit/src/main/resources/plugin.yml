@@ -122,6 +122,8 @@ permissions:
       plots.set.biome: true
       plots.set.home: true
       plots.set.alias: true
+      plots.alias.set: true
+      plots.alias.remove: true
       plots.set.description: true
       plots.description: true
       plots.alias: true
