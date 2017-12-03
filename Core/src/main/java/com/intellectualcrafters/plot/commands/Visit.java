@@ -5,6 +5,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal2;
 import com.intellectualcrafters.plot.object.RunnableVal3;
@@ -17,6 +18,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -31,6 +33,9 @@ import java.util.UUID;
         category = CommandCategory.TELEPORT)
 public class Visit extends Command {
 
+	private static final int PAGE_OUT_OF_RANGE = -998899; // this is to flag Page argument is to long. Can occur if someone enters a large number (some player uses numeric names)
+	private final int MaxPageRange = 100;
+	
     public Visit() {
         super(MainCommand.getInstance(), true);
     }
@@ -50,54 +55,48 @@ public class Visit extends Command {
         PlotArea sortByArea = player.getApplicablePlotArea();
         boolean shouldSortByArea = Settings.Teleport.PER_WORLD_VISIT;
         switch (args.length) {
-            case 3:
-                if (!MathMan.isInteger(args[1])) {
-                    C.NOT_VALID_NUMBER.send(player, "(1, ∞)");
-                    C.COMMAND_SYNTAX.send(player, getUsage());
-                    return;
-                }
-                page = Integer.parseInt(args[2]);
-            case 2:
-                if (!MathMan.isInteger(args[1])) {
-                    sortByArea = PS.get().getPlotAreaByString(args[1]);
-                    if (sortByArea == null) {
-                        C.NOT_VALID_NUMBER.send(player, "(1, ∞)");
-                        C.COMMAND_SYNTAX.send(player, getUsage());
-                        return;
-                    }
-                    UUID user = UUIDHandler.getUUIDFromString(args[0]);
-                    if (user == null) {
-                        C.COMMAND_SYNTAX.send(player, getUsage());
-                        return;
-                    }
-                    unsorted = PS.get().getBasePlots(user);
-                    shouldSortByArea = true;
-                    break;
-                }
-                page = Integer.parseInt(args[1]);
-            case 1:
-                UUID user = (args.length == 2 || !MathMan.isInteger(args[0])) ? UUIDHandler.getUUIDFromString(args[0]) : null;
-                if (page == Integer.MIN_VALUE && user == null && MathMan.isInteger(args[0])) {
-                    page = Integer.parseInt(args[0]);
-                    unsorted = PS.get().getBasePlots(player);
-                    break;
-                }
-                if (user != null) {
-                    unsorted = PS.get().getBasePlots(user);
-                } else {
-                    Plot plot = MainUtil.getPlotFromString(player, args[0], true);
-                    if (plot != null) {
-                        unsorted = Collections.singletonList(plot.getBasePlot(false));
-                    }
-                }
-                break;
-            case 0:
-                page = 1;
-                unsorted = PS.get().getPlots(player);
-                break;
-            default:
-
+        	case 2:
+        		if (MathMan.isInteger(args[1])) {
+        			page = tryReadPageIdFromArg(player, args[1]);
+        		} else {        			
+        			C.COMMAND_SYNTAX.send(player, getUsage());
+        			return;
+        		}
+        		// don't add break here. we handle the first argument in case 1
+        	case 1:
+        		boolean isCorrectSyntaxWithoutResults = false;
+        		Collection<Plot> plots = new HashSet<Plot>();
+        		if (args[0] != null) {
+        			plots = getPlotsFromSingleArgument(args[0], sortByArea); 
+            		if (!plots.isEmpty()) {
+            			unsorted = plots;        			
+            		} else {
+            			if (MathMan.isInteger(args[0])) {
+            				page = tryReadPageIdFromArg(player, args[0]);
+            				
+            				if (page != PAGE_OUT_OF_RANGE && page != Integer.MIN_VALUE) {
+            					unsorted = PS.get().getPlots(player);
+            				}
+            			} else {
+            				// we know now syntax is correct but no results.
+            				isCorrectSyntaxWithoutResults = true;
+            			}            				
+            		}
+        		}
+        		
+        		if (!isCorrectSyntaxWithoutResults && plots.isEmpty() && page == Integer.MIN_VALUE) {        			
+        			C.COMMAND_SYNTAX.send(player, getUsage());
+        			return;
+        		}
+        		break;
+        	case 0:
+        		unsorted = PS.get().getPlots(player);
+        		break;
+        	default:
+        		C.COMMAND_SYNTAX.send(player, getUsage());
+    			return;        		
         }
+
         if (page == Integer.MIN_VALUE) {
             page = 1;
         }
@@ -112,7 +111,7 @@ public class Visit extends Command {
             }
         }
         if (page < 1 || page > unsorted.size()) {
-            C.NOT_VALID_NUMBER.send(player, "(1, " + unsorted.size() + ")");
+            C.NOT_VALID_NUMBER.send(player, "(1 - " + unsorted.size() + ")");
             return;
         }
         List<Plot> plots;
@@ -160,4 +159,65 @@ public class Visit extends Command {
         });
     }
 
+    /**
+     * Get Plots based on an unknown argument type
+     * Check order: Player, Alias, World, PlotId
+     * @param argument to search plots
+     * <pre>
+     * Samples:
+     * p h xPlotPlayerGuy	= Player [numeric] [alphanumeric] [UUID]
+     * p h MyPlantage		= Alias  [numeric] [alphanumeric] [Set<Plot>]
+     * p h PlotworldLarge	= World  [numeric] [alphanumeric] [PlotArea]
+     * p h 1:1		= plotId [numeric] (1,1|1;2)      [PlotId]
+     * </pre>
+     * @param applicablePlotArea the area from the player invoked the command
+     * @return Collection<{@link Plot}> empty if nothing found
+     */
+    private Collection<Plot> getPlotsFromSingleArgument(String argument, PlotArea applicablePlotArea) {
+    	
+    	Collection<Plot> result = new HashSet<Plot>();
+		UUID user = UUIDHandler.getUUIDFromString(argument);
+		if (user != null) {
+			result = PS.get().getBasePlots(user);
+		} else {
+			result = PS.get().getPlotsByAlias(argument, applicablePlotArea.worldname);
+		}
+		
+		if (result.isEmpty()) {
+			PlotArea plotArea = PS.get().getPlotArea(argument, "0,0");
+			if (plotArea != null) {
+				result = plotArea.getBasePlots();
+				if(result.isEmpty()) {
+					result = Collections.singletonList(plotArea.getPlot(new PlotId(0, 0)));
+				}
+			}
+		}
+		
+		if (result.isEmpty()) {
+			PlotId plotId = PlotId.fromString(argument);
+			if (plotId != null) {
+				result = Collections.singletonList(applicablePlotArea.getPlot(plotId));
+			}			
+		}
+				
+		return result;
+    }
+    
+    private int tryReadPageIdFromArg(PlotPlayer player, String arg) {
+    	int page = Integer.MIN_VALUE;    	
+    	
+    	try {
+    		if (MathMan.isInteger(arg)) {
+    			page = Integer.parseInt(arg);
+    			if (page > MaxPageRange) {
+    				page = PAGE_OUT_OF_RANGE;
+    			}
+    		}
+    	} catch (Exception ignored) {
+    		page = PAGE_OUT_OF_RANGE;
+    		C.NOT_VALID_NUMBER.send(player, "(1, ∞)");
+    	}
+    	
+    	return page;
+    }
 }
