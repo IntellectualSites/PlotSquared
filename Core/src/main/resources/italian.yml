@@ -117,7 +117,7 @@ locale:
     comment_header: $2====== Commenti ======
     not_valid_inbox_index: $2Indice commento %s non valido
     inbox_item: $2 - $4%s
-    no_perm_inbox: $2Non hai i permessi per quel inbox
+    no_perm_inbox: $2Non hai i permessi per quell'inbox
     no_perm_inbox_modify: $2Non hai i permessi per modificare quell'inbox
     no_plot_inbox: $2Devi stare in un lotto
     inbox_empty: $2Nessun commento
@@ -151,7 +151,7 @@ locale:
     cluster_available_args: '$1I seguenti commandi sono disponibili: $4list$2, $4create$2,
       $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4helpers$2, $4info$2,
       $4tp$2, $4sethome'
-    cluster_list_heading: $2Ci sono $1%s$2 clusters in questo mondo
+    cluster_list_heading: $2Ci sono $1%s$2 cluster in questo mondo
     cluster_removed: '$1Sei stato rimosso dal cluster: $2%s'
     cluster_resized: $4Cluster ridimensionato con successo.
     cluster_current_plotid: '$1Lotto corrente: $2%s'
