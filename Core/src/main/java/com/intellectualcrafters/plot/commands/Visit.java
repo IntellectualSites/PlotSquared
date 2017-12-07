@@ -88,6 +88,15 @@ public class Visit extends Command {
         			C.COMMAND_SYNTAX.send(player, getUsage());
         			return;
         		}
+        		
+        		// we found nothing we now check for a combined command arg
+        		if((args[0].contains(";") || args[0].contains(",")) && (unsorted == null || unsorted.isEmpty())) {
+        			Plot plot = MainUtil.getPlotFromString(player, args[0], true);
+        			if (plot != null) {
+                        unsorted = Collections.singletonList(plot.getBasePlot(false));
+                    }
+        		}
+        		
         		break;
         	case 0:
         		unsorted = PS.get().getPlots(player);
