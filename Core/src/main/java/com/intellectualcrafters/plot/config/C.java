@@ -541,6 +541,7 @@ public enum C {
     NO_SUCH_PLOT("$2There is no such plot", "Invalid"),
     PLAYER_HAS_NOT_BEEN_ON("$2That player hasn't been in the plotworld", "Invalid"),
     FOUND_NO_PLOTS("$2Found no plots with your search query", "Invalid"),
+    FOUND_NO_PLOTS_FOR_PLAYER("$2No plots found for player: %s", "Invalid"),
     /*
      * Camera
      */

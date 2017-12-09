@@ -88,14 +88,23 @@ public class Visit extends Command {
         			C.COMMAND_SYNTAX.send(player, getUsage());
         			return;
         		}
-        		
-        		// we found nothing we now check for a combined command arg
-        		if((args[0].contains(";") || args[0].contains(",")) && (unsorted == null || unsorted.isEmpty())) {
-        			Plot plot = MainUtil.getPlotFromString(player, args[0], true);
-        			if (plot != null) {
-                        unsorted = Collections.singletonList(plot.getBasePlot(false));
-                    }
-        		}
+        				
+        		if(unsorted == null || unsorted.isEmpty()) {        			
+        			// we now check for a combined command arg
+        			if(args[0].contains(";") || args[0].contains(",")) {
+        				Plot plot = MainUtil.getPlotFromString(player, args[0], true);
+            			if (plot != null) {
+                            unsorted = Collections.singletonList(plot.getBasePlot(false));
+                        }
+        			} else { // its not a combined command check for player search without result
+        				UUID user = UUIDHandler.getUUIDFromString(args[0]);
+        				if(user != null) {            					
+        					// we know safe its a player (we can provide a specific message that we searched for player plots without result)
+        					MainUtil.sendMessage(player, C.FOUND_NO_PLOTS_FOR_PLAYER, UUIDHandler.getName(user));
+        					return;
+        				}
+        			}
+        		}        		
         		
         		break;
         	case 0:
@@ -224,7 +233,6 @@ public class Visit extends Command {
     		}
     	} catch (Exception ignored) {
     		page = PAGE_OUT_OF_RANGE;
-    		C.NOT_VALID_NUMBER.send(player, "(1, ∞)");
     	}
     	
     	return page;
