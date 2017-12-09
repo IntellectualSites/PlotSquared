@@ -270,31 +270,6 @@ public abstract class EventUtil {
                 }
                 return true;
             }
-            case INTERACT_MISC: {
-                if (plot == null) {
-                    return Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), notifyPerms);
-                }
-                if (!plot.hasOwner()) {
-                    return Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
-                }
-                if (plot.getFlag(Flags.MISC_INTERACT).or(false)) {
-                    return true;
-                }
-                Optional<HashSet<PlotBlock>> flag = plot.getFlag(Flags.USE);
-                HashSet<PlotBlock> value;
-                if (flag.isPresent()) {
-                    value = flag.get();
-                } else {
-                    value = null;
-                }
-                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
-                    if (Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false)) {
-                        return true;
-                    }
-                    return !(!notifyPerms || MainUtil.sendMessage(player, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s() + '/' + C.FLAG_MISC_INTERACT.s()));
-                }
-                return true;
-            }
             case INTERACT_VEHICLE: {
                 if (plot == null) {
                     return Permissions.hasPermission(player, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), notifyPerms);

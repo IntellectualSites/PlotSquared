@@ -132,41 +132,4 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
             event.setCursor(new ItemStack(newItem.getType(), newItem.getAmount(), newItem.getDurability()));
         }
     }
-    
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onInteract(PlayerInteractAtEntityEvent e) {
-        Entity entity = e.getRightClicked();
-        if (!(entity instanceof ArmorStand)) {
-            return;
-        }
-        Location l = BukkitUtil.getLocation(e.getRightClicked().getLocation());
-        PlotArea area = l.getPlotArea();
-        if (area == null) {
-            return;
-        }
-        Plot plot = area.getPlotAbs(l);
-        PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
-        if (plot == null) {
-            if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.road");
-                e.setCancelled(true);
-            }
-        } else if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.unowned");
-                e.setCancelled(true);
-            }
-        } else {
-            UUID uuid = pp.getUUID();
-            if (!plot.isAdded(uuid)) {
-                if (Flags.MISC_INTERACT.isTrue(plot)) {
-                    return;
-                }
-                if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.other");
-                    e.setCancelled(true);
-                }
-            }
-        }
-    }
 }
