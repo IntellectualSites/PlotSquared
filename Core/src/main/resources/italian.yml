@@ -80,9 +80,9 @@ comment:
   not_valid_inbox_index: $2Nessun commento all'indice %s
   inbox_item: $2 - $4%s
   comment_syntax: $2Usa /plot comment [X;Z] <%s> <commento>
-  invalid_inbox: '$2Quello non è un inbox valido.&-$1Valori accettati: %s'
-  no_perm_inbox: $2Non hai il permesso per quell'inbox
-  no_perm_inbox_modify: $2Non hai il permesso di modificare quell'inbox
+  invalid_inbox: '$2Quella non è una casella di posta valida.&-$1Valori accettati: %s'
+  no_perm_inbox: $2Non hai il permesso per quella casella di posta
+  no_perm_inbox_modify: $2Non hai il permesso di modificare quella casella di posta
   no_plot_inbox: $2Devi stare in un lotto o fornirlo nell'argomento
   comment_removed: $4Cancellato con successo il commento/i:n$2 - '$3%s$2'
   comment_added: $4È stato lasciato un commento
