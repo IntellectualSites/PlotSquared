@@ -1,8 +1,7 @@
 confirm:
   expired_confirm: $2La conferma è scaduta, esegui nuovamente il comando!
   failed_confirm: $2Non hai azioni in sospeso da confermare!
-  requires_confirm: '$2Sei sicuro di voler eseguire: $1%s$2?&-$2Questo non può essere annullato!
-    Se sei sicuro: $1/plot confirm'
+  requires_confirm: '$2Sei sicuro di voler eseguire: $1%s$2?&-$2Questo non può essere annullato! Se sei sicuro: $1/plot confirm'
 move:
   move_success: $4Lotto spostato con successo.
   copy_success: $4Lotto copiato con successo.
@@ -42,8 +41,7 @@ cluster:
   cluster_removed_helper: $4Rimosso con successo un aiutante dal cluster
   cluster_regenerated: $4Rigenerazione cluster iniziata correttamente
   cluster_teleporting: $4Teletrasporto in corso...
-  cluster_info: '$1Cluster attuale: $2%id%&-$1Nome: $2%name%&-$1Proprietario: $2%owner%&-$1Dimensione:
-    $2%size%&-$1Permessi: $2%rights%'
+  cluster_info: '$1Cluster attuale: $2%id%&-$1Nome: $2%name%&-$1Proprietario: $2%owner%&-$1Dimensione: $2%size%&-$1Permessi: $2%rights%'
 border:
   border: $2Sei fuori dal confine della mappa attuale
 unclaim:
@@ -98,14 +96,11 @@ inventory:
   inventory_desc: '&cDescrizione: &6{desc}'
   inventory_category: '&cCategoria: &6{category}'
 clipboard:
-  clipboard_set: $2Il lotto corrente è ora copiato nei tuoi appunti, usa $1/plot paste$2
-    per incollarlo
-  pasted: $4La selezione del lotto è stata incollata. È stata cancellata dai tuoi
-    appunti.
+  clipboard_set: $2Il lotto corrente è ora copiato nei tuoi appunti, usa $1/plot paste$2 per incollarlo
+  pasted: $4La selezione del lotto è stata incollata. È stata cancellata dai tuoi appunti.
   paste_failed: '$2Incollaggio della selezione fallito. Motivo: $2%s'
   no_clipboard: $2Non hai una selezione nei tuoi appunti
-  clipboard_info: '$2Selezione Attuale - ID Lotto: $1%id$2, Larghezza: $1%width$2, Blocchi
-    Totali: $1%total$2'
+  clipboard_info: '$2Selezione Attuale - ID Lotto: $1%id$2, Larghezza: $1%width$2, Blocchi Totali: $1%total$2'
 toggle:
   toggle_enabled: '$2Impostazione abilitata: %s'
   toggle_disabled: '$2Impostazione disabilitata: %s'
@@ -114,8 +109,7 @@ blocked command:
 done:
   done_already_done: $2Questo lotto è già contrassegnato come finito
   done_not_done: $2Questo lotto non è contrassegnato come finito.
-  done_insufficient_complexity: $2Questo lotto è troppo semplice. Aggiungi altri dettagli
-    prima di usare questo comando.
+  done_insufficient_complexity: $2Questo lotto è troppo semplice. Aggiungi altri dettagli prima di usare questo comando.
   done_success: $1Questo lotto è stato contrassegnato con successo come finito.
   done_removed: $1Ora puoi continuare a costruire in questo lotto.
 ratings:
@@ -142,8 +136,7 @@ economy:
 setup:
   setup_init: '$1Uso: $2/plot setup <valore>'
   setup_step: '$3[$1Passaggio %s0$3] $1%s1 $2- $1Stimato: $2%s2 $1Predefinito: $2%s3'
-  setup_invalid_arg: '$2%s0 non è un argomento valido per il passaggio %s1. Per cancellare il setup
-    usa: $1/plot setup cancel'
+  setup_invalid_arg: '$2%s0 non è un argomento valido per il passaggio %s1. Per cancellare il setup usa: $1/plot setup cancel'
   setup_valid_arg: $2Valore $1%s0 $2impostato a %s1
   setup_finished: $4Dovresti essere stato teletrasportato nel mondo creato. Altrimenti
     sarà necessario impostare manualmente il generatore usando il file bukkit.yml o il tuo plugin
@@ -158,8 +151,7 @@ setup:
   setup_invalid_generator: '$2Generatore non valido. Opzioni possibili: %s'
 schematics:
   schematic_too_large: $2Il lotto è troppo grande per questa azione!
-  schematic_missing_arg: '$2Devi specificare un argomento. Valori possibili: $1test
-    <nome>$2 , $1save$2 , $1paste $2, $1exportall'
+  schematic_missing_arg: '$2Devi specificare un argomento. Valori possibili: $1test <nome>$2 , $1save$2 , $1paste $2, $1exportall'
   schematic_invalid: '$2Quella non è una schematica valida. Motivo: $2%s'
   schematic_valid: $2Quella è una schematica valida
   schematic_paste_failed: $2L'incollaggio della schematica è fallito
@@ -197,8 +189,7 @@ cap:
 time:
   time_format: $1%hours%, %min%, %sec%
 permission:
-  no_schematic_permission: $2Non hai il permesso richiesto per usare la schematica
-    $1%s
+  no_schematic_permission: $2Non hai il permesso richiesto per usare la schematica $1%s
   no_permission: '$2Ti manca il permesso: $1%s'
   no_permission_event: '$2Ti manca il permesso: $1%s'
   no_plot_perms: $2Devi essere il proprietario del lotto per eseguire questa azione
@@ -214,8 +205,7 @@ merge:
   success_merge: $2I lotti sono stati uniti!
   merge_requested: $2Richiesta di fusione dei lotti inviata
   no_perm_merge: '$2Non sei il proprietario del lotto: $1%plot%'
-  no_available_automerge: $2Non possiedi alcun lotto adiacente nella direzione specificata
-    o non puoi unire i lotti alla dimensione richiesta.
+  no_available_automerge: $2Non possiedi alcun lotto adiacente nella direzione specificata o non puoi unire i lotti alla dimensione richiesta.
   unlink_required: $2Per fare questo è necessario uno scollegamento dei lotti.
   unlink_impossible: $2Puoi scollegare solo un mega-lotto
   unlink_success: $2Lotti scollegati con successo.
@@ -243,16 +233,14 @@ errors:
   not_valid_world: $2Quello non è un mondo valido (case sensitive)
   not_valid_plot_world: $2Quello non è un mondo lotti valido (case sensitive)
   no_plots: $2Non hai nessun lotto
-  wait_for_timer: $2Un timer setblock è impostato sul lotto attuale o su di te. Aspetta
-    che finisca
+  wait_for_timer: $2Un timer setblock è impostato sul lotto attuale o su di te. Aspetta che finisca
 paste:
   debug_report_created: '$1Un debug completo è stato caricato a: $1%url%'
 purge:
   purge_success: $4Eliminati con successo %s lotti
 trim:
   trim_in_progress: Un'attività di trim del mondo è già in esecuzione!
-  not_valid_hybrid_plot_world: Il gestore di lotti ibridi è richiesto per eseguire questa
-    azione
+  not_valid_hybrid_plot_world: Il gestore di lotti ibridi è richiesto per eseguire questa azione
 block list:
   block_list_separater: '$1,$2 '
 biome:
@@ -283,6 +271,7 @@ invalid:
   no_such_plot: $2Quel lotto non esiste
   player_has_not_been_on: $2Quel giocatore non è mai stato nel mondo lotti
   found_no_plots: $2Non sono stati trovati lotti con la tua ricerca
+  found_no_plots_for_player: $2Nessun lotto trovato per il giocatore: %s
 camera:
   camera_started: $2Hai inserito la modalità telecamera per il lotto $1%s
   camera_stopped: $2Non sei più in modalità telecamera
@@ -349,11 +338,9 @@ chat:
 deny:
   denied_removed: $4Hai sbloccato con successo il giocatore da questo lotto
   denied_added: $4Hai bloccato con successo il giocatore da questo lotto
-  denied_need_argument: $2Gli argomenti sono mancanti. $1/plot denied add <nome> $2o $1/plot
-    denied remove <nome>
+  denied_need_argument: $2Gli argomenti sono mancanti. $1/plot denied add <nome> $2o $1/plot denied remove <nome>
   was_not_denied: $2Quel giocatore non è bloccato in questo lotto
-  you_got_denied: $4Sei stato bloccato dal lotto dove eri prima, e sei stato teletrasportato
-    allo spawn
+  you_got_denied: $4Sei stato bloccato dal lotto dove eri prima, e sei stato teletrasportato allo spawn
 kick:
   you_got_kicked: $4Sei stato cacciato!
 rain:
@@ -375,8 +362,7 @@ trusted:
   trusted_added: $4Quell'utente ora può costruire nel tuo lotto
   trusted_removed: $4Hai rimosso con successo un amico dal lotto
   was_not_added: $2Quel giocatore non è aggiunto come amico in questo lotto
-  plot_removed_user: $1Il lotto %s in cui eri aggiunto è stato eliminato a causa
-    dell'inattività del proprietario
+  plot_removed_user: $1Il lotto %s in cui eri aggiunto è stato eliminato a causa dell'inattività del proprietario
 member:
   removed_players: $2Rimossi %s giocatori dal lotto.
   already_owner: '$2L''utente %s0 è già il proprietario di questo lotto.'
