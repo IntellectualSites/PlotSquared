@@ -294,12 +294,12 @@ info:
   plot_info_header: $3&m---------&r $1INFO $3&m---------
   plot_info: '$1ID: $2%id%$1&-$1Alias: $2%alias%$1&-$1Proprietario: $2%owner%$1&-$1Bioma:
     $2%biome%$1&-$1Posso costruire: $2%build%$1&-$1Valutazione: $2%rating%&-$1Visto: $2%seen%&-$1Amici:
-    $2%trusted%$1&-$1Membri: $2%members%$1&-$1Bloccati: $2%denied%$1&-$1Flags: $2%flags%'
+    $2%trusted%$1&-$1Membri: $2%members%$1&-$1Bloccati: $2%denied%$1&-$1Flag: $2%flags%'
   plot_info_footer: $3&m---------&r $1INFO $3&m---------
   plot_info_trusted: $1Amici:$2 %trusted%
   plot_info_members: $1Membri:$2 %members%
   plot_info_denied: $1Bloccati:$2 %denied%
-  plot_info_flags: $1Flags:$2 %flags%
+  plot_info_flags: $1Flag:$2 %flags%
   plot_info_biome: $1Bioma:$2 %biome%
   plot_info_rating: $1Valutazione:$2 %rating%
   plot_info_owner: $1Proprietario:$2 %owner%
