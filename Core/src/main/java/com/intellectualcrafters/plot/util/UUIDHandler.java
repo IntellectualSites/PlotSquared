@@ -115,14 +115,23 @@ public class UUIDHandler {
         if (implementation == null) {
             return null;
         }
-        return implementation.getPlayer(uuid);
+        return check(implementation.getPlayer(uuid));
     }
 
     public static PlotPlayer getPlayer(String name) {
         if (implementation == null) {
             return null;
         }
-        return implementation.getPlayer(name);
+        return check(implementation.getPlayer(name));
+    }
+
+    private static PlotPlayer check(PlotPlayer plr) {
+        if (plr != null && !plr.isOnline()) {
+            UUIDHandler.getPlayers().remove(plr.getName());
+            PS.get().IMP.unregister(plr);
+            plr = null;
+        }
+        return plr;
     }
 
     public static UUID getUUIDFromString(String nameOrUUIDString) {
