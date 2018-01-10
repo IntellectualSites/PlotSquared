@@ -64,6 +64,8 @@ public class Save extends SubCommand {
                     public void run() {
                         String time = (System.currentTimeMillis() / 1000) + "";
                         Location[] corners = plot.getCorners();
+                        corners[0].setY(0);
+                        corners[1].setY(255);
                         int size = (corners[1].getX() - corners[0].getX()) + 1;
                         PlotId id = plot.getId();
                         String world = plot.getArea().toString().replaceAll(";", "-").replaceAll("[^A-Za-z0-9]", "");
