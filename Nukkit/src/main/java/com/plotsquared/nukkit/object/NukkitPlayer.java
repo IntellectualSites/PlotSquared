@@ -1,7 +1,9 @@
 package com.plotsquared.nukkit.object;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.event.player.PlayerTeleportEvent;
+import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.plugin.RegisteredListener;
 import cn.nukkit.utils.EventException;
 import com.intellectualcrafters.plot.PS;
@@ -13,6 +15,7 @@ import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.nukkit.util.NukkitUtil;
+import java.util.Collections;
 import java.util.UUID;
 
 public class NukkitPlayer extends PlotPlayer {
@@ -145,7 +148,36 @@ public class NukkitPlayer extends PlotPlayer {
 
     @Override
     public void setWeather(PlotWeather weather) {
-        throw new UnsupportedOperationException("Not implemented yet: setWeather");
+        LevelEventPacket pk;
+        switch (weather) {
+            case RAIN: {
+                pk = new LevelEventPacket();
+                pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;
+                pk.data = Integer.MAX_VALUE;
+                Server.broadcastPacket(Collections.singleton(player), pk);
+
+                pk = new LevelEventPacket();
+                pk.evid = LevelEventPacket.EVENT_START_RAIN;
+                pk.data = Integer.MAX_VALUE;
+                Server.broadcastPacket(Collections.singleton(player), pk);
+                break;
+            }
+            case CLEAR: {
+                pk = new LevelEventPacket();
+                pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;
+                pk.data = Integer.MAX_VALUE;
+                Server.broadcastPacket(Collections.singleton(player), pk);
+
+                pk = new LevelEventPacket();
+                pk.evid = LevelEventPacket.EVENT_STOP_RAIN;
+                pk.data = Integer.MAX_VALUE;
+                Server.broadcastPacket(Collections.singleton(player), pk);
+                break;
+            }
+            case RESET:
+                player.getLevel().sendWeather(player);
+                break;
+        }
     }
     
     @Override
