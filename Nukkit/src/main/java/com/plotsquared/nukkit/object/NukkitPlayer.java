@@ -145,7 +145,7 @@ public class NukkitPlayer extends PlotPlayer {
 
     @Override
     public void setWeather(PlotWeather weather) {
-        throw new UnsupportedOperationException("Not implemented yet: setWeather");
+        //throw new UnsupportedOperationException("Not implemented yet: setWeather");
     }
     
     @Override
