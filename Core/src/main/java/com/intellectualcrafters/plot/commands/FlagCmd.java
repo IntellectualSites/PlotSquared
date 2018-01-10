@@ -12,6 +12,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandDeclaration;
@@ -168,6 +169,8 @@ public class FlagCmd extends SubCommand {
                 }
                 if(flag == Flags.TIME) {
                     player.setTime(Long.MAX_VALUE);
+                } else if(flag == Flags.WEATHER) {
+                    player.setWeather(PlotWeather.RESET);
                 }
                 MainUtil.sendMessage(player, C.FLAG_REMOVED);
                 return true;

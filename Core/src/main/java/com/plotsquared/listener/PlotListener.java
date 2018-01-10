@@ -236,13 +236,11 @@ public class PlotListener {
             if (plot.getFlag(Flags.TIME).isPresent()) {
                 player.setTime(Long.MAX_VALUE);
             }
-            
-            //always reset the weather on leave to default
-            //Flags.WEATHER
-            //CASE: FLAG SET		-> RESET -> Need update to World Weather
-            //CASE: FLAG NOT SET	-> RESET -> Need update to World Weather. We could came from Plot.reEnter() which is used to update flag changes
-            player.setWeather(PlotWeather.RESET);
-            
+
+            if (plot.getFlag(Flags.WEATHER).isPresent()) {
+                player.setTime(Long.MAX_VALUE);
+            }
+
             Location lastLoc = player.getMeta("music");
             if (lastLoc != null) {
                 player.deleteMeta("music");
