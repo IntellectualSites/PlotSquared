@@ -58,7 +58,7 @@ public class Visit extends Command {
                 }
                 page = Integer.parseInt(args[2]);
             case 2:
-                if (!MathMan.isInteger(args[1])) {
+                if (page != Integer.MIN_VALUE || !MathMan.isInteger(args[1])) {
                     sortByArea = PS.get().getPlotAreaByString(args[1]);
                     if (sortByArea == null) {
                         C.NOT_VALID_NUMBER.send(player, "(1, ∞)");
@@ -76,7 +76,7 @@ public class Visit extends Command {
                 }
                 page = Integer.parseInt(args[1]);
             case 1:
-                UUID user = (args.length == 2 || !MathMan.isInteger(args[0])) ? UUIDHandler.getUUIDFromString(args[0]) : null;
+                UUID user = (args.length == 2 || (page != Integer.MIN_VALUE || !MathMan.isInteger(args[0]))) ? UUIDHandler.getUUIDFromString(args[0]) : null;
                 if (page == Integer.MIN_VALUE && user == null && MathMan.isInteger(args[0])) {
                     page = Integer.parseInt(args[0]);
                     unsorted = PS.get().getBasePlots(player);
