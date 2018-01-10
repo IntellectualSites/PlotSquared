@@ -99,7 +99,6 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Shulker;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -459,8 +458,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                     case WITHER:
                                     case WOLF:
                                     case ZOMBIE:
-                                    case SHULKER:
-                                    default:
+                                    default: {
                                         if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
                                             Location location = entity.getLocation();
                                             if (BukkitUtil.getLocation(location).isPlotRoad()) {
@@ -484,29 +482,28 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                                 }
                                             }
                                         }
-                                        
-                                        if (entity != null && BukkitUtil.getLocation(entity.getLocation()).isPlotArea()) {
-                                        	if (entity instanceof Shulker) {
-                                        		LivingEntity livingEntity = (LivingEntity) entity;
-                                        		if (entity.hasMetadata("ownerplot")) {
-                                        			if(!livingEntity.isLeashed() || !entity.hasMetadata("keep")) {
-                                        				PlotId originalPlotId = (PlotId) (!entity.getMetadata("ownerplot").isEmpty() ? entity.getMetadata("ownerplot").get(0).value() : null);
-                                        				PlotId currentPlotId = BukkitUtil.getLocation(entity.getLocation()).getPlot().getId();
-                                        				if(!currentPlotId.equals(originalPlotId)) {
-                                        					iterator.remove();
-                                        					entity.remove();
-                                        				}
-                                        				
-                                        			}
-                                        		}
-                                        		else {
-                                                    if(!entity.hasMetadata("ownerplot")) {
-                                        				//This is to apply the metadata to already spawned shulkers (see EntitySpawnListener.java)
-                                            			entity.setMetadata("ownerplot", new FixedMetadataValue((Plugin) PS.get().IMP, BukkitUtil.getLocation(entity.getLocation()).getPlot().getId()));                                        				
-                                        			}
-                                        		}
-    										}
-    									}
+                                    }
+                                    case SHULKER: {
+                                        if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
+                                            LivingEntity livingEntity = (LivingEntity) entity;
+                                            if (entity.hasMetadata("plot")) {
+                                                if (!livingEntity.isLeashed() || !entity.hasMetadata("keep")) {
+                                                    PlotId originalPlotId = (PlotId) (!entity.getMetadata("plot").isEmpty() ? entity.getMetadata("plot").get(0).value() : null);
+                                                    PlotId currentPlotId = BukkitUtil.getLocation(entity.getLocation()).getPlot().getId();
+                                                    if (!currentPlotId.equals(originalPlotId)) {
+                                                        iterator.remove();
+                                                        entity.remove();
+                                                    }
+
+                                                }
+                                            } else {
+                                                if (!entity.hasMetadata("plot")) {
+                                                    //This is to apply the metadata to already spawned shulkers (see EntitySpawnListener.java)
+                                                    entity.setMetadata("plot", new FixedMetadataValue((Plugin) PS.get().IMP, BukkitUtil.getLocation(entity.getLocation()).getPlot().getId()));
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         } catch (Throwable e) {
