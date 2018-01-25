@@ -9,22 +9,11 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.ReflectionUtils;
-import com.intellectualcrafters.plot.util.StringComparison;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.WorldUtil;
-import com.plotsquared.sponge.SpongeMain;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.sponge.object.SpongePlayer;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.world.biome.Biome;
@@ -41,7 +30,6 @@ import org.spongepowered.api.data.value.mutable.ListValue;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.text.translation.Translation;
@@ -52,7 +40,7 @@ import org.spongepowered.api.world.extent.Extent;
 
 public class SpongeUtil extends WorldUtil {
 
-    public static Cause CAUSE = Cause.of(NamedCause.source(Sponge.getPluginManager().fromInstance(SpongeMain.THIS).get()));
+//    public static Cause CAUSE = Cause.of(NamedCause.source(Sponge.getPluginManager().fromInstance(SpongeMain.THIS).get()));
     private static BiomeType[] biomes;
     private static HashMap<String, Integer> biomeMap;
     private static Player lastPlayer = null;
@@ -406,7 +394,7 @@ public class SpongeUtil extends WorldUtil {
     @Override
     public void setSign(String worldName, int x, int y, int z, String[] lines) {
         World world = SpongeUtil.getWorld(worldName);
-        world.setBlock(x, y, z, BlockTypes.WALL_SIGN.getDefaultState(), CAUSE);
+        world.setBlock(x, y, z, BlockTypes.WALL_SIGN.getDefaultState());
         Optional<TileEntity> block = world.getTileEntity(x, y, z);
         if (!block.isPresent()) {
             return;
