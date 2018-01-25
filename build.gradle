@@ -8,6 +8,11 @@ buildscript {
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
         classpath 'org.ajoberstar:grgit:1.7.0'
     }
+    configurations.all {
+        resolutionStrategy {
+            force 'org.ow2.asm:asm:6.0_BETA'
+        }
+    }
 }
 
 group = 'com.intellectualcrafters'
