@@ -71,7 +71,7 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
             return;
         }
         try {
-            ChunkPos pos = nmsChunk.getChunkCoordIntPair();
+            ChunkPos pos = nmsChunk.getPos();
             WorldServer w = (WorldServer) nmsChunk.getWorld();
             PlayerChunkMap chunkMap = w.getPlayerChunkMap();
             if (!chunkMap.contains(x, z)) {
@@ -320,7 +320,7 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
     }
 
     public boolean isSolid(int i) {
-        return i != 0 && Block.getBlockById(i).isFullyOpaque(Block.getBlockById(i).getDefaultState());
+        return i != 0 && Block.getBlockById(i).isOpaqueCube(Block.getBlockById(i).getDefaultState());
     }
 
     public int getId(char[][] sections, int x, int y, int z) {
@@ -425,7 +425,7 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
     public Chunk getChunk(World world, int x, int z) {
         net.minecraft.world.chunk.Chunk chunk = ((net.minecraft.world.World) world).getChunkProvider().provideChunk(x, z);
         if (chunk != null && !chunk.isLoaded()) {
-            chunk.onChunkLoad();
+            chunk.onLoad();
         }
         return chunk;
     }
@@ -475,7 +475,7 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
                 }
             }
         }
-        refreshChunk(nmsChunk.xPosition, nmsChunk.zPosition);
+        refreshChunk(nmsChunk.x, nmsChunk.z);
     }
 
     public void setBiomes(LocalChunk<char[]> lc) {

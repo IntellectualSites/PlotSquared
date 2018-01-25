@@ -61,7 +61,7 @@ public class SpongeInventoryUtil extends InventoryUtil {
         }
         inv.player.deleteMeta("inventory");
         final SpongePlayer sp = (SpongePlayer) inv.player;
-        sp.player.closeInventory(SpongeUtil.CAUSE);
+        sp.player.closeInventory();
     }
 
     @Override

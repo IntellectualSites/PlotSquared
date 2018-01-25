@@ -45,7 +45,7 @@ public class SpongeAugmentedGenerator implements GenerationPopulator {
         AugmentedUtils.generate(world.getName(), cx, cz, new DelegateLocalBlockQueue(null) {
             @Override
             public boolean setBlock(int x, int y, int z, int id, int data) {
-                terrain.setBlock(bx + x, y, bz + z, SpongeUtil.getBlockState(id, data), SpongeUtil.CAUSE);
+                terrain.setBlock(bx + x, y, bz + z, SpongeUtil.getBlockState(id, data));
                 return true;
             }
 

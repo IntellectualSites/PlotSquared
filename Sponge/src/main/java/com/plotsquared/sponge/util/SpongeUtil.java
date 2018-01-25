@@ -10,6 +10,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.*;
+import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -30,6 +31,7 @@ import org.spongepowered.api.data.value.mutable.ListValue;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.text.translation.Translation;
@@ -40,7 +42,7 @@ import org.spongepowered.api.world.extent.Extent;
 
 public class SpongeUtil extends WorldUtil {
 
-//    public static Cause CAUSE = Cause.of(NamedCause.source(Sponge.getPluginManager().fromInstance(SpongeMain.THIS).get()));
+    public static Cause CAUSE = Cause.builder().append(Sponge.getPluginManager().fromInstance(SpongeMain.THIS).get()).build(EventContext.empty());
     private static BiomeType[] biomes;
     private static HashMap<String, Integer> biomeMap;
     private static Player lastPlayer = null;
