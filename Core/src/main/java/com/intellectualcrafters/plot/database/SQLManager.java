@@ -2611,7 +2611,7 @@ public class SQLManager implements AbstractDB {
 
             @Override
             public PreparedStatement get() throws SQLException {
-                return SQLManager.this.connection.prepareStatement("SELECT * FROM `" + SQLManager.this.prefix + "player_meta` WHERE `uuid` = ?");
+                return SQLManager.this.connection.prepareStatement("SELECT * FROM `" + SQLManager.this.prefix + "player_meta` WHERE `uuid` = ? ORDER BY `meta_id` ASC");
             }
 
             @Override
@@ -2621,7 +2621,7 @@ public class SQLManager implements AbstractDB {
             public void addBatch(PreparedStatement statement) throws SQLException {
                 ResultSet resultSet = statement.executeQuery();
 
-                Map<String, byte[]> metaMap = new HashMap<>();
+                final Map<String, byte[]> metaMap = new HashMap<>();
 
                 while (resultSet.next()) {
                     String key = resultSet.getString("key");
@@ -2630,7 +2630,12 @@ public class SQLManager implements AbstractDB {
                 }
 
                 resultSet.close();
-                result.run(metaMap);
+                TaskManager.runTaskAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        result.run(metaMap);
+                    }
+                });
             }
 
         });

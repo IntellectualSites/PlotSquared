@@ -78,7 +78,7 @@ public abstract class EventUtil {
                     plot.teleportPlayer(player);
                 }
             });
-            MainUtil.sendMessage(player, C.TELEPORTED_TO_ROAD);
+            MainUtil.sendMessage(player, C.TELEPORTED_TO_ROAD.f() + " (on-login) " + "(" + plot.getId().x + ";" + plot.getId().y + ")");
         }
     }
 

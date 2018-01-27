@@ -2,27 +2,18 @@ package com.intellectualcrafters.plot.object;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.RequiredType;
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.worlds.PlotAreaManager;
 import com.intellectualcrafters.plot.object.worlds.SinglePlotArea;
 import com.intellectualcrafters.plot.object.worlds.SinglePlotAreaManager;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.PlotGameMode;
-import com.intellectualcrafters.plot.util.PlotWeather;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.plotsquared.general.commands.CommandCaller;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -489,34 +480,61 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
             DBFunc.getPersistentMeta(getUUID(), new RunnableVal<Map<String, byte[]>>() {
                 @Override
                 public void run(Map<String, byte[]> value) {
-                    PlotPlayer.this.metaMap = value;
-                    if (!value.isEmpty()) {
-                        if (Settings.Enabled_Components.PERSISTENT_META) {
-                            PlotAreaManager manager = PS.get().getPlotAreaManager();
-                            if (manager instanceof SinglePlotAreaManager) {
-                                PlotArea area = ((SinglePlotAreaManager) manager).getArea();
-                                byte[] arr = PlotPlayer.this.getPersistentMeta("quitLoc");
-                                if (arr != null && getMeta("teleportOnLogin", true)) {
-                                    ByteBuffer quitWorld = ByteBuffer.wrap(arr);
-                                    PlotId id = new PlotId(quitWorld.getShort(), quitWorld.getShort());
-                                    int x = quitWorld.getInt();
-                                    int y = quitWorld.get() & 0xFF;
-                                    int z = quitWorld.getInt();
-                                    Plot plot = area.getOwnedPlot(id);
-                                    if (plot != null && plot.isLoaded()) {
-                                        final Location loc = new Location(plot.getWorldName(), x, y, z);
-                                        TaskManager.IMP.sync(new RunnableVal<Object>() {
-                                            @Override
-                                            public void run(Object o) {
-                                                if (getMeta("teleportOnLogin", true)) {
-                                                    teleport(loc);
+                    try {
+                        PlotPlayer.this.metaMap = value;
+                        if (!value.isEmpty()) {
+                            if (Settings.Enabled_Components.PERSISTENT_META) {
+                                PlotAreaManager manager = PS.get().getPlotAreaManager();
+                                if (manager instanceof SinglePlotAreaManager) {
+                                    PlotArea area = ((SinglePlotAreaManager) manager).getArea();
+                                    byte[] arr = PlotPlayer.this.getPersistentMeta("quitLoc");
+                                    if (arr != null) {
+                                        removePersistentMeta("quitLoc");
+
+                                        if (getMeta("teleportOnLogin", true)) {
+                                            ByteBuffer quitWorld = ByteBuffer.wrap(arr);
+                                            final int plotX = quitWorld.getShort();
+                                            final int plotZ = quitWorld.getShort();
+                                            PlotId id = new PlotId(plotX, plotZ);
+                                            int x = quitWorld.getInt();
+                                            int y = quitWorld.get() & 0xFF;
+                                            int z = quitWorld.getInt();
+                                            Plot plot = area.getOwnedPlot(id);
+                                            if (plot != null) {
+                                                final Location loc = new Location(plot.getWorldName(), x, y, z);
+                                                if (plot.isLoaded()) {
+                                                    TaskManager.runTask(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            if (getMeta("teleportOnLogin", true)) {
+                                                                teleport(loc);
+                                                                sendMessage(C.TELEPORTED_TO_PLOT.f() + " (quitLoc) (" + plotX + "," + plotZ + ")");
+                                                            }
+                                                        }
+                                                    });
+                                                } else if (!PS.get().isMainThread(Thread.currentThread())) {
+                                                    if (getMeta("teleportOnLogin", true)) {
+                                                        if (plot.teleportPlayer(PlotPlayer.this)) {
+                                                            TaskManager.runTask(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    if (getMeta("teleportOnLogin", true)) {
+                                                                        teleport(loc);
+                                                                        sendMessage(C.TELEPORTED_TO_PLOT.f() + " (quitLoc-unloaded) (" + plotX + "," + plotZ + ")");
+                                                                    }
+                                                                }
+                                                            });
+                                                        }
+                                                    }
                                                 }
                                             }
-                                        });
+                                        }
                                     }
                                 }
                             }
                         }
+                    } catch (Throwable e) {
+                        e.printStackTrace();
                     }
                 }
             });

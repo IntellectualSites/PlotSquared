@@ -54,7 +54,14 @@ public class Grant extends Command {
                         } else { // add
                             int amount = 1 + (array == null ? 0 : ByteArrayUtilities.bytesToInteger(array));
                             boolean replace = array != null;
-                            DBFunc.addPersistentMeta(uuid, "grantedPlots", ByteArrayUtilities.integerToBytes(amount), replace);
+                            String key = "grantedPlots";
+                            byte[] rawData = ByteArrayUtilities.integerToBytes(amount);
+                            PlotPlayer online = UUIDHandler.getPlayer(uuid);
+                            if (online != null) {
+                                online.setPersistentMeta(key, rawData);
+                            } else {
+                                DBFunc.addPersistentMeta(uuid, key, rawData, replace);
+                            }
                         }
                     }
                 });
