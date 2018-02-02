@@ -1,13 +1,13 @@
 repositories {
-    maven {url "http://ci.mengcraft.com:8080/plugin/repository/everything"}
     maven { url = "https://oss.sonatype.org/content/repositories/snapshots/"}
     maven {url "http://nexus.hc.to/content/repositories/pub_releases"}
+    flatDir {dirs 'lib'}
 }
 
 dependencies {
     compile project(':Core')
-    compile group: "cn.nukkit", name: "nukkit", version: "1.0-20170704.231613-609", changing: true
     compile 'com.google.guava:guava:17.0'
+    compile name: 'nukkit-1.0-SNAPSHOT'
 }
 
 configurations.all {

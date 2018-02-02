@@ -6,7 +6,7 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Listener;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.format.generic.BaseFullChunk;
+import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.plugin.Plugin;
@@ -17,49 +17,18 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.generator.GeneratorWrapper;
-import com.intellectualcrafters.plot.generator.HybridGen;
-import com.intellectualcrafters.plot.generator.HybridPlotManager;
-import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.SetupObject;
+import com.intellectualcrafters.plot.generator.*;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.object.chat.PlainChatManager;
 import com.intellectualcrafters.plot.object.worlds.PlotAreaManager;
 import com.intellectualcrafters.plot.object.worlds.SinglePlotArea;
 import com.intellectualcrafters.plot.object.worlds.SinglePlotAreaManager;
-import com.intellectualcrafters.plot.util.AbstractTitle;
-import com.intellectualcrafters.plot.util.ChatManager;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.ConsoleColors;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.InventoryUtil;
-import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
-import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.block.QueueProvider;
 import com.plotsquared.nukkit.generator.NukkitPlotGenerator;
 import com.plotsquared.nukkit.listeners.PlayerEvents;
 import com.plotsquared.nukkit.listeners.WorldEvents;
-import com.plotsquared.nukkit.util.Metrics;
-import com.plotsquared.nukkit.util.NukkitChunkManager;
-import com.plotsquared.nukkit.util.NukkitCommand;
-import com.plotsquared.nukkit.util.NukkitEventUtil;
-import com.plotsquared.nukkit.util.NukkitHybridUtils;
-import com.plotsquared.nukkit.util.NukkitInventoryUtil;
-import com.plotsquared.nukkit.util.NukkitSchematicHandler;
-import com.plotsquared.nukkit.util.NukkitSetupUtils;
-import com.plotsquared.nukkit.util.NukkitTaskManager;
-import com.plotsquared.nukkit.util.NukkitUtil;
+import com.plotsquared.nukkit.util.*;
 import com.plotsquared.nukkit.util.block.NukkitHybridGen;
 import com.plotsquared.nukkit.util.block.NukkitLocalQueue;
 import com.plotsquared.nukkit.uuid.FileUUIDHandler;
@@ -67,11 +36,7 @@ import com.plotsquared.nukkit.uuid.LowerOfflineUUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public final class NukkitMain extends PluginBase implements Listener, IPlotMain {
 
@@ -146,10 +111,14 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
                 }
             }
             if (unload != null) {
-                Map<Long, BaseFullChunk> chunks = unload.getChunks();
-                BaseFullChunk[] toUnload = chunks.values().toArray(new BaseFullChunk[chunks.size()]);
-                for (BaseFullChunk chunk : toUnload) {
-                    chunk.unload(true, false);
+                Map<Long, ? extends FullChunk> chunks = unload.getChunks();
+                FullChunk[] toUnload = chunks.values().toArray(new FullChunk[chunks.size()]);
+                for (FullChunk chunk : toUnload) {
+                    try {
+                        chunk.unload(true, false);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     if (System.currentTimeMillis() - start > 20) {
                         return;
                     }
