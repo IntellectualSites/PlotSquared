@@ -8,6 +8,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -27,7 +28,16 @@ public class EntitySpawnListener implements Listener {
         Plot plot = area.getOwnedPlotAbs(location);
         if (plot == null) {
             if (!area.MOB_SPAWNING) {
-                if (event.getEntityType().isAlive() || !area.MISC_SPAWN_UNOWNED) {
+                EntityType type = entity.getType();
+                switch (type) {
+                    case DROPPED_ITEM:
+                        if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
+                            break;
+                        }
+                    case PLAYER:
+                        return;
+                }
+                if (type.isAlive() || !area.MISC_SPAWN_UNOWNED) {
                     event.setCancelled(true);
                 }
             }
