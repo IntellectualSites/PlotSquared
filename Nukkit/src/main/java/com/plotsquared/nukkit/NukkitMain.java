@@ -424,8 +424,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
 
     @Override
     public AbstractTitle initTitleManager() {
-        // Already initialized in UUID handler
-        return AbstractTitle.TITLE_CLASS;
+        return new NukkitTitleUtil();
     }
 
     @Override
