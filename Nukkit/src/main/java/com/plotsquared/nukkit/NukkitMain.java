@@ -388,9 +388,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
         }
         if (world != null) {
             try {
-                Field fieldInstance = Level.class.getDeclaredField("generatorInstance");
-                fieldInstance.setAccessible(true);
-                Generator gen = (Generator) fieldInstance.get(world);
+                Generator gen = world.getGenerator();
                 if (gen instanceof NukkitPlotGenerator) {
                     PS.get().loadWorld(worldName, (NukkitPlotGenerator) gen);
                 } else if (gen instanceof GeneratorWrapper) {

@@ -11,20 +11,11 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.plotsquared.nukkit.generator.NukkitPlotGenerator;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 
 public class WorldEvents implements Listener {
 
-    private final Field instance;
-
     public WorldEvents() {
-        try {
-            this.instance = Level.class.getDeclaredField("generatorInstance");
-            this.instance.setAccessible(true);
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -40,7 +31,7 @@ public class WorldEvents implements Listener {
     private void handle(Level level) {
         String name = level.getName();
         try {
-            Generator gen = (Generator) instance.get(level);
+            Generator gen = level.getGenerator();
             if (gen instanceof GeneratorWrapper) {
                 PS.get().loadWorld(name, (GeneratorWrapper<?>) gen);
             } else {

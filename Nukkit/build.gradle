@@ -1,13 +1,14 @@
 repositories {
     maven { url = "https://oss.sonatype.org/content/repositories/snapshots/"}
     maven {url "http://nexus.hc.to/content/repositories/pub_releases"}
+    maven {url "https://repo.potestas.xyz/main/"}
     flatDir {dirs 'lib'}
 }
 
 dependencies {
     compile project(':Core')
     compile 'com.google.guava:guava:17.0'
-    compile name: 'nukkit-1.0-SNAPSHOT'
+    compile 'cn.nukkit:nukkit:1.0-SNAPSHOT'
 }
 
 configurations.all {
