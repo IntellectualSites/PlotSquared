@@ -179,7 +179,7 @@ public class PlotListener {
     }
 
     public static boolean plotExit(final PlotPlayer player, Plot plot) {
-        player.deleteMeta("lastplot");
+        Object previous = player.deleteMeta("lastplot");
         EventUtil.manager.callLeave(player, plot);
         if (plot.hasOwner()) {
             PlotArea pw = plot.getArea();
@@ -187,6 +187,9 @@ public class PlotListener {
                 return true;
             }
             if (Flags.DENY_EXIT.isTrue(plot)) {
+                if (previous != null) {
+                    player.setMeta("lastplot", previous);
+                }
                 return false;
             }
             if (plot.getFlag(Flags.GAMEMODE).isPresent() || plot.getFlag(Flags.GUEST_GAMEMODE).isPresent()) {
