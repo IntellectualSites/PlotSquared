@@ -349,7 +349,7 @@ public class SQLManager implements AbstractDB {
                         task = tasks.remove();
                         count++;
                         if (task != null) {
-                            if (task.method == null || !task.method.equals(method)) {
+                            if (task.method == null || !task.method.equals(method) || statement == null) {
                                 if (statement != null) {
                                     lastTask.execute(statement);
                                     statement.close();
@@ -359,6 +359,9 @@ public class SQLManager implements AbstractDB {
                             }
                             task.set(statement);
                             task.addBatch(statement);
+                            if (statement.isClosed()) {
+                                statement = null;
+                            }
                         }
                         lastTask = task;
                     } catch (Throwable e) {
