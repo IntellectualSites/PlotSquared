@@ -359,9 +359,11 @@ public class SQLManager implements AbstractDB {
                             }
                             task.set(statement);
                             task.addBatch(statement);
-                            if (statement.isClosed()) {
-                                statement = null;
-                            }
+                            try {
+                                if (statement.isClosed()) {
+                                    statement = null;
+                                }
+                            } catch (AbstractMethodError ignore) {}
                         }
                         lastTask = task;
                     } catch (Throwable e) {
