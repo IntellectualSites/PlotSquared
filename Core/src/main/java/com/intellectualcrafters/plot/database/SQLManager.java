@@ -317,7 +317,7 @@ public class SQLManager implements AbstractDB {
                     } catch (Throwable e) {
                         PS.debug("============ DATABASE ERROR ============");
                         PS.debug("There was an error updating the database.");
-                        PS.debug(" - It will be correct on shutdown");
+                        PS.debug(" - It will be corrected on shutdown");
                         PS.debug("========================================");
                         e.printStackTrace();
                         PS.debug("========================================");
@@ -369,7 +369,7 @@ public class SQLManager implements AbstractDB {
                     } catch (Throwable e) {
                         PS.debug("============ DATABASE ERROR ============");
                         PS.debug("There was an error updating the database.");
-                        PS.debug(" - It will be correct on shutdown");
+                        PS.debug(" - It will be corrected on shutdown");
                         PS.debug("========================================");
                         e.printStackTrace();
                         PS.debug("========================================");
@@ -414,7 +414,7 @@ public class SQLManager implements AbstractDB {
                     } catch (Throwable e) {
                         PS.debug("============ DATABASE ERROR ============");
                         PS.debug("There was an error updating the database.");
-                        PS.debug(" - It will be correct on shutdown");
+                        PS.debug(" - It will be corrected on shutdown");
                         PS.debug("========================================");
                         e.printStackTrace();
                         PS.debug("========================================");
@@ -459,7 +459,7 @@ public class SQLManager implements AbstractDB {
                     } catch (Throwable e) {
                         PS.debug("============ DATABASE ERROR ============");
                         PS.debug("There was an error updating the database.");
-                        PS.debug(" - It will be correct on shutdown");
+                        PS.debug(" - It will be corrected on shutdown");
                         PS.debug("========================================");
                         e.printStackTrace();
                         PS.debug("========================================");
@@ -488,7 +488,7 @@ public class SQLManager implements AbstractDB {
         } catch (Throwable e) {
             PS.debug("============ DATABASE ERROR ============");
             PS.debug("There was an error updating the database.");
-            PS.debug(" - It will be correct on shutdown");
+            PS.debug(" - It will be corrected on shutdown");
             PS.debug("========================================");
             e.printStackTrace();
             PS.debug("========================================");
