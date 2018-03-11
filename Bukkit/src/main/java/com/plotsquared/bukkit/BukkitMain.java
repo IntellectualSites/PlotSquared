@@ -49,6 +49,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
+import javax.annotation.Nonnull;
+
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
@@ -316,6 +318,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                             Iterator<Entity> iterator = entities.iterator();
                             while (iterator.hasNext()) {
                                 Entity entity = iterator.next();
+                                if(entity == null)continue;
                                 switch (entity.getType()) {
                                     case EGG:
                                     case COMPLEX_PART:
@@ -446,23 +449,18 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                                 if (entity instanceof LivingEntity) {
                                                     LivingEntity livingEntity = (LivingEntity) entity;
                                                     if (!livingEntity.isLeashed() || !entity.hasMetadata("keep")) {
-                                                        Entity passenger = entity.getPassenger();
-                                                        if (!(passenger instanceof Player) && entity.getMetadata("keep").isEmpty()) {
-                                                            iterator.remove();
-                                                            entity.remove();
-                                                            entity = null;
-                                                        }
+                                                        List<Entity> passengers = entity.getPassengers();
+                                                        removeEntityVehicles(entity, passengers);
                                                     }
                                                 } else {
-                                                    Entity passenger = entity.getPassenger();
-                                                    if (!(passenger instanceof Player) && entity.getMetadata("keep").isEmpty()) {
-                                                        iterator.remove();
-                                                        entity.remove();
-                                                        entity = null;
-                                                    }
+                                                    List<Entity> passengers = entity.getPassengers();
+                                                    removeEntityVehicles(entity, passengers);
+
                                                 }
+                                                if(entity == null)continue;
                                             }
                                         }
+                                        break;
                                     }
                                     case SHULKER: {
                                         if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
@@ -494,6 +492,16 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 });
             }
         }, 20);
+    }
+
+    private void removeEntityVehicles(Entity entity, List<Entity> passengers) {
+        for(Entity passenger:passengers) {
+            if(entity == null)return;
+            if (!(passenger instanceof Player) && entity.getMetadata("keep").isEmpty()) {
+                entity.remove();
+                entity = null;
+            }
+        }
     }
 
     @Override
