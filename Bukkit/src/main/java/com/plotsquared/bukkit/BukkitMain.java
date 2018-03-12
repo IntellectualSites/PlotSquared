@@ -450,7 +450,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                                         if (!(passenger instanceof Player) && entity.getMetadata("keep").isEmpty()) {
                                                             iterator.remove();
                                                             entity.remove();
-                                                            entity = null;
+                                                            continue;
                                                         }
                                                     }
                                                 } else {
@@ -458,7 +458,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                                     if (!(passenger instanceof Player) && entity.getMetadata("keep").isEmpty()) {
                                                         iterator.remove();
                                                         entity.remove();
-                                                        entity = null;
+                                                        continue;
                                                     }
                                                 }
                                             }
