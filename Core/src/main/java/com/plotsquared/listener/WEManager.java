@@ -50,6 +50,7 @@ public class WEManager {
         }
         boolean allowMember = player.hasPermission("plots.worldedit.member");
         Plot plot = player.getCurrentPlot();
+        if (Flags.NO_WORLDEDIT.isTrue(plot)) return regions;
         HashSet<RegionWrapper> allowed = new HashSet<>();
         if (plot == null) {
             plot = player.getMeta("WorldEditRegionPlot");
