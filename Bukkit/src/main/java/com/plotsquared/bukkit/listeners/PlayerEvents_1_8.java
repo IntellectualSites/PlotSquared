@@ -144,6 +144,9 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
         if (area == null) {
             return;
         }
+
+        EntityPortal_1_7_9.test(entity);
+
         Plot plot = area.getPlotAbs(l);
         PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
         if (plot == null) {

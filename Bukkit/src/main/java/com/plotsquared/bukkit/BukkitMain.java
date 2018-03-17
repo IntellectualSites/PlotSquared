@@ -525,6 +525,13 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         } catch (NoSuchMethodException | ClassNotFoundException ignored) {
             PS.debug("Not running Spigot. Skipping EntitySpawnListener event.");
         }
+        if (PS.get().checkVersion(getServerVersion(), 1, 7, 9)) {
+            try {
+                getServer().getPluginManager().registerEvents(new EntityPortal_1_7_9(), this);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
         if (PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_8_0)) {
             try {
                 getServer().getPluginManager().registerEvents(new PlayerEvents_1_8(), this);
