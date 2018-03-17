@@ -28,8 +28,6 @@ public enum PlayerBlockEventType {
     BREAK_HANGING,
     BREAK_VEHICLE,
     
-    // armor stands
-    INTERACT_MISC,
     // blocks
     INTERACT_BLOCK,
     // vehicle

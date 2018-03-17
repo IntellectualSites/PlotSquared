@@ -51,6 +51,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.EnderDragon;
@@ -2202,7 +2203,10 @@ public class PlayerEvents extends PlotListener implements Listener {
             if (entity instanceof Villager && plot.getFlag(Flags.VILLAGER_INTERACT, false)) {
                 return;
             }
-            if (entity instanceof ItemFrame && plot.getFlag(Flags.MISC_INTERACT, false)) {
+            if (entity instanceof ItemFrame && plot.getFlag(Flags.FRAME_INTERACT, false)) {
+                return;
+            }
+            if (entity instanceof ArmorStand && plot.getFlag(Flags.MISC_INTERACT, false)) {
                 return;
             }
             if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER)) {
