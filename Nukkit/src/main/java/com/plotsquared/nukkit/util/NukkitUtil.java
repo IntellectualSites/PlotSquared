@@ -10,18 +10,15 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
-import cn.nukkit.level.generator.biome.Biome;
+import cn.nukkit.level.biome.Biome;
+import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.math.Vector3;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.StringComparison;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.nukkit.NukkitMain;
 import com.plotsquared.nukkit.object.NukkitPlayer;
 import java.lang.reflect.Field;
@@ -121,7 +118,7 @@ public class NukkitUtil extends WorldUtil {
     @Override
     public String getBiome(String world, int x, int z) {
         int id = getWorld(world).getBiomeId(x, z);
-        return Biome.getBiome(id).getName();
+        return EnumBiome.getBiome(id).getName();
     }
 
     @Override
@@ -183,7 +180,7 @@ public class NukkitUtil extends WorldUtil {
     @Override
     public int getBiomeFromString(String biomeString) {
         try {
-            Biome biome = Biome.getBiome(biomeString.toUpperCase());
+            Biome biome = EnumBiome.getBiome(biomeString.toUpperCase());
             return biome.getId();
         } catch (Throwable ignored) {
             return -1;
@@ -266,7 +263,7 @@ public class NukkitUtil extends WorldUtil {
             int biome = (int) Biome.class.getDeclaredField(biomeString.toUpperCase()).get(null);
             for (int x = region.minX; x <= region.maxX; x++) {
                 for (int z = region.minZ; z <= region.maxZ; z++) {
-                    world.setBiomeId(x, z, biome);
+                    world.setBiomeId(x, z, (byte) biome);
                 }
             }
         } catch (Throwable e) {

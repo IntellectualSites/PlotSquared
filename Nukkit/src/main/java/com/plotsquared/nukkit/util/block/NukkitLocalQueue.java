@@ -2,9 +2,9 @@ package com.plotsquared.nukkit.util.block;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
-import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.math.Vector3;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -111,8 +111,8 @@ public class NukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
                     for (int y = 0; y < biomes2.length; y++) {
                         String biomeStr = biomes2[y];
                         if (biomeStr != null) {
-                            biome = Biome.getBiome(biomeStr.toUpperCase()).getId();
-                            level.setBiomeId(bx + x, bz + y, biome);
+                            biome = EnumBiome.getBiome(biomeStr.toUpperCase()).getId();
+                            level.setBiomeId(bx + x, bz + y, (byte) biome);
                         }
                     }
                 }
