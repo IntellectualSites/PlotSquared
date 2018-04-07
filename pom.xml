@@ -22,7 +22,7 @@
         <directory>Bukkit/src/main/resources/</directory>
       </resource>
       <resource>
-        <filtering>false</filtering>
+        <filtering>true</filtering>
         <includes>
           <include>**/*.*</include>
         </includes>
