@@ -12,7 +12,7 @@
   <packaging>jar</packaging>
   <build>
     <finalName>PlotSquared-Bukkit-${project.version}</finalName>
-    <sourceDirectory>Bukkit/src/main/java</sourceDirectory>
+    <sourceDirectory>Bukkit/src</sourceDirectory>
     <resources>
       <resource>
         <filtering>true</filtering>
@@ -52,7 +52,7 @@
             </goals>
             <configuration>
               <sources>
-                <source>Core/src/main/java</source>
+                <source>Core/src</source>
               </sources>
             </configuration>
           </execution>
@@ -82,7 +82,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.11-R0.1-SNAPSHOT</version>
+      <version>1.12-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -97,12 +97,6 @@
       <artifactId>VaultAPI</artifactId>
       <version>1.5</version>
       <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.bukkit</groupId>
-          <artifactId>bukkit</artifactId>
-        </exclusion>
-      </exclusions> 
     </dependency>
   </dependencies>
 </project>
