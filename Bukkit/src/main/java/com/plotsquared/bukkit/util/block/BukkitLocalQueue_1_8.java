@@ -6,6 +6,8 @@ import com.intellectualcrafters.plot.object.ChunkWrapper;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.ReflectionUtils;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.SendChunk;
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ public class BukkitLocalQueue_1_8 extends BukkitLocalQueue<PlotBlock[]> {
     private final ReflectionUtils.RefMethod methodGetByCombinedId;
     private final ReflectionUtils.RefConstructor constructorBlockPosition;
     private final SendChunk sendChunk;
+    private final RefMethod methodGetHandleChunk;
 
     public BukkitLocalQueue_1_8(String world) throws NoSuchMethodException, ClassNotFoundException, NoSuchFieldException {
         super(world);
@@ -42,6 +45,8 @@ public class BukkitLocalQueue_1_8 extends BukkitLocalQueue<PlotBlock[]> {
         this.constructorBlockPosition = this.classBlockPosition.getConstructor(int.class, int.class, int.class);
         this.methodGetByCombinedId = this.classBlock.getMethod("getByCombinedId", int.class);
         this.methodGetHandle = this.classCraftWorld.getMethod("getHandle");
+        RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
+        this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
         this.methodGetChunkAt = this.classWorld.getMethod("getChunkAt", int.class, int.class);
         this.methodA = this.classChunk.getMethod("a", this.classBlockPosition, this.classIBlockData);
         this.sendChunk = new SendChunk();
@@ -70,7 +75,7 @@ public class BukkitLocalQueue_1_8 extends BukkitLocalQueue<PlotBlock[]> {
 
     @Override
     public void fixChunkLighting(int x, int z) {
-        Object c = this.methodGetHandle.of(getChunk(x, z)).call();
+        Object c = this.methodGetHandleChunk.of(getChunk(x, z)).call();
         this.methodInitLighting.of(c).call();
     }
 
@@ -305,7 +310,7 @@ public class BukkitLocalQueue_1_8 extends BukkitLocalQueue<PlotBlock[]> {
                     e.printStackTrace();
                 }
                 Object combined = this.methodGetByCombinedId.call(newBlock.id + (newBlock.data << 12));
-                this.methodA.of(chunk).call(pos, combined);
+                this.methodA.of(c).call(pos, combined);
             }
         }
         fixChunkLighting(lc.getX(), lc.getZ());
