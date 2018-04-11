@@ -1,5 +1,7 @@
 package com.plotsquared.bukkit.util.block;
 
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+
 import com.intellectualcrafters.plot.object.ChunkWrapper;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -16,9 +18,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-
-
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 public class BukkitLocalQueue_1_8 extends BukkitLocalQueue<PlotBlock[]> {
 
@@ -96,6 +95,8 @@ public class BukkitLocalQueue_1_8 extends BukkitLocalQueue<PlotBlock[]> {
                 int y = MainUtil.y_loc[i][j];
                 int z = MainUtil.z_loc[i][j];
                 PlotBlock newBlock = result2[j];
+                if (newBlock == null) continue;
+
                 if (newBlock.id == -1) {
                     chunk.getBlock(x, y, z).setData(newBlock.data, false);
                     continue;
