@@ -255,7 +255,14 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     public ChunkData generateChunkData(World world, Random random, int cx, int cz, BiomeGrid grid) {
         GenChunk result = this.chunkSetter;
         if (this.getPlotGenerator() instanceof SingleWorldGenerator) {
-            if (result.cd != null) return result.cd;
+            if (result.cd != null) {
+                for (int x = 0; x < 16; x++) {
+                    for (int z = 0; z < 16; z++) {
+                        grid.setBiome(x, z, Biome.PLAINS);
+                    }
+                }
+                return result.cd;
+            }
         }
         // Set the chunk location
         result.setChunk(new ChunkWrapper(world.getName(), cx, cz));
