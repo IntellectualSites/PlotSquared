@@ -31,7 +31,7 @@ public class EntitySpawnListener implements Listener {
                 EntityType type = entity.getType();
                 switch (type) {
                     case DROPPED_ITEM:
-                        if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
+                        if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
                             break;
                         }
                     case PLAYER:

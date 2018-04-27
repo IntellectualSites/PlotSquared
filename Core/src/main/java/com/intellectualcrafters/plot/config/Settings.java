@@ -321,6 +321,8 @@ public class Settings extends Config {
         public static boolean CHUNK_PROCESSOR = false;
         @Comment("Kill mobs on roads")
         public static boolean KILL_ROAD_MOBS = false;
+        @Comment("Kill items on roads")
+        public static boolean KILL_ROAD_ITEMS = false;
         @Comment("Kill vehicles on roads")
         public static boolean KILL_ROAD_VEHICLES = false;
         @Comment("Notify a player of any missed comments upon plot entry")
