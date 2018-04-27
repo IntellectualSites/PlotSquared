@@ -241,7 +241,7 @@ public class PlotListener {
             }
 
             if (plot.getFlag(Flags.WEATHER).isPresent()) {
-                player.setTime(Long.MAX_VALUE);
+                player.setWeather(PlotWeather.CLEAR);
             }
 
             Location lastLoc = player.getMeta("music");
