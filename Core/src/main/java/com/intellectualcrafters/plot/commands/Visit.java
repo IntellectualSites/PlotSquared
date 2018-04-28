@@ -76,7 +76,7 @@ public class Visit extends Command {
                 }
                 page = Integer.parseInt(args[1]);
             case 1:
-                UUID user = UUIDHandler.getUUIDFromString(args[0]);
+                UUID user = args[0].length() >= 4 ? UUIDHandler.getUUIDFromString(args[0]) : null;
                 if (user != null && !PS.get().hasPlot(user)) user = null;
                 if (page == Integer.MIN_VALUE && user == null && MathMan.isInteger(args[0])) {
                     page = Integer.parseInt(args[0]);
