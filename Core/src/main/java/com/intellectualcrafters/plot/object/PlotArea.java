@@ -536,6 +536,13 @@ public abstract class PlotArea {
         return getPlotsAbs(uuid).size();
     }
 
+    public boolean hasPlot(UUID uuid) {
+        for (Entry<PlotId, Plot> entry : this.plots.entrySet()) {
+            if (entry.getValue().isOwner(uuid)) return true;
+        }
+        return false;
+    }
+
     public int getPlotCount(PlotPlayer player) {
         return player != null ? getPlotCount(player.getUUID()) : 0;
     }

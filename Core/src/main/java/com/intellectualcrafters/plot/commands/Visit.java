@@ -76,7 +76,8 @@ public class Visit extends Command {
                 }
                 page = Integer.parseInt(args[1]);
             case 1:
-                UUID user = (args.length == 2 || (page != Integer.MIN_VALUE || !MathMan.isInteger(args[0]))) ? UUIDHandler.getUUIDFromString(args[0]) : null;
+                UUID user = UUIDHandler.getUUIDFromString(args[0]);
+                if (user != null && !PS.get().hasPlot(user)) user = null;
                 if (page == Integer.MIN_VALUE && user == null && MathMan.isInteger(args[0])) {
                     page = Integer.parseInt(args[0]);
                     unsorted = PS.get().getBasePlots(player);

@@ -1077,6 +1077,13 @@ public class PS{
         return new HashSet<>(myPlots);
     }
 
+    public boolean hasPlot(final UUID uuid) {
+        for (PlotArea area : manager.getAllPlotAreas()) {
+            if (area.hasPlot(uuid)) return true;
+        }
+        return false;
+    }
+
     public Set<Plot> getBasePlots(final UUID uuid) {
         final ArrayList<Plot> myplots = new ArrayList<>();
         foreachBasePlot(new RunnableVal<Plot>() {
