@@ -1544,6 +1544,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         switch (reason) {
             case SPAWNER_EGG:
             case DISPENSE_EGG:
+            case OCELOT_BABY:
                 if (!area.SPAWN_EGGS) {
                     event.setCancelled(true);
                     return;
@@ -1748,7 +1749,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             case PAINTING:
             case ARMOR_STAND:
                 return checkEntity(plot, Flags.ENTITY_CAP, Flags.MISC_CAP);
-            // misc
+                // misc
             case MINECART:
             case MINECART_CHEST:
             case MINECART_COMMAND:
