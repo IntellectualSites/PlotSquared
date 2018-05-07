@@ -2378,6 +2378,10 @@ public class PlayerEvents extends PlotListener implements Listener {
             if (shooter instanceof Player) { // shooter is player
                 player = (Player) shooter;
             } else { // shooter is not player
+                if (shooter instanceof BlockProjectileSource) {
+                    Location sLoc = BukkitUtil.getLocation(((BlockProjectileSource) shooter).getBlock().getLocation());
+                    dplot = dArea.getPlot(sLoc);
+                }
                 player = null;
             }
         } else { // Attacker is not player
@@ -2452,6 +2456,8 @@ public class PlayerEvents extends PlotListener implements Listener {
                 }
             }
             return true;
+        } else if (dplot != null && (!(dplot.equals(vplot)) || (vplot != null && dplot.isOwner(vplot.owner)))) {
+            return false;
         }
         // player is null
         return !(damager instanceof Arrow && !(victim instanceof Creature));
