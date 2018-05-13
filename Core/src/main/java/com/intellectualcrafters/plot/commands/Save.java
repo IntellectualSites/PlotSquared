@@ -3,7 +3,6 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -14,7 +13,6 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.net.URL;
 import java.util.List;
 import java.util.UUID;
@@ -29,12 +27,6 @@ public class Save extends SubCommand {
 
     @Override
     public boolean onCommand(final PlotPlayer player, String[] args) {
-
-        if (!Settings.Enabled_Components.METRICS) {
-            MainUtil.sendMessage(player,
-                    "&cPlease enable metrics in order to use this command.\n&7 - Or host it yourself if you don't like the free service");
-            return false;
-        }
         String world = player.getLocation().getWorld();
         if (!PS.get().hasPlotArea(world)) {
             return !sendMessage(player, C.NOT_IN_PLOT_WORLD);

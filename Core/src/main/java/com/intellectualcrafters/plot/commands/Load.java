@@ -30,12 +30,6 @@ public class Load extends SubCommand {
 
     @Override
     public boolean onCommand(final PlotPlayer player, String[] args) {
-
-        if (!Settings.Enabled_Components.METRICS) {
-            MainUtil.sendMessage(player,
-                    "&cPlease enable metrics in order to use this command.\n&7 - Or host it yourself if you don't like the free service");
-            return false;
-        }
         String world = player.getLocation().getWorld();
         if (!PS.get().hasPlotArea(world)) {
             return !sendMessage(player, C.NOT_IN_PLOT_WORLD);

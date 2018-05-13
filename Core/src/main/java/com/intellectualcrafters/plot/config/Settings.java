@@ -213,13 +213,13 @@ public class Settings extends Config {
                 " - Downloads can be deleted by the user",
                 " - Supports plot uploads, downloads and saves",
         })
-        public static String URL = "http://empcraft.com/plots/";
+        public static String URL = "https://empcraft.com/plots/";
         @Comment({
                 "The web interface for assets",
                 " - All schematics are organized and public",
                 " - Assets can be searched, selected and downloaded",
         })
-        public static String ASSETS = "http://empcraft.com/assetpack/";
+        public static String ASSETS = "https://empcraft.com/assetpack/";
 
     }
 
