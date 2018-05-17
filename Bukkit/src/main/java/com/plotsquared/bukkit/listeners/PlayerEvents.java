@@ -2476,7 +2476,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 }
             }
             return true;
-        } else if (dplot != null && (!(dplot.equals(vplot)) || (vplot != null && dplot.isOwner(vplot.owner)))) {
+        } else if (dplot != null && (!(dplot.equals(vplot)) || (vplot != null && Objects.equals(dplot.owner, vplot.owner)))) {
             return false;
         }
         // player is null
