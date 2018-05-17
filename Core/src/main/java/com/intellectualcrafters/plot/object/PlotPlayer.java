@@ -135,6 +135,31 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         return Permissions.hasPermissionRange(this, "plots.cluster", Settings.Limit.MAX_PLOTS);
     }
 
+    public int hasPermissionRange(String stub, int range) {
+        if (hasPermission(C.PERMISSION_ADMIN.s())) {
+            return Integer.MAX_VALUE;
+        }
+        String[] nodes = stub.split("\\.");
+        StringBuilder n = new StringBuilder();
+        for (int i = 0; i < (nodes.length - 1); i++) {
+            n.append(nodes[i]).append(".");
+            if (!stub.equals(n + C.PERMISSION_STAR.s())) {
+                if (hasPermission(n + C.PERMISSION_STAR.s())) {
+                    return Integer.MAX_VALUE;
+                }
+            }
+        }
+        if (hasPermission(stub + ".*")) {
+            return Integer.MAX_VALUE;
+        }
+        for (int i = range; i > 0; i--) {
+            if (hasPermission(stub + "." + i)) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
     /**
      * Get the number of plots this player owns.
      *

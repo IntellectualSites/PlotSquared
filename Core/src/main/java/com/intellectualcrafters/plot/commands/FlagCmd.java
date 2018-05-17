@@ -10,11 +10,7 @@ import com.intellectualcrafters.plot.flag.ListFlag;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.PlotWeather;
-import com.intellectualcrafters.plot.util.StringComparison;
-import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.util.ArrayList;
@@ -32,6 +28,21 @@ import java.util.Map;
         requiredType = RequiredType.NONE,
         permission = "plots.flag")
 public class FlagCmd extends SubCommand {
+
+    private boolean checkPermValue(PlotPlayer player, String key, String value) {
+        key = key.toLowerCase();
+        value = value.toLowerCase();
+        String perm = C.PERMISSION_SET_FLAG_KEY_VALUE.f(key.toLowerCase(), value.toLowerCase());
+        if (MathMan.isInteger(value)) {
+            try {
+                int numeric = Integer.parseInt(value);
+                perm.substring(0, perm.length() - value.length() - 1);
+                return player.hasPermissionRange(perm, numeric) >= numeric;
+
+            } catch (NumberFormatException ignore) {}
+        }
+        return Permissions.hasPermission(player, perm);
+    }
 
     @Override
     public boolean onCommand(PlotPlayer player, String[] args) {
@@ -108,7 +119,7 @@ public class FlagCmd extends SubCommand {
                     return false;
                 }
                 String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
-                if (!Permissions.hasPermission(player, C.PERMISSION_SET_FLAG_KEY_VALUE.f(args[1].toLowerCase(), value.toLowerCase()))) {
+                if (!checkPermValue(player, args[1], value)) {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SET_FLAG_KEY_VALUE.f(args[1].toLowerCase(), value.toLowerCase()));
                     return false;
                 }
@@ -140,7 +151,7 @@ public class FlagCmd extends SubCommand {
                         return false;
                     }
                     for (String entry : args[2].split(",")) {
-                        if (!Permissions.hasPermission(player, C.PERMISSION_SET_FLAG_KEY_VALUE.f(args[1].toLowerCase(), entry))) {
+                        if (!checkPermValue(player, args[1], entry)) {
                             MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SET_FLAG_KEY_VALUE.f(args[1].toLowerCase(), entry));
                             return false;
                         }
@@ -185,7 +196,7 @@ public class FlagCmd extends SubCommand {
                     return false;
                 }
                 for (String entry : args[2].split(",")) {
-                    if (!Permissions.hasPermission(player, C.PERMISSION_SET_FLAG_KEY_VALUE.f(args[1].toLowerCase(), entry))) {
+                    if (!checkPermValue(player, args[1], entry)) {
                         MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SET_FLAG_KEY_VALUE.f(args[1].toLowerCase(), entry));
                         return false;
                     }

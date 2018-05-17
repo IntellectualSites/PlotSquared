@@ -1,14 +1,12 @@
 package com.plotsquared.bukkit.object;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.PlotGameMode;
-import com.intellectualcrafters.plot.util.PlotWeather;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.WeatherType;
@@ -18,6 +16,8 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.UUID;
+
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.RegisteredListener;
 
 public class BukkitPlayer extends PlotPlayer {
@@ -100,6 +100,40 @@ public class BukkitPlayer extends PlotPlayer {
             return EconHandler.manager.hasPermission(getName(), permission);
         }
         return this.player.hasPermission(permission);
+    }
+
+    @Override
+    public int hasPermissionRange(String stub, int range) {
+        if (hasPermission(C.PERMISSION_ADMIN.s())) {
+            return Integer.MAX_VALUE;
+        }
+        String[] nodes = stub.split("\\.");
+        StringBuilder n = new StringBuilder();
+        for (int i = 0; i < (nodes.length - 1); i++) {
+            n.append(nodes[i]).append(".");
+            if (!stub.equals(n + C.PERMISSION_STAR.s())) {
+                if (hasPermission(n + C.PERMISSION_STAR.s())) {
+                    return Integer.MAX_VALUE;
+                }
+            }
+        }
+        if (hasPermission(stub + ".*")) {
+            return Integer.MAX_VALUE;
+        }
+        int max = 0;
+        String stubPlus = stub + ".";
+        for (PermissionAttachmentInfo attach : player.getEffectivePermissions()) {
+            String perm = attach.getPermission();
+            if (perm.startsWith(stubPlus)) {
+                String end = perm.substring(stubPlus.length());
+                if (MathMan.isInteger(end)) {
+                    int val = Integer.parseInt(end);
+                    if (val > range) return val;
+                    if (val > max) max = val;
+                }
+            }
+        }
+        return max;
     }
 
     @Override
