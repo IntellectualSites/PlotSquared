@@ -1230,8 +1230,9 @@ public class PlayerEvents extends PlotListener implements Listener {
         Plot plot = area.getOwnedPlot(location);
         if (this.pistonBlocks) {
             try {
+                BlockFace dir = event.getDirection();
                 for (Block pulled : event.getBlocks()) {
-                    location = BukkitUtil.getLocation(pulled.getLocation());
+                    location = BukkitUtil.getLocation(pulled.getLocation().add(dir.getModX(), dir.getModY(), dir.getModZ()));
                     if (!area.contains(location.getX(), location.getZ())) {
                         event.setCancelled(true);
                         return;
