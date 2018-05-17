@@ -1269,7 +1269,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 if (event.getBlock().getType() == Material.DROPPER) return;
             }
         }
-        Location location = BukkitUtil.getLocation(event.getBlock().getLocation());
+        Location location = BukkitUtil.getLocation(event.getVelocity().toLocation(event.getBlock().getWorld()));
         if (location.isPlotRoad()) {
             event.setCancelled(true);
         }
