@@ -7,6 +7,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
@@ -76,7 +77,6 @@ public class Alias extends SubCommand {
 	
     
     private boolean setAlias(PlotPlayer player, Plot plot, String alias) {
-    	
         if (alias.isEmpty()) {
             C.COMMAND_SYNTAX.send(player, "/plot alias <set> <value>");
             return false;
@@ -86,6 +86,10 @@ public class Alias extends SubCommand {
             return false;
         }
         if (alias.contains(" ")) {
+            C.NOT_VALID_VALUE.send(player);
+            return false;
+        }
+        if (MathMan.isInteger(alias)) {
             C.NOT_VALID_VALUE.send(player);
             return false;
         }
