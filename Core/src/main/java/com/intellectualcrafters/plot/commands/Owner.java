@@ -73,9 +73,11 @@ public class Owner extends SetCommand {
         }
         final String finalName = name;
         final UUID finalUUID = uuid;
+        boolean removeDenied = plot.isDenied(finalUUID);
         Runnable run = new Runnable() {
             @Override
             public void run() {
+                if (removeDenied) plot.removeDenied(finalUUID);
                 plot.setOwner(finalUUID);
                 plot.setSign(finalName);
                 MainUtil.sendMessage(player, C.SET_OWNER);
