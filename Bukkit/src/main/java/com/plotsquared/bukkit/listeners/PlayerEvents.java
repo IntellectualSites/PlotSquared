@@ -6,22 +6,8 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.flag.IntegerFlag;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotHandler;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotInventory;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.RegExUtil;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.object.BukkitLazyBlock;
 import com.plotsquared.bukkit.object.BukkitPlayer;
@@ -271,7 +257,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             case DRAGON_EGG:
             case ANVIL:
             case SAND:
-            case GRAVEL:
+            case GRAVEL: {
                 Block block = event.getBlock();
                 Location loc = BukkitUtil.getLocation(block.getLocation());
                 PlotArea area = loc.getPlotArea();
@@ -286,8 +272,49 @@ public class PlayerEvents extends PlotListener implements Listener {
                     event.setCancelled(true);
                 }
                 return;
+            }
             default:
-                break;
+                if (Settings.Redstone.DETECT_INVALID_EDGE_PISTONS) {
+                    Block block = event.getBlock();
+                    switch (block.getType()) {
+                        case PISTON_BASE:
+                        case PISTON_STICKY_BASE:
+                            Location loc = BukkitUtil.getLocation(block.getLocation());
+                            PlotArea area = loc.getPlotArea();
+                            if (area == null) {
+                                return;
+                            }
+                            Plot plot = area.getOwnedPlotAbs(loc);
+                            if (plot == null) {
+                                return;
+                            }
+                            int data = block.getData();
+                            switch (data) {
+                                case 5:
+                                case 13:
+                                    loc.setX(loc.getX() + 1);
+                                    break;
+                                case 4:
+                                case 12:
+                                    loc.setX(loc.getX() - 1);
+                                    break;
+                                case 3:
+                                case 11:
+                                    loc.setZ(loc.getZ() + 1);
+                                    break;
+                                case 2:
+                                case 10:
+                                    loc.setZ(loc.getZ() - 1);
+                                    break;
+                            }
+                            Plot newPlot = area.getOwnedPlotAbs(loc);
+                            if (!plot.equals(newPlot)) {
+                                event.setCancelled(true);
+                                return;
+                            }
+                }
+            }
+            break;
         }
     }
 
@@ -1247,17 +1274,26 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Plot plot = area.getOwnedPlot(location);
+        BlockFace dir = event.getDirection();
+//        Location head = location.add(-dir.getModX(), -dir.getModY(), -dir.getModZ());
+//
+//        if (!Objects.equals(plot, area.getOwnedPlot(head))) {
+//            // FIXME: cancelling the event doesn't work here. See issue #1484
+//            event.setCancelled(true);
+//            return;
+//        }
         if (this.pistonBlocks) {
             try {
-                BlockFace dir = event.getDirection();
                 for (Block pulled : event.getBlocks()) {
-                    location = BukkitUtil.getLocation(pulled.getLocation().add(dir.getModX(), dir.getModY(), dir.getModZ()));
-                    if (!area.contains(location.getX(), location.getZ())) {
+                    Location from = BukkitUtil.getLocation(pulled.getLocation().add(dir.getModX(), dir.getModY(), dir.getModZ()));
+                    Location to = BukkitUtil.getLocation(pulled.getLocation());
+                    if (!area.contains(to.getX(), to.getZ())) {
                         event.setCancelled(true);
                         return;
                     }
-                    Plot newPlot = area.getOwnedPlot(location);
-                    if (!Objects.equals(plot, newPlot)) {
+                    Plot fromPlot = area.getOwnedPlot(from);
+                    Plot toPlot = area.getOwnedPlot(to);
+                    if (!Objects.equals(fromPlot, toPlot)) {
                         event.setCancelled(true);
                         return;
                     }
@@ -1267,7 +1303,6 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
         }
         if (!this.pistonBlocks && block.getType() != Material.PISTON_BASE) {
-            BlockFace dir = event.getDirection();
             location = BukkitUtil.getLocation(block.getLocation().add(dir.getModX() * 2, dir.getModY() * 2, dir.getModZ() * 2));
             if (!area.contains(location)) {
                 event.setCancelled(true);

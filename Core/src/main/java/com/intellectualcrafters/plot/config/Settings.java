@@ -276,6 +276,8 @@ public class Settings extends Config {
         public static boolean DISABLE_UNOCCUPIED = false;
         @Comment("Disable redstone when all owners/trusted/members are offline")
         public static boolean DISABLE_OFFLINE = false;
+        @Comment("Detect and cancel invalid pistons on the edge of plots (e.g. placed with WorldEdit)")
+        public static boolean DETECT_INVALID_EDGE_PISTONS = false;
     }
 
     public static final class Claim {

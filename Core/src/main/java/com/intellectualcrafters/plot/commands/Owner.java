@@ -73,7 +73,7 @@ public class Owner extends SetCommand {
         }
         final String finalName = name;
         final UUID finalUUID = uuid;
-        boolean removeDenied = plot.isDenied(finalUUID);
+        final boolean removeDenied = plot.isDenied(finalUUID);
         Runnable run = new Runnable() {
             @Override
             public void run() {
