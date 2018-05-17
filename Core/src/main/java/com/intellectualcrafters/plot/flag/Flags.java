@@ -80,6 +80,7 @@ public final class Flags {
     public static final BooleanFlag HOSTILE_ATTACK = new BooleanFlag("hostile-attack");
     public static final BooleanFlag HOSTILE_INTERACT = new BooleanFlag("hostile-interact");
     public static final BooleanFlag MOB_PLACE = new BooleanFlag("mob-place");
+    public static final BooleanFlag MOB_BREAK = new BooleanFlag("mob-break");
     public static final BooleanFlag FORCEFIELD = new BooleanFlag("forcefield");
     public static final BooleanFlag INVINCIBLE = new BooleanFlag("invincible");
     public static final BooleanFlag ITEM_DROP = new BooleanFlag("item-drop");

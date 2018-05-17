@@ -927,13 +927,15 @@ public class PlayerEvents extends PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPeskyMobsChangeTheWorldLikeWTFEvent(EntityChangeBlockEvent event) {
-        String world = event.getBlock().getWorld().getName();
-        if (!PS.get().hasPlotArea(world)) {
-            return;
-        }
         Entity e = event.getEntity();
         if (!(e instanceof FallingBlock)) {
-            event.setCancelled(true);
+            Location location = BukkitUtil.getLocation(event.getBlock().getLocation());
+            PlotArea area = location.getPlotArea();
+            if (area != null) {
+                Plot plot = area.getOwnedPlot(location);
+                if (plot != null && Flags.MOB_BREAK.isTrue(plot)) return;
+                event.setCancelled(true);
+            }
         }
     }
 
