@@ -1017,7 +1017,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onBlockSpread(BlockFormEvent event) {
+    public void onBlockForm(BlockFormEvent event) {
         Block block = event.getBlock();
         Location location = BukkitUtil.getLocation(block.getLocation());
         if (location.isPlotRoad()) {
@@ -1032,8 +1032,25 @@ public class PlayerEvents extends PlotListener implements Listener {
         if (plot == null) {
             return;
         }
-        if (Flags.SNOW_FORM.isFalse(plot)) {
-            event.setCancelled(true);
+        switch (event.getNewState().getType()) {
+            case SNOW:
+            case SNOW_BLOCK:
+                if (Flags.SNOW_FORM.isFalse(plot)) {
+                    event.setCancelled(true);
+                }
+                return;
+            case ICE:
+            case FROSTED_ICE:
+            case PACKED_ICE:
+                if (Flags.ICE_FORM.isFalse(plot)) {
+                    event.setCancelled(true);
+                }
+                return;
+            case STONE:
+            case OBSIDIAN:
+            case COBBLESTONE:
+                // TODO event ?
+                return;
         }
     }
 
