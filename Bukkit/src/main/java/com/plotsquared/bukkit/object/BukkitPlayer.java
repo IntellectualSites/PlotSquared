@@ -15,6 +15,7 @@ import org.bukkit.event.EventException;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -122,14 +123,23 @@ public class BukkitPlayer extends PlotPlayer {
         }
         int max = 0;
         String stubPlus = stub + ".";
-        for (PermissionAttachmentInfo attach : player.getEffectivePermissions()) {
-            String perm = attach.getPermission();
-            if (perm.startsWith(stubPlus)) {
-                String end = perm.substring(stubPlus.length());
-                if (MathMan.isInteger(end)) {
-                    int val = Integer.parseInt(end);
-                    if (val > range) return val;
-                    if (val > max) max = val;
+        Set<PermissionAttachmentInfo> effective = player.getEffectivePermissions();
+        if (!effective.isEmpty()) {
+            for (PermissionAttachmentInfo attach : effective) {
+                String perm = attach.getPermission();
+                if (perm.startsWith(stubPlus)) {
+                    String end = perm.substring(stubPlus.length());
+                    if (MathMan.isInteger(end)) {
+                        int val = Integer.parseInt(end);
+                        if (val > range) return val;
+                        if (val > max) max = val;
+                    }
+                }
+            }
+        } else {
+            for (int i = range; i > 0; i--) {
+                if (hasPermission(stub + "." + i)) {
+                    return i;
                 }
             }
         }

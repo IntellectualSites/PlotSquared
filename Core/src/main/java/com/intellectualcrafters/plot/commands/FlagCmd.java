@@ -1,7 +1,9 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.google.common.base.Optional;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
@@ -37,7 +39,8 @@ public class FlagCmd extends SubCommand {
             try {
                 int numeric = Integer.parseInt(value);
                 perm.substring(0, perm.length() - value.length() - 1);
-                return player.hasPermissionRange(perm, numeric) >= numeric;
+                int checkRange = PS.get().getPlatform().equalsIgnoreCase("bukkit") ? numeric : Settings.Limit.MAX_PLOTS;
+                return player.hasPermissionRange(perm, checkRange) >= numeric;
 
             } catch (NumberFormatException ignore) {}
         }
