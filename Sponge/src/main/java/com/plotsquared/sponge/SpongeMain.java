@@ -110,7 +110,7 @@ public class SpongeMain implements IPlotMain {
 
     private GameProfileManager resolver;
 
-    private Logger getLogger() {
+    public Logger getLogger() {
         return this.logger;
     }
 
