@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+
 public class SpongeCommand implements CommandCallable {
 
     @Override
@@ -62,7 +63,7 @@ public class SpongeCommand implements CommandCallable {
         for (Object o : objects) {
             result.add(o.toString());
         }
-        return result.isEmpty() ? null : result;
+        return result.isEmpty() ? Collections.emptyList() : result;
     }
 
     @Override
