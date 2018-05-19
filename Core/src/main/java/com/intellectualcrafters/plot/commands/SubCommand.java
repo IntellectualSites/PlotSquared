@@ -17,6 +17,8 @@ public abstract class SubCommand extends Command {
         super(MainCommand.getInstance(), true);
     }
 
+    public SubCommand(Command parent, boolean isStatic) { super(parent, isStatic); }
+
     public SubCommand(Argument... arguments) {
         this();
         setRequiredArguments(arguments);

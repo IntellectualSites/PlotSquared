@@ -454,6 +454,7 @@ public enum C {
     NO_COMMANDS("$2I'm sorry, but you're not permitted to use any subcommands.", "CommandConfig"),
     SUBCOMMAND_SET_OPTIONS_HEADER("$2Possible Values: ", "CommandConfig"),
     COMMAND_SYNTAX("$1Usage: $2%s", "CommandConfig"),
+    COMMAND_NOT_IMPLEMENTED("$2is not implemented yet!!!", "CommandConfig"),
     /*
      * Player not found
      */

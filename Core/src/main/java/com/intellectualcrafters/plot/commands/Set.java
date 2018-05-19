@@ -27,13 +27,18 @@ import java.util.HashSet;
         command = "set",
         description = "Set a plot value",
         aliases = {"s"},
-        usage = "/plot set <biome|alias|home|flag> <value...>",
+        usage = "/plot set <alias|biome|description|flag|home|owner>",
         permission = "plots.set",
         category = CommandCategory.APPEARANCE,
         requiredType = RequiredType.NONE)
-public class Set extends SubCommand {
+public class Set extends Command {
 
-    public static final String[] values = new String[]{"biome", "alias", "home", "flag"};
+    public Set() {
+        super(MainCommand.getInstance(), true);
+    }
+
+}
+/*    public static final String[] values = new String[]{"biome", "alias", "home", "flag"};
     public static final String[] aliases = new String[]{"b", "w", "wf", "f", "a", "h", "fl"};
 
     private final SetCommand component;
@@ -176,5 +181,4 @@ public class Set extends SubCommand {
             return true;
         }
         return noArgs(player);
-    }
-}
+    }*/

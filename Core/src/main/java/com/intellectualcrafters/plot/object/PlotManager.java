@@ -1,6 +1,6 @@
 package com.intellectualcrafters.plot.object;
 
-import com.intellectualcrafters.plot.commands.Template;
+import com.intellectualcrafters.plot.commands.TemplateCommand;
 import com.intellectualcrafters.plot.config.Settings;
 
 import java.io.IOException;
@@ -69,8 +69,8 @@ public abstract class PlotManager {
 
     public void exportTemplate(PlotArea plotArea) throws IOException {
         HashSet<FileBytes> files = new HashSet<>(
-                Collections.singletonList(new FileBytes(Settings.Paths.TEMPLATES + "/tmp-data.yml", Template.getBytes(plotArea))));
-        Template.zipAll(plotArea.worldname, files);
+                Collections.singletonList(new FileBytes(Settings.Paths.TEMPLATES + "/tmp-data.yml", TemplateCommand.getBytes(plotArea))));
+        TemplateCommand.zipAll(plotArea.worldname, files);
     }
 
     public int getWorldHeight() {

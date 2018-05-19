@@ -17,6 +17,7 @@ import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * PlotSquared command class.
@@ -28,7 +29,6 @@ public class MainCommand extends Command {
     
     private static MainCommand instance;
     public Help help;
-    public Toggle toggle;
 
     private MainCommand() {
         super(null, true);
@@ -38,79 +38,141 @@ public class MainCommand extends Command {
     public static MainCommand getInstance() {
         if (instance == null) {
             instance = new MainCommand();
-            new Buy();
-            new Save();
-            new Load();
-            new Confirm();
-            new Template();
-            new Download();
-            new Changelog();
-            new Template();
-            new Setup();
-            new Area();
-            new DebugSaveTest();
-            new DebugLoadTest();
-            new CreateRoadSchematic();
-            new DebugAllowUnsafe();
-            new RegenAllRoads();
-            new Claim();
-            new Auto();
-            new Visit();
-            new Set();
-            new Clear();
-            new Delete();
-            new Trust();
             new Add();
-            new Leave();
-            new Deny();
-            new Remove();
-            new Info();
-            new Near();
-            new ListCmd();
+
+            Alias aliasCmd = new Alias();
+            new AliasSet(aliasCmd, true);
+            new AliasRemove(aliasCmd, true);
+
+            Area areaCmd = new Area();
+            new AreaCreate(areaCmd, true);
+            new AreaInfo(areaCmd, true);
+            new AreaList(areaCmd, true);
+            new AreaRegen(areaCmd, true);
+            new AreaTeleport(areaCmd, true);
+
+            new Auto();
+            new Biome();
+
+            BO3 bo3Cmd = new BO3();
+            new BO3Export(bo3Cmd, true);
+            new BO3Import(bo3Cmd, true);
+
+            new Buy();
+            new Changelog();
+            new Chat();
+            new Claim();
+            new Clear();
+
+            Cluster clusterCmd = new Cluster();
+            new ClusterCreate(clusterCmd, true);
+            new ClusterDelete(clusterCmd, true);
+            ClusterHelpers clusterHelpersCmd = new ClusterHelpers(clusterCmd, true);
+            new ClusterHelpersAdd(clusterHelpersCmd, true);
+            new ClusterHelpersRemove(clusterHelpersCmd, true);
+            new ClusterInfo(clusterCmd, true);
+            new ClusterInvite(clusterCmd, true);
+            new ClusterKick(clusterCmd, true);
+            new ClusterLeave(clusterCmd, true);
+            new ClusterList(clusterCmd, true);
+            new ClusterResize(clusterCmd, true);
+            new ClusterSethome(clusterCmd, true);
+            new ClusterTeleport(clusterCmd, true);
+
+            new Comment();
+            new Condense();
+            new Confirm();
+            new Continue();
+            new Copy();
+            new CreateRoadSchematic();
+            new Database();
             new Debug();
-            new SchematicCmd();
+            new DebugAllowUnsafe();
+            new DebugClaimTest();
+            new DebugExec();
+            new DebugFixFlags();
+            new DebugImportWorlds();
+            new DebugLoadTest();
+            new DebugPaste();
+            new DebugRoadRegen();
+            new DebugSaveTest();
+            new Delete();
+            new Deny();
+            new Desc();
+            new Done();
+
+            Download downloadCmd = new Download();
+            new DownloadBO3(downloadCmd, true);
+            new DownloadSchematic(downloadCmd, true);
+            new DownloadWorld(downloadCmd, true);
+
+            FlagCmd flagCmd = new FlagCmd();
+            new FlagAdd(flagCmd, true);
+            new FlagInfo(flagCmd, true);
+            new FlagList(flagCmd, true);
+            new FlagRemove(flagCmd, true);
+            new FlagSet(flagCmd, true);
+
+            Grant grantCmd = new Grant();
+            new GrantAdd(grantCmd, true);
+            new GrantCheck(grantCmd, true);
+
+            instance.help = new Help(instance);
+            new Home();
+            new Inbox();
+            new Info();
+            new Kick();
+            new Leave();
+            new ListCmd();
+            new Load();
+            new Merge();
+            new Middle();
+            new Move();
+            new Music();
+            new Near();
+            new Owner();
             new PluginCmd();
             new Purge();
-            new Reload();
-            new Relight();
-            new Merge();
-            new DebugPaste();
-            new Unlink();
-            new Kick();
             new Rate();
-            new DebugClaimTest();
-            new Inbox();
-            new Comment();
-            new Database();
+            new RegenAllRoads();
+            new Relight();
+            new Reload();
+            new Remove();
+            new Save();
+
+            SchematicCmd schematicCmd = new SchematicCmd();
+            new SchematicPaste(schematicCmd, true);
+            new SchematicSave(schematicCmd, true);
+            new SchematicSaveall(schematicCmd, true);
+            new SchematicTest(schematicCmd, true);
+
+            Set setCmd = new Set();
+            new SetBiome(setCmd, true);
+            new SetDescription(setCmd, true);
+            new SetHome(setCmd, true);
+            new SetOwner(setCmd, true);
+
+            new Setflag();
+            new Setup();
             new Swap();
-            new Music();
-            new DebugRoadRegen();
-            new Trust();
-            new DebugExec();
-            new FlagCmd();
             new Target();
-            new DebugFixFlags();
-            new Move();
-            new Condense();
-            new Copy();
-            new Chat();
+
+            Template templateCmd = new Template();
+            new TemplateExport(templateCmd, true);
+            new TemplateImport(templateCmd, true);
+
+            Toggle toggleCmd = new Toggle();
+            new ToggleChat(toggleCmd, true);
+            new ToggleChatspy(toggleCmd, true);
+            new ToggleClearconfirm(toggleCmd, true);
+            new ToggleTitles(toggleCmd, true);
+            new ToggleWorldedit(toggleCmd, true);
+
             new Trim();
-            new Done();
-            new Continue();
-            new BO3();
-            new Middle();
-            new Grant();
-            // Set commands
-            new Owner();
-            new Desc();
-            new Biome();
-            new Alias();
-            new SetHome();
-            new Cluster();
-            new DebugImportWorlds();
-            // Referenced commands
-            instance.toggle = new Toggle();
-            instance.help = new Help(instance);
+            new Trust();
+            new Unlink();
+            new Visit();
+            new WE_Anywhere();
         }
         return instance;
     }
@@ -282,6 +344,14 @@ public class MainCommand extends Command {
                 player.setMeta("lastplot", plot);
             }
         }
+    }
+
+    @Override
+    public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
+        // Clear perm caching //
+        player.deleteMeta("perm");
+
+        return super.tab(player, args, space);
     }
 
     @Override

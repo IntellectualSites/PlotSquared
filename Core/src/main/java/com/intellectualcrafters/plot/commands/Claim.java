@@ -20,7 +20,8 @@ import com.plotsquared.general.commands.CommandDeclaration;
         description = "Claim the current plot you're standing on",
         category = CommandCategory.CLAIMING,
         requiredType = RequiredType.NONE,
-        permission = "plots.claim", usage = "/plot claim")
+        permission = "plots.claim",
+        usage = "/plot claim")
 public class Claim extends SubCommand {
 
     @Override

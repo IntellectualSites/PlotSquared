@@ -21,7 +21,7 @@ import java.util.UUID;
         aliases = {"k"},
         description = "Kick a player from your plot",
         permission = "plots.kick",
-        usage = "<player>",
+        usage = "/plot kick <player>",
         category = CommandCategory.TELEPORT,
         requiredType = RequiredType.NONE)
 public class Kick extends SubCommand {

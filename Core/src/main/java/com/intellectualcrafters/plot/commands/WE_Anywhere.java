@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
@@ -12,12 +13,12 @@ import com.plotsquared.general.commands.CommandDeclaration;
         requiredType = RequiredType.NONE,
         category = CommandCategory.ADMINISTRATION)
 @Deprecated
-public class WE_Anywhere extends SubCommand {
+public class WE_Anywhere extends ToggleWorldedit {
 
-    @Override
-    public boolean onCommand(PlotPlayer player, String[] arguments) {
-        MainCommand.getInstance().toggle.worldedit(this, player, new String[0], null, null);
-        return true;
+    public WE_Anywhere() {
+        super(MainCommand.getInstance(), true);
     }
 
+    @Override
+    public boolean onCommand(PlotPlayer player, String[] args) { return super.onCommand(player, args); }
 }

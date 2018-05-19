@@ -76,7 +76,7 @@ public class Inbox extends SubCommand {
             return false;
         }
         if (args.length == 0) {
-            sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox [inbox] [delete <index>|clear|page]");
+            sendMessage(player, C.COMMAND_SYNTAX, getUsage());
             for (final CommentInbox inbox : CommentManager.inboxes.values()) {
                 if (inbox.canRead(plot, player)) {
                     if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
@@ -172,7 +172,7 @@ public class Inbox extends SubCommand {
                     try {
                         page = Integer.parseInt(args[1]);
                     } catch (NumberFormatException ignored) {
-                        sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox [inbox] [delete <index>|clear|page]");
+                        sendMessage(player, C.COMMAND_SYNTAX, getUsage());
                         return false;
                     }
             }

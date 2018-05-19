@@ -6,17 +6,19 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "sethome",
+        command = "home",
         permission = "plots.set.home",
         description = "Set the plot home",
-        usage = "/plot sethome [none]",
-        aliases = {"sh", "seth"},
+        usage = "/plot set home [none]",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.NONE)
 public class SetHome extends SetCommand {
+
+    public SetHome(Command parent, boolean isStatic) { super(parent, isStatic); }
 
     @Override
     public boolean set(PlotPlayer player, Plot plot, String value) {
