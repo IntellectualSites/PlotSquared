@@ -20,16 +20,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public abstract class Command {
 
@@ -446,6 +437,12 @@ public abstract class Command {
                 MainUtil.sendMessage(player, this.required == RequiredType.PLAYER ? C.IS_CONSOLE : C.NOT_CONSOLE);
             }
         } else if (!Permissions.hasPermission(player, getPermission())) {
+            // Also check sub command permissions if current command doesn't have permission
+            for (Command command : this.staticCommands.values()) {
+                if (command.canExecute(player, false)) {
+                    return true;
+                }
+            }
             if (message) {
                 C.NO_PERMISSION.send(player, getPermission());
             }
@@ -510,7 +507,13 @@ public abstract class Command {
     public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
         switch (args.length) {
             case 0:
-                return this.allCommands;
+                List<Command> commandList = new ArrayList<Command>();
+                for (Command entry : this.allCommands) {
+                    if (entry.canExecute(player, false)) {
+                        commandList.add(entry);
+                    }
+                }
+                return commandList;
             case 1:
                 String arg = args[0].toLowerCase();
                 if (space) {
