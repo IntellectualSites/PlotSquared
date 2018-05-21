@@ -19,6 +19,7 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.util.ArrayList;
@@ -36,8 +37,10 @@ import java.util.UUID;
         description = "List plots",
         permission = "plots.list",
         category = CommandCategory.INFO,
-        usage = "/plot list <forsale|mine|shared|world|top|all|unowned|unknown|player|world|done|fuzzy <search...>> [#]")
+        usage = "/plot list <forsale|mine|shared|world|top|all|unowned|unknown|player|done|fuzzy <search...>> [#]")
 public class ListCmd extends SubCommand {
+
+    private final String[] subPermissions = {"forsale","mine","shared","world","top","all","unowned","unknown","player","done","fuzzy"};
 
     private String[] getArgumentList(PlotPlayer player) {
         List<String> args = new ArrayList<>();
@@ -401,4 +404,23 @@ public class ListCmd extends SubCommand {
         }, "/plot list " + args[0], C.PLOT_LIST_HEADER_PAGED.s());
     }
 
+    public boolean canExecute(PlotPlayer player, boolean message) {
+        if (player == null) {
+            return true;
+        }
+        if (!Permissions.hasPermission(player, getPermission())) {
+            // Also check sub permissions if current command doesn't have permission
+            for (String item : this.subPermissions) {
+                if (Permissions.hasPermission(player, "plots.list." + item)) {
+                    return true;
+                }
+            }
+            if (message) {
+                C.NO_PERMISSION.send(player, getPermission());
+            }
+        } else {
+            return true;
+        }
+        return false;
+    }
 }

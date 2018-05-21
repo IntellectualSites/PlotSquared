@@ -9,7 +9,7 @@ import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 import java.util.Set;
 
-@CommandDeclaration(command = "cluster",
+@CommandDeclaration(command = "list",
         aliases = {"l"},
         category = CommandCategory.ADMINISTRATION,
         requiredType = RequiredType.NONE,

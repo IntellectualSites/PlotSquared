@@ -12,7 +12,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 import java.util.Arrays;
 import java.util.Collection;
 
-@CommandDeclaration(command = "set",
+@CommandDeclaration(command = "add",
         permission = "plots.flag.add",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.NONE,

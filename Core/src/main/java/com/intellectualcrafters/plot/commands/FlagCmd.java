@@ -24,8 +24,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-@CommandDeclaration(
-        command = "flag",
+@CommandDeclaration(command = "flag",
         aliases = {"f"},
         usage = "/plot flag <set|remove|add|list|info>",
         description = "Plot flag commands",

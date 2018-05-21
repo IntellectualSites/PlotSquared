@@ -11,6 +11,8 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.plotsquared.general.commands.Command;
 
+import java.util.ArrayList;
+
 public abstract class FlagCommand extends SubCommand {
 
     public FlagCommand() { super(MainCommand.getInstance(), true); }

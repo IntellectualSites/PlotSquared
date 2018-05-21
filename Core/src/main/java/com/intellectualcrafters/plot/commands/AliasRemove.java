@@ -12,7 +12,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         command = "remove",
         permission = "plots.alias.remove",
         description = "Remove the plot name",
-        usage = "/plot alias remove <alias>",
+        usage = "/plot alias remove",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.NONE)
 public class AliasRemove extends SubCommand {
@@ -21,11 +21,6 @@ public class AliasRemove extends SubCommand {
 
     @Override
     public boolean onCommand(PlotPlayer player, String[] args) {
-        if (args.length == 0) {
-            C.COMMAND_SYNTAX.send(player, getUsage());
-            return false;
-        }
-
         Location loc = player.getLocation();
         Plot plot = loc.getPlotAbs();
         if (plot == null) {

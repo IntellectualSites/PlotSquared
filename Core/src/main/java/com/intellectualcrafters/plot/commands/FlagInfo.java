@@ -27,6 +27,12 @@ public class FlagInfo extends FlagCommand {
         Plot plot = loc.getPlotAbs();
         Flag<?> flag = getFlag(player, plot, args[0]);
         if (flag == null) { return false; }
+        String name = flag.getName();
+        // Only show information on flags that the player can set
+        if (!Permissions.hasPermission(player, "plots.set.flag." + name)) {
+            C.NO_PERMISSION.send(player, "plots.set.flag." + name);
+            return false;
+        }
         // flag key
         MainUtil.sendMessage(player, C.FLAG_KEY, flag.getName());
         // flag type

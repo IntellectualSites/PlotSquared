@@ -2,6 +2,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.general.commands.Command;
@@ -45,5 +46,27 @@ public class FlagSet extends FlagCommand {
         }
         MainUtil.sendMessage(player, C.FLAG_ADDED);
         return true;
+    }
+
+    @Override
+    public boolean canExecute(PlotPlayer player, boolean message) {
+        if (player == null) {
+            return true;
+        }
+        if (!Permissions.hasPermission(player, getPermission())) {
+            // Also check flag permissions
+            for (Flag<?> flag1 : Flags.getFlags()) {
+                String name = flag1.getName();
+                if (Permissions.hasPermission(player, getPermission() + "." + name)) {
+                    return true;
+                }
+            }
+            if (message) {
+                C.NO_PERMISSION.send(player, getPermission());
+            }
+        } else {
+            return true;
+        }
+        return false;
     }
 }

@@ -25,7 +25,7 @@ public class AliasSet extends SubCommand {
     @Override
     public boolean onCommand(PlotPlayer player, String[] args) {
 
-        if (args.length == 0) {
+        if (args.length != 1) {
             C.COMMAND_SYNTAX.send(player, getUsage());
             return false;
         }
@@ -46,7 +46,7 @@ public class AliasSet extends SubCommand {
             return false;
         }
 
-        String alias = args[1];
+        String alias = args[0];
         if (alias.isEmpty() || alias == " ") {
             MainUtil.sendMessage(player, C.MISSING_ALIAS);
             return false;
