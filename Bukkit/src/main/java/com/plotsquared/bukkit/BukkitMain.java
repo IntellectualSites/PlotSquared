@@ -87,12 +87,7 @@ import com.sk89q.worldedit.WorldEdit;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -527,27 +522,43 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                                 }
                                             }
                                         }
+                                        continue;
                                     }
                                     case SHULKER: {
                                         if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
                                             LivingEntity livingEntity = (LivingEntity) entity;
-                                            if (entity.hasMetadata("plot")) {
-                                                if (!livingEntity.isLeashed() || !entity.hasMetadata("keep")) {
-                                                    PlotId originalPlotId = (PlotId) (!entity.getMetadata("plot").isEmpty() ? entity.getMetadata("plot").get(0).value() : null);
-                                                    PlotId currentPlotId = BukkitUtil.getLocation(entity.getLocation()).getPlot().getId();
-                                                    if (!currentPlotId.equals(originalPlotId)) {
-                                                        iterator.remove();
-                                                        entity.remove();
-                                                    }
+                                            List<MetadataValue> meta = entity.getMetadata("plot");
+                                            if (meta != null && !meta.isEmpty()) {
+                                                if (livingEntity.isLeashed()) continue;
 
+                                                List<MetadataValue> keep = entity.getMetadata("keep");
+                                                if (keep != null && !keep.isEmpty()) continue;
+
+                                                PlotId originalPlotId = (PlotId) meta.get(0).value();
+                                                if (originalPlotId != null) {
+                                                    com.intellectualcrafters.plot.object.Location pLoc = BukkitUtil.getLocation(entity.getLocation());
+                                                    PlotArea area = pLoc.getPlotArea();
+                                                    if (area != null) {
+                                                        PlotId currentPlotId = PlotId.of(area.getPlotAbs(pLoc));
+                                                        if (!originalPlotId.equals(currentPlotId) && (currentPlotId == null || !area.getPlot(originalPlotId).equals(area.getPlot(currentPlotId)))) {
+                                                            iterator.remove();
+                                                            entity.remove();
+                                                        }
+                                                    }
                                                 }
                                             } else {
-                                                if (!entity.hasMetadata("plot")) {
-                                                    //This is to apply the metadata to already spawned shulkers (see EntitySpawnListener.java)
-                                                    entity.setMetadata("plot", new FixedMetadataValue((Plugin) PS.get().IMP, BukkitUtil.getLocation(entity.getLocation()).getPlot().getId()));
+                                                //This is to apply the metadata to already spawned shulkers (see EntitySpawnListener.java)
+                                                com.intellectualcrafters.plot.object.Location pLoc = BukkitUtil.getLocation(entity.getLocation());
+                                                PlotArea area = pLoc.getPlotArea();
+                                                if (area != null) {
+                                                    PlotId currentPlotId = PlotId.of(area.getPlotAbs(pLoc));
+                                                    if (currentPlotId != null) {
+                                                        entity.setMetadata("plot", new FixedMetadataValue((Plugin) PS.get().IMP, currentPlotId));
+                                                    }
                                                 }
                                             }
                                         }
+                                        continue;
                                     }
                                 }
                             }
