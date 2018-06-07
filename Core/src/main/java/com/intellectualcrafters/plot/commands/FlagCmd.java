@@ -38,7 +38,7 @@ public class FlagCmd extends SubCommand {
         if (MathMan.isInteger(value)) {
             try {
                 int numeric = Integer.parseInt(value);
-                perm.substring(0, perm.length() - value.length() - 1);
+                perm = perm.substring(0, perm.length() - value.length() - 1);
                 int checkRange = PS.get().getPlatform().equalsIgnoreCase("bukkit") ? numeric : Settings.Limit.MAX_PLOTS;
                 return player.hasPermissionRange(perm, checkRange) >= numeric;
 
