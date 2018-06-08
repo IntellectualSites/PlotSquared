@@ -769,8 +769,10 @@ public class PlayerEvents extends PlotListener implements Listener {
         if (plot == null) {
             return;
         }
-        event.setCancelled(true);
         String message = event.getMessage();
+        if (plotPlayer.hasPermission("plots.chat.color")) {
+            event.setMessage(C.color(message));
+        }
         String format = C.PLOT_CHAT_FORMAT.s();
         String sender = event.getPlayer().getDisplayName();
         PlotId id = plot.getId();
@@ -788,21 +790,14 @@ public class PlayerEvents extends PlotListener implements Listener {
                 }
             }
         }
-        String partial = ChatColor.translateAlternateColorCodes('&',format.replace("%plot_id%", id.x + ";" + id.y).replace("%sender%", sender));
-        if (plotPlayer.hasPermission("plots.chat.color")) {
-            message = C.color(message);
-        }
-        String full = partial.replace("%msg%", message);
-        for (Player receiver : recipients) {
-            receiver.sendMessage(full);
-        }
+        String newFormat = ChatColor.translateAlternateColorCodes('&', format.replace("%plot_id%", id.x + ";" + id.y).replace("%sender%", "%1$s").replace("%msg%", "%2$s"));
+        event.setFormat(newFormat);
         if (!spies.isEmpty()) {
             String spyMessage = C.PLOT_CHAT_SPY_FORMAT.s().replace("%plot_id%", id.x + ";" + id.y).replace("%sender%", sender).replace("%msg%", message);
             for (Player player : spies) {
                 player.sendMessage(spyMessage);
             }
         }
-        PS.debug(full);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
