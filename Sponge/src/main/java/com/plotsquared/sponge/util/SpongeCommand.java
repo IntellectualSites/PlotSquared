@@ -1,10 +1,12 @@
 package com.plotsquared.sponge.util;
 
 import com.google.common.collect.ImmutableList;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.sponge.SpongeMain;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
@@ -15,12 +17,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class SpongeCommand implements CommandCallable {
 
@@ -56,14 +53,22 @@ public class SpongeCommand implements CommandCallable {
             return Collections.singletonList(MainCommand.getInstance().toString());
         }
         Collection objects = MainCommand.getInstance().tab(player, args, arguments.endsWith(" "));
-        if (objects == null) {
-            return ImmutableList.of();
+        if (objects != null && !objects.isEmpty()) {
+            List<String> result = new ArrayList<>();
+            for (Object o : objects) {
+                result.add(o.toString());
+            }
+            return result;
         }
-        List<String> result = new ArrayList<>();
-        for (Object o : objects) {
-            result.add(o.toString());
+        List<String> names = new ArrayList<>();
+        String startsWith = arguments.endsWith(" ") ? "" : args[args.length - 1];
+        for (Map.Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
+            String name = entry.getKey();
+            if (name.startsWith(startsWith)) {
+                names.add(name);
+            }
         }
-        return result;
+        return names;
     }
 
     @Override
