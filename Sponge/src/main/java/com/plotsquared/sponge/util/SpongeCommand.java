@@ -1,5 +1,6 @@
 package com.plotsquared.sponge.util;
 
+import com.google.common.collect.ImmutableList;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -47,7 +48,7 @@ public class SpongeCommand implements CommandCallable {
     public List<String> getSuggestions(CommandSource source, String arguments, Location<World> targetPosition)
             throws CommandException {
         if (!(source instanceof Player)) {
-            return null;
+            return ImmutableList.of();
         }
         PlotPlayer player = SpongeUtil.getPlayer((Player) source);
         String[] args = arguments.split(" ");
@@ -56,13 +57,13 @@ public class SpongeCommand implements CommandCallable {
         }
         Collection objects = MainCommand.getInstance().tab(player, args, arguments.endsWith(" "));
         if (objects == null) {
-            return null;
+            return ImmutableList.of();
         }
         List<String> result = new ArrayList<>();
         for (Object o : objects) {
             result.add(o.toString());
         }
-        return result.isEmpty() ? null : result;
+        return result;
     }
 
     @Override
