@@ -1,6 +1,7 @@
 package com.plotsquared.nukkit.listeners;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.entity.Entity;
@@ -588,10 +589,11 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         String newFormat = C.color(format.replace("%plot_id%", id.x + ";" + id.y).replace("%sender%", "{%0}").replace("%msg%", "{%1}"));
         event.setFormat(newFormat);
+        recipients.add(Server.getInstance().getConsoleSender());
     }
 
-@EventHandler(priority = EventPriority.LOWEST)
-public void blockDestroy(BlockBreakEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void blockDestroy(BlockBreakEvent event) {
         Player player = event.getPlayer();
         Location location = NukkitUtil.getLocation(event.getBlock().getLocation());
         PlotArea area = location.getPlotArea();
