@@ -111,7 +111,9 @@ public class ExpireManager {
                                     .text("\n - ").color("$3").text("Remind later (/plot set keep 1d)").color("$2").suggest("/plot set keep 1d")
                                     .tooltip("/plot set keep 1d")
                                     .text("\n - ").color("$3").text("Keep this (/plot set keep true)").color("$2").suggest("/plot set keep true")
-                                    .tooltip("/plot set keep true");
+                                    .tooltip("/plot set keep true")
+                                    .text("\n - ").color("$3").text("Don't show me this").color("$2").suggest("/plot toggle clear-confirmation")
+                                    .tooltip("/plot toggle clear-confirmation");
                             msg.send(pp);
                         }
                     });

@@ -564,8 +564,10 @@ public class PlayerEvents extends PlotListener implements Listener {
         if (plot == null) {
             return;
         }
-        event.setCancelled(true);
         String message = event.getMessage();
+        if (plotPlayer.hasPermission("plots.chat.color")) {
+            event.setMessage(C.color(message));
+        }
         String format = C.PLOT_CHAT_FORMAT.s();
         String sender = event.getPlayer().getDisplayName();
         PlotId id = plot.getId();
@@ -584,11 +586,8 @@ public class PlayerEvents extends PlotListener implements Listener {
                 }
             }
         }
-        String partial = C.color(format.replace("%plot_id%", id.x + ";" + id.y).replace("%sender%", sender));
-        String full = partial.replace("%msg%", message);
-        for (CommandSender receiver : recipients) {
-            receiver.sendMessage(full);
-        }
+        String newFormat = C.color(format.replace("%plot_id%", id.x + ";" + id.y).replace("%sender%", "{%0}").replace("%msg%", "{%1}"));
+        event.setFormat(newFormat);
     }
 
 @EventHandler(priority = EventPriority.LOWEST)
