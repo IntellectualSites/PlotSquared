@@ -15,11 +15,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @CommandDeclaration(
         command = "setflag",
@@ -250,8 +246,11 @@ public class FlagCmd extends SubCommand {
                 }
                 String message = "";
                 String prefix = "";
-                for (Map.Entry<String, ArrayList<String>> stringArrayListEntry : flags.entrySet()) {
-                    message += prefix + "&6" + stringArrayListEntry.getKey() + ": &7" + StringMan.join(stringArrayListEntry.getValue(), ", ");
+                for (Map.Entry<String, ArrayList<String>> entry : flags.entrySet()) {
+                    String category = entry.getKey();
+                    List<String> flagNames = entry.getValue();
+                    Collections.sort(flagNames);
+                    message += prefix + "&6" + category + ": &7" + StringMan.join(flagNames, ", ");
                     prefix = "\n";
                 }
                 MainUtil.sendMessage(player, message);
