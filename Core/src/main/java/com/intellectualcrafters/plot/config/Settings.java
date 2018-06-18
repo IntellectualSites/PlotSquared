@@ -158,7 +158,9 @@ public class Settings extends Config {
         public int REQUIRED_PLOTS = -1;
         public boolean CONFIRMATION = true;
         public int DAYS = 7;
+        public int SKIP_ACCOUNT_AGE_DAYS = -1;
         public List<String> WORLDS = new ArrayList<>(Collections.singletonList("*"));
+
 
         @Comment("See: https://github.com/IntellectualSites/PlotSquared/wiki/Plot-analysis")
         public static final class CALIBRATION {

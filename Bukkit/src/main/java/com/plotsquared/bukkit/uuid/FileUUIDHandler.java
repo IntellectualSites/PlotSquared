@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 public class FileUUIDHandler extends UUIDHandlerImplementation {
 
@@ -101,8 +102,10 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                                         NbtFactory.NbtCompound bukkit = (NbtFactory.NbtCompound) compound.get("bukkit");
                                         String name = (String) bukkit.get("lastKnownName");
                                         long last = (long) bukkit.get("lastPlayed");
+                                        long first = (long) bukkit.get("firstPlayed");
                                         if (ExpireManager.IMP != null) {
                                             ExpireManager.IMP.storeDate(uuid, last);
+                                            ExpireManager.IMP.storeAccountAge(uuid, last - first);
                                         }
                                         toAdd.put(new StringWrapper(name), uuid);
                                     }
@@ -168,6 +171,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                             StringWrapper wrap = new StringWrapper(name);
                             if (!toAdd.containsKey(wrap)) {
                                 long last = (long) bukkit.get("lastPlayed");
+                                long first = (long) bukkit.get("firstPlayed");
                                 if (Settings.UUID.OFFLINE) {
                                     if (Settings.UUID.FORCE_LOWERCASE && !name.toLowerCase().equals(name)) {
                                         uuid = FileUUIDHandler.this.uuidWrapper.getUUID(name);
@@ -179,6 +183,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                                 }
                                 if (ExpireManager.IMP != null) {
                                     ExpireManager.IMP.storeDate(uuid, last);
+                                    ExpireManager.IMP.storeAccountAge(uuid, last - first);
                                 }
                                 toAdd.put(wrap, uuid);
                             }

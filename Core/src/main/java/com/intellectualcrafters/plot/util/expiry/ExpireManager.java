@@ -35,6 +35,7 @@ public class ExpireManager {
 
     public static ExpireManager IMP;
     private final ConcurrentHashMap<UUID, Long> dates_cache;
+    private final ConcurrentHashMap<UUID, Long> account_age_cache;
     private volatile HashSet<Plot> plotsToDelete;
     private ArrayDeque<ExpiryTask> tasks;
     /**
@@ -45,6 +46,7 @@ public class ExpireManager {
     public ExpireManager() {
         tasks = new ArrayDeque<>();
         dates_cache = new ConcurrentHashMap<>();
+        account_age_cache = new ConcurrentHashMap<>();
     }
 
     public void addTask(ExpiryTask task) {
@@ -71,6 +73,16 @@ public class ExpireManager {
                 confirmExpiry(pp);
             }
         }
+    }
+
+    /**
+     * Gets the account last joined - first joined (or Long.MAX_VALUE)
+     * @param uuid
+     * @return result
+     */
+    public long getAccountAge(UUID uuid) {
+        Long value = this.account_age_cache.get(uuid);
+        return value == null ? Long.MAX_VALUE : value;
     }
 
     public long getTimestamp(UUID uuid) {
@@ -163,6 +175,8 @@ public class ExpireManager {
         if (applicable.isEmpty()) {
             return new ArrayList<>();
         }
+        boolean shouldCheckAccountAge = false;
+
         long diff = getAge(plot);
         if (diff == 0) {
             return new ArrayList<>();
@@ -172,11 +186,26 @@ public class ExpireManager {
             ExpiryTask et = applicable.poll();
             if (et.applies(diff)) {
                 applicable.add(et);
+                shouldCheckAccountAge |= et.getSettings().SKIP_ACCOUNT_AGE_DAYS != -1;
             }
         }
         if (applicable.isEmpty()) {
             return new ArrayList<>();
         }
+        // Check account age
+        if (shouldCheckAccountAge) {
+            long accountAge = getAge(plot);
+            for (int i = 0; i < applicable.size(); i++) {
+                ExpiryTask et = applicable.poll();
+                if (et.appliesAccountAge(accountAge)) {
+                    applicable.add(et);
+                }
+            }
+            if (applicable.isEmpty()) {
+                return new ArrayList<>();
+            }
+        }
+
         // Run applicable non confirming tasks
         for (int i = 0; i < applicable.size(); i++) {
             ExpiryTask expiryTask = applicable.poll();
@@ -334,7 +363,19 @@ public class ExpireManager {
     }
 
     public void storeDate(UUID uuid, long time) {
-        this.dates_cache.put(uuid, time);
+        Long existing = this.dates_cache.put(uuid, time);
+        if (existing != null) {
+            long diff = time - existing;
+            if (diff > 0) {
+                Long account_age = this.account_age_cache.get(uuid);
+                if (account_age != null)
+                    this.account_age_cache.put(uuid, account_age + diff);
+            }
+        }
+    }
+
+    public void storeAccountAge(UUID uuid, long time) {
+        this.account_age_cache.put(uuid, time);
     }
 
     public HashSet<Plot> getPendingExpired() {
@@ -397,6 +438,18 @@ public class ExpireManager {
             return System.currentTimeMillis() - last;
         }
         return 0;
+    }
+
+    public long getAccountAge(Plot plot) {
+        if (!plot.hasOwner() || Objects.equals(DBFunc.everyone, plot.owner) || UUIDHandler.getPlayer(plot.owner) != null || plot.getRunning() > 0) {
+            return Long.MAX_VALUE;
+        }
+        long max = 0;
+        for (UUID owner : plot.getOwners()) {
+            long age = getAccountAge(owner);
+            max = Math.max(age, max);
+        }
+        return max;
     }
 
     public long getAge(Plot plot) {

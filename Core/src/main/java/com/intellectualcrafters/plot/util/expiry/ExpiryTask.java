@@ -18,6 +18,10 @@ public class ExpiryTask {
         this.settings = settings;
     }
 
+    public Settings.Auto_Clear getSettings() {
+        return settings;
+    }
+
     public boolean allowsArea(PlotArea area) {
         return settings.WORLDS.contains(area.toString()) || settings.WORLDS.contains(area.worldname) || settings.WORLDS.contains("*");
     }
@@ -97,6 +101,12 @@ public class ExpiryTask {
 
     public boolean applies(long diff) {
         return diff > TimeUnit.DAYS.toMillis(settings.DAYS) && diff > cutoffThreshold;
+    }
+
+    public boolean appliesAccountAge(long accountAge) {
+        if (settings.SKIP_ACCOUNT_AGE_DAYS != -1)
+            return accountAge <= TimeUnit.DAYS.toMillis(settings.SKIP_ACCOUNT_AGE_DAYS);
+        return false;
     }
 
     public boolean needsAnalysis() {
