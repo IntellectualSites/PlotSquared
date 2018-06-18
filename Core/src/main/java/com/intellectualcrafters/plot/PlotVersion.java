@@ -3,6 +3,23 @@ package com.intellectualcrafters.plot;
 public class PlotVersion {
     public final int year, month, day, hash, build;
 
+    public PlotVersion(int year, int month, int day, int hash, int build) {
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        this.hash = hash;
+        this.build = build;
+    }
+
+    public static PlotVersion tryParse(String version) {
+        try {
+            return new PlotVersion(version);
+        } catch (Exception ignore) {
+            ignore.printStackTrace();
+            return new PlotVersion(0, 0, 0, 0, 0);
+        }
+    }
+
     public PlotVersion(String version) {
         String[] split = version.substring(version.indexOf('=') + 1).split("-");
         if (split[0].equals("unknown")) {
