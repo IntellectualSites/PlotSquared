@@ -5,10 +5,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.flag.Flags;
-import com.intellectualcrafters.plot.flag.ListFlag;
+import com.intellectualcrafters.plot.flag.*;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -27,16 +24,18 @@ import java.util.*;
         permission = "plots.flag")
 public class FlagCmd extends SubCommand {
 
-    private boolean checkPermValue(PlotPlayer player, String key, String value) {
+    private boolean checkPermValue(PlotPlayer player, Flag flag, String key, String value) {
         key = key.toLowerCase();
         value = value.toLowerCase();
         String perm = C.PERMISSION_SET_FLAG_KEY_VALUE.f(key.toLowerCase(), value.toLowerCase());
-        if (MathMan.isInteger(value)) {
+        if (flag instanceof IntegerFlag && MathMan.isInteger(value)) {
             try {
                 int numeric = Integer.parseInt(value);
                 perm = perm.substring(0, perm.length() - value.length() - 1);
-                int checkRange = PS.get().getPlatform().equalsIgnoreCase("bukkit") ? numeric : Settings.Limit.MAX_PLOTS;
-                return player.hasPermissionRange(perm, checkRange) >= numeric;
+                if (numeric > 0) {
+                    int checkRange = PS.get().getPlatform().equalsIgnoreCase("bukkit") ? numeric : Settings.Limit.MAX_PLOTS;
+                    return player.hasPermissionRange(perm, checkRange) >= numeric;
+                }
 
             } catch (NumberFormatException ignore) {}
         }
@@ -118,7 +117,7 @@ public class FlagCmd extends SubCommand {
                     return false;
                 }
                 String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
-                if (!checkPermValue(player, args[1], value)) {
+                if (!checkPermValue(player, flag, args[1], value)) {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SET_FLAG_KEY_VALUE.f(args[1].toLowerCase(), value.toLowerCase()));
                     return false;
                 }
@@ -150,7 +149,7 @@ public class FlagCmd extends SubCommand {
                         return false;
                     }
                     for (String entry : args[2].split(",")) {
-                        if (!checkPermValue(player, args[1], entry)) {
+                        if (!checkPermValue(player, flag, args[1], entry)) {
                             MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SET_FLAG_KEY_VALUE.f(args[1].toLowerCase(), entry));
                             return false;
                         }
@@ -195,7 +194,7 @@ public class FlagCmd extends SubCommand {
                     return false;
                 }
                 for (String entry : args[2].split(",")) {
-                    if (!checkPermValue(player, args[1], entry)) {
+                    if (!checkPermValue(player, flag, args[1], entry)) {
                         MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SET_FLAG_KEY_VALUE.f(args[1].toLowerCase(), entry));
                         return false;
                     }
