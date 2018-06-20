@@ -2515,7 +2515,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return false;
         }
         // player is null
-        return !(damager instanceof Arrow && !(victim instanceof Creature));
+        return (dArea != null && dArea.MOB_DAMAGE) || !(damager instanceof Arrow && !(victim instanceof Creature));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

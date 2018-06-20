@@ -52,6 +52,7 @@ public abstract class PlotArea {
     public boolean MISC_SPAWN_UNOWNED = false;
     public boolean MOB_SPAWNING = false;
     public boolean MOB_SPAWNER_SPAWNING = false;
+    public boolean MOB_DAMAGE = false;
     public String PLOT_BIOME = "FOREST";
     public boolean PLOT_CHAT = false;
     public boolean SCHEMATIC_CLAIM_SPECIFY = false;
@@ -217,6 +218,7 @@ public abstract class PlotArea {
             this.TERRAIN = config.getInt("generator.terrain");
             this.TYPE = config.getInt("generator.type");
         }
+        this.MOB_DAMAGE = config.getBoolean("mob_damage");
         this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
         this.MISC_SPAWN_UNOWNED = config.getBoolean("misc_spawn_unowned");
         this.MOB_SPAWNER_SPAWNING = config.getBoolean("mob_spawner_spawning");
@@ -326,6 +328,7 @@ public abstract class PlotArea {
      */
     public void saveConfiguration(ConfigurationSection config) {
         HashMap<String, Object> options = new HashMap<>();
+        options.put("mob_damage", this.MOB_DAMAGE);
         options.put("natural_mob_spawning", this.MOB_SPAWNING);
         options.put("misc_spawn_unowned", this.MISC_SPAWN_UNOWNED);
         options.put("mob_spawner_spawning", this.MOB_SPAWNER_SPAWNING);
