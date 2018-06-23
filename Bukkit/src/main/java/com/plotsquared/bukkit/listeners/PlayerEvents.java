@@ -2370,7 +2370,6 @@ public class PlayerEvents extends PlotListener implements Listener {
                     }
                 }
             }
-            System.out.println("Cancel entity damage");
             event.setCancelled(true);
         }
     }
