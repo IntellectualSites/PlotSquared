@@ -2370,6 +2370,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     }
                 }
             }
+            System.out.println("Cancel entity damage");
             event.setCancelled(true);
         }
     }
@@ -2512,10 +2513,9 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
             return true;
         } else if (dplot != null && (!(dplot.equals(vplot)) || (vplot != null && Objects.equals(dplot.owner, vplot.owner)))) {
-            return false;
+            return vplot != null && Flags.PVE.isTrue(vplot);
         }
-        // player is null
-        return !(damager instanceof Arrow && !(victim instanceof Creature));
+        return ((vplot != null && Flags.PVE.isTrue(vplot)) || !(damager instanceof Arrow && !(victim instanceof Creature)));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
