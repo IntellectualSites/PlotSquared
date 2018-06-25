@@ -2491,10 +2491,18 @@ public class PlayerEvents extends PlotListener implements Listener {
                     return false;
                 }
             } else if (victim instanceof Creature) { // victim is animal
-                if (plot != null && (plot.getFlag(Flags.ANIMAL_ATTACK, false) || plot.getFlag(Flags.PVE, false) || plot
-                        .isAdded(plotPlayer.getUUID()))) {
-                    return true;
+                if (plot != null || plot.isAdded(plotPlayer.getUUID())) {
+                  return true; 
+                 }
+
+                if (plot.getFlag(Flags.ANIMAL_ATTACK, false)) {
+                  return false; 
+                 }
+
+                if (plot.getFlag(Flags.PVE, false)) { 
+                    return true; 
                 }
+                
                 if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
                     MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, "plots.admin.pve." + stub);
                     return false;
