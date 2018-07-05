@@ -1,8 +1,10 @@
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
@@ -35,7 +37,10 @@ public class Move extends SubCommand {
         }
         Plot plot2 = MainUtil.getPlotFromString(player, args[0], true);
         if (plot2 == null) {
-            return false;
+            PlotArea area = PS.get().getPlotAreaByString(args[0]);
+            if (area == null)
+                return false;
+            plot2 = area.getPlotAbs(plot1.getId());
         }
         if (plot1.equals(plot2)) {
             MainUtil.sendMessage(player, C.NOT_VALID_PLOT_ID);
