@@ -737,7 +737,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override
     public UUIDHandlerImplementation initUUIDHandler() {
-        boolean checkVersion = PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_7_6);
+        boolean checkVersion = false;
+        try {
+            OfflinePlayer.class.getDeclaredMethod("getUniqueID");
+            checkVersion = true;
+        } catch (Throwable ignore) {}
         UUIDWrapper wrapper;
         if (Settings.UUID.OFFLINE) {
             if (Settings.UUID.FORCE_LOWERCASE) {
