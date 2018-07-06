@@ -31,15 +31,23 @@ public class Move extends SubCommand {
             MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return false;
         }
+        boolean override = false;
+        if (args.length == 2 && args[1].equalsIgnoreCase("-f")) {
+            args = new String[]{ args[0] };
+            override = true;
+        }
         if (args.length != 1) {
             C.COMMAND_SYNTAX.send(player, getUsage());
             return false;
         }
-        Plot plot2 = MainUtil.getPlotFromString(player, args[0], true);
-        if (plot2 == null) {
-            PlotArea area = PS.get().getPlotAreaByString(args[0]);
-            if (area == null)
+        PlotArea area = PS.get().getPlotAreaByString(args[0]);
+        Plot plot2;
+        if (area == null) {
+            plot2 = MainUtil.getPlotFromString(player, args[0], true);
+            if (plot2 == null) {
                 return false;
+            }
+        } else {
             plot2 = area.getPlotAbs(plot1.getId());
         }
         if (plot1.equals(plot2)) {
@@ -47,7 +55,7 @@ public class Move extends SubCommand {
             MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot copy <X;Z>");
             return false;
         }
-        if (!plot1.getArea().isCompatible(plot2.getArea())) {
+        if (!plot1.getArea().isCompatible(plot2.getArea()) && (!override || !Permissions.hasPermission(player, C.PERMISSION_ADMIN.s()))) {
             C.PLOTWORLD_INCOMPATIBLE.send(player);
             return false;
         }
