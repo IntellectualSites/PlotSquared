@@ -739,7 +739,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     public UUIDHandlerImplementation initUUIDHandler() {
         boolean checkVersion = false;
         try {
-            OfflinePlayer.class.getDeclaredMethod("getUniqueID");
+            OfflinePlayer.class.getDeclaredMethod("getUniqueId");
             checkVersion = true;
         } catch (Throwable ignore) {}
         UUIDWrapper wrapper;
