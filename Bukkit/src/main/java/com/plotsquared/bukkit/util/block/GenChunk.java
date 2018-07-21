@@ -8,6 +8,7 @@ import com.intellectualcrafters.plot.util.block.ScopedLocalBlockQueue;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import java.util.Arrays;
 import org.bukkit.Chunk;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
@@ -115,7 +116,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
     @Override
     public boolean setBlock(int x, int y, int z, int id, int data) {
         if (this.result == null) {
-            this.cd.setBlock(x, y, z, id, (byte) data);
+            this.cd.setBlock(x, y, z, new MaterialData(Material.getMaterial(id), (byte) data));
             return true;
         }
         int i = MainUtil.CACHE_I[y][x][z];
