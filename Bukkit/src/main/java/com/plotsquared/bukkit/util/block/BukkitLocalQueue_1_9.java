@@ -51,7 +51,7 @@ public class BukkitLocalQueue_1_9 extends BukkitLocalQueue<char[]> {
         ReflectionUtils.RefClass classWorld = getRefClass("{nms}.World");
         this.tileEntityListTick = classWorld.getField("tileEntityListTick");
         this.methodGetWorld = classChunk.getMethod("getWorld");
-        this.methodW = classWorld.getMethod("r", classBlockPosition.getRealClass());
+        this.methodW = classWorld.getMethod("w", classBlockPosition.getRealClass());
         this.fieldSections = classChunk.getField("sections");
         this.fieldWorld = classChunk.getField("world");
         ReflectionUtils.RefClass classBlock = getRefClass("{nms}.Block");
