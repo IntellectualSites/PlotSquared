@@ -1,6 +1,7 @@
 package com.plotsquared.bukkit.util;
 
 public class BukkitVersion {
+    public static int[] v1_13_0 = {1, 13, 0};
     public static int[] v1_12_1 = {1, 12, 1};
     public static int[] v1_12_0 = {1, 12, 0};
     public static int[] v1_11_0 = {1, 11, 0};
