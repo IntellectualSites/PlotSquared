@@ -1322,12 +1322,13 @@ public class PlayerEvents extends PlotListener implements Listener {
             case WATER_BUCKET:
             case LAVA_BUCKET: {
                 if (event.getBlock().getType() == Material.DROPPER) return;
+                BlockFace targetFace = ((org.bukkit.material.Dispenser) event.getBlock().getState().getData()).getFacing();
+                Location location = BukkitUtil.getLocation(event.getBlock().getRelative(targetFace).getLocation());
+                if (location.isPlotRoad()) {
+                    event.setCancelled(true);
+                }
             }
-        }
-        Location location = BukkitUtil.getLocation(event.getVelocity().toLocation(event.getBlock().getWorld()));
-        if (location.isPlotRoad()) {
-            event.setCancelled(true);
-        }
+        } 
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
