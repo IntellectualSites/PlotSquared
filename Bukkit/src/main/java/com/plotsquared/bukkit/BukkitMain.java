@@ -177,7 +177,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 e.printStackTrace();
                 PS.debug(StringMan.getString(Bukkit.getBukkitVersion()));
                 PS.debug(StringMan.getString(Bukkit.getBukkitVersion().split("-")[0].split("\\.")));
-                return new int[]{1, 10, 0};
+                return new int[]{1, 13, 0};
             }
         }
         return this.version;
