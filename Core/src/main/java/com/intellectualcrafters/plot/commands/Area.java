@@ -414,7 +414,12 @@ public class Area extends SubCommand {
                     public void run(ChunkLoc value) {
                         AugmentedUtils.generate(area.worldname, value.x, value.z, null);
                     }
-                }, null);
+                }, new Runnable() {
+                    @Override
+                    public void run() {
+                        player.sendMessage("Regen complete");
+                    }
+                });
                 return true;
             }
             case "goto":

@@ -19,7 +19,7 @@ public class NukkitChunkManager extends ChunkManager {
 
     @Override
     public boolean loadChunk(String world, ChunkLoc loc, boolean force) {
-        return false;
+        return true;
     }
 
     @Override

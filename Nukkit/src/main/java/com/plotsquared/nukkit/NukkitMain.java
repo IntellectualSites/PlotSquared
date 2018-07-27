@@ -307,7 +307,12 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
                 return new NukkitPlotGenerator(map);
             } catch (Throwable e) {
                 System.out.println("Failed to create generator for " + name + " | " + gen);
-                e.printStackTrace();
+                while (e.getCause() != null) {
+                    e = e.getCause();
+                }
+                synchronized (PS.class) {
+                    e.printStackTrace();
+                }
             }
         }
         return new NukkitHybridGen(map);

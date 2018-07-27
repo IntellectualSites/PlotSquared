@@ -486,7 +486,7 @@ public class PS{
         HashMap<PlotId, Plot> plots;
         if (plots_tmp == null || (plots = plots_tmp.remove(plotArea.toString())) == null) {
             if (plotArea.TYPE == 2) {
-                plots = this.plots_tmp.get(plotArea.worldname);
+                plots = this.plots_tmp != null ? this.plots_tmp.get(plotArea.worldname) : null;
                 if (plots != null) {
                     Iterator<Entry<PlotId, Plot>> iterator = plots.entrySet().iterator();
                     while (iterator.hasNext()) {
@@ -507,7 +507,7 @@ public class PS{
         Set<PlotCluster> clusters;
         if (clusters_tmp == null || (clusters = clusters_tmp.remove(plotArea.toString())) == null) {
             if (plotArea.TYPE == 2) {
-                clusters = this.clusters_tmp.get(plotArea.worldname);
+                clusters = this.clusters_tmp != null ? this.clusters_tmp.get(plotArea.worldname) : null;
                 if (clusters != null) {
                     Iterator<PlotCluster> iterator = clusters.iterator();
                     while (iterator.hasNext()) {

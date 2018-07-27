@@ -21,16 +21,16 @@ import com.plotsquared.nukkit.util.block.NukkitWrappedChunk;
 import java.util.Map;
 
 public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<Generator> {
-    
-    private final PseudoRandom random = new PseudoRandom();
-    private final IndependentPlotGenerator plotGenerator;
-    private final Generator platformGenerator;
-    private final boolean full;
-    private final String world;
-    private final Map<String, Object> settings;
-    private boolean loaded = false;
-    private cn.nukkit.level.ChunkManager chunkManager;
-    private final NukkitWrappedChunk chunkSetter;
+
+    protected final PseudoRandom random = new PseudoRandom();
+    protected final IndependentPlotGenerator plotGenerator;
+    protected final Generator platformGenerator;
+    protected final boolean full;
+    protected final String world;
+    protected final Map<String, Object> settings;
+    protected boolean loaded = false;
+    protected cn.nukkit.level.ChunkManager chunkManager;
+    protected final NukkitWrappedChunk chunkSetter;
 
     public NukkitPlotGenerator(Map<String, Object> map) {
         if (map == null) {
@@ -86,7 +86,6 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
             this.full = true;
             chunkSetter = new NukkitWrappedChunk(world, null);
         }
-        PS.get().loadWorld(world, this);
     }
 
     @Override
@@ -136,6 +135,9 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
 
     @Override
     public void init(cn.nukkit.level.ChunkManager chunkManager, NukkitRandom nukkitRandom) {
+        if (this.chunkManager == null) {
+            PS.get().loadWorld(world, this);
+        }
         this.chunkManager = chunkManager;
         if (getPlatformGenerator() != this) {
             getPlatformGenerator().init(chunkManager, nukkitRandom);
