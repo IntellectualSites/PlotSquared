@@ -130,7 +130,7 @@ public class AugmentedUtils {
                 for (int x = bxx; x <= txx; x++) {
                     for (int z = bzz; z <= tzz; z++) {
                         for (int y = 1; y < 128; y++) {
-                            queue.setBlock(x, y, z, air);
+                            queue.setBlock(bx + x, y, bz + z, air);
                         }
                     }
                 }
