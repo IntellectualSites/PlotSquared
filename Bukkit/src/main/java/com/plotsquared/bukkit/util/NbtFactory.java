@@ -73,11 +73,12 @@ public class NbtFactory {
                 ClassLoader loader = NbtFactory.class.getClassLoader();
 
                 String packageName = getPackageName();
+				String craftpackageName = getCraftPackageName();
                 Class<?> offlinePlayer = loader.loadClass(packageName + ".CraftOfflinePlayer");
 
                 // Prepare NBT
                 this.COMPOUND_CLASS = getMethod(0, Modifier.STATIC, offlinePlayer, "getData").getReturnType();
-                this.BASE_CLASS = this.COMPOUND_CLASS.getSuperclass();
+                this.BASE_CLASS = loader.loadClass(craftpackageName + ".NBTBase");
                 this.NBT_GET_TYPE = getMethod(0, Modifier.STATIC, this.BASE_CLASS, "getTypeId");
                 this.NBT_CREATE_TAG = getMethod(Modifier.STATIC, 0, this.BASE_CLASS, "createTag", byte.class);
 
@@ -400,8 +401,13 @@ public class NbtFactory {
             return name;
         } else {
             // Fallback
-            return "org.bukkit.craftbukkit.v1_7_R3";
+            return "org.bukkit.craftbukkit.v1_13_R1";
         }
+    }
+	
+	private String getCraftPackageName() {
+        String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+		return "net.minecraft.server." + version;
     }
 
     @SuppressWarnings("unchecked")

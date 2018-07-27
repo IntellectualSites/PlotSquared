@@ -177,7 +177,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 e.printStackTrace();
                 PS.debug(StringMan.getString(Bukkit.getBukkitVersion()));
                 PS.debug(StringMan.getString(Bukkit.getBukkitVersion().split("-")[0].split("\\.")));
-                return new int[]{1, 10, 0};
+                return new int[]{1, 13, 0};
             }
         }
         return this.version;
@@ -680,6 +680,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         } catch (ClassNotFoundException | NoSuchFieldException | NoSuchMethodException e) {
             PS.debug(SendChunk.class + " does not support " + StringMan.getString(getServerVersion()));
             MainUtil.canSendChunk = false;
+        }
+		if (PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_13_0)) {
+            return QueueProvider.of(BukkitLocalQueue.class, BukkitLocalQueue.class);
         }
         if (PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_9_0)) {
             return QueueProvider.of(BukkitLocalQueue_1_9.class, BukkitLocalQueue.class);
