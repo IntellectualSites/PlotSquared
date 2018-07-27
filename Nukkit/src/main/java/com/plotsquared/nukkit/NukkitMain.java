@@ -8,6 +8,7 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.Generator;
+import cn.nukkit.level.generator.Normal;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginBase;
@@ -36,6 +37,7 @@ import com.plotsquared.nukkit.uuid.LowerOfflineUUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public final class NukkitMain extends PluginBase implements Listener, IPlotMain {
@@ -294,18 +296,19 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
         }
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("world", world);
-        try {
-            Class<? extends Generator> gen = Generator.getGenerator(name);
-            if (gen != null) {
+        Class<? extends Generator> gen = Generator.getGenerator(name);
+        if (gen != null) {
+            try {
                 Generator instance = gen.getConstructor(Map.class).newInstance(map);
                 if (instance instanceof GeneratorWrapper) {
                     return (GeneratorWrapper<?>) instance;
                 }
                 map.put("generator", instance);
                 return new NukkitPlotGenerator(map);
+            } catch (Throwable e) {
+                System.out.println("Failed to create generator for " + name + " | " + gen);
+                e.printStackTrace();
             }
-        } catch (Throwable e) {
-            e.printStackTrace();
         }
         return new NukkitHybridGen(map);
     }
