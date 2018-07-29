@@ -16,6 +16,8 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import javax.annotation.Nullable;
 import java.util.Set;
 
 @CommandDeclaration(command = "auto",
@@ -85,31 +87,9 @@ public class Auto extends SubCommand {
             MainUtil.sendMessage(player, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.Claim.MAX_AUTO_AREA + "");
             return false;
         }
-        int currentPlots = Settings.Limit.GLOBAL ? player.getPlotCount() : player.getPlotCount(plotarea.worldname);
-        int diff = currentPlots - player.getAllowedPlots();
-        if (diff + size_x * size_z > 0) {
-            if (diff < 0) {
-                    MainUtil.sendMessage(player, C.CANT_CLAIM_MORE_PLOTS_NUM, -diff + "");
-                return false;
-            } else if (player.hasPersistentMeta("grantedPlots")) {
-                int grantedPlots = ByteArrayUtilities.bytesToInteger(player.getPersistentMeta("grantedPlots"));
-                if (grantedPlots - diff < size_x * size_z) {
-                    player.removePersistentMeta("grantedPlots");
-                    return sendMessage(player, C.CANT_CLAIM_MORE_PLOTS);
-                } else {
-                    int left = grantedPlots - diff - size_x * size_z;
-                    if (left == 0) {
-                        player.removePersistentMeta("grantedPlots");
-                    } else {
-                        player.setPersistentMeta("grantedPlots", ByteArrayUtilities.integerToBytes(left));
-                    }
-                    sendMessage(player, C.REMOVED_GRANTED_PLOT, "" + left, "" + (grantedPlots - left));
-                }
-            } else {
-                MainUtil.sendMessage(player, C.CANT_CLAIM_MORE_PLOTS);
-                return false;
-            }
-        }
+        final int allowed_plots = player.getAllowedPlots();
+        if (player.getMeta(Auto.class.getName(), false) || !checkAllowedPlots(player, plotarea, allowed_plots, size_x, size_z)) return false;
+
         if (schematic != null && !schematic.isEmpty()) {
             if (!plotarea.SCHEMATICS.contains(schematic.toLowerCase())) {
                 sendMessage(player, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
@@ -122,7 +102,7 @@ public class Auto extends SubCommand {
         }
         if (EconHandler.manager != null && plotarea.USE_ECONOMY) {
             Expression<Double> costExp = plotarea.PRICES.get("claim");
-            double cost = costExp.evaluate((double) currentPlots);
+            double cost = costExp.evaluate((double) (Settings.Limit.GLOBAL ? player.getPlotCount() : player.getPlotCount(plotarea.worldname)));
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
                 if (EconHandler.manager.getMoney(player) < cost) {
@@ -135,11 +115,10 @@ public class Auto extends SubCommand {
         }
         // TODO handle type 2 the same as normal worlds!
         if (size_x == 1 && size_z == 1) {
-            autoClaimSafe(player, plotarea, null, schematic);
+            autoClaimSafe(player, plotarea, null, schematic, allowed_plots);
             return true;
         } else {
             if (plotarea.TYPE == 2) {
-                // TODO
                 MainUtil.sendMessage(player, C.NO_FREE_PLOTS);
                 return false;
             }
@@ -164,6 +143,38 @@ public class Auto extends SubCommand {
             }
             return true;
         }
+    }
+
+    private static boolean checkAllowedPlots(PlotPlayer player, PlotArea plotarea, @Nullable Integer allowed_plots, int size_x, int size_z) {
+        if (allowed_plots == null)
+            allowed_plots = player.getAllowedPlots();
+        int currentPlots = Settings.Limit.GLOBAL ? player.getPlotCount() : player.getPlotCount(plotarea.worldname);
+        int diff = currentPlots - allowed_plots;
+        if (diff + size_x * size_z > 0) {
+            if (diff < 0) {
+                MainUtil.sendMessage(player, C.CANT_CLAIM_MORE_PLOTS_NUM, -diff + "");
+                return false;
+            } else if (player.hasPersistentMeta("grantedPlots")) {
+                int grantedPlots = ByteArrayUtilities.bytesToInteger(player.getPersistentMeta("grantedPlots"));
+                if (grantedPlots - diff < size_x * size_z) {
+                    player.removePersistentMeta("grantedPlots");
+                    MainUtil.sendMessage(player, C.CANT_CLAIM_MORE_PLOTS);
+                    return false;
+                } else {
+                    int left = grantedPlots - diff - size_x * size_z;
+                    if (left == 0) {
+                        player.removePersistentMeta("grantedPlots");
+                    } else {
+                        player.setPersistentMeta("grantedPlots", ByteArrayUtilities.integerToBytes(left));
+                    }
+                    MainUtil.sendMessage(player, C.REMOVED_GRANTED_PLOT, "" + left, "" + (grantedPlots - left));
+                }
+            } else {
+                MainUtil.sendMessage(player, C.CANT_CLAIM_MORE_PLOTS);
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -214,19 +225,34 @@ public class Auto extends SubCommand {
      * @param schem
      */
     public static void autoClaimSafe(final PlotPlayer player, final PlotArea area, PlotId start, final String schem) {
+        autoClaimSafe(player, area, start, schem, null);
+    }
+
+    /**
+     * Claim a new plot for a player
+     * @param player
+     * @param area
+     * @param start
+     * @param schem
+     */
+    public static void autoClaimSafe(final PlotPlayer player, final PlotArea area, PlotId start, final String schem, @Nullable Integer allowed_plots) {
+        player.setMeta(Auto.class.getName(), true);
         autoClaimFromDatabase(player, area, start, new RunnableVal<Plot>() {
             @Override
             public void run(final Plot plot) {
                 TaskManager.IMP.sync(new RunnableVal<Object>() {
                     @Override
                     public void run(Object ignore) {
+                        player.deleteMeta(Auto.class.getName());
                         if (plot == null) {
                             MainUtil.sendMessage(player, C.NO_FREE_PLOTS);
-                        } else {
+                        } else if (checkAllowedPlots(player, area, allowed_plots, 1, 1)) {
                             plot.claim(player, true, schem, false);
                             if (area.AUTO_MERGE) {
                                 plot.autoMerge(-1, Integer.MAX_VALUE, player.getUUID(), true);
                             }
+                        } else {
+                            DBFunc.delete(plot);
                         }
                     }
                 });
