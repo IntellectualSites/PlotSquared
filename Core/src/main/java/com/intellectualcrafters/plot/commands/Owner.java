@@ -42,6 +42,9 @@ public class Owner extends SetCommand {
         }
         if (uuid == null || value.equalsIgnoreCase("-")) {
             if (value.equalsIgnoreCase("none") || value.equalsIgnoreCase("null") || value.equalsIgnoreCase("-")) {
+                if (!Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SETOWNER.s(), true)) {
+                    return false;
+                }
                 Set<Plot> connected = plot.getConnectedPlots();
                 plot.unlinkPlot(false, false);
                 for (Plot current : connected) {
