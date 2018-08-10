@@ -8,8 +8,6 @@ import java.util.ArrayList;
 
 /**
  * Main Configuration Utility
- *
-
  */
 public class Configuration {
 
