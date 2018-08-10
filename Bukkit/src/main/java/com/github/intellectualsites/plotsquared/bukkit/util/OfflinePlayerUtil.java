@@ -9,6 +9,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
+import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.*;
+
 public class OfflinePlayerUtil {
 
     public static Player loadPlayer(String name) {
