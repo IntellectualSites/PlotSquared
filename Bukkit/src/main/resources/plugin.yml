@@ -1,5 +1,5 @@
 name: ${name}
-main: com.plotsquared.bukkit.BukkitMain
+main: BukkitMain
 version: ${version}
 load: STARTUP
 description: >

@@ -1,0 +1,21 @@
+package com.github.intellectualsites.plotsquared.jnbt;
+
+/**
+ * The {@code TAG_End} tag.
+ */
+public final class EndTag extends Tag {
+
+    /**
+     * Creates the tag.
+     */
+    public EndTag() {
+    }
+
+    @Override public Object getValue() {
+        return null;
+    }
+
+    @Override public String toString() {
+        return "TAG_End";
+    }
+}
