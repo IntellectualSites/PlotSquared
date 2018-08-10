@@ -10,6 +10,7 @@ import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -76,7 +77,7 @@ public class BukkitUtil extends WorldUtil {
             location.getY(), location.getZ());
     }
 
-    public static World getWorld(String string) {
+    public static World getWorld(@NonNull final String string) {
         return Bukkit.getWorld(string);
     }
 

@@ -29,6 +29,8 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
+import lombok.Getter;
+import lombok.NonNull;
 import org.bukkit.*;
 import org.bukkit.Location;
 import org.bukkit.command.PluginCommand;
@@ -43,6 +45,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -53,8 +56,9 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
 
 public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
-    public static WorldEdit worldEdit;
-    private static ConcurrentHashMap<String, Plugin> pluginMap;
+    @Getter
+    private static WorldEdit worldEdit;
+    private static Map<String, Plugin> pluginMap;
 
     static {
         // Disable AWE as otherwise both fail to load
@@ -103,8 +107,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     private int[] version;
-    private String name;
-    private SingleWorldListener singleWorldListener;
+    @Getter private String pluginName;
+    @Getter private SingleWorldListener singleWorldListener;
     private Method methodUnloadChunk0;
     private boolean methodUnloadSetup = false;
 
@@ -132,7 +136,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         if (pluginMap != null) {
             pluginMap.put("PlotMe-DefaultGenerator", this);
         }
-        this.name = getDescription().getName();
+        this.pluginName = getDescription().getName();
         getServer().getName();
         new PS(this, "Bukkit");
         if (Settings.Enabled_Components.METRICS) {
@@ -155,46 +159,45 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
     }
 
-    public SingleWorldListener getSingleWorldListener() {
-        return singleWorldListener;
-    }
-
     public void unload() {
-        if (!methodUnloadSetup) {
-            methodUnloadSetup = true;
+        if (!this.methodUnloadSetup) {
+            this.methodUnloadSetup = true;
             try {
                 ReflectionUtils.RefClass classCraftWorld = getRefClass("{cb}.CraftWorld");
-                methodUnloadChunk0 = classCraftWorld.getRealClass()
+                this.methodUnloadChunk0 = classCraftWorld.getRealClass()
                     .getDeclaredMethod("unloadChunk0", int.class, int.class, boolean.class);
-                methodUnloadChunk0.setAccessible(true);
+                this.methodUnloadChunk0.setAccessible(true);
             } catch (Throwable ignore) {
                 ignore.printStackTrace();
             }
         }
-        PlotAreaManager manager = PS.get().getPlotAreaManager();
+        final PlotAreaManager manager = PS.get().getPlotAreaManager();
         if (manager instanceof SinglePlotAreaManager) {
             long start = System.currentTimeMillis();
-            SinglePlotArea area = ((SinglePlotAreaManager) manager).getArea();
+            final SinglePlotArea area = ((SinglePlotAreaManager) manager).getArea();
+
             outer:
-            for (World world : Bukkit.getWorlds()) {
-                String name = world.getName();
-                char char0 = name.charAt(0);
-                if (!Character.isDigit(char0) && char0 != '-')
+            for (final World world : Bukkit.getWorlds()) {
+                final String name = world.getName();
+                final char char0 = name.charAt(0);
+                if (!Character.isDigit(char0) && char0 != '-') {
                     continue;
+                }
+
                 if (!world.getPlayers().isEmpty()) {
                     continue;
                 }
 
-                PlotId id = PlotId.fromString(name);
+                final PlotId id = PlotId.fromString(name);
                 if (id != null) {
-                    Plot plot = area.getOwnedPlot(id);
+                    final Plot plot = area.getOwnedPlot(id);
                     if (plot != null) {
                         if (PlotPlayer.wrap(plot.owner) == null) {
                             if (world.getKeepSpawnInMemory()) {
                                 world.setKeepSpawnInMemory(false);
                                 return;
                             }
-                            Chunk[] chunks = world.getLoadedChunks();
+                            final Chunk[] chunks = world.getLoadedChunks();
                             if (chunks.length == 0) {
                                 if (!Bukkit.unloadWorld(world, true)) {
                                     PS.debug("Failed to unload " + world.getName());
@@ -203,7 +206,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                             } else {
                                 int index = 0;
                                 do {
-                                    Chunk chunkI = chunks[index++];
+                                    final Chunk chunkI = chunks[index++];
                                     boolean result;
                                     if (methodUnloadChunk0 != null) {
                                         try {
@@ -237,14 +240,14 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         Bukkit.getScheduler().cancelTasks(this);
     }
 
-    @Override public void log(String message) {
+    @Override public void log(@NonNull String message) {
         try {
             message = C.color(message);
             if (!Settings.Chat.CONSOLE_COLOR) {
                 message = ChatColor.stripColor(message);
             }
             this.getServer().getConsoleSender().sendMessage(message);
-        } catch (Throwable ignored) {
+        } catch (final Throwable ignored) {
             System.out.println(ConsoleColors.fromString(message));
         }
     }
@@ -267,13 +270,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return getDescription().getVersion();
     }
 
-    @Override public String getPluginName() {
-        return name;
-    }
-
     @Override public void registerCommands() {
-        BukkitCommand bukkitCommand = new BukkitCommand();
-        PluginCommand plotCommand = getCommand("plots");
+        final BukkitCommand bukkitCommand = new BukkitCommand();
+        final PluginCommand plotCommand = getCommand("plots");
         plotCommand.setExecutor(bukkitCommand);
         plotCommand.setAliases(Arrays.asList("p", "ps", "plotme", "plot"));
         plotCommand.setTabCompleter(bukkitCommand);
@@ -291,13 +290,13 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return new BukkitTaskManager(this);
     }
 
-    @Override public void runEntityTask() {
+    @Override @SuppressWarnings("deprecation") public void runEntityTask() {
         PS.log(C.PREFIX + "KillAllEntities started.");
         TaskManager.runTaskRepeat(new Runnable() {
             @Override public void run() {
                 PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
                     @Override public void run(PlotArea plotArea) {
-                        World world = Bukkit.getWorld(plotArea.worldname);
+                        final World world = Bukkit.getWorld(plotArea.worldname);
                         try {
                             if (world == null) {
                                 return;
@@ -514,7 +513,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                                 }
                                             }
                                         }
-                                        continue;
                                     }
                                 }
                             }
@@ -527,12 +525,12 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }, 20);
     }
 
-    @Override public final ChunkGenerator getDefaultWorldGenerator(String world, String id) {
+    @Override @Nullable public final ChunkGenerator getDefaultWorldGenerator(final String world, final String id) {
         if (Settings.Enabled_Components.PLOTME_CONVERTER) {
             initPlotMeConverter();
             Settings.Enabled_Components.PLOTME_CONVERTER = false;
         }
-        IndependentPlotGenerator result;
+       final IndependentPlotGenerator result;
         if (id != null && id.equalsIgnoreCase("single")) {
             result = new SingleWorldGenerator();
         } else {
@@ -545,13 +543,13 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     @Override public void registerPlayerEvents() {
-        PlayerEvents main = new PlayerEvents();
+        final PlayerEvents main = new PlayerEvents();
         getServer().getPluginManager().registerEvents(main, this);
         try {
             getServer().getClass().getMethod("spigot");
             Class.forName("org.bukkit.event.entity.EntitySpawnEvent");
             getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
-        } catch (NoSuchMethodException | ClassNotFoundException ignored) {
+        } catch (final NoSuchMethodException | ClassNotFoundException ignored) {
             PS.debug("Not running Spigot. Skipping EntitySpawnListener event.");
         }
         if (PS.get().checkVersion(getServerVersion(), 1, 7, 9)) {
@@ -658,11 +656,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return false;
     }
 
-    @Override public GeneratorWrapper<?> getGenerator(String world, String name) {
+    @Override @Nullable public GeneratorWrapper<?> getGenerator(@NonNull final String world, @Nullable final String name) {
         if (name == null) {
             return null;
         }
-        Plugin genPlugin = Bukkit.getPluginManager().getPlugin(name);
+        final Plugin genPlugin = Bukkit.getPluginManager().getPlugin(name);
         if (genPlugin != null && genPlugin.isEnabled()) {
             ChunkGenerator gen = genPlugin.getDefaultWorldGenerator(world, "");
             if (gen instanceof GeneratorWrapper<?>) {
@@ -689,7 +687,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             checkVersion = true;
         } catch (Throwable ignore) {
         }
-        UUIDWrapper wrapper;
+        final UUIDWrapper wrapper;
         if (Settings.UUID.OFFLINE) {
             if (Settings.UUID.FORCE_LOWERCASE) {
                 wrapper = new LowerOfflineUUIDWrapper();
@@ -741,7 +739,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return new BukkitEventUtil();
     }
 
-    @Override public void unregister(PlotPlayer player) {
+    @Override public void unregister(@NonNull final PlotPlayer player) {
         BukkitUtil.removePlayer(player.getName());
     }
 
@@ -766,7 +764,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         PS.log(C.PREFIX + "&6Metrics enabled.");
     }
 
-    @Override public void setGenerator(String worldName) {
+    @Override public void setGenerator(@NonNull final String worldName) {
         World world = BukkitUtil.getWorld(worldName);
         if (world == null) {
             // create world
@@ -812,7 +810,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return AbstractTitle.TITLE_CLASS;
     }
 
-    @Override public PlotPlayer wrapPlayer(Object player) {
+    @Override @Nullable public PlotPlayer wrapPlayer(final Object player) {
         if (player instanceof Player) {
             return BukkitUtil.getPlayer((Player) player);
         }
@@ -829,7 +827,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     @Override public String getNMSPackage() {
-        String name = Bukkit.getServer().getClass().getPackage().getName();
+        final String name = Bukkit.getServer().getClass().getPackage().getName();
         return name.substring(name.lastIndexOf('.') + 1);
     }
 
@@ -842,13 +840,13 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     @Override
-    public GeneratorWrapper<?> wrapPlotGenerator(String world, IndependentPlotGenerator generator) {
+    public GeneratorWrapper<?> wrapPlotGenerator(@Nullable final String world, @NonNull final IndependentPlotGenerator generator) {
         return new BukkitPlotGenerator(generator);
     }
 
     @Override public List<String> getPluginIds() {
-        ArrayList<String> names = new ArrayList<>();
-        for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+        final List<String> names = new ArrayList<>();
+        for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
             names.add(plugin.getName() + ';' + plugin.getDescription().getVersion() + ':' + plugin
                 .isEnabled());
         }

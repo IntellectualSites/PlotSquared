@@ -557,7 +557,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         String[] parts = msg.split(" ");
         Plot plot = pp.getCurrentPlot();
-        if (BukkitMain.worldEdit != null) { // Check WorldEdit
+        if (BukkitMain.getWorldEdit() != null) { // Check WorldEdit
             switch (parts[0].toLowerCase()) {
                 case "up":
                 case "/up":
