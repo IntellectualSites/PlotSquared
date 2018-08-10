@@ -10,13 +10,11 @@ public class ChunkLoc {
         this.z = z;
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         return (x << 16) | (z & 0xFFFF);
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -30,8 +28,7 @@ public class ChunkLoc {
         return (this.x == other.x) && (this.z == other.z);
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return this.x + "," + this.z;
     }
 }

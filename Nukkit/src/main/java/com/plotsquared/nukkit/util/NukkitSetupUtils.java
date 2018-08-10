@@ -12,6 +12,7 @@ import com.intellectualcrafters.plot.util.SetupUtils;
 import com.plotsquared.nukkit.NukkitMain;
 import com.plotsquared.nukkit.generator.NukkitPlotGenerator;
 import com.plotsquared.nukkit.util.block.NukkitHybridGen;
+
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -27,13 +28,11 @@ public class NukkitSetupUtils extends SetupUtils {
         Generator.addGenerator(NukkitHybridGen.class, "PlotSquared", 1);
     }
 
-    @Override
-    public void unload(String world, boolean save) {
+    @Override public void unload(String world, boolean save) {
         plugin.getServer().unloadLevel(plugin.getServer().getLevelByName(world), save);
     }
 
-    @Override
-    public void updateGenerators() {
+    @Override public void updateGenerators() {
         if (!SetupUtils.generators.isEmpty()) {
             return;
         }
@@ -45,8 +44,7 @@ public class NukkitSetupUtils extends SetupUtils {
         SetupUtils.generators.put(PS.imp().getPluginName(), gen);
     }
 
-    @Override
-    public String setupWorld(SetupObject object) {
+    @Override public String setupWorld(SetupObject object) {
         SetupUtils.manager.updateGenerators();
         ConfigurationNode[] steps = object.step == null ? new ConfigurationNode[0] : object.step;
         String world = object.world;
@@ -64,7 +62,8 @@ public class NukkitSetupUtils extends SetupUtils {
                     if (!worldSection.contains(areaPath)) {
                         worldSection.createSection(areaPath);
                     }
-                    ConfigurationSection areaSection = worldSection.getConfigurationSection(areaPath);
+                    ConfigurationSection areaSection =
+                        worldSection.getConfigurationSection(areaPath);
                     HashMap<String, Object> options = new HashMap<>();
                     for (ConfigurationNode step : steps) {
                         options.put(step.getConstant(), step.getValue());
@@ -72,7 +71,8 @@ public class NukkitSetupUtils extends SetupUtils {
                     options.put("generator.type", object.type);
                     options.put("generator.terrain", object.terrain);
                     options.put("generator.plugin", object.plotManager);
-                    if (object.setupGenerator != null && !object.setupGenerator.equals(object.plotManager)) {
+                    if (object.setupGenerator != null && !object.setupGenerator
+                        .equals(object.plotManager)) {
                         options.put("generator.init", object.setupGenerator);
                     }
                     for (Entry<String, Object> entry : options.entrySet()) {
@@ -101,8 +101,10 @@ public class NukkitSetupUtils extends SetupUtils {
                 PS.get().worlds.set("worlds." + world + ".generator.type", object.type);
                 PS.get().worlds.set("worlds." + world + ".generator.terrain", object.terrain);
                 PS.get().worlds.set("worlds." + world + ".generator.plugin", object.plotManager);
-                if (object.setupGenerator != null && !object.setupGenerator.equals(object.plotManager)) {
-                    PS.get().worlds.set("worlds." + world + ".generator.init", object.setupGenerator);
+                if (object.setupGenerator != null && !object.setupGenerator
+                    .equals(object.plotManager)) {
+                    PS.get().worlds
+                        .set("worlds." + world + ".generator.init", object.setupGenerator);
                 }
                 GeneratorWrapper<?> gen = SetupUtils.generators.get(object.setupGenerator);
                 if (gen != null && gen.isFull()) {
@@ -124,16 +126,17 @@ public class NukkitSetupUtils extends SetupUtils {
             HashMap<String, Object> map = new HashMap<>();
             map.put("world", object.world);
             map.put("plot-generator", PS.get().IMP.getDefaultGenerator());
-            if (!plugin.getServer().generateLevel(object.world, object.world.hashCode(), NukkitHybridGen.class, map)) {
+            if (!plugin.getServer()
+                .generateLevel(object.world, object.world.hashCode(), NukkitHybridGen.class, map)) {
                 plugin.getServer().loadLevel(object.world);
             }
             try {
-//                File nukkitFile = new File("nukkit.yml");
-//                YamlConfiguration nukkitYml = YamlConfiguration.loadConfiguration(nukkitFile);
-//                if (!nukkitYml.contains("worlds." + object.world + ".generator")) {
-//                    nukkitYml.set("worlds." + object.world + ".generator", object.setupGenerator);
-//                    nukkitYml.save(nukkitFile);
-//                }
+                //                File nukkitFile = new File("nukkit.yml");
+                //                YamlConfiguration nukkitYml = YamlConfiguration.loadConfiguration(nukkitFile);
+                //                if (!nukkitYml.contains("worlds." + object.world + ".generator")) {
+                //                    nukkitYml.set("worlds." + object.world + ".generator", object.setupGenerator);
+                //                    nukkitYml.save(nukkitFile);
+                //                }
             } catch (Throwable e) {
                 e.printStackTrace();
             }
@@ -145,8 +148,7 @@ public class NukkitSetupUtils extends SetupUtils {
         return object.world;
     }
 
-    @Override
-    public String getGenerator(PlotArea plotArea) {
+    @Override public String getGenerator(PlotArea plotArea) {
         if (SetupUtils.generators.isEmpty()) {
             updateGenerators();
         }

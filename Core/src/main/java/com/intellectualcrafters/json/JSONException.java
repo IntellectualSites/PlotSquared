@@ -9,7 +9,7 @@ package com.intellectualcrafters.json;
 public class JSONException extends RuntimeException {
     private static final long serialVersionUID = 0;
     private Throwable cause;
-    
+
     /**
      * Constructs a JSONException with an explanatory message.
      *
@@ -18,7 +18,7 @@ public class JSONException extends RuntimeException {
     public JSONException(final String message) {
         super(message);
     }
-    
+
     /**
      * Constructs a new JSONException with the specified cause.
      *
@@ -28,14 +28,13 @@ public class JSONException extends RuntimeException {
         super(cause.getMessage());
         this.cause = cause;
     }
-    
+
     /**
      * Returns the cause of this exception or null if the cause is nonexistent or unknown.
      *
      * @return the cause of this exception or null if the cause is nonexistent or unknown.
      */
-    @Override
-    public Throwable getCause() {
+    @Override public Throwable getCause() {
         return cause;
     }
 }

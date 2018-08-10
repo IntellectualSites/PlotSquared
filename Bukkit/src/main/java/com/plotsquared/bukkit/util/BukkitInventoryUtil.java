@@ -45,8 +45,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
         return stack;
     }
 
-    @Override
-    public void open(PlotInventory inv) {
+    @Override public void open(PlotInventory inv) {
         BukkitPlayer bp = (BukkitPlayer) inv.player;
         Inventory inventory = Bukkit.createInventory(null, inv.size * 9, inv.getTitle());
         PlotItemStack[] items = inv.getItems();
@@ -60,8 +59,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
         bp.player.openInventory(inventory);
     }
 
-    @Override
-    public void close(PlotInventory inv) {
+    @Override public void close(PlotInventory inv) {
         if (!inv.isOpen()) {
             return;
         }
@@ -70,8 +68,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
         bp.player.closeInventory();
     }
 
-    @Override
-    public void setItem(PlotInventory inv, int index, PlotItemStack item) {
+    @Override public void setItem(PlotInventory inv, int index, PlotItemStack item) {
         BukkitPlayer bp = (BukkitPlayer) inv.player;
         InventoryView opened = bp.player.getOpenInventory();
         if (!inv.isOpen()) {
@@ -103,8 +100,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
         return new PlotItemStack(id, data, amount, name, lore);
     }
 
-    @Override
-    public PlotItemStack[] getItems(PlotPlayer player) {
+    @Override public PlotItemStack[] getItems(PlotPlayer player) {
         BukkitPlayer bp = (BukkitPlayer) player;
         PlayerInventory inv = bp.player.getInventory();
         PlotItemStack[] items = new PlotItemStack[36];
@@ -114,13 +110,13 @@ public class BukkitInventoryUtil extends InventoryUtil {
         return items;
     }
 
-    @Override
-    public boolean isOpen(PlotInventory inv) {
+    @Override public boolean isOpen(PlotInventory inv) {
         if (!inv.isOpen()) {
             return false;
         }
         BukkitPlayer bp = (BukkitPlayer) inv.player;
         InventoryView opened = bp.player.getOpenInventory();
-        return inv.isOpen() && opened.getType() == InventoryType.CRAFTING && opened.getTitle() == null;
+        return inv.isOpen() && opened.getType() == InventoryType.CRAFTING
+            && opened.getTitle() == null;
     }
 }

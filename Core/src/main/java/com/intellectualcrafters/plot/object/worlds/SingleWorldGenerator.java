@@ -2,12 +2,7 @@ package com.intellectualcrafters.plot.object.worlds;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PseudoRandom;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.block.ScopedLocalBlockQueue;
 
 public class SingleWorldGenerator extends IndependentPlotGenerator {
@@ -18,13 +13,12 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
     private Location grass1 = new Location(null, 0, 3, 0);
     private Location grass2 = new Location(null, 15, 3, 15);
 
-    @Override
-    public String getName() {
+    @Override public String getName() {
         return "PlotSquared:single";
     }
 
-    @Override
-    public void generateChunk(ScopedLocalBlockQueue result, PlotArea settings, PseudoRandom random) {
+    @Override public void generateChunk(ScopedLocalBlockQueue result, PlotArea settings,
+        PseudoRandom random) {
         SinglePlotArea area = (SinglePlotArea) settings;
         if (area.VOID) {
             Location min = result.getMin();
@@ -39,18 +33,15 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
         result.fillBiome("PLAINS");
     }
 
-    @Override
-    public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
+    @Override public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
         return ((SinglePlotAreaManager) PS.get().getPlotAreaManager()).getArea();
     }
 
-    @Override
-    public PlotManager getNewPlotManager() {
+    @Override public PlotManager getNewPlotManager() {
         return new SinglePlotManager();
     }
 
-    @Override
-    public void initialize(PlotArea area) {
+    @Override public void initialize(PlotArea area) {
 
     }
 }

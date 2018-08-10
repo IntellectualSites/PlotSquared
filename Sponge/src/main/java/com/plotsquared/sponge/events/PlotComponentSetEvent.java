@@ -1,10 +1,9 @@
 package com.plotsquared.sponge.events;
 
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.impl.AbstractEvent;
-
-import com.intellectualcrafters.plot.object.PlotId;
 
 public class PlotComponentSetEvent extends AbstractEvent {
     private final Plot plot;
@@ -13,8 +12,8 @@ public class PlotComponentSetEvent extends AbstractEvent {
     /**
      * PlotDeleteEvent: Called when a plot component is set
      *
-     * @param plot        The plot
-     * @param component   The component which was set
+     * @param plot      The plot
+     * @param component The component which was set
      */
     public PlotComponentSetEvent(Plot plot, String component) {
         this.plot = plot;
@@ -48,8 +47,7 @@ public class PlotComponentSetEvent extends AbstractEvent {
         return this.component;
     }
 
-    @Override
-    public Cause getCause() {
+    @Override public Cause getCause() {
         return null;
     }
 }

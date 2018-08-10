@@ -20,8 +20,11 @@ final class JsonString implements JsonRepresentedObject, ConfigurationSerializab
         _value = value == null ? null : value.toString();
     }
 
-    @Override
-    public void writeJson(JsonWriter writer) throws IOException {
+    public static JsonString deserialize(Map<String, Object> map) {
+        return new JsonString(map.get("stringValue").toString());
+    }
+
+    @Override public void writeJson(JsonWriter writer) throws IOException {
         writer.value(getValue());
     }
 
@@ -35,12 +38,7 @@ final class JsonString implements JsonRepresentedObject, ConfigurationSerializab
         return theSingleValue;
     }
 
-    public static JsonString deserialize(Map<String, Object> map) {
-        return new JsonString(map.get("stringValue").toString());
-    }
-
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return _value;
     }
 

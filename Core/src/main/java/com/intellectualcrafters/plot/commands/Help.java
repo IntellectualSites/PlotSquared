@@ -11,24 +11,20 @@ import com.intellectualcrafters.plot.util.helpmenu.HelpMenu;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "help",
-        description = "Get this help menu",
-        aliases = {"he", "?"},
-        category = CommandCategory.INFO,
-        usage="help [category|#]",
-        permission="plots.use")
+@CommandDeclaration(command = "help", description = "Get this help menu", aliases = {"he",
+    "?"}, category = CommandCategory.INFO, usage = "help [category|#]", permission = "plots.use")
 public class Help extends Command {
     public Help(Command parent) {
         super(parent, true);
     }
 
-    @Override
-    public boolean canExecute(PlotPlayer player, boolean message) {
+    @Override public boolean canExecute(PlotPlayer player, boolean message) {
         return true;
     }
 
-    @Override
-    public void execute(PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) {
+    @Override public void execute(PlotPlayer player, String[] args,
+        RunnableVal3<Command, Runnable, Runnable> confirm,
+        RunnableVal2<Command, CommandResult> whenDone) {
         switch (args.length) {
             case 0:
                 displayHelp(player, null, 0);
@@ -80,15 +76,18 @@ public class Help extends Command {
             StringBuilder builder = new StringBuilder();
             builder.append(C.HELP_HEADER.s());
             for (CommandCategory c : CommandCategory.values()) {
-                builder.append(
-                        "\n" + StringMan.replaceAll(C.HELP_INFO_ITEM.s(), "%category%", c.toString().toLowerCase(), "%category_desc%", c.toString()));
+                builder.append("\n" + StringMan
+                    .replaceAll(C.HELP_INFO_ITEM.s(), "%category%", c.toString().toLowerCase(),
+                        "%category_desc%", c.toString()));
             }
-            builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", "all").replaceAll("%category_desc%", "Display all commands"));
+            builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", "all")
+                .replaceAll("%category_desc%", "Display all commands"));
             builder.append("\n" + C.HELP_FOOTER.s());
             MainUtil.sendMessage(player, builder.toString(), false);
             return;
         }
         page--;
-        new HelpMenu(player).setCategory(catEnum).getCommands().generateMaxPages().generatePage(page, getParent().toString()).render();
+        new HelpMenu(player).setCategory(catEnum).getCommands().generateMaxPages()
+            .generatePage(page, getParent().toString()).render();
     }
 }

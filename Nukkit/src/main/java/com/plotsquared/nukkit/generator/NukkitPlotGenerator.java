@@ -7,17 +7,13 @@ import cn.nukkit.math.Vector3;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PseudoRandom;
-import com.intellectualcrafters.plot.object.SetupObject;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.block.ScopedLocalBlockQueue;
 import com.plotsquared.nukkit.util.NukkitUtil;
 import com.plotsquared.nukkit.util.block.NukkitWrappedChunk;
+
 import java.util.Map;
 
 public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<Generator> {
@@ -28,9 +24,9 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
     protected final boolean full;
     protected final String world;
     protected final Map<String, Object> settings;
+    protected final NukkitWrappedChunk chunkSetter;
     protected boolean loaded = false;
     protected cn.nukkit.level.ChunkManager chunkManager;
-    protected final NukkitWrappedChunk chunkSetter;
 
     public NukkitPlotGenerator(Map<String, Object> map) {
         if (map == null) {
@@ -42,25 +38,24 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
         if (map.containsKey("generator")) {
             final Generator cg = (Generator) map.get("generator");
             if (cg instanceof NukkitPlotGenerator) {
-                throw new IllegalArgumentException("Generator: " + cg.getClass().getName() + " is already a NukkitPlotGenerator!");
+                throw new IllegalArgumentException(
+                    "Generator: " + cg.getClass().getName() + " is already a NukkitPlotGenerator!");
             }
             this.full = false;
             PS.debug("NukkitPlotGenerator does not fully support: " + cg);
             this.platformGenerator = cg;
             this.plotGenerator = new IndependentPlotGenerator() {
-                @Override
-                public void processSetup(SetupObject setup) {}
+                @Override public void processSetup(SetupObject setup) {
+                }
 
-                @Override
-                public void initialize(PlotArea area) {}
+                @Override public void initialize(PlotArea area) {
+                }
 
-                @Override
-                public PlotManager getNewPlotManager() {
+                @Override public PlotManager getNewPlotManager() {
                     return PS.get().IMP.getDefaultGenerator().getNewPlotManager();
                 }
 
-                @Override
-                public String getName() {
+                @Override public String getName() {
                     return cg.getClass().getName();
                 }
 
@@ -70,7 +65,8 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
                 }
 
                 @Override
-                public void generateChunk(final ScopedLocalBlockQueue result, PlotArea settings, PseudoRandom random) {
+                public void generateChunk(final ScopedLocalBlockQueue result, PlotArea settings,
+                    PseudoRandom random) {
                     Location min = result.getMin();
                     int cx = min.getX() >> 4;
                     int cz = min.getZ() >> 4;
@@ -88,28 +84,23 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
         }
     }
 
-    @Override
-    public void augment(PlotArea area) {
+    @Override public void augment(PlotArea area) {
         NukkitAugmentedGenerator.get(NukkitUtil.getWorld(area.worldname));
     }
-    
-    @Override
-    public boolean isFull() {
+
+    @Override public boolean isFull() {
         return this.full;
     }
-    
-    @Override
-    public IndependentPlotGenerator getPlotGenerator() {
+
+    @Override public IndependentPlotGenerator getPlotGenerator() {
         return this.plotGenerator;
     }
-    
-    @Override
-    public Generator getPlatformGenerator() {
+
+    @Override public Generator getPlatformGenerator() {
         return this.platformGenerator;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         if (this.platformGenerator == this) {
             return this.plotGenerator.getName();
         }
@@ -119,17 +110,15 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
             return this.platformGenerator.getClass().getName();
         }
     }
-    
-    @Override
-    public boolean equals(Object obj) {
+
+    @Override public boolean equals(Object obj) {
         if (obj == null) {
             return false;
         }
         return toString().equals(obj.toString()) || toString().equals(obj.getClass().getName());
     }
 
-    @Override
-    public int getId() {
+    @Override public int getId() {
         return 1;
     }
 
@@ -144,8 +133,7 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
         }
     }
 
-    @Override
-    public void generateChunk(int cx, int cz) {
+    @Override public void generateChunk(int cx, int cz) {
         if (getPlatformGenerator() != this) {
             getPlatformGenerator().generateChunk(cx, cz);
         } else {
@@ -173,8 +161,7 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
         }
     }
 
-    @Override
-    public void populateChunk(int x, int z) {
+    @Override public void populateChunk(int x, int z) {
         if (getPlatformGenerator() != this) {
             getPlatformGenerator().populateChunk(x, z);
         } else {
@@ -182,23 +169,19 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
         }
     }
 
-    @Override
-    public Map<String, Object> getSettings() {
+    @Override public Map<String, Object> getSettings() {
         return settings;
     }
 
-    @Override
-    public String getName() {
+    @Override public String getName() {
         return plotGenerator.getName();
     }
 
-    @Override
-    public Vector3 getSpawn() {
+    @Override public Vector3 getSpawn() {
         return new Vector3(0, 61, 0);
     }
 
-    @Override
-    public cn.nukkit.level.ChunkManager getChunkManager() {
+    @Override public cn.nukkit.level.ChunkManager getChunkManager() {
         return chunkManager;
     }
 }

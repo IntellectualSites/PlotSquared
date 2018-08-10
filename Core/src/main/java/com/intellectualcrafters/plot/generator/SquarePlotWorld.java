@@ -5,18 +5,18 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.PlotId;
 
 public abstract class SquarePlotWorld extends GridPlotWorld {
-    
+
     public int PLOT_WIDTH = 42;
     public int ROAD_WIDTH = 7;
     public int ROAD_OFFSET_X = 0;
     public int ROAD_OFFSET_Z = 0;
 
-    public SquarePlotWorld(String worldName, String id, IndependentPlotGenerator generator, PlotId min, PlotId max) {
+    public SquarePlotWorld(String worldName, String id, IndependentPlotGenerator generator,
+        PlotId min, PlotId max) {
         super(worldName, id, generator, min, max);
     }
-    
-    @Override
-    public void loadConfiguration(ConfigurationSection config) {
+
+    @Override public void loadConfiguration(ConfigurationSection config) {
         if (!config.contains("plot.height")) {
             PS.debug(" - &cConfiguration is null? (" + config.getCurrentPath() + ')');
         }

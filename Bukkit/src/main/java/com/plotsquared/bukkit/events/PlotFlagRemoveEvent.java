@@ -7,7 +7,6 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Called when a flag is removed from a plot
- *
  */
 public class PlotFlagRemoveEvent extends PlotEvent implements Cancellable {
 
@@ -39,18 +38,15 @@ public class PlotFlagRemoveEvent extends PlotEvent implements Cancellable {
         return this.flag;
     }
 
-    @Override
-    public HandlerList getHandlers() {
+    @Override public HandlerList getHandlers() {
         return handlers;
     }
 
-    @Override
-    public final boolean isCancelled() {
+    @Override public final boolean isCancelled() {
         return this.cancelled;
     }
 
-    @Override
-    public final void setCancelled(boolean cancelled) {
+    @Override public final void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
     }
 }

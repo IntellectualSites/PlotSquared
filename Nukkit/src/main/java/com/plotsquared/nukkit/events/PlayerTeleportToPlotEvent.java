@@ -9,9 +9,6 @@ import com.intellectualcrafters.plot.object.Plot;
 
 /**
  * Called when a player teleports to a plot
- *
-
-
  */
 public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellable {
 
@@ -56,8 +53,7 @@ public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellabl
         return this.plot;
     }
 
-    @Override
-    public boolean isCancelled() {
+    @Override public boolean isCancelled() {
         return this.cancelled;
     }
 }

@@ -17,13 +17,11 @@ import java.util.List;
 
 public class SpongeChatManager extends ChatManager<Text.Builder> {
 
-    @Override
-    public Text.Builder builder() {
+    @Override public Text.Builder builder() {
         return Text.builder();
     }
 
-    @Override
-    public void color(PlotMessage message, String color) {
+    @Override public void color(PlotMessage message, String color) {
         TextColor tc = null;
         TextStyle ts = null;
         switch (color.charAt(1)) {
@@ -114,8 +112,7 @@ public class SpongeChatManager extends ChatManager<Text.Builder> {
         m.$(this).append(builder.build());
     }
 
-    @Override
-    public void tooltip(PlotMessage message, PlotMessage... tooltips) {
+    @Override public void tooltip(PlotMessage message, PlotMessage... tooltips) {
         Text.Builder builder = Text.builder();
         boolean lb = false;
         for (PlotMessage tooltip : tooltips) {
@@ -128,18 +125,15 @@ public class SpongeChatManager extends ChatManager<Text.Builder> {
         apply(message, getChild(message).onHover(TextActions.showText(builder.toText())));
     }
 
-    @Override
-    public void command(PlotMessage message, String command) {
+    @Override public void command(PlotMessage message, String command) {
         apply(message, getChild(message).onClick(TextActions.runCommand(command)));
     }
 
-    @Override
-    public void text(PlotMessage message, String text) {
+    @Override public void text(PlotMessage message, String text) {
         message.$(this).append(SpongeUtil.getText(text));
     }
 
-    @Override
-    public void send(PlotMessage plotMessage, PlotPlayer player) {
+    @Override public void send(PlotMessage plotMessage, PlotPlayer player) {
         if (player instanceof ConsolePlayer || !Settings.Chat.INTERACTIVE) {
             player.sendMessage(plotMessage.$(this).build().toPlain());
         } else {
@@ -147,8 +141,7 @@ public class SpongeChatManager extends ChatManager<Text.Builder> {
         }
     }
 
-    @Override
-    public void suggest(PlotMessage plotMessage, String command) {
+    @Override public void suggest(PlotMessage plotMessage, String command) {
         apply(plotMessage, getChild(plotMessage).onClick(TextActions.suggestCommand(command)));
     }
 }

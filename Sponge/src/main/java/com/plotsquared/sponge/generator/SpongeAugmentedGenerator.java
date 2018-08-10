@@ -15,10 +15,11 @@ import org.spongepowered.api.world.gen.WorldGenerator;
 import java.util.List;
 
 public class SpongeAugmentedGenerator implements GenerationPopulator {
-    
+
     private static SpongeAugmentedGenerator generator;
 
-    private SpongeAugmentedGenerator() {}
+    private SpongeAugmentedGenerator() {
+    }
 
     public static SpongeAugmentedGenerator get(World world) {
         WorldGenerator wg = world.getWorldGenerator();
@@ -43,25 +44,21 @@ public class SpongeAugmentedGenerator implements GenerationPopulator {
         int cx = bx >> 4;
         int cz = bz >> 4;
         AugmentedUtils.generate(world.getName(), cx, cz, new DelegateLocalBlockQueue(null) {
-            @Override
-            public boolean setBlock(int x, int y, int z, int id, int data) {
+            @Override public boolean setBlock(int x, int y, int z, int id, int data) {
                 terrain.setBlock(bx + x, y, bz + z, SpongeUtil.getBlockState(id, data));
                 return true;
             }
 
-            @Override
-            public PlotBlock getBlock(int x, int y, int z) {
+            @Override public PlotBlock getBlock(int x, int y, int z) {
                 BlockState block = terrain.getBlock(bx + x, y, bz + z);
                 return SpongeUtil.getPlotBlock(block);
             }
 
-            @Override
-            public boolean setBiome(int x, int z, String biome) {
+            @Override public boolean setBiome(int x, int z, String biome) {
                 return false; // TODO ?
             }
 
-            @Override
-            public String getWorld() {
+            @Override public String getWorld() {
                 return world.getName();
             }
         });

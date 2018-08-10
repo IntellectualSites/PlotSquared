@@ -9,11 +9,9 @@ import java.util.List;
 
 public class InboxReport extends CommentInbox {
 
-    @Override
-    public boolean getComments(Plot plot, final RunnableVal<List<PlotComment>> whenDone) {
+    @Override public boolean getComments(Plot plot, final RunnableVal<List<PlotComment>> whenDone) {
         DBFunc.getComments(null, toString(), new RunnableVal<List<PlotComment>>() {
-            @Override
-            public void run(List<PlotComment> value) {
+            @Override public void run(List<PlotComment> value) {
                 whenDone.value = value;
                 TaskManager.runTask(whenDone);
             }
@@ -21,8 +19,7 @@ public class InboxReport extends CommentInbox {
         return true;
     }
 
-    @Override
-    public boolean addComment(Plot plot, PlotComment comment) {
+    @Override public boolean addComment(Plot plot, PlotComment comment) {
         if (plot.owner == null) {
             return false;
         }
@@ -30,8 +27,7 @@ public class InboxReport extends CommentInbox {
         return true;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return "report";
     }
 

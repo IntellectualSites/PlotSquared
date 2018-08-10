@@ -12,18 +12,15 @@ public class NukkitChunkManager extends ChunkManager {
         PS.debug("Not implemented: NukkitChunkManager");
     }
 
-    @Override
-    public int[] countEntities(Plot plot) {
+    @Override public int[] countEntities(Plot plot) {
         return new int[0];
     }
 
-    @Override
-    public boolean loadChunk(String world, ChunkLoc loc, boolean force) {
+    @Override public boolean loadChunk(String world, ChunkLoc loc, boolean force) {
         return true;
     }
 
-    @Override
-    public void unloadChunk(String world, ChunkLoc loc, boolean save, boolean safe) {
+    @Override public void unloadChunk(String world, ChunkLoc loc, boolean save, boolean safe) {
 
     }
 
@@ -32,18 +29,17 @@ public class NukkitChunkManager extends ChunkManager {
         return false;
     }
 
-    @Override
-    public boolean regenerateRegion(Location pos1, Location pos2, boolean ignoreAugment, Runnable whenDone) {
+    @Override public boolean regenerateRegion(Location pos1, Location pos2, boolean ignoreAugment,
+        Runnable whenDone) {
         return false;
     }
 
-    @Override
-    public void clearAllEntities(Location pos1, Location pos2) {
+    @Override public void clearAllEntities(Location pos1, Location pos2) {
 
     }
 
-    @Override
-    public void swap(Location bot1, Location top1, Location bot2, Location top2, Runnable whenDone) {
+    @Override public void swap(Location bot1, Location top1, Location bot2, Location top2,
+        Runnable whenDone) {
         whenDone.run();
     }
 }

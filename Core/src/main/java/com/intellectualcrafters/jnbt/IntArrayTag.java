@@ -31,13 +31,11 @@ public final class IntArrayTag extends Tag {
         this.value = value;
     }
 
-    @Override
-    public int[] getValue() {
+    @Override public int[] getValue() {
         return this.value;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         StringBuilder hex = new StringBuilder();
         for (int b : this.value) {
             String hexDigits = Integer.toHexString(b).toUpperCase();

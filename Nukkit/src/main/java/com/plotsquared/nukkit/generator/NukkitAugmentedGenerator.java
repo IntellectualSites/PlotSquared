@@ -8,12 +8,14 @@ import cn.nukkit.level.format.FullChunk;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.AugmentedUtils;
 import com.plotsquared.nukkit.NukkitMain;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 public class NukkitAugmentedGenerator implements Listener {
-    
+
     private static NukkitAugmentedGenerator generator;
-    private static ConcurrentHashMap<String, NukkitAugmentedGenerator> generators = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<String, NukkitAugmentedGenerator> generators =
+        new ConcurrentHashMap<>();
 
     private NukkitAugmentedGenerator(NukkitMain plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -32,8 +34,7 @@ public class NukkitAugmentedGenerator implements Listener {
         return generator;
     }
 
-    @EventHandler
-    private void onChunkLoad(ChunkLoadEvent event) {
+    @EventHandler private void onChunkLoad(ChunkLoadEvent event) {
         Level level = event.getLevel();
         generator = generators.get(level.getName());
         if (generator != null) {

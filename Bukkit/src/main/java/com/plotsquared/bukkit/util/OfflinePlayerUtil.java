@@ -1,13 +1,5 @@
 package com.plotsquared.bukkit.util;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.callConstructor;
-import static com.intellectualcrafters.plot.util.ReflectionUtils.callMethod;
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getCbClass;
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getNmsClass;
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getUtilClass;
-import static com.intellectualcrafters.plot.util.ReflectionUtils.makeConstructor;
-import static com.intellectualcrafters.plot.util.ReflectionUtils.makeMethod;
-
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
@@ -16,6 +8,8 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.UUID;
+
+import static com.intellectualcrafters.plot.util.ReflectionUtils.*;
 
 public class OfflinePlayerUtil {
 
@@ -43,10 +37,12 @@ public class OfflinePlayerUtil {
         Object worldServer = getWorldServer();
         Object profile = newGameProfile(id, name);
         Class<?> entityPlayerClass = getNmsClass("EntityPlayer");
-        Constructor entityPlayerConstructor = makeConstructor(entityPlayerClass, getNmsClass("MinecraftServer"), getNmsClass("WorldServer"),
-                getUtilClass("com.mojang.authlib.GameProfile"),
+        Constructor entityPlayerConstructor =
+            makeConstructor(entityPlayerClass, getNmsClass("MinecraftServer"),
+                getNmsClass("WorldServer"), getUtilClass("com.mojang.authlib.GameProfile"),
                 getNmsClass("PlayerInteractManager"));
-        Object entityPlayer = callConstructor(entityPlayerConstructor, server, worldServer, profile, interactManager);
+        Object entityPlayer =
+            callConstructor(entityPlayerConstructor, server, worldServer, profile, interactManager);
         return (Player) getBukkitEntity(entityPlayer);
     }
 
@@ -55,7 +51,8 @@ public class OfflinePlayerUtil {
         if (gameProfileClass == null) { //Before uuids
             return name;
         }
-        Constructor gameProfileConstructor = makeConstructor(gameProfileClass, UUID.class, String.class);
+        Constructor gameProfileConstructor =
+            makeConstructor(gameProfileClass, UUID.class, String.class);
         if (gameProfileConstructor == null) { //Version has string constructor
             gameProfileConstructor = makeConstructor(gameProfileClass, String.class, String.class);
             return callConstructor(gameProfileConstructor, id.toString(), name);

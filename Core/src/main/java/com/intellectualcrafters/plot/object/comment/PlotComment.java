@@ -10,7 +10,8 @@ public class PlotComment {
     public final String world;
     public final long timestamp;
 
-    public PlotComment(String world, PlotId id, String comment, String senderName, String inbox, long timestamp) {
+    public PlotComment(String world, PlotId id, String comment, String senderName, String inbox,
+        long timestamp) {
         this.world = world;
         this.id = id;
         this.comment = comment;

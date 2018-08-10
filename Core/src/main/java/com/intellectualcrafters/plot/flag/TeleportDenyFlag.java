@@ -25,7 +25,8 @@ public class TeleportDenyFlag extends EnumFlag {
                 result = !plot.isAdded(player.getUUID());
                 break;
             case "nontrusted":
-                result = !plot.getTrusted().contains(player.getUUID()) && !plot.isOwner(player.getUUID());
+                result = !plot.getTrusted().contains(player.getUUID()) && !plot
+                    .isOwner(player.getUUID());
                 break;
             case "nonowners":
                 result = !plot.isOwner(player.getUUID());

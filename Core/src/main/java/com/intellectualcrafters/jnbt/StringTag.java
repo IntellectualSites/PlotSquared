@@ -31,13 +31,11 @@ public final class StringTag extends Tag {
         this.value = value;
     }
 
-    @Override
-    public String getValue() {
+    @Override public String getValue() {
         return this.value;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         String name = getName();
         String append = "";
         if (name != null && !name.isEmpty()) {

@@ -1,15 +1,13 @@
 package com.intellectualcrafters.plot.util.block;
 
 public abstract class QueueProvider {
-    public abstract LocalBlockQueue getNewQueue(String world);
-
-    public static QueueProvider of(final Class<? extends LocalBlockQueue> primary, final Class<? extends LocalBlockQueue> fallback) {
+    public static QueueProvider of(final Class<? extends LocalBlockQueue> primary,
+        final Class<? extends LocalBlockQueue> fallback) {
         return new QueueProvider() {
 
             private boolean failed = false;
 
-            @Override
-            public LocalBlockQueue getNewQueue(String world) {
+            @Override public LocalBlockQueue getNewQueue(String world) {
                 if (!failed) {
                     try {
                         return (LocalBlockQueue) primary.getConstructors()[0].newInstance(world);
@@ -27,4 +25,6 @@ public abstract class QueueProvider {
             }
         };
     }
+
+    public abstract LocalBlockQueue getNewQueue(String world);
 }

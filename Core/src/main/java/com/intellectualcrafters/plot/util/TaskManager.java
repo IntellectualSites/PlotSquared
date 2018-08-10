@@ -12,54 +12,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class TaskManager {
 
-    public static TaskManager IMP;
-
     public static final HashSet<String> TELEPORT_QUEUE = new HashSet<>();
     public static final HashMap<Integer, Integer> tasks = new HashMap<>();
+    public static TaskManager IMP;
     public static AtomicInteger index = new AtomicInteger(0);
-
-    public <T> T sync(final RunnableVal<T> function) {
-        return sync(function, Integer.MAX_VALUE);
-    }
-
-    public <T> T sync(final RunnableVal<T> function, int timeout) {
-        if (PS.get().isMainThread(Thread.currentThread())) {
-            function.run();
-            return function.value;
-        }
-        final AtomicBoolean running = new AtomicBoolean(true);
-        RunnableVal<RuntimeException> run = new RunnableVal<RuntimeException>() {
-            @Override
-            public void run(RuntimeException value) {
-                try {
-                    function.run();
-                } catch (RuntimeException e) {
-                    this.value = e;
-                } catch (Throwable neverHappens) {
-                    neverHappens.printStackTrace();
-                } finally {
-                    running.set(false);
-                }
-                synchronized (function) {
-                    function.notifyAll();
-                }
-            }
-        };
-        TaskManager.IMP.task(run);
-        try {
-            synchronized (function) {
-                while (running.get()) {
-                    function.wait(timeout);
-                }
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if (run.value != null) {
-            throw run.value;
-        }
-        return function.value;
-    }
 
     public static int runTaskRepeat(Runnable runnable, int interval) {
         if (runnable != null) {
@@ -103,8 +59,9 @@ public abstract class TaskManager {
 
     /**
      * Run task later.
+     *
      * @param runnable The task
-     * @param delay The delay in ticks
+     * @param delay    The delay in ticks
      */
     public static void runTaskLater(Runnable runnable, int delay) {
         if (runnable != null) {
@@ -128,15 +85,16 @@ public abstract class TaskManager {
 
     /**
      * Break up a series of tasks so that they can run without lagging the server.
+     *
      * @param objects
      * @param task
      * @param whenDone
      */
-    public static <T> void objectTask(Collection<T> objects, final RunnableVal<T> task, final Runnable whenDone) {
+    public static <T> void objectTask(Collection<T> objects, final RunnableVal<T> task,
+        final Runnable whenDone) {
         final Iterator<T> iterator = objects.iterator();
         TaskManager.runTask(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 long start = System.currentTimeMillis();
                 boolean hasNext;
                 while ((hasNext = iterator.hasNext()) && System.currentTimeMillis() - start < 5) {
@@ -150,6 +108,48 @@ public abstract class TaskManager {
                 }
             }
         });
+    }
+
+    public <T> T sync(final RunnableVal<T> function) {
+        return sync(function, Integer.MAX_VALUE);
+    }
+
+    public <T> T sync(final RunnableVal<T> function, int timeout) {
+        if (PS.get().isMainThread(Thread.currentThread())) {
+            function.run();
+            return function.value;
+        }
+        final AtomicBoolean running = new AtomicBoolean(true);
+        RunnableVal<RuntimeException> run = new RunnableVal<RuntimeException>() {
+            @Override public void run(RuntimeException value) {
+                try {
+                    function.run();
+                } catch (RuntimeException e) {
+                    this.value = e;
+                } catch (Throwable neverHappens) {
+                    neverHappens.printStackTrace();
+                } finally {
+                    running.set(false);
+                }
+                synchronized (function) {
+                    function.notifyAll();
+                }
+            }
+        };
+        TaskManager.IMP.task(run);
+        try {
+            synchronized (function) {
+                while (running.get()) {
+                    function.wait(timeout);
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (run.value != null) {
+            throw run.value;
+        }
+        return function.value;
     }
 
     public abstract int taskRepeat(Runnable runnable, int interval);

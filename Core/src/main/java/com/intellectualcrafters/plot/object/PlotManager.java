@@ -41,7 +41,8 @@ public abstract class PlotManager {
      */
     public abstract String[] getPlotComponents(PlotArea plotArea, PlotId plotId);
 
-    public abstract boolean setComponent(PlotArea plotArea, PlotId plotId, String component, PlotBlock[] blocks);
+    public abstract boolean setComponent(PlotArea plotArea, PlotId plotId, String component,
+        PlotBlock[] blocks);
 
     /*
      * PLOT MERGING (return false if your generator does not support plot
@@ -68,8 +69,9 @@ public abstract class PlotManager {
     public abstract boolean finishPlotUnlink(PlotArea plotArea, ArrayList<PlotId> plotIds);
 
     public void exportTemplate(PlotArea plotArea) throws IOException {
-        HashSet<FileBytes> files = new HashSet<>(
-                Collections.singletonList(new FileBytes(Settings.Paths.TEMPLATES + "/tmp-data.yml", Template.getBytes(plotArea))));
+        HashSet<FileBytes> files = new HashSet<>(Collections.singletonList(
+            new FileBytes(Settings.Paths.TEMPLATES + "/tmp-data.yml",
+                Template.getBytes(plotArea))));
         Template.zipAll(plotArea.worldname, files);
     }
 

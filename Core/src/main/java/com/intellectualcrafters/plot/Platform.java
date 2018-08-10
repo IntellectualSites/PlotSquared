@@ -1,9 +1,6 @@
 package com.intellectualcrafters.plot;
 
 public enum Platform {
-    Bukkit,
-    Sponge,
-    Spigot,
-    Cauldron
+    Bukkit, Sponge, Spigot, Cauldron
 
 }

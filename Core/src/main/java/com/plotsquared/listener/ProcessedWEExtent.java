@@ -31,7 +31,8 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
     private int count;
     private Extent parent;
 
-    public ProcessedWEExtent(String world, HashSet<RegionWrapper> mask, int max, Extent child, Extent parent) {
+    public ProcessedWEExtent(String world, HashSet<RegionWrapper> mask, int max, Extent child,
+        Extent parent) {
         super(child);
         this.mask = mask;
         this.world = world;
@@ -43,16 +44,15 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         this.parent = parent;
     }
 
-    @Override
-    public BaseBlock getBlock(Vector location) {
-        if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
+    @Override public BaseBlock getBlock(Vector location) {
+        if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),
+            location.getBlockZ())) {
             return super.getBlock(location);
         }
         return WEManager.AIR;
     }
 
-    @Override
-    public boolean setBlock(Vector location, BaseBlock block) throws WorldEditException {
+    @Override public boolean setBlock(Vector location, BaseBlock block) throws WorldEditException {
         int id = block.getType();
         switch (id) {
             case 54:
@@ -96,13 +96,16 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                 this.BScount++;
                 if (this.BScount > Settings.Chunk_Processor.MAX_TILES) {
                     this.BSblocked = true;
-                    PS.debug(C.PREFIX + "&cdetected unsafe WorldEdit: " + location.getBlockX() + "," + location.getBlockZ());
+                    PS.debug(C.PREFIX + "&cdetected unsafe WorldEdit: " + location.getBlockX() + ","
+                        + location.getBlockZ());
                 }
-                if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
+                if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),
+                    location.getBlockZ())) {
                     if (this.count++ > this.max) {
                         if (this.parent != null) {
                             try {
-                                Field field = AbstractDelegateExtent.class.getDeclaredField("extent");
+                                Field field =
+                                    AbstractDelegateExtent.class.getDeclaredField("extent");
                                 field.setAccessible(true);
                                 field.set(this.parent, new NullExtent());
                             } catch (Exception e) {
@@ -119,11 +122,13 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                 int x = location.getBlockX();
                 int y = location.getBlockY();
                 int z = location.getBlockZ();
-                if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
+                if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),
+                    location.getBlockZ())) {
                     if (this.count++ > this.max) {
                         if (this.parent != null) {
                             try {
-                                Field field = AbstractDelegateExtent.class.getDeclaredField("extent");
+                                Field field =
+                                    AbstractDelegateExtent.class.getDeclaredField("extent");
                                 field.setAccessible(true);
                                 field.set(this.parent, new NullExtent());
                             } catch (Exception e) {
@@ -215,16 +220,14 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                         case 189:
                         case 190:
                         case 191:
-                        case 192:
-                            {
-                                super.setBlock(location, block);
-                            }
-                            break;
-                        default:
-                            {
-                                super.setBlock(location, block);
-                            }
-                            break;
+                        case 192: {
+                            super.setBlock(location, block);
+                        }
+                        break;
+                        default: {
+                            super.setBlock(location, block);
+                        }
+                        break;
                     }
                     return true;
                 }
@@ -233,24 +236,26 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         return false;
     }
 
-    @Override
-    public Entity createEntity(Location location, BaseEntity entity) {
+    @Override public Entity createEntity(Location location, BaseEntity entity) {
         if (this.Eblocked) {
             return null;
         }
         this.Ecount++;
         if (this.Ecount > Settings.Chunk_Processor.MAX_ENTITIES) {
             this.Eblocked = true;
-            PS.debug(C.PREFIX + "&cdetected unsafe WorldEdit: " + location.getBlockX() + "," + location.getBlockZ());
+            PS.debug(
+                C.PREFIX + "&cdetected unsafe WorldEdit: " + location.getBlockX() + "," + location
+                    .getBlockZ());
         }
-        if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
+        if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),
+            location.getBlockZ())) {
             return super.createEntity(location, entity);
         }
         return null;
     }
 
-    @Override
-    public boolean setBiome(Vector2D position, BaseBiome biome) {
-        return WEManager.maskContains(this.mask, position.getBlockX(), position.getBlockZ()) && super.setBiome(position, biome);
+    @Override public boolean setBiome(Vector2D position, BaseBiome biome) {
+        return WEManager.maskContains(this.mask, position.getBlockX(), position.getBlockZ())
+            && super.setBiome(position, biome);
     }
 }

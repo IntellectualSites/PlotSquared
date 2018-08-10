@@ -33,8 +33,7 @@ public class PlotRateEvent extends PlotEvent {
         this.rating = rating;
     }
 
-    @Override
-    public HandlerList getHandlers() {
+    @Override public HandlerList getHandlers() {
         return handlers;
     }
 

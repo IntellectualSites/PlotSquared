@@ -5,18 +5,14 @@ import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.jnbt.Tag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.ReflectionUtils;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +27,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public HashMap<Integer, HashMap<Integer, CompoundTag>> G_SCH_STATE;
     private Location SIGN_LOCATION;
 
-    public HybridPlotWorld(String worldName, String id, IndependentPlotGenerator generator, PlotId min, PlotId max) {
+    public HybridPlotWorld(String worldName, String id, IndependentPlotGenerator generator,
+        PlotId min, PlotId max) {
         super(worldName, id, generator, min, max);
     }
 
@@ -47,19 +44,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             data = (byte) ((((data - start) + 1) & 1) + start);
         }
         return data;
-    }
-
-    public Location getSignLocation(Plot plot) {
-        plot = plot.getBasePlot(false);
-        Location bot = plot.getBottomAbs();
-        if (SIGN_LOCATION == null) {
-            bot.setY(ROAD_HEIGHT + 1);
-            return bot.add(-1, 0, -2);
-        } else {
-            bot.setY(0);
-            Location loc = bot.add(SIGN_LOCATION.getX(), SIGN_LOCATION.getY(), SIGN_LOCATION.getZ());
-            return loc;
-        }
     }
 
     // FIXME depends on block ids
@@ -158,12 +142,25 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
     }
 
+    public Location getSignLocation(Plot plot) {
+        plot = plot.getBasePlot(false);
+        Location bot = plot.getBottomAbs();
+        if (SIGN_LOCATION == null) {
+            bot.setY(ROAD_HEIGHT + 1);
+            return bot.add(-1, 0, -2);
+        } else {
+            bot.setY(0);
+            Location loc =
+                bot.add(SIGN_LOCATION.getX(), SIGN_LOCATION.getY(), SIGN_LOCATION.getZ());
+            return loc;
+        }
+    }
+
     /**
      * <p>This method is called when a world loads. Make sure you set all your constants here. You are provided with the
      * configuration section for that specific world.</p>
      */
-    @Override
-    public void loadConfiguration(ConfigurationSection config) {
+    @Override public void loadConfiguration(ConfigurationSection config) {
         super.loadConfiguration(config);
         if ((this.ROAD_WIDTH & 1) == 0) {
             this.PATH_WIDTH_LOWER = (short) (Math.floor(this.ROAD_WIDTH / 2) - 1);
@@ -182,8 +179,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
     }
 
-    @Override
-    public boolean isCompatible(PlotArea plotArea) {
+    @Override public boolean isCompatible(PlotArea plotArea) {
         if (!(plotArea instanceof SquarePlotWorld)) {
             return false;
         }
@@ -192,11 +188,12 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
     public void setupSchematics() {
         this.G_SCH = new HashMap<>();
-        File schematic1File =
-                MainUtil.getFile(PS.get().IMP.getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/sideroad.schematic");
-        File schematic2File =
-                MainUtil.getFile(PS.get().IMP.getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/intersection.schematic");
-        File schem3File = MainUtil.getFile(PS.get().IMP.getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/plot.schematic");
+        File schematic1File = MainUtil.getFile(PS.get().IMP.getDirectory(),
+            "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/sideroad.schematic");
+        File schematic2File = MainUtil.getFile(PS.get().IMP.getDirectory(),
+            "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/intersection.schematic");
+        File schem3File = MainUtil.getFile(PS.get().IMP.getDirectory(),
+            "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/plot.schematic");
         Schematic schematic1 = SchematicHandler.manager.getSchematic(schematic1File);
         Schematic schematic2 = SchematicHandler.manager.getSchematic(schematic2File);
         Schematic schematic3 = SchematicHandler.manager.getSchematic(schem3File);
@@ -235,9 +232,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                         short id = ids[index];
                         byte data = datas[index];
                         if (id != 0) {
-                            addOverlayBlock((short) (x + shift + oddshift + centerShiftX), (short) (y + startY),
-                                    (short) (z + shift + oddshift + centerShiftZ), id,
-                                    data, false, h3);
+                            addOverlayBlock((short) (x + shift + oddshift + centerShiftX),
+                                (short) (y + startY), (short) (z + shift + oddshift + centerShiftZ),
+                                id, data, false, h3);
                         }
                     }
                 }
@@ -263,9 +260,12 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     Map<String, Tag> map = ReflectionUtils.getMap(tag.getValue());
                     for (int i = 1; i <= 4; i++) {
                         String ln = tag.getString("Line" + i);
-                        if (ln == null || ln.length() > 11) continue outer;
+                        if (ln == null || ln.length() > 11)
+                            continue outer;
                     }
-                    SIGN_LOCATION = new Location(worldname, loc.x + centerShiftX, this.PLOT_HEIGHT + loc.y, loc.z + centerShiftZ);
+                    SIGN_LOCATION =
+                        new Location(worldname, loc.x + centerShiftX, this.PLOT_HEIGHT + loc.y,
+                            loc.z + centerShiftZ);
                     ALLOW_SIGNS = true;
                     continue outer;
                 }
@@ -301,8 +301,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     short id = ids1[index];
                     byte data = datas1[index];
                     if (id != 0) {
-                        addOverlayBlock((short) (x - shift), (short) (y + startY), (short) (z + shift + oddshift), id, data, false, h1);
-                        addOverlayBlock((short) (z + shift + oddshift), (short) (y + startY), (short) (x - shift), id, data, true, h1);
+                        addOverlayBlock((short) (x - shift), (short) (y + startY),
+                            (short) (z + shift + oddshift), id, data, false, h1);
+                        addOverlayBlock((short) (z + shift + oddshift), (short) (y + startY),
+                            (short) (x - shift), id, data, true, h1);
                     }
                 }
             }
@@ -314,14 +316,16 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     short id = ids2[index];
                     byte data = datas2[index];
                     if (id != 0) {
-                        addOverlayBlock((short) (x - shift), (short) (y + startY), (short) (z - shift), id, data, false, h2);
+                        addOverlayBlock((short) (x - shift), (short) (y + startY),
+                            (short) (z - shift), id, data, false, h2);
                     }
                 }
             }
         }
     }
 
-    public void addOverlayBlock(short x, short y, short z, short id, byte data, boolean rotate, int height) {
+    public void addOverlayBlock(short x, short y, short z, short id, byte data, boolean rotate,
+        int height) {
         if (z < 0) {
             z += this.SIZE;
         } else if (z >= this.SIZE) {

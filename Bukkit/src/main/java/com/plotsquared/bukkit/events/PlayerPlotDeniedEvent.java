@@ -59,8 +59,7 @@ public class PlayerPlotDeniedEvent extends PlotEvent {
         return this.initiator;
     }
 
-    @Override
-    public HandlerList getHandlers() {
+    @Override public HandlerList getHandlers() {
         return handlers;
     }
 }

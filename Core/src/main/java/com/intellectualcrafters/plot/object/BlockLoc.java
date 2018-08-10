@@ -44,8 +44,7 @@ public class BlockLoc {
         return new BlockLoc(x, y, z, yaw, pitch);
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         int prime = 31;
         int result = 1;
         result = prime * result + this.x;
@@ -54,8 +53,7 @@ public class BlockLoc {
         return result;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -69,8 +67,7 @@ public class BlockLoc {
         return this.x == other.x && this.y == other.y && this.z == other.z;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         if (this.x == 0 && this.y == 0 && this.z == 0) {
             return "";
         }

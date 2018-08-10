@@ -19,9 +19,7 @@ import java.lang.annotation.Target;
  *
  * @see ConfigurationSerialization#registerClass(Class, String)
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface SerializableAs {
+@Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) public @interface SerializableAs {
     /**
      * This is the name your class will be stored and retrieved as.
      * <p>

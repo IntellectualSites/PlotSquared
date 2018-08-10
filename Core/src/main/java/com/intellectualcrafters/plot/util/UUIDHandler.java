@@ -2,12 +2,9 @@ package com.intellectualcrafters.plot.util;
 
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -25,7 +22,6 @@ public class UUIDHandler {
      * Get the map containing all names/uuids.
      *
      * @return map with names + uuids
-     *
      * @see BiMap
      */
     public static BiMap<StringWrapper, UUID> getUuidMap() {
@@ -36,9 +32,7 @@ public class UUIDHandler {
      * Check if a uuid is cached
      *
      * @param uuid to check
-     *
      * @return true of the uuid is cached
-     *
      * @see BiMap#containsValue(Object)
      */
     public static boolean uuidExists(UUID uuid) {
@@ -49,9 +43,7 @@ public class UUIDHandler {
      * Check if a name is cached
      *
      * @param name to check
-     *
      * @return true of the name is cached
-     *
      * @see BiMap#containsKey(Object)
      */
     public static boolean nameExists(StringWrapper name) {
@@ -61,8 +53,7 @@ public class UUIDHandler {
     public static HashSet<UUID> getAllUUIDS() {
         final HashSet<UUID> uuids = new HashSet<>();
         PS.get().foreachPlotRaw(new RunnableVal<Plot>() {
-            @Override
-            public void run(Plot plot) {
+            @Override public void run(Plot plot) {
                 if (plot.hasOwner()) {
                     uuids.add(plot.owner);
                     uuids.addAll(plot.getTrusted());
@@ -141,7 +132,7 @@ public class UUIDHandler {
         if (nameOrUUIDString.length() > 16) {
             try {
                 return UUID.fromString(nameOrUUIDString);
-            } catch (IllegalArgumentException  e) {
+            } catch (IllegalArgumentException e) {
                 return null;
             }
         }

@@ -100,14 +100,18 @@ public class QuadMap<T> {
         if (region.minX >= this.x) {
             if (region.minZ >= this.z) {
                 if (this.one == null) {
-                    this.one = newInstance(this.newsize, this.x + this.newsize, this.z + this.newsize, this.min);
+                    this.one =
+                        newInstance(this.newsize, this.x + this.newsize, this.z + this.newsize,
+                            this.min);
                 }
                 this.one.add(area);
                 recalculateSkip();
                 return;
             } else if (region.maxZ < this.z) {
                 if (this.two == null) {
-                    this.two = newInstance(this.newsize, this.x + this.newsize, this.z - this.newsize, this.min);
+                    this.two =
+                        newInstance(this.newsize, this.x + this.newsize, this.z - this.newsize,
+                            this.min);
                 }
                 this.two.add(area);
                 recalculateSkip();
@@ -116,14 +120,18 @@ public class QuadMap<T> {
         } else if (region.maxX < this.x) {
             if (region.minZ >= this.z) {
                 if (this.four == null) {
-                    this.four = newInstance(this.newsize, this.x - this.newsize, this.z + this.newsize, this.min);
+                    this.four =
+                        newInstance(this.newsize, this.x - this.newsize, this.z + this.newsize,
+                            this.min);
                 }
                 this.four.add(area);
                 recalculateSkip();
                 return;
             } else if (region.maxZ < this.z) {
                 if (this.three == null) {
-                    this.three = newInstance(this.newsize, this.x - this.newsize, this.z - this.newsize, this.min);
+                    this.three =
+                        newInstance(this.newsize, this.x - this.newsize, this.z - this.newsize,
+                            this.min);
                 }
                 this.three.add(area);
                 recalculateSkip();
@@ -143,8 +151,7 @@ public class QuadMap<T> {
     public QuadMap<T> newInstance(int newsize, int x, int z, int min) {
         try {
             return new QuadMap<T>(newsize, x, z, min) {
-                @Override
-                public RegionWrapper getRegion(T value) {
+                @Override public RegionWrapper getRegion(T value) {
                     return QuadMap.this.getRegion(value);
                 }
             };
@@ -205,7 +212,7 @@ public class QuadMap<T> {
 
     public void recalculateSkip() {
         QuadMap<T> map = null;
-        for (QuadMap<T> current : new QuadMap[]{this.one, this.two, this.three, this.four}) {
+        for (QuadMap<T> current : new QuadMap[] {this.one, this.two, this.three, this.four}) {
             if (current != null) {
                 if (map != null) {
                     this.skip = null;
@@ -248,8 +255,8 @@ public class QuadMap<T> {
     }
 
     public boolean intersects(RegionWrapper other) {
-        return (other.minX <= this.x + this.size) && (other.maxX >= this.x - this.size) && (other.minZ <= this.z + this.size) && (other.maxZ
-                >= this.z - this.size);
+        return (other.minX <= this.x + this.size) && (other.maxX >= this.x - this.size) && (
+            other.minZ <= this.z + this.size) && (other.maxZ >= this.z - this.size);
     }
 
     public T get(int x, int z) {

@@ -10,13 +10,13 @@ public final class NBTUtils {
     /**
      * Default private constructor.
      */
-    private NBTUtils() {}
+    private NBTUtils() {
+    }
 
     /**
      * Gets the type name of a tag.
      *
      * @param clazz the tag class
-     *
      * @return The type name.
      */
     public static String getTypeName(Class<? extends Tag> clazz) {
@@ -53,9 +53,7 @@ public final class NBTUtils {
      * Gets the type code of a tag class.
      *
      * @param clazz the tag class
-     *
      * @return The type code.
-     *
      * @throws IllegalArgumentException if the tag class is invalid.
      */
     public static int getTypeCode(Class<? extends Tag> clazz) {
@@ -92,9 +90,7 @@ public final class NBTUtils {
      * Gets the class of a type of tag.
      *
      * @param type the type
-     *
      * @return The class.
-     *
      * @throws IllegalArgumentException if the tag type is invalid.
      */
     public static Class<? extends Tag> getTypeClass(int type) {
@@ -135,17 +131,17 @@ public final class NBTUtils {
      * @param key      the key to look for
      * @param expected the expected NBT class type
      * @param <T>
-     *
      * @return child tag
      */
-    public static <T extends Tag> T getChildTag(Map<String, Tag> items, String key, Class<T> expected)
-            throws IllegalArgumentException {
+    public static <T extends Tag> T getChildTag(Map<String, Tag> items, String key,
+        Class<T> expected) throws IllegalArgumentException {
         if (!items.containsKey(key)) {
             throw new IllegalArgumentException("Missing a \"" + key + "\" tag");
         }
         Tag tag = items.get(key);
         if (!expected.isInstance(tag)) {
-            throw new IllegalArgumentException(key + " tag is not of tag type " + expected.getName());
+            throw new IllegalArgumentException(
+                key + " tag is not of tag type " + expected.getName());
         }
         return expected.cast(tag);
     }

@@ -10,8 +10,7 @@ import com.intellectualcrafters.plot.util.StringMan;
 
 public abstract class SetCommand extends SubCommand {
 
-    @Override
-    public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer player, String[] args) {
         Location loc = player.getLocation();
         Plot plot = loc.getPlotAbs();
         if (plot == null) {
@@ -19,14 +18,16 @@ public abstract class SetCommand extends SubCommand {
         }
         if (!plot.hasOwner()) {
             if (!Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND.f(getFullId()))) {
-                MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_ADMIN_COMMAND.f(getFullId()));
+                MainUtil.sendMessage(player, C.NO_PERMISSION,
+                    C.PERMISSION_ADMIN_COMMAND.f(getFullId()));
                 MainUtil.sendMessage(player, C.PLOT_NOT_CLAIMED);
                 return false;
             }
         }
         if (!plot.isOwner(player.getUUID())) {
             if (!Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND.f(getFullId()))) {
-                MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_ADMIN_COMMAND.f(getFullId()));
+                MainUtil.sendMessage(player, C.NO_PERMISSION,
+                    C.PERMISSION_ADMIN_COMMAND.f(getFullId()));
                 MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
                 return false;
             }

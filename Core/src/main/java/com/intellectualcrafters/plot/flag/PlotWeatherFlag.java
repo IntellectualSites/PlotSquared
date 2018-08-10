@@ -8,8 +8,7 @@ public class PlotWeatherFlag extends Flag<PlotWeather> {
         super(name);
     }
 
-    @Override
-    public String valueToString(Object value) {
+    @Override public String valueToString(Object value) {
         return value.toString();
     }
 

@@ -1,14 +1,13 @@
 package com.plotsquared.sponge.events;
 
-import org.spongepowered.api.event.Cancellable;
-
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.Plot;
+import org.spongepowered.api.event.Cancellable;
 
 public class PlotFlagAddEvent extends PlotEvent implements Cancellable {
     private final Flag flag;
     private boolean cancelled;
-    
+
     /**
      * PlotFlagAddEvent: Called when a Flag is added to a plot
      *
@@ -19,7 +18,7 @@ public class PlotFlagAddEvent extends PlotEvent implements Cancellable {
         super(plot);
         this.flag = flag;
     }
-    
+
     /**
      * Get the flag involved
      *
@@ -28,14 +27,12 @@ public class PlotFlagAddEvent extends PlotEvent implements Cancellable {
     public Flag getFlag() {
         return flag;
     }
-    
-    @Override
-    public boolean isCancelled() {
+
+    @Override public boolean isCancelled() {
         return cancelled;
     }
-    
-    @Override
-    public void setCancelled(final boolean cancel) {
+
+    @Override public void setCancelled(final boolean cancel) {
         cancelled = cancel;
     }
 }

@@ -13,9 +13,11 @@ import java.util.HashMap;
 
 public abstract class APlotMeConnector {
 
-    public abstract Connection getPlotMeConnection(String plugin, FileConfiguration plotConfig, String dataFolder);
+    public abstract Connection getPlotMeConnection(String plugin, FileConfiguration plotConfig,
+        String dataFolder);
 
-    public abstract HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(Connection connection) throws SQLException;
+    public abstract HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(Connection connection)
+        throws SQLException;
 
     public abstract boolean accepts(String version);
 
@@ -31,9 +33,11 @@ public abstract class APlotMeConnector {
         String wallBlock = plotConfig.getString("worlds." + world + ".WallBlockId"); //
         PS.get().worlds.set("worlds." + actualWorldName + ".wall.block", wallBlock);
         String floor = plotConfig.getString("worlds." + world + ".PlotFloorBlockId"); //
-        PS.get().worlds.set("worlds." + actualWorldName + ".plot.floor", Collections.singletonList(floor));
+        PS.get().worlds
+            .set("worlds." + actualWorldName + ".plot.floor", Collections.singletonList(floor));
         String filling = plotConfig.getString("worlds." + world + ".PlotFillingBlockId"); //
-        PS.get().worlds.set("worlds." + actualWorldName + ".plot.filling", Collections.singletonList(filling));
+        PS.get().worlds
+            .set("worlds." + actualWorldName + ".plot.filling", Collections.singletonList(filling));
         String road = plotConfig.getString("worlds." + world + ".RoadMainBlockId");
         PS.get().worlds.set("worlds." + actualWorldName + ".road.block", road);
         int height = plotConfig.getInt("worlds." + world + ".RoadHeight"); //
@@ -58,25 +62,26 @@ public abstract class APlotMeConnector {
         return new Location(null, x, 1, z);
     }
 
-    public void setMerged(HashMap<String, HashMap<PlotId, boolean[]>> merges, String world, PlotId id, int direction) {
+    public void setMerged(HashMap<String, HashMap<PlotId, boolean[]>> merges, String world,
+        PlotId id, int direction) {
         HashMap<PlotId, boolean[]> plots = merges.get(world);
         PlotId id2 = new PlotId(id.x, id.y);
         boolean[] merge1;
         if (plots.containsKey(id)) {
             merge1 = plots.get(id);
         } else {
-            merge1 = new boolean[] { false, false, false, false };
+            merge1 = new boolean[] {false, false, false, false};
         }
         boolean[] merge2;
         if (plots.containsKey(id2)) {
             merge2 = plots.get(id2);
         } else {
-            merge2 = new boolean[] { false, false, false, false };
+            merge2 = new boolean[] {false, false, false, false};
         }
         merge1[direction] = true;
         merge2[(direction + 2) % 4] = true;
         plots.put(id, merge1);
         plots.put(id2, merge1);
     }
-    
+
 }

@@ -4,13 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.math.Vector3;
-import com.intellectualcrafters.jnbt.ByteArrayTag;
-import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.jnbt.IntTag;
-import com.intellectualcrafters.jnbt.ListTag;
-import com.intellectualcrafters.jnbt.ShortTag;
-import com.intellectualcrafters.jnbt.StringTag;
-import com.intellectualcrafters.jnbt.Tag;
+import com.intellectualcrafters.jnbt.*;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.RegionWrapper;
@@ -20,12 +14,9 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import com.plotsquared.nukkit.NukkitMain;
+
 import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Schematic Handler.
@@ -38,12 +29,11 @@ public class NukkitSchematicHandler extends SchematicHandler {
         this.plugin = plugin;
     }
 
-    @Override
-    public void getCompoundTag(final String world, final Set<RegionWrapper> regions, final RunnableVal<CompoundTag> whenDone) {
+    @Override public void getCompoundTag(final String world, final Set<RegionWrapper> regions,
+        final RunnableVal<CompoundTag> whenDone) {
         // async
         TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 // Main positions
                 Location[] corners = MainUtil.getCorners(world, regions);
                 final Location bot = corners[0];
@@ -71,16 +61,18 @@ public class NukkitSchematicHandler extends SchematicHandler {
                 // Queue
                 final ArrayDeque<RegionWrapper> queue = new ArrayDeque<>(regions);
                 TaskManager.runTask(new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         if (queue.isEmpty()) {
                             TaskManager.runTaskAsync(new Runnable() {
-                                @Override
-                                public void run() {
+                                @Override public void run() {
                                     schematic.put("Blocks", new ByteArrayTag("Blocks", blocks));
                                     schematic.put("Data", new ByteArrayTag("Data", blockData));
-                                    schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<>()));
-                                    schematic.put("TileEntities", new ListTag("TileEntities", CompoundTag.class, tileEntities));
+                                    schematic.put("Entities",
+                                        new ListTag("Entities", CompoundTag.class,
+                                            new ArrayList<>()));
+                                    schematic.put("TileEntities",
+                                        new ListTag("TileEntities", CompoundTag.class,
+                                            tileEntities));
                                     whenDone.value = new CompoundTag("Schematic", schematic);
                                     TaskManager.runTask(whenDone);
                                     System.gc();
@@ -116,10 +108,10 @@ public class NukkitSchematicHandler extends SchematicHandler {
                         // Main thread
                         final Vector3 mutable = new Vector3();
                         TaskManager.runTask(new Runnable() {
-                            @Override
-                            public void run() {
+                            @Override public void run() {
                                 long start = System.currentTimeMillis();
-                                while (!chunks.isEmpty() && System.currentTimeMillis() - start < 20) {
+                                while (!chunks.isEmpty()
+                                    && System.currentTimeMillis() - start < 20) {
                                     // save schematics
                                     ChunkLoc chunk = chunks.remove(0);
                                     BaseFullChunk bc = worldObj.getChunk(chunk.x, chunk.z);

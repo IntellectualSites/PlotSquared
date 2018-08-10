@@ -38,8 +38,7 @@ public abstract class Flag<V> implements StringComparison.StringComparable {
 
     public abstract String valueToString(Object value);
 
-    @Override
-    public final String toString() {
+    @Override public final String toString() {
         return "Flag { name='" + getName() + "'}";
     }
 
@@ -55,8 +54,7 @@ public abstract class Flag<V> implements StringComparison.StringComparable {
         return FlagManager.getPlotFlagRaw(plot, this) != null;
     }
 
-    @Override
-    public String getComparableString() {
+    @Override public String getComparableString() {
         return getName();
     }
 }

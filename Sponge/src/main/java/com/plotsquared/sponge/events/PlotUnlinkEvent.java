@@ -1,19 +1,18 @@
 package com.plotsquared.sponge.events;
 
-import java.util.ArrayList;
-
+import com.intellectualcrafters.plot.object.PlotId;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.impl.AbstractEvent;
 import org.spongepowered.api.world.World;
 
-import com.intellectualcrafters.plot.object.PlotId;
+import java.util.ArrayList;
 
 public class PlotUnlinkEvent extends AbstractEvent implements Cancellable {
     private final ArrayList<PlotId> plots;
     private final World world;
     private boolean cancelled;
-    
+
     /**
      * Called when a mega-plot is unlinked.
      *
@@ -24,7 +23,7 @@ public class PlotUnlinkEvent extends AbstractEvent implements Cancellable {
         this.plots = plots;
         this.world = world;
     }
-    
+
     /**
      * Get the plots involved
      *
@@ -33,23 +32,20 @@ public class PlotUnlinkEvent extends AbstractEvent implements Cancellable {
     public ArrayList<PlotId> getPlots() {
         return plots;
     }
-    
+
     public World getWorld() {
         return world;
     }
-    
-    @Override
-    public boolean isCancelled() {
+
+    @Override public boolean isCancelled() {
         return cancelled;
     }
-    
-    @Override
-    public void setCancelled(final boolean cancel) {
+
+    @Override public void setCancelled(final boolean cancel) {
         cancelled = cancel;
     }
-    
-    @Override
-    public Cause getCause() {
+
+    @Override public Cause getCause() {
         return null;
     }
 }

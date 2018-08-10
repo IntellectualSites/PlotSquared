@@ -12,8 +12,8 @@ public class NukkitHybridUtils extends HybridUtils {
         PS.debug("Not implemented: NukkitHybridUtils");
     }
 
-    @Override
-    public void analyzeRegion(final String world, final RegionWrapper region, final RunnableVal<PlotAnalysis> whenDone) {
+    @Override public void analyzeRegion(final String world, final RegionWrapper region,
+        final RunnableVal<PlotAnalysis> whenDone) {
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
 }

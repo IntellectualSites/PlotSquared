@@ -6,16 +6,11 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.ReflectionUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.SendChunk;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 
+import java.util.*;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
@@ -36,24 +31,26 @@ public class BukkitLocalQueue_1_7 extends BukkitLocalQueue<PlotBlock[]> {
 
     private final HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
 
-    public BukkitLocalQueue_1_7(String world) throws NoSuchMethodException, ClassNotFoundException, NoSuchFieldException {
+    public BukkitLocalQueue_1_7(String world)
+        throws NoSuchMethodException, ClassNotFoundException, NoSuchFieldException {
         super(world);
         this.methodGetHandle = this.classCraftWorld.getMethod("getHandle");
         this.methodGetChunkAt = this.classWorld.getMethod("getChunkAt", int.class, int.class);
-        this.methodA = this.classChunk.getMethod("a", int.class, int.class, int.class, this.classBlock, int.class);
+        this.methodA = this.classChunk
+            .getMethod("a", int.class, int.class, int.class, this.classBlock, int.class);
         this.methodGetById = this.classBlock.getMethod("getById", int.class);
         this.methodGetHandleChunk = this.classCraftChunk.getMethod("getHandle");
         this.methodInitLighting = this.classChunk.getMethod("initLighting");
         this.sendChunk = new SendChunk();
         TaskManager.runTaskRepeat(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 if (BukkitLocalQueue_1_7.this.toUpdate.isEmpty()) {
                     return;
                 }
                 int count = 0;
                 ArrayList<Chunk> chunks = new ArrayList<>();
-                Iterator<Map.Entry<ChunkWrapper, Chunk>> i = BukkitLocalQueue_1_7.this.toUpdate.entrySet().iterator();
+                Iterator<Map.Entry<ChunkWrapper, Chunk>> i =
+                    BukkitLocalQueue_1_7.this.toUpdate.entrySet().iterator();
                 while (i.hasNext() && (count < 128)) {
                     chunks.add(i.next().getValue());
                     i.remove();
@@ -88,14 +85,12 @@ public class BukkitLocalQueue_1_7 extends BukkitLocalQueue<PlotBlock[]> {
         }
     }
 
-    @Override
-    public void fixChunkLighting(int x, int z) {
+    @Override public void fixChunkLighting(int x, int z) {
         Object c = this.methodGetHandleChunk.of(getChunk(x, z)).call();
         this.methodInitLighting.of(c).call();
     }
 
-    @Override
-    public void setBlocks(LocalChunk<PlotBlock[]> lc) {
+    @Override public void setBlocks(LocalChunk<PlotBlock[]> lc) {
         Chunk chunk = getChunk(lc.getX(), lc.getZ());
         chunk.load(true);
         World world = chunk.getWorld();
@@ -128,8 +123,7 @@ public class BukkitLocalQueue_1_7 extends BukkitLocalQueue<PlotBlock[]> {
         fixChunkLighting(lc.getX(), lc.getZ());
     }
 
-    @Override
-    public void refreshChunk(int x, int z) {
+    @Override public void refreshChunk(int x, int z) {
         update(Arrays.asList(Bukkit.getWorld(getWorld()).getChunkAt(x, z)));
     }
 }

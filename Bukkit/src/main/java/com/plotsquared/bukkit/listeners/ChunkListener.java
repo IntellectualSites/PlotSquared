@@ -9,8 +9,6 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 import com.intellectualcrafters.plot.util.TaskManager;
-import java.lang.reflect.Method;
-import java.util.HashSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -29,6 +27,8 @@ import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
+import java.lang.reflect.Method;
+import java.util.HashSet;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
@@ -37,6 +37,7 @@ public class ChunkListener implements Listener {
     private RefMethod methodGetHandleChunk;
     private RefField mustSave;
     private Chunk lastChunk;
+    private boolean ignoreUnload = false;
 
     public ChunkListener() {
         if (Settings.Chunk_Processor.AUTO_TRIM) {
@@ -46,7 +47,8 @@ public class ChunkListener implements Listener {
                 this.mustSave = classChunk.getField("mustSave");
                 this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
             } catch (Throwable ignored) {
-                PS.debug(PS.imp().getPluginName() + "/Server not compatible for chunk processor trim/gc");
+                PS.debug(PS.imp().getPluginName()
+                    + "/Server not compatible for chunk processor trim/gc");
                 Settings.Chunk_Processor.AUTO_TRIM = false;
             }
         }
@@ -57,8 +59,7 @@ public class ChunkListener implements Listener {
             world.setAutoSave(false);
         }
         TaskManager.runTaskRepeat(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 try {
                     HashSet<Chunk> toUnload = new HashSet<>();
                     for (World world : Bukkit.getWorlds()) {
@@ -67,11 +68,14 @@ public class ChunkListener implements Listener {
                             continue;
                         }
                         Object w = world.getClass().getDeclaredMethod("getHandle").invoke(world);
-                        Object chunkMap = w.getClass().getDeclaredMethod("getPlayerChunkMap").invoke(w);
-                        Method methodIsChunkInUse = chunkMap.getClass().getDeclaredMethod("isChunkInUse", int.class, int.class);
+                        Object chunkMap =
+                            w.getClass().getDeclaredMethod("getPlayerChunkMap").invoke(w);
+                        Method methodIsChunkInUse = chunkMap.getClass()
+                            .getDeclaredMethod("isChunkInUse", int.class, int.class);
                         Chunk[] chunks = world.getLoadedChunks();
                         for (Chunk chunk : chunks) {
-                            if ((boolean) methodIsChunkInUse.invoke(chunkMap, chunk.getX(), chunk.getZ())) {
+                            if ((boolean) methodIsChunkInUse
+                                .invoke(chunkMap, chunk.getX(), chunk.getZ())) {
                                 continue;
                             }
                             int x = chunk.getX();
@@ -99,8 +103,6 @@ public class ChunkListener implements Listener {
             }
         }, 1);
     }
-
-    private boolean ignoreUnload = false;
 
     public boolean unloadChunk(String world, Chunk chunk, boolean safe) {
         if (safe && shouldSave(world, chunk.getX(), chunk.getZ())) {
@@ -144,8 +146,7 @@ public class ChunkListener implements Listener {
         return plot != null && plot.hasOwner();
     }
 
-    @EventHandler
-    public void onChunkUnload(ChunkUnloadEvent event) {
+    @EventHandler public void onChunkUnload(ChunkUnloadEvent event) {
         if (ignoreUnload) {
             return;
         }
@@ -162,14 +163,12 @@ public class ChunkListener implements Listener {
             event.setCancelled(true);
         }
     }
-    
-    @EventHandler
-    public void onChunkLoad(ChunkLoadEvent event) {
+
+    @EventHandler public void onChunkLoad(ChunkLoadEvent event) {
         processChunk(event.getChunk(), false);
     }
-    
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onItemSpawn(ItemSpawnEvent event) {
+
+    @EventHandler(priority = EventPriority.LOWEST) public void onItemSpawn(ItemSpawnEvent event) {
         Item entity = event.getEntity();
         Chunk chunk = entity.getLocation().getChunk();
         if (chunk == this.lastChunk) {
@@ -189,14 +188,14 @@ public class ChunkListener implements Listener {
             this.lastChunk = null;
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPhysics(BlockPhysicsEvent event) {
         if (Settings.Chunk_Processor.DISABLE_PHYSICS) {
             event.setCancelled(true);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntitySpawn(CreatureSpawnEvent event) {
         LivingEntity entity = event.getEntity();
@@ -223,8 +222,7 @@ public class ChunkListener implements Listener {
         TaskManager.index.incrementAndGet();
         final Integer currentIndex = TaskManager.index.get();
         Integer task = TaskManager.runTaskRepeat(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 if (!chunk.isLoaded()) {
                     Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                     TaskManager.tasks.remove(currentIndex);
@@ -270,11 +268,13 @@ public class ChunkListener implements Listener {
                     ent.remove();
                 }
             }
-            PS.debug(C.PREFIX.s() + "&a detected unsafe chunk and processed: " + (chunk.getX() << 4) + "," + (chunk.getX() << 4));
+            PS.debug(C.PREFIX.s() + "&a detected unsafe chunk and processed: " + (chunk.getX() << 4)
+                + "," + (chunk.getX() << 4));
         }
         if (tiles.length > Settings.Chunk_Processor.MAX_TILES) {
             if (unload) {
-                PS.debug(C.PREFIX.s() + "&c detected unsafe chunk: " + (chunk.getX() << 4) + "," + (chunk.getX() << 4));
+                PS.debug(C.PREFIX.s() + "&c detected unsafe chunk: " + (chunk.getX() << 4) + "," + (
+                    chunk.getX() << 4));
                 cleanChunk(chunk);
                 return true;
             }

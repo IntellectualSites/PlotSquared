@@ -1,24 +1,11 @@
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.jnbt.IntTag;
-import com.intellectualcrafters.jnbt.NBTInputStream;
-import com.intellectualcrafters.jnbt.NBTOutputStream;
-import com.intellectualcrafters.jnbt.Tag;
+import com.intellectualcrafters.jnbt.*;
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+
+import java.io.*;
 import java.net.URL;
 import java.util.Map;
 import java.util.Set;
@@ -30,11 +17,11 @@ import java.util.zip.ZipOutputStream;
 
 public abstract class WorldUtil {
     public static WorldUtil IMP;
-    
+
     public abstract int getBiomeFromString(String value);
-    
+
     public abstract String[] getBiomeList();
-    
+
     public abstract String getMainWorld();
 
     public abstract boolean isWorld(String worldName);
@@ -48,23 +35,23 @@ public abstract class WorldUtil {
     public abstract void setSpawn(Location location);
 
     public abstract void saveWorld(String world);
-    
+
     public abstract String getClosestMatchingName(PlotBlock plotBlock);
-    
+
     public abstract boolean isBlockSolid(PlotBlock block);
-    
+
     public abstract StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name);
-    
+
     public abstract String getBiome(String world, int x, int z);
-    
+
     public abstract PlotBlock getBlock(Location location);
-    
+
     public abstract int getHighestBlock(String world, int x, int z);
-    
+
     public abstract boolean addItems(String world, PlotItem item);
-    
+
     public abstract void setSign(String world, int x, int y, int z, String[] lines);
-    
+
     public abstract void setBiomes(String world, RegionWrapper region, String biome);
 
     public void upload(final Plot plot, UUID uuid, String file, RunnableVal<URL> whenDone) {
@@ -73,8 +60,7 @@ public abstract class WorldUtil {
         }
         final Location home = plot.getHome();
         MainUtil.upload(uuid, file, "zip", new RunnableVal<OutputStream>() {
-            @Override
-            public void run(OutputStream output) {
+            @Override public void run(OutputStream output) {
                 try (final ZipOutputStream zos = new ZipOutputStream(output)) {
                     File dat = getDat(plot.getWorldName());
                     Location spawn = getSpawn(plot.getWorldName());
@@ -82,7 +68,8 @@ public abstract class WorldUtil {
                     if (dat != null) {
                         ZipEntry ze = new ZipEntry("world" + File.separator + dat.getName());
                         zos.putNextEntry(ze);
-                        try (NBTInputStream nis = new NBTInputStream(new GZIPInputStream(new FileInputStream(dat)))) {
+                        try (NBTInputStream nis = new NBTInputStream(
+                            new GZIPInputStream(new FileInputStream(dat)))) {
                             CompoundTag tag = (CompoundTag) nis.readTag();
                             CompoundTag data = (CompoundTag) tag.getValue().get("Data");
                             Map<String, Tag> map = ReflectionUtils.getMap(data.getValue());
@@ -90,7 +77,8 @@ public abstract class WorldUtil {
                             map.put("SpawnY", new IntTag("SpawnY", home.getY()));
                             map.put("SpawnZ", new IntTag("SpawnZ", home.getZ()));
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            try (NBTOutputStream out = new NBTOutputStream(new GZIPOutputStream(baos, true))) {
+                            try (NBTOutputStream out = new NBTOutputStream(
+                                new GZIPOutputStream(baos, true))) {
                                 out.writeTag(tag);
                             }
                             zos.write(baos.toByteArray());
@@ -111,7 +99,9 @@ public abstract class WorldUtil {
                                 if (file != null) {
                                     //final String name = "r." + (x - cx) + "." + (z - cz) + ".mca";
                                     String name = file.getName();
-                                    final ZipEntry ze = new ZipEntry("world" + File.separator + "region" + File.separator + name);
+                                    final ZipEntry ze = new ZipEntry(
+                                        "world" + File.separator + "region" + File.separator
+                                            + name);
                                     zos.putNextEntry(ze);
                                     final FileInputStream in = new FileInputStream(file);
                                     int len;
@@ -135,7 +125,9 @@ public abstract class WorldUtil {
     }
 
     public File getDat(String world) {
-        File file = new File(PS.get().IMP.getWorldContainer() + File.separator + world + File.separator + "level.dat");
+        File file = new File(
+            PS.get().IMP.getWorldContainer() + File.separator + world + File.separator
+                + "level.dat");
         if (file.exists()) {
             return file;
         }
@@ -143,7 +135,8 @@ public abstract class WorldUtil {
     }
 
     public File getMcr(String world, int x, int z) {
-        File file = new File(PS.get().IMP.getWorldContainer(), world + File.separator + "region" + File.separator + "r." + x + '.' + z + ".mca");
+        File file = new File(PS.get().IMP.getWorldContainer(),
+            world + File.separator + "region" + File.separator + "r." + x + '.' + z + ".mca");
         if (file.exists()) {
             return file;
         }

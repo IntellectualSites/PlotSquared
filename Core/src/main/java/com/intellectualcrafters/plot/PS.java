@@ -17,69 +17,27 @@ import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
 import com.intellectualcrafters.plot.logger.DelegateLogger;
 import com.intellectualcrafters.plot.logger.ILogger;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotFilter;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.object.worlds.DefaultPlotAreaManager;
 import com.intellectualcrafters.plot.object.worlds.PlotAreaManager;
 import com.intellectualcrafters.plot.object.worlds.SinglePlotArea;
 import com.intellectualcrafters.plot.object.worlds.SinglePlotAreaManager;
-import com.intellectualcrafters.plot.util.AbstractTitle;
-import com.intellectualcrafters.plot.util.ChatManager;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.CommentManager;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.InventoryUtil;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.ReflectionUtils;
-import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.util.expiry.ExpiryTask;
 import com.plotsquared.listener.WESubscriber;
 import com.sk89q.worldedit.WorldEdit;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.sql.SQLException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -87,42 +45,42 @@ import java.util.zip.ZipInputStream;
 /**
  * An implementation of the core, with a static getter for easy access.
  */
-public class PS{
+public class PS {
     private static PS instance;
     // Implementation
     public final IPlotMain IMP;
-    // Implementation logger
-    private ILogger logger;
     // Current thread
     private final Thread thread;
-    // Platform / Version / Update URL
-    private Updater updater;
-    private PlotVersion version;
     // WorldEdit instance
     public WorldEdit worldedit;
-    // Files and configuration
-    private File jarFile = null; // This file
     public File styleFile;
     public File configFile;
     public File worldsFile;
     public File commandsFile;
     public File translationFile;
-    private File storageFile;
     public YamlConfiguration style;
     public YamlConfiguration config;
     public YamlConfiguration worlds;
     public YamlConfiguration storage;
     public YamlConfiguration commands;
-     // Temporary hold the plots/clusters before the worlds load
+    // Temporary hold the plots/clusters before the worlds load
     public HashMap<String, Set<PlotCluster>> clusters_tmp;
     public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
-
+    // Implementation logger
+    private ILogger logger;
+    // Platform / Version / Update URL
+    private Updater updater;
+    private PlotVersion version;
+    // Files and configuration
+    private File jarFile = null; // This file
+    private File storageFile;
     private PlotAreaManager manager;
 
     /**
      * Initialize PlotSquared with the desired Implementation class.
+     *
      * @param iPlotMain Implementation of {@link IPlotMain} used
-     * @param platform The platform being used
+     * @param platform  The platform being used
      */
     public PS(IPlotMain iPlotMain, String platform) {
         PS.instance = this;
@@ -134,12 +92,15 @@ public class PS{
             new ReflectionUtils(this.IMP.getNMSPackage());
             try {
                 URL url = PS.class.getProtectionDomain().getCodeSource().getLocation();
-                this.jarFile = new File(new URL(url.toURI().toString().split("\\!")[0].replaceAll("jar:file", "file")).toURI().getPath());
+                this.jarFile = new File(
+                    new URL(url.toURI().toString().split("\\!")[0].replaceAll("jar:file", "file"))
+                        .toURI().getPath());
             } catch (MalformedURLException | URISyntaxException | SecurityException e) {
                 e.printStackTrace();
                 this.jarFile = new File(this.IMP.getDirectory().getParentFile(), "PlotSquared.jar");
                 if (!this.jarFile.exists()) {
-                    this.jarFile = new File(this.IMP.getDirectory().getParentFile(), "PlotSquared-" + platform + ".jar");
+                    this.jarFile = new File(this.IMP.getDirectory().getParentFile(),
+                        "PlotSquared-" + platform + ".jar");
                 }
             }
             if (getJavaVersion() < 1.8) {
@@ -147,8 +108,9 @@ public class PS{
             }
             TaskManager.IMP = this.IMP.getTaskManager();
             setupConfigs();
-            this.translationFile =
-                    MainUtil.getFile(this.IMP.getDirectory(), Settings.Paths.TRANSLATIONS + File.separator + IMP.getPluginName() + ".use_THIS.yml");
+            this.translationFile = MainUtil.getFile(this.IMP.getDirectory(),
+                Settings.Paths.TRANSLATIONS + File.separator + IMP.getPluginName()
+                    + ".use_THIS.yml");
             C.load(this.translationFile);
 
             // Setup manager
@@ -165,7 +127,8 @@ public class PS{
             // Comments
             CommentManager.registerDefaultInboxes();
             // Kill entities
-            if (Settings.Enabled_Components.KILL_ROAD_MOBS || Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
+            if (Settings.Enabled_Components.KILL_ROAD_MOBS
+                || Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
                 this.IMP.runEntityTask();
             }
             if (Settings.Enabled_Components.EVENTS) {
@@ -231,14 +194,14 @@ public class PS{
 
                     }
                 } catch (Throwable e) {
-                    PS.debug("Incompatible version of WorldEdit, please upgrade: http://builds.enginehub.org/job/worldedit?branch=master");
+                    PS.debug(
+                        "Incompatible version of WorldEdit, please upgrade: http://builds.enginehub.org/job/worldedit?branch=master");
                 }
             }
             // Economy
             if (Settings.Enabled_Components.ECONOMY) {
                 TaskManager.runTask(new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         EconHandler.manager = PS.this.IMP.getEconomyHandler();
                     }
                 });
@@ -248,14 +211,12 @@ public class PS{
             if (Settings.Enabled_Components.UPDATER) {
                 updater = new Updater();
                 TaskManager.IMP.taskAsync(new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         updater.update(getPlatform(), getVersion());
                     }
                 });
                 TaskManager.IMP.taskRepeatAsync(new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         updater.update(getPlatform(), getVersion());
                     }
                 }, 36000);
@@ -273,16 +234,18 @@ public class PS{
                     }
                 }
                 TaskManager.runTaskLater(new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         for (String world : section.getKeys(false)) {
                             if (world.equals("CheckingPlotSquaredGenerator")) {
                                 continue;
                             }
                             if (!WorldUtil.IMP.isWorld(world) && !world.equals("*")) {
-                                debug("&c`" + world + "` was not properly loaded - " + IMP.getPluginName() + " will now try to load it properly: ");
-                                debug("&8 - &7Are you trying to delete this world? Remember to remove it from the settings.yml, bukkit.yml and multiverse worlds.yml");
-                                debug("&8 - &7Your world management plugin may be faulty (or non existent)");
+                                debug("&c`" + world + "` was not properly loaded - " + IMP
+                                    .getPluginName() + " will now try to load it properly: ");
+                                debug(
+                                    "&8 - &7Are you trying to delete this world? Remember to remove it from the settings.yml, bukkit.yml and multiverse worlds.yml");
+                                debug(
+                                    "&8 - &7Your world management plugin may be faulty (or non existent)");
                                 PS.this.IMP.setGenerator(world);
                             }
                         }
@@ -356,7 +319,19 @@ public class PS{
     }
 
     /**
+     * Set the Logger.
+     *
+     * @param logger the logger the plugin should use
+     * @see DelegateLogger
+     * @see #getLogger()
+     */
+    public void setLogger(ILogger logger) {
+        this.logger = logger;
+    }
+
+    /**
      * The plugin updater
+     *
      * @return
      */
     public Updater getUpdater() {
@@ -367,28 +342,15 @@ public class PS{
         return manager;
     }
 
-    /**
-     * Set the Logger.
-     * @see DelegateLogger
-     * @see #getLogger()
-     * @param logger the logger the plugin should use
-     */
-    public void setLogger(ILogger logger) {
-        this.logger = logger;
-    }
-
     private void startUuidCatching() {
         TaskManager.runTaskLater(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 debug("Starting UUID caching");
                 UUIDHandler.startCaching(new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         UUIDHandler.add(new StringWrapper("*"), DBFunc.everyone);
                         foreachPlotRaw(new RunnableVal<Plot>() {
-                            @Override
-                            public void run(Plot plot) {
+                            @Override public void run(Plot plot) {
                                 if (plot.hasOwner() && plot.temp != -1) {
                                     if (UUIDHandler.getName(plot.owner) == null) {
                                         UUIDHandler.implementation.unknown.add(plot.owner);
@@ -418,14 +380,16 @@ public class PS{
     private void startPlotMeConversion() {
         if (Settings.Enabled_Components.PLOTME_CONVERTER || Settings.PlotMe.CACHE_UUDS) {
             TaskManager.IMP.taskAsync(new Runnable() {
-                @Override
-                public void run() {
+                @Override public void run() {
                     if (PS.this.IMP.initPlotMeConverter()) {
                         PS.log("&c=== IMPORTANT ===");
-                        PS.log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PlotMe!");
+                        PS.log(
+                            "&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PlotMe!");
                         PS.log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
-                        PS.log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
-                        PS.log("&c - After the conversion is finished, please set 'plotme-converter' to false in the "
+                        PS.log(
+                            "&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
+                        PS.log(
+                            "&c - After the conversion is finished, please set 'plotme-converter' to false in the "
                                 + "'settings.yml'");
                     }
                     Settings.Enabled_Components.PLOTME_CONVERTER = false;
@@ -440,17 +404,19 @@ public class PS{
 
     /**
      * Check if `version` is >= `version2`.
+     *
      * @param version
      * @param version2
      * @return true if `version` is >= `version2`
      */
     public boolean checkVersion(int[] version, int... version2) {
-        return version[0] > version2[0] || version[0] == version2[0] && version[1] > version2[1] || version[0] == version2[0]
-                && version[1] == version2[1] && version[2] >= version2[2];
+        return version[0] > version2[0] || version[0] == version2[0] && version[1] > version2[1]
+            || version[0] == version2[0] && version[1] == version2[1] && version[2] >= version2[2];
     }
 
     /**
      * Get the current PlotSquared version.
+     *
      * @return current version in config or null
      */
     public PlotVersion getVersion() {
@@ -459,8 +425,9 @@ public class PS{
 
     /**
      * Get the server platform this plugin is running on this is running on.
-     *
+     * <p>
      * <p>This will be either <b>Bukkit</b> or <b>Sponge</b></p>
+     *
      * @return the server implementation
      */
     public String getPlatform() {
@@ -507,7 +474,8 @@ public class PS{
         Set<PlotCluster> clusters;
         if (clusters_tmp == null || (clusters = clusters_tmp.remove(plotArea.toString())) == null) {
             if (plotArea.TYPE == 2) {
-                clusters = this.clusters_tmp != null ? this.clusters_tmp.get(plotArea.worldname) : null;
+                clusters =
+                    this.clusters_tmp != null ? this.clusters_tmp.get(plotArea.worldname) : null;
                 if (clusters != null) {
                     Iterator<PlotCluster> iterator = clusters.iterator();
                     while (iterator.hasNext()) {
@@ -576,14 +544,14 @@ public class PS{
     /**
      * Get all the base plots in a single set (for merged plots it just returns
      * the bottom plot).
+     *
      * @return Set of base Plots
      */
     public Set<Plot> getBasePlots() {
         int size = getPlotCount();
         final Set<Plot> result = new HashSet<>(size);
         foreachPlotArea(new RunnableVal<PlotArea>() {
-            @Override
-            public void run(PlotArea value) {
+            @Override public void run(PlotArea value) {
                 for (Plot plot : value.getPlots()) {
                     if (!plot.isBasePlot()) {
                         continue;
@@ -623,8 +591,7 @@ public class PS{
             }
         }
         Collections.sort(overflow, new Comparator<Plot>() {
-            @Override
-            public int compare(Plot a, Plot b) {
+            @Override public int compare(Plot a, Plot b) {
                 return a.hashCode() - b.hashCode();
             }
         });
@@ -634,14 +601,14 @@ public class PS{
 
     /**
      * Sort plots by hashcode.
+     *
      * @param plots the collection of plots to sort
      * @return the sorted collection
      * @deprecated Unchecked, please use
-     *             {@link #sortPlots(Collection, SortType, PlotArea)} which has
-     *             additional checks before calling this
+     * {@link #sortPlots(Collection, SortType, PlotArea)} which has
+     * additional checks before calling this
      */
-    @Deprecated
-    public ArrayList<Plot> sortPlotsByHash(Collection<Plot> plots) {
+    @Deprecated public ArrayList<Plot> sortPlotsByHash(Collection<Plot> plots) {
         int hardmax = 256000;
         int max = 0;
         int overflowSize = 0;
@@ -690,10 +657,10 @@ public class PS{
 
     /**
      * Unchecked, use {@link #sortPlots(Collection, SortType, PlotArea)} instead which will in turn call this.
+     *
      * @param input an array of plots to sort
      */
-    @Deprecated
-    public void sortPlotsByHash(Plot[] input) {
+    @Deprecated public void sortPlotsByHash(Plot[] input) {
         List<Plot>[] bucket = new ArrayList[32];
         for (int i = 0; i < bucket.length; i++) {
             bucket[i] = new ArrayList<>();
@@ -720,8 +687,7 @@ public class PS{
         }
     }
 
-    @Deprecated
-    public ArrayList<Plot> sortPlotsByTimestamp(Collection<Plot> plots) {
+    @Deprecated public ArrayList<Plot> sortPlotsByTimestamp(Collection<Plot> plots) {
         int hardMax = 256000;
         int max = 0;
         int overflowSize = 0;
@@ -770,12 +736,12 @@ public class PS{
 
     /**
      * Sort plots by creation timestamp.
+     *
      * @param input
-     * @deprecated Unchecked, use {@link #sortPlots(Collection, SortType, PlotArea)} instead which will call this after checks
      * @return
+     * @deprecated Unchecked, use {@link #sortPlots(Collection, SortType, PlotArea)} instead which will call this after checks
      */
-    @Deprecated
-    public List<Plot> sortPlotsByModified(Collection<Plot> input) {
+    @Deprecated public List<Plot> sortPlotsByModified(Collection<Plot> input) {
         List<Plot> list;
         if (input instanceof List) {
             list = (List<Plot>) input;
@@ -783,9 +749,9 @@ public class PS{
             list = new ArrayList<>(input);
         }
         Collections.sort(list, new Comparator<Plot>() {
-            @Override
-            public int compare(Plot a, Plot b) {
-                return Long.compare(ExpireManager.IMP.getTimestamp(a.owner), ExpireManager.IMP.getTimestamp(b.owner));
+            @Override public int compare(Plot a, Plot b) {
+                return Long.compare(ExpireManager.IMP.getTimestamp(a.owner),
+                    ExpireManager.IMP.getTimestamp(b.owner));
             }
         });
         return list;
@@ -794,13 +760,15 @@ public class PS{
     /**
      * Sort a collection of plots by world (with a priority world), then
      * by hashcode.
-     * @param plots the plots to sort
-     * @param type The sorting method to use for each world (timestamp, or hash)
+     *
+     * @param plots        the plots to sort
+     * @param type         The sorting method to use for each world (timestamp, or hash)
      * @param priorityArea Use null, "world", or "gibberish" if you
-     *        want default world order
+     *                     want default world order
      * @return ArrayList of plot
      */
-    public ArrayList<Plot> sortPlots(Collection<Plot> plots, SortType type, final PlotArea priorityArea) {
+    public ArrayList<Plot> sortPlots(Collection<Plot> plots, SortType type,
+        final PlotArea priorityArea) {
         // group by world
         // sort each
         HashMap<PlotArea, Collection<Plot>> map = new HashMap<>();
@@ -827,8 +795,7 @@ public class PS{
         }
         List<PlotArea> areas = Arrays.asList(manager.getAllPlotAreas());
         Collections.sort(areas, new Comparator<PlotArea>() {
-            @Override
-            public int compare(PlotArea a, PlotArea b) {
+            @Override public int compare(PlotArea a, PlotArea b) {
                 if (priorityArea != null && StringMan.isEqual(a.toString(), b.toString())) {
                     return -1;
                 }
@@ -860,14 +827,14 @@ public class PS{
     /**
      * A more generic way to filter plots - make your own method
      * if you need complex filters.
+     *
      * @param filters the filter
      * @return a filtered set of plots
      */
     public Set<Plot> getPlots(final PlotFilter... filters) {
         final HashSet<Plot> set = new HashSet<>();
         foreachPlotArea(new RunnableVal<PlotArea>() {
-            @Override
-            public void run(PlotArea value) {
+            @Override public void run(PlotArea value) {
                 for (PlotFilter filter : filters) {
                     if (!filter.allowsArea(value)) {
                         return;
@@ -890,14 +857,14 @@ public class PS{
 
     /**
      * Get all the plots in a single set.
+     *
      * @return Set of Plots
      */
     public Set<Plot> getPlots() {
         int size = getPlotCount();
         final Set<Plot> result = new HashSet<>(size);
         foreachPlotArea(new RunnableVal<PlotArea>() {
-            @Override
-            public void run(PlotArea value) {
+            @Override public void run(PlotArea value) {
                 result.addAll(value.getPlots());
             }
         });
@@ -929,7 +896,8 @@ public class PS{
 
     /**
      * Get all the plots owned by a player name.
-     * @param world the world
+     *
+     * @param world  the world
      * @param player the plot owner
      * @return Set of Plot
      */
@@ -940,7 +908,8 @@ public class PS{
 
     /**
      * Get all the plots owned by a player name.
-     * @param area the PlotArea
+     *
+     * @param area   the PlotArea
      * @param player the plot owner
      * @return Set of Plot
      */
@@ -951,7 +920,8 @@ public class PS{
 
     /**
      * Get all plots by a PlotPlayer.
-     * @param world the world
+     *
+     * @param world  the world
      * @param player the plot owner
      * @return Set of plot
      */
@@ -961,7 +931,8 @@ public class PS{
 
     /**
      * Get all plots by a PlotPlayer.
-     * @param area the PlotArea
+     *
+     * @param area   the PlotArea
      * @param player the plot owner
      * @return Set of plot
      */
@@ -971,8 +942,9 @@ public class PS{
 
     /**
      * Get all plots by a UUID in a world.
+     *
      * @param world the world
-     * @param uuid the plot owner
+     * @param uuid  the plot owner
      * @return Set of plot
      */
     public Set<Plot> getPlots(String world, UUID uuid) {
@@ -989,6 +961,7 @@ public class PS{
 
     /**
      * Get all plots by a UUID in an area.
+     *
      * @param area the {@code PlotArea}
      * @param uuid the plot owner
      * @return Set of plot
@@ -1008,20 +981,21 @@ public class PS{
     /**
      * Use {@link #hasPlotArea(String)}.
      * Note: Worlds may have more than one plot area
-     * @deprecated
+     *
      * @param world the world
      * @return if the world is a plotworld
+     * @deprecated
      */
-    @Deprecated
-    public boolean isPlotWorld(String world) {
+    @Deprecated public boolean isPlotWorld(String world) {
         return hasPlotArea(world);
     }
 
     /**
      * Check if a plot world.
+     *
      * @param world the world
-     * @see #getPlotAreaByString(String) to get the PlotArea object
      * @return if a plot world is registered
+     * @see #getPlotAreaByString(String) to get the PlotArea object
      */
     public boolean hasPlotArea(String world) {
         return manager.getPlotAreas(world, null).length != 0;
@@ -1030,8 +1004,7 @@ public class PS{
     public Collection<Plot> getPlots(String world) {
         final HashSet<Plot> set = new HashSet<>();
         foreachPlotArea(world, new RunnableVal<PlotArea>() {
-            @Override
-            public void run(PlotArea value) {
+            @Override public void run(PlotArea value) {
                 set.addAll(value.getPlots());
             }
         });
@@ -1040,6 +1013,7 @@ public class PS{
 
     /**
      * Get the plots for a PlotPlayer.
+     *
      * @param player the player to retrieve the plots for
      * @return Set of Plot
      */
@@ -1061,14 +1035,14 @@ public class PS{
 
     /**
      * Get the plots for a UUID.
+     *
      * @param uuid the plot owner
      * @return Set of Plot's owned by the player
      */
     public Set<Plot> getPlots(final UUID uuid) {
         final ArrayList<Plot> myPlots = new ArrayList<>();
         foreachPlot(new RunnableVal<Plot>() {
-            @Override
-            public void run(Plot value) {
+            @Override public void run(Plot value) {
                 if (value.isOwnerAbs(uuid)) {
                     myPlots.add(value);
                 }
@@ -1079,7 +1053,8 @@ public class PS{
 
     public boolean hasPlot(final UUID uuid) {
         for (PlotArea area : manager.getAllPlotAreas()) {
-            if (area.hasPlot(uuid)) return true;
+            if (area.hasPlot(uuid))
+                return true;
         }
         return false;
     }
@@ -1087,8 +1062,7 @@ public class PS{
     public Set<Plot> getBasePlots(final UUID uuid) {
         final ArrayList<Plot> myplots = new ArrayList<>();
         foreachBasePlot(new RunnableVal<Plot>() {
-            @Override
-            public void run(Plot value) {
+            @Override public void run(Plot value) {
                 if (value.isOwner(uuid)) {
                     myplots.add(value);
                 }
@@ -1099,14 +1073,14 @@ public class PS{
 
     /**
      * Get the plots for a UUID.
+     *
      * @param uuid the UUID of the owner
      * @return Set of Plot
      */
     public Set<Plot> getPlotsAbs(final UUID uuid) {
         final ArrayList<Plot> myPlots = new ArrayList<>();
         foreachPlot(new RunnableVal<Plot>() {
-            @Override
-            public void run(Plot value) {
+            @Override public void run(Plot value) {
                 if (value.isOwnerAbs(uuid)) {
                     myPlots.add(value);
                 }
@@ -1117,7 +1091,8 @@ public class PS{
 
     /**
      * Unregister a plot from local memory (does not call DB).
-     * @param plot the plot to remove
+     *
+     * @param plot      the plot to remove
      * @param callEvent If to call an event about the plot being removed
      * @return true if plot existed | false if it didn't
      */
@@ -1143,18 +1118,19 @@ public class PS{
     /**
      * This method is called by the PlotGenerator class normally.
      * <ul>
-     *     <li>Initializes the PlotArea and PlotManager classes
-     *     <li>Registers the PlotArea and PlotManager classes
-     *     <li>Loads (and/or generates) the PlotArea configuration
-     *     <li>Sets up the world border if configured
+     * <li>Initializes the PlotArea and PlotManager classes
+     * <li>Registers the PlotArea and PlotManager classes
+     * <li>Loads (and/or generates) the PlotArea configuration
+     * <li>Sets up the world border if configured
      * </ul>
-     *
+     * <p>
      * <p>If loading an augmented plot world:
      * <ul>
-     *      <li>Creates the AugmentedPopulator classes
-     *      <li>Injects the AugmentedPopulator classes if required
+     * <li>Creates the AugmentedPopulator classes
+     * <li>Injects the AugmentedPopulator classes if required
      * </ul>
-     * @param world the world to load
+     *
+     * @param world         the world to load
      * @param baseGenerator The generator for that world, or null
      */
     public void loadWorld(String world, GeneratorWrapper<?> baseGenerator) {
@@ -1186,12 +1162,14 @@ public class PS{
                 plotGenerator = baseGenerator.getPlotGenerator();
             } else if (worldSection != null) {
                 String secondaryGeneratorName = worldSection.getString("generator.plugin");
-                GeneratorWrapper<?> secondaryGenerator = this.IMP.getGenerator(world, secondaryGeneratorName);
+                GeneratorWrapper<?> secondaryGenerator =
+                    this.IMP.getGenerator(world, secondaryGeneratorName);
                 if (secondaryGenerator != null && secondaryGenerator.isFull()) {
                     plotGenerator = secondaryGenerator.getPlotGenerator();
                 } else {
                     String primaryGeneratorName = worldSection.getString("generator.init");
-                    GeneratorWrapper<?> primaryGenerator = this.IMP.getGenerator(world, primaryGeneratorName);
+                    GeneratorWrapper<?> primaryGenerator =
+                        this.IMP.getGenerator(world, primaryGeneratorName);
                     if (primaryGenerator != null && primaryGenerator.isFull()) {
                         plotGenerator = primaryGenerator.getPlotGenerator();
                     } else {
@@ -1235,7 +1213,9 @@ public class PS{
                 PS.log(C.PREFIX + "&aDetected world load for '" + world + "'");
                 String gen_string = worldSection.getString("generator.plugin", IMP.getPluginName());
                 if (type == 2) {
-                    Set<PlotCluster> clusters = this.clusters_tmp != null ? this.clusters_tmp.get(world) : new HashSet<PlotCluster>();
+                    Set<PlotCluster> clusters = this.clusters_tmp != null ?
+                        this.clusters_tmp.get(world) :
+                        new HashSet<PlotCluster>();
                     if (clusters == null) {
                         throw new IllegalArgumentException("No cluster exists for world: " + world);
                     }
@@ -1253,7 +1233,8 @@ public class PS{
                         if (areaGen == null) {
                             throw new IllegalArgumentException("Invalid Generator: " + gen_string);
                         }
-                        PlotArea pa = areaGen.getPlotGenerator().getNewPlotArea(world, name, pos1, pos2);
+                        PlotArea pa =
+                            areaGen.getPlotGenerator().getNewPlotArea(world, name, pos1, pos2);
                         pa.saveConfiguration(worldSection);
                         pa.loadDefaultConfiguration(worldSection);
                         try {
@@ -1264,7 +1245,8 @@ public class PS{
                         PS.log(C.PREFIX + "&c | &9generator: &7" + baseGenerator + ">" + areaGen);
                         PS.log(C.PREFIX + "&c | &9plotworld: &7" + pa);
                         PS.log(C.PREFIX + "&c | &9manager: &7" + pa);
-                        PS.log(C.PREFIX + "&cNote: &7Area created for cluster:" + name + " (invalid or old configuration?)");
+                        PS.log(C.PREFIX + "&cNote: &7Area created for cluster:" + name
+                            + " (invalid or old configuration?)");
                         areaGen.getPlotGenerator().initialize(pa);
                         areaGen.augment(pa);
                         toLoad.add(pa);
@@ -1295,19 +1277,22 @@ public class PS{
                 return;
             }
             if (type == 1) {
-                throw new IllegalArgumentException("Invalid type for multi-area world. Expected `2`, got `" + 1 + "`");
+                throw new IllegalArgumentException(
+                    "Invalid type for multi-area world. Expected `2`, got `" + 1 + "`");
             }
             for (String areaId : areasSection.getKeys(false)) {
                 PS.log(C.PREFIX + "&3 - " + areaId);
                 String[] split = areaId.split("(?<=[^;-])-");
                 if (split.length != 3) {
-                    throw new IllegalArgumentException("Invalid Area identifier: " + areaId + ". Expected form `<name>-<pos1>-<pos2>`");
+                    throw new IllegalArgumentException("Invalid Area identifier: " + areaId
+                        + ". Expected form `<name>-<pos1>-<pos2>`");
                 }
                 String name = split[0];
                 PlotId pos1 = PlotId.fromString(split[1]);
                 PlotId pos2 = PlotId.fromString(split[2]);
                 if (pos1 == null || pos2 == null || name.isEmpty()) {
-                    throw new IllegalArgumentException("Invalid Area identifier: " + areaId + ". Expected form `<name>-<x1;z1>-<x2;z2>`");
+                    throw new IllegalArgumentException("Invalid Area identifier: " + areaId
+                        + ". Expected form `<name>-<x1;z1>-<x2;z2>`");
                 }
                 PlotArea existing = getPlotArea(world, name);
                 if (existing != null && name.equals(existing.id)) {
@@ -1371,12 +1356,12 @@ public class PS{
 
     /**
      * Setup the configuration for a plot world based on world arguments.
-     *
+     * <p>
      * <p>
      * <i>e.g. /mv create &lt;world&gt; normal -g PlotSquared:&lt;args&gt;</i>
      *
-     * @param world The name of the world
-     * @param args The arguments
+     * @param world     The name of the world
+     * @param args      The arguments
      * @param generator the plot generator
      * @return boolean | if valid arguments were provided
      */
@@ -1398,35 +1383,44 @@ public class PS{
                     switch (key) {
                         case "s":
                         case "size":
-                            this.worlds.set(base + "plot.size", Configuration.INTEGER.parseString(value).shortValue());
+                            this.worlds.set(base + "plot.size",
+                                Configuration.INTEGER.parseString(value).shortValue());
                             break;
                         case "g":
                         case "gap":
-                            this.worlds.set(base + "road.width", Configuration.INTEGER.parseString(value).shortValue());
+                            this.worlds.set(base + "road.width",
+                                Configuration.INTEGER.parseString(value).shortValue());
                             break;
                         case "h":
                         case "height":
-                            this.worlds.set(base + "road.height", Configuration.INTEGER.parseString(value).shortValue());
-                            this.worlds.set(base + "plot.height", Configuration.INTEGER.parseString(value).shortValue());
-                            this.worlds.set(base + "wall.height", Configuration.INTEGER.parseString(value).shortValue());
+                            this.worlds.set(base + "road.height",
+                                Configuration.INTEGER.parseString(value).shortValue());
+                            this.worlds.set(base + "plot.height",
+                                Configuration.INTEGER.parseString(value).shortValue());
+                            this.worlds.set(base + "wall.height",
+                                Configuration.INTEGER.parseString(value).shortValue());
                             break;
                         case "f":
                         case "floor":
-                            this.worlds.set(base + "plot.floor",
-                                    new ArrayList<>(Arrays.asList(StringMan.join(Configuration.BLOCKLIST.parseString(value), ",").split(","))));
+                            this.worlds.set(base + "plot.floor", new ArrayList<>(Arrays.asList(
+                                StringMan.join(Configuration.BLOCKLIST.parseString(value), ",")
+                                    .split(","))));
                             break;
                         case "m":
                         case "main":
-                            this.worlds.set(base + "plot.filling",
-                                    new ArrayList<>(Arrays.asList(StringMan.join(Configuration.BLOCKLIST.parseString(value), ",").split(","))));
+                            this.worlds.set(base + "plot.filling", new ArrayList<>(Arrays.asList(
+                                StringMan.join(Configuration.BLOCKLIST.parseString(value), ",")
+                                    .split(","))));
                             break;
                         case "w":
                         case "wall":
-                            this.worlds.set(base + "wall.filling", Configuration.BLOCK.parseString(value).toString());
+                            this.worlds.set(base + "wall.filling",
+                                Configuration.BLOCK.parseString(value).toString());
                             break;
                         case "b":
                         case "border":
-                            this.worlds.set(base + "wall.block", Configuration.BLOCK.parseString(value).toString());
+                            this.worlds.set(base + "wall.block",
+                                Configuration.BLOCK.parseString(value).toString());
                             break;
                         default:
                             PS.log("&cKey not found: &7" + element);
@@ -1439,7 +1433,8 @@ public class PS{
                 }
             }
             try {
-                ConfigurationSection section = this.worlds.getConfigurationSection("worlds." + world);
+                ConfigurationSection section =
+                    this.worlds.getConfigurationSection("worlds." + world);
                 plotworld.saveConfiguration(section);
                 plotworld.loadConfiguration(section);
                 this.worlds.save(this.worldsFile);
@@ -1489,7 +1484,8 @@ public class PS{
                 }
                 Files.copy(stream, newJar.toPath());
             }
-            MainUtil.sendMessage(sender, "$1The update will take effect when the server is restarted next");
+            MainUtil.sendMessage(sender,
+                "$1The update will take effect when the server is restarted next");
             return true;
         } catch (IOException e) {
             MainUtil.sendMessage(sender, "Failed to update " + IMP.getPluginName() + "");
@@ -1503,7 +1499,8 @@ public class PS{
 
     /**
      * Copy a file from inside the jar to a location
-     * @param file Name of the file inside PlotSquared.jar
+     *
+     * @param file   Name of the file inside PlotSquared.jar
      * @param folder The output location relative to /plugins/PlotSquared/
      */
     public void copyFile(String file, String folder) {
@@ -1519,7 +1516,8 @@ public class PS{
             try (InputStream stream = this.IMP.getClass().getResourceAsStream(file)) {
                 byte[] buffer = new byte[2048];
                 if (stream == null) {
-                    try (ZipInputStream zis = new ZipInputStream(new FileInputStream(this.jarFile))) {
+                    try (ZipInputStream zis = new ZipInputStream(
+                        new FileInputStream(this.jarFile))) {
                         ZipEntry ze = zis.getNextEntry();
                         while (ze != null) {
                             String name = ze.getName();
@@ -1575,8 +1573,7 @@ public class PS{
             // Validate that all data in the db is correct
             final HashSet<Plot> plots = new HashSet<>();
             foreachPlotRaw(new RunnableVal<Plot>() {
-                @Override
-                public void run(Plot value) {
+                @Override public void run(Plot value) {
                     plots.add(value);
                 }
             });
@@ -1601,8 +1598,9 @@ public class PS{
             }
             Database database;
             if (Storage.MySQL.USE) {
-                database = new com.intellectualcrafters.plot.database.MySQL(Storage.MySQL.HOST, Storage.MySQL.PORT, Storage.MySQL.DATABASE,
-                        Storage.MySQL.USER, Storage.MySQL.PASSWORD);
+                database = new com.intellectualcrafters.plot.database.MySQL(Storage.MySQL.HOST,
+                    Storage.MySQL.PORT, Storage.MySQL.DATABASE, Storage.MySQL.USER,
+                    Storage.MySQL.PASSWORD);
             } else if (Storage.SQLite.USE) {
                 File file = MainUtil.getFile(IMP.getDirectory(), Storage.SQLite.DB + ".db");
                 database = new com.intellectualcrafters.plot.database.SQLite(file);
@@ -1625,7 +1623,8 @@ public class PS{
             }
             this.clusters_tmp = DBFunc.getClusters();
         } catch (ClassNotFoundException | SQLException e) {
-            PS.log(C.PREFIX + "&cFailed to open DATABASE connection. The plugin will disable itself.");
+            PS.log(
+                C.PREFIX + "&cFailed to open DATABASE connection. The plugin will disable itself.");
             if (Storage.MySQL.USE) {
                 PS.log("$4MYSQL");
             } else if (Storage.SQLite.USE) {
@@ -1634,21 +1633,24 @@ public class PS{
             PS.log("&d==== Here is an ugly stacktrace, if you are interested in those things ===");
             e.printStackTrace();
             PS.log("&d==== End of stacktrace ====");
-            PS.log("&6Please go to the " + IMP.getPluginName() + " 'storage.yml' and configure the database correctly.");
+            PS.log("&6Please go to the " + IMP.getPluginName()
+                + " 'storage.yml' and configure the database correctly.");
             this.IMP.disable();
         }
     }
 
     /**
      * Setup the default configuration.
+     *
      * @throws IOException if the config failed to save
      */
     public void setupConfig() throws IOException {
         String lastVersionString = this.config.getString("version");
         if (lastVersionString != null) {
             String[] split = lastVersionString.split("\\.");
-            int[] lastVersion = new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])};
-            if (checkVersion(new int[]{3, 4, 0}, lastVersion)) {
+            int[] lastVersion = new int[] {Integer.parseInt(split[0]), Integer.parseInt(split[1]),
+                Integer.parseInt(split[2])};
+            if (checkVersion(new int[] {3, 4, 0}, lastVersion)) {
                 Settings.convertLegacy(configFile);
                 if (config.contains("worlds")) {
                     ConfigurationSection worldSection = config.getConfigurationSection("worlds");
@@ -1672,7 +1674,8 @@ public class PS{
             this.version = PlotVersion.tryParse(versionString);
             Settings.DATE = new Date(100 + version.year, version.month, version.day).toGMTString();
             Settings.BUILD = "https://ci.athion.net/job/PlotSquared/" + version.build;
-            Settings.COMMIT = "https://github.com/IntellectualSites/PlotSquared/commit/" + Integer.toHexString(version.hash);
+            Settings.COMMIT = "https://github.com/IntellectualSites/PlotSquared/commit/" + Integer
+                .toHexString(version.hash);
             System.out.println("Version is " + this.version);
         } catch (Throwable ignore) {
             ignore.printStackTrace();
@@ -1683,14 +1686,15 @@ public class PS{
 
     /**
      * Setup all configuration files<br>
-     *  - Config: settings.yml<br>
-     *  - Storage: storage.yml<br>
-     *  - Translation: PlotSquared.use_THIS.yml, style.yml<br>
+     * - Config: settings.yml<br>
+     * - Storage: storage.yml<br>
+     * - Translation: PlotSquared.use_THIS.yml, style.yml<br>
      */
     public void setupConfigs() {
         File folder = new File(this.IMP.getDirectory(), "config");
         if (!folder.exists() && !folder.mkdirs()) {
-            PS.log(C.PREFIX + "&cFailed to create the /plugins/config folder. Please create it manually.");
+            PS.log(C.PREFIX
+                + "&cFailed to create the /plugins/config folder. Please create it manually.");
         }
         try {
             this.worldsFile = new File(folder, "worlds.yml");
@@ -1704,7 +1708,8 @@ public class PS{
         try {
             this.configFile = new File(folder, "settings.yml");
             if (!this.configFile.exists() && !this.configFile.createNewFile()) {
-                PS.log("Could not create the settings file, please create \"settings.yml\" manually.");
+                PS.log(
+                    "Could not create the settings file, please create \"settings.yml\" manually.");
             }
             this.config = YamlConfiguration.loadConfiguration(this.configFile);
             setupConfig();
@@ -1712,13 +1717,15 @@ public class PS{
             PS.log("Failed to save settings.yml");
         }
         try {
-            this.styleFile = MainUtil.getFile(IMP.getDirectory(), Settings.Paths.TRANSLATIONS + File.separator + "style.yml");
+            this.styleFile = MainUtil.getFile(IMP.getDirectory(),
+                Settings.Paths.TRANSLATIONS + File.separator + "style.yml");
             if (!this.styleFile.exists()) {
                 if (!this.styleFile.getParentFile().exists()) {
                     this.styleFile.getParentFile().mkdirs();
                 }
                 if (!this.styleFile.createNewFile()) {
-                    PS.log("Could not create the style file, please create \"translations/style.yml\" manually");
+                    PS.log(
+                        "Could not create the style file, please create \"translations/style.yml\" manually");
                 }
             }
             this.style = YamlConfiguration.loadConfiguration(this.styleFile);
@@ -1730,7 +1737,8 @@ public class PS{
         try {
             this.storageFile = new File(folder, "storage.yml");
             if (!this.storageFile.exists() && !this.storageFile.createNewFile()) {
-                PS.log("Could not the storage settings file, please create \"storage.yml\" manually.");
+                PS.log(
+                    "Could not the storage settings file, please create \"storage.yml\" manually.");
             }
             this.storage = YamlConfiguration.loadConfiguration(this.storageFile);
             setupStorage();
@@ -1740,7 +1748,8 @@ public class PS{
         try {
             this.commandsFile = new File(folder, "commands.yml");
             if (!this.commandsFile.exists() && !this.commandsFile.createNewFile()) {
-                PS.log("Could not the storage settings file, please create \"commands.yml\" manually.");
+                PS.log(
+                    "Could not the storage settings file, please create \"commands.yml\" manually.");
             }
             this.commands = YamlConfiguration.loadConfiguration(this.commandsFile);
         } catch (IOException ignored) {
@@ -1771,7 +1780,8 @@ public class PS{
         if (Settings.DEBUG) {
             Map<String, Object> components = Settings.getFields(Settings.Enabled_Components.class);
             for (Entry<String, Object> component : components.entrySet()) {
-                PS.log(C.PREFIX + String.format("&cKey: &6%s&c, Value: &6%s", component.getKey(), component.getValue()));
+                PS.log(C.PREFIX + String.format("&cKey: &6%s&c, Value: &6%s", component.getKey(),
+                    component.getValue()));
             }
         }
     }
@@ -1797,6 +1807,7 @@ public class PS{
 
     /**
      * Get the Java version.
+     *
      * @return the java version
      */
     public double getJavaVersion() {
@@ -1873,10 +1884,10 @@ public class PS{
 
     /**
      * Not recommended for use since worlds can have multiple PlotAreas.
+     *
      * @return Set of world names
      */
-    @Deprecated
-    public Set<String> getPlotWorldStrings() {
+    @Deprecated public Set<String> getPlotWorldStrings() {
         HashSet<String> set = new HashSet<>(manager.getAllPlotAreas().length);
         for (String world : manager.getAllWorlds()) {
             if (manager.getPlotAreas(world, null).length != 0) {
@@ -1899,6 +1910,7 @@ public class PS{
 
     /**
      * Get a list of PlotArea objects.
+     *
      * @param world the world
      * @return Collection of PlotArea objects
      */
@@ -1911,12 +1923,13 @@ public class PS{
     /**
      * Get the relevant plot area for a specified location.
      * <ul>
-     *     <li>If there is only one plot area globally that will be returned.
-     *     <li>If there is only one plot area in the world, it will return that.
-     *     <li>If the plot area for a location cannot be unambiguously
-     *         resolved, null will be returned.
+     * <li>If there is only one plot area globally that will be returned.
+     * <li>If there is only one plot area in the world, it will return that.
+     * <li>If the plot area for a location cannot be unambiguously
+     * resolved, null will be returned.
      * </ul>
      * Note: An applicable plot area may not include the location i.e. clusters
+     *
      * @param location the location
      * @return
      */
@@ -1931,8 +1944,8 @@ public class PS{
     /**
      * Get the {@code PlotArea} which contains a location.
      * <ul>
-     *     <li>If the plot area does not contain a location, null
-     *         will be returned.
+     * <li>If the plot area does not contain a location, null
+     * will be returned.
      * </ul>
      *
      * @param location the location
@@ -1948,7 +1961,8 @@ public class PS{
         if (areas == null) {
             for (PlotArea area : manager.getAllPlotAreas()) {
                 if (area.worldname.equalsIgnoreCase(split[0])) {
-                    if (area.id == null || split.length == 2 && area.id.equalsIgnoreCase(split[1])) {
+                    if (area.id == null || split.length == 2 && area.id
+                        .equalsIgnoreCase(split[1])) {
                         return area;
                     }
                 }
@@ -1968,27 +1982,27 @@ public class PS{
             return null;
         }
     }
-    
+
     /**
      * Get Plots based on alias
      *
-     * @param alias to search plots
+     * @param alias     to search plots
      * @param worldname to filter alias to a specific world [optional] null means all worlds
-     *
      * @return Set<{@link Plot}> empty if nothing found
      */
     public Set<Plot> getPlotsByAlias(String alias, String worldname) {
-    	Set<Plot> result = new HashSet<>();
-    	
-    	if (alias != null) {
-    		for (Plot plot : getPlots()) {
-    			if (alias.equals(plot.getAlias()) && (worldname == null || worldname.equals(plot.getWorldName()))) {    				
-    				result.add(plot);    				
-    			}
-    		}
-    	}
-    	
-    	return result;
+        Set<Plot> result = new HashSet<>();
+
+        if (alias != null) {
+            for (Plot plot : getPlots()) {
+                if (alias.equals(plot.getAlias()) && (worldname == null || worldname
+                    .equals(plot.getWorldName()))) {
+                    result.add(plot);
+                }
+            }
+        }
+
+        return result;
     }
 
     public Set<PlotArea> getPlotAreas(String world, RegionWrapper region) {

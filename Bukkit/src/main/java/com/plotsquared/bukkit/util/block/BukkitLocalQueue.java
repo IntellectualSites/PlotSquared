@@ -4,34 +4,35 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.block.BasicLocalBlockQueue;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
+
+    private Field fieldNeighbors;
+    private Method chunkGetHandle;
 
     public BukkitLocalQueue(String world) {
         super(world);
     }
 
-    @Override
-    public LocalChunk<T> getLocalChunk(int x, int z) {
+    @Override public LocalChunk<T> getLocalChunk(int x, int z) {
         return (LocalChunk<T>) new BasicLocalChunk(this, x, z) {
             // Custom stuff?
         };
     }
 
-    @Override
-    public void optimize() {
+    @Override public void optimize() {
 
     }
 
-    @Override
-    public PlotBlock getBlock(int x, int y, int z) {
+    @Override public PlotBlock getBlock(int x, int y, int z) {
         World worldObj = Bukkit.getWorld(getWorld());
         Block block = worldObj.getBlockAt(x, y, z);
         if (block == null) {
@@ -44,25 +45,21 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
         return PlotBlock.get(id, block.getData());
     }
 
-    @Override
-    public void refreshChunk(int x, int z) {
+    @Override public void refreshChunk(int x, int z) {
         World worldObj = Bukkit.getWorld(getWorld());
         worldObj.refreshChunk(x, z);
     }
 
-    @Override
-    public void fixChunkLighting(int x, int z) {
+    @Override public void fixChunkLighting(int x, int z) {
         // Do nothing
     }
 
-    @Override
-    public final void regenChunk(int x, int z) {
+    @Override public final void regenChunk(int x, int z) {
         World worldObj = Bukkit.getWorld(getWorld());
         worldObj.regenerateChunk(x, z);
     }
 
-    @Override
-    public final void setComponents(LocalChunk<T> lc) {
+    @Override public final void setComponents(LocalChunk<T> lc) {
         setBlocks(lc);
         setBiomes(lc);
     }
@@ -129,13 +126,11 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
         }
     }
 
-    private Field fieldNeighbors;
-    private Method chunkGetHandle;
-
     /**
      * Exploiting a bug in the vanilla lighting algorithm for faster block placement
-     *  - Could have been achieved without reflection by force unloading specific chunks
-     *  - Much faster just setting the variable manually though
+     * - Could have been achieved without reflection by force unloading specific chunks
+     * - Much faster just setting the variable manually though
+     *
      * @param chunk
      * @return
      */
@@ -153,7 +148,8 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
             Object value = fieldNeighbors.get(nmsChunk);
             fieldNeighbors.set(nmsChunk, 0);
             return new Object[] {nmsChunk, value};
-        } catch (Throwable ignore) {}
+        } catch (Throwable ignore) {
+        }
         return null;
     }
 
@@ -181,7 +177,8 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
         if (disableResult != null) {
             try {
                 fieldNeighbors.set(disableResult[0], 0x739C0);
-            } catch (Throwable ignore) {}
+            } catch (Throwable ignore) {
+            }
         }
     }
 }

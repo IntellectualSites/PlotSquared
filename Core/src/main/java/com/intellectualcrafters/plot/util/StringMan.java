@@ -1,13 +1,8 @@
 package com.intellectualcrafters.plot.util;
 
 import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 public class StringMan {
 
@@ -116,7 +111,8 @@ public class StringMan {
     public static boolean isAlphanumeric(String str) {
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
-            if ((c < 0x30) || ((c >= 0x3a) && (c <= 0x40)) || ((c > 0x5a) && (c <= 0x60)) || (c > 0x7a)) {
+            if ((c < 0x30) || ((c >= 0x3a) && (c <= 0x40)) || ((c > 0x5a) && (c <= 0x60)) || (c
+                > 0x7a)) {
                 return false;
             }
         }
@@ -150,8 +146,7 @@ public class StringMan {
     public static String joinOrdered(Collection<?> collection, String delimiter) {
         Object[] array = collection.toArray();
         Arrays.sort(array, new Comparator<Object>() {
-            @Override
-            public int compare(Object a, Object b) {
+            @Override public int compare(Object a, Object b) {
                 return a.hashCode() - b.hashCode();
             }
 
@@ -250,11 +245,13 @@ public class StringMan {
     }
 
     public static boolean isEqual(String a, String b) {
-        return (a == b) || ((a != null) && (b != null) && (a.length() == b.length()) && (a.hashCode() == b.hashCode()) && a.equals(b));
+        return (a == b) || ((a != null) && (b != null) && (a.length() == b.length()) && (
+            a.hashCode() == b.hashCode()) && a.equals(b));
     }
 
     public static boolean isEqualIgnoreCase(String a, String b) {
-        return (a == b) || ((a != null) && (b != null) && (a.length() == b.length()) && a.equalsIgnoreCase(b));
+        return (a == b) || ((a != null) && (b != null) && (a.length() == b.length()) && a
+            .equalsIgnoreCase(b));
     }
 
     public static String repeat(String s, int n) {
@@ -263,6 +260,15 @@ public class StringMan {
             sb.append(s);
         }
         return sb.toString();
+    }
+
+    public static boolean contains(String name, char c) {
+        for (char current : name.toCharArray()) {
+            if (c == current) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public <T> Collection<T> match(Collection<T> col, String startsWith) {
@@ -278,14 +284,5 @@ public class StringMan {
             }
         }
         return col;
-    }
-
-    public static boolean contains(String name, char c) {
-        for (char current : name.toCharArray()) {
-            if (c == current) {
-                return true;
-            }
-        }
-        return false;
     }
 }

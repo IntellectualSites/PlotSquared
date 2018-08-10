@@ -16,13 +16,14 @@ import org.spongepowered.api.world.extent.ImmutableBiomeVolume;
 import org.spongepowered.api.world.extent.MutableBlockVolume;
 import org.spongepowered.api.world.gen.GenerationPopulator;
 
-public class SpongeTerrainGen implements GenerationPopulator, GeneratorWrapper<GenerationPopulator> {
-    
+public class SpongeTerrainGen
+    implements GenerationPopulator, GeneratorWrapper<GenerationPopulator> {
+
     public final IndependentPlotGenerator child;
     private final boolean full;
     private final GenerationPopulator platformGenerator;
     private final PseudoRandom random = new PseudoRandom();
-    
+
     public SpongeTerrainGen(IndependentPlotGenerator ipg) {
         this.child = ipg;
         this.full = true;
@@ -36,7 +37,7 @@ public class SpongeTerrainGen implements GenerationPopulator, GeneratorWrapper<G
         this.full = false;
         MainUtil.initCache();
     }
-    
+
     @Override
     public void populate(World world, MutableBlockVolume terrain, ImmutableBiomeVolume biomes) {
         if (platformGenerator != this) {
@@ -75,23 +76,19 @@ public class SpongeTerrainGen implements GenerationPopulator, GeneratorWrapper<G
         }
     }
 
-    @Override
-    public IndependentPlotGenerator getPlotGenerator() {
+    @Override public IndependentPlotGenerator getPlotGenerator() {
         return child;
     }
 
-    @Override
-    public GenerationPopulator getPlatformGenerator() {
+    @Override public GenerationPopulator getPlatformGenerator() {
         return platformGenerator;
     }
 
-    @Override
-    public void augment(PlotArea area) {
+    @Override public void augment(PlotArea area) {
         SpongeAugmentedGenerator.get(SpongeUtil.getWorld(area.worldname));
     }
 
-    @Override
-    public boolean isFull() {
+    @Override public boolean isFull() {
         return this.full;
     }
 }

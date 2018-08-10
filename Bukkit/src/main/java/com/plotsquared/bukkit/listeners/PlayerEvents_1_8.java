@@ -11,9 +11,6 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.listener.PlotListener;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -31,12 +28,17 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
+
 public class PlayerEvents_1_8 extends PlotListener implements Listener {
-    
+
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
-        if (!event.isLeftClick() || (event.getAction() != InventoryAction.PLACE_ALL) || event.isShiftClick()) {
+        if (!event.isLeftClick() || (event.getAction() != InventoryAction.PLACE_ALL) || event
+            .isShiftClick()) {
             return;
         }
         HumanEntity entity = event.getWhoClicked();
@@ -71,7 +73,8 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
             switch (newItem.getType()) {
                 case BANNER:
                 case SKULL_ITEM:
-                    if (newMeta != null) break;
+                    if (newMeta != null)
+                        break;
                 default:
                     return;
             }
@@ -89,9 +92,11 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
             switch (stateType) {
                 case STANDING_BANNER:
                 case WALL_BANNER:
-                    if (itemType == Material.BANNER) break;
+                    if (itemType == Material.BANNER)
+                        break;
                 case SKULL:
-                    if (itemType == Material.SKULL_ITEM) break;
+                    if (itemType == Material.SKULL_ITEM)
+                        break;
                 default:
                     return;
             }
@@ -124,15 +129,18 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
             }
         }
         if (cancelled) {
-            if ((current.getType() == newItem.getType()) && (current.getDurability() == newItem.getDurability())) {
-                event.setCursor(new ItemStack(newItem.getType(), newItem.getAmount(), newItem.getDurability()));
+            if ((current.getType() == newItem.getType()) && (current.getDurability() == newItem
+                .getDurability())) {
+                event.setCursor(
+                    new ItemStack(newItem.getType(), newItem.getAmount(), newItem.getDurability()));
                 event.setCancelled(true);
                 return;
             }
-            event.setCursor(new ItemStack(newItem.getType(), newItem.getAmount(), newItem.getDurability()));
+            event.setCursor(
+                new ItemStack(newItem.getType(), newItem.getAmount(), newItem.getDurability()));
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInteract(PlayerInteractAtEntityEvent e) {
         Entity entity = e.getRightClicked();

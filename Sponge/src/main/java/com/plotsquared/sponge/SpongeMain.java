@@ -19,44 +19,18 @@ import com.intellectualcrafters.plot.object.worlds.PlotAreaManager;
 import com.intellectualcrafters.plot.object.worlds.SinglePlotArea;
 import com.intellectualcrafters.plot.object.worlds.SinglePlotAreaManager;
 import com.intellectualcrafters.plot.object.worlds.SingleWorldGenerator;
-import com.intellectualcrafters.plot.util.AbstractTitle;
-import com.intellectualcrafters.plot.util.ChatManager;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.InventoryUtil;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
-import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.block.QueueProvider;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.sponge.generator.SpongePlotGenerator;
 import com.plotsquared.sponge.listener.ChunkProcessor;
 import com.plotsquared.sponge.listener.MainListener;
 import com.plotsquared.sponge.listener.WorldEvents;
-import com.plotsquared.sponge.util.KillRoadMobs;
-import com.plotsquared.sponge.util.SpongeChatManager;
-import com.plotsquared.sponge.util.SpongeChunkManager;
-import com.plotsquared.sponge.util.SpongeCommand;
-import com.plotsquared.sponge.util.SpongeEconHandler;
-import com.plotsquared.sponge.util.SpongeEventUtil;
-import com.plotsquared.sponge.util.SpongeHybridUtils;
-import com.plotsquared.sponge.util.SpongeInventoryUtil;
-import com.plotsquared.sponge.util.SpongeSchematicHandler;
-import com.plotsquared.sponge.util.SpongeSetupUtils;
-import com.plotsquared.sponge.util.SpongeTaskManager;
-import com.plotsquared.sponge.util.SpongeTitleManager;
-import com.plotsquared.sponge.util.SpongeUtil;
+import com.plotsquared.sponge.util.*;
 import com.plotsquared.sponge.util.block.SpongeLocalQueue;
 import com.plotsquared.sponge.uuid.SpongeLowerOfflineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeOnlineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeUUIDHandler;
-import java.io.IOException;
 import net.minecrell.mcstats.SpongeStatsLite;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
@@ -77,6 +51,7 @@ import org.spongepowered.api.world.gen.WorldGenerator;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -84,29 +59,18 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Plugin(id = "plotsquared", name = "PlotSquared", description = "Easy, yet powerful Plot World generation and management.",
-        url = "https://github.com/IntellectualSites/PlotSquared", version = "3.5.0-SNAPSHOT")
+@Plugin(id = "plotsquared", name = "PlotSquared", description = "Easy, yet powerful Plot World generation and management.", url = "https://github.com/IntellectualSites/PlotSquared", version = "3.5.0-SNAPSHOT")
 public class SpongeMain implements IPlotMain {
 
     public static SpongeMain THIS;
 
-    @Inject
-    public PluginContainer plugin;
-
-    @Inject
-    private Logger logger;
-
-    @Inject
-    private Game game;
-
-    @Inject
-    public SpongeStatsLite stats;
-
+    @Inject public PluginContainer plugin;
+    @Inject public SpongeStatsLite stats;
+    @Inject private Logger logger;
+    @Inject private Game game;
     private Server server;
 
-    @Inject
-    @ConfigDir(sharedRoot = false)
-    private Path privateConfigDir;
+    @Inject @ConfigDir(sharedRoot = false) private Path privateConfigDir;
 
     private GameProfileManager resolver;
 
@@ -133,23 +97,23 @@ public class SpongeMain implements IPlotMain {
         return THIS;
     }
 
-    @Listener
-    public void onPreInitialize(GamePreInitializationEvent event) {
-        getLogger().info("The metrics section in PlotSquared is ignored in favor of the actual metrics reporter configurations.");
+    @Listener public void onPreInitialize(GamePreInitializationEvent event) {
+        getLogger().info(
+            "The metrics section in PlotSquared is ignored in favor of the actual metrics reporter configurations.");
         this.stats.start();
     }
 
-    @Listener
-    public void onServerAboutToStart(GameAboutToStartServerEvent event) {
+    @Listener public void onServerAboutToStart(GameAboutToStartServerEvent event) {
         THIS = this;
         new PS(this, "Sponge");
         this.server = this.game.getServer();
-        this.game.getRegistry().register(WorldGeneratorModifier.class, (WorldGeneratorModifier) PS.get().IMP.getDefaultGenerator().specify(null));
-        this.game.getRegistry().register(WorldGeneratorModifier.class, (WorldGeneratorModifier) new SingleWorldGenerator().specify(null));
+        this.game.getRegistry().register(WorldGeneratorModifier.class,
+            (WorldGeneratorModifier) PS.get().IMP.getDefaultGenerator().specify(null));
+        this.game.getRegistry().register(WorldGeneratorModifier.class,
+            (WorldGeneratorModifier) new SingleWorldGenerator().specify(null));
         if (Settings.Enabled_Components.WORLDS) {
             TaskManager.IMP.taskRepeat(new Runnable() {
-                @Override
-                public void run() {
+                @Override public void run() {
                     unload();
                 }
             }, 20);
@@ -190,8 +154,7 @@ public class SpongeMain implements IPlotMain {
         }
     }
 
-    @Override
-    public void log(String message) {
+    @Override public void log(String message) {
         message = C.format(message, C.replacements);
         if (!Settings.Chat.CONSOLE_COLOR) {
             message = message.replaceAll('\u00a7' + "[a-z|0-9]", "");
@@ -203,119 +166,102 @@ public class SpongeMain implements IPlotMain {
         this.server.getConsole().sendMessage(SpongeUtil.getText(message));
     }
 
-    @Override
-    public File getDirectory() {
+    @Override public File getDirectory() {
         return privateConfigDir.toFile();
     }
 
-    @Override
-    public File getWorldContainer() {
+    @Override public File getWorldContainer() {
         return new File(game.getSavesDirectory().toFile(), "world");
     }
 
-    @Override
-    public void disable() {
+    @Override public void disable() {
         PS.get().disable();
         THIS = null;
     }
 
-    @Override
-    public int[] getPluginVersion() {
+    @Override public int[] getPluginVersion() {
         String ver = this.plugin.getVersion().orElse("");
         String[] split = ver.split("[\\.|-]");
-        return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])};
+        return new int[] {Integer.parseInt(split[0]), Integer.parseInt(split[1]),
+            Integer.parseInt(split[2])};
     }
 
     @Override public String getPluginVersionString() {
         return this.plugin.getVersion().orElse("");
     }
 
-    @Override
-    public String getPluginName() {
+    @Override public String getPluginName() {
         return "PlotSquared";
     }
 
-    @Override
-    public int[] getServerVersion() {
+    @Override public int[] getServerVersion() {
         PS.log("Checking minecraft version: Sponge: ");
         String version = this.game.getPlatform().getMinecraftVersion().getName();
         String[] split = version.split("\\.");
-        return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), split.length == 3 ? Integer.parseInt(split[2]) : 0};
+        return new int[] {Integer.parseInt(split[0]), Integer.parseInt(split[1]),
+            split.length == 3 ? Integer.parseInt(split[2]) : 0};
     }
 
-    @Override
-    public InventoryUtil initInventoryUtil() {
+    @Override public InventoryUtil initInventoryUtil() {
         return new SpongeInventoryUtil();
     }
 
-    @Override
-    public EconHandler getEconomyHandler() {
+    @Override public EconHandler getEconomyHandler() {
         SpongeEconHandler econ = new SpongeEconHandler();
         Sponge.getEventManager().registerListeners(this, econ);
         return econ;
     }
 
-    @Override
-    public EventUtil initEventUtil() {
+    @Override public EventUtil initEventUtil() {
         return new SpongeEventUtil();
     }
 
-    @Override
-    public ChunkManager initChunkManager() {
+    @Override public ChunkManager initChunkManager() {
         return new SpongeChunkManager();
     }
 
-    @Override
-    public SetupUtils initSetupUtils() {
+    @Override public SetupUtils initSetupUtils() {
         return new SpongeSetupUtils();
     }
 
-    @Override
-    public HybridUtils initHybridUtils() {
+    @Override public HybridUtils initHybridUtils() {
         return new SpongeHybridUtils();
     }
 
-    @Override
-    public SchematicHandler initSchematicHandler() {
+    @Override public SchematicHandler initSchematicHandler() {
         return new SpongeSchematicHandler();
     }
 
-    @Override
-    public TaskManager getTaskManager() {
+    @Override public TaskManager getTaskManager() {
         return new SpongeTaskManager(this);
     }
 
-    @Override
-    public void runEntityTask() {
+    @Override public void runEntityTask() {
         new KillRoadMobs().run();
     }
 
-    @Override
-    public void registerCommands() {
-        getGame().getCommandManager().register(THIS, new SpongeCommand(), "plots", "p", "plot", "ps", "plotsquared", "p2", "2");
+    @Override public void registerCommands() {
+        getGame().getCommandManager()
+            .register(THIS, new SpongeCommand(), "plots", "p", "plot", "ps", "plotsquared", "p2",
+                "2");
     }
 
-    @Override
-    public void registerPlayerEvents() {
+    @Override public void registerPlayerEvents() {
         Sponge.getEventManager().registerListeners(this, new MainListener());
     }
 
-    @Override
-    public void registerInventoryEvents() {
+    @Override public void registerInventoryEvents() {
         // Part of PlayerEvents - can be moved if necessary
     }
 
-    @Override
-    public void registerPlotPlusEvents() {
+    @Override public void registerPlotPlusEvents() {
         PS.log("registerPlotPlusEvents is not implemented!");
     }
 
-    @Override
-    public void registerForceFieldEvents() {
+    @Override public void registerForceFieldEvents() {
     }
 
-    @Override
-    public boolean initWorldEdit() {
+    @Override public boolean initWorldEdit() {
         try {
             Class.forName("com.sk89q.worldedit.WorldEdit");
         } catch (ClassNotFoundException ignored) {
@@ -324,8 +270,7 @@ public class SpongeMain implements IPlotMain {
         return true;
     }
 
-    @Override
-    public UUIDHandlerImplementation initUUIDHandler() {
+    @Override public UUIDHandlerImplementation initUUIDHandler() {
         UUIDWrapper wrapper;
         if (Settings.UUID.OFFLINE) {
             wrapper = new SpongeLowerOfflineUUIDWrapper();
@@ -335,36 +280,31 @@ public class SpongeMain implements IPlotMain {
         return new SpongeUUIDHandler(wrapper);
     }
 
-    @Override
-    public boolean initPlotMeConverter() {
+    @Override public boolean initPlotMeConverter() {
         return false;
     }
 
-    @Override
-    public void unregister(PlotPlayer player) {
+    @Override public void unregister(PlotPlayer player) {
         SpongeUtil.removePlayer(player.getName());
     }
 
-    @Override
-    public void registerChunkProcessor() {
+    @Override public void registerChunkProcessor() {
         Sponge.getEventManager().registerListeners(this, new ChunkProcessor());
     }
 
-    @Override
-    public void registerWorldEvents() {
+    @Override public void registerWorldEvents() {
         Sponge.getEventManager().registerListeners(this, new WorldEvents());
     }
 
-    @Override
-    public void startMetrics() {
+    @Override public void startMetrics() {
     }
 
-    @Override
-    public void setGenerator(String worldName) {
+    @Override public void setGenerator(String worldName) {
         World world = SpongeUtil.getWorld(worldName);
         if (world == null) {
             // create world
-            ConfigurationSection worldConfig = PS.get().worlds.getConfigurationSection("worlds." + worldName);
+            ConfigurationSection worldConfig =
+                PS.get().worlds.getConfigurationSection("worlds." + worldName);
             String manager = worldConfig.getString("generator.plugin", "PlotSquared");
             String generator = worldConfig.getString("generator.init", manager);
 
@@ -387,17 +327,16 @@ public class SpongeMain implements IPlotMain {
         if (gen instanceof GeneratorWrapper) {
             PS.get().loadWorld(worldName, (GeneratorWrapper) gen);
         } else {
-            throw new UnsupportedOperationException("NOT IMPLEMENTED YET2! " + worldName + " | " + gen);
+            throw new UnsupportedOperationException(
+                "NOT IMPLEMENTED YET2! " + worldName + " | " + gen);
         }
     }
 
-    @Override
-    public AbstractTitle initTitleManager() {
+    @Override public AbstractTitle initTitleManager() {
         return new SpongeTitleManager();
     }
 
-    @Override
-    public PlotPlayer wrapPlayer(Object player) {
+    @Override public PlotPlayer wrapPlayer(Object player) {
         if (player instanceof Player) {
             return SpongeUtil.getPlayer((Player) player);
         } else if (UUIDHandler.implementation == null) {
@@ -411,33 +350,29 @@ public class SpongeMain implements IPlotMain {
         return null;
     }
 
-    @Override
-    public String getNMSPackage() {
+    @Override public String getNMSPackage() {
         return "";//TODO FIXME
     }
 
-    @Override
-    public ChatManager<?> initChatManager() {
+    @Override public ChatManager<?> initChatManager() {
         return new SpongeChatManager();
     }
 
-    @Override
-    public QueueProvider initBlockQueue() {
+    @Override public QueueProvider initBlockQueue() {
         MainUtil.canSendChunk = true;
         return QueueProvider.of(SpongeLocalQueue.class, null);
     }
 
-    @Override
-    public WorldUtil initWorldUtil() {
+    @Override public WorldUtil initWorldUtil() {
         return new SpongeUtil();
     }
 
-    @Override
-    public GeneratorWrapper<?> getGenerator(String world, String name) {
+    @Override public GeneratorWrapper<?> getGenerator(String world, String name) {
         if (name == null) {
             return null;
         }
-        Collection<WorldGeneratorModifier> wgms = this.game.getRegistry().getAllOf(WorldGeneratorModifier.class);
+        Collection<WorldGeneratorModifier> wgms =
+            this.game.getRegistry().getAllOf(WorldGeneratorModifier.class);
         for (WorldGeneratorModifier wgm : wgms) {
             if (StringMan.isEqualIgnoreCaseToAny(name, wgm.getName(), wgm.getId())) {
                 if (wgm instanceof GeneratorWrapper<?>) {
@@ -454,14 +389,13 @@ public class SpongeMain implements IPlotMain {
         return new SpongePlotGenerator(generator);
     }
 
-    @Override
-    public List<String> getPluginIds() {
-        return this.game.getPluginManager().getPlugins().stream().map(plugin1 -> plugin1.getName() + ';' + plugin1.getVersion() + ':' + true)
-                .collect(Collectors.toCollection(ArrayList::new));
+    @Override public List<String> getPluginIds() {
+        return this.game.getPluginManager().getPlugins().stream()
+            .map(plugin1 -> plugin1.getName() + ';' + plugin1.getVersion() + ':' + true)
+            .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    @Override
-    public IndependentPlotGenerator getDefaultGenerator() {
+    @Override public IndependentPlotGenerator getDefaultGenerator() {
         return new HybridGen();
     }
 }

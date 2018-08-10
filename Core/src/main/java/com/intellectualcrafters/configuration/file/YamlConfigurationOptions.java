@@ -6,43 +6,38 @@ package com.intellectualcrafters.configuration.file;
  */
 public class YamlConfigurationOptions extends FileConfigurationOptions {
     private int indent = 2;
-    
+
     YamlConfigurationOptions(YamlConfiguration configuration) {
         super(configuration);
     }
-    
-    @Override
-    public YamlConfiguration configuration() {
+
+    @Override public YamlConfiguration configuration() {
         return (YamlConfiguration) super.configuration();
     }
-    
-    @Override
-    public YamlConfigurationOptions copyDefaults(boolean value) {
+
+    @Override public YamlConfigurationOptions copyDefaults(boolean value) {
         super.copyDefaults(value);
         return this;
     }
-    
-    @Override
-    public YamlConfigurationOptions pathSeparator(char value) {
+
+    @Override public YamlConfigurationOptions pathSeparator(char value) {
         super.pathSeparator(value);
         return this;
     }
-    
-    @Override
-    public YamlConfigurationOptions header(String value) {
+
+    @Override public YamlConfigurationOptions header(String value) {
         super.header(value);
         return this;
     }
-    
-    @Override
-    public YamlConfigurationOptions copyHeader(boolean value) {
+
+    @Override public YamlConfigurationOptions copyHeader(boolean value) {
         super.copyHeader(value);
         return this;
     }
-    
+
     /**
      * Gets how much spaces should be used to indent each line.
-     *
+     * <p>
      * <p>The minimum value this may be is 2, and the maximum is 9.
      *
      * @return How much to indent by
@@ -50,10 +45,10 @@ public class YamlConfigurationOptions extends FileConfigurationOptions {
     public int indent() {
         return indent;
     }
-    
+
     /**
      * Sets how much spaces should be used to indent each line.
-     *
+     * <p>
      * <p>The minimum value this may be is 2, and the maximum is 9.
      *
      * @param value New indent
@@ -66,7 +61,7 @@ public class YamlConfigurationOptions extends FileConfigurationOptions {
         if (value > 9) {
             throw new IllegalArgumentException("Indent cannot be greater than 9 characters");
         }
-        
+
         indent = value;
         return this;
     }

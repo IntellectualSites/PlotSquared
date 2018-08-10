@@ -22,16 +22,17 @@ public class GenerateDocs {
         List<Command> commands = MainCommand.getInstance().getCommands();
         GenerateDocs.log("### Want to document some commands?");
         GenerateDocs.log(" - This page is automatically generated");
-        GenerateDocs.log(" - Fork the project and add a javadoc comment to one of the command classes");
+        GenerateDocs
+            .log(" - Fork the project and add a javadoc comment to one of the command classes");
         GenerateDocs.log(" - Then do a pull request and it will be added to this page");
         GenerateDocs.log("");
         GenerateDocs.log("# Contents");
         for (CommandCategory category : CommandCategory.values()) {
             GenerateDocs.log("###### " + category.name());
             for (Command command : MainCommand.getInstance().getCommands(category, null)) {
-                GenerateDocs
-                        .log(" - [/plot " + command.getId() + "](https://github.com/IntellectualSites/PlotSquared/wiki/Commands#" + command.getId()
-                                + ")    ");
+                GenerateDocs.log(" - [/plot " + command.getId()
+                    + "](https://github.com/IntellectualSites/PlotSquared/wiki/Commands#" + command
+                    .getId() + ")    ");
             }
             GenerateDocs.log("");
         }
@@ -48,11 +49,12 @@ public class GenerateDocs {
 
             // Header
             String source =
-                    "https://github.com/IntellectualSites/PlotSquared/tree/master/Core/src/main/java/com/intellectualcrafters/plot/commands/" + clazz
-                            + ".java";
+                "https://github.com/IntellectualSites/PlotSquared/tree/master/Core/src/main/java/com/intellectualcrafters/plot/commands/"
+                    + clazz + ".java";
             GenerateDocs.log("## [" + name.toUpperCase() + "](" + source + ")    ");
 
-            File file = new File("Core/src/main/java/com/intellectualcrafters/plot/commands/" + clazz + ".java");
+            File file = new File(
+                "Core/src/main/java/com/intellectualcrafters/plot/commands/" + clazz + ".java");
             List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
             List<String> perms = GenerateDocs.getPerms(name, lines);
             List<String> usages = GenerateDocs.getUsage(name, lines);
@@ -123,7 +125,8 @@ public class GenerateDocs {
                     prefix = " <arg> ";
                 }
                 if (usage.length() != 0) {
-                    usages.add(usage.toString().trim().replaceAll("  ", " ").replaceAll("\\{label\\}", "plot"));
+                    usages.add(usage.toString().trim().replaceAll("  ", " ")
+                        .replaceAll("\\{label\\}", "plot"));
                 }
             }
         }
@@ -203,7 +206,9 @@ public class GenerateDocs {
         for (String line : lines) {
             line = line.trim();
             if (line.startsWith("/** ") || line.startsWith("*/ ") || line.startsWith("* ")) {
-                line = line.replaceAll("/[*][*] ", "").replaceAll("[*]/ ", "").replaceAll("[*] ", "").trim();
+                line =
+                    line.replaceAll("/[*][*] ", "").replaceAll("[*]/ ", "").replaceAll("[*] ", "")
+                        .trim();
                 result.append(line + '\n');
             }
         }

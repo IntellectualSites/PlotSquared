@@ -24,8 +24,7 @@ public class SpongeInventoryUtil extends InventoryUtil {
         builder = SpongeMain.THIS.getGame().getRegistry().createBuilder(ItemStack.Builder.class);
     }
 
-    @Override
-    public void open(final PlotInventory inv) {
+    @Override public void open(final PlotInventory inv) {
 /*
         // TODO Auto-generated method stub
         final SpongePlayer sp = (SpongePlayer) inv.player;
@@ -54,8 +53,7 @@ public class SpongeInventoryUtil extends InventoryUtil {
         return builder.itemType(ItemTypes.SPONGE).quantity(item.amount).build();
     }
 
-    @Override
-    public void close(final PlotInventory inv) {
+    @Override public void close(final PlotInventory inv) {
         if (!inv.isOpen()) {
             return;
         }
@@ -87,8 +85,7 @@ public class SpongeInventoryUtil extends InventoryUtil {
         return new PlotItemStack(id, amount, null);
     }
 
-    @Override
-    public PlotItemStack[] getItems(final PlotPlayer player) {
+    @Override public PlotItemStack[] getItems(final PlotPlayer player) {
         final SpongePlayer sp = (SpongePlayer) player;
         sp.player.getInventory();
         new ArrayList<PlotItemStack>();
@@ -98,8 +95,7 @@ public class SpongeInventoryUtil extends InventoryUtil {
         //        return list.toArray();
     }
 
-    @Override
-    public boolean isOpen(final PlotInventory inv) {
+    @Override public boolean isOpen(final PlotInventory inv) {
         if (!inv.isOpen()) {
             return false;
         }

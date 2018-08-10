@@ -8,7 +8,7 @@ import org.bukkit.generator.BlockPopulator;
 import java.util.Random;
 
 public class BukkitAugmentedGenerator extends BlockPopulator {
-    
+
     private static BukkitAugmentedGenerator generator;
 
     public static BukkitAugmentedGenerator get(World world) {
@@ -24,8 +24,7 @@ public class BukkitAugmentedGenerator extends BlockPopulator {
         return generator;
     }
 
-    @Override
-    public void populate(World world, Random r, Chunk chunk) {
+    @Override public void populate(World world, Random r, Chunk chunk) {
         AugmentedUtils.generate(world.getName(), chunk.getX(), chunk.getZ(), null);
     }
 }

@@ -10,30 +10,24 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(
-        usage = "/plot move <X;Z>",
-        command = "move",
-        description = "Move a plot",
-        aliases = {"debugmove"},
-        permission = "plots.move",
-        category = CommandCategory.CLAIMING,
-        requiredType = RequiredType.NONE)
+@CommandDeclaration(usage = "/plot move <X;Z>", command = "move", description = "Move a plot", aliases = {
+    "debugmove"}, permission = "plots.move", category = CommandCategory.CLAIMING, requiredType = RequiredType.NONE)
 public class Move extends SubCommand {
 
-    @Override
-    public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         Location loc = player.getLocation();
         Plot plot1 = loc.getPlotAbs();
         if (plot1 == null) {
             return !MainUtil.sendMessage(player, C.NOT_IN_PLOT);
         }
-        if (!plot1.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN.s())) {
+        if (!plot1.isOwner(player.getUUID()) && !Permissions
+            .hasPermission(player, C.PERMISSION_ADMIN.s())) {
             MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return false;
         }
         boolean override = false;
         if (args.length == 2 && args[1].equalsIgnoreCase("-f")) {
-            args = new String[]{ args[0] };
+            args = new String[] {args[0]};
             override = true;
         }
         if (args.length != 1) {
@@ -55,13 +49,13 @@ public class Move extends SubCommand {
             MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot copy <X;Z>");
             return false;
         }
-        if (!plot1.getArea().isCompatible(plot2.getArea()) && (!override || !Permissions.hasPermission(player, C.PERMISSION_ADMIN.s()))) {
+        if (!plot1.getArea().isCompatible(plot2.getArea()) && (!override || !Permissions
+            .hasPermission(player, C.PERMISSION_ADMIN.s()))) {
             C.PLOTWORLD_INCOMPATIBLE.send(player);
             return false;
         }
         if (plot1.move(plot2, new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 MainUtil.sendMessage(player, C.MOVE_SUCCESS);
             }
         }, false)) {

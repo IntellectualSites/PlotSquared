@@ -8,7 +8,7 @@ import com.plotsquared.general.commands.Command;
 import java.util.List;
 
 public class HelpMenu {
-    
+
     public static final int PER_PAGE = 5;
 
     private final PlotPlayer player;
@@ -25,12 +25,12 @@ public class HelpMenu {
         this.commandCategory = commandCategory;
         return this;
     }
-    
+
     public HelpMenu getCommands() {
         this.commands = MainCommand.getInstance().getCommands(this.commandCategory, this.player);
         return this;
     }
-    
+
     public HelpMenu generateMaxPages() {
         this.maxPage = Math.max((this.commands.size() - 1) / PER_PAGE, 0);
         return this;
@@ -50,9 +50,9 @@ public class HelpMenu {
         }
         return this;
     }
-    
+
     public void render() {
         this.page.render(this.player);
     }
-    
+
 }

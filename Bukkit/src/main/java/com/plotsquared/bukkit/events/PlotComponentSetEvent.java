@@ -6,7 +6,6 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Called when a plot component is set
- *
  */
 public class PlotComponentSetEvent extends PlotEvent {
 
@@ -49,8 +48,7 @@ public class PlotComponentSetEvent extends PlotEvent {
         return this.component;
     }
 
-    @Override
-    public HandlerList getHandlers() {
+    @Override public HandlerList getHandlers() {
         return handlers;
     }
 }

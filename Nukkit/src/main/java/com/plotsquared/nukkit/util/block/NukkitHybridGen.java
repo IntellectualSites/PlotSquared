@@ -4,6 +4,7 @@ import cn.nukkit.level.Level;
 import com.intellectualcrafters.plot.PS;
 import com.plotsquared.nukkit.NukkitMain;
 import com.plotsquared.nukkit.generator.NukkitPlotGenerator;
+
 import java.util.Map;
 
 public class NukkitHybridGen extends NukkitPlotGenerator {

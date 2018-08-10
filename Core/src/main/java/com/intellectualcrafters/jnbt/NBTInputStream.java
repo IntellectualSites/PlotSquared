@@ -24,7 +24,6 @@ public final class NBTInputStream implements Closeable {
      * Creates a new {@code NBTInputStream}, which will source its data from the specified input stream.
      *
      * @param is the input stream
-     *
      * @throws IOException if an I/O error occurs
      */
     public NBTInputStream(InputStream is) {
@@ -35,7 +34,6 @@ public final class NBTInputStream implements Closeable {
      * Reads an NBT tag from the stream.
      *
      * @return The tag that was read.
-     *
      * @throws IOException if an I/O error occurs.
      */
     public Tag readTag() throws IOException {
@@ -46,7 +44,6 @@ public final class NBTInputStream implements Closeable {
      * Reads an NBT tag from the stream.
      *
      * @return The tag that was read.
-     *
      * @throws IOException if an I/O error occurs.
      */
     public Tag readTag(int maxDepth) throws IOException {
@@ -57,9 +54,7 @@ public final class NBTInputStream implements Closeable {
      * Reads an NBT from the stream.
      *
      * @param depth the depth of this tag
-     *
      * @return The tag that was read.
-     *
      * @throws IOException if an I/O error occurs.
      */
     private Tag readTag(int depth, int maxDepth) throws IOException {
@@ -85,9 +80,7 @@ public final class NBTInputStream implements Closeable {
      * @param type  the type
      * @param name  the name
      * @param depth the depth
-     *
      * @return the tag
-     *
      * @throws IOException if an I/O error occurs.
      */
     private Tag readTagPayload(int type, String name, int depth, int maxDepth) throws IOException {
@@ -98,7 +91,8 @@ public final class NBTInputStream implements Closeable {
         switch (type) {
             case NBTConstants.TYPE_END:
                 if (depth == 0) {
-                    throw new IOException("TAG_End found without a TAG_Compound/TAG_List tag preceding it.");
+                    throw new IOException(
+                        "TAG_End found without a TAG_Compound/TAG_List tag preceding it.");
                 } else {
                     return new EndTag();
                 }
@@ -185,8 +179,7 @@ public final class NBTInputStream implements Closeable {
         }
     }
 
-    @Override
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         this.is.close();
     }
 }

@@ -28,51 +28,44 @@ public class GenChunk extends ScopedLocalBlockQueue {
         this.world = wrap.world;
     }
 
-    @Override
-    public void fillBiome(String biomeName) {
+    @Override public void fillBiome(String biomeName) {
         if (this.biome == null) {
             return;
         }
         BiomeType biome = SpongeUtil.getBiome(biomeName.toUpperCase());
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                this.biome.setBiome(this.bx + x, 0,this.bz + z, biome);
+                this.biome.setBiome(this.bx + x, 0, this.bz + z, biome);
             }
         }
     }
 
-    @Override
-    public boolean setBiome(int x, int z, String biomeName) {
+    @Override public boolean setBiome(int x, int z, String biomeName) {
         modified = true;
         BiomeType biome = SpongeUtil.getBiome(biomeName.toUpperCase());
         this.biome.setBiome(this.bx + x, 0, this.bz + z, biome);
         return true;
     }
 
-    @Override
-    public boolean setBlock(int x, int y, int z, int id, int data) {
+    @Override public boolean setBlock(int x, int y, int z, int id, int data) {
         modified = true;
         this.terrain.setBlock(this.bx + x, y, this.bz + z, SpongeUtil.getBlockState(id, data));
         return true;
     }
 
-    @Override
-    public PlotBlock getBlock(int x, int y, int z) {
+    @Override public PlotBlock getBlock(int x, int y, int z) {
         return SpongeUtil.getPlotBlock(this.terrain.getBlock(this.bx + x, y, this.bz + z));
     }
 
-    @Override
-    public String getWorld() {
+    @Override public String getWorld() {
         return this.world;
     }
 
-    @Override
-    public Location getMax() {
+    @Override public Location getMax() {
         return new Location(getWorld(), 15 + bx, 255, 15 + bz);
     }
 
-    @Override
-    public Location getMin() {
+    @Override public Location getMin() {
         return new Location(getWorld(), bx, 0, bz);
     }
 

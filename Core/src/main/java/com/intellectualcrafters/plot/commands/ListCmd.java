@@ -5,43 +5,22 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.PS.SortType;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flags;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotMessage;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.Rating;
-import com.intellectualcrafters.plot.object.RunnableVal3;
-import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.StringComparison;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.UUID;
 
-@CommandDeclaration(
-        command = "list",
-        aliases = {"l", "find", "search"},
-        description = "List plots",
-        permission = "plots.list",
-        category = CommandCategory.INFO,
-        usage = "/plot list <forsale|mine|shared|world|top|all|unowned|unknown|player|world|done|fuzzy <search...>> [#]")
+@CommandDeclaration(command = "list", aliases = {"l", "find",
+    "search"}, description = "List plots", permission = "plots.list", category = CommandCategory.INFO, usage = "/plot list <forsale|mine|shared|world|top|all|unowned|unknown|player|world|done|fuzzy <search...>> [#]")
 public class ListCmd extends SubCommand {
 
     private String[] getArgumentList(PlotPlayer player) {
         List<String> args = new ArrayList<>();
-        if (EconHandler.manager != null && Permissions.hasPermission(player, C.PERMISSION_LIST_FORSALE)) {
+        if (EconHandler.manager != null && Permissions
+            .hasPermission(player, C.PERMISSION_LIST_FORSALE)) {
             args.add("forsale");
         }
         if (Permissions.hasPermission(player, C.PERMISSION_LIST_MINE)) {
@@ -84,11 +63,11 @@ public class ListCmd extends SubCommand {
     }
 
     public void noArgs(PlotPlayer player) {
-        MainUtil.sendMessage(player, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + Arrays.toString(getArgumentList(player)));
+        MainUtil.sendMessage(player,
+            C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + Arrays.toString(getArgumentList(player)));
     }
 
-    @Override
-    public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer player, String[] args) {
         if (args.length < 1) {
             noArgs(player);
             return false;
@@ -128,7 +107,8 @@ public class ListCmd extends SubCommand {
                 }
                 plots = new ArrayList<>();
                 for (Plot plot : PS.get().getPlots()) {
-                    if (plot.getTrusted().contains(player.getUUID()) || plot.getMembers().contains(player.getUUID())) {
+                    if (plot.getTrusted().contains(player.getUUID()) || plot.getMembers()
+                        .contains(player.getUUID())) {
                         plots.add(plot);
                     }
                 }
@@ -139,7 +119,8 @@ public class ListCmd extends SubCommand {
                     return false;
                 }
                 if (!Permissions.hasPermission(player, C.PERMISSION_LIST_WORLD_NAME.f(world))) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_LIST_WORLD_NAME.f(world));
+                    MainUtil.sendMessage(player, C.NO_PERMISSION,
+                        C.PERMISSION_LIST_WORLD_NAME.f(world));
                     return false;
                 }
                 plots = new ArrayList<>(PS.get().getPlots(world));
@@ -149,7 +130,9 @@ public class ListCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_LIST_EXPIRED);
                     return false;
                 }
-                plots = ExpireManager.IMP == null ? new ArrayList<Plot>() : new ArrayList<>(ExpireManager.IMP.getPendingExpired());
+                plots = ExpireManager.IMP == null ?
+                    new ArrayList<Plot>() :
+                    new ArrayList<>(ExpireManager.IMP.getPendingExpired());
                 break;
             case "area":
                 if (!Permissions.hasPermission(player, C.PERMISSION_LIST_AREA)) {
@@ -157,7 +140,8 @@ public class ListCmd extends SubCommand {
                     return false;
                 }
                 if (!Permissions.hasPermission(player, C.PERMISSION_LIST_WORLD_NAME.f(world))) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_LIST_WORLD_NAME.f(world));
+                    MainUtil.sendMessage(player, C.NO_PERMISSION,
+                        C.PERMISSION_LIST_WORLD_NAME.f(world));
                     return false;
                 }
                 plots = area == null ? new ArrayList<Plot>() : new ArrayList<>(area.getPlots());
@@ -183,8 +167,7 @@ public class ListCmd extends SubCommand {
                     plots.add(plot);
                 }
                 Collections.sort(plots, new Comparator<Plot>() {
-                    @Override
-                    public int compare(Plot a, Plot b) {
+                    @Override public int compare(Plot a, Plot b) {
                         String va = "" + a.getFlags().get(Flags.DONE);
                         String vb = "" + b.getFlags().get(Flags.DONE);
                         if (MathMan.isInteger(va)) {
@@ -205,8 +188,7 @@ public class ListCmd extends SubCommand {
                 }
                 plots = new ArrayList<>(PS.get().getPlots());
                 Collections.sort(plots, new Comparator<Plot>() {
-                    @Override
-                    public int compare(Plot p1, Plot p2) {
+                    @Override public int compare(Plot p1, Plot p2) {
                         double v1 = 0;
                         int p1s = p1.getSettings().getRatings().size();
                         int p2s = p2.getRatings().size();
@@ -302,8 +284,10 @@ public class ListCmd extends SubCommand {
                         MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_LIST_WORLD);
                         return false;
                     }
-                    if (!Permissions.hasPermission(player, C.PERMISSION_LIST_WORLD_NAME.f(args[0]))) {
-                        MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_LIST_WORLD_NAME.f(args[0]));
+                    if (!Permissions
+                        .hasPermission(player, C.PERMISSION_LIST_WORLD_NAME.f(args[0]))) {
+                        MainUtil.sendMessage(player, C.NO_PERMISSION,
+                            C.PERMISSION_LIST_WORLD_NAME.f(args[0]));
                         return false;
                     }
                     plots = new ArrayList<>(PS.get().getPlots(args[0]));
@@ -313,7 +297,8 @@ public class ListCmd extends SubCommand {
                 if (uuid == null) {
                     try {
                         uuid = UUID.fromString(args[0]);
-                    } catch (Exception ignored) {}
+                    } catch (Exception ignored) {
+                    }
                 }
                 if (uuid != null) {
                     if (!Permissions.hasPermission(player, C.PERMISSION_LIST_PLAYER)) {
@@ -327,7 +312,9 @@ public class ListCmd extends SubCommand {
         }
 
         if (plots == null) {
-            sendMessage(player, C.DID_YOU_MEAN, new StringComparison<>(args[0], new String[]{"mine", "shared", "world", "all"}).getBestMatch());
+            sendMessage(player, C.DID_YOU_MEAN,
+                new StringComparison<>(args[0], new String[] {"mine", "shared", "world", "all"})
+                    .getBestMatch());
             return false;
         }
 
@@ -339,8 +326,8 @@ public class ListCmd extends SubCommand {
         return true;
     }
 
-    public void displayPlots(final PlotPlayer player, List<Plot> plots, int pageSize, int page, PlotArea area,
-            String[] args, boolean sort) {
+    public void displayPlots(final PlotPlayer player, List<Plot> plots, int pageSize, int page,
+        PlotArea area, String[] args, boolean sort) {
         // Header
         Iterator<Plot> iterator = plots.iterator();
         while (iterator.hasNext()) {
@@ -351,54 +338,61 @@ public class ListCmd extends SubCommand {
         if (sort) {
             plots = PS.get().sortPlots(plots, SortType.CREATION_DATE, area);
         }
-        this.paginate(player, plots, pageSize, page, new RunnableVal3<Integer, Plot, PlotMessage>() {
-            @Override
-            public void run(Integer i, Plot plot, PlotMessage message) {
-                String color;
-                if (plot.owner == null) {
-                    color = "$3";
-                } else if (plot.isOwner(player.getUUID())) {
-                    color = "$1";
-                } else if (plot.isAdded(player.getUUID())) {
-                    color = "$4";
-                } else if (plot.isDenied(player.getUUID())) {
-                    color = "$2";
-                } else {
-                    color = "$1";
-                }
-                PlotMessage trusted =
-                        new PlotMessage().text(C.color(C.PLOT_INFO_TRUSTED.s().replaceAll("%trusted%", MainUtil.getPlayerList(plot.getTrusted()))))
-                                .color("$1");
-                PlotMessage members =
-                        new PlotMessage().text(C.color(C.PLOT_INFO_MEMBERS.s().replaceAll("%members%", MainUtil.getPlayerList(plot.getMembers()))))
-                                .color("$1");
-                String strFlags = StringMan.join(plot.getFlags().values(), ",");
-                if (strFlags.isEmpty()) {
-                    strFlags = C.NONE.s();
-                }
-                PlotMessage flags = new PlotMessage().text(C.color(C.PLOT_INFO_FLAGS.s().replaceAll("%flags%", strFlags))).color("$1");
-                message.text("[").color("$3").text(i + "").command("/plot visit " + plot.getArea() + ";" + plot.getId())
-                        .tooltip("/plot visit " + plot.getArea() + ";" + plot.getId()).color("$1")
-                        .text("]")
-                        .color("$3").text(" " + plot.toString()).tooltip(trusted, members, flags)
-                        .command("/plot info " + plot.getArea() + ";" + plot.getId()).color(color).text(" - ").color("$2");
-                String prefix = "";
-                for (UUID uuid : plot.getOwners()) {
-                    String name = UUIDHandler.getName(uuid);
-                    if (name == null) {
-                        message = message.text(prefix).color("$4").text("unknown").color("$2").tooltip(uuid.toString()).suggest(uuid.toString());
+        this.paginate(player, plots, pageSize, page,
+            new RunnableVal3<Integer, Plot, PlotMessage>() {
+                @Override public void run(Integer i, Plot plot, PlotMessage message) {
+                    String color;
+                    if (plot.owner == null) {
+                        color = "$3";
+                    } else if (plot.isOwner(player.getUUID())) {
+                        color = "$1";
+                    } else if (plot.isAdded(player.getUUID())) {
+                        color = "$4";
+                    } else if (plot.isDenied(player.getUUID())) {
+                        color = "$2";
                     } else {
-                        PlotPlayer pp = UUIDHandler.getPlayer(uuid);
-                        if (pp != null) {
-                            message = message.text(prefix).color("$4").text(name).color("$1").tooltip(new PlotMessage("Online").color("$4"));
-                        } else {
-                            message = message.text(prefix).color("$4").text(name).color("$1").tooltip(new PlotMessage("Offline").color("$3"));
-                        }
+                        color = "$1";
                     }
-                    prefix = ", ";
+                    PlotMessage trusted = new PlotMessage().text(C.color(C.PLOT_INFO_TRUSTED.s()
+                        .replaceAll("%trusted%", MainUtil.getPlayerList(plot.getTrusted()))))
+                        .color("$1");
+                    PlotMessage members = new PlotMessage().text(C.color(C.PLOT_INFO_MEMBERS.s()
+                        .replaceAll("%members%", MainUtil.getPlayerList(plot.getMembers()))))
+                        .color("$1");
+                    String strFlags = StringMan.join(plot.getFlags().values(), ",");
+                    if (strFlags.isEmpty()) {
+                        strFlags = C.NONE.s();
+                    }
+                    PlotMessage flags = new PlotMessage()
+                        .text(C.color(C.PLOT_INFO_FLAGS.s().replaceAll("%flags%", strFlags)))
+                        .color("$1");
+                    message.text("[").color("$3").text(i + "")
+                        .command("/plot visit " + plot.getArea() + ";" + plot.getId())
+                        .tooltip("/plot visit " + plot.getArea() + ";" + plot.getId()).color("$1")
+                        .text("]").color("$3").text(" " + plot.toString())
+                        .tooltip(trusted, members, flags)
+                        .command("/plot info " + plot.getArea() + ";" + plot.getId()).color(color)
+                        .text(" - ").color("$2");
+                    String prefix = "";
+                    for (UUID uuid : plot.getOwners()) {
+                        String name = UUIDHandler.getName(uuid);
+                        if (name == null) {
+                            message = message.text(prefix).color("$4").text("unknown").color("$2")
+                                .tooltip(uuid.toString()).suggest(uuid.toString());
+                        } else {
+                            PlotPlayer pp = UUIDHandler.getPlayer(uuid);
+                            if (pp != null) {
+                                message = message.text(prefix).color("$4").text(name).color("$1")
+                                    .tooltip(new PlotMessage("Online").color("$4"));
+                            } else {
+                                message = message.text(prefix).color("$4").text(name).color("$1")
+                                    .tooltip(new PlotMessage("Offline").color("$3"));
+                            }
+                        }
+                        prefix = ", ";
+                    }
                 }
-            }
-        }, "/plot list " + args[0], C.PLOT_LIST_HEADER_PAGED.s());
+            }, "/plot list " + args[0], C.PLOT_LIST_HEADER_PAGED.s());
     }
 
 }

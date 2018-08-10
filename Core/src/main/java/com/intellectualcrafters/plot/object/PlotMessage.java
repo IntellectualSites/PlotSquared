@@ -6,17 +6,18 @@ import com.intellectualcrafters.plot.object.chat.PlainChatManager;
 import com.intellectualcrafters.plot.util.ChatManager;
 
 public class PlotMessage {
-    
+
     private Object builder;
-    
+
     public PlotMessage() {
         try {
             reset(ChatManager.manager);
         } catch (Throwable e) {
-            PS.debug(PS.imp().getPluginName() + " doesn't support fancy chat for " + PS.get().IMP.getServerVersion());
+            PS.debug(PS.imp().getPluginName() + " doesn't support fancy chat for " + PS.get().IMP
+                .getServerVersion());
             ChatManager.manager = new PlainChatManager();
-        reset(ChatManager.manager);
-    }
+            reset(ChatManager.manager);
+        }
     }
 
     public PlotMessage(String text) {

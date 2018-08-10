@@ -24,8 +24,7 @@ public class BukkitLazyBlock extends LazyBlock {
         this.block = block;
     }
 
-    @Override
-    public PlotBlock getPlotBlock() {
+    @Override public PlotBlock getPlotBlock() {
         if (this.pb != null) {
             return this.pb;
         }
@@ -127,8 +126,7 @@ public class BukkitLazyBlock extends LazyBlock {
 
     }
 
-    @Override
-    public int getId() {
+    @Override public int getId() {
         if (this.id == 0) {
             this.id = this.block.getTypeId();
         }

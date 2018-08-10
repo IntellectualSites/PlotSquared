@@ -7,7 +7,8 @@ public abstract class GridPlotWorld extends PlotArea {
 
     public short SIZE;
 
-    public GridPlotWorld(String worldName, String id, IndependentPlotGenerator generator, PlotId min, PlotId max) {
+    public GridPlotWorld(String worldName, String id, IndependentPlotGenerator generator,
+        PlotId min, PlotId max) {
         super(worldName, id, generator, min, max);
     }
 }

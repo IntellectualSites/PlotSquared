@@ -16,7 +16,6 @@ public class Cookie {
      * encode '=' and ';' because we must. We encode '%' and '+' because they are meta characters in URL encoding.
      *
      * @param string The source string.
-     *
      * @return The escaped result.
      */
     public static String escape(final String string) {
@@ -36,7 +35,7 @@ public class Cookie {
         }
         return sb.toString();
     }
-    
+
     /**
      * Convert a cookie specification string into a JSONObject. The string will contain a name value pair separated by
      * '='. The name and the value will be unescaped, possibly converting '+' and '%' sequences. The cookie properties
@@ -46,9 +45,7 @@ public class Cookie {
      * JSONObject.
      *
      * @param string The cookie specification string.
-     *
      * @return A JSONObject containing "name", "value", and possibly other members.
-     *
      * @throws JSONException
      */
     public static JSONObject toJSONObject(final String string) throws JSONException {
@@ -76,16 +73,14 @@ public class Cookie {
         }
         return jo;
     }
-    
+
     /**
      * Convert a JSONObject into a cookie specification string. The JSONObject must contain "name" and "value" members.
      * If the JSONObject contains "expires", "domain", "path", or "secure" members, they will be appended to the cookie
      * specification string. All other members are ignored.
      *
      * @param jo A JSONObject
-     *
      * @return A cookie specification string
-     *
      * @throws JSONException
      */
     public static String toString(final JSONObject jo) throws JSONException {
@@ -105,13 +100,12 @@ public class Cookie {
         }
         return sb.toString();
     }
-    
+
     /**
      * Convert {@code %}<i>hh</i> sequences to single characters, and convert plus to space.
      *
      * @param string A string that may contain {@code +} &nbsp;<small>(plus)</small> and <code>%</code><i>hh</i>
      *               sequences.
-     *
      * @return The unescaped string.
      */
     public static String unescape(final String string) {

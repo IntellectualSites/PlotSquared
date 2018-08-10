@@ -27,13 +27,11 @@ public final class ShortTag extends Tag {
         this.value = value;
     }
 
-    @Override
-    public Short getValue() {
+    @Override public Short getValue() {
         return this.value;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         String name = getName();
         String append = "";
         if (name != null && !name.isEmpty()) {

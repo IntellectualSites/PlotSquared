@@ -14,14 +14,8 @@ import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.util.*;
 
-@CommandDeclaration(
-        command = "setflag",
-        aliases = {"f", "flag", "setf", "setflag"},
-        usage = "/plot flag <set|remove|add|list|info> <flag> <value>",
-        description = "Set plot flags",
-        category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.NONE,
-        permission = "plots.flag")
+@CommandDeclaration(command = "setflag", aliases = {"f", "flag", "setf",
+    "setflag"}, usage = "/plot flag <set|remove|add|list|info> <flag> <value>", description = "Set plot flags", category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE, permission = "plots.flag")
 public class FlagCmd extends SubCommand {
 
     private boolean checkPermValue(PlotPlayer player, Flag flag, String key, String value) {
@@ -33,17 +27,19 @@ public class FlagCmd extends SubCommand {
                 int numeric = Integer.parseInt(value);
                 perm = perm.substring(0, perm.length() - value.length() - 1);
                 if (numeric > 0) {
-                    int checkRange = PS.get().getPlatform().equalsIgnoreCase("bukkit") ? numeric : Settings.Limit.MAX_PLOTS;
+                    int checkRange = PS.get().getPlatform().equalsIgnoreCase("bukkit") ?
+                        numeric :
+                        Settings.Limit.MAX_PLOTS;
                     return player.hasPermissionRange(perm, checkRange) >= numeric;
                 }
 
-            } catch (NumberFormatException ignore) {}
+            } catch (NumberFormatException ignore) {
+            }
         }
         return Permissions.hasPermission(player, perm);
     }
 
-    @Override
-    public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer player, String[] args) {
 
         /*
          *  plot flag set fly true
@@ -66,7 +62,8 @@ public class FlagCmd extends SubCommand {
             sendMessage(player, C.PLOT_NOT_CLAIMED);
             return false;
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_SET_FLAG_OTHER)) {
+        if (!plot.isOwner(player.getUUID()) && !Permissions
+            .hasPermission(player, C.PERMISSION_SET_FLAG_OTHER)) {
             MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SET_FLAG_OTHER);
             return false;
         }
@@ -76,7 +73,8 @@ public class FlagCmd extends SubCommand {
             if (flag == null || flag.isReserved()) {
                 boolean suggested = false;
                 try {
-                    StringComparison<Flag<?>> stringComparison = new StringComparison<>(args[1], Flags.getFlags());
+                    StringComparison<Flag<?>> stringComparison =
+                        new StringComparison<>(args[1], Flags.getFlags());
                     String best = stringComparison.getBestMatch();
                     if (best != null) {
                         MainUtil.sendMessage(player, C.NOT_VALID_FLAG_SUGGESTED, best);
@@ -118,7 +116,8 @@ public class FlagCmd extends SubCommand {
                 }
                 String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
                 if (!checkPermValue(player, flag, args[1], value)) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SET_FLAG_KEY_VALUE.f(args[1].toLowerCase(), value.toLowerCase()));
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SET_FLAG_KEY_VALUE
+                        .f(args[1].toLowerCase(), value.toLowerCase()));
                     return false;
                 }
                 Object parsed = flag.parseValue(value);
@@ -140,24 +139,29 @@ public class FlagCmd extends SubCommand {
                     return false;
                 }
                 if (args.length != 2 && args.length != 3) {
-                    MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag remove <flag> [values]");
+                    MainUtil
+                        .sendMessage(player, C.COMMAND_SYNTAX, "/plot flag remove <flag> [values]");
                     return false;
                 }
-                if (!Permissions.hasPermission(player, C.PERMISSION_SET_FLAG_KEY.f(args[1].toLowerCase()))) {
+                if (!Permissions
+                    .hasPermission(player, C.PERMISSION_SET_FLAG_KEY.f(args[1].toLowerCase()))) {
                     if (args.length != 3) {
-                        MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SET_FLAG_KEY.f(args[1].toLowerCase()));
+                        MainUtil.sendMessage(player, C.NO_PERMISSION,
+                            C.PERMISSION_SET_FLAG_KEY.f(args[1].toLowerCase()));
                         return false;
                     }
                     for (String entry : args[2].split(",")) {
                         if (!checkPermValue(player, flag, args[1], entry)) {
-                            MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SET_FLAG_KEY_VALUE.f(args[1].toLowerCase(), entry));
+                            MainUtil.sendMessage(player, C.NO_PERMISSION,
+                                C.PERMISSION_SET_FLAG_KEY_VALUE.f(args[1].toLowerCase(), entry));
                             return false;
                         }
                     }
                 }
                 if (args.length == 3 && flag instanceof ListFlag) {
                     String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
-                    Optional<? extends Collection> flag1 = plot.getFlag((Flag<? extends Collection<?>>) flag);
+                    Optional<? extends Collection> flag1 =
+                        plot.getFlag((Flag<? extends Collection<?>>) flag);
                     if (flag1.isPresent()) {
                         boolean o = flag1.get().removeAll((Collection) flag.parseValue(value));
                         if (o) {
@@ -176,9 +180,9 @@ public class FlagCmd extends SubCommand {
                         return false;
                     }
                 }
-                if(flag == Flags.TIME) {
+                if (flag == Flags.TIME) {
                     player.setTime(Long.MAX_VALUE);
-                } else if(flag == Flags.WEATHER) {
+                } else if (flag == Flags.WEATHER) {
                     player.setWeather(PlotWeather.RESET);
                 }
                 MainUtil.sendMessage(player, C.FLAG_REMOVED);
@@ -190,12 +194,14 @@ public class FlagCmd extends SubCommand {
                     return false;
                 }
                 if (args.length < 3) {
-                    MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag add <flag> <values>");
+                    MainUtil
+                        .sendMessage(player, C.COMMAND_SYNTAX, "/plot flag add <flag> <values>");
                     return false;
                 }
                 for (String entry : args[2].split(",")) {
                     if (!checkPermValue(player, flag, args[1], entry)) {
-                        MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SET_FLAG_KEY_VALUE.f(args[1].toLowerCase(), entry));
+                        MainUtil.sendMessage(player, C.NO_PERMISSION,
+                            C.PERMISSION_SET_FLAG_KEY_VALUE.f(args[1].toLowerCase(), entry));
                         return false;
                     }
                 }
@@ -207,7 +213,8 @@ public class FlagCmd extends SubCommand {
                 }
                 Object val = parsed;
                 if (flag instanceof ListFlag) {
-                    Optional<? extends Collection> flag1 = plot.getFlag((Flag<? extends Collection<?>>) flag);
+                    Optional<? extends Collection> flag1 =
+                        plot.getFlag((Flag<? extends Collection<?>>) flag);
                     if (flag1.isPresent()) {
                         boolean o = flag1.get().addAll((Collection) parsed);
                         if (o) {

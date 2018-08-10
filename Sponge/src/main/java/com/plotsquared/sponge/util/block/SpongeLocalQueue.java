@@ -36,19 +36,19 @@ import java.util.HashSet;
 
 public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
 
+    private BlockState AIR = BlockTypes.AIR.getDefaultState();
+
     public SpongeLocalQueue(String world) {
         super(world);
     }
 
-    @Override
-    public LocalChunk<char[]> getLocalChunk(int x, int z) {
+    @Override public LocalChunk<char[]> getLocalChunk(int x, int z) {
         return new CharLocalChunk_Sponge(this, x, z) {
             // Custom stuff?
         };
     }
 
-    @Override
-    public void optimize() {
+    @Override public void optimize() {
 
     }
 
@@ -56,15 +56,13 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
         return SpongeUtil.getWorld(getWorld());
     }
 
-    @Override
-    public PlotBlock getBlock(int x, int y, int z) {
+    @Override public PlotBlock getBlock(int x, int y, int z) {
         World worldObj = getSpongeWorld();
         BlockState block = worldObj.getBlock(x, y, z);
         return SpongeUtil.getPlotBlock(block);
     }
 
-    @Override
-    public void refreshChunk(int x, int z) {
+    @Override public void refreshChunk(int x, int z) {
         World world = getSpongeWorld();
         Chunk nmsChunk = ((net.minecraft.world.World) world).getChunkProvider().provideChunk(x, z);
         if (nmsChunk == null || !nmsChunk.isLoaded()) {
@@ -103,7 +101,8 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
                     continue;
                 }
                 for (Entity ent : slice) {
-                    EntityTrackerEntry entry = entries != null ? entries.lookup(ent.getEntityId()) : null;
+                    EntityTrackerEntry entry =
+                        entries != null ? entries.lookup(ent.getEntityId()) : null;
                     if (entry == null) {
                         continue;
                     }
@@ -123,8 +122,7 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
             for (EntityTrackerEntry entry : entities) {
                 try {
                     TaskManager.IMP.taskLater(new Runnable() {
-                        @Override
-                        public void run() {
+                        @Override public void run() {
                             for (EntityPlayerMP player : players) {
                                 if (entry.isVisibleTo(player)) {
                                     entry.removeFromTrackedPlayers(player);
@@ -144,11 +142,200 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
         }
     }
 
-    @Override
-    public void fixChunkLighting(int x, int z) {
+    @Override public void fixChunkLighting(int x, int z) {
         Chunk nmsChunk = getChunk(getSpongeWorld(), x, z);
         nmsChunk.generateSkylightMap();
     }
+
+    public boolean isSurrounded(char[][] sections, int x, int y, int z) {
+        return isSolid(getId(sections, x, y + 1, z)) && isSolid(getId(sections, x + 1, y - 1, z))
+            && isSolid(getId(sections, x - 1, y, z)) && isSolid(getId(sections, x, y, z + 1))
+            && isSolid(getId(sections, x, y, z - 1));
+    }
+
+    public boolean isSolid(int i) {
+        return i != 0 && Block.getBlockById(i)
+            .isOpaqueCube(Block.getBlockById(i).getDefaultState());
+    }
+
+    public int getId(char[][] sections, int x, int y, int z) {
+        if (x < 0 || x > 15 || z < 0 || z > 15) {
+            return 1;
+        }
+        if (y < 0 || y > 255) {
+            return 1;
+        }
+        int i = MainUtil.CACHE_I[y][x][z];
+        char[] section = sections[i];
+        if (section == null) {
+            return 0;
+        }
+        int j = MainUtil.CACHE_I[y][x][z];
+        int combined = section[j];
+        return combined >> 4;
+    }
+
+    public boolean fixLighting(CharLocalChunk_Sponge bc, Chunk nmsChunk) {
+        try {
+            if (!nmsChunk.isLoaded()) {
+                return false;
+            }
+            ExtendedBlockStorage[] sections = nmsChunk.getBlockStorageArray();
+            nmsChunk.generateSkylightMap();
+            net.minecraft.world.World nmsWorld = nmsChunk.getWorld();
+
+            int X = bc.getX() << 4;
+            int Z = bc.getZ() << 4;
+
+            BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(0, 0, 0);
+            for (int j = 0; j < sections.length; j++) {
+                ExtendedBlockStorage section = sections[j];
+                if (section == null) {
+                    continue;
+                }
+                if ((bc.getCount(j) == 0) || ((bc.getCount(j) >= 4096) && (bc.getAir(j) == 0))
+                    || bc.getAir(j) == 4096) {
+                    continue;
+                }
+                char[] array = bc.getIdArray(j);
+                if (array != null) {
+                    int l = PseudoRandom.random.random(2);
+                    for (int k = 0; k < array.length; k++) {
+                        int i = array[k];
+                        if (i < 16) {
+                            continue;
+                        }
+                        short id = (short) (i >> 4);
+                        switch (id) { // Lighting
+                            default:
+                                if ((k & 1) == l) {
+                                    l = 1 - l;
+                                    continue;
+                                }
+                            case 10:
+                            case 11:
+                            case 39:
+                            case 40:
+                            case 50:
+                            case 51:
+                            case 62:
+                            case 74:
+                            case 76:
+                            case 89:
+                            case 122:
+                            case 124:
+                            case 130:
+                            case 138:
+                            case 169:
+                                int x = MainUtil.x_loc[j][k];
+                                int y = MainUtil.y_loc[j][k];
+                                int z = MainUtil.z_loc[j][k];
+                                if (isSurrounded(bc.blocks, x, y, z)) {
+                                    continue;
+                                }
+                                pos.setPos(X + x, y, Z + z);
+                                nmsWorld.checkLight(pos);
+                        }
+                    }
+                }
+            }
+            return true;
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override public final void regenChunk(int x, int z) {
+        World worldObj = getSpongeWorld();
+        throw new UnsupportedOperationException("NOT SUPPORTED");
+    }
+
+    @Override public final void setComponents(LocalChunk<char[]> lc) {
+        setBlocks(lc);
+        setBiomes(lc);
+    }
+
+    public Chunk getChunk(World world, int x, int z) {
+        net.minecraft.world.chunk.Chunk chunk =
+            ((net.minecraft.world.World) world).getChunkProvider().provideChunk(x, z);
+        if (chunk != null && !chunk.isLoaded()) {
+            chunk.onLoad();
+        }
+        return chunk;
+    }
+
+    public void setBlocks(LocalChunk<char[]> lc) {
+        World worldObj = getSpongeWorld();
+        org.spongepowered.api.world.Chunk spongeChunk =
+            (org.spongepowered.api.world.Chunk) getChunk(worldObj, lc.getX(), lc.getZ());
+        Chunk nmsChunk = (Chunk) spongeChunk;
+        char[][] ids = ((CharLocalChunk) lc).blocks;
+        for (int layer = 0; layer < 16; layer++) {
+            char[] array = ids[layer];
+            if (array == null) {
+                continue;
+            }
+            ExtendedBlockStorage section = nmsChunk.getBlockStorageArray()[layer];
+            short[] cacheX = MainUtil.x_loc[0];
+            short[] cacheY = MainUtil.y_loc[0];
+            short[] cacheZ = MainUtil.z_loc[0];
+            for (int j = 0; j < array.length; j++) {
+                int combinedId = array[j];
+                switch (combinedId) {
+                    case 0:
+                        continue;
+                    case 1:
+                        int x = cacheX[j];
+                        int y = cacheY[j];
+                        int z = cacheZ[j];
+                        section.set(x, y, z, Blocks.AIR.getDefaultState());
+                        continue;
+                    default:
+                        int id = combinedId >> 4;
+                        Block block = Block.getBlockById(id);
+                        int data = combinedId & 0xf;
+                        IBlockState ibd;
+                        if (data != 0) {
+                            ibd = block.getStateFromMeta(data);
+                        } else {
+                            ibd = block.getDefaultState();
+                        }
+                        x = cacheX[j];
+                        y = cacheY[j];
+                        z = cacheZ[j];
+                        section.set(x, y, z, ibd);
+                        continue;
+                }
+            }
+        }
+        refreshChunk(nmsChunk.x, nmsChunk.z);
+    }
+
+    public void setBiomes(LocalChunk<char[]> lc) {
+        if (lc.biomes != null) {
+            World worldObj = getSpongeWorld();
+            int bx = lc.getX() << 4;
+            int bz = lc.getX() << 4;
+            String last = null;
+            BiomeType biome = null;
+            for (int x = 0; x < lc.biomes.length; x++) {
+                String[] biomes2 = lc.biomes[x];
+                if (biomes2 != null) {
+                    for (int y = 0; y < biomes2.length; y++) {
+                        String biomeStr = biomes2[y];
+                        if (biomeStr != null) {
+                            if (last == null || !StringMan.isEqual(last, biomeStr)) {
+                                biome = SpongeUtil.getBiome(biomeStr.toUpperCase());
+                            }
+                            worldObj.setBiome(bx, 0, bz, biome);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     public class CharLocalChunk_Sponge extends CharLocalChunk {
         public short[] count;
@@ -162,8 +349,7 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
             this.relight = new short[16];
         }
 
-        @Override
-        public void setBlock(int x, int y, int z, int id, int data) {
+        @Override public void setBlock(int x, int y, int z, int id, int data) {
             int i = MainUtil.CACHE_I[y][x][z];
             int j = MainUtil.CACHE_J[y][x][z];
             char[] vs = this.blocks[i];
@@ -308,197 +494,6 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
                 total += this.relight[i];
             }
             return total;
-        }
-    }
-
-    public boolean isSurrounded(char[][] sections, int x, int y, int z) {
-        return isSolid(getId(sections, x, y + 1, z))
-                && isSolid(getId(sections, x + 1, y - 1, z))
-                && isSolid(getId(sections, x - 1, y, z))
-                && isSolid(getId(sections, x, y, z + 1))
-                && isSolid(getId(sections, x, y, z - 1));
-    }
-
-    public boolean isSolid(int i) {
-        return i != 0 && Block.getBlockById(i).isOpaqueCube(Block.getBlockById(i).getDefaultState());
-    }
-
-    public int getId(char[][] sections, int x, int y, int z) {
-        if (x < 0 || x > 15 || z < 0 || z > 15) {
-            return 1;
-        }
-        if (y < 0 || y > 255) {
-            return 1;
-        }
-        int i = MainUtil.CACHE_I[y][x][z];
-        char[] section = sections[i];
-        if (section == null) {
-            return 0;
-        }
-        int j = MainUtil.CACHE_I[y][x][z];
-        int combined = section[j];
-        return combined >> 4;
-    }
-
-    public boolean fixLighting(CharLocalChunk_Sponge bc, Chunk nmsChunk) {
-        try {
-            if (!nmsChunk.isLoaded()) {
-                return false;
-            }
-            ExtendedBlockStorage[] sections = nmsChunk.getBlockStorageArray();
-            nmsChunk.generateSkylightMap();
-            net.minecraft.world.World nmsWorld = nmsChunk.getWorld();
-
-            int X = bc.getX() << 4;
-            int Z = bc.getZ() << 4;
-
-            BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(0, 0, 0);
-            for (int j = 0; j < sections.length; j++) {
-                ExtendedBlockStorage section = sections[j];
-                if (section == null) {
-                    continue;
-                }
-                if ((bc.getCount(j) == 0) || ((bc.getCount(j) >= 4096) && (bc.getAir(j) == 0)) || bc.getAir(j) == 4096) {
-                    continue;
-                }
-                char[] array = bc.getIdArray(j);
-                if (array != null) {
-                    int l = PseudoRandom.random.random(2);
-                    for (int k = 0; k < array.length; k++) {
-                        int i = array[k];
-                        if (i < 16) {
-                            continue;
-                        }
-                        short id = (short) (i >> 4);
-                        switch (id) { // Lighting
-                            default:
-                                if ((k & 1) == l) {
-                                    l = 1 - l;
-                                    continue;
-                                }
-                            case 10:
-                            case 11:
-                            case 39:
-                            case 40:
-                            case 50:
-                            case 51:
-                            case 62:
-                            case 74:
-                            case 76:
-                            case 89:
-                            case 122:
-                            case 124:
-                            case 130:
-                            case 138:
-                            case 169:
-                                int x = MainUtil.x_loc[j][k];
-                                int y = MainUtil.y_loc[j][k];
-                                int z = MainUtil.z_loc[j][k];
-                                if (isSurrounded(bc.blocks, x, y, z)) {
-                                    continue;
-                                }
-                                pos.setPos(X + x, y, Z + z);
-                                nmsWorld.checkLight(pos);
-                        }
-                    }
-                }
-            }
-            return true;
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    @Override
-    public final void regenChunk(int x, int z) {
-        World worldObj = getSpongeWorld();
-        throw new UnsupportedOperationException("NOT SUPPORTED");
-    }
-
-    @Override
-    public final void setComponents(LocalChunk<char[]> lc) {
-        setBlocks(lc);
-        setBiomes(lc);
-    }
-
-    public Chunk getChunk(World world, int x, int z) {
-        net.minecraft.world.chunk.Chunk chunk = ((net.minecraft.world.World) world).getChunkProvider().provideChunk(x, z);
-        if (chunk != null && !chunk.isLoaded()) {
-            chunk.onLoad();
-        }
-        return chunk;
-    }
-
-    private BlockState AIR = BlockTypes.AIR.getDefaultState();
-
-    public void setBlocks(LocalChunk<char[]> lc) {
-        World worldObj = getSpongeWorld();
-        org.spongepowered.api.world.Chunk spongeChunk = (org.spongepowered.api.world.Chunk) getChunk(worldObj, lc.getX(), lc.getZ());
-        Chunk nmsChunk = (Chunk) spongeChunk;
-        char[][] ids = ((CharLocalChunk) lc).blocks;
-        for (int layer = 0; layer < 16; layer++) {
-            char[] array = ids[layer];
-            if (array == null) {
-                continue;
-            }
-            ExtendedBlockStorage section = nmsChunk.getBlockStorageArray()[layer];
-            short[] cacheX = MainUtil.x_loc[0];
-            short[] cacheY = MainUtil.y_loc[0];
-            short[] cacheZ = MainUtil.z_loc[0];
-            for (int j = 0; j < array.length; j++) {
-                int combinedId = array[j];
-                switch (combinedId) {
-                    case 0:
-                        continue;
-                    case 1:
-                        int x = cacheX[j];
-                        int y = cacheY[j];
-                        int z = cacheZ[j];
-                        section.set(x, y, z, Blocks.AIR.getDefaultState());
-                        continue;
-                    default:
-                        int id = combinedId >> 4;
-                        Block block = Block.getBlockById(id);
-                        int data = combinedId & 0xf;
-                        IBlockState ibd;
-                        if (data != 0) {
-                            ibd = block.getStateFromMeta(data);
-                        } else {
-                            ibd = block.getDefaultState();
-                        }
-                        x = cacheX[j];
-                        y = cacheY[j];
-                        z = cacheZ[j];
-                        section.set(x, y, z, ibd);
-                        continue;
-                }
-            }
-        }
-        refreshChunk(nmsChunk.x, nmsChunk.z);
-    }
-
-    public void setBiomes(LocalChunk<char[]> lc) {
-        if (lc.biomes != null) {
-            World worldObj = getSpongeWorld();
-            int bx = lc.getX() << 4;
-            int bz = lc.getX() << 4;
-            String last = null;
-            BiomeType biome = null;
-            for (int x = 0; x < lc.biomes.length; x++) {
-                String[] biomes2 = lc.biomes[x];
-                if (biomes2 != null) {
-                    for (int y = 0; y < biomes2.length; y++) {
-                        String biomeStr = biomes2[y];
-                        if (biomeStr != null) {
-                            if (last == null || !StringMan.isEqual(last, biomeStr)) {
-                                biome = SpongeUtil.getBiome(biomeStr.toUpperCase());
-                            }
-                            worldObj.setBiome(bx, 0, bz, biome);
-                        }
-                    }
-                }
-            }
         }
     }
 }

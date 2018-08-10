@@ -19,7 +19,7 @@ public class ClusterFlagRemoveEvent extends Event implements Cancellable {
     /**
      * PlotFlagRemoveEvent: Called when a flag is removed from a plot.
      *
-     * @param flag Flag that was removed
+     * @param flag    Flag that was removed
      * @param cluster PlotCluster from which the flag was removed
      */
     public ClusterFlagRemoveEvent(Flag flag, PlotCluster cluster) {
@@ -49,18 +49,15 @@ public class ClusterFlagRemoveEvent extends Event implements Cancellable {
         return this.flag;
     }
 
-    @Override
-    public HandlerList getHandlers() {
+    @Override public HandlerList getHandlers() {
         return handlers;
     }
 
-    @Override
-    public boolean isCancelled() {
+    @Override public boolean isCancelled() {
         return this.cancelled;
     }
 
-    @Override
-    public void setCancelled(boolean b) {
+    @Override public void setCancelled(boolean b) {
         this.cancelled = b;
     }
 }

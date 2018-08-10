@@ -3,11 +3,7 @@ package com.plotsquared.listener;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flags;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.*;
 import com.sk89q.worldedit.blocks.BaseBlock;
 
 import java.util.HashSet;
@@ -41,7 +37,8 @@ public class WEManager {
         Location location = player.getLocation();
         String world = location.getWorld();
         if (!PS.get().hasPlotArea(world)) {
-            regions.add(new RegionWrapper(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE));
+            regions.add(new RegionWrapper(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
+                Integer.MAX_VALUE));
             return regions;
         }
         PlotArea area = player.getApplicablePlotArea();
@@ -54,9 +51,13 @@ public class WEManager {
         if (plot == null) {
             plot = player.getMeta("WorldEditRegionPlot");
         }
-        if (plot != null && (!Settings.Done.RESTRICT_BUILDING || !Flags.DONE.isSet(plot)) && ((allowMember && plot.isAdded(uuid)) || (!allowMember && (plot.isOwner(uuid)) || plot.getTrusted().contains(uuid))) && !(Flags.NO_WORLDEDIT.isTrue(plot))) {
+        if (plot != null && (!Settings.Done.RESTRICT_BUILDING || !Flags.DONE.isSet(plot)) && (
+            (allowMember && plot.isAdded(uuid)) || (!allowMember && (plot.isOwner(uuid)) || plot
+                .getTrusted().contains(uuid))) && !(Flags.NO_WORLDEDIT.isTrue(plot))) {
             for (RegionWrapper region : plot.getRegions()) {
-                RegionWrapper copy = new RegionWrapper(region.minX, region.maxX, area.MIN_BUILD_HEIGHT, area.MAX_BUILD_HEIGHT, region.minZ, region.maxZ);
+                RegionWrapper copy =
+                    new RegionWrapper(region.minX, region.maxX, area.MIN_BUILD_HEIGHT,
+                        area.MAX_BUILD_HEIGHT, region.minZ, region.maxZ);
                 regions.add(copy);
             }
             player.setMeta("WorldEditRegionPlot", plot);

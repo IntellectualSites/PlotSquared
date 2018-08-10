@@ -4,29 +4,18 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.CmdConfirm;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.util.Set;
 import java.util.UUID;
 
-@CommandDeclaration(
-        command = "setowner",
-        permission = "plots.set.owner",
-        description = "Set the plot owner",
-        usage = "/plot setowner <player>",
-        aliases = {"owner", "so", "seto"},
-        category = CommandCategory.CLAIMING,
-        requiredType = RequiredType.NONE,
-        confirmation = true)
+@CommandDeclaration(command = "setowner", permission = "plots.set.owner", description = "Set the plot owner", usage = "/plot setowner <player>", aliases = {
+    "owner", "so",
+    "seto"}, category = CommandCategory.CLAIMING, requiredType = RequiredType.NONE, confirmation = true)
 public class Owner extends SetCommand {
 
-    @Override
-    public boolean set(final PlotPlayer player, final Plot plot, String value) {
+    @Override public boolean set(final PlotPlayer player, final Plot plot, String value) {
         Set<Plot> plots = plot.getConnectedPlots();
         UUID uuid = null;
         String name = null;
@@ -34,15 +23,18 @@ public class Owner extends SetCommand {
             try {
                 uuid = UUID.fromString(value);
                 name = MainUtil.getName(uuid);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         } else {
             uuid = UUIDHandler.getUUID(value, null);
             name = UUIDHandler.getName(uuid);
             name = name == null ? value : name;
         }
         if (uuid == null || value.equalsIgnoreCase("-")) {
-            if (value.equalsIgnoreCase("none") || value.equalsIgnoreCase("null") || value.equalsIgnoreCase("-")) {
-                if (!Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SETOWNER.s(), true)) {
+            if (value.equalsIgnoreCase("none") || value.equalsIgnoreCase("null") || value
+                .equalsIgnoreCase("-")) {
+                if (!Permissions
+                    .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SETOWNER.s(), true)) {
                     return false;
                 }
                 Set<Plot> connected = plot.getConnectedPlots();
@@ -68,7 +60,9 @@ public class Owner extends SetCommand {
                 return false;
             }
             int size = plots.size();
-            int currentPlots = (Settings.Limit.GLOBAL ? other.getPlotCount() : other.getPlotCount(plot.getWorldName())) + size;
+            int currentPlots = (Settings.Limit.GLOBAL ?
+                other.getPlotCount() :
+                other.getPlotCount(plot.getWorldName())) + size;
             if (currentPlots > other.getAllowedPlots()) {
                 sendMessage(player, C.CANT_TRANSFER_MORE_PLOTS);
                 return false;
@@ -78,9 +72,9 @@ public class Owner extends SetCommand {
         final UUID finalUUID = uuid;
         final boolean removeDenied = plot.isDenied(finalUUID);
         Runnable run = new Runnable() {
-            @Override
-            public void run() {
-                if (removeDenied) plot.removeDenied(finalUUID);
+            @Override public void run() {
+                if (removeDenied)
+                    plot.removeDenied(finalUUID);
                 plot.setOwner(finalUUID);
                 plot.setSign(finalName);
                 MainUtil.sendMessage(player, C.SET_OWNER);

@@ -28,10 +28,12 @@ public final class Reflection {
      * Contains loaded methods in a cache.
      * The map maps [types to maps of [method names to maps of [parameter types to method instances]]].
      */
-    private static final Map<Class<?>, Map<String, Map<ArrayWrapper<Class<?>>, Method>>> _loadedMethods = new HashMap<>();
+    private static final Map<Class<?>, Map<String, Map<ArrayWrapper<Class<?>>, Method>>>
+        _loadedMethods = new HashMap<>();
     private static String _versionString;
 
-    private Reflection() { }
+    private Reflection() {
+    }
 
     /**
      * Gets the version string from the package name of the CraftBukkit server implementation.
@@ -109,8 +111,9 @@ public final class Reflection {
      * @param obj The object for which to retrieve an NMS handle.
      * @return The NMS handle of the specified object, or {@code null} if it could not be retrieved using {@code getHandle()}.
      */
-    public synchronized static Object getHandle(Object obj) throws InvocationTargetException, IllegalAccessException, IllegalArgumentException {
-            return getMethod(obj.getClass(), "getHandle").invoke(obj);
+    public synchronized static Object getHandle(Object obj)
+        throws InvocationTargetException, IllegalAccessException, IllegalArgumentException {
+        return getMethod(obj.getClass(), "getHandle").invoke(obj);
     }
 
     /**
@@ -181,7 +184,8 @@ public final class Reflection {
             _loadedMethods.put(clazz, new HashMap<String, Map<ArrayWrapper<Class<?>>, Method>>());
         }
 
-        Map<String, Map<ArrayWrapper<Class<?>>, Method>> loadedMethodNames = _loadedMethods.get(clazz);
+        Map<String, Map<ArrayWrapper<Class<?>>, Method>> loadedMethodNames =
+            _loadedMethods.get(clazz);
         if (!loadedMethodNames.containsKey(name)) {
             loadedMethodNames.put(name, new HashMap<ArrayWrapper<Class<?>>, Method>());
         }

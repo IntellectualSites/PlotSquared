@@ -1,7 +1,6 @@
 package com.plotsquared.sponge.util;
 
 import com.google.common.collect.ImmutableList;
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -21,8 +20,8 @@ import java.util.*;
 
 public class SpongeCommand implements CommandCallable {
 
-    @Override
-    public CommandResult process(CommandSource source, String arguments) throws CommandException {
+    @Override public CommandResult process(CommandSource source, String arguments)
+        throws CommandException {
         TaskManager.runTask(() -> {
             String id = source.getIdentifier();
             PlotPlayer plotPlayer = null;
@@ -36,14 +35,14 @@ public class SpongeCommand implements CommandCallable {
             } catch (Exception ignored) {
                 plotPlayer = ConsolePlayer.getConsole();
             }
-            MainCommand.onCommand(plotPlayer, arguments.isEmpty() ? new String[]{} : arguments.split(" "));
+            MainCommand.onCommand(plotPlayer,
+                arguments.isEmpty() ? new String[] {} : arguments.split(" "));
         });
         return CommandResult.success();
     }
 
-    @Override
-    public List<String> getSuggestions(CommandSource source, String arguments, Location<World> targetPosition)
-            throws CommandException {
+    @Override public List<String> getSuggestions(CommandSource source, String arguments,
+        Location<World> targetPosition) throws CommandException {
         if (!(source instanceof Player)) {
             return ImmutableList.of();
         }
@@ -71,23 +70,19 @@ public class SpongeCommand implements CommandCallable {
         return names;
     }
 
-    @Override
-    public boolean testPermission(CommandSource source) {
+    @Override public boolean testPermission(CommandSource source) {
         return true;
     }
 
-    @Override
-    public Optional<Text> getShortDescription(CommandSource source) {
+    @Override public Optional<Text> getShortDescription(CommandSource source) {
         return Optional.of(Text.of("Shows plot help"));
     }
 
-    @Override
-    public Optional<Text> getHelp(CommandSource source) {
+    @Override public Optional<Text> getHelp(CommandSource source) {
         return Optional.of(Text.of("/plot"));
     }
 
-    @Override
-    public Text getUsage(CommandSource source) {
+    @Override public Text getUsage(CommandSource source) {
         return Text.of("/plot <command>");
     }
 

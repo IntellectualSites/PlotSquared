@@ -26,8 +26,8 @@ import java.util.Random;
 
 public class BukkitHybridUtils extends HybridUtils {
 
-    @Override
-    public void analyzeRegion(final String world, final RegionWrapper region, final RunnableVal<PlotAnalysis> whenDone) {
+    @Override public void analyzeRegion(final String world, final RegionWrapper region,
+        final RunnableVal<PlotAnalysis> whenDone) {
         // int diff, int variety, int vertices, int rotation, int height_sd
         /*
          * diff: compare to base by looping through all blocks
@@ -41,8 +41,7 @@ public class BukkitHybridUtils extends HybridUtils {
          *
          */
         TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
                 final World worldObj = Bukkit.getWorld(world);
                 final ChunkGenerator gen = worldObj.getGenerator();
@@ -50,12 +49,10 @@ public class BukkitHybridUtils extends HybridUtils {
                     return;
                 }
                 final BiomeGrid nullBiomeGrid = new BiomeGrid() {
-                    @Override
-                    public void setBiome(int a, int b, Biome c) {
+                    @Override public void setBiome(int a, int b, Biome c) {
                     }
 
-                    @Override
-                    public Biome getBiome(int a, int b) {
+                    @Override public Biome getBiome(int a, int b) {
                         return null;
                     }
                 };
@@ -82,15 +79,14 @@ public class BukkitHybridUtils extends HybridUtils {
                 final short[][][] newBlocks = new short[256][width][length];
 
                 final Runnable run = new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         ChunkManager.chunkTask(bot, top, new RunnableVal<int[]>() {
-                            @Override
-                            public void run(int[] value) {
+                            @Override public void run(int[] value) {
                                 // [chunkx, chunkz, pos1x, pos1z, pos2x, pos2z, isedge]
                                 int X = value[0];
                                 int Z = value[1];
-                                short[][] result = gen.generateExtBlockSections(worldObj, r, X, Z, nullBiomeGrid);
+                                short[][] result =
+                                    gen.generateExtBlockSections(worldObj, r, X, Z, nullBiomeGrid);
                                 int xb = (X << 4) - bx;
                                 int zb = (Z << 4) - bz;
                                 for (int i = 0; i < result.length; i++) {
@@ -125,11 +121,9 @@ public class BukkitHybridUtils extends HybridUtils {
 
                             }
                         }, new Runnable() {
-                            @Override
-                            public void run() {
+                            @Override public void run() {
                                 TaskManager.runTaskAsync(new Runnable() {
-                                    @Override
-                                    public void run() {
+                                    @Override public void run() {
                                         int size = width * length;
                                         int[] changes = new int[size];
                                         int[] faces = new int[size];
@@ -151,7 +145,8 @@ public class BukkitHybridUtils extends HybridUtils {
                                                     } else {
                                                         // check vertices
                                                         // modifications_adjacent
-                                                        if (x > 0 && z > 0 && y > 0 && x < width - 1 && z < length - 1 && y < 255) {
+                                                        if (x > 0 && z > 0 && y > 0 && x < width - 1
+                                                            && z < length - 1 && y < 255) {
                                                             if (newBlocks[y - 1][x][z] == 0) {
                                                                 faces[i]++;
                                                             }
@@ -172,12 +167,15 @@ public class BukkitHybridUtils extends HybridUtils {
                                                             }
                                                         }
 
-                                                        Material material = Material.getMaterial(now);
+                                                        Material material =
+                                                            Material.getMaterial(now);
                                                         if (material != null) {
-                                                            Class<? extends MaterialData> md = material.getData();
+                                                            Class<? extends MaterialData> md =
+                                                                material.getData();
                                                             if (md.equals(Directional.class)) {
                                                                 data[i] += 8;
-                                                            } else if (!md.equals(MaterialData.class)) {
+                                                            } else if (!md
+                                                                .equals(MaterialData.class)) {
                                                                 data[i]++;
                                                             }
                                                         }
@@ -199,11 +197,14 @@ public class BukkitHybridUtils extends HybridUtils {
                                         analysis.air = (int) (MathMan.getMean(air) * 100);
                                         analysis.variety = (int) (MathMan.getMean(variety) * 100);
 
-                                        analysis.changes_sd = (int) MathMan.getSD(changes, analysis.changes);
-                                        analysis.faces_sd = (int) MathMan.getSD(faces, analysis.faces);
+                                        analysis.changes_sd =
+                                            (int) MathMan.getSD(changes, analysis.changes);
+                                        analysis.faces_sd =
+                                            (int) MathMan.getSD(faces, analysis.faces);
                                         analysis.data_sd = (int) MathMan.getSD(data, analysis.data);
                                         analysis.air_sd = (int) MathMan.getSD(air, analysis.air);
-                                        analysis.variety_sd = (int) MathMan.getSD(variety, analysis.variety);
+                                        analysis.variety_sd =
+                                            (int) MathMan.getSD(variety, analysis.variety);
                                         System.gc();
                                         System.gc();
                                         whenDone.value = analysis;
@@ -219,8 +220,7 @@ public class BukkitHybridUtils extends HybridUtils {
                 MainUtil.initCache();
                 ChunkManager.chunkTask(bot, top, new RunnableVal<int[]>() {
 
-                    @Override
-                    public void run(int[] value) {
+                    @Override public void run(int[] value) {
                         int X = value[0];
                         int Z = value[1];
                         worldObj.loadChunk(X, Z);
@@ -269,8 +269,7 @@ public class BukkitHybridUtils extends HybridUtils {
                         worldObj.unloadChunkRequest(X, Z, true);
                     }
                 }, new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         TaskManager.runTaskAsync(run);
                     }
                 }, 5);

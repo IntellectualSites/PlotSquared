@@ -23,27 +23,27 @@ public class WEExtent extends AbstractDelegateExtent {
         this.mask = mask;
     }
 
-    @Override
-    public boolean setBlock(Vector location, BaseBlock block) throws WorldEditException {
-        return WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(), location.getBlockZ()) && super.setBlock(location, block);
+    @Override public boolean setBlock(Vector location, BaseBlock block) throws WorldEditException {
+        return WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),
+            location.getBlockZ()) && super.setBlock(location, block);
     }
 
-    @Override
-    public Entity createEntity(Location location, BaseEntity entity) {
-        if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
+    @Override public Entity createEntity(Location location, BaseEntity entity) {
+        if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),
+            location.getBlockZ())) {
             return super.createEntity(location, entity);
         }
         return null;
     }
 
-    @Override
-    public boolean setBiome(Vector2D position, BaseBiome biome) {
-        return WEManager.maskContains(this.mask, position.getBlockX(), position.getBlockZ()) && super.setBiome(position, biome);
+    @Override public boolean setBiome(Vector2D position, BaseBiome biome) {
+        return WEManager.maskContains(this.mask, position.getBlockX(), position.getBlockZ())
+            && super.setBiome(position, biome);
     }
 
-    @Override
-    public BaseBlock getBlock(Vector location) {
-        if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
+    @Override public BaseBlock getBlock(Vector location) {
+        if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),
+            location.getBlockZ())) {
             return super.getBlock(location);
         }
         return WEManager.AIR;

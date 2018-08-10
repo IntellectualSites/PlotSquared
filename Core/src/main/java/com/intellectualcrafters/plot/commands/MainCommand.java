@@ -2,14 +2,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.ConsolePlayer;
-import com.intellectualcrafters.plot.object.Expression;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RunnableVal2;
-import com.intellectualcrafters.plot.object.RunnableVal3;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.Permissions;
@@ -21,11 +14,9 @@ import java.util.Arrays;
 /**
  * PlotSquared command class.
  */
-@CommandDeclaration(
-        command = "plot",
-        aliases = {"plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap"})
-public class MainCommand extends Command {
-    
+@CommandDeclaration(command = "plot", aliases = {"plots", "p", "plotsquared", "plot2", "p2", "ps",
+    "2", "plotme", "plotz", "ap"}) public class MainCommand extends Command {
+
     private static MainCommand instance;
     public Help help;
     public Toggle toggle;
@@ -137,14 +128,16 @@ public class MainCommand extends Command {
                 public void run(final Command cmd, final Runnable success, final Runnable failure) {
                     if (cmd.hasConfirmation(player)) {
                         CmdConfirm.addPending(player, cmd.getUsage(), new Runnable() {
-                            @Override
-                            public void run() {
+                            @Override public void run() {
                                 if (EconHandler.manager != null) {
                                     PlotArea area = player.getApplicablePlotArea();
                                     if (area != null) {
-                                        Expression<Double> priceEval = area.PRICES.get(cmd.getFullId());
-                                        Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
-                                        if (price != null && EconHandler.manager.getMoney(player) < price) {
+                                        Expression<Double> priceEval =
+                                            area.PRICES.get(cmd.getFullId());
+                                        Double price =
+                                            priceEval != null ? priceEval.evaluate(0d) : 0d;
+                                        if (price != null
+                                            && EconHandler.manager.getMoney(player) < price) {
                                             if (failure != null) {
                                                 failure.run();
                                             }
@@ -177,8 +170,7 @@ public class MainCommand extends Command {
                     }
                 }
             }, new RunnableVal2<Command, CommandResult>() {
-                @Override
-                public void run(Command cmd, CommandResult result) {
+                @Override public void run(Command cmd, CommandResult result) {
                     // Post command stuff!?
                 }
             });
@@ -192,13 +184,13 @@ public class MainCommand extends Command {
     @Deprecated
     /**
      * @Deprecated legacy
-     */
-    public void addCommand(SubCommand command) {
+     */ public void addCommand(SubCommand command) {
         PS.debug("Command registration is now done during instantiation");
     }
 
-    @Override
-    public void execute(final PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) {
+    @Override public void execute(final PlotPlayer player, String[] args,
+        RunnableVal3<Command, Runnable, Runnable> confirm,
+        RunnableVal2<Command, CommandResult> whenDone) {
         // Clear perm caching //
         player.deleteMeta("perm");
         // Optional command scope //
@@ -208,7 +200,9 @@ public class MainCommand extends Command {
         if (args.length >= 2) {
             PlotArea area = player.getApplicablePlotArea();
             Plot newPlot = Plot.fromString(area, args[0]);
-            if (newPlot != null && (player instanceof ConsolePlayer || newPlot.getArea().equals(area) || Permissions.hasPermission(player, C.PERMISSION_ADMIN)) && !newPlot.isDenied(player.getUUID())) {
+            if (newPlot != null && (player instanceof ConsolePlayer || newPlot.getArea()
+                .equals(area) || Permissions.hasPermission(player, C.PERMISSION_ADMIN)) && !newPlot
+                .isDenied(player.getUUID())) {
                 Location newLoc = newPlot.getCenter();
                 if (player.canTeleport(newLoc)) {
                     // Save meta
@@ -233,9 +227,12 @@ public class MainCommand extends Command {
                                 if (EconHandler.manager != null) {
                                     PlotArea area = player.getApplicablePlotArea();
                                     if (area != null) {
-                                        Expression<Double> priceEval = area.PRICES.get(cmd.getFullId());
-                                        Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
-                                        if (price != 0d && EconHandler.manager.getMoney(player) < price) {
+                                        Expression<Double> priceEval =
+                                            area.PRICES.get(cmd.getFullId());
+                                        Double price =
+                                            priceEval != null ? priceEval.evaluate(0d) : 0d;
+                                        if (price != 0d
+                                            && EconHandler.manager.getMoney(player) < price) {
                                             if (failure != null) {
                                                 failure.run();
                                             }
@@ -284,8 +281,7 @@ public class MainCommand extends Command {
         }
     }
 
-    @Override
-    public boolean canExecute(PlotPlayer player, boolean message) {
+    @Override public boolean canExecute(PlotPlayer player, boolean message) {
         return true;
     }
 }

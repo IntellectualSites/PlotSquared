@@ -9,18 +9,15 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "near",
-        aliases = "n",
-        description = "Display nearby players",
-        usage = "/plot near",
-        category = CommandCategory.INFO)
+@CommandDeclaration(command = "near", aliases = "n", description = "Display nearby players", usage = "/plot near", category = CommandCategory.INFO)
 public class Near extends Command {
     public Near() {
         super(MainCommand.getInstance(), true);
     }
 
-    @Override
-    public void execute(PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
+    @Override public void execute(PlotPlayer player, String[] args,
+        RunnableVal3<Command, Runnable, Runnable> confirm,
+        RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         final Plot plot = check(player.getCurrentPlot(), C.NOT_IN_PLOT);
         C.PLOT_NEAR.send(player, StringMan.join(plot.getPlayersInPlot(), ", "));
     }

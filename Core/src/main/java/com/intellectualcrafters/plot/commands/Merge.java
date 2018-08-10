@@ -2,32 +2,17 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.object.Expression;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.CmdConfirm;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.util.UUID;
 
-@CommandDeclaration(command = "merge",
-        aliases = "m",
-        description = "Merge the plot you are standing on, with another plot",
-        permission = "plots.merge", usage = "/plot merge <all|n|e|s|w> [removeroads]",
-        category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.NONE,
-        confirmation = true)
+@CommandDeclaration(command = "merge", aliases = "m", description = "Merge the plot you are standing on, with another plot", permission = "plots.merge", usage = "/plot merge <all|n|e|s|w> [removeroads]", category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE, confirmation = true)
 public class Merge extends SubCommand {
 
-    public static final String[] values = new String[]{"north", "east", "south", "west", "auto"};
-    public static final String[] aliases = new String[]{"n", "e", "s", "w", "all"};
+    public static final String[] values = new String[] {"north", "east", "south", "west", "auto"};
+    public static final String[] aliases = new String[] {"n", "e", "s", "w", "all"};
 
     public static String direction(float yaw) {
         yaw = yaw / 90;
@@ -51,8 +36,7 @@ public class Merge extends SubCommand {
         }
     }
 
-    @Override
-    public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         Location loc = player.getLocationFull();
         final Plot plot = loc.getPlotAbs();
         if (plot == null) {
@@ -72,14 +56,17 @@ public class Merge extends SubCommand {
             }
         }
         final PlotArea plotArea = plot.getArea();
-        Expression<Double> priceExr = plotArea.PRICES.containsKey("merge") ? plotArea.PRICES.get("merge") : null;
+        Expression<Double> priceExr =
+            plotArea.PRICES.containsKey("merge") ? plotArea.PRICES.get("merge") : null;
         final int size = plot.getConnectedPlots().size();
         final double price = priceExr == null ? 0d : priceExr.evaluate((double) size);
-        if (EconHandler.manager != null && plotArea.USE_ECONOMY && price > 0d && EconHandler.manager.getMoney(player) < price) {
+        if (EconHandler.manager != null && plotArea.USE_ECONOMY && price > 0d
+            && EconHandler.manager.getMoney(player) < price) {
             sendMessage(player, C.CANNOT_AFFORD_MERGE, String.valueOf(price));
             return false;
         }
-        final int maxSize = Permissions.hasPermissionRange(player, "plots.merge", Settings.Limit.MAX_PLOTS);
+        final int maxSize =
+            Permissions.hasPermissionRange(player, "plots.merge", Settings.Limit.MAX_PLOTS);
         if (size - 1 > maxSize) {
             MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.merge." + (size + 1));
             return false;
@@ -126,8 +113,10 @@ public class Merge extends SubCommand {
             }
         }
         if (direction == -1) {
-            MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot merge <" + StringMan.join(values, "|") + "> [removeroads]");
-            MainUtil.sendMessage(player, C.DIRECTION.s().replaceAll("%dir%", direction(loc.getYaw())));
+            MainUtil.sendMessage(player, C.COMMAND_SYNTAX,
+                "/plot merge <" + StringMan.join(values, "|") + "> [removeroads]");
+            MainUtil
+                .sendMessage(player, C.DIRECTION.s().replaceAll("%dir%", direction(loc.getYaw())));
             return false;
         }
         final boolean terrain;
@@ -145,7 +134,8 @@ public class Merge extends SubCommand {
             return true;
         }
         Plot adjacent = plot.getRelative(direction);
-        if (adjacent == null || !adjacent.hasOwner() || adjacent.getMerged((direction + 2) % 4) || adjacent.isOwner(uuid)) {
+        if (adjacent == null || !adjacent.hasOwner() || adjacent.getMerged((direction + 2) % 4)
+            || adjacent.isOwner(uuid)) {
             MainUtil.sendMessage(player, C.NO_AVAILABLE_AUTOMERGE);
             return false;
         }
@@ -163,8 +153,7 @@ public class Merge extends SubCommand {
             isOnline = true;
             final int dir = direction;
             Runnable run = new Runnable() {
-                @Override
-                public void run() {
+                @Override public void run() {
                     MainUtil.sendMessage(accepter, C.MERGE_ACCEPTED);
                     plot.autoMerge(dir, maxSize - size, owner, terrain);
                     PlotPlayer plotPlayer = UUIDHandler.getPlayer(player.getUUID());
@@ -184,7 +173,8 @@ public class Merge extends SubCommand {
                 }
             };
             if (hasConfirmation(player)) {
-                CmdConfirm.addPending(accepter, C.MERGE_REQUEST_CONFIRM.s().replaceAll("%s", player.getName()), run);
+                CmdConfirm.addPending(accepter,
+                    C.MERGE_REQUEST_CONFIRM.s().replaceAll("%s", player.getName()), run);
             } else {
                 run.run();
             }

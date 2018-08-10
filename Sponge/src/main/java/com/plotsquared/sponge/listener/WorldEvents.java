@@ -9,9 +9,8 @@ import org.spongepowered.api.world.gen.GenerationPopulator;
 import org.spongepowered.api.world.gen.WorldGenerator;
 
 public class WorldEvents {
-    
-    @Listener
-    public void onLoadWorld(LoadWorldEvent event) {
+
+    @Listener public void onLoadWorld(LoadWorldEvent event) {
         final World world = event.getTargetWorld();
         final String name = world.getName();
         WorldGenerator generator = world.getWorldGenerator();
@@ -19,8 +18,7 @@ public class WorldEvents {
         if (terrain instanceof GeneratorWrapper) {
             GeneratorWrapper stg = (GeneratorWrapper) terrain;
             PS.get().loadWorld(name, stg);
-        }
-        else {
+        } else {
             PS.get().loadWorld(name, null);
         }
     }

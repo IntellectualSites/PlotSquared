@@ -9,7 +9,7 @@ import com.intellectualcrafters.plot.util.PlotWeather;
 import java.util.UUID;
 
 public class ConsolePlayer extends PlotPlayer {
-    
+
     private static ConsolePlayer instance;
 
     private ConsolePlayer() {
@@ -17,7 +17,8 @@ public class ConsolePlayer extends PlotPlayer {
         Location loc;
         if (area != null) {
             RegionWrapper region = area.getRegion();
-            loc = new Location(area.worldname, region.minX + region.maxX / 2, 0, region.minZ + region.maxZ / 2);
+            loc = new Location(area.worldname, region.minX + region.maxX / 2, 0,
+                region.minZ + region.maxZ / 2);
         } else {
             loc = new Location("world", 0, 0, 0);
         }
@@ -32,23 +33,19 @@ public class ConsolePlayer extends PlotPlayer {
         return instance;
     }
 
-    @Override
-    public boolean canTeleport(Location loc) {
+    @Override public boolean canTeleport(Location loc) {
         return true;
     }
 
-    @Override
-    public Location getLocation() {
+    @Override public Location getLocation() {
         return this.getMeta("location");
     }
-    
-    @Override
-    public Location getLocationFull() {
+
+    @Override public Location getLocationFull() {
         return getLocation();
     }
-    
-    @Override
-    public UUID getUUID() {
+
+    @Override public UUID getUUID() {
         return DBFunc.everyone;
     }
 
@@ -56,89 +53,79 @@ public class ConsolePlayer extends PlotPlayer {
         return 0;
     }
 
-    @Override
-    public boolean hasPermission(String permission) {
+    @Override public boolean hasPermission(String permission) {
         return true;
     }
 
-    @Override
-    public boolean isPermissionSet(String permission) {
+    @Override public boolean isPermissionSet(String permission) {
         return true;
     }
 
-    @Override
-    public void sendMessage(String message) {
+    @Override public void sendMessage(String message) {
         PS.log(message);
     }
-    
-    @Override
-    public void teleport(Location location) {
+
+    @Override public void teleport(Location location) {
         setMeta("lastplot", location.getPlot());
         setMeta("location", location);
     }
-    
-    @Override
-    public boolean isOnline() {
+
+    @Override public boolean isOnline() {
         return true;
     }
-    
-    @Override
-    public String getName() {
+
+    @Override public String getName() {
         return "*";
     }
-    
-    @Override
-    public void setCompassTarget(Location location) {}
 
-    @Override
-    public void setAttribute(String key) {}
-    
-    @Override
-    public boolean getAttribute(String key) {
+    @Override public void setCompassTarget(Location location) {
+    }
+
+    @Override public void setAttribute(String key) {
+    }
+
+    @Override public boolean getAttribute(String key) {
         return false;
     }
-    
-    @Override
-    public void removeAttribute(String key) {}
-    
-    @Override
-    public RequiredType getSuperCaller() {
+
+    @Override public void removeAttribute(String key) {
+    }
+
+    @Override public RequiredType getSuperCaller() {
         return RequiredType.CONSOLE;
     }
-    
-    @Override
-    public void setWeather(PlotWeather weather) {}
-    
-    @Override
-    public PlotGameMode getGameMode() {
+
+    @Override public void setWeather(PlotWeather weather) {
+    }
+
+    @Override public PlotGameMode getGameMode() {
         return PlotGameMode.NOT_SET;
     }
-    
-    @Override
-    public void setGameMode(PlotGameMode gameMode) {}
-    
-    @Override
-    public void setTime(long time) {}
-    
-    @Override
-    public boolean getFlight() {
+
+    @Override public void setGameMode(PlotGameMode gameMode) {
+    }
+
+    @Override public void setTime(long time) {
+    }
+
+    @Override public boolean getFlight() {
         return true;
     }
 
-    @Override
-    public void setFlight(boolean fly) {}
+    @Override public void setFlight(boolean fly) {
+    }
 
-    @Override
-    public void playMusic(Location location, int id) {}
-    
-    @Override
-    public void kick(String message) {}
+    @Override public void playMusic(Location location, int id) {
+    }
 
-    @Override public void stopSpectating() {}
+    @Override public void kick(String message) {
+    }
 
-    @Override
-    public boolean isBanned() {
+    @Override public void stopSpectating() {
+    }
+
+    @Override public boolean isBanned() {
         return false;
     }
-    
+
 }

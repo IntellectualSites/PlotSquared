@@ -14,26 +14,24 @@ import com.plotsquared.nukkit.NukkitMain;
 public class NukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
 
     private final Level level;
+    private Vector3 mutable;
 
     public NukkitLocalQueue(String world) {
         super(world);
         this.level = ((NukkitMain) PS.get().IMP).getServer().getLevelByName(world);
     }
 
-    @Override
-    public LocalChunk<T> getLocalChunk(int x, int z) {
+    @Override public LocalChunk<T> getLocalChunk(int x, int z) {
         return (LocalChunk<T>) new BasicLocalChunk(this, x, z) {
             // Custom stuff?
         };
     }
 
-    @Override
-    public void optimize() {
+    @Override public void optimize() {
 
     }
 
-    @Override
-    public PlotBlock getBlock(int x, int y, int z) {
+    @Override public PlotBlock getBlock(int x, int y, int z) {
         Block block = level.getBlock(getMut(x, y, z));
         if (block == null) {
             return PlotBlock.get(0, 0);
@@ -45,23 +43,19 @@ public class NukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
         return PlotBlock.get(id, block.getDamage());
     }
 
-    @Override
-    public void refreshChunk(int x, int z) {
+    @Override public void refreshChunk(int x, int z) {
 
     }
 
-    @Override
-    public void fixChunkLighting(int x, int z) {
+    @Override public void fixChunkLighting(int x, int z) {
         // Do nothing
     }
 
-    @Override
-    public final void regenChunk(int x, int z) {
+    @Override public final void regenChunk(int x, int z) {
         level.regenerateChunk(x, z);
     }
 
-    @Override
-    public final void setComponents(LocalChunk<T> lc) {
+    @Override public final void setComponents(LocalChunk<T> lc) {
         setBlocks(lc);
         setBiomes(lc);
     }
@@ -70,7 +64,6 @@ public class NukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
         return level.getChunk(x, z);
     }
 
-    private Vector3 mutable;
     private Vector3 getMut(int x, int y, int z) {
         mutable.x = x;
         mutable.y = y;

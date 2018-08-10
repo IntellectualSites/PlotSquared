@@ -6,7 +6,6 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Called when a plot is deleted
- *
  */
 public class PlotDeleteEvent extends PlotEvent {
 
@@ -38,8 +37,7 @@ public class PlotDeleteEvent extends PlotEvent {
         return getPlot().getWorldName();
     }
 
-    @Override
-    public HandlerList getHandlers() {
+    @Override public HandlerList getHandlers() {
         return handlers;
     }
 }

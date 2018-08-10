@@ -8,22 +8,18 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(usage = "/plot swap <X;Z>",
-        command = "swap",
-        description = "Swap two plots",
-        aliases = {"switch"},
-        category = CommandCategory.CLAIMING,
-        requiredType = RequiredType.NONE)
+@CommandDeclaration(usage = "/plot swap <X;Z>", command = "swap", description = "Swap two plots", aliases = {
+    "switch"}, category = CommandCategory.CLAIMING, requiredType = RequiredType.NONE)
 public class Swap extends SubCommand {
 
-    @Override
-    public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         Location loc = player.getLocation();
         Plot plot1 = loc.getPlotAbs();
         if (plot1 == null) {
             return !MainUtil.sendMessage(player, C.NOT_IN_PLOT);
         }
-        if (!plot1.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN.s())) {
+        if (!plot1.isOwner(player.getUUID()) && !Permissions
+            .hasPermission(player, C.PERMISSION_ADMIN.s())) {
             MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return false;
         }
@@ -45,8 +41,7 @@ public class Swap extends SubCommand {
             return false;
         }
         if (plot1.move(plot2, new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 MainUtil.sendMessage(player, C.SWAP_SUCCESS);
             }
         }, true)) {

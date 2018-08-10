@@ -28,11 +28,11 @@ public class YamlConfiguration extends FileConfiguration {
 
     /**
      * Creates a new {@link YamlConfiguration}, loading from the given file.
-     *
+     * <p>
      * <p>Any errors loading the Configuration will be logged and then ignored.
      * If the specified input is not a valid config, a blank config will be
      * returned.
-     *
+     * <p>
      * <p>The encoding used may follow the system dependent default.
      *
      * @param file Input file
@@ -64,8 +64,7 @@ public class YamlConfiguration extends FileConfiguration {
         return config;
     }
 
-    @Override
-    public String saveToString() {
+    @Override public String saveToString() {
         yamlOptions.setIndent(options().indent());
         yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
@@ -79,9 +78,8 @@ public class YamlConfiguration extends FileConfiguration {
 
         return header + dump;
     }
-    
-    @Override
-    public void loadFromString(String contents) throws InvalidConfigurationException {
+
+    @Override public void loadFromString(String contents) throws InvalidConfigurationException {
 
         Map<?, ?> input;
         try {
@@ -101,7 +99,7 @@ public class YamlConfiguration extends FileConfiguration {
             convertMapsToSections(input, this);
         }
     }
-    
+
     protected void convertMapsToSections(Map<?, ?> input, ConfigurationSection section) {
         for (Map.Entry<?, ?> entry : input.entrySet()) {
             String key = entry.getKey().toString();
@@ -114,7 +112,7 @@ public class YamlConfiguration extends FileConfiguration {
             }
         }
     }
-    
+
     protected String parseHeader(String input) {
         String[] lines = input.split("\r?\n", -1);
         StringBuilder result = new StringBuilder();
@@ -143,9 +141,8 @@ public class YamlConfiguration extends FileConfiguration {
 
         return result.toString();
     }
-    
-    @Override
-    protected String buildHeader() {
+
+    @Override protected String buildHeader() {
         String header = options().header();
 
         if (options().copyHeader()) {
@@ -182,8 +179,7 @@ public class YamlConfiguration extends FileConfiguration {
         return builder.toString();
     }
 
-    @Override
-    public YamlConfigurationOptions options() {
+    @Override public YamlConfigurationOptions options() {
         if (options == null) {
             options = new YamlConfigurationOptions(this);
         }

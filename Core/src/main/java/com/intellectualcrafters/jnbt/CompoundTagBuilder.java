@@ -1,9 +1,9 @@
 package com.intellectualcrafters.jnbt;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Helps create compound tags.
@@ -43,7 +43,6 @@ public class CompoundTagBuilder {
      *
      * @param key   they key
      * @param value the value
-     *
      * @return this object
      */
     public CompoundTagBuilder put(String key, Tag value) {
@@ -58,7 +57,6 @@ public class CompoundTagBuilder {
      *
      * @param key   they key
      * @param value the value
-     *
      * @return this object
      */
     public CompoundTagBuilder putByteArray(String key, byte[] value) {
@@ -70,7 +68,6 @@ public class CompoundTagBuilder {
      *
      * @param key   they key
      * @param value the value
-     *
      * @return this object
      */
     public CompoundTagBuilder putByte(String key, byte value) {
@@ -82,7 +79,6 @@ public class CompoundTagBuilder {
      *
      * @param key   they key
      * @param value the value
-     *
      * @return this object
      */
     public CompoundTagBuilder putDouble(String key, double value) {
@@ -94,7 +90,6 @@ public class CompoundTagBuilder {
      *
      * @param key   they key
      * @param value the value
-     *
      * @return this object
      */
     public CompoundTagBuilder putFloat(String key, float value) {
@@ -106,7 +101,6 @@ public class CompoundTagBuilder {
      *
      * @param key   they key
      * @param value the value
-     *
      * @return this object
      */
     public CompoundTagBuilder putIntArray(String key, int[] value) {
@@ -118,7 +112,6 @@ public class CompoundTagBuilder {
      *
      * @param key   they key
      * @param value the value
-     *
      * @return this object
      */
     public CompoundTagBuilder putInt(String key, int value) {
@@ -130,7 +123,6 @@ public class CompoundTagBuilder {
      *
      * @param key   they key
      * @param value the value
-     *
      * @return this object
      */
     public CompoundTagBuilder putLong(String key, long value) {
@@ -142,7 +134,6 @@ public class CompoundTagBuilder {
      *
      * @param key   they key
      * @param value the value
-     *
      * @return this object
      */
     public CompoundTagBuilder putShort(String key, short value) {
@@ -154,7 +145,6 @@ public class CompoundTagBuilder {
      *
      * @param key   they key
      * @param value the value
-     *
      * @return this object
      */
     public CompoundTagBuilder putString(String key, String value) {
@@ -165,7 +155,6 @@ public class CompoundTagBuilder {
      * Put all the entries from the given map into this map.
      *
      * @param value the map of tags
-     *
      * @return this object
      */
     public CompoundTagBuilder putAll(Map<String, ? extends Tag> value) {
@@ -189,7 +178,6 @@ public class CompoundTagBuilder {
      * Build a new compound tag with this builder's entries.
      *
      * @param name the name of the tag
-     *
      * @return the created compound tag
      */
     public CompoundTag build(String name) {

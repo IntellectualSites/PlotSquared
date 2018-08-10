@@ -27,13 +27,11 @@ public final class LongTag extends Tag {
         this.value = value;
     }
 
-    @Override
-    public Long getValue() {
+    @Override public Long getValue() {
         return this.value;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         String name = getName();
         String append = "";
         if (name != null && !name.isEmpty()) {

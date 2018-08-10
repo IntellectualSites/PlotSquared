@@ -6,12 +6,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -22,19 +17,33 @@ import java.util.zip.GZIPOutputStream;
 
 public class Metrics {
 
-    /** The current revision number. */
+    /**
+     * The current revision number.
+     */
     private static final int REVISION = 7;
-    /** The base url of the metrics domain.*/
+    /**
+     * The base url of the metrics domain.
+     */
     private static final String BASE_URL = "http://report.mcstats.org";
-    /** The url used to report a server's status. */
+    /**
+     * The url used to report a server's status.
+     */
     private static final String REPORT_URL = "/plugin/%s";
-    /** Interval of time to ping (in minutes). */
+    /**
+     * Interval of time to ping (in minutes).
+     */
     private static final int PING_INTERVAL = 15;
-    /** The plugin this metrics submits for. */
+    /**
+     * The plugin this metrics submits for.
+     */
     private final Plugin plugin;
-    /** Unique server id. */
+    /**
+     * Unique server id.
+     */
     private final String guid;
-    /** The scheduled task. */
+    /**
+     * The scheduled task.
+     */
     private volatile BukkitTask task = null;
 
     public Metrics(Plugin plugin) {
@@ -46,7 +55,6 @@ public class Metrics {
      * GZip compress a string of bytes.
      *
      * @param input
-     *
      * @return byte[] the file as a byte array
      */
     public static byte[] gzip(String input) {
@@ -61,7 +69,8 @@ public class Metrics {
             if (gzos != null) {
                 try {
                     gzos.close();
-                } catch (IOException ignore) {}
+                } catch (IOException ignore) {
+                }
             }
         }
         return baos.toByteArray();
@@ -73,7 +82,6 @@ public class Metrics {
      * @param json
      * @param key
      * @param value
-     *
      */
     private static void appendJSONPair(StringBuilder json, String key, String value) {
         boolean isValueNumeric = false;
@@ -101,7 +109,6 @@ public class Metrics {
      * Escape a string to create a valid JSON string
      *
      * @param text
-     *
      * @return String
      */
     private static String escapeJSON(String text) {
@@ -145,7 +152,6 @@ public class Metrics {
      * Encode text as UTF-8
      *
      * @param text the text to encode
-     *
      * @return the encoded text, as UTF-8
      */
     private static String urlEncode(String text) throws UnsupportedEncodingException {
@@ -165,22 +171,22 @@ public class Metrics {
             return true;
         }
         // Begin hitting the server with glorious data
-        this.task = this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(this.plugin, new Runnable() {
-            private boolean firstPost = true;
+        this.task = this.plugin.getServer().getScheduler()
+            .runTaskTimerAsynchronously(this.plugin, new Runnable() {
+                private boolean firstPost = true;
 
-            @Override
-            public void run() {
-                try {
-                    postPlugin(!this.firstPost);
-                    // After the first post we set firstPost to
-                    // false
-                    // Each post thereafter will be a ping
-                    this.firstPost = false;
-                } catch (IOException e) {
-                    e.printStackTrace();
+                @Override public void run() {
+                    try {
+                        postPlugin(!this.firstPost);
+                        // After the first post we set firstPost to
+                        // false
+                        // Each post thereafter will be a ping
+                        this.firstPost = false;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-        }, 0, PING_INTERVAL * 1200);
+            }, 0, PING_INTERVAL * 1200);
         return true;
     }
 
@@ -196,10 +202,15 @@ public class Metrics {
         String serverVersion = Bukkit.getVersion();
         int playersOnline = 0;
         try {
-            if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class) {
-                playersOnline = ((Collection<?>) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)).size();
+            if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType()
+                == Collection.class) {
+                playersOnline =
+                    ((Collection<?>) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0])
+                        .invoke(null)).size();
             } else {
-                playersOnline = ((Player[]) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)).length;
+                playersOnline =
+                    ((Player[]) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0])
+                        .invoke(null)).length;
             }
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
             ex.printStackTrace();
@@ -256,7 +267,8 @@ public class Metrics {
                 os.flush();
             }
             String response;
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(connection.getInputStream()))) {
                 response = reader.readLine();
             }
             if (response == null || response.startsWith("ERR") || response.startsWith("7")) {
@@ -267,6 +279,7 @@ public class Metrics {
                 }
                 throw new IOException(response);
             }
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
     }
 }

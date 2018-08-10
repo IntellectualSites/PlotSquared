@@ -10,21 +10,14 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(
-        command = "target",
-        usage = "/plot target <<plot>|nearest>",
-        description = "Target a plot with your compass",
-        permission = "plots.target",
-        requiredType = RequiredType.PLAYER,
-        category = CommandCategory.INFO)
+@CommandDeclaration(command = "target", usage = "/plot target <<plot>|nearest>", description = "Target a plot with your compass", permission = "plots.target", requiredType = RequiredType.PLAYER, category = CommandCategory.INFO)
 public class Target extends SubCommand {
 
     public Target() {
         super(Argument.PlotID);
     }
 
-    @Override
-    public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer player, String[] args) {
         Location location = player.getLocation();
         if (!location.isPlotArea()) {
             MainUtil.sendMessage(player, C.NOT_IN_PLOT_WORLD);

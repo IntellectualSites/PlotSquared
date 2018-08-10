@@ -14,12 +14,13 @@ public class CmdConfirm {
         player.deleteMeta("cmdConfirm");
     }
 
-    public static void addPending(final PlotPlayer player, String commandStr, final Runnable runnable) {
+    public static void addPending(final PlotPlayer player, String commandStr,
+        final Runnable runnable) {
         removePending(player);
-        if (commandStr != null) MainUtil.sendMessage(player, C.REQUIRES_CONFIRM, commandStr);
+        if (commandStr != null)
+            MainUtil.sendMessage(player, C.REQUIRES_CONFIRM, commandStr);
         TaskManager.runTaskLater(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 CmdInstance cmd = new CmdInstance(runnable);
                 player.setMeta("cmdConfirm", cmd);
             }

@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.flag;
 
 import com.intellectualcrafters.plot.object.Plot;
+
 import java.util.Collection;
 
 public abstract class ListFlag<V extends Collection<?>> extends Flag<V> {

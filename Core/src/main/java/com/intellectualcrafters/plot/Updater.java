@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot;
 
 import com.intellectualcrafters.plot.util.MainUtil;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,7 +17,9 @@ public class Updater {
 
     public String getChanges() {
         if (changes == null) {
-            try (Scanner scanner = new Scanner(new URL("http://empcraft.com/plots/cl?" + Integer.toHexString(PS.get().getVersion().hash)).openStream(), "UTF-8")) {
+            try (Scanner scanner = new Scanner(new URL(
+                "http://empcraft.com/plots/cl?" + Integer.toHexString(PS.get().getVersion().hash))
+                .openStream(), "UTF-8")) {
                 changes = scanner.useDelimiter("\\A").next();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -35,7 +38,8 @@ public class Updater {
             return;
         }
         try {
-            String downloadUrl = "https://ci.athion.net/job/PlotSquared/lastSuccessfulBuild/artifact/target/PlotSquared-%platform%-%version%.jar";
+            String downloadUrl =
+                "https://ci.athion.net/job/PlotSquared/lastSuccessfulBuild/artifact/target/PlotSquared-%platform%-%version%.jar";
             String versionUrl = "http://empcraft.com/plots/version.php?%platform%";
             URL url = new URL(versionUrl.replace("%platform%", platform));
             try (Scanner reader = new Scanner(url.openStream())) {
@@ -43,12 +47,15 @@ public class Updater {
                 PlotVersion version = new PlotVersion(versionString);
                 if (version.isNewer(newVersion != null ? newVersion : currentVersion)) {
                     newVersion = version;
-                    URL download = new URL(downloadUrl.replaceAll("%platform%", platform).replaceAll("%version%", versionString));
+                    URL download = new URL(downloadUrl.replaceAll("%platform%", platform)
+                        .replaceAll("%version%", versionString));
                     try (ReadableByteChannel rbc = Channels.newChannel(download.openStream())) {
                         File jarFile = PS.get().getJarFile();
 
-                        File finalFile = new File(jarFile.getParent(), "update" + File.separator + jarFile.getName());
-                        File outFile = new File(jarFile.getParent(), "update" + File.separator + jarFile.getName().replace(".jar", ".part"));
+                        File finalFile = new File(jarFile.getParent(),
+                            "update" + File.separator + jarFile.getName());
+                        File outFile = new File(jarFile.getParent(),
+                            "update" + File.separator + jarFile.getName().replace(".jar", ".part"));
                         boolean exists = outFile.exists();
                         if (exists) {
                             outFile.delete();
@@ -63,7 +70,10 @@ public class Updater {
                         }
                         outFile.renameTo(finalFile);
                         PS.debug("Updated PlotSquared to " + versionString);
-                        MainUtil.sendAdmin("&7Restart to update PlotSquared with these changes: &c/plot changelog &7or&c " + "http://empcraft.com/plots/cl?" + Integer.toHexString(currentVersion.hash));
+                        MainUtil.sendAdmin(
+                            "&7Restart to update PlotSquared with these changes: &c/plot changelog &7or&c "
+                                + "http://empcraft.com/plots/cl?" + Integer
+                                .toHexString(currentVersion.hash));
                     }
                 }
             }

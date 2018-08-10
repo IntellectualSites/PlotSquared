@@ -8,24 +8,18 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(
-        command = "copy",
-        permission = "plots.copy",
-        aliases = {"copypaste"},
-        category = CommandCategory.CLAIMING,
-        description = "Copy a plot",
-        usage = "/plot copy <X;Z>",
-        requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "copy", permission = "plots.copy", aliases = {
+    "copypaste"}, category = CommandCategory.CLAIMING, description = "Copy a plot", usage = "/plot copy <X;Z>", requiredType = RequiredType.NONE)
 public class Copy extends SubCommand {
 
-    @Override
-    public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         Location loc = player.getLocation();
         Plot plot1 = loc.getPlotAbs();
         if (plot1 == null) {
             return !MainUtil.sendMessage(player, C.NOT_IN_PLOT);
         }
-        if (!plot1.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN.s())) {
+        if (!plot1.isOwner(player.getUUID()) && !Permissions
+            .hasPermission(player, C.PERMISSION_ADMIN.s())) {
             MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return false;
         }
@@ -47,8 +41,7 @@ public class Copy extends SubCommand {
             return false;
         }
         if (plot1.copy(plot2, new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 MainUtil.sendMessage(player, C.COPY_SUCCESS);
             }
         })) {

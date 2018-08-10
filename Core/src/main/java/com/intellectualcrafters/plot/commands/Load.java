@@ -3,33 +3,23 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-@CommandDeclaration(
-        command = "load",
-        aliases = {"restore"},
-        category = CommandCategory.SCHEMATIC,
-        requiredType = RequiredType.NONE,
-        description = "Load your plot",
-        permission = "plots.load",
-        usage = "/plot restore")
+@CommandDeclaration(command = "load", aliases = {
+    "restore"}, category = CommandCategory.SCHEMATIC, requiredType = RequiredType.NONE, description = "Load your plot", permission = "plots.load", usage = "/plot restore")
 public class Load extends SubCommand {
 
-    @Override
-    public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         String world = player.getLocation().getWorld();
         if (!PS.get().hasPlotArea(world)) {
             return !sendMessage(player, C.NOT_IN_PLOT_WORLD);
@@ -42,7 +32,8 @@ public class Load extends SubCommand {
             MainUtil.sendMessage(player, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_LOAD)) {
+        if (!plot.isOwner(player.getUUID()) && !Permissions
+            .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_LOAD)) {
             MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return false;
         }
@@ -64,7 +55,8 @@ public class Load extends SubCommand {
                     schematic = schematics.get(Integer.parseInt(args[0]) - 1);
                 } catch (Exception ignored) {
                     // use /plot load <index>
-                    MainUtil.sendMessage(player, C.NOT_VALID_NUMBER, "(1, " + schematics.size() + ')');
+                    MainUtil
+                        .sendMessage(player, C.NOT_VALID_NUMBER, "(1, " + schematics.size() + ')');
                     return false;
                 }
                 final URL url;
@@ -78,26 +70,27 @@ public class Load extends SubCommand {
                 plot.addRunning();
                 MainUtil.sendMessage(player, C.GENERATING_COMPONENT);
                 TaskManager.runTaskAsync(new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         Schematic schematic = SchematicHandler.manager.getSchematic(url);
                         if (schematic == null) {
                             plot.removeRunning();
-                            sendMessage(player, C.SCHEMATIC_INVALID, "non-existent or not in gzip format");
+                            sendMessage(player, C.SCHEMATIC_INVALID,
+                                "non-existent or not in gzip format");
                             return;
                         }
                         PlotArea area = plot.getArea();
-                        SchematicHandler.manager.paste(schematic, plot, 0, area.MIN_BUILD_HEIGHT, 0, false, new RunnableVal<Boolean>() {
-                            @Override
-                            public void run(Boolean value) {
-                                plot.removeRunning();
-                                if (value) {
-                                    sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);
-                                } else {
-                                    sendMessage(player, C.SCHEMATIC_PASTE_FAILED);
-                                }
-                            }
-                        });
+                        SchematicHandler.manager
+                            .paste(schematic, plot, 0, area.MIN_BUILD_HEIGHT, 0, false,
+                                new RunnableVal<Boolean>() {
+                                    @Override public void run(Boolean value) {
+                                        plot.removeRunning();
+                                        if (value) {
+                                            sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);
+                                        } else {
+                                            sendMessage(player, C.SCHEMATIC_PASTE_FAILED);
+                                        }
+                                    }
+                                });
                     }
                 });
                 return true;
@@ -113,8 +106,7 @@ public class Load extends SubCommand {
         if (schematics == null) {
             plot.addRunning();
             TaskManager.runTaskAsync(new Runnable() {
-                @Override
-                public void run() {
+                @Override public void run() {
                     List<String> schematics = SchematicHandler.manager.getSaves(player.getUUID());
                     plot.removeRunning();
                     if ((schematics == null) || schematics.isEmpty()) {
@@ -140,13 +132,15 @@ public class Load extends SubCommand {
                 if (split.length < 5) {
                     continue;
                 }
-                String time = secToTime((System.currentTimeMillis() / 1000) - Long.parseLong(split[0]));
+                String time =
+                    secToTime((System.currentTimeMillis() / 1000) - Long.parseLong(split[0]));
                 String world = split[1];
                 PlotId id = PlotId.fromString(split[2] + ';' + split[3]);
                 String size = split[4];
                 String color = "$4";
                 MainUtil.sendMessage(player,
-                        "$3[$2" + (i + 1) + "$3] " + color + time + "$3 | " + color + world + ';' + id + "$3 | " + color + size + 'x' + size);
+                    "$3[$2" + (i + 1) + "$3] " + color + time + "$3 | " + color + world + ';' + id
+                        + "$3 | " + color + size + 'x' + size);
             } catch (Exception e) {
                 e.printStackTrace();
             }

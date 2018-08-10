@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.flag;
 
 import com.intellectualcrafters.plot.util.StringMan;
+
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -12,8 +13,7 @@ public class EnumFlag extends Flag<String> {
         this.values = new HashSet<>(Arrays.asList(values));
     }
 
-    @Override
-    public String valueToString(Object value) {
+    @Override public String valueToString(Object value) {
         return value.toString();
     }
 

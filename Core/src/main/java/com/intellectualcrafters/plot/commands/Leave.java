@@ -9,20 +9,18 @@ import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.UUID;
 
-@CommandDeclaration(command = "leave",
-        description = "Leave a plot",
-        permission = "plots.leave",
-        category = CommandCategory.CLAIMING,
-        requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "leave", description = "Leave a plot", permission = "plots.leave", category = CommandCategory.CLAIMING, requiredType = RequiredType.NONE)
 public class Leave extends Command {
     public Leave() {
         super(MainCommand.getInstance(), true);
     }
 
-    @Override
-    public void execute(PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
+    @Override public void execute(PlotPlayer player, String[] args,
+        RunnableVal3<Command, Runnable, Runnable> confirm,
+        RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         final Plot plot = check(player.getCurrentPlot(), C.NOT_IN_PLOT);
         checkTrue(plot.hasOwner(), C.PLOT_UNOWNED);
         checkTrue(plot.isAdded(player.getUUID()), C.NO_PLOT_PERMS);

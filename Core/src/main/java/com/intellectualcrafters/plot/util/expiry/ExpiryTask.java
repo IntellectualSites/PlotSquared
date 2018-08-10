@@ -5,6 +5,7 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotFilter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ExpiryTask {
     private final Settings.Auto_Clear settings;
+    private long cutoffThreshold = Long.MIN_VALUE;
 
     public ExpiryTask(Settings.Auto_Clear settings) {
         this.settings = settings;
@@ -23,7 +25,8 @@ public class ExpiryTask {
     }
 
     public boolean allowsArea(PlotArea area) {
-        return settings.WORLDS.contains(area.toString()) || settings.WORLDS.contains(area.worldname) || settings.WORLDS.contains("*");
+        return settings.WORLDS.contains(area.toString()) || settings.WORLDS.contains(area.worldname)
+            || settings.WORLDS.contains("*");
     }
 
     public boolean applies(PlotArea area) {
@@ -32,7 +35,9 @@ public class ExpiryTask {
                 return true;
             }
             Set<Plot> plots = null;
-            if (cutoffThreshold != Long.MAX_VALUE && area.getPlots().size() > settings.REQUIRED_PLOTS || (plots = getPlotsToCheck()).size() > settings.REQUIRED_PLOTS) {
+            if (cutoffThreshold != Long.MAX_VALUE
+                && area.getPlots().size() > settings.REQUIRED_PLOTS
+                || (plots = getPlotsToCheck()).size() > settings.REQUIRED_PLOTS) {
                 // calculate cutoff
                 if (cutoffThreshold == Long.MIN_VALUE) {
                     plots = plots != null ? plots : getPlotsToCheck();
@@ -90,14 +95,11 @@ public class ExpiryTask {
 
     public Set<Plot> getPlotsToCheck() {
         return PS.get().getPlots(new PlotFilter() {
-            @Override
-            public boolean allowsArea(PlotArea area) {
+            @Override public boolean allowsArea(PlotArea area) {
                 return ExpiryTask.this.allowsArea(area);
             }
         });
     }
-
-    private long cutoffThreshold = Long.MIN_VALUE;
 
     public boolean applies(long diff) {
         return diff > TimeUnit.DAYS.toMillis(settings.DAYS) && diff > cutoffThreshold;

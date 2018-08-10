@@ -16,21 +16,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-@CommandDeclaration(
-        command = "debugfixflags",
-        usage = "/plot debugfixflags <world>",
-        permission = "plots.debugfixflags",
-        description = "Attempt to fix all flags for a world",
-        requiredType = RequiredType.CONSOLE,
-        category = CommandCategory.DEBUG)
+@CommandDeclaration(command = "debugfixflags", usage = "/plot debugfixflags <world>", permission = "plots.debugfixflags", description = "Attempt to fix all flags for a world", requiredType = RequiredType.CONSOLE, category = CommandCategory.DEBUG)
 public class DebugFixFlags extends SubCommand {
 
     public DebugFixFlags() {
         super(Argument.String);
     }
 
-    @Override
-    public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer player, String[] args) {
         PlotArea area = PS.get().getPlotAreaByString(args[0]);
         if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
             MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD, args[0]);

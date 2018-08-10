@@ -2,34 +2,11 @@ package com.plotsquared.bukkit.object.entity;
 
 import com.intellectualcrafters.plot.PS;
 import com.plotsquared.bukkit.util.BukkitVersion;
-import org.bukkit.Art;
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
-import org.bukkit.Rotation;
-import org.bukkit.TreeSpecies;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Bat;
-import org.bukkit.entity.Boat;
-import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Guardian;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.IronGolem;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Painting;
-import org.bukkit.entity.Rabbit;
+import org.bukkit.entity.*;
 import org.bukkit.entity.Rabbit.Type;
-import org.bukkit.entity.Sheep;
-import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Skeleton.SkeletonType;
-import org.bukkit.entity.Slime;
-import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -87,7 +64,8 @@ public class EntityWrapper {
         if (depth == 1) {
             return;
         }
-        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_10_0) || entity instanceof ArmorStand) {
+        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_10_0)
+            || entity instanceof ArmorStand) {
             if (!entity.hasGravity()) {
                 this.noGravity = true;
             }
@@ -220,13 +198,16 @@ public class EntityWrapper {
                 storeLiving((LivingEntity) entity);
                 return;
             case SKELETON:
-                this.dataByte = getOrdinal(SkeletonType.values(),((Skeleton)entity).getSkeletonType());
+                this.dataByte =
+                    getOrdinal(SkeletonType.values(), ((Skeleton) entity).getSkeletonType());
                 storeLiving((LivingEntity) entity);
                 return;
             case ARMOR_STAND:
                 ArmorStand stand = (ArmorStand) entity;
-                this.inventory = new ItemStack[]{stand.getItemInHand().clone(), stand.getHelmet().clone(), stand.getChestplate().clone(),
-                        stand.getLeggings().clone(), stand.getBoots().clone()};
+                this.inventory =
+                    new ItemStack[] {stand.getItemInHand().clone(), stand.getHelmet().clone(),
+                        stand.getChestplate().clone(), stand.getLeggings().clone(),
+                        stand.getBoots().clone()};
                 storeLiving(stand);
                 this.stand = new ArmorStandStats();
 
@@ -315,13 +296,11 @@ public class EntityWrapper {
         }
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         return this.hash == obj.hashCode();
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         return this.hash;
     }
 
@@ -473,7 +452,8 @@ public class EntityWrapper {
         if (this.base.passenger != null) {
             try {
                 entity.setPassenger(this.base.passenger.spawn(world, xOffset, zOffset));
-            } catch (Exception ignored) { }
+            } catch (Exception ignored) {
+            }
         }
         if (this.base.fall != 0) {
             entity.setFallDistance(this.base.fall);
@@ -488,7 +468,8 @@ public class EntityWrapper {
         if (this.depth == 1) {
             return entity;
         }
-        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_10_0) || entity instanceof ArmorStand) {
+        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_10_0)
+            || entity instanceof ArmorStand) {
             if (this.noGravity) {
                 entity.setGravity(false);
             }
@@ -642,27 +623,37 @@ public class EntityWrapper {
                     stand.setBoots(this.inventory[4]);
                 }
                 if (this.stand.head[0] != 0 || this.stand.head[1] != 0 || this.stand.head[2] != 0) {
-                    EulerAngle pose = new EulerAngle(this.stand.head[0], this.stand.head[1], this.stand.head[2]);
+                    EulerAngle pose =
+                        new EulerAngle(this.stand.head[0], this.stand.head[1], this.stand.head[2]);
                     stand.setHeadPose(pose);
                 }
                 if (this.stand.body[0] != 0 || this.stand.body[1] != 0 || this.stand.body[2] != 0) {
-                    EulerAngle pose = new EulerAngle(this.stand.body[0], this.stand.body[1], this.stand.body[2]);
+                    EulerAngle pose =
+                        new EulerAngle(this.stand.body[0], this.stand.body[1], this.stand.body[2]);
                     stand.setBodyPose(pose);
                 }
-                if (this.stand.leftLeg[0] != 0 || this.stand.leftLeg[1] != 0 || this.stand.leftLeg[2] != 0) {
-                    EulerAngle pose = new EulerAngle(this.stand.leftLeg[0], this.stand.leftLeg[1], this.stand.leftLeg[2]);
+                if (this.stand.leftLeg[0] != 0 || this.stand.leftLeg[1] != 0
+                    || this.stand.leftLeg[2] != 0) {
+                    EulerAngle pose = new EulerAngle(this.stand.leftLeg[0], this.stand.leftLeg[1],
+                        this.stand.leftLeg[2]);
                     stand.setLeftLegPose(pose);
                 }
-                if (this.stand.rightLeg[0] != 0 || this.stand.rightLeg[1] != 0 || this.stand.rightLeg[2] != 0) {
-                    EulerAngle pose = new EulerAngle(this.stand.rightLeg[0], this.stand.rightLeg[1], this.stand.rightLeg[2]);
+                if (this.stand.rightLeg[0] != 0 || this.stand.rightLeg[1] != 0
+                    || this.stand.rightLeg[2] != 0) {
+                    EulerAngle pose = new EulerAngle(this.stand.rightLeg[0], this.stand.rightLeg[1],
+                        this.stand.rightLeg[2]);
                     stand.setRightLegPose(pose);
                 }
-                if (this.stand.leftArm[0] != 0 || this.stand.leftArm[1] != 0 || this.stand.leftArm[2] != 0) {
-                    EulerAngle pose = new EulerAngle(this.stand.leftArm[0], this.stand.leftArm[1], this.stand.leftArm[2]);
+                if (this.stand.leftArm[0] != 0 || this.stand.leftArm[1] != 0
+                    || this.stand.leftArm[2] != 0) {
+                    EulerAngle pose = new EulerAngle(this.stand.leftArm[0], this.stand.leftArm[1],
+                        this.stand.leftArm[2]);
                     stand.setLeftArmPose(pose);
                 }
-                if (this.stand.rightArm[0] != 0 || this.stand.rightArm[1] != 0 || this.stand.rightArm[2] != 0) {
-                    EulerAngle pose = new EulerAngle(this.stand.rightArm[0], this.stand.rightArm[1], this.stand.rightArm[2]);
+                if (this.stand.rightArm[0] != 0 || this.stand.rightArm[1] != 0
+                    || this.stand.rightArm[2] != 0) {
+                    EulerAngle pose = new EulerAngle(this.stand.rightArm[0], this.stand.rightArm[1],
+                        this.stand.rightArm[2]);
                     stand.setRightArmPose(pose);
                 }
                 if (this.stand.invisible) {
@@ -716,7 +707,7 @@ public class EntityWrapper {
                 }
                 restoreLiving((LivingEntity) entity);
                 return entity;
-                // END LIVING
+            // END LIVING
         }
     }
 
@@ -729,9 +720,7 @@ public class EntityWrapper {
         return 0;
     }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public String toString() {
+    @SuppressWarnings("deprecation") @Override public String toString() {
         return String.format("[%s, x=%s, y=%s, z=%s]", type.getName(), x, y, z);
     }
 }

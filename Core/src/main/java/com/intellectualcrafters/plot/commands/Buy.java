@@ -15,21 +15,16 @@ import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.util.Set;
 
-@CommandDeclaration(
-        command = "buy",
-        description = "Buy the plot you are standing on",
-        usage = "/plot buy",
-        permission = "plots.buy",
-        category = CommandCategory.CLAIMING,
-        requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "buy", description = "Buy the plot you are standing on", usage = "/plot buy", permission = "plots.buy", category = CommandCategory.CLAIMING, requiredType = RequiredType.NONE)
 public class Buy extends Command {
 
     public Buy() {
         super(MainCommand.getInstance(), true);
     }
 
-    @Override
-    public void execute(final PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, final RunnableVal2<Command, CommandResult> whenDone) {
+    @Override public void execute(final PlotPlayer player, String[] args,
+        RunnableVal3<Command, Runnable, Runnable> confirm,
+        final RunnableVal2<Command, CommandResult> whenDone) {
         check(EconHandler.manager, C.ECON_DISABLED);
         final Plot plot;
         if (args.length != 0) {
@@ -41,7 +36,8 @@ public class Buy extends Command {
         checkTrue(plot.hasOwner(), C.PLOT_UNOWNED);
         checkTrue(!plot.isOwner(player.getUUID()), C.CANNOT_BUY_OWN);
         Set<Plot> plots = plot.getConnectedPlots();
-        checkTrue(player.getPlotCount() + plots.size() <= player.getAllowedPlots(), C.CANT_CLAIM_MORE_PLOTS);
+        checkTrue(player.getPlotCount() + plots.size() <= player.getAllowedPlots(),
+            C.CANT_CLAIM_MORE_PLOTS);
         Optional<Double> flag = plot.getFlag(Flags.PRICE);
         if (!flag.isPresent()) {
             throw new CommandException(C.NOT_FOR_SALE);
@@ -53,7 +49,8 @@ public class Buy extends Command {
             @Override // Success
             public void run() {
                 C.REMOVED_BALANCE.send(player, price);
-                EconHandler.manager.depositMoney(UUIDHandler.getUUIDWrapper().getOfflinePlayer(plot.owner), price);
+                EconHandler.manager
+                    .depositMoney(UUIDHandler.getUUIDWrapper().getOfflinePlayer(plot.owner), price);
                 PlotPlayer owner = UUIDHandler.getPlayer(plot.owner);
                 if (owner != null) {
                     C.PLOT_SOLD.send(owner, plot.getId(), player.getName(), price);

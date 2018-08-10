@@ -5,16 +5,19 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
 
     private final String world;
-    private long modified;
-
     private final ConcurrentHashMap<Long, LocalChunk> blocks = new ConcurrentHashMap<>();
     private final ConcurrentLinkedDeque<LocalChunk> chunks = new ConcurrentLinkedDeque<>();
+    private long modified;
+    private LocalChunk lastWrappedChunk;
+    private int lastX = Integer.MIN_VALUE;
+    private int lastZ = Integer.MIN_VALUE;
 
     public BasicLocalBlockQueue(String world) {
         super(world);
@@ -24,22 +27,15 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
 
     public abstract LocalChunk getLocalChunk(int x, int z);
 
-    @Override
-    public abstract PlotBlock getBlock(int x, int y, int z);
+    @Override public abstract PlotBlock getBlock(int x, int y, int z);
 
     public abstract void setComponents(LocalChunk<T> lc);
 
-    @Override
-    public final String getWorld() {
+    @Override public final String getWorld() {
         return world;
     }
 
-    private LocalChunk lastWrappedChunk;
-    private int lastX = Integer.MIN_VALUE;
-    private int lastZ = Integer.MIN_VALUE;
-
-    @Override
-    public final boolean next() {
+    @Override public final boolean next() {
         lastX = Integer.MIN_VALUE;
         lastZ = Integer.MIN_VALUE;
         try {
@@ -68,33 +64,27 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
         return true;
     }
 
-    @Override
-    public void startSet(boolean parallel) {
+    @Override public void startSet(boolean parallel) {
         // Do nothing
     }
 
-    @Override
-    public void endSet(boolean parallel) {
+    @Override public void endSet(boolean parallel) {
         // Do nothing
     }
 
-    @Override
-    public final int size() {
+    @Override public final int size() {
         return chunks.size();
     }
 
-    @Override
-    public final void setModified(long modified) {
-        this.modified = modified;
-    }
-
-    @Override
-    public final long getModified() {
+    @Override public final long getModified() {
         return modified;
     }
 
-    @Override
-    public final boolean setBlock(int x, int y, int z, int id, int data) {
+    @Override public final void setModified(long modified) {
+        this.modified = modified;
+    }
+
+    @Override public final boolean setBlock(int x, int y, int z, int id, int data) {
         if ((y > 255) || (y < 0)) {
             return false;
         }
@@ -121,8 +111,7 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
         return true;
     }
 
-    @Override
-    public final boolean setBiome(int x, int z, String biome) {
+    @Override public final boolean setBiome(int x, int z, String biome) {
         long pair = (long) (x >> 4) << 32 | (z >> 4) & 0xFFFFFFFFL;
         LocalChunk result = this.blocks.get(pair);
         if (result == null) {
@@ -147,6 +136,17 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
         chunks.add((LocalChunk) chunk);
     }
 
+    @Override public void flush() {
+        GlobalBlockQueue.IMP.dequeue(this);
+        TaskManager.IMP.sync(new RunnableVal<Object>() {
+            @Override public void run(Object value) {
+                while (next())
+                    ;
+            }
+        });
+    }
+
+
     public abstract class LocalChunk<T> {
         public final BasicLocalBlockQueue parent;
         public final int z;
@@ -163,6 +163,7 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
 
         /**
          * Get the parent queue this chunk belongs to
+         *
          * @return
          */
         public BasicLocalBlockQueue getParent() {
@@ -190,6 +191,7 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
 
         /**
          * Fill a cuboid in this chunk with a block
+         *
          * @param x1
          * @param x2
          * @param y1
@@ -209,7 +211,8 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
             }
         }
 
-        public abstract void setBlock(final int x, final int y, final int z, final int id, final int data);
+        public abstract void setBlock(final int x, final int y, final int z, final int id,
+            final int data);
 
         public void setBiome(int x, int z, String biome) {
             if (this.biomes == null) {
@@ -226,11 +229,11 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
             return MathMan.pairInt(x, z);
         }
 
-        @Override
-        public int hashCode() {
+        @Override public int hashCode() {
             return MathMan.pair((short) x, (short) z);
         }
     }
+
 
     public class BasicLocalChunk extends LocalChunk<PlotBlock[]> {
         public BasicLocalChunk(BasicLocalBlockQueue parent, int x, int z) {
@@ -250,6 +253,7 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
         }
     }
 
+
     public class CharLocalChunk extends LocalChunk<char[]> {
 
         public CharLocalChunk(BasicLocalBlockQueue parent, int x, int z) {
@@ -267,16 +271,5 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
             }
             array[j] = (char) ((block.id << 4) + block.data);
         }
-    }
-
-    @Override
-    public void flush() {
-        GlobalBlockQueue.IMP.dequeue(this);
-        TaskManager.IMP.sync(new RunnableVal<Object>() {
-            @Override
-            public void run(Object value) {
-                while (next());
-            }
-        });
     }
 }

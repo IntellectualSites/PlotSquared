@@ -30,18 +30,15 @@ public class NukkitInventoryUtil extends InventoryUtil {
         return stack;
     }
 
-    @Override
-    public void open(PlotInventory inv) {
+    @Override public void open(PlotInventory inv) {
         return; // TODO
     }
 
-    @Override
-    public void close(PlotInventory inv) {
+    @Override public void close(PlotInventory inv) {
         return; // TODO
     }
 
-    @Override
-    public void setItem(PlotInventory inv, int index, PlotItemStack item) {
+    @Override public void setItem(PlotInventory inv, int index, PlotItemStack item) {
         return; // TODO
     }
 
@@ -59,8 +56,7 @@ public class NukkitInventoryUtil extends InventoryUtil {
         return new PlotItemStack(id, (short) data, amount, name);
     }
 
-    @Override
-    public PlotItemStack[] getItems(PlotPlayer player) {
+    @Override public PlotItemStack[] getItems(PlotPlayer player) {
         NukkitPlayer bp = (NukkitPlayer) player;
         PlayerInventory inv = bp.player.getInventory();
         PlotItemStack[] items = new PlotItemStack[36];
@@ -70,8 +66,7 @@ public class NukkitInventoryUtil extends InventoryUtil {
         return items;
     }
 
-    @Override
-    public boolean isOpen(PlotInventory inv) {
+    @Override public boolean isOpen(PlotInventory inv) {
         return false; // TODO
     }
 }

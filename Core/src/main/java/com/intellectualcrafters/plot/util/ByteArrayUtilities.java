@@ -12,7 +12,8 @@ public class ByteArrayUtilities {
     }
 
     public static int bytesToInteger(byte[] bytes) {
-        return (bytes[0]<<24)&0xff000000|(bytes[1]<<16)&0x00ff0000|(bytes[2]<<8)&0x0000ff00|(bytes[3])&0x000000ff;
+        return (bytes[0] << 24) & 0xff000000 | (bytes[1] << 16) & 0x00ff0000
+            | (bytes[2] << 8) & 0x0000ff00 | (bytes[3]) & 0x000000ff;
     }
 
     public static boolean bytesToBoolean(byte[] bytes) {
@@ -20,6 +21,6 @@ public class ByteArrayUtilities {
     }
 
     public static byte[] booleanToBytes(boolean b) {
-        return new byte[] {(byte)(b ? 1 : 0)};
+        return new byte[] {(byte) (b ? 1 : 0)};
     }
 }

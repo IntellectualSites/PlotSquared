@@ -9,19 +9,22 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 public class ForceFieldListener {
 
     private static Set<PlotPlayer> getNearbyPlayers(Player player, Plot plot) {
         Set<PlotPlayer> players = new HashSet<>();
-        for (Player nearPlayer : Iterables.filter(player.getNearbyEntities(5d, 5d, 5d),Player.class)) {
+        for (Player nearPlayer : Iterables
+            .filter(player.getNearbyEntities(5d, 5d, 5d), Player.class)) {
             PlotPlayer plotPlayer;
-            if ((plotPlayer = BukkitUtil.getPlayer(nearPlayer)) == null || !plot.equals(plotPlayer.getCurrentPlot())) {
+            if ((plotPlayer = BukkitUtil.getPlayer(nearPlayer)) == null || !plot
+                .equals(plotPlayer.getCurrentPlot())) {
                 continue;
             }
             if (!plot.isAdded(plotPlayer.getUUID())) {
@@ -32,9 +35,11 @@ public class ForceFieldListener {
     }
 
     private static PlotPlayer hasNearbyPermitted(Player player, Plot plot) {
-        for (Player nearPlayer : Iterables.filter(player.getNearbyEntities(5d, 5d, 5d),Player.class)) {
+        for (Player nearPlayer : Iterables
+            .filter(player.getNearbyEntities(5d, 5d, 5d), Player.class)) {
             PlotPlayer plotPlayer;
-            if ((plotPlayer = BukkitUtil.getPlayer(nearPlayer)) == null || !plot.equals(plotPlayer.getCurrentPlot())) {
+            if ((plotPlayer = BukkitUtil.getPlayer(nearPlayer)) == null || !plot
+                .equals(plotPlayer.getCurrentPlot())) {
                 continue;
             }
             if (plot.isAdded(plotPlayer.getUUID())) {
@@ -81,7 +86,8 @@ public class ForceFieldListener {
                 Set<PlotPlayer> players = getNearbyPlayers(player, plot);
                 for (PlotPlayer oPlayer : players) {
                     if (!Permissions.hasPermission(oPlayer, C.PERMISSION_ADMIN_ENTRY_FORCEFIELD)) {
-                        ((BukkitPlayer) oPlayer).player.setVelocity(calculateVelocity(plotPlayer, oPlayer));
+                        ((BukkitPlayer) oPlayer).player
+                            .setVelocity(calculateVelocity(plotPlayer, oPlayer));
                     }
                 }
             } else {

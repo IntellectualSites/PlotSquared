@@ -4,8 +4,6 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.worlds.PlotAreaManager;
 import com.intellectualcrafters.plot.object.worlds.SinglePlotAreaManager;
 import com.intellectualcrafters.plot.util.ReflectionUtils;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -16,6 +14,8 @@ import org.bukkit.event.world.ChunkEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.plugin.Plugin;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
@@ -42,10 +42,14 @@ public class SingleWorldListener implements Listener {
     public void markChunkAsClean(Chunk chunk) {
         try {
             Object nmsChunk = methodGetHandleChunk.invoke(chunk);
-            if (done != null)       this.done.set(nmsChunk, true);
-            if (mustSave != null)   this.mustSave.set(nmsChunk, false);
-            if (lit != null)        this.lit.set(nmsChunk, false);
-            if (s != null)          this.s.set(nmsChunk, false);
+            if (done != null)
+                this.done.set(nmsChunk, true);
+            if (mustSave != null)
+                this.mustSave.set(nmsChunk, false);
+            if (lit != null)
+                this.lit.set(nmsChunk, false);
+            if (s != null)
+                this.s.set(nmsChunk, false);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -55,19 +59,20 @@ public class SingleWorldListener implements Listener {
         World world = event.getWorld();
         String name = world.getName();
         PlotAreaManager man = PS.get().getPlotAreaManager();
-        if (!(man instanceof SinglePlotAreaManager)) return;
-        if (!isPlotId(name)) return;
+        if (!(man instanceof SinglePlotAreaManager))
+            return;
+        if (!isPlotId(name))
+            return;
 
         markChunkAsClean(event.getChunk());
     }
 
-//    @EventHandler
-//    public void onPopulate(ChunkPopulateEvent event) {
-//        handle(event);
-//    }
+    //    @EventHandler
+    //    public void onPopulate(ChunkPopulateEvent event) {
+    //        handle(event);
+    //    }
 
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onChunkLoad(ChunkLoadEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST) public void onChunkLoad(ChunkLoadEvent event) {
         handle(event);
     }
 

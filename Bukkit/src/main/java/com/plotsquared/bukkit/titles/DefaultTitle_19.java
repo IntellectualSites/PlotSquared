@@ -6,8 +6,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import org.bukkit.entity.Player;
 
-@SuppressWarnings("deprecation")
-public class DefaultTitle_19 extends AbstractTitle {
+@SuppressWarnings("deprecation") public class DefaultTitle_19 extends AbstractTitle {
 
     @Override
     public void sendTitle(PlotPlayer player, String head, String sub, int in, int delay, int out) {
@@ -15,8 +14,7 @@ public class DefaultTitle_19 extends AbstractTitle {
             final Player playerObj = ((BukkitPlayer) player).player;
             playerObj.sendTitle(head, sub);
             TaskManager.runTaskLater(new Runnable() {
-                @Override
-                public void run() {
+                @Override public void run() {
                     playerObj.sendTitle("", "");
                 }
             }, delay * 20);

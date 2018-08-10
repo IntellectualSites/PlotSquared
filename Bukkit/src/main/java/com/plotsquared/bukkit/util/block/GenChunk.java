@@ -6,7 +6,6 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.block.ScopedLocalBlockQueue;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import java.util.Arrays;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -14,6 +13,8 @@ import org.bukkit.block.Biome;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
 import org.bukkit.material.MaterialData;
+
+import java.util.Arrays;
 
 public class GenChunk extends ScopedLocalBlockQueue {
 
@@ -37,13 +38,6 @@ public class GenChunk extends ScopedLocalBlockQueue {
         this.chunk = chunk;
     }
 
-    public void setChunk(ChunkWrapper wrap) {
-        chunk = null;
-        world = wrap.world;
-        cx = wrap.x;
-        cz = wrap.z;
-    }
-
     public Chunk getChunk() {
         if (chunk == null) {
             World worldObj = BukkitUtil.getWorld(world);
@@ -54,6 +48,13 @@ public class GenChunk extends ScopedLocalBlockQueue {
         return chunk;
     }
 
+    public void setChunk(ChunkWrapper wrap) {
+        chunk = null;
+        world = wrap.world;
+        cx = wrap.x;
+        cz = wrap.z;
+    }
+
     public ChunkWrapper getChunkWrapper() {
         if (chunk == null) {
             return new ChunkWrapper(world, cx, cz);
@@ -61,8 +62,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
         return new ChunkWrapper(chunk.getWorld().getName(), chunk.getX(), chunk.getZ());
     }
 
-    @Override
-    public void fillBiome(String biomeName) {
+    @Override public void fillBiome(String biomeName) {
         if (grid == null) {
             return;
         }
@@ -74,9 +74,9 @@ public class GenChunk extends ScopedLocalBlockQueue {
         }
     }
 
-    @Override
-    public void setCuboid(Location pos1, Location pos2, PlotBlock block) {
-        if (block.data == 0 && result != null && pos1.getX() == 0 && pos1.getZ() == 0 && pos2.getX() == 15 && pos2.getZ() == 15) {
+    @Override public void setCuboid(Location pos1, Location pos2, PlotBlock block) {
+        if (block.data == 0 && result != null && pos1.getX() == 0 && pos1.getZ() == 0
+            && pos2.getX() == 15 && pos2.getZ() == 15) {
             for (int y = pos1.getY(); y <= pos2.getY(); y++) {
                 int layer = y >> 4;
                 short[] data = result[layer];
@@ -92,8 +92,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
         }
     }
 
-    @Override
-    public boolean setBiome(int x, int z, String biome) {
+    @Override public boolean setBiome(int x, int z, String biome) {
         return setBiome(x, z, Biome.valueOf(biome.toUpperCase()));
     }
 
@@ -113,8 +112,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
         return false;
     }
 
-    @Override
-    public boolean setBlock(int x, int y, int z, int id, int data) {
+    @Override public boolean setBlock(int x, int y, int z, int id, int data) {
         if (this.result == null) {
             this.cd.setBlock(x, y, z, new MaterialData(Material.getMaterial(id), (byte) data));
             return true;
@@ -136,8 +134,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
         return true;
     }
 
-    @Override
-    public PlotBlock getBlock(int x, int y, int z) {
+    @Override public PlotBlock getBlock(int x, int y, int z) {
         int i = MainUtil.CACHE_I[y][x][z];
         if (result == null) {
             MaterialData md = cd.getTypeAndData(x, y, z);
@@ -167,23 +164,21 @@ public class GenChunk extends ScopedLocalBlockQueue {
         return chunk == null ? cz : chunk.getZ();
     }
 
-    @Override
-    public String getWorld() {
+    @Override public String getWorld() {
         return chunk == null ? world : chunk.getWorld().getName();
     }
 
-    @Override
-    public Location getMax() {
+    @Override public Location getMax() {
         return new Location(getWorld(), 15 + (getX() << 4), 255, 15 + (getZ() << 4));
     }
 
-    @Override
-    public Location getMin() {
+    @Override public Location getMin() {
         return new Location(getWorld(), getX() << 4, 0, getZ() << 4);
     }
 
     public GenChunk clone() {
-        GenChunk toReturn = new GenChunk(chunk, new ChunkWrapper(getWorld(), chunk.getX(), chunk.getZ()));
+        GenChunk toReturn =
+            new GenChunk(chunk, new ChunkWrapper(getWorld(), chunk.getX(), chunk.getZ()));
         if (this.result != null) {
             for (int i = 0; i < this.result.length; i++) {
                 short[] matrix = this.result[i];

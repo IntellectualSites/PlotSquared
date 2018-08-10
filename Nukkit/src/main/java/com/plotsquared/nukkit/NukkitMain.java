@@ -8,7 +8,6 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.Generator;
-import cn.nukkit.level.generator.Normal;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginBase;
@@ -35,9 +34,9 @@ import com.plotsquared.nukkit.util.block.NukkitLocalQueue;
 import com.plotsquared.nukkit.uuid.FileUUIDHandler;
 import com.plotsquared.nukkit.uuid.LowerOfflineUUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
+
 import java.io.File;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public final class NukkitMain extends PluginBase implements Listener, IPlotMain {
@@ -47,8 +46,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
     private int[] version;
     private String name;
 
-    @Override
-    public int[] getServerVersion() {
+    @Override public int[] getServerVersion() {
         if (this.version == null) {
             try {
                 this.version = new int[3];
@@ -59,14 +57,13 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
                     this.version[2] = Integer.parseInt(split[2]);
                 }
             } catch (NumberFormatException e) {
-                return new int[]{1, 0, 0};
+                return new int[] {1, 0, 0};
             }
         }
         return this.version;
     }
 
-    @Override
-    public void onEnable() {
+    @Override public void onEnable() {
         try {
             this.name = getDescription().getName();
             getServer().getName();
@@ -80,8 +77,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
             Generator.addGenerator(NukkitHybridGen.class, getPluginName(), 1);
             if (Settings.Enabled_Components.WORLDS) {
                 TaskManager.IMP.taskRepeat(new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         unload();
                     }
                 }, 20);
@@ -130,14 +126,12 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
         }
     }
 
-    @Override
-    public void onDisable() {
+    @Override public void onDisable() {
         PS.get().disable();
         getServer().getScheduler().cancelAllTasks();
     }
 
-    @Override
-    public void log(String message) {
+    @Override public void log(String message) {
         try {
             message = C.color(message);
             if (!Settings.Chat.CONSOLE_COLOR) {
@@ -149,60 +143,52 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
         }
     }
 
-    @Override
-    public void disable() {
+    @Override public void disable() {
         onDisable();
     }
 
-    @Override
-    public int[] getPluginVersion() {
+    @Override public int[] getPluginVersion() {
         String ver = getDescription().getVersion();
         if (ver.contains("-")) {
             ver = ver.split("-")[0];
         }
         String[] split = ver.split("\\.");
-        return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])};
+        return new int[] {Integer.parseInt(split[0]), Integer.parseInt(split[1]),
+            Integer.parseInt(split[2])};
     }
 
     @Override public String getPluginVersionString() {
         return getDescription().getVersion();
     }
 
-    @Override
-    public String getPluginName() {
+    @Override public String getPluginName() {
         return name;
     }
 
-    @Override
-    public void registerCommands() {
-        NukkitCommand bukkitCommand = new NukkitCommand("plot", new String[] {"p","plot","ps","plotsquared","p2","2"});
+    @Override public void registerCommands() {
+        NukkitCommand bukkitCommand =
+            new NukkitCommand("plot", new String[] {"p", "plot", "ps", "plotsquared", "p2", "2"});
         getServer().getCommandMap().register("plot", bukkitCommand);
     }
 
-    @Override
-    public File getDirectory() {
+    @Override public File getDirectory() {
         return getDataFolder();
     }
 
-    @Override
-    public File getWorldContainer() {
+    @Override public File getWorldContainer() {
         return new File("worlds");
     }
 
-    @Override
-    public TaskManager getTaskManager() {
+    @Override public TaskManager getTaskManager() {
         return new NukkitTaskManager(this);
     }
 
-    @Override
-    public void runEntityTask() {
+    @Override public void runEntityTask() {
         PS.log(C.PREFIX + "KillAllEntities started.");
         TaskManager.runTaskRepeat(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
-                    @Override
-                    public void run(PlotArea plotArea) {
+                    @Override public void run(PlotArea plotArea) {
                         Level world = getServer().getLevelByName(plotArea.worldname);
                         try {
                             if (world == null) {
@@ -213,7 +199,8 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
                                 if (entity instanceof Player) {
                                     continue;
                                 }
-                                com.intellectualcrafters.plot.object.Location location = NukkitUtil.getLocation(entity.getLocation());
+                                com.intellectualcrafters.plot.object.Location location =
+                                    NukkitUtil.getLocation(entity.getLocation());
                                 Plot plot = location.getPlot();
                                 if (plot == null) {
                                     if (location.isPlotArea()) {
@@ -240,28 +227,23 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
         }, 20);
     }
 
-    @Override
-    public void registerPlayerEvents() {
+    @Override public void registerPlayerEvents() {
         getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
     }
 
-    @Override
-    public void registerInventoryEvents() {
+    @Override public void registerInventoryEvents() {
         PS.debug("Not implemented: registerPlotPlusEvents");
     }
 
-    @Override
-    public void registerPlotPlusEvents() {
+    @Override public void registerPlotPlusEvents() {
         PS.debug("Not implemented: registerPlotPlusEvents");
     }
 
-    @Override
-    public void registerForceFieldEvents() {
+    @Override public void registerForceFieldEvents() {
         PS.debug("Not implemented: registerPlotPlusEvents");
     }
 
-    @Override
-    public boolean initWorldEdit() {
+    @Override public boolean initWorldEdit() {
         if (getServer().getPluginManager().getPlugin("WorldEdit") != null) {
             worldEdit = WorldEdit.getInstance();
             return true;
@@ -269,28 +251,23 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
         return false;
     }
 
-    @Override
-    public EconHandler getEconomyHandler() {
+    @Override public EconHandler getEconomyHandler() {
         return null;
     }
 
-    @Override
-    public QueueProvider initBlockQueue() {
+    @Override public QueueProvider initBlockQueue() {
         return QueueProvider.of(NukkitLocalQueue.class, null);
     }
 
-    @Override
-    public WorldUtil initWorldUtil() {
+    @Override public WorldUtil initWorldUtil() {
         return new NukkitUtil(this);
     }
 
-    @Override
-    public boolean initPlotMeConverter() {
+    @Override public boolean initPlotMeConverter() {
         return false; // No PlotMe for MCPE
     }
 
-    @Override
-    public GeneratorWrapper<?> getGenerator(String world, String name) {
+    @Override public GeneratorWrapper<?> getGenerator(String world, String name) {
         if (name == null) {
             return null;
         }
@@ -318,66 +295,56 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
         return new NukkitHybridGen(map);
     }
 
-    @Override
-    public HybridUtils initHybridUtils() {
+    @Override public HybridUtils initHybridUtils() {
         return new NukkitHybridUtils();
     }
 
-    @Override
-    public SetupUtils initSetupUtils() {
+    @Override public SetupUtils initSetupUtils() {
         return new NukkitSetupUtils(this);
     }
 
-    @Override
-    public UUIDHandlerImplementation initUUIDHandler() {
+    @Override public UUIDHandlerImplementation initUUIDHandler() {
         Settings.UUID.FORCE_LOWERCASE = true;
         Settings.UUID.OFFLINE = true;
         LowerOfflineUUIDWrapper wrapper = new LowerOfflineUUIDWrapper();
         return new FileUUIDHandler(wrapper);
     }
 
-    @Override
-    public ChunkManager initChunkManager() {
+    @Override public ChunkManager initChunkManager() {
         return new NukkitChunkManager();
     }
 
-    @Override
-    public EventUtil initEventUtil() {
+    @Override public EventUtil initEventUtil() {
         return new NukkitEventUtil(this);
     }
 
-    @Override
-    public void unregister(PlotPlayer player) {
+    @Override public void unregister(PlotPlayer player) {
         NukkitUtil.removePlayer(player.getName());
     }
 
-    @Override
-    public void registerChunkProcessor() {
+    @Override public void registerChunkProcessor() {
         PS.debug("Not implemented: registerChunkProcessor");
     }
 
-    @Override
-    public void registerWorldEvents() {
+    @Override public void registerWorldEvents() {
         getServer().getPluginManager().registerEvents(new WorldEvents(), this);
     }
 
-    @Override
-    public InventoryUtil initInventoryUtil() {
+    @Override public InventoryUtil initInventoryUtil() {
         return new NukkitInventoryUtil();
     }
 
-    @Override
-    public void startMetrics() {
+    @Override public void startMetrics() {
         new Metrics(this).start();
         PS.log(C.PREFIX + "&6Metrics enabled.");
     }
 
-    @Override
-    public void setGenerator(String worldName) {
+    @Override public void setGenerator(String worldName) {
         Level world = getServer().getLevelByName(worldName);
         if (world == null) {
             // create world
-            ConfigurationSection worldConfig = PS.get().worlds.getConfigurationSection("worlds." + worldName);
+            ConfigurationSection worldConfig =
+                PS.get().worlds.getConfigurationSection("worlds." + worldName);
             String manager = worldConfig.getString("generator.plugin", getPluginName());
             SetupObject setup = new SetupObject();
             setup.plotManager = manager;
@@ -423,18 +390,15 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
         }
     }
 
-    @Override
-    public SchematicHandler initSchematicHandler() {
+    @Override public SchematicHandler initSchematicHandler() {
         return new NukkitSchematicHandler(this);
     }
 
-    @Override
-    public AbstractTitle initTitleManager() {
+    @Override public AbstractTitle initTitleManager() {
         return new NukkitTitleUtil();
     }
 
-    @Override
-    public PlotPlayer wrapPlayer(Object player) {
+    @Override public PlotPlayer wrapPlayer(Object player) {
         if (player instanceof Player) {
             return NukkitUtil.getPlayer((Player) player);
         }
@@ -450,13 +414,11 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
         return null;
     }
 
-    @Override
-    public String getNMSPackage() {
+    @Override public String getNMSPackage() {
         return "";
     }
 
-    @Override
-    public ChatManager<?> initChatManager() {
+    @Override public ChatManager<?> initChatManager() {
         return new PlainChatManager();
     }
 
@@ -468,24 +430,22 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
         return new NukkitPlotGenerator(settings);
     }
 
-    @Override
-    public List<String> getPluginIds() {
+    @Override public List<String> getPluginIds() {
         ArrayList<String> names = new ArrayList<>();
-        for (Map.Entry<String, Plugin> entry : getServer().getPluginManager().getPlugins().entrySet()) {
+        for (Map.Entry<String, Plugin> entry : getServer().getPluginManager().getPlugins()
+            .entrySet()) {
             Plugin plugin = entry.getValue();
-            names.add(entry.getKey() + ';' + plugin.getDescription().getVersion() + ':' + plugin.isEnabled());
+            names.add(entry.getKey() + ';' + plugin.getDescription().getVersion() + ':' + plugin
+                .isEnabled());
         }
         return names;
     }
 
-    @Override
-    public IndependentPlotGenerator getDefaultGenerator() {
+    @Override public IndependentPlotGenerator getDefaultGenerator() {
         return new HybridGen() {
-            @Override
-            public PlotManager getNewPlotManager() {
+            @Override public PlotManager getNewPlotManager() {
                 return new HybridPlotManager() {
-                    @Override
-                    public int getWorldHeight() {
+                    @Override public int getWorldHeight() {
                         return 255;
                     }
                 };

@@ -12,7 +12,7 @@ public class PlotId {
      */
     public int y;
     private int hash;
-    
+
     /**
      * PlotId class (PlotId x,y values do not correspond to Block locations)
      *
@@ -23,12 +23,11 @@ public class PlotId {
         this.x = x;
         this.y = y;
     }
-    
+
     /**
      * Get a Plot Id based on a string
      *
      * @param string to create id from
-     *
      * @return null if the string is invalid
      */
     public static PlotId fromString(String string) {
@@ -48,6 +47,21 @@ public class PlotId {
             return null;
         }
         return new PlotId(x, y);
+    }
+
+    public static PlotId of(@Nullable Plot plot) {
+        return plot != null ? plot.getId() : null;
+    }
+
+    /**
+     * Get the PlotId from the HashCode<br>
+     * Note: Only accurate for small x,z values (short)
+     *
+     * @param hash
+     * @return
+     */
+    public static PlotId unpair(int hash) {
+        return new PlotId(hash >> 16, hash & 0xFFFF);
     }
 
     public PlotId getNextId(int step) {
@@ -79,26 +93,13 @@ public class PlotId {
         }
     }
 
-    public static PlotId of(@Nullable Plot plot) {
-        return plot != null ? plot.getId() : null;
-    }
-
-    /**
-     * Get the PlotId from the HashCode<br>
-     * Note: Only accurate for small x,z values (short)
-     * @param hash
-     * @return
-     */
-    public static PlotId unpair(int hash) {
-        return new PlotId(hash >> 16, hash & 0xFFFF);
-    }
-
     /**
      * Get the PlotId in a relative direction
      * 0 = north<br>
      * 1 = east<br>
      * 2 = south<br>
      * 3 = west<br>
+     *
      * @param direction
      * @return PlotId
      */
@@ -118,6 +119,7 @@ public class PlotId {
 
     /**
      * Get the PlotId in a relative location
+     *
      * @param x
      * @param y
      * @return PlotId
@@ -126,8 +128,7 @@ public class PlotId {
         return new PlotId(this.x + x, this.y + y);
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -147,10 +148,10 @@ public class PlotId {
     /**
      * e.g.
      * 5;-6
+     *
      * @return
      */
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return this.x + ";" + this.y;
     }
 
@@ -162,16 +163,15 @@ public class PlotId {
 
     /**
      * The PlotId object caches the hashcode for faster mapping/fetching/sorting<br>
-     *     - Recalculation is required if the x/y values change
+     * - Recalculation is required if the x/y values change
      * TODO maybe make x/y values private and add this to the mutators
      */
     public void recalculateHash() {
         this.hash = 0;
         hashCode();
     }
-    
-    @Override
-    public int hashCode() {
+
+    @Override public int hashCode() {
         if (this.hash == 0) {
             this.hash = (this.x << 16) | (this.y & 0xFFFF);
         }

@@ -1,13 +1,12 @@
 package com.plotsquared.sponge.events;
 
+import com.intellectualcrafters.plot.object.Plot;
 import org.spongepowered.api.entity.living.player.Player;
 
-import com.intellectualcrafters.plot.object.Plot;
-
 public class PlayerLeavePlotEvent extends PlayerEvent {
-    
+
     private final Plot plot;
-    
+
     /**
      * PlayerLeavePlotEvent: Called when a player leaves a plot
      *
@@ -18,7 +17,7 @@ public class PlayerLeavePlotEvent extends PlayerEvent {
         super(player);
         this.plot = plot;
     }
-    
+
     /**
      * Get the plot involved
      *

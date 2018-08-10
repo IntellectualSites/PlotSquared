@@ -25,9 +25,8 @@ public class PlotLoc {
             }
         }
     }
-    
-    @Override
-    public int hashCode() {
+
+    @Override public int hashCode() {
         int prime = 31;
         int result = 1;
         result = (prime * result) + this.x;
@@ -35,13 +34,11 @@ public class PlotLoc {
         return result;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return this.x + "," + this.z;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }

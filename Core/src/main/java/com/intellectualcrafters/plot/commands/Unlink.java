@@ -4,24 +4,14 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.CmdConfirm;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "unlink",
-        aliases = {"u", "unmerge"},
-        description = "Unlink a mega-plot",
-        usage = "/plot unlink",
-        requiredType = RequiredType.NONE,
-        category = CommandCategory.SETTINGS,
-        confirmation = true)
+@CommandDeclaration(command = "unlink", aliases = {"u",
+    "unmerge"}, description = "Unlink a mega-plot", usage = "/plot unlink", requiredType = RequiredType.NONE, category = CommandCategory.SETTINGS, confirmation = true)
 public class Unlink extends SubCommand {
 
-    @Override
-    public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
 
         Location loc = player.getLocation();
         final Plot plot = loc.getPlotAbs();
@@ -31,7 +21,8 @@ public class Unlink extends SubCommand {
         if (!plot.hasOwner()) {
             return !sendMessage(player, C.PLOT_UNOWNED);
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_UNLINK)) {
+        if (!plot.isOwner(player.getUUID()) && !Permissions
+            .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_UNLINK)) {
             return sendMessage(player, C.NO_PLOT_PERMS);
         }
         if (!plot.isMerged()) {
@@ -48,8 +39,7 @@ public class Unlink extends SubCommand {
             createRoad = true;
         }
         Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 if (!plot.unlinkPlot(createRoad, createRoad)) {
                     MainUtil.sendMessage(player, "&cUnlink has been cancelled");
                     return;

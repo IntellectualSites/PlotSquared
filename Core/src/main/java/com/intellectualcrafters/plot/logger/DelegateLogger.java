@@ -12,8 +12,7 @@ public class DelegateLogger implements ILogger {
         return parent;
     }
 
-    @Override
-    public void log(String message) {
+    @Override public void log(String message) {
         parent.log(message);
     }
 }

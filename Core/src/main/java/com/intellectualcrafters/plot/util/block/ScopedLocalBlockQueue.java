@@ -1,11 +1,7 @@
 package com.intellectualcrafters.plot.util.block;
 
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.RunnableVal3;
+import com.intellectualcrafters.plot.object.*;
 
 public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
     private final int minX;
@@ -36,8 +32,7 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
     }
 
 
-    @Override
-    public boolean setBiome(int x, int z, String biome) {
+    @Override public boolean setBiome(int x, int z, String biome) {
         return x >= 0 && x <= dx && z >= 0 && z <= dz && super.setBiome(x + minX, z + minZ, biome);
     }
 
@@ -49,9 +44,9 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
         }
     }
 
-    @Override
-    public boolean setBlock(int x, int y, int z, int id, int data) {
-        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super.setBlock(x + minX, y + minY, z + minZ, id, data);
+    @Override public boolean setBlock(int x, int y, int z, int id, int data) {
+        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super
+            .setBlock(x + minX, y + minY, z + minZ, id, data);
     }
 
     public Location getMin() {
@@ -64,9 +59,10 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
 
     /**
      * Run a task for each x,z value corresponding to the plot at that location<br>
-     *     - Plot: The plot at the x,z (may be null)<br>
-     *     - Location: The location in the chunk (y = 0)<br>
-     *     - PlotChunk: Reference to this chunk object<br>
+     * - Plot: The plot at the x,z (may be null)<br>
+     * - Location: The location in the chunk (y = 0)<br>
+     * - PlotChunk: Reference to this chunk object<br>
+     *
      * @param task
      */
     public void mapByType2D(RunnableVal3<Plot, Integer, Integer> task) {

@@ -6,8 +6,7 @@ public class IntervalFlag extends Flag<Integer[]> {
         super(name);
     }
 
-    @Override
-    public String valueToString(Object value) {
+    @Override public String valueToString(Object value) {
         Integer[] value1 = (Integer[]) value;
         return value1[0] + " " + value1[1];
     }
@@ -33,7 +32,7 @@ public class IntervalFlag extends Flag<Integer[]> {
         } else {
             return null;
         }
-        return new Integer[]{amount, seconds};
+        return new Integer[] {amount, seconds};
     }
 
     @Override public String getValueDescription() {

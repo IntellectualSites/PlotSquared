@@ -18,18 +18,10 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-@CommandDeclaration(
-        usage = "/plot purge world:<world> area:<area> id:<id> owner:<owner> shared:<shared> unknown:[true|false]",
-        command = "purge",
-        permission = "plots.admin",
-        description = "Purge all plots for a world",
-        category = CommandCategory.ADMINISTRATION,
-        requiredType = RequiredType.CONSOLE,
-        confirmation = true)
+@CommandDeclaration(usage = "/plot purge world:<world> area:<area> id:<id> owner:<owner> shared:<shared> unknown:[true|false]", command = "purge", permission = "plots.admin", description = "Purge all plots for a world", category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.CONSOLE, confirmation = true)
 public class Purge extends SubCommand {
 
-    @Override
-    public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length == 0) {
             return false;
         }
@@ -145,10 +137,10 @@ public class Purge extends SubCommand {
             C.FOUND_NO_PLOTS.send(player);
             return false;
         }
-        String cmd = "/plot purge " + StringMan.join(args, " ") + " (" + toDelete.size() + " plots)";
+        String cmd =
+            "/plot purge " + StringMan.join(args, " ") + " (" + toDelete.size() + " plots)";
         Runnable run = new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 PS.debug("Calculating plots to purge, please wait...");
                 HashSet<Integer> ids = new HashSet<>();
                 for (Plot plot : toDelete) {

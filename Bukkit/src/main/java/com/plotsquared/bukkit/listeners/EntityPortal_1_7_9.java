@@ -1,7 +1,6 @@
 package com.plotsquared.bukkit.listeners;
 
 import com.intellectualcrafters.plot.PS;
-import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
@@ -17,62 +16,21 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
+import java.util.List;
+
 public class EntityPortal_1_7_9 implements Listener {
+    private static boolean ignoreTP = false;
+
     public EntityPortal_1_7_9() {
     }
-
-    @EventHandler
-    public void onVehicle(VehicleUpdateEvent event) {
-        test(event.getVehicle());
-    }
-
-    @EventHandler
-    public void onVehicle(VehicleDestroyEvent event) {
-        test(event.getVehicle());
-    }
-
-    @EventHandler
-    public void onVehicle(VehicleEntityCollisionEvent event) {
-        test(event.getVehicle());
-    }
-
-    @EventHandler
-    public void onVehicle(VehicleCreateEvent event) {
-        test(event.getVehicle());
-    }
-
-    @EventHandler
-    public void onVehicle(VehicleBlockCollisionEvent event) {
-        test(event.getVehicle());
-    }
-
-    @EventHandler
-    public void onTeleport(EntityTeleportEvent event) {
-        Entity ent = event.getEntity();
-        if (ent instanceof Vehicle || ent instanceof ArmorStand) test(event.getEntity());
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void vehicleMove(VehicleMoveEvent event) throws IllegalAccessException {
-        test(event.getVehicle());
-    }
-
-    @EventHandler
-    public void spawn(CreatureSpawnEvent event) {
-        switch (event.getEntityType()) {
-            case ARMOR_STAND:
-                test(event.getEntity());
-        }
-    }
-
-    private static boolean ignoreTP = false;
 
     public static void test(Entity entity) {
         List<MetadataValue> meta = entity.getMetadata("plotworld");
         World world = entity.getLocation().getWorld();
         if (meta == null || meta.isEmpty()) {
             if (PS.get().isPlotWorld(world.getName())) {
-                entity.setMetadata("plotworld", new FixedMetadataValue((Plugin) PS.get().IMP, entity.getLocation()));
+                entity.setMetadata("plotworld",
+                    new FixedMetadataValue((Plugin) PS.get().IMP, entity.getLocation()));
             }
         } else {
             Location origin = (Location) meta.get(0).value();
@@ -94,6 +52,44 @@ public class EntityPortal_1_7_9 implements Listener {
                     entity.remove();
                 }
             }
+        }
+    }
+
+    @EventHandler public void onVehicle(VehicleUpdateEvent event) {
+        test(event.getVehicle());
+    }
+
+    @EventHandler public void onVehicle(VehicleDestroyEvent event) {
+        test(event.getVehicle());
+    }
+
+    @EventHandler public void onVehicle(VehicleEntityCollisionEvent event) {
+        test(event.getVehicle());
+    }
+
+    @EventHandler public void onVehicle(VehicleCreateEvent event) {
+        test(event.getVehicle());
+    }
+
+    @EventHandler public void onVehicle(VehicleBlockCollisionEvent event) {
+        test(event.getVehicle());
+    }
+
+    @EventHandler public void onTeleport(EntityTeleportEvent event) {
+        Entity ent = event.getEntity();
+        if (ent instanceof Vehicle || ent instanceof ArmorStand)
+            test(event.getEntity());
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void vehicleMove(VehicleMoveEvent event) throws IllegalAccessException {
+        test(event.getVehicle());
+    }
+
+    @EventHandler public void spawn(CreatureSpawnEvent event) {
+        switch (event.getEntityType()) {
+            case ARMOR_STAND:
+                test(event.getEntity());
         }
     }
 }

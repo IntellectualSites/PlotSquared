@@ -11,25 +11,16 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@CommandDeclaration(command = "condense",
-        permission = "plots.admin",
-        description = "Condense a plotworld",
-        category = CommandCategory.ADMINISTRATION,
-        requiredType = RequiredType.CONSOLE)
+@CommandDeclaration(command = "condense", permission = "plots.admin", description = "Condense a plotworld", category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.CONSOLE)
 public class Condense extends SubCommand {
 
     public static boolean TASK = false;
 
-    @Override
-    public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length != 2 && args.length != 3) {
             MainUtil.sendMessage(player, "/plot condense <area> <start|stop|info> [radius]");
             return false;
@@ -42,7 +33,8 @@ public class Condense extends SubCommand {
         switch (args[1].toLowerCase()) {
             case "start": {
                 if (args.length == 2) {
-                    MainUtil.sendMessage(player, "/plot condense " + area.toString() + " start <radius>");
+                    MainUtil.sendMessage(player,
+                        "/plot condense " + area.toString() + " start <radius>");
                     return false;
                 }
                 if (Condense.TASK) {
@@ -112,14 +104,14 @@ public class Condense extends SubCommand {
                 }
                 MainUtil.sendMessage(player, "TASK STARTED...");
                 Runnable run = new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         if (!Condense.TASK) {
                             MainUtil.sendMessage(player, "TASK CANCELLED.");
                         }
                         if (allPlots.isEmpty()) {
                             Condense.TASK = false;
-                            MainUtil.sendMessage(player, "TASK COMPLETE. PLEASE VERIFY THAT NO NEW PLOTS HAVE BEEN CLAIMED DURING TASK.");
+                            MainUtil.sendMessage(player,
+                                "TASK COMPLETE. PLEASE VERIFY THAT NO NEW PLOTS HAVE BEEN CLAIMED DURING TASK.");
                             return;
                         }
                         final Runnable task = this;
@@ -134,10 +126,10 @@ public class Condense extends SubCommand {
                             i++;
                             final AtomicBoolean result = new AtomicBoolean(false);
                             result.set(origin.move(possible, new Runnable() {
-                                @Override
-                                public void run() {
+                                @Override public void run() {
                                     if (result.get()) {
-                                        MainUtil.sendMessage(player, "Moving: " + origin + " -> " + possible);
+                                        MainUtil.sendMessage(player,
+                                            "Moving: " + origin + " -> " + possible);
                                         TaskManager.runTaskLater(task, 1);
                                     }
                                 }
@@ -170,7 +162,8 @@ public class Condense extends SubCommand {
                 return true;
             case "info":
                 if (args.length == 2) {
-                    MainUtil.sendMessage(player, "/plot condense " + area.toString() + " info <radius>");
+                    MainUtil.sendMessage(player,
+                        "/plot condense " + area.toString() + " info <radius>");
                     return false;
                 }
                 if (!MathMan.isInteger(args[2])) {
@@ -193,18 +186,21 @@ public class Condense extends SubCommand {
                 MainUtil.sendMessage(player, "=== INPUT EVAL ===");
                 MainUtil.sendMessage(player, "INPUT RADIUS: " + radius);
                 MainUtil.sendMessage(player, "ESTIMATED MOVES: " + userMove);
-                MainUtil.sendMessage(player, "ESTIMATED TIME: No idea, times will drastically change based on the system performance and load");
+                MainUtil.sendMessage(player,
+                    "ESTIMATED TIME: No idea, times will drastically change based on the system performance and load");
                 MainUtil.sendMessage(player, "&e - Radius is measured in plot width");
                 return true;
         }
-        MainUtil.sendMessage(player, "/plot condense " + area.worldname + " <start|stop|info> [radius]");
+        MainUtil.sendMessage(player,
+            "/plot condense " + area.worldname + " <start|stop|info> [radius]");
         return false;
     }
 
     public Set<PlotId> getPlots(Collection<Plot> plots, int radius) {
         HashSet<PlotId> outside = new HashSet<>();
         for (Plot plot : plots) {
-            if (plot.getId().x > radius || plot.getId().x < -radius || plot.getId().y > radius || plot.getId().y < -radius) {
+            if (plot.getId().x > radius || plot.getId().x < -radius || plot.getId().y > radius
+                || plot.getId().y < -radius) {
                 outside.add(plot.getId());
             }
         }

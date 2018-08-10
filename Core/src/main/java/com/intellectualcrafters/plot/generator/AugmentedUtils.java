@@ -1,16 +1,12 @@
 package com.intellectualcrafters.plot.generator;
 
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PseudoRandom;
-import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.block.DelegateLocalBlockQueue;
 import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import com.intellectualcrafters.plot.util.block.ScopedLocalBlockQueue;
+
 import java.util.Set;
 
 public class AugmentedUtils {
@@ -23,7 +19,8 @@ public class AugmentedUtils {
         enabled = true;
     }
 
-    public static boolean generate(final String world, final int cx, final int cz, LocalBlockQueue queue) {
+    public static boolean generate(final String world, final int cx, final int cz,
+        LocalBlockQueue queue) {
         if (!enabled) {
             return false;
         }
@@ -66,16 +63,14 @@ public class AugmentedUtils {
                 txx = Math.min(15, area.getRegion().maxX - bx);
                 tzz = Math.min(15, area.getRegion().maxZ - bz);
                 primaryMask = new DelegateLocalBlockQueue(queue) {
-                    @Override
-                    public boolean setBlock(int x, int y, int z, int id, int data) {
+                    @Override public boolean setBlock(int x, int y, int z, int id, int data) {
                         if (area.contains(x, z)) {
                             return super.setBlock(x, y, z, id, data);
                         }
                         return false;
                     }
 
-                    @Override
-                    public boolean setBiome(int x, int z, String biome) {
+                    @Override public boolean setBiome(int x, int z, String biome) {
                         if (area.contains(x, z)) {
                             return super.setBiome(x, z, biome);
                         }
@@ -112,16 +107,14 @@ public class AugmentedUtils {
                 }
                 toReturn = true;
                 secondaryMask = new DelegateLocalBlockQueue(primaryMask) {
-                    @Override
-                    public boolean setBlock(int x, int y, int z, int id, int data) {
+                    @Override public boolean setBlock(int x, int y, int z, int id, int data) {
                         if (canPlace[x - bx][z - bz]) {
                             return super.setBlock(x, y, z, id, data);
                         }
                         return false;
                     }
 
-                    @Override
-                    public boolean setBiome(int x, int y, String biome) {
+                    @Override public boolean setBiome(int x, int y, String biome) {
                         return super.setBiome(x, y, biome);
                     }
                 };
@@ -136,7 +129,9 @@ public class AugmentedUtils {
                 }
                 toReturn = true;
             }
-            ScopedLocalBlockQueue scoped = new ScopedLocalBlockQueue(secondaryMask, new Location(area.worldname, bx, 0, bz), new Location(area.worldname, bx + 15, 255, bz + 15));
+            ScopedLocalBlockQueue scoped =
+                new ScopedLocalBlockQueue(secondaryMask, new Location(area.worldname, bx, 0, bz),
+                    new Location(area.worldname, bx + 15, 255, bz + 15));
             generator.generateChunk(scoped, area, r);
             generator.populateChunk(scoped, area, r);
         }

@@ -6,12 +6,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.PlotGameMode;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
@@ -19,20 +14,15 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
-@CommandDeclaration(command = "deny",
-        aliases = {"d", "ban"},
-        description = "Deny a user from a plot",
-        usage = "/plot deny <player>",
-        category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "deny", aliases = {"d",
+    "ban"}, description = "Deny a user from a plot", usage = "/plot deny <player>", category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE)
 public class Deny extends SubCommand {
 
     public Deny() {
         super(Argument.PlayerName);
     }
 
-    @Override
-    public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer player, String[] args) {
 
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
@@ -43,7 +33,8 @@ public class Deny extends SubCommand {
             MainUtil.sendMessage(player, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_DENY)) {
+        if (!plot.isOwner(player.getUUID()) && !Permissions
+            .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_DENY)) {
             MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return true;
         }
@@ -55,7 +46,9 @@ public class Deny extends SubCommand {
         Iterator<UUID> iter = uuids.iterator();
         while (iter.hasNext()) {
             UUID uuid = iter.next();
-            if (uuid == DBFunc.everyone && !(Permissions.hasPermission(player, C.PERMISSION_DENY_EVERYONE) || Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_DENY))) {
+            if (uuid == DBFunc.everyone && !(
+                Permissions.hasPermission(player, C.PERMISSION_DENY_EVERYONE) || Permissions
+                    .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_DENY))) {
                 MainUtil.sendMessage(player, C.INVALID_PLAYER, MainUtil.getName(uuid));
                 continue;
             }
@@ -105,7 +98,8 @@ public class Deny extends SubCommand {
         Location spawn = WorldUtil.IMP.getSpawn(loc.getWorld());
         MainUtil.sendMessage(player, C.YOU_GOT_DENIED);
         if (plot.equals(spawn.getPlot())) {
-            Location newSpawn = WorldUtil.IMP.getSpawn(PS.get().getPlotAreaManager().getAllWorlds()[0]);
+            Location newSpawn =
+                WorldUtil.IMP.getSpawn(PS.get().getPlotAreaManager().getAllWorlds()[0]);
             if (plot.equals(newSpawn.getPlot())) {
                 // Kick from server if you can't be teleported to spawn
                 player.kick(C.YOU_GOT_DENIED.s());

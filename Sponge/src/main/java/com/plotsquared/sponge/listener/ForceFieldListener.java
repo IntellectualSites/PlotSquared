@@ -19,10 +19,12 @@ public class ForceFieldListener {
 
     private static Set<PlotPlayer> getNearbyPlayers(Player player, Plot plot) {
         Set<PlotPlayer> players = new HashSet<>();
-        for (Entity nearbyEntity : player.getNearbyEntities(entity -> entity.getType().equals(EntityTypes.PLAYER))) {
+        for (Entity nearbyEntity : player
+            .getNearbyEntities(entity -> entity.getType().equals(EntityTypes.PLAYER))) {
             Player nearbyPlayer = (Player) nearbyEntity;
             PlotPlayer plotPlayer;
-            if ((plotPlayer = SpongeUtil.getPlayer(nearbyPlayer)) == null || !plot.equals(plotPlayer.getCurrentPlot())) {
+            if ((plotPlayer = SpongeUtil.getPlayer(nearbyPlayer)) == null || !plot
+                .equals(plotPlayer.getCurrentPlot())) {
                 continue;
             }
             if (!plot.isAdded(plotPlayer.getUUID())) {
@@ -34,10 +36,12 @@ public class ForceFieldListener {
     }
 
     private static PlotPlayer hasNearbyPermitted(Player player, Plot plot) {
-        for (Entity nearbyEntity : player.getNearbyEntities(entity -> entity.getType().equals(EntityTypes.PLAYER))) {
+        for (Entity nearbyEntity : player
+            .getNearbyEntities(entity -> entity.getType().equals(EntityTypes.PLAYER))) {
             Player nearbyPlayer = (Player) nearbyEntity;
             PlotPlayer plotPlayer;
-            if ((plotPlayer = SpongeUtil.getPlayer(nearbyPlayer)) == null || !plot.equals(plotPlayer.getCurrentPlot())) {
+            if ((plotPlayer = SpongeUtil.getPlayer(nearbyPlayer)) == null || !plot
+                .equals(plotPlayer.getCurrentPlot())) {
                 continue;
             }
             if (plot.isAdded(plotPlayer.getUUID())) {
@@ -83,7 +87,8 @@ public class ForceFieldListener {
             if (plot.isAdded(uuid)) {
                 Set<PlotPlayer> players = getNearbyPlayers(player, plot);
                 for (PlotPlayer oPlayer : players) {
-                    ((SpongePlayer) oPlayer).player.setVelocity(calculateVelocity(plotPlayer, oPlayer));
+                    ((SpongePlayer) oPlayer).player
+                        .setVelocity(calculateVelocity(plotPlayer, oPlayer));
                 }
             } else {
                 PlotPlayer oPlayer = hasNearbyPermitted(player, plot);

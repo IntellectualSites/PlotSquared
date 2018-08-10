@@ -54,11 +54,11 @@ public class PlotCluster {
         this.pos2 = id;
         setRegion();
     }
-    
+
     private void setRegion() {
         this.region = new RegionWrapper(this.pos1.x, this.pos2.x, this.pos1.y, this.pos2.y);
     }
-    
+
     public RegionWrapper getRegion() {
         return this.region;
     }
@@ -68,21 +68,23 @@ public class PlotCluster {
     }
 
     public boolean isAdded(UUID uuid) {
-        return this.owner.equals(uuid) || this.invited.contains(uuid) || this.invited.contains(DBFunc.everyone) || this.helpers.contains(uuid)
-                || this.helpers
-                .contains(DBFunc.everyone);
+        return this.owner.equals(uuid) || this.invited.contains(uuid) || this.invited
+            .contains(DBFunc.everyone) || this.helpers.contains(uuid) || this.helpers
+            .contains(DBFunc.everyone);
     }
 
     public boolean hasHelperRights(UUID uuid) {
-        return this.owner.equals(uuid) || this.helpers.contains(uuid) || this.helpers.contains(DBFunc.everyone);
+        return this.owner.equals(uuid) || this.helpers.contains(uuid) || this.helpers
+            .contains(DBFunc.everyone);
     }
-    
+
     public String getName() {
         return this.settings.getAlias();
     }
-    
+
     /**
      * Get the area (in plots).
+     *
      * @return
      */
     public int getArea() {
@@ -96,14 +98,12 @@ public class PlotCluster {
         this.area = plotArea;
         plotArea.addCluster(this);
     }
-    
-    @Override
-    public int hashCode() {
+
+    @Override public int hashCode() {
         return this.pos1.hashCode();
     }
-    
-    @Override
-    public boolean equals(Object obj) {
+
+    @Override public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -114,14 +114,15 @@ public class PlotCluster {
             return false;
         }
         PlotCluster other = (PlotCluster) obj;
-        return this.pos1.equals(other.pos1) && this.pos2.equals(other.pos2) && this.area.equals(other.area);
+        return this.pos1.equals(other.pos1) && this.pos2.equals(other.pos2) && this.area
+            .equals(other.area);
     }
-    
-    @Override
-    public String toString() {
-        return this.area + ";" + this.pos1.x + ";" + this.pos1.y + ";" + this.pos2.x + ";" + this.pos2.y;
+
+    @Override public String toString() {
+        return this.area + ";" + this.pos1.x + ";" + this.pos1.y + ";" + this.pos2.x + ";"
+            + this.pos2.y;
     }
-    
+
     public Location getHome() {
         BlockLoc home = this.settings.getPosition();
         Location toReturn;
@@ -143,7 +144,7 @@ public class PlotCluster {
         }
         return toReturn;
     }
-    
+
     public PlotId getCenterPlotId() {
         PlotId bot = getP1();
         PlotId top = getP2();
@@ -158,17 +159,19 @@ public class PlotCluster {
         PlotManager manager = this.area.getPlotManager();
         return manager.getPlotBottomLocAbs(this.area, getP1());
     }
-    
+
     public Location getClusterTop() {
         PlotManager manager = this.area.getPlotManager();
         return manager.getPlotTopLocAbs(this.area, getP2());
     }
-    
+
     public boolean intersects(PlotId pos1, PlotId pos2) {
-        return pos1.x <= this.pos2.x && pos2.x >= this.pos1.x && pos1.y <= this.pos2.y && pos2.y >= this.pos1.y;
+        return pos1.x <= this.pos2.x && pos2.x >= this.pos1.x && pos1.y <= this.pos2.y
+            && pos2.y >= this.pos1.y;
     }
 
     public boolean contains(PlotId id) {
-        return this.pos1.x <= id.x && this.pos1.y <= id.y && this.pos2.x >= id.x && this.pos2.y >= id.y;
+        return this.pos1.x <= id.x && this.pos1.y <= id.y && this.pos2.x >= id.x
+            && this.pos2.y >= id.y;
     }
 }

@@ -9,17 +9,14 @@ import cn.nukkit.utils.EventException;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.PlotGameMode;
-import com.intellectualcrafters.plot.util.PlotWeather;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.nukkit.util.NukkitUtil;
+
 import java.util.Collections;
 import java.util.UUID;
 
 public class NukkitPlayer extends PlotPlayer {
-    
+
     public final Player player;
     public boolean offline;
     private UUID uuid;
@@ -28,6 +25,7 @@ public class NukkitPlayer extends PlotPlayer {
     /**
      * <p>Please do not use this method. Instead use
      * NukkitUtil.getPlayer(Player), as it caches player objects.</p>
+     *
      * @param player
      */
     public NukkitPlayer(Player player) {
@@ -41,14 +39,12 @@ public class NukkitPlayer extends PlotPlayer {
         super.populatePersistentMetaMap();
     }
 
-    @Override
-    public Location getLocation() {
+    @Override public Location getLocation() {
         Location location = super.getLocation();
         return location == null ? NukkitUtil.getLocation(this.player) : location;
     }
-    
-    @Override
-    public UUID getUUID() {
+
+    @Override public UUID getUUID() {
         if (this.uuid == null) {
             this.uuid = UUIDHandler.getUUID(this);
         }
@@ -59,11 +55,11 @@ public class NukkitPlayer extends PlotPlayer {
         return this.player.getLastPlayed();
     }
 
-    @Override
-    public boolean canTeleport(Location loc) {
+    @Override public boolean canTeleport(Location loc) {
         cn.nukkit.level.Location to = NukkitUtil.getLocation(loc);
         cn.nukkit.level.Location from = player.getLocation();
-        PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, PlayerTeleportEvent.TeleportCause.PLUGIN);
+        PlayerTeleportEvent event =
+            new PlayerTeleportEvent(player, from, to, PlayerTeleportEvent.TeleportCause.PLUGIN);
         RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
         for (RegisteredListener listener : listeners) {
             if (listener.getPlugin().getName().equals(PS.imp().getPluginName())) {
@@ -92,62 +88,56 @@ public class NukkitPlayer extends PlotPlayer {
         return true;
     }
 
-    @Override
-    public boolean hasPermission(String permission) {
+    @Override public boolean hasPermission(String permission) {
         if (this.offline && EconHandler.manager != null) {
             return EconHandler.manager.hasPermission(getName(), permission);
         }
         return this.player.hasPermission(permission);
     }
 
-    @Override
-    public boolean isPermissionSet(String permission) {
+    @Override public boolean isPermissionSet(String permission) {
         return this.player.isPermissionSet(permission);
     }
 
-    @Override
-    public void sendMessage(String message) {
-        if (!StringMan.isEqual(this.<String>getMeta("lastMessage"), message) || (System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
+    @Override public void sendMessage(String message) {
+        if (!StringMan.isEqual(this.<String>getMeta("lastMessage"), message) || (
+            System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
             setMeta("lastMessage", message);
             setMeta("lastMessageTime", System.currentTimeMillis());
             this.player.sendMessage(message);
         }
     }
-    
-    @Override
-    public void teleport(Location to) {
+
+    @Override public void teleport(Location to) {
         if (Math.abs(to.getX()) >= 30000000 || Math.abs(to.getZ()) >= 30000000) {
             return;
         }
-        cn.nukkit.level.Location loc = new cn.nukkit.level.Location(to.getX() + 0.5, to.getY(), to.getZ() + 0.5, to.getYaw(), to.getPitch(), NukkitUtil.getWorld(to.getWorld()));
+        cn.nukkit.level.Location loc =
+            new cn.nukkit.level.Location(to.getX() + 0.5, to.getY(), to.getZ() + 0.5, to.getYaw(),
+                to.getPitch(), NukkitUtil.getWorld(to.getWorld()));
         this.player.teleport(loc);
     }
-    
-    @Override
-    public String getName() {
+
+    @Override public String getName() {
         if (this.name == null) {
             this.name = this.player.getName();
         }
         return this.name;
     }
-    
-    @Override
-    public boolean isOnline() {
+
+    @Override public boolean isOnline() {
         return !this.offline && this.player.isOnline();
     }
-    
-    @Override
-    public void setCompassTarget(Location location) {
+
+    @Override public void setCompassTarget(Location location) {
         throw new UnsupportedOperationException("Not implemented yet: setCompassTarget");
     }
-    
-    @Override
-    public Location getLocationFull() {
+
+    @Override public Location getLocationFull() {
         return NukkitUtil.getLocationFull(this.player);
     }
 
-    @Override
-    public void setWeather(PlotWeather weather) {
+    @Override public void setWeather(PlotWeather weather) {
         LevelEventPacket pk;
         switch (weather) {
             case RAIN: {
@@ -179,9 +169,8 @@ public class NukkitPlayer extends PlotPlayer {
                 break;
         }
     }
-    
-    @Override
-    public PlotGameMode getGameMode() {
+
+    @Override public PlotGameMode getGameMode() {
         switch (this.player.getGamemode()) {
             case 0:
                 return PlotGameMode.SURVIVAL;
@@ -195,9 +184,8 @@ public class NukkitPlayer extends PlotPlayer {
                 return PlotGameMode.NOT_SET;
         }
     }
-    
-    @Override
-    public void setGameMode(PlotGameMode gameMode) {
+
+    @Override public void setGameMode(PlotGameMode gameMode) {
         switch (gameMode) {
             case ADVENTURE:
                 this.player.setGamemode(2);
@@ -216,29 +204,24 @@ public class NukkitPlayer extends PlotPlayer {
                 break;
         }
     }
-    
-    @Override
-    public void setTime(long time) {
+
+    @Override public void setTime(long time) {
         throw new UnsupportedOperationException("Not implemented yet: setTIme");
     }
-    
-    @Override
-    public void setFlight(boolean fly) {
-        this.player.setAllowFlight(fly);
-    }
 
-    @Override
-    public boolean getFlight() {
+    @Override public boolean getFlight() {
         return player.getAllowFlight();
     }
 
-    @Override
-    public void playMusic(Location location, int id) {
+    @Override public void setFlight(boolean fly) {
+        this.player.setAllowFlight(fly);
+    }
+
+    @Override public void playMusic(Location location, int id) {
         throw new UnsupportedOperationException("Not implemented yet: playMusic");
     }
-    
-    @Override
-    public void kick(String message) {
+
+    @Override public void kick(String message) {
         player.kick(message);
     }
 
@@ -246,8 +229,7 @@ public class NukkitPlayer extends PlotPlayer {
         // Do nothing
     }
 
-    @Override
-    public boolean isBanned() {
+    @Override public boolean isBanned() {
         return this.player.isBanned();
     }
 }

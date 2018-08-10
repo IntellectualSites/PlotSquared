@@ -7,15 +7,10 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "debug",
-        category = CommandCategory.DEBUG,
-        description = "Show debug information",
-        usage = "/plot debug [msg]",
-        permission = "plots.admin")
+@CommandDeclaration(command = "debug", category = CommandCategory.DEBUG, description = "Show debug information", usage = "/plot debug [msg]", permission = "plots.admin")
 public class Debug extends SubCommand {
 
-    @Override
-    public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer player, String[] args) {
         if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {
             StringBuilder msg = new StringBuilder();
             for (C caption : C.values()) {
@@ -30,7 +25,8 @@ public class Debug extends SubCommand {
         String section = C.DEBUG_SECTION.s();
         information.append(header);
         information.append(getSection(section, "PlotArea"));
-        information.append(getLine(line, "Plot Worlds", StringMan.join(PS.get().getPlotAreas(), ", ")));
+        information
+            .append(getLine(line, "Plot Worlds", StringMan.join(PS.get().getPlotAreas(), ", ")));
         information.append(getLine(line, "Owned Plots", PS.get().getPlots().size()));
         information.append(getSection(section, "Messages"));
         information.append(getLine(line, "Total Messages", C.values().length));

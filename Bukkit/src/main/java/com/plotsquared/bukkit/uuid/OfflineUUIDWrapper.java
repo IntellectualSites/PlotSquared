@@ -32,22 +32,22 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
         }
     }
 
-    @Override
-    public UUID getUUID(PlotPlayer player) {
-        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
+    @Override public UUID getUUID(PlotPlayer player) {
+        return UUID
+            .nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
 
-    @Override
-    public UUID getUUID(OfflinePlotPlayer player) {
-        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
+    @Override public UUID getUUID(OfflinePlotPlayer player) {
+        return UUID
+            .nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
 
     public UUID getUUID(OfflinePlayer player) {
-        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
+        return UUID
+            .nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
 
-    @Override
-    public OfflinePlotPlayer getOfflinePlayer(UUID uuid) {
+    @Override public OfflinePlotPlayer getOfflinePlayer(UUID uuid) {
         BiMap<UUID, StringWrapper> map = UUIDHandler.getUuidMap().inverse();
         String name = null;
         if (map.containsKey(uuid)) {
@@ -77,7 +77,8 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
             if (players instanceof Player[]) {
                 return (Player[]) players;
             } else {
-                @SuppressWarnings("unchecked") Collection<? extends Player> p = (Collection<? extends Player>) players;
+                @SuppressWarnings("unchecked") Collection<? extends Player> p =
+                    (Collection<? extends Player>) players;
                 return p.toArray(new Player[p.size()]);
             }
         } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException ignored) {
@@ -88,13 +89,11 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
         }
     }
 
-    @Override
-    public UUID getUUID(String name) {
+    @Override public UUID getUUID(String name) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
     }
 
-    @Override
-    public OfflinePlotPlayer[] getOfflinePlayers() {
+    @Override public OfflinePlotPlayer[] getOfflinePlayers() {
         OfflinePlayer[] ops = Bukkit.getOfflinePlayers();
         BukkitOfflinePlayer[] toReturn = new BukkitOfflinePlayer[ops.length];
         for (int i = 0; i < ops.length; i++) {
@@ -103,8 +102,7 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
         return toReturn;
     }
 
-    @Override
-    public OfflinePlotPlayer getOfflinePlayer(String name) {
+    @Override public OfflinePlotPlayer getOfflinePlayer(String name) {
         return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(name));
     }
 }

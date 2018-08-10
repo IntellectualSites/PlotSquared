@@ -3,11 +3,7 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RunnableVal2;
-import com.intellectualcrafters.plot.object.RunnableVal3;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.Permissions;
@@ -15,33 +11,24 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-@CommandDeclaration(
-        command = "visit",
-        permission = "plots.visit",
-        description = "Visit someones plot",
-        usage = "/plot visit [<player>|<alias>|<world>|<id>] [#]",
-        aliases = {"v", "tp", "teleport", "goto", "home", "h"},
-        requiredType = RequiredType.NONE,
-        category = CommandCategory.TELEPORT)
-public class Visit extends Command {
+@CommandDeclaration(command = "visit", permission = "plots.visit", description = "Visit someones plot", usage = "/plot visit [<player>|<alias>|<world>|<id>] [#]", aliases = {
+    "v", "tp", "teleport", "goto", "home",
+    "h"}, requiredType = RequiredType.NONE, category = CommandCategory.TELEPORT) public class Visit
+    extends Command {
 
     public Visit() {
         super(MainCommand.getInstance(), true);
     }
 
-    @Override
-    public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
+    @Override public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
         return tabOf(player, args, space, getUsage());
     }
 
-    @Override
-    public void execute(final PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, final RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
+    @Override public void execute(final PlotPlayer player, String[] args,
+        RunnableVal3<Command, Runnable, Runnable> confirm,
+        final RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         if (args.length == 1 && args[0].contains(":")) {
             args = args[0].split(":");
         }
@@ -77,7 +64,8 @@ public class Visit extends Command {
                 page = Integer.parseInt(args[1]);
             case 1:
                 UUID user = args[0].length() >= 2 ? UUIDHandler.getUUIDFromString(args[0]) : null;
-                if (user != null && !PS.get().hasPlot(user)) user = null;
+                if (user != null && !PS.get().hasPlot(user))
+                    user = null;
                 if (page == Integer.MIN_VALUE && user == null && MathMan.isInteger(args[0])) {
                     page = Integer.parseInt(args[0]);
                     unsorted = PS.get().getBasePlots(player);
@@ -119,7 +107,7 @@ public class Visit extends Command {
         List<Plot> plots;
         if (shouldSortByArea) {
             plots = PS.get().sortPlots(unsorted, PS.SortType.CREATION_DATE, sortByArea);
-        }  else {
+        } else {
             plots = PS.get().sortPlotsByTemp(unsorted);
         }
         final Plot plot = plots.get(page - 1);
@@ -129,7 +117,8 @@ public class Visit extends Command {
                 return;
             }
         } else if (plot.isOwner(player.getUUID())) {
-            if (!Permissions.hasPermission(player, C.PERMISSION_VISIT_OWNED) && !Permissions.hasPermission(player, C.PERMISSION_HOME)) {
+            if (!Permissions.hasPermission(player, C.PERMISSION_VISIT_OWNED) && !Permissions
+                .hasPermission(player, C.PERMISSION_HOME)) {
                 C.NO_PERMISSION.send(player, C.PERMISSION_VISIT_OWNED);
                 return;
             }
@@ -145,8 +134,7 @@ public class Visit extends Command {
             }
         }
         confirm.run(this, new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 if (plot.teleportPlayer(player)) {
                     whenDone.run(Visit.this, CommandResult.SUCCESS);
                 } else {
@@ -154,8 +142,7 @@ public class Visit extends Command {
                 }
             }
         }, new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 whenDone.run(Visit.this, CommandResult.FAILURE);
             }
         });

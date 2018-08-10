@@ -2,13 +2,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.RunnableVal2;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -29,25 +23,19 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-@CommandDeclaration(
-        command = "trim",
-        permission = "plots.admin",
-        description = "Delete unmodified portions of your plotworld",
-        usage = "/plot trim <world> [regenerate]",
-        requiredType = RequiredType.CONSOLE,
-        category = CommandCategory.ADMINISTRATION)
+@CommandDeclaration(command = "trim", permission = "plots.admin", description = "Delete unmodified portions of your plotworld", usage = "/plot trim <world> [regenerate]", requiredType = RequiredType.CONSOLE, category = CommandCategory.ADMINISTRATION)
 public class Trim extends SubCommand {
 
     public static ArrayList<Plot> expired = null;
     private static volatile boolean TASK = false;
 
-    public static boolean getBulkRegions(final ArrayList<ChunkLoc> empty, final String world, final Runnable whenDone) {
+    public static boolean getBulkRegions(final ArrayList<ChunkLoc> empty, final String world,
+        final Runnable whenDone) {
         if (Trim.TASK) {
             return false;
         }
         TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 String directory = world + File.separator + "region";
                 File folder = new File(PS.get().IMP.getWorldContainer(), directory);
                 File[] regionFiles = folder.listFiles();
@@ -59,20 +47,23 @@ public class Trim extends SubCommand {
                         } else {
                             Path path = Paths.get(file.getPath());
                             try {
-                                BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
+                                BasicFileAttributes attr =
+                                    Files.readAttributes(path, BasicFileAttributes.class);
                                 long creation = attr.creationTime().toMillis();
                                 long modification = file.lastModified();
                                 long diff = Math.abs(creation - modification);
                                 if (diff < 10000) {
                                     checkMca(name);
                                 }
-                            } catch (IOException ignored) {}
+                            } catch (IOException ignored) {
+                            }
                         }
                     }
                 }
                 Trim.TASK = false;
                 TaskManager.runTaskAsync(whenDone);
             }
+
             private void checkMca(String name) {
                 try {
                     String[] split = name.split("\\.");
@@ -91,11 +82,13 @@ public class Trim extends SubCommand {
 
     /**
      * Runs the result task with the parameters (viable, nonViable).
-     * @param world The world
+     *
+     * @param world  The world
      * @param result (viable = .mcr to trim, nonViable = .mcr keep)
      * @return
      */
-    public static boolean getTrimRegions(String world, final RunnableVal2<Set<ChunkLoc>, Set<ChunkLoc>> result) {
+    public static boolean getTrimRegions(String world,
+        final RunnableVal2<Set<ChunkLoc>, Set<ChunkLoc>> result) {
         if (result == null) {
             return false;
         }
@@ -111,8 +104,7 @@ public class Trim extends SubCommand {
         MainUtil.sendMessage(null, " - CHUNKS: " + (result.value1.size() * 1024) + " (max)");
         MainUtil.sendMessage(null, " - TIME ESTIMATE: 12 Parsecs");
         TaskManager.objectTask(plots, new RunnableVal<Plot>() {
-            @Override
-            public void run(Plot plot) {
+            @Override public void run(Plot plot) {
                 Location pos1 = plot.getBottom();
                 Location pos2 = plot.getTop();
                 int ccx1 = pos1.getX() >> 9;
@@ -132,8 +124,7 @@ public class Trim extends SubCommand {
         return true;
     }
 
-    @Override
-    public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length == 0) {
             C.COMMAND_SYNTAX.send(player, getUsage());
             return false;
@@ -150,16 +141,14 @@ public class Trim extends SubCommand {
         Trim.TASK = true;
         final boolean regen = args.length == 2 && Boolean.parseBoolean(args[1]);
         getTrimRegions(world, new RunnableVal2<Set<ChunkLoc>, Set<ChunkLoc>>() {
-            @Override
-            public void run(Set<ChunkLoc> viable, final Set<ChunkLoc> nonViable) {
+            @Override public void run(Set<ChunkLoc> viable, final Set<ChunkLoc> nonViable) {
                 Runnable regenTask;
                 if (regen) {
                     PS.log("Starting regen task:");
                     PS.log(" - This is a VERY slow command");
                     PS.log(" - It will say `Trim done!` when complete");
                     regenTask = new Runnable() {
-                        @Override
-                        public void run() {
+                        @Override public void run() {
                             if (nonViable.isEmpty()) {
                                 Trim.TASK = false;
                                 player.sendMessage("Trim done!");
@@ -184,7 +173,9 @@ public class Trim extends SubCommand {
                             for (Plot plot : PS.get().getPlots(world)) {
                                 Location bot = plot.getBottomAbs();
                                 Location top = plot.getExtendedTopAbs();
-                                RegionWrapper plotReg = new RegionWrapper(bot.getX(), top.getX(), bot.getZ(), top.getZ());
+                                RegionWrapper plotReg =
+                                    new RegionWrapper(bot.getX(), top.getX(), bot.getZ(),
+                                        top.getZ());
                                 if (!region.intersects(plotReg)) {
                                     continue;
                                 }
@@ -195,10 +186,10 @@ public class Trim extends SubCommand {
                                     }
                                 }
                             }
-                            final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
+                            final LocalBlockQueue queue =
+                                GlobalBlockQueue.IMP.getNewQueue(world, false);
                             TaskManager.objectTask(chunks, new RunnableVal<ChunkLoc>() {
-                                @Override
-                                public void run(ChunkLoc value) {
+                                @Override public void run(ChunkLoc value) {
                                     queue.regenChunk(value.x, value.z);
                                 }
                             }, this);
@@ -206,8 +197,7 @@ public class Trim extends SubCommand {
                     };
                 } else {
                     regenTask = new Runnable() {
-                        @Override
-                        public void run() {
+                        @Override public void run() {
                             Trim.TASK = false;
                             player.sendMessage("Trim done!");
                         }

@@ -13,7 +13,7 @@ import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.generator.ChunkGenerator;
 
 public class WorldEvents implements Listener {
-    
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onWorldInit(WorldInitEvent event) {
         World world = event.getWorld();

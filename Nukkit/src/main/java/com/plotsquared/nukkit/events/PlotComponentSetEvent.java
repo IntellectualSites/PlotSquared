@@ -6,7 +6,6 @@ import com.intellectualcrafters.plot.object.PlotId;
 
 /**
  * Called when a plot component is set
- *
  */
 public class PlotComponentSetEvent extends PlotEvent {
 

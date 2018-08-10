@@ -4,13 +4,13 @@ package com.intellectualcrafters.json;
  * This provides static methods to convert comma delimited text into a JSONArray, and to covert a JSONArray into comma
  * delimited text. Comma delimited text is a very popular format for data interchange. It is understood by most
  * database, spreadsheet, and organizer programs.
- *
+ * <p>
  * Each row of text represents a row in a table or a data record. Each row ends with a NEWLINE character. Each row
  * contains one or more values. Values are separated by commas. A value can contain any character except for comma,
  * unless is is wrapped in single quotes or double quotes.
- *
+ * <p>
  * The first row usually contains the names of the columns.
- *
+ * <p>
  * A comma delimited list can be converted into a JSONArray of JSONObjects. The names for the elements in the
  * JSONObjects can be taken from the names in the first row.
  *
@@ -23,9 +23,7 @@ public class CDL {
      * Get the next value. The value can be wrapped in quotes. The value can be empty.
      *
      * @param x A JSONTokener of the source text.
-     *
      * @return The value string, or null if empty.
-     *
      * @throws JSONException if the quoted string is badly formed.
      */
     private static String getValue(JSONTokener x) throws JSONException {
@@ -66,9 +64,7 @@ public class CDL {
      * Produce a JSONArray of strings from a row of comma delimited values.
      *
      * @param x A JSONTokener of the source text.
-     *
      * @return A JSONArray of strings.
-     *
      * @throws JSONException
      */
     public static JSONArray rowToJSONArray(JSONTokener x) throws JSONException {
@@ -102,9 +98,7 @@ public class CDL {
      * @param names A JSONArray of names. This is commonly obtained from the first row of a comma delimited text file
      *              using the rowToJSONArray method.
      * @param x     A JSONTokener of the source text.
-     *
      * @return A JSONObject combining the names and values.
-     *
      * @throws JSONException
      */
     public static JSONObject rowToJSONObject(JSONArray names, JSONTokener x) throws JSONException {
@@ -117,7 +111,6 @@ public class CDL {
      * Troublesome characters may be removed.
      *
      * @param ja A JSONArray of strings.
-     *
      * @return A string ending in NEWLINE.
      */
     public static String rowToString(JSONArray ja) {
@@ -129,8 +122,9 @@ public class CDL {
             Object object = ja.opt(i);
             if (object != null) {
                 String string = object.toString();
-                if (!string.isEmpty() && ((string.indexOf(',') >= 0) || (string.indexOf('\n') >= 0) || (string.indexOf('\r') >= 0) || (
-                        string.indexOf(0) >= 0) || (string.charAt(0) == '"'))) {
+                if (!string.isEmpty() && ((string.indexOf(',') >= 0) || (string.indexOf('\n') >= 0)
+                    || (string.indexOf('\r') >= 0) || (string.indexOf(0) >= 0) || (string.charAt(0)
+                    == '"'))) {
                     sb.append('"');
                     int length = string.length();
                     for (int j = 0; j < length; j += 1) {
@@ -153,9 +147,7 @@ public class CDL {
      * Produce a JSONArray of JSONObjects from a comma delimited text string, using the first row as a source of names.
      *
      * @param string The comma delimited text.
-     *
      * @return A JSONArray of JSONObjects.
-     *
      * @throws JSONException
      */
     public static JSONArray toJSONArray(String string) throws JSONException {
@@ -166,9 +158,7 @@ public class CDL {
      * Produce a JSONArray of JSONObjects from a comma delimited text string, using the first row as a source of names.
      *
      * @param x The JSONTokener containing the comma delimited text.
-     *
      * @return A JSONArray of JSONObjects.
-     *
      * @throws JSONException
      */
     public static JSONArray toJSONArray(JSONTokener x) throws JSONException {
@@ -181,9 +171,7 @@ public class CDL {
      *
      * @param names  A JSONArray of strings.
      * @param string The comma delimited text.
-     *
      * @return A JSONArray of JSONObjects.
-     *
      * @throws JSONException
      */
     public static JSONArray toJSONArray(JSONArray names, String string) throws JSONException {
@@ -196,9 +184,7 @@ public class CDL {
      *
      * @param names A JSONArray of strings.
      * @param x     A JSONTokener of the source text.
-     *
      * @return A JSONArray of JSONObjects.
-     *
      * @throws JSONException
      */
     public static JSONArray toJSONArray(JSONArray names, JSONTokener x) throws JSONException {
@@ -224,9 +210,7 @@ public class CDL {
      * inspecting the first JSONObject.
      *
      * @param ja A JSONArray of JSONObjects.
-     *
      * @return A comma delimited text.
-     *
      * @throws JSONException
      */
     public static String toString(JSONArray ja) throws JSONException {
@@ -246,9 +230,7 @@ public class CDL {
      *
      * @param names A JSONArray of strings.
      * @param ja    A JSONArray of JSONObjects.
-     *
      * @return A comma delimited text.
-     *
      * @throws JSONException
      */
     public static String toString(JSONArray names, JSONArray ja) throws JSONException {

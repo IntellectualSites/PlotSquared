@@ -14,17 +14,14 @@ import java.lang.annotation.Target;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Config {
 
     /**
      * Get the value for a node<br>
-     *     Probably throws some error if you try to get a non existent key
+     * Probably throws some error if you try to get a non existent key
+     *
      * @param key
      * @param root
      * @param <T>
@@ -49,11 +46,11 @@ public class Config {
 
     /**
      * Set the value of a specific node<br>
-     *     Probably throws some error if you supply non existing keys or invalid values
-     * @param key config node
+     * Probably throws some error if you supply non existing keys or invalid values
+     *
+     * @param key   config node
      * @param value value
      * @param root
-     *
      */
     public static void set(String key, Object value, Class root) {
         String[] split = key.split("\\.");
@@ -71,7 +68,8 @@ public class Config {
                     field.set(instance, value);
                     return;
                 } catch (Throwable e) {
-                    PS.debug("Invalid configuration value: " + key + ": " + value + " in " + root.getSimpleName());
+                    PS.debug("Invalid configuration value: " + key + ": " + value + " in " + root
+                        .getSimpleName());
                     e.printStackTrace();
                 }
             }
@@ -96,6 +94,7 @@ public class Config {
 
     /**
      * Set all values in the file (load first to avoid overwriting)
+     *
      * @param file
      * @param root
      */
@@ -116,6 +115,7 @@ public class Config {
 
     /**
      * Get the static fields in a section.
+     *
      * @param clazz
      * @return
      */
@@ -184,7 +184,8 @@ public class Config {
                     }
                     continue;
                 } else {
-                    writer.write(spacing + toNodeName(field.getName() + ": ") + toYamlString(field.get(instance), spacing) + lineSeparator);
+                    writer.write(spacing + toNodeName(field.getName() + ": ") + toYamlString(
+                        field.get(instance), spacing) + lineSeparator);
                 }
             }
             for (Class<?> current : clazz.getClasses()) {
@@ -203,7 +204,8 @@ public class Config {
                 writer.write(spacing + toNodeName(current.getSimpleName()) + ":" + lineSeparator);
                 BlockName blockNames = current.getAnnotation(BlockName.class);
                 if (blockNames != null) {
-                    Field instanceField = clazz.getDeclaredField(toFieldName(current.getSimpleName()));
+                    Field instanceField =
+                        clazz.getDeclaredField(toFieldName(current.getSimpleName()));
                     setAccessible(instanceField);
                     ConfigBlock value = (ConfigBlock) instanceField.get(instance);
                     if (value == null) {
@@ -214,7 +216,8 @@ public class Config {
                         }
                     }
                     // Save each instance
-                    for (Map.Entry<String, Object> entry: ((Map<String, Object>) value.getRaw()).entrySet()) {
+                    for (Map.Entry<String, Object> entry : ((Map<String, Object>) value.getRaw())
+                        .entrySet()) {
                         String key = entry.getKey();
                         writer.write(spacing + "  " + toNodeName(key) + ":" + lineSeparator);
                         save(writer, current, entry.getValue(), indent + 4);
@@ -231,6 +234,7 @@ public class Config {
 
     /**
      * Get the field for a specific config node.
+     *
      * @param split the node (split by period)
      * @param root
      * @return
@@ -245,8 +249,9 @@ public class Config {
 
     /**
      * Get the field for a specific config node and instance<br>
-     *     Note: As expiry can have multiple blocks there will be multiple instances
-     * @param split the node (split by period)
+     * Note: As expiry can have multiple blocks there will be multiple instances
+     *
+     * @param split    the node (split by period)
      * @param instance the instance
      * @return
      */
@@ -256,13 +261,15 @@ public class Config {
             setAccessible(field);
             return field;
         } catch (Throwable e) {
-            PS.debug("Invalid config field: " + StringMan.join(split, ".") + " for " + toNodeName(instance.getClass().getSimpleName()));
+            PS.debug("Invalid config field: " + StringMan.join(split, ".") + " for " + toNodeName(
+                instance.getClass().getSimpleName()));
             return null;
         }
     }
 
     /**
      * Get the instance for a specific config node.
+     *
      * @param split the node (split by period)
      * @param root
      * @return The instance or null
@@ -311,7 +318,8 @@ public class Config {
                             clazz = found;
                             split = Arrays.copyOfRange(split, 2, split.length);
                             continue;
-                        } catch (NoSuchFieldException ignore) { }
+                        } catch (NoSuchFieldException ignore) {
+                        }
                         if (found != null) {
                             split = Arrays.copyOfRange(split, 1, split.length);
                             clazz = found;
@@ -329,29 +337,33 @@ public class Config {
 
     /**
      * Translate a node to a java field name.
+     *
      * @param node
      * @return
      */
     private static String toFieldName(String node) {
-        return node.toUpperCase().replaceAll("-","_");
+        return node.toUpperCase().replaceAll("-", "_");
     }
 
     /**
      * Translate a field to a config node.
+     *
      * @param field
      * @return
      */
     private static String toNodeName(String field) {
-        return field.toLowerCase().replace("_","-");
+        return field.toLowerCase().replace("_", "-");
     }
 
     /**
      * Set some field to be accessible.
+     *
      * @param field
      * @throws NoSuchFieldException
      * @throws IllegalAccessException
      */
-    private static void setAccessible(Field field) throws NoSuchFieldException, IllegalAccessException {
+    private static void setAccessible(Field field)
+        throws NoSuchFieldException, IllegalAccessException {
         field.setAccessible(true);
         Field modifiersField = Field.class.getDeclaredField("modifiers");
         modifiersField.setAccessible(true);
@@ -361,41 +373,42 @@ public class Config {
     /**
      * Indicates that a field should be instantiated / created.
      */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.FIELD})
-    public  @interface Create {}
+    @Retention(RetentionPolicy.RUNTIME) @Target({ElementType.FIELD}) public @interface Create {
+    }
+
 
     /**
      * Indicates that a field cannot be modified.
      */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.FIELD})
-    public @interface Final {}
+    @Retention(RetentionPolicy.RUNTIME) @Target({ElementType.FIELD}) public @interface Final {
+    }
+
 
     /**
      * Creates a comment.
      */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.FIELD,ElementType.TYPE})
+    @Retention(RetentionPolicy.RUNTIME) @Target({ElementType.FIELD, ElementType.TYPE})
     public @interface Comment {
         String[] value();
     }
 
+
     /**
      * The names of any default blocks.
      */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.FIELD,ElementType.TYPE})
+    @Retention(RetentionPolicy.RUNTIME) @Target({ElementType.FIELD, ElementType.TYPE})
     public @interface BlockName {
         String[] value();
     }
 
+
     /**
      * Any field or class with is not part of the config.
      */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.FIELD,ElementType.TYPE})
-    public @interface Ignore {}
+    @Retention(RetentionPolicy.RUNTIME) @Target({ElementType.FIELD, ElementType.TYPE})
+    public @interface Ignore {
+    }
+
 
     @Ignore // This is not part of the config
     public static class ConfigBlock<T> {

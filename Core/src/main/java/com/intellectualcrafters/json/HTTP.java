@@ -13,7 +13,7 @@ public class HTTP {
      * Carriage return/line feed.
      */
     public static final String CRLF = "\r\n";
-    
+
     public static JSONObject toJSONObject(final String string) throws JSONException {
         final JSONObject jo = new JSONObject();
         final HTTPTokener x = new HTTPTokener(string);
@@ -40,11 +40,11 @@ public class HTTP {
         }
         return jo;
     }
-    
+
     /**
      * Convert a JSONObject into an HTTP header. A request header must contain
-     *
-     *
+     * <p>
+     * <p>
      * <pre>
      * {
      *    Method: "POST" (for example),
@@ -52,10 +52,10 @@ public class HTTP {
      *    "HTTP-Version": "HTTP/1.1" (for example)
      * }
      * </pre>
-     *
+     * <p>
      * A response header must contain
-     *
-     *
+     * <p>
+     * <p>
      * <pre>
      * {
      *    "HTTP-Version": "HTTP/1.1" (for example),
@@ -63,13 +63,11 @@ public class HTTP {
      *    "Reason-Phrase": "OK" (for example)
      * }
      * </pre>
-     *
+     * <p>
      * Any other members of the JSONObject will be output as HTTP fields. The result will end with two CRLF pairs.
      *
      * @param jo A JSONObject
-     *
      * @return An HTTP header string.
-     *
      * @throws JSONException if the object does not contain enough information.
      */
     public static String toString(final JSONObject jo) throws JSONException {
@@ -96,7 +94,9 @@ public class HTTP {
         sb.append(CRLF);
         while (keys.hasNext()) {
             string = keys.next();
-            if (!"HTTP-Version".equals(string) && !"Status-Code".equals(string) && !"Reason-Phrase".equals(string) && !"Method".equals(string) && !"Request-URI".equals(string) && !jo.isNull(string)) {
+            if (!"HTTP-Version".equals(string) && !"Status-Code".equals(string) && !"Reason-Phrase"
+                .equals(string) && !"Method".equals(string) && !"Request-URI".equals(string) && !jo
+                .isNull(string)) {
                 sb.append(string);
                 sb.append(": ");
                 sb.append(jo.getString(string));

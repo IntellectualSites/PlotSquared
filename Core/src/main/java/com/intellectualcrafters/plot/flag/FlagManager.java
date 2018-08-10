@@ -4,21 +4,12 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotSettings;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Flag Manager Utility.
@@ -61,6 +52,7 @@ public class FlagManager {
 
     /**
      * Reserve a flag so that it cannot be set by players.
+     *
      * @param flag the flag to reserve
      * @return false if the flag was already reserved, otherwise true
      */
@@ -74,6 +66,7 @@ public class FlagManager {
 
     /**
      * Check if a flag is reserved.
+     *
      * @param flag the flag to check
      * @return true if the flag is reserved, false otherwise
      */
@@ -83,6 +76,7 @@ public class FlagManager {
 
     /**
      * Get an immutable set of reserved flags.
+     *
      * @return a set of reserved flags
      */
     public static Set<Flag<?>> getReservedFlags() {
@@ -97,6 +91,7 @@ public class FlagManager {
 
     /**
      * Unreserve a flag.
+     *
      * @param flag the flag to unreserve
      * @return true if the flag was unreserved
      */
@@ -117,7 +112,9 @@ public class FlagManager {
                 if (i != 0) {
                     flag_string.append(',');
                 }
-                flag_string.append(flag.getName() + ':' + flag.valueToString(entry.getValue()).replaceAll(":", "¯").replaceAll(",", "´"));
+                flag_string.append(
+                    flag.getName() + ':' + flag.valueToString(entry.getValue()).replaceAll(":", "¯")
+                        .replaceAll(",", "´"));
                 i++;
             } catch (Exception e) {
                 PS.debug("Failed to parse flag: " + entry.getKey() + "->" + entry.getValue());
@@ -140,8 +137,9 @@ public class FlagManager {
 
     /**
      * Returns the raw flag<br>
-     *  - Faster
-     *  - You should not modify the flag
+     * - Faster
+     * - You should not modify the flag
+     *
      * @param plot
      * @param flag
      * @return
@@ -155,6 +153,7 @@ public class FlagManager {
 
     /**
      * Add a flag to a plot.
+     *
      * @param origin
      * @param flag
      * @param value
@@ -181,6 +180,7 @@ public class FlagManager {
 
     /**
      * Returns a map of the {@link Flag}s and their values for the specified plot.
+     *
      * @param plot the plot
      * @return a map of the flags and values for the plot, returns an empty map for unowned plots
      */
@@ -191,7 +191,8 @@ public class FlagManager {
         return getSettingFlags(plot.getArea(), plot.getSettings());
     }
 
-    public static HashMap<Flag<?>, Object> getPlotFlags(PlotArea area, PlotSettings settings, boolean ignorePluginflags) {
+    public static HashMap<Flag<?>, Object> getPlotFlags(PlotArea area, PlotSettings settings,
+        boolean ignorePluginflags) {
         HashMap<Flag<?>, Object> flags = null;
         if (area != null && !area.DEFAULT_FLAGS.isEmpty()) {
             flags = new HashMap<>(area.DEFAULT_FLAGS.size());
@@ -222,8 +223,9 @@ public class FlagManager {
 
     /**
      * Removes a flag from a certain plot.
+     *
      * @param origin the plot to remove the flag from
-     * @param id the flag to remove
+     * @param id     the flag to remove
      * @return true if the plot contained the flag and was removed successfully
      */
     public static boolean removePlotFlag(Plot origin, Flag<?> id) {
@@ -294,13 +296,13 @@ public class FlagManager {
      * Get a list of registered {@link Flag} objects based on player permissions.
      *
      * @param player the player
-     *
      * @return a list of flags the specified player can use
      */
     public static List<Flag> getFlags(PlotPlayer player) {
         List<Flag> returnFlags = new ArrayList<>();
         for (Flag flag : Flags.getFlags()) {
-            if (Permissions.hasPermission(player, "plots.set.flag." + flag.getName().toLowerCase())) {
+            if (Permissions
+                .hasPermission(player, "plots.set.flag." + flag.getName().toLowerCase())) {
                 returnFlags.add(flag);
             }
         }
@@ -311,7 +313,6 @@ public class FlagManager {
      * Get a {@link Flag} specified by the specified {@code String}.
      *
      * @param string the flag name
-     *
      * @return the {@code Flag} object defined by the {@code String}
      */
     public static Flag<?> getFlag(String string) {

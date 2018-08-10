@@ -8,11 +8,11 @@ class ConfigurationOptions {
     private final Configuration configuration;
     private char pathSeparator = '.';
     private boolean copyDefaults = false;
-    
+
     protected ConfigurationOptions(Configuration configuration) {
         this.configuration = configuration;
     }
-    
+
     /**
      * Returns the {@link Configuration} that this object is responsible for.
      *
@@ -21,11 +21,11 @@ class ConfigurationOptions {
     public Configuration configuration() {
         return configuration;
     }
-    
+
     /**
      * Gets the char that will be used to separate {@link
      * ConfigurationSection}s.
-     *
+     * <p>
      * <p>This value does not affect how the {@link Configuration} is stored,
      * only in how you access the data. The default value is '.'.
      *
@@ -34,11 +34,11 @@ class ConfigurationOptions {
     public char pathSeparator() {
         return pathSeparator;
     }
-    
+
     /**
      * Sets the char that will be used to separate {@link
      * ConfigurationSection}s.
-     *
+     * <p>
      * <p>This value does not affect how the {@link Configuration} is stored,
      * only in how you access the data. The default value is '.'.
      *
@@ -49,11 +49,11 @@ class ConfigurationOptions {
         pathSeparator = value;
         return this;
     }
-    
+
     /**
      * Checks if the {@link Configuration} should copy values from its default
      * {@link Configuration} directly.
-     *
+     * <p>
      * <p>If this is true, all values in the default Configuration will be
      * directly copied, making it impossible to distinguish between values
      * that were set and values that are provided by default. As a result,
@@ -67,11 +67,11 @@ class ConfigurationOptions {
     public boolean copyDefaults() {
         return copyDefaults;
     }
-    
+
     /**
      * Sets if the {@link Configuration} should copy values from its default
      * {@link Configuration} directly.
-     *
+     * <p>
      * <p>If this is true, all values in the default Configuration will be
      * directly copied, making it impossible to distinguish between values
      * that were set and values that are provided by default. As a result,

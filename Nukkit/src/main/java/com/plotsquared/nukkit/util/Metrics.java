@@ -5,22 +5,13 @@ import cn.nukkit.plugin.PluginDescription;
 import cn.nukkit.utils.LogLevel;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.util.TaskManager;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+
+import java.io.*;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.zip.GZIPOutputStream;
 
 public class Metrics {
@@ -75,7 +66,6 @@ public class Metrics {
      * GZip compress a string of bytes.
      *
      * @param input
-     *
      * @return byte[] the file as a byte array
      */
     public static byte[] gzip(String input) {
@@ -103,7 +93,6 @@ public class Metrics {
      * @param json
      * @param key
      * @param value
-     *
      */
     private static void appendJSONPair(StringBuilder json, String key, String value) {
         boolean isValueNumeric = false;
@@ -131,7 +120,6 @@ public class Metrics {
      * Escape a string to create a valid JSON string
      *
      * @param text
-     *
      * @return String
      */
     private static String escapeJSON(String text) {
@@ -175,7 +163,6 @@ public class Metrics {
      * Encode text as UTF-8
      *
      * @param text the text to encode
-     *
      * @return the encoded text, as UTF-8
      */
     private static String urlEncode(String text) throws UnsupportedEncodingException {
@@ -187,7 +174,6 @@ public class Metrics {
      * website. Plotters can be added to the graph object returned.
      *
      * @param name The name of the graph
-     *
      * @return Graph object created. Will never return NULL under normal circumstances unless bad parameters are given
      */
     public Graph createGraph(String name) {
@@ -229,8 +215,8 @@ public class Metrics {
         // Begin hitting the server with glorious data
         this.taskId = TaskManager.IMP.taskRepeatAsync(new Runnable() {
             private boolean firstPost = true;
-            @Override
-            public void run() {
+
+            @Override public void run() {
                 try {
                     postPlugin(!this.firstPost);
                     // After the first post we set firstPost to
@@ -262,7 +248,6 @@ public class Metrics {
 
     /**
      * Disables metrics for the server by setting "opt-out" to true in the config file and canceling the metrics task.
-     *
      */
     public void disable() {
         // Disable Task, if it is running
@@ -344,7 +329,8 @@ public class Metrics {
                     StringBuilder graphJson = new StringBuilder();
                     graphJson.append('{');
                     for (Plotter plotter : graph.getPlotters()) {
-                        appendJSONPair(graphJson, plotter.getColumnName(), Integer.toString(plotter.getValue()));
+                        appendJSONPair(graphJson, plotter.getColumnName(),
+                            Integer.toString(plotter.getValue()));
                     }
                     graphJson.append('}');
                     if (!firstGraph) {
@@ -382,7 +368,8 @@ public class Metrics {
         connection.addRequestProperty("Connection", "close");
         connection.setDoOutput(true);
         if (this.debug) {
-            PS.debug("[Metrics] Prepared request for " + pluginName + " uncompressed=" + uncompressed.length + " compressed=" + compressed.length);
+            PS.debug("[Metrics] Prepared request for " + pluginName + " uncompressed="
+                + uncompressed.length + " compressed=" + compressed.length);
         }
         try {
             try (OutputStream os = connection.getOutputStream()) {
@@ -390,7 +377,8 @@ public class Metrics {
                 os.flush();
             }
             String response;
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(connection.getInputStream()))) {
                 response = reader.readLine();
                 if (this.debug) {
                     PS.debug("[Metrics] Response for " + pluginName + ": " + response);
@@ -405,7 +393,8 @@ public class Metrics {
                 throw new IOException(response);
             } else {
                 // Is this the first update this hour?
-                if ("1".equals(response) || response.contains("This is your first update this hour")) {
+                if ("1".equals(response) || response
+                    .contains("This is your first update this hour")) {
                     synchronized (this.graphs) {
                         for (Graph graph : this.graphs) {
                             for (Plotter plotter : graph.getPlotters()) {
@@ -491,13 +480,11 @@ public class Metrics {
             return Collections.unmodifiableSet(this.plotters);
         }
 
-        @Override
-        public int hashCode() {
+        @Override public int hashCode() {
             return this.name.hashCode();
         }
 
-        @Override
-        public boolean equals(Object object) {
+        @Override public boolean equals(Object object) {
             if (!(object instanceof Graph)) {
                 return false;
             }
@@ -511,6 +498,7 @@ public class Metrics {
         protected void onOptOut() {
         }
     }
+
 
     /**
      * Interface used to collect custom data for a plugin
@@ -562,13 +550,11 @@ public class Metrics {
         public void reset() {
         }
 
-        @Override
-        public int hashCode() {
+        @Override public int hashCode() {
             return getColumnName().hashCode();
         }
 
-        @Override
-        public boolean equals(Object object) {
+        @Override public boolean equals(Object object) {
             if (!(object instanceof Plotter)) {
                 return false;
             }

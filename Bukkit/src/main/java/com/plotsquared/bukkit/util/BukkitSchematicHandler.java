@@ -1,12 +1,6 @@
 package com.plotsquared.bukkit.util;
 
-import com.intellectualcrafters.jnbt.ByteArrayTag;
-import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.jnbt.IntTag;
-import com.intellectualcrafters.jnbt.ListTag;
-import com.intellectualcrafters.jnbt.ShortTag;
-import com.intellectualcrafters.jnbt.StringTag;
-import com.intellectualcrafters.jnbt.Tag;
+import com.intellectualcrafters.jnbt.*;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.RegionWrapper;
@@ -22,24 +16,18 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Schematic Handler.
  */
 public class BukkitSchematicHandler extends SchematicHandler {
 
-    @Override
-    public void getCompoundTag(final String world, final Set<RegionWrapper> regions, final RunnableVal<CompoundTag> whenDone) {
+    @Override public void getCompoundTag(final String world, final Set<RegionWrapper> regions,
+        final RunnableVal<CompoundTag> whenDone) {
         // async
         TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 // Main positions
                 Location[] corners = MainUtil.getCorners(world, regions);
                 final Location bot = corners[0];
@@ -67,16 +55,18 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 // Queue
                 final ArrayDeque<RegionWrapper> queue = new ArrayDeque<>(regions);
                 TaskManager.runTask(new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         if (queue.isEmpty()) {
                             TaskManager.runTaskAsync(new Runnable() {
-                                @Override
-                                public void run() {
+                                @Override public void run() {
                                     schematic.put("Blocks", new ByteArrayTag("Blocks", blocks));
                                     schematic.put("Data", new ByteArrayTag("Data", blockData));
-                                    schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<Tag>()));
-                                    schematic.put("TileEntities", new ListTag("TileEntities", CompoundTag.class, tileEntities));
+                                    schematic.put("Entities",
+                                        new ListTag("Entities", CompoundTag.class,
+                                            new ArrayList<Tag>()));
+                                    schematic.put("TileEntities",
+                                        new ListTag("TileEntities", CompoundTag.class,
+                                            tileEntities));
                                     whenDone.value = new CompoundTag("Schematic", schematic);
                                     TaskManager.runTask(whenDone);
                                     System.gc();
@@ -111,10 +101,10 @@ public class BukkitSchematicHandler extends SchematicHandler {
                         final World worldObj = Bukkit.getWorld(world);
                         // Main thread
                         TaskManager.runTask(new Runnable() {
-                            @Override
-                            public void run() {
+                            @Override public void run() {
                                 long start = System.currentTimeMillis();
-                                while (!chunks.isEmpty() && System.currentTimeMillis() - start < 20) {
+                                while (!chunks.isEmpty()
+                                    && System.currentTimeMillis() - start < 20) {
                                     // save schematics
                                     ChunkLoc chunk = chunks.remove(0);
                                     Chunk bc = worldObj.getChunkAt(chunk.x, chunk.z);
@@ -259,15 +249,20 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                                         // TODO implement fully
                                                         BlockState state = block.getState();
                                                         if (state != null) {
-                                                            StateWrapper wrapper = new StateWrapper(state);
+                                                            StateWrapper wrapper =
+                                                                new StateWrapper(state);
                                                             CompoundTag rawTag = wrapper.getTag();
                                                             if (rawTag != null) {
-                                                                Map<String, Tag> values = new HashMap<>(rawTag.getValue());
-                                                                values.put("id", new StringTag("id", wrapper.getId()));
+                                                                Map<String, Tag> values =
+                                                                    new HashMap<>(
+                                                                        rawTag.getValue());
+                                                                values.put("id", new StringTag("id",
+                                                                    wrapper.getId()));
                                                                 values.put("x", new IntTag("x", x));
                                                                 values.put("y", new IntTag("y", y));
                                                                 values.put("z", new IntTag("z", z));
-                                                                CompoundTag tileEntityTag = new CompoundTag(values);
+                                                                CompoundTag tileEntityTag =
+                                                                    new CompoundTag(values);
                                                                 tileEntities.add(tileEntityTag);
                                                             }
                                                         }

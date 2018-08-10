@@ -21,6 +21,7 @@ import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.nukkit.NukkitMain;
 import com.plotsquared.nukkit.object.NukkitPlayer;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -65,17 +66,18 @@ public class NukkitUtil extends WorldUtil {
     }
 
     public static Location getLocation(cn.nukkit.level.Location location) {
-        return new Location(location.getLevel().getName(), MathMan.roundInt(location.getX()), MathMan.roundInt(location.getY()),
-                MathMan.roundInt(location.getZ()));
+        return new Location(location.getLevel().getName(), MathMan.roundInt(location.getX()),
+            MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()));
     }
 
     public static Location getLocation(cn.nukkit.level.Position location) {
-        return new Location(location.getLevel().getName(), MathMan.roundInt(location.getX()), MathMan.roundInt(location.getY()),
-                MathMan.roundInt(location.getZ()));
+        return new Location(location.getLevel().getName(), MathMan.roundInt(location.getX()),
+            MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()));
     }
 
     public static cn.nukkit.level.Location getLocation(Location location) {
-        return new cn.nukkit.level.Location(location.getX(), location.getY(), location.getZ(), 0, 0, getWorld(location.getWorld()));
+        return new cn.nukkit.level.Location(location.getX(), location.getY(), location.getZ(), 0, 0,
+            getWorld(location.getWorld()));
     }
 
     public static Level getWorld(String string) {
@@ -101,28 +103,27 @@ public class NukkitUtil extends WorldUtil {
     public static Location getLocation(Entity entity) {
         cn.nukkit.level.Location location = entity.getLocation();
         String world = location.getLevel().getName();
-        return new Location(world, location.getFloorX(), location.getFloorY(), location.getFloorZ());
+        return new Location(world, location.getFloorX(), location.getFloorY(),
+            location.getFloorZ());
     }
 
     public static Location getLocationFull(Entity entity) {
         cn.nukkit.level.Location location = entity.getLocation();
-        return new Location(location.getLevel().getName(), MathMan.roundInt(location.getX()), MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()),
-                (float) location.getYaw(), (float) location.getPitch());
+        return new Location(location.getLevel().getName(), MathMan.roundInt(location.getX()),
+            MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()),
+            (float) location.getYaw(), (float) location.getPitch());
     }
 
-    @Override
-    public boolean isWorld(String worldName) {
+    @Override public boolean isWorld(String worldName) {
         return getWorld(worldName) != null;
     }
 
-    @Override
-    public String getBiome(String world, int x, int z) {
+    @Override public String getBiome(String world, int x, int z) {
         int id = getWorld(world).getBiomeId(x, z);
         return EnumBiome.getBiome(id).getName();
     }
 
-    @Override
-    public void setSign(String worldName, int x, int y, int z, String[] lines) {
+    @Override public void setSign(String worldName, int x, int y, int z, String[] lines) {
         Level world = getWorld(worldName);
         BlockWallSign sign = new BlockWallSign(0);
         Vector3 pos = new Vector3(x, y, z);
@@ -134,8 +135,7 @@ public class NukkitUtil extends WorldUtil {
         }
     }
 
-    @Override
-    public String[] getSign(Location location) {
+    @Override public String[] getSign(Location location) {
         Level world = getWorld(location.getWorld());
         Vector3 pos = new Vector3(location.getX(), location.getY(), location.getZ());
         BlockEntity tile = world.getBlockEntity(pos);
@@ -145,40 +145,34 @@ public class NukkitUtil extends WorldUtil {
         return null;
     }
 
-    @Override
-    public Location getSpawn(PlotPlayer player) {
+    @Override public Location getSpawn(PlotPlayer player) {
         return getLocation(((NukkitPlayer) player).player.getSpawn());
     }
 
-    @Override
-    public Location getSpawn(String world) {
+    @Override public Location getSpawn(String world) {
         Position loc = getWorld(world).getSpawnLocation();
         return new Location(world, loc.getFloorX(), loc.getFloorY(), loc.getFloorZ(), 0, 0);
     }
 
-    @Override
-    public void setSpawn(Location location) {
+    @Override public void setSpawn(Location location) {
         Level world = getWorld(location.getWorld());
         if (world != null) {
             world.setSpawnLocation(new Vector3(location.getX(), location.getY(), location.getZ()));
         }
     }
 
-    @Override
-    public void saveWorld(String worldName) {
+    @Override public void saveWorld(String worldName) {
         Level world = getWorld(worldName);
         if (world != null) {
             world.save();
         }
     }
 
-    @Override
-    public int getHighestBlock(String world, int x, int z) {
+    @Override public int getHighestBlock(String world, int x, int z) {
         return getWorld(world).getHeightMap(x, z);
     }
 
-    @Override
-    public int getBiomeFromString(String biomeString) {
+    @Override public int getBiomeFromString(String biomeString) {
         try {
             Biome biome = EnumBiome.getBiome(biomeString.toUpperCase());
             return biome.getId();
@@ -187,8 +181,7 @@ public class NukkitUtil extends WorldUtil {
         }
     }
 
-    @Override
-    public String[] getBiomeList() {
+    @Override public String[] getBiomeList() {
         ArrayList<String> biomes = new ArrayList<>();
         for (Field field : Biome.class.getDeclaredFields()) {
             if (field.getName().equals(field.getName().toUpperCase())) {
@@ -198,24 +191,22 @@ public class NukkitUtil extends WorldUtil {
         return biomes.toArray(new String[biomes.size()]);
     }
 
-    @Override
-    public boolean addItems(String worldName, PlotItem items) {
+    @Override public boolean addItems(String worldName, PlotItem items) {
         return false;
     }
 
-    @Override
-    public boolean isBlockSolid(PlotBlock block) {
+    @Override public boolean isBlockSolid(PlotBlock block) {
         try {
             Item item = Item.get(block.id, (int) block.data);
-            return (item != null && item.canBePlaced() && !Block.transparent[item.getId()] && Block.solid[item.getId()]);
+            return (item != null && item.canBePlaced() && !Block.transparent[item.getId()]
+                && Block.solid[item.getId()]);
         } catch (Exception ignored) {
             ignored.printStackTrace();
             return false;
         }
     }
 
-    @Override
-    public String getClosestMatchingName(PlotBlock block) {
+    @Override public String getClosestMatchingName(PlotBlock block) {
         try {
             return Item.get(block.id, (int) block.data).getName();
         } catch (Exception ignored) {
@@ -223,12 +214,13 @@ public class NukkitUtil extends WorldUtil {
         }
     }
 
-    @Override
-    public StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name) {
+    @Override public StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name) {
         try {
             Item item = Item.fromString(name);
-            return new StringComparison<PlotBlock>().new ComparisonResult(0, PlotBlock.get(item.getId(), item.getDamage()));
-        } catch (IllegalArgumentException ignored) {}
+            return new StringComparison<PlotBlock>().new ComparisonResult(0,
+                PlotBlock.get(item.getId(), item.getDamage()));
+        } catch (IllegalArgumentException ignored) {
+        }
         try {
             byte data;
             String[] split = name.split(":");
@@ -244,7 +236,8 @@ public class NukkitUtil extends WorldUtil {
                 id = Short.parseShort(split[0]);
                 match = 0;
             } else {
-                StringComparison<Item>.ComparisonResult comparison = new StringComparison<>(name, Item.getCreativeItems()).getBestMatchAdvanced();
+                StringComparison<Item>.ComparisonResult comparison =
+                    new StringComparison<>(name, Item.getCreativeItems()).getBestMatchAdvanced();
                 match = comparison.match;
                 id = (short) comparison.best.getId();
             }
@@ -252,12 +245,12 @@ public class NukkitUtil extends WorldUtil {
             StringComparison<PlotBlock> outer = new StringComparison<>();
             return outer.new ComparisonResult(match, block);
 
-        } catch (NumberFormatException ignored) {}
+        } catch (NumberFormatException ignored) {
+        }
         return null;
     }
 
-    @Override
-    public void setBiomes(String worldName, RegionWrapper region, String biomeString) {
+    @Override public void setBiomes(String worldName, RegionWrapper region, String biomeString) {
         Level world = getWorld(worldName);
         try {
             int biome = (int) Biome.class.getDeclaredField(biomeString.toUpperCase()).get(null);
@@ -271,8 +264,7 @@ public class NukkitUtil extends WorldUtil {
         }
     }
 
-    @Override
-    public PlotBlock getBlock(Location location) {
+    @Override public PlotBlock getBlock(Location location) {
         Level world = getWorld(location.getWorld());
         int id = world.getBlockIdAt(location.getX(), location.getY(), location.getZ());
         if (id == 0) {
@@ -282,8 +274,7 @@ public class NukkitUtil extends WorldUtil {
         return PlotBlock.get(id, data);
     }
 
-    @Override
-    public String getMainWorld() {
+    @Override public String getMainWorld() {
         return plugin.getServer().getDefaultLevel().getName();
     }
 }

@@ -17,22 +17,15 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@CommandDeclaration(
-        command = "remove",
-        aliases = {"r","untrust", "ut", "undeny", "unban", "ud"},
-        description = "Remove a player from a plot",
-        usage = "/plot remove <player>",
-        category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.NONE,
-        permission = "plots.remove")
+@CommandDeclaration(command = "remove", aliases = {"r", "untrust", "ut", "undeny", "unban",
+    "ud"}, description = "Remove a player from a plot", usage = "/plot remove <player>", category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE, permission = "plots.remove")
 public class Remove extends SubCommand {
 
     public Remove() {
         super(Argument.PlayerName);
     }
 
-    @Override
-    public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer player, String[] args) {
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
         if (plot == null) {
@@ -42,7 +35,8 @@ public class Remove extends SubCommand {
             MainUtil.sendMessage(player, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_REMOVE)) {
+        if (!plot.isOwner(player.getUUID()) && !Permissions
+            .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_REMOVE)) {
             MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return true;
         }
@@ -72,18 +66,17 @@ public class Remove extends SubCommand {
                 if (!uuids.isEmpty()) {
                     for (UUID uuid : uuids) {
                         if (uuid == DBFunc.everyone) {
-                            if (plot.removeTrusted(uuid)){
+                            if (plot.removeTrusted(uuid)) {
                                 EventUtil.manager.callTrusted(player, plot, uuid, false);
                                 count++;
-                            }else if (plot.removeMember(uuid)) {
+                            } else if (plot.removeMember(uuid)) {
                                 EventUtil.manager.callMember(player, plot, uuid, false);
                                 count++;
-                            }else if (plot.removeDenied(uuid)) {
+                            } else if (plot.removeDenied(uuid)) {
                                 EventUtil.manager.callDenied(player, plot, uuid, false);
                                 count++;
                             }
-                        }
-                        else if (plot.getTrusted().contains(uuid)) {
+                        } else if (plot.getTrusted().contains(uuid)) {
                             if (plot.removeTrusted(uuid)) {
                                 EventUtil.manager.callTrusted(player, plot, uuid, false);
                                 count++;

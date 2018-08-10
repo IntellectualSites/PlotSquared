@@ -38,8 +38,7 @@ public class PlayerLeavePlotEvent extends PlayerEvent {
         return this.plot;
     }
 
-    @Override
-    public HandlerList getHandlers() {
+    @Override public HandlerList getHandlers() {
         return handlers;
     }
 }

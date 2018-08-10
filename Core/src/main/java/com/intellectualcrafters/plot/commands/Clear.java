@@ -14,13 +14,7 @@ import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "clear",
-        description = "Clear a plot",
-        permission = "plots.clear",
-        category = CommandCategory.APPEARANCE,
-        usage = "/plot clear",
-        aliases = "reset",
-        confirmation = true)
+@CommandDeclaration(command = "clear", description = "Clear a plot", permission = "plots.clear", category = CommandCategory.APPEARANCE, usage = "/plot clear", aliases = "reset", confirmation = true)
 public class Clear extends Command {
 
     // Note: To clear a specific plot use /plot <plot> clear
@@ -30,24 +24,24 @@ public class Clear extends Command {
         super(MainCommand.getInstance(), true);
     }
 
-    @Override
-    public void execute(final PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
+    @Override public void execute(final PlotPlayer player, String[] args,
+        RunnableVal3<Command, Runnable, Runnable> confirm,
+        RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         checkTrue(args.length == 0, C.COMMAND_SYNTAX, getUsage());
         final Plot plot = check(player.getCurrentPlot(), C.NOT_IN_PLOT);
-        checkTrue(plot.isOwner(player.getUUID()) || Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_CLEAR), C.NO_PLOT_PERMS);
+        checkTrue(plot.isOwner(player.getUUID()) || Permissions
+            .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_CLEAR), C.NO_PLOT_PERMS);
         checkTrue(plot.getRunning() == 0, C.WAIT_FOR_TIMER);
-        checkTrue(!Settings.Done.RESTRICT_BUILDING || !Flags.DONE.isSet(plot) || Permissions.hasPermission(player, C.PERMISSION_CONTINUE), C.DONE_ALREADY_DONE);
+        checkTrue(!Settings.Done.RESTRICT_BUILDING || !Flags.DONE.isSet(plot) || Permissions
+            .hasPermission(player, C.PERMISSION_CONTINUE), C.DONE_ALREADY_DONE);
         confirm.run(this, new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 final long start = System.currentTimeMillis();
                 boolean result = plot.clear(true, false, new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         plot.unlink();
                         GlobalBlockQueue.IMP.addTask(new Runnable() {
-                            @Override
-                            public void run() {
+                            @Override public void run() {
                                 plot.removeRunning();
                                 // If the state changes, then mark it as no longer done
                                 if (plot.getFlag(Flags.DONE).isPresent()) {
@@ -56,7 +50,8 @@ public class Clear extends Command {
                                 if (plot.getFlag(Flags.ANALYSIS).isPresent()) {
                                     FlagManager.removePlotFlag(plot, Flags.ANALYSIS);
                                 }
-                                MainUtil.sendMessage(player, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
+                                MainUtil.sendMessage(player, C.CLEARING_DONE,
+                                    "" + (System.currentTimeMillis() - start));
                             }
                         });
                     }

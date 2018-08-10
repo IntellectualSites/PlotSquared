@@ -7,7 +7,6 @@ import com.intellectualcrafters.plot.object.Plot;
 
 /**
  * Called when a flag is removed from a plot
- *
  */
 public class PlotFlagRemoveEvent extends PlotEvent implements Cancellable {
 
@@ -39,13 +38,11 @@ public class PlotFlagRemoveEvent extends PlotEvent implements Cancellable {
         return this.flag;
     }
 
-    @Override
-    public final boolean isCancelled() {
+    @Override public final boolean isCancelled() {
         return this.cancelled;
     }
 
-    @Override
-    public final void setCancelled(boolean cancelled) {
+    @Override public final void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
     }
 }

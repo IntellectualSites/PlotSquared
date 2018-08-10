@@ -1,15 +1,12 @@
 package com.intellectualcrafters.plot.util.block;
 
 import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PseudoRandom;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
+
 import java.util.Map;
 
 public abstract class LocalBlockQueue {
@@ -21,7 +18,8 @@ public abstract class LocalBlockQueue {
     public ScopedLocalBlockQueue getForChunk(int x, int z) {
         int bx = x << 4;
         int bz = z << 4;
-        return new ScopedLocalBlockQueue(this, new Location(getWorld(), bx, 0, bz), new Location(getWorld(), bx + 15, 255, bz + 15));
+        return new ScopedLocalBlockQueue(this, new Location(getWorld(), bx, 0, bz),
+            new Location(getWorld(), bx + 15, 255, bz + 15));
     }
 
     public abstract boolean next();
@@ -34,11 +32,12 @@ public abstract class LocalBlockQueue {
 
     public abstract void optimize();
 
-    public abstract void setModified(long modified);
-
     public abstract long getModified();
 
-    public abstract boolean setBlock(final int x, final int y, final int z, final int id, final int data);
+    public abstract void setModified(long modified);
+
+    public abstract boolean setBlock(final int x, final int y, final int z, final int id,
+        final int data);
 
     public final boolean setBlock(int x, int y, int z, int id) {
         return setBlock(x, y, z, id, 0);
@@ -78,7 +77,8 @@ public abstract class LocalBlockQueue {
         for (Map.Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
             PlotPlayer pp = entry.getValue();
             Location pLoc = pp.getLocation();
-            if (!StringMan.isEqual(getWorld(), pLoc.getWorld()) || !pLoc.getChunkLoc().equals(loc)) {
+            if (!StringMan.isEqual(getWorld(), pLoc.getWorld()) || !pLoc.getChunkLoc()
+                .equals(loc)) {
                 continue;
             }
             pLoc.setY(WorldUtil.IMP.getHighestBlock(getWorld(), pLoc.getX(), pLoc.getZ()));

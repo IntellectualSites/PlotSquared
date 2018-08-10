@@ -15,13 +15,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 import java.util.ArrayList;
 import java.util.List;
 
-@CommandDeclaration(
-        command = "inbox",
-        description = "Review the comments for a plot",
-        usage = "/plot inbox [inbox] [delete <index>|clear|page]",
-        permission = "plots.inbox",
-        category = CommandCategory.CHAT,
-        requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "inbox", description = "Review the comments for a plot", usage = "/plot inbox [inbox] [delete <index>|clear|page]", permission = "plots.inbox", category = CommandCategory.CHAT, requiredType = RequiredType.NONE)
 public class Inbox extends SubCommand {
 
     public void displayComments(PlotPlayer player, List<PlotComment> oldComments, int page) {
@@ -46,8 +40,8 @@ public class Inbox extends SubCommand {
         }
         StringBuilder string = new StringBuilder();
         string.append(StringMan
-                .replaceAll(C.COMMENT_LIST_HEADER_PAGED.s(), "%amount%", comments.length, "%cur", page + 1, "%max", totalPages + 1, "%word", "all")
-                + '\n');
+            .replaceAll(C.COMMENT_LIST_HEADER_PAGED.s(), "%amount%", comments.length, "%cur",
+                page + 1, "%max", totalPages + 1, "%word", "all") + '\n');
 
         // This might work xD
         for (int x = page * 12; x < max; x++) {
@@ -58,14 +52,14 @@ public class Inbox extends SubCommand {
             } else {
                 color = "&7";
             }
-            string.append("&8[&7#").append(x + 1).append("&8][&7").append(comment.world).append(';').append(comment.id).append("&8][&6")
-                    .append(comment.senderName).append("&8]").append(color).append(comment.comment).append('\n');
+            string.append("&8[&7#").append(x + 1).append("&8][&7").append(comment.world).append(';')
+                .append(comment.id).append("&8][&6").append(comment.senderName).append("&8]")
+                .append(color).append(comment.comment).append('\n');
         }
         MainUtil.sendMessage(player, string.toString());
     }
 
-    @Override
-    public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             sendMessage(player, C.NOT_IN_PLOT);
@@ -76,18 +70,19 @@ public class Inbox extends SubCommand {
             return false;
         }
         if (args.length == 0) {
-            sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox [inbox] [delete <index>|clear|page]");
+            sendMessage(player, C.COMMAND_SYNTAX,
+                "/plot inbox [inbox] [delete <index>|clear|page]");
             for (final CommentInbox inbox : CommentManager.inboxes.values()) {
                 if (inbox.canRead(plot, player)) {
                     if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
-                        @Override
-                        public void run(List<PlotComment> value) {
+                        @Override public void run(List<PlotComment> value) {
                             if (value != null) {
                                 int total = 0;
                                 int unread = 0;
                                 for (PlotComment comment : value) {
                                     total++;
-                                    if (comment.timestamp > CommentManager.getTimestamp(player, inbox.toString())) {
+                                    if (comment.timestamp > CommentManager
+                                        .getTimestamp(player, inbox.toString())) {
                                         unread++;
                                     }
                                 }
@@ -98,7 +93,9 @@ public class Inbox extends SubCommand {
                                     } else {
                                         color = "";
                                     }
-                                    sendMessage(player, C.INBOX_ITEM, color + inbox.toString() + " (" + total + '/' + unread + ')');
+                                    sendMessage(player, C.INBOX_ITEM,
+                                        color + inbox.toString() + " (" + total + '/' + unread
+                                            + ')');
                                     return;
                                 }
                             }
@@ -113,7 +110,8 @@ public class Inbox extends SubCommand {
         }
         final CommentInbox inbox = CommentManager.inboxes.get(args[0].toLowerCase());
         if (inbox == null) {
-            sendMessage(player, C.INVALID_INBOX, StringMan.join(CommentManager.inboxes.keySet(), ", "));
+            sendMessage(player, C.INVALID_INBOX,
+                StringMan.join(CommentManager.inboxes.keySet(), ", "));
             return false;
         }
         player.setMeta("inbox:" + inbox.toString(), System.currentTimeMillis());
@@ -126,7 +124,8 @@ public class Inbox extends SubCommand {
                         return false;
                     }
                     if (args.length != 3) {
-                        sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox " + inbox.toString() + " delete <index>");
+                        sendMessage(player, C.COMMAND_SYNTAX,
+                            "/plot inbox " + inbox.toString() + " delete <index>");
                     }
                     final int index;
                     try {
@@ -136,13 +135,13 @@ public class Inbox extends SubCommand {
                             return false;
                         }
                     } catch (NumberFormatException ignored) {
-                        sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox " + inbox.toString() + " delete <index>");
+                        sendMessage(player, C.COMMAND_SYNTAX,
+                            "/plot inbox " + inbox.toString() + " delete <index>");
                         return false;
                     }
 
                     if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
-                        @Override
-                        public void run(List<PlotComment> value) {
+                        @Override public void run(List<PlotComment> value) {
                             if (index > value.size()) {
                                 sendMessage(player, C.NOT_VALID_INBOX_INDEX, index + "");
                                 return;
@@ -162,7 +161,8 @@ public class Inbox extends SubCommand {
                         sendMessage(player, C.NO_PERM_INBOX_MODIFY);
                     }
                     inbox.clearInbox(plot);
-                    Optional<ArrayList<PlotComment>> comments = plot.getSettings().getComments(inbox.toString());
+                    Optional<ArrayList<PlotComment>> comments =
+                        plot.getSettings().getComments(inbox.toString());
                     if (comments.isPresent()) {
                         plot.getSettings().removeComments(comments.get());
                     }
@@ -172,7 +172,8 @@ public class Inbox extends SubCommand {
                     try {
                         page = Integer.parseInt(args[1]);
                     } catch (NumberFormatException ignored) {
-                        sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox [inbox] [delete <index>|clear|page]");
+                        sendMessage(player, C.COMMAND_SYNTAX,
+                            "/plot inbox [inbox] [delete <index>|clear|page]");
                         return false;
                     }
             }
@@ -184,8 +185,7 @@ public class Inbox extends SubCommand {
             return false;
         }
         if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
-            @Override
-            public void run(List<PlotComment> value) {
+            @Override public void run(List<PlotComment> value) {
                 displayComments(player, value, page);
             }
         })) {

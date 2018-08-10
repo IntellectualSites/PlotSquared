@@ -15,6 +15,9 @@ import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.util.NbtFactory;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,9 +27,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 public class FileUUIDHandler extends UUIDHandlerImplementation {
 
@@ -34,8 +34,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
         super(wrapper);
     }
 
-    @Override
-    public boolean startCaching(Runnable whenDone) {
+    @Override public boolean startCaching(Runnable whenDone) {
         return super.startCaching(whenDone) && cache(whenDone);
     }
 
@@ -49,13 +48,13 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
             world = worlds.get(0).getName();
         }
         TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 PS.debug(C.PREFIX + "&6Starting player data caching for: " + world);
                 File uuidFile = new File(PS.get().IMP.getDirectory(), "uuids.txt");
                 if (uuidFile.exists()) {
                     try {
-                        List<String> lines = Files.readAllLines(uuidFile.toPath(), StandardCharsets.UTF_8);
+                        List<String> lines =
+                            Files.readAllLines(uuidFile.toPath(), StandardCharsets.UTF_8);
                         for (String line : lines) {
                             try {
                                 line = line.trim();
@@ -65,7 +64,8 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                                 line = line.replaceAll("[\\|][0-9]+[\\|][0-9]+[\\|]", "");
                                 String[] split = line.split("\\|");
                                 String name = split[0];
-                                if (name.isEmpty() || (name.length() > 16) || !StringMan.isAlphanumericUnd(name)) {
+                                if (name.isEmpty() || (name.length() > 16) || !StringMan
+                                    .isAlphanumericUnd(name)) {
                                     continue;
                                 }
                                 UUID uuid = FileUUIDHandler.this.uuidWrapper.getUUID(name);
@@ -81,11 +81,13 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                         e.printStackTrace();
                     }
                 }
-                HashBiMap<StringWrapper, UUID> toAdd = HashBiMap.create(new HashMap<StringWrapper, UUID>());
+                HashBiMap<StringWrapper, UUID> toAdd =
+                    HashBiMap.create(new HashMap<StringWrapper, UUID>());
                 if (Settings.UUID.NATIVE_UUID_PROVIDER) {
                     HashSet<UUID> all = UUIDHandler.getAllUUIDS();
                     PS.debug("&aFast mode UUID caching enabled!");
-                    File playerDataFolder = new File(container, world + File.separator + "playerdata");
+                    File playerDataFolder =
+                        new File(container, world + File.separator + "playerdata");
                     String[] dat = playerDataFolder.list(new DatFileFilter());
                     boolean check = all.isEmpty();
                     if (dat != null) {
@@ -95,11 +97,15 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                                 UUID uuid = UUID.fromString(s);
                                 if (check || all.remove(uuid)) {
                                     File file = new File(playerDataFolder, current);
-                                    NbtFactory.NbtCompound compound = NbtFactory.fromStream(new FileInputStream(file), NbtFactory.StreamOptions.GZIP_COMPRESSION);
+                                    NbtFactory.NbtCompound compound = NbtFactory
+                                        .fromStream(new FileInputStream(file),
+                                            NbtFactory.StreamOptions.GZIP_COMPRESSION);
                                     if (!compound.containsKey("bukkit")) {
-                                        PS.debug("ERROR: Player data (" + uuid.toString() + ".dat) does not contain the the key \"bukkit\"");
+                                        PS.debug("ERROR: Player data (" + uuid.toString()
+                                            + ".dat) does not contain the the key \"bukkit\"");
                                     } else {
-                                        NbtFactory.NbtCompound bukkit = (NbtFactory.NbtCompound) compound.get("bukkit");
+                                        NbtFactory.NbtCompound bukkit =
+                                            (NbtFactory.NbtCompound) compound.get("bukkit");
                                         String name = (String) bukkit.get("lastKnownName");
                                         long last = (long) bukkit.get("lastPlayed");
                                         long first = (long) bukkit.get("firstPlayed");
@@ -123,7 +129,8 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                         }
                         return;
                     } else {
-                        PS.debug("Failed to cache: " + all.size() + " uuids - slowly processing all files");
+                        PS.debug("Failed to cache: " + all.size()
+                            + " uuids - slowly processing all files");
                     }
                 }
                 HashSet<String> worlds = Sets.newHashSet(world, "world");
@@ -132,7 +139,8 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                 File playerDataFolder = null;
                 for (String worldName : worlds) {
                     // Getting UUIDs
-                    playerDataFolder = new File(container, worldName + File.separator + "playerdata");
+                    playerDataFolder =
+                        new File(container, worldName + File.separator + "playerdata");
                     String[] dat = playerDataFolder.list(new DatFileFilter());
                     if ((dat != null) && (dat.length != 0)) {
                         for (String current : dat) {
@@ -158,22 +166,28 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                 }
                 for (UUID uuid : uuids) {
                     try {
-                        File file = new File(playerDataFolder + File.separator + uuid.toString() + ".dat");
+                        File file =
+                            new File(playerDataFolder + File.separator + uuid.toString() + ".dat");
                         if (!file.exists()) {
                             continue;
                         }
-                        NbtFactory.NbtCompound compound = NbtFactory.fromStream(new FileInputStream(file), NbtFactory.StreamOptions.GZIP_COMPRESSION);
+                        NbtFactory.NbtCompound compound = NbtFactory
+                            .fromStream(new FileInputStream(file),
+                                NbtFactory.StreamOptions.GZIP_COMPRESSION);
                         if (!compound.containsKey("bukkit")) {
-                            PS.debug("ERROR: Player data (" + uuid.toString() + ".dat) does not contain the the key \"bukkit\"");
+                            PS.debug("ERROR: Player data (" + uuid.toString()
+                                + ".dat) does not contain the the key \"bukkit\"");
                         } else {
-                            NbtFactory.NbtCompound bukkit = (NbtFactory.NbtCompound) compound.get("bukkit");
+                            NbtFactory.NbtCompound bukkit =
+                                (NbtFactory.NbtCompound) compound.get("bukkit");
                             String name = (String) bukkit.get("lastKnownName");
                             StringWrapper wrap = new StringWrapper(name);
                             if (!toAdd.containsKey(wrap)) {
                                 long last = (long) bukkit.get("lastPlayed");
                                 long first = (long) bukkit.get("firstPlayed");
                                 if (Settings.UUID.OFFLINE) {
-                                    if (Settings.UUID.FORCE_LOWERCASE && !name.toLowerCase().equals(name)) {
+                                    if (Settings.UUID.FORCE_LOWERCASE && !name.toLowerCase()
+                                        .equals(name)) {
                                         uuid = FileUUIDHandler.this.uuidWrapper.getUUID(name);
                                     } else {
                                         long most = (long) compound.get("UUIDMost");
@@ -199,7 +213,8 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                 }
 
                 if (getUUIDMap().isEmpty()) {
-                    for (OfflinePlotPlayer op : FileUUIDHandler.this.uuidWrapper.getOfflinePlayers()) {
+                    for (OfflinePlotPlayer op : FileUUIDHandler.this.uuidWrapper
+                        .getOfflinePlayers()) {
                         long last = op.getLastPlayed();
                         if (last != 0) {
                             String name = op.getName();
@@ -223,11 +238,9 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
         return true;
     }
 
-    @Override
-    public void fetchUUID(final String name, final RunnableVal<UUID> ifFetch) {
+    @Override public void fetchUUID(final String name, final RunnableVal<UUID> ifFetch) {
         TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 ifFetch.value = FileUUIDHandler.this.uuidWrapper.getUUID(name);
                 TaskManager.runTask(ifFetch);
             }

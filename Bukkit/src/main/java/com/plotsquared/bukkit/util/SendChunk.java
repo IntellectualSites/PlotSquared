@@ -1,7 +1,5 @@
 package com.plotsquared.bukkit.util;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
@@ -24,6 +22,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
+
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 /**
  * An utility that can be used to send chunks, rather than using bukkit code
@@ -52,12 +52,14 @@ public class SendChunk {
         RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
         if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_9_4)) {
             //this works for 1.9.4 and 1.10
-            tempMapChunk = classMapChunk.getConstructor(classChunk.getRealClass(),int.class);
+            tempMapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), int.class);
         } else {
             try {
-                tempMapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
+                tempMapChunk = classMapChunk
+                    .getConstructor(classChunk.getRealClass(), boolean.class, int.class);
             } catch (NoSuchMethodException ignored) {
-                tempMapChunk = classMapChunk.getConstructor(classChunk.getRealClass(),boolean.class, int.class, int.class);
+                tempMapChunk = classMapChunk
+                    .getConstructor(classChunk.getRealClass(), boolean.class, int.class, int.class);
             }
         }
         this.mapChunk = tempMapChunk;
@@ -118,8 +120,9 @@ public class SendChunk {
                 Object packet = null;
                 if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_9_4)) {
                     try {
-                        packet = this.mapChunk.create(c,65535);
-                    } catch (Exception ignored) {}
+                        packet = this.mapChunk.create(c, 65535);
+                    } catch (Exception ignored) {
+                    }
                 } else {
                     try {
                         packet = this.mapChunk.create(c, true, 65535);
@@ -139,16 +142,16 @@ public class SendChunk {
         }
         for (final Chunk chunk : chunks) {
             TaskManager.runTask(new Runnable() {
-                @Override
-                public void run() {
+                @Override public void run() {
                     try {
                         chunk.unload(true, false);
                     } catch (Throwable ignored) {
                         String worldName = chunk.getWorld().getName();
-                        PS.debug("$4Could not save chunk: " + worldName + ';' + chunk.getX() + ";" + chunk.getZ());
+                        PS.debug("$4Could not save chunk: " + worldName + ';' + chunk.getX() + ";"
+                            + chunk.getZ());
                         PS.debug("$3 - $4File may be open in another process (e.g. MCEdit)");
                         PS.debug("$3 - $4" + worldName + "/level.dat or " + worldName
-                                + "/level_old.dat may be corrupt (try repairing or removing these)");
+                            + "/level_old.dat may be corrupt (try repairing or removing these)");
                     }
                 }
             });

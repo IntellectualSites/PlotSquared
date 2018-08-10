@@ -3,6 +3,7 @@ package com.plotsquared.nukkit.events;
 import cn.nukkit.Player;
 import cn.nukkit.event.HandlerList;
 import com.intellectualcrafters.plot.object.Plot;
+
 import java.util.UUID;
 
 public class PlayerPlotDeniedEvent extends PlotEvent {

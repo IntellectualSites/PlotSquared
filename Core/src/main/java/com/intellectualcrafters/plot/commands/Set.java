@@ -5,16 +5,8 @@ import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.Flags;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.StringComparison;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
@@ -23,43 +15,38 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
-@CommandDeclaration(
-        command = "set",
-        description = "Set a plot value",
-        aliases = {"s"},
-        usage = "/plot set <biome|alias|home|flag> <value...>",
-        permission = "plots.set",
-        category = CommandCategory.APPEARANCE,
-        requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "set", description = "Set a plot value", aliases = {
+    "s"}, usage = "/plot set <biome|alias|home|flag> <value...>", permission = "plots.set", category = CommandCategory.APPEARANCE, requiredType = RequiredType.NONE)
 public class Set extends SubCommand {
 
-    public static final String[] values = new String[]{"biome", "alias", "home", "flag"};
-    public static final String[] aliases = new String[]{"b", "w", "wf", "f", "a", "h", "fl"};
+    public static final String[] values = new String[] {"biome", "alias", "home", "flag"};
+    public static final String[] aliases = new String[] {"b", "w", "wf", "f", "a", "h", "fl"};
 
     private final SetCommand component;
 
     public Set() {
         this.component = new SetCommand() {
 
-            @Override
-            public String getId() {
+            @Override public String getId() {
                 return "set.component";
             }
 
-            @Override
-            public boolean set(PlotPlayer player, final Plot plot, String value) {
+            @Override public boolean set(PlotPlayer player, final Plot plot, String value) {
                 PlotArea plotArea = player.getLocation().getPlotArea();
                 PlotManager manager = player.getLocation().getPlotManager();
                 String[] components = manager.getPlotComponents(plotArea, plot.getId());
                 boolean allowUnsafe = DebugAllowUnsafe.unsafeAllowed.contains(player.getUUID());
 
                 String[] args = value.split(" ");
-                String material = StringMan.join(Arrays.copyOfRange(args, 1, args.length), ",").trim();
+                String material =
+                    StringMan.join(Arrays.copyOfRange(args, 1, args.length), ",").trim();
 
                 for (String component : components) {
                     if (component.equalsIgnoreCase(args[0])) {
-                        if (!Permissions.hasPermission(player, C.PERMISSION_SET_COMPONENT.f(component))) {
-                            MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SET_COMPONENT.f(component));
+                        if (!Permissions
+                            .hasPermission(player, C.PERMISSION_SET_COMPONENT.f(component))) {
+                            MainUtil.sendMessage(player, C.NO_PERMISSION,
+                                C.PERMISSION_SET_COMPONENT.f(component));
                             return false;
                         }
                         PlotBlock[] blocks;
@@ -80,23 +67,28 @@ public class Set extends SubCommand {
                                     } else {
                                         name = split[i];
                                     }
-                                    StringComparison<PlotBlock>.ComparisonResult match = WorldUtil.IMP.getClosestBlock(name);
+                                    StringComparison<PlotBlock>.ComparisonResult match =
+                                        WorldUtil.IMP.getClosestBlock(name);
                                     if (match != null) {
                                         name = WorldUtil.IMP.getClosestMatchingName(match.best);
                                         if (name != null) {
-                                            MainUtil.sendMessage(player, C.DID_YOU_MEAN, name.toLowerCase());
+                                            MainUtil.sendMessage(player, C.DID_YOU_MEAN,
+                                                name.toLowerCase());
                                         }
                                     }
                                     return false;
-                                } else if (!allowUnsafe && (block.id != 0 && !WorldUtil.IMP.isBlockSolid(block))) {
-                                    MainUtil.sendMessage(player, C.NOT_ALLOWED_BLOCK, block.toString());
+                                } else if (!allowUnsafe && (block.id != 0 && !WorldUtil.IMP
+                                    .isBlockSolid(block))) {
+                                    MainUtil
+                                        .sendMessage(player, C.NOT_ALLOWED_BLOCK, block.toString());
                                     return false;
                                 }
                             }
                             if (!allowUnsafe) {
                                 for (PlotBlock block : blocks) {
                                     if (block.id != 0 && !WorldUtil.IMP.isBlockSolid(block)) {
-                                        MainUtil.sendMessage(player, C.NOT_ALLOWED_BLOCK, block.toString());
+                                        MainUtil.sendMessage(player, C.NOT_ALLOWED_BLOCK,
+                                            block.toString());
                                         return false;
                                     }
                                 }
@@ -115,8 +107,7 @@ public class Set extends SubCommand {
                         }
                         MainUtil.sendMessage(player, C.GENERATING_COMPONENT);
                         GlobalBlockQueue.IMP.addTask(new Runnable() {
-                            @Override
-                            public void run() {
+                            @Override public void run() {
                                 plot.removeRunning();
                             }
                         });
@@ -133,14 +124,15 @@ public class Set extends SubCommand {
         newValues.addAll(Arrays.asList("biome", "alias", "home", "flag"));
         Plot plot = player.getCurrentPlot();
         if (plot != null) {
-            newValues.addAll(Arrays.asList(plot.getManager().getPlotComponents(plot.getArea(), plot.getId())));
+            newValues.addAll(
+                Arrays.asList(plot.getManager().getPlotComponents(plot.getArea(), plot.getId())));
         }
-        MainUtil.sendMessage(player, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringMan.join(newValues, C.BLOCK_LIST_SEPARATER.formatted()));
+        MainUtil.sendMessage(player, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringMan
+            .join(newValues, C.BLOCK_LIST_SEPARATER.formatted()));
         return false;
     }
 
-    @Override
-    public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer player, String[] args) {
         if (args.length == 0) {
             return noArgs(player);
         }
@@ -159,7 +151,8 @@ public class Set extends SubCommand {
             return false;
         }
         // components
-        HashSet<String> components = new HashSet<>(Arrays.asList(plot.getManager().getPlotComponents(plot.getArea(), plot.getId())));
+        HashSet<String> components = new HashSet<>(
+            Arrays.asList(plot.getManager().getPlotComponents(plot.getArea(), plot.getId())));
         if (components.contains(args[0].toLowerCase())) {
             return this.component.onCommand(player, Arrays.copyOfRange(args, 0, args.length));
         }

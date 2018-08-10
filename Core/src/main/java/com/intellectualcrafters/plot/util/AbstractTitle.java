@@ -15,5 +15,6 @@ public abstract class AbstractTitle {
         }
     }
 
-    public abstract void sendTitle(PlotPlayer player, String head, String sub, int in, int delay, int out);
+    public abstract void sendTitle(PlotPlayer player, String head, String sub, int in, int delay,
+        int out);
 }

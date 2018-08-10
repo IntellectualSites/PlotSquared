@@ -6,7 +6,6 @@ import com.intellectualcrafters.plot.object.PlotId;
 
 /**
  * Called when a plot is deleted
- *
  */
 public class PlotDeleteEvent extends PlotEvent {
 

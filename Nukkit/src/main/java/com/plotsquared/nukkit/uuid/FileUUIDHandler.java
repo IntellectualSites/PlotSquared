@@ -9,6 +9,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.UUID;
@@ -19,18 +20,17 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
         super(wrapper);
     }
 
-    @Override
-    public boolean startCaching(Runnable whenDone) {
+    @Override public boolean startCaching(Runnable whenDone) {
         return super.startCaching(whenDone) && cache(whenDone);
     }
 
     public boolean cache(final Runnable whenDone) {
         final File container = new File("players");
         TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 PS.debug(C.PREFIX + "&6Starting player data caching for: " + container);
-                HashBiMap<StringWrapper, UUID> toAdd = HashBiMap.create(new HashMap<StringWrapper, UUID>());
+                HashBiMap<StringWrapper, UUID> toAdd =
+                    HashBiMap.create(new HashMap<StringWrapper, UUID>());
                 for (File file : container.listFiles(new DatFileFilter())) {
                     String fileName = file.getName();
                     String name = fileName.substring(0, fileName.length() - 4);
@@ -50,11 +50,9 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
         return true;
     }
 
-    @Override
-    public void fetchUUID(final String name, final RunnableVal<UUID> ifFetch) {
+    @Override public void fetchUUID(final String name, final RunnableVal<UUID> ifFetch) {
         TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 ifFetch.value = FileUUIDHandler.this.uuidWrapper.getUUID(name);
                 TaskManager.runTask(ifFetch);
             }

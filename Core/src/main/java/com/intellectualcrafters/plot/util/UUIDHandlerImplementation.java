@@ -7,18 +7,10 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class UUIDHandlerImplementation {
@@ -27,8 +19,9 @@ public abstract class UUIDHandlerImplementation {
     public final HashSet<UUID> unknown = new HashSet<>();
     public UUIDWrapper uuidWrapper;
     private boolean cached = false;
-    private BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
-//    private BiMap<UUID, StringWrapper> nameMap = uuidMap.inverse();
+    private BiMap<StringWrapper, UUID> uuidMap =
+        HashBiMap.create(new HashMap<StringWrapper, UUID>());
+    //    private BiMap<UUID, StringWrapper> nameMap = uuidMap.inverse();
 
     public UUIDHandlerImplementation(UUIDWrapper wrapper) {
         this.uuidWrapper = wrapper;
@@ -37,6 +30,7 @@ public abstract class UUIDHandlerImplementation {
 
     /**
      * If the UUID is not found, some commands can request to fetch the UUID when possible.
+     *
      * @param name
      * @param ifFetch
      */
@@ -113,11 +107,13 @@ public abstract class UUIDHandlerImplementation {
          */
         if (!Settings.UUID.OFFLINE && !this.unknown.isEmpty()) {
             TaskManager.runTaskAsync(new Runnable() {
-                @Override
-                public void run() {
-                    UUID offline = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.value).getBytes(Charsets.UTF_8));
-                    if (!UUIDHandlerImplementation.this.unknown.contains(offline) && !name.value.equals(name.value.toLowerCase())) {
-                        offline = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.value.toLowerCase()).getBytes(Charsets.UTF_8));
+                @Override public void run() {
+                    UUID offline = UUID.nameUUIDFromBytes(
+                        ("OfflinePlayer:" + name.value).getBytes(Charsets.UTF_8));
+                    if (!UUIDHandlerImplementation.this.unknown.contains(offline) && !name.value
+                        .equals(name.value.toLowerCase())) {
+                        offline = UUID.nameUUIDFromBytes(
+                            ("OfflinePlayer:" + name.value.toLowerCase()).getBytes(Charsets.UTF_8));
                         if (!UUIDHandlerImplementation.this.unknown.contains(offline)) {
                             offline = null;
                         }
@@ -131,18 +127,22 @@ public abstract class UUIDHandlerImplementation {
                             }
                             DBFunc.replaceUUID(offline, uuid);
                             PS.debug("&cDetected invalid UUID stored for: " + name.value);
-                            PS.debug("&7 - Did you recently switch to online-mode storage without running `uuidconvert`?");
-                            PS.debug("&6" + PS.imp().getPluginName() + " will update incorrect entries when the user logs in, or you can reconstruct your database.");
+                            PS.debug(
+                                "&7 - Did you recently switch to online-mode storage without running `uuidconvert`?");
+                            PS.debug("&6" + PS.imp().getPluginName()
+                                + " will update incorrect entries when the user logs in, or you can reconstruct your database.");
                         }
                     }
                 }
             });
-        } else if (Settings.UUID.FORCE_LOWERCASE && !this.unknown.isEmpty() && !name.value.equals(name.value.toLowerCase())) {
+        } else if (Settings.UUID.FORCE_LOWERCASE && !this.unknown.isEmpty() && !name.value
+            .equals(name.value.toLowerCase())) {
             TaskManager.runTaskAsync(new Runnable() {
-                @Override
-                public void run() {
-                    UUID offlineUpper = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.value).getBytes(Charsets.UTF_8));
-                    if (UUIDHandlerImplementation.this.unknown.contains(offlineUpper) && offlineUpper != null && !offlineUpper.equals(uuid)) {
+                @Override public void run() {
+                    UUID offlineUpper = UUID.nameUUIDFromBytes(
+                        ("OfflinePlayer:" + name.value).getBytes(Charsets.UTF_8));
+                    if (UUIDHandlerImplementation.this.unknown.contains(offlineUpper)
+                        && offlineUpper != null && !offlineUpper.equals(uuid)) {
                         UUIDHandlerImplementation.this.unknown.remove(offlineUpper);
                         Set<Plot> plots = PS.get().getPlotsAbs(offlineUpper);
                         if (!plots.isEmpty()) {
@@ -170,7 +170,7 @@ public abstract class UUIDHandlerImplementation {
                 } else {
                     StringWrapper oName = this.uuidMap.inverse().get(offline);
                     if (!oName.equals(name)) {
-                        this.uuidMap.remove (name);
+                        this.uuidMap.remove(name);
                         this.uuidMap.put(name, uuid);
                     }
                 }
@@ -197,8 +197,10 @@ public abstract class UUIDHandlerImplementation {
     private void replace(UUID from, UUID to, String name) {
         DBFunc.replaceUUID(from, to);
         PS.debug("&cDetected invalid UUID stored for: " + name);
-        PS.debug("&7 - Did you recently switch to online-mode storage without running `uuidconvert`?");
-        PS.debug("&6" + PS.imp().getPluginName() + " will update incorrect entries when the user logs in, or you can reconstruct your database.");
+        PS.debug(
+            "&7 - Did you recently switch to online-mode storage without running `uuidconvert`?");
+        PS.debug("&6" + PS.imp().getPluginName()
+            + " will update incorrect entries when the user logs in, or you can reconstruct your database.");
     }
 
     public boolean uuidExists(UUID uuid) {

@@ -16,23 +16,20 @@ import com.plotsquared.general.commands.CommandDeclaration;
 import java.util.Arrays;
 import java.util.Map.Entry;
 
-@CommandDeclaration(command = "comment",
-        aliases = {"msg"},
-        description = "Comment on a plot",
-        category = CommandCategory.CHAT,
-        requiredType = RequiredType.NONE,
-        permission = "plots.comment")
+@CommandDeclaration(command = "comment", aliases = {
+    "msg"}, description = "Comment on a plot", category = CommandCategory.CHAT, requiredType = RequiredType.NONE, permission = "plots.comment")
 public class Comment extends SubCommand {
 
-    @Override
-    public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer player, String[] args) {
         if (args.length < 2) {
-            sendMessage(player, C.COMMENT_SYNTAX, StringMan.join(CommentManager.inboxes.keySet(), "|"));
+            sendMessage(player, C.COMMENT_SYNTAX,
+                StringMan.join(CommentManager.inboxes.keySet(), "|"));
             return false;
         }
         CommentInbox inbox = CommentManager.inboxes.get(args[0].toLowerCase());
         if (inbox == null) {
-            sendMessage(player, C.COMMENT_SYNTAX, StringMan.join(CommentManager.inboxes.keySet(), "|"));
+            sendMessage(player, C.COMMENT_SYNTAX,
+                StringMan.join(CommentManager.inboxes.keySet(), "|"));
             return false;
         }
         Location loc = player.getLocation();
@@ -44,7 +41,8 @@ public class Comment extends SubCommand {
             plot = loc.getPlotAbs();
         } else {
             if (args.length < 4) {
-                sendMessage(player, C.COMMENT_SYNTAX, StringMan.join(CommentManager.inboxes.keySet(), "|"));
+                sendMessage(player, C.COMMENT_SYNTAX,
+                    StringMan.join(CommentManager.inboxes.keySet(), "|"));
                 return false;
             }
             index = 2;
@@ -54,11 +52,14 @@ public class Comment extends SubCommand {
             return false;
         }
         String message = StringMan.join(Arrays.copyOfRange(args, index, args.length), " ");
-        PlotComment comment = new PlotComment(loc.getWorld(), id, message, player.getName(), inbox.toString(), System.currentTimeMillis());
+        PlotComment comment =
+            new PlotComment(loc.getWorld(), id, message, player.getName(), inbox.toString(),
+                System.currentTimeMillis());
         boolean result = inbox.addComment(plot, comment);
         if (!result) {
             sendMessage(player, C.NO_PLOT_INBOX, "");
-            sendMessage(player, C.COMMENT_SYNTAX, StringMan.join(CommentManager.inboxes.keySet(), "|"));
+            sendMessage(player, C.COMMENT_SYNTAX,
+                StringMan.join(CommentManager.inboxes.keySet(), "|"));
             return false;
         }
         for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {

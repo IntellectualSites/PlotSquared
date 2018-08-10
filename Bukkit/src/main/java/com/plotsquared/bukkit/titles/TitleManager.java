@@ -12,17 +12,13 @@ import java.util.Map;
 public abstract class TitleManager {
 
     private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES = new HashMap<>();
-    /* Title packet */
-    Class<?> packetTitle;
-    /* Title packet actions ENUM */
-    Class<?> packetActions;
-    /* Chat serializer */
-    Class<?> nmsChatSerializer;
+    /* Title packet */ Class<?> packetTitle;
+    /* Title packet actions ENUM */ Class<?> packetActions;
+    /* Chat serializer */ Class<?> nmsChatSerializer;
     Class<?> chatBaseComponent;
     ChatColor titleColor = ChatColor.WHITE;
     ChatColor subtitleColor = ChatColor.WHITE;
-    /* Title timings */
-    int fadeInTime = -1;
+    /* Title timings */ int fadeInTime = -1;
     int stayTime = -1;
     int fadeOutTime = -1;
     boolean ticks = false;
@@ -34,10 +30,10 @@ public abstract class TitleManager {
     /**
      * Create a new 1.8 title.
      *
-     * @param title Title text
-     * @param subtitle Subtitle text
-     * @param fadeInTime Fade in time
-     * @param stayTime Stay on screen time
+     * @param title       Title text
+     * @param subtitle    Subtitle text
+     * @param fadeInTime  Fade in time
+     * @param stayTime    Stay on screen time
      * @param fadeOutTime Fade out time
      */
     TitleManager(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) {
@@ -154,7 +150,8 @@ public abstract class TitleManager {
      * @throws ReflectiveOperationException
      * @throws SecurityException
      */
-    public abstract void send(Player player) throws IllegalArgumentException, ReflectiveOperationException, SecurityException;
+    public abstract void send(Player player)
+        throws IllegalArgumentException, ReflectiveOperationException, SecurityException;
 
     /**
      * Broadcasts the title to all players.
@@ -175,7 +172,8 @@ public abstract class TitleManager {
      * @throws ReflectiveOperationException
      * @throws SecurityException
      */
-    public abstract void clearTitle(Player player) throws IllegalArgumentException, ReflectiveOperationException, SecurityException;
+    public abstract void clearTitle(Player player)
+        throws IllegalArgumentException, ReflectiveOperationException, SecurityException;
 
     /**
      * Resets the title settings.
@@ -185,7 +183,8 @@ public abstract class TitleManager {
      * @throws ReflectiveOperationException
      * @throws SecurityException
      */
-    public abstract void resetTitle(Player player) throws  IllegalArgumentException, ReflectiveOperationException, SecurityException;
+    public abstract void resetTitle(Player player)
+        throws IllegalArgumentException, ReflectiveOperationException, SecurityException;
 
     private Class<?> getPrimitiveType(Class<?> clazz) {
         if (CORRESPONDING_TYPES.containsKey(clazz)) {

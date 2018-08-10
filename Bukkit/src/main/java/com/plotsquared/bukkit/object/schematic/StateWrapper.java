@@ -1,10 +1,6 @@
 package com.plotsquared.bukkit.object.schematic;
 
-import com.intellectualcrafters.jnbt.ByteTag;
-import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.jnbt.ListTag;
-import com.intellectualcrafters.jnbt.ShortTag;
-import com.intellectualcrafters.jnbt.Tag;
+import com.intellectualcrafters.jnbt.*;
 import com.intellectualcrafters.plot.object.schematic.ItemType;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -89,7 +85,8 @@ public class StateWrapper {
             InventoryHolder inv = (InventoryHolder) this.state;
             ItemStack[] contents = inv.getInventory().getContents();
             Map<String, Tag> values = new HashMap<>();
-            values.put("Items", new ListTag("Items", CompoundTag.class, serializeInventory(contents)));
+            values.put("Items",
+                new ListTag("Items", CompoundTag.class, serializeInventory(contents)));
             return new CompoundTag(values);
         }
         return null;

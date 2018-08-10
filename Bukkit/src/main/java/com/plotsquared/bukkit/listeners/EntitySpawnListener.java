@@ -52,9 +52,10 @@ public class EntitySpawnListener implements Listener {
                     event.setCancelled(true);
                 }
             case SHULKER:
-            	if(!entity.hasMetadata("plot")) {
-            		entity.setMetadata("plot", new FixedMetadataValue((Plugin) PS.get().IMP, plot.getId()));
-            	}
+                if (!entity.hasMetadata("plot")) {
+                    entity.setMetadata("plot",
+                        new FixedMetadataValue((Plugin) PS.get().IMP, plot.getId()));
+                }
         }
     }
 }

@@ -9,21 +9,16 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(
-        command = "continue",
-        description = "Continue a plot that was previously marked as done",
-        permission = "plots.continue",
-        category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "continue", description = "Continue a plot that was previously marked as done", permission = "plots.continue", category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE)
 public class Continue extends SubCommand {
 
-    @Override
-    public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer player, String[] args) {
         Plot plot = player.getCurrentPlot();
         if ((plot == null) || !plot.hasOwner()) {
             return !sendMessage(player, C.NOT_IN_PLOT);
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_CONTINUE)) {
+        if (!plot.isOwner(player.getUUID()) && !Permissions
+            .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_CONTINUE)) {
             MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return false;
         }
@@ -32,7 +27,8 @@ public class Continue extends SubCommand {
             return false;
         }
         int size = plot.getConnectedPlots().size();
-        if (Settings.Done.COUNTS_TOWARDS_LIMIT && (player.getAllowedPlots() < player.getPlotCount() + size)) {
+        if (Settings.Done.COUNTS_TOWARDS_LIMIT && (player.getAllowedPlots()
+            < player.getPlotCount() + size)) {
             MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_ADMIN_COMMAND_CONTINUE);
             return false;
         }

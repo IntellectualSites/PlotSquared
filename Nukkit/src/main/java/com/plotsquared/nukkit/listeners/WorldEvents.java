@@ -11,6 +11,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.plotsquared.nukkit.generator.NukkitPlotGenerator;
+
 import java.util.HashMap;
 
 public class WorldEvents implements Listener {

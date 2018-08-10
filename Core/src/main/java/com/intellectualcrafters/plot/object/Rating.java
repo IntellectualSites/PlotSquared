@@ -69,7 +69,8 @@ public class Rating {
         if (Settings.Ratings.CATEGORIES != null && Settings.Ratings.CATEGORIES.size() > 1) {
             int val = 0;
             for (int i = 0; i < Settings.Ratings.CATEGORIES.size(); i++) {
-                val += (i + 1) * Math.pow(10, this.ratingMap.get(Settings.Ratings.CATEGORIES.get(i)));
+                val +=
+                    (i + 1) * Math.pow(10, this.ratingMap.get(Settings.Ratings.CATEGORIES.get(i)));
             }
             return val;
         } else {

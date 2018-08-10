@@ -9,12 +9,8 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "bo3",
-        aliases = {"bo2"},
-        description = "Mark a plot as done",
-        permission = "plots.bo3",
-        category = CommandCategory.SCHEMATIC,
-        requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "bo3", aliases = {
+    "bo2"}, description = "Mark a plot as done", permission = "plots.bo3", category = CommandCategory.SCHEMATIC, requiredType = RequiredType.NONE)
 public class BO3 extends SubCommand {
 
     public void noArgs(PlotPlayer player) {
@@ -22,14 +18,14 @@ public class BO3 extends SubCommand {
         MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot bo3 import <file>");
     }
 
-    @Override
-    public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer player, String[] args) {
         Location loc = player.getLocation();
         Plot plot = loc.getPlotAbs();
         if (plot == null || !plot.hasOwner()) {
             return !sendMessage(player, C.NOT_IN_PLOT);
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_BO3)) {
+        if (!plot.isOwner(player.getUUID()) && !Permissions
+            .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_BO3)) {
             MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return false;
         }

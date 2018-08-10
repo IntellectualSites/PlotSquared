@@ -5,45 +5,45 @@ import com.intellectualcrafters.plot.object.PlotId;
 public abstract class Argument<T> {
 
     public static final Argument<Integer> Integer = new Argument<Integer>("int", 16) {
-        @Override
-        public Integer parse(String in) {
+        @Override public Integer parse(String in) {
             Integer value = null;
             try {
                 value = java.lang.Integer.parseInt(in);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
             return value;
         }
     };
     public static final Argument<Boolean> Boolean = new Argument<Boolean>("boolean", true) {
-        @Override
-        public Boolean parse(String in) {
+        @Override public Boolean parse(String in) {
             Boolean value = null;
-            if (in.equalsIgnoreCase("true") || in.equalsIgnoreCase("Yes") || in.equalsIgnoreCase("1")) {
+            if (in.equalsIgnoreCase("true") || in.equalsIgnoreCase("Yes") || in
+                .equalsIgnoreCase("1")) {
                 value = true;
-            } else if (in.equalsIgnoreCase("false") || in.equalsIgnoreCase("No") || in.equalsIgnoreCase("0")) {
+            } else if (in.equalsIgnoreCase("false") || in.equalsIgnoreCase("No") || in
+                .equalsIgnoreCase("0")) {
                 value = false;
             }
             return value;
         }
     };
     public static final Argument<String> String = new Argument<String>("String", "Example") {
-        @Override
-        public String parse(String in) {
+        @Override public String parse(String in) {
             return in;
         }
     };
-    public static final Argument<String> PlayerName = new Argument<String>("PlayerName", "Dinnerbone") {
-        @Override
-        public String parse(String in) {
-            return in.length() <= 16 ? in : null;
-        }
-    };
-    public static final Argument<PlotId> PlotID = new Argument<PlotId>("PlotID", new PlotId(-6, 3)) {
-        @Override
-        public PlotId parse(String in) {
-            return PlotId.fromString(in);
-        }
-    };
+    public static final Argument<String> PlayerName =
+        new Argument<String>("PlayerName", "Dinnerbone") {
+            @Override public String parse(String in) {
+                return in.length() <= 16 ? in : null;
+            }
+        };
+    public static final Argument<PlotId> PlotID =
+        new Argument<PlotId>("PlotID", new PlotId(-6, 3)) {
+            @Override public PlotId parse(String in) {
+                return PlotId.fromString(in);
+            }
+        };
     private final String name;
     private final T example;
 
@@ -54,8 +54,7 @@ public abstract class Argument<T> {
 
     public abstract T parse(String in);
 
-    @Override
-    public final String toString() {
+    @Override public final String toString() {
         return this.getName();
     }
 

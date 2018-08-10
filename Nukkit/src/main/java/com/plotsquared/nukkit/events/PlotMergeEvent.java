@@ -5,6 +5,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Level;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+
 import java.util.ArrayList;
 
 public class PlotMergeEvent extends PlotEvent implements Cancellable {
@@ -44,13 +45,11 @@ public class PlotMergeEvent extends PlotEvent implements Cancellable {
         return this.world;
     }
 
-    @Override
-    public boolean isCancelled() {
+    @Override public boolean isCancelled() {
         return this.cancelled;
     }
 
-    @Override
-    public void setCancelled(boolean b) {
+    @Override public void setCancelled(boolean b) {
         this.cancelled = b;
     }
 }

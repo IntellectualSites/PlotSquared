@@ -12,9 +12,6 @@ import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.world.biome.Biome;
@@ -40,9 +37,15 @@ import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
 import org.spongepowered.api.world.extent.Extent;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.*;
+
 public class SpongeUtil extends WorldUtil {
 
-    public static Cause CAUSE = Cause.builder().append(Sponge.getPluginManager().fromInstance(SpongeMain.THIS).get()).build(EventContext.empty());
+    public static Cause CAUSE =
+        Cause.builder().append(Sponge.getPluginManager().fromInstance(SpongeMain.THIS).get())
+            .build(EventContext.empty());
     private static BiomeType[] biomes;
     private static HashMap<String, Integer> biomeMap;
     private static Player lastPlayer = null;
@@ -110,18 +113,15 @@ public class SpongeUtil extends WorldUtil {
     public static Translation getTranslation(String m) {
         return new Translation() {
 
-            @Override
-            public String getId() {
+            @Override public String getId() {
                 return m;
             }
 
-            @Override
-            public String get(Locale l, Object... args) {
+            @Override public String get(Locale l, Object... args) {
                 return m;
             }
 
-            @Override
-            public String get(Locale l) {
+            @Override public String get(Locale l) {
                 return m;
             }
         };
@@ -149,7 +149,8 @@ public class SpongeUtil extends WorldUtil {
     public static Location getLocationFull(Entity player) {
         String world = player.getWorld().getName();
         Vector3d rot = player.getRotation();
-        float[] pitchYaw = MathMan.getPitchAndYaw((float) rot.getX(), (float) rot.getY(), (float) rot.getZ());
+        float[] pitchYaw =
+            MathMan.getPitchAndYaw((float) rot.getX(), (float) rot.getY(), (float) rot.getZ());
         org.spongepowered.api.world.Location loc = player.getLocation();
         Vector3i pos = loc.getBlockPosition();
         return new Location(world, pos.getX(), pos.getY(), pos.getZ(), pitchYaw[1], pitchYaw[0]);
@@ -213,8 +214,10 @@ public class SpongeUtil extends WorldUtil {
 
     public static org.spongepowered.api.world.Location<World> getLocation(Location location) {
         Collection<World> worlds = Sponge.getServer().getWorlds();
-        World world = Sponge.getServer().getWorld(location.getWorld()).orElse(worlds.toArray(new World[worlds.size()])[0]);
-        return new org.spongepowered.api.world.Location<>(world, location.getX(), location.getY(), location.getZ());
+        World world = Sponge.getServer().getWorld(location.getWorld())
+            .orElse(worlds.toArray(new World[worlds.size()])[0]);
+        return new org.spongepowered.api.world.Location<>(world, location.getX(), location.getY(),
+            location.getZ());
     }
 
     public static Location getLocation(String world, Vector3i position) {
@@ -222,11 +225,11 @@ public class SpongeUtil extends WorldUtil {
     }
 
     public static Location getLocation(String world, Vector3d position) {
-        return new Location(world, MathMan.roundInt(position.getX()), MathMan.roundInt(position.getY()), MathMan.roundInt(position.getZ()));
+        return new Location(world, MathMan.roundInt(position.getX()),
+            MathMan.roundInt(position.getY()), MathMan.roundInt(position.getZ()));
     }
 
-    @Override
-    public boolean isBlockSolid(PlotBlock block) {
+    @Override public boolean isBlockSolid(PlotBlock block) {
         BlockState state = SpongeUtil.getBlockState(block.id, block.data);
         Optional<SolidCubeProperty> property = state.getType().getProperty(SolidCubeProperty.class);
         if (property.isPresent()) {
@@ -236,8 +239,7 @@ public class SpongeUtil extends WorldUtil {
         }
     }
 
-    @Override
-    public StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name) {
+    @Override public StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name) {
         try {
 
             byte data;
@@ -256,12 +258,12 @@ public class SpongeUtil extends WorldUtil {
             } else {
                 List<BlockType> types = ReflectionUtils.getStaticFields(BlockTypes.class);
                 StringComparison<BlockType>.ComparisonResult comparison =
-                        new StringComparison<BlockType>(name, types.toArray(new BlockType[types.size()])) {
-                            @Override
-                            public String getString(BlockType type) {
-                                return type.getId();
-                            }
-                        }.getBestMatchAdvanced();
+                    new StringComparison<BlockType>(name,
+                        types.toArray(new BlockType[types.size()])) {
+                        @Override public String getString(BlockType type) {
+                            return type.getId();
+                        }
+                    }.getBestMatchAdvanced();
                 match = comparison.match;
                 id = SpongeUtil.getPlotBlock(comparison.best.getDefaultState()).id;
             }
@@ -274,68 +276,61 @@ public class SpongeUtil extends WorldUtil {
         return null;
     }
 
-    @Override
-    public String getClosestMatchingName(PlotBlock block) {
+    @Override public String getClosestMatchingName(PlotBlock block) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
-    public String[] getBiomeList() {
+    @Override public String[] getBiomeList() {
         if (biomes == null) {
             initBiomeCache();
         }
         return biomeMap.keySet().toArray(new String[biomeMap.size()]);
     }
 
-    @Override
-    public boolean addItems(String world, PlotItem items) {
+    @Override public boolean addItems(String world, PlotItem items) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
 
-    @Override
-    public int getBiomeFromString(String biome) {
+    @Override public int getBiomeFromString(String biome) {
         if (biomes == null) {
             initBiomeCache();
         }
         return biomeMap.get(biome.toUpperCase());
     }
 
-    @Override
-    public String getBiome(String world, int x, int z) {
+    @Override public String getBiome(String world, int x, int z) {
         return SpongeUtil.getWorld(world).getBiome(x, 0, z).getName().toUpperCase();
     }
 
-    @Override
-    public PlotBlock getBlock(Location location) {
-        BlockState state = SpongeUtil.getWorld(location.getWorld()).getBlock(location.getX(), location.getY(), location.getZ());
+    @Override public PlotBlock getBlock(Location location) {
+        BlockState state = SpongeUtil.getWorld(location.getWorld())
+            .getBlock(location.getX(), location.getY(), location.getZ());
         return SpongeUtil.getPlotBlock(state);
     }
 
-    @Override
-    public Location getSpawn(PlotPlayer plotPlayer) {
+    @Override public Location getSpawn(PlotPlayer plotPlayer) {
         World world = getWorld(plotPlayer.getLocation().getWorld());
         return SpongeUtil.getLocation(world.getSpawnLocation());
     }
 
-    @Override
-    public Location getSpawn(String world) {
-        Location result = SpongeUtil.getLocation(world, SpongeUtil.getWorld(world).getSpawnLocation());
+    @Override public Location getSpawn(String world) {
+        Location result =
+            SpongeUtil.getLocation(world, SpongeUtil.getWorld(world).getSpawnLocation());
         result.setY(1 + getHighestBlock(world, result.getX(), result.getZ()));
         return result;
     }
 
-    @Override
-    public void setSpawn(Location location) {
+    @Override public void setSpawn(Location location) {
         World world = getWorld(location.getWorld());
         if (world != null) {
-            world.getProperties().setSpawnPosition(new Vector3i(location.getX(), location.getY(), location.getZ()));
+            world.getProperties()
+                .setSpawnPosition(new Vector3i(location.getX(), location.getY(), location.getZ()));
         }
     }
 
-    @Override
-    public void saveWorld(String worldName) {
+    @Override public void saveWorld(String worldName) {
         try {
             SpongeUtil.getWorld(worldName).save();
         } catch (IOException e) {
@@ -344,10 +339,10 @@ public class SpongeUtil extends WorldUtil {
         }
     }
 
-    @Override
-    public String[] getSign(Location location) {
+    @Override public String[] getSign(Location location) {
         World world = SpongeUtil.getWorld(location.getWorld());
-        Optional<TileEntity> block = world.getTileEntity(location.getX(), location.getY(), location.getZ());
+        Optional<TileEntity> block =
+            world.getTileEntity(location.getX(), location.getY(), location.getZ());
         if (!block.isPresent()) {
             return null;
         }
@@ -368,18 +363,15 @@ public class SpongeUtil extends WorldUtil {
         return result;
     }
 
-    @Override
-    public boolean isWorld(String worldName) {
+    @Override public boolean isWorld(String worldName) {
         return SpongeUtil.getWorld(worldName) != null;
     }
 
-    @Override
-    public String getMainWorld() {
+    @Override public String getMainWorld() {
         return Sponge.getServer().getWorlds().iterator().next().getName();
     }
 
-    @Override
-    public int getHighestBlock(String worldName, int x, int z) {
+    @Override public int getHighestBlock(String worldName, int x, int z) {
         World world = SpongeUtil.getWorld(worldName);
         if (world == null) {
             return 63;
@@ -393,8 +385,7 @@ public class SpongeUtil extends WorldUtil {
         return 63;
     }
 
-    @Override
-    public void setSign(String worldName, int x, int y, int z, String[] lines) {
+    @Override public void setSign(String worldName, int x, int y, int z, String[] lines) {
         World world = SpongeUtil.getWorld(worldName);
         world.setBlock(x, y, z, BlockTypes.WALL_SIGN.getDefaultState());
         Optional<TileEntity> block = world.getTileEntity(x, y, z);
@@ -413,8 +404,7 @@ public class SpongeUtil extends WorldUtil {
         sign.offer(Keys.SIGN_LINES, text);
     }
 
-    @Override
-    public void setBiomes(String worldName, RegionWrapper region, String biomename) {
+    @Override public void setBiomes(String worldName, RegionWrapper region, String biomename) {
         World world = SpongeUtil.getWorld(worldName);
         BiomeType biome = SpongeUtil.getBiome(biomename);
         for (int x = region.minX; x <= region.maxX; x++) {

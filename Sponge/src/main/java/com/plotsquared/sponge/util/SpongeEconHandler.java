@@ -22,16 +22,14 @@ public class SpongeEconHandler extends EconHandler {
             econ = Sponge.getServiceManager().provide(EconomyService.class).get();
         }
     }
-    
-    @Listener
-    public void onChangeServiceProvider(ChangeServiceProviderEvent event) {
+
+    @Listener public void onChangeServiceProvider(ChangeServiceProviderEvent event) {
         if (event.getService().equals(EconomyService.class)) {
             econ = (EconomyService) event.getNewProviderRegistration().getProvider();
         }
     }
 
-    @Override
-    public void withdrawMoney(PlotPlayer player, double amount) {
+    @Override public void withdrawMoney(PlotPlayer player, double amount) {
         if (econ != null) {
             Optional<UniqueAccount> accOpt = econ.getOrCreateAccount(player.getUUID());
             if (accOpt.isPresent()) {
@@ -41,9 +39,8 @@ public class SpongeEconHandler extends EconHandler {
             }
         }
     }
-    
-    @Override
-    public void depositMoney(PlotPlayer player, double amount) {
+
+    @Override public void depositMoney(PlotPlayer player, double amount) {
         if (econ != null) {
             Optional<UniqueAccount> accOpt = econ.getOrCreateAccount(player.getUUID());
             if (accOpt.isPresent()) {
@@ -52,9 +49,8 @@ public class SpongeEconHandler extends EconHandler {
             }
         }
     }
-    
-    @Override
-    public void depositMoney(OfflinePlotPlayer player, double amount) {
+
+    @Override public void depositMoney(OfflinePlotPlayer player, double amount) {
         if (econ != null) {
             Optional<UniqueAccount> accOpt = econ.getOrCreateAccount(player.getUUID());
             if (accOpt.isPresent()) {
@@ -63,9 +59,8 @@ public class SpongeEconHandler extends EconHandler {
             }
         }
     }
-    
-    @Override
-    public boolean hasPermission(String world, String player, String perm) {
+
+    @Override public boolean hasPermission(String world, String player, String perm) {
         SpongePlayer obj = (SpongePlayer) UUIDHandler.getPlayer(player);
         if (obj != null) {
             return obj.player.hasPermission(perm);
@@ -73,9 +68,8 @@ public class SpongeEconHandler extends EconHandler {
         // TODO offline
         return false;
     }
-    
-    @Override
-    public double getBalance(PlotPlayer player) {
+
+    @Override public double getBalance(PlotPlayer player) {
         if (econ != null) {
             Optional<UniqueAccount> accOpt = econ.getOrCreateAccount(player.getUUID());
             if (accOpt.isPresent()) {
@@ -86,5 +80,5 @@ public class SpongeEconHandler extends EconHandler {
         }
         return 0;
     }
-    
+
 }

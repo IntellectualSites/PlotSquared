@@ -21,11 +21,9 @@ public class StringWrapper {
      * Check if a wrapped string equals another one
      *
      * @param obj to compare
-     *
      * @return true if obj equals the stored value
      */
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -53,8 +51,7 @@ public class StringWrapper {
      *
      * @return string value
      */
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return this.value;
     }
 
@@ -63,8 +60,7 @@ public class StringWrapper {
      *
      * @return has value
      */
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         if (this.value == null) {
             return 0;
         }

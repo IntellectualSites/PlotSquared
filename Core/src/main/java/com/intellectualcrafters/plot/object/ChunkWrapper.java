@@ -15,13 +15,11 @@ public class ChunkWrapper {
         this.z = z;
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         return MathMan.pair((short) x, (short) z);
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -35,11 +33,11 @@ public class ChunkWrapper {
             return false;
         }
         ChunkWrapper other = (ChunkWrapper) obj;
-        return (this.x == other.x) && (this.z == other.z) && StringMan.isEqual(this.world, other.world);
+        return (this.x == other.x) && (this.z == other.z) && StringMan
+            .isEqual(this.world, other.world);
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return this.world + ":" + this.x + "," + this.z;
     }
 }

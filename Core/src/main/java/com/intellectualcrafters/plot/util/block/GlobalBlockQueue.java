@@ -3,6 +3,7 @@ package com.intellectualcrafters.plot.util.block;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.RunnableVal2;
 import com.intellectualcrafters.plot.util.TaskManager;
+
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -14,23 +15,33 @@ public class GlobalBlockQueue {
 
     public static GlobalBlockQueue IMP;
     private final int PARALLEL_THREADS;
-
-    private QueueProvider provider;
     private final ConcurrentLinkedDeque<LocalBlockQueue> activeQueues;
     private final ConcurrentLinkedDeque<LocalBlockQueue> inactiveQueues;
     private final ConcurrentLinkedDeque<Runnable> runnables;
-
+    private final AtomicBoolean running;
+    private QueueProvider provider;
     /**
      * Used to calculate elapsed time in milliseconds and ensure block placement doesn't lag the server
      */
     private long last;
     private long secondLast;
     private long lastSuccess;
-    private final AtomicBoolean running;
-
-    public enum QueueStage {
-        INACTIVE, ACTIVE, NONE;
-    }
+    private final RunnableVal2<Long, LocalBlockQueue> SET_TASK =
+        new RunnableVal2<Long, LocalBlockQueue>() {
+            @Override public void run(Long free, LocalBlockQueue queue) {
+                do {
+                    boolean more = queue.next();
+                    if (!more) {
+                        lastSuccess = last;
+                        if (inactiveQueues.size() == 0 && activeQueues.size() == 0) {
+                            tasks();
+                        }
+                        return;
+                    }
+                } while (((GlobalBlockQueue.this.secondLast = System.currentTimeMillis())
+                    - GlobalBlockQueue.this.last) < free);
+            }
+        };
 
     public GlobalBlockQueue(QueueProvider provider, int threads) {
         this.provider = provider;
@@ -40,22 +51,6 @@ public class GlobalBlockQueue {
         running = new AtomicBoolean();
         this.PARALLEL_THREADS = threads;
     }
-
-    private final RunnableVal2<Long, LocalBlockQueue> SET_TASK = new RunnableVal2<Long, LocalBlockQueue>() {
-        @Override
-        public void run(Long free, LocalBlockQueue queue) {
-            do {
-                boolean more = queue.next();
-                if (!more) {
-                    lastSuccess = last;
-                    if (inactiveQueues.size() == 0 && activeQueues.size() == 0) {
-                        tasks();
-                    }
-                    return;
-                }
-            } while (((GlobalBlockQueue.this.secondLast = System.currentTimeMillis()) - GlobalBlockQueue.this.last) < free);
-        }
-    };
 
     public QueueProvider getProvider() {
         return provider;
@@ -75,32 +70,35 @@ public class GlobalBlockQueue {
 
     public boolean stop() {
         if (!running.get()) {
-            return  false;
+            return false;
         }
         running.set(false);
         return true;
     }
-    
+
     public boolean runTask() {
         if (running.get()) {
             return false;
         }
         running.set(true);
         TaskManager.runTaskRepeat(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 if (inactiveQueues.isEmpty() && activeQueues.isEmpty()) {
                     lastSuccess = System.currentTimeMillis();
                     tasks();
                     return;
                 }
-                SET_TASK.value1 = 50 + Math.min((50 + GlobalBlockQueue.this.last) - (GlobalBlockQueue.this.last = System.currentTimeMillis()), GlobalBlockQueue.this.secondLast - System.currentTimeMillis());
+                SET_TASK.value1 = 50 + Math.min(
+                    (50 + GlobalBlockQueue.this.last) - (GlobalBlockQueue.this.last =
+                        System.currentTimeMillis()),
+                    GlobalBlockQueue.this.secondLast - System.currentTimeMillis());
                 SET_TASK.value2 = getNextQueue();
                 if (SET_TASK.value2 == null) {
                     return;
                 }
                 if (!PS.get().isMainThread(Thread.currentThread())) {
-                    throw new IllegalStateException("This shouldn't be possible for placement to occur off the main thread");
+                    throw new IllegalStateException(
+                        "This shouldn't be possible for placement to occur off the main thread");
                 }
                 // Disable the async catcher as it can't discern async vs parallel
                 SET_TASK.value2.startSet(true);
@@ -169,7 +167,8 @@ public class GlobalBlockQueue {
     }
 
     public List<LocalBlockQueue> getAllQueues() {
-        ArrayList<LocalBlockQueue> list = new ArrayList<LocalBlockQueue>(activeQueues.size() + inactiveQueues.size());
+        ArrayList<LocalBlockQueue> list =
+            new ArrayList<LocalBlockQueue>(activeQueues.size() + inactiveQueues.size());
         list.addAll(inactiveQueues);
         list.addAll(activeQueues);
         return list;
@@ -297,5 +296,9 @@ public class GlobalBlockQueue {
             runnable.run();
         }
         return true;
+    }
+
+    public enum QueueStage {
+        INACTIVE, ACTIVE, NONE;
     }
 }

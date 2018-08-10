@@ -45,18 +45,15 @@ public class PlotMergeEvent extends PlotEvent implements Cancellable {
         return this.world;
     }
 
-    @Override
-    public HandlerList getHandlers() {
+    @Override public HandlerList getHandlers() {
         return handlers;
     }
 
-    @Override
-    public boolean isCancelled() {
+    @Override public boolean isCancelled() {
         return this.cancelled;
     }
 
-    @Override
-    public void setCancelled(boolean b) {
+    @Override public void setCancelled(boolean b) {
         this.cancelled = b;
     }
 }

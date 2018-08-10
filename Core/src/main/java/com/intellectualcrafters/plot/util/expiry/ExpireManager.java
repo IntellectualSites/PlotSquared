@@ -8,26 +8,13 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotMessage;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.RunnableVal3;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -65,7 +52,8 @@ public class ExpireManager {
     }
 
     public void handleEntry(PlotPlayer pp, Plot plot) {
-        if (plotsToDelete != null && !plotsToDelete.isEmpty() && pp.hasPermission("plots.admin.command.autoclear") && plotsToDelete.contains(plot)) {
+        if (plotsToDelete != null && !plotsToDelete.isEmpty() && pp
+            .hasPermission("plots.admin.command.autoclear") && plotsToDelete.contains(plot)) {
             if (!isExpired(new ArrayDeque<>(tasks), plot).isEmpty()) {
                 confirmExpiry(pp);
             } else {
@@ -77,6 +65,7 @@ public class ExpireManager {
 
     /**
      * Gets the account last joined - first joined (or Long.MAX_VALUE)
+     *
      * @param uuid
      * @return result
      */
@@ -102,30 +91,33 @@ public class ExpireManager {
         if (pp.getMeta("ignoreExpireTask") != null) {
             return;
         }
-        if (plotsToDelete != null && !plotsToDelete.isEmpty() && pp.hasPermission("plots.admin.command.autoclear")) {
+        if (plotsToDelete != null && !plotsToDelete.isEmpty() && pp
+            .hasPermission("plots.admin.command.autoclear")) {
             final int num = plotsToDelete.size();
             while (!plotsToDelete.isEmpty()) {
                 Iterator<Plot> iter = plotsToDelete.iterator();
                 final Plot current = iter.next();
                 if (!isExpired(new ArrayDeque<>(tasks), current).isEmpty()) {
                     TaskManager.runTask(new Runnable() {
-                        @Override
-                        public void run() {
+                        @Override public void run() {
                             pp.setMeta("ignoreExpireTask", true);
                             pp.teleport(current.getCenter());
                             pp.deleteMeta("ignoreExpireTask");
-                            PlotMessage msg = new PlotMessage()
-                                    .text(num + " " + (num > 1 ? "plots are" : "plot is") + " expired: ").color("$1").text(current.toString()).color("$2").suggest("/plot list expired")
-                                    .tooltip("/plot list expired")
-                                    //.text("\n - ").color("$3").text("Delete all (/plot delete expired)").color("$2").command("/plot delete expired")
-                                    .text("\n - ").color("$3").text("Delete this (/plot delete)").color("$2").suggest("/plot delete")
-                                    .tooltip("/plot delete")
-                                    .text("\n - ").color("$3").text("Remind later (/plot set keep 1d)").color("$2").suggest("/plot set keep 1d")
-                                    .tooltip("/plot set keep 1d")
-                                    .text("\n - ").color("$3").text("Keep this (/plot set keep true)").color("$2").suggest("/plot set keep true")
-                                    .tooltip("/plot set keep true")
-                                    .text("\n - ").color("$3").text("Don't show me this").color("$2").suggest("/plot toggle clear-confirmation")
-                                    .tooltip("/plot toggle clear-confirmation");
+                            PlotMessage msg = new PlotMessage().text(
+                                num + " " + (num > 1 ? "plots are" : "plot is") + " expired: ")
+                                .color("$1").text(current.toString()).color("$2")
+                                .suggest("/plot list expired").tooltip("/plot list expired")
+                                //.text("\n - ").color("$3").text("Delete all (/plot delete expired)").color("$2").command("/plot delete expired")
+                                .text("\n - ").color("$3").text("Delete this (/plot delete)")
+                                .color("$2").suggest("/plot delete").tooltip("/plot delete")
+                                .text("\n - ").color("$3").text("Remind later (/plot set keep 1d)")
+                                .color("$2").suggest("/plot set keep 1d")
+                                .tooltip("/plot set keep 1d").text("\n - ").color("$3")
+                                .text("Keep this (/plot set keep true)").color("$2")
+                                .suggest("/plot set keep true").tooltip("/plot set keep true")
+                                .text("\n - ").color("$3").text("Don't show me this").color("$2")
+                                .suggest("/plot toggle clear-confirmation")
+                                .tooltip("/plot toggle clear-confirmation");
                             msg.send(pp);
                         }
                     });
@@ -149,8 +141,7 @@ public class ExpireManager {
 
     public boolean runAutomatedTask() {
         return runTask(new RunnableVal3<Plot, Runnable, Boolean>() {
-            @Override
-            public void run(Plot plot, Runnable runnable, Boolean confirm) {
+            @Override public void run(Plot plot, Runnable runnable, Boolean confirm) {
                 if (confirm) {
                     if (plotsToDelete == null) {
                         plotsToDelete = new HashSet<>();
@@ -238,7 +229,8 @@ public class ExpireManager {
         return queue;
     }
 
-    public void passesComplexity(PlotAnalysis analysis, Collection<ExpiryTask> applicable, RunnableVal<Boolean> success, Runnable failure) {
+    public void passesComplexity(PlotAnalysis analysis, Collection<ExpiryTask> applicable,
+        RunnableVal<Boolean> success, Runnable failure) {
         if (analysis != null) {
             // Run non confirming tasks
             for (ExpiryTask et : applicable) {
@@ -262,10 +254,10 @@ public class ExpireManager {
             return false;
         }
         this.running = 2;
-        final ConcurrentLinkedDeque<Plot> plots = new ConcurrentLinkedDeque<Plot>(PS.get().getPlots());
+        final ConcurrentLinkedDeque<Plot> plots =
+            new ConcurrentLinkedDeque<Plot>(PS.get().getPlots());
         TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 final Runnable task = this;
                 if (ExpireManager.this.running != 2) {
                     ExpireManager.this.running = 0;
@@ -288,39 +280,35 @@ public class ExpireManager {
                     for (ExpiryTask expiryTask : expired) {
                         if (!expiryTask.needsAnalysis()) {
                             expiredTask.run(newPlot, new Runnable() {
-                                @Override
-                                public void run() {
+                                @Override public void run() {
                                     TaskManager.IMP.taskLaterAsync(task, 1);
                                 }
                             }, expiryTask.requiresConfirmation());
                             return;
                         }
                     }
-                    final RunnableVal<PlotAnalysis> handleAnalysis = new RunnableVal<PlotAnalysis>() {
-                        @Override
-                        public void run(final PlotAnalysis changed) {
-                            passesComplexity(changed, expired, new RunnableVal<Boolean>() {
-                                @Override
-                                public void run(Boolean confirmation) {
-                                    expiredTask.run(newPlot, new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            TaskManager.IMP.taskLaterAsync(task, 1);
-                                        }
-                                    }, confirmation);
-                                }
-                            }, new Runnable() {
-                                @Override
-                                public void run() {
-                                    FlagManager.addPlotFlag(newPlot, Flags.ANALYSIS, changed.asList());
-                                    TaskManager.runTaskLaterAsync(task, 20);
-                                }
-                            });
-                        }
-                    };
+                    final RunnableVal<PlotAnalysis> handleAnalysis =
+                        new RunnableVal<PlotAnalysis>() {
+                            @Override public void run(final PlotAnalysis changed) {
+                                passesComplexity(changed, expired, new RunnableVal<Boolean>() {
+                                    @Override public void run(Boolean confirmation) {
+                                        expiredTask.run(newPlot, new Runnable() {
+                                            @Override public void run() {
+                                                TaskManager.IMP.taskLaterAsync(task, 1);
+                                            }
+                                        }, confirmation);
+                                    }
+                                }, new Runnable() {
+                                    @Override public void run() {
+                                        FlagManager
+                                            .addPlotFlag(newPlot, Flags.ANALYSIS, changed.asList());
+                                        TaskManager.runTaskLaterAsync(task, 20);
+                                    }
+                                });
+                            }
+                        };
                     final Runnable doAnalysis = new Runnable() {
-                        @Override
-                        public void run() {
+                        @Override public void run() {
                             HybridUtils.manager.analyzePlot(newPlot, handleAnalysis);
                         }
                     };
@@ -328,13 +316,11 @@ public class ExpireManager {
                     PlotAnalysis analysis = newPlot.getComplexity(null);
                     if (analysis != null) {
                         passesComplexity(analysis, expired, new RunnableVal<Boolean>() {
-                            @Override
-                            public void run(Boolean value) {
+                            @Override public void run(Boolean value) {
                                 doAnalysis.run();
                             }
                         }, new Runnable() {
-                            @Override
-                            public void run() {
+                            @Override public void run() {
                                 TaskManager.IMP.taskLaterAsync(task, 1);
                             }
                         });
@@ -346,8 +332,7 @@ public class ExpireManager {
                 if (plots.isEmpty()) {
                     ExpireManager.this.running = 3;
                     TaskManager.runTaskLater(new Runnable() {
-                        @Override
-                        public void run() {
+                        @Override public void run() {
                             if (ExpireManager.this.running == 3) {
                                 ExpireManager.this.running = 2;
                                 runTask(expiredTask);
@@ -403,7 +388,8 @@ public class ExpireManager {
         PlotAnalysis changed = plot.getComplexity(null);
         int changes = changed == null ? 0 : changed.changes_sd;
         int modified = changed == null ? 0 : changed.changes;
-        PS.debug("$2[&5Expire&dManager$2] &cDeleted expired plot: " + plot + " User:" + plot.owner + " Delta:" + changes + "/" + modified + " Connected: " + StringMan.getString(plots));
+        PS.debug("$2[&5Expire&dManager$2] &cDeleted expired plot: " + plot + " User:" + plot.owner
+            + " Delta:" + changes + "/" + modified + " Connected: " + StringMan.getString(plots));
         PS.debug("$4 - Area: " + plot.getArea());
         if (plot.hasOwner()) {
             PS.debug("$4 - Owner: " + UUIDHandler.getName(plot.owner));
@@ -441,7 +427,8 @@ public class ExpireManager {
     }
 
     public long getAccountAge(Plot plot) {
-        if (!plot.hasOwner() || Objects.equals(DBFunc.everyone, plot.owner) || UUIDHandler.getPlayer(plot.owner) != null || plot.getRunning() > 0) {
+        if (!plot.hasOwner() || Objects.equals(DBFunc.everyone, plot.owner)
+            || UUIDHandler.getPlayer(plot.owner) != null || plot.getRunning() > 0) {
             return Long.MAX_VALUE;
         }
         long max = 0;
@@ -453,7 +440,8 @@ public class ExpireManager {
     }
 
     public long getAge(Plot plot) {
-        if (!plot.hasOwner() || Objects.equals(DBFunc.everyone, plot.owner) || UUIDHandler.getPlayer(plot.owner) != null || plot.getRunning() > 0) {
+        if (!plot.hasOwner() || Objects.equals(DBFunc.everyone, plot.owner)
+            || UUIDHandler.getPlayer(plot.owner) != null || plot.getRunning() > 0) {
             return 0;
         }
         Optional<?> keep = plot.getFlag(Flags.KEEP);

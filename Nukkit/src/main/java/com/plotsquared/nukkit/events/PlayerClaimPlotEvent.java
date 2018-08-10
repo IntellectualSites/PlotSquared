@@ -45,13 +45,11 @@ public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
         return this.auto;
     }
 
-    @Override
-    public boolean isCancelled() {
+    @Override public boolean isCancelled() {
         return this.cancelled;
     }
 
-    @Override
-    public void setCancelled(boolean b) {
+    @Override public void setCancelled(boolean b) {
         this.cancelled = b;
     }
 }

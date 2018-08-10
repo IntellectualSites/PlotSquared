@@ -46,12 +46,11 @@ class XML {
         }
         return sb.toString();
     }
-    
+
     /**
      * Throw an exception if the string contains whitespace. Whitespace is not allowed in tagNames and attributes.
      *
      * @param string A string.
-     *
      * @throws JSONException
      */
     static void noSpace(String string) throws JSONException {
@@ -65,19 +64,18 @@ class XML {
             }
         }
     }
-    
+
     /**
      * Scan the content following the named tag, attaching it to the context.
      *
      * @param x       The XMLTokener containing the source string.
      * @param context The JSONObject that will include the new material.
      * @param name    The tag name.
-     *
      * @return true if the close tag is processed.
-     *
      * @throws JSONException
      */
-    private static boolean parse(XMLTokener x, JSONObject context, String name) throws JSONException {
+    private static boolean parse(XMLTokener x, JSONObject context, String name)
+        throws JSONException {
         // Test for and skip past these forms:
         // <!-- ... -->
         // <! ... >
@@ -147,7 +145,7 @@ class XML {
             String tagName = (String) token;
             token = null;
             JSONObject jsonobject = new JSONObject();
-            for (;;) {
+            for (; ; ) {
                 if (token == null) {
                     token = x.nextToken();
                 }
@@ -178,7 +176,7 @@ class XML {
                     return false;
                     // Content, between <...> and </...>
                 } else if (token == GT) {
-                    for (;;) {
+                    for (; ; ) {
                         token = x.nextContent();
                         if (token == null) {
                             if (tagName != null) {
@@ -195,7 +193,8 @@ class XML {
                             if (parse(x, jsonobject, tagName)) {
                                 if (jsonobject.length() == 0) {
                                     context.accumulate(tagName, "");
-                                } else if ((jsonobject.length() == 1) && (jsonobject.opt("content") != null)) {
+                                } else if ((jsonobject.length() == 1) && (jsonobject.opt("content")
+                                    != null)) {
                                     context.accumulate(tagName, jsonobject.opt("content"));
                                 } else {
                                     context.accumulate(tagName, jsonobject);
@@ -210,14 +209,13 @@ class XML {
             }
         }
     }
-    
+
     /**
      * Try to convert a string into a number, boolean, or null. If the string can't be converted, return the string.
      * This is much less ambitious than JSONObject.stringToValue, especially because it does not attempt to convert plus
      * forms, octal forms, hex forms, or E forms lacking decimal points.
      *
      * @param string A String.
-     *
      * @return A simple JSON value.
      */
     static Object stringToValue(String string) {
@@ -245,7 +243,8 @@ class XML {
                 if (value.toString().equals(string)) {
                     return value;
                 }
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
         }
         return string;
     }
@@ -258,28 +257,24 @@ class XML {
         }
         return jo;
     }
-    
+
     /**
      * Convert a JSONObject into a well-formed, element-normal XML string.
      *
      * @param object A JSONObject.
-     *
      * @return A string.
-     *
      * @throws JSONException
      */
     public static String toString(Object object) throws JSONException {
         return toString(object, null);
     }
-    
+
     /**
      * Convert a JSONObject into a well-formed, element-normal XML string.
      *
      * @param object  A JSONObject.
      * @param tagName The optional name of the enclosing tag.
-     *
      * @return A string.
-     *
      * @throws JSONException
      */
     public static String toString(Object object, String tagName) throws JSONException {
@@ -369,8 +364,11 @@ class XML {
                 return sb.toString();
             } else {
                 string = escape(object.toString());
-                return (tagName == null) ? '"' + string + '"' :
-                        string.isEmpty() ? '<' + tagName + "/>" : '<' + tagName + '>' + string + "</" + tagName + '>';
+                return (tagName == null) ?
+                    '"' + string + '"' :
+                    string.isEmpty() ?
+                        '<' + tagName + "/>" :
+                        '<' + tagName + '>' + string + "</" + tagName + '>';
             }
         }
     }

@@ -1,7 +1,5 @@
 package com.plotsquared.bukkit.util.block;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
-
 import com.intellectualcrafters.plot.object.ChunkWrapper;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -10,16 +8,14 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.SendChunk;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+
+import java.util.*;
+
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 public class BukkitLocalQueue_1_8 extends BukkitLocalQueue<PlotBlock[]> {
 
@@ -39,26 +35,29 @@ public class BukkitLocalQueue_1_8 extends BukkitLocalQueue<PlotBlock[]> {
     private final SendChunk sendChunk;
     private final RefMethod methodGetHandleChunk;
 
-    public BukkitLocalQueue_1_8(String world) throws NoSuchMethodException, ClassNotFoundException, NoSuchFieldException {
+    public BukkitLocalQueue_1_8(String world)
+        throws NoSuchMethodException, ClassNotFoundException, NoSuchFieldException {
         super(world);
         this.methodInitLighting = this.classChunk.getMethod("initLighting");
-        this.constructorBlockPosition = this.classBlockPosition.getConstructor(int.class, int.class, int.class);
+        this.constructorBlockPosition =
+            this.classBlockPosition.getConstructor(int.class, int.class, int.class);
         this.methodGetByCombinedId = this.classBlock.getMethod("getByCombinedId", int.class);
         this.methodGetHandle = this.classCraftWorld.getMethod("getHandle");
         RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
         this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
         this.methodGetChunkAt = this.classWorld.getMethod("getChunkAt", int.class, int.class);
-        this.methodA = this.classChunk.getMethod("a", this.classBlockPosition, this.classIBlockData);
+        this.methodA =
+            this.classChunk.getMethod("a", this.classBlockPosition, this.classIBlockData);
         this.sendChunk = new SendChunk();
         TaskManager.runTaskRepeat(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 if (BukkitLocalQueue_1_8.this.toUpdate.isEmpty()) {
                     return;
                 }
                 int count = 0;
                 ArrayList<Chunk> chunks = new ArrayList<>();
-                Iterator<Map.Entry<ChunkWrapper, Chunk>> i = BukkitLocalQueue_1_8.this.toUpdate.entrySet().iterator();
+                Iterator<Map.Entry<ChunkWrapper, Chunk>> i =
+                    BukkitLocalQueue_1_8.this.toUpdate.entrySet().iterator();
                 while (i.hasNext() && count < 128) {
                     chunks.add(i.next().getValue());
                     i.remove();
@@ -73,14 +72,12 @@ public class BukkitLocalQueue_1_8 extends BukkitLocalQueue<PlotBlock[]> {
         MainUtil.initCache();
     }
 
-    @Override
-    public void fixChunkLighting(int x, int z) {
+    @Override public void fixChunkLighting(int x, int z) {
         Object c = this.methodGetHandleChunk.of(getChunk(x, z)).call();
         this.methodInitLighting.of(c).call();
     }
 
-    @Override
-    public void setBlocks(LocalChunk<PlotBlock[]> lc) {
+    @Override public void setBlocks(LocalChunk<PlotBlock[]> lc) {
         Chunk chunk = getChunk(lc.getX(), lc.getZ());
         chunk.load(true);
         World world = chunk.getWorld();
@@ -100,7 +97,8 @@ public class BukkitLocalQueue_1_8 extends BukkitLocalQueue<PlotBlock[]> {
                 int y = MainUtil.y_loc[i][j];
                 int z = MainUtil.z_loc[i][j];
                 PlotBlock newBlock = result2[j];
-                if (newBlock == null) continue;
+                if (newBlock == null)
+                    continue;
 
                 if (newBlock.id == -1) {
                     chunk.getBlock(x, y, z).setData(newBlock.data, false);
@@ -309,7 +307,8 @@ public class BukkitLocalQueue_1_8 extends BukkitLocalQueue<PlotBlock[]> {
                 } catch (ReflectiveOperationException e) {
                     e.printStackTrace();
                 }
-                Object combined = this.methodGetByCombinedId.call(newBlock.id + (newBlock.data << 12));
+                Object combined =
+                    this.methodGetByCombinedId.call(newBlock.id + (newBlock.data << 12));
                 this.methodA.of(c).call(pos, combined);
             }
         }
@@ -336,8 +335,7 @@ public class BukkitLocalQueue_1_8 extends BukkitLocalQueue<PlotBlock[]> {
         }
     }
 
-    @Override
-    public void refreshChunk(int x, int z) {
+    @Override public void refreshChunk(int x, int z) {
         update(Arrays.asList(Bukkit.getWorld(getWorld()).getChunkAt(x, z)));
     }
 }

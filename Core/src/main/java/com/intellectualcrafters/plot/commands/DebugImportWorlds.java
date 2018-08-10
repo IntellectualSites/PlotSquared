@@ -13,22 +13,19 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.io.File;
 import java.util.UUID;
 
-@CommandDeclaration(
-        command = "debugimportworlds",
-        permission = "plots.admin",
-        description = "Import worlds by player name",
-        requiredType = RequiredType.CONSOLE,
-        category = CommandCategory.TELEPORT)
+@CommandDeclaration(command = "debugimportworlds", permission = "plots.admin", description = "Import worlds by player name", requiredType = RequiredType.CONSOLE, category = CommandCategory.TELEPORT)
 public class DebugImportWorlds extends Command {
     public DebugImportWorlds() {
         super(MainCommand.getInstance(), true);
     }
 
-    @Override
-    public void execute(PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
+    @Override public void execute(PlotPlayer player, String[] args,
+        RunnableVal3<Command, Runnable, Runnable> confirm,
+        RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         // UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8))
         PlotAreaManager pam = PS.get().getPlotAreaManager();
         if (!(pam instanceof SinglePlotAreaManager)) {
@@ -43,7 +40,8 @@ public class DebugImportWorlds extends Command {
             if (!WorldUtil.IMP.isWorld(name) && PlotId.fromString(name) == null) {
                 UUID uuid = UUIDHandler.getUUID(name, null);
                 if (uuid == null) {
-                    uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
+                    uuid =
+                        UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
                 }
                 while (new File(container, id.toCommaSeparatedString()).exists()) {
                     id = Auto.getNextPlotId(id, 1);

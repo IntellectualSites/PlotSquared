@@ -8,13 +8,11 @@ public class GameModeFlag extends Flag<PlotGameMode> {
         super(name);
     }
 
-    @Override
-    public String valueToString(Object value) {
+    @Override public String valueToString(Object value) {
         return ((PlotGameMode) value).getName();
     }
 
-    @Override
-    public PlotGameMode parseValue(String value) {
+    @Override public PlotGameMode parseValue(String value) {
         switch (value.toLowerCase()) {
             case "survival":
             case "s":
@@ -36,8 +34,7 @@ public class GameModeFlag extends Flag<PlotGameMode> {
         }
     }
 
-    @Override
-    public String getValueDescription() {
+    @Override public String getValueDescription() {
         return "Flag value must be a gamemode: 'creative' , 'survival', 'adventure' or 'spectator'";
     }
 }

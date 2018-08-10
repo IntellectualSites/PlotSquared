@@ -27,13 +27,11 @@ public final class IntTag extends Tag {
         this.value = value;
     }
 
-    @Override
-    public Integer getValue() {
+    @Override public Integer getValue() {
         return this.value;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         String name = getName();
         String append = "";
         if (name != null && !name.isEmpty()) {

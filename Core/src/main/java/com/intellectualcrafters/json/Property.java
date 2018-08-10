@@ -15,12 +15,11 @@ public class Property {
      * Converts a property file object into a JSONObject. The property file object is a table of name value pairs.
      *
      * @param properties java.util.Properties
-     *
      * @return JSONObject
-     *
      * @throws JSONException
      */
-    public static JSONObject toJSONObject(final java.util.Properties properties) throws JSONException {
+    public static JSONObject toJSONObject(final java.util.Properties properties)
+        throws JSONException {
         final JSONObject jo = new JSONObject();
         if ((properties != null) && !properties.isEmpty()) {
             final Enumeration enumProperties = properties.propertyNames();
@@ -31,14 +30,12 @@ public class Property {
         }
         return jo;
     }
-    
+
     /**
      * Converts the JSONObject into a property file object.
      *
      * @param jo JSONObject
-     *
      * @return java.util.Properties
-     *
      * @throws JSONException
      */
     public static Properties toProperties(final JSONObject jo) throws JSONException {

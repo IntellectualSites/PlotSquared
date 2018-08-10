@@ -2,28 +2,24 @@ package com.intellectualcrafters.plot.generator;
 
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PseudoRandom;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import com.intellectualcrafters.plot.util.block.ScopedLocalBlockQueue;
+
 import java.util.HashMap;
 import java.util.Map.Entry;
 
 public class HybridGen extends IndependentPlotGenerator {
 
-    @Override
-    public String getName() {
+    @Override public String getName() {
         return PS.imp().getPluginName();
     }
 
-    private void placeSchem(HybridPlotWorld world, ScopedLocalBlockQueue result, short relativeX, short relativeZ, int x, int z) {
+    private void placeSchem(HybridPlotWorld world, ScopedLocalBlockQueue result, short relativeX,
+        short relativeZ, int x, int z) {
         int minY = Math.min(world.PLOT_HEIGHT, world.ROAD_HEIGHT);
         char[] blocks = world.G_SCH.get(MathMan.pair(relativeX, relativeZ));
         if (blocks != null) {
@@ -36,8 +32,8 @@ public class HybridGen extends IndependentPlotGenerator {
         }
     }
 
-    @Override
-    public void generateChunk(ScopedLocalBlockQueue result, PlotArea settings, PseudoRandom random) {
+    @Override public void generateChunk(ScopedLocalBlockQueue result, PlotArea settings,
+        PseudoRandom random) {
         HybridPlotWorld hpw = (HybridPlotWorld) settings;
         // Biome
         result.fillBiome(hpw.PLOT_BIOME);
@@ -153,9 +149,11 @@ public class HybridGen extends IndependentPlotGenerator {
                     } else {
                         // plot
                         for (int y = 1; y < hpw.PLOT_HEIGHT; y++) {
-                            result.setBlock(x, y, z, hpw.MAIN_BLOCK[random.random(hpw.MAIN_BLOCK.length)]);
+                            result.setBlock(x, y, z,
+                                hpw.MAIN_BLOCK[random.random(hpw.MAIN_BLOCK.length)]);
                         }
-                        result.setBlock(x, hpw.PLOT_HEIGHT, z, hpw.TOP_BLOCK[random.random(hpw.TOP_BLOCK.length)]);
+                        result.setBlock(x, hpw.PLOT_HEIGHT, z,
+                            hpw.TOP_BLOCK[random.random(hpw.TOP_BLOCK.length)]);
                         if (hpw.PLOT_SCHEMATIC) {
                             placeSchem(hpw, result, rx[x], rz[z], x, z);
                         }
@@ -165,8 +163,8 @@ public class HybridGen extends IndependentPlotGenerator {
         }
     }
 
-    @Override
-    public boolean populateChunk(ScopedLocalBlockQueue result, PlotArea settings, PseudoRandom random) {
+    @Override public boolean populateChunk(ScopedLocalBlockQueue result, PlotArea settings,
+        PseudoRandom random) {
         HybridPlotWorld hpw = (HybridPlotWorld) settings;
         if (hpw.G_SCH_STATE != null) {
             Location min = result.getMin();
@@ -215,7 +213,8 @@ public class HybridGen extends IndependentPlotGenerator {
                                 queue = GlobalBlockQueue.IMP.getNewQueue(hpw.worldname, false);
                             }
                             CompoundTag tag = entry.getValue();
-                            SchematicHandler.manager.restoreTile(queue, tag, p1x + x, entry.getKey(), p1z + z);
+                            SchematicHandler.manager
+                                .restoreTile(queue, tag, p1x + x, entry.getKey(), p1z + z);
                         }
                     }
                 }
@@ -227,18 +226,15 @@ public class HybridGen extends IndependentPlotGenerator {
         return false;
     }
 
-    @Override
-    public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
+    @Override public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
         return new HybridPlotWorld(world, id, this, min, max);
     }
 
-    @Override
-    public PlotManager getNewPlotManager() {
-        return  new HybridPlotManager();
+    @Override public PlotManager getNewPlotManager() {
+        return new HybridPlotManager();
     }
 
-    @Override
-    public void initialize(PlotArea area) {
+    @Override public void initialize(PlotArea area) {
         // All initialization is done in the PlotArea class
     }
 }

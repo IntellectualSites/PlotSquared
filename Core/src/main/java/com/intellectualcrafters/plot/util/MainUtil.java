@@ -8,53 +8,34 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.Flags;
-import com.intellectualcrafters.plot.object.ConsolePlayer;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.object.stream.AbstractDelegateOutputStream;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * plot functions
- *
  */
 public class MainUtil {
 
     /**
      * If the NMS code for sending chunk updates is functional<br>
-     *  - E.g. If using an older version of Bukkit, or before the plugin is updated to 1.5<br>
-     *  - Slower fallback code will be used if not.<br>
+     * - E.g. If using an older version of Bukkit, or before the plugin is updated to 1.5<br>
+     * - Slower fallback code will be used if not.<br>
      */
     public static boolean canSendChunk = false;
     /**
      * Cache of mapping x,y,z coordinates to the chunk array<br>
-     *  - Used for efficent world generation<br>
+     * - Used for efficent world generation<br>
      */
     public static short[][] x_loc;
     public static short[][] y_loc;
@@ -63,15 +44,16 @@ public class MainUtil {
     public static short[][][] CACHE_J = null;
 
     /**
-     *
-     * @deprecated
      * @param location
      * @return
+     * @deprecated
      */
-    @Deprecated
-    public static PlotId getPlotId(Location location) {
+    @Deprecated public static PlotId getPlotId(Location location) {
         PlotArea area = location.getPlotArea();
-        return area == null ? null : area.getPlotManager().getPlotId(area, location.getX(), location.getY(), location.getZ());
+        return area == null ?
+            null :
+            area.getPlotManager()
+                .getPlotId(area, location.getX(), location.getY(), location.getZ());
     }
 
     /**
@@ -120,7 +102,8 @@ public class MainUtil {
         PS.debug(s);
     }
 
-    public static void upload(UUID uuid, String file, String extension, final RunnableVal<OutputStream> writeTask, final RunnableVal<URL> whenDone) {
+    public static void upload(UUID uuid, String file, String extension,
+        final RunnableVal<OutputStream> writeTask, final RunnableVal<URL> whenDone) {
         if (writeTask == null) {
             PS.debug("&cWrite task cannot be null");
             TaskManager.runTask(whenDone);
@@ -145,29 +128,36 @@ public class MainUtil {
             return;
         }
         TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 try {
                     String boundary = Long.toHexString(System.currentTimeMillis());
                     URLConnection con = new URL(website).openConnection();
                     con.setDoOutput(true);
-                    con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+                    con.setRequestProperty("Content-Type",
+                        "multipart/form-data; boundary=" + boundary);
                     try (OutputStream output = con.getOutputStream();
-                            PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, StandardCharsets.UTF_8), true)) {
+                        PrintWriter writer = new PrintWriter(
+                            new OutputStreamWriter(output, StandardCharsets.UTF_8), true)) {
                         String CRLF = "\r\n";
                         writer.append("--" + boundary).append(CRLF);
-                        writer.append("Content-Disposition: form-data; name=\"param\"").append(CRLF);
-                        writer.append("Content-Type: text/plain; charset=" + StandardCharsets.UTF_8.displayName()).append(CRLF);
+                        writer.append("Content-Disposition: form-data; name=\"param\"")
+                            .append(CRLF);
+                        writer.append("Content-Type: text/plain; charset=" + StandardCharsets.UTF_8
+                            .displayName()).append(CRLF);
                         String param = "value";
                         writer.append(CRLF).append(param).append(CRLF).flush();
                         writer.append("--" + boundary).append(CRLF);
-                        writer.append("Content-Disposition: form-data; name=\"schematicFile\"; filename=\"" + filename + '"').append(CRLF);
-                        writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(filename)).append(CRLF);
+                        writer.append(
+                            "Content-Disposition: form-data; name=\"schematicFile\"; filename=\""
+                                + filename + '"').append(CRLF);
+                        writer.append(
+                            "Content-Type: " + URLConnection.guessContentTypeFromName(filename))
+                            .append(CRLF);
                         writer.append("Content-Transfer-Encoding: binary").append(CRLF);
                         writer.append(CRLF).flush();
                         writeTask.value = new AbstractDelegateOutputStream(output) {
-                            @Override
-                            public void close() {  } // Don't close
+                            @Override public void close() {
+                            } // Don't close
                         };
                         writeTask.run();
                         output.flush();
@@ -205,6 +195,7 @@ public class MainUtil {
 
     /**
      * Resets the biome if it was modified
+     *
      * @param area
      * @param pos1
      * @param pos2
@@ -212,8 +203,11 @@ public class MainUtil {
      */
     public static boolean resetBiome(PlotArea area, Location pos1, Location pos2) {
         String biome = area.PLOT_BIOME;
-        if (!StringMan.isEqual(WorldUtil.IMP.getBiome(area.worldname, (pos1.getX() + pos2.getX()) / 2, (pos1.getZ() + pos2.getZ()) / 2), biome)) {
-            MainUtil.setBiome(area.worldname, pos1.getX(), pos1.getZ(), pos2.getX(), pos2.getZ(), biome);
+        if (!StringMan.isEqual(WorldUtil.IMP
+            .getBiome(area.worldname, (pos1.getX() + pos2.getX()) / 2,
+                (pos1.getZ() + pos2.getZ()) / 2), biome)) {
+            MainUtil.setBiome(area.worldname, pos1.getX(), pos1.getZ(), pos2.getX(), pos2.getZ(),
+                biome);
             return true;
         }
         return false;
@@ -224,30 +218,30 @@ public class MainUtil {
         if (time >= 33868800) {
             int years = (int) (time / 33868800);
             time -= years * 33868800;
-            toreturn.append(years+"y ");
+            toreturn.append(years + "y ");
         }
         if (time >= 604800) {
             int weeks = (int) (time / 604800);
             time -= weeks * 604800;
-            toreturn.append(weeks+"w ");
+            toreturn.append(weeks + "w ");
         }
         if (time >= 86400) {
             int days = (int) (time / 86400);
             time -= days * 86400;
-            toreturn.append(days+"d ");
+            toreturn.append(days + "d ");
         }
         if (time >= 3600) {
             int hours = (int) (time / 3600);
             time -= hours * 3600;
-            toreturn.append(hours+"h ");
+            toreturn.append(hours + "h ");
         }
-        if (time>=60) {
+        if (time >= 60) {
             int minutes = (int) (time / 60);
             time -= minutes * 60;
-            toreturn.append(minutes+"m ");
+            toreturn.append(minutes + "m ");
         }
-        if (toreturn.equals("")||time>0){
-            toreturn.append((time)+"s ");
+        if (toreturn.equals("") || time > 0) {
+            toreturn.append((time) + "s ");
         }
         return toreturn.toString().trim();
     }
@@ -301,7 +295,8 @@ public class MainUtil {
 
     /**
      * Hashcode of a boolean array.<br>
-     *  - Used for traversing mega plots quickly.
+     * - Used for traversing mega plots quickly.
+     *
      * @param array
      * @return hashcode
      */
@@ -310,7 +305,8 @@ public class MainUtil {
             if (!array[0] && !array[1] && !array[2] && !array[3]) {
                 return 0;
             }
-            return ((array[0] ? 1 : 0) << 3) + ((array[1] ? 1 : 0) << 2) + ((array[2] ? 1 : 0) << 1) + (array[3] ? 1 : 0);
+            return ((array[0] ? 1 : 0) << 3) + ((array[1] ? 1 : 0) << 2) + ((array[2] ? 1 : 0) << 1)
+                + (array[3] ? 1 : 0);
         }
         int n = 0;
         for (boolean anArray : array) {
@@ -321,6 +317,7 @@ public class MainUtil {
 
     /**
      * Get a list of plot ids within a selection.
+     *
      * @param pos1
      * @param pos2
      * @return
@@ -337,6 +334,7 @@ public class MainUtil {
 
     /**
      * Get the name from a UUID.
+     *
      * @param owner
      * @return The player's name, None, Everyone or Unknown
      */
@@ -356,10 +354,11 @@ public class MainUtil {
 
     /**
      * Get the corner locations for a list of regions.
-     * @see Plot#getCorners()
+     *
      * @param world
      * @param regions
      * @return
+     * @see Plot#getCorners()
      */
     public static Location[] getCorners(String world, Collection<RegionWrapper> regions) {
         Location min = null;
@@ -386,12 +385,13 @@ public class MainUtil {
                 min.setZ(pos1.getZ());
             }
         }
-        return new Location[]{min, max};
+        return new Location[] {min, max};
     }
 
     /**
      * Fuzzy plot search with spaces separating terms.
-     *  - Terms: type, alias, world, owner, trusted, member
+     * - Terms: type, alias, world, owner, trusted, member
+     *
      * @param search
      * @return
      */
@@ -466,8 +466,9 @@ public class MainUtil {
 
     /**
      * Get the plot from a string.
-     * @param player Provides a context for what world to search in. Prefixing the term with 'world_name;' will override this context.
-     * @param arg The search term
+     *
+     * @param player  Provides a context for what world to search in. Prefixing the term with 'world_name;' will override this context.
+     * @param arg     The search term
      * @param message If a message should be sent to the player if a plot cannot be found
      * @return The plot if only 1 result is found, or null
      */
@@ -542,6 +543,7 @@ public class MainUtil {
 
     /**
      * Synchronously set the biome in a selection.
+     *
      * @param world
      * @param p1x
      * @param p1z
@@ -556,6 +558,7 @@ public class MainUtil {
 
     /**
      * Get the highest block at a location.
+     *
      * @param world
      * @param x
      * @param z
@@ -573,8 +576,7 @@ public class MainUtil {
      * Send a message to the player.
      *
      * @param player Player to receive message
-     * @param msg Message to send
-     *
+     * @param msg    Message to send
      * @return true Can be used in things such as commands (return PlayerFunctions.sendMessage(...))
      */
     public static boolean sendMessage(PlotPlayer player, String msg) {
@@ -583,6 +585,7 @@ public class MainUtil {
 
     /**
      * Send a message to console.
+     *
      * @param caption
      * @param args
      */
@@ -592,6 +595,7 @@ public class MainUtil {
 
     /**
      * Send a message to a player.
+     *
      * @param player Can be null to represent console, or use ConsolePlayer.getConsole()
      * @param msg
      * @param prefix If the message should be prefixed with the configured prefix
@@ -612,9 +616,8 @@ public class MainUtil {
     /**
      * Send a message to the player.
      *
-     * @param player the recipient of the message
+     * @param player  the recipient of the message
      * @param caption the message to send
-     *
      * @return boolean success
      */
     public static boolean sendMessage(PlotPlayer player, C caption, String... args) {
@@ -624,18 +627,17 @@ public class MainUtil {
     /**
      * Send a message to the player
      *
-     * @param player the recipient of the message
+     * @param player  the recipient of the message
      * @param caption the message to send
-     *
      * @return boolean success
      */
-    public static boolean sendMessage(final PlotPlayer player, final C caption, final Object... args) {
+    public static boolean sendMessage(final PlotPlayer player, final C caption,
+        final Object... args) {
         if (caption.s().isEmpty()) {
             return true;
         }
         TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 String m = C.format(caption, args);
                 if (player == null) {
                     PS.log(m);
@@ -649,7 +651,8 @@ public class MainUtil {
 
     /**
      * If rating categories are enabled, get the average rating by category.<br>
-     *  - The index corresponds to the index of the category in the config
+     * - The index corresponds to the index of the category in the config
+     *
      * @param plot
      * @return
      */
@@ -718,13 +721,15 @@ public class MainUtil {
 
     /**
      * Format a string with plot information.
+     *
      * @param info
      * @param plot
      * @param player
      * @param full
      * @param whenDone
      */
-    public static void format(String info, final Plot plot, PlotPlayer player, final boolean full, final RunnableVal<String> whenDone) {
+    public static void format(String info, final Plot plot, PlotPlayer player, final boolean full,
+        final RunnableVal<String> whenDone) {
         int num = plot.getConnectedPlots().size();
         String alias = !plot.getAlias().isEmpty() ? plot.getAlias() : C.NONE.s();
         Location bot = plot.getCorners()[0];
@@ -748,16 +753,20 @@ public class MainUtil {
             seen = C.NEVER.s();
         }
         Optional<String> descriptionFlag = plot.getFlag(Flags.DESCRIPTION);
-        String description = !descriptionFlag.isPresent() ? C.NONE.s() : Flags.DESCRIPTION.valueToString(descriptionFlag.get());
+        String description = !descriptionFlag.isPresent() ?
+            C.NONE.s() :
+            Flags.DESCRIPTION.valueToString(descriptionFlag.get());
 
         StringBuilder flags = new StringBuilder();
-        HashMap<Flag<?>, Object> flagMap = FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true);
+        HashMap<Flag<?>, Object> flagMap =
+            FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true);
         if (flagMap.isEmpty()) {
-                flags.append(C.NONE.s());
+            flags.append(C.NONE.s());
         } else {
             String prefix = "";
             for (Entry<Flag<?>, Object> entry : flagMap.entrySet()) {
-                flags.append(prefix).append(C.PLOT_FLAG_LIST.f(entry.getKey().getName(), entry.getValue()));
+                flags.append(prefix)
+                    .append(C.PLOT_FLAG_LIST.f(entry.getKey().getName(), entry.getValue()));
                 prefix = ", ";
             }
         }
@@ -781,24 +790,27 @@ public class MainUtil {
         if (info.contains("%rating%")) {
             final String newInfo = info;
             TaskManager.runTaskAsync(new Runnable() {
-                @Override
-                public void run() {
+                @Override public void run() {
                     int max = 10;
-                    if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES.isEmpty()) {
+                    if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES
+                        .isEmpty()) {
                         max = 8;
                     }
                     String info;
-                    if (full && Settings.Ratings.CATEGORIES != null && Settings.Ratings.CATEGORIES.size() > 1) {
+                    if (full && Settings.Ratings.CATEGORIES != null
+                        && Settings.Ratings.CATEGORIES.size() > 1) {
                         double[] ratings = MainUtil.getAverageRatings(plot);
                         String rating = "";
                         String prefix = "";
                         for (int i = 0; i < ratings.length; i++) {
-                            rating += prefix + Settings.Ratings.CATEGORIES.get(i) + '=' + String.format("%.1f", ratings[i]);
+                            rating += prefix + Settings.Ratings.CATEGORIES.get(i) + '=' + String
+                                .format("%.1f", ratings[i]);
                             prefix = ",";
                         }
                         info = newInfo.replaceAll("%rating%", rating);
                     } else {
-                        info = newInfo.replaceAll("%rating%", String.format("%.1f", plot.getAverageRating()) + '/' + max);
+                        info = newInfo.replaceAll("%rating%",
+                            String.format("%.1f", plot.getAverageRating()) + '/' + max);
                     }
                     whenDone.run(info);
                 }
@@ -828,6 +840,7 @@ public class MainUtil {
     /**
      * Get a list of names given a list of uuids.<br>
      * - Uses the format {@link C#PLOT_USER_LIST} for the returned string
+     *
      * @param uuids
      * @return
      */
@@ -845,7 +858,7 @@ public class MainUtil {
         StringBuilder list = new StringBuilder();
         for (int x = 0; x < users.size(); x++) {
             if (x + 1 == l.size()) {
-                list.append(c.replace("%user%",users.get(x)).replace(",", ""));
+                list.append(c.replace("%user%", users.get(x)).replace(",", ""));
             } else {
                 list.append(c.replace("%user%", users.get(x)));
             }
@@ -853,14 +866,14 @@ public class MainUtil {
         return list.toString();
     }
 
-    public static void getPersistentMeta(UUID uuid, final String key, final RunnableVal<byte[]> result) {
+    public static void getPersistentMeta(UUID uuid, final String key,
+        final RunnableVal<byte[]> result) {
         PlotPlayer player = UUIDHandler.getPlayer(uuid);
         if (player != null) {
             result.run(player.getPersistentMeta(key));
         } else {
             DBFunc.getPersistentMeta(uuid, new RunnableVal<Map<String, byte[]>>() {
-                @Override
-                public void run(Map<String, byte[]> value) {
+                @Override public void run(Map<String, byte[]> value) {
                     result.run(value.get(key));
                 }
             });

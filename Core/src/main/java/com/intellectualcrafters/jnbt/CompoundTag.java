@@ -36,15 +36,13 @@ public final class CompoundTag extends Tag {
      * Returns whether this compound tag contains the given key.
      *
      * @param key the given key
-     *
      * @return true if the tag contains the given key
      */
     public boolean containsKey(String key) {
         return this.value.containsKey(key);
     }
 
-    @Override
-    public Map<String, Tag> getValue() {
+    @Override public Map<String, Tag> getValue() {
         return this.value;
     }
 
@@ -52,7 +50,6 @@ public final class CompoundTag extends Tag {
      * Return a new compound tag with the given values.
      *
      * @param value the value
-     *
      * @return the new compound tag
      */
     public CompoundTag setValue(Map<String, Tag> value) {
@@ -75,12 +72,11 @@ public final class CompoundTag extends Tag {
 
     /**
      * Get a byte array named with the given key.
-     *
+     * <p>
      * <p> If the key does not exist or its value is not a byte array
      * tag, then an empty byte array will be returned. </p>
      *
      * @param key the key
-     *
      * @return a byte array
      */
     public byte[] getByteArray(String key) {
@@ -97,7 +93,6 @@ public final class CompoundTag extends Tag {
      * {@code 0} will be returned. </p>
      *
      * @param key the key
-     *
      * @return a byte
      */
     public byte getByte(String key) {
@@ -114,7 +109,6 @@ public final class CompoundTag extends Tag {
      * {@code 0} will be returned. </p>
      *
      * @param key the key
-     *
      * @return a double
      */
     public double getDouble(String key) {
@@ -131,7 +125,6 @@ public final class CompoundTag extends Tag {
      * its value is not a number, then {@code 0} will be returned. </p>
      *
      * @param key the key
-     *
      * @return a double
      */
     public double asDouble(String key) {
@@ -158,7 +151,6 @@ public final class CompoundTag extends Tag {
      * {@code 0} will be returned. </p>
      *
      * @param key the key
-     *
      * @return a float
      */
     public float getFloat(String key) {
@@ -175,7 +167,6 @@ public final class CompoundTag extends Tag {
      * tag, then an empty array will be returned. </p>
      *
      * @param key the key
-     *
      * @return an int array
      */
     public int[] getIntArray(String key) {
@@ -192,7 +183,6 @@ public final class CompoundTag extends Tag {
      * {@code 0} will be returned. </p>
      *
      * @param key the key
-     *
      * @return an int
      */
     public int getInt(String key) {
@@ -209,7 +199,6 @@ public final class CompoundTag extends Tag {
      * its value is not a number, then {@code 0} will be returned. </p>
      *
      * @param key the key
-     *
      * @return an int
      */
     public int asInt(String key) {
@@ -236,7 +225,6 @@ public final class CompoundTag extends Tag {
      * then an empty list will be returned. </p>
      *
      * @param key the key
-     *
      * @return a list of tags
      */
     public List<Tag> getList(String key) {
@@ -253,7 +241,6 @@ public final class CompoundTag extends Tag {
      * tag, then an empty tag list will be returned. </p>
      *
      * @param key the key
-     *
      * @return a tag list instance
      */
     public ListTag getListTag(String key) {
@@ -273,11 +260,10 @@ public final class CompoundTag extends Tag {
      * @param key      the key
      * @param listType the class of the contained type
      * @param <T>      the type of list
-     *
      * @return a list of tags
      */
-    @SuppressWarnings("unchecked")
-    public <T extends Tag> List<T> getList(String key, Class<T> listType) {
+    @SuppressWarnings("unchecked") public <T extends Tag> List<T> getList(String key,
+        Class<T> listType) {
         Tag tag = this.value.get(key);
         if (tag instanceof ListTag) {
             ListTag listTag = (ListTag) tag;
@@ -296,7 +282,6 @@ public final class CompoundTag extends Tag {
      * {@code 0} will be returned. </p>
      *
      * @param key the key
-     *
      * @return a long
      */
     public long getLong(String key) {
@@ -313,7 +298,6 @@ public final class CompoundTag extends Tag {
      * its value is not a number, then {@code 0} will be returned. </p>
      *
      * @param key the key
-     *
      * @return a long
      */
     public long asLong(String key) {
@@ -340,7 +324,6 @@ public final class CompoundTag extends Tag {
      * {@code 0} will be returned. </p>
      *
      * @param key the key
-     *
      * @return a short
      */
     public short getShort(String key) {
@@ -357,7 +340,6 @@ public final class CompoundTag extends Tag {
      * {@code ""} will be returned. </p>
      *
      * @param key the key
-     *
      * @return a string
      */
     public String getString(String key) {
@@ -369,17 +351,18 @@ public final class CompoundTag extends Tag {
         }
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         String name = getName();
         String append = "";
         if (name != null && !name.isEmpty()) {
             append = "(\"" + getName() + "\")";
         }
         StringBuilder bldr = new StringBuilder();
-        bldr.append("TAG_Compound").append(append).append(": ").append(this.value.size()).append(" entries\r\n{\r\n");
+        bldr.append("TAG_Compound").append(append).append(": ").append(this.value.size())
+            .append(" entries\r\n{\r\n");
         for (Map.Entry<String, Tag> entry : this.value.entrySet()) {
-            bldr.append("   ").append(entry.getValue().toString().replaceAll("\r\n", "\r\n   ")).append("\r\n");
+            bldr.append("   ").append(entry.getValue().toString().replaceAll("\r\n", "\r\n   "))
+                .append("\r\n");
         }
         bldr.append("}");
         return bldr.toString();

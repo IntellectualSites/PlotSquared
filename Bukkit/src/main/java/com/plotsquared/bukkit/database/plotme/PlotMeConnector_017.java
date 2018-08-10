@@ -5,19 +5,11 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.SQLite;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -25,8 +17,8 @@ public class PlotMeConnector_017 extends APlotMeConnector {
 
     private String plugin;
 
-    @Override
-    public Connection getPlotMeConnection(String plugin, FileConfiguration plotConfig, String dataFolder) {
+    @Override public Connection getPlotMeConnection(String plugin, FileConfiguration plotConfig,
+        String dataFolder) {
         this.plugin = plugin.toLowerCase();
         try {
             if (plotConfig.getBoolean("usemySQL")) {
@@ -39,7 +31,8 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                 if (file.exists()) {
                     return new SQLite(file).openConnection();
                 }
-                return new SQLite(new File(dataFolder + File.separator + "plots.db")).openConnection();
+                return new SQLite(new File(dataFolder + File.separator + "plots.db"))
+                    .openConnection();
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -47,8 +40,8 @@ public class PlotMeConnector_017 extends APlotMeConnector {
         return null;
     }
 
-    @Override
-    public HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(Connection connection) throws SQLException {
+    @Override public HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(Connection connection)
+        throws SQLException {
         ResultSet resultSet;
         PreparedStatement statement;
         HashMap<String, Integer> plotWidth = new HashMap<>();
@@ -56,18 +49,21 @@ public class PlotMeConnector_017 extends APlotMeConnector {
         HashMap<Integer, Plot> plots = new HashMap<>();
         HashMap<String, HashMap<PlotId, boolean[]>> merges = new HashMap<>();
         try {
-            statement = connection.prepareStatement("SELECT * FROM `" + this.plugin + "core_plots`");
+            statement =
+                connection.prepareStatement("SELECT * FROM `" + this.plugin + "core_plots`");
             resultSet = statement.executeQuery();
         } catch (SQLException e) {
             PS.debug("========= Table does not exist =========");
             e.printStackTrace();
             PS.debug("=======================================");
-            PS.debug("&8 - &7The database does not match the version specified in the PlotMe config");
+            PS.debug(
+                "&8 - &7The database does not match the version specified in the PlotMe config");
             PS.debug("&8 - &7Please correct this, or if you are unsure, the most common is 0.16.3");
             return null;
         }
         boolean checkUUID = DBFunc.hasColumn(resultSet, "ownerID");
-        boolean merge = !"plotme".equals(this.plugin) && Settings.Enabled_Components.PLOTME_CONVERTER;
+        boolean merge =
+            !"plotme".equals(this.plugin) && Settings.Enabled_Components.PLOTME_CONVERTER;
         while (resultSet.next()) {
             int key = resultSet.getInt("plot_id");
             PlotId id = new PlotId(resultSet.getInt("plotX"), resultSet.getInt("plotZ"));
@@ -115,7 +111,8 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                         }
                     }
                     if (owner == null) {
-                        PS.log("&cCould not identify owner for plot: " + id + " -> '" + name + '\'');
+                        PS.log(
+                            "&cCould not identify owner for plot: " + id + " -> '" + name + '\'');
                         continue;
                     }
                 }
@@ -137,7 +134,8 @@ public class PlotMeConnector_017 extends APlotMeConnector {
         statement.close();
         try {
             PS.log(" - " + this.plugin + "core_denied");
-            statement = connection.prepareStatement("SELECT * FROM `" + this.plugin + "core_denied`");
+            statement =
+                connection.prepareStatement("SELECT * FROM `" + this.plugin + "core_denied`");
             resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
@@ -153,7 +151,8 @@ public class PlotMeConnector_017 extends APlotMeConnector {
             }
 
             PS.log(" - " + this.plugin + "core_allowed");
-            statement = connection.prepareStatement("SELECT * FROM `" + this.plugin + "core_allowed`");
+            statement =
+                connection.prepareStatement("SELECT * FROM `" + this.plugin + "core_allowed`");
             resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
@@ -186,8 +185,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
         return processed;
     }
 
-    @Override
-    public boolean accepts(String version) {
+    @Override public boolean accepts(String version) {
         if (version == null) {
             return false;
         }

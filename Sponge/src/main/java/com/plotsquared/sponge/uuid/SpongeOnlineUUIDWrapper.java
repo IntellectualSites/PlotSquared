@@ -17,24 +17,23 @@ import java.util.UUID;
 public class SpongeOnlineUUIDWrapper extends UUIDWrapper {
 
     private UserStorageService userStorageService;
+
     public SpongeOnlineUUIDWrapper() {
-        Optional<UserStorageService> userStorage = Sponge.getServiceManager().provide(UserStorageService.class);
+        Optional<UserStorageService> userStorage =
+            Sponge.getServiceManager().provide(UserStorageService.class);
         userStorage.ifPresent(userStorageService -> this.userStorageService = userStorageService);
 
     }
 
-    @Override
-    public UUID getUUID(PlotPlayer player) {
+    @Override public UUID getUUID(PlotPlayer player) {
         return ((SpongePlayer) player).player.getUniqueId();
     }
-    
-    @Override
-    public UUID getUUID(OfflinePlotPlayer player) {
+
+    @Override public UUID getUUID(OfflinePlotPlayer player) {
         return player.getUUID();
     }
-    
-    @Override
-    public UUID getUUID(String name) {
+
+    @Override public UUID getUUID(String name) {
         Optional<Player> player = Sponge.getServer().getPlayer(name);
         if (player.isPresent()) {
             return player.get().getUniqueId();
@@ -42,9 +41,8 @@ public class SpongeOnlineUUIDWrapper extends UUIDWrapper {
         Optional<User> user = userStorageService.get(name);
         return user.map(Identifiable::getUniqueId).orElse(null);
     }
-    
-    @Override
-    public OfflinePlotPlayer getOfflinePlayer(UUID uuid) {
+
+    @Override public OfflinePlotPlayer getOfflinePlayer(UUID uuid) {
         Optional<Player> player = Sponge.getServer().getPlayer(uuid);
         if (player.isPresent()) {
             return new SpongeOfflinePlayer(player.get());
@@ -52,14 +50,12 @@ public class SpongeOnlineUUIDWrapper extends UUIDWrapper {
         Optional<User> user = userStorageService.get(uuid);
         return user.map(SpongeOfflinePlayer::new).orElse(null);
     }
-    
-    @Override
-    public OfflinePlotPlayer[] getOfflinePlayers() {
+
+    @Override public OfflinePlotPlayer[] getOfflinePlayers() {
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
 
-    @Override
-    public OfflinePlotPlayer getOfflinePlayer(String name) {
+    @Override public OfflinePlotPlayer getOfflinePlayer(String name) {
         Optional<Player> player = Sponge.getServer().getPlayer(name);
         if (player.isPresent()) {
             return new SpongeOfflinePlayer(player.get());
@@ -67,5 +63,5 @@ public class SpongeOnlineUUIDWrapper extends UUIDWrapper {
         Optional<User> user = userStorageService.get(name);
         return user.map(SpongeOfflinePlayer::new).orElse(null);
     }
-    
+
 }

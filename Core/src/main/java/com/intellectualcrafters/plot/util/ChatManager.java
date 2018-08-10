@@ -5,7 +5,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 
 public abstract class ChatManager<T> {
     public static ChatManager<?> manager;
-    
+
     public abstract T builder();
 
     public abstract void color(PlotMessage message, String color);

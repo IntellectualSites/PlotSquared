@@ -27,13 +27,11 @@ public final class ByteTag extends Tag {
         this.value = value;
     }
 
-    @Override
-    public Byte getValue() {
+    @Override public Byte getValue() {
         return this.value;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         String name = getName();
         String append = "";
         if (name != null && !name.isEmpty()) {

@@ -13,6 +13,7 @@ import com.intellectualcrafters.plot.object.worlds.SinglePlotArea;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,20 +22,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-@CommandDeclaration(
-        command = "database",
-        aliases = {"convert"},
-        category = CommandCategory.ADMINISTRATION,
-        permission = "plots.database",
-        description = "Convert/Backup Storage",
-        requiredType = RequiredType.CONSOLE,
-        usage = "/plot database [area] <sqlite|mysql|import>")
+@CommandDeclaration(command = "database", aliases = {
+    "convert"}, category = CommandCategory.ADMINISTRATION, permission = "plots.database", description = "Convert/Backup Storage", requiredType = RequiredType.CONSOLE, usage = "/plot database [area] <sqlite|mysql|import>")
 public class Database extends SubCommand {
 
-    public static void insertPlots(final SQLManager manager, final List<Plot> plots, final PlotPlayer player) {
+    public static void insertPlots(final SQLManager manager, final List<Plot> plots,
+        final PlotPlayer player) {
         TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 try {
                     ArrayList<Plot> ps = new ArrayList<>();
                     for (Plot p : plots) {
@@ -42,22 +37,21 @@ public class Database extends SubCommand {
                     }
                     MainUtil.sendMessage(player, "&6Starting...");
                     manager.createPlotsAndData(ps, new Runnable() {
-                        @Override
-                        public void run() {
+                        @Override public void run() {
                             MainUtil.sendMessage(player, "&6Database conversion finished!");
                             manager.close();
                         }
                     });
                 } catch (Exception e) {
-                    MainUtil.sendMessage(player, "Failed to insert plot objects, see stacktrace for info");
+                    MainUtil.sendMessage(player,
+                        "Failed to insert plot objects, see stacktrace for info");
                     e.printStackTrace();
                 }
             }
         });
     }
 
-    @Override
-    public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length < 1) {
             MainUtil.sendMessage(player, "/plot database [area] <sqlite|mysql|import>");
             return false;
@@ -81,17 +75,20 @@ public class Database extends SubCommand {
             switch (args[0].toLowerCase()) {
                 case "import":
                     if (args.length < 2) {
-                        MainUtil.sendMessage(player, "/plot database import <sqlite file> [prefix]");
+                        MainUtil
+                            .sendMessage(player, "/plot database import <sqlite file> [prefix]");
                         return false;
                     }
-                    File file = MainUtil.getFile(PS.get().IMP.getDirectory(), args[1].endsWith(".db") ? args[1] : args[1] + ".db");
+                    File file = MainUtil.getFile(PS.get().IMP.getDirectory(),
+                        args[1].endsWith(".db") ? args[1] : args[1] + ".db");
                     if (!file.exists()) {
                         MainUtil.sendMessage(player, "&6Database does not exist: " + file);
                         return false;
                     }
                     MainUtil.sendMessage(player, "&6Starting...");
                     implementation = new SQLite(file);
-                    SQLManager manager = new SQLManager(implementation, args.length == 3 ? args[2] : "", true);
+                    SQLManager manager =
+                        new SQLManager(implementation, args.length == 3 ? args[2] : "", true);
                     HashMap<String, HashMap<PlotId, Plot>> map = manager.getPlots();
                     plots = new ArrayList<>();
                     for (Entry<String, HashMap<PlotId, Plot>> entry : map.entrySet()) {
@@ -106,9 +103,12 @@ public class Database extends SubCommand {
                                         if (newPlot != null) {
                                             PlotId newId = newPlot.getId();
                                             PlotId id = plot.getId();
-                                            File worldFile = new File(PS.imp().getWorldContainer(), id.toCommaSeparatedString());
+                                            File worldFile = new File(PS.imp().getWorldContainer(),
+                                                id.toCommaSeparatedString());
                                             if (worldFile.exists()) {
-                                                File newFile = new File(PS.imp().getWorldContainer(), newId.toCommaSeparatedString());
+                                                File newFile =
+                                                    new File(PS.imp().getWorldContainer(),
+                                                        newId.toCommaSeparatedString());
                                                 worldFile.renameTo(newFile);
                                             }
                                             id.x = newId.x;
@@ -119,7 +119,8 @@ public class Database extends SubCommand {
                                             continue;
                                         }
                                     }
-                                    MainUtil.sendMessage(player, "Skipping duplicate plot: " + plot + " | id=" + plot.temp);
+                                    MainUtil.sendMessage(player,
+                                        "Skipping duplicate plot: " + plot + " | id=" + plot.temp);
                                     continue;
                                 }
                                 plot.setArea(pa);
@@ -135,15 +136,15 @@ public class Database extends SubCommand {
                         }
                     }
                     DBFunc.createPlotsAndData(plots, new Runnable() {
-                        @Override
-                        public void run() {
+                        @Override public void run() {
                             MainUtil.sendMessage(player, "&6Database conversion finished!");
                         }
                     });
                     return true;
                 case "mysql":
                     if (args.length < 6) {
-                        return MainUtil.sendMessage(player, "/plot database mysql [host] [port] [username] [password] [database] {prefix}");
+                        return MainUtil.sendMessage(player,
+                            "/plot database mysql [host] [port] [username] [password] [database] {prefix}");
                     }
                     String host = args[1];
                     String port = args[2];
@@ -159,7 +160,8 @@ public class Database extends SubCommand {
                     if (args.length < 2) {
                         return MainUtil.sendMessage(player, "/plot database sqlite [file]");
                     }
-                    File sqliteFile = MainUtil.getFile(PS.get().IMP.getDirectory(), args[1] + ".db");
+                    File sqliteFile =
+                        MainUtil.getFile(PS.get().IMP.getDirectory(), args[1] + ".db");
                     implementation = new SQLite(sqliteFile);
                     break;
                 default:
@@ -171,15 +173,18 @@ public class Database extends SubCommand {
                 return true;
             } catch (ClassNotFoundException | SQLException e) {
                 MainUtil.sendMessage(player, "$1Failed to save plots, read stacktrace for info");
-                MainUtil.sendMessage(player, "&d==== Here is an ugly stacktrace, if you are interested in those things ===");
+                MainUtil.sendMessage(player,
+                    "&d==== Here is an ugly stacktrace, if you are interested in those things ===");
                 e.printStackTrace();
                 MainUtil.sendMessage(player, "&d==== End of stacktrace ====");
-                MainUtil.sendMessage(player, "$1Please make sure you are using the correct arguments!");
+                MainUtil
+                    .sendMessage(player, "$1Please make sure you are using the correct arguments!");
                 return false;
             }
         } catch (ClassNotFoundException | SQLException e) {
             MainUtil.sendMessage(player, "$1Failed to open connection, read stacktrace for info");
-            MainUtil.sendMessage(player, "&d==== Here is an ugly stacktrace, if you are interested in those things ===");
+            MainUtil.sendMessage(player,
+                "&d==== Here is an ugly stacktrace, if you are interested in those things ===");
             e.printStackTrace();
             MainUtil.sendMessage(player, "&d==== End of stacktrace ====");
             MainUtil.sendMessage(player, "$1Please make sure you are using the correct arguments!");

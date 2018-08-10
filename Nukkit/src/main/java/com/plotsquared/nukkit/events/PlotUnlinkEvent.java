@@ -6,6 +6,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Level;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
+
 import java.util.ArrayList;
 
 public class PlotUnlinkEvent extends Event implements Cancellable {
@@ -49,13 +50,11 @@ public class PlotUnlinkEvent extends Event implements Cancellable {
         return this.area;
     }
 
-    @Override
-    public boolean isCancelled() {
+    @Override public boolean isCancelled() {
         return this.cancelled;
     }
 
-    @Override
-    public void setCancelled(boolean b) {
+    @Override public void setCancelled(boolean b) {
         this.cancelled = b;
     }
 }

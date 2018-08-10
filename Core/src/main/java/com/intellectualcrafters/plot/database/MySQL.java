@@ -2,11 +2,8 @@ package com.intellectualcrafters.plot.database;
 
 import com.intellectualcrafters.plot.config.Storage;
 import com.intellectualcrafters.plot.util.StringMan;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+
+import java.sql.*;
 
 /**
  * Connects to and uses a MySQL database
@@ -41,33 +38,29 @@ public class MySQL extends Database {
         this.connection = null;
     }
 
-    @Override
-    public Connection forceConnection() throws SQLException {
-        this.connection =
-                DriverManager.getConnection("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?" + StringMan.join(Storage.MySQL.PROPERTIES, "&"), this.user, this.password);
+    @Override public Connection forceConnection() throws SQLException {
+        this.connection = DriverManager.getConnection(
+            "jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?"
+                + StringMan.join(Storage.MySQL.PROPERTIES, "&"), this.user, this.password);
         return this.connection;
     }
 
-    @Override
-    public Connection openConnection() throws SQLException, ClassNotFoundException {
+    @Override public Connection openConnection() throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             return this.connection;
         }
         return forceConnection();
     }
 
-    @Override
-    public boolean checkConnection() throws SQLException {
+    @Override public boolean checkConnection() throws SQLException {
         return (this.connection != null) && !this.connection.isClosed();
     }
 
-    @Override
-    public Connection getConnection() {
+    @Override public Connection getConnection() {
         return this.connection;
     }
 
-    @Override
-    public boolean closeConnection() throws SQLException {
+    @Override public boolean closeConnection() throws SQLException {
         if (this.connection == null) {
             return false;
         }
@@ -76,8 +69,7 @@ public class MySQL extends Database {
         return true;
     }
 
-    @Override
-    public ResultSet querySQL(String query) throws SQLException, ClassNotFoundException {
+    @Override public ResultSet querySQL(String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             openConnection();
         }
@@ -86,8 +78,7 @@ public class MySQL extends Database {
         }
     }
 
-    @Override
-    public int updateSQL(String query) throws SQLException, ClassNotFoundException {
+    @Override public int updateSQL(String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             openConnection();
         }

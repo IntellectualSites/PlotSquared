@@ -22,8 +22,7 @@ import java.util.HashSet;
 
 public class WESubscriber {
 
-    @Subscribe(priority = Priority.VERY_EARLY)
-    public void onEditSession(EditSessionEvent event) {
+    @Subscribe(priority = Priority.VERY_EARLY) public void onEditSession(EditSessionEvent event) {
         WorldEdit worldedit = PS.get().worldedit;
         if (worldedit == null) {
             WorldEdit.getInstance().getEventBus().unregister(this);
@@ -40,8 +39,8 @@ public class WESubscriber {
                 Player player = (Player) actor;
                 Location loc = player.getLocation();
                 com.intellectualcrafters.plot.object.Location pLoc =
-                        new com.intellectualcrafters.plot.object.Location(player.getWorld().getName(), loc.getBlockX(), loc.getBlockX(),
-                                loc.getBlockZ());
+                    new com.intellectualcrafters.plot.object.Location(player.getWorld().getName(),
+                        loc.getBlockX(), loc.getBlockX(), loc.getBlockZ());
                 Plot plot = pLoc.getPlot();
                 if (plot == null) {
                     event.setExtent(new NullExtent());
@@ -64,7 +63,9 @@ public class WESubscriber {
             }
             if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
                 if (PS.get().hasPlotArea(world)) {
-                    event.setExtent(new ProcessedWEExtent(world, mask, event.getMaxBlocks(), event.getExtent(), event.getExtent()));
+                    event.setExtent(
+                        new ProcessedWEExtent(world, mask, event.getMaxBlocks(), event.getExtent(),
+                            event.getExtent()));
                 }
             } else if (PS.get().hasPlotArea(world)) {
                 event.setExtent(new WEExtent(mask, event.getExtent()));

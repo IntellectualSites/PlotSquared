@@ -5,11 +5,7 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Generic settings class.
@@ -20,48 +16,47 @@ public class PlotSettings {
 
     /**
      * Merged plots.
+     *
      * @deprecated Raw access
      */
-    @Deprecated
-    public boolean[] merged = new boolean[]{false, false, false, false};
+    @Deprecated public boolean[] merged = new boolean[] {false, false, false, false};
     /**
      * Plot alias.
+     *
      * @deprecated Raw access
      */
-    @Deprecated
-    public String alias = "";
+    @Deprecated public String alias = "";
     /**
      * Comments.
+     *
      * @deprecated Raw access
      */
-    @Deprecated
-    public List<PlotComment> comments = null;
+    @Deprecated public List<PlotComment> comments = null;
 
     /**
      * The ratings for a plot.
+     *
      * @deprecated Raw access
      */
-    @Deprecated
-    public HashMap<UUID, Integer> ratings;
+    @Deprecated public HashMap<UUID, Integer> ratings;
 
     /**
      * Flags.
+     *
      * @deprecated Raw access
      */
-    @Deprecated
-    public HashMap<Flag<?>, Object> flags = new HashMap<>();
+    @Deprecated public HashMap<Flag<?>, Object> flags = new HashMap<>();
     /**
      * Home Position.
+     *
      * @deprecated Raw access
      */
-    @Deprecated
-    private BlockLoc position;
+    @Deprecated private BlockLoc position;
 
     /**
      * <b>Check if the plot is merged in a direction</b><br> 0 = North<br> 1 = East<br> 2 = South<br> 3 = West<br>
      *
      * @param direction Direction to check
-     *
      * @return boolean merged
      */
     public boolean getMerged(int direction) {

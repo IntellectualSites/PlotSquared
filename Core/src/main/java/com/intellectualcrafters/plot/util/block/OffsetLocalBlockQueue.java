@@ -12,13 +12,11 @@ public class OffsetLocalBlockQueue extends DelegateLocalBlockQueue {
         this.oz = oz;
     }
 
-    @Override
-    public boolean setBiome(int x, int y, String biome) {
+    @Override public boolean setBiome(int x, int y, String biome) {
         return super.setBiome(ox + x, oy + y, biome);
     }
 
-    @Override
-    public boolean setBlock(int x, int y, int z, int id, int data) {
+    @Override public boolean setBlock(int x, int y, int z, int id, int data) {
         return super.setBlock(ox + x, oy + y, oz + z, id, data);
     }
 }

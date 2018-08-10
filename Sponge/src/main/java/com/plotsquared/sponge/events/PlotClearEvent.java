@@ -29,7 +29,7 @@ public class PlotClearEvent extends AbstractEvent implements Cancellable {
     public PlotId getPlotId() {
         return this.plot.getId();
     }
-    
+
     /**
      * Get the world name.
      *
@@ -38,19 +38,16 @@ public class PlotClearEvent extends AbstractEvent implements Cancellable {
     public String getWorld() {
         return this.plot.getWorldName();
     }
-    
-    @Override
-    public boolean isCancelled() {
+
+    @Override public boolean isCancelled() {
         return this.cancelled;
     }
-    
-    @Override
-    public void setCancelled(boolean cancel) {
+
+    @Override public void setCancelled(boolean cancel) {
         this.cancelled = cancel;
     }
-    
-    @Override
-    public Cause getCause() {
+
+    @Override public Cause getCause() {
         return null;
     }
 }

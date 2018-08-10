@@ -27,7 +27,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class SpongePlayer extends PlotPlayer {
-    
+
     public final Player player;
     private UUID uuid;
     private String name;
@@ -36,14 +36,12 @@ public class SpongePlayer extends PlotPlayer {
         this.player = player;
         super.populatePersistentMetaMap();
     }
-    
-    @Override
-    public RequiredType getSuperCaller() {
+
+    @Override public RequiredType getSuperCaller() {
         return RequiredType.PLAYER;
     }
 
-    @Override
-    public Location getLocation() {
+    @Override public Location getLocation() {
         Location location = super.getLocation();
         if (location == null) {
             return SpongeUtil.getLocation(this.player);
@@ -51,14 +49,12 @@ public class SpongePlayer extends PlotPlayer {
             return location;
         }
     }
-    
-    @Override
-    public Location getLocationFull() {
+
+    @Override public Location getLocationFull() {
         return SpongeUtil.getLocationFull(this.player);
     }
-    
-    @Override
-    public UUID getUUID() {
+
+    @Override public UUID getUUID() {
         if (this.uuid == null) {
             this.uuid = UUIDHandler.getUUID(this);
         }
@@ -69,72 +65,69 @@ public class SpongePlayer extends PlotPlayer {
         return this.player.lastPlayed().get().toEpochMilli();
     }
 
-    @Override
-    public boolean hasPermission(String permission) {
+    @Override public boolean hasPermission(String permission) {
         return this.player.hasPermission(permission);
     }
 
-    @Override
-    public boolean isPermissionSet(String permission) {
-        Tristate state = this.player.getPermissionValue(this.player.getActiveContexts(), permission);
+    @Override public boolean isPermissionSet(String permission) {
+        Tristate state =
+            this.player.getPermissionValue(this.player.getActiveContexts(), permission);
         return state != Tristate.UNDEFINED;
     }
 
-    @Override
-    public void sendMessage(String message) {
-        if (!StringMan.isEqual(this.getMeta("lastMessage"), message) || (System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
+    @Override public void sendMessage(String message) {
+        if (!StringMan.isEqual(this.getMeta("lastMessage"), message) || (
+            System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
             setMeta("lastMessage", message);
             setMeta("lastMessageTime", System.currentTimeMillis());
-            this.player.sendMessage(ChatTypes.CHAT, TextSerializers.LEGACY_FORMATTING_CODE.deserialize(message));
+            this.player.sendMessage(ChatTypes.CHAT,
+                TextSerializers.LEGACY_FORMATTING_CODE.deserialize(message));
         }
     }
-    
-    @Override
-    public void teleport(Location location) {
+
+    @Override public void teleport(Location location) {
         if ((Math.abs(location.getX()) >= 30000000) || (Math.abs(location.getZ()) >= 30000000)) {
             return;
         }
         String world = this.player.getWorld().getName();
         if (!world.equals(location.getWorld())) {
-            this.player.transferToWorld(location.getWorld(), new Vector3d(location.getX(), location.getY(), location.getZ()));
+            this.player.transferToWorld(location.getWorld(),
+                new Vector3d(location.getX(), location.getY(), location.getZ()));
         } else {
             org.spongepowered.api.world.Location<World> current = this.player.getLocation();
-            current = current.setPosition(new Vector3d(location.getX(), location.getY(), location.getZ()));
+            current = current
+                .setPosition(new Vector3d(location.getX(), location.getY(), location.getZ()));
             this.player.setLocation(current);
         }
     }
-    
-    @Override
-    public boolean isOnline() {
+
+    @Override public boolean isOnline() {
         return this.player.isOnline();
     }
-    
-    @Override
-    public String getName() {
+
+    @Override public String getName() {
         if (this.name == null) {
             this.name = this.player.getName();
         }
         return this.name;
     }
-    
-    @Override
-    public void setCompassTarget(Location location) {
+
+    @Override public void setCompassTarget(Location location) {
         Optional<TargetedLocationData> target = this.player.getOrCreate(TargetedLocationData.class);
         if (target.isPresent()) {
-            target.get().set(Keys.TARGETED_LOCATION, SpongeUtil.getLocation(location).getPosition());
+            target.get()
+                .set(Keys.TARGETED_LOCATION, SpongeUtil.getLocation(location).getPosition());
         } else {
             PS.debug("Failed to set compass target.");
         }
     }
 
-    @Override
-    public void setWeather(PlotWeather weather) {
+    @Override public void setWeather(PlotWeather weather) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
-    
-    @Override
-    public PlotGameMode getGameMode() {
+
+    @Override public PlotGameMode getGameMode() {
         GameMode gamemode = this.player.getGameModeData().type().get();
         if (gamemode == GameModes.ADVENTURE) {
             return PlotGameMode.ADVENTURE;
@@ -148,9 +141,8 @@ public class SpongePlayer extends PlotPlayer {
             return PlotGameMode.NOT_SET;
         }
     }
-    
-    @Override
-    public void setGameMode(PlotGameMode gameMode) {
+
+    @Override public void setGameMode(PlotGameMode gameMode) {
         switch (gameMode) {
             case ADVENTURE:
                 this.player.offer(Keys.GAME_MODE, GameModes.ADVENTURE);
@@ -168,72 +160,82 @@ public class SpongePlayer extends PlotPlayer {
                 this.player.offer(Keys.GAME_MODE, GameModes.NOT_SET);
         }
     }
-    
-    @Override
-    public void setTime(long time) {
+
+    @Override public void setTime(long time) {
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
-    
-    @Override
-    public boolean getFlight() {
+
+    @Override public boolean getFlight() {
         Optional<Boolean> flying = player.get(Keys.CAN_FLY);
         return flying.isPresent() && flying.get();
     }
 
-    @Override
-    public void setFlight(boolean fly) {
+    @Override public void setFlight(boolean fly) {
         this.player.offer(Keys.IS_FLYING, fly);
         this.player.offer(Keys.CAN_FLY, fly);
     }
 
-    @Override
-    public void playMusic(Location location, int id) {
+    @Override public void playMusic(Location location, int id) {
         switch (id) {
             case 0:
                 //Placeholder because Sponge doesn't have a stopSound() implemented yet.
-                this.player.playSound(SoundTypes.BLOCK_CLOTH_PLACE, SpongeUtil.getLocation(location).getPosition(), 0);
+                this.player.playSound(SoundTypes.BLOCK_CLOTH_PLACE,
+                    SpongeUtil.getLocation(location).getPosition(), 0);
                 break;
             case 2256:
-                this.player.playSound(SoundTypes.RECORD_11, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player
+                    .playSound(SoundTypes.RECORD_11, SpongeUtil.getLocation(location).getPosition(),
+                        1);
                 break;
             case 2257:
-                this.player.playSound(SoundTypes.RECORD_13, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player
+                    .playSound(SoundTypes.RECORD_13, SpongeUtil.getLocation(location).getPosition(),
+                        1);
                 break;
             case 2258:
-                this.player.playSound(SoundTypes.RECORD_BLOCKS, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_BLOCKS,
+                    SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2259:
-                this.player.playSound(SoundTypes.RECORD_CAT, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_CAT,
+                    SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2260:
-                this.player.playSound(SoundTypes.RECORD_CHIRP, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_CHIRP,
+                    SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2261:
-                this.player.playSound(SoundTypes.RECORD_FAR, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_FAR,
+                    SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2262:
-                this.player.playSound(SoundTypes.RECORD_MALL, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_MALL,
+                    SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2263:
-                this.player.playSound(SoundTypes.RECORD_MELLOHI, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_MELLOHI,
+                    SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2264:
-                this.player.playSound(SoundTypes.RECORD_STAL, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_STAL,
+                    SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2265:
-                this.player.playSound(SoundTypes.RECORD_STRAD, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_STRAD,
+                    SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2266:
-                this.player.playSound(SoundTypes.RECORD_WAIT, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_WAIT,
+                    SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2267:
-                this.player.playSound(SoundTypes.RECORD_WARD, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_WARD,
+                    SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
         }
     }
-    
-    @Override
-    public void kick(String message) {
+
+    @Override public void kick(String message) {
         this.player.kick(SpongeUtil.getText(message));
     }
 
@@ -241,8 +243,7 @@ public class SpongePlayer extends PlotPlayer {
         //Not Implemented
     }
 
-    @Override
-    public boolean isBanned() {
+    @Override public boolean isBanned() {
         Optional<BanService> service = Sponge.getServiceManager().provide(BanService.class);
         return service.isPresent() && service.get().isBanned(this.player.getProfile());
     }

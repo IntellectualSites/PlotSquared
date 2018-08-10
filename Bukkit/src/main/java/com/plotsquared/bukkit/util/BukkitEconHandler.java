@@ -24,7 +24,8 @@ public class BukkitEconHandler extends EconHandler {
     }
 
     private boolean setupPermissions() {
-        RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
+        RegisteredServiceProvider<Permission> permissionProvider =
+            Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
         if (permissionProvider != null) {
             this.perms = permissionProvider.getProvider();
         }
@@ -35,15 +36,15 @@ public class BukkitEconHandler extends EconHandler {
         if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) {
             return false;
         }
-        RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
+        RegisteredServiceProvider<Economy> economyProvider =
+            Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
         if (economyProvider != null) {
             this.econ = economyProvider.getProvider();
         }
         return this.econ != null;
     }
 
-    @Override
-    public double getMoney(PlotPlayer player) {
+    @Override public double getMoney(PlotPlayer player) {
         double bal = super.getMoney(player);
         if (Double.isNaN(bal)) {
             return this.econ.getBalance(((BukkitPlayer) player).player);
@@ -51,28 +52,23 @@ public class BukkitEconHandler extends EconHandler {
         return bal;
     }
 
-    @Override
-    public void withdrawMoney(PlotPlayer player, double amount) {
+    @Override public void withdrawMoney(PlotPlayer player, double amount) {
         this.econ.withdrawPlayer(((BukkitPlayer) player).player, amount);
     }
 
-    @Override
-    public void depositMoney(PlotPlayer player, double amount) {
+    @Override public void depositMoney(PlotPlayer player, double amount) {
         this.econ.depositPlayer(((BukkitPlayer) player).player, amount);
     }
 
-    @Override
-    public void depositMoney(OfflinePlotPlayer player, double amount) {
+    @Override public void depositMoney(OfflinePlotPlayer player, double amount) {
         this.econ.depositPlayer(((BukkitOfflinePlayer) player).player, amount);
     }
 
-    @Override
-    public boolean hasPermission(String world, String player, String perm) {
+    @Override public boolean hasPermission(String world, String player, String perm) {
         return this.perms.playerHas(world, Bukkit.getOfflinePlayer(player), perm);
     }
 
-    @Override
-    public double getBalance(PlotPlayer player) {
+    @Override public double getBalance(PlotPlayer player) {
         return this.econ.getBalance(player.getName());
     }
 

@@ -14,22 +14,18 @@ import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.util.expiry.PlotAnalysis;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "done",
-        aliases = {"submit"},
-        description = "Mark a plot as done",
-        permission = "plots.done",
-        category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "done", aliases = {
+    "submit"}, description = "Mark a plot as done", permission = "plots.done", category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE)
 public class Done extends SubCommand {
 
-    @Override
-    public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         Location loc = player.getLocation();
         final Plot plot = loc.getPlotAbs();
         if ((plot == null) || !plot.hasOwner()) {
             return !sendMessage(player, C.NOT_IN_PLOT);
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_DONE)) {
+        if (!plot.isOwner(player.getUUID()) && !Permissions
+            .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_DONE)) {
             MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return false;
         }
@@ -49,10 +45,10 @@ public class Done extends SubCommand {
             plot.removeRunning();
         } else {
             HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
-                @Override
-                public void run(PlotAnalysis value) {
+                @Override public void run(PlotAnalysis value) {
                     plot.removeRunning();
-                    boolean result = value.getComplexity(doneRequirements) <= doneRequirements.THRESHOLD;
+                    boolean result =
+                        value.getComplexity(doneRequirements) <= doneRequirements.THRESHOLD;
                     finish(plot, player, result);
                 }
             });

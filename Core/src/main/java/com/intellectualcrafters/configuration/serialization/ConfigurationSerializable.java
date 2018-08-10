@@ -21,10 +21,10 @@ import java.util.Map;
  * @see SerializableAs
  */
 public interface ConfigurationSerializable {
-    
+
     /**
      * Creates a Map representation of this class.
-     *
+     * <p>
      * <p>This class must provide a method to restore this class, as defined in
      * the {@link ConfigurationSerializable} interface javadoc.
      *

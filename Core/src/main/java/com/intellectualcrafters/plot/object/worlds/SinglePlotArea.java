@@ -4,13 +4,7 @@ import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.generator.GridPlotWorld;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotLoc;
-import com.intellectualcrafters.plot.object.PlotSettings;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.SetupObject;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.WorldUtil;
@@ -27,17 +21,16 @@ public class SinglePlotArea extends GridPlotWorld {
         this.DEFAULT_HOME = new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE);
     }
 
-    @Override
-    public void loadConfiguration(ConfigurationSection config) {
+    @Override public void loadConfiguration(ConfigurationSection config) {
         VOID = config.getBoolean("void", false);
     }
 
     public void loadWorld(final PlotId id) {
         TaskManager.IMP.sync(new RunnableVal<Object>() {
-            @Override
-            public void run(Object value) {
+            @Override public void run(Object value) {
                 String worldName = id.toCommaSeparatedString();
-                if (WorldUtil.IMP.isWorld(worldName)) return;
+                if (WorldUtil.IMP.isWorld(worldName))
+                    return;
                 SetupObject setup = new SetupObject();
                 setup.plotManager = "PlotSquared:single";
                 setup.setupGenerator = "PlotSquared:single";
@@ -48,28 +41,26 @@ public class SinglePlotArea extends GridPlotWorld {
                 SetupUtils.manager.setupWorld(setup);
             }
         });
-//        String worldName = plot.getWorldName();
-//        World world = Bukkit.getWorld(worldName);
-//        if (world != null) {
-//            return world;
-//        }
-//        WorldCreator wc = new WorldCreator(worldName);
-//        wc.generator("PlotSquared:single");
-//        wc.environment(World.Environment.NORMAL);
-//        wc.type(WorldType.FLAT);
-//        return AsyncWorld.create(wc);
+        //        String worldName = plot.getWorldName();
+        //        World world = Bukkit.getWorld(worldName);
+        //        if (world != null) {
+        //            return world;
+        //        }
+        //        WorldCreator wc = new WorldCreator(worldName);
+        //        wc.generator("PlotSquared:single");
+        //        wc.environment(World.Environment.NORMAL);
+        //        wc.type(WorldType.FLAT);
+        //        return AsyncWorld.create(wc);
     }
 
 
 
-    @Override
-    public ConfigurationNode[] getSettingNodes() {
+    @Override public ConfigurationNode[] getSettingNodes() {
         return new ConfigurationNode[] {
-                new ConfigurationNode("void", this.VOID, "Void world", Configuration.BOOLEAN) };
+            new ConfigurationNode("void", this.VOID, "Void world", Configuration.BOOLEAN)};
     }
 
-    @Override
-    public Plot getOwnedPlot(Location location) {
+    @Override public Plot getOwnedPlot(Location location) {
         PlotId pid = PlotId.fromString(location.getWorld());
         if (pid == null) {
             return null;
@@ -78,8 +69,7 @@ public class SinglePlotArea extends GridPlotWorld {
         return plot == null ? null : plot.getBasePlot(false);
     }
 
-    @Override
-    public Plot getOwnedPlotAbs(Location location) {
+    @Override public Plot getOwnedPlotAbs(Location location) {
         PlotId pid = PlotId.fromString(location.getWorld());
         if (pid == null) {
             return null;
@@ -87,8 +77,7 @@ public class SinglePlotArea extends GridPlotWorld {
         return plots.get(pid);
     }
 
-    @Override
-    public Plot getPlot(Location location) {
+    @Override public Plot getPlot(Location location) {
         PlotId pid = PlotId.fromString(location.getWorld());
         if (pid == null) {
             return null;
@@ -96,8 +85,7 @@ public class SinglePlotArea extends GridPlotWorld {
         return getPlot(pid);
     }
 
-    @Override
-    public Plot getPlotAbs(Location location) {
+    @Override public Plot getPlotAbs(Location location) {
         PlotId pid = PlotId.fromString(location.getWorld());
         if (pid == null) {
             return null;
@@ -110,14 +98,12 @@ public class SinglePlotArea extends GridPlotWorld {
         return super.addPlot(plot);
     }
 
-    @Override
-    public boolean addPlotAbs(Plot plot) {
+    @Override public boolean addPlotAbs(Plot plot) {
         plot = adapt(plot);
         return super.addPlotAbs(plot);
     }
 
-    @Override
-    public boolean addPlotIfAbsent(Plot plot) {
+    @Override public boolean addPlotIfAbsent(Plot plot) {
         plot = adapt(plot);
         return super.addPlotIfAbsent(plot);
     }
@@ -127,7 +113,8 @@ public class SinglePlotArea extends GridPlotWorld {
             return p;
         }
         PlotSettings s = p.getSettings();
-        p = new SinglePlot(p.getId(), p.owner, p.getTrusted(), p.getMembers(), p.getDenied(), s.alias,  s.getPosition(), null, this, s.merged, p.getTimestamp(), p.temp);
+        p = new SinglePlot(p.getId(), p.owner, p.getTrusted(), p.getMembers(), p.getDenied(),
+            s.alias, s.getPosition(), null, this, s.merged, p.getTimestamp(), p.temp);
         p.getSettings().flags = s.flags;
         return p;
     }

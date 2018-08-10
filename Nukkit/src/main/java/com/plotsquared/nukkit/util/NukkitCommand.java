@@ -20,7 +20,8 @@ public class NukkitCommand extends Command {
         if (commandSender instanceof Player) {
             return MainCommand.onCommand(NukkitUtil.getPlayer((Player) commandSender), args);
         }
-        if (commandSender instanceof ConsoleCommandSender || commandSender instanceof RemoteConsoleCommandSender) {
+        if (commandSender instanceof ConsoleCommandSender
+            || commandSender instanceof RemoteConsoleCommandSender) {
             return MainCommand.onCommand(ConsolePlayer.getConsole(), args);
         }
         return false;

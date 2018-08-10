@@ -1,11 +1,11 @@
 package com.intellectualcrafters.jnbt;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Helps create list tags.
@@ -30,7 +30,6 @@ public class ListTagBuilder {
      * Create a new builder instance.
      *
      * @param type
-     *
      * @return a new builder
      */
     public static ListTagBuilder create(Class<? extends Tag> type) {
@@ -42,11 +41,9 @@ public class ListTagBuilder {
      *
      * @param entries
      * @param <T>
-     *
      * @return a new builder
      */
-    @SafeVarargs
-    public static <T extends Tag> ListTagBuilder createWith(T... entries) {
+    @SafeVarargs public static <T extends Tag> ListTagBuilder createWith(T... entries) {
         checkNotNull(entries);
         if (entries.length == 0) {
             throw new IllegalArgumentException("This method needs an array of at least one entry");
@@ -66,13 +63,14 @@ public class ListTagBuilder {
      * Add the given tag.
      *
      * @param value the tag
-     *
      * @return this object
      */
     public ListTagBuilder add(Tag value) {
         checkNotNull(value);
         if (!this.type.isInstance(value)) {
-            throw new IllegalArgumentException(value.getClass().getCanonicalName() + " is not of expected type " + this.type.getCanonicalName());
+            throw new IllegalArgumentException(
+                value.getClass().getCanonicalName() + " is not of expected type " + this.type
+                    .getCanonicalName());
         }
         this.entries.add(value);
         return this;
@@ -82,7 +80,6 @@ public class ListTagBuilder {
      * Add all the tags in the given list.
      *
      * @param value a list of tags
-     *
      * @return this object
      */
     public ListTagBuilder addAll(Collection<? extends Tag> value) {
@@ -106,7 +103,6 @@ public class ListTagBuilder {
      * Build a new list tag with this builder's entries.
      *
      * @param name the name of the tag
-     *
      * @return the created list tag
      */
     public ListTag build(String name) {

@@ -7,8 +7,7 @@ import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitVersion;
 import org.bukkit.entity.Player;
 
-@SuppressWarnings("deprecation")
-public class DefaultTitle_111 extends AbstractTitle {
+@SuppressWarnings("deprecation") public class DefaultTitle_111 extends AbstractTitle {
 
     private final boolean valid;
 
@@ -24,7 +23,8 @@ public class DefaultTitle_111 extends AbstractTitle {
                 TitleManager_1_11 title = new TitleManager_1_11(head, sub, in, delay, out);
                 title.send(playerObj);
                 return;
-            } catch (Throwable ignored) {}
+            } catch (Throwable ignored) {
+            }
         }
         AbstractTitle.TITLE_CLASS = new DefaultTitle_180();
         AbstractTitle.TITLE_CLASS.sendTitle(player, head, sub, in, delay, out);

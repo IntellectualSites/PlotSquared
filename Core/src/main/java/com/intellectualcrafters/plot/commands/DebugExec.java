@@ -8,71 +8,37 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.object.ConsolePlayer;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotMessage;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.RunnableVal2;
-import com.intellectualcrafters.plot.object.RunnableVal3;
-import com.intellectualcrafters.plot.util.AbstractTitle;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.util.expiry.PlotAnalysis;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 import com.plotsquared.listener.WEManager;
+
+import javax.script.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-import javax.script.Bindings;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
+import java.util.*;
 
-@CommandDeclaration(command = "debugexec",
-        permission = "plots.admin",
-        description = "Mutli-purpose debug command",
-        aliases = {"exec", "$"},
-        category = CommandCategory.DEBUG)
-public class DebugExec extends SubCommand {
+@CommandDeclaration(command = "debugexec", permission = "plots.admin", description = "Mutli-purpose debug command", aliases = {
+    "exec", "$"}, category = CommandCategory.DEBUG) public class DebugExec extends SubCommand {
     private ScriptEngine engine;
     private Bindings scope;
 
     public DebugExec() {
         try {
             if (PS.get() != null) {
-                File file = new File(PS.get().IMP.getDirectory(), Settings.Paths.SCRIPTS + File.separator + "start.js");
+                File file = new File(PS.get().IMP.getDirectory(),
+                    Settings.Paths.SCRIPTS + File.separator + "start.js");
                 if (file.exists()) {
                     init();
-                    String script = StringMan.join(Files
-                                    .readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS), "start.js"),
-                                            StandardCharsets.UTF_8),
-                            System.getProperty("line.separator"));
+                    String script = StringMan.join(Files.readLines(new File(new File(
+                        PS.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS),
+                        "start.js"), StandardCharsets.UTF_8), System.getProperty("line.separator"));
                     this.scope.put("THIS", this);
                     this.scope.put("PlotPlayer", ConsolePlayer.getConsole());
                     this.engine.eval(script, this.scope);
@@ -148,10 +114,11 @@ public class DebugExec extends SubCommand {
         }
     }
 
-    @Override
-    public boolean onCommand(final PlotPlayer player, String[] args) {
-        List<String> allowed_params =
-                Arrays.asList("analyze", "calibrate-analysis", "remove-flag", "stop-expire", "start-expire", "seen", "list-scripts", "start-rgar", "stop-rgar", "help", "addcmd", "runasync", "run", "allcmd", "all");
+    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+        List<String> allowed_params = Arrays
+            .asList("analyze", "calibrate-analysis", "remove-flag", "stop-expire", "start-expire",
+                "seen", "list-scripts", "start-rgar", "stop-rgar", "help", "addcmd", "runasync",
+                "run", "allcmd", "all");
         if (args.length > 0) {
             String arg = args[0].toLowerCase();
             String script;
@@ -170,19 +137,20 @@ public class DebugExec extends SubCommand {
                     }
                     MainUtil.sendMessage(player, "$1Starting task...");
                     HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
-                        @Override
-                        public void run(PlotAnalysis value) {
-                            MainUtil.sendMessage(player, "$1Done: $2Use $3/plot debugexec analyze$2 for more information");
+                        @Override public void run(PlotAnalysis value) {
+                            MainUtil.sendMessage(player,
+                                "$1Done: $2Use $3/plot debugexec analyze$2 for more information");
                         }
                     });
                     return true;
                 }
                 case "calibrate-analysis":
                     if (args.length != 2) {
-                        MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot debugexec analyze <threshold>");
+                        MainUtil.sendMessage(player, C.COMMAND_SYNTAX,
+                            "/plot debugexec analyze <threshold>");
                         MainUtil.sendMessage(player,
-                                "$1<threshold> $2= $1The percentage of plots you want to clear (100 clears 100% of plots so no point calibrating "
-                                        + "it)");
+                            "$1<threshold> $2= $1The percentage of plots you want to clear (100 clears 100% of plots so no point calibrating "
+                                + "it)");
                         return false;
                     }
                     double threshold;
@@ -190,12 +158,12 @@ public class DebugExec extends SubCommand {
                         threshold = Integer.parseInt(args[1]) / 100d;
                     } catch (NumberFormatException ignored) {
                         MainUtil.sendMessage(player, "$2Invalid threshold: " + args[1]);
-                        MainUtil.sendMessage(player, "$1<threshold> $2= $1The percentage of plots you want to clear as a number between 0 - 100");
+                        MainUtil.sendMessage(player,
+                            "$1<threshold> $2= $1The percentage of plots you want to clear as a number between 0 - 100");
                         return false;
                     }
                     PlotAnalysis.calcOptimalModifiers(new Runnable() {
-                        @Override
-                        public void run() {
+                        @Override public void run() {
                             MainUtil.sendMessage(player, "$1Thank you for calibrating plot expiry");
                         }
                     }, threshold);
@@ -207,7 +175,8 @@ public class DebugExec extends SubCommand {
                     return MainUtil.sendMessage(player, "Cancelled task.");
                 case "remove-flag":
                     if (args.length != 2) {
-                        MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot debugexec remove-flag <flag>");
+                        MainUtil.sendMessage(player, C.COMMAND_SYNTAX,
+                            "/plot debugexec remove-flag <flag>");
                         return false;
                     }
                     String flag = args[1];
@@ -220,7 +189,8 @@ public class DebugExec extends SubCommand {
                     return MainUtil.sendMessage(player, "Cleared flag: " + flag);
                 case "start-rgar": {
                     if (args.length != 2) {
-                        MainUtil.sendMessage(player, "&cInvalid syntax: /plot debugexec start-rgar <world>");
+                        MainUtil.sendMessage(player,
+                            "&cInvalid syntax: /plot debugexec start-rgar <world>");
                         return false;
                     }
                     PlotArea area = PS.get().getPlotAreaByString(args[1]);
@@ -230,12 +200,14 @@ public class DebugExec extends SubCommand {
                     }
                     boolean result;
                     if (HybridUtils.regions != null) {
-                        result = HybridUtils.manager.scheduleRoadUpdate(area, HybridUtils.regions, 0);
+                        result =
+                            HybridUtils.manager.scheduleRoadUpdate(area, HybridUtils.regions, 0);
                     } else {
                         result = HybridUtils.manager.scheduleRoadUpdate(area, 0);
                     }
                     if (!result) {
-                        MainUtil.sendMessage(player, "&cCannot schedule mass schematic update! (Is one already in progress?)");
+                        MainUtil.sendMessage(player,
+                            "&cCannot schedule mass schematic update! (Is one already in progress?)");
                         return false;
                     }
                     return true;
@@ -267,7 +239,8 @@ public class DebugExec extends SubCommand {
                     }
                     OfflinePlotPlayer op = UUIDHandler.getUUIDWrapper().getOfflinePlayer(uuid);
                     if (op == null || op.getLastPlayed() == 0) {
-                        return MainUtil.sendMessage(player, "Player hasn't connected before: " + args[1]);
+                        return MainUtil
+                            .sendMessage(player, "Player hasn't connected before: " + args[1]);
                     }
                     Timestamp stamp = new Timestamp(op.getLastPlayed());
                     Date date = new Date(stamp.getTime());
@@ -281,18 +254,21 @@ public class DebugExec extends SubCommand {
                 case "he":
                 case "?":
                 case "help":
-                    MainUtil.sendMessage(player, "Possible sub commands: /plot debugexec <" + StringMan.join(allowed_params, "|") + ">");
+                    MainUtil.sendMessage(player,
+                        "Possible sub commands: /plot debugexec <" + StringMan
+                            .join(allowed_params, "|") + ">");
                     return false;
                 case "addcmd":
                     try {
-                        final String cmd = StringMan.join(Files
-                                        .readLines(MainUtil.getFile(new File(PS.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS),
-                                                args[1]),
-                                                StandardCharsets.UTF_8),
-                                System.getProperty("line.separator"));
-                        new Command(MainCommand.getInstance(), true, args[1].split("\\.")[0], null, RequiredType.NONE, CommandCategory.DEBUG) {
-                            @Override
-                            public void execute(PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) {
+                        final String cmd = StringMan.join(Files.readLines(MainUtil.getFile(new File(
+                                PS.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS),
+                            args[1]), StandardCharsets.UTF_8),
+                            System.getProperty("line.separator"));
+                        new Command(MainCommand.getInstance(), true, args[1].split("\\.")[0], null,
+                            RequiredType.NONE, CommandCategory.DEBUG) {
+                            @Override public void execute(PlotPlayer player, String[] args,
+                                RunnableVal3<Command, Runnable, Runnable> confirm,
+                                RunnableVal2<Command, CommandResult> whenDone) {
                                 try {
                                     DebugExec.this.scope.put("PlotPlayer", player);
                                     DebugExec.this.scope.put("args", args);
@@ -306,18 +282,18 @@ public class DebugExec extends SubCommand {
                         return true;
                     } catch (IOException e) {
                         e.printStackTrace();
-                        MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot debugexec addcmd <file>");
+                        MainUtil
+                            .sendMessage(player, C.COMMAND_SYNTAX, "/plot debugexec addcmd <file>");
                         return false;
                     }
                 case "runasync":
                     async = true;
                 case "run":
                     try {
-                        script = StringMan.join(Files
-                                        .readLines(MainUtil.getFile(new File(PS.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS),
-                                                args[1]),
-                                                StandardCharsets.UTF_8),
-                                System.getProperty("line.separator"));
+                        script = StringMan.join(Files.readLines(MainUtil.getFile(new File(
+                                PS.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS),
+                            args[1]), StandardCharsets.UTF_8),
+                            System.getProperty("line.separator"));
                         if (args.length > 2) {
                             HashMap<String, String> replacements = new HashMap<>();
                             for (int i = 2; i < args.length; i++) {
@@ -331,7 +307,8 @@ public class DebugExec extends SubCommand {
                     }
                     break;
                 case "list-scripts":
-                    String path = PS.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS;
+                    String path =
+                        PS.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS;
                     File folder = new File(path);
                     File[] filesArray = folder.listFiles();
 
@@ -351,18 +328,20 @@ public class DebugExec extends SubCommand {
                     }
 
                     List<File> allFiles = Arrays.asList(filesArray);
-                    paginate(player, allFiles, 8, page, new RunnableVal3<Integer, File, PlotMessage>() {
+                    paginate(player, allFiles, 8, page,
+                        new RunnableVal3<Integer, File, PlotMessage>() {
 
-                        @Override
-                        public void run(Integer i, File file, PlotMessage message) {
-                            String name = file.getName();
-                            message.text("[").color("$3").text(String.valueOf(i)).color("$1").text("]").color("$3").text(' ' + name).color("$1");
-                        }
-                    }, "/plot debugexec list-scripts", "List of scripts");
+                            @Override public void run(Integer i, File file, PlotMessage message) {
+                                String name = file.getName();
+                                message.text("[").color("$3").text(String.valueOf(i)).color("$1")
+                                    .text("]").color("$3").text(' ' + name).color("$1");
+                            }
+                        }, "/plot debugexec list-scripts", "List of scripts");
                     return true;
                 case "allcmd":
                     if (args.length < 3) {
-                        C.COMMAND_SYNTAX.send(player, "/plot debugexec allcmd <condition> <command>");
+                        C.COMMAND_SYNTAX
+                            .send(player, "/plot debugexec allcmd <condition> <command>");
                         return false;
                     }
                     long start = System.currentTimeMillis();
@@ -392,7 +371,9 @@ public class DebugExec extends SubCommand {
                     init();
                     this.scope.put("_2", params);
                     this.scope.put("_3", cmd);
-                    script = "_1=PS.getBasePlots().iterator();while(_1.hasNext()){plot=_1.next();if(" + args[1]
+                    script =
+                        "_1=PS.getBasePlots().iterator();while(_1.hasNext()){plot=_1.next();if("
+                            + args[1]
                             + "){PlotPlayer.setMeta(\"location\",plot.getBottomAbs());PlotPlayer.setMeta(\"lastplot\",plot);_3.onCommand"
                             + "(PlotPlayer,_2)}}";
 
@@ -402,9 +383,10 @@ public class DebugExec extends SubCommand {
                         C.COMMAND_SYNTAX.send(player, "/plot debugexec all <condition> <code>");
                         return false;
                     }
-                    script = "_1=PS.getBasePlots().iterator();while(_1.hasNext()){plot=_1.next();if(" + args[1] + "){" + StringMan
-                            .join(Arrays.copyOfRange(args, 2, args.length), " ")
-                            + "}}";
+                    script =
+                        "_1=PS.getBasePlots().iterator();while(_1.hasNext()){plot=_1.next();if("
+                            + args[1] + "){" + StringMan
+                            .join(Arrays.copyOfRange(args, 2, args.length), " ") + "}}";
 
                     break;
                 default:
@@ -421,8 +403,7 @@ public class DebugExec extends SubCommand {
                 if (async) {
                     final String toExec = script;
                     TaskManager.runTaskAsync(new Runnable() {
-                        @Override
-                        public void run() {
+                        @Override public void run() {
                             long start = System.currentTimeMillis();
                             Object result = null;
                             try {

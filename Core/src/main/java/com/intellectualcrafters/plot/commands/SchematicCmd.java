@@ -3,12 +3,7 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.object.ConsolePlayer;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
@@ -21,19 +16,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
-@CommandDeclaration(
-        command = "schematic",
-        permission = "plots.schematic",
-        description = "Schematic command",
-        aliases = {"sch"},
-        category = CommandCategory.SCHEMATIC,
-        usage = "/plot schematic <arg...>")
+@CommandDeclaration(command = "schematic", permission = "plots.schematic", description = "Schematic command", aliases = {
+    "sch"}, category = CommandCategory.SCHEMATIC, usage = "/plot schematic <arg...>")
 public class SchematicCmd extends SubCommand {
 
     private boolean running = false;
 
-    @Override
-    public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length < 1) {
             sendMessage(player, C.SCHEMATIC_MISSING_ARG);
             return true;
@@ -58,7 +47,8 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.PLOT_UNOWNED);
                     return false;
                 }
-                if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SCHEMATIC_PASTE)) {
+                if (!plot.isOwner(player.getUUID()) && !Permissions
+                    .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SCHEMATIC_PASTE)) {
                     MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
                     return false;
                 }
@@ -69,8 +59,7 @@ public class SchematicCmd extends SubCommand {
                 final String location = args[1];
                 this.running = true;
                 TaskManager.runTaskAsync(new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         Schematic schematic;
                         if (location.startsWith("url:")) {
                             try {
@@ -80,7 +69,8 @@ public class SchematicCmd extends SubCommand {
                                 schematic = SchematicHandler.manager.getSchematic(url);
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                sendMessage(player, C.SCHEMATIC_INVALID, "non-existent url: " + location);
+                                sendMessage(player, C.SCHEMATIC_INVALID,
+                                    "non-existent url: " + location);
                                 SchematicCmd.this.running = false;
                                 return;
                             }
@@ -89,20 +79,21 @@ public class SchematicCmd extends SubCommand {
                         }
                         if (schematic == null) {
                             SchematicCmd.this.running = false;
-                            sendMessage(player, C.SCHEMATIC_INVALID, "non-existent or not in gzip format");
+                            sendMessage(player, C.SCHEMATIC_INVALID,
+                                "non-existent or not in gzip format");
                             return;
                         }
-                        SchematicHandler.manager.paste(schematic, plot, 0, 0, 0, true, new RunnableVal<Boolean>() {
-                            @Override
-                            public void run(Boolean value) {
-                                SchematicCmd.this.running = false;
-                                if (value) {
-                                    sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);
-                                } else {
-                                    sendMessage(player, C.SCHEMATIC_PASTE_FAILED);
+                        SchematicHandler.manager
+                            .paste(schematic, plot, 0, 0, 0, true, new RunnableVal<Boolean>() {
+                                @Override public void run(Boolean value) {
+                                    SchematicCmd.this.running = false;
+                                    if (value) {
+                                        sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);
+                                    } else {
+                                        sendMessage(player, C.SCHEMATIC_PASTE_FAILED);
+                                    }
                                 }
-                            }
-                        });
+                            });
                     }
                 });
                 break;
@@ -146,7 +137,8 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 if (args.length != 2) {
-                    MainUtil.sendMessage(player, "&cNeed world argument. Use &7/plot sch exportall <area>");
+                    MainUtil.sendMessage(player,
+                        "&cNeed world argument. Use &7/plot sch exportall <area>");
                     return false;
                 }
                 PlotArea area = PS.get().getPlotAreaByString(args[1]);
@@ -156,21 +148,24 @@ public class SchematicCmd extends SubCommand {
                 }
                 Collection<Plot> plots = area.getPlots();
                 if (plots.isEmpty()) {
-                    MainUtil.sendMessage(player, "&cInvalid world. Use &7/plot sch exportall <area>");
+                    MainUtil
+                        .sendMessage(player, "&cInvalid world. Use &7/plot sch exportall <area>");
                     return false;
                 }
-                boolean result = SchematicHandler.manager.exportAll(plots, null, null, new Runnable() {
-                    @Override
-                    public void run() {
-                        MainUtil.sendMessage(player, "&aFinished mass export");
-                    }
-                });
+                boolean result =
+                    SchematicHandler.manager.exportAll(plots, null, null, new Runnable() {
+                        @Override public void run() {
+                            MainUtil.sendMessage(player, "&aFinished mass export");
+                        }
+                    });
                 if (!result) {
                     MainUtil.sendMessage(player, "&cTask is already running.");
                     return false;
                 } else {
-                    MainUtil.sendMessage(player, "&3Plot&8->&3Schematic&8: &7Mass export has started. This may take a while.");
-                    MainUtil.sendMessage(player, "&3Plot&8->&3Schematic&8: &7Found &c" + plots.size() + "&7 plots...");
+                    MainUtil.sendMessage(player,
+                        "&3Plot&8->&3Schematic&8: &7Mass export has started. This may take a while.");
+                    MainUtil.sendMessage(player,
+                        "&3Plot&8->&3Schematic&8: &7Found &c" + plots.size() + "&7 plots...");
                 }
                 break;
             }
@@ -193,20 +188,21 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.PLOT_UNOWNED);
                     return false;
                 }
-                if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SCHEMATIC_SAVE)) {
+                if (!plot.isOwner(player.getUUID()) && !Permissions
+                    .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SCHEMATIC_SAVE)) {
                     MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
                     return false;
                 }
                 location.getWorld();
                 Collection<Plot> plots = new ArrayList<>();
                 plots.add(plot);
-                boolean result = SchematicHandler.manager.exportAll(plots, null, null, new Runnable() {
-                    @Override
-                    public void run() {
-                        MainUtil.sendMessage(player, "&aFinished export");
-                        SchematicCmd.this.running = false;
-                    }
-                });
+                boolean result =
+                    SchematicHandler.manager.exportAll(plots, null, null, new Runnable() {
+                        @Override public void run() {
+                            MainUtil.sendMessage(player, "&aFinished export");
+                            SchematicCmd.this.running = false;
+                        }
+                    });
                 if (!result) {
                     MainUtil.sendMessage(player, "&cTask is already running.");
                     return false;

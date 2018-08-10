@@ -6,20 +6,12 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.SQLite;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
 import java.io.File;
 import java.nio.ByteBuffer;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -29,8 +21,8 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
     private String plugin = "PlotMe";
     private String prefix;
 
-    @Override
-    public Connection getPlotMeConnection(String plugin, FileConfiguration plotConfig, String dataFolder) {
+    @Override public Connection getPlotMeConnection(String plugin, FileConfiguration plotConfig,
+        String dataFolder) {
         this.plugin = plugin.toLowerCase();
         this.prefix = plotConfig.getString("mySQLprefix", this.plugin.toLowerCase());
         try {
@@ -40,7 +32,8 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                 String con = plotConfig.getString("mySQLconn");
                 return DriverManager.getConnection(con, user, password);
             } else {
-                return new SQLite(new File(dataFolder + File.separator + "plots.db")).openConnection();
+                return new SQLite(new File(dataFolder + File.separator + "plots.db"))
+                    .openConnection();
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -48,13 +41,14 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         return null;
     }
 
-    @Override
-    public HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(Connection connection) throws SQLException {
+    @Override public HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(Connection connection)
+        throws SQLException {
         HashMap<String, Integer> plotWidth = new HashMap<>();
         HashMap<String, Integer> roadWidth = new HashMap<>();
         HashMap<String, HashMap<PlotId, Plot>> plots = new HashMap<>();
         HashMap<String, HashMap<PlotId, boolean[]>> merges = new HashMap<>();
-        PreparedStatement statement = connection.prepareStatement("SELECT * FROM `" + this.prefix + "Plots`");
+        PreparedStatement statement =
+            connection.prepareStatement("SELECT * FROM `" + this.prefix + "Plots`");
         ResultSet resultSet = statement.executeQuery();
         String column = null;
         boolean checkUUID = DBFunc.hasColumn(resultSet, "ownerid");
@@ -64,7 +58,8 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         } else if (checkUUID2) {
             column = "ownerId";
         }
-        boolean merge = !"plotme".equalsIgnoreCase(this.plugin) && Settings.Enabled_Components.PLOTME_CONVERTER;
+        boolean merge =
+            !"plotme".equalsIgnoreCase(this.plugin) && Settings.Enabled_Components.PLOTME_CONVERTER;
         int missing = 0;
         while (resultSet.next()) {
             PlotId id = new PlotId(resultSet.getInt("idX"), resultSet.getInt("idZ"));
@@ -122,7 +117,8 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                         missing++;
                         continue;
                     }
-                    owner = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(Charsets.UTF_8));
+                    owner = UUID.nameUUIDFromBytes(
+                        ("OfflinePlayer:" + name.toLowerCase()).getBytes(Charsets.UTF_8));
                 }
             } else {
                 UUIDHandler.add(new StringWrapper(name), owner);
@@ -134,7 +130,8 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             PS.log("&cSome names could not be identified:");
             PS.log("&7 - Empty quotes mean PlotMe just stored an unowned plot in the database");
             PS.log("&7 - Names you have never seen before could be from people mistyping commands");
-            PS.log("&7 - Converting from a non-uuid version of PlotMe can't identify owners if the playerdata files are deleted (these plots will "
+            PS.log(
+                "&7 - Converting from a non-uuid version of PlotMe can't identify owners if the playerdata files are deleted (these plots will "
                     + "remain unknown until the player connects)");
         }
 
@@ -228,12 +225,13 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             resultSet.close();
             statement.close();
 
-        } catch (SQLException ignored) {}
+        } catch (SQLException ignored) {
+        }
         return plots;
     }
 
-    @Override
-    public boolean accepts(String version) {
-        return version == null || PS.get().canUpdate(version, "0.17.0") || PS.get().canUpdate("0.999.999", version);
+    @Override public boolean accepts(String version) {
+        return version == null || PS.get().canUpdate(version, "0.17.0") || PS.get()
+            .canUpdate("0.999.999", version);
     }
 }

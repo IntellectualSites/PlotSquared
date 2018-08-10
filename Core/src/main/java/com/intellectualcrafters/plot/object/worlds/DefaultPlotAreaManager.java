@@ -5,35 +5,28 @@ import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.area.QuadMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+
+import java.util.*;
 
 public class DefaultPlotAreaManager implements PlotAreaManager {
 
-    // All plot areas
-    private PlotArea[] plotAreas = new PlotArea[0];
+    protected final PlotArea[] noPlotAreas = new PlotArea[0];
     // All plot areas mapped by world
     private final HashMap<String, PlotArea[]> plotAreaMap = new HashMap<>();
     // All plot areas mapped by position
     private final HashMap<String, QuadMap<PlotArea>> plotAreaGrid = new HashMap<>();
+    private final HashSet<Integer> plotAreaHashCheck = new HashSet<>();
+    // All plot areas
+    private PlotArea[] plotAreas = new PlotArea[0];
     // Optimization if there are no hash collisions
     private boolean plotAreaHasCollision = false;
-    private final HashSet<Integer> plotAreaHashCheck = new HashSet<>();
-    protected final PlotArea[] noPlotAreas = new PlotArea[0];
     private String[] worlds = new String[0];
 
-    @Override
-    public PlotArea[] getAllPlotAreas() {
+    @Override public PlotArea[] getAllPlotAreas() {
         return plotAreas;
     }
 
-    @Override
-    public PlotArea getApplicablePlotArea(Location location) {
+    @Override public PlotArea getApplicablePlotArea(Location location) {
         switch (this.plotAreas.length) {
             case 0:
                 return null;
@@ -50,7 +43,8 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
                 int hash = world.hashCode();
                 for (PlotArea area : this.plotAreas) {
                     if (hash == area.worldhash) {
-                        if (area.contains(location.getX(), location.getZ()) && (!this.plotAreaHasCollision || world.equals(area.worldname))) {
+                        if (area.contains(location.getX(), location.getZ()) && (
+                            !this.plotAreaHasCollision || world.equals(area.worldname))) {
                             return area;
                         }
                     }
@@ -88,19 +82,19 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         }
     }
 
-    @Override
-    public void addPlotArea(PlotArea plotArea) {
-        HashSet<PlotArea> localAreas = new HashSet<>(Arrays.asList(getPlotAreas(plotArea.worldname, null)));
+    @Override public void addPlotArea(PlotArea plotArea) {
+        HashSet<PlotArea> localAreas =
+            new HashSet<>(Arrays.asList(getPlotAreas(plotArea.worldname, null)));
         HashSet<PlotArea> globalAreas = new HashSet<>(Arrays.asList(plotAreas));
         localAreas.add(plotArea);
         globalAreas.add(plotArea);
         this.plotAreas = globalAreas.toArray(new PlotArea[globalAreas.size()]);
-        this.plotAreaMap.put(plotArea.worldname, localAreas.toArray(new PlotArea[localAreas.size()]));
+        this.plotAreaMap
+            .put(plotArea.worldname, localAreas.toArray(new PlotArea[localAreas.size()]));
         QuadMap<PlotArea> map = this.plotAreaGrid.get(plotArea.worldname);
         if (map == null) {
             map = new QuadMap<PlotArea>(Integer.MAX_VALUE, 0, 0) {
-                @Override
-                public RegionWrapper getRegion(PlotArea value) {
+                @Override public RegionWrapper getRegion(PlotArea value) {
                     return value.getRegion();
                 }
             };
@@ -109,8 +103,7 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         map.add(plotArea);
     }
 
-    @Override
-    public void removePlotArea(PlotArea area) {
+    @Override public void removePlotArea(PlotArea area) {
         ArrayList<PlotArea> globalAreas = new ArrayList<PlotArea>(Arrays.asList(plotAreas));
         globalAreas.remove(area);
         this.plotAreas = globalAreas.toArray(new PlotArea[globalAreas.size()]);
@@ -118,13 +111,13 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
             this.plotAreaMap.remove(area.worldname);
             this.plotAreaGrid.remove(area.worldname);
         } else {
-            this.plotAreaMap.put(area.worldname, globalAreas.toArray(new PlotArea[globalAreas.size()]));
+            this.plotAreaMap
+                .put(area.worldname, globalAreas.toArray(new PlotArea[globalAreas.size()]));
             this.plotAreaGrid.get(area.worldname).remove(area);
         }
     }
 
-    @Override
-    public PlotArea getPlotArea(String world, String id) {
+    @Override public PlotArea getPlotArea(String world, String id) {
         PlotArea[] areas = this.plotAreaMap.get(world);
         if (areas == null) {
             return null;
@@ -142,8 +135,7 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         return null;
     }
 
-    @Override
-    public PlotArea getPlotArea(Location location) {
+    @Override public PlotArea getPlotArea(Location location) {
         switch (this.plotAreas.length) {
             case 0:
                 return null;
@@ -161,7 +153,8 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
                 int hash = world.hashCode();
                 for (PlotArea area : this.plotAreas) {
                     if (hash == area.worldhash) {
-                        if (area.contains(location.getX(), location.getZ()) && (!this.plotAreaHasCollision || world.equals(area.worldname))) {
+                        if (area.contains(location.getX(), location.getZ()) && (
+                            !this.plotAreaHasCollision || world.equals(area.worldname))) {
                             return area;
                         }
                     }
@@ -200,8 +193,7 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         }
     }
 
-    @Override
-    public PlotArea[] getPlotAreas(String world, RegionWrapper region) {
+    @Override public PlotArea[] getPlotAreas(String world, RegionWrapper region) {
         if (region == null) {
             PlotArea[] areas = this.plotAreaMap.get(world);
             if (areas == null) {
@@ -218,8 +210,7 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         }
     }
 
-    @Override
-    public void addWorld(String worldName) {
+    @Override public void addWorld(String worldName) {
         if (!this.plotAreaHasCollision && !this.plotAreaHashCheck.add(worldName.hashCode())) {
             this.plotAreaHasCollision = true;
         }
@@ -229,16 +220,14 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         worlds = tmp.toArray(new String[tmp.size()]);
     }
 
-    @Override
-    public void removeWorld(String worldName) {
+    @Override public void removeWorld(String worldName) {
         Set<String> tmp = new LinkedHashSet<>();
         Collections.addAll(tmp, worlds);
         tmp.remove(worldName);
         worlds = tmp.toArray(new String[tmp.size()]);
     }
 
-    @Override
-    public String[] getAllWorlds() {
+    @Override public String[] getAllWorlds() {
         return worlds;
     }
 }

@@ -12,6 +12,7 @@ public class SpongeOfflinePlayer implements OfflinePlotPlayer {
     public SpongeOfflinePlayer(User user) {
         this.user = user;
     }
+
     @Override public UUID getUUID() {
         return user.getUniqueId();
     }

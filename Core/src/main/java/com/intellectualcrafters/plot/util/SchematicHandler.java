@@ -1,59 +1,31 @@
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.jnbt.ByteArrayTag;
-import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.jnbt.IntTag;
-import com.intellectualcrafters.jnbt.ListTag;
-import com.intellectualcrafters.jnbt.NBTInputStream;
-import com.intellectualcrafters.jnbt.NBTOutputStream;
-import com.intellectualcrafters.jnbt.ShortTag;
-import com.intellectualcrafters.jnbt.StringTag;
-import com.intellectualcrafters.jnbt.Tag;
+import com.intellectualcrafters.jnbt.*;
 import com.intellectualcrafters.json.JSONArray;
 import com.intellectualcrafters.json.JSONException;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
-import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public abstract class SchematicHandler {
     public static SchematicHandler manager;
-    
+
     private boolean exportAll = false;
 
-    public boolean exportAll(Collection<Plot> collection, final File outputDir, final String namingScheme, final Runnable ifSuccess) {
+    public boolean exportAll(Collection<Plot> collection, final File outputDir,
+        final String namingScheme, final Runnable ifSuccess) {
         if (this.exportAll) {
             return false;
         }
@@ -63,8 +35,7 @@ public abstract class SchematicHandler {
         this.exportAll = true;
         final ArrayList<Plot> plots = new ArrayList<>(collection);
         TaskManager.runTask(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 if (plots.isEmpty()) {
                     SchematicHandler.this.exportAll = false;
                     TaskManager.runTask(ifSuccess);
@@ -81,8 +52,11 @@ public abstract class SchematicHandler {
                 if (namingScheme == null) {
                     name = plot.getId().x + ";" + plot.getId().y + ',' + plot.getArea() + ',' + o;
                 } else {
-                    name = namingScheme.replaceAll("%owner%", o).replaceAll("%id%", plot.getId().toString()).replaceAll("%idx%", plot.getId().x + "").replaceAll("%idy%", plot.getId().y + "")
-                            .replaceAll("%world%", plot.getArea().toString());
+                    name = namingScheme.replaceAll("%owner%", o)
+                        .replaceAll("%id%", plot.getId().toString())
+                        .replaceAll("%idx%", plot.getId().x + "")
+                        .replaceAll("%idy%", plot.getId().y + "")
+                        .replaceAll("%world%", plot.getArea().toString());
                 }
                 final String directory;
                 if (outputDir == null) {
@@ -92,24 +66,24 @@ public abstract class SchematicHandler {
                 }
                 final Runnable THIS = this;
                 SchematicHandler.manager.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
-                    @Override
-                    public void run(final CompoundTag value) {
+                    @Override public void run(final CompoundTag value) {
                         if (value == null) {
                             MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.getId());
                         } else {
                             TaskManager.runTaskAsync(new Runnable() {
-                                @Override
-                                public void run() {
+                                @Override public void run() {
                                     MainUtil.sendMessage(null, "&6ID: " + plot.getId());
-                                    boolean result = SchematicHandler.manager.save(value, directory + File.separator + name + ".schematic");
+                                    boolean result = SchematicHandler.manager.save(value,
+                                        directory + File.separator + name + ".schematic");
                                     if (!result) {
-                                        MainUtil.sendMessage(null, "&7 - Failed to save &c" + plot.getId());
+                                        MainUtil.sendMessage(null,
+                                            "&7 - Failed to save &c" + plot.getId());
                                     } else {
-                                        MainUtil.sendMessage(null, "&7 - &a  success: " + plot.getId());
+                                        MainUtil
+                                            .sendMessage(null, "&7 - &a  success: " + plot.getId());
                                     }
                                     TaskManager.runTask(new Runnable() {
-                                        @Override
-                                        public void run() {
+                                        @Override public void run() {
                                             THIS.run();
                                         }
                                     });
@@ -128,15 +102,15 @@ public abstract class SchematicHandler {
      *
      * @param schematic the schematic object to paste
      * @param plot      plot to paste in
-     * @param xOffset  offset x to paste it from plot origin
-     * @param zOffset  offset z to paste it from plot origin
-     *
+     * @param xOffset   offset x to paste it from plot origin
+     * @param zOffset   offset z to paste it from plot origin
      * @return boolean true if succeeded
      */
-    public void paste(final Schematic schematic, final Plot plot, final int xOffset, final int yOffset, final int zOffset, final boolean autoHeight, final RunnableVal<Boolean> whenDone) {
+    public void paste(final Schematic schematic, final Plot plot, final int xOffset,
+        final int yOffset, final int zOffset, final boolean autoHeight,
+        final RunnableVal<Boolean> whenDone) {
         TaskManager.runTask(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 if (whenDone != null) {
                     whenDone.value = false;
                 }
@@ -163,10 +137,13 @@ public abstract class SchematicHandler {
                     final int HEIGHT = dimension.getY();
                     // Validate dimensions
                     RegionWrapper region = plot.getLargestRegion();
-                    if (((region.maxX - region.minX + xOffset + 1) < WIDTH) || ((region.maxZ - region.minZ + zOffset + 1) < LENGTH) || (HEIGHT
-                            > 256)) {
+                    if (((region.maxX - region.minX + xOffset + 1) < WIDTH) || (
+                        (region.maxZ - region.minZ + zOffset + 1) < LENGTH) || (HEIGHT > 256)) {
                         PS.debug("Schematic is too large");
-                        PS.debug("(" + WIDTH + ',' + LENGTH + ',' + HEIGHT + ") is bigger than (" + (region.maxX - region.minX) + ',' + (region.maxZ - region.minZ) + ",256)");
+                        PS.debug(
+                            "(" + WIDTH + ',' + LENGTH + ',' + HEIGHT + ") is bigger than (" + (
+                                region.maxX - region.minX) + ',' + (region.maxZ - region.minZ)
+                                + ",256)");
                         TaskManager.runTask(whenDone);
                         return;
                     }
@@ -183,14 +160,17 @@ public abstract class SchematicHandler {
                             if (pw instanceof ClassicPlotWorld) {
                                 y_offset_actual = yOffset + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
                             } else {
-                                y_offset_actual = yOffset + 1 + MainUtil.getHeighestBlock(plot.getWorldName(), region.minX + 1, region.minZ + 1);
+                                y_offset_actual = yOffset + 1 + MainUtil
+                                    .getHeighestBlock(plot.getWorldName(), region.minX + 1,
+                                        region.minZ + 1);
                             }
                         }
-                    }
-                    else {
+                    } else {
                         y_offset_actual = yOffset;
                     }
-                    Location pos1 = new Location(plot.getWorldName(), region.minX + xOffset, y_offset_actual, region.minZ + zOffset);
+                    Location pos1 =
+                        new Location(plot.getWorldName(), region.minX + xOffset, y_offset_actual,
+                            region.minZ + zOffset);
                     Location pos2 = pos1.clone().add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
                     // TODO switch to ChunkManager.chunkTask(pos1, pos2, task, whenDone, allocate);
                     final int p1x = pos1.getX();
@@ -208,8 +188,7 @@ public abstract class SchematicHandler {
                         }
                     }
                     TaskManager.runTaskAsync(new Runnable() {
-                        @Override
-                        public void run() {
+                        @Override public void run() {
                             int count = 0;
                             while (!chunks.isEmpty() && count < 256) {
                                 count++;
@@ -318,7 +297,8 @@ public abstract class SchematicHandler {
                                                     queue.setBlock(xx, yy, zz, id);
                                                     break;
                                                 default:
-                                                    queue.setBlock(xx, yy, zz, PlotBlock.get((short) id, datas[i]));
+                                                    queue.setBlock(xx, yy, zz,
+                                                        PlotBlock.get((short) id, datas[i]));
                                                     break;
                                             }
                                         }
@@ -332,11 +312,13 @@ public abstract class SchematicHandler {
                                 HashMap<BlockLoc, CompoundTag> tiles = schematic.getTiles();
                                 if (!tiles.isEmpty()) {
                                     TaskManager.IMP.sync(new RunnableVal<Object>() {
-                                        @Override
-                                        public void run(Object value) {
-                                            for (Map.Entry<BlockLoc, CompoundTag> entry : schematic.getTiles().entrySet()) {
+                                        @Override public void run(Object value) {
+                                            for (Map.Entry<BlockLoc, CompoundTag> entry : schematic
+                                                .getTiles().entrySet()) {
                                                 BlockLoc loc = entry.getKey();
-                                                restoreTile(queue, entry.getValue(), p1x + xOffset + loc.x, loc.y + y_offset_actual, p1z + zOffset + loc.z);
+                                                restoreTile(queue, entry.getValue(),
+                                                    p1x + xOffset + loc.x, loc.y + y_offset_actual,
+                                                    p1z + zOffset + loc.z);
                                             }
                                         }
                                     });
@@ -395,9 +377,11 @@ public abstract class SchematicHandler {
             } else {
                 for (int index = 0; index < block.length; index++) {
                     if ((index & 1) == 0) {
-                        block[index] = (short) (((addBlocks[index >> 1] & 0x0F) << 8) + (block[index]));
+                        block[index] =
+                            (short) (((addBlocks[index >> 1] & 0x0F) << 8) + (block[index]));
                     } else {
-                        block[index] = (short) (((addBlocks[index >> 1] & 0xF0) << 4) + (block[index]));
+                        block[index] =
+                            (short) (((addBlocks[index >> 1] & 0xF0) << 4) + (block[index]));
                     }
                 }
             }
@@ -433,13 +417,13 @@ public abstract class SchematicHandler {
         return schem;
     }
 
-    public abstract boolean restoreTile(LocalBlockQueue queue, CompoundTag tag, int x, int y, int z);
+    public abstract boolean restoreTile(LocalBlockQueue queue, CompoundTag tag, int x, int y,
+        int z);
 
     /**
      * Get a schematic
      *
      * @param name to check
-     *
      * @return schematic if found, else null
      */
     public Schematic getSchematic(String name) {
@@ -450,15 +434,16 @@ public abstract class SchematicHandler {
             }
         }
         File file = MainUtil.getFile(PS.get().IMP.getDirectory(),
-                Settings.Paths.SCHEMATICS + File.separator + name + (name.endsWith(".schematic") ? "" : ".schematic"));
+            Settings.Paths.SCHEMATICS + File.separator + name + (name.endsWith(".schematic") ?
+                "" :
+                ".schematic"));
         return getSchematic(file);
     }
-    
+
     /**
      * Get a schematic
      *
      * @param file to check
-     *
      * @return schematic if found, else null
      */
     public Schematic getSchematic(File file) {
@@ -496,7 +481,8 @@ public abstract class SchematicHandler {
             return getSchematic(tag);
         } catch (IOException e) {
             e.printStackTrace();
-            PS.debug(is.toString() + " | " + is.getClass().getCanonicalName() + " is not in GZIP format : " + e.getMessage());
+            PS.debug(is.toString() + " | " + is.getClass().getCanonicalName()
+                + " is not in GZIP format : " + e.getMessage());
         }
         return null;
     }
@@ -508,7 +494,8 @@ public abstract class SchematicHandler {
             URL url = new URL(website);
             URLConnection connection = new URL(url.toString()).openConnection();
             connection.setRequestProperty("User-Agent", "Mozilla/5.0");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            BufferedReader reader =
+                new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
                 rawJSON.append(line);
@@ -527,7 +514,7 @@ public abstract class SchematicHandler {
         }
         return null;
     }
-    
+
     public void upload(final CompoundTag tag, UUID uuid, String file, RunnableVal<URL> whenDone) {
         if (tag == null) {
             PS.debug("&cCannot save empty tag");
@@ -535,8 +522,7 @@ public abstract class SchematicHandler {
             return;
         }
         MainUtil.upload(uuid, file, "schematic", new RunnableVal<OutputStream>() {
-            @Override
-            public void run(OutputStream output) {
+            @Override public void run(OutputStream output) {
                 try {
                     try (GZIPOutputStream gzip = new GZIPOutputStream(output, true)) {
                         try (NBTOutputStream nos = new NBTOutputStream(gzip)) {
@@ -549,13 +535,12 @@ public abstract class SchematicHandler {
             }
         }, whenDone);
     }
-    
+
     /**
      * Saves a schematic to a file path.
      *
      * @param tag  to save
      * @param path to save in
-     *
      * @return true if succeeded
      */
     public boolean save(CompoundTag tag, String path) {
@@ -566,7 +551,8 @@ public abstract class SchematicHandler {
         try {
             File tmp = MainUtil.getFile(PS.get().IMP.getDirectory(), path);
             tmp.getParentFile().mkdirs();
-            try (OutputStream stream = new FileOutputStream(tmp); NBTOutputStream output = new NBTOutputStream(new GZIPOutputStream(stream))) {
+            try (OutputStream stream = new FileOutputStream(tmp);
+                NBTOutputStream output = new NBTOutputStream(new GZIPOutputStream(stream))) {
                 output.writeTag(tag);
             }
         } catch (FileNotFoundException e) {
@@ -577,10 +563,11 @@ public abstract class SchematicHandler {
         }
         return true;
     }
-    
+
     /**
      * Create a compound tag from blocks
-     *  - Untested
+     * - Untested
+     *
      * @param blocks
      * @param blockData
      * @param dimension
@@ -601,21 +588,23 @@ public abstract class SchematicHandler {
         schematic.put("Blocks", new ByteArrayTag("Blocks", blocks));
         schematic.put("Data", new ByteArrayTag("Data", blockData));
         schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<Tag>()));
-        schematic.put("TileEntities", new ListTag("TileEntities", CompoundTag.class, new ArrayList<Tag>()));
+        schematic.put("TileEntities",
+            new ListTag("TileEntities", CompoundTag.class, new ArrayList<Tag>()));
         return new CompoundTag("Schematic", schematic);
     }
 
-    public abstract void getCompoundTag(String world, Set<RegionWrapper> regions, RunnableVal<CompoundTag> whenDone);
-    
+    public abstract void getCompoundTag(String world, Set<RegionWrapper> regions,
+        RunnableVal<CompoundTag> whenDone);
+
     public void getCompoundTag(final Plot plot, final RunnableVal<CompoundTag> whenDone) {
         getCompoundTag(plot.getWorldName(), plot.getRegions(), new RunnableVal<CompoundTag>() {
-            @Override
-            public void run(CompoundTag value) {
+            @Override public void run(CompoundTag value) {
                 if (!plot.getFlags().isEmpty()) {
                     HashMap<String, Tag> flagMap = new HashMap<>();
                     for (Map.Entry<Flag<?>, Object> entry : plot.getFlags().entrySet()) {
                         String key = entry.getKey().getName();
-                        flagMap.put(key, new StringTag(key, entry.getKey().valueToString(entry.getValue())));
+                        flagMap.put(key,
+                            new StringTag(key, entry.getKey().valueToString(entry.getValue())));
                     }
                     CompoundTag tag = new CompoundTag("Flags", flagMap);
                     HashMap<String, Tag> map = new HashMap<>(value.getValue());
@@ -626,7 +615,7 @@ public abstract class SchematicHandler {
             }
         });
     }
-    
+
     /**
      * Schematic Dimensions.
      */
@@ -655,10 +644,9 @@ public abstract class SchematicHandler {
         }
     }
 
+
     /**
      * Schematic Class
-     *
-
      */
     public class Schematic {
         // Lossy but fast
@@ -685,6 +673,7 @@ public abstract class SchematicHandler {
 
         /**
          * Add a tile entity
+         *
          * @param loc
          * @param tag
          */
@@ -697,6 +686,7 @@ public abstract class SchematicHandler {
 
         /**
          * Get the tile entities
+         *
          * @return Map of block location to tag
          */
         public HashMap<BlockLoc, CompoundTag> getTiles() {
@@ -705,6 +695,7 @@ public abstract class SchematicHandler {
 
         /**
          * Get the schematic dimensions.
+         *
          * @return
          */
         public Dimension getSchematicDimension() {
@@ -713,6 +704,7 @@ public abstract class SchematicHandler {
 
         /**
          * Get the block type array.
+         *
          * @return
          */
         public short[] getIds() {
@@ -721,6 +713,7 @@ public abstract class SchematicHandler {
 
         /**
          * Get the block data array.
+         *
          * @return
          */
         public byte[] getDatas() {

@@ -7,6 +7,7 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.StringMan;
+
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,7 +17,8 @@ public final class Flags {
 
     public static final IntegerFlag MUSIC = new IntegerFlag("music");
     public static final StringFlag DESCRIPTION = new StringFlag("description");
-    public static final IntegerListFlag ANALYSIS = (IntegerListFlag) new IntegerListFlag("analysis").reserve();
+    public static final IntegerListFlag ANALYSIS =
+        (IntegerListFlag) new IntegerListFlag("analysis").reserve();
     public static final StringFlag GREETING = new StringFlag("greeting");
     public static final StringFlag FAREWELL = new StringFlag("farewell");
     public static final IntervalFlag FEED = new IntervalFlag("feed");
@@ -32,14 +34,12 @@ public final class Flags {
     public static final LongFlag TIME = new LongFlag("time");
     public static final PlotWeatherFlag WEATHER = new PlotWeatherFlag("weather");
     public static final DoubleFlag PRICE = new DoubleFlag("price") {
-        @Override
-        public Double parseValue(String input) {
+        @Override public Double parseValue(String input) {
             Double value = super.parseValue(input);
             return value != null && value > 0 ? value : null;
         }
 
-        @Override
-        public String getValueDescription() {
+        @Override public String getValueDescription() {
             return "Flag value must be a positive number.";
         }
     };
@@ -124,18 +124,20 @@ public final class Flags {
 
 
     private static final HashMap<String, Flag<?>> flags;
+
     static {
         flags = new HashMap<>();
         try {
             for (Field field : Flags.class.getFields()) {
-                String fieldName = field.getName().replace("_","-").toLowerCase();
+                String fieldName = field.getName().replace("_", "-").toLowerCase();
                 Object fieldValue = field.get(null);
                 if (!(fieldValue instanceof Flag)) {
                     continue;
                 }
                 Flag flag = (Flag) fieldValue;
                 if (!flag.getName().equals(fieldName)) {
-                    PS.debug(Flags.class + "Field doesn't match: " + fieldName + " != " + flag.getName());
+                    PS.debug(Flags.class + "Field doesn't match: " + fieldName + " != " + flag
+                        .getName());
                 }
                 flags.put(flag.getName(), flag);
             }
@@ -166,8 +168,11 @@ public final class Flags {
                     if (value.DEFAULT_FLAGS.containsKey(duplicate)) {
                         remove = value.DEFAULT_FLAGS.remove(duplicate);
                         try {
-                            if (remove instanceof Collection && remove.getClass().getMethod("toString").getDeclaringClass() == Object.class) {
-                                value.DEFAULT_FLAGS.put(flag, flag.parseValue(StringMan.join((Collection) remove, ',')));
+                            if (remove instanceof Collection
+                                && remove.getClass().getMethod("toString").getDeclaringClass()
+                                == Object.class) {
+                                value.DEFAULT_FLAGS.put(flag,
+                                    flag.parseValue(StringMan.join((Collection) remove, ',')));
                             } else {
                                 value.DEFAULT_FLAGS.put(flag, flag.parseValue("" + remove));
                             }
@@ -182,8 +187,11 @@ public final class Flags {
                     if (value.getFlags().containsKey(duplicate)) {
                         Object remove = value.getFlags().remove(duplicate);
                         try {
-                            if (remove instanceof Collection && remove.getClass().getMethod("toString").getDeclaringClass() == Object.class) {
-                                value.getFlags().put(flag, flag.parseValue(StringMan.join((Collection) remove, ',')));
+                            if (remove instanceof Collection
+                                && remove.getClass().getMethod("toString").getDeclaringClass()
+                                == Object.class) {
+                                value.getFlags().put(flag,
+                                    flag.parseValue(StringMan.join((Collection) remove, ',')));
                             } else {
                                 value.getFlags().put(flag, flag.parseValue("" + remove));
                             }

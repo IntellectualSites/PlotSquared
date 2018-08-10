@@ -21,14 +21,12 @@ public class NukkitWrappedChunk extends ScopedLocalBlockQueue {
         this.chunk = chunk;
     }
 
-    @Override
-    public boolean setBlock(int x, int y, int z, int id, int data) {
+    @Override public boolean setBlock(int x, int y, int z, int id, int data) {
         chunk.setBlock(x, y, z, id, data);
         return true;
     }
 
-    @Override
-    public PlotBlock getBlock(int x, int y, int z) {
+    @Override public PlotBlock getBlock(int x, int y, int z) {
         int id = chunk.getBlockId(x, y, z);
         if (id == 0) {
             return PlotBlock.get(0, 0);
@@ -37,16 +35,14 @@ public class NukkitWrappedChunk extends ScopedLocalBlockQueue {
         return PlotBlock.get(id, data);
     }
 
-    @Override
-    public boolean setBiome(int x, int z, String biome) {
+    @Override public boolean setBiome(int x, int z, String biome) {
         Biome b = EnumBiome.getBiome(biome);
         int id = b.getId();
         chunk.setBiomeId(x, z, id);
         return true;
     }
 
-    @Override
-    public void fillBiome(String biome) {
+    @Override public void fillBiome(String biome) {
         Biome b = EnumBiome.getBiome(biome);
         int id = b.getId();
         for (int x = 0; x < 16; x++) {
@@ -56,8 +52,7 @@ public class NukkitWrappedChunk extends ScopedLocalBlockQueue {
         }
     }
 
-    @Override
-    public String getWorld() {
+    @Override public String getWorld() {
         return world;
     }
 
@@ -69,13 +64,11 @@ public class NukkitWrappedChunk extends ScopedLocalBlockQueue {
         return chunk.getZ();
     }
 
-    @Override
-    public Location getMax() {
+    @Override public Location getMax() {
         return new Location(getWorld(), 15 + (getX() << 4), 255, 15 + (getZ() << 4));
     }
 
-    @Override
-    public Location getMin() {
+    @Override public Location getMin() {
         return new Location(getWorld(), getX() << 4, 0, getZ() << 4);
     }
 

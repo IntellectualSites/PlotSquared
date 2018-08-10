@@ -4,16 +4,16 @@ import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import java.util.UUID;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 
+import java.util.UUID;
+
 public class PlotPlusListener_1_12 implements Listener {
-    @EventHandler
-    public void onItemPickup(EntityPickupItemEvent event) {
+    @EventHandler public void onItemPickup(EntityPickupItemEvent event) {
         LivingEntity ent = event.getEntity();
         if (ent instanceof Player) {
             Player player = (Player) ent;

@@ -8,10 +8,6 @@ import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
 import com.plotsquared.bukkit.events.PlayerLeavePlotEvent;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.listener.PlotListener;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
@@ -27,6 +23,11 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.UUID;
+
 public class PlotPlusListener extends PlotListener implements Listener {
 
     private static final HashMap<String, Interval> feedRunnable = new HashMap<>();
@@ -34,10 +35,10 @@ public class PlotPlusListener extends PlotListener implements Listener {
 
     public static void startRunnable(JavaPlugin plugin) {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 if (!healRunnable.isEmpty()) {
-                    for (Iterator<Entry<String, Interval>> iterator = healRunnable.entrySet().iterator(); iterator.hasNext(); ) {
+                    for (Iterator<Entry<String, Interval>> iterator =
+                         healRunnable.entrySet().iterator(); iterator.hasNext(); ) {
                         Entry<String, Interval> entry = iterator.next();
                         Interval value = entry.getValue();
                         ++value.count;
@@ -56,7 +57,8 @@ public class PlotPlusListener extends PlotListener implements Listener {
                     }
                 }
                 if (!feedRunnable.isEmpty()) {
-                    for (Iterator<Entry<String, Interval>> iterator = feedRunnable.entrySet().iterator(); iterator.hasNext(); ) {
+                    for (Iterator<Entry<String, Interval>> iterator =
+                         feedRunnable.entrySet().iterator(); iterator.hasNext(); ) {
                         Entry<String, Interval> entry = iterator.next();
                         Interval value = entry.getValue();
                         ++value.count;
@@ -78,8 +80,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }, 0L, 20L);
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onInteract(BlockDamageEvent event) {
+    @EventHandler(priority = EventPriority.HIGH) public void onInteract(BlockDamageEvent event) {
         Player player = event.getPlayer();
         if (player.getGameMode() != GameMode.SURVIVAL) {
             return;
@@ -97,9 +98,8 @@ public class PlotPlusListener extends PlotListener implements Listener {
             }
         }
     }
-    
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onDamage(EntityDamageEvent event) {
+
+    @EventHandler(priority = EventPriority.HIGH) public void onDamage(EntityDamageEvent event) {
         if (event.getEntityType() != EntityType.PLAYER) {
             return;
         }
@@ -112,9 +112,8 @@ public class PlotPlusListener extends PlotListener implements Listener {
             event.setCancelled(true);
         }
     }
-    
-    @EventHandler
-    public void onItemDrop(PlayerDropItemEvent event) {
+
+    @EventHandler public void onItemDrop(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
         Plot plot = BukkitUtil.getLocation(player).getOwnedPlot();
@@ -128,9 +127,8 @@ public class PlotPlusListener extends PlotListener implements Listener {
             }
         }
     }
-    
-    @EventHandler
-    public void onPlotEnter(PlayerEnterPlotEvent event) {
+
+    @EventHandler public void onPlotEnter(PlayerEnterPlotEvent event) {
         Player player = event.getPlayer();
         Plot plot = event.getPlot();
         Optional<Integer[]> feed = plot.getFlag(Flags.FEED);
@@ -144,17 +142,15 @@ public class PlotPlusListener extends PlotListener implements Listener {
             healRunnable.put(player.getName(), new Interval(value[0], value[1], 20));
         }
     }
-    
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
+
+    @EventHandler public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         String name = player.getName();
         feedRunnable.remove(name);
         healRunnable.remove(name);
     }
-    
-    @EventHandler
-    public void onPlotLeave(PlayerLeavePlotEvent event) {
+
+    @EventHandler public void onPlotLeave(PlayerLeavePlotEvent event) {
         Player leaver = event.getPlayer();
         Plot plot = event.getPlot();
         if (!plot.hasOwner()) {

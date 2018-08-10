@@ -19,23 +19,19 @@ public class BukkitOfflinePlayer implements OfflinePlotPlayer {
         this.player = player;
     }
 
-    @Override
-    public UUID getUUID() {
+    @Override public UUID getUUID() {
         return this.player.getUniqueId();
     }
 
-    @Override
-    public long getLastPlayed() {
+    @Override public long getLastPlayed() {
         return this.player.getLastPlayed();
     }
 
-    @Override
-    public boolean isOnline() {
+    @Override public boolean isOnline() {
         return this.player.isOnline();
     }
 
-    @Override
-    public String getName() {
+    @Override public String getName() {
         return this.player.getName();
     }
 }

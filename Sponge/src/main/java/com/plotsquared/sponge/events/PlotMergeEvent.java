@@ -1,21 +1,20 @@
 package com.plotsquared.sponge.events;
 
-import java.util.ArrayList;
-
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.impl.AbstractEvent;
 import org.spongepowered.api.world.World;
 
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
+import java.util.ArrayList;
 
 public class PlotMergeEvent extends AbstractEvent implements Cancellable {
     private final ArrayList<PlotId> plots;
     private boolean cancelled;
     private Plot plot;
     private World world;
-    
+
     /**
      * PlotMergeEvent: Called when plots are merged
      *
@@ -26,7 +25,7 @@ public class PlotMergeEvent extends AbstractEvent implements Cancellable {
     public PlotMergeEvent(final World world, final Plot plot, final ArrayList<PlotId> plots) {
         this.plots = plots;
     }
-    
+
     /**
      * Get the plots being added;
      *
@@ -35,7 +34,7 @@ public class PlotMergeEvent extends AbstractEvent implements Cancellable {
     public ArrayList<PlotId> getPlots() {
         return plots;
     }
-    
+
     /**
      * Get the main plot
      *
@@ -44,23 +43,20 @@ public class PlotMergeEvent extends AbstractEvent implements Cancellable {
     public Plot getPlot() {
         return plot;
     }
-    
+
     public World getWorld() {
         return world;
     }
-    
-    @Override
-    public boolean isCancelled() {
+
+    @Override public boolean isCancelled() {
         return cancelled;
     }
-    
-    @Override
-    public void setCancelled(final boolean cancel) {
+
+    @Override public void setCancelled(final boolean cancel) {
         cancelled = cancel;
     }
-    
-    @Override
-    public Cause getCause() {
+
+    @Override public Cause getCause() {
         return null;
     }
 }

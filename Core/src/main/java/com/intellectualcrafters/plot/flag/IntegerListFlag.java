@@ -13,7 +13,7 @@ public class IntegerListFlag extends ListFlag<List<Integer>> {
     }
 
     @Override public String valueToString(Object value) {
-        return StringMan.join((List<Integer>)value, ",");
+        return StringMan.join((List<Integer>) value, ",");
     }
 
     @Override public List<Integer> parseValue(String value) {

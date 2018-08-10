@@ -10,27 +10,23 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.io.IOException;
 import java.util.Objects;
 
-@CommandDeclaration(command = "reload",
-        permission = "plots.admin.command.reload",
-        description = "Reload configurations",
-        usage = "/plot reload",
-        category = CommandCategory.ADMINISTRATION)
+@CommandDeclaration(command = "reload", permission = "plots.admin.command.reload", description = "Reload configurations", usage = "/plot reload", category = CommandCategory.ADMINISTRATION)
 public class Reload extends SubCommand {
 
-    @Override
-    public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer player, String[] args) {
         try {
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.
             PS.get().setupConfigs();
             C.load(PS.get().translationFile);
             PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
-                @Override
-                public void run(PlotArea area) {
-                    ConfigurationSection worldSection = PS.get().worlds.getConfigurationSection("worlds." + area.worldname);
+                @Override public void run(PlotArea area) {
+                    ConfigurationSection worldSection =
+                        PS.get().worlds.getConfigurationSection("worlds." + area.worldname);
                     if (worldSection == null) {
                         return;
                     }
@@ -38,8 +34,8 @@ public class Reload extends SubCommand {
                         area.saveConfiguration(worldSection);
                         area.loadDefaultConfiguration(worldSection);
                     } else {
-                        ConfigurationSection areaSection =
-                                worldSection.getConfigurationSection("areas." + area.id + "-" + area.getMin() + "-" + area.getMax());
+                        ConfigurationSection areaSection = worldSection.getConfigurationSection(
+                            "areas." + area.id + "-" + area.getMin() + "-" + area.getMax());
                         YamlConfiguration clone = new YamlConfiguration();
                         for (String key : areaSection.getKeys(true)) {
                             if (areaSection.get(key) instanceof MemorySection) {

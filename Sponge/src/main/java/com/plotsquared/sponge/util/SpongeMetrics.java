@@ -37,13 +37,7 @@ import org.spongepowered.api.Game;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
@@ -112,8 +106,7 @@ public class SpongeMetrics {
      */
     private volatile Task task = null;
 
-    @Inject
-    public SpongeMetrics(final Game game, final PluginContainer plugin) {
+    @Inject public SpongeMetrics(final Game game, final PluginContainer plugin) {
         if (plugin == null) {
             throw new IllegalArgumentException("Plugin cannot be null");
         }
@@ -159,7 +152,8 @@ public class SpongeMetrics {
      * @param value
      * @throws UnsupportedEncodingException
      */
-    private static void appendJSONPair(final StringBuilder json, final String key, final String value) {
+    private static void appendJSONPair(final StringBuilder json, final String key,
+        final String value) {
         boolean isValueNumeric = false;
 
         try {
@@ -295,8 +289,7 @@ public class SpongeMetrics {
 
                 private boolean firstPost = true;
 
-                @Override
-                public void run() {
+                @Override public void run() {
                     try {
                         // This has to be synchronized or it can collide with the disable method.
                         synchronized (optOutLock) {
@@ -396,14 +389,15 @@ public class SpongeMetrics {
 
     /**
      * Generic method that posts a plugin to the metrics website
-     *
      */
     private void postPlugin(final boolean isPing) throws IOException {
         // Server software specific section
         final String pluginName = plugin.getName();
-        final boolean onlineMode = game.getServer().getOnlineMode(); // TRUE if online mode is enabled
+        final boolean onlineMode =
+            game.getServer().getOnlineMode(); // TRUE if online mode is enabled
         final String pluginVersion = plugin.getVersion().orElse("unknown");
-        final String serverVersion = String.format("%s %s", "Sponge", game.getPlatform().getMinecraftVersion());
+        final String serverVersion =
+            String.format("%s %s", "Sponge", game.getPlatform().getMinecraftVersion());
         final int playersOnline = game.getServer().getOnlinePlayers().size();
 
         // END server software specific section -- all code below does not use any code outside of this class / Java
@@ -473,7 +467,8 @@ public class SpongeMetrics {
         connection.setDoOutput(true);
 
         if (debug) {
-            PS.debug("[Metrics] Prepared request for " + pluginName + " uncompressed=" + uncompressed.length + " compressed=" + compressed.length);
+            PS.debug("[Metrics] Prepared request for " + pluginName + " uncompressed="
+                + uncompressed.length + " compressed=" + compressed.length);
         }
 
         // Write the data
@@ -482,7 +477,8 @@ public class SpongeMetrics {
         os.flush();
 
         // Now read the response
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        final BufferedReader reader =
+            new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String response = reader.readLine();
 
         // close resources

@@ -1,17 +1,7 @@
 package com.plotsquared.sponge.util;
 
-import com.intellectualcrafters.jnbt.ByteArrayTag;
-import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.jnbt.IntTag;
-import com.intellectualcrafters.jnbt.ListTag;
-import com.intellectualcrafters.jnbt.ShortTag;
-import com.intellectualcrafters.jnbt.StringTag;
-import com.intellectualcrafters.jnbt.Tag;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.jnbt.*;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -21,13 +11,8 @@ import org.spongepowered.api.item.inventory.Carrier;
 import org.spongepowered.api.item.inventory.type.CarriedInventory;
 import org.spongepowered.api.world.World;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 public class SpongeSchematicHandler extends SchematicHandler {
 
@@ -38,12 +23,11 @@ public class SpongeSchematicHandler extends SchematicHandler {
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
 
-    @Override
-    public void getCompoundTag(String world, Set<RegionWrapper> regions, RunnableVal<CompoundTag> whenDone) {
+    @Override public void getCompoundTag(String world, Set<RegionWrapper> regions,
+        RunnableVal<CompoundTag> whenDone) {
         // async
         TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 // Main positions
                 Location[] corners = MainUtil.getCorners(world, regions);
                 Location bot = corners[0];
@@ -71,16 +55,18 @@ public class SpongeSchematicHandler extends SchematicHandler {
                 // Queue
                 ArrayDeque<RegionWrapper> queue = new ArrayDeque<>(regions);
                 TaskManager.runTask(new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         if (queue.isEmpty()) {
                             TaskManager.runTaskAsync(new Runnable() {
-                                @Override
-                                public void run() {
+                                @Override public void run() {
                                     schematic.put("Blocks", new ByteArrayTag("Blocks", blocks));
                                     schematic.put("Data", new ByteArrayTag("Data", blockData));
-                                    schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<>()));
-                                    schematic.put("TileEntities", new ListTag("TileEntities", CompoundTag.class, tileEntities));
+                                    schematic.put("Entities",
+                                        new ListTag("Entities", CompoundTag.class,
+                                            new ArrayList<>()));
+                                    schematic.put("TileEntities",
+                                        new ListTag("TileEntities", CompoundTag.class,
+                                            tileEntities));
                                     whenDone.value = new CompoundTag("Schematic", schematic);
                                     TaskManager.runTask(whenDone);
                                     System.gc();
@@ -115,22 +101,23 @@ public class SpongeSchematicHandler extends SchematicHandler {
                         World worldObj = SpongeUtil.getWorld(world);
                         // Main thread
                         TaskManager.runTask(new Runnable() {
-                            @Override
-                            public void run() {
+                            @Override public void run() {
                                 long start = System.currentTimeMillis();
-                                while (!chunks.isEmpty() && System.currentTimeMillis() - start < 20) {
+                                while (!chunks.isEmpty()
+                                    && System.currentTimeMillis() - start < 20) {
                                     // save schematics
                                     ChunkLoc chunk = chunks.remove(0);
                                     int X = chunk.x;
                                     int Z = chunk.z;
                                     int xxb = X << 4;
                                     int zzb = Z << 4;
-                                    if (!worldObj.getChunk(xxb, 1, zzb).isPresent() && !worldObj.loadChunk(xxb, 1, zzb, false).isPresent()) {
+                                    if (!worldObj.getChunk(xxb, 1, zzb).isPresent() && !worldObj
+                                        .loadChunk(xxb, 1, zzb, false).isPresent()) {
                                         continue;
                                     }
                                     int xxt = xxb + 15;
                                     int zzt = zzb + 15;
-                                    
+
                                     if (X == bcx) {
                                         xxb = p1x;
                                     }
@@ -264,22 +251,28 @@ public class SpongeSchematicHandler extends SchematicHandler {
                                                         CompoundTag rawTag;
                                                         if (state instanceof Carrier) {
                                                             Carrier chest = (Carrier) state;
-                                                            CarriedInventory<? extends Carrier> inv = chest.getInventory();
+                                                            CarriedInventory<? extends Carrier>
+                                                                inv = chest.getInventory();
                                                             // TODO serialize inventory
                                                             rawTag = null;
                                                         } else {
                                                             rawTag = null;
                                                         }
                                                         if (rawTag != null) {
-                                                            Map<String, Tag> values = new HashMap<>();
-                                                            for (Entry<String, Tag> entry : rawTag.getValue().entrySet()) {
-                                                                values.put(entry.getKey(), entry.getValue());
+                                                            Map<String, Tag> values =
+                                                                new HashMap<>();
+                                                            for (Entry<String, Tag> entry : rawTag
+                                                                .getValue().entrySet()) {
+                                                                values.put(entry.getKey(),
+                                                                    entry.getValue());
                                                             }
-                                                            values.put("id", new StringTag("id", "Chest"));
+                                                            values.put("id",
+                                                                new StringTag("id", "Chest"));
                                                             values.put("x", new IntTag("x", x));
                                                             values.put("y", new IntTag("y", y));
                                                             values.put("z", new IntTag("z", z));
-                                                            CompoundTag tileEntityTag = new CompoundTag(values);
+                                                            CompoundTag tileEntityTag =
+                                                                new CompoundTag(values);
                                                             tileEntities.add(tileEntityTag);
                                                         }
                                                     default:

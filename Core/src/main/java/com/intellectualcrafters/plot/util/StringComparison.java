@@ -8,11 +8,11 @@ import java.util.Collections;
  * String comparison library.
  */
 public class StringComparison<T> {
-    
+
     private T bestMatch;
     private double match = Integer.MAX_VALUE;
     private T bestMatchObject;
-    
+
     /**
      * Constructor
      *
@@ -26,18 +26,18 @@ public class StringComparison<T> {
     public StringComparison(String input, Collection<T> objects) {
         init(input, (T[]) objects.toArray());
     }
-    
+
     /**
      * You should call init(...) when you are ready to get a String comparison value.
      */
-    public StringComparison() {}
-    
+    public StringComparison() {
+    }
+
     /**
      * Compare two strings
      *
      * @param s1 String Base
      * @param s2 Object
-     *
      * @return match
      */
     public static int compare(String s1, String s2) {
@@ -50,12 +50,11 @@ public class StringComparison<T> {
         }
         return distance;
     }
-    
+
     /**
      * Create an ArrayList containing pairs of letters
      *
      * @param s string to split
-     *
      * @return ArrayList
      */
     public static ArrayList<String> wLetterPair(String s) {
@@ -67,12 +66,11 @@ public class StringComparison<T> {
         }
         return aPairs;
     }
-    
+
     /**
      * Get an array containing letter pairs
      *
      * @param s string to split
-     *
      * @return Array
      */
     public static String[] sLetterPair(String s) {
@@ -104,7 +102,7 @@ public class StringComparison<T> {
         }
         return o.toString();
     }
-    
+
     /**
      * Get the object
      *
@@ -113,7 +111,7 @@ public class StringComparison<T> {
     public T getMatchObject() {
         return this.bestMatchObject;
     }
-    
+
     /**
      * Get the best match value
      *
@@ -122,7 +120,7 @@ public class StringComparison<T> {
     public String getBestMatch() {
         return getString(this.bestMatch);
     }
-    
+
     /**
      * Will return both the match number, and the actual match string
      *
@@ -131,27 +129,29 @@ public class StringComparison<T> {
     public ComparisonResult getBestMatchAdvanced() {
         return new ComparisonResult(this.match, this.bestMatch);
     }
-    
+
+    public interface StringComparable {
+        String getComparableString();
+    }
+
+
     /**
      * The comparison result
      */
     public class ComparisonResult {
-        
+
         public final T best;
         public final double match;
-        
+
         /**
          * The constructor
+         *
          * @param match Match value
-         * @param best Best Match
+         * @param best  Best Match
          */
         public ComparisonResult(double match, T best) {
             this.match = match;
             this.best = best;
         }
-    }
-
-    public interface StringComparable {
-        String getComparableString();
     }
 }

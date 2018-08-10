@@ -13,23 +13,20 @@ import java.util.Collection;
 import java.util.UUID;
 
 public class SpongeLowerOfflineUUIDWrapper extends UUIDWrapper {
-    
+
     public SpongeLowerOfflineUUIDWrapper() {
         // Anything?
     }
-    
-    @Override
-    public UUID getUUID(PlotPlayer player) {
+
+    @Override public UUID getUUID(PlotPlayer player) {
         return getUUID(player.getName());
     }
-    
-    @Override
-    public UUID getUUID(OfflinePlotPlayer player) {
+
+    @Override public UUID getUUID(OfflinePlotPlayer player) {
         return getUUID(player.getName());
     }
-    
-    @Override
-    public OfflinePlotPlayer getOfflinePlayer(UUID uuid) {
+
+    @Override public OfflinePlotPlayer getOfflinePlayer(UUID uuid) {
         String name = UUIDHandler.getName(uuid);
         if (name == null) {
             try {
@@ -54,47 +51,41 @@ public class SpongeLowerOfflineUUIDWrapper extends UUIDWrapper {
         }
         String username = name;
         return new OfflinePlotPlayer() {
-            @Override
-            public boolean isOnline() {
+            @Override public boolean isOnline() {
                 return UUIDHandler.getPlayer(uuid) != null;
             }
-            
-            @Override
-            public UUID getUUID() {
+
+            @Override public UUID getUUID() {
                 return uuid;
             }
-            
-            @Override
-            public String getName() {
+
+            @Override public String getName() {
                 return username;
             }
-            
-            @Override
-            public long getLastPlayed() {
+
+            @Override public long getLastPlayed() {
                 // TODO FIXME
                 throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
             }
         };
     }
-    
+
     public Player[] getOnlinePlayers() {
         Collection<Player> onlinePlayers = SpongeMain.THIS.getServer().getOnlinePlayers();
         return onlinePlayers.toArray(new Player[onlinePlayers.size()]);
     }
-    
-    @Override
-    public UUID getUUID(String name) {
-        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(Charsets.UTF_8));
+
+    @Override public UUID getUUID(String name) {
+        return UUID
+            .nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(Charsets.UTF_8));
     }
-    
-    @Override
-    public OfflinePlotPlayer[] getOfflinePlayers() {
+
+    @Override public OfflinePlotPlayer[] getOfflinePlayers() {
         // TODO FIXME
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
-    
-    @Override
-    public OfflinePlotPlayer getOfflinePlayer(String name) {
+
+    @Override public OfflinePlotPlayer getOfflinePlayer(String name) {
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
 }

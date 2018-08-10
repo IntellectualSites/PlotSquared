@@ -9,8 +9,9 @@ import com.plotsquared.general.commands.Command;
 
 /**
  * SubCommand class
- * @see Command(Command, boolean)
+ *
  * @Deprecated In favor of normal Command class
+ * @see Command(Command, boolean)
  */
 public abstract class SubCommand extends Command {
     public SubCommand() {
@@ -22,8 +23,9 @@ public abstract class SubCommand extends Command {
         setRequiredArguments(arguments);
     }
 
-    @Override
-    public void execute(PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) {
+    @Override public void execute(PlotPlayer player, String[] args,
+        RunnableVal3<Command, Runnable, Runnable> confirm,
+        RunnableVal2<Command, CommandResult> whenDone) {
         onCommand(player, args);
     }
 

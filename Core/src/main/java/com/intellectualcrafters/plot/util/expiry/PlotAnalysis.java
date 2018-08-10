@@ -11,11 +11,7 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 import java.lang.reflect.Array;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlotAnalysis {
@@ -58,10 +54,11 @@ public class PlotAnalysis {
     public static void analyzePlot(Plot plot, RunnableVal<PlotAnalysis> whenDone) {
         HybridUtils.manager.analyzePlot(plot, whenDone);
     }
-    
+
     /**
      * This will set the optimal modifiers for the plot analysis based on the current plot ratings<br>
-     *  - Will be used to calibrate the threshold for plot clearing
+     * - Will be used to calibrate the threshold for plot clearing
+     *
      * @param whenDone
      * @param threshold
      */
@@ -71,20 +68,21 @@ public class PlotAnalysis {
             return;
         }
         if (threshold <= 0 || threshold >= 1) {
-            PS.debug("Invalid threshold provided! (Cannot be 0 or 100 as then there's no point calibrating)");
+            PS.debug(
+                "Invalid threshold provided! (Cannot be 0 or 100 as then there's no point calibrating)");
             return;
         }
         running = true;
         PS.debug(" - Fetching all plots");
         final ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlots());
         TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 Iterator<Plot> iterator = plots.iterator();
                 PS.debug(" - $1Reducing " + plots.size() + " plots to those with sufficient data");
                 while (iterator.hasNext()) {
                     Plot plot = iterator.next();
-                    if (plot.getSettings().ratings == null || plot.getSettings().getRatings().isEmpty()) {
+                    if (plot.getSettings().ratings == null || plot.getSettings().getRatings()
+                        .isEmpty()) {
                         iterator.remove();
                     } else {
                         plot.addRunning();
@@ -93,7 +91,8 @@ public class PlotAnalysis {
                 PS.debug(" - | Reduced to " + plots.size() + " plots");
 
                 if (plots.size() < 3) {
-                    PS.debug("Calibration cancelled due to insufficient comparison data, please try again later");
+                    PS.debug(
+                        "Calibration cancelled due to insufficient comparison data, please try again later");
                     running = false;
                     for (Plot plot : plots) {
                         plot.removeRunning();
@@ -120,12 +119,13 @@ public class PlotAnalysis {
                 final AtomicInteger mi = new AtomicInteger(0);
 
                 Thread ratingAnalysis = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         for (; mi.intValue() < plots.size(); mi.incrementAndGet()) {
                             int i = mi.intValue();
                             Plot plot = plots.get(i);
-                            ratings[i] = (int) ((plot.getAverageRating() + plot.getSettings().getRatings().size()) * 100);
+                            ratings[i] = (int) (
+                                (plot.getAverageRating() + plot.getSettings().getRatings().size())
+                                    * 100);
                             PS.debug(" | " + plot + " (rating) " + ratings[i]);
                         }
                     }
@@ -141,11 +141,9 @@ public class PlotAnalysis {
                     PS.debug(" | " + queuePlot);
                     final Object lock = new Object();
                     TaskManager.runTask(new Runnable() {
-                        @Override
-                        public void run() {
+                        @Override public void run() {
                             analyzePlot(queuePlot, new RunnableVal<PlotAnalysis>() {
-                                @Override
-                                public void run(PlotAnalysis value) {
+                                @Override public void run(PlotAnalysis value) {
                                     try {
                                         synchronized (this) {
                                             wait(10000);
@@ -170,7 +168,8 @@ public class PlotAnalysis {
                     }
                 }
 
-                PS.debug(" - $1Waiting on plot rating thread: " + mi.intValue() * 100 / plots.size() + "%");
+                PS.debug(" - $1Waiting on plot rating thread: " + mi.intValue() * 100 / plots.size()
+                    + "%");
                 try {
                     ratingAnalysis.join();
                 } catch (InterruptedException e) {
@@ -204,17 +203,21 @@ public class PlotAnalysis {
                 int optimalIndex = (int) Math.round((1 - threshold) * (n - 1));
 
                 PS.debug(" - $1Calculating rank correlation: ");
-                PS.debug(" - The analyzed plots which were processed and put into bulk data will be compared and correlated to the plot ranking");
-                PS.debug(" - The calculated correlation constant will then be used to calibrate the threshold for auto plot clearing");
+                PS.debug(
+                    " - The analyzed plots which were processed and put into bulk data will be compared and correlated to the plot ranking");
+                PS.debug(
+                    " - The calculated correlation constant will then be used to calibrate the threshold for auto plot clearing");
 
                 Settings.Auto_Clear settings = new Settings.Auto_Clear();
-                
+
                 int[] rankChanges = rank(changes);
                 int[] sdChanges = getSD(rankChanges, rankRatings);
                 int[] varianceChanges = square(sdChanges);
                 int sumChanges = sum(varianceChanges);
                 double factorChanges = getCC(n, sumChanges);
-                settings.CALIBRATION.CHANGES = factorChanges == 1 ? 0 : (int) (factorChanges * 1000 / MathMan.getMean(changes));
+                settings.CALIBRATION.CHANGES = factorChanges == 1 ?
+                    0 :
+                    (int) (factorChanges * 1000 / MathMan.getMean(changes));
                 PS.debug(" - | changes " + factorChanges);
 
                 int[] rankFaces = rank(faces);
@@ -222,7 +225,8 @@ public class PlotAnalysis {
                 int[] varianceFaces = square(sdFaces);
                 int sumFaces = sum(varianceFaces);
                 double factorFaces = getCC(n, sumFaces);
-                settings.CALIBRATION.FACES = factorFaces == 1 ? 0 : (int) (factorFaces * 1000 / MathMan.getMean(faces));
+                settings.CALIBRATION.FACES =
+                    factorFaces == 1 ? 0 : (int) (factorFaces * 1000 / MathMan.getMean(faces));
                 PS.debug(" - | faces " + factorFaces);
 
                 int[] rankData = rank(data);
@@ -230,7 +234,8 @@ public class PlotAnalysis {
                 int[] variance_data = square(sdData);
                 int sum_data = sum(variance_data);
                 double factor_data = getCC(n, sum_data);
-                settings.CALIBRATION.DATA = factor_data == 1 ? 0 : (int) (factor_data * 1000 / MathMan.getMean(data));
+                settings.CALIBRATION.DATA =
+                    factor_data == 1 ? 0 : (int) (factor_data * 1000 / MathMan.getMean(data));
                 PS.debug(" - | data " + factor_data);
 
                 int[] rank_air = rank(air);
@@ -238,7 +243,8 @@ public class PlotAnalysis {
                 int[] variance_air = square(sd_air);
                 int sum_air = sum(variance_air);
                 double factor_air = getCC(n, sum_air);
-                settings.CALIBRATION.AIR = factor_air == 1 ? 0 : (int) (factor_air * 1000 / MathMan.getMean(air));
+                settings.CALIBRATION.AIR =
+                    factor_air == 1 ? 0 : (int) (factor_air * 1000 / MathMan.getMean(air));
                 PS.debug(" - | air " + factor_air);
 
                 int[] rank_variety = rank(variety);
@@ -246,7 +252,9 @@ public class PlotAnalysis {
                 int[] variance_variety = square(sd_variety);
                 int sum_variety = sum(variance_variety);
                 double factor_variety = getCC(n, sum_variety);
-                settings.CALIBRATION.VARIETY = factor_variety == 1 ? 0 : (int) (factor_variety * 1000 / MathMan.getMean(variety));
+                settings.CALIBRATION.VARIETY = factor_variety == 1 ?
+                    0 :
+                    (int) (factor_variety * 1000 / MathMan.getMean(variety));
                 PS.debug(" - | variety " + factor_variety);
 
                 int[] rank_changes_sd = rank(changes_sd);
@@ -254,7 +262,9 @@ public class PlotAnalysis {
                 int[] variance_changes_sd = square(sd_changes_sd);
                 int sum_changes_sd = sum(variance_changes_sd);
                 double factor_changes_sd = getCC(n, sum_changes_sd);
-                settings.CALIBRATION.CHANGES_SD = factor_changes_sd == 1 ? 0 : (int) (factor_changes_sd * 1000 / MathMan.getMean(changes_sd));
+                settings.CALIBRATION.CHANGES_SD = factor_changes_sd == 1 ?
+                    0 :
+                    (int) (factor_changes_sd * 1000 / MathMan.getMean(changes_sd));
                 PS.debug(" - | changes_sd " + factor_changes_sd);
 
                 int[] rank_faces_sd = rank(faces_sd);
@@ -262,7 +272,9 @@ public class PlotAnalysis {
                 int[] variance_faces_sd = square(sd_faces_sd);
                 int sum_faces_sd = sum(variance_faces_sd);
                 double factor_faces_sd = getCC(n, sum_faces_sd);
-                settings.CALIBRATION.FACES_SD = factor_faces_sd == 1 ? 0 : (int) (factor_faces_sd * 1000 / MathMan.getMean(faces_sd));
+                settings.CALIBRATION.FACES_SD = factor_faces_sd == 1 ?
+                    0 :
+                    (int) (factor_faces_sd * 1000 / MathMan.getMean(faces_sd));
                 PS.debug(" - | faces_sd " + factor_faces_sd);
 
                 int[] rank_data_sd = rank(data_sd);
@@ -270,7 +282,9 @@ public class PlotAnalysis {
                 int[] variance_data_sd = square(sd_data_sd);
                 int sum_data_sd = sum(variance_data_sd);
                 double factor_data_sd = getCC(n, sum_data_sd);
-                settings.CALIBRATION.DATA_SD = factor_data_sd == 1 ? 0 : (int) (factor_data_sd * 1000 / MathMan.getMean(data_sd));
+                settings.CALIBRATION.DATA_SD = factor_data_sd == 1 ?
+                    0 :
+                    (int) (factor_data_sd * 1000 / MathMan.getMean(data_sd));
                 PS.debug(" - | data_sd " + factor_data_sd);
 
                 int[] rank_air_sd = rank(air_sd);
@@ -278,7 +292,8 @@ public class PlotAnalysis {
                 int[] variance_air_sd = square(sd_air_sd);
                 int sum_air_sd = sum(variance_air_sd);
                 double factor_air_sd = getCC(n, sum_air_sd);
-                settings.CALIBRATION.AIR_SD = factor_air_sd == 1 ? 0 : (int) (factor_air_sd * 1000 / MathMan.getMean(air_sd));
+                settings.CALIBRATION.AIR_SD =
+                    factor_air_sd == 1 ? 0 : (int) (factor_air_sd * 1000 / MathMan.getMean(air_sd));
                 PS.debug(" - | air_sd " + factor_air_sd);
 
                 int[] rank_variety_sd = rank(variety_sd);
@@ -286,7 +301,9 @@ public class PlotAnalysis {
                 int[] variance_variety_sd = square(sd_variety_sd);
                 int sum_variety_sd = sum(variance_variety_sd);
                 double factor_variety_sd = getCC(n, sum_variety_sd);
-                settings.CALIBRATION.VARIETY_SD = factor_variety_sd == 1 ? 0 : (int) (factor_variety_sd * 1000 / MathMan.getMean(variety_sd));
+                settings.CALIBRATION.VARIETY_SD = factor_variety_sd == 1 ?
+                    0 :
+                    (int) (factor_variety_sd * 1000 / MathMan.getMean(variety_sd));
                 PS.debug(" - | variety_sd " + factor_variety_sd);
 
                 int[] complexity = new int[n];
@@ -320,7 +337,9 @@ public class PlotAnalysis {
                     logln("Correlation: ");
                     logln(getCC(n, sum(square(getSD(rankComplexity, rankRatings)))));
                     if (optimalComplexity == Integer.MAX_VALUE) {
-                        PS.debug("Insufficient data to determine correlation! " + optimalIndex + " | " + n);
+                        PS.debug(
+                            "Insufficient data to determine correlation! " + optimalIndex + " | "
+                                + n);
                         running = false;
                         for (Plot plot : plots) {
                             plot.removeRunning();
@@ -376,17 +395,19 @@ public class PlotAnalysis {
             return obj.toString();
         }
     }
-    
+
     /**
      * Get correlation coefficient.
+     *
      * @return
      */
     public static double getCC(int n, int sum) {
         return 1 - 6 * (double) sum / (n * (n * n - 1));
     }
-    
+
     /**
      * Sum of an array
+     *
      * @param array
      * @return
      */
@@ -397,10 +418,11 @@ public class PlotAnalysis {
         }
         return sum;
     }
-    
+
     /**
      * A simple array squaring algorithm.
-     *  - Used for calculating the variance
+     * - Used for calculating the variance
+     *
      * @param array
      * @return
      */
@@ -411,9 +433,10 @@ public class PlotAnalysis {
         }
         return array;
     }
-    
+
     /**
      * An optimized lossy standard deviation algorithm.
+     *
      * @param ranks
      * @return
      */
@@ -437,24 +460,23 @@ public class PlotAnalysis {
         }
         return result;
     }
-    
+
     /**
      * An optimized algorithm for ranking a very specific set of inputs<br>
-     *  - Input is an array of int with a max size of 102400<br>
-     *  - A reduced sample space allows for sorting (and ranking in this case) in linear time
+     * - Input is an array of int with a max size of 102400<br>
+     * - A reduced sample space allows for sorting (and ranking in this case) in linear time
+     *
      * @param input
-     * @return
-    /**
-     * An optimized algorithm for ranking a very specific set of inputs
      * @param input
      * @return
      */
     public static int[] rank(int[] input) {
         return rank(input, 102400);
     }
-    
+
     /**
      * An optimized algorithm for ranking a very specific set of inputs
+     *
      * @param input
      * @return
      */
@@ -523,8 +545,9 @@ public class PlotAnalysis {
     }
 
     public List<Integer> asList() {
-        return Arrays.asList(this.changes, this.faces, this.data, this.air, this.variety, this.changes_sd, this.faces_sd, this.data_sd, this.air_sd,
-                this.variety_sd);
+        return Arrays
+            .asList(this.changes, this.faces, this.data, this.air, this.variety, this.changes_sd,
+                this.faces_sd, this.data_sd, this.air_sd, this.variety_sd);
     }
 
     public int getComplexity(Settings.Auto_Clear settings) {
@@ -532,16 +555,11 @@ public class PlotAnalysis {
         if (this.complexity != 0) {
             return this.complexity;
         }
-        this.complexity = this.changes * modifiers.CHANGES
-                + this.faces * modifiers.FACES
-                + this.data * modifiers.DATA
-                + this.air * modifiers.AIR
-                + this.variety * modifiers.VARIETY
-                + this.changes_sd * modifiers.CHANGES_SD
-                + this.faces_sd * modifiers.FACES_SD
-                + this.data_sd * modifiers.DATA_SD
-                + this.air_sd * modifiers.AIR_SD
-                + this.variety_sd * modifiers.VARIETY_SD;
+        this.complexity = this.changes * modifiers.CHANGES + this.faces * modifiers.FACES
+            + this.data * modifiers.DATA + this.air * modifiers.AIR
+            + this.variety * modifiers.VARIETY + this.changes_sd * modifiers.CHANGES_SD
+            + this.faces_sd * modifiers.FACES_SD + this.data_sd * modifiers.DATA_SD
+            + this.air_sd * modifiers.AIR_SD + this.variety_sd * modifiers.VARIETY_SD;
         return this.complexity;
     }
 }

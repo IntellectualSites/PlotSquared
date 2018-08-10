@@ -1,10 +1,10 @@
 package com.intellectualcrafters.jnbt;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * The {@code TAG_List} tag.
@@ -49,8 +49,7 @@ public final class ListTag extends Tag {
         return this.type;
     }
 
-    @Override
-    public List<Tag> getValue() {
+    @Override public List<Tag> getValue() {
         return this.value;
     }
 
@@ -58,7 +57,6 @@ public final class ListTag extends Tag {
      * Create a new list tag with this tag's name and type.
      *
      * @param list the new list
-     *
      * @return a new list tag
      */
     public ListTag setValue(List<Tag> list) {
@@ -69,7 +67,6 @@ public final class ListTag extends Tag {
      * Get the tag if it exists at the given index.
      *
      * @param index the index
-     *
      * @return the tag or null
      */
     public Tag getIfExists(int index) {
@@ -85,7 +82,6 @@ public final class ListTag extends Tag {
      * array tag, then an empty byte array will be returned. </p>
      *
      * @param index the index
-     *
      * @return a byte array
      */
     public byte[] getByteArray(int index) {
@@ -102,7 +98,6 @@ public final class ListTag extends Tag {
      * {@code 0} will be returned. </p>
      *
      * @param index the index
-     *
      * @return a byte
      */
     public byte getByte(int index) {
@@ -119,7 +114,6 @@ public final class ListTag extends Tag {
      * then {@code 0} will be returned. </p>
      *
      * @param index the index
-     *
      * @return a double
      */
     public double getDouble(int index) {
@@ -136,7 +130,6 @@ public final class ListTag extends Tag {
      * exist or its value is not a number, then {@code 0} will be returned. </p>
      *
      * @param index the index
-     *
      * @return a double
      */
     public double asDouble(int index) {
@@ -163,7 +156,6 @@ public final class ListTag extends Tag {
      * then {@code 0} will be returned. </p>
      *
      * @param index the index
-     *
      * @return a float
      */
     public float getFloat(int index) {
@@ -180,7 +172,6 @@ public final class ListTag extends Tag {
      * array tag, then an empty array will be returned. </p>
      *
      * @param index the index
-     *
      * @return an int array
      */
     public int[] getIntArray(int index) {
@@ -197,7 +188,6 @@ public final class ListTag extends Tag {
      * {@code 0} will be returned. </p>
      *
      * @param index the index
-     *
      * @return an int
      */
     public int getInt(int index) {
@@ -214,7 +204,6 @@ public final class ListTag extends Tag {
      * or its value is not a number, then {@code 0} will be returned. </p>
      *
      * @param index the index
-     *
      * @return an int
      */
     public int asInt(int index) {
@@ -241,7 +230,6 @@ public final class ListTag extends Tag {
      * tag, then an empty list will be returned. </p>
      *
      * @param index the index
-     *
      * @return a list of tags
      */
     public List<Tag> getList(int index) {
@@ -258,7 +246,6 @@ public final class ListTag extends Tag {
      * tag, then an empty tag list will be returned. </p>
      *
      * @param index the index
-     *
      * @return a tag list instance
      */
     public ListTag getListTag(int index) {
@@ -278,11 +265,10 @@ public final class ListTag extends Tag {
      * @param index    the index
      * @param listType the class of the contained type
      * @param <T>      the NBT type
-     *
      * @return a list of tags
      */
-    @SuppressWarnings("unchecked")
-    public <T extends Tag> List<T> getList(int index, Class<T> listType) {
+    @SuppressWarnings("unchecked") public <T extends Tag> List<T> getList(int index,
+        Class<T> listType) {
         Tag tag = getIfExists(index);
         if (tag instanceof ListTag) {
             ListTag listTag = (ListTag) tag;
@@ -301,7 +287,6 @@ public final class ListTag extends Tag {
      * {@code 0} will be returned. </p>
      *
      * @param index the index
-     *
      * @return a long
      */
     public long getLong(int index) {
@@ -318,7 +303,6 @@ public final class ListTag extends Tag {
      * or its value is not a number, then {@code 0} will be returned. </p>
      *
      * @param index the index
-     *
      * @return a long
      */
     public long asLong(int index) {
@@ -345,7 +329,6 @@ public final class ListTag extends Tag {
      * then {@code 0} will be returned. </p>
      *
      * @param index the index
-     *
      * @return a short
      */
     public short getShort(int index) {
@@ -362,7 +345,6 @@ public final class ListTag extends Tag {
      * then {@code ""} will be returned. </p>
      *
      * @param index the index
-     *
      * @return a string
      */
     public String getString(int index) {
@@ -374,17 +356,16 @@ public final class ListTag extends Tag {
         }
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         String name = getName();
         String append = "";
         if (name != null && !name.isEmpty()) {
             append = "(\"" + getName() + "\")";
         }
         StringBuilder bldr = new StringBuilder();
-        bldr.append("TAG_List").append(append).append(": ").append(this.value.size()).append(" entries of type ")
-                .append(NBTUtils.getTypeName(this.type))
-                .append("\r\n{\r\n");
+        bldr.append("TAG_List").append(append).append(": ").append(this.value.size())
+            .append(" entries of type ").append(NBTUtils.getTypeName(this.type))
+            .append("\r\n{\r\n");
         for (Tag t : this.value) {
             bldr.append("   ").append(t.toString().replaceAll("\r\n", "\r\n   ")).append("\r\n");
         }

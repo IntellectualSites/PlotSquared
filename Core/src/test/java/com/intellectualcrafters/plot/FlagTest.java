@@ -1,7 +1,5 @@
 package com.intellectualcrafters.plot;
 
-import static org.junit.Assert.assertEquals;
-
 import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.database.AbstractDBTest;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -19,19 +17,19 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
+
 public class FlagTest {
 
     private Object testBlock;
     private Flag<? extends Collection<?>> use = Flags.USE;
 
-    @Before
-    public void setUp() throws Exception {
+    @Before public void setUp() throws Exception {
         EventUtil.manager = new EventUtilTest();
         DBFunc.dbManager = new AbstractDBTest();
     }
 
-    @Test
-    public void flagTest() throws Exception {
+    @Test public void flagTest() throws Exception {
         Plot plot = new Plot(null, new PlotId(0, 0));
         plot.owner = UUID.fromString("84499644-ad72-454b-a19d-f28c28df382b");
         //plot.setFlag(use, use.parseValue("33,33:1,6:4")); //TODO fix this so FlagTest will run during compile

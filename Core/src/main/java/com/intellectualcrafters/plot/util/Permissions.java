@@ -9,8 +9,8 @@ import java.util.HashMap;
 
 /**
  * The Permissions class handles checking user permissions.<br>
- *  - This will respect * nodes and plots.admin and can be used to check permission ranges (e.g. plots.plot.5)<br>
- *  - Checking the PlotPlayer class directly will not take the above into account<br> 
+ * - This will respect * nodes and plots.admin and can be used to check permission ranges (e.g. plots.plot.5)<br>
+ * - Checking the PlotPlayer class directly will not take the above into account<br>
  */
 public class Permissions {
 
@@ -20,6 +20,7 @@ public class Permissions {
 
     /**
      * Check if a player has a permission (C class helps keep track of permissions).
+     *
      * @param player
      * @param caption
      * @return
@@ -27,9 +28,10 @@ public class Permissions {
     public static boolean hasPermission(PlotPlayer player, C caption) {
         return hasPermission(player, caption.s());
     }
-    
+
     /**
      * Check if a {@link PlotPlayer} has a permission.
+     *
      * @param player
      * @param permission
      * @return
@@ -52,9 +54,10 @@ public class Permissions {
         map.put(permission, result);
         return result;
     }
-    
+
     /**
      * Check if a {@code CommandCaller} has a permission.
+     *
      * @param caller
      * @param permission
      * @return
@@ -84,13 +87,14 @@ public class Permissions {
         }
         return false;
     }
-    
+
     /**
      * Check if a PlotPlayer has a permission, and optionally send the no permission message if applicable.
+     *
      * @param player
      * @param permission
      * @param notify
-     * @return 
+     * @return
      */
     public static boolean hasPermission(PlotPlayer player, String permission, boolean notify) {
         if (!hasPermission(player, permission)) {
@@ -108,11 +112,12 @@ public class Permissions {
 
     /**
      * Check the the highest permission a PlotPlayer has within a specified range.<br>
-     *  - Excessively high values will lag<br>
-     *  - The default range that is checked is {@link Settings.Limit#MAX_PLOTS}<br>
+     * - Excessively high values will lag<br>
+     * - The default range that is checked is {@link Settings.Limit#MAX_PLOTS}<br>
+     *
      * @param player
-     * @param stub The permission stub to check e.g. for `plots.plot.#` the stub is `plots.plot`
-     * @param range The range to check
+     * @param stub   The permission stub to check e.g. for `plots.plot.#` the stub is `plots.plot`
+     * @param range  The range to check
      * @return The highest permission they have within that range
      */
     public static int hasPermissionRange(PlotPlayer player, String stub, int range) {
