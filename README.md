@@ -18,8 +18,9 @@ is to provide a lag-free and smooth experience.
 
 ### Developer Resources
 * [JavaDocs]  Link Temporarily Unavailable 
-* [Build Server](http://ci.athion.net/job/PlotSquared/)
-* [Maven Repo](http://ci.athion.net/job/PlotSquared/ws/mvn/)
+* [[Git Mirror](https://incendo.org/git/sauilitired/PlotSquared/)]
+* [[Build Server](http://ci.athion.net/job/PlotSquared/)] [[Alternative](https://incendo.org/ci/job/PlotSquared/)]
+* [[Maven Repo](http://ci.athion.net/job/PlotSquared/ws/mvn/)] 
 
 # Building
 Gradle is the **recommended** way to build the project. Use `./gradlew build` in the main project directory to build the project. Gradle is required if you intend to build or develop the Sponge module.
