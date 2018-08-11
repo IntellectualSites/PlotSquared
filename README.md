@@ -29,6 +29,9 @@ If you prefer to use maven, a `pom.xml` file is provided for working with the Bu
 # Contributing
 Feel free to contribute, if you feel like you can improve the plugin in any way. Make sure to test your code before sending it away from us, as committing broken code will block you from future contribution.
 
+## Suggestions
+Suggestions are welcome! We have a separate issue tracker for suggestions, that can be found in [this](https://github.com/IntellectualSites/PlotSquaredSuggestions) repository.
+
 # Official Addons
 * [Plot2Dynmap](http://www.spigotmc.org/resources/plot2dynmap.1292/)
 * [AdvPlots](http://www.spigotmc.org/resources/advplots-%CE%B2.1500/)
