@@ -1,0 +1,13 @@
+# Comment to a new issue.
+issueOpened: >
+  Thank your for raising a issue. We will try and get back to you as soon as possible.
+
+  Please make sure that you followed the issue template, and provied all neccessary information. Failure
+  to do so will prevent us from resolving the issue in a timely manner. 
+
+pullRequestOpened: >
+  Thank your for raising your pull request.
+
+  Please make sure you have followed our contributing guidelines and to take an extra look at the code to make sure that it is functional!
+  
+  We will review it as soon as possible!
