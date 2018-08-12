@@ -235,7 +235,7 @@ public class Auto extends SubCommand {
      * @param start
      * @param schem
      */
-    public static void autoClaimSafe(final PlotPlayer player, final PlotArea area, PlotId start, final String schem, @Nullable Integer allowed_plots) {
+    public static void autoClaimSafe(final PlotPlayer player, final PlotArea area, PlotId start, final String schem, @Nullable final Integer allowed_plots) {
         player.setMeta(Auto.class.getName(), true);
         autoClaimFromDatabase(player, area, start, new RunnableVal<Plot>() {
             @Override
