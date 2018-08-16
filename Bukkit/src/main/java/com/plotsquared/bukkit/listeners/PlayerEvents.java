@@ -7,6 +7,8 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.flag.IntegerFlag;
 import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.object.BukkitLazyBlock;
@@ -27,10 +29,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.World;
+
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -165,6 +165,16 @@ public class PlayerEvents extends PlotListener implements Listener {
             case WOODEN_DOOR:
             case FENCE_GATE:
             case WOOD_BUTTON:
+//DAVIDBLA
+                if(block.getState().hasMetadata("BlockRedstone")){
+                    block.getState().removeMetadata("BlockRedstone",Bukkit.getPluginManager().getPlugin("PlotSquared"));
+                    //event.setNewCurrent(event.getOldCurrent());
+                    //seems to "sometimes" fired after button gets powered -> button will stay powered...
+                    event.setNewCurrent(0); //think about side effects...
+                    System.out.println("Redstone gestoppt");
+                    return;
+                }
+/////////////////
             case STONE_BUTTON:
             case IRON_PLATE:
             case WOOD_PLATE:
@@ -355,14 +365,35 @@ public class PlayerEvents extends PlotListener implements Listener {
         ProjectileSource shooter = entity.getShooter();
         if (shooter instanceof Player) {
             PlotPlayer pp = BukkitUtil.getPlayer((Player) shooter);
+
+            if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_PROJECTILE_OTHER)) {
+                return true;
+            }
+
+///DAVIDBLA
+            if(entity.getType() == EntityType.ARROW){
+                if( event.getHitBlock().getType() == Material.WOOD_BUTTON){
+                    //Seems obsolete - Arrows never hits Buttons but the Block behind...
+                    event.getHitBlock().getState().setMetadata("BlockRedstone", new FixedMetadataValue((Plugin) PS.get().IMP, plot));
+                }else{
+                    org.bukkit.util.BlockIterator iterator = new org.bukkit.util.BlockIterator(entity.getWorld(), entity.getLocation().toVector(), entity.getVelocity().normalize(), 0, 1);
+                    Block hitBlock = null;
+                    while (iterator.hasNext()) {
+                        hitBlock = iterator.next();
+                        if (hitBlock.getType() == Material.WOOD_BUTTON) {
+                            hitBlock.getState().setMetadata("BlockRedstone", new FixedMetadataValue((Plugin) PS.get().IMP, plot));
+                            break;
+                        }
+                    }
+                }
+            }
+////////////////////////////////////////////////////////////////
+
             if (plot == null) {
                 if (!Permissions.hasPermission(pp, C.PERMISSION_PROJECTILE_UNOWNED)) {
                     entity.remove();
                     return false;
                 }
-                return true;
-            }
-            if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_PROJECTILE_OTHER)) {
                 return true;
             }
             entity.remove();
@@ -624,7 +655,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                                 vehicle.remove();
                             }
                         } else if (toPlot != null) {
-                            vehicle.setMetadata("plot", new FixedMetadataValue((Plugin) PS.get().IMP, toPlot));
+                            vehicle.setMetadata("plot",new FixedMetadataValue((Plugin) PS.get().IMP, toPlot));
                         }
                     }
                 }
