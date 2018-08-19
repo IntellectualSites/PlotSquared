@@ -122,12 +122,15 @@ public class Rate extends SubCommand {
                             if (index.getValue() >= Settings.Ratings.CATEGORIES.size()) {
                                 int rV = rating.getValue();
                                 Rating result = EventUtil.manager.callRating(this.player, plot, new Rating(rV));
-                                plot.addRating(this.player.getUUID(), result);
-                                sendMessage(this.player, C.RATING_APPLIED, plot.getId().toString());
-                                if (Permissions.hasPermission(this.player, C.PERMISSION_COMMENT)) {
-                                    Command command = MainCommand.getInstance().getCommand(Comment.class);
-                                    if (command != null) {
-                                        MainUtil.sendMessage(this.player, C.COMMENT_THIS, command.getUsage());
+                                if (result != null) {
+                                    plot.addRating(this.player.getUUID(), result);
+                                    sendMessage(this.player, C.RATING_APPLIED, plot.getId().toString());
+                                    if (Permissions.hasPermission(this.player, C.PERMISSION_COMMENT)) {
+                                        Command command = MainCommand.getInstance().getCommand(Comment.class);
+                                        if (command != null) {
+                                            MainUtil.sendMessage(this.player, C.COMMENT_THIS,
+                                                command.getUsage());
+                                        }
                                     }
                                 }
                                 return false;
@@ -189,8 +192,10 @@ public class Rate extends SubCommand {
                     return;
                 }
                 Rating result = EventUtil.manager.callRating(player, plot, new Rating(rating));
-                plot.addRating(uuid, result);
-                sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
+                if (result != null) {
+                    plot.addRating(uuid, result);
+                    sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
+                }
             }
         };
         if (plot.getSettings().ratings == null) {

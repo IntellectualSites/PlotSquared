@@ -18,6 +18,7 @@ import com.intellectualcrafters.plot.object.Rating;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.plotsquared.listener.PlayerBlockEventType;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
@@ -26,6 +27,14 @@ public abstract class EventUtil {
 
     public static EventUtil manager = null;
 
+    /**
+     * Submit a plot rate event and return the updated rating
+     * @param player Player that rated the plot
+     * @param plot Plot that was rated
+     * @param rating Rating given to the plot
+     * @return Updated rating or null if the event was cancelled
+     */
+    @Nullable
     public abstract Rating callRating(PlotPlayer player, Plot plot, Rating rating);
 
     public abstract boolean callClaim(PlotPlayer player, Plot plot, boolean auto);

@@ -29,6 +29,7 @@ import com.plotsquared.sponge.events.PlotUnlinkEvent;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.EventManager;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -120,9 +121,13 @@ public class SpongeEventUtil extends EventUtil {
     }
     
     @Override
+    @Nullable
     public Rating callRating(PlotPlayer player, Plot plot, Rating rating) {
         PlotRateEvent event = new PlotRateEvent(player, rating, plot);
         this.events.post(event);
+        if (event.isCancelled()) {
+            return null;
+        }
         return event.getRating();
     }
     

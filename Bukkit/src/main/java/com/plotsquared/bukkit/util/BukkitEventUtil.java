@@ -31,6 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -124,10 +125,13 @@ public class BukkitEventUtil extends EventUtil {
     }
 
     @Override
+    @Nullable
     public Rating callRating(PlotPlayer player, Plot plot, Rating rating) {
         PlotRateEvent event = new PlotRateEvent(player, rating, plot);
         Bukkit.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return null;
+        }
         return event.getRating();
     }
-
 }

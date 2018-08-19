@@ -1,15 +1,17 @@
 package com.plotsquared.nukkit.events;
 
+import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.Rating;
 
-public class PlotRateEvent extends PlotEvent {
+public class PlotRateEvent extends PlotEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private final PlotPlayer rater;
     private Rating rating;
+    private boolean cancelled = false;
 
     public PlotRateEvent(PlotPlayer rater, Rating rating, Plot plot) {
         super(plot);
@@ -33,4 +35,11 @@ public class PlotRateEvent extends PlotEvent {
         this.rating = rating;
     }
 
+    @Override public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    @Override public boolean isCancelled() {
+        return this.cancelled;
+    }
 }
