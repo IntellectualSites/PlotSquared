@@ -355,6 +355,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                             Plot plot = location.getPlot();
                                             if (plot == null) {
                                                 if (location.isPlotArea()) {
+                                                    if (entity.hasMetadata("ps-tmp-teleport")) {
+                                                        continue;
+                                                    }
                                                     iterator.remove();
                                                     entity.remove();
                                                 }
@@ -366,6 +369,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                             }
                                             Plot origin = (Plot) meta.get(0).value();
                                             if (!plot.equals(origin.getBasePlot(false))) {
+                                                if (entity.hasMetadata("ps-tmp-teleport")) {
+                                                    continue;
+                                                }
                                                 iterator.remove();
                                                 entity.remove();
                                             }
@@ -445,6 +451,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                                         Entity passenger = entity.getPassenger();
                                                         if (!(passenger instanceof Player) && entity
                                                             .getMetadata("keep").isEmpty()) {
+                                                            if (entity.hasMetadata("ps-tmp-teleport")) {
+                                                                continue;
+                                                            }
                                                             iterator.remove();
                                                             entity.remove();
                                                             continue;
@@ -454,6 +463,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                                     Entity passenger = entity.getPassenger();
                                                     if (!(passenger instanceof Player) && entity
                                                         .getMetadata("keep").isEmpty()) {
+                                                        if (entity.hasMetadata("ps-tmp-teleport")) {
+                                                            continue;
+                                                        }
                                                         iterator.remove();
                                                         entity.remove();
                                                         continue;
@@ -490,6 +502,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                                             && (currentPlotId == null || !area
                                                             .getPlot(originalPlotId)
                                                             .equals(area.getPlot(currentPlotId)))) {
+                                                            if (entity.hasMetadata("ps-tmp-teleport")) {
+                                                                continue;
+                                                            }
                                                             iterator.remove();
                                                             entity.remove();
                                                         }

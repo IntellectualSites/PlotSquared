@@ -1,5 +1,5 @@
 name: ${name}
-main: BukkitMain
+main: com.github.intellectualsites.plotsquared.bukkit.BukkitMain
 version: ${version}
 load: STARTUP
 description: >

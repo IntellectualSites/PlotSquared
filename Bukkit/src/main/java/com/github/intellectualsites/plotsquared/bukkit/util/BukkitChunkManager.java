@@ -1,6 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.entity.EntityWrapper;
+import com.github.intellectualsites.plotsquared.bukkit.object.entity.ReplicatingEntityWrapper;
 import com.github.intellectualsites.plotsquared.plot.PS;
 import com.github.intellectualsites.plotsquared.plot.generator.AugmentedUtils;
 import com.github.intellectualsites.plotsquared.plot.object.*;
@@ -327,6 +328,9 @@ public class BukkitChunkManager extends ChunkManager {
                 org.bukkit.Location location = entity.getLocation();
                 if (location.getX() >= bx && location.getX() <= tx && location.getZ() >= bz
                     && location.getZ() <= tz) {
+                    if (entity.hasMetadata("ps-tmp-teleport")) {
+                        continue;
+                    }
                     entity.remove();
                 }
             }
@@ -660,7 +664,8 @@ public class BukkitChunkManager extends ChunkManager {
                 if (entity.getVehicle() != null) {
                     continue;
                 }
-                EntityWrapper wrap = new EntityWrapper(entity, (short) 2);
+                EntityWrapper wrap = new ReplicatingEntityWrapper(entity, (short) 2);
+                wrap.saveEntity();
                 this.entities.add(wrap);
             }
         }
@@ -677,9 +682,10 @@ public class BukkitChunkManager extends ChunkManager {
                 if (entity.getVehicle() != null) {
                     continue;
                 }
-                EntityWrapper wrap = new EntityWrapper(entity, (short) 2);
+                EntityWrapper wrap = new ReplicatingEntityWrapper(entity, (short) 2);
                 wrap.x += offsetX;
                 wrap.z += offsetZ;
+                wrap.saveEntity();
                 this.entities.add(wrap);
                 if (delete) {
                     if (!(entity instanceof Player)) {
