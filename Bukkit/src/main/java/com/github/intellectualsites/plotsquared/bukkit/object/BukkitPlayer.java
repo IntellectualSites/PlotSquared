@@ -10,6 +10,7 @@ import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.WeatherType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -63,6 +64,16 @@ public class BukkitPlayer extends PlotPlayer {
         org.bukkit.Location to = BukkitUtil.getLocation(loc);
         org.bukkit.Location from = player.getLocation();
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to);
+        callEvent(event);
+        if (event.isCancelled() || !event.getTo().equals(to)) {
+            return false;
+        }
+        event = new PlayerTeleportEvent(player, to, from);
+        callEvent(event);
+        return true;
+    }
+
+    private void callEvent(final Event event) {
         RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
         for (RegisteredListener listener : listeners) {
             if (listener.getPlugin().getName().equals(PS.imp().getPluginName())) {
@@ -74,21 +85,6 @@ public class BukkitPlayer extends PlotPlayer {
                 e.printStackTrace();
             }
         }
-        if (event.isCancelled() || !event.getTo().equals(to)) {
-            return false;
-        }
-        event = new PlayerTeleportEvent(player, to, from);
-        for (RegisteredListener listener : listeners) {
-            if (listener.getPlugin().getName().equals(PS.imp().getPluginName())) {
-                continue;
-            }
-            try {
-                listener.callEvent(event);
-            } catch (EventException e) {
-                e.printStackTrace();
-            }
-        }
-        return true;
     }
 
     @Override public boolean hasPermission(String permission) {
