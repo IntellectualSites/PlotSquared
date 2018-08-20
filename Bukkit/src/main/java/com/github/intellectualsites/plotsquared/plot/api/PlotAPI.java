@@ -3,20 +3,23 @@ package com.github.intellectualsites.plotsquared.plot.api;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
 import com.github.intellectualsites.plotsquared.plot.PS;
-import com.github.intellectualsites.plotsquared.plot.commands.SubCommand;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
-import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
+import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
@@ -35,19 +38,8 @@ import java.util.*;
  *
  * @version 3.3.3
  */
+@NoArgsConstructor
 public class PlotAPI {
-
-    /**
-     * Deprecated, does nothing.
-     *
-     * @param plugin not needed
-     * @deprecated Not needed
-     */
-    @Deprecated public PlotAPI(JavaPlugin plugin) {
-    }
-
-    public PlotAPI() {
-    }
 
     /**
      * Get all plots.
@@ -147,44 +139,6 @@ public class PlotAPI {
     }
 
     /**
-     * Do not use this. Instead use FlagManager.[method] in your code.
-     * - Flag related stuff
-     *
-     * @return FlagManager
-     * @deprecated Use {@link FlagManager} directly
-     */
-    @Deprecated public FlagManager getFlagManager() {
-        return new FlagManager();
-    }
-
-    /**
-     * Do not use this. Instead use MainUtil.[method] in your code.
-     *
-     * @return MainUtil
-     * @deprecated Use {@link MainUtil} directly
-     */
-    @Deprecated public MainUtil getMainUtil() {
-        return new MainUtil();
-    }
-
-    /**
-     * Do not use this. Instead use C.PERMISSION_[method] in your code.
-     *
-     * @return Array of strings
-     * @see Permissions
-     * @deprecated Use {@link C} to list all the permissions
-     */
-    @Deprecated public String[] getPermissions() {
-        ArrayList<String> perms = new ArrayList<>();
-        for (C caption : C.values()) {
-            if ("static.permissions".equals(caption.getCategory())) {
-                perms.add(caption.s());
-            }
-        }
-        return perms.toArray(new String[perms.size()]);
-    }
-
-    /**
      * SchematicHandler class contains methods related to pasting, reading
      * and writing schematics.
      *
@@ -193,32 +147,6 @@ public class PlotAPI {
      */
     public SchematicHandler getSchematicHandler() {
         return SchematicHandler.manager;
-    }
-
-    /**
-     * Use C.[caption] instead
-     *
-     * @return C
-     * @deprecated Use {@link C}
-     */
-    @Deprecated public C[] getCaptions() {
-        return C.values();
-    }
-
-    /**
-     * Get the plot manager for a world. Most of these methods can be accessed
-     * through the MainUtil.
-     *
-     * @param world the world to retrieve the manager from
-     * @return PlotManager
-     * @see PlotManager
-     * @see PS#getPlotManager(Plot)
-     */
-    @SuppressWarnings("deprecation") @Deprecated public PlotManager getPlotManager(World world) {
-        if (world == null) {
-            return null;
-        }
-        return getPlotManager(world.getName());
     }
 
     /**
@@ -232,71 +160,6 @@ public class PlotAPI {
             return Collections.emptySet();
         }
         return PS.get().getPlotAreas(world.getName());
-    }
-
-    /**
-     * Get the plot manager for a world. Contains useful low level methods for
-     * plot merging, clearing, and tessellation.
-     *
-     * @param world The world
-     * @return PlotManager
-     * @see PS#getPlotManager(Plot)
-     * @see PlotManager
-     */
-    @Deprecated public PlotManager getPlotManager(String world) {
-        Set<PlotArea> areas = PS.get().getPlotAreas(world);
-        switch (areas.size()) {
-            case 0:
-                return null;
-            case 1:
-                return areas.iterator().next().manager;
-            default:
-                PS.debug(
-                    "PlotAPI#getPlotManager(org.bukkit.World) is deprecated and doesn't support multi plot area worlds.");
-                return null;
-        }
-    }
-
-    /**
-     * Get the settings for a world (settings bundled in PlotArea class). You
-     * will need to downcast for the specific settings a Generator has. e.g.
-     * DefaultPlotWorld class implements PlotArea
-     *
-     * @param world The World
-     * @return The {@link PlotArea} for the world or null if not in plotworld
-     * @see #getPlotAreas(World)
-     * @see PlotArea
-     */
-    @SuppressWarnings("deprecation") @Deprecated public PlotArea getWorldSettings(World world) {
-        if (world == null) {
-            return null;
-        }
-        return getWorldSettings(world.getName());
-    }
-
-    /**
-     * Get the settings for a world.
-     *
-     * @param world the world to retrieve settings from
-     * @return The {@link PlotArea} for the world or null if not in plotworld
-     * @see PS#getPlotArea(String, String)
-     * @see PlotArea
-     */
-    @Deprecated public PlotArea getWorldSettings(String world) {
-        if (world == null) {
-            return null;
-        }
-        Set<PlotArea> areas = PS.get().getPlotAreas(world);
-        switch (areas.size()) {
-            case 0:
-                return null;
-            case 1:
-                return areas.iterator().next();
-            default:
-                PS.debug(
-                    "PlotAPI#getWorldSettings(org.bukkit.World) is deprecated and doesn't support multi plot area worlds.");
-                return null;
-        }
     }
 
     /**
@@ -352,26 +215,6 @@ public class PlotAPI {
     }
 
     /**
-     * Gets a plot based on the ID.
-     *
-     * @param world the world the plot is located in
-     * @param x     The PlotID x coordinate
-     * @param z     The PlotID y coordinate
-     * @return plot, null if ID is wrong
-     * @see PlotArea#getPlot(PlotId)
-     */
-    @SuppressWarnings("deprecation") @Deprecated public Plot getPlot(World world, int x, int z) {
-        if (world == null) {
-            return null;
-        }
-        PlotArea area = getWorldSettings(world);
-        if (area == null) {
-            return null;
-        }
-        return area.getPlot(new PlotId(x, z));
-    }
-
-    /**
      * Get a plot based on the location.
      *
      * @param location the location to check
@@ -398,94 +241,6 @@ public class PlotAPI {
     }
 
     /**
-     * Check whether or not a player has a plot.
-     *
-     * @param player Player that you want to check for
-     * @param world  The world to check
-     * @return true if player has a plot, false if not.
-     * @see #getPlots(World, Player, boolean)
-     */
-    @SuppressWarnings("deprecation") @Deprecated public boolean hasPlot(World world,
-        Player player) {
-        return getPlots(world, player, true).length > 0;
-    }
-
-    /**
-     * Get all plots for the player.
-     *
-     * @param world     The world to retrieve plots from
-     * @param player    The player to search for
-     * @param justOwner should we just search for owner? Or with rights?
-     * @return An array of plots for the player
-     */
-    @Deprecated public Plot[] getPlots(World world, Player player, boolean justOwner) {
-        ArrayList<Plot> pPlots = new ArrayList<>();
-        UUID uuid = BukkitUtil.getPlayer(player).getUUID();
-        for (Plot plot : PS.get().getPlots(world.getName())) {
-            if (justOwner) {
-                if (plot.hasOwner() && plot.isOwner(uuid)) {
-                    pPlots.add(plot);
-                }
-            } else if (plot.isAdded(uuid)) {
-                pPlots.add(plot);
-            }
-        }
-        return pPlots.toArray(new Plot[pPlots.size()]);
-    }
-
-    /**
-     * Get all plots for the world.
-     *
-     * @param world to get plots of
-     * @return Plot[] - array of plot objects in world
-     * @see PS#getPlots(String)
-     * @see Plot
-     */
-    @Deprecated public Plot[] getPlots(World world) {
-        if (world == null) {
-            return new Plot[0];
-        }
-        Collection<Plot> plots = PS.get().getPlots(world.getName());
-        return plots.toArray(new Plot[plots.size()]);
-    }
-
-    /**
-     * Get all plot worlds.
-     *
-     * @return World[] - array of plot worlds
-     */
-    @SuppressWarnings("deprecation") @Deprecated public String[] getPlotWorlds() {
-        Set<String> plotWorldStrings = PS.get().getPlotWorldStrings();
-        return plotWorldStrings.toArray(new String[plotWorldStrings.size()]);
-    }
-
-    /**
-     * Get if plotworld.
-     *
-     * @param world The world to check
-     * @return boolean (if plot world or not)
-     * @see PS#hasPlotArea(String)
-     */
-    @Deprecated public boolean isPlotWorld(World world) {
-        return PS.get().hasPlotArea(world.getName());
-    }
-
-    /**
-     * Get plot locations.
-     *
-     * @param plot Plot to get the locations for
-     * @return [0] = bottomLc, [1] = topLoc, [2] = home
-     * @see Plot
-     * @deprecated As merged plots may not have a rectangular shape
-     */
-    @SuppressWarnings("deprecation") @Deprecated public Location[] getLocations(Plot plot) {
-        Location bukkitBottom = BukkitUtil.getLocation(plot.getCorners()[0]);
-        Location bukkitTop = BukkitUtil.getLocation(plot.getCorners()[1]);
-        Location bukkitHome = BukkitUtil.getLocation(plot.getHome());
-        return new Location[] {bukkitBottom, bukkitTop, bukkitHome};
-    }
-
-    /**
      * Get home location.
      *
      * @param plot Plot that you want to get the location for
@@ -497,30 +252,6 @@ public class PlotAPI {
     }
 
     /**
-     * Get Bottom Location (min, min, min).
-     *
-     * @param plot Plot that you want to get the location for
-     * @return plot bottom location
-     * @see Plot
-     * @deprecated As merged plots may not have a rectangular shape
-     */
-    @SuppressWarnings("deprecation") @Deprecated public Location getBottomLocation(Plot plot) {
-        return BukkitUtil.getLocation(plot.getCorners()[0]);
-    }
-
-    /**
-     * Get Top Location (max, max, max).
-     *
-     * @param plot Plot that you want to get the location for
-     * @return plot top location
-     * @see Plot
-     * @deprecated As merged plots may not have a rectangular shape
-     */
-    @SuppressWarnings("deprecation") @Deprecated public Location getTopLocation(Plot plot) {
-        return BukkitUtil.getLocation(plot.getCorners()[1]);
-    }
-
-    /**
      * Check whether or not a player is in a plot.
      *
      * @param player who we're checking for
@@ -528,17 +259,6 @@ public class PlotAPI {
      */
     public boolean isInPlot(Player player) {
         return getPlot(player) != null;
-    }
-
-    /**
-     * Register a subcommand.
-     *
-     * @param c SubCommand, that we want to register
-     * @see SubCommand
-     * @deprecated Command registration is done on object creation
-     */
-    @Deprecated public void registerCommand(SubCommand c) {
-        PS.debug("SubCommands are now registered on creation");
     }
 
     /**

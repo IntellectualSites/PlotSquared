@@ -1640,38 +1640,10 @@ public class Plot {
     }
 
     /**
-     * Returns the top and bottom plot id.<br>
-     * - If the plot is not connected, it will return itself for the top/bottom<br>
-     * - the returned ids will not necessarily correspond to claimed plots if the connected plots do not form a rectangular shape
-     *
-     * @return new Plot[] { bottom, top }
-     * @deprecated as merged plots no longer need to be rectangular
-     */
-    @Deprecated public PlotId[] getCornerIds() {
-        if (!this.isMerged()) {
-            return new PlotId[] {this.getId(), this.getId()};
-        }
-        PlotId min = new PlotId(this.getId().x, this.getId().y);
-        PlotId max = new PlotId(this.getId().x, this.getId().y);
-        for (Plot current : this.getConnectedPlots()) {
-            if (current.getId().x < min.x) {
-                min.x = current.getId().x;
-            } else if (current.getId().x > max.x) {
-                max.x = current.getId().x;
-            }
-            if (current.getId().y < min.y) {
-                min.y = current.getId().y;
-            } else if (current.getId().y > max.y) {
-                max.y = current.getId().y;
-            }
-        }
-        return new PlotId[] {min, max};
-    }
-
-    /**
      * @return
      * @deprecated in favor of getCorners()[0];<br>
      */
+    // Won't remove as suggestion also points to deprecated method
     @Deprecated public Location getBottom() {
         return this.getCorners()[0];
     }
@@ -1680,6 +1652,7 @@ public class Plot {
      * @return the top corner of the plot
      * @deprecated in favor of getCorners()[1];
      */
+    // Won't remove as suggestion also points to deprecated method
     @Deprecated public Location getTop() {
         return this.getCorners()[1];
     }

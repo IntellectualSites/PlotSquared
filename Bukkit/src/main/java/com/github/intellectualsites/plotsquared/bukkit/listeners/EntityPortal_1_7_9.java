@@ -28,7 +28,7 @@ public class EntityPortal_1_7_9 implements Listener {
         List<MetadataValue> meta = entity.getMetadata("plotworld");
         World world = entity.getLocation().getWorld();
         if (meta == null || meta.isEmpty()) {
-            if (PS.get().isPlotWorld(world.getName())) {
+            if (PS.get().hasPlotArea(world.getName())) {
                 entity.setMetadata("plotworld",
                     new FixedMetadataValue((Plugin) PS.get().IMP, entity.getLocation()));
             }

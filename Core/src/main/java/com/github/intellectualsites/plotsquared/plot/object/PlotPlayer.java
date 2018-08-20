@@ -300,10 +300,6 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
 
     ////////////////////////////////////////////////
 
-    @Deprecated public long getPreviousLogin() {
-        return getLastPlayed();
-    }
-
     /**
      * Get this player's full location (including yaw/pitch)
      *

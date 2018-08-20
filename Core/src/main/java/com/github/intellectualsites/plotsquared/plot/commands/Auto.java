@@ -56,30 +56,6 @@ public class Auto extends SubCommand {
     }
 
     /**
-     * Get the next plot id (spiral out from 0,0)
-     *
-     * @param start
-     * @return
-     */
-    @Deprecated public static PlotId getNextPlot(PlotId start) {
-        int plots;
-        PlotId center;
-        center = new PlotId(0, 0);
-        plots = Integer.MAX_VALUE;
-        PlotId currentId;
-        for (int i = 0; i < plots; i++) {
-            if (start == null) {
-                start = new PlotId(0, 0);
-            } else {
-                start = start.getNextId(1);
-            }
-            currentId = new PlotId(center.x + start.x, center.y + start.y);
-            return currentId;
-        }
-        return null;
-    }
-
-    /**
      * Teleport the player home, or claim a new plot
      *
      * @param player

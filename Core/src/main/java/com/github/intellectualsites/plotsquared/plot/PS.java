@@ -606,6 +606,7 @@ public class PS {
      * {@link #sortPlots(Collection, SortType, PlotArea)} which has
      * additional checks before calling this
      */
+    // TODO: Re-evaluate deprecation of this, as it's being used internally
     @Deprecated public ArrayList<Plot> sortPlotsByHash(Collection<Plot> plots) {
         int hardmax = 256000;
         int max = 0;
@@ -658,6 +659,7 @@ public class PS {
      *
      * @param input an array of plots to sort
      */
+    // TODO: Re-evaluate deprecation of this, as it's being used internally
     @Deprecated public void sortPlotsByHash(Plot[] input) {
         List<Plot>[] bucket = new ArrayList[32];
         for (int i = 0; i < bucket.length; i++) {
@@ -685,6 +687,7 @@ public class PS {
         }
     }
 
+    // TODO: Re-evaluate deprecation of this, as it's being used internally
     @Deprecated public ArrayList<Plot> sortPlotsByTimestamp(Collection<Plot> plots) {
         int hardMax = 256000;
         int max = 0;
@@ -739,6 +742,7 @@ public class PS {
      * @return
      * @deprecated Unchecked, use {@link #sortPlots(Collection, SortType, PlotArea)} instead which will call this after checks
      */
+    // TODO: Re-evaluate deprecation of this, as it's being used internally
     @Deprecated public List<Plot> sortPlotsByModified(Collection<Plot> input) {
         List<Plot> list;
         if (input instanceof List) {
@@ -974,18 +978,6 @@ public class PS {
             }
         }
         return new HashSet<>(myplots);
-    }
-
-    /**
-     * Use {@link #hasPlotArea(String)}.
-     * Note: Worlds may have more than one plot area
-     *
-     * @param world the world
-     * @return if the world is a plotworld
-     * @deprecated
-     */
-    @Deprecated public boolean isPlotWorld(String world) {
-        return hasPlotArea(world);
     }
 
     /**
@@ -1877,21 +1869,6 @@ public class PS {
     public Set<PlotArea> getPlotAreas() {
         HashSet<PlotArea> set = new HashSet<>();
         Collections.addAll(set, manager.getAllPlotAreas());
-        return set;
-    }
-
-    /**
-     * Not recommended for use since worlds can have multiple PlotAreas.
-     *
-     * @return Set of world names
-     */
-    @Deprecated public Set<String> getPlotWorldStrings() {
-        HashSet<String> set = new HashSet<>(manager.getAllPlotAreas().length);
-        for (String world : manager.getAllWorlds()) {
-            if (manager.getPlotAreas(world, null).length != 0) {
-                set.add(world);
-            }
-        }
         return set;
     }
 

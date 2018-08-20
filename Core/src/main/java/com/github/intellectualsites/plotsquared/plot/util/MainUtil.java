@@ -44,19 +44,6 @@ public class MainUtil {
     public static short[][][] CACHE_J = null;
 
     /**
-     * @param location
-     * @return
-     * @deprecated
-     */
-    @Deprecated public static PlotId getPlotId(Location location) {
-        PlotArea area = location.getPlotArea();
-        return area == null ?
-            null :
-            area.getPlotManager()
-                .getPlotId(area, location.getX(), location.getY(), location.getZ());
-    }
-
-    /**
      * This cache is used for world generation and just saves a bit of calculation time when checking if something is in the plot area.
      */
     public static void initCache() {
