@@ -34,6 +34,7 @@ import java.util.UUID;
  *
  * @version 3.3.3
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 @NoArgsConstructor
 public class PlotAPI {
 
