@@ -1,15 +1,10 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
-import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
-import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
-import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+import com.github.intellectualsites.plotsquared.plot.util.*;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -27,9 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.*;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class BukkitUtil extends WorldUtil {
@@ -52,6 +45,141 @@ public class BukkitUtil extends WorldUtil {
         final Player player = OfflinePlayerUtil.loadPlayer(op);
         player.loadData();
         return new BukkitPlayer(player, true);
+    }
+
+    /**
+     * Get a plot based on the location.
+     *
+     * @param location the location to check
+     * @return plot if found, otherwise it creates a temporary plot
+     * @see Plot
+     */
+    public static Plot getPlot(org.bukkit.Location location) {
+        if (location == null) {
+            return null;
+        }
+        return getLocation(location).getPlot();
+    }
+
+    /**
+     * Get a plot based on the player location.
+     *
+     * @param player the player to check
+     * @return plot if found, otherwise it creates a temporary plot
+     * @see #getPlot(org.bukkit.Location)
+     * @see Plot
+     */
+    public static Plot getPlot(Player player) {
+        return getPlot(player.getLocation());
+    }
+
+    /**
+     * Get home location.
+     *
+     * @param plot Plot that you want to get the location for
+     * @return plot bottom location
+     * @see Plot
+     */
+    public static org.bukkit.Location getHomeLocation(Plot plot) {
+        return BukkitUtil.getLocation(plot.getHome());
+    }
+
+    /**
+     * Get the PlotPlayer for an offline player.
+     * <p>
+     * <p>Note that this will work if the player is offline, however not all
+     * functionality will work.
+     *
+     * @param player the player to wrap
+     * @return a {@code PlotPlayer}
+     * @see PlotPlayer#wrap(Object)
+     */
+    public static PlotPlayer wrapPlayer(OfflinePlayer player) {
+        return PlotPlayer.wrap(player);
+    }
+
+    /**
+     * Gets the PlotPlayer for a player. The PlotPlayer is usually cached and
+     * will provide useful functions relating to players.
+     *
+     * @param player the player to wrap
+     * @return a {@code PlotPlayer}
+     * @see PlotPlayer#wrap(Object)
+     */
+    public static PlotPlayer wrapPlayer(Player player) {
+        return PlotPlayer.wrap(player);
+    }
+
+    /**
+     * Gets the number of plots, which the player is able to build in.
+     *
+     * @param player player, for whom we're getting the plots
+     * @return the number of allowed plots
+     */
+    public static int getAllowedPlots(Player player) {
+        PlotPlayer plotPlayer = PlotPlayer.wrap(player);
+        return plotPlayer.getAllowedPlots();
+    }
+
+    /**
+     * Check whether or not a player is in a plot.
+     *
+     * @param player who we're checking for
+     * @return true if the player is in a plot, false if not-
+     */
+    public static boolean isInPlot(Player player) {
+        return getPlot(player) != null;
+    }
+
+    /**
+     * Gets a collection containing the players plots.
+     *
+     * @param world  Specify the world we want to select the plots from
+     * @param player Player, for whom we're getting the plots
+     * @return a set containing the players plots
+     * @see Plot
+     */
+    public static Set<Plot> getPlayerPlots(String world, Player player) {
+        if (world == null) {
+            return new HashSet<>();
+        }
+        return PlotPlayer.wrap(player).getPlots(world);
+    }
+
+    /**
+     * Send a message to a player. The message supports color codes.
+     *
+     * @param player the recipient of the message
+     * @param string the message
+     * @see MainUtil#sendMessage(PlotPlayer, String)
+     */
+    public static void sendMessage(Player player, String string) {
+        MainUtil.sendMessage(BukkitUtil.getPlayer(player), string);
+    }
+
+    /**
+     * Gets the player plot count.
+     *
+     * @param world  Specify the world we want to select the plots from
+     * @param player Player, for whom we're getting the plot count
+     * @return the number of plots the player has
+     */
+    public static int getPlayerPlotCount(String world, Player player) {
+        if (world == null) {
+            return 0;
+        }
+        return BukkitUtil.getPlayer(player).getPlotCount(world);
+    }
+
+    /**
+     * Send a message to a player.
+     *
+     * @param player  the recipient of the message
+     * @param caption the message
+     * @see MainUtil#sendMessage(PlotPlayer, C, String...)
+     */
+    public static void sendMessage(Player player, C caption) {
+        MainUtil.sendMessage(BukkitUtil.getPlayer(player), caption);
     }
 
     public static PlotPlayer getPlayer(@NonNull final Player player) {

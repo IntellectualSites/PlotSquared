@@ -1,6 +1,5 @@
-package com.github.intellectualsites.plotsquared.plot.api;
+package com.github.intellectualsites.plotsquared.api;
 
-import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
 import com.github.intellectualsites.plotsquared.plot.PS;
 import com.github.intellectualsites.plotsquared.plot.config.C;
@@ -16,19 +15,16 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import lombok.NoArgsConstructor;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * PlotSquared API.
  * <p>
  * <p>Useful classes:
  * <ul>
- * <li>{@link BukkitUtil}</li>
  * <li>{@link PlotPlayer}</li>
  * <li>{@link Plot}</li>
  * <li>{@link com.github.intellectualsites.plotsquared.plot.object.Location}</li>
@@ -57,8 +53,8 @@ public class PlotAPI {
      * @param player Player, whose plots to search for
      * @return all plots that a player owns
      */
-    public Set<Plot> getPlayerPlots(Player player) {
-        return PS.get().getPlots(BukkitUtil.getPlayer(player));
+    public Set<Plot> getPlayerPlots(PlotPlayer player) {
+        return PS.get().getPlots(player);
     }
 
     /**
@@ -155,33 +151,11 @@ public class PlotAPI {
      * @param world The world to check for plot areas
      * @return A set of PlotAreas
      */
-    public Set<PlotArea> getPlotAreas(World world) {
+    public Set<PlotArea> getPlotAreas(String world) {
         if (world == null) {
             return Collections.emptySet();
         }
-        return PS.get().getPlotAreas(world.getName());
-    }
-
-    /**
-     * Send a message to a player.
-     *
-     * @param player  the recipient of the message
-     * @param caption the message
-     * @see MainUtil#sendMessage(PlotPlayer, C, String...)
-     */
-    public void sendMessage(Player player, C caption) {
-        MainUtil.sendMessage(BukkitUtil.getPlayer(player), caption);
-    }
-
-    /**
-     * Send a message to a player. The message supports color codes.
-     *
-     * @param player the recipient of the message
-     * @param string the message
-     * @see MainUtil#sendMessage(PlotPlayer, String)
-     */
-    public void sendMessage(Player player, String string) {
-        MainUtil.sendMessage(BukkitUtil.getPlayer(player), string);
+        return PS.get().getPlotAreas(world);
     }
 
     /**
@@ -215,53 +189,6 @@ public class PlotAPI {
     }
 
     /**
-     * Get a plot based on the location.
-     *
-     * @param location the location to check
-     * @return plot if found, otherwise it creates a temporary plot
-     * @see Plot
-     */
-    public Plot getPlot(Location location) {
-        if (location == null) {
-            return null;
-        }
-        return BukkitUtil.getLocation(location).getPlot();
-    }
-
-    /**
-     * Get a plot based on the player location.
-     *
-     * @param player the player to check
-     * @return plot if found, otherwise it creates a temporary plot
-     * @see #getPlot(Location)
-     * @see Plot
-     */
-    public Plot getPlot(Player player) {
-        return this.getPlot(player.getLocation());
-    }
-
-    /**
-     * Get home location.
-     *
-     * @param plot Plot that you want to get the location for
-     * @return plot bottom location
-     * @see Plot
-     */
-    public Location getHomeLocation(Plot plot) {
-        return BukkitUtil.getLocation(plot.getHome());
-    }
-
-    /**
-     * Check whether or not a player is in a plot.
-     *
-     * @param player who we're checking for
-     * @return true if the player is in a plot, false if not-
-     */
-    public boolean isInPlot(Player player) {
-        return getPlot(player) != null;
-    }
-
-    /**
      * Gets the PlotSquared class.
      *
      * @return PlotSquared Class
@@ -269,59 +196,6 @@ public class PlotAPI {
      */
     public PS getPlotSquared() {
         return PS.get();
-    }
-
-    /**
-     * Gets the player plot count.
-     *
-     * @param world  Specify the world we want to select the plots from
-     * @param player Player, for whom we're getting the plot count
-     * @return the number of plots the player has
-     */
-    public int getPlayerPlotCount(World world, Player player) {
-        if (world == null) {
-            return 0;
-        }
-        return BukkitUtil.getPlayer(player).getPlotCount(world.getName());
-    }
-
-    /**
-     * Gets a collection containing the players plots.
-     *
-     * @param world  Specify the world we want to select the plots from
-     * @param player Player, for whom we're getting the plots
-     * @return a set containing the players plots
-     * @see PS#getPlots(String, PlotPlayer)
-     * @see Plot
-     */
-    public Set<Plot> getPlayerPlots(World world, Player player) {
-        if (world == null) {
-            return new HashSet<>();
-        }
-        return PlotPlayer.wrap(player).getPlots(world.getName());
-    }
-
-    /**
-     * Gets the number of plots, which the player is able to build in.
-     *
-     * @param player player, for whom we're getting the plots
-     * @return the number of allowed plots
-     */
-    public int getAllowedPlots(Player player) {
-        PlotPlayer plotPlayer = PlotPlayer.wrap(player);
-        return plotPlayer.getAllowedPlots();
-    }
-
-    /**
-     * Gets the PlotPlayer for a player. The PlotPlayer is usually cached and
-     * will provide useful functions relating to players.
-     *
-     * @param player the player to wrap
-     * @return a {@code PlotPlayer}
-     * @see PlotPlayer#wrap(Object)
-     */
-    public PlotPlayer wrapPlayer(Player player) {
-        return PlotPlayer.wrap(player);
     }
 
     /**
@@ -346,20 +220,6 @@ public class PlotAPI {
      * @see PlotPlayer#wrap(Object)
      */
     public PlotPlayer wrapPlayer(String player) {
-        return PlotPlayer.wrap(player);
-    }
-
-    /**
-     * Get the PlotPlayer for an offline player.
-     * <p>
-     * <p>Note that this will work if the player is offline, however not all
-     * functionality will work.
-     *
-     * @param player the player to wrap
-     * @return a {@code PlotPlayer}
-     * @see PlotPlayer#wrap(Object)
-     */
-    public PlotPlayer wrapPlayer(OfflinePlayer player) {
         return PlotPlayer.wrap(player);
     }
 }
