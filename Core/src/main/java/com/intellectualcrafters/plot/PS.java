@@ -829,8 +829,12 @@ public class PS{
         Collections.sort(areas, new Comparator<PlotArea>() {
             @Override
             public int compare(PlotArea a, PlotArea b) {
-                if (priorityArea != null && StringMan.isEqual(a.toString(), b.toString())) {
-                    return -1;
+                if (priorityArea != null) {
+                    if (a.equals(priorityArea)) {
+                        return -1;
+                    } else if (b.equals(priorityArea)) {
+                        return 1;
+                    }
                 }
                 return a.hashCode() - b.hashCode();
             }
