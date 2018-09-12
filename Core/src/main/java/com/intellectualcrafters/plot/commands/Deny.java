@@ -92,9 +92,18 @@ public class Deny extends SubCommand {
         if (player == null) {
             return;
         }
-        if (!plot.equals(player.getCurrentPlot())) {
-            return;
+
+        Plot currentPlot = null;
+        if (plot.equals(player.getCurrentPlot())) {
+            currentPlot = plot;
+        } else {
+            for (Plot p : plot.getConnectedPlots()) {
+                if (p.equals(plot))
+                    currentPlot = p;
+            }
+            if (currentPlot == null) return; // player not in plot
         }
+
         if (player.hasPermission("plots.admin.entry.denied")) {
             return;
         }
@@ -104,9 +113,9 @@ public class Deny extends SubCommand {
         Location loc = player.getLocation();
         Location spawn = WorldUtil.IMP.getSpawn(loc.getWorld());
         MainUtil.sendMessage(player, C.YOU_GOT_DENIED);
-        if (plot.equals(spawn.getPlot())) {
+        if (currentPlot.equals(spawn.getPlot())) {
             Location newSpawn = WorldUtil.IMP.getSpawn(PS.get().getPlotAreaManager().getAllWorlds()[0]);
-            if (plot.equals(newSpawn.getPlot())) {
+            if (currentPlot.equals(newSpawn.getPlot())) {
                 // Kick from server if you can't be teleported to spawn
                 player.kick(C.YOU_GOT_DENIED.s());
             } else {
