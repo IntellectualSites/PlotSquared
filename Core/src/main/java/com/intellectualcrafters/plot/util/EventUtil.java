@@ -67,6 +67,8 @@ public abstract class EventUtil {
 
     public abstract void callMember(PlotPlayer initiator, Plot plot, UUID player, boolean added);
 
+    public abstract boolean callOwnerChange(PlotPlayer initiator, Plot plot, UUID newOwner, UUID oldOwner, boolean hasOldOwner);
+
     public void doJoinTask(final PlotPlayer player) {
         if (player == null) {
             return; //possible future warning message to figure out where we are retrieving null
