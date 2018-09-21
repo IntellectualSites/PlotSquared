@@ -14,7 +14,8 @@ import java.io.File;
 import java.io.IOException;
 
 @CommandDeclaration(command = "debugpaste",
-        aliases = "dp", usage = "/plot debugpaste",
+        aliases = {"dp"}, 
+        usage = "/plot debugpaste",
         description = "Upload settings.yml, worlds.yml, commands.yml and latest.log to www.hastebin.com",
         permission = "plots.debugpaste",
         category = CommandCategory.DEBUG)
