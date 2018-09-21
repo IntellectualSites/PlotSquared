@@ -21,7 +21,7 @@ import java.util.UUID;
         aliases = {"t"},
         requiredType = RequiredType.NONE,
         usage = "/plot trust <player>",
-        description = "Allow a player to build in a plot",
+        description = "Allow a player to build while you are offline",
         category = CommandCategory.SETTINGS)
 public class Trust extends Command {
 

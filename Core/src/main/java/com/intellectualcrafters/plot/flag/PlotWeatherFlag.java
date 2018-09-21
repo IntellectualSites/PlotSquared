@@ -31,6 +31,6 @@ public class PlotWeatherFlag extends Flag<PlotWeather> {
     }
 
     @Override public String getValueDescription() {
-        return "";
+        return "Flag value must be weather: 'rain' or 'sun'";
     }
 }

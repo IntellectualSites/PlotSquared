@@ -85,7 +85,6 @@ public class MainCommand extends Command {
             new Swap();
             new Music();
             new DebugRoadRegen();
-            new Trust();
             new DebugExec();
             new FlagCmd();
             new Target();
