@@ -293,6 +293,7 @@ public class PS{
             // Copy files
             copyFile("automerge.js", Settings.Paths.SCRIPTS);
             copyFile("town.template", Settings.Paths.TEMPLATES);
+            copyFile("bridge.template", Settings.Paths.TEMPLATES);
             copyFile("skyblock.template", Settings.Paths.TEMPLATES);
             copyFile("de-DE.yml", Settings.Paths.TRANSLATIONS);
             copyFile("es-ES.yml", Settings.Paths.TRANSLATIONS);
