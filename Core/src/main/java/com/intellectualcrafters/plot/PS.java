@@ -297,7 +297,6 @@ public class PS{
             copyFile("bridge.template", Settings.Paths.TEMPLATES);
             copyFile("de-DE.yml", Settings.Paths.TRANSLATIONS);
             copyFile("es-ES.yml", Settings.Paths.TRANSLATIONS);
-            copyFile("chinese.yml", Settings.Paths.TRANSLATIONS);
             copyFile("zh-CN.yml", Settings.Paths.TRANSLATIONS);
             copyFile("it-IT.yml", Settings.Paths.TRANSLATIONS);
             copyFile("ko-KR.yml", Settings.Paths.TRANSLATIONS);
