@@ -294,12 +294,10 @@ public class PS{
             copyFile("automerge.js", Settings.Paths.SCRIPTS);
             copyFile("town.template", Settings.Paths.TEMPLATES);
             copyFile("skyblock.template", Settings.Paths.TEMPLATES);
-            copyFile("de-DE.yml", Settings.Paths.TRANSLATIONS);
-            copyFile("es-ES.yml", Settings.Paths.TRANSLATIONS);
-            copyFile("it-IT.yml", Settings.Paths.TRANSLATIONS);
-            copyFile("ko-KR.yml", Settings.Paths.TRANSLATIONS);
-            copyFile("zh-CN.yml", Settings.Paths.TRANSLATIONS);
-            copyFile("chinese.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("german.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("s_chinese_unescaped.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("s_chinese.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("italian.yml", Settings.Paths.TRANSLATIONS);
             showDebug();
         } catch (Throwable e) {
             e.printStackTrace();
