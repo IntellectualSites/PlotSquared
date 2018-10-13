@@ -747,6 +747,37 @@ public class Plot {
     }
 
     /**
+     * Set the plot owner (and update the database)
+     * @param owner
+     * @param initiator
+     * @return boolean
+     */
+    public boolean setOwner(UUID owner, PlotPlayer initiator) {
+        boolean result = EventUtil.manager.callOwnerChange(initiator, this, owner, hasOwner() ? this.owner : null, hasOwner());
+        if(!result)
+            return false;
+        if (!hasOwner()) {
+            this.owner = owner;
+            create();
+            return true;
+        }
+        if (!isMerged()) {
+            if (!this.owner.equals(owner)) {
+                this.owner = owner;
+                DBFunc.setOwner(this, owner);
+            }
+            return true;
+        }
+        for (Plot current : getConnectedPlots()) {
+            if (!owner.equals(current.owner)) {
+                current.owner = owner;
+                DBFunc.setOwner(current, owner);
+            }
+        }
+        return true;
+    }
+
+    /**
      * Clear a plot.
      * @see this#clear(boolean, boolean, Runnable)
      * @see #deletePlot(Runnable) to clear and delete a plot
