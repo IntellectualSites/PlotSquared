@@ -25,7 +25,7 @@ import java.util.List;
         requiredType = RequiredType.NONE,
         description = "Load your plot",
         permission = "plots.load",
-        usage = "/plot restore")
+        usage = "/plot load")
 public class Load extends SubCommand {
 
     @Override

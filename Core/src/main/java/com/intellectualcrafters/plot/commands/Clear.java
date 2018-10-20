@@ -15,7 +15,7 @@ import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(command = "clear",
-        description = "Clear a plot",
+        description = "Clear the plot you stand on",
         permission = "plots.clear",
         category = CommandCategory.APPEARANCE,
         usage = "/plot clear",

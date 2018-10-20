@@ -1,6 +1,9 @@
-# PlotSquared [![forthebadge](http://forthebadge.com/images/badges/built-by-developers.svg)](http://forthebadge.com)
+<p align="center">
+    <img src="https://i.imgur.com/Kd7N6uf.png">
+</p>
 
-[![Join the chat at https://gitter.im/PlotSquared/Lobby](https://badges.gitter.im/PlotSquared/Lobby.svg)](https://gitter.im/PlotSquared/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+---
+
 For the end user, PlotSquared is packed with a tonne of cool features.
 It allows you to merge plots, and build together with your friends. 
 You can also change a lot of plot specific settings in the form of
@@ -11,15 +14,15 @@ is to provide a lag-free and smooth experience.
 
 ## Links
 
-### Server Owner
+* [Download](https://github.com/IntellectualSites/PlotSquared/releases/tag/dev)
+* [Jenkins](https://ci.athion.net/job/PlotSquared/)
 * [Spigot Page](https://www.spigotmc.org/resources/plotsquared.1177/)
 * [WebChat/IRC]: #IntellectualCrafters on irc.esper.net
+* [Discord](https://discord.gg/ngZCzbU)
 * [Wiki](https://github.com/intellectualcrafters/plotsquared/wiki)
-* [Website](http://plotsquared.com)
 
 ### Developer Resources
-* [JavaDocs]  Link Temporarily Unavailable 
-* [Build Server] [![Build Status](http://ci.plotsquared.com/buildStatus/icon?job=PlotSquared)](http://ci.athion.net/job/PlotSquared/)
+* [JavaDocs] Link Temporarily Unavailable 
 * [Maven Repo] Link Temporarily Unavailable 
 
 # Building
@@ -43,4 +46,4 @@ Suggestions are welcome! We have a separate issue tracker for suggestions, that 
 * [BasicPlots](https://www.spigotmc.org/resources/basicplots.6901/)
 * [HoloPlots](https://www.spigotmc.org/resources/holoplots.4880/)
 
-[WebChat/IRC]: http://webchat.esper.net/?nick=&channels=IntellectualCrafters&fg_color=000&fg_sec_color=000&bg_color=FFF
+[WebChat/IRC]: https://webchat.esper.net/?nick=&channels=IntellectualCrafters

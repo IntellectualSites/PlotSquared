@@ -11,6 +11,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 @CommandDeclaration(command = "plugin",
         permission = "plots.use",
         description = "Show plugin information",
+        usage = "/plot plugin",
         aliases = "version",
         category = CommandCategory.INFO)
 public class PluginCmd extends SubCommand {
