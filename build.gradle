@@ -48,7 +48,7 @@ subprojects {
 
 
     dependencies {
-        compile(group: 'com.sk89q.worldedit', name: 'worldedit-core', version:'6.1.3-SNAPSHOT') {
+        compile(group: 'com.sk89q.worldedit', name: 'worldedit-core', version:'7.0.0-SNAPSHOT') {
             exclude(module: 'bukkit-classloader-check')
             exclude(module: 'mockito-core')
             exclude(module: 'dummypermscompat')

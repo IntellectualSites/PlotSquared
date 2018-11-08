@@ -1,6 +1,7 @@
 name: ${name}
 main: com.plotsquared.bukkit.BukkitMain
 version: ${version}
+api-version: legacy
 load: STARTUP
 description: >
              Easy, yet powerful Plot World generation and management.
@@ -60,7 +61,6 @@ permissions:
       plots.set.flag.vehicle-use.*: true
       plots.set.flag.vehicle-place.*: true
       plots.set.flag.vehicle-break.*: true
-      plots.set.flag.player-interact.*: true
       plots.set.flag.place.*: true
       plots.set.flag.break.*: true
       plots.set.flag.use.*: true
@@ -73,16 +73,12 @@ permissions:
       comments.notifications.enabled  : true 
       plots.inbox.read.public: true
       plots.inbox.modify.public: true
-      plots.inbox.modify.public: true
       plots.inbox.write.public: true
-      plots.inbox.read.public: true
       plots.inbox.read.report: true
       plots.inbox.write.report: true
-      plots.inbox.read.report: true
       plots.inbox.read.owner: true
       plots.inbox.modify.owner: true
       plots.inbox.write.owner: true
-      plots.inbox.read.owner: true
       plots.comment: true
       plots.inbox: true
   plots.permpack.wilderness:

@@ -4,17 +4,18 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.Vector2D;
 import com.sk89q.worldedit.WorldEditException;
-import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.entity.BaseEntity;
 import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.extent.AbstractDelegateExtent;
 import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.extent.NullExtent;
+import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.biome.BaseBiome;
+import com.sk89q.worldedit.world.block.BlockState;
+import com.sk89q.worldedit.world.block.BlockStateHolder;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
@@ -44,7 +45,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
     }
 
     @Override
-    public BaseBlock getBlock(Vector location) {
+    public BlockState getBlock(BlockVector3 location) {
         if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
             return super.getBlock(location);
         }
@@ -52,44 +53,40 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
     }
 
     @Override
-    public boolean setBlock(Vector location, BaseBlock block) throws WorldEditException {
-        int id = block.getType();
+    public boolean setBlock(BlockVector3 location, BlockStateHolder block) throws WorldEditException {
+        String id = block.getBlockType().getId();
         switch (id) {
-            case 54:
-            case 130:
-            case 142:
-            case 27:
-            case 137:
-            case 52:
-            case 154:
-            case 84:
-            case 25:
-            case 144:
-            case 138:
-            case 176:
-            case 177:
-            case 63:
-            case 68:
-            case 323:
-            case 117:
-            case 116:
-            case 28:
-            case 66:
-            case 157:
-            case 61:
-            case 62:
-            case 140:
-            case 146:
-            case 149:
-            case 150:
-            case 158:
-            case 23:
-            case 123:
-            case 124:
-            case 29:
-            case 33:
-            case 151:
-            case 178:
+            case "minecraft:chest":
+            case "minecraft:ender_chest":
+            case "minecraft:potatoes":
+            case "minecraft:powered_rail":
+            case "minecraft:command_block" :
+            case "minecraft:mob_spawner":
+            case "minecraft:hopper":
+            case "minecraft:jukebox":
+            case "minecraft:note_block":
+            case "minecraft:skull":
+            case "minecraft:beacon":
+            case "minecraft:standing_banner":
+            case "minecraft:wall_banner":
+            case "minecraft:standing_sign":
+            case "minecraft:wall_sign":
+            case "minecraft:sign":
+            case "minecraft:brewing_stand":
+            case "minecraft:enchanting_table":
+            case "minecraft:detector_rail":
+            case "minecraft:rail":
+            case "minecraft:activator_rail":
+            case "minecraft:furnace":
+            case "minecraft:flower_pot ":
+            case "minecraft:trapped_chest":
+            case "minecraft:powered_comparator":
+            case "minecraft:dropper":
+            case "minecraft:dispenser":
+            case "minecraft:redstone_lamp":
+            case "minecraft:sticky_piston":
+            case "minecraft:piston":
+            case "minecraft:daylight_detector":
                 if (this.BSblocked) {
                     return false;
                 }
@@ -134,88 +131,122 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                         return false;
                     }
                     switch (id) {
-                        case 0:
-                        case 2:
-                        case 4:
-                        case 13:
-                        case 14:
-                        case 15:
-                        case 20:
-                        case 21:
-                        case 22:
-                        case 24:
-                        case 25:
-                        case 30:
-                        case 32:
-                        case 37:
-                        case 39:
-                        case 40:
-                        case 41:
-                        case 42:
-                        case 45:
-                        case 46:
-                        case 47:
-                        case 48:
-                        case 49:
-                        case 51:
-                        case 52:
-                        case 54:
-                        case 55:
-                        case 56:
-                        case 57:
-                        case 58:
-                        case 60:
-                        case 61:
-                        case 62:
-                        case 7:
-                        case 8:
-                        case 9:
-                        case 10:
-                        case 11:
-                        case 73:
-                        case 74:
-                        case 78:
-                        case 79:
-                        case 80:
-                        case 81:
-                        case 82:
-                        case 83:
-                        case 84:
-                        case 85:
-                        case 87:
-                        case 88:
-                        case 101:
-                        case 102:
-                        case 103:
-                        case 110:
-                        case 112:
-                        case 113:
-                        case 117:
-                        case 121:
-                        case 122:
-                        case 123:
-                        case 124:
-                        case 129:
-                        case 133:
-                        case 138:
-                        case 137:
-                        case 140:
-                        case 165:
-                        case 166:
-                        case 169:
-                        case 170:
-                        case 172:
-                        case 173:
-                        case 174:
-                        case 176:
-                        case 177:
-                        case 181:
-                        case 182:
-                        case 188:
-                        case 189:
-                        case 190:
-                        case 191:
-                        case 192:
+                        case "minecraft:air":
+                        case "minecraft:grass_block":
+                        case "minecraft:cobblestone":
+                        case "minecraft:gravel":
+                        case "minecraft:gold_ore":
+                        case "minecraft:iron_ore":
+                        case "minecraft:glass":
+                        case "minecraft:white_stained_glass":
+                        case "minecraft:orange_stained_glass":
+                        case "minecraft:red_stained_glass":
+                        case "minecraft:light_blue_stained_glass":
+                        case "minecraft:yellow_stained_glass":
+                        case "minecraft:pink_stained_glass":
+                        case "minecraft:blue_stained_glass":
+                        case "minecraft:green_stained_glass":
+                        case "minecraft:lime_stained_glass":
+                        case "minecraft:black_stained_glass":
+                        case "minecraft:grey_stained_glass":
+                        case "minecraft:brown_stained_glass":
+                        case "minecraft:cyan_stained_glass":
+                        case "minecraft:purple_stained_glass":
+                        case "minecraft:magneta_stained_glass":
+                        case "minecraft:lapis_ore":
+                        case "minecraft:lapis_block":
+                        case "minecraft:sandstone":
+                        case "minecraft:cobweb":
+                        case "minecraft:dead_bush":
+                        case "minecraft:dandelion":
+                        case "minecraft:brown_mushroom":
+                        case "minecraft:red_mushroom":
+                        case "minecraft:gold_block":
+                        case "minecraft:iron_block":
+                        case "minecraft:bricks":
+                        case "minecraft:tnt":
+                        case "minecraft:bookshelf":
+                        case "minecraft:mossy_cobblestone":
+                        case "minecraft:obsidian":
+                        case "minecraft:fire":
+                        case "minecraft:redstone_wire":
+                        case "minecraft:diamond_ore":
+                        case "minecraft:diamond_block":
+                        case "minecraft:crafting_table":
+                        case "minecraft:farmland":
+                        case "minecraft:bedrock":
+                        case "minecraft:flowing_water":
+                        case "minecraft:water":
+                        case "minecraft:flowing_lava":
+                        case "minecraft:lava":
+                        case "minecraft:redstone_ore":
+                        case "minecraft:unlit_redstone_torch":
+                        case "minecraft:redstone_torch":
+                        case "minecraft:ice":
+                        case "minecraft:snow_block":
+                        case "minecraft:cactus":
+                        case "minecraft:clay_ball":
+                        case "minecraft:reeds":
+                        case "minecraft:oak_fence ":
+                        case "minecraft:netherrack":
+                        case "minecraft:soul_sand":
+                        case "minecraft:iron_bars":
+                        case "minecraft:glass_pane":
+                        case "minecraft:white_glass_pane":
+                        case "minecraft:orange_glass_pane":
+                        case "minecraft:red_glass_pane":
+                        case "minecraft:light_blue_glass_pane":
+                        case "minecraft:yellow_glass_pane":
+                        case "minecraft:pink_glass_pane":
+                        case "minecraft:blue_glass_pane":
+                        case "minecraft:green_glass_pane":
+                        case "minecraft:lime_glass_pane":
+                        case "minecraft:black_glass_pane":
+                        case "minecraft:grey_glass_pane":
+                        case "minecraft:brown_glass_pane":
+                        case "minecraft:cyan_glass_pane":
+                        case "minecraft:purple_glass_pane":
+                        case "minecraft:magneta_glass_pane":
+                        case "minecraft:melon":
+                        case "minecraft:mycelium":
+                        case "minecraft:nether_bricks":
+                        case "minecraft:nether_brick_fence":
+                        case "minecraft:nether_brick_stairs":
+                        case "minecraft:end_stone":
+                        case "minecraft:dragon_egg":
+                        case "minecraft:emerald_ore":
+                        case "minecraft:emerald_block":
+                        case "minecraft:flower_pot":
+                        case "minecraft:slime_block ":
+                        case "minecraft:barrier":
+                        case "minecraft:sea_lantern":
+                        case "minecraft:hay_block":
+                        case "minecraft:terracotta":
+                        case "minecraft:white_terracotta":
+                        case "minecraft:orange_terracotta":
+                        case "minecraft:red_terracotta":
+                        case "minecraft:light_blue_terracotta":
+                        case "minecraft:yellow_terracotta":
+                        case "minecraft:pink_terracotta":
+                        case "minecraft:blue_terracotta":
+                        case "minecraft:green_terracotta":
+                        case "minecraft:lime_terracotta":
+                        case "minecraft:black_terracotta":
+                        case "minecraft:grey_terracotta":
+                        case "minecraft:brown_terracotta":
+                        case "minecraft:cyan_terracotta":
+                        case "minecraft:purple_terracotta":
+                        case "minecraft:magneta_terracotta":
+                        case "minecraft:coal_block":
+                        case "minecraft:packed_ice":
+                        case "minecraft:double_stone_slab2 ":
+                        case "minecraft:red_sandstone_slab":
+                        case "minecraft:spruce_fence":
+                        case "minecraft:birch_fence":
+                        case "minecraft:oak_fence":
+                        case "minecraft:jungle_fence":
+                        case "minecraft:dark_oak_fence":
+                        case "minecraft:acacia_fence":
                             {
                                 super.setBlock(location, block);
                             }
@@ -250,7 +281,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
     }
 
     @Override
-    public boolean setBiome(Vector2D position, BaseBiome biome) {
+    public boolean setBiome(BlockVector2 position, BaseBiome biome) {
         return WEManager.maskContains(this.mask, position.getBlockX(), position.getBlockZ()) && super.setBiome(position, biome);
     }
 }

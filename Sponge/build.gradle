@@ -44,7 +44,7 @@ repositories {
     }
 }
 minecraft {
-    version = "1.12.2"
+    version = "1.13.2"
     mappings = "snapshot_20171022"
     runDir = 'run'
 }

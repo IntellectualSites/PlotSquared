@@ -7,14 +7,14 @@ repositories {
 
 dependencies {
     compile project(':Core')
-    compile 'org.spigotmc:spigot-api:1.12.1-R0.1-SNAPSHOT'
-    compile("net.milkbowl.vault:VaultAPI:1.6") {
+    compile 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
+    compile("net.milkbowl.vault:VaultAPI:1.7") {
         exclude module: 'bukkit'
     }
 }
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 processResources {
     from('src/main/resources') {
