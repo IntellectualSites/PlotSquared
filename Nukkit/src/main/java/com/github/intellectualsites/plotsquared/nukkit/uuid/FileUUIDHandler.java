@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.nukkit.uuid;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.StringWrapper;
@@ -28,7 +28,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
         final File container = new File("players");
         TaskManager.runTaskAsync(new Runnable() {
             @Override public void run() {
-                PS.debug(C.PREFIX + "&6Starting player data caching for: " + container);
+                PlotSquared.debug(C.PREFIX + "&6Starting player data caching for: " + container);
                 HashBiMap<StringWrapper, UUID> toAdd =
                     HashBiMap.create(new HashMap<StringWrapper, UUID>());
                 for (File file : container.listFiles(new DatFileFilter())) {

@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.object.worlds;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
@@ -34,7 +34,7 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
     }
 
     @Override public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
-        return ((SinglePlotAreaManager) PS.get().getPlotAreaManager()).getArea();
+        return ((SinglePlotAreaManager) PlotSquared.get().getPlotAreaManager()).getArea();
     }
 
     @Override public PlotManager getNewPlotManager() {

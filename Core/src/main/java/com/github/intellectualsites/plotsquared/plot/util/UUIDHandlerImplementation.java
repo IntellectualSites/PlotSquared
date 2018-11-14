@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
@@ -82,19 +82,19 @@ public abstract class UUIDHandlerImplementation {
             }
             this.uuidMap.put(name, uuid);
         }
-        PS.debug(C.PREFIX + "&6Cached a total of: " + this.uuidMap.size() + " UUIDs");
+        PlotSquared.debug(C.PREFIX + "&6Cached a total of: " + this.uuidMap.size() + " UUIDs");
     }
 
     public boolean add(final StringWrapper name, final UUID uuid) {
         if (uuid == null) {
-            PS.debug("UUID cannot be null!");
+            PlotSquared.debug("UUID cannot be null!");
             return false;
         }
         if (name == null) {
             try {
                 this.unknown.add(uuid);
             } catch (Exception e) {
-                PS.log("&c(minor) Invalid UUID mapping: " + uuid);
+                PlotSquared.log("&c(minor) Invalid UUID mapping: " + uuid);
                 e.printStackTrace();
             }
             return false;
@@ -120,16 +120,16 @@ public abstract class UUIDHandlerImplementation {
                     }
                     if (offline != null && !offline.equals(uuid)) {
                         UUIDHandlerImplementation.this.unknown.remove(offline);
-                        Set<Plot> plots = PS.get().getPlotsAbs(offline);
+                        Set<Plot> plots = PlotSquared.get().getPlotsAbs(offline);
                         if (!plots.isEmpty()) {
                             for (Plot plot : plots) {
                                 plot.owner = uuid;
                             }
                             DBFunc.replaceUUID(offline, uuid);
-                            PS.debug("&cDetected invalid UUID stored for: " + name.value);
-                            PS.debug(
+                            PlotSquared.debug("&cDetected invalid UUID stored for: " + name.value);
+                            PlotSquared.debug(
                                 "&7 - Did you recently switch to online-mode storage without running `uuidconvert`?");
-                            PS.debug("&6" + PS.imp().getPluginName()
+                            PlotSquared.debug("&6" + PlotSquared.imp().getPluginName()
                                 + " will update incorrect entries when the user logs in, or you can reconstruct your database.");
                         }
                     }
@@ -144,7 +144,7 @@ public abstract class UUIDHandlerImplementation {
                     if (UUIDHandlerImplementation.this.unknown.contains(offlineUpper)
                         && offlineUpper != null && !offlineUpper.equals(uuid)) {
                         UUIDHandlerImplementation.this.unknown.remove(offlineUpper);
-                        Set<Plot> plots = PS.get().getPlotsAbs(offlineUpper);
+                        Set<Plot> plots = PlotSquared.get().getPlotsAbs(offlineUpper);
                         if (!plots.isEmpty()) {
                             for (Plot plot : plots) {
                                 plot.owner = uuid;
@@ -159,7 +159,7 @@ public abstract class UUIDHandlerImplementation {
             UUID offline = this.uuidMap.put(name, uuid);
             if (offline != null) {
                 if (!offline.equals(uuid)) {
-                    Set<Plot> plots = PS.get().getPlots(offline);
+                    Set<Plot> plots = PlotSquared.get().getPlots(offline);
                     if (!plots.isEmpty()) {
                         for (Plot plot : plots) {
                             plot.owner = uuid;
@@ -196,10 +196,10 @@ public abstract class UUIDHandlerImplementation {
 
     private void replace(UUID from, UUID to, String name) {
         DBFunc.replaceUUID(from, to);
-        PS.debug("&cDetected invalid UUID stored for: " + name);
-        PS.debug(
+        PlotSquared.debug("&cDetected invalid UUID stored for: " + name);
+        PlotSquared.debug(
             "&7 - Did you recently switch to online-mode storage without running `uuidconvert`?");
-        PS.debug("&6" + PS.imp().getPluginName()
+        PlotSquared.debug("&6" + PlotSquared.imp().getPluginName()
             + " will update incorrect entries when the user logs in, or you can reconstruct your database.");
     }
 

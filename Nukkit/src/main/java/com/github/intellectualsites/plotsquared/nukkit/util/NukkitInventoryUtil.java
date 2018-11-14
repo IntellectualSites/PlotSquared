@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.nukkit.util;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import com.github.intellectualsites.plotsquared.nukkit.object.NukkitPlayer;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
 import com.github.intellectualsites.plotsquared.plot.object.PlotItemStack;
@@ -13,7 +13,7 @@ import com.github.intellectualsites.plotsquared.plot.util.InventoryUtil;
 public class NukkitInventoryUtil extends InventoryUtil {
 
     public NukkitInventoryUtil() {
-        PS.debug("Not implemented: NukkitInventoryUtil");
+        PlotSquared.debug("Not implemented: NukkitInventoryUtil");
     }
 
     public static Item getItem(PlotItemStack item) {

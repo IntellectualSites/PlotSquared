@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.nukkit.util;
 
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.ChunkLoc;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -9,7 +9,7 @@ import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 
 public class NukkitChunkManager extends ChunkManager {
     public NukkitChunkManager() {
-        PS.debug("Not implemented: NukkitChunkManager");
+        PlotSquared.debug("Not implemented: NukkitChunkManager");
     }
 
     @Override public int[] countEntities(Plot plot) {

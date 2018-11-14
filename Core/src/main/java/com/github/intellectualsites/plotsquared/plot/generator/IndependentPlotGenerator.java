@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
 
@@ -76,7 +76,7 @@ public abstract class IndependentPlotGenerator {
      * @return
      */
     public <T> GeneratorWrapper<T> specify(String world) {
-        return (GeneratorWrapper<T>) PS.get().IMP.wrapPlotGenerator(world, this);
+        return (GeneratorWrapper<T>) PlotSquared.get().IMP.wrapPlotGenerator(world, this);
     }
 
     @Override public String toString() {

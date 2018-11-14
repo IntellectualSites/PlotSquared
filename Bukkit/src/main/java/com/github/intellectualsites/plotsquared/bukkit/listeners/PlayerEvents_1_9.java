@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import org.bukkit.entity.LingeringPotion;
 import org.bukkit.event.EventHandler;
@@ -21,7 +21,7 @@ public class PlayerEvents_1_9 implements Listener {
     public void onPotionSplash(LingeringPotionSplashEvent event) {
         LingeringPotion entity = event.getEntity();
         Location l = BukkitUtil.getLocation(entity);
-        if (!PS.get().hasPlotArea(l.getWorld())) {
+        if (!PlotSquared.get().hasPlotArea(l.getWorld())) {
             return;
         }
         if (!parent.onProjectileHit(event)) {

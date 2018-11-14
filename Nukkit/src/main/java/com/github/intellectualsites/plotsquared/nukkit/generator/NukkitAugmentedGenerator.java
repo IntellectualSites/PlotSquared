@@ -6,7 +6,7 @@ import cn.nukkit.event.level.ChunkLoadEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import com.github.intellectualsites.plotsquared.nukkit.NukkitMain;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.generator.AugmentedUtils;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +27,7 @@ public class NukkitAugmentedGenerator implements Listener {
             return current;
         }
         if (generator == null) {
-            NukkitMain plugin = ((NukkitMain) PS.get().IMP);
+            NukkitMain plugin = ((NukkitMain) PlotSquared.get().IMP);
             generator = new NukkitAugmentedGenerator(plugin);
         }
         generators.put(level.getName(), generator);

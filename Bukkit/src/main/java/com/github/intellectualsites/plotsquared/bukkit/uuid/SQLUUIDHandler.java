@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.bukkit.uuid;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.SQLite;
@@ -43,7 +43,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
 
     public SQLUUIDHandler(UUIDWrapper wrapper) {
         super(wrapper);
-        this.sqlite = new SQLite(MainUtil.getFile(PS.get().IMP.getDirectory(), "usercache.db"));
+        this.sqlite = new SQLite(MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), "usercache.db"));
         try {
             this.sqlite.openConnection();
         } catch (ClassNotFoundException | SQLException e) {
@@ -139,7 +139,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                                                 connection.disconnect();
                                             }
                                         } catch (IOException | ParseException e) {
-                                            PS.debug(
+                                            PlotSquared.debug(
                                                 "Invalid response from Mojang: Some UUIDs will be cached later. (`unknown` until then or player joins)");
                                         }
                                         try {
@@ -166,7 +166,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
     }
 
     @Override public void fetchUUID(final String name, final RunnableVal<UUID> ifFetch) {
-        PS.debug(C.PREFIX + "UUID for '" + name
+        PlotSquared.debug(C.PREFIX + "UUID for '" + name
             + "' was null. We'll cache this from the Mojang servers!");
         if (ifFetch == null) {
             return;
@@ -221,7 +221,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                         statement.setString(1, uuid.toString());
                         statement.setString(2, name.toString());
                         statement.execute();
-                        PS.debug(C.PREFIX + "&cAdded '&6" + uuid + "&c' - '&6" + name + "&c'");
+                        PlotSquared.debug(C.PREFIX + "&cAdded '&6" + uuid + "&c' - '&6" + name + "&c'");
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -244,7 +244,8 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                     statement.setString(1, name.value);
                     statement.setString(2, uuid.toString());
                     statement.execute();
-                    PS.debug(C.PREFIX + "Name change for '" + uuid + "' to '" + name.value + '\'');
+                    PlotSquared
+                        .debug(C.PREFIX + "Name change for '" + uuid + "' to '" + name.value + '\'');
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

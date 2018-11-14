@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
 import com.github.intellectualsites.plotsquared.jnbt.CompoundTag;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
@@ -15,7 +15,7 @@ import java.util.Map.Entry;
 public class HybridGen extends IndependentPlotGenerator {
 
     @Override public String getName() {
-        return PS.imp().getPluginName();
+        return PlotSquared.imp().getPluginName();
     }
 
     private void placeSchem(HybridPlotWorld world, ScopedLocalBlockQueue result, short relativeX,

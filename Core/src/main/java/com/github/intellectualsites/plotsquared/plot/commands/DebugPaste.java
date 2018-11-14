@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -20,13 +20,13 @@ public class DebugPaste extends SubCommand {
         TaskManager.runTaskAsync(new Runnable() {
             @Override public void run() {
                 try {
-                    String settingsYML = HastebinUtility.upload(PS.get().configFile);
-                    String worldsYML = HastebinUtility.upload(PS.get().worldsFile);
-                    String commandsYML = HastebinUtility.upload(PS.get().commandsFile);
+                    String settingsYML = HastebinUtility.upload(PlotSquared.get().configFile);
+                    String worldsYML = HastebinUtility.upload(PlotSquared.get().worldsFile);
+                    String commandsYML = HastebinUtility.upload(PlotSquared.get().commandsFile);
                     String latestLOG;
                     try {
                         latestLOG = HastebinUtility
-                            .upload(new File(PS.get().IMP.getDirectory(), "../../logs/latest.log"));
+                            .upload(new File(PlotSquared.get().IMP.getDirectory(), "../../logs/latest.log"));
                     } catch (IOException ignored) {
                         MainUtil.sendMessage(player,
                             "&clatest.log is too big to be pasted, will ignore");
@@ -41,13 +41,13 @@ public class DebugPaste extends SubCommand {
                     b.append("links.commands_yml: ").append(commandsYML).append('\n');
                     b.append("links.latest_log: ").append(latestLOG).append('\n');
                     b.append("\n# Server Information\n");
-                    int[] sVersion = PS.get().IMP.getServerVersion();
+                    int[] sVersion = PlotSquared.get().IMP.getServerVersion();
                     b.append("version.server: ").append(sVersion[0]).append('.').append(sVersion[1])
                         .append('.').append(sVersion[2]).append('\n');
                     b.append("online_mode: ").append(UUIDHandler.getUUIDWrapper()).append(';')
                         .append(!Settings.UUID.OFFLINE).append('\n');
                     b.append("plugins:");
-                    for (String id : PS.get().IMP.getPluginIds()) {
+                    for (String id : PlotSquared.get().IMP.getPluginIds()) {
                         String[] split = id.split(":");
                         String[] split2 = split[0].split(";");
                         String enabled = split.length == 2 ? split[1] : "unknown";

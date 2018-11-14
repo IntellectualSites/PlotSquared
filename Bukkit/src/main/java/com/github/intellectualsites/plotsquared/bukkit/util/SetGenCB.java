@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.bukkit.generator.BukkitAugmentedGenerator;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import org.bukkit.World;
@@ -16,7 +16,7 @@ public class SetGenCB {
 
     public static void setGenerator(World world) throws Exception {
         SetupUtils.manager.updateGenerators();
-        PS.get().removePlotAreas(world.getName());
+        PlotSquared.get().removePlotAreas(world.getName());
         ChunkGenerator gen = world.getGenerator();
         if (gen == null) {
             return;
@@ -52,6 +52,6 @@ public class SetGenCB {
                 }
             }
         }
-        PS.get().loadWorld(world.getName(), PS.get().IMP.getGenerator(world.getName(), null));
+        PlotSquared.get().loadWorld(world.getName(), PlotSquared.get().IMP.getGenerator(world.getName(), null));
     }
 }

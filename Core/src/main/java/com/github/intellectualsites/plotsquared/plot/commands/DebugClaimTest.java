@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.object.*;
@@ -26,7 +26,7 @@ public class DebugClaimTest extends SubCommand {
                 "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the "
                     + "plot signs. \n\n&cMissing world arg /plot debugclaimtest {world} {PlotId min} {PlotId max}");
         }
-        PlotArea area = PS.get().getPlotAreaByString(args[0]);
+        PlotArea area = PlotSquared.get().getPlotAreaByString(args[0]);
         if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
             C.NOT_VALID_PLOT_WORLD.send(player, args[0]);
             return false;

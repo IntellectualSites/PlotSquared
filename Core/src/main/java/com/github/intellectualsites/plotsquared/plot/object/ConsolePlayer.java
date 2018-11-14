@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.RequiredType;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
@@ -13,7 +13,7 @@ public class ConsolePlayer extends PlotPlayer {
     private static ConsolePlayer instance;
 
     private ConsolePlayer() {
-        PlotArea area = PS.get().getFirstPlotArea();
+        PlotArea area = PlotSquared.get().getFirstPlotArea();
         Location loc;
         if (area != null) {
             RegionWrapper region = area.getRegion();
@@ -62,7 +62,7 @@ public class ConsolePlayer extends PlotPlayer {
     }
 
     @Override public void sendMessage(String message) {
-        PS.log(message);
+        PlotSquared.log(message);
     }
 
     @Override public void teleport(Location location) {

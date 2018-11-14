@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.object;
 
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -76,7 +76,7 @@ public class BukkitPlayer extends PlotPlayer {
     private void callEvent(final Event event) {
         RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
         for (RegisteredListener listener : listeners) {
-            if (listener.getPlugin().getName().equals(PS.imp().getPluginName())) {
+            if (listener.getPlugin().getName().equals(PlotSquared.imp().getPluginName())) {
                 continue;
             }
             try {

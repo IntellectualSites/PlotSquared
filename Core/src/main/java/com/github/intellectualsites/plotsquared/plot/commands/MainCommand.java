@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.CmdConfirm;
@@ -185,7 +185,7 @@ import java.util.Arrays;
     /**
      * @Deprecated legacy
      */ public void addCommand(SubCommand command) {
-        PS.debug("Command registration is now done during instantiation");
+        PlotSquared.debug("Command registration is now done during instantiation");
     }
 
     @Override public void execute(final PlotPlayer player, String[] args,

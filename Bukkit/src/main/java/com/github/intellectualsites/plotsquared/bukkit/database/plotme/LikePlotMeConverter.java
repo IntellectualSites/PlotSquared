@@ -5,7 +5,7 @@ import com.github.intellectualsites.plotsquared.configuration.ConfigurationSecti
 import com.github.intellectualsites.plotsquared.configuration.MemorySection;
 import com.github.intellectualsites.plotsquared.configuration.file.FileConfiguration;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -47,7 +47,7 @@ public class LikePlotMeConverter {
     }
 
     private void sendMessage(String message) {
-        PS.debug("&3PlotMe&8->&3" + PS.imp().getPluginName() + "&8: &7" + message);
+        PlotSquared.debug("&3PlotMe&8->&3" + PlotSquared.imp().getPluginName() + "&8: &7" + message);
     }
 
     public String getPlotMePath() {
@@ -96,7 +96,7 @@ public class LikePlotMeConverter {
                 return;
             }
             String content = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
-            String pluginName = PS.imp().getPluginName();
+            String pluginName = PlotSquared.imp().getPluginName();
             content = content.replace("PlotMe-DefaultGenerator", pluginName);
             content = content.replace("PlotMe", pluginName);
             content = content.replace("AthionPlots", pluginName);
@@ -110,32 +110,32 @@ public class LikePlotMeConverter {
         String actualWorldName = getWorld(world);
         String plotMeWorldName = world.toLowerCase();
         Integer pathWidth = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".PathWidth"); //
-        PS.get().worlds.set("worlds." + world + ".road.width", pathWidth);
+        PlotSquared.get().worlds.set("worlds." + world + ".road.width", pathWidth);
         int height = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".RoadHeight",
             plotmeDgYml.getInt("worlds." + plotMeWorldName + ".GroundHeight", 64)); //
-        PS.get().worlds.set("worlds." + world + ".road.height", height);
-        PS.get().worlds.set("worlds." + world + ".wall.height", height);
-        PS.get().worlds.set("worlds." + world + ".plot.height", height);
+        PlotSquared.get().worlds.set("worlds." + world + ".road.height", height);
+        PlotSquared.get().worlds.set("worlds." + world + ".wall.height", height);
+        PlotSquared.get().worlds.set("worlds." + world + ".plot.height", height);
         int plotSize = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".PlotSize", 32); //
-        PS.get().worlds.set("worlds." + world + ".plot.size", plotSize);
+        PlotSquared.get().worlds.set("worlds." + world + ".plot.size", plotSize);
         String wallblock = plotmeDgYml.getString("worlds." + plotMeWorldName + ".UnclaimedBorder",
             plotmeDgYml.getString("worlds." + plotMeWorldName + ".WallBlock", "44")); //
-        PS.get().worlds.set("worlds." + world + ".wall.block", wallblock);
+        PlotSquared.get().worlds.set("worlds." + world + ".wall.block", wallblock);
         String claimed =
             plotmeDgYml.getString("worlds." + plotMeWorldName + ".ProtectedWallBlock", "44:1"); //
-        PS.get().worlds.set("worlds." + world + ".wall.block_claimed", claimed);
+        PlotSquared.get().worlds.set("worlds." + world + ".wall.block_claimed", claimed);
         String floor =
             plotmeDgYml.getString("worlds." + plotMeWorldName + ".PlotFloorBlock", "2"); //
-        PS.get().worlds.set("worlds." + world + ".plot.floor", Collections.singletonList(floor));
+        PlotSquared.get().worlds.set("worlds." + world + ".plot.floor", Collections.singletonList(floor));
         String filling = plotmeDgYml.getString("worlds." + plotMeWorldName + ".FillBlock", "3"); //
-        PS.get().worlds
+        PlotSquared.get().worlds
             .set("worlds." + world + ".plot.filling", Collections.singletonList(filling));
         String road = plotmeDgYml.getString("worlds." + plotMeWorldName + ".RoadMainBlock", "5");
-        PS.get().worlds.set("worlds." + world + ".road.block", road);
-        PS.get().worlds.set("worlds." + actualWorldName + ".road.height", height);
-        PS.get().worlds.set("worlds." + actualWorldName + ".plot.height", height);
-        PS.get().worlds.set("worlds." + actualWorldName + ".wall.height", height);
-        PS.get().worlds.save(PS.get().worldsFile);
+        PlotSquared.get().worlds.set("worlds." + world + ".road.block", road);
+        PlotSquared.get().worlds.set("worlds." + actualWorldName + ".road.height", height);
+        PlotSquared.get().worlds.set("worlds." + actualWorldName + ".plot.height", height);
+        PlotSquared.get().worlds.set("worlds." + actualWorldName + ".wall.height", height);
+        PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
     }
 
     public boolean run(APlotMeConnector connector) {
@@ -154,7 +154,7 @@ public class LikePlotMeConverter {
                 return false;
             }
 
-            PS.debug("&3Using connector: " + connector.getClass().getCanonicalName());
+            PlotSquared.debug("&3Using connector: " + connector.getClass().getCanonicalName());
 
             Connection connection = connector.getPlotMeConnection(plugin, plotConfig, dataFolder);
 
@@ -187,7 +187,7 @@ public class LikePlotMeConverter {
                     try {
                         String actualWorldName = getWorld(world);
                         connector.copyConfig(plotConfig, world, actualWorldName);
-                        PS.get().worlds.save(PS.get().worldsFile);
+                        PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
                     } catch (IOException e) {
                         e.printStackTrace();
                         sendMessage("&c-- &lFailed to save configuration for world '" + world
@@ -224,7 +224,7 @@ public class LikePlotMeConverter {
             }
             for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
                 String world = entry.getKey();
-                PlotArea area = PS.get().getPlotArea(world, null);
+                PlotArea area = PlotSquared.get().getPlotArea(world, null);
                 int duplicate = 0;
                 if (area != null) {
                     for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
@@ -235,13 +235,13 @@ public class LikePlotMeConverter {
                         }
                     }
                     if (duplicate > 0) {
-                        PS.debug("&c[WARNING] Found " + duplicate
+                        PlotSquared.debug("&c[WARNING] Found " + duplicate
                             + " duplicate plots already in DB for world: '" + world
                             + "'. Have you run the converter already?");
                     }
                 } else {
-                    if (PS.get().plots_tmp != null) {
-                        HashMap<PlotId, Plot> map = PS.get().plots_tmp.get(world);
+                    if (PlotSquared.get().plots_tmp != null) {
+                        HashMap<PlotId, Plot> map = PlotSquared.get().plots_tmp.get(world);
                         if (map != null) {
                             for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
                                 if (map.containsKey(entry2.getKey())) {
@@ -251,7 +251,7 @@ public class LikePlotMeConverter {
                                 }
                             }
                             if (duplicate > 0) {
-                                PS.debug("&c[WARNING] Found " + duplicate
+                                PlotSquared.debug("&c[WARNING] Found " + duplicate
                                     + " duplicate plots already in DB for world: '" + world
                                     + "'. Have you run the converter already?");
                             }
@@ -269,13 +269,13 @@ public class LikePlotMeConverter {
                     if (done.get()) {
                         done();
                         sendMessage("&aDatabase conversion is now complete!");
-                        PS.debug("&c - Stop the server");
-                        PS.debug(
+                        PlotSquared.debug("&c - Stop the server");
+                        PlotSquared.debug(
                             "&c - Disable 'plotme-converter' and 'plotme-convert.cache-uuids' in the settings.yml");
-                        PS.debug(
+                        PlotSquared.debug(
                             "&c - Correct any generator settings that haven't copied to 'settings.yml' properly");
-                        PS.debug("&c - Start the server");
-                        PS.get().setPlots(DBFunc.getPlots());
+                        PlotSquared.debug("&c - Start the server");
+                        PlotSquared.get().setPlots(DBFunc.getPlots());
                     } else {
                         sendMessage(
                             "&cPlease wait until database conversion is complete. You will be notified with instructions when this happens!");
@@ -285,7 +285,7 @@ public class LikePlotMeConverter {
             });
             sendMessage("Saving configuration...");
             try {
-                PS.get().worlds.save(PS.get().worldsFile);
+                PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
             } catch (IOException ignored) {
                 sendMessage(" - &cFailed to save configuration.");
             }
@@ -316,7 +316,7 @@ public class LikePlotMeConverter {
                                 sendMessage(
                                     "&cYou need to stop the server to reload this world properly");
                             } else {
-                                PS.get().removePlotAreas(actualWorldName);
+                                PlotSquared.get().removePlotAreas(actualWorldName);
                                 if (mv) {
                                     // unload world with MV
                                     Bukkit.getServer()
@@ -330,7 +330,7 @@ public class LikePlotMeConverter {
                                     // load world with MV
                                     Bukkit.getServer()
                                         .dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                                            "mv import " + actualWorldName + " normal -g " + PS
+                                            "mv import " + actualWorldName + " normal -g " + PlotSquared
                                                 .imp().getPluginName());
                                 } else if (mw) {
                                     // unload world with MW
@@ -345,14 +345,15 @@ public class LikePlotMeConverter {
                                     // load world with MW
                                     Bukkit.getServer()
                                         .dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                                            "mw create " + actualWorldName + " plugin:" + PS.imp()
+                                            "mw create " + actualWorldName + " plugin:" + PlotSquared
+                                                .imp()
                                                 .getPluginName());
                                 } else {
                                     // Load using Bukkit API
                                     // - User must set generator manually
                                     Bukkit.getServer().unloadWorld(world, true);
                                     World myWorld = WorldCreator.name(actualWorldName).generator(
-                                        new BukkitPlotGenerator(PS.get().IMP.getDefaultGenerator()))
+                                        new BukkitPlotGenerator(PlotSquared.get().IMP.getDefaultGenerator()))
                                         .createWorld();
                                     myWorld.save();
                                 }
@@ -364,12 +365,12 @@ public class LikePlotMeConverter {
                     if (done.get()) {
                         done();
                         sendMessage("&aDatabase conversion is now complete!");
-                        PS.debug("&c - Stop the server");
-                        PS.debug(
+                        PlotSquared.debug("&c - Stop the server");
+                        PlotSquared.debug(
                             "&c - Disable 'plotme-converter' and 'plotme-convert.cache-uuids' in the settings.yml");
-                        PS.debug(
+                        PlotSquared.debug(
                             "&c - Correct any generator settings that haven't copied to 'settings.yml' properly");
-                        PS.debug("&c - Start the server");
+                        PlotSquared.debug("&c - Start the server");
                     } else {
                         sendMessage(
                             "&cPlease wait until database conversion is complete. You will be notified with instructions when this happens!");
@@ -379,12 +380,12 @@ public class LikePlotMeConverter {
             });
         } catch (InterruptedException | SQLException e) {
             e.printStackTrace();
-            PS.debug("&/end/");
+            PlotSquared.debug("&/end/");
         }
         return true;
     }
 
     public void done() {
-        PS.get().setPlots(DBFunc.getPlots());
+        PlotSquared.get().setPlots(DBFunc.getPlots());
     }
 }

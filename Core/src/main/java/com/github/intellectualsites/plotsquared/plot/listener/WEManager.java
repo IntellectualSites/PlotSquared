@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.listener;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.*;
@@ -36,7 +36,7 @@ public class WEManager {
         UUID uuid = player.getUUID();
         Location location = player.getLocation();
         String world = location.getWorld();
-        if (!PS.get().hasPlotArea(world)) {
+        if (!PlotSquared.get().hasPlotArea(world)) {
             regions.add(new RegionWrapper(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
                 Integer.MAX_VALUE));
             return regions;

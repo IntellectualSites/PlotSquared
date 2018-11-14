@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.DebugExec;
 import com.github.intellectualsites.plotsquared.plot.commands.MainCommand;
 
@@ -41,7 +41,7 @@ public abstract class Expression<T> {
                 try {
                     return (Double) exec.getEngine().eval(expression.replace("{arg}", "" + arg));
                 } catch (ScriptException e) {
-                    PS.debug("Invalid Expression: " + expression);
+                    PlotSquared.debug("Invalid Expression: " + expression);
                     e.printStackTrace();
                 }
                 return 0d;

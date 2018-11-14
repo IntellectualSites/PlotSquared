@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.jnbt.CompoundTag;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
@@ -201,13 +201,13 @@ public class Plot {
                 return id != null ? defaultArea.getPlotAbs(id) : null;
             }
         } else if (split.length == 3) {
-            PlotArea pa = PS.get().getPlotArea(split[0], null);
+            PlotArea pa = PlotSquared.get().getPlotArea(split[0], null);
             if (pa != null) {
                 PlotId id = PlotId.fromString(split[1] + ';' + split[2]);
                 return pa.getPlotAbs(id);
             }
         } else if (split.length == 4) {
-            PlotArea pa = PS.get().getPlotArea(split[0], split[1]);
+            PlotArea pa = PlotSquared.get().getPlotArea(split[0], split[1]);
             if (pa != null) {
                 PlotId id = PlotId.fromString(split[1] + ';' + split[2]);
                 return pa.getPlotAbs(id);
@@ -224,7 +224,7 @@ public class Plot {
      * @see PlotPlayer#getCurrentPlot() if a player is expected here.
      */
     public static Plot getPlot(Location location) {
-        PlotArea pa = PS.get().getPlotAreaAbs(location);
+        PlotArea pa = PlotSquared.get().getPlotAreaAbs(location);
         if (pa != null) {
             return pa.getPlot(location);
         }
@@ -915,7 +915,7 @@ public class Plot {
     public void setSign(final String name) {
         if (!isLoaded())
             return;
-        if (!PS.get().isMainThread(Thread.currentThread())) {
+        if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
             TaskManager.runTask(new Runnable() {
                 @Override public void run() {
                     Plot.this.setSign(name);
@@ -1002,7 +1002,7 @@ public class Plot {
     /**
      * Delete a plot (use null for the runnable if you don't need to be notified on completion)
      *
-     * @see PS#removePlot(Plot, boolean)
+     * @see PlotSquared#removePlot(Plot, boolean)
      * @see #clear(Runnable) to simply clear a plot
      */
     public boolean deletePlot(final Runnable whenDone) {
@@ -1544,12 +1544,12 @@ public class Plot {
      */
     public boolean moveData(Plot plot, Runnable whenDone) {
         if (this.owner == null) {
-            PS.debug(plot + " is unowned (single)");
+            PlotSquared.debug(plot + " is unowned (single)");
             TaskManager.runTask(whenDone);
             return false;
         }
         if (plot.hasOwner()) {
-            PS.debug(plot + " is unowned (multi)");
+            PlotSquared.debug(plot + " is unowned (multi)");
             TaskManager.runTask(whenDone);
             return false;
         }
@@ -2352,7 +2352,7 @@ public class Plot {
             tmp = this.area.getPlotAbs(this.id.getRelative(0));
             if (!tmp.getMerged(2)) {
                 // invalid merge
-                PS.debug("Fixing invalid merge: " + this);
+                PlotSquared.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(this.owner)) {
                     tmp.getSettings().setMerged(2, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
@@ -2368,7 +2368,7 @@ public class Plot {
             tmp = this.area.getPlotAbs(this.id.getRelative(1));
             if (!tmp.getMerged(3)) {
                 // invalid merge
-                PS.debug("Fixing invalid merge: " + this);
+                PlotSquared.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(this.owner)) {
                     tmp.getSettings().setMerged(3, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
@@ -2384,7 +2384,7 @@ public class Plot {
             tmp = this.area.getPlotAbs(this.id.getRelative(2));
             if (!tmp.getMerged(0)) {
                 // invalid merge
-                PS.debug("Fixing invalid merge: " + this);
+                PlotSquared.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(this.owner)) {
                     tmp.getSettings().setMerged(0, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
@@ -2400,7 +2400,7 @@ public class Plot {
             tmp = this.area.getPlotAbs(this.id.getRelative(3));
             if (!tmp.getMerged(1)) {
                 // invalid merge
-                PS.debug("Fixing invalid merge: " + this);
+                PlotSquared.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(this.owner)) {
                     tmp.getSettings().setMerged(1, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
@@ -2417,7 +2417,7 @@ public class Plot {
             if (current.owner == null || current.settings == null) {
                 // Invalid plot
                 // merged onto unclaimed plot
-                PS.debug("Ignoring invalid merged plot: " + current + " | " + current.owner);
+                PlotSquared.debug("Ignoring invalid merged plot: " + current + " | " + current.owner);
                 continue;
             }
             tmpSet.add(current);

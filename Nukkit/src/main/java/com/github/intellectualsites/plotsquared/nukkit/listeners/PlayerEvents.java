@@ -23,7 +23,7 @@ import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.plugin.Plugin;
 import com.github.intellectualsites.plotsquared.nukkit.object.NukkitPlayer;
 import com.github.intellectualsites.plotsquared.nukkit.util.NukkitUtil;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
@@ -224,7 +224,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             EntityDamageByEntityEvent specific = (EntityDamageByEntityEvent) event;
             Entity damager = specific.getDamager();
             Location l = NukkitUtil.getLocation(damager);
-            if (!PS.get().hasPlotArea(l.getWorld())) {
+            if (!PlotSquared.get().hasPlotArea(l.getWorld())) {
                 return;
             }
             Entity victim = event.getEntity();
@@ -244,7 +244,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Location l = NukkitUtil.getLocation(entity);
-        if (!PS.get().hasPlotArea(l.getWorld())) {
+        if (!PlotSquared.get().hasPlotArea(l.getWorld())) {
             return;
         }
         PlotPlayer pp = NukkitUtil.getPlayer((Player) shooter);
@@ -257,7 +257,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     @EventHandler public boolean onProjectileHit(ProjectileHitEvent event) {
         EntityProjectile entity = (EntityProjectile) event.getEntity();
         Location loc = NukkitUtil.getLocation(entity);
-        if (!PS.get().hasPlotArea(loc.getWorld())) {
+        if (!PlotSquared.get().hasPlotArea(loc.getWorld())) {
             return true;
         }
         PlotArea area = loc.getPlotArea();
@@ -708,8 +708,8 @@ public class PlayerEvents extends PlotListener implements Listener {
         if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_ROAD)) {
             return;
         }
-        if (PS.get().worldedit != null && pp.getAttribute("worldedit")) {
-            if (player.getInventory().getItemInHand().getId() == PS.get().worldedit
+        if (PlotSquared.get().worldedit != null && pp.getAttribute("worldedit")) {
+            if (player.getInventory().getItemInHand().getId() == PlotSquared.get().worldedit
                 .getConfiguration().wandItem) {
                 return;
             }
@@ -728,7 +728,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         final Plot finalPlot = area.getOwnedPlot(location);
         if (!entity.hasMetadata("plot")) {
-            entity.setMetadata("plot", new MetadataValue((Plugin) PS.get().IMP) {
+            entity.setMetadata("plot", new MetadataValue((Plugin) PlotSquared.get().IMP) {
                 private Plot plot = finalPlot;
 
                 @Override public Object value() {
@@ -747,7 +747,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         Location location = NukkitUtil.getLocation(event.getPosition());
         PlotArea area = location.getPlotArea();
         if (area == null) {
-            if (!PS.get().hasPlotArea(location.getWorld())) {
+            if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
                 return;
             }
             Iterator<Block> iterator = event.getBlockList().iterator();
@@ -787,7 +787,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityBlockForm(BlockFormEvent event) {
         String world = event.getBlock().getLevel().getName();
-        if (!PS.get().hasPlotArea(world)) {
+        if (!PlotSquared.get().hasPlotArea(world)) {
             return;
         }
         if (NukkitUtil.getLocation(event.getBlock().getLocation()).getPlotArea() != null) {
@@ -937,7 +937,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     public void onEntityFall(EntityBlockChangeEvent event) {
         Entity entity = event.getEntity();
         Location location = NukkitUtil.getLocation(entity);
-        if (!PS.get().hasPlotArea(location.getWorld())) {
+        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
             return;
         }
         PlotArea area = location.getPlotArea();
@@ -958,7 +958,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 kill(entity, event);
             }
         } else {
-            entity.setMetadata("plot", new MetadataValue((Plugin) PS.get().IMP) {
+            entity.setMetadata("plot", new MetadataValue((Plugin) PlotSquared.get().IMP) {
                 private Plot plot = finalPlot;
 
                 @Override public Object value() {
@@ -1081,7 +1081,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     public void onPotionSplash(PotionCollideEvent event) {
         EntityPotion entity = event.getThrownPotion();
         Location l = NukkitUtil.getLocation(entity);
-        if (!PS.get().hasPlotArea(l.getWorld())) {
+        if (!PlotSquared.get().hasPlotArea(l.getWorld())) {
             return;
         }
         Entity shooter = entity.shootingEntity;

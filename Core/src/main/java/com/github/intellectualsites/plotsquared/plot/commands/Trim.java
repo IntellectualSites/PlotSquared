@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
@@ -37,7 +37,7 @@ public class Trim extends SubCommand {
         TaskManager.runTaskAsync(new Runnable() {
             @Override public void run() {
                 String directory = world + File.separator + "region";
-                File folder = new File(PS.get().IMP.getWorldContainer(), directory);
+                File folder = new File(PlotSquared.get().IMP.getWorldContainer(), directory);
                 File[] regionFiles = folder.listFiles();
                 for (File file : regionFiles) {
                     String name = file.getName();
@@ -72,7 +72,7 @@ public class Trim extends SubCommand {
                     ChunkLoc loc = new ChunkLoc(x, z);
                     empty.add(loc);
                 } catch (NumberFormatException ignored) {
-                    PS.debug("INVALID MCA: " + name);
+                    PlotSquared.debug("INVALID MCA: " + name);
                 }
             }
         });
@@ -94,7 +94,7 @@ public class Trim extends SubCommand {
         }
         MainUtil.sendMessage(null, "Collecting region data...");
         ArrayList<Plot> plots = new ArrayList<>();
-        plots.addAll(PS.get().getPlots(world));
+        plots.addAll(PlotSquared.get().getPlots(world));
         if (ExpireManager.IMP != null) {
             plots.removeAll(ExpireManager.IMP.getPendingExpired());
         }
@@ -130,7 +130,7 @@ public class Trim extends SubCommand {
             return false;
         }
         final String world = args[0];
-        if (!WorldUtil.IMP.isWorld(world) || !PS.get().hasPlotArea(world)) {
+        if (!WorldUtil.IMP.isWorld(world) || !PlotSquared.get().hasPlotArea(world)) {
             MainUtil.sendMessage(player, C.NOT_VALID_WORLD);
             return false;
         }
@@ -144,9 +144,9 @@ public class Trim extends SubCommand {
             @Override public void run(Set<ChunkLoc> viable, final Set<ChunkLoc> nonViable) {
                 Runnable regenTask;
                 if (regen) {
-                    PS.log("Starting regen task:");
-                    PS.log(" - This is a VERY slow command");
-                    PS.log(" - It will say `Trim done!` when complete");
+                    PlotSquared.log("Starting regen task:");
+                    PlotSquared.log(" - This is a VERY slow command");
+                    PlotSquared.log(" - It will say `Trim done!` when complete");
                     regenTask = new Runnable() {
                         @Override public void run() {
                             if (nonViable.isEmpty()) {
@@ -170,7 +170,7 @@ public class Trim extends SubCommand {
                             int bx = cbx << 4;
                             int bz = cbz << 4;
                             RegionWrapper region = new RegionWrapper(bx, bx + 511, bz, bz + 511);
-                            for (Plot plot : PS.get().getPlots(world)) {
+                            for (Plot plot : PlotSquared.get().getPlots(world)) {
                                 Location bot = plot.getBottomAbs();
                                 Location top = plot.getExtendedTopAbs();
                                 RegionWrapper plotReg =

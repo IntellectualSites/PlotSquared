@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 
@@ -9,7 +9,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 public class DebugLoadTest extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
-        PS.get().plots_tmp = DBFunc.getPlots();
+        PlotSquared.get().plots_tmp = DBFunc.getPlots();
         return true;
     }
 }

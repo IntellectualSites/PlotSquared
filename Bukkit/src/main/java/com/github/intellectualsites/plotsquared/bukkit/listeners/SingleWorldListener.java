@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.PlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils;
@@ -58,7 +58,7 @@ public class SingleWorldListener implements Listener {
     private void handle(ChunkEvent event) {
         World world = event.getWorld();
         String name = world.getName();
-        PlotAreaManager man = PS.get().getPlotAreaManager();
+        PlotAreaManager man = PlotSquared.get().getPlotAreaManager();
         if (!(man instanceof SinglePlotAreaManager))
             return;
         if (!isPlotId(name))

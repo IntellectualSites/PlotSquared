@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.sponge.object;
 
 import com.flowpowered.math.vector.Vector3d;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.RequiredType;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -118,7 +118,7 @@ public class SpongePlayer extends PlotPlayer {
             target.get()
                 .set(Keys.TARGETED_LOCATION, SpongeUtil.getLocation(location).getPosition());
         } else {
-            PS.debug("Failed to set compass target.");
+            PlotSquared.debug("Failed to set compass target.");
         }
     }
 

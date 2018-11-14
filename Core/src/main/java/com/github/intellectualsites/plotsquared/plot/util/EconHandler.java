@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
 import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -15,7 +15,7 @@ public abstract class EconHandler {
             return manager;
         }
         initialized = true;
-        return manager = PS.get().IMP.getEconomyHandler();
+        return manager = PlotSquared.get().IMP.getEconomyHandler();
     }
 
     public double getMoney(PlotPlayer player) {

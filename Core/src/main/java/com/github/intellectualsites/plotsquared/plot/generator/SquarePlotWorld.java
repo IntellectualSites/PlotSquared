@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 
 public abstract class SquarePlotWorld extends GridPlotWorld {
@@ -18,7 +18,7 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
 
     @Override public void loadConfiguration(ConfigurationSection config) {
         if (!config.contains("plot.height")) {
-            PS.debug(" - &cConfiguration is null? (" + config.getCurrentPath() + ')');
+            PlotSquared.debug(" - &cConfiguration is null? (" + config.getCurrentPath() + ')');
         }
         this.PLOT_WIDTH = config.getInt("plot.size");
         this.ROAD_WIDTH = config.getInt("road.width");

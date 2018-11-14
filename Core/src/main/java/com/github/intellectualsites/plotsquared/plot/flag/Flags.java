@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
@@ -136,7 +136,7 @@ public final class Flags {
                 }
                 Flag flag = (Flag) fieldValue;
                 if (!flag.getName().equals(fieldName)) {
-                    PS.debug(Flags.class + "Field doesn't match: " + fieldName + " != " + flag
+                    PlotSquared.debug(Flags.class + "Field doesn't match: " + fieldName + " != " + flag
                         .getName());
                 }
                 flags.put(flag.getName(), flag);
@@ -162,7 +162,7 @@ public final class Flags {
     public static void registerFlag(final Flag<?> flag) {
         final Flag<?> duplicate = flags.put(flag.getName(), flag);
         if (duplicate != null) {
-            PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
+            PlotSquared.get().foreachPlotArea(new RunnableVal<PlotArea>() {
                 @Override public void run(PlotArea value) {
                     Object remove;
                     if (value.DEFAULT_FLAGS.containsKey(duplicate)) {
@@ -182,7 +182,7 @@ public final class Flags {
                     }
                 }
             });
-            PS.get().foreachPlotRaw(new RunnableVal<Plot>() {
+            PlotSquared.get().foreachPlotRaw(new RunnableVal<Plot>() {
                 @Override public void run(Plot value) {
                     if (value.getFlags().containsKey(duplicate)) {
                         Object remove = value.getFlags().remove(duplicate);

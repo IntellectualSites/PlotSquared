@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
@@ -31,13 +31,13 @@ import java.util.*;
 
     public DebugExec() {
         try {
-            if (PS.get() != null) {
-                File file = new File(PS.get().IMP.getDirectory(),
+            if (PlotSquared.get() != null) {
+                File file = new File(PlotSquared.get().IMP.getDirectory(),
                     Settings.Paths.SCRIPTS + File.separator + "start.js");
                 if (file.exists()) {
                     init();
                     String script = StringMan.join(Files.readLines(new File(new File(
-                        PS.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS),
+                        PlotSquared.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS),
                         "start.js"), StandardCharsets.UTF_8), System.getProperty("line.separator"));
                     this.scope.put("THIS", this);
                     this.scope.put("PlotPlayer", ConsolePlayer.getConsole());
@@ -87,10 +87,10 @@ import java.util.*;
         this.scope.put("RunnableVal", RunnableVal.class);
 
         // Instances
-        this.scope.put("PS", PS.get());
+        this.scope.put("PS", PlotSquared.get());
         this.scope.put("GlobalBlockQueue", GlobalBlockQueue.IMP);
         this.scope.put("ExpireManager", ExpireManager.IMP);
-        if (PS.get().worldedit != null) {
+        if (PlotSquared.get().worldedit != null) {
             this.scope.put("WEManager", new WEManager());
         }
         this.scope.put("TaskManager", TaskManager.IMP);
@@ -105,7 +105,7 @@ import java.util.*;
         this.scope.put("UUIDHandler", UUIDHandler.implementation);
         this.scope.put("DBFunc", DBFunc.dbManager);
         this.scope.put("HybridUtils", HybridUtils.manager);
-        this.scope.put("IMP", PS.get().IMP);
+        this.scope.put("IMP", PlotSquared.get().IMP);
         this.scope.put("MainCommand", MainCommand.getInstance());
 
         // enums
@@ -180,7 +180,7 @@ import java.util.*;
                         return false;
                     }
                     String flag = args[1];
-                    for (Plot plot : PS.get().getBasePlots()) {
+                    for (Plot plot : PlotSquared.get().getBasePlots()) {
                         Flag<?> flag1 = FlagManager.getFlag(flag);
                         if (plot.getFlag(flag1).isPresent()) {
                             plot.removeFlag(flag1);
@@ -193,7 +193,7 @@ import java.util.*;
                             "&cInvalid syntax: /plot debugexec start-rgar <world>");
                         return false;
                     }
-                    PlotArea area = PS.get().getPlotAreaByString(args[1]);
+                    PlotArea area = PlotSquared.get().getPlotAreaByString(args[1]);
                     if (area == null) {
                         MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD, args[1]);
                         return false;
@@ -261,7 +261,7 @@ import java.util.*;
                 case "addcmd":
                     try {
                         final String cmd = StringMan.join(Files.readLines(MainUtil.getFile(new File(
-                                PS.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS),
+                                PlotSquared.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS),
                             args[1]), StandardCharsets.UTF_8),
                             System.getProperty("line.separator"));
                         new Command(MainCommand.getInstance(), true, args[1].split("\\.")[0], null,
@@ -291,7 +291,7 @@ import java.util.*;
                 case "run":
                     try {
                         script = StringMan.join(Files.readLines(MainUtil.getFile(new File(
-                                PS.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS),
+                                PlotSquared.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS),
                             args[1]), StandardCharsets.UTF_8),
                             System.getProperty("line.separator"));
                         if (args.length > 2) {
@@ -308,7 +308,7 @@ import java.util.*;
                     break;
                 case "list-scripts":
                     String path =
-                        PS.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS;
+                        PlotSquared.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS;
                     File folder = new File(path);
                     File[] filesArray = folder.listFiles();
 
@@ -350,7 +350,7 @@ import java.util.*;
                     if ("true".equals(args[1])) {
                         Location loc = player.getMeta("location");
                         Plot plot = player.getMeta("lastplot");
-                        for (Plot current : PS.get().getBasePlots()) {
+                        for (Plot current : PlotSquared.get().getBasePlots()) {
                             player.setMeta("location", current.getBottomAbs());
                             player.setMeta("lastplot", current);
                             cmd.execute(player, params, null, null);
@@ -398,7 +398,7 @@ import java.util.*;
             }
             init();
             this.scope.put("PlotPlayer", player);
-            PS.debug("> " + script);
+            PlotSquared.debug("> " + script);
             try {
                 if (async) {
                     final String toExec = script;
@@ -411,13 +411,13 @@ import java.util.*;
                             } catch (ScriptException e) {
                                 e.printStackTrace();
                             }
-                            PS.log("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
+                            PlotSquared.log("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
                         }
                     });
                 } else {
                     long start = System.currentTimeMillis();
                     Object result = this.engine.eval(script, this.scope);
-                    PS.log("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
+                    PlotSquared.log("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
                 }
                 return true;
             } catch (ScriptException e) {

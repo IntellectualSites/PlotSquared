@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
@@ -57,7 +57,7 @@ public abstract class EventUtil {
         if (ExpireManager.IMP != null) {
             ExpireManager.IMP.handleJoin(player);
         }
-        if (PS.get().worldedit != null) {
+        if (PlotSquared.get().worldedit != null) {
             if (player.getAttribute("worldedit")) {
                 MainUtil.sendMessage(player, C.WORLDEDIT_BYPASSED);
             }
@@ -89,7 +89,7 @@ public abstract class EventUtil {
 
     public boolean checkPlayerBlockEvent(PlotPlayer player, PlayerBlockEventType type,
         Location location, LazyBlock block, boolean notifyPerms) {
-        PlotArea area = PS.get().getPlotAreaAbs(location);
+        PlotArea area = PlotSquared.get().getPlotAreaAbs(location);
         Plot plot;
         if (area != null) {
             plot = area.getPlot(location);

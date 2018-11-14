@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.object.worlds;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
@@ -28,7 +28,7 @@ public class SinglePlotManager extends PlotManager {
 
     @Override public boolean clearPlot(PlotArea plotArea, Plot plot, final Runnable whenDone) {
         SetupUtils.manager.unload(plot.getWorldName(), false);
-        final File worldFolder = new File(PS.get().IMP.getWorldContainer(), plot.getWorldName());
+        final File worldFolder = new File(PlotSquared.get().IMP.getWorldContainer(), plot.getWorldName());
         TaskManager.IMP.taskAsync(new Runnable() {
             @Override public void run() {
                 MainUtil.deleteDirectory(worldFolder);

@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.database;
 
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.config.Storage;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
@@ -304,12 +304,12 @@ import java.util.concurrent.atomic.AtomicInteger;
                     try {
                         task.run();
                     } catch (Throwable e) {
-                        PS.debug("============ DATABASE ERROR ============");
-                        PS.debug("There was an error updating the database.");
-                        PS.debug(" - It will be corrected on shutdown");
-                        PS.debug("========================================");
+                        PlotSquared.debug("============ DATABASE ERROR ============");
+                        PlotSquared.debug("There was an error updating the database.");
+                        PlotSquared.debug(" - It will be corrected on shutdown");
+                        PlotSquared.debug("========================================");
                         e.printStackTrace();
-                        PS.debug("========================================");
+                        PlotSquared.debug("========================================");
                     }
                 }
                 commit();
@@ -359,12 +359,12 @@ import java.util.concurrent.atomic.AtomicInteger;
                         }
                         lastTask = task;
                     } catch (Throwable e) {
-                        PS.debug("============ DATABASE ERROR ============");
-                        PS.debug("There was an error updating the database.");
-                        PS.debug(" - It will be corrected on shutdown");
-                        PS.debug("========================================");
+                        PlotSquared.debug("============ DATABASE ERROR ============");
+                        PlotSquared.debug("There was an error updating the database.");
+                        PlotSquared.debug(" - It will be corrected on shutdown");
+                        PlotSquared.debug("========================================");
                         e.printStackTrace();
-                        PS.debug("========================================");
+                        PlotSquared.debug("========================================");
                     }
                 }
                 if (statement != null && task != null) {
@@ -404,12 +404,12 @@ import java.util.concurrent.atomic.AtomicInteger;
                         }
                         lastTask = task;
                     } catch (Throwable e) {
-                        PS.debug("============ DATABASE ERROR ============");
-                        PS.debug("There was an error updating the database.");
-                        PS.debug(" - It will be corrected on shutdown");
-                        PS.debug("========================================");
+                        PlotSquared.debug("============ DATABASE ERROR ============");
+                        PlotSquared.debug("There was an error updating the database.");
+                        PlotSquared.debug(" - It will be corrected on shutdown");
+                        PlotSquared.debug("========================================");
                         e.printStackTrace();
-                        PS.debug("========================================");
+                        PlotSquared.debug("========================================");
                     }
                 }
                 if (statement != null && task != null) {
@@ -450,12 +450,12 @@ import java.util.concurrent.atomic.AtomicInteger;
                         }
                         lastTask = task;
                     } catch (Throwable e) {
-                        PS.debug("============ DATABASE ERROR ============");
-                        PS.debug("There was an error updating the database.");
-                        PS.debug(" - It will be corrected on shutdown");
-                        PS.debug("========================================");
+                        PlotSquared.debug("============ DATABASE ERROR ============");
+                        PlotSquared.debug("There was an error updating the database.");
+                        PlotSquared.debug(" - It will be corrected on shutdown");
+                        PlotSquared.debug("========================================");
                         e.printStackTrace();
-                        PS.debug("========================================");
+                        PlotSquared.debug("========================================");
                     }
                 }
                 if (statement != null && task != null) {
@@ -479,12 +479,12 @@ import java.util.concurrent.atomic.AtomicInteger;
                 this.plotTasks.clear();
             }
         } catch (Throwable e) {
-            PS.debug("============ DATABASE ERROR ============");
-            PS.debug("There was an error updating the database.");
-            PS.debug(" - It will be corrected on shutdown");
-            PS.debug("========================================");
+            PlotSquared.debug("============ DATABASE ERROR ============");
+            PlotSquared.debug("There was an error updating the database.");
+            PlotSquared.debug(" - It will be corrected on shutdown");
+            PlotSquared.debug("========================================");
             e.printStackTrace();
-            PS.debug("========================================");
+            PlotSquared.debug("========================================");
         }
         return false;
     }
@@ -584,7 +584,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 });
                             } catch (SQLException e) {
                                 e.printStackTrace();
-                                PS.debug("&7[WARN] Failed to set all helpers for plots");
+                                PlotSquared.debug("&7[WARN] Failed to set all helpers for plots");
                                 try {
                                     SQLManager.this.connection.commit();
                                 } catch (SQLException e1) {
@@ -595,7 +595,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                     });
                 } catch (Exception e) {
                     e.printStackTrace();
-                    PS.debug("&7[WARN] Failed to set all helpers for plots");
+                    PlotSquared.debug("&7[WARN] Failed to set all helpers for plots");
                     try {
                         SQLManager.this.connection.commit();
                     } catch (SQLException e1) {
@@ -754,7 +754,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 last = subList.size();
                 preparedStmt.addBatch();
             }
-            PS.debug("&aBatch 1: " + count + " | " + objList.get(0).getClass().getCanonicalName());
+            PlotSquared.debug("&aBatch 1: " + count + " | " + objList.get(0).getClass().getCanonicalName());
             preparedStmt.executeBatch();
             preparedStmt.clearParameters();
             preparedStmt.close();
@@ -765,7 +765,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         } catch (SQLException e) {
             if (this.mySQL) {
                 e.printStackTrace();
-                PS.debug("&cERROR 1:  | " + objList.get(0).getClass().getCanonicalName());
+                PlotSquared.debug("&cERROR 1:  | " + objList.get(0).getClass().getCanonicalName());
             }
         }
         try {
@@ -797,25 +797,25 @@ import java.util.concurrent.atomic.AtomicInteger;
                 last = subList.size();
                 preparedStmt.addBatch();
             }
-            PS.debug("&aBatch 2: " + count + " | " + objList.get(0).getClass().getCanonicalName());
+            PlotSquared.debug("&aBatch 2: " + count + " | " + objList.get(0).getClass().getCanonicalName());
             preparedStmt.executeBatch();
             preparedStmt.clearParameters();
             preparedStmt.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            PS.debug("&cERROR 2:  | " + objList.get(0).getClass().getCanonicalName());
-            PS.debug("&6[WARN] Could not bulk save!");
+            PlotSquared.debug("&cERROR 2:  | " + objList.get(0).getClass().getCanonicalName());
+            PlotSquared.debug("&6[WARN] Could not bulk save!");
             try (PreparedStatement preparedStmt = this.connection
                 .prepareStatement(mod.getCreateSQL())) {
                 for (T obj : objList) {
                     mod.setSQL(preparedStmt, obj);
                     preparedStmt.addBatch();
                 }
-                PS.debug("&aBatch 3");
+                PlotSquared.debug("&aBatch 3");
                 preparedStmt.executeBatch();
             } catch (SQLException e3) {
                 e3.printStackTrace();
-                PS.debug("&c[ERROR] Failed to save all!");
+                PlotSquared.debug("&c[ERROR] Failed to save all!");
             }
         }
         if (whenDone != null) {
@@ -1114,7 +1114,7 @@ import java.util.concurrent.atomic.AtomicInteger;
             return;
         }
         boolean addConstraint = create == tables.length;
-        PS.debug("Creating tables");
+        PlotSquared.debug("Creating tables");
         try (Statement stmt = this.connection.createStatement()) {
             if (this.mySQL) {
                 stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot` ("
@@ -1347,7 +1347,7 @@ import java.util.concurrent.atomic.AtomicInteger;
      * @param plot
      */
     @Override public void delete(final Plot plot) {
-        PS.debug(
+        PlotSquared.debug(
             "Deleting plot... Id: " + plot.getId() + " World: " + plot.getWorldName() + " Owner: "
                 + plot.owner + " Index: " + plot.temp);
         deleteSettings(plot);
@@ -1375,7 +1375,7 @@ import java.util.concurrent.atomic.AtomicInteger;
      * @param plot
      */
     @Override public void createPlotSettings(final int id, Plot plot) {
-        PS.debug(
+        PlotSquared.debug(
             "Creating plot... Id: " + plot.getId() + " World: " + plot.getWorldName() + " Owner: "
                 + plot.owner + " Index: " + id);
         addPlotTask(plot, new UniqueStatement("createPlotSettings") {
@@ -1469,7 +1469,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
     @Override public void updateTables(int[] oldVersion) {
         try {
-            if (this.mySQL && !PS.get().checkVersion(oldVersion, 3, 3, 2)) {
+            if (this.mySQL && !PlotSquared.get().checkVersion(oldVersion, 3, 3, 2)) {
                 try (Statement stmt = this.connection.createStatement()) {
                     stmt.executeUpdate(
                         "ALTER TABLE `" + this.prefix + "plots` DROP INDEX `unique_alias`");
@@ -1535,7 +1535,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                             "SELECT plot_plot_id, user_uuid, COUNT(*) FROM " + this.prefix + table
                                 + " GROUP BY plot_plot_id, user_uuid HAVING COUNT(*) > 1");
                         if (result.next()) {
-                            PS.debug("BACKING UP: " + this.prefix + table);
+                            PlotSquared.debug("BACKING UP: " + this.prefix + table);
                             result.close();
                             statement.executeUpdate(
                                 "CREATE TABLE " + this.prefix + table + "_tmp AS SELECT * FROM "
@@ -1545,7 +1545,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 "CREATE TABLE " + this.prefix + table + " AS SELECT * FROM "
                                     + this.prefix + table + "_tmp");
                             statement.executeUpdate("DROP TABLE " + this.prefix + table + "_tmp");
-                            PS.debug("RESTORING: " + this.prefix + table);
+                            PlotSquared.debug("RESTORING: " + this.prefix + table);
                         }
                     }
                 } catch (SQLException e2) {
@@ -1599,9 +1599,9 @@ import java.util.concurrent.atomic.AtomicInteger;
         HashMap<Integer, Plot> plots = new HashMap<>();
         try {
             HashSet<String> areas = new HashSet<>();
-            if (PS.get().worlds.contains("worlds")) {
+            if (PlotSquared.get().worlds.contains("worlds")) {
                 ConfigurationSection worldSection =
-                    PS.get().worlds.getConfigurationSection("worlds");
+                    PlotSquared.get().worlds.getConfigurationSection("worlds");
                 if (worldSection != null) {
                     for (String worldKey : worldSection.getKeys(false)) {
                         areas.add(worldKey);
@@ -1677,7 +1677,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(parsable)
                                     .getTime();
                             } catch (ParseException e) {
-                                PS.debug(
+                                PlotSquared.debug(
                                     "Could not parse date for plot: #" + id + "(" + areaid + ";"
                                         + plot_id + ") (" + parsable + ")");
                                 time = System.currentTimeMillis() + id;
@@ -1693,7 +1693,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 if (Settings.Enabled_Components.DATABASE_PURGER) {
                                     toDelete.add(last.temp);
                                 } else {
-                                    PS.debug("&cPLOT #" + id + "(" + last + ") in `" + this.prefix
+                                    PlotSquared.debug("&cPLOT #" + id + "(" + last + ") in `" + this.prefix
                                         + "plot` is a duplicate. Delete this plot or set `database-purger: true` in the settings.yml.");
                                 }
                             }
@@ -1725,7 +1725,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                             } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                                 toDelete.add(id);
                             } else {
-                                PS.debug("&cENTRY #" + id + "(" + plot
+                                PlotSquared.debug("&cENTRY #" + id + "(" + plot
                                     + ") in `plot_rating` does not exist. Create this plot or set `database-purger: true` in the "
                                     + "settings.yml.");
                             }
@@ -1754,7 +1754,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
                         } else {
-                            PS.debug("&cENTRY #" + id + "(" + plot
+                            PlotSquared.debug("&cENTRY #" + id + "(" + plot
                                 + ") in `plot_helpers` does not exist. Create this plot or set `database-purger: true` in the settings"
                                 + ".yml.");
                         }
@@ -1782,7 +1782,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
                         } else {
-                            PS.debug("&cENTRY #" + id + "(" + plot
+                            PlotSquared.debug("&cENTRY #" + id + "(" + plot
                                 + ") in `plot_trusted` does not exist. Create this plot or set `database-purger: true` in the settings"
                                 + ".yml.");
                         }
@@ -1810,7 +1810,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
                         } else {
-                            PS.debug("&cENTRY " + id
+                            PlotSquared.debug("&cENTRY " + id
                                 + " in `plot_denied` does not exist. Create this plot or set `database-purger: true` in the settings.yml.");
                         }
                     }
@@ -1884,21 +1884,21 @@ import java.util.concurrent.atomic.AtomicInteger;
                                         }
                                         flags.put(flag, flag.parseValue(""));
                                     } else {
-                                        PS.debug("INVALID FLAG: " + element);
+                                        PlotSquared.debug("INVALID FLAG: " + element);
                                     }
                                 }
                             }
                             if (exception) {
-                                PS.debug("&cPlot #" + id + "(" + plot + ") | " + plot
+                                PlotSquared.debug("&cPlot #" + id + "(" + plot + ") | " + plot
                                     + " had an invalid flag. A fix has been attempted.");
-                                PS.debug("&c" + myflags);
+                                PlotSquared.debug("&c" + myflags);
                                 this.setFlags(plot, flags);
                             }
                             plot.getSettings().flags = flags;
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
                         } else {
-                            PS.debug("&cENTRY #" + id + "(" + plot
+                            PlotSquared.debug("&cENTRY #" + id + "(" + plot
                                 + ") in `plot_settings` does not exist. Create this plot or set `database-purger: true` in the settings"
                                 + ".yml.");
                         }
@@ -1916,15 +1916,15 @@ import java.util.concurrent.atomic.AtomicInteger;
             for (Entry<String, AtomicInteger> entry : noExist.entrySet()) {
                 String worldName = entry.getKey();
                 invalidPlot = true;
-                PS.debug("&c[WARNING] Found " + entry.getValue().intValue()
+                PlotSquared.debug("&c[WARNING] Found " + entry.getValue().intValue()
                     + " plots in DB for non existent world; '" + worldName + "'.");
             }
             if (invalidPlot) {
-                PS.debug(
+                PlotSquared.debug(
                     "&c[WARNING] - Please create the world/s or remove the plots using the purge command");
             }
         } catch (SQLException e) {
-            PS.debug("&7[WARN] Failed to load plots.");
+            PlotSquared.debug("&7[WARN] Failed to load plots.");
             e.printStackTrace();
         }
         return newPlots;
@@ -2045,7 +2045,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                         int count = 0;
                         int last = -1;
                         for (int j = 0; j <= amount; j++) {
-                            PS.debug("Purging " + (j * packet) + " / " + size);
+                            PlotSquared.debug("Purging " + (j * packet) + " / " + size);
                             List<Integer> subList =
                                 uniqueIdsList.subList(j * packet, Math.min(size, (j + 1) * packet));
                             if (subList.isEmpty()) {
@@ -2092,11 +2092,11 @@ import java.util.concurrent.atomic.AtomicInteger;
                         }
                     } catch (SQLException e) {
                         e.printStackTrace();
-                        PS.debug("&c[ERROR] FAILED TO PURGE PLOTS!");
+                        PlotSquared.debug("&c[ERROR] FAILED TO PURGE PLOTS!");
                         return;
                     }
                 }
-                PS.debug("&6[INFO] SUCCESSFULLY PURGED " + uniqueIds.size() + " PLOTS!");
+                PlotSquared.debug("&6[INFO] SUCCESSFULLY PURGED " + uniqueIds.size() + " PLOTS!");
             }
         });
     }
@@ -2122,7 +2122,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                     purgeIds(ids);
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    PS.debug("&c[ERROR] FAILED TO PURGE AREA '" + area + "'!");
+                    PlotSquared.debug("&c[ERROR] FAILED TO PURGE AREA '" + area + "'!");
                 }
                 for (Iterator<PlotId> iterator = plots.iterator(); iterator.hasNext(); ) {
                     PlotId plotId = iterator.next();
@@ -2378,7 +2378,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 }
             }
         } catch (SQLException e) {
-            PS.debug("&7[WARN] Failed to fetch rating for plot " + plot.getId().toString());
+            PlotSquared.debug("&7[WARN] Failed to fetch rating for plot " + plot.getId().toString());
             e.printStackTrace();
         }
         return map;
@@ -2534,9 +2534,9 @@ import java.util.concurrent.atomic.AtomicInteger;
         HashMap<Integer, PlotCluster> clusters = new HashMap<>();
         try {
             HashSet<String> areas = new HashSet<>();
-            if (PS.get().worlds.contains("worlds")) {
+            if (PlotSquared.get().worlds.contains("worlds")) {
                 ConfigurationSection worldSection =
-                    PS.get().worlds.getConfigurationSection("worlds");
+                    PlotSquared.get().worlds.getConfigurationSection("worlds");
                 if (worldSection != null) {
                     for (String worldKey : worldSection.getKeys(false)) {
                         areas.add(worldKey);
@@ -2609,7 +2609,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                     if (cluster != null) {
                         cluster.helpers.add(user);
                     } else {
-                        PS.debug("&cCluster #" + id + "(" + cluster
+                        PlotSquared.debug("&cCluster #" + id + "(" + cluster
                             + ") in cluster_helpers does not exist. Please create the cluster or remove this entry.");
                     }
                 }
@@ -2628,7 +2628,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                     if (cluster != null) {
                         cluster.invited.add(user);
                     } else {
-                        PS.debug("&cCluster #" + id + "(" + cluster
+                        PlotSquared.debug("&cCluster #" + id + "(" + cluster
                             + ") in cluster_invited does not exist. Please create the cluster or remove this entry.");
                     }
                 }
@@ -2698,7 +2698,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                         }
                         cluster.settings.flags = flags;
                     } else {
-                        PS.debug("&cCluster #" + id + "(" + cluster
+                        PlotSquared.debug("&cCluster #" + id + "(" + cluster
                             + ") in cluster_settings does not exist. Please create the cluster or remove this entry.");
                     }
                 }
@@ -2708,15 +2708,15 @@ import java.util.concurrent.atomic.AtomicInteger;
             for (Entry<String, Integer> entry : noExist.entrySet()) {
                 String a = entry.getKey();
                 invalidPlot = true;
-                PS.debug("&c[WARNING] Found " + noExist.get(a)
+                PlotSquared.debug("&c[WARNING] Found " + noExist.get(a)
                     + " clusters in DB for non existent area; '" + a + "'.");
             }
             if (invalidPlot) {
-                PS.debug(
+                PlotSquared.debug(
                     "&c[WARNING] - Please create the world/s or remove the clusters using the purge command");
             }
         } catch (SQLException e) {
-            PS.debug("&7[WARN] Failed to load clusters.");
+            PlotSquared.debug("&7[WARN] Failed to load clusters.");
             e.printStackTrace();
         }
         return newClusters;
@@ -2935,7 +2935,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         if (!isValid()) {
             reconnect();
         }
-        PS.debug(
+        PlotSquared.debug(
             "$1All DB transactions during this session are being validated (This may take a while if corrections need to be made)");
         commit();
         while (true) {
@@ -2958,19 +2958,19 @@ import java.util.concurrent.atomic.AtomicInteger;
             }
             HashMap<PlotId, Plot> worldPlots = database.get(plot.getArea().toString());
             if (worldPlots == null) {
-                PS.debug("&8 - &7Creating plot (1): " + plot);
+                PlotSquared.debug("&8 - &7Creating plot (1): " + plot);
                 toCreate.add(plot);
                 continue;
             }
             Plot dataPlot = worldPlots.remove(plot.getId());
             if (dataPlot == null) {
-                PS.debug("&8 - &7Creating plot (2): " + plot);
+                PlotSquared.debug("&8 - &7Creating plot (2): " + plot);
                 toCreate.add(plot);
                 continue;
             }
             // owner
             if (!plot.owner.equals(dataPlot.owner)) {
-                PS.debug("&8 - &7Setting owner: " + plot + " -> " + MainUtil.getName(plot.owner));
+                PlotSquared.debug("&8 - &7Setting owner: " + plot + " -> " + MainUtil.getName(plot.owner));
                 setOwner(plot, plot.owner);
             }
             // trusted
@@ -2979,7 +2979,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 HashSet<UUID> toRemove = (HashSet<UUID>) dataPlot.getTrusted().clone();
                 toRemove.removeAll(plot.getTrusted());
                 toAdd.removeAll(dataPlot.getTrusted());
-                PS.debug("&8 - &7Correcting " + (toAdd.size() + toRemove.size()) + " trusted for: "
+                PlotSquared.debug("&8 - &7Correcting " + (toAdd.size() + toRemove.size()) + " trusted for: "
                     + plot);
                 if (!toRemove.isEmpty()) {
                     for (UUID uuid : toRemove) {
@@ -2997,7 +2997,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 HashSet<UUID> toRemove = (HashSet<UUID>) dataPlot.getMembers().clone();
                 toRemove.removeAll(plot.getMembers());
                 toAdd.removeAll(dataPlot.getMembers());
-                PS.debug("&8 - &7Correcting " + (toAdd.size() + toRemove.size()) + " members for: "
+                PlotSquared.debug("&8 - &7Correcting " + (toAdd.size() + toRemove.size()) + " members for: "
                     + plot);
                 if (!toRemove.isEmpty()) {
                     for (UUID uuid : toRemove) {
@@ -3015,7 +3015,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 HashSet<UUID> toRemove = (HashSet<UUID>) dataPlot.getDenied().clone();
                 toRemove.removeAll(plot.getDenied());
                 toAdd.removeAll(dataPlot.getDenied());
-                PS.debug("&8 - &7Correcting " + (toAdd.size() + toRemove.size()) + " denied for: "
+                PlotSquared.debug("&8 - &7Correcting " + (toAdd.size() + toRemove.size()) + " denied for: "
                     + plot);
                 if (!toRemove.isEmpty()) {
                     for (UUID uuid : toRemove) {
@@ -3031,7 +3031,7 @@ import java.util.concurrent.atomic.AtomicInteger;
             boolean[] pm = plot.getMerged();
             boolean[] dm = dataPlot.getMerged();
             if (pm[0] != dm[0] || pm[1] != dm[1]) {
-                PS.debug("&8 - &7Correcting merge for: " + plot);
+                PlotSquared.debug("&8 - &7Correcting merge for: " + plot);
                 setMerged(dataPlot, plot.getMerged());
             }
             HashMap<Flag<?>, Object> pf = plot.getFlags();
@@ -3040,7 +3040,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 if (pf.size() != df.size() || !StringMan
                     .isEqual(StringMan.joinOrdered(pf.values(), ","),
                         StringMan.joinOrdered(df.values(), ","))) {
-                    PS.debug("&8 - &7Correcting flags for: " + plot);
+                    PlotSquared.debug("&8 - &7Correcting flags for: " + plot);
                     setFlags(plot, pf);
                 }
             }
@@ -3050,7 +3050,7 @@ import java.util.concurrent.atomic.AtomicInteger;
             HashMap<PlotId, Plot> map = entry.getValue();
             if (!map.isEmpty()) {
                 for (Entry<PlotId, Plot> entry2 : map.entrySet()) {
-                    PS.debug("$1Plot was deleted: " + entry2.getValue().toString()
+                    PlotSquared.debug("$1Plot was deleted: " + entry2.getValue().toString()
                         + "// TODO implement this when sure safe");
                 }
             }

@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util.expiry;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
@@ -37,7 +37,7 @@ public class ExpireManager {
     }
 
     public void addTask(ExpiryTask task) {
-        PS.debug("Adding new expiry task!");
+        PlotSquared.debug("Adding new expiry task!");
         this.tasks.add(task);
     }
 
@@ -255,7 +255,7 @@ public class ExpireManager {
         }
         this.running = 2;
         final ConcurrentLinkedDeque<Plot> plots =
-            new ConcurrentLinkedDeque<Plot>(PS.get().getPlots());
+            new ConcurrentLinkedDeque<Plot>(PlotSquared.get().getPlots());
         TaskManager.runTaskAsync(new Runnable() {
             @Override public void run() {
                 final Runnable task = this;
@@ -388,13 +388,13 @@ public class ExpireManager {
         PlotAnalysis changed = plot.getComplexity(null);
         int changes = changed == null ? 0 : changed.changes_sd;
         int modified = changed == null ? 0 : changed.changes;
-        PS.debug("$2[&5Expire&dManager$2] &cDeleted expired plot: " + plot + " User:" + plot.owner
+        PlotSquared.debug("$2[&5Expire&dManager$2] &cDeleted expired plot: " + plot + " User:" + plot.owner
             + " Delta:" + changes + "/" + modified + " Connected: " + StringMan.getString(plots));
-        PS.debug("$4 - Area: " + plot.getArea());
+        PlotSquared.debug("$4 - Area: " + plot.getArea());
         if (plot.hasOwner()) {
-            PS.debug("$4 - Owner: " + UUIDHandler.getName(plot.owner));
+            PlotSquared.debug("$4 - Owner: " + UUIDHandler.getName(plot.owner));
         } else {
-            PS.debug("$4 - Owner: Unowned");
+            PlotSquared.debug("$4 - Owner: Unowned");
         }
     }
 

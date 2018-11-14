@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
@@ -28,9 +28,9 @@ public class EntityPortal_1_7_9 implements Listener {
         List<MetadataValue> meta = entity.getMetadata("plotworld");
         World world = entity.getLocation().getWorld();
         if (meta == null || meta.isEmpty()) {
-            if (PS.get().hasPlotArea(world.getName())) {
+            if (PlotSquared.get().hasPlotArea(world.getName())) {
                 entity.setMetadata("plotworld",
-                    new FixedMetadataValue((Plugin) PS.get().IMP, entity.getLocation()));
+                    new FixedMetadataValue((Plugin) PlotSquared.get().IMP, entity.getLocation()));
             }
         } else {
             Location origin = (Location) meta.get(0).value();

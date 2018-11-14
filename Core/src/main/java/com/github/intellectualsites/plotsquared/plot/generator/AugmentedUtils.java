@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.block.DelegateLocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
@@ -28,7 +28,7 @@ public class AugmentedUtils {
         final int bx = cx << 4;
         final int bz = cz << 4;
         RegionWrapper region = new RegionWrapper(bx, bx + 15, bz, bz + 15);
-        Set<PlotArea> areas = PS.get().getPlotAreas(world, region);
+        Set<PlotArea> areas = PlotSquared.get().getPlotAreas(world, region);
         if (areas.isEmpty()) {
             return false;
         }

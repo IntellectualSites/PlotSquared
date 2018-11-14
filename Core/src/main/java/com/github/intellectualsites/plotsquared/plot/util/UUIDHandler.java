@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.google.common.collect.BiMap;
@@ -52,7 +52,7 @@ public class UUIDHandler {
 
     public static HashSet<UUID> getAllUUIDS() {
         final HashSet<UUID> uuids = new HashSet<>();
-        PS.get().foreachPlotRaw(new RunnableVal<Plot>() {
+        PlotSquared.get().foreachPlotRaw(new RunnableVal<Plot>() {
             @Override public void run(Plot plot) {
                 if (plot.hasOwner()) {
                     uuids.add(plot.owner);
@@ -119,7 +119,7 @@ public class UUIDHandler {
     private static PlotPlayer check(PlotPlayer plr) {
         if (plr != null && !plr.isOnline()) {
             UUIDHandler.getPlayers().remove(plr.getName());
-            PS.get().IMP.unregister(plr);
+            PlotSquared.get().IMP.unregister(plr);
             plr = null;
         }
         return plr;

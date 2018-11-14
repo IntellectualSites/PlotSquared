@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
@@ -42,7 +42,7 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
             return;
         }
         HumanEntity entity = event.getWhoClicked();
-        if (!(entity instanceof Player) || !PS.get().hasPlotArea(entity.getWorld().getName())) {
+        if (!(entity instanceof Player) || !PlotSquared.get().hasPlotArea(entity.getWorld().getName())) {
             return;
         }
         Player player = (Player) entity;

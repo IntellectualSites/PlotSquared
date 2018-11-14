@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.config;
 
 import com.github.intellectualsites.plotsquared.configuration.MemorySection;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 import java.io.File;
@@ -40,7 +40,7 @@ public class Config {
                 }
             }
         }
-        PS.debug("Failed to get config option: " + key);
+        PlotSquared.debug("Failed to get config option: " + key);
         return null;
     }
 
@@ -68,13 +68,14 @@ public class Config {
                     field.set(instance, value);
                     return;
                 } catch (Throwable e) {
-                    PS.debug("Invalid configuration value: " + key + ": " + value + " in " + root
+                    PlotSquared
+                        .debug("Invalid configuration value: " + key + ": " + value + " in " + root
                         .getSimpleName());
                     e.printStackTrace();
                 }
             }
         }
-        PS.debug("Failed to set config option: " + key + ": " + value + " | " + instance);
+        PlotSquared.debug("Failed to set config option: " + key + ": " + value + " | " + instance);
     }
 
     public static boolean load(File file, Class root) {
@@ -261,7 +262,7 @@ public class Config {
             setAccessible(field);
             return field;
         } catch (Throwable e) {
-            PS.debug("Invalid config field: " + StringMan.join(split, ".") + " for " + toNodeName(
+            PlotSquared.debug("Invalid config field: " + StringMan.join(split, ".") + " for " + toNodeName(
                 instance.getClass().getSimpleName()));
             return null;
         }

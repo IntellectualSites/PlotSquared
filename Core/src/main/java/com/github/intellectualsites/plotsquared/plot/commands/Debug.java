@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
@@ -26,8 +26,8 @@ public class Debug extends SubCommand {
         information.append(header);
         information.append(getSection(section, "PlotArea"));
         information
-            .append(getLine(line, "Plot Worlds", StringMan.join(PS.get().getPlotAreas(), ", ")));
-        information.append(getLine(line, "Owned Plots", PS.get().getPlots().size()));
+            .append(getLine(line, "Plot Worlds", StringMan.join(PlotSquared.get().getPlotAreas(), ", ")));
+        information.append(getLine(line, "Owned Plots", PlotSquared.get().getPlots().size()));
         information.append(getSection(section, "Messages"));
         information.append(getLine(line, "Total Messages", C.values().length));
         information.append(getLine(line, "View all captions", "/plot debug msg"));

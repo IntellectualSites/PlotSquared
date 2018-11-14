@@ -21,7 +21,7 @@ import com.github.intellectualsites.plotsquared.nukkit.util.block.NukkitLocalQue
 import com.github.intellectualsites.plotsquared.nukkit.uuid.FileUUIDHandler;
 import com.github.intellectualsites.plotsquared.nukkit.uuid.LowerOfflineUUIDWrapper;
 import com.github.intellectualsites.plotsquared.plot.IPlotMain;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
@@ -67,12 +67,12 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
         try {
             this.name = getDescription().getName();
             getServer().getName();
-            new PS(this, "Nukkit");
+            new PlotSquared(this, "Nukkit");
             if (Settings.Enabled_Components.METRICS) {
                 new Metrics(this).start();
-                PS.log(C.PREFIX + "&6Metrics enabled.");
+                PlotSquared.log(C.PREFIX + "&6Metrics enabled.");
             } else {
-                PS.log(C.CONSOLE_PLEASE_ENABLE_METRICS.f(getPluginName()));
+                PlotSquared.log(C.CONSOLE_PLEASE_ENABLE_METRICS.f(getPluginName()));
             }
             Generator.addGenerator(NukkitHybridGen.class, getPluginName(), 1);
             if (Settings.Enabled_Components.WORLDS) {
@@ -88,7 +88,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
     }
 
     public void unload() {
-        PlotAreaManager manager = PS.get().getPlotAreaManager();
+        PlotAreaManager manager = PlotSquared.get().getPlotAreaManager();
         if (manager instanceof SinglePlotAreaManager) {
             long start = System.currentTimeMillis();
             SinglePlotArea area = ((SinglePlotAreaManager) manager).getArea();
@@ -127,7 +127,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
     }
 
     @Override public void onDisable() {
-        PS.get().disable();
+        PlotSquared.get().disable();
         getServer().getScheduler().cancelAllTasks();
     }
 
@@ -184,10 +184,10 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
     }
 
     @Override public void runEntityTask() {
-        PS.log(C.PREFIX + "KillAllEntities started.");
+        PlotSquared.log(C.PREFIX + "KillAllEntities started.");
         TaskManager.runTaskRepeat(new Runnable() {
             @Override public void run() {
-                PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
+                PlotSquared.get().foreachPlotArea(new RunnableVal<PlotArea>() {
                     @Override public void run(PlotArea plotArea) {
                         Level world = getServer().getLevelByName(plotArea.worldname);
                         try {
@@ -232,15 +232,15 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
     }
 
     @Override public void registerInventoryEvents() {
-        PS.debug("Not implemented: registerPlotPlusEvents");
+        PlotSquared.debug("Not implemented: registerPlotPlusEvents");
     }
 
     @Override public void registerPlotPlusEvents() {
-        PS.debug("Not implemented: registerPlotPlusEvents");
+        PlotSquared.debug("Not implemented: registerPlotPlusEvents");
     }
 
     @Override public void registerForceFieldEvents() {
-        PS.debug("Not implemented: registerPlotPlusEvents");
+        PlotSquared.debug("Not implemented: registerPlotPlusEvents");
     }
 
     @Override public boolean initWorldEdit() {
@@ -287,7 +287,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
                 while (e.getCause() != null) {
                     e = e.getCause();
                 }
-                synchronized (PS.class) {
+                synchronized (PlotSquared.class) {
                     e.printStackTrace();
                 }
             }
@@ -323,7 +323,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
     }
 
     @Override public void registerChunkProcessor() {
-        PS.debug("Not implemented: registerChunkProcessor");
+        PlotSquared.debug("Not implemented: registerChunkProcessor");
     }
 
     @Override public void registerWorldEvents() {
@@ -336,7 +336,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
 
     @Override public void startMetrics() {
         new Metrics(this).start();
-        PS.log(C.PREFIX + "&6Metrics enabled.");
+        PlotSquared.log(C.PREFIX + "&6Metrics enabled.");
     }
 
     @Override public void setGenerator(String worldName) {
@@ -344,7 +344,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
         if (world == null) {
             // create world
             ConfigurationSection worldConfig =
-                PS.get().worlds.getConfigurationSection("worlds." + worldName);
+                PlotSquared.get().worlds.getConfigurationSection("worlds." + worldName);
             String manager = worldConfig.getString("generator.plugin", getPluginName());
             SetupObject setup = new SetupObject();
             setup.plotManager = manager;
@@ -358,18 +358,18 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
         } else {
             HashMap<String, Object> map = new HashMap<>();
             map.put("world", world.getName());
-            map.put("plot-generator", PS.get().IMP.getDefaultGenerator());
+            map.put("plot-generator", PlotSquared.get().IMP.getDefaultGenerator());
             setGenerator(world, new NukkitPlotGenerator(map));
         }
         if (world != null) {
             try {
                 Generator gen = world.getGenerator();
                 if (gen instanceof NukkitPlotGenerator) {
-                    PS.get().loadWorld(worldName, (NukkitPlotGenerator) gen);
+                    PlotSquared.get().loadWorld(worldName, (NukkitPlotGenerator) gen);
                 } else if (gen instanceof GeneratorWrapper) {
-                    PS.get().loadWorld(worldName, (GeneratorWrapper) gen);
-                } else if (PS.get().worlds.contains("worlds." + worldName)) {
-                    PS.get().loadWorld(worldName, null);
+                    PlotSquared.get().loadWorld(worldName, (GeneratorWrapper) gen);
+                } else if (PlotSquared.get().worlds.contains("worlds." + worldName)) {
+                    PlotSquared.get().loadWorld(worldName, null);
                 }
             } catch (Throwable e) {
                 e.printStackTrace();

@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
@@ -45,7 +45,7 @@ public class Purge extends SubCommand {
                     break;
                 case "area":
                 case "a":
-                    area = PS.get().getPlotAreaByString(split[1]);
+                    area = PlotSquared.get().getPlotAreaByString(split[1]);
                     if (area == null) {
                         C.NOT_VALID_PLOT_WORLD.send(player, split[1]);
                         return false;
@@ -86,7 +86,7 @@ public class Purge extends SubCommand {
             }
         }
         final HashSet<Plot> toDelete = new HashSet<>();
-        for (Plot plot : PS.get().getBasePlots()) {
+        for (Plot plot : PlotSquared.get().getBasePlots()) {
             if (world != null && !plot.getWorldName().equalsIgnoreCase(world)) {
                 continue;
             }
@@ -109,8 +109,8 @@ public class Purge extends SubCommand {
                 toDelete.add(current);
             }
         }
-        if (PS.get().plots_tmp != null) {
-            for (Entry<String, HashMap<PlotId, Plot>> entry : PS.get().plots_tmp.entrySet()) {
+        if (PlotSquared.get().plots_tmp != null) {
+            for (Entry<String, HashMap<PlotId, Plot>> entry : PlotSquared.get().plots_tmp.entrySet()) {
                 String worldName = entry.getKey();
                 if (world != null && !world.equalsIgnoreCase(worldName)) {
                     continue;
@@ -141,7 +141,7 @@ public class Purge extends SubCommand {
             "/plot purge " + StringMan.join(args, " ") + " (" + toDelete.size() + " plots)";
         Runnable run = new Runnable() {
             @Override public void run() {
-                PS.debug("Calculating plots to purge, please wait...");
+                PlotSquared.debug("Calculating plots to purge, please wait...");
                 HashSet<Integer> ids = new HashSet<>();
                 for (Plot plot : toDelete) {
                     if (plot.temp != Integer.MAX_VALUE) {

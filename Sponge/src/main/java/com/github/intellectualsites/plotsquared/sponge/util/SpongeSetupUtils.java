@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.sponge.util;
 
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -28,9 +28,9 @@ public class SpongeSetupUtils extends SetupUtils {
         if (!SetupUtils.generators.isEmpty()) {
             return;
         }
-        SetupUtils.generators.put(PS.imp().getPluginName(),
-            new SpongePlotGenerator(PS.get().IMP.getDefaultGenerator()));
-        SetupUtils.generators.put(PS.imp().getPluginName() + ":single",
+        SetupUtils.generators.put(PlotSquared.imp().getPluginName(),
+            new SpongePlotGenerator(PlotSquared.get().IMP.getDefaultGenerator()));
+        SetupUtils.generators.put(PlotSquared.imp().getPluginName() + ":single",
             new SpongePlotGenerator(new SingleWorldGenerator()));
         // TODO get external world generators
         Collection<WorldGeneratorModifier> wgms =
@@ -76,11 +76,11 @@ public class SpongeSetupUtils extends SetupUtils {
         String worldPath = "worlds." + object.world;
         switch (type) {
             case 2: {
-                if (!PS.get().worlds.contains(worldPath)) {
-                    PS.get().worlds.createSection(worldPath);
+                if (!PlotSquared.get().worlds.contains(worldPath)) {
+                    PlotSquared.get().worlds.createSection(worldPath);
                 }
                 ConfigurationSection worldSection =
-                    PS.get().worlds.getConfigurationSection(worldPath);
+                    PlotSquared.get().worlds.getConfigurationSection(worldPath);
                 if (object.id != null) {
                     String areaName = object.id + "-" + object.min + "-" + object.max;
                     String areaPath = "areas." + areaName;
@@ -120,20 +120,20 @@ public class SpongeSetupUtils extends SetupUtils {
                 break;
             }
             case 1: {
-                if (!PS.get().worlds.contains(worldPath)) {
-                    PS.get().worlds.createSection(worldPath);
+                if (!PlotSquared.get().worlds.contains(worldPath)) {
+                    PlotSquared.get().worlds.createSection(worldPath);
                 }
                 ConfigurationSection worldSection =
-                    PS.get().worlds.getConfigurationSection(worldPath);
+                    PlotSquared.get().worlds.getConfigurationSection(worldPath);
                 for (ConfigurationNode step : steps) {
                     worldSection.set(step.getConstant(), step.getValue());
                 }
-                PS.get().worlds.set("worlds." + world + ".generator.type", object.type);
-                PS.get().worlds.set("worlds." + world + ".generator.terrain", object.terrain);
-                PS.get().worlds.set("worlds." + world + ".generator.plugin", object.plotManager);
+                PlotSquared.get().worlds.set("worlds." + world + ".generator.type", object.type);
+                PlotSquared.get().worlds.set("worlds." + world + ".generator.terrain", object.terrain);
+                PlotSquared.get().worlds.set("worlds." + world + ".generator.plugin", object.plotManager);
                 if (object.setupGenerator != null && !object.setupGenerator
                     .equals(object.plotManager)) {
-                    PS.get().worlds
+                    PlotSquared.get().worlds
                         .set("worlds." + world + ".generator.init", object.setupGenerator);
                 }
                 GeneratorWrapper<?> gen = SetupUtils.generators.get(object.setupGenerator);
@@ -144,11 +144,11 @@ public class SpongeSetupUtils extends SetupUtils {
             }
             case 0: {
                 if (steps.length != 0) {
-                    if (!PS.get().worlds.contains(worldPath)) {
-                        PS.get().worlds.createSection(worldPath);
+                    if (!PlotSquared.get().worlds.contains(worldPath)) {
+                        PlotSquared.get().worlds.createSection(worldPath);
                     }
                     ConfigurationSection worldSection =
-                        PS.get().worlds.getConfigurationSection(worldPath);
+                        PlotSquared.get().worlds.getConfigurationSection(worldPath);
                     for (ConfigurationNode step : steps) {
                         worldSection.set(step.getConstant(), step.getValue());
                     }
@@ -157,7 +157,7 @@ public class SpongeSetupUtils extends SetupUtils {
             }
         }
         try {
-            PS.get().worlds.save(PS.get().worldsFile);
+            PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
         } catch (IOException e) {
             e.printStackTrace();
         }

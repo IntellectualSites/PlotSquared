@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
@@ -27,7 +27,7 @@ public abstract class ChunkManager {
     public static void setChunkInPlotArea(RunnableVal<ScopedLocalBlockQueue> force,
         RunnableVal<ScopedLocalBlockQueue> add, String world, ChunkLoc loc) {
         LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
-        if (PS.get().isAugmented(world)) {
+        if (PlotSquared.get().isAugmented(world)) {
             int bx = loc.x << 4;
             int bz = loc.z << 4;
             ScopedLocalBlockQueue scoped =
@@ -209,7 +209,7 @@ public abstract class ChunkManager {
     public abstract void unloadChunk(String world, ChunkLoc loc, boolean save, boolean safe);
 
     public Set<ChunkLoc> getChunkChunks(String world) {
-        File folder = new File(PS.get().IMP.getWorldContainer(), world + File.separator + "region");
+        File folder = new File(PlotSquared.get().IMP.getWorldContainer(), world + File.separator + "region");
         File[] regionFiles = folder.listFiles();
         HashSet<ChunkLoc> chunks = new HashSet<>();
         if (regionFiles == null) {
@@ -244,8 +244,8 @@ public abstract class ChunkManager {
                     String directory =
                         world + File.separator + "region" + File.separator + "r." + loc.x + "."
                             + loc.z + ".mca";
-                    File file = new File(PS.get().IMP.getWorldContainer(), directory);
-                    PS.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
+                    File file = new File(PlotSquared.get().IMP.getWorldContainer(), directory);
+                    PlotSquared.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
                     if (file.exists()) {
                         file.delete();
                     }

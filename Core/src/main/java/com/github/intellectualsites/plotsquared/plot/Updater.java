@@ -18,7 +18,7 @@ public class Updater {
     public String getChanges() {
         if (changes == null) {
             try (Scanner scanner = new Scanner(new URL(
-                "http://empcraft.com/plots/cl?" + Integer.toHexString(PS.get().getVersion().hash))
+                "http://empcraft.com/plots/cl?" + Integer.toHexString(PlotSquared.get().getVersion().hash))
                 .openStream(), "UTF-8")) {
                 changes = scanner.useDelimiter("\\A").next();
             } catch (IOException e) {
@@ -50,7 +50,7 @@ public class Updater {
                     URL download = new URL(downloadUrl.replaceAll("%platform%", platform)
                         .replaceAll("%version%", versionString));
                     try (ReadableByteChannel rbc = Channels.newChannel(download.openStream())) {
-                        File jarFile = PS.get().getJarFile();
+                        File jarFile = PlotSquared.get().getJarFile();
 
                         File finalFile = new File(jarFile.getParent(),
                             "update" + File.separator + jarFile.getName());
@@ -69,7 +69,7 @@ public class Updater {
                             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
                         }
                         outFile.renameTo(finalFile);
-                        PS.debug("Updated PlotSquared to " + versionString);
+                        PlotSquared.debug("Updated PlotSquared to " + versionString);
                         MainUtil.sendAdmin(
                             "&7Restart to update PlotSquared with these changes: &c/plot changelog &7or&c "
                                 + "http://empcraft.com/plots/cl?" + Integer

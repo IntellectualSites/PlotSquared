@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.api;
 
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
@@ -29,7 +29,7 @@ import java.util.UUID;
  * <li>{@link Plot}</li>
  * <li>{@link com.github.intellectualsites.plotsquared.plot.object.Location}</li>
  * <li>{@link PlotArea}</li>
- * <li>{@link PS}</li>
+ * <li>{@link PlotSquared}</li>
  * </ul>
  *
  * @version 3.3.3
@@ -42,10 +42,10 @@ public class PlotAPI {
      * Get all plots.
      *
      * @return all plots
-     * @see PS#getPlots()
+     * @see PlotSquared#getPlots()
      */
     public Set<Plot> getAllPlots() {
-        return PS.get().getPlots();
+        return PlotSquared.get().getPlots();
     }
 
     /**
@@ -55,47 +55,47 @@ public class PlotAPI {
      * @return all plots that a player owns
      */
     public Set<Plot> getPlayerPlots(PlotPlayer player) {
-        return PS.get().getPlots(player);
+        return PlotSquared.get().getPlots(player);
     }
 
     /**
      * Add a plot world.
      *
      * @param plotArea Plot World Object
-     * @see PS#addPlotArea(PlotArea)
+     * @see PlotSquared#addPlotArea(PlotArea)
      */
     public void addPlotArea(PlotArea plotArea) {
-        PS.get().addPlotArea(plotArea);
+        PlotSquared.get().addPlotArea(plotArea);
     }
 
     /**
      * Returns the PlotSquared configurations file.
      *
      * @return main configuration
-     * @see PS#config
+     * @see PlotSquared#config
      */
     public YamlConfiguration getConfig() {
-        return PS.get().config;
+        return PlotSquared.get().config;
     }
 
     /**
      * Get the PlotSquared storage file.
      *
      * @return storage configuration
-     * @see PS#storage
+     * @see PlotSquared#storage
      */
     public YamlConfiguration getStorage() {
-        return PS.get().storage;
+        return PlotSquared.get().storage;
     }
 
     /**
      * Get the main class for this plugin. Only use this if you really need it.
      *
      * @return PlotSquared PlotSquared Main Class
-     * @see PS
+     * @see PlotSquared
      */
-    public PS getMain() {
-        return PS.get();
+    public PlotSquared getMain() {
+        return PlotSquared.get();
     }
 
     /**
@@ -156,7 +156,7 @@ public class PlotAPI {
         if (world == null) {
             return Collections.emptySet();
         }
-        return PS.get().getPlotAreas(world);
+        return PlotSquared.get().getPlotAreas(world);
     }
 
     /**
@@ -166,7 +166,7 @@ public class PlotAPI {
      * @see MainUtil#sendConsoleMessage(C, String...)
      */
     public void sendConsoleMessage(String message) {
-        PS.log(message);
+        PlotSquared.log(message);
     }
 
     /**
@@ -193,10 +193,10 @@ public class PlotAPI {
      * Gets the PlotSquared class.
      *
      * @return PlotSquared Class
-     * @see PS
+     * @see PlotSquared
      */
-    public PS getPlotSquared() {
-        return PS.get();
+    public PlotSquared getPlotSquared() {
+        return PlotSquared.get();
     }
 
     /**

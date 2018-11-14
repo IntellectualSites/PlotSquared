@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
@@ -27,14 +27,14 @@ public class DebugImportWorlds extends Command {
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         // UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8))
-        PlotAreaManager pam = PS.get().getPlotAreaManager();
+        PlotAreaManager pam = PlotSquared.get().getPlotAreaManager();
         if (!(pam instanceof SinglePlotAreaManager)) {
             player.sendMessage("Must be a single plot area!");
             return;
         }
         SinglePlotArea area = ((SinglePlotAreaManager) pam).getArea();
         PlotId id = new PlotId(0, 0);
-        File container = PS.imp().getWorldContainer();
+        File container = PlotSquared.imp().getWorldContainer();
         for (File folder : container.listFiles()) {
             String name = folder.getName();
             if (!WorldUtil.IMP.isWorld(name) && PlotId.fromString(name) == null) {

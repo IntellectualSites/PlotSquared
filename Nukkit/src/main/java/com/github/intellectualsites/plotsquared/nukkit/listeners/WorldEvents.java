@@ -8,7 +8,7 @@ import cn.nukkit.event.level.LevelLoadEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.generator.Generator;
 import com.github.intellectualsites.plotsquared.nukkit.generator.NukkitPlotGenerator;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 
@@ -34,13 +34,13 @@ public class WorldEvents implements Listener {
         try {
             Generator gen = level.getGenerator();
             if (gen instanceof GeneratorWrapper) {
-                PS.get().loadWorld(name, (GeneratorWrapper<?>) gen);
+                PlotSquared.get().loadWorld(name, (GeneratorWrapper<?>) gen);
             } else {
                 HashMap<String, Object> settings = new HashMap<>();
                 settings.put("world", level.getName());
                 settings.put("generator", gen);
-                PS.get().loadWorld(name, new NukkitPlotGenerator(settings));
-                for (PlotArea area : PS.get().getPlotAreas(name)) {
+                PlotSquared.get().loadWorld(name, new NukkitPlotGenerator(settings));
+                for (PlotArea area : PlotSquared.get().getPlotAreas(name)) {
                     area.MAX_BUILD_HEIGHT = Math.min(127, area.MAX_BUILD_HEIGHT);
                 }
             }

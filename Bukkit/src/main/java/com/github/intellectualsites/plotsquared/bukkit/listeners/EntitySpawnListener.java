@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
@@ -54,7 +54,7 @@ public class EntitySpawnListener implements Listener {
             case SHULKER:
                 if (!entity.hasMetadata("plot")) {
                     entity.setMetadata("plot",
-                        new FixedMetadataValue((Plugin) PS.get().IMP, plot.getId()));
+                        new FixedMetadataValue((Plugin) PlotSquared.get().IMP, plot.getId()));
                 }
         }
     }

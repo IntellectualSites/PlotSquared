@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.generator;
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.jnbt.CompoundTag;
 import com.github.intellectualsites.plotsquared.jnbt.Tag;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
@@ -173,7 +173,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         try {
             setupSchematics();
         } catch (Exception ignored) {
-            PS.debug("&c - road schematics are disabled for this world.");
+            PlotSquared.debug("&c - road schematics are disabled for this world.");
         }
     }
 
@@ -186,11 +186,11 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
     public void setupSchematics() {
         this.G_SCH = new HashMap<>();
-        File schematic1File = MainUtil.getFile(PS.get().IMP.getDirectory(),
+        File schematic1File = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
             "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/sideroad.schematic");
-        File schematic2File = MainUtil.getFile(PS.get().IMP.getDirectory(),
+        File schematic2File = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
             "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/intersection.schematic");
-        File schem3File = MainUtil.getFile(PS.get().IMP.getDirectory(),
+        File schem3File = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
             "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/plot.schematic");
         SchematicHandler.Schematic schematic1 = SchematicHandler.manager.getSchematic(schematic1File);
         SchematicHandler.Schematic schematic2 = SchematicHandler.manager.getSchematic(schematic2File);
@@ -270,7 +270,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             }
         }
         if (schematic1 == null || schematic2 == null || this.ROAD_WIDTH == 0) {
-            PS.debug(C.PREFIX + "&3 - schematic: &7false");
+            PlotSquared.debug(C.PREFIX + "&3 - schematic: &7false");
             return;
         }
         this.ROAD_SCHEMATIC_ENABLED = true;

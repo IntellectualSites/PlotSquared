@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.sponge.listener;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
@@ -74,10 +74,10 @@ import java.util.function.Predicate;
             return;
         }
         String world = player.getWorld().getName();
-        if (!PS.get().hasPlotArea(world)) {
+        if (!PlotSquared.get().hasPlotArea(world)) {
             return;
         }
-        PlotArea plotworld = PS.get().getPlotAreaByString(world);
+        PlotArea plotworld = PlotSquared.get().getPlotAreaByString(world);
         PlotPlayer plr = SpongeUtil.getPlayer(player);
         if (!plotworld.PLOT_CHAT && (plr.getMeta("chat") == null || !(Boolean) plr
             .getMeta("chat"))) {
@@ -128,7 +128,7 @@ import java.util.function.Predicate;
     @Listener public void onBreedEntity(BreedEntityEvent.Breed event) {
         Location loc = SpongeUtil.getLocation(event.getTargetEntity());
         String world = loc.getWorld();
-        PlotArea plotworld = PS.get().getPlotAreaByString(world);
+        PlotArea plotworld = PlotSquared.get().getPlotAreaByString(world);
         if (plotworld == null) {
             return;
         }
@@ -339,7 +339,7 @@ import java.util.function.Predicate;
             ExplosionEvent.Detonate event = (Detonate) e;
             World world = event.getTargetWorld();
             String worldName = world.getName();
-            if (!PS.get().hasPlotArea(worldName)) {
+            if (!PlotSquared.get().hasPlotArea(worldName)) {
                 return;
             }
             Optional<Explosive> source = event.getExplosion().getSourceExplosive();

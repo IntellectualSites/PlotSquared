@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.commands;
 
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.CommandCategory;
 import com.github.intellectualsites.plotsquared.plot.commands.MainCommand;
 import com.github.intellectualsites.plotsquared.plot.commands.RequiredType;
@@ -166,7 +166,8 @@ public abstract class Command {
         options.put("usage", declaration.usage());
         options.put("confirmation", declaration.confirmation());
         boolean set = false;
-        YamlConfiguration commands = PS.get() == null ? new YamlConfiguration() : PS.get().commands;
+        YamlConfiguration commands = PlotSquared.get() == null ? new YamlConfiguration() : PlotSquared
+            .get().commands;
         for (Map.Entry<String, Object> entry : options.entrySet()) {
             String key = this.getFullId() + "." + entry.getKey();
             if (!commands.contains(key)) {
@@ -174,9 +175,9 @@ public abstract class Command {
                 set = true;
             }
         }
-        if (set && PS.get() != null) {
+        if (set && PlotSquared.get() != null) {
             try {
-                commands.save(PS.get().commandsFile);
+                commands.save(PlotSquared.get().commandsFile);
             } catch (IOException e) {
                 e.printStackTrace();
 

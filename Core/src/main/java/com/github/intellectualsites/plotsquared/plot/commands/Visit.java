@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.*;
@@ -46,7 +46,7 @@ import java.util.*;
                 page = Integer.parseInt(args[2]);
             case 2:
                 if (page != Integer.MIN_VALUE || !MathMan.isInteger(args[1])) {
-                    sortByArea = PS.get().getPlotAreaByString(args[1]);
+                    sortByArea = PlotSquared.get().getPlotAreaByString(args[1]);
                     if (sortByArea == null) {
                         C.NOT_VALID_NUMBER.send(player, "(1, ∞)");
                         C.COMMAND_SYNTAX.send(player, getUsage());
@@ -57,22 +57,22 @@ import java.util.*;
                         C.COMMAND_SYNTAX.send(player, getUsage());
                         return;
                     }
-                    unsorted = PS.get().getBasePlots(user);
+                    unsorted = PlotSquared.get().getBasePlots(user);
                     shouldSortByArea = true;
                     break;
                 }
                 page = Integer.parseInt(args[1]);
             case 1:
                 UUID user = args[0].length() >= 2 ? UUIDHandler.getUUIDFromString(args[0]) : null;
-                if (user != null && !PS.get().hasPlot(user))
+                if (user != null && !PlotSquared.get().hasPlot(user))
                     user = null;
                 if (page == Integer.MIN_VALUE && user == null && MathMan.isInteger(args[0])) {
                     page = Integer.parseInt(args[0]);
-                    unsorted = PS.get().getBasePlots(player);
+                    unsorted = PlotSquared.get().getBasePlots(player);
                     break;
                 }
                 if (user != null) {
-                    unsorted = PS.get().getBasePlots(user);
+                    unsorted = PlotSquared.get().getBasePlots(user);
                 } else {
                     Plot plot = MainUtil.getPlotFromString(player, args[0], true);
                     if (plot != null) {
@@ -82,7 +82,7 @@ import java.util.*;
                 break;
             case 0:
                 page = 1;
-                unsorted = PS.get().getPlots(player);
+                unsorted = PlotSquared.get().getPlots(player);
                 break;
             default:
 
@@ -106,9 +106,10 @@ import java.util.*;
         }
         List<Plot> plots;
         if (shouldSortByArea) {
-            plots = PS.get().sortPlots(unsorted, PS.SortType.CREATION_DATE, sortByArea);
+            plots = PlotSquared
+                .get().sortPlots(unsorted, PlotSquared.SortType.CREATION_DATE, sortByArea);
         } else {
-            plots = PS.get().sortPlotsByTemp(unsorted);
+            plots = PlotSquared.get().sortPlotsByTemp(unsorted);
         }
         final Plot plot = plots.get(page - 1);
         if (!plot.hasOwner()) {

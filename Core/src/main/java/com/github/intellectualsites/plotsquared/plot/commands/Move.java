@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -34,7 +34,7 @@ public class Move extends SubCommand {
             C.COMMAND_SYNTAX.send(player, getUsage());
             return false;
         }
-        PlotArea area = PS.get().getPlotAreaByString(args[0]);
+        PlotArea area = PlotSquared.get().getPlotAreaByString(args[0]);
         Plot plot2;
         if (area == null) {
             plot2 = MainUtil.getPlotFromString(player, args[0], true);

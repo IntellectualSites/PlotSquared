@@ -1,8 +1,8 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
-import com.github.intellectualsites.plotsquared.plot.PS.SortType;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared.SortType;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.*;
@@ -98,7 +98,7 @@ public class ListCmd extends SubCommand {
                     return false;
                 }
                 sort = false;
-                plots = PS.get().sortPlotsByTemp(PS.get().getBasePlots(player));
+                plots = PlotSquared.get().sortPlotsByTemp(PlotSquared.get().getBasePlots(player));
                 break;
             case "shared":
                 if (!Permissions.hasPermission(player, C.PERMISSION_LIST_SHARED)) {
@@ -106,7 +106,7 @@ public class ListCmd extends SubCommand {
                     return false;
                 }
                 plots = new ArrayList<>();
-                for (Plot plot : PS.get().getPlots()) {
+                for (Plot plot : PlotSquared.get().getPlots()) {
                     if (plot.getTrusted().contains(player.getUUID()) || plot.getMembers()
                         .contains(player.getUUID())) {
                         plots.add(plot);
@@ -123,7 +123,7 @@ public class ListCmd extends SubCommand {
                         C.PERMISSION_LIST_WORLD_NAME.f(world));
                     return false;
                 }
-                plots = new ArrayList<>(PS.get().getPlots(world));
+                plots = new ArrayList<>(PlotSquared.get().getPlots(world));
                 break;
             case "expired":
                 if (!Permissions.hasPermission(player, C.PERMISSION_LIST_EXPIRED)) {
@@ -151,7 +151,7 @@ public class ListCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_LIST_ALL);
                     return false;
                 }
-                plots = new ArrayList<>(PS.get().getPlots());
+                plots = new ArrayList<>(PlotSquared.get().getPlots());
                 break;
             case "done":
                 if (!Permissions.hasPermission(player, C.PERMISSION_LIST_DONE)) {
@@ -159,7 +159,7 @@ public class ListCmd extends SubCommand {
                     return false;
                 }
                 plots = new ArrayList<>();
-                for (Plot plot : PS.get().getPlots()) {
+                for (Plot plot : PlotSquared.get().getPlots()) {
                     Optional<String> flag = plot.getFlag(Flags.DONE);
                     if (!flag.isPresent()) {
                         continue;
@@ -186,7 +186,7 @@ public class ListCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_LIST_TOP);
                     return false;
                 }
-                plots = new ArrayList<>(PS.get().getPlots());
+                plots = new ArrayList<>(PlotSquared.get().getPlots());
                 Collections.sort(plots, new Comparator<Plot>() {
                     @Override public int compare(Plot p1, Plot p2) {
                         double v1 = 0;
@@ -226,7 +226,7 @@ public class ListCmd extends SubCommand {
                     break;
                 }
                 plots = new ArrayList<>();
-                for (Plot plot : PS.get().getPlots()) {
+                for (Plot plot : PlotSquared.get().getPlots()) {
                     Optional<Double> price = plot.getFlag(Flags.PRICE);
                     if (price.isPresent()) {
                         plots.add(plot);
@@ -239,7 +239,7 @@ public class ListCmd extends SubCommand {
                     return false;
                 }
                 plots = new ArrayList<>();
-                for (Plot plot : PS.get().getPlots()) {
+                for (Plot plot : PlotSquared.get().getPlots()) {
                     if (plot.owner == null) {
                         plots.add(plot);
                     }
@@ -251,7 +251,7 @@ public class ListCmd extends SubCommand {
                     return false;
                 }
                 plots = new ArrayList<>();
-                for (Plot plot : PS.get().getPlots()) {
+                for (Plot plot : PlotSquared.get().getPlots()) {
                     if (plot.owner == null) {
                         continue;
                     }
@@ -279,7 +279,7 @@ public class ListCmd extends SubCommand {
                 sort = false;
                 break;
             default:
-                if (PS.get().hasPlotArea(args[0])) {
+                if (PlotSquared.get().hasPlotArea(args[0])) {
                     if (!Permissions.hasPermission(player, C.PERMISSION_LIST_WORLD)) {
                         MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_LIST_WORLD);
                         return false;
@@ -290,7 +290,7 @@ public class ListCmd extends SubCommand {
                             C.PERMISSION_LIST_WORLD_NAME.f(args[0]));
                         return false;
                     }
-                    plots = new ArrayList<>(PS.get().getPlots(args[0]));
+                    plots = new ArrayList<>(PlotSquared.get().getPlots(args[0]));
                     break;
                 }
                 UUID uuid = UUIDHandler.getUUID(args[0], null);
@@ -306,7 +306,7 @@ public class ListCmd extends SubCommand {
                         return false;
                     }
                     sort = false;
-                    plots = PS.get().sortPlotsByTemp(PS.get().getPlots(uuid));
+                    plots = PlotSquared.get().sortPlotsByTemp(PlotSquared.get().getPlots(uuid));
                     break;
                 }
         }
@@ -336,7 +336,7 @@ public class ListCmd extends SubCommand {
             }
         }
         if (sort) {
-            plots = PS.get().sortPlots(plots, SortType.CREATION_DATE, area);
+            plots = PlotSquared.get().sortPlots(plots, SortType.CREATION_DATE, area);
         }
         this.paginate(player, plots, pageSize, page,
             new RunnableVal3<Integer, Plot, PlotMessage>() {

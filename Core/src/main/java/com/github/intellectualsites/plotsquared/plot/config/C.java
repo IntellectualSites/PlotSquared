@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.config;
 import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 import java.io.File;
@@ -757,7 +757,7 @@ public enum C {
                 changed = true;
                 yml.set(remove, null);
             }
-            ConfigurationSection config = PS.get().style.getConfigurationSection("color");
+            ConfigurationSection config = PlotSquared.get().style.getConfigurationSection("color");
             Set<String> styles = config.getKeys(false);
             // HashMap<String, String> replacements = new HashMap<>();
             replacements.clear();
@@ -819,7 +819,7 @@ public enum C {
     public void send(CommandCaller caller, Object... args) {
         String msg = format(this, args);
         if (caller == null) {
-            PS.log(msg);
+            PlotSquared.log(msg);
         } else {
             caller.sendMessage(msg);
         }

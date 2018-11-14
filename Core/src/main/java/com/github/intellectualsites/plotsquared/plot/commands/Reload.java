@@ -4,7 +4,7 @@ import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.configuration.MemorySection;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -21,12 +21,12 @@ public class Reload extends SubCommand {
         try {
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.
-            PS.get().setupConfigs();
-            C.load(PS.get().translationFile);
-            PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
+            PlotSquared.get().setupConfigs();
+            C.load(PlotSquared.get().translationFile);
+            PlotSquared.get().foreachPlotArea(new RunnableVal<PlotArea>() {
                 @Override public void run(PlotArea area) {
                     ConfigurationSection worldSection =
-                        PS.get().worlds.getConfigurationSection("worlds." + area.worldname);
+                        PlotSquared.get().worlds.getConfigurationSection("worlds." + area.worldname);
                     if (worldSection == null) {
                         return;
                     }
@@ -72,7 +72,7 @@ public class Reload extends SubCommand {
                     }
                 }
             });
-            PS.get().worlds.save(PS.get().worldsFile);
+            PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
             MainUtil.sendMessage(player, C.RELOADED_CONFIGS);
         } catch (IOException e) {
             e.printStackTrace();

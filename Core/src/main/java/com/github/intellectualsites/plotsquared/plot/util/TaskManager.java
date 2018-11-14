@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 
 import java.util.Collection;
@@ -115,7 +115,7 @@ public abstract class TaskManager {
     }
 
     public <T> T sync(final RunnableVal<T> function, int timeout) {
-        if (PS.get().isMainThread(Thread.currentThread())) {
+        if (PlotSquared.get().isMainThread(Thread.currentThread())) {
             function.run();
             return function.value;
         }

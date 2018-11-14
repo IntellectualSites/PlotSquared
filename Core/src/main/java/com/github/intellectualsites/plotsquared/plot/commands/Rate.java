@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
@@ -20,7 +20,7 @@ public class Rate extends SubCommand {
         if (args.length == 1) {
             switch (args[0].toLowerCase()) {
                 case "next": {
-                    ArrayList<Plot> plots = new ArrayList<>(PS.get().getBasePlots());
+                    ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getBasePlots());
                     Collections.sort(plots, new Comparator<Plot>() {
                         @Override public int compare(Plot p1, Plot p2) {
                             double v1 = 0;

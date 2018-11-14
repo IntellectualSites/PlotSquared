@@ -11,7 +11,7 @@ import com.github.intellectualsites.plotsquared.bukkit.util.block.*;
 import com.github.intellectualsites.plotsquared.bukkit.uuid.*;
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.plot.IPlotMain;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
@@ -124,8 +124,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 }
             } catch (NumberFormatException e) {
                 e.printStackTrace();
-                PS.debug(StringMan.getString(Bukkit.getBukkitVersion()));
-                PS.debug(StringMan.getString(Bukkit.getBukkitVersion().split("-")[0].split("\\.")));
+                PlotSquared.debug(StringMan.getString(Bukkit.getBukkitVersion()));
+                PlotSquared.debug(StringMan.getString(Bukkit.getBukkitVersion().split("-")[0].split("\\.")));
                 return new int[] {1, 13, 0};
             }
         }
@@ -138,12 +138,12 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
         this.pluginName = getDescription().getName();
         getServer().getName();
-        new PS(this, "Bukkit");
+        new PlotSquared(this, "Bukkit");
         if (Settings.Enabled_Components.METRICS) {
             new Metrics(this).start();
-            PS.log(C.PREFIX + "&6Metrics enabled.");
+            PlotSquared.log(C.PREFIX + "&6Metrics enabled.");
         } else {
-            PS.log(C.CONSOLE_PLEASE_ENABLE_METRICS.f(getPluginName()));
+            PlotSquared.log(C.CONSOLE_PLEASE_ENABLE_METRICS.f(getPluginName()));
         }
         if (Settings.Enabled_Components.WORLDS) {
             TaskManager.IMP.taskRepeat(new Runnable() {
@@ -171,7 +171,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 ignore.printStackTrace();
             }
         }
-        final PlotAreaManager manager = PS.get().getPlotAreaManager();
+        final PlotAreaManager manager = PlotSquared.get().getPlotAreaManager();
         if (manager instanceof SinglePlotAreaManager) {
             long start = System.currentTimeMillis();
             final SinglePlotArea area = ((SinglePlotAreaManager) manager).getArea();
@@ -200,7 +200,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                             final Chunk[] chunks = world.getLoadedChunks();
                             if (chunks.length == 0) {
                                 if (!Bukkit.unloadWorld(world, true)) {
-                                    PS.debug("Failed to unload " + world.getName());
+                                    PlotSquared.debug("Failed to unload " + world.getName());
                                 }
                                 return;
                             } else {
@@ -236,7 +236,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     @Override public void onDisable() {
-        PS.get().disable();
+        PlotSquared.get().disable();
         Bukkit.getScheduler().cancelTasks(this);
     }
 
@@ -291,10 +291,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     @Override @SuppressWarnings("deprecation") public void runEntityTask() {
-        PS.log(C.PREFIX + "KillAllEntities started.");
+        PlotSquared.log(C.PREFIX + "KillAllEntities started.");
         TaskManager.runTaskRepeat(new Runnable() {
             @Override public void run() {
-                PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
+                PlotSquared.get().foreachPlotArea(new RunnableVal<PlotArea>() {
                     @Override public void run(PlotArea plotArea) {
                         final World world = Bukkit.getWorld(plotArea.worldname);
                         try {
@@ -522,7 +522,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                                     if (currentPlotId != null) {
                                                         entity.setMetadata("plot",
                                                             new FixedMetadataValue(
-                                                                (Plugin) PS.get().IMP,
+                                                                (Plugin) PlotSquared.get().IMP,
                                                                 currentPlotId));
                                                     }
                                                 }
@@ -549,8 +549,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         if (id != null && id.equalsIgnoreCase("single")) {
             result = new SingleWorldGenerator();
         } else {
-            result = PS.get().IMP.getDefaultGenerator();
-            if (!PS.get().setupPlotWorld(world, id, result)) {
+            result = PlotSquared.get().IMP.getDefaultGenerator();
+            if (!PlotSquared.get().setupPlotWorld(world, id, result)) {
                 return null;
             }
         }
@@ -565,30 +565,30 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             Class.forName("org.bukkit.event.entity.EntitySpawnEvent");
             getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
         } catch (final NoSuchMethodException | ClassNotFoundException ignored) {
-            PS.debug("Not running Spigot. Skipping EntitySpawnListener event.");
+            PlotSquared.debug("Not running Spigot. Skipping EntitySpawnListener event.");
         }
-        if (PS.get().checkVersion(getServerVersion(), 1, 7, 9)) {
+        if (PlotSquared.get().checkVersion(getServerVersion(), 1, 7, 9)) {
             try {
                 getServer().getPluginManager().registerEvents(new EntityPortal_1_7_9(), this);
             } catch (Throwable e) {
                 e.printStackTrace();
             }
         }
-        if (PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_8_0)) {
+        if (PlotSquared.get().checkVersion(getServerVersion(), BukkitVersion.v1_8_0)) {
             try {
                 getServer().getPluginManager().registerEvents(new PlayerEvents_1_8(), this);
             } catch (Throwable e) {
                 e.printStackTrace();
             }
         }
-        if (PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_8_3)) {
+        if (PlotSquared.get().checkVersion(getServerVersion(), BukkitVersion.v1_8_3)) {
             try {
                 getServer().getPluginManager().registerEvents(new PlayerEvents183(), this);
             } catch (Throwable e) {
                 e.printStackTrace();
             }
         }
-        if (PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_9_0)) {
+        if (PlotSquared.get().checkVersion(getServerVersion(), BukkitVersion.v1_9_0)) {
             try {
                 getServer().getPluginManager().registerEvents(new PlayerEvents_1_9(main), this);
             } catch (Throwable e) {
@@ -604,7 +604,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Override public void registerPlotPlusEvents() {
         PlotPlusListener.startRunnable(this);
         getServer().getPluginManager().registerEvents(new PlotPlusListener(), this);
-        if (PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_12_0)) {
+        if (PlotSquared.get().checkVersion(getServerVersion(), BukkitVersion.v1_12_0)) {
             getServer().getPluginManager().registerEvents(new PlotPlusListener_1_12(), this);
         } else {
             getServer().getPluginManager().registerEvents(new PlotPlusListener_Legacy(), this);
@@ -629,7 +629,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 return econ;
             }
         } catch (Throwable ignored) {
-            PS.debug("No economy detected!");
+            PlotSquared.debug("No economy detected!");
         }
         return null;
     }
@@ -639,20 +639,20 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             new SendChunk();
             MainUtil.canSendChunk = true;
         } catch (ClassNotFoundException | NoSuchFieldException | NoSuchMethodException e) {
-            PS.debug(
+            PlotSquared.debug(
                 SendChunk.class + " does not support " + StringMan.getString(getServerVersion()));
             MainUtil.canSendChunk = false;
         }
-        if (PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_13_0)) {
+        if (PlotSquared.get().checkVersion(getServerVersion(), BukkitVersion.v1_13_0)) {
             return QueueProvider.of(BukkitLocalQueue.class, BukkitLocalQueue.class);
         }
-        if (PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_9_0)) {
+        if (PlotSquared.get().checkVersion(getServerVersion(), BukkitVersion.v1_9_0)) {
             return QueueProvider.of(BukkitLocalQueue_1_9.class, BukkitLocalQueue.class);
         }
-        if (PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_8_3)) {
+        if (PlotSquared.get().checkVersion(getServerVersion(), BukkitVersion.v1_8_3)) {
             return QueueProvider.of(BukkitLocalQueue_1_8_3.class, BukkitLocalQueue.class);
         }
-        if (PS.get().checkVersion(getServerVersion(), BukkitVersion.v1_8_0)) {
+        if (PlotSquared.get().checkVersion(getServerVersion(), BukkitVersion.v1_8_0)) {
             return QueueProvider.of(BukkitLocalQueue_1_8.class, BukkitLocalQueue.class);
         }
         return QueueProvider.of(BukkitLocalQueue_1_7.class, BukkitLocalQueue.class);
@@ -683,7 +683,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             }
             return new BukkitPlotGenerator(world, gen);
         } else {
-            return new BukkitPlotGenerator(PS.get().IMP.getDefaultGenerator());
+            return new BukkitPlotGenerator(PlotSquared.get().IMP.getDefaultGenerator());
         }
     }
 
@@ -722,7 +722,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             Settings.UUID.OFFLINE = true;
         }
         if (!checkVersion) {
-            PS.log(C.PREFIX
+            PlotSquared.log(C.PREFIX
                 + " &c[WARN] Titles are disabled - please update your version of Bukkit to support this feature.");
             Settings.TITLES = false;
         } else {
@@ -733,11 +733,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             }
         }
         if (Settings.UUID.OFFLINE) {
-            PS.log(C.PREFIX + " &6" + getPluginName()
+            PlotSquared.log(C.PREFIX + " &6" + getPluginName()
                 + " is using Offline Mode UUIDs either because of user preference, or because you are using an old version of "
                 + "Bukkit");
         } else {
-            PS.log(C.PREFIX + " &6" + getPluginName() + " is using online UUIDs");
+            PlotSquared.log(C.PREFIX + " &6" + getPluginName() + " is using online UUIDs");
         }
         if (Settings.UUID.USE_SQLUUIDHANDLER) {
             return new SQLUUIDHandler(wrapper);
@@ -776,7 +776,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override public void startMetrics() {
         new Metrics(this).start();
-        PS.log(C.PREFIX + "&6Metrics enabled.");
+        PlotSquared.log(C.PREFIX + "&6Metrics enabled.");
     }
 
     @Override public void setGenerator(@NonNull final String worldName) {
@@ -784,7 +784,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         if (world == null) {
             // create world
             ConfigurationSection worldConfig =
-                PS.get().worlds.getConfigurationSection("worlds." + worldName);
+                PlotSquared.get().worlds.getConfigurationSection("worlds." + worldName);
             String manager = worldConfig.getString("generator.plugin", getPluginName());
             SetupObject setup = new SetupObject();
             setup.plotManager = manager;
@@ -797,22 +797,22 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             world = Bukkit.getWorld(worldName);
         } else {
             try {
-                if (!PS.get().hasPlotArea(worldName)) {
+                if (!PlotSquared.get().hasPlotArea(worldName)) {
                     SetGenCB.setGenerator(BukkitUtil.getWorld(worldName));
                 }
             } catch (Exception ignored) {
-                PS.log("Failed to reload world: " + world + " | " + ignored.getMessage());
+                PlotSquared.log("Failed to reload world: " + world + " | " + ignored.getMessage());
                 Bukkit.getServer().unloadWorld(world, false);
                 return;
             }
         }
         ChunkGenerator gen = world.getGenerator();
         if (gen instanceof BukkitPlotGenerator) {
-            PS.get().loadWorld(worldName, (BukkitPlotGenerator) gen);
+            PlotSquared.get().loadWorld(worldName, (BukkitPlotGenerator) gen);
         } else if (gen != null) {
-            PS.get().loadWorld(worldName, new BukkitPlotGenerator(worldName, gen));
-        } else if (PS.get().worlds.contains("worlds." + worldName)) {
-            PS.get().loadWorld(worldName, null);
+            PlotSquared.get().loadWorld(worldName, new BukkitPlotGenerator(worldName, gen));
+        } else if (PlotSquared.get().worlds.contains("worlds." + worldName)) {
+            PlotSquared.get().loadWorld(worldName, null);
         }
     }
 

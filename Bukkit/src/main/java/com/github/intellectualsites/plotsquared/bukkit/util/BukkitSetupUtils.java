@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.bukkit.util;
 import com.github.intellectualsites.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -33,7 +33,7 @@ public class BukkitSetupUtils extends SetupUtils {
                 if (plugin.isEnabled()) {
                     ChunkGenerator generator = plugin.getDefaultWorldGenerator(testWorld, "");
                     if (generator != null) {
-                        PS.get().removePlotAreas(testWorld);
+                        PlotSquared.get().removePlotAreas(testWorld);
                         String name = plugin.getDescription().getName();
                         GeneratorWrapper<?> wrapped;
                         if (generator instanceof GeneratorWrapper<?>) {
@@ -80,11 +80,11 @@ public class BukkitSetupUtils extends SetupUtils {
         switch (type) {
             case 2: {
                 if (object.id != null) {
-                    if (!PS.get().worlds.contains(worldPath)) {
-                        PS.get().worlds.createSection(worldPath);
+                    if (!PlotSquared.get().worlds.contains(worldPath)) {
+                        PlotSquared.get().worlds.createSection(worldPath);
                     }
                     ConfigurationSection worldSection =
-                        PS.get().worlds.getConfigurationSection(worldPath);
+                        PlotSquared.get().worlds.getConfigurationSection(worldPath);
                     String areaName = object.id + "-" + object.min + "-" + object.max;
                     String areaPath = "areas." + areaName;
                     if (!worldSection.contains(areaPath)) {
@@ -123,20 +123,20 @@ public class BukkitSetupUtils extends SetupUtils {
                 break;
             }
             case 1: {
-                if (!PS.get().worlds.contains(worldPath)) {
-                    PS.get().worlds.createSection(worldPath);
+                if (!PlotSquared.get().worlds.contains(worldPath)) {
+                    PlotSquared.get().worlds.createSection(worldPath);
                 }
                 ConfigurationSection worldSection =
-                    PS.get().worlds.getConfigurationSection(worldPath);
+                    PlotSquared.get().worlds.getConfigurationSection(worldPath);
                 for (ConfigurationNode step : steps) {
                     worldSection.set(step.getConstant(), step.getValue());
                 }
-                PS.get().worlds.set("worlds." + world + ".generator.type", object.type);
-                PS.get().worlds.set("worlds." + world + ".generator.terrain", object.terrain);
-                PS.get().worlds.set("worlds." + world + ".generator.plugin", object.plotManager);
+                PlotSquared.get().worlds.set("worlds." + world + ".generator.type", object.type);
+                PlotSquared.get().worlds.set("worlds." + world + ".generator.terrain", object.terrain);
+                PlotSquared.get().worlds.set("worlds." + world + ".generator.plugin", object.plotManager);
                 if (object.setupGenerator != null && !object.setupGenerator
                     .equals(object.plotManager)) {
-                    PS.get().worlds
+                    PlotSquared.get().worlds
                         .set("worlds." + world + ".generator.init", object.setupGenerator);
                 }
                 GeneratorWrapper<?> gen = SetupUtils.generators.get(object.setupGenerator);
@@ -147,11 +147,11 @@ public class BukkitSetupUtils extends SetupUtils {
             }
             case 0: {
                 if (steps.length != 0) {
-                    if (!PS.get().worlds.contains(worldPath)) {
-                        PS.get().worlds.createSection(worldPath);
+                    if (!PlotSquared.get().worlds.contains(worldPath)) {
+                        PlotSquared.get().worlds.createSection(worldPath);
                     }
                     ConfigurationSection worldSection =
-                        PS.get().worlds.getConfigurationSection(worldPath);
+                        PlotSquared.get().worlds.getConfigurationSection(worldPath);
                     for (ConfigurationNode step : steps) {
                         worldSection.set(step.getConstant(), step.getValue());
                     }
@@ -160,7 +160,7 @@ public class BukkitSetupUtils extends SetupUtils {
             }
         }
         try {
-            PS.get().worlds.save(PS.get().worldsFile);
+            PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
         } catch (IOException e) {
             e.printStackTrace();
         }

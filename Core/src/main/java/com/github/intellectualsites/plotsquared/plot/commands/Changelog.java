@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.Updater;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
@@ -15,11 +15,11 @@ import java.util.Scanner;
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
         try {
-            Updater updater = PS.get().getUpdater();
+            Updater updater = PlotSquared.get().getUpdater();
             String changes = updater != null ? updater.getChanges() : null;
             if (changes == null) {
                 try (Scanner scanner = new Scanner(new URL("http://empcraft.com/plots/cl?" + Integer
-                    .toHexString(PS.get().getVersion().hash)).openStream(), "UTF-8")) {
+                    .toHexString(PlotSquared.get().getVersion().hash)).openStream(), "UTF-8")) {
                     changes = scanner.useDelimiter("\\A").next();
                 }
             }

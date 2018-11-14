@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.util;
 import com.github.intellectualsites.plotsquared.jnbt.*;
 import com.github.intellectualsites.plotsquared.json.JSONArray;
 import com.github.intellectualsites.plotsquared.json.JSONException;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.generator.ClassicPlotWorld;
@@ -115,7 +115,7 @@ public abstract class SchematicHandler {
                     whenDone.value = false;
                 }
                 if (schematic == null) {
-                    PS.debug("Schematic == null :|");
+                    PlotSquared.debug("Schematic == null :|");
                     TaskManager.runTask(whenDone);
                     return;
                 }
@@ -139,8 +139,8 @@ public abstract class SchematicHandler {
                     RegionWrapper region = plot.getLargestRegion();
                     if (((region.maxX - region.minX + xOffset + 1) < WIDTH) || (
                         (region.maxZ - region.minZ + zOffset + 1) < LENGTH) || (HEIGHT > 256)) {
-                        PS.debug("Schematic is too large");
-                        PS.debug(
+                        PlotSquared.debug("Schematic is too large");
+                        PlotSquared.debug(
                             "(" + WIDTH + ',' + LENGTH + ',' + HEIGHT + ") is bigger than (" + (
                                 region.maxX - region.minX) + ',' + (region.maxZ - region.minZ)
                                 + ",256)");
@@ -427,13 +427,13 @@ public abstract class SchematicHandler {
      * @return schematic if found, else null
      */
     public Schematic getSchematic(String name) {
-        File parent = MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS);
+        File parent = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS);
         if (!parent.exists()) {
             if (!parent.mkdir()) {
                 throw new RuntimeException("Could not create schematic parent directory");
             }
         }
-        File file = MainUtil.getFile(PS.get().IMP.getDirectory(),
+        File file = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
             Settings.Paths.SCHEMATICS + File.separator + name + (name.endsWith(".schematic") ?
                 "" :
                 ".schematic"));
@@ -481,7 +481,7 @@ public abstract class SchematicHandler {
             return getSchematic(tag);
         } catch (IOException e) {
             e.printStackTrace();
-            PS.debug(is.toString() + " | " + is.getClass().getCanonicalName()
+            PlotSquared.debug(is.toString() + " | " + is.getClass().getCanonicalName()
                 + " is not in GZIP format : " + e.getMessage());
         }
         return null;
@@ -510,14 +510,14 @@ public abstract class SchematicHandler {
             return schematics;
         } catch (JSONException | IOException e) {
             e.printStackTrace();
-            PS.debug("ERROR PARSING: " + rawJSON);
+            PlotSquared.debug("ERROR PARSING: " + rawJSON);
         }
         return null;
     }
 
     public void upload(final CompoundTag tag, UUID uuid, String file, RunnableVal<URL> whenDone) {
         if (tag == null) {
-            PS.debug("&cCannot save empty tag");
+            PlotSquared.debug("&cCannot save empty tag");
             TaskManager.runTask(whenDone);
             return;
         }
@@ -545,11 +545,11 @@ public abstract class SchematicHandler {
      */
     public boolean save(CompoundTag tag, String path) {
         if (tag == null) {
-            PS.debug("&cCannot save empty tag");
+            PlotSquared.debug("&cCannot save empty tag");
             return false;
         }
         try {
-            File tmp = MainUtil.getFile(PS.get().IMP.getDirectory(), path);
+            File tmp = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), path);
             tmp.getParentFile().mkdirs();
             try (OutputStream stream = new FileOutputStream(tmp);
                 NBTOutputStream output = new NBTOutputStream(new GZIPOutputStream(stream))) {

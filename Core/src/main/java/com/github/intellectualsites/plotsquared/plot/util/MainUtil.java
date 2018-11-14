@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
@@ -86,13 +86,13 @@ public class MainUtil {
                 player.sendMessage(C.color(s));
             }
         }
-        PS.debug(s);
+        PlotSquared.debug(s);
     }
 
     public static void upload(UUID uuid, String file, String extension,
         final RunnableVal<OutputStream> writeTask, final RunnableVal<URL> whenDone) {
         if (writeTask == null) {
-            PS.debug("&cWrite task cannot be null");
+            PlotSquared.debug("&cWrite task cannot be null");
             TaskManager.runTask(whenDone);
             return;
         }
@@ -403,7 +403,7 @@ public class MainUtil {
                 if (id != null) {
                     continue;
                 }
-                area = PS.get().getPlotAreaByString(term);
+                area = PlotSquared.get().getPlotAreaByString(term);
                 if (area == null) {
                     alias = term;
                 }
@@ -415,7 +415,7 @@ public class MainUtil {
             plotList.add(new ArrayList<Plot>());
         }
 
-        for (Plot plot : PS.get().getPlots()) {
+        for (Plot plot : PlotSquared.get().getPlots()) {
             int count = 0;
             if (!uuids.isEmpty()) {
                 for (UUID uuid : uuids) {
@@ -463,7 +463,7 @@ public class MainUtil {
         if (arg == null) {
             if (player == null) {
                 if (message) {
-                    PS.log(C.NOT_VALID_PLOT_WORLD);
+                    PlotSquared.log(C.NOT_VALID_PLOT_WORLD);
                 }
                 return null;
             }
@@ -471,7 +471,7 @@ public class MainUtil {
         }
         PlotArea area;
         if (player != null) {
-            area = PS.get().getPlotAreaByString(arg);
+            area = PlotSquared.get().getPlotAreaByString(arg);
             if (area == null) {
                 area = player.getApplicablePlotArea();
             }
@@ -481,17 +481,17 @@ public class MainUtil {
         String[] split = arg.split(";|,");
         PlotId id;
         if (split.length == 4) {
-            area = PS.get().getPlotAreaByString(split[0] + ';' + split[1]);
+            area = PlotSquared.get().getPlotAreaByString(split[0] + ';' + split[1]);
             id = PlotId.fromString(split[2] + ';' + split[3]);
         } else if (split.length == 3) {
-            area = PS.get().getPlotAreaByString(split[0]);
+            area = PlotSquared.get().getPlotAreaByString(split[0]);
             id = PlotId.fromString(split[1] + ';' + split[2]);
         } else if (split.length == 2) {
             id = PlotId.fromString(arg);
         } else {
             Collection<Plot> plots;
             if (area == null) {
-                plots = PS.get().getPlots();
+                plots = PlotSquared.get().getPlots();
             } else {
                 plots = area.getPlots();
             }
@@ -592,7 +592,7 @@ public class MainUtil {
         if (!msg.isEmpty()) {
             if (player == null) {
                 String message = (prefix ? C.PREFIX.s() : "") + msg;
-                PS.log(message);
+                PlotSquared.log(message);
             } else {
                 player.sendMessage((prefix ? C.PREFIX.s() : "") + C.color(msg));
             }
@@ -627,7 +627,7 @@ public class MainUtil {
             @Override public void run() {
                 String m = C.format(caption, args);
                 if (player == null) {
-                    PS.log(m);
+                    PlotSquared.log(m);
                 } else {
                     player.sendMessage(m);
                 }
@@ -816,7 +816,7 @@ public class MainUtil {
                     if (file.isDirectory()) {
                         deleteDirectory(files[i]);
                     } else {
-                        PS.debug("Deleting file: " + file + " | " + file.delete());
+                        PlotSquared.debug("Deleting file: " + file + " | " + file.delete());
                     }
                 }
             }

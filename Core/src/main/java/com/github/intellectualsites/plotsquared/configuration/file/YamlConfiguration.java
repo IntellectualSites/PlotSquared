@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.configuration.file;
 import com.github.intellectualsites.plotsquared.configuration.Configuration;
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.configuration.InvalidConfigurationException;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
@@ -51,11 +51,11 @@ public class YamlConfiguration extends FileConfiguration {
                     dest = new File(file.getAbsolutePath() + "_broken_" + i++);
                 }
                 Files.copy(file.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                PS.debug("&dCould not read: &7" + file);
-                PS.debug("&dRenamed to: &7" + dest.getName());
-                PS.debug("&c============ Full stacktrace ============");
+                PlotSquared.debug("&dCould not read: &7" + file);
+                PlotSquared.debug("&dRenamed to: &7" + dest.getName());
+                PlotSquared.debug("&c============ Full stacktrace ============");
                 ex.printStackTrace();
-                PS.debug("&c=========================================");
+                PlotSquared.debug("&c=========================================");
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.sponge.util;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
@@ -335,7 +335,7 @@ public class SpongeUtil extends WorldUtil {
             SpongeUtil.getWorld(worldName).save();
         } catch (IOException e) {
             e.printStackTrace();
-            PS.debug("Failed to save world.");
+            PlotSquared.debug("Failed to save world.");
         }
     }
 

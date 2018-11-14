@@ -7,7 +7,7 @@ import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.plugin.RegisteredListener;
 import cn.nukkit.utils.EventException;
 import com.github.intellectualsites.plotsquared.nukkit.util.NukkitUtil;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.*;
@@ -62,7 +62,7 @@ public class NukkitPlayer extends PlotPlayer {
             new PlayerTeleportEvent(player, from, to, PlayerTeleportEvent.TeleportCause.PLUGIN);
         RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
         for (RegisteredListener listener : listeners) {
-            if (listener.getPlugin().getName().equals(PS.imp().getPluginName())) {
+            if (listener.getPlugin().getName().equals(PlotSquared.imp().getPluginName())) {
                 continue;
             }
             try {
@@ -76,7 +76,7 @@ public class NukkitPlayer extends PlotPlayer {
         }
         event = new PlayerTeleportEvent(player, to, from, PlayerTeleportEvent.TeleportCause.PLUGIN);
         for (RegisteredListener listener : listeners) {
-            if (listener.getPlugin().getName().equals(PS.imp().getPluginName())) {
+            if (listener.getPlugin().getName().equals(PlotSquared.imp().getPluginName())) {
                 continue;
             }
             try {

@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
@@ -196,9 +196,9 @@ public abstract class SquarePlotManager extends GridPlotManager {
                     // northwest
                     return plot.getMerged(7) ? id : null;
             }
-            PS.debug("invalid location: " + Arrays.toString(merged));
+            PlotSquared.debug("invalid location: " + Arrays.toString(merged));
         } catch (Exception ignored) {
-            PS.debug("Invalid plot / road width in settings.yml for world: " + plotArea.worldname);
+            PlotSquared.debug("Invalid plot / road width in settings.yml for world: " + plotArea.worldname);
         }
         return null;
     }

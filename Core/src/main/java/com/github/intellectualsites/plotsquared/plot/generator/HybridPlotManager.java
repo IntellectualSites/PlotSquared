@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.Template;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.*;
@@ -31,18 +31,18 @@ public class HybridPlotManager extends ClassicPlotManager {
                 + File.separator;
         try {
             File sideroad =
-                MainUtil.getFile(PS.get().IMP.getDirectory(), dir + "sideroad.schematic");
+                MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), dir + "sideroad.schematic");
             if (sideroad.exists()) {
                 files.add(new FileBytes(newDir + "sideroad.schematic",
                     Files.readAllBytes(sideroad.toPath())));
             }
             File intersection =
-                MainUtil.getFile(PS.get().IMP.getDirectory(), "intersection.schematic");
+                MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), "intersection.schematic");
             if (intersection.exists()) {
                 files.add(new FileBytes(newDir + "intersection.schematic",
                     Files.readAllBytes(intersection.toPath())));
             }
-            File plot = MainUtil.getFile(PS.get().IMP.getDirectory(), dir + "plot.schematic");
+            File plot = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), dir + "plot.schematic");
             if (plot.exists()) {
                 files.add(
                     new FileBytes(newDir + "plot.schematic", Files.readAllBytes(plot.toPath())));

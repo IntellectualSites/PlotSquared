@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.generator.ClassicPlotWorld;
@@ -287,10 +287,10 @@ public class BO3Handler {
     }
 
     public static File getBaseFile(String category) {
-        File base = MainUtil.getFile(PS.get().IMP.getDirectory(),
+        File base = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
             Settings.Paths.BO3 + File.separator + category + File.separator + "base.yml");
         if (!base.exists()) {
-            PS.get().copyFile("base.yml", Settings.Paths.BO3 + File.separator + category);
+            PlotSquared.get().copyFile("base.yml", Settings.Paths.BO3 + File.separator + category);
         }
         return base;
     }

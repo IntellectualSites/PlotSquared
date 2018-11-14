@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 
@@ -61,7 +61,7 @@ public class BO3 {
     }
 
     public File getFile() {
-        return MainUtil.getFile(PS.get().IMP.getDirectory(),
+        return MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
             Settings.Paths.BO3 + File.separator + getWorld() + File.separator + getFilename());
     }
 

@@ -28,7 +28,7 @@ package com.github.intellectualsites.plotsquared.sponge.util;
  * either expressed or implied, of anybody else.
  */
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -310,7 +310,7 @@ public class SpongeMetrics {
                         firstPost = false;
                     } catch (final IOException e) {
                         if (debug) {
-                            PS.debug("[Metrics] " + e.getMessage());
+                            PlotSquared.debug("[Metrics] " + e.getMessage());
                         }
                     }
                 }
@@ -467,7 +467,7 @@ public class SpongeMetrics {
         connection.setDoOutput(true);
 
         if (debug) {
-            PS.debug("[Metrics] Prepared request for " + pluginName + " uncompressed="
+            PlotSquared.debug("[Metrics] Prepared request for " + pluginName + " uncompressed="
                 + uncompressed.length + " compressed=" + compressed.length);
         }
 

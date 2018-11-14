@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.uuid;
 
 import com.github.intellectualsites.plotsquared.bukkit.util.NbtFactory;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
@@ -49,8 +49,8 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
         }
         TaskManager.runTaskAsync(new Runnable() {
             @Override public void run() {
-                PS.debug(C.PREFIX + "&6Starting player data caching for: " + world);
-                File uuidFile = new File(PS.get().IMP.getDirectory(), "uuids.txt");
+                PlotSquared.debug(C.PREFIX + "&6Starting player data caching for: " + world);
+                File uuidFile = new File(PlotSquared.get().IMP.getDirectory(), "uuids.txt");
                 if (uuidFile.exists()) {
                     try {
                         List<String> lines =
@@ -85,7 +85,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                     HashBiMap.create(new HashMap<StringWrapper, UUID>());
                 if (Settings.UUID.NATIVE_UUID_PROVIDER) {
                     HashSet<UUID> all = UUIDHandler.getAllUUIDS();
-                    PS.debug("&aFast mode UUID caching enabled!");
+                    PlotSquared.debug("&aFast mode UUID caching enabled!");
                     File playerDataFolder =
                         new File(container, world + File.separator + "playerdata");
                     String[] dat = playerDataFolder.list(new DatFileFilter());
@@ -101,7 +101,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                                         .fromStream(new FileInputStream(file),
                                             NbtFactory.StreamOptions.GZIP_COMPRESSION);
                                     if (!compound.containsKey("bukkit")) {
-                                        PS.debug("ERROR: Player data (" + uuid.toString()
+                                        PlotSquared.debug("ERROR: Player data (" + uuid.toString()
                                             + ".dat) does not contain the the key \"bukkit\"");
                                     } else {
                                         NbtFactory.NbtCompound bukkit =
@@ -118,7 +118,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                PS.debug(C.PREFIX + "Invalid playerdata: " + current);
+                                PlotSquared.debug(C.PREFIX + "Invalid playerdata: " + current);
                             }
                         }
                     }
@@ -129,7 +129,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                         }
                         return;
                     } else {
-                        PS.debug("Failed to cache: " + all.size()
+                        PlotSquared.debug("Failed to cache: " + all.size()
                             + " uuids - slowly processing all files");
                     }
                 }
@@ -149,7 +149,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                                 UUID uuid = UUID.fromString(s);
                                 uuids.add(uuid);
                             } catch (Exception ignored) {
-                                PS.debug(C.PREFIX + "Invalid PlayerData: " + current);
+                                PlotSquared.debug(C.PREFIX + "Invalid PlayerData: " + current);
                             }
                         }
                         break;
@@ -175,7 +175,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                             .fromStream(new FileInputStream(file),
                                 NbtFactory.StreamOptions.GZIP_COMPRESSION);
                         if (!compound.containsKey("bukkit")) {
-                            PS.debug("ERROR: Player data (" + uuid.toString()
+                            PlotSquared.debug("ERROR: Player data (" + uuid.toString()
                                 + ".dat) does not contain the the key \"bukkit\"");
                         } else {
                             NbtFactory.NbtCompound bukkit =
@@ -203,7 +203,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                             }
                         }
                     } catch (Exception ignored) {
-                        PS.debug(C.PREFIX + "&6Invalid PlayerData: " + uuid.toString() + ".dat");
+                        PlotSquared.debug(C.PREFIX + "&6Invalid PlayerData: " + uuid.toString() + ".dat");
                     }
                 }
                 for (String name : names) {

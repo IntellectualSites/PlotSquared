@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
@@ -189,7 +189,7 @@ public abstract class PlotArea {
      * @return true if both areas are compatible
      */
     public boolean isCompatible(PlotArea plotArea) {
-        ConfigurationSection section = PS.get().worlds.getConfigurationSection("worlds");
+        ConfigurationSection section = PlotSquared.get().worlds.getConfigurationSection("worlds");
         for (ConfigurationNode setting : plotArea.getSettingNodes()) {
             Object constant = section.get(plotArea.worldname + '.' + setting.getConstant());
             if (constant == null || !constant
@@ -305,7 +305,7 @@ public abstract class PlotArea {
             this.DEFAULT_FLAGS = FlagManager.parseFlags(flags);
         } catch (Exception e) {
             e.printStackTrace();
-            PS.debug("&cInvalid default flags for " + this.worldname + ": " + StringMan
+            PlotSquared.debug("&cInvalid default flags for " + this.worldname + ": " + StringMan
                 .join(flags, ","));
             this.DEFAULT_FLAGS = new HashMap<>();
         }

@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.bukkit.titles;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitVersion;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.AbstractTitle;
 import org.bukkit.entity.Player;
@@ -12,7 +12,8 @@ import org.bukkit.entity.Player;
     private final boolean valid;
 
     public DefaultTitle_111() {
-        this.valid = PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_11_0);
+        this.valid = PlotSquared
+            .get().checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_11_0);
     }
 
     @Override

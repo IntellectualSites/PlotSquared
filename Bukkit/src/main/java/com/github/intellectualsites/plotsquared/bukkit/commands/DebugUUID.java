@@ -6,7 +6,7 @@ import com.github.intellectualsites.plotsquared.bukkit.uuid.LowerOfflineUUIDWrap
 import com.github.intellectualsites.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.github.intellectualsites.plotsquared.commands.Argument;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.CommandCategory;
 import com.github.intellectualsites.plotsquared.plot.commands.RequiredType;
 import com.github.intellectualsites.plotsquared.plot.commands.SubCommand;
@@ -180,7 +180,7 @@ public class DebugUUID extends SubCommand {
 
                 MainUtil.sendMessage(player, "&7 - Scanning for applicable files (uuids.txt)");
 
-                File file = new File(PS.get().IMP.getDirectory(), "uuids.txt");
+                File file = new File(PlotSquared.get().IMP.getDirectory(), "uuids.txt");
                 if (file.exists()) {
                     try {
                         List<String> lines =
@@ -220,7 +220,7 @@ public class DebugUUID extends SubCommand {
 
                 MainUtil.sendMessage(player, "&7 - Updating plot objects");
 
-                for (Plot plot : PS.get().getPlots()) {
+                for (Plot plot : PlotSquared.get().getPlots()) {
                     UUID value = uCMap.get(plot.owner);
                     if (value != null) {
                         plot.owner = value;
@@ -239,13 +239,13 @@ public class DebugUUID extends SubCommand {
                     DBFunc.createTables();
                     if (!result) {
                         MainUtil.sendMessage(player, "&cConversion failed! Attempting recovery");
-                        for (Plot plot : PS.get().getPlots()) {
+                        for (Plot plot : PlotSquared.get().getPlots()) {
                             UUID value = uCReverse.get(plot.owner);
                             if (value != null) {
                                 plot.owner = value;
                             }
                         }
-                        DBFunc.createPlotsAndData(new ArrayList<>(PS.get().getPlots()),
+                        DBFunc.createPlotsAndData(new ArrayList<>(PlotSquared.get().getPlots()),
                             new Runnable() {
                                 @Override public void run() {
                                     MainUtil.sendMessage(player, "&6Recovery was successful!");
@@ -259,14 +259,14 @@ public class DebugUUID extends SubCommand {
                 }
 
                 if (newWrapper instanceof OfflineUUIDWrapper) {
-                    PS.get().worlds.set("UUID.force-lowercase", false);
-                    PS.get().worlds.set("UUID.offline", true);
+                    PlotSquared.get().worlds.set("UUID.force-lowercase", false);
+                    PlotSquared.get().worlds.set("UUID.offline", true);
                 } else if (newWrapper instanceof DefaultUUIDWrapper) {
-                    PS.get().worlds.set("UUID.force-lowercase", false);
-                    PS.get().worlds.set("UUID.offline", false);
+                    PlotSquared.get().worlds.set("UUID.force-lowercase", false);
+                    PlotSquared.get().worlds.set("UUID.offline", false);
                 }
                 try {
-                    PS.get().worlds.save(PS.get().worldsFile);
+                    PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
                 } catch (IOException ignored) {
                     MainUtil.sendMessage(player,
                         "Could not save configuration. It will need to be manual set!");
@@ -276,7 +276,7 @@ public class DebugUUID extends SubCommand {
 
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override public void run() {
-                        ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlots());
+                        ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getPlots());
                         DBFunc.createPlotsAndData(plots, new Runnable() {
                             @Override public void run() {
                                 MainUtil.sendMessage(player, "&aConversion complete!");

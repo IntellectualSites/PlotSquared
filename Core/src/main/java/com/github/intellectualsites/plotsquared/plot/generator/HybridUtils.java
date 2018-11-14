@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
 import com.github.intellectualsites.plotsquared.jnbt.CompoundTag;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
@@ -207,16 +207,16 @@ public abstract class HybridUtils {
                         regenerateRoad(area, chunk, extend);
                         ChunkManager.manager.unloadChunk(area.worldname, chunk, true, true);
                     }
-                    PS.debug("&cCancelled road task");
+                    PlotSquared.debug("&cCancelled road task");
                     return;
                 }
                 count.incrementAndGet();
                 if (count.intValue() % 20 == 0) {
-                    PS.debug("PROGRESS: " + 100 * (2048 - chunks.size()) / 2048 + "%");
+                    PlotSquared.debug("PROGRESS: " + 100 * (2048 - chunks.size()) / 2048 + "%");
                 }
                 if (regions.isEmpty() && chunks.isEmpty()) {
                     HybridUtils.UPDATE = false;
-                    PS.debug(C.PREFIX.s() + "Finished road conversion");
+                    PlotSquared.debug(C.PREFIX.s() + "Finished road conversion");
                     // CANCEL TASK
                 } else {
                     final Runnable task = this;
@@ -230,9 +230,9 @@ public abstract class HybridUtils {
                                         Iterator<ChunkLoc> iterator = regions.iterator();
                                         ChunkLoc loc = iterator.next();
                                         iterator.remove();
-                                        PS.debug("&3Updating .mcr: " + loc.x + ", " + loc.z
+                                        PlotSquared.debug("&3Updating .mcr: " + loc.x + ", " + loc.z
                                             + " (aprrox 1024 chunks)");
-                                        PS.debug(" - Remaining: " + regions.size());
+                                        PlotSquared.debug(" - Remaining: " + regions.size());
                                         chunks.addAll(getChunks(loc));
                                         System.gc();
                                     }
@@ -256,7 +256,7 @@ public abstract class HybridUtils {
                                 Iterator<ChunkLoc> iterator = regions.iterator();
                                 ChunkLoc loc = iterator.next();
                                 iterator.remove();
-                                PS.debug(
+                                PlotSquared.debug(
                                     "&c[ERROR]&7 Could not update '" + area.worldname + "/region/r."
                                         + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
                                 int sx = loc.x << 5;
@@ -268,8 +268,8 @@ public abstract class HybridUtils {
                                                 true);
                                     }
                                 }
-                                PS.debug("&d - Potentially skipping 1024 chunks");
-                                PS.debug("&d - TODO: recommend chunkster if corrupt");
+                                PlotSquared.debug("&d - Potentially skipping 1024 chunks");
+                                PlotSquared.debug("&d - TODO: recommend chunkster if corrupt");
                             }
                             GlobalBlockQueue.IMP.addTask(new Runnable() {
                                 @Override public void run() {

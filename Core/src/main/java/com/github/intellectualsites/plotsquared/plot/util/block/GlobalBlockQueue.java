@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 
@@ -96,7 +96,7 @@ public class GlobalBlockQueue {
                 if (SET_TASK.value2 == null) {
                     return;
                 }
-                if (!PS.get().isMainThread(Thread.currentThread())) {
+                if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
                     throw new IllegalStateException(
                         "This shouldn't be possible for placement to occur off the main thread");
                 }
@@ -188,7 +188,7 @@ public class GlobalBlockQueue {
         if (SET_TASK.value2 == null) {
             return;
         }
-        if (PS.get().isMainThread(Thread.currentThread())) {
+        if (PlotSquared.get().isMainThread(Thread.currentThread())) {
             throw new IllegalStateException("Must be flushed on the main thread!");
         }
         // Disable the async catcher as it can't discern async vs parallel

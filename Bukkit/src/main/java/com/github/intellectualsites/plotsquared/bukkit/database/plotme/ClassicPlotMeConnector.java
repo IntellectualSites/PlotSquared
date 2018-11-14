@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.database.plotme;
 
 import com.github.intellectualsites.plotsquared.configuration.file.FileConfiguration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.database.SQLite;
@@ -68,8 +68,8 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             if (!plots.containsKey(world)) {
                 plots.put(world, new HashMap<PlotId, Plot>());
                 if (merge) {
-                    int plot = PS.get().worlds.getInt("worlds." + world + ".plot.size");
-                    int path = PS.get().worlds.getInt("worlds." + world + ".road.width");
+                    int plot = PlotSquared.get().worlds.getInt("worlds." + world + ".plot.size");
+                    int path = PlotSquared.get().worlds.getInt("worlds." + world + ".road.width");
                     plotWidth.put(world, plot);
                     roadWidth.put(world, path);
                     merges.put(world, new HashMap<PlotId, boolean[]>());
@@ -113,7 +113,8 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                         }
                     }
                     if (name.isEmpty()) {
-                        PS.log("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
+                        PlotSquared
+                            .log("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
                         missing++;
                         continue;
                     }
@@ -127,10 +128,10 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             plots.get(world).put(id, plot);
         }
         if (missing > 0) {
-            PS.log("&cSome names could not be identified:");
-            PS.log("&7 - Empty quotes mean PlotMe just stored an unowned plot in the database");
-            PS.log("&7 - Names you have never seen before could be from people mistyping commands");
-            PS.log(
+            PlotSquared.log("&cSome names could not be identified:");
+            PlotSquared.log("&7 - Empty quotes mean PlotMe just stored an unowned plot in the database");
+            PlotSquared.log("&7 - Names you have never seen before could be from people mistyping commands");
+            PlotSquared.log(
                 "&7 - Converting from a non-uuid version of PlotMe can't identify owners if the playerdata files are deleted (these plots will "
                     + "remain unknown until the player connects)");
         }
@@ -151,7 +152,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
 
         try {
 
-            PS.log(" - " + this.prefix + "Denied");
+            PlotSquared.log(" - " + this.prefix + "Denied");
             statement = connection.prepareStatement("SELECT * FROM `" + this.prefix + "Denied`");
             resultSet = statement.executeQuery();
 
@@ -174,7 +175,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                         }
                     }
                     if (denied == null) {
-                        PS.log("&6Could not identify denied for plot: " + id);
+                        PlotSquared.log("&6Could not identify denied for plot: " + id);
                         continue;
                     }
                 }
@@ -209,7 +210,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                         }
                     }
                     if (helper == null) {
-                        PS.log("&6Could not identify helper for plot: " + id);
+                        PlotSquared.log("&6Could not identify helper for plot: " + id);
                         continue;
                     }
                 }
@@ -231,7 +232,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
     }
 
     @Override public boolean accepts(String version) {
-        return version == null || PS.get().canUpdate(version, "0.17.0") || PS.get()
+        return version == null || PlotSquared.get().canUpdate(version, "0.17.0") || PlotSquared.get()
             .canUpdate("0.999.999", version);
     }
 }

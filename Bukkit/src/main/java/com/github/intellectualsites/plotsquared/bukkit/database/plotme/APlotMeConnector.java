@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.database.plotme;
 
 import com.github.intellectualsites.plotsquared.configuration.file.FileConfiguration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
@@ -27,23 +27,23 @@ public abstract class APlotMeConnector {
 
     public void copyConfig(FileConfiguration plotConfig, String world, String actualWorldName) {
         int pathWidth = plotConfig.getInt("worlds." + world + ".PathWidth"); //
-        PS.get().worlds.set("worlds." + actualWorldName + ".road.width", pathWidth);
+        PlotSquared.get().worlds.set("worlds." + actualWorldName + ".road.width", pathWidth);
         int plotSize = plotConfig.getInt("worlds." + world + ".PlotSize"); //
-        PS.get().worlds.set("worlds." + actualWorldName + ".plot.size", plotSize);
+        PlotSquared.get().worlds.set("worlds." + actualWorldName + ".plot.size", plotSize);
         String wallBlock = plotConfig.getString("worlds." + world + ".WallBlockId"); //
-        PS.get().worlds.set("worlds." + actualWorldName + ".wall.block", wallBlock);
+        PlotSquared.get().worlds.set("worlds." + actualWorldName + ".wall.block", wallBlock);
         String floor = plotConfig.getString("worlds." + world + ".PlotFloorBlockId"); //
-        PS.get().worlds
+        PlotSquared.get().worlds
             .set("worlds." + actualWorldName + ".plot.floor", Collections.singletonList(floor));
         String filling = plotConfig.getString("worlds." + world + ".PlotFillingBlockId"); //
-        PS.get().worlds
+        PlotSquared.get().worlds
             .set("worlds." + actualWorldName + ".plot.filling", Collections.singletonList(filling));
         String road = plotConfig.getString("worlds." + world + ".RoadMainBlockId");
-        PS.get().worlds.set("worlds." + actualWorldName + ".road.block", road);
+        PlotSquared.get().worlds.set("worlds." + actualWorldName + ".road.block", road);
         int height = plotConfig.getInt("worlds." + world + ".RoadHeight"); //
-        PS.get().worlds.set("worlds." + actualWorldName + ".road.height", height);
-        PS.get().worlds.set("worlds." + actualWorldName + ".plot.height", height);
-        PS.get().worlds.set("worlds." + actualWorldName + ".wall.height", height);
+        PlotSquared.get().worlds.set("worlds." + actualWorldName + ".road.height", height);
+        PlotSquared.get().worlds.set("worlds." + actualWorldName + ".plot.height", height);
+        PlotSquared.get().worlds.set("worlds." + actualWorldName + ".wall.height", height);
     }
 
     public Location getPlotTopLocAbs(int path, int plot, PlotId plotId) {

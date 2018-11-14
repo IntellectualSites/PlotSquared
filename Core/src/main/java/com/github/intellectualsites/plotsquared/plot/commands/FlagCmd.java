@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
@@ -27,7 +27,7 @@ public class FlagCmd extends SubCommand {
                 int numeric = Integer.parseInt(value);
                 perm = perm.substring(0, perm.length() - value.length() - 1);
                 if (numeric > 0) {
-                    int checkRange = PS.get().getPlatform().equalsIgnoreCase("bukkit") ?
+                    int checkRange = PlotSquared.get().getPlatform().equalsIgnoreCase("bukkit") ?
                         numeric :
                         Settings.Limit.MAX_PLOTS;
                     return player.hasPermissionRange(perm, checkRange) >= numeric;

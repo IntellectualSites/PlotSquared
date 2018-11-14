@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -20,7 +20,7 @@ public class PlayerEvents183 implements Listener {
         Block block = event.getBlock();
         Location location = BukkitUtil.getLocation(block.getLocation());
         String world = location.getWorld();
-        if (!PS.get().hasPlotArea(world)) {
+        if (!PlotSquared.get().hasPlotArea(world)) {
             return;
         }
         PlotArea area = location.getPlotArea();

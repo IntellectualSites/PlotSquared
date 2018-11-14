@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.commands.CommandCaller;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.RequiredType;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
@@ -40,7 +40,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      * @return
      */
     public static PlotPlayer wrap(Object player) {
-        return PS.get().IMP.wrapPlayer(player);
+        return PlotSquared.get().IMP.wrapPlayer(player);
     }
 
     /**
@@ -183,7 +183,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         }
         final AtomicInteger count = new AtomicInteger(0);
         final UUID uuid = getUUID();
-        PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
+        PlotSquared.get().foreachPlotArea(new RunnableVal<PlotArea>() {
             @Override public void run(PlotArea value) {
                 if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
                     for (Plot plot : value.getPlotsAbs(uuid)) {
@@ -205,7 +205,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         }
         final AtomicInteger count = new AtomicInteger(0);
         final UUID uuid = getUUID();
-        PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
+        PlotSquared.get().foreachPlotArea(new RunnableVal<PlotArea>() {
             @Override public void run(PlotArea value) {
                 for (PlotCluster cluster : value.getClusters()) {
                     if (cluster.isOwner(getUUID())) {
@@ -226,7 +226,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     public int getPlotCount(String world) {
         UUID uuid = getUUID();
         int count = 0;
-        for (PlotArea area : PS.get().getPlotAreas(world)) {
+        for (PlotArea area : PlotSquared.get().getPlotAreas(world)) {
             if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
                 for (Plot plot : area.getPlotsAbs(uuid)) {
                     if (!plot.getFlag(Flags.DONE).isPresent()) {
@@ -243,7 +243,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     public int getClusterCount(String world) {
         UUID uuid = getUUID();
         int count = 0;
-        for (PlotArea area : PS.get().getPlotAreas(world)) {
+        for (PlotArea area : PlotSquared.get().getPlotAreas(world)) {
             for (PlotCluster cluster : area.getClusters()) {
                 if (cluster.isOwner(getUUID())) {
                     count++;
@@ -257,11 +257,11 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      * Get a {@code Set} of plots owned by this player.
      *
      * @return a {@code Set} of plots owned by the player
-     * @see PS for more searching functions
+     * @see PlotSquared for more searching functions
      * @see #getPlotCount() for the number of plots
      */
     public Set<Plot> getPlots() {
-        return PS.get().getPlots(this);
+        return PlotSquared.get().getPlots(this);
     }
 
     /**
@@ -270,11 +270,11 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      * @return
      */
     public PlotArea getPlotAreaAbs() {
-        return PS.get().getPlotAreaAbs(getLocation());
+        return PlotSquared.get().getPlotAreaAbs(getLocation());
     }
 
     public PlotArea getApplicablePlotArea() {
-        return PS.get().getApplicablePlotArea(getLocation());
+        return PlotSquared.get().getApplicablePlotArea(getLocation());
     }
 
     @Override public RequiredType getSuperCaller() {
@@ -462,7 +462,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         if (Settings.Enabled_Components.BAN_DELETER && isBanned()) {
             for (Plot owned : getPlots()) {
                 owned.deletePlot(null);
-                PS.debug(String
+                PlotSquared.debug(String
                     .format("&cPlot &6%s &cwas deleted + cleared due to &6%s&c getting banned",
                         plot.getId(), getName()));
             }
@@ -472,7 +472,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
             ExpireManager.IMP.storeDate(getUUID(), System.currentTimeMillis());
         }
         UUIDHandler.getPlayers().remove(name);
-        PS.get().IMP.unregister(this);
+        PlotSquared.get().IMP.unregister(this);
     }
 
     /**
@@ -484,7 +484,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     public int getPlayerClusterCount(String world) {
         UUID uuid = getUUID();
         int count = 0;
-        for (PlotCluster cluster : PS.get().getClusters(world)) {
+        for (PlotCluster cluster : PlotSquared.get().getClusters(world)) {
             if (uuid.equals(cluster.owner)) {
                 count += cluster.getArea();
             }
@@ -499,7 +499,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      */
     public int getPlayerClusterCount() {
         final AtomicInteger count = new AtomicInteger();
-        PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
+        PlotSquared.get().foreachPlotArea(new RunnableVal<PlotArea>() {
             @Override public void run(PlotArea value) {
                 count.addAndGet(value.getClusters().size());
             }
@@ -516,7 +516,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     public Set<Plot> getPlots(String world) {
         UUID uuid = getUUID();
         HashSet<Plot> plots = new HashSet<>();
-        for (Plot plot : PS.get().getPlots(world)) {
+        for (Plot plot : PlotSquared.get().getPlots(world)) {
             if (plot.isOwner(uuid)) {
                 plots.add(plot);
             }
@@ -532,7 +532,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                         PlotPlayer.this.metaMap = value;
                         if (!value.isEmpty()) {
                             if (Settings.Enabled_Components.PERSISTENT_META) {
-                                PlotAreaManager manager = PS.get().getPlotAreaManager();
+                                PlotAreaManager manager = PlotSquared.get().getPlotAreaManager();
                                 if (manager instanceof SinglePlotAreaManager) {
                                     PlotArea area = ((SinglePlotAreaManager) manager).getArea();
                                     byte[] arr = PlotPlayer.this.getPersistentMeta("quitLoc");
@@ -562,7 +562,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                                                             }
                                                         }
                                                     });
-                                                } else if (!PS.get()
+                                                } else if (!PlotSquared.get()
                                                     .isMainThread(Thread.currentThread())) {
                                                     if (getMeta("teleportOnLogin", true)) {
                                                         if (plot.teleportPlayer(PlotPlayer.this)) {

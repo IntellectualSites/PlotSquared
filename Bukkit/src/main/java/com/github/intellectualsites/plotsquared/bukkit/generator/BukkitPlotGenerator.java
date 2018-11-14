@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.bukkit.generator;
 
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.bukkit.util.block.GenChunk;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
 import com.github.intellectualsites.plotsquared.plot.object.*;
@@ -78,7 +78,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
                     }
                 }
                 BukkitPlotGenerator.this.random.state = c.getX() << 16 | c.getZ() & 0xFFFF;
-                PlotArea area = PS.get().getPlotArea(world.getName(), null);
+                PlotArea area = PlotSquared.get().getPlotArea(world.getName(), null);
                 ChunkWrapper wrap = new ChunkWrapper(area.worldname, c.getX(), c.getZ());
                 ScopedLocalBlockQueue chunk = queue.getForChunk(wrap.x, wrap.z);
                 if (BukkitPlotGenerator.this.plotGenerator
@@ -98,7 +98,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
                 + " is already a BukkitPlotGenerator!");
         }
         this.full = false;
-        PS.debug("BukkitPlotGenerator does not fully support: " + cg);
+        PlotSquared.debug("BukkitPlotGenerator does not fully support: " + cg);
         this.platformGenerator = cg;
         this.plotGenerator = new IndependentPlotGenerator() {
             @Override public void processSetup(SetupObject setup) {
@@ -108,7 +108,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
             }
 
             @Override public PlotManager getNewPlotManager() {
-                return PS.get().IMP.getDefaultGenerator().getNewPlotManager();
+                return PlotSquared.get().IMP.getDefaultGenerator().getNewPlotManager();
             }
 
             @Override public String getName() {
@@ -117,7 +117,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
 
             @Override
             public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
-                return PS.get().IMP.getDefaultGenerator().getNewPlotArea(world, id, min, max);
+                return PlotSquared.get().IMP.getDefaultGenerator().getNewPlotArea(world, id, min, max);
             }
 
             @Override
@@ -199,8 +199,8 @@ public class BukkitPlotGenerator extends ChunkGenerator
         try {
             if (!this.loaded) {
                 String name = world.getName();
-                PS.get().loadWorld(name, this);
-                Set<PlotArea> areas = PS.get().getPlotAreas(name);
+                PlotSquared.get().loadWorld(name, this);
+                Set<PlotArea> areas = PlotSquared.get().getPlotAreas(name);
                 if (!areas.isEmpty()) {
                     PlotArea area = areas.iterator().next();
                     if (!area.MOB_SPAWNING) {
@@ -276,7 +276,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
         // Load if improperly loaded
         if (!this.loaded) {
             String name = world.getName();
-            PS.get().loadWorld(name, this);
+            PlotSquared.get().loadWorld(name, this);
             this.loaded = true;
         }
         // Set random seed
@@ -285,7 +285,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
         if (ChunkManager.preProcessChunk(result)) {
             return;
         }
-        PlotArea area = PS.get().getPlotArea(world.getName(), null);
+        PlotArea area = PlotSquared.get().getPlotArea(world.getName(), null);
         try {
             this.plotGenerator.generateChunk(this.chunkSetter, area, this.random);
         } catch (Throwable e) {

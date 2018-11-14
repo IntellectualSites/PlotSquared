@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotManager;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
@@ -33,7 +33,7 @@ public class RegenAllRoads extends SubCommand {
             MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot regenallroads <world> [height]");
             return false;
         }
-        PlotArea area = PS.get().getPlotAreaByString(args[0]);
+        PlotArea area = PlotSquared.get().getPlotAreaByString(args[0]);
         if (area == null) {
             C.NOT_VALID_PLOT_WORLD.send(player, args[0]);
             return false;

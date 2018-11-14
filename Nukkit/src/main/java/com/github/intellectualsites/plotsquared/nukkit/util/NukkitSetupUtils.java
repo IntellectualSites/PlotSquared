@@ -6,7 +6,7 @@ import com.github.intellectualsites.plotsquared.configuration.ConfigurationSecti
 import com.github.intellectualsites.plotsquared.nukkit.NukkitMain;
 import com.github.intellectualsites.plotsquared.nukkit.generator.NukkitPlotGenerator;
 import com.github.intellectualsites.plotsquared.nukkit.util.block.NukkitHybridGen;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -39,9 +39,9 @@ public class NukkitSetupUtils extends SetupUtils {
         String testWorld = "CheckingPlotSquaredGenerator";
         HashMap<String, Object> map = new HashMap<>();
         map.put("world", testWorld);
-        map.put("plot-generator", PS.get().IMP.getDefaultGenerator());
+        map.put("plot-generator", PlotSquared.get().IMP.getDefaultGenerator());
         NukkitPlotGenerator gen = new NukkitPlotGenerator(map);
-        SetupUtils.generators.put(PS.imp().getPluginName(), gen);
+        SetupUtils.generators.put(PlotSquared.imp().getPluginName(), gen);
     }
 
     @Override public String setupWorld(SetupObject object) {
@@ -50,10 +50,10 @@ public class NukkitSetupUtils extends SetupUtils {
         String world = object.world;
         int type = object.type;
         String worldPath = "worlds." + object.world;
-        if (!PS.get().worlds.contains(worldPath)) {
-            PS.get().worlds.createSection(worldPath);
+        if (!PlotSquared.get().worlds.contains(worldPath)) {
+            PlotSquared.get().worlds.createSection(worldPath);
         }
-        ConfigurationSection worldSection = PS.get().worlds.getConfigurationSection(worldPath);
+        ConfigurationSection worldSection = PlotSquared.get().worlds.getConfigurationSection(worldPath);
         switch (type) {
             case 2: {
                 if (object.id != null) {
@@ -98,12 +98,12 @@ public class NukkitSetupUtils extends SetupUtils {
                 for (ConfigurationNode step : steps) {
                     worldSection.set(step.getConstant(), step.getValue());
                 }
-                PS.get().worlds.set("worlds." + world + ".generator.type", object.type);
-                PS.get().worlds.set("worlds." + world + ".generator.terrain", object.terrain);
-                PS.get().worlds.set("worlds." + world + ".generator.plugin", object.plotManager);
+                PlotSquared.get().worlds.set("worlds." + world + ".generator.type", object.type);
+                PlotSquared.get().worlds.set("worlds." + world + ".generator.terrain", object.terrain);
+                PlotSquared.get().worlds.set("worlds." + world + ".generator.plugin", object.plotManager);
                 if (object.setupGenerator != null && !object.setupGenerator
                     .equals(object.plotManager)) {
-                    PS.get().worlds
+                    PlotSquared.get().worlds
                         .set("worlds." + world + ".generator.init", object.setupGenerator);
                 }
                 GeneratorWrapper<?> gen = SetupUtils.generators.get(object.setupGenerator);
@@ -118,14 +118,14 @@ public class NukkitSetupUtils extends SetupUtils {
                 break;
         }
         try {
-            PS.get().worlds.save(PS.get().worldsFile);
+            PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
         if (object.setupGenerator != null) {
             HashMap<String, Object> map = new HashMap<>();
             map.put("world", object.world);
-            map.put("plot-generator", PS.get().IMP.getDefaultGenerator());
+            map.put("plot-generator", PlotSquared.get().IMP.getDefaultGenerator());
             if (!plugin.getServer()
                 .generateLevel(object.world, object.world.hashCode(), NukkitHybridGen.class, map)) {
                 plugin.getServer().loadLevel(object.world);
@@ -169,7 +169,7 @@ public class NukkitSetupUtils extends SetupUtils {
                     return entry.getKey();
                 }
             }
-            return PS.imp().getPluginName();
+            return PlotSquared.imp().getPluginName();
         } catch (Throwable e) {
             e.printStackTrace();
         }

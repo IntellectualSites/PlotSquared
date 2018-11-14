@@ -4,7 +4,7 @@ import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.configuration.InvalidConfigurationException;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
@@ -26,12 +26,12 @@ public class Template extends SubCommand {
 
     public static boolean extractAllFiles(String world, String template) {
         try {
-            File folder = MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.Paths.TEMPLATES);
+            File folder = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.TEMPLATES);
             if (!folder.exists()) {
                 return false;
             }
             File input = new File(folder + File.separator + template + ".template");
-            File output = PS.get().IMP.getDirectory();
+            File output = PlotSquared.get().IMP.getDirectory();
             if (!output.exists()) {
                 output.mkdirs();
             }
@@ -71,7 +71,7 @@ public class Template extends SubCommand {
 
     public static byte[] getBytes(PlotArea plotArea) {
         ConfigurationSection section =
-            PS.get().worlds.getConfigurationSection("worlds." + plotArea.worldname);
+            PlotSquared.get().worlds.getConfigurationSection("worlds." + plotArea.worldname);
         YamlConfiguration config = new YamlConfiguration();
         String generator = SetupUtils.manager.getGenerator(plotArea);
         if (generator != null) {
@@ -84,7 +84,7 @@ public class Template extends SubCommand {
     }
 
     public static void zipAll(String world, Set<FileBytes> files) throws IOException {
-        File output = MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.Paths.TEMPLATES);
+        File output = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.TEMPLATES);
         output.mkdirs();
         try (FileOutputStream fos = new FileOutputStream(
             output + File.separator + world + ".template");
@@ -123,7 +123,7 @@ public class Template extends SubCommand {
                         "/plot template import <world> <template>");
                     return false;
                 }
-                if (PS.get().hasPlotArea(world)) {
+                if (PlotSquared.get().hasPlotArea(world)) {
                     MainUtil.sendMessage(player, C.SETUP_WORLD_TAKEN, world);
                     return false;
                 }
@@ -133,18 +133,18 @@ public class Template extends SubCommand {
                         .sendMessage(player, "&cInvalid template file: " + args[2] + ".template");
                     return false;
                 }
-                File worldFile = MainUtil.getFile(PS.get().IMP.getDirectory(),
+                File worldFile = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
                     Settings.Paths.TEMPLATES + File.separator + "tmp-data.yml");
                 YamlConfiguration worldConfig = YamlConfiguration.loadConfiguration(worldFile);
-                PS.get().worlds.set("worlds." + world, worldConfig.get(""));
+                PlotSquared.get().worlds.set("worlds." + world, worldConfig.get(""));
                 try {
-                    PS.get().worlds.save(PS.get().worldsFile);
-                    PS.get().worlds.load(PS.get().worldsFile);
+                    PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
+                    PlotSquared.get().worlds.load(PlotSquared.get().worldsFile);
                 } catch (InvalidConfigurationException | IOException e) {
                     e.printStackTrace();
                 }
                 String manager =
-                    worldConfig.getString("generator.plugin", PS.imp().getPluginName());
+                    worldConfig.getString("generator.plugin", PlotSquared.imp().getPluginName());
                 String generator = worldConfig.getString("generator.init", manager);
                 int type = worldConfig.getInt("generator.type");
                 int terrain = worldConfig.getInt("generator.terrain");
@@ -170,7 +170,7 @@ public class Template extends SubCommand {
                     MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot template export <world>");
                     return false;
                 }
-                final PlotArea area = PS.get().getPlotAreaByString(world);
+                final PlotArea area = PlotSquared.get().getPlotAreaByString(world);
                 if (area == null) {
                     MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
                     return false;

@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.generator.AugmentedUtils;
@@ -81,7 +81,8 @@ public class Area extends SubCommand {
                                 final int offsetX = bx - (area.ROAD_WIDTH == 0 ? 0 : lower);
                                 final int offsetZ = bz - (area.ROAD_WIDTH == 0 ? 0 : lower);
                                 final RegionWrapper region = new RegionWrapper(bx, tx, bz, tz);
-                                Set<PlotArea> areas = PS.get().getPlotAreas(area.worldname, region);
+                                Set<PlotArea> areas = PlotSquared
+                                    .get().getPlotAreas(area.worldname, region);
                                 if (!areas.isEmpty()) {
                                     C.CLUSTER_INTERSECTION
                                         .send(player, areas.iterator().next().toString());
@@ -94,8 +95,8 @@ public class Area extends SubCommand {
                                 object.type = area.TYPE;
                                 object.min = new PlotId(1, 1);
                                 object.max = new PlotId(numX, numZ);
-                                object.plotManager = PS.imp().getPluginName();
-                                object.setupGenerator = PS.imp().getPluginName();
+                                object.plotManager = PlotSquared.imp().getPluginName();
+                                object.setupGenerator = PlotSquared.imp().getPluginName();
                                 object.step = area.getSettingNodes();
                                 final String path =
                                     "worlds." + area.worldname + ".areas." + area.id + '-'
@@ -103,14 +104,14 @@ public class Area extends SubCommand {
                                 Runnable run = new Runnable() {
                                     @Override public void run() {
                                         if (offsetX != 0) {
-                                            PS.get().worlds.set(path + ".road.offset.x", offsetX);
+                                            PlotSquared.get().worlds.set(path + ".road.offset.x", offsetX);
                                         }
                                         if (offsetZ != 0) {
-                                            PS.get().worlds.set(path + ".road.offset.z", offsetZ);
+                                            PlotSquared.get().worlds.set(path + ".road.offset.z", offsetZ);
                                         }
                                         final String world = SetupUtils.manager.setupWorld(object);
                                         if (WorldUtil.IMP.isWorld(world)) {
-                                            PS.get().loadWorld(world, null);
+                                            PlotSquared.get().loadWorld(world, null);
                                             C.SETUP_FINISHED.send(player);
                                             player.teleport(WorldUtil.IMP.getSpawn(world));
                                             if (area.TERRAIN != 3) {
@@ -149,13 +150,13 @@ public class Area extends SubCommand {
                         }
                         object.world = split[0];
                         final HybridPlotWorld pa = new HybridPlotWorld(object.world, id,
-                            PS.get().IMP.getDefaultGenerator(), null, null);
-                        PlotArea other = PS.get().getPlotArea(pa.worldname, id);
+                            PlotSquared.get().IMP.getDefaultGenerator(), null, null);
+                        PlotArea other = PlotSquared.get().getPlotArea(pa.worldname, id);
                         if (other != null && Objects.equals(pa.id, other.id)) {
                             C.SETUP_WORLD_TAKEN.send(player, pa.toString());
                             return false;
                         }
-                        Set<PlotArea> areas = PS.get().getPlotAreas(pa.worldname);
+                        Set<PlotArea> areas = PlotSquared.get().getPlotAreas(pa.worldname);
                         if (!areas.isEmpty()) {
                             PlotArea area = areas.iterator().next();
                             pa.TYPE = area.TYPE;
@@ -224,15 +225,15 @@ public class Area extends SubCommand {
                             Runnable run = new Runnable() {
                                 @Override public void run() {
                                     String path = "worlds." + pa.worldname;
-                                    if (!PS.get().worlds.contains(path)) {
-                                        PS.get().worlds.createSection(path);
+                                    if (!PlotSquared.get().worlds.contains(path)) {
+                                        PlotSquared.get().worlds.createSection(path);
                                     }
                                     ConfigurationSection section =
-                                        PS.get().worlds.getConfigurationSection(path);
+                                        PlotSquared.get().worlds.getConfigurationSection(path);
                                     pa.saveConfiguration(section);
                                     pa.loadConfiguration(section);
-                                    object.plotManager = PS.imp().getPluginName();
-                                    object.setupGenerator = PS.imp().getPluginName();
+                                    object.plotManager = PlotSquared.imp().getPluginName();
+                                    object.setupGenerator = PlotSquared.imp().getPluginName();
                                     String world = SetupUtils.manager.setupWorld(object);
                                     if (WorldUtil.IMP.isWorld(world)) {
                                         C.SETUP_FINISHED.send(player);
@@ -243,7 +244,7 @@ public class Area extends SubCommand {
                                                 + pa.worldname);
                                     }
                                     try {
-                                        PS.get().worlds.save(PS.get().worldsFile);
+                                        PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
@@ -291,7 +292,7 @@ public class Area extends SubCommand {
                         area = player.getApplicablePlotArea();
                         break;
                     case 2:
-                        area = PS.get().getPlotAreaByString(args[1]);
+                        area = PlotSquared.get().getPlotAreaByString(args[1]);
                         break;
                     default:
                         C.COMMAND_SYNTAX.send(player, getCommandString() + " info [area]");
@@ -351,7 +352,7 @@ public class Area extends SubCommand {
                         C.COMMAND_SYNTAX.send(player, getCommandString() + " list [#]");
                         return false;
                 }
-                ArrayList<PlotArea> areas = new ArrayList<>(PS.get().getPlotAreas());
+                ArrayList<PlotArea> areas = new ArrayList<>(PlotSquared.get().getPlotAreas());
                 paginate(player, areas, 8, page,
                     new RunnableVal3<Integer, PlotArea, PlotMessage>() {
                         @Override public void run(Integer i, PlotArea area, PlotMessage message) {
@@ -435,7 +436,7 @@ public class Area extends SubCommand {
                     C.COMMAND_SYNTAX.send(player, "/plot visit [area]");
                     return false;
                 }
-                PlotArea area = PS.get().getPlotAreaByString(args[1]);
+                PlotArea area = PlotSquared.get().getPlotAreaByString(args[1]);
                 if (area == null) {
                     C.NOT_VALID_PLOT_WORLD.send(player, args[1]);
                     return false;
@@ -457,7 +458,7 @@ public class Area extends SubCommand {
             case "remove":
                 MainUtil.sendMessage(player,
                     "$1World creation settings may be stored in multiple locations:"
-                        + "\n$3 - $2Bukkit bukkit.yml" + "\n$3 - $2" + PS.imp().getPluginName()
+                        + "\n$3 - $2Bukkit bukkit.yml" + "\n$3 - $2" + PlotSquared.imp().getPluginName()
                         + " settings.yml"
                         + "\n$3 - $2Multiverse worlds.yml (or any world management plugin)"
                         + "\n$1Stop the server and delete it from these locations.");

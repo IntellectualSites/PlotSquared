@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
@@ -379,7 +379,7 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(player2, C.CLUSTER_REMOVED, cluster.getName());
                 }
                 for (Plot plot : new ArrayList<>(
-                    PS.get().getPlots(player2.getLocation().getWorld(), uuid))) {
+                    PlotSquared.get().getPlots(player2.getLocation().getWorld(), uuid))) {
                     PlotCluster current = plot.getCluster();
                     if (current != null && current.equals(cluster)) {
                         plot.unclaim();
@@ -433,7 +433,7 @@ public class Cluster extends SubCommand {
                 DBFunc.removeInvited(cluster, uuid);
                 MainUtil.sendMessage(player, C.CLUSTER_REMOVED, cluster.getName());
                 for (Plot plot : new ArrayList<>(
-                    PS.get().getPlots(player.getLocation().getWorld(), uuid))) {
+                    PlotSquared.get().getPlots(player.getLocation().getWorld(), uuid))) {
                     PlotCluster current = plot.getCluster();
                     if (current != null && current.equals(cluster)) {
                         player.getLocation().getWorld();

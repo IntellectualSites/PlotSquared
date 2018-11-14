@@ -6,7 +6,7 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import com.github.intellectualsites.plotsquared.nukkit.util.NukkitUtil;
 import com.github.intellectualsites.plotsquared.nukkit.util.block.NukkitWrappedChunk;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
 import com.github.intellectualsites.plotsquared.plot.object.*;
@@ -42,7 +42,7 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
                     "Generator: " + cg.getClass().getName() + " is already a NukkitPlotGenerator!");
             }
             this.full = false;
-            PS.debug("NukkitPlotGenerator does not fully support: " + cg);
+            PlotSquared.debug("NukkitPlotGenerator does not fully support: " + cg);
             this.platformGenerator = cg;
             this.plotGenerator = new IndependentPlotGenerator() {
                 @Override public void processSetup(SetupObject setup) {
@@ -52,7 +52,7 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
                 }
 
                 @Override public PlotManager getNewPlotManager() {
-                    return PS.get().IMP.getDefaultGenerator().getNewPlotManager();
+                    return PlotSquared.get().IMP.getDefaultGenerator().getNewPlotManager();
                 }
 
                 @Override public String getName() {
@@ -61,7 +61,7 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
 
                 @Override
                 public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
-                    return PS.get().IMP.getDefaultGenerator().getNewPlotArea(world, id, min, max);
+                    return PlotSquared.get().IMP.getDefaultGenerator().getNewPlotArea(world, id, min, max);
                 }
 
                 @Override
@@ -125,7 +125,7 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
     @Override
     public void init(cn.nukkit.level.ChunkManager chunkManager, NukkitRandom nukkitRandom) {
         if (this.chunkManager == null) {
-            PS.get().loadWorld(world, this);
+            PlotSquared.get().loadWorld(world, this);
         }
         this.chunkManager = chunkManager;
         if (getPlatformGenerator() != this) {
@@ -140,7 +140,7 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
             BaseFullChunk chunk = this.chunkManager.getChunk(cx, cz);
             // Load if improperly loaded
             if (!this.loaded) {
-                PS.get().loadWorld(world, this);
+                PlotSquared.get().loadWorld(world, this);
                 this.loaded = true;
             }
             chunkSetter.init(chunk);
@@ -150,7 +150,7 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
             if (ChunkManager.preProcessChunk(chunkSetter)) {
                 return;
             }
-            PlotArea area = PS.get().getPlotArea(world, null);
+            PlotArea area = PlotSquared.get().getPlotArea(world, null);
             try {
                 this.plotGenerator.generateChunk(this.chunkSetter, area, this.random);
             } catch (Throwable e) {

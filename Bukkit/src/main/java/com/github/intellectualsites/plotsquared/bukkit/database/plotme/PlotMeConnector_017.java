@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.database.plotme;
 
 import com.github.intellectualsites.plotsquared.configuration.file.FileConfiguration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.database.SQLite;
@@ -53,12 +53,12 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                 connection.prepareStatement("SELECT * FROM `" + this.plugin + "core_plots`");
             resultSet = statement.executeQuery();
         } catch (SQLException e) {
-            PS.debug("========= Table does not exist =========");
+            PlotSquared.debug("========= Table does not exist =========");
             e.printStackTrace();
-            PS.debug("=======================================");
-            PS.debug(
+            PlotSquared.debug("=======================================");
+            PlotSquared.debug(
                 "&8 - &7The database does not match the version specified in the PlotMe config");
-            PS.debug("&8 - &7Please correct this, or if you are unsure, the most common is 0.16.3");
+            PlotSquared.debug("&8 - &7Please correct this, or if you are unsure, the most common is 0.16.3");
             return null;
         }
         boolean checkUUID = DBFunc.hasColumn(resultSet, "ownerID");
@@ -70,8 +70,8 @@ public class PlotMeConnector_017 extends APlotMeConnector {
             String name = resultSet.getString("owner");
             String world = LikePlotMeConverter.getWorld(resultSet.getString("world"));
             if (!plots.containsKey(world) && merge) {
-                int plot = PS.get().worlds.getInt("worlds." + world + ".plot.size");
-                int path = PS.get().worlds.getInt("worlds." + world + ".road.width");
+                int plot = PlotSquared.get().worlds.getInt("worlds." + world + ".plot.size");
+                int path = PlotSquared.get().worlds.getInt("worlds." + world + ".road.width");
                 plotWidth.put(world, plot);
                 roadWidth.put(world, path);
                 merges.put(world, new HashMap<PlotId, boolean[]>());
@@ -111,7 +111,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                         }
                     }
                     if (owner == null) {
-                        PS.log(
+                        PlotSquared.log(
                             "&cCould not identify owner for plot: " + id + " -> '" + name + '\'');
                         continue;
                     }
@@ -133,7 +133,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
         resultSet.close();
         statement.close();
         try {
-            PS.log(" - " + this.plugin + "core_denied");
+            PlotSquared.log(" - " + this.plugin + "core_denied");
             statement =
                 connection.prepareStatement("SELECT * FROM `" + this.plugin + "core_denied`");
             resultSet = statement.executeQuery();
@@ -142,7 +142,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                 int key = resultSet.getInt("plot_id");
                 Plot plot = plots.get(key);
                 if (plot == null) {
-                    PS.log("&6Denied (" + key + ") references deleted plot; ignoring entry.");
+                    PlotSquared.log("&6Denied (" + key + ") references deleted plot; ignoring entry.");
                     continue;
                 }
                 String player = resultSet.getString("player");
@@ -150,7 +150,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                 plot.getDenied().add(denied);
             }
 
-            PS.log(" - " + this.plugin + "core_allowed");
+            PlotSquared.log(" - " + this.plugin + "core_allowed");
             statement =
                 connection.prepareStatement("SELECT * FROM `" + this.plugin + "core_allowed`");
             resultSet = statement.executeQuery();
@@ -159,7 +159,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                 int key = resultSet.getInt("plot_id");
                 Plot plot = plots.get(key);
                 if (plot == null) {
-                    PS.log("&6Allowed (" + key + ") references deleted plot; ignoring entry.");
+                    PlotSquared.log("&6Allowed (" + key + ") references deleted plot; ignoring entry.");
                     continue;
                 }
                 String player = resultSet.getString("player");
@@ -189,6 +189,6 @@ public class PlotMeConnector_017 extends APlotMeConnector {
         if (version == null) {
             return false;
         }
-        return !PS.get().canUpdate(version, "0.17");
+        return !PlotSquared.get().canUpdate(version, "0.17");
     }
 }

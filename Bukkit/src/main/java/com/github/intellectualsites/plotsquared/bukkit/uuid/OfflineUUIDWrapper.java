@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.uuid;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitOfflinePlayer;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.StringWrapper;
@@ -82,7 +82,7 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
                 return p.toArray(new Player[p.size()]);
             }
         } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException ignored) {
-            PS.debug("Failed to resolve online players");
+            PlotSquared.debug("Failed to resolve online players");
             this.getOnline = null;
             Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
             return onlinePlayers.toArray(new Player[onlinePlayers.size()]);

@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
@@ -37,7 +37,7 @@ public class FlagManager {
     public static <V> Optional<V> getPlotFlag(Plot plot, Flag<V> key) {
         V value = FlagManager.getPlotFlagRaw(plot, key);
         if (value != null) {
-            if (PS.get().isMainThread(Thread.currentThread())) {
+            if (PlotSquared.get().isMainThread(Thread.currentThread())) {
                 try {
                     MUTABLE_OPTIONAL_FIELD.set(MUTABLE_OPTIONAL, value);
                     return MUTABLE_OPTIONAL;
@@ -117,7 +117,7 @@ public class FlagManager {
                         .replaceAll(",", "´"));
                 i++;
             } catch (Exception e) {
-                PS.debug("Failed to parse flag: " + entry.getKey() + "->" + entry.getValue());
+                PlotSquared.debug("Failed to parse flag: " + entry.getKey() + "->" + entry.getValue());
                 e.printStackTrace();
             }
         }

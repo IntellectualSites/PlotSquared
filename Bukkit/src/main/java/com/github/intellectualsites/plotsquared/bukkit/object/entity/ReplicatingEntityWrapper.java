@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.object.entity;
 
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitVersion;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.*;
@@ -53,7 +53,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         if (depth == 1) {
             return;
         }
-        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_10_0)
+        if (PlotSquared.get().checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_10_0)
             || entity instanceof ArmorStand) {
             if (!entity.hasGravity()) {
                 this.noGravity = true;
@@ -62,7 +62,8 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         switch (entity.getType()) {
             case ARROW:
             case BOAT:
-                if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
+                if (PlotSquared
+                    .get().checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
                     Boat boat = (Boat) entity;
                     this.dataByte = getOrdinal(TreeSpecies.values(), boat.getWoodType());
                 }
@@ -102,7 +103,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 // Do this stuff later
                 return;
             default:
-                PS.debug("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
+                PlotSquared.debug("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
                 return;
             // MISC //
             case DROPPED_ITEM:
@@ -322,7 +323,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
 
     void restoreEquipment(LivingEntity entity) {
         EntityEquipment equipment = entity.getEquipment();
-        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
+        if (PlotSquared.get().checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
             equipment.setItemInMainHand(this.lived.mainHand);
             equipment.setItemInOffHand(this.lived.offHand);
         } else {
@@ -338,7 +339,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         try {
             entity.getInventory().setContents(this.inventory);
         } catch (IllegalArgumentException e) {
-            PS.debug("&c[WARN] Failed to restore inventory.\n Reason: " + e.getMessage());
+            PlotSquared.debug("&c[WARN] Failed to restore inventory.\n Reason: " + e.getMessage());
         }
     }
 
@@ -366,7 +367,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
     }
 
     void storeEquipment(EntityEquipment equipment) {
-        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
+        if (PlotSquared.get().checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
             this.lived.mainHand = equipment.getItemInMainHand().clone();
             this.lived.offHand = equipment.getItemInOffHand().clone();
         } else {
@@ -458,7 +459,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         if (this.depth == 1) {
             return entity;
         }
-        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_10_0)
+        if (PlotSquared.get().checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_10_0)
             || entity instanceof ArmorStand) {
             if (this.noGravity) {
                 entity.setGravity(false);
@@ -467,7 +468,8 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         switch (entity.getType()) {
             case ARROW:
             case BOAT:
-                if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
+                if (PlotSquared
+                    .get().checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
                     Boat boat = (Boat) entity;
                     boat.setWoodType(TreeSpecies.values()[dataByte]);
                 }
@@ -512,7 +514,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 // Do this stuff later
                 return entity;
             default:
-                PS.debug("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
+                PlotSquared.debug("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
                 return entity;
             // MISC //
             case ITEM_FRAME:

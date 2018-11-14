@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Argument;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
@@ -24,7 +24,7 @@ public class DebugFixFlags extends SubCommand {
     }
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
-        PlotArea area = PS.get().getPlotAreaByString(args[0]);
+        PlotArea area = PlotSquared.get().getPlotAreaByString(args[0]);
         if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
             MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD, args[0]);
             return false;

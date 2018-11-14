@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.sponge.listener;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.world.LoadWorldEvent;
@@ -17,9 +17,9 @@ public class WorldEvents {
         GenerationPopulator terrain = generator.getBaseGenerationPopulator();
         if (terrain instanceof GeneratorWrapper) {
             GeneratorWrapper stg = (GeneratorWrapper) terrain;
-            PS.get().loadWorld(name, stg);
+            PlotSquared.get().loadWorld(name, stg);
         } else {
-            PS.get().loadWorld(name, null);
+            PlotSquared.get().loadWorld(name, null);
         }
     }
 }

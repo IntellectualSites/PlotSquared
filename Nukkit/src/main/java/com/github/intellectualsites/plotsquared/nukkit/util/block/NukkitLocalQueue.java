@@ -7,7 +7,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.math.Vector3;
 import com.github.intellectualsites.plotsquared.nukkit.NukkitMain;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.util.block.BasicLocalBlockQueue;
 
@@ -18,7 +18,7 @@ public class NukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
 
     public NukkitLocalQueue(String world) {
         super(world);
-        this.level = ((NukkitMain) PS.get().IMP).getServer().getLevelByName(world);
+        this.level = ((NukkitMain) PlotSquared.get().IMP).getServer().getLevelByName(world);
     }
 
     @Override public LocalChunk<T> getLocalChunk(int x, int z) {

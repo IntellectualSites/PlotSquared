@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.database.MySQL;
 import com.github.intellectualsites.plotsquared.plot.database.SQLManager;
@@ -57,12 +57,12 @@ public class Database extends SubCommand {
             return false;
         }
         List<Plot> plots;
-        PlotArea area = PS.get().getPlotAreaByString(args[0]);
+        PlotArea area = PlotSquared.get().getPlotAreaByString(args[0]);
         if (area != null) {
-            plots = PS.get().sortPlotsByTemp(area.getPlots());
+            plots = PlotSquared.get().sortPlotsByTemp(area.getPlots());
             args = Arrays.copyOfRange(args, 1, args.length);
         } else {
-            plots = PS.get().sortPlotsByTemp(PS.get().getPlots());
+            plots = PlotSquared.get().sortPlotsByTemp(PlotSquared.get().getPlots());
         }
         if (args.length < 1) {
             MainUtil.sendMessage(player, "/plot database [world] <sqlite|mysql|import>");
@@ -79,7 +79,7 @@ public class Database extends SubCommand {
                             .sendMessage(player, "/plot database import <sqlite file> [prefix]");
                         return false;
                     }
-                    File file = MainUtil.getFile(PS.get().IMP.getDirectory(),
+                    File file = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
                         args[1].endsWith(".db") ? args[1] : args[1] + ".db");
                     if (!file.exists()) {
                         MainUtil.sendMessage(player, "&6Database does not exist: " + file);
@@ -93,7 +93,7 @@ public class Database extends SubCommand {
                     plots = new ArrayList<>();
                     for (Entry<String, HashMap<PlotId, Plot>> entry : map.entrySet()) {
                         String areaname = entry.getKey();
-                        PlotArea pa = PS.get().getPlotAreaByString(areaname);
+                        PlotArea pa = PlotSquared.get().getPlotAreaByString(areaname);
                         if (pa != null) {
                             for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
                                 Plot plot = entry2.getValue();
@@ -103,11 +103,11 @@ public class Database extends SubCommand {
                                         if (newPlot != null) {
                                             PlotId newId = newPlot.getId();
                                             PlotId id = plot.getId();
-                                            File worldFile = new File(PS.imp().getWorldContainer(),
+                                            File worldFile = new File(PlotSquared.imp().getWorldContainer(),
                                                 id.toCommaSeparatedString());
                                             if (worldFile.exists()) {
                                                 File newFile =
-                                                    new File(PS.imp().getWorldContainer(),
+                                                    new File(PlotSquared.imp().getWorldContainer(),
                                                         newId.toCommaSeparatedString());
                                                 worldFile.renameTo(newFile);
                                             }
@@ -127,10 +127,10 @@ public class Database extends SubCommand {
                                 plots.add(plot);
                             }
                         } else {
-                            HashMap<PlotId, Plot> plotmap = PS.get().plots_tmp.get(areaname);
+                            HashMap<PlotId, Plot> plotmap = PlotSquared.get().plots_tmp.get(areaname);
                             if (plotmap == null) {
                                 plotmap = new HashMap<>();
-                                PS.get().plots_tmp.put(areaname, plotmap);
+                                PlotSquared.get().plots_tmp.put(areaname, plotmap);
                             }
                             plotmap.putAll(entry.getValue());
                         }
@@ -161,7 +161,7 @@ public class Database extends SubCommand {
                         return MainUtil.sendMessage(player, "/plot database sqlite [file]");
                     }
                     File sqliteFile =
-                        MainUtil.getFile(PS.get().IMP.getDirectory(), args[1] + ".db");
+                        MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), args[1] + ".db");
                     implementation = new SQLite(sqliteFile);
                     break;
                 default:

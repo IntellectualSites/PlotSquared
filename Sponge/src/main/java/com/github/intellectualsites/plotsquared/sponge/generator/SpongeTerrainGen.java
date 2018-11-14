@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.sponge.generator;
 
 import com.flowpowered.math.vector.Vector3i;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
 import com.github.intellectualsites.plotsquared.plot.object.ChunkWrapper;
@@ -66,7 +66,7 @@ public class SpongeTerrainGen
                 return;
             }
             // Fill the result data
-            PlotArea area = PS.get().getPlotArea(world.getName(), null);
+            PlotArea area = PlotSquared.get().getPlotArea(world.getName(), null);
             child.generateChunk(result, area, random);
             child.populateChunk(result, area, random);
             ChunkManager.postProcessChunk(result);

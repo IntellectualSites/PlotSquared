@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 
 public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
@@ -68,7 +68,7 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
     public void mapByType2D(RunnableVal3<Plot, Integer, Integer> task) {
         int bx = minX;
         int bz = minZ;
-        PlotArea area = PS.get().getPlotArea(getWorld(), null);
+        PlotArea area = PlotSquared.get().getPlotArea(getWorld(), null);
         Location loc = new Location(getWorld(), bx, 0, bz);
         if (area != null) {
             PlotManager manager = area.getPlotManager();

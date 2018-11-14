@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 
 public class Location implements Cloneable, Comparable<Location> {
@@ -66,11 +66,11 @@ public class Location implements Cloneable, Comparable<Location> {
     }
 
     public PlotArea getPlotArea() {
-        return PS.get().getPlotAreaAbs(this);
+        return PlotSquared.get().getPlotAreaAbs(this);
     }
 
     public Plot getOwnedPlot() {
-        PlotArea area = PS.get().getPlotAreaAbs(this);
+        PlotArea area = PlotSquared.get().getPlotAreaAbs(this);
         if (area != null) {
             return area.getOwnedPlot(this);
         } else {
@@ -79,7 +79,7 @@ public class Location implements Cloneable, Comparable<Location> {
     }
 
     public Plot getOwnedPlotAbs() {
-        PlotArea area = PS.get().getPlotAreaAbs(this);
+        PlotArea area = PlotSquared.get().getPlotAreaAbs(this);
         if (area != null) {
             return area.getOwnedPlotAbs(this);
         } else {
@@ -88,16 +88,16 @@ public class Location implements Cloneable, Comparable<Location> {
     }
 
     public boolean isPlotArea() {
-        return PS.get().getPlotAreaAbs(this) != null;
+        return PlotSquared.get().getPlotAreaAbs(this) != null;
     }
 
     public boolean isPlotRoad() {
-        PlotArea area = PS.get().getPlotAreaAbs(this);
+        PlotArea area = PlotSquared.get().getPlotAreaAbs(this);
         return area != null && area.getPlotAbs(this) == null;
     }
 
     public boolean isUnownedPlotArea() {
-        PlotArea area = PS.get().getPlotAreaAbs(this);
+        PlotArea area = PlotSquared.get().getPlotAreaAbs(this);
         return area != null && area.getOwnedPlotAbs(this) == null;
     }
 
@@ -111,7 +111,7 @@ public class Location implements Cloneable, Comparable<Location> {
     }
 
     public Plot getPlotAbs() {
-        PlotArea area = PS.get().getPlotAreaAbs(this);
+        PlotArea area = PlotSquared.get().getPlotAreaAbs(this);
         if (area != null) {
             return area.getPlotAbs(this);
         } else {
@@ -120,7 +120,7 @@ public class Location implements Cloneable, Comparable<Location> {
     }
 
     public Plot getPlot() {
-        PlotArea area = PS.get().getPlotAreaAbs(this);
+        PlotArea area = PlotSquared.get().getPlotAreaAbs(this);
         if (area != null) {
             return area.getPlot(this);
         } else {

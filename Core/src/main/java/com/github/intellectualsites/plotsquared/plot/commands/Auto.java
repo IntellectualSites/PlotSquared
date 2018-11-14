@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
@@ -138,7 +138,7 @@ public class Auto extends SubCommand {
         PlotArea plotarea = player.getApplicablePlotArea();
         if (plotarea == null) {
             if (EconHandler.manager != null) {
-                for (PlotArea area : PS.get().getPlotAreaManager().getAllPlotAreas()) {
+                for (PlotArea area : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
                     if (EconHandler.manager
                         .hasPermission(area.worldname, player.getName(), "plots.auto")) {
                         if (plotarea != null) {

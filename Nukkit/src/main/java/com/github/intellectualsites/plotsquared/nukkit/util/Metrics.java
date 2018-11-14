@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.nukkit.util;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginDescription;
 import cn.nukkit.utils.LogLevel;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 
 import java.io.*;
@@ -368,7 +368,7 @@ public class Metrics {
         connection.addRequestProperty("Connection", "close");
         connection.setDoOutput(true);
         if (this.debug) {
-            PS.debug("[Metrics] Prepared request for " + pluginName + " uncompressed="
+            PlotSquared.debug("[Metrics] Prepared request for " + pluginName + " uncompressed="
                 + uncompressed.length + " compressed=" + compressed.length);
         }
         try {
@@ -381,7 +381,7 @@ public class Metrics {
                 new InputStreamReader(connection.getInputStream()))) {
                 response = reader.readLine();
                 if (this.debug) {
-                    PS.debug("[Metrics] Response for " + pluginName + ": " + response);
+                    PlotSquared.debug("[Metrics] Response for " + pluginName + ": " + response);
                 }
             }
             if (response == null || response.startsWith("ERR") || response.startsWith("7")) {

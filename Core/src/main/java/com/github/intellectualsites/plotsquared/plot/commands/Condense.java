@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
@@ -25,7 +25,7 @@ public class Condense extends SubCommand {
             MainUtil.sendMessage(player, "/plot condense <area> <start|stop|info> [radius]");
             return false;
         }
-        PlotArea area = PS.get().getPlotAreaByString(args[0]);
+        PlotArea area = PlotSquared.get().getPlotAreaByString(args[0]);
         if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
             MainUtil.sendMessage(player, "INVALID AREA");
             return false;
@@ -46,7 +46,7 @@ public class Condense extends SubCommand {
                     return false;
                 }
                 int radius = Integer.parseInt(args[2]);
-                ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlots(area));
+                ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getPlots(area));
                 // remove non base plots
                 Iterator<Plot> iterator = plots.iterator();
                 int maxSize = 0;

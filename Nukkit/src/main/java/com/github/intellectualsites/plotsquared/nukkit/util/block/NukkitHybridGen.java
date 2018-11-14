@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.nukkit.util.block;
 import cn.nukkit.level.Level;
 import com.github.intellectualsites.plotsquared.nukkit.NukkitMain;
 import com.github.intellectualsites.plotsquared.nukkit.generator.NukkitPlotGenerator;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 
 import java.util.Map;
 
@@ -14,7 +14,7 @@ public class NukkitHybridGen extends NukkitPlotGenerator {
 
     private static Map<String, Object> defaultSettings(Map<String, Object> existing) {
         if (!existing.containsKey("world")) {
-            Map<Integer, Level> levels = ((NukkitMain) PS.get().IMP).getServer().getLevels();
+            Map<Integer, Level> levels = ((NukkitMain) PlotSquared.get().IMP).getServer().getLevels();
             int max = -1;
             for (Map.Entry<Integer, Level> entry : levels.entrySet()) {
                 int id = entry.getKey();
@@ -24,7 +24,7 @@ public class NukkitHybridGen extends NukkitPlotGenerator {
                 }
             }
         }
-        existing.put("plot-generator", PS.get().IMP.getDefaultGenerator());
+        existing.put("plot-generator", PlotSquared.get().IMP.getDefaultGenerator());
         return existing;
     }
 }

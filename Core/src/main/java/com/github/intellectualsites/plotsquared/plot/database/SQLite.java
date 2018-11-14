@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.database;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,15 +27,15 @@ public class SQLite extends Database {
         if (checkConnection()) {
             return this.connection;
         }
-        if (!PS.get().IMP.getDirectory().exists()) {
-            PS.get().IMP.getDirectory().mkdirs();
+        if (!PlotSquared.get().IMP.getDirectory().exists()) {
+            PlotSquared.get().IMP.getDirectory().mkdirs();
         }
         File file = new File(this.dbLocation);
         if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException ignored) {
-                PS.debug("&cUnable to create database!");
+                PlotSquared.debug("&cUnable to create database!");
             }
         }
         Class.forName("org.sqlite.JDBC");

@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.*;
@@ -141,7 +141,7 @@ public class SchematicCmd extends SubCommand {
                         "&cNeed world argument. Use &7/plot sch exportall <area>");
                     return false;
                 }
-                PlotArea area = PS.get().getPlotAreaByString(args[1]);
+                PlotArea area = PlotSquared.get().getPlotAreaByString(args[1]);
                 if (area == null) {
                     C.NOT_VALID_PLOT_WORLD.send(player, args[1]);
                     return false;

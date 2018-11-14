@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.sponge;
 
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.plot.IPlotMain;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
@@ -105,10 +105,10 @@ public class SpongeMain implements IPlotMain {
 
     @Listener public void onServerAboutToStart(GameAboutToStartServerEvent event) {
         THIS = this;
-        new PS(this, "Sponge");
+        new PlotSquared(this, "Sponge");
         this.server = this.game.getServer();
         this.game.getRegistry().register(WorldGeneratorModifier.class,
-            (WorldGeneratorModifier) PS.get().IMP.getDefaultGenerator().specify(null));
+            (WorldGeneratorModifier) PlotSquared.get().IMP.getDefaultGenerator().specify(null));
         this.game.getRegistry().register(WorldGeneratorModifier.class,
             (WorldGeneratorModifier) new SingleWorldGenerator().specify(null));
         if (Settings.Enabled_Components.WORLDS) {
@@ -121,7 +121,7 @@ public class SpongeMain implements IPlotMain {
     }
 
     public void unload() {
-        PlotAreaManager manager = PS.get().getPlotAreaManager();
+        PlotAreaManager manager = PlotSquared.get().getPlotAreaManager();
         if (manager instanceof SinglePlotAreaManager) {
             SinglePlotArea area = ((SinglePlotAreaManager) manager).getArea();
             for (World world : Sponge.getServer().getWorlds()) {
@@ -175,7 +175,7 @@ public class SpongeMain implements IPlotMain {
     }
 
     @Override public void disable() {
-        PS.get().disable();
+        PlotSquared.get().disable();
         THIS = null;
     }
 
@@ -195,7 +195,7 @@ public class SpongeMain implements IPlotMain {
     }
 
     @Override public int[] getServerVersion() {
-        PS.log("Checking minecraft version: Sponge: ");
+        PlotSquared.log("Checking minecraft version: Sponge: ");
         String version = this.game.getPlatform().getMinecraftVersion().getName();
         String[] split = version.split("\\.");
         return new int[] {Integer.parseInt(split[0]), Integer.parseInt(split[1]),
@@ -255,7 +255,7 @@ public class SpongeMain implements IPlotMain {
     }
 
     @Override public void registerPlotPlusEvents() {
-        PS.log("registerPlotPlusEvents is not implemented!");
+        PlotSquared.log("registerPlotPlusEvents is not implemented!");
     }
 
     @Override public void registerForceFieldEvents() {
@@ -304,7 +304,7 @@ public class SpongeMain implements IPlotMain {
         if (world == null) {
             // create world
             ConfigurationSection worldConfig =
-                PS.get().worlds.getConfigurationSection("worlds." + worldName);
+                PlotSquared.get().worlds.getConfigurationSection("worlds." + worldName);
             String manager = worldConfig.getString("generator.plugin", "PlotSquared");
             String generator = worldConfig.getString("generator.init", manager);
 
@@ -325,7 +325,7 @@ public class SpongeMain implements IPlotMain {
         WorldGenerator wg = world.getWorldGenerator();
         GenerationPopulator gen = wg.getBaseGenerationPopulator();
         if (gen instanceof GeneratorWrapper) {
-            PS.get().loadWorld(worldName, (GeneratorWrapper) gen);
+            PlotSquared.get().loadWorld(worldName, (GeneratorWrapper) gen);
         } else {
             throw new UnsupportedOperationException(
                 "NOT IMPLEMENTED YET2! " + worldName + " | " + gen);
@@ -381,7 +381,7 @@ public class SpongeMain implements IPlotMain {
                 return new SpongePlotGenerator(wgm);
             }
         }
-        return new SpongePlotGenerator(PS.get().IMP.getDefaultGenerator());
+        return new SpongePlotGenerator(PlotSquared.get().IMP.getDefaultGenerator());
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -88,13 +88,13 @@ public class Alias extends SubCommand {
             C.NOT_VALID_VALUE.send(player);
             return false;
         }
-        for (Plot p : PS.get().getPlots(plot.getArea())) {
+        for (Plot p : PlotSquared.get().getPlots(plot.getArea())) {
             if (p.getAlias().equalsIgnoreCase(alias)) {
                 MainUtil.sendMessage(player, C.ALIAS_IS_TAKEN);
                 return false;
             }
         }
-        if (UUIDHandler.nameExists(new StringWrapper(alias)) || PS.get().hasPlotArea(alias)) {
+        if (UUIDHandler.nameExists(new StringWrapper(alias)) || PlotSquared.get().hasPlotArea(alias)) {
             MainUtil.sendMessage(player, C.ALIAS_IS_TAKEN);
             return false;
         }

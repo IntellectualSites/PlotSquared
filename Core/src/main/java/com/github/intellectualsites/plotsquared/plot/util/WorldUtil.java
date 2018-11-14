@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
 import com.github.intellectualsites.plotsquared.jnbt.*;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
 
@@ -126,7 +126,7 @@ public abstract class WorldUtil {
 
     public File getDat(String world) {
         File file = new File(
-            PS.get().IMP.getWorldContainer() + File.separator + world + File.separator
+            PlotSquared.get().IMP.getWorldContainer() + File.separator + world + File.separator
                 + "level.dat");
         if (file.exists()) {
             return file;
@@ -135,7 +135,7 @@ public abstract class WorldUtil {
     }
 
     public File getMcr(String world, int x, int z) {
-        File file = new File(PS.get().IMP.getWorldContainer(),
+        File file = new File(PlotSquared.get().IMP.getWorldContainer(),
             world + File.separator + "region" + File.separator + "r." + x + '.' + z + ".mca");
         if (file.exists()) {
             return file;

@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
 import com.github.intellectualsites.plotsquared.bukkit.generator.BukkitPlotGenerator;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.PlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAreaManager;
@@ -18,7 +18,7 @@ public class WorldEvents implements Listener {
     public void onWorldInit(WorldInitEvent event) {
         World world = event.getWorld();
         String name = world.getName();
-        PlotAreaManager manager = PS.get().getPlotAreaManager();
+        PlotAreaManager manager = PlotSquared.get().getPlotAreaManager();
         if (manager instanceof SinglePlotAreaManager) {
             SinglePlotAreaManager single = (SinglePlotAreaManager) manager;
             if (single.isWorld(name)) {
@@ -28,9 +28,9 @@ public class WorldEvents implements Listener {
         }
         ChunkGenerator gen = world.getGenerator();
         if (gen instanceof GeneratorWrapper) {
-            PS.get().loadWorld(name, (GeneratorWrapper<?>) gen);
+            PlotSquared.get().loadWorld(name, (GeneratorWrapper<?>) gen);
         } else {
-            PS.get().loadWorld(name, new BukkitPlotGenerator(name, gen));
+            PlotSquared.get().loadWorld(name, new BukkitPlotGenerator(name, gen));
         }
     }
 }

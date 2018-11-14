@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.listener;
 
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -23,7 +23,7 @@ import java.util.HashSet;
 public class WESubscriber {
 
     @Subscribe(priority = Priority.VERY_EARLY) public void onEditSession(EditSessionEvent event) {
-        WorldEdit worldedit = PS.get().worldedit;
+        WorldEdit worldedit = PlotSquared.get().worldedit;
         if (worldedit == null) {
             WorldEdit.getInstance().getEventBus().unregister(this);
             return;
@@ -55,19 +55,19 @@ public class WESubscriber {
                     if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
                         MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASS);
                     }
-                    if (PS.get().hasPlotArea(world)) {
+                    if (PlotSquared.get().hasPlotArea(world)) {
                         event.setExtent(new NullExtent());
                     }
                     return;
                 }
             }
             if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
-                if (PS.get().hasPlotArea(world)) {
+                if (PlotSquared.get().hasPlotArea(world)) {
                     event.setExtent(
                         new ProcessedWEExtent(world, mask, event.getMaxBlocks(), event.getExtent(),
                             event.getExtent()));
                 }
-            } else if (PS.get().hasPlotArea(world)) {
+            } else if (PlotSquared.get().hasPlotArea(world)) {
                 event.setExtent(new WEExtent(mask, event.getExtent()));
             }
         }

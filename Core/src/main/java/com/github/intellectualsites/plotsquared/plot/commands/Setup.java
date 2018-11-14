@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PS;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
@@ -26,7 +26,7 @@ import java.util.Map.Entry;
         StringBuilder message = new StringBuilder();
         message.append("&6What generator do you want?");
         for (Entry<String, GeneratorWrapper<?>> entry : SetupUtils.generators.entrySet()) {
-            if (entry.getKey().equals(PS.imp().getPluginName())) {
+            if (entry.getKey().equals(PlotSquared.imp().getPluginName())) {
                 message.append("\n&8 - &2").append(entry.getKey()).append(" (Default Generator)");
             } else if (entry.getValue().isFull()) {
                 message.append("\n&8 - &7").append(entry.getKey()).append(" (Plot Generator)");
@@ -74,7 +74,7 @@ import java.util.Map.Entry;
                     MainUtil.sendMessage(player,
                         "&cYou must choose a generator!" + prefix + StringMan
                             .join(SetupUtils.generators.keySet(), prefix)
-                            .replaceAll(PS.imp().getPluginName(), "&2" + PS.imp().getPluginName()));
+                            .replaceAll(PlotSquared.imp().getPluginName(), "&2" + PlotSquared.imp().getPluginName()));
                     sendMessage(player, C.SETUP_INIT);
                     return false;
                 }
@@ -142,7 +142,7 @@ import java.util.Map.Entry;
                         SetupUtils.generators.get(object.plotManager).getPlotGenerator()
                             .processSetup(object);
                     } else {
-                        object.plotManager = PS.imp().getPluginName();
+                        object.plotManager = PlotSquared.imp().getPluginName();
                         MainUtil.sendMessage(player,
                             "&c[WARNING] The specified generator does not identify as BukkitPlotGenerator");
                         MainUtil.sendMessage(player,
@@ -170,7 +170,7 @@ import java.util.Map.Entry;
                     MainUtil.sendMessage(player, "&cThe area id must be alphanumerical!");
                     return false;
                 }
-                for (PlotArea area : PS.get().getPlotAreas()) {
+                for (PlotArea area : PlotSquared.get().getPlotAreas()) {
                     if (area.id != null && area.id.equalsIgnoreCase(args[0])) {
                         MainUtil.sendMessage(player,
                             "&cYou must choose an area id that is not in use!");
@@ -270,13 +270,13 @@ import java.util.Map.Entry;
                     return false;
                 }
                 if (WorldUtil.IMP.isWorld(args[0])) {
-                    if (PS.get().hasPlotArea(args[0])) {
+                    if (PlotSquared.get().hasPlotArea(args[0])) {
                         MainUtil.sendMessage(player, "&cThat world name is already taken!");
                         return false;
                     }
                     MainUtil.sendMessage(player,
                         "&cThe world you specified already exists. After restarting, new terrain will use "
-                            + PS.imp().getPluginName() + ", however you may need to "
+                            + PlotSquared.imp().getPluginName() + ", however you may need to "
                             + "reset the world for it to generate correctly!");
                 }
                 object.world = args[0];
