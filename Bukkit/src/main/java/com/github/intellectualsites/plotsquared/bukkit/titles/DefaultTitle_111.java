@@ -12,8 +12,8 @@ import org.bukkit.entity.Player;
     private final boolean valid;
 
     public DefaultTitle_111() {
-        this.valid = PlotSquared
-            .get().checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_11_0);
+        this.valid = PlotSquared.get()
+            .checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_11_0);
     }
 
     @Override

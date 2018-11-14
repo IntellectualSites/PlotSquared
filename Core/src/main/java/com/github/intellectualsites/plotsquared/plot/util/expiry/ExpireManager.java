@@ -388,8 +388,10 @@ public class ExpireManager {
         PlotAnalysis changed = plot.getComplexity(null);
         int changes = changed == null ? 0 : changed.changes_sd;
         int modified = changed == null ? 0 : changed.changes;
-        PlotSquared.debug("$2[&5Expire&dManager$2] &cDeleted expired plot: " + plot + " User:" + plot.owner
-            + " Delta:" + changes + "/" + modified + " Connected: " + StringMan.getString(plots));
+        PlotSquared.debug(
+            "$2[&5Expire&dManager$2] &cDeleted expired plot: " + plot + " User:" + plot.owner
+                + " Delta:" + changes + "/" + modified + " Connected: " + StringMan
+                .getString(plots));
         PlotSquared.debug("$4 - Area: " + plot.getArea());
         if (plot.hasOwner()) {
             PlotSquared.debug("$4 - Owner: " + UUIDHandler.getName(plot.owner));

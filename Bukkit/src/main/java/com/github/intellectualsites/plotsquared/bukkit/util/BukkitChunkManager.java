@@ -101,13 +101,16 @@ public class BukkitChunkManager extends ChunkManager {
         return chunks;
     }
 
-    @Override public boolean copyRegion(
-        com.github.intellectualsites.plotsquared.plot.object.Location pos1, com.github.intellectualsites.plotsquared.plot.object.Location pos2, com.github.intellectualsites.plotsquared.plot.object.Location newPos,
+    @Override
+    public boolean copyRegion(com.github.intellectualsites.plotsquared.plot.object.Location pos1,
+        com.github.intellectualsites.plotsquared.plot.object.Location pos2,
+        com.github.intellectualsites.plotsquared.plot.object.Location newPos,
         final Runnable whenDone) {
         final int relX = newPos.getX() - pos1.getX();
         final int relZ = newPos.getZ() - pos1.getZ();
         com.github.intellectualsites.plotsquared.plot.object.Location pos4 =
-            new com.github.intellectualsites.plotsquared.plot.object.Location(newPos.getWorld(), newPos.getX() + relX, 256, newPos.getZ() + relZ);
+            new com.github.intellectualsites.plotsquared.plot.object.Location(newPos.getWorld(),
+                newPos.getX() + relX, 256, newPos.getZ() + relZ);
 
         final RegionWrapper region =
             new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
@@ -159,7 +162,9 @@ public class BukkitChunkManager extends ChunkManager {
         return true;
     }
 
-    @Override public boolean regenerateRegion(final com.github.intellectualsites.plotsquared.plot.object.Location pos1, final com.github.intellectualsites.plotsquared.plot.object.Location pos2,
+    @Override public boolean regenerateRegion(
+        final com.github.intellectualsites.plotsquared.plot.object.Location pos1,
+        final com.github.intellectualsites.plotsquared.plot.object.Location pos2,
         final boolean ignoreAugment, final Runnable whenDone) {
         final String world = pos1.getWorld();
 
@@ -315,8 +320,9 @@ public class BukkitChunkManager extends ChunkManager {
         return true;
     }
 
-    @Override public void clearAllEntities(
-        com.github.intellectualsites.plotsquared.plot.object.Location pos1, com.github.intellectualsites.plotsquared.plot.object.Location pos2) {
+    @Override
+    public void clearAllEntities(com.github.intellectualsites.plotsquared.plot.object.Location pos1,
+        com.github.intellectualsites.plotsquared.plot.object.Location pos2) {
         String world = pos1.getWorld();
         List<Entity> entities = BukkitUtil.getEntities(world);
         int bx = pos1.getX();
@@ -355,7 +361,10 @@ public class BukkitChunkManager extends ChunkManager {
         }
     }
 
-    @Override public void swap(com.github.intellectualsites.plotsquared.plot.object.Location bot1, com.github.intellectualsites.plotsquared.plot.object.Location top1, com.github.intellectualsites.plotsquared.plot.object.Location bot2, com.github.intellectualsites.plotsquared.plot.object.Location top2,
+    @Override public void swap(com.github.intellectualsites.plotsquared.plot.object.Location bot1,
+        com.github.intellectualsites.plotsquared.plot.object.Location top1,
+        com.github.intellectualsites.plotsquared.plot.object.Location bot2,
+        com.github.intellectualsites.plotsquared.plot.object.Location top2,
         final Runnable whenDone) {
         RegionWrapper region1 =
             new RegionWrapper(bot1.getX(), top1.getX(), bot1.getZ(), top1.getZ());
@@ -655,7 +664,8 @@ public class BukkitChunkManager extends ChunkManager {
 
         public void saveEntitiesOut(Chunk chunk, RegionWrapper region) {
             for (Entity entity : chunk.getEntities()) {
-                com.github.intellectualsites.plotsquared.plot.object.Location loc = BukkitUtil.getLocation(entity);
+                com.github.intellectualsites.plotsquared.plot.object.Location loc =
+                    BukkitUtil.getLocation(entity);
                 int x = loc.getX();
                 int z = loc.getZ();
                 if (isIn(region, x, z)) {
@@ -673,7 +683,8 @@ public class BukkitChunkManager extends ChunkManager {
         public void saveEntitiesIn(Chunk chunk, RegionWrapper region, int offsetX, int offsetZ,
             boolean delete) {
             for (Entity entity : chunk.getEntities()) {
-                com.github.intellectualsites.plotsquared.plot.object.Location loc = BukkitUtil.getLocation(entity);
+                com.github.intellectualsites.plotsquared.plot.object.Location loc =
+                    BukkitUtil.getLocation(entity);
                 int x = loc.getX();
                 int z = loc.getZ();
                 if (!isIn(region, x, z)) {
@@ -894,14 +905,16 @@ public class BukkitChunkManager extends ChunkManager {
                         ((NoteBlock) state).setNote(blockLocNoteEntry.getValue());
                         state.update(true);
                     } else {
-                        PlotSquared.debug("&c[WARN] Plot clear failed to regenerate note block: " + (
-                            blockLocNoteEntry.getKey().x + xOffset) + ',' + blockLocNoteEntry
-                            .getKey().y + ',' + (blockLocNoteEntry.getKey().z + zOffset));
+                        PlotSquared.debug(
+                            "&c[WARN] Plot clear failed to regenerate note block: " + (
+                                blockLocNoteEntry.getKey().x + xOffset) + ',' + blockLocNoteEntry
+                                .getKey().y + ',' + (blockLocNoteEntry.getKey().z + zOffset));
                     }
                 } catch (Exception ignored) {
-                    PlotSquared.debug("&c[WARN] Plot clear failed to regenerate note block (e): " + (
-                        blockLocNoteEntry.getKey().x + xOffset) + ',' + blockLocNoteEntry.getKey().y
-                        + ',' + (blockLocNoteEntry.getKey().z + zOffset));
+                    PlotSquared.debug(
+                        "&c[WARN] Plot clear failed to regenerate note block (e): " + (
+                            blockLocNoteEntry.getKey().x + xOffset) + ',' + blockLocNoteEntry
+                            .getKey().y + ',' + (blockLocNoteEntry.getKey().z + zOffset));
                 }
             }
             for (Entry<BlockLoc, Short> blockLocShortEntry : this.brewTime.entrySet()) {
@@ -912,16 +925,16 @@ public class BukkitChunkManager extends ChunkManager {
                     if (state instanceof BrewingStand) {
                         ((BrewingStand) state).setBrewingTime(blockLocShortEntry.getValue());
                     } else {
-                        PlotSquared
-                            .debug("&c[WARN] Plot clear failed to restore brewing stand cooking: " + (
-                            blockLocShortEntry.getKey().x + xOffset) + ',' + blockLocShortEntry
-                            .getKey().y + ',' + (blockLocShortEntry.getKey().z + zOffset));
+                        PlotSquared.debug(
+                            "&c[WARN] Plot clear failed to restore brewing stand cooking: " + (
+                                blockLocShortEntry.getKey().x + xOffset) + ',' + blockLocShortEntry
+                                .getKey().y + ',' + (blockLocShortEntry.getKey().z + zOffset));
                     }
                 } catch (Exception ignored) {
-                    PlotSquared
-                        .debug("&c[WARN] Plot clear failed to restore brewing stand cooking (e): " + (
-                        blockLocShortEntry.getKey().x + xOffset) + ',' + blockLocShortEntry
-                        .getKey().y + ',' + (blockLocShortEntry.getKey().z + zOffset));
+                    PlotSquared.debug(
+                        "&c[WARN] Plot clear failed to restore brewing stand cooking (e): " + (
+                            blockLocShortEntry.getKey().x + xOffset) + ',' + blockLocShortEntry
+                            .getKey().y + ',' + (blockLocShortEntry.getKey().z + zOffset));
                 }
             }
             for (Entry<BlockLoc, EntityType> blockLocEntityTypeEntry : this.spawnerData
@@ -957,14 +970,17 @@ public class BukkitChunkManager extends ChunkManager {
                         ((CommandBlock) state).setCommand(blockLocStringEntry.getValue());
                         state.update(true);
                     } else {
-                        PlotSquared.debug("&c[WARN] Plot clear failed to restore command block: " + (
-                            blockLocStringEntry.getKey().x + xOffset) + ',' + blockLocStringEntry
-                            .getKey().y + ',' + (blockLocStringEntry.getKey().z + zOffset));
+                        PlotSquared.debug(
+                            "&c[WARN] Plot clear failed to restore command block: " + (
+                                blockLocStringEntry.getKey().x + xOffset) + ','
+                                + blockLocStringEntry.getKey().y + ',' + (
+                                blockLocStringEntry.getKey().z + zOffset));
                     }
                 } catch (Exception ignored) {
-                    PlotSquared.debug("&c[WARN] Plot clear failed to restore command block (e): " + (
-                        blockLocStringEntry.getKey().x + xOffset) + ',' + blockLocStringEntry
-                        .getKey().y + ',' + (blockLocStringEntry.getKey().z + zOffset));
+                    PlotSquared.debug(
+                        "&c[WARN] Plot clear failed to restore command block (e): " + (
+                            blockLocStringEntry.getKey().x + xOffset) + ',' + blockLocStringEntry
+                            .getKey().y + ',' + (blockLocStringEntry.getKey().z + zOffset));
                 }
             }
             for (Entry<BlockLoc, ItemStack[]> blockLocEntry : this.brewingStandContents
@@ -979,16 +995,16 @@ public class BukkitChunkManager extends ChunkManager {
                             .setContents(blockLocEntry.getValue());
                         state.update(true);
                     } else {
-                        PlotSquared
-                            .debug("&c[WARN] Plot clear failed to regenerate brewing stand: " + (
-                            blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry.getKey().y
-                            + ',' + (blockLocEntry.getKey().z + zOffset));
+                        PlotSquared.debug(
+                            "&c[WARN] Plot clear failed to regenerate brewing stand: " + (
+                                blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry.getKey().y
+                                + ',' + (blockLocEntry.getKey().z + zOffset));
                     }
                 } catch (IllegalArgumentException ignored) {
-                    PlotSquared
-                        .debug("&c[WARN] Plot clear failed to regenerate brewing stand (e): " + (
-                        blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry.getKey().y + ','
-                        + (blockLocEntry.getKey().z + zOffset));
+                    PlotSquared.debug(
+                        "&c[WARN] Plot clear failed to regenerate brewing stand (e): " + (
+                            blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry.getKey().y
+                            + ',' + (blockLocEntry.getKey().z + zOffset));
                 }
             }
             for (Entry<BlockLoc, Short[]> blockLocEntry : this.furnaceTime.entrySet()) {
@@ -1002,16 +1018,16 @@ public class BukkitChunkManager extends ChunkManager {
                         ((Furnace) state).setBurnTime(time[0]);
                         ((Furnace) state).setCookTime(time[1]);
                     } else {
-                        PlotSquared
-                            .debug("&c[WARN] Plot clear failed to restore furnace cooking: " + (
-                            blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry.getKey().y
-                            + ',' + (blockLocEntry.getKey().z + zOffset));
+                        PlotSquared.debug(
+                            "&c[WARN] Plot clear failed to restore furnace cooking: " + (
+                                blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry.getKey().y
+                                + ',' + (blockLocEntry.getKey().z + zOffset));
                     }
                 } catch (Exception ignored) {
-                    PlotSquared
-                        .debug("&c[WARN] Plot clear failed to restore furnace cooking (e): " + (
-                        blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry.getKey().y + ','
-                        + (blockLocEntry.getKey().z + zOffset));
+                    PlotSquared.debug(
+                        "&c[WARN] Plot clear failed to restore furnace cooking (e): " + (
+                            blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry.getKey().y
+                            + ',' + (blockLocEntry.getKey().z + zOffset));
                 }
             }
             for (Entry<BlockLoc, ItemStack[]> blockLocEntry : this.furnaceContents.entrySet()) {

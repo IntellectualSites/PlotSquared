@@ -42,7 +42,8 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
             return;
         }
         HumanEntity entity = event.getWhoClicked();
-        if (!(entity instanceof Player) || !PlotSquared.get().hasPlotArea(entity.getWorld().getName())) {
+        if (!(entity instanceof Player) || !PlotSquared.get()
+            .hasPlotArea(entity.getWorld().getName())) {
             return;
         }
         Player player = (Player) entity;

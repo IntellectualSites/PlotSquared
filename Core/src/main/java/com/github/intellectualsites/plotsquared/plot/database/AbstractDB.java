@@ -320,7 +320,7 @@ public interface AbstractDB {
 
     /**
      * Replace a old uuid with a new one in the database.
-     * <p>
+     *
      * <ul>
      * <li> Useful for replacing a few uuids (not the entire database).</li>
      * <li>or entire conversion, the uuidconvert command scales better.</li>

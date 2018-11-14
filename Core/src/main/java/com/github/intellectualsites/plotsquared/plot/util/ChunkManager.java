@@ -209,7 +209,8 @@ public abstract class ChunkManager {
     public abstract void unloadChunk(String world, ChunkLoc loc, boolean save, boolean safe);
 
     public Set<ChunkLoc> getChunkChunks(String world) {
-        File folder = new File(PlotSquared.get().IMP.getWorldContainer(), world + File.separator + "region");
+        File folder =
+            new File(PlotSquared.get().IMP.getWorldContainer(), world + File.separator + "region");
         File[] regionFiles = folder.listFiles();
         HashSet<ChunkLoc> chunks = new HashSet<>();
         if (regionFiles == null) {

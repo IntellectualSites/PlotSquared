@@ -73,14 +73,17 @@ public class Owner extends SetCommand {
         final boolean removeDenied = plot.isDenied(finalUUID);
         Runnable run = new Runnable() {
             @Override public void run() {
-                if (removeDenied)
-                    plot.removeDenied(finalUUID);
-                plot.setOwner(finalUUID);
-                plot.setSign(finalName);
-                MainUtil.sendMessage(player, C.SET_OWNER);
-                if (other != null) {
-                    MainUtil.sendMessage(other, C.NOW_OWNER, plot.getArea() + ";" + plot.getId());
-                }
+                if (plot.setOwner(finalUUID, player)) {
+                    if (removeDenied)
+                        plot.removeDenied(finalUUID);
+                    plot.setSign(finalName);
+                    MainUtil.sendMessage(player, C.SET_OWNER);
+                    if (other != null) {
+                        MainUtil
+                            .sendMessage(other, C.NOW_OWNER, plot.getArea() + ";" + plot.getId());
+                    }
+                } else
+                    MainUtil.sendMessage(player, C.SET_OWNER_CANCELLED);
             }
         };
         if (hasConfirmation(player)) {

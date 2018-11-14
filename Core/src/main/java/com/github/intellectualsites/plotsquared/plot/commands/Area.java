@@ -81,8 +81,8 @@ public class Area extends SubCommand {
                                 final int offsetX = bx - (area.ROAD_WIDTH == 0 ? 0 : lower);
                                 final int offsetZ = bz - (area.ROAD_WIDTH == 0 ? 0 : lower);
                                 final RegionWrapper region = new RegionWrapper(bx, tx, bz, tz);
-                                Set<PlotArea> areas = PlotSquared
-                                    .get().getPlotAreas(area.worldname, region);
+                                Set<PlotArea> areas =
+                                    PlotSquared.get().getPlotAreas(area.worldname, region);
                                 if (!areas.isEmpty()) {
                                     C.CLUSTER_INTERSECTION
                                         .send(player, areas.iterator().next().toString());
@@ -104,10 +104,12 @@ public class Area extends SubCommand {
                                 Runnable run = new Runnable() {
                                     @Override public void run() {
                                         if (offsetX != 0) {
-                                            PlotSquared.get().worlds.set(path + ".road.offset.x", offsetX);
+                                            PlotSquared.get().worlds
+                                                .set(path + ".road.offset.x", offsetX);
                                         }
                                         if (offsetZ != 0) {
-                                            PlotSquared.get().worlds.set(path + ".road.offset.z", offsetZ);
+                                            PlotSquared.get().worlds
+                                                .set(path + ".road.offset.z", offsetZ);
                                         }
                                         final String world = SetupUtils.manager.setupWorld(object);
                                         if (WorldUtil.IMP.isWorld(world)) {
@@ -458,8 +460,8 @@ public class Area extends SubCommand {
             case "remove":
                 MainUtil.sendMessage(player,
                     "$1World creation settings may be stored in multiple locations:"
-                        + "\n$3 - $2Bukkit bukkit.yml" + "\n$3 - $2" + PlotSquared.imp().getPluginName()
-                        + " settings.yml"
+                        + "\n$3 - $2Bukkit bukkit.yml" + "\n$3 - $2" + PlotSquared.imp()
+                        .getPluginName() + " settings.yml"
                         + "\n$3 - $2Multiverse worlds.yml (or any world management plugin)"
                         + "\n$1Stop the server and delete it from these locations.");
                 return true;

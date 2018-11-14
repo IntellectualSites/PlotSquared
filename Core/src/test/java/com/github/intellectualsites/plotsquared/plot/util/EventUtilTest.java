@@ -65,4 +65,10 @@ public class EventUtilTest extends EventUtil {
 
     @Override public void callMember(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
     }
+
+    @Override
+    public boolean callOwnerChange(PlotPlayer initiator, Plot plot, UUID newOwner, UUID oldOwner,
+        boolean hasOldOwner) {
+        return false;
+    }
 }

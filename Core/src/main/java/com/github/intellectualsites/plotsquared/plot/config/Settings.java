@@ -14,9 +14,11 @@ public class Settings extends Config {
     NOTE: Fields are saved in declaration order, classes in reverse order
      */
 
-    @Comment("These first 4 aren't configurable") // This is a comment
+    @Comment("These first 7 aren't configurable") // This is a comment
     @Final // Indicates that this value isn't configurable
     public static final String ISSUES = "https://github.com/IntellectualSites/PlotSquared/issues";
+    @Final public static final String SUGGESTION =
+        "https://github.com/IntellectualSites/PlotSquaredSuggestions";
     @Final public static final String WIKI =
         "https://github.com/IntellectualSites/PlotSquared/wiki";
     @Final public static String DATE; // These values are set from P2 before loading
@@ -31,7 +33,7 @@ public class Settings extends Config {
 
     @Create // This value will be generated automatically
     public static ConfigBlock<Auto_Clear> AUTO_CLEAR = null;
-        // A ConfigBlock is a section that can have multiple instances e.g. multiple expiry tasks
+    // A ConfigBlock is a section that can have multiple instances e.g. multiple expiry tasks
 
     public static void save(File file) {
         save(file, Settings.class);

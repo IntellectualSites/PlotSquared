@@ -199,8 +199,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
                                 if (entity instanceof Player) {
                                     continue;
                                 }
-                                Location location =
-                                    NukkitUtil.getLocation(entity.getLocation());
+                                Location location = NukkitUtil.getLocation(entity.getLocation());
                                 Plot plot = location.getPlot();
                                 if (plot == null) {
                                     if (location.isPlotArea()) {

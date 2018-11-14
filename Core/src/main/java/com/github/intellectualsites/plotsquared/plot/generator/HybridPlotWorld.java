@@ -192,8 +192,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/intersection.schematic");
         File schem3File = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
             "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/plot.schematic");
-        SchematicHandler.Schematic schematic1 = SchematicHandler.manager.getSchematic(schematic1File);
-        SchematicHandler.Schematic schematic2 = SchematicHandler.manager.getSchematic(schematic2File);
+        SchematicHandler.Schematic schematic1 =
+            SchematicHandler.manager.getSchematic(schematic1File);
+        SchematicHandler.Schematic schematic2 =
+            SchematicHandler.manager.getSchematic(schematic2File);
         SchematicHandler.Schematic schematic3 = SchematicHandler.manager.getSchematic(schem3File);
         int shift = this.ROAD_WIDTH / 2;
         int oddshift = (this.ROAD_WIDTH & 1) == 0 ? 0 : 1;

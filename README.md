@@ -1,4 +1,8 @@
-# PlotSquared
+<p align="center">
+    <img src="https://i.imgur.com/Kd7N6uf.png">
+</p>
+
+---
 
 For the end user, PlotSquared is packed with a tonne of cool features.
 It allows you to merge plots, and build together with your friends. 
@@ -10,10 +14,12 @@ is to provide a lag-free and smooth experience.
 
 ## Links
 
-### Server Owner
+* [Download](https://github.com/IntellectualSites/PlotSquared/releases/tag/dev)
+* [Jenkins](https://ci.athion.net/job/PlotSquared/)
 * [Spigot Page](https://www.spigotmc.org/resources/plotsquared.1177/)
 * [Discord](https://discord.gg/a6NZPV2)
 * [WebChat/IRC]: #IntellectualCrafters on irc.esper.net
+* [Discord](https://discord.gg/ngZCzbU)
 * [Wiki](https://github.com/intellectualcrafters/plotsquared/wiki)
 
 ### Developer Resources
@@ -47,6 +53,9 @@ Press `Import` and select `...path/to/project/code_style.xml`
 `File > Settings > Editor > Code Style`. Next to "Scheme" there is a cog wheel, press that and then
 `Import Scheme > IntelliJ IDEA Code Style XML` and then select `..path/to/project/code_style.xml`
 
+## Suggestions
+Suggestions are welcome! We have a separate issue tracker for suggestions, that can be found in [this](https://github.com/IntellectualSites/PlotSquaredSuggestions) repository.
+
 # Official Addons
 * [Plot2Dynmap](http://www.spigotmc.org/resources/plot2dynmap.1292/)
 * [AdvPlots](http://www.spigotmc.org/resources/advplots-%CE%B2.1500/)
@@ -57,3 +66,5 @@ Press `Import` and select `...path/to/project/code_style.xml`
 * [PlotSquaredMG](https://www.spigotmc.org/resources/plotsquaredmg.8025/)
 * [BasicPlots](https://www.spigotmc.org/resources/basicplots.6901/)
 * [HoloPlots](https://www.spigotmc.org/resources/holoplots.4880/)
+
+[WebChat/IRC]: https://webchat.esper.net/?nick=&channels=IntellectualCrafters

@@ -909,8 +909,10 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onChat(AsyncPlayerChatEvent event) {
+    @EventHandler(priority = EventPriority.LOW) public void onChat(AsyncPlayerChatEvent event) {
+        if (event.isCancelled())
+            return;
+
         PlotPlayer plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
         Location location = plotPlayer.getLocation();
         PlotArea area = location.getPlotArea();
@@ -2100,7 +2102,8 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
-            entity.setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.get().IMP, plot));
+            entity
+                .setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.get().IMP, plot));
         }
     }
 
@@ -2332,7 +2335,8 @@ public class PlayerEvents extends PlotListener implements Listener {
     @SuppressWarnings("deprecation") @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityCombustByEntity(EntityCombustByEntityEvent event) {
         EntityDamageByEntityEvent eventChange = null;
-        if (PlotSquared.get().checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_11_0)) {
+        if (PlotSquared.get()
+            .checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_11_0)) {
             eventChange = new EntityDamageByEntityEvent(event.getCombuster(), event.getEntity(),
                 EntityDamageEvent.DamageCause.FIRE_TICK, (double) event.getDuration());
         } else {

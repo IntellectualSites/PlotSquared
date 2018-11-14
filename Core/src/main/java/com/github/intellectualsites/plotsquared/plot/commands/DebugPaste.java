@@ -25,8 +25,9 @@ public class DebugPaste extends SubCommand {
                     String commandsYML = HastebinUtility.upload(PlotSquared.get().commandsFile);
                     String latestLOG;
                     try {
-                        latestLOG = HastebinUtility
-                            .upload(new File(PlotSquared.get().IMP.getDirectory(), "../../logs/latest.log"));
+                        latestLOG = HastebinUtility.upload(
+                            new File(PlotSquared.get().IMP.getDirectory(),
+                                "../../logs/latest.log"));
                     } catch (IOException ignored) {
                         MainUtil.sendMessage(player,
                             "&clatest.log is too big to be pasted, will ignore");

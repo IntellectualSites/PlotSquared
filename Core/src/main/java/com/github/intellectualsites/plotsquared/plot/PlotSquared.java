@@ -75,8 +75,7 @@ import java.util.zip.ZipInputStream;
     @Getter private Updater updater;
     private PlotVersion version;
     // Files and configuration
-    @Getter
-    private File jarFile = null; // This file
+    @Getter private File jarFile = null; // This file
     private File storageFile;
     @Getter private PlotAreaManager plotAreaManager;
 
@@ -266,10 +265,12 @@ import java.util.zip.ZipInputStream;
             copyFile("automerge.js", Settings.Paths.SCRIPTS);
             copyFile("town.template", Settings.Paths.TEMPLATES);
             copyFile("skyblock.template", Settings.Paths.TEMPLATES);
-            copyFile("german.yml", Settings.Paths.TRANSLATIONS);
-            copyFile("s_chinese_unescaped.yml", Settings.Paths.TRANSLATIONS);
-            copyFile("s_chinese.yml", Settings.Paths.TRANSLATIONS);
-            copyFile("italian.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("bridge.template", Settings.Paths.TEMPLATES);
+            copyFile("de-DE.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("es-ES.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("zh-CN.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("it-IT.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("ko-KR.yml", Settings.Paths.TRANSLATIONS);
             showDebug();
         } catch (Throwable e) {
             e.printStackTrace();
@@ -778,8 +779,12 @@ import java.util.zip.ZipInputStream;
         List<PlotArea> areas = Arrays.asList(plotAreaManager.getAllPlotAreas());
         Collections.sort(areas, new Comparator<PlotArea>() {
             @Override public int compare(PlotArea a, PlotArea b) {
-                if (priorityArea != null && StringMan.isEqual(a.toString(), b.toString())) {
-                    return -1;
+                if (priorityArea != null) {
+                    if (a.equals(priorityArea)) {
+                        return -1;
+                    } else if (b.equals(priorityArea)) {
+                        return 1;
+                    }
                 }
                 return a.hashCode() - b.hashCode();
             }
@@ -1089,7 +1094,7 @@ import java.util.zip.ZipInputStream;
      * <li>Loads (and/or generates) the PlotArea configuration
      * <li>Sets up the world border if configured
      * </ul>
-     * <p>
+     *
      * <p>If loading an augmented plot world:
      * <ul>
      * <li>Creates the AugmentedPopulator classes
@@ -1151,7 +1156,8 @@ import java.util.zip.ZipInputStream;
             PlotSquared.log(C.PREFIX + "&aDetected world load for '" + world + "'");
             PlotSquared.log(C.PREFIX + "&3 - generator: &7" + baseGenerator + ">" + plotGenerator);
             PlotSquared.log(C.PREFIX + "&3 - plotworld: &7" + plotArea.getClass().getName());
-            PlotSquared.log(C.PREFIX + "&3 - plotAreaManager: &7" + plotManager.getClass().getName());
+            PlotSquared
+                .log(C.PREFIX + "&3 - plotAreaManager: &7" + plotManager.getClass().getName());
             if (!this.worlds.contains(path)) {
                 this.worlds.createSection(path);
                 worldSection = this.worlds.getConfigurationSection(path);
@@ -1323,8 +1329,8 @@ import java.util.zip.ZipInputStream;
 
     /**
      * Setup the configuration for a plot world based on world arguments.
-     * <p>
-     * <p>
+     *
+     *
      * <i>e.g. /mv create &lt;world&gt; normal -g PlotSquared:&lt;args&gt;</i>
      *
      * @param world     The name of the world
@@ -1784,7 +1790,8 @@ import java.util.zip.ZipInputStream;
         }
     }
 
-    public void foreachPlotArea(@NonNull final String world, @NonNull final RunnableVal<PlotArea> runnable) {
+    public void foreachPlotArea(@NonNull final String world,
+        @NonNull final RunnableVal<PlotArea> runnable) {
         final PlotArea[] array = this.plotAreaManager.getPlotAreas(world, null);
         if (array == null) {
             return;
@@ -1925,9 +1932,10 @@ import java.util.zip.ZipInputStream;
      *
      * @param alias     to search plots
      * @param worldname to filter alias to a specific world [optional] null means all worlds
-     * @return Set<{@link Plot}> empty if nothing found
+     * @return Set<{                                                               @                                                               link                                                                                                                               Plot                                                               }> empty if nothing found
      */
-    public Set<Plot> getPlotsByAlias(@Nullable final String alias, @NonNull final String worldname) {
+    public Set<Plot> getPlotsByAlias(@Nullable final String alias,
+        @NonNull final String worldname) {
         final Set<Plot> result = new HashSet<>();
         if (alias != null) {
             for (final Plot plot : getPlots()) {

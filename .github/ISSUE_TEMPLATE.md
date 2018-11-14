@@ -1,7 +1,7 @@
 # Bug report template 
 <!--- In order to create a valid issue report you have to follow this template. -->
 <!--- Incomplete reports might be marked as invalid. -->
-<!--- You may remove it if you are posting a feature request. -->
+<!--  Feature requests and enhancements may be suggested at https://github.com/IntellectualSites/PlotSquaredSuggestions. -->
 **Debug paste link:** 
 <!--- Enter /plot debugpaste in game or in your console and copy the output here -->
 

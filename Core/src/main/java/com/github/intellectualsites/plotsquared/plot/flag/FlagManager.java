@@ -117,7 +117,8 @@ public class FlagManager {
                         .replaceAll(",", "´"));
                 i++;
             } catch (Exception e) {
-                PlotSquared.debug("Failed to parse flag: " + entry.getKey() + "->" + entry.getValue());
+                PlotSquared
+                    .debug("Failed to parse flag: " + entry.getKey() + "->" + entry.getValue());
                 e.printStackTrace();
             }
         }

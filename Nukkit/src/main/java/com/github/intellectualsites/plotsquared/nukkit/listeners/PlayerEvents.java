@@ -612,8 +612,10 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onChat(PlayerChatEvent event) {
+    @EventHandler(priority = EventPriority.LOW) public void onChat(PlayerChatEvent event) {
+        if (event.isCancelled())
+            return;
+
         PlotPlayer plotPlayer = NukkitUtil.getPlayer(event.getPlayer());
         Location location = plotPlayer.getLocation();
         PlotArea area = location.getPlotArea();

@@ -160,7 +160,7 @@ public enum C {
      * Confirm
      */
     EXPIRED_CONFIRM("$2Confirmation has expired, please run the command again!",
-            "Confirm"), FAILED_CONFIRM("$2You have no pending actions to confirm!",
+        "Confirm"), FAILED_CONFIRM("$2You have no pending actions to confirm!",
         "Confirm"), REQUIRES_CONFIRM(
         "$2Are you sure you wish to execute: $1%s$2?&-$2This cannot be undone! If you are sure: $1/plot confirm",
         "Confirm"), /*
@@ -185,8 +185,8 @@ public enum C {
      * Cluster
      */
     CLUSTER_AVAILABLE_ARGS(
-            "$1The following sub commands are available: $4list$2, $4create$2, $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, "
-                + "$4members$2, $4info$2, $4tp$2, $4sethome", "Cluster"), CLUSTER_LIST_HEADING(
+        "$1The following sub commands are available: $4list$2, $4create$2, $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, "
+            + "$4members$2, $4info$2, $4tp$2, $4sethome", "Cluster"), CLUSTER_LIST_HEADING(
         "$2There are $1%s$2 clusters in this world", "Cluster"), CLUSTER_LIST_ELEMENT("$2 - $1%s&-",
         "Cluster"), CLUSTER_INTERSECTION("$2The proposed area overlaps with: %s0",
         "Cluster"), CLUSTER_OUTSIDE("$2The proposed area is outside the plot area: %s0",
@@ -217,7 +217,7 @@ public enum C {
      * WorldEdit masks
      */
     WORLDEDIT_DELAYED("$2Please wait while we process your WorldEdit action...",
-            "WorldEdit Masks"), WORLDEDIT_RUN("$2Apologies for the delay. Now executing: %s",
+        "WorldEdit Masks"), WORLDEDIT_RUN("$2Apologies for the delay. Now executing: %s",
         "WorldEdit Masks"), REQUIRE_SELECTION_IN_MASK(
         "$2%s of your selection is not within your plot mask. You can only make edits within your plot.",
         "WorldEdit Masks"), WORLDEDIT_VOLUME(
@@ -262,7 +262,7 @@ public enum C {
      * Console
      */
     NOT_CONSOLE("$2For safety reasons, this command can only be executed by console.",
-            "Console"), IS_CONSOLE("$2This command can only be executed by a player.", "Console"),
+        "Console"), IS_CONSOLE("$2This command can only be executed by a player.", "Console"),
 
     /*
     Inventory
@@ -337,16 +337,18 @@ public enum C {
      * Schematic Stuff
      */
     SCHEMATIC_TOO_LARGE("$2The plot is too large for this action!",
-            "Schematics"), SCHEMATIC_MISSING_ARG(
+        "Schematics"), SCHEMATIC_MISSING_ARG(
         "$2You need to specify an argument. Possible values: $1test <name>$2 , $1save$2 , $1paste $2, $1exportall",
         "Schematics"), SCHEMATIC_INVALID("$2That is not a valid schematic. Reason: $2%s",
         "Schematics"), SCHEMATIC_VALID("$2That is a valid schematic",
         "Schematics"), SCHEMATIC_PASTE_FAILED("$2Failed to paste the schematic",
-        "Schematics"), SCHEMATIC_PASTE_SUCCESS("$4The schematic pasted successfully", "Schematics"), /*
+        "Schematics"), SCHEMATIC_PASTE_SUCCESS("$4The schematic pasted successfully",
+        "Schematics"), /*
      * Title Stuff
      */
     TITLE_ENTERED_PLOT("$1Plot: %world%;%x%;%z%", "Titles"), TITLE_ENTERED_PLOT_SUB("$4Owned by %s",
-        "Titles"), PREFIX_GREETING("$1%id%$2> ", "Titles"), PREFIX_FAREWELL("$1%id%$2> ", "Titles"), /*
+        "Titles"), PREFIX_GREETING("$1%id%$2> ", "Titles"), PREFIX_FAREWELL("$1%id%$2> ",
+        "Titles"), /*
      * Core Stuff
      */
     TASK_START("Starting task...", "Core"), PREFIX("$3[$1P2$3] $2", "Core"), ENABLED(
@@ -354,7 +356,7 @@ public enum C {
      * Reload
      */
     RELOADED_CONFIGS("$1Translations and world settings have been reloaded",
-            "Reload"), RELOAD_FAILED("$2Failed to reload file configurations", "Reload"),
+        "Reload"), RELOAD_FAILED("$2Failed to reload file configurations", "Reload"),
     /*
      * BarAPI
      */
@@ -372,7 +374,7 @@ public enum C {
      * Position
      */
     MISSING_POSITION("$2You need to specify a position. Possible values: $1none",
-            "Position"), POSITION_SET("$1Home position set to your current location",
+        "Position"), POSITION_SET("$1Home position set to your current location",
         "Position"), POSITION_UNSET("$1Home position reset to the default location",
         "Position"), HOME_ARGUMENT("$2Use /plot set home [none]", "Position"), INVALID_POSITION(
         "$2That is not a valid position value", "Position"), /*
@@ -385,7 +387,7 @@ public enum C {
      * Permission
      */
     NO_SCHEMATIC_PERMISSION("$2You don't have the permission required to use schematic $1%s",
-            "Permission"), NO_PERMISSION("$2You are lacking the permission node: $1%s",
+        "Permission"), NO_PERMISSION("$2You are lacking the permission node: $1%s",
         "Permission"), NO_PERMISSION_EVENT("$2You are lacking the permission node: $1%s",
         "Permission"), NO_PLOT_PERMS("$2You must be the plot owner to perform this action",
         "Permission"), CANT_CLAIM_MORE_PLOTS("$2You can't claim more plots.",
@@ -418,15 +420,15 @@ public enum C {
      * Player not found
      */
     INVALID_PLAYER_WAIT("$2Player not found: $1%s$2, fetching it. Try again soon.",
-            "Errors"), INVALID_PLAYER("$2Player not found: $1%s$2.",
-        "Errors"), INVALID_PLAYER_OFFLINE("$2The player must be online: $1%s.", "Errors"), /*
+        "Errors"), INVALID_PLAYER("$2Player not found: $1%s$2.", "Errors"), INVALID_PLAYER_OFFLINE(
+        "$2The player must be online: $1%s.", "Errors"), /*
      * Command flag
      */
     INVALID_COMMAND_FLAG("$2Invalid command flag: %s0", "Errors"), /*
      * Unknown Error
      */
     ERROR("$2An error occurred: %s",
-            "Errors"), // SETTINGS_PASTE_UPLOADED("$2settings.yml was uploaded to: $1%url%", "Paste"),
+        "Errors"), // SETTINGS_PASTE_UPLOADED("$2settings.yml was uploaded to: $1%url%", "Paste"),
     // LATEST_LOG_UPLOADED("$2latest.log was uploaded to: $1%url%", "Paste"),
     DEBUG_REPORT_CREATED("$1Uploaded a full debug to: $1%url%", "Paste"), /*
      *
@@ -438,7 +440,7 @@ public enum C {
      * trim
      */
     TRIM_IN_PROGRESS("A world trim task is already in progress!",
-            "Trim"), NOT_VALID_HYBRID_PLOT_WORLD(
+        "Trim"), NOT_VALID_HYBRID_PLOT_WORLD(
         "The hybrid plot manager is required to perform this action", "Trim"), /*
      * No <plot>
      */
@@ -538,7 +540,7 @@ public enum C {
      * List
      */
     COMMENT_LIST_HEADER_PAGED("$2(Page $1%cur$2/$1%max$2) $1List of %amount% comments",
-            "List"), CLICKABLE(" (interactive)", "List"), AREA_LIST_HEADER_PAGED(
+        "List"), CLICKABLE(" (interactive)", "List"), AREA_LIST_HEADER_PAGED(
         "$2(Page $1%cur$2/$1%max$2) $1List of %amount% areas", "List"), PLOT_LIST_HEADER_PAGED(
         "$2(Page $1%cur$2/$1%max$2) $1List of %amount% plots", "List"), PLOT_LIST_HEADER(
         "$1List of %word% plots", "List"), PLOT_LIST_ITEM("$2>> $1%id$2:$1%world $2- $1%owner",
@@ -550,12 +552,12 @@ public enum C {
      * Wait
      */
     WAIT_FOR_TIMER(
-            "$2A setblock timer is bound to either the current plot or you. Please wait for it to finish",
-            "Errors"), /*
+        "$2A setblock timer is bound to either the current plot or you. Please wait for it to finish",
+        "Errors"), /*
      * Chat
      */
     PLOT_CHAT_SPY_FORMAT("$2[$1Plot Spy$2][$1%plot_id%$2] $1%sender%$2: $1%msg%",
-            "Chat"), PLOT_CHAT_FORMAT("$2[$1Plot Chat$2][$1%plot_id%$2] $1%sender%$2: $1%msg%",
+        "Chat"), PLOT_CHAT_FORMAT("$2[$1Plot Chat$2][$1%plot_id%$2] $1%sender%$2: $1%msg%",
         "Chat"), PLOT_CHAT_FORCED("$2This world forces everyone to use plot chat.",
         "Chat"), PLOT_CHAT_ON("$4Plot chat enabled.", "Chat"), PLOT_CHAT_OFF(
         "$4Plot chat disabled.", "Chat"), /*
@@ -574,7 +576,7 @@ public enum C {
      * Rain
      */
     NEED_ON_OFF("$2You need to specify a value. Possible values: $1on$2, $1off",
-            "Rain"), SETTING_UPDATED("$4You successfully updated the setting", "Rain"), /*
+        "Rain"), SETTING_UPDATED("$4You successfully updated the setting", "Rain"), /*
      * Flag
      */
     FLAG_KEY("$2Key: %s", "Flag"), FLAG_TYPE("$2Type: %s", "Flag"), FLAG_DESC("$2Desc: %s",
@@ -591,7 +593,8 @@ public enum C {
     TRUSTED_ADDED("$4You successfully trusted a user to the plot", "Trusted"), TRUSTED_REMOVED(
         "$4You successfully removed a trusted user from the plot", "Trusted"), WAS_NOT_ADDED(
         "$2That player was not trusted on this plot", "Trusted"), PLOT_REMOVED_USER(
-        "$1Plot %s of which you were added to has been deleted due to owner inactivity", "Trusted"), /*
+        "$1Plot %s of which you were added to has been deleted due to owner inactivity",
+        "Trusted"), /*
      * Member
      */
     REMOVED_PLAYERS("$2Removed %s players from this plot.", "Member"), ALREADY_OWNER(
@@ -603,8 +606,9 @@ public enum C {
         "$2You are not allowed to add any more players to this plot", "Member"), /*
      * Set Owner
      */
-    SET_OWNER("$4You successfully set the plot owner", "Owner"), NOW_OWNER(
-        "$4You are now owner of plot %s", "Owner"), /*
+    SET_OWNER("$4You successfully set the plot owner", "Owner"), SET_OWNER_CANCELLED(
+        "$2The setowner action was cancelled", "Owner"), NOW_OWNER("$4You are now owner of plot %s",
+        "Owner"), /*
      * Signs
      */
     OWNER_SIGN_LINE_1("$1ID: $1%id%", "Signs"), OWNER_SIGN_LINE_2("$1Owner:",

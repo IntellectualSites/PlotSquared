@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -83,14 +84,23 @@ public class BukkitEventUtil extends EventUtil {
         callEvent(new PlayerPlotHelperEvent(getPlayer(initiator), plot, player, added));
     }
 
+    @Override
+    public boolean callOwnerChange(PlotPlayer initiator, Plot plot, UUID oldOwner, UUID newOwner,
+        boolean hasOldOwner) {
+        return callEvent(
+            new PlotChangeOwnerEvent(getPlayer(initiator), plot, oldOwner, newOwner, hasOldOwner));
+    }
+
     @Override public boolean callFlagRemove(Flag flag, Object object, PlotCluster cluster) {
         return callEvent(new ClusterFlagRemoveEvent(flag, cluster));
     }
 
-    @Override public Rating callRating(PlotPlayer player, Plot plot, Rating rating) {
+    @Override @Nullable public Rating callRating(PlotPlayer player, Plot plot, Rating rating) {
         PlotRateEvent event = new PlotRateEvent(player, rating, plot);
         Bukkit.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return null;
+        }
         return event.getRating();
     }
-
 }

@@ -68,9 +68,9 @@ public class Config {
                     field.set(instance, value);
                     return;
                 } catch (Throwable e) {
-                    PlotSquared
-                        .debug("Invalid configuration value: " + key + ": " + value + " in " + root
-                        .getSimpleName());
+                    PlotSquared.debug(
+                        "Invalid configuration value: " + key + ": " + value + " in " + root
+                            .getSimpleName());
                     e.printStackTrace();
                 }
             }
@@ -262,8 +262,9 @@ public class Config {
             setAccessible(field);
             return field;
         } catch (Throwable e) {
-            PlotSquared.debug("Invalid config field: " + StringMan.join(split, ".") + " for " + toNodeName(
-                instance.getClass().getSimpleName()));
+            PlotSquared.debug(
+                "Invalid config field: " + StringMan.join(split, ".") + " for " + toNodeName(
+                    instance.getClass().getSimpleName()));
             return null;
         }
     }

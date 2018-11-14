@@ -47,7 +47,8 @@ public class LikePlotMeConverter {
     }
 
     private void sendMessage(String message) {
-        PlotSquared.debug("&3PlotMe&8->&3" + PlotSquared.imp().getPluginName() + "&8: &7" + message);
+        PlotSquared
+            .debug("&3PlotMe&8->&3" + PlotSquared.imp().getPluginName() + "&8: &7" + message);
     }
 
     public String getPlotMePath() {
@@ -126,7 +127,8 @@ public class LikePlotMeConverter {
         PlotSquared.get().worlds.set("worlds." + world + ".wall.block_claimed", claimed);
         String floor =
             plotmeDgYml.getString("worlds." + plotMeWorldName + ".PlotFloorBlock", "2"); //
-        PlotSquared.get().worlds.set("worlds." + world + ".plot.floor", Collections.singletonList(floor));
+        PlotSquared.get().worlds
+            .set("worlds." + world + ".plot.floor", Collections.singletonList(floor));
         String filling = plotmeDgYml.getString("worlds." + plotMeWorldName + ".FillBlock", "3"); //
         PlotSquared.get().worlds
             .set("worlds." + world + ".plot.filling", Collections.singletonList(filling));
@@ -330,8 +332,8 @@ public class LikePlotMeConverter {
                                     // load world with MV
                                     Bukkit.getServer()
                                         .dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                                            "mv import " + actualWorldName + " normal -g " + PlotSquared
-                                                .imp().getPluginName());
+                                            "mv import " + actualWorldName + " normal -g "
+                                                + PlotSquared.imp().getPluginName());
                                 } else if (mw) {
                                     // unload world with MW
                                     Bukkit.getServer()
@@ -345,15 +347,15 @@ public class LikePlotMeConverter {
                                     // load world with MW
                                     Bukkit.getServer()
                                         .dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                                            "mw create " + actualWorldName + " plugin:" + PlotSquared
-                                                .imp()
-                                                .getPluginName());
+                                            "mw create " + actualWorldName + " plugin:"
+                                                + PlotSquared.imp().getPluginName());
                                 } else {
                                     // Load using Bukkit API
                                     // - User must set generator manually
                                     Bukkit.getServer().unloadWorld(world, true);
                                     World myWorld = WorldCreator.name(actualWorldName).generator(
-                                        new BukkitPlotGenerator(PlotSquared.get().IMP.getDefaultGenerator()))
+                                        new BukkitPlotGenerator(
+                                            PlotSquared.get().IMP.getDefaultGenerator()))
                                         .createWorld();
                                     myWorld.save();
                                 }

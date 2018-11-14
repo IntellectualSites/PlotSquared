@@ -15,7 +15,7 @@ import java.net.URL;
 import java.util.List;
 
 @CommandDeclaration(command = "load", aliases = {
-    "restore"}, category = CommandCategory.SCHEMATIC, requiredType = RequiredType.NONE, description = "Load your plot", permission = "plots.load", usage = "/plot restore")
+    "restore"}, category = CommandCategory.SCHEMATIC, requiredType = RequiredType.NONE, description = "Load your plot", permission = "plots.load", usage = "/plot load")
 public class Load extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
@@ -70,7 +70,8 @@ public class Load extends SubCommand {
                 MainUtil.sendMessage(player, C.GENERATING_COMPONENT);
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override public void run() {
-                        SchematicHandler.Schematic schematic = SchematicHandler.manager.getSchematic(url);
+                        SchematicHandler.Schematic schematic =
+                            SchematicHandler.manager.getSchematic(url);
                         if (schematic == null) {
                             plot.removeRunning();
                             sendMessage(player, C.SCHEMATIC_INVALID,

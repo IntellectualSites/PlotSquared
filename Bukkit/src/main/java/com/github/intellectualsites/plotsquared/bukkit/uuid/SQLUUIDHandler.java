@@ -43,7 +43,8 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
 
     public SQLUUIDHandler(UUIDWrapper wrapper) {
         super(wrapper);
-        this.sqlite = new SQLite(MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), "usercache.db"));
+        this.sqlite =
+            new SQLite(MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), "usercache.db"));
         try {
             this.sqlite.openConnection();
         } catch (ClassNotFoundException | SQLException e) {
@@ -221,7 +222,8 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                         statement.setString(1, uuid.toString());
                         statement.setString(2, name.toString());
                         statement.execute();
-                        PlotSquared.debug(C.PREFIX + "&cAdded '&6" + uuid + "&c' - '&6" + name + "&c'");
+                        PlotSquared
+                            .debug(C.PREFIX + "&cAdded '&6" + uuid + "&c' - '&6" + name + "&c'");
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -244,8 +246,8 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                     statement.setString(1, name.value);
                     statement.setString(2, uuid.toString());
                     statement.execute();
-                    PlotSquared
-                        .debug(C.PREFIX + "Name change for '" + uuid + "' to '" + name.value + '\'');
+                    PlotSquared.debug(
+                        C.PREFIX + "Name change for '" + uuid + "' to '" + name.value + '\'');
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

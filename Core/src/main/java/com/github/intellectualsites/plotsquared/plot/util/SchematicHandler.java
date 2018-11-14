@@ -427,7 +427,8 @@ public abstract class SchematicHandler {
      * @return schematic if found, else null
      */
     public Schematic getSchematic(String name) {
-        File parent = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS);
+        File parent =
+            MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS);
         if (!parent.exists()) {
             if (!parent.mkdir()) {
                 throw new RuntimeException("Could not create schematic parent directory");

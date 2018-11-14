@@ -103,7 +103,7 @@ public abstract class UUIDHandlerImplementation {
         /*
          * lazy UUID conversion:
          *  - Useful if the person misconfigured the database, or settings before
-          *   PlotMe conversion
+         *   PlotMe conversion
          */
         if (!Settings.UUID.OFFLINE && !this.unknown.isEmpty()) {
             TaskManager.runTaskAsync(new Runnable() {

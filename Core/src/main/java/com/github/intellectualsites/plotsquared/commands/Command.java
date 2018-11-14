@@ -166,8 +166,8 @@ public abstract class Command {
         options.put("usage", declaration.usage());
         options.put("confirmation", declaration.confirmation());
         boolean set = false;
-        YamlConfiguration commands = PlotSquared.get() == null ? new YamlConfiguration() : PlotSquared
-            .get().commands;
+        YamlConfiguration commands =
+            PlotSquared.get() == null ? new YamlConfiguration() : PlotSquared.get().commands;
         for (Map.Entry<String, Object> entry : options.entrySet()) {
             String key = this.getFullId() + "." + entry.getKey();
             if (!commands.contains(key)) {

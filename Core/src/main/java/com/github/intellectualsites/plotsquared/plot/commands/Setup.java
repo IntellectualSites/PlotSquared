@@ -74,7 +74,8 @@ import java.util.Map.Entry;
                     MainUtil.sendMessage(player,
                         "&cYou must choose a generator!" + prefix + StringMan
                             .join(SetupUtils.generators.keySet(), prefix)
-                            .replaceAll(PlotSquared.imp().getPluginName(), "&2" + PlotSquared.imp().getPluginName()));
+                            .replaceAll(PlotSquared.imp().getPluginName(),
+                                "&2" + PlotSquared.imp().getPluginName()));
                     sendMessage(player, C.SETUP_INIT);
                     return false;
                 }

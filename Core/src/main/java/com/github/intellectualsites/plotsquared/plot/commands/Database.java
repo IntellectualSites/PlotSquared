@@ -103,8 +103,9 @@ public class Database extends SubCommand {
                                         if (newPlot != null) {
                                             PlotId newId = newPlot.getId();
                                             PlotId id = plot.getId();
-                                            File worldFile = new File(PlotSquared.imp().getWorldContainer(),
-                                                id.toCommaSeparatedString());
+                                            File worldFile =
+                                                new File(PlotSquared.imp().getWorldContainer(),
+                                                    id.toCommaSeparatedString());
                                             if (worldFile.exists()) {
                                                 File newFile =
                                                     new File(PlotSquared.imp().getWorldContainer(),
@@ -127,7 +128,8 @@ public class Database extends SubCommand {
                                 plots.add(plot);
                             }
                         } else {
-                            HashMap<PlotId, Plot> plotmap = PlotSquared.get().plots_tmp.get(areaname);
+                            HashMap<PlotId, Plot> plotmap =
+                                PlotSquared.get().plots_tmp.get(areaname);
                             if (plotmap == null) {
                                 plotmap = new HashMap<>();
                                 PlotSquared.get().plots_tmp.put(areaname, plotmap);

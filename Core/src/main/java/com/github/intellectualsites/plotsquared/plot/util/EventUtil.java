@@ -10,6 +10,7 @@ import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.google.common.base.Optional;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
@@ -18,7 +19,15 @@ public abstract class EventUtil {
 
     public static EventUtil manager = null;
 
-    public abstract Rating callRating(PlotPlayer player, Plot plot, Rating rating);
+    /**
+     * Submit a plot rate event and return the updated rating
+     *
+     * @param player Player that rated the plot
+     * @param plot   Plot that was rated
+     * @param rating Rating given to the plot
+     * @return Updated rating or null if the event was cancelled
+     */
+    @Nullable public abstract Rating callRating(PlotPlayer player, Plot plot, Rating rating);
 
     public abstract boolean callClaim(PlotPlayer player, Plot plot, boolean auto);
 
@@ -49,6 +58,9 @@ public abstract class EventUtil {
     public abstract void callTrusted(PlotPlayer initiator, Plot plot, UUID player, boolean added);
 
     public abstract void callMember(PlotPlayer initiator, Plot plot, UUID player, boolean added);
+
+    public abstract boolean callOwnerChange(PlotPlayer initiator, Plot plot, UUID newOwner,
+        UUID oldOwner, boolean hasOldOwner);
 
     public void doJoinTask(final PlotPlayer player) {
         if (player == null) {

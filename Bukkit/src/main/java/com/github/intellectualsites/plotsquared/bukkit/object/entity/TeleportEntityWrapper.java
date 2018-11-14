@@ -52,10 +52,11 @@ public class TeleportEntityWrapper extends EntityWrapper {
         this.getEntity().setInvulnerable(true);
         this.fireTicksOld = this.getEntity().getFireTicks();
         this.livingTicksOld = this.getEntity().getTicksLived();
-        this.getEntity().setMetadata("ps-tmp-teleport", new FixedMetadataValue(
-            BukkitMain.getPlugin(BukkitMain.class), oldLocation));
+        this.getEntity().setMetadata("ps-tmp-teleport",
+            new FixedMetadataValue(BukkitMain.getPlugin(BukkitMain.class), oldLocation));
         final Chunk newChunk = getNewChunk();
-        this.getEntity().teleport(new Location(newChunk.getWorld(), newChunk.getX() << 4, 5000, newChunk.getZ() << 4));
+        this.getEntity().teleport(
+            new Location(newChunk.getWorld(), newChunk.getX() << 4, 5000, newChunk.getZ() << 4));
     }
 
     private Chunk getNewChunk() {

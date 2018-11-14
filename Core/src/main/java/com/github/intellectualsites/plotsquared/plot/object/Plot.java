@@ -746,6 +746,39 @@ public class Plot {
     }
 
     /**
+     * Set the plot owner (and update the database)
+     *
+     * @param owner
+     * @param initiator
+     * @return boolean
+     */
+    public boolean setOwner(UUID owner, PlotPlayer initiator) {
+        boolean result = EventUtil.manager
+            .callOwnerChange(initiator, this, owner, hasOwner() ? this.owner : null, hasOwner());
+        if (!result)
+            return false;
+        if (!hasOwner()) {
+            this.owner = owner;
+            create();
+            return true;
+        }
+        if (!isMerged()) {
+            if (!this.owner.equals(owner)) {
+                this.owner = owner;
+                DBFunc.setOwner(this, owner);
+            }
+            return true;
+        }
+        for (Plot current : getConnectedPlots()) {
+            if (!owner.equals(current.owner)) {
+                current.owner = owner;
+                DBFunc.setOwner(current, owner);
+            }
+        }
+        return true;
+    }
+
+    /**
      * Clear a plot.
      *
      * @param whenDone A runnable to execute when clearing finishes, or null
@@ -2417,7 +2450,8 @@ public class Plot {
             if (current.owner == null || current.settings == null) {
                 // Invalid plot
                 // merged onto unclaimed plot
-                PlotSquared.debug("Ignoring invalid merged plot: " + current + " | " + current.owner);
+                PlotSquared
+                    .debug("Ignoring invalid merged plot: " + current + " | " + current.owner);
                 continue;
             }
             tmpSet.add(current);

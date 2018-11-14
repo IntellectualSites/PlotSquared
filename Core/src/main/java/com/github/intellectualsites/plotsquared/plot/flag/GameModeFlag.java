@@ -35,6 +35,6 @@ public class GameModeFlag extends Flag<PlotGameMode> {
     }
 
     @Override public String getValueDescription() {
-        return "Flag value must be a gamemode: 'creative' , 'survival', 'adventure' or 'spectator'";
+        return "Flag value must be a gamemode: 'survival', 'creative', 'adventure' or 'spectator'";
     }
 }

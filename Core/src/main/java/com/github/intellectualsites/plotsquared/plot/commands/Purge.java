@@ -110,7 +110,8 @@ public class Purge extends SubCommand {
             }
         }
         if (PlotSquared.get().plots_tmp != null) {
-            for (Entry<String, HashMap<PlotId, Plot>> entry : PlotSquared.get().plots_tmp.entrySet()) {
+            for (Entry<String, HashMap<PlotId, Plot>> entry : PlotSquared.get().plots_tmp
+                .entrySet()) {
                 String worldName = entry.getKey();
                 if (world != null && !world.equalsIgnoreCase(worldName)) {
                     continue;

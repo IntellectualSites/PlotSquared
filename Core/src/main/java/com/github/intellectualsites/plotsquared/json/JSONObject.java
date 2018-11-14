@@ -28,8 +28,8 @@ import java.util.Map.Entry;
  * as null.
  * <p>
  * The <code>put</code> methods add or replace values in an object. For example,
- * <p>
- * <p>
+ *
+ *
  * <pre>
  * myString = new JSONObject().put(&quot;JSON&quot;, &quot;Hello, World!&quot;).toString();
  * </pre>

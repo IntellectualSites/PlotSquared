@@ -198,7 +198,8 @@ public abstract class SquarePlotManager extends GridPlotManager {
             }
             PlotSquared.debug("invalid location: " + Arrays.toString(merged));
         } catch (Exception ignored) {
-            PlotSquared.debug("Invalid plot / road width in settings.yml for world: " + plotArea.worldname);
+            PlotSquared.debug(
+                "Invalid plot / road width in settings.yml for world: " + plotArea.worldname);
         }
         return null;
     }

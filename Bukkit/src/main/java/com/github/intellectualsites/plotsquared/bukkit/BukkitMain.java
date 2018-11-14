@@ -56,8 +56,7 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
 
 public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
-    @Getter
-    private static WorldEdit worldEdit;
+    @Getter private static WorldEdit worldEdit;
     private static Map<String, Plugin> pluginMap;
 
     static {
@@ -125,7 +124,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             } catch (NumberFormatException e) {
                 e.printStackTrace();
                 PlotSquared.debug(StringMan.getString(Bukkit.getBukkitVersion()));
-                PlotSquared.debug(StringMan.getString(Bukkit.getBukkitVersion().split("-")[0].split("\\.")));
+                PlotSquared.debug(
+                    StringMan.getString(Bukkit.getBukkitVersion().split("-")[0].split("\\.")));
                 return new int[] {1, 13, 0};
             }
         }
@@ -451,7 +451,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                                         Entity passenger = entity.getPassenger();
                                                         if (!(passenger instanceof Player) && entity
                                                             .getMetadata("keep").isEmpty()) {
-                                                            if (entity.hasMetadata("ps-tmp-teleport")) {
+                                                            if (entity
+                                                                .hasMetadata("ps-tmp-teleport")) {
                                                                 continue;
                                                             }
                                                             iterator.remove();
@@ -502,7 +503,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                                             && (currentPlotId == null || !area
                                                             .getPlot(originalPlotId)
                                                             .equals(area.getPlot(currentPlotId)))) {
-                                                            if (entity.hasMetadata("ps-tmp-teleport")) {
+                                                            if (entity
+                                                                .hasMetadata("ps-tmp-teleport")) {
                                                                 continue;
                                                             }
                                                             iterator.remove();
@@ -540,12 +542,13 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }, 20);
     }
 
-    @Override @Nullable public final ChunkGenerator getDefaultWorldGenerator(final String world, final String id) {
+    @Override @Nullable
+    public final ChunkGenerator getDefaultWorldGenerator(final String world, final String id) {
         if (Settings.Enabled_Components.PLOTME_CONVERTER) {
             initPlotMeConverter();
             Settings.Enabled_Components.PLOTME_CONVERTER = false;
         }
-       final IndependentPlotGenerator result;
+        final IndependentPlotGenerator result;
         if (id != null && id.equalsIgnoreCase("single")) {
             result = new SingleWorldGenerator();
         } else {
@@ -671,7 +674,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return false;
     }
 
-    @Override @Nullable public GeneratorWrapper<?> getGenerator(@NonNull final String world, @Nullable final String name) {
+    @Override @Nullable public GeneratorWrapper<?> getGenerator(@NonNull final String world,
+        @Nullable final String name) {
         if (name == null) {
             return null;
         }
@@ -854,8 +858,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
     }
 
-    @Override
-    public GeneratorWrapper<?> wrapPlotGenerator(@Nullable final String world, @NonNull final IndependentPlotGenerator generator) {
+    @Override public GeneratorWrapper<?> wrapPlotGenerator(@Nullable final String world,
+        @NonNull final IndependentPlotGenerator generator) {
         return new BukkitPlotGenerator(generator);
     }
 

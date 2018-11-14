@@ -106,8 +106,8 @@ import java.util.*;
         }
         List<Plot> plots;
         if (shouldSortByArea) {
-            plots = PlotSquared
-                .get().sortPlots(unsorted, PlotSquared.SortType.CREATION_DATE, sortByArea);
+            plots = PlotSquared.get()
+                .sortPlots(unsorted, PlotSquared.SortType.CREATION_DATE, sortByArea);
         } else {
             plots = PlotSquared.get().sortPlotsByTemp(unsorted);
         }

@@ -22,7 +22,7 @@ import java.util.UUID;
 
 /**
  * PlotSquared API.
- * <p>
+ *
  * <p>Useful classes:
  * <ul>
  * <li>{@link PlotPlayer}</li>
@@ -34,9 +34,7 @@ import java.util.UUID;
  *
  * @version 3.3.3
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
-@NoArgsConstructor
-public class PlotAPI {
+@SuppressWarnings({"unused", "WeakerAccess"}) @NoArgsConstructor public class PlotAPI {
 
     /**
      * Get all plots.
@@ -201,7 +199,7 @@ public class PlotAPI {
 
     /**
      * Get the PlotPlayer for a UUID.
-     * <p>
+     *
      * <p><i>Please note that PlotSquared can be configured to provide
      * different UUIDs than bukkit</i>
      *

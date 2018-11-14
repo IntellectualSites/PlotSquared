@@ -203,7 +203,8 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                             }
                         }
                     } catch (Exception ignored) {
-                        PlotSquared.debug(C.PREFIX + "&6Invalid PlayerData: " + uuid.toString() + ".dat");
+                        PlotSquared
+                            .debug(C.PREFIX + "&6Invalid PlayerData: " + uuid.toString() + ".dat");
                     }
                 }
                 for (String name : names) {

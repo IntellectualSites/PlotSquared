@@ -61,7 +61,8 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
 
                 @Override
                 public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
-                    return PlotSquared.get().IMP.getDefaultGenerator().getNewPlotArea(world, id, min, max);
+                    return PlotSquared.get().IMP.getDefaultGenerator()
+                        .getNewPlotArea(world, id, min, max);
                 }
 
                 @Override

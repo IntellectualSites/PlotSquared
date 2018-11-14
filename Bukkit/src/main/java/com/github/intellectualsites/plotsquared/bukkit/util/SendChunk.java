@@ -50,7 +50,8 @@ public class SendChunk {
         RefClass classChunk = getRefClass("{nms}.Chunk");
         this.methodInitLighting = classChunk.getMethod("initLighting");
         RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
-        if (PlotSquared.get().checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_4)) {
+        if (PlotSquared.get()
+            .checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_4)) {
             //this works for 1.9.4 and 1.10
             tempMapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), int.class);
         } else {
@@ -118,8 +119,8 @@ public class SendChunk {
                 chunks.remove(chunk);
                 Object con = this.connection.of(entity).get();
                 Object packet = null;
-                if (PlotSquared
-                    .get().checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_4)) {
+                if (PlotSquared.get()
+                    .checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_4)) {
                     try {
                         packet = this.mapChunk.create(c, 65535);
                     } catch (Exception ignored) {
@@ -148,10 +149,11 @@ public class SendChunk {
                         chunk.unload(true, false);
                     } catch (Throwable ignored) {
                         String worldName = chunk.getWorld().getName();
+                        PlotSquared.debug(
+                            "$4Could not save chunk: " + worldName + ';' + chunk.getX() + ";"
+                                + chunk.getZ());
                         PlotSquared
-                            .debug("$4Could not save chunk: " + worldName + ';' + chunk.getX() + ";"
-                            + chunk.getZ());
-                        PlotSquared.debug("$3 - $4File may be open in another process (e.g. MCEdit)");
+                            .debug("$3 - $4File may be open in another process (e.g. MCEdit)");
                         PlotSquared.debug("$3 - $4" + worldName + "/level.dat or " + worldName
                             + "/level_old.dat may be corrupt (try repairing or removing these)");
                     }

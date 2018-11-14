@@ -53,7 +53,8 @@ public class NukkitSetupUtils extends SetupUtils {
         if (!PlotSquared.get().worlds.contains(worldPath)) {
             PlotSquared.get().worlds.createSection(worldPath);
         }
-        ConfigurationSection worldSection = PlotSquared.get().worlds.getConfigurationSection(worldPath);
+        ConfigurationSection worldSection =
+            PlotSquared.get().worlds.getConfigurationSection(worldPath);
         switch (type) {
             case 2: {
                 if (object.id != null) {
@@ -99,8 +100,10 @@ public class NukkitSetupUtils extends SetupUtils {
                     worldSection.set(step.getConstant(), step.getValue());
                 }
                 PlotSquared.get().worlds.set("worlds." + world + ".generator.type", object.type);
-                PlotSquared.get().worlds.set("worlds." + world + ".generator.terrain", object.terrain);
-                PlotSquared.get().worlds.set("worlds." + world + ".generator.plugin", object.plotManager);
+                PlotSquared.get().worlds
+                    .set("worlds." + world + ".generator.terrain", object.terrain);
+                PlotSquared.get().worlds
+                    .set("worlds." + world + ".generator.plugin", object.plotManager);
                 if (object.setupGenerator != null && !object.setupGenerator
                     .equals(object.plotManager)) {
                     PlotSquared.get().worlds

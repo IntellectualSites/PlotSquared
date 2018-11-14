@@ -26,7 +26,8 @@ public class Template extends SubCommand {
 
     public static boolean extractAllFiles(String world, String template) {
         try {
-            File folder = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.TEMPLATES);
+            File folder =
+                MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.TEMPLATES);
             if (!folder.exists()) {
                 return false;
             }
@@ -84,7 +85,8 @@ public class Template extends SubCommand {
     }
 
     public static void zipAll(String world, Set<FileBytes> files) throws IOException {
-        File output = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.TEMPLATES);
+        File output =
+            MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.TEMPLATES);
         output.mkdirs();
         try (FileOutputStream fos = new FileOutputStream(
             output + File.separator + world + ".template");

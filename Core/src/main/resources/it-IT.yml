@@ -19,9 +19,9 @@ web:
 compass:
   compass_target: $4Lotto mirato con successo con la bussola
 cluster:
-  cluster_available_args: '$1Sono disponibili i seguenti sotto comandi: $4list$2, $4create$2,
-    $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4members$2, $4info$2,
-    $4tp$2, $4sethome'
+  cluster_available_args: '$1Sono disponibili i seguenti sotto comandi: $4list$2, 
+    $4create$2, $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4members$2,
+    $4info$2, $4tp$2, $4sethome'
   cluster_list_heading: $2Ci sono $1%s$2 cluster in questo mondo
   cluster_list_element: $2 - $1%s&-
   cluster_intersection: '$2L''area proposta si sovrappone a: %s0'
@@ -50,12 +50,9 @@ unclaim:
 worldedit masks:
   worldedit_delayed: $2Attendi durante l'elaborazione della tua azione WorldEdit...
   worldedit_run: '$2Scuse per il ritardo. Ora in esecuzione: %s'
-  require_selection_in_mask: $2%s della tua selezione non è all'interno del tuo lotto.
-    Puoi apportare modifiche solo dentro il tuo lotto.
-  worldedit_volume: $2Non puoi selezionare un volume di %current%. Il volume massimo
-    che puoi modificare è %max%.
-  worldedit_iterations: $2Non puoi iterare %current% volte. Il massimo numero di
-    iterazioni consentite è %max%.
+  require_selection_in_mask: $2%s della tua selezione non è all'interno del tuo lotto. Puoi apportare modifiche solo dentro il tuo lotto.
+  worldedit_volume: $2Non puoi selezionare un volume di %current%. Il volume massimo che puoi modificare è %max%.
+  worldedit_iterations: $2Non puoi iterare %current% volte. Il massimo numero di iterazioni consentite è %max%.
   worldedit_unsafe: $2L'accesso a quel comando è stato bloccato
   worldedit_bypass: $2&oPer bypassare le tue restrizioni usa $4/plot wea
   worldedit_bypassed: $2Attualmente bypassando le restrizioni di WorldEdit.
@@ -139,15 +136,15 @@ setup:
   setup_invalid_arg: '$2%s0 non è un argomento valido per il passaggio %s1. Per cancellare il setup usa: $1/plot setup cancel'
   setup_valid_arg: $2Valore $1%s0 $2impostato a %s1
   setup_finished: $4Dovresti essere stato teletrasportato nel mondo creato. Altrimenti
-    sarà necessario impostare manualmente il generatore usando il file bukkit.yml o il tuo plugin
-    di gestione dei mondi scelto.
+    sarà necessario impostare manualmente il generatore usando il file bukkit.yml
+    o il tuo plugin di gestione dei mondi scelto.
   setup_world_taken: $2%s è già un mondo lotti
   setup_missing_world: $2Devi specificare un nome per il mondo ($1/plot setup &l<mondo>$1
     <generatore>$2)&-$1Comandi aggiuntivi:&-$2 - $1/plot setup <valore>&-$2 - $1/plot
     setup back&-$2 - $1/plot setup cancel
   setup_missing_generator: $2Devi specificare un generatore ($1/plot setup <mondo>
-    &l<generatore>&r$2)&-$1Comandi aggiuntivi:&-$2 - $1/plot setup <valore>&-$2 - $1/plot
-    setup back&-$2 - $1/plot setup cancel
+    &l<generatore>&r$2)&-$1Comandi aggiuntivi:&-$2 - $1/plot setup <valore>&-$2 -
+    $1/plot setup back&-$2 - $1/plot setup cancel
   setup_invalid_generator: '$2Generatore non valido. Opzioni possibili: %s'
 schematics:
   schematic_too_large: $2Il lotto è troppo grande per questa azione!
@@ -271,7 +268,7 @@ invalid:
   no_such_plot: $2Quel lotto non esiste
   player_has_not_been_on: $2Quel giocatore non è mai stato nel mondo lotti
   found_no_plots: $2Non sono stati trovati lotti con la tua ricerca
-  found_no_plots_for_player: $2Nessun lotto trovato per il giocatore: %s
+  found_no_plots_for_player: '$2Nessun lotto trovato per il giocatore: %s'
 camera:
   camera_started: $2Hai inserito la modalità telecamera per il lotto $1%s
   camera_stopped: $2Non sei più in modalità telecamera
@@ -293,8 +290,9 @@ info:
   plot_info_unclaimed: $2Il lotto $1%s$2 non è ancora claimato
   plot_info_header: $3&m---------&r $1INFO $3&m---------
   plot_info: '$1ID: $2%id%$1&-$1Alias: $2%alias%$1&-$1Proprietario: $2%owner%$1&-$1Bioma:
-    $2%biome%$1&-$1Puoi costruire: $2%build%$1&-$1Valutazione: $2%rating%&-$1Visto: $2%seen%&-$1Membri fidati:
-    $2%trusted%$1&-$1Membri: $2%members%$1&-$1Bloccati: $2%denied%$1&-$1Flag: $2%flags%'
+    $2%biome%$1&-$1Puoi costruire: $2%build%$1&-$1Valutazione: $2%rating%&-$1Visto:
+    $2%seen%&-$1Membri fidati: $2%trusted%$1&-$1Membri: $2%members%$1&-$1Bloccati:
+    $2%denied%$1&-$1Flag: $2%flags%'
   plot_info_footer: $3&m---------&r $1INFO $3&m---------
   plot_info_trusted: $1Membri fidati:$2 %trusted%
   plot_info_members: $1Membri:$2 %members%
@@ -365,8 +363,8 @@ trusted:
   plot_removed_user: $1Il lotto %s in cui eri aggiunto è stato eliminato a causa dell'inattività del proprietario
 member:
   removed_players: $2Rimossi %s giocatori dal lotto.
-  already_owner: '$2L''utente %s0 è già il proprietario di questo lotto.'
-  already_added: '$2L''utente %s0 è già aggiunto a quella categoria.'
+  already_owner: $2L'utente %s0 è già il proprietario di questo lotto.
+  already_added: $2L'utente %s0 è già aggiunto a quella categoria.
   member_added: $4Quell'utente ora può costruire quando il proprietario è online
   member_removed: $1Hai rimosso con successo un utente dal lotto
   member_was_not_added: $2Quel giocatore non è aggiunto a questo lotto
@@ -374,6 +372,7 @@ member:
 owner:
   set_owner: $4Hai impostato correttamente il proprietario del lotto
   now_owner: $4Sei ora proprietario del lotto %s
+  set_owner_cancelled: $2L'azione del proprietario è stata annullata
 signs:
   owner_sign_line_1: '$1ID: $1%id%'
   owner_sign_line_2: '$1Proprietario:'

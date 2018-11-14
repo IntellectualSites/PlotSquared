@@ -17,9 +17,8 @@ public class Updater {
 
     public String getChanges() {
         if (changes == null) {
-            try (Scanner scanner = new Scanner(new URL(
-                "http://empcraft.com/plots/cl?" + Integer.toHexString(PlotSquared.get().getVersion().hash))
-                .openStream(), "UTF-8")) {
+            try (Scanner scanner = new Scanner(new URL("http://empcraft.com/plots/cl?" + Integer
+                .toHexString(PlotSquared.get().getVersion().hash)).openStream(), "UTF-8")) {
                 changes = scanner.useDelimiter("\\A").next();
             } catch (IOException e) {
                 e.printStackTrace();

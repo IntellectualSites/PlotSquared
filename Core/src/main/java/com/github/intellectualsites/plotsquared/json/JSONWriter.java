@@ -12,15 +12,15 @@ import java.io.Writer;
  * method for adding keys before values in objects. There are <code>array</code> and <code>endArray</code> methods that
  * make and bound array values, and <code>object</code> and <code>endObject</code> methods which make and bound object
  * values. All of these methods return the JSONWriter instance, permitting a cascade style. For example,
- * <p>
- * <p>
+ *
+ *
  * <pre>
  * new JSONWriter(myWriter).object().key(&quot;JSON&quot;).value(&quot;Hello, World!&quot;).endObject();
  * </pre>
  * <p>
  * which writes
- * <p>
- * <p>
+ *
+ *
  * <pre>
  * {"JSON":"Hello, World!"}
  * </pre>

@@ -8,6 +8,7 @@ import com.github.intellectualsites.plotsquared.sponge.events.*;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.EventManager;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -79,13 +80,24 @@ public class SpongeEventUtil extends EventUtil {
         callEvent(new PlayerPlotHelperEvent(SpongeUtil.getPlayer(initiator), plot, player, added));
     }
 
+    @Override
+    public boolean callOwnerChange(PlotPlayer initiator, Plot plot, UUID oldOwner, UUID newOwner,
+        boolean hasOldOwner) {
+        return callEvent(
+            new PlotChangeOwnerEvent(SpongeUtil.getPlayer(initiator), plot, oldOwner, newOwner,
+                hasOldOwner));
+    }
+
     @Override public boolean callFlagRemove(Flag flag, Object object, PlotCluster cluster) {
         return callEvent(new ClusterFlagRemoveEvent(flag, cluster));
     }
 
-    @Override public Rating callRating(PlotPlayer player, Plot plot, Rating rating) {
+    @Override @Nullable public Rating callRating(PlotPlayer player, Plot plot, Rating rating) {
         PlotRateEvent event = new PlotRateEvent(player, rating, plot);
         this.events.post(event);
+        if (event.isCancelled()) {
+            return null;
+        }
         return event.getRating();
     }
 

@@ -96,9 +96,9 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                 this.BScount++;
                 if (this.BScount > Settings.Chunk_Processor.MAX_TILES) {
                     this.BSblocked = true;
-                    PlotSquared
-                        .debug(C.PREFIX + "&cdetected unsafe WorldEdit: " + location.getBlockX() + ","
-                        + location.getBlockZ());
+                    PlotSquared.debug(
+                        C.PREFIX + "&cdetected unsafe WorldEdit: " + location.getBlockX() + ","
+                            + location.getBlockZ());
                 }
                 if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),
                     location.getBlockZ())) {

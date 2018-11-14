@@ -14,7 +14,8 @@ public class NukkitHybridGen extends NukkitPlotGenerator {
 
     private static Map<String, Object> defaultSettings(Map<String, Object> existing) {
         if (!existing.containsKey("world")) {
-            Map<Integer, Level> levels = ((NukkitMain) PlotSquared.get().IMP).getServer().getLevels();
+            Map<Integer, Level> levels =
+                ((NukkitMain) PlotSquared.get().IMP).getServer().getLevels();
             int max = -1;
             for (Map.Entry<Integer, Level> entry : levels.entrySet()) {
                 int id = entry.getKey();

@@ -53,7 +53,8 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         if (depth == 1) {
             return;
         }
-        if (PlotSquared.get().checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_10_0)
+        if (PlotSquared.get()
+            .checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_10_0)
             || entity instanceof ArmorStand) {
             if (!entity.hasGravity()) {
                 this.noGravity = true;
@@ -62,8 +63,8 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         switch (entity.getType()) {
             case ARROW:
             case BOAT:
-                if (PlotSquared
-                    .get().checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
+                if (PlotSquared.get()
+                    .checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
                     Boat boat = (Boat) entity;
                     this.dataByte = getOrdinal(TreeSpecies.values(), boat.getWoodType());
                 }
@@ -188,8 +189,8 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 storeLiving((LivingEntity) entity);
                 return;
             case SKELETON:
-                this.dataByte =
-                    getOrdinal(Skeleton.SkeletonType.values(), ((Skeleton) entity).getSkeletonType());
+                this.dataByte = getOrdinal(Skeleton.SkeletonType.values(),
+                    ((Skeleton) entity).getSkeletonType());
                 storeLiving((LivingEntity) entity);
                 return;
             case ARMOR_STAND:
@@ -323,7 +324,8 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
 
     void restoreEquipment(LivingEntity entity) {
         EntityEquipment equipment = entity.getEquipment();
-        if (PlotSquared.get().checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
+        if (PlotSquared.get()
+            .checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
             equipment.setItemInMainHand(this.lived.mainHand);
             equipment.setItemInOffHand(this.lived.offHand);
         } else {
@@ -367,7 +369,8 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
     }
 
     void storeEquipment(EntityEquipment equipment) {
-        if (PlotSquared.get().checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
+        if (PlotSquared.get()
+            .checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
             this.lived.mainHand = equipment.getItemInMainHand().clone();
             this.lived.offHand = equipment.getItemInOffHand().clone();
         } else {
@@ -412,8 +415,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         this.tamed.tamed = tamed.isTamed();
     }
 
-    @Override
-    public Entity spawn(World world, int xOffset, int zOffset) {
+    @Override public Entity spawn(World world, int xOffset, int zOffset) {
         Location location = new Location(world, this.x + xOffset, this.y, this.z + zOffset);
         location.setYaw(this.yaw);
         location.setPitch(this.pitch);
@@ -459,7 +461,8 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         if (this.depth == 1) {
             return entity;
         }
-        if (PlotSquared.get().checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_10_0)
+        if (PlotSquared.get()
+            .checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_10_0)
             || entity instanceof ArmorStand) {
             if (this.noGravity) {
                 entity.setGravity(false);
@@ -468,8 +471,8 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         switch (entity.getType()) {
             case ARROW:
             case BOAT:
-                if (PlotSquared
-                    .get().checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
+                if (PlotSquared.get()
+                    .checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
                     Boat boat = (Boat) entity;
                     boat.setWoodType(TreeSpecies.values()[dataByte]);
                 }
@@ -592,7 +595,8 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 return entity;
             case SKELETON:
                 if (this.dataByte != 0) {
-                    ((Skeleton) entity).setSkeletonType(Skeleton.SkeletonType.values()[this.dataByte]);
+                    ((Skeleton) entity)
+                        .setSkeletonType(Skeleton.SkeletonType.values()[this.dataByte]);
                 }
                 storeLiving((LivingEntity) entity);
                 return entity;
@@ -703,7 +707,8 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         }
     }
 
-    public void saveEntity() {}
+    public void saveEntity() {
+    }
 
     private byte getOrdinal(Object[] list, Object value) {
         for (byte i = 0; i < list.length; i++) {

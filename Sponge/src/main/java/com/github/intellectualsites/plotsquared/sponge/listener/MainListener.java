@@ -41,7 +41,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 @SuppressWarnings("Guava") public class MainListener {
-    
+
     /*
      * TODO:
      *  - Anything marked with a TODO below
@@ -69,6 +69,9 @@ import java.util.function.Predicate;
 
     @Listener public void onChat(MessageEvent event) {
         // TODO
+        if (event.isMessageCancelled())
+            return;
+
         Player player = SpongeUtil.getCause(event.getCause(), Player.class);
         if (player == null) {
             return;

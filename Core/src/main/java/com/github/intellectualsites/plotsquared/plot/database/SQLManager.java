@@ -754,7 +754,8 @@ import java.util.concurrent.atomic.AtomicInteger;
                 last = subList.size();
                 preparedStmt.addBatch();
             }
-            PlotSquared.debug("&aBatch 1: " + count + " | " + objList.get(0).getClass().getCanonicalName());
+            PlotSquared.debug(
+                "&aBatch 1: " + count + " | " + objList.get(0).getClass().getCanonicalName());
             preparedStmt.executeBatch();
             preparedStmt.clearParameters();
             preparedStmt.close();
@@ -797,7 +798,8 @@ import java.util.concurrent.atomic.AtomicInteger;
                 last = subList.size();
                 preparedStmt.addBatch();
             }
-            PlotSquared.debug("&aBatch 2: " + count + " | " + objList.get(0).getClass().getCanonicalName());
+            PlotSquared.debug(
+                "&aBatch 2: " + count + " | " + objList.get(0).getClass().getCanonicalName());
             preparedStmt.executeBatch();
             preparedStmt.clearParameters();
             preparedStmt.close();
@@ -1693,8 +1695,9 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 if (Settings.Enabled_Components.DATABASE_PURGER) {
                                     toDelete.add(last.temp);
                                 } else {
-                                    PlotSquared.debug("&cPLOT #" + id + "(" + last + ") in `" + this.prefix
-                                        + "plot` is a duplicate. Delete this plot or set `database-purger: true` in the settings.yml.");
+                                    PlotSquared.debug(
+                                        "&cPLOT #" + id + "(" + last + ") in `" + this.prefix
+                                            + "plot` is a duplicate. Delete this plot or set `database-purger: true` in the settings.yml.");
                                 }
                             }
                         } else {
@@ -1734,9 +1737,9 @@ import java.util.concurrent.atomic.AtomicInteger;
                     }
                 }
 
-            /*
-             * Getting helpers
-             */
+                /*
+                 * Getting helpers
+                 */
                 try (ResultSet r = statement.executeQuery(
                     "SELECT `user_uuid`, `plot_plot_id` FROM `" + this.prefix + "plot_helpers`")) {
                     ArrayList<Integer> toDelete = new ArrayList<>();
@@ -1762,9 +1765,9 @@ import java.util.concurrent.atomic.AtomicInteger;
                     deleteRows(toDelete, this.prefix + "plot_helpers", "plot_plot_id");
                 }
 
-            /*
-             * Getting trusted
-             */
+                /*
+                 * Getting trusted
+                 */
                 try (ResultSet r = statement.executeQuery(
                     "SELECT `user_uuid`, `plot_plot_id` FROM `" + this.prefix + "plot_trusted`")) {
                     ArrayList<Integer> toDelete = new ArrayList<>();
@@ -1790,9 +1793,9 @@ import java.util.concurrent.atomic.AtomicInteger;
                     deleteRows(toDelete, this.prefix + "plot_trusted", "plot_plot_id");
                 }
 
-            /*
-             * Getting denied
-             */
+                /*
+                 * Getting denied
+                 */
                 try (ResultSet r = statement.executeQuery(
                     "SELECT `user_uuid`, `plot_plot_id` FROM `" + this.prefix + "plot_denied`")) {
                     ArrayList<Integer> toDelete = new ArrayList<>();
@@ -2378,7 +2381,8 @@ import java.util.concurrent.atomic.AtomicInteger;
                 }
             }
         } catch (SQLException e) {
-            PlotSquared.debug("&7[WARN] Failed to fetch rating for plot " + plot.getId().toString());
+            PlotSquared
+                .debug("&7[WARN] Failed to fetch rating for plot " + plot.getId().toString());
             e.printStackTrace();
         }
         return map;
@@ -2970,7 +2974,8 @@ import java.util.concurrent.atomic.AtomicInteger;
             }
             // owner
             if (!plot.owner.equals(dataPlot.owner)) {
-                PlotSquared.debug("&8 - &7Setting owner: " + plot + " -> " + MainUtil.getName(plot.owner));
+                PlotSquared
+                    .debug("&8 - &7Setting owner: " + plot + " -> " + MainUtil.getName(plot.owner));
                 setOwner(plot, plot.owner);
             }
             // trusted
@@ -2979,8 +2984,9 @@ import java.util.concurrent.atomic.AtomicInteger;
                 HashSet<UUID> toRemove = (HashSet<UUID>) dataPlot.getTrusted().clone();
                 toRemove.removeAll(plot.getTrusted());
                 toAdd.removeAll(dataPlot.getTrusted());
-                PlotSquared.debug("&8 - &7Correcting " + (toAdd.size() + toRemove.size()) + " trusted for: "
-                    + plot);
+                PlotSquared.debug(
+                    "&8 - &7Correcting " + (toAdd.size() + toRemove.size()) + " trusted for: "
+                        + plot);
                 if (!toRemove.isEmpty()) {
                     for (UUID uuid : toRemove) {
                         removeTrusted(plot, uuid);
@@ -2997,8 +3003,9 @@ import java.util.concurrent.atomic.AtomicInteger;
                 HashSet<UUID> toRemove = (HashSet<UUID>) dataPlot.getMembers().clone();
                 toRemove.removeAll(plot.getMembers());
                 toAdd.removeAll(dataPlot.getMembers());
-                PlotSquared.debug("&8 - &7Correcting " + (toAdd.size() + toRemove.size()) + " members for: "
-                    + plot);
+                PlotSquared.debug(
+                    "&8 - &7Correcting " + (toAdd.size() + toRemove.size()) + " members for: "
+                        + plot);
                 if (!toRemove.isEmpty()) {
                     for (UUID uuid : toRemove) {
                         removeMember(plot, uuid);
@@ -3015,8 +3022,9 @@ import java.util.concurrent.atomic.AtomicInteger;
                 HashSet<UUID> toRemove = (HashSet<UUID>) dataPlot.getDenied().clone();
                 toRemove.removeAll(plot.getDenied());
                 toAdd.removeAll(dataPlot.getDenied());
-                PlotSquared.debug("&8 - &7Correcting " + (toAdd.size() + toRemove.size()) + " denied for: "
-                    + plot);
+                PlotSquared.debug(
+                    "&8 - &7Correcting " + (toAdd.size() + toRemove.size()) + " denied for: "
+                        + plot);
                 if (!toRemove.isEmpty()) {
                     for (UUID uuid : toRemove) {
                         removeDenied(plot, uuid);

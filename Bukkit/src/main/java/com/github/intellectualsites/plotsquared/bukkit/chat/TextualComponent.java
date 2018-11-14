@@ -48,7 +48,7 @@ public abstract class TextualComponent implements Cloneable {
 
     /**
      * Create a textual component representing a string literal.
-     * <p>
+     *
      * <p>This is the default type of textual component when a single string
      * literal is given to a method.
      *
@@ -98,7 +98,7 @@ public abstract class TextualComponent implements Cloneable {
     /**
      * Create a textual component representing a scoreboard value.
      * The client will see the score of the specified player for the specified objective as the text represented by this component.
-     * <p>
+     *
      * <p><b>This method is currently guaranteed to throw an {@code UnsupportedOperationException}
      * as it is only supported on snapshot clients.</b>
      *
@@ -234,7 +234,7 @@ public abstract class TextualComponent implements Cloneable {
     /**
      * Internal class used to represent a text component with a nested JSON
      * value.
-     * <p>
+     *
      * <p>Exception validating done is on keys and values.
      */
     private static final class ComplexTextTypeComponent extends TextualComponent

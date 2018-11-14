@@ -7,18 +7,15 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
-@Getter
-public abstract class EntityWrapper {
-
-    private final Entity entity;
-    private final EntityType type;
-
-    public double x;
-    public double y;
-    public double z;
+@Getter public abstract class EntityWrapper {
 
     protected final float yaw;
     protected final float pitch;
+    private final Entity entity;
+    private final EntityType type;
+    public double x;
+    public double y;
+    public double z;
 
     EntityWrapper(@NonNull final Entity entity) {
         this.entity = entity;

@@ -94,7 +94,8 @@ public class Alias extends SubCommand {
                 return false;
             }
         }
-        if (UUIDHandler.nameExists(new StringWrapper(alias)) || PlotSquared.get().hasPlotArea(alias)) {
+        if (UUIDHandler.nameExists(new StringWrapper(alias)) || PlotSquared.get()
+            .hasPlotArea(alias)) {
             MainUtil.sendMessage(player, C.ALIAS_IS_TAKEN);
             return false;
         }

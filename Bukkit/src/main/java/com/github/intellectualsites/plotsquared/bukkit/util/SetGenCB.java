@@ -52,6 +52,7 @@ public class SetGenCB {
                 }
             }
         }
-        PlotSquared.get().loadWorld(world.getName(), PlotSquared.get().IMP.getGenerator(world.getName(), null));
+        PlotSquared.get()
+            .loadWorld(world.getName(), PlotSquared.get().IMP.getGenerator(world.getName(), null));
     }
 }

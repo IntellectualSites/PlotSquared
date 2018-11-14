@@ -136,8 +136,9 @@ public final class Flags {
                 }
                 Flag flag = (Flag) fieldValue;
                 if (!flag.getName().equals(fieldName)) {
-                    PlotSquared.debug(Flags.class + "Field doesn't match: " + fieldName + " != " + flag
-                        .getName());
+                    PlotSquared.debug(
+                        Flags.class + "Field doesn't match: " + fieldName + " != " + flag
+                            .getName());
                 }
                 flags.put(flag.getName(), flag);
             }

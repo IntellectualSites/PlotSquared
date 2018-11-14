@@ -87,7 +87,7 @@ public class Configuration {
     };
     public static final SettingValue<PlotBlock> BLOCK = new SettingValue<PlotBlock>("BLOCK") {
         @Override public boolean validateValue(String string) {
-            StringComparison.ComparisonResult value =
+            StringComparison<PlotBlock>.ComparisonResult value =
                 WorldUtil.IMP.getClosestBlock(string);
             return !(value == null || value.match > 1);
         }

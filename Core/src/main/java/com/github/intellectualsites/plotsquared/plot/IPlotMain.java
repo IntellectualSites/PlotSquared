@@ -44,7 +44,7 @@ public interface IPlotMain extends ILogger {
 
     /**
      * Disable the implementation.
-     * <p>
+     *
      * <ul>
      * <li>If a full disable isn't feasibly, just disable what it can.
      * </ul>

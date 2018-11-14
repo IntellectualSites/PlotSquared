@@ -14,16 +14,16 @@ import java.util.Map;
  * accessing the values by index, and {@code put} methods for adding or replacing values. The values can be any of
  * these types: {@code Boolean}, {@code JSONArray}, {@code JSONObject}, {@code Number},
  * {@code String}, or the {@code JSONObject.NULL object}.
- * <p>
+ *
  * <p>The constructor can convert a JSON text into a Java object. The {@code toString} method converts to JSON text.
- * <p>
+ *
  * <p>A {@code get} method returns a value if one can be found, and throws an exception if one cannot be found. An
  * {@code opt} method returns a default value instead of throwing an exception, and so is useful for obtaining
  * optional values.
- * <p>
+ *
  * <p>The generic {@code get()} and {@code opt()} methods return an object which you can cast or query for type.
  * There are also typed {@code get} and {@code opt} methods that do type checking and type coercion for you.
- * <p>
+ *
  * <p>The texts produced by the {@code toString} methods strictly conform to JSON syntax rules. The constructors are
  * more forgiving in the texts they will accept: <ul> <li>An extra {@code ,}&nbsp;<small>(comma)</small> may appear
  * just before the closing bracket.</li> <li>The {@code null} value will be inserted when there is {@code ,}

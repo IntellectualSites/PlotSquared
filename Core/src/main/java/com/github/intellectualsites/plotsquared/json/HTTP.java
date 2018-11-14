@@ -43,8 +43,8 @@ public class HTTP {
 
     /**
      * Convert a JSONObject into an HTTP header. A request header must contain
-     * <p>
-     * <p>
+     *
+     *
      * <pre>
      * {
      *    Method: "POST" (for example),
@@ -54,8 +54,8 @@ public class HTTP {
      * </pre>
      * <p>
      * A response header must contain
-     * <p>
-     * <p>
+     *
+     *
      * <pre>
      * {
      *    "HTTP-Version": "HTTP/1.1" (for example),

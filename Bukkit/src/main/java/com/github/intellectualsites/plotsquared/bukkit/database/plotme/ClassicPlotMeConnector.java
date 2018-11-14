@@ -113,8 +113,8 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                         }
                     }
                     if (name.isEmpty()) {
-                        PlotSquared
-                            .log("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
+                        PlotSquared.log(
+                            "&cCould not identify owner for plot: " + id + " -> '" + name + "'");
                         missing++;
                         continue;
                     }
@@ -129,8 +129,10 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         }
         if (missing > 0) {
             PlotSquared.log("&cSome names could not be identified:");
-            PlotSquared.log("&7 - Empty quotes mean PlotMe just stored an unowned plot in the database");
-            PlotSquared.log("&7 - Names you have never seen before could be from people mistyping commands");
+            PlotSquared
+                .log("&7 - Empty quotes mean PlotMe just stored an unowned plot in the database");
+            PlotSquared.log(
+                "&7 - Names you have never seen before could be from people mistyping commands");
             PlotSquared.log(
                 "&7 - Converting from a non-uuid version of PlotMe can't identify owners if the playerdata files are deleted (these plots will "
                     + "remain unknown until the player connects)");
@@ -232,7 +234,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
     }
 
     @Override public boolean accepts(String version) {
-        return version == null || PlotSquared.get().canUpdate(version, "0.17.0") || PlotSquared.get()
-            .canUpdate("0.999.999", version);
+        return version == null || PlotSquared.get().canUpdate(version, "0.17.0") || PlotSquared
+            .get().canUpdate("0.999.999", version);
     }
 }

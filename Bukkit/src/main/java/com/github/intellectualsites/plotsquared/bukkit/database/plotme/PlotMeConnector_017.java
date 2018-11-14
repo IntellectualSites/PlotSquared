@@ -58,7 +58,8 @@ public class PlotMeConnector_017 extends APlotMeConnector {
             PlotSquared.debug("=======================================");
             PlotSquared.debug(
                 "&8 - &7The database does not match the version specified in the PlotMe config");
-            PlotSquared.debug("&8 - &7Please correct this, or if you are unsure, the most common is 0.16.3");
+            PlotSquared.debug(
+                "&8 - &7Please correct this, or if you are unsure, the most common is 0.16.3");
             return null;
         }
         boolean checkUUID = DBFunc.hasColumn(resultSet, "ownerID");
@@ -142,7 +143,8 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                 int key = resultSet.getInt("plot_id");
                 Plot plot = plots.get(key);
                 if (plot == null) {
-                    PlotSquared.log("&6Denied (" + key + ") references deleted plot; ignoring entry.");
+                    PlotSquared
+                        .log("&6Denied (" + key + ") references deleted plot; ignoring entry.");
                     continue;
                 }
                 String player = resultSet.getString("player");
@@ -159,7 +161,8 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                 int key = resultSet.getInt("plot_id");
                 Plot plot = plots.get(key);
                 if (plot == null) {
-                    PlotSquared.log("&6Allowed (" + key + ") references deleted plot; ignoring entry.");
+                    PlotSquared
+                        .log("&6Allowed (" + key + ") references deleted plot; ignoring entry.");
                     continue;
                 }
                 String player = resultSet.getString("player");

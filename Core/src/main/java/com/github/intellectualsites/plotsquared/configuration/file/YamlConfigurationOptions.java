@@ -37,7 +37,7 @@ public class YamlConfigurationOptions extends FileConfigurationOptions {
 
     /**
      * Gets how much spaces should be used to indent each line.
-     * <p>
+     *
      * <p>The minimum value this may be is 2, and the maximum is 9.
      *
      * @return How much to indent by
@@ -48,7 +48,7 @@ public class YamlConfigurationOptions extends FileConfigurationOptions {
 
     /**
      * Sets how much spaces should be used to indent each line.
-     * <p>
+     *
      * <p>The minimum value this may be is 2, and the maximum is 9.
      *
      * @param value New indent

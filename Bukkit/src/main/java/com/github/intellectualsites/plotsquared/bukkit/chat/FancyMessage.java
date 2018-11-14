@@ -155,7 +155,8 @@ public class FancyMessage
                         // Assume composite type
                         // The only composite type we currently store is another FancyMessage
                         // Therefore, recursion time!
-                        component.hoverActionData = deserialize(object.get("value").toString() /* This should properly serialize the JSON object as a JSON string */);
+                        component.hoverActionData = deserialize(object.get("value")
+                            .toString() /* This should properly serialize the JSON object as a JSON string */);
                     }
                 } else if (entry.getKey().equals("insertion")) {
                     component.insertionData = entry.getValue().getAsString();
@@ -622,8 +623,7 @@ public class FancyMessage
      * @return This builder instance.
      */
     public FancyMessage formattedTooltip(final Iterable<FancyMessage> lines) {
-        return formattedTooltip(
-            ArrayWrapper.toArray(lines, FancyMessage.class));
+        return formattedTooltip(ArrayWrapper.toArray(lines, FancyMessage.class));
     }
 
     /**
@@ -664,8 +664,7 @@ public class FancyMessage
      * @return This builder instance.
      */
     public FancyMessage translationReplacements(final Iterable<FancyMessage> replacements) {
-        return translationReplacements(
-            ArrayWrapper.toArray(replacements, FancyMessage.class));
+        return translationReplacements(ArrayWrapper.toArray(replacements, FancyMessage.class));
     }
 
     /**

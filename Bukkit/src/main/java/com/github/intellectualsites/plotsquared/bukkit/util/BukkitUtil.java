@@ -24,8 +24,7 @@ import org.bukkit.material.*;
 import javax.annotation.Nullable;
 import java.util.*;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
-public class BukkitUtil extends WorldUtil {
+@SuppressWarnings({"unused", "WeakerAccess"}) public class BukkitUtil extends WorldUtil {
 
     private static String lastString = null;
     private static World lastWorld = null;
@@ -86,7 +85,7 @@ public class BukkitUtil extends WorldUtil {
 
     /**
      * Get the PlotPlayer for an offline player.
-     * <p>
+     *
      * <p>Note that this will work if the player is offline, however not all
      * functionality will work.
      *
@@ -242,8 +241,9 @@ public class BukkitUtil extends WorldUtil {
         return getWorld(world).getBiome(x, z).name();
     }
 
-    @Override @SuppressWarnings("deprecation") public void setSign(@NonNull final String worldName,
-        final int x, final int y, final int z, @NonNull final String[] lines) {
+    @Override @SuppressWarnings("deprecation")
+    public void setSign(@NonNull final String worldName, final int x, final int y, final int z,
+        @NonNull final String[] lines) {
         final World world = getWorld(worldName);
         final Block block = world.getBlockAt(x, y, z);
         //        block.setType(Material.AIR);
@@ -351,7 +351,8 @@ public class BukkitUtil extends WorldUtil {
         return list;
     }
 
-    @Override public boolean addItems(@NonNull final String worldName, @NonNull final PlotItem items) {
+    @Override
+    public boolean addItems(@NonNull final String worldName, @NonNull final PlotItem items) {
         final World world = getWorld(worldName);
         final Block block = world.getBlockAt(items.x, items.y, items.z);
         if (block == null) {
@@ -403,7 +404,8 @@ public class BukkitUtil extends WorldUtil {
         }
     }
 
-    @Override @Nullable public StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name) {
+    @Override @Nullable
+    public StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name) {
         try {
             final Material material = Material.valueOf(name.toUpperCase());
             return new StringComparison<PlotBlock>().new ComparisonResult(0,
@@ -439,7 +441,8 @@ public class BukkitUtil extends WorldUtil {
         return null;
     }
 
-    @Override public void setBiomes(@NonNull final String worldName, @NonNull final RegionWrapper region,
+    @Override
+    public void setBiomes(@NonNull final String worldName, @NonNull final RegionWrapper region,
         @NonNull final String biomeString) {
         final World world = getWorld(worldName);
         final Biome biome = Biome.valueOf(biomeString.toUpperCase());

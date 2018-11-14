@@ -78,7 +78,8 @@ public class PlotAnalysis {
         TaskManager.runTaskAsync(new Runnable() {
             @Override public void run() {
                 Iterator<Plot> iterator = plots.iterator();
-                PlotSquared.debug(" - $1Reducing " + plots.size() + " plots to those with sufficient data");
+                PlotSquared.debug(
+                    " - $1Reducing " + plots.size() + " plots to those with sufficient data");
                 while (iterator.hasNext()) {
                     Plot plot = iterator.next();
                     if (plot.getSettings().ratings == null || plot.getSettings().getRatings()
@@ -168,15 +169,17 @@ public class PlotAnalysis {
                     }
                 }
 
-                PlotSquared.debug(" - $1Waiting on plot rating thread: " + mi.intValue() * 100 / plots.size()
-                    + "%");
+                PlotSquared.debug(
+                    " - $1Waiting on plot rating thread: " + mi.intValue() * 100 / plots.size()
+                        + "%");
                 try {
                     ratingAnalysis.join();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
-                PlotSquared.debug(" - $1Processing and grouping single plot analysis for bulk processing");
+                PlotSquared
+                    .debug(" - $1Processing and grouping single plot analysis for bulk processing");
                 for (int i = 0; i < plots.size(); i++) {
                     Plot plot = plots.get(i);
                     PlotSquared.debug(" | " + plot);

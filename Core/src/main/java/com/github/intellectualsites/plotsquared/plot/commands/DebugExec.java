@@ -37,8 +37,9 @@ import java.util.*;
                 if (file.exists()) {
                     init();
                     String script = StringMan.join(Files.readLines(new File(new File(
-                        PlotSquared.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS),
-                        "start.js"), StandardCharsets.UTF_8), System.getProperty("line.separator"));
+                            PlotSquared.get().IMP.getDirectory() + File.separator
+                                + Settings.Paths.SCRIPTS), "start.js"), StandardCharsets.UTF_8),
+                        System.getProperty("line.separator"));
                     this.scope.put("THIS", this);
                     this.scope.put("PlotPlayer", ConsolePlayer.getConsole());
                     this.engine.eval(script, this.scope);
@@ -261,8 +262,8 @@ import java.util.*;
                 case "addcmd":
                     try {
                         final String cmd = StringMan.join(Files.readLines(MainUtil.getFile(new File(
-                                PlotSquared.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS),
-                            args[1]), StandardCharsets.UTF_8),
+                                PlotSquared.get().IMP.getDirectory() + File.separator
+                                    + Settings.Paths.SCRIPTS), args[1]), StandardCharsets.UTF_8),
                             System.getProperty("line.separator"));
                         new Command(MainCommand.getInstance(), true, args[1].split("\\.")[0], null,
                             RequiredType.NONE, CommandCategory.DEBUG) {
@@ -291,8 +292,8 @@ import java.util.*;
                 case "run":
                     try {
                         script = StringMan.join(Files.readLines(MainUtil.getFile(new File(
-                                PlotSquared.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS),
-                            args[1]), StandardCharsets.UTF_8),
+                                PlotSquared.get().IMP.getDirectory() + File.separator
+                                    + Settings.Paths.SCRIPTS), args[1]), StandardCharsets.UTF_8),
                             System.getProperty("line.separator"));
                         if (args.length > 2) {
                             HashMap<String, String> replacements = new HashMap<>();
@@ -307,8 +308,8 @@ import java.util.*;
                     }
                     break;
                 case "list-scripts":
-                    String path =
-                        PlotSquared.get().IMP.getDirectory() + File.separator + Settings.Paths.SCRIPTS;
+                    String path = PlotSquared.get().IMP.getDirectory() + File.separator
+                        + Settings.Paths.SCRIPTS;
                     File folder = new File(path);
                     File[] filesArray = folder.listFiles();
 
@@ -411,13 +412,15 @@ import java.util.*;
                             } catch (ScriptException e) {
                                 e.printStackTrace();
                             }
-                            PlotSquared.log("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
+                            PlotSquared.log(
+                                "> " + (System.currentTimeMillis() - start) + "ms -> " + result);
                         }
                     });
                 } else {
                     long start = System.currentTimeMillis();
                     Object result = this.engine.eval(script, this.scope);
-                    PlotSquared.log("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
+                    PlotSquared
+                        .log("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
                 }
                 return true;
             } catch (ScriptException e) {

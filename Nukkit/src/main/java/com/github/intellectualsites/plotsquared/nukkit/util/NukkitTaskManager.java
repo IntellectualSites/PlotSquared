@@ -12,6 +12,7 @@ public class NukkitTaskManager extends TaskManager {
     private final NukkitMain plugin;
     private AtomicInteger index = new AtomicInteger(0);
     private HashMap<Integer, Integer> tasks = new HashMap<>();
+
     public NukkitTaskManager(NukkitMain bukkitMain) {
         this.plugin = bukkitMain;
     }

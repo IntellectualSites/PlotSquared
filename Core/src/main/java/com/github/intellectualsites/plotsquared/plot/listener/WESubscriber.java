@@ -39,8 +39,9 @@ public class WESubscriber {
                 Player player = (Player) actor;
                 Location loc = player.getLocation();
                 com.github.intellectualsites.plotsquared.plot.object.Location pLoc =
-                    new com.github.intellectualsites.plotsquared.plot.object.Location(player.getWorld().getName(),
-                        loc.getBlockX(), loc.getBlockX(), loc.getBlockZ());
+                    new com.github.intellectualsites.plotsquared.plot.object.Location(
+                        player.getWorld().getName(), loc.getBlockX(), loc.getBlockX(),
+                        loc.getBlockZ());
                 Plot plot = pLoc.getPlot();
                 if (plot == null) {
                     event.setExtent(new NullExtent());
