@@ -966,18 +966,16 @@ public class PS {
      *
      * @param area the {@code PlotArea}
      * @param uuid the plot owner
-     * @return Set of plot
+     * @return Set of plots
      */
     public Set<Plot> getPlots(PlotArea area, UUID uuid) {
-        ArrayList<Plot> myplots = new ArrayList<>();
+        final HashSet<Plot> plots = new HashSet<>();
         for (Plot plot : getPlots(area)) {
-            if (plot.hasOwner()) {
-                if (plot.isOwnerAbs(uuid)) {
-                    myplots.add(plot);
-                }
+            if (plot.hasOwner() && plot.isOwnerAbs(uuid)) {
+                plots.add(plot);
             }
         }
-        return new HashSet<>(myplots);
+        return Collections.unmodifiableSet(plots);
     }
 
     /**
