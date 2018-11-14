@@ -36,6 +36,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("unused")
 public class PlayerEvents extends PlotListener implements Listener {
 
     private boolean pistonBlocks = true;

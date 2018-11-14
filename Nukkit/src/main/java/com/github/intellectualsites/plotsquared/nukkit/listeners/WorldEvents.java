@@ -14,6 +14,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 
 import java.util.HashMap;
 
+@SuppressWarnings("unused")
 public class WorldEvents implements Listener {
 
     public WorldEvents() {

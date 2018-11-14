@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public class ForceFieldListener {
 
     private static Set<PlotPlayer> getNearbyPlayers(Player player, Plot plot) {

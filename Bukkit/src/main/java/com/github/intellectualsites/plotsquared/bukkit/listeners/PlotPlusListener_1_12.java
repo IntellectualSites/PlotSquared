@@ -12,7 +12,9 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public class PlotPlusListener_1_12 implements Listener {
+
     @EventHandler public void onItemPickup(EntityPickupItemEvent event) {
         LivingEntity ent = event.getEntity();
         if (ent instanceof Player) {

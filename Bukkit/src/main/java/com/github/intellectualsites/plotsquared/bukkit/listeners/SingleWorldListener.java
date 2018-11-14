@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 
 import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getRefClass;
 
+@SuppressWarnings("unused")
 public class SingleWorldListener implements Listener {
 
     private Method methodGetHandleChunk;

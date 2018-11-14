@@ -56,6 +56,7 @@ import java.util.regex.Pattern;
 /**
  * Player Events involving plots.
  */
+@SuppressWarnings("unused")
 public class PlayerEvents extends PlotListener implements Listener {
 
     private boolean pistonBlocks = true;

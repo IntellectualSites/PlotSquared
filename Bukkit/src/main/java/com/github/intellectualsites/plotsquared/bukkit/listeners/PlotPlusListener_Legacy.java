@@ -11,7 +11,9 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public class PlotPlusListener_Legacy implements Listener {
+    
     @EventHandler public void onItemPickup(PlayerPickupItemEvent event) {
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
