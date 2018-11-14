@@ -9,7 +9,6 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.flag.IntegerFlag;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.*;
@@ -79,103 +78,23 @@ public class PlayerEvents extends PlotListener implements Listener {
 
     public static void sendBlockChange(final org.bukkit.Location bloc, final Material type,
         final byte data) {
-        TaskManager.runTaskLater(new Runnable() {
-            @Override public void run() {
-                String world = bloc.getWorld().getName();
-                int x = bloc.getBlockX();
-                int z = bloc.getBlockZ();
-                int distance = Bukkit.getViewDistance() * 16;
-                for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
-                    PlotPlayer player = entry.getValue();
-                    Location loc = player.getLocation();
-                    if (loc.getWorld().equals(world)) {
-                        if (16 * Math.abs(loc.getX() - x) / 16 > distance
-                            || 16 * Math.abs(loc.getZ() - z) / 16 > distance) {
-                            continue;
-                        }
-                        ((BukkitPlayer) player).player.sendBlockChange(bloc, type, data);
+        TaskManager.runTaskLater(() -> {
+            String world = bloc.getWorld().getName();
+            int x = bloc.getBlockX();
+            int z = bloc.getBlockZ();
+            int distance = Bukkit.getViewDistance() * 16;
+            for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
+                PlotPlayer player = entry.getValue();
+                Location loc = player.getLocation();
+                if (loc.getWorld().equals(world)) {
+                    if (16 * Math.abs(loc.getX() - x) / 16 > distance
+                        || 16 * Math.abs(loc.getZ() - z) / 16 > distance) {
+                        continue;
                     }
+                    ((BukkitPlayer) player).player.sendBlockChange(bloc, type, data);
                 }
             }
         }, 3);
-    }
-
-    public static boolean checkEntity(Plot plot, IntegerFlag... flags) {
-        if (Settings.Done.RESTRICT_BUILDING && Flags.DONE.isSet(plot)) {
-            return true;
-        }
-        int[] mobs = null;
-        for (IntegerFlag flag : flags) {
-            int i;
-            switch (flag.getName()) {
-                case "entity-cap":
-                    i = 0;
-                    break;
-                case "mob-cap":
-                    i = 3;
-                    break;
-                case "hostile-cap":
-                    i = 2;
-                    break;
-                case "animal-cap":
-                    i = 1;
-                    break;
-                case "vehicle-cap":
-                    i = 4;
-                    break;
-                case "misc-cap":
-                    i = 5;
-                    break;
-                default:
-                    i = 0;
-            }
-            int cap = plot.getFlag(flag, Integer.MAX_VALUE);
-            if (cap == Integer.MAX_VALUE) {
-                continue;
-            }
-            if (cap == 0) {
-                return true;
-            }
-            if (mobs == null) {
-                mobs = plot.countEntities();
-            }
-            if (mobs[i] >= cap) {
-                plot.setMeta("EntityCount", mobs);
-                plot.setMeta("EntityCountTime", System.currentTimeMillis());
-                return true;
-            }
-        }
-        if (mobs != null) {
-            for (IntegerFlag flag : flags) {
-                int i;
-                switch (flag.getName()) {
-                    case "entity-cap":
-                        i = 0;
-                        break;
-                    case "mob-cap":
-                        i = 3;
-                        break;
-                    case "hostile-cap":
-                        i = 2;
-                        break;
-                    case "animal-cap":
-                        i = 1;
-                        break;
-                    case "vehicle-cap":
-                        i = 4;
-                        break;
-                    case "misc-cap":
-                        i = 5;
-                        break;
-                    default:
-                        i = 0;
-                }
-                mobs[i]++;
-            }
-            plot.setMeta("EntityCount", mobs);
-            plot.setMeta("EntityCountTime", System.currentTimeMillis());
-        }
-        return false;
     }
 
     public static boolean checkEntity(Entity entity, Plot plot) {
@@ -219,11 +138,11 @@ public class PlayerEvents extends PlotListener implements Listener {
             case EVOKER_FANGS:
             case UNKNOWN:
                 // non moving / unmovable
-                return checkEntity(plot, Flags.ENTITY_CAP);
+                return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP);
             case ITEM_FRAME:
             case PAINTING:
             case ARMOR_STAND:
-                return checkEntity(plot, Flags.ENTITY_CAP, Flags.MISC_CAP);
+                return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MISC_CAP);
             // misc
             case MINECART:
             case MINECART_CHEST:
@@ -233,7 +152,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             case MINECART_MOB_SPAWNER:
             case MINECART_TNT:
             case BOAT:
-                return checkEntity(plot, Flags.ENTITY_CAP, Flags.VEHICLE_CAP);
+                return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.VEHICLE_CAP);
             case POLAR_BEAR:
             case RABBIT:
             case SHEEP:
@@ -255,7 +174,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             case ZOMBIE_HORSE:
             case SKELETON_HORSE:
                 // animal
-                return checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.ANIMAL_CAP);
+                return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.ANIMAL_CAP);
             case BLAZE:
             case CAVE_SPIDER:
             case CREEPER:
@@ -284,25 +203,25 @@ public class PlayerEvents extends PlotListener implements Listener {
             case VEX:
             case ZOMBIE_VILLAGER:
                 // monster
-                return checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.HOSTILE_CAP);
+                return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.HOSTILE_CAP);
             default:
                 if (entity instanceof LivingEntity) {
                     if (entity instanceof Animals) {
-                        return checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.ANIMAL_CAP);
+                        return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.ANIMAL_CAP);
                     } else if (entity instanceof Monster) {
-                        return checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP,
+                        return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP,
                             Flags.HOSTILE_CAP);
                     } else {
-                        return checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP);
+                        return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP);
                     }
                 }
                 if (entity instanceof Vehicle) {
-                    return checkEntity(plot, Flags.ENTITY_CAP, Flags.VEHICLE_CAP);
+                    return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.VEHICLE_CAP);
                 }
                 if (entity instanceof Hanging) {
-                    return checkEntity(plot, Flags.ENTITY_CAP, Flags.MISC_CAP);
+                    return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MISC_CAP);
                 }
-                return checkEntity(plot, Flags.ENTITY_CAP);
+                return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP);
         }
     }
 
@@ -745,8 +664,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                         vehicle.eject();
                         vehicle.setVelocity(new Vector(0d, 0d, 0d));
                         vehicle.teleport(dest);
-                        for (final Entity entity : passengers)
-                            vehicle.addPassenger(entity);
+                        passengers.forEach(vehicle::addPassenger);
                     } else {
                         vehicle.eject();
                         vehicle.setVelocity(new Vector(0d, 0d, 0d));

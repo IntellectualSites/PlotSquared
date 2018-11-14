@@ -27,7 +27,6 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.flag.IntegerFlag;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.*;
@@ -43,84 +42,6 @@ public class PlayerEvents extends PlotListener implements Listener {
     // To prevent recursion
     private boolean tmpTeleport = true;
 
-    public static boolean checkEntity(Plot plot, IntegerFlag... flags) {
-        if (Settings.Done.RESTRICT_BUILDING && Flags.DONE.isSet(plot)) {
-            return true;
-        }
-        int[] mobs = null;
-        for (IntegerFlag flag : flags) {
-            int i;
-            switch (flag.getName()) {
-                case "entity-cap":
-                    i = 0;
-                    break;
-                case "mob-cap":
-                    i = 3;
-                    break;
-                case "hostile-cap":
-                    i = 2;
-                    break;
-                case "animal-cap":
-                    i = 1;
-                    break;
-                case "vehicle-cap":
-                    i = 4;
-                    break;
-                case "misc-cap":
-                    i = 5;
-                    break;
-                default:
-                    i = 0;
-            }
-            int cap = plot.getFlag(flag, Integer.MAX_VALUE);
-            if (cap == Integer.MAX_VALUE) {
-                continue;
-            }
-            if (cap == 0) {
-                return true;
-            }
-            if (mobs == null) {
-                mobs = plot.countEntities();
-            }
-            if (mobs[i] >= cap) {
-                plot.setMeta("EntityCount", mobs);
-                plot.setMeta("EntityCountTime", System.currentTimeMillis());
-                return true;
-            }
-        }
-        if (mobs != null) {
-            for (IntegerFlag flag : flags) {
-                int i;
-                switch (flag.getName()) {
-                    case "entity-cap":
-                        i = 0;
-                        break;
-                    case "mob-cap":
-                        i = 3;
-                        break;
-                    case "hostile-cap":
-                        i = 2;
-                        break;
-                    case "animal-cap":
-                        i = 1;
-                        break;
-                    case "vehicle-cap":
-                        i = 4;
-                        break;
-                    case "misc-cap":
-                        i = 5;
-                        break;
-                    default:
-                        i = 0;
-                }
-                mobs[i]++;
-            }
-            plot.setMeta("EntityCount", mobs);
-            plot.setMeta("EntityCountTime", System.currentTimeMillis());
-        }
-        return false;
-    }
-
     public static boolean checkEntity(Entity entity, Plot plot) {
         if (plot == null || !plot.hasOwner() || plot.getFlags().isEmpty() && plot
             .getArea().DEFAULT_FLAGS.isEmpty()) {
@@ -129,23 +50,23 @@ public class PlayerEvents extends PlotListener implements Listener {
         if (entity instanceof EntityLiving) {
             if (entity instanceof EntityCreature) {
                 if (entity instanceof EntityAnimal || entity instanceof EntityWaterAnimal) {
-                    return checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.ANIMAL_CAP);
+                    return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.ANIMAL_CAP);
                 } else if (entity instanceof EntityMob) {
-                    return checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.HOSTILE_CAP);
+                    return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.HOSTILE_CAP);
                 } else if (entity instanceof EntityHuman) {
                     return false;
                 } else {
-                    return checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.MOB_CAP);
+                    return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.MOB_CAP);
                 }
             } else {
-                return checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP);
+                return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP);
             }
         } else if (entity instanceof EntityVehicle) {
-            return checkEntity(plot, Flags.ENTITY_CAP, Flags.VEHICLE_CAP);
+            return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.VEHICLE_CAP);
         } else if (entity instanceof EntityHanging) {
-            return checkEntity(plot, Flags.ENTITY_CAP, Flags.MISC_CAP);
+            return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MISC_CAP);
         } else {
-            return checkEntity(plot, Flags.ENTITY_CAP);
+            return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP);
         }
     }
 
