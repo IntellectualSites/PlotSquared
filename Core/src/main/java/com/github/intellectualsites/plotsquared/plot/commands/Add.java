@@ -37,7 +37,7 @@ public class Add extends Command {
         int size = plot.getTrusted().size() + plot.getMembers().size();
         while (iter.hasNext()) {
             UUID uuid = iter.next();
-            if (uuid == DBFunc.everyone && !(
+            if (uuid == DBFunc.EVERYONE && !(
                 Permissions.hasPermission(player, C.PERMISSION_TRUST_EVERYONE) || Permissions
                     .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_TRUST))) {
                 MainUtil.sendMessage(player, C.INVALID_PLAYER, MainUtil.getName(uuid));
@@ -63,7 +63,7 @@ public class Add extends Command {
             @Override // Success
             public void run() {
                 for (UUID uuid : uuids) {
-                    if (uuid != DBFunc.everyone) {
+                    if (uuid != DBFunc.EVERYONE) {
                         if (!plot.removeTrusted(uuid)) {
                             if (plot.getDenied().contains(uuid)) {
                                 plot.removeDenied(uuid);

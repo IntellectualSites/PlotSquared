@@ -100,7 +100,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             UUID owner = UUIDHandler.getUUID(name, null);
             if (owner == null) {
                 if ("*".equals(name)) {
-                    owner = DBFunc.everyone;
+                    owner = DBFunc.EVERYONE;
                 } else {
                     if (checkUUID || checkUUID2) {
                         byte[] bytes = resultSet.getBytes(column);
@@ -165,7 +165,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                 UUID denied = UUIDHandler.getUUID(name, null);
                 if (denied == null) {
                     if ("*".equals(name)) {
-                        denied = DBFunc.everyone;
+                        denied = DBFunc.EVERYONE;
                     } else if (DBFunc.hasColumn(resultSet, "playerid")) {
                         byte[] bytes = resultSet.getBytes("playerid");
                         if (bytes != null) {
@@ -200,7 +200,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                 UUID helper = UUIDHandler.getUUID(name, null);
                 if (helper == null) {
                     if ("*".equals(name)) {
-                        helper = DBFunc.everyone;
+                        helper = DBFunc.EVERYONE;
                     } else if (DBFunc.hasColumn(resultSet, "playerid")) {
                         byte[] bytes = resultSet.getBytes("playerid");
                         if (bytes != null) {

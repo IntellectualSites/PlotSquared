@@ -678,8 +678,8 @@ public class PlayerEvents extends PlotListener implements Listener {
     public void onTeleport(PlayerTeleportEvent event) {
         if (event.getTo() == null || event.getFrom() == null || !event.getFrom().getWorld()
             .equals(event.getTo().getWorld())) {
-            BukkitUtil.getPlayer(event.getPlayer()).deleteMeta("location");
-            BukkitUtil.getPlayer(event.getPlayer()).deleteMeta("lastplot");
+            BukkitUtil.getPlayer(event.getPlayer()).deleteMeta(PlotPlayer.META_LOCATION);
+            BukkitUtil.getPlayer(event.getPlayer()).deleteMeta(PlotPlayer.META_LAST_PLOT);
             org.bukkit.Location to = event.getTo();
             if (to != null) {
                 Player player = event.getPlayer();
@@ -796,14 +796,14 @@ public class PlayerEvents extends PlotListener implements Listener {
             TaskManager.TELEPORT_QUEUE.remove(pp.getName());
             // Set last location
             Location loc = BukkitUtil.getLocation(to);
-            pp.setMeta("location", loc);
+            pp.setMeta(PlotPlayer.META_LOCATION, loc);
             PlotArea area = loc.getPlotArea();
             if (area == null) {
-                pp.deleteMeta("lastplot");
+                pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
                 return;
             }
             Plot now = area.getPlot(loc);
-            Plot lastPlot = pp.getMeta("lastplot");
+            Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
             if (now == null) {
                 if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
@@ -857,14 +857,14 @@ public class PlayerEvents extends PlotListener implements Listener {
             TaskManager.TELEPORT_QUEUE.remove(pp.getName());
             // Set last location
             Location loc = BukkitUtil.getLocation(to);
-            pp.setMeta("location", loc);
+            pp.setMeta(PlotPlayer.META_LOCATION, loc);
             PlotArea area = loc.getPlotArea();
             if (area == null) {
-                pp.deleteMeta("lastplot");
+                pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
                 return;
             }
             Plot now = area.getPlot(loc);
-            Plot lastPlot = pp.getMeta("lastplot");
+            Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
             if (now == null) {
                 if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
@@ -1094,8 +1094,8 @@ public class PlayerEvents extends PlotListener implements Listener {
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
         // Delete last location
-        pp.deleteMeta("location");
-        Plot plot = (Plot) pp.deleteMeta("lastplot");
+        pp.deleteMeta(PlotPlayer.META_LOCATION);
+        Plot plot = (Plot) pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
         if (plot != null) {
             plotExit(pp, plot);
         }

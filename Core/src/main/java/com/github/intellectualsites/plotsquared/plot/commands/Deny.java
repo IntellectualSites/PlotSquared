@@ -46,7 +46,7 @@ public class Deny extends SubCommand {
         Iterator<UUID> iter = uuids.iterator();
         while (iter.hasNext()) {
             UUID uuid = iter.next();
-            if (uuid == DBFunc.everyone && !(
+            if (uuid == DBFunc.EVERYONE && !(
                 Permissions.hasPermission(player, C.PERMISSION_DENY_EVERYONE) || Permissions
                     .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_DENY))) {
                 MainUtil.sendMessage(player, C.INVALID_PLAYER, MainUtil.getName(uuid));
@@ -61,13 +61,13 @@ public class Deny extends SubCommand {
                 MainUtil.sendMessage(player, C.ALREADY_ADDED, MainUtil.getName(uuid));
                 return false;
             }
-            if (uuid != DBFunc.everyone) {
+            if (uuid != DBFunc.EVERYONE) {
                 plot.removeMember(uuid);
                 plot.removeTrusted(uuid);
             }
             plot.addDenied(uuid);
             EventUtil.manager.callDenied(player, plot, uuid, true);
-            if (!uuid.equals(DBFunc.everyone)) {
+            if (!uuid.equals(DBFunc.EVERYONE)) {
                 handleKick(UUIDHandler.getPlayer(uuid), plot);
             } else {
                 for (PlotPlayer plotPlayer : plot.getPlayersInPlot()) {

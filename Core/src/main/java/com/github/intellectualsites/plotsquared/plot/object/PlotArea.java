@@ -691,7 +691,7 @@ public abstract class PlotArea {
 
     public boolean addPlot(Plot plot) {
         for (PlotPlayer pp : plot.getPlayersInPlot()) {
-            pp.setMeta("lastplot", plot);
+            pp.setMeta(PlotPlayer.META_LAST_PLOT, plot);
         }
         return this.plots.put(plot.getId(), plot) == null;
     }
@@ -730,7 +730,7 @@ public abstract class PlotArea {
     public boolean addPlotIfAbsent(Plot plot) {
         if (this.plots.putIfAbsent(plot.getId(), plot) == null) {
             for (PlotPlayer pp : plot.getPlayersInPlot()) {
-                pp.setMeta("lastplot", plot);
+                pp.setMeta(PlotPlayer.META_LAST_PLOT, plot);
             }
             return true;
         }

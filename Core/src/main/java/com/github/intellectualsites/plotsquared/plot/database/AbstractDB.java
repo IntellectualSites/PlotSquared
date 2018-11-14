@@ -9,7 +9,7 @@ import java.util.*;
 public interface AbstractDB {
 
     /**
-     * The UUID that will count as everyone.
+     * The UUID that will count as EVERYONE.
      */
     UUID everyone = UUID.fromString("1-1-3-3-7");
 

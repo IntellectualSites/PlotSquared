@@ -429,7 +429,7 @@ public class ExpireManager {
     }
 
     public long getAccountAge(Plot plot) {
-        if (!plot.hasOwner() || Objects.equals(DBFunc.everyone, plot.owner)
+        if (!plot.hasOwner() || Objects.equals(DBFunc.EVERYONE, plot.owner)
             || UUIDHandler.getPlayer(plot.owner) != null || plot.getRunning() > 0) {
             return Long.MAX_VALUE;
         }
@@ -442,7 +442,7 @@ public class ExpireManager {
     }
 
     public long getAge(Plot plot) {
-        if (!plot.hasOwner() || Objects.equals(DBFunc.everyone, plot.owner)
+        if (!plot.hasOwner() || Objects.equals(DBFunc.EVERYONE, plot.owner)
             || UUIDHandler.getPlayer(plot.owner) != null || plot.getRunning() > 0) {
             return 0;
         }

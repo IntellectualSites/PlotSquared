@@ -69,13 +69,13 @@ public class PlotCluster {
 
     public boolean isAdded(UUID uuid) {
         return this.owner.equals(uuid) || this.invited.contains(uuid) || this.invited
-            .contains(DBFunc.everyone) || this.helpers.contains(uuid) || this.helpers
-            .contains(DBFunc.everyone);
+            .contains(DBFunc.EVERYONE) || this.helpers.contains(uuid) || this.helpers
+            .contains(DBFunc.EVERYONE);
     }
 
     public boolean hasHelperRights(UUID uuid) {
         return this.owner.equals(uuid) || this.helpers.contains(uuid) || this.helpers
-            .contains(DBFunc.everyone);
+            .contains(DBFunc.EVERYONE);
     }
 
     public String getName() {

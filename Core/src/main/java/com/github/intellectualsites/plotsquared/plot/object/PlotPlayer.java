@@ -22,6 +22,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * The abstract class supporting {@code BukkitPlayer} and {@code SpongePlayer}.
  */
 public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
+
+    public static final String META_LAST_PLOT = "lastplot";
+    public static final String META_LOCATION = "location";
+
     private Map<String, byte[]> metaMap = new HashMap<>();
 
     /**
@@ -119,7 +123,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      * @return the plot the player is standing on or null if standing on a road or not in a {@link PlotArea}
      */
     public Plot getCurrentPlot() {
-        Plot value = getMeta("lastplot");
+        Plot value = getMeta(PlotPlayer.META_LAST_PLOT);
         if (value == null && !Settings.Enabled_Components.EVENTS) {
             return getLocation().getPlot();
         }

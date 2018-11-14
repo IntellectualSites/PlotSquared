@@ -384,10 +384,10 @@ public class Plot {
         if (getMembers().contains(uuid)) {
             return isOnline();
         }
-        if (getTrusted().contains(uuid) || getTrusted().contains(DBFunc.everyone)) {
+        if (getTrusted().contains(uuid) || getTrusted().contains(DBFunc.EVERYONE)) {
             return true;
         }
-        if (getMembers().contains(DBFunc.everyone)) {
+        if (getMembers().contains(DBFunc.EVERYONE)) {
             return isOnline();
         }
         return false;
@@ -400,7 +400,7 @@ public class Plot {
      * @return boolean false if the player is allowed to enter
      */
     public boolean isDenied(UUID uuid) {
-        return this.denied != null && (this.denied.contains(DBFunc.everyone) && !this.isAdded(uuid)
+        return this.denied != null && (this.denied.contains(DBFunc.EVERYONE) && !this.isAdded(uuid)
             || !this.isAdded(uuid) && this.denied.contains(uuid));
     }
 
@@ -1737,7 +1737,7 @@ public class Plot {
      * @param uuid
      */
     public boolean removeDenied(UUID uuid) {
-        if (uuid == DBFunc.everyone && !denied.contains(uuid)) {
+        if (uuid == DBFunc.EVERYONE && !denied.contains(uuid)) {
             boolean result = false;
             for (UUID other : new HashSet<>(getDenied())) {
                 result = rmvDenied(other) || result;
@@ -1765,7 +1765,7 @@ public class Plot {
      * @param uuid
      */
     public boolean removeTrusted(UUID uuid) {
-        if (uuid == DBFunc.everyone && !trusted.contains(uuid)) {
+        if (uuid == DBFunc.EVERYONE && !trusted.contains(uuid)) {
             boolean result = false;
             for (UUID other : new HashSet<>(getTrusted())) {
                 result = rmvTrusted(other) || result;
@@ -1796,7 +1796,7 @@ public class Plot {
         if (this.members == null) {
             return false;
         }
-        if (uuid == DBFunc.everyone && !members.contains(uuid)) {
+        if (uuid == DBFunc.EVERYONE && !members.contains(uuid)) {
             boolean result = false;
             for (UUID other : new HashSet<>(this.members)) {
                 result = rmvMember(other) || result;

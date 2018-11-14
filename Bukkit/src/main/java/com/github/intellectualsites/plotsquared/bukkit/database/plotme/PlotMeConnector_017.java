@@ -102,7 +102,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
             UUID owner = UUIDHandler.getUUID(name, null);
             if (owner == null) {
                 if (name.equals("*")) {
-                    owner = DBFunc.everyone;
+                    owner = DBFunc.EVERYONE;
                 } else {
                     if (checkUUID) {
                         byte[] bytes = resultSet.getBytes("ownerid");
@@ -148,7 +148,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                     continue;
                 }
                 String player = resultSet.getString("player");
-                UUID denied = player.equals("*") ? DBFunc.everyone : UUID.fromString(player);
+                UUID denied = player.equals("*") ? DBFunc.EVERYONE : UUID.fromString(player);
                 plot.getDenied().add(denied);
             }
 
@@ -166,7 +166,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                     continue;
                 }
                 String player = resultSet.getString("player");
-                UUID allowed = player.equals("*") ? DBFunc.everyone : UUID.fromString(player);
+                UUID allowed = player.equals("*") ? DBFunc.EVERYONE : UUID.fromString(player);
                 plot.getTrusted().add(allowed);
             }
             resultSet.close();

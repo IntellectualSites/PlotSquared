@@ -43,7 +43,7 @@ public class Kick extends SubCommand {
         }
         Set<PlotPlayer> players = new HashSet<>();
         for (UUID uuid : uuids) {
-            if (uuid == DBFunc.everyone) {
+            if (uuid == DBFunc.EVERYONE) {
                 for (PlotPlayer pp : plot.getPlayersInPlot()) {
                     if (pp == player || Permissions
                         .hasPermission(pp, C.PERMISSION_ADMIN_ENTRY_DENIED)) {

@@ -349,22 +349,22 @@ import java.util.*;
                     Command cmd = MainCommand.getInstance().getCommand(args[3]);
                     String[] params = Arrays.copyOfRange(args, 4, args.length);
                     if ("true".equals(args[1])) {
-                        Location loc = player.getMeta("location");
-                        Plot plot = player.getMeta("lastplot");
+                        Location loc = player.getMeta(PlotPlayer.META_LOCATION);
+                        Plot plot = player.getMeta(PlotPlayer.META_LAST_PLOT);
                         for (Plot current : PlotSquared.get().getBasePlots()) {
-                            player.setMeta("location", current.getBottomAbs());
-                            player.setMeta("lastplot", current);
+                            player.setMeta(PlotPlayer.META_LOCATION, current.getBottomAbs());
+                            player.setMeta(PlotPlayer.META_LAST_PLOT, current);
                             cmd.execute(player, params, null, null);
                         }
                         if (loc == null) {
-                            player.deleteMeta("location");
+                            player.deleteMeta(PlotPlayer.META_LOCATION);
                         } else {
-                            player.setMeta("location", loc);
+                            player.setMeta(PlotPlayer.META_LOCATION, loc);
                         }
                         if (plot == null) {
-                            player.deleteMeta("lastplot");
+                            player.deleteMeta(PlotPlayer.META_LAST_PLOT);
                         } else {
-                            player.setMeta("lastplot", plot);
+                            player.setMeta(PlotPlayer.META_LAST_PLOT, plot);
                         }
                         player.sendMessage("&c> " + (System.currentTimeMillis() - start));
                         return true;

@@ -372,8 +372,8 @@ public class PlayerEvents extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTeleport(PlayerTeleportEvent event) {
         if (event.getTo() == null || event.getFrom() == null) {
-            NukkitUtil.getPlayer(event.getPlayer()).deleteMeta("location");
-            NukkitUtil.getPlayer(event.getPlayer()).deleteMeta("lastplot");
+            NukkitUtil.getPlayer(event.getPlayer()).deleteMeta(PlotPlayer.META_LOCATION);
+            NukkitUtil.getPlayer(event.getPlayer()).deleteMeta(PlotPlayer.META_LAST_PLOT);
             return;
         }
         cn.nukkit.level.Location from = event.getFrom();
@@ -386,14 +386,14 @@ public class PlayerEvents extends PlotListener implements Listener {
             TaskManager.TELEPORT_QUEUE.remove(pp.getName());
             // Set last location
             Location loc = NukkitUtil.getLocation(to);
-            pp.setMeta("location", loc);
+            pp.setMeta(PlotPlayer.META_LOCATION, loc);
             PlotArea area = loc.getPlotArea();
             if (area == null) {
-                pp.deleteMeta("lastplot");
+                pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
                 return;
             }
             Plot now = area.getPlot(loc);
-            Plot lastPlot = pp.getMeta("lastplot");
+            Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
             if (now == null) {
                 if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
@@ -447,11 +447,11 @@ public class PlayerEvents extends PlotListener implements Listener {
             pp.setMeta("location", loc);
             PlotArea area = loc.getPlotArea();
             if (area == null) {
-                pp.deleteMeta("lastplot");
+                pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
                 return;
             }
             Plot now = area.getPlot(loc);
-            Plot lastPlot = pp.getMeta("lastplot");
+            Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
             if (now == null) {
                 if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
@@ -505,14 +505,14 @@ public class PlayerEvents extends PlotListener implements Listener {
             TaskManager.TELEPORT_QUEUE.remove(pp.getName());
             // Set last location
             Location loc = NukkitUtil.getLocation(to);
-            pp.setMeta("location", loc);
+            pp.setMeta(PlotPlayer.META_LOCATION, loc);
             PlotArea area = loc.getPlotArea();
             if (area == null) {
-                pp.deleteMeta("lastplot");
+                pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
                 return;
             }
             Plot now = area.getPlot(loc);
-            Plot lastPlot = pp.getMeta("lastplot");
+            Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
             if (now == null) {
                 if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
@@ -563,14 +563,14 @@ public class PlayerEvents extends PlotListener implements Listener {
             TaskManager.TELEPORT_QUEUE.remove(pp.getName());
             // Set last location
             Location loc = NukkitUtil.getLocation(to);
-            pp.setMeta("location", loc);
+            pp.setMeta(PlotPlayer.META_LOCATION, loc);
             PlotArea area = loc.getPlotArea();
             if (area == null) {
-                pp.deleteMeta("lastplot");
+                pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
                 return;
             }
             Plot now = area.getPlot(loc);
-            Plot lastPlot = pp.getMeta("lastplot");
+            Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
             if (now == null) {
                 if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);

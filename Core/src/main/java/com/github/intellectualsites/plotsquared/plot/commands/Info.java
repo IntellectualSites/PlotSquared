@@ -92,8 +92,8 @@ public class Info extends SubCommand {
         }
         boolean hasOwner = plot.hasOwner();
         // Wildcard player {added}
-        boolean containsEveryone = plot.getTrusted().contains(DBFunc.everyone);
-        boolean trustedEveryone = plot.getMembers().contains(DBFunc.everyone);
+        boolean containsEveryone = plot.getTrusted().contains(DBFunc.EVERYONE);
+        boolean trustedEveryone = plot.getMembers().contains(DBFunc.EVERYONE);
         // Unclaimed?
         if (!hasOwner && !containsEveryone && !trustedEveryone) {
             MainUtil

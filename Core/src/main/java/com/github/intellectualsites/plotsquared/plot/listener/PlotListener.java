@@ -21,14 +21,14 @@ public class PlotListener {
             .hasPermission(player, "plots.admin.entry.denied")) {
             return false;
         }
-        Plot last = player.getMeta("lastplot");
+        Plot last = player.getMeta(PlotPlayer.META_LAST_PLOT);
         if ((last != null) && !last.getId().equals(plot.getId())) {
             plotExit(player, last);
         }
         if (ExpireManager.IMP != null) {
             ExpireManager.IMP.handleEntry(player, plot);
         }
-        player.setMeta("lastplot", plot);
+        player.setMeta(PlotPlayer.META_LAST_PLOT, plot);
         EventUtil.manager.callEntry(player, plot);
         if (plot.hasOwner()) {
             Map<Flag<?>, Object> flags = FlagManager.getPlotFlags(plot);
@@ -160,7 +160,7 @@ public class PlotListener {
                     .isEmpty()) {
                     TaskManager.runTaskLaterAsync(new Runnable() {
                         @Override public void run() {
-                            Plot lastPlot = player.getMeta("lastplot");
+                            Plot lastPlot = player.getMeta(PlotPlayer.META_LAST_PLOT);
                             if ((lastPlot != null) && plot.getId().equals(lastPlot.getId())) {
                                 Map<String, String> replacements = new HashMap<>();
                                 replacements.put("%x%", String.valueOf(lastPlot.getId().x));
@@ -185,7 +185,7 @@ public class PlotListener {
     }
 
     public static boolean plotExit(final PlotPlayer player, Plot plot) {
-        Object previous = player.deleteMeta("lastplot");
+        Object previous = player.deleteMeta(PlotPlayer.META_LAST_PLOT);
         EventUtil.manager.callLeave(player, plot);
         if (plot.hasOwner()) {
             PlotArea pw = plot.getArea();
@@ -194,7 +194,7 @@ public class PlotListener {
             }
             if (Flags.DENY_EXIT.isTrue(plot)) {
                 if (previous != null) {
-                    player.setMeta("lastplot", previous);
+                    player.setMeta(PlotPlayer.META_LAST_PLOT, previous);
                 }
                 return false;
             }

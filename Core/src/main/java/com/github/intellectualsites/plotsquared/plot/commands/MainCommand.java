@@ -206,12 +206,12 @@ import java.util.Arrays;
                 Location newLoc = newPlot.getCenter();
                 if (player.canTeleport(newLoc)) {
                     // Save meta
-                    loc = player.getMeta("location");
-                    plot = player.getMeta("lastplot");
+                    loc = player.getMeta(PlotPlayer.META_LOCATION);
+                    plot = player.getMeta(PlotPlayer.META_LAST_PLOT);
                     tp = true;
                     // Set loc
-                    player.setMeta("location", newLoc);
-                    player.setMeta("lastplot", newPlot);
+                    player.setMeta(PlotPlayer.META_LOCATION, newLoc);
+                    player.setMeta(PlotPlayer.META_LAST_PLOT, newPlot);
                 } else {
                     C.BORDER.send(player);
                 }
@@ -269,14 +269,14 @@ import java.util.Arrays;
         // Reset command scope //
         if (tp && !(player instanceof ConsolePlayer)) {
             if (loc == null) {
-                player.deleteMeta("location");
+                player.deleteMeta(PlotPlayer.META_LOCATION);
             } else {
-                player.setMeta("location", loc);
+                player.setMeta(PlotPlayer.META_LOCATION, loc);
             }
             if (plot == null) {
-                player.deleteMeta("lastplot");
+                player.deleteMeta(PlotPlayer.META_LAST_PLOT);
             } else {
-                player.setMeta("lastplot", plot);
+                player.setMeta(PlotPlayer.META_LAST_PLOT, plot);
             }
         }
     }

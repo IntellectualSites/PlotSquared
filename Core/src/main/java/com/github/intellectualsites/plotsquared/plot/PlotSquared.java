@@ -160,7 +160,7 @@ import java.util.zip.ZipInputStream;
                 startUuidCatching();
             } else {
                 // Start these separately
-                UUIDHandler.add(new StringWrapper("*"), DBFunc.everyone);
+                UUIDHandler.add(new StringWrapper("*"), DBFunc.EVERYONE);
                 startExpiryTasks();
                 startPlotMeConversion();
             }
@@ -326,7 +326,7 @@ import java.util.zip.ZipInputStream;
                 debug("Starting UUID caching");
                 UUIDHandler.startCaching(new Runnable() {
                     @Override public void run() {
-                        UUIDHandler.add(new StringWrapper("*"), DBFunc.everyone);
+                        UUIDHandler.add(new StringWrapper("*"), DBFunc.EVERYONE);
                         foreachPlotRaw(new RunnableVal<Plot>() {
                             @Override public void run(Plot plot) {
                                 if (plot.hasOwner() && plot.temp != -1) {

@@ -65,7 +65,7 @@ public class Remove extends SubCommand {
                 Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
                 if (!uuids.isEmpty()) {
                     for (UUID uuid : uuids) {
-                        if (uuid == DBFunc.everyone) {
+                        if (uuid == DBFunc.EVERYONE) {
                             if (plot.removeTrusted(uuid)) {
                                 EventUtil.manager.callTrusted(player, plot, uuid, false);
                                 count++;

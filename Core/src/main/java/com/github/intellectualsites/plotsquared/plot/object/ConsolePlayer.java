@@ -46,7 +46,7 @@ public class ConsolePlayer extends PlotPlayer {
     }
 
     @Override public UUID getUUID() {
-        return DBFunc.everyone;
+        return DBFunc.EVERYONE;
     }
 
     @Override public long getLastPlayed() {
@@ -66,8 +66,8 @@ public class ConsolePlayer extends PlotPlayer {
     }
 
     @Override public void teleport(Location location) {
-        setMeta("lastplot", location.getPlot());
-        setMeta("location", location);
+        setMeta(PlotPlayer.META_LAST_PLOT, location.getPlot());
+        setMeta(PlotPlayer.META_LOCATION, location);
     }
 
     @Override public boolean isOnline() {

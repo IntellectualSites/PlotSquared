@@ -668,11 +668,11 @@ import java.util.function.Predicate;
             pp.setMeta("location", loc);
             PlotArea area = loc.getPlotArea();
             if (area == null) {
-                pp.deleteMeta("lastplot");
+                pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
                 return;
             }
             Plot now = area.getPlotAbs(loc);
-            Plot lastPlot = pp.getMeta("lastplot");
+            Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
             if (now == null) {
                 if (lastPlot != null && !PlotListener.plotExit(pp, lastPlot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
@@ -715,14 +715,14 @@ import java.util.function.Predicate;
             TaskManager.TELEPORT_QUEUE.remove(pp.getName());
             // Set last location
             Location loc = SpongeUtil.getLocation(to);
-            pp.setMeta("location", loc);
+            pp.setMeta(PlotPlayer.META_LOCATION, loc);
             PlotArea area = loc.getPlotArea();
             if (area == null) {
-                pp.deleteMeta("lastplot");
+                pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
                 return;
             }
             Plot now = area.getPlotAbs(loc);
-            Plot lastPlot = pp.getMeta("lastplot");
+            Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
             if (now == null) {
                 if (lastPlot != null && !PlotListener.plotExit(pp, lastPlot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);

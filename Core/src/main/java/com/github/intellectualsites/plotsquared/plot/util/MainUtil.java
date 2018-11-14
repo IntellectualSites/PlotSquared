@@ -329,7 +329,7 @@ public class MainUtil {
         if (owner == null) {
             return C.NONE.s();
         }
-        if (owner.equals(DBFunc.everyone)) {
+        if (owner.equals(DBFunc.EVERYONE)) {
             return C.EVERYONE.s();
         }
         String name = UUIDHandler.getName(owner);
@@ -686,7 +686,7 @@ public class MainUtil {
                 return Collections.emptySet();
             }
             if ("*".equals(name)) {
-                result.add(DBFunc.everyone);
+                result.add(DBFunc.EVERYONE);
                 continue;
             }
             if (name.length() > 16) {
