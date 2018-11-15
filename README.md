@@ -22,8 +22,9 @@ is to provide a lag-free and smooth experience.
 * [Wiki](https://github.com/intellectualcrafters/plotsquared/wiki)
 
 ### Developer Resources
-* [JavaDocs] Link Temporarily Unavailable 
-* [Maven Repo] Link Temporarily Unavailable 
+* [Java Docs](http://empcraft.com/plotsquared/doc/)
+* [Maven Repo](http://ci.athion.net/job/PlotSquared/ws/mvn/)
+* [API Documentation](https://github.com/IntellectualSites/PlotSquared/wiki/Developer-documentation-(WIP))
 
 # Building
 Gradle is the **recommended** way to build the project. Use `./gradlew build` in the main project directory to build the project. Gradle is required if you intend to build or develop the Sponge module.
