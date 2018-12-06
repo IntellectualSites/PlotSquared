@@ -21,6 +21,7 @@ plugins {
 
 group = 'com.intellectualcrafters'
 
+def rootVersion = "4"
 def revision = ""
 def buildNumber = ""
 def date = ""
@@ -36,7 +37,7 @@ ext {
     buildNumber = "-${index}"
 }
 
-version = date + revision + buildNumber
+version = rootVersion + date + revision + buildNumber
 
 description = rootProject.name
 if (project.hasProperty("lzNoVersion")) { // gradle build -PlzNoVersion
