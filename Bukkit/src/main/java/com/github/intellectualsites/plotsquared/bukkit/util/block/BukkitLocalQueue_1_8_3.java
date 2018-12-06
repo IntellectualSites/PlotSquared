@@ -88,7 +88,7 @@ public class BukkitLocalQueue_1_8_3 extends BukkitLocalQueue<char[]> {
         return new CharLocalChunk_1_8_3(this, x, z);
     }
 
-    @Override public void setBlocks(LocalChunk lc) {
+    @Override public void setBlocks(LocalChunk<char[]> lc) {
         CharLocalChunk_1_8_3 fs = (CharLocalChunk_1_8_3) lc;
         Chunk chunk = getChunk(lc.getX(), lc.getZ());
         chunk.load(true);

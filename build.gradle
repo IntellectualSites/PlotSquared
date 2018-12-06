@@ -37,7 +37,7 @@ ext {
     buildNumber = "-${index}"
 }
 
-version = rootVersion + date + revision + buildNumber
+version = String.format("%s.%s%s%s", rootVersion, date, revision, buildNumber)
 
 description = rootProject.name
 if (project.hasProperty("lzNoVersion")) { // gradle build -PlzNoVersion
