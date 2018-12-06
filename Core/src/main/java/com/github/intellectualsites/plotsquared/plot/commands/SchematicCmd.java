@@ -5,11 +5,8 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.Permissions;
-import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
+import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler.Schematic;
-import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -210,6 +207,14 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(player, "&7Starting export...");
                 }
                 break;
+            case "list": {
+                if (!Permissions.hasPermission(player, C.PERMISSION_SCHEMATIC_LIST)) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SCHEMATIC_LIST);
+                    return false;
+                }
+                final String string = StringMan.join(SchematicHandler.manager.getShematicNames(), "$2, $1");
+                C.SCHEMATIC_LIST.send(player, string);
+            } break;
             default:
                 sendMessage(player, C.SCHEMATIC_MISSING_ARG);
                 break;

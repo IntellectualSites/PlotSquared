@@ -16,6 +16,7 @@ import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -439,6 +440,25 @@ public abstract class SchematicHandler {
                 "" :
                 ".schematic"));
         return getSchematic(file);
+    }
+
+    /**
+     * Get an immutable collection containing all schematic names
+     *
+     * @return Immutable collection with schematic names
+     */
+    public Collection<String> getShematicNames() {
+        final File parent = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS);
+        final List<String> names = new ArrayList<>();
+        if (parent.exists()) {
+            final String[] rawNames = parent.list((dir, name) -> name.endsWith(".schematic"));
+            if (rawNames != null) {
+                final List<String> transformed = Arrays.stream(rawNames).map(rawName -> rawName.substring(0, rawName.length() - 10))
+                    .collect(Collectors.toList());
+                names.addAll(transformed);
+            }
+        }
+        return Collections.unmodifiableList(names);
     }
 
     /**

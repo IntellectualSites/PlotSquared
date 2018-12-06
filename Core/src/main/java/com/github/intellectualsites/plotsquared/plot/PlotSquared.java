@@ -1881,7 +1881,7 @@ import java.util.zip.ZipInputStream;
         return plotAreaManager.getApplicablePlotArea(location);
     }
 
-    public PlotArea getPlotArea(@NonNull final String world, @NonNull final String id) {
+    public PlotArea getPlotArea(@NonNull final String world, final String id) {
         return plotAreaManager.getPlotArea(world, id);
     }
 
