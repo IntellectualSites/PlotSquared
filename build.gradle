@@ -62,7 +62,7 @@ subprojects {
             exclude(module: 'dummypermscompat')
         }
         compile 'com.google.guava:guava:10.0'
-        compileOnly 'org.projectlombok:lombok:1.16.18'
+        compileOnly 'org.projectlombok:lombok:1.18.4'
     }
     clean {
         delete file("../target")
