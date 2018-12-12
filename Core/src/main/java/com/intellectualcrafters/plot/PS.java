@@ -300,6 +300,7 @@ public class PS{
             copyFile("zh-CN.yml", Settings.Paths.TRANSLATIONS);
             copyFile("it-IT.yml", Settings.Paths.TRANSLATIONS);
             copyFile("ko-KR.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("fr-FR.yml", Settings.Paths.TRANSLATIONS);
             showDebug();
         } catch (Throwable e) {
             e.printStackTrace();
