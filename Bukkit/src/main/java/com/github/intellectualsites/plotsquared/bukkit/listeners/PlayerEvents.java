@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.bukkit.object.BukkitLazyBlock;
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitVersion;
+import com.github.intellectualsites.plotsquared.bukkit.util.LegacyMappings;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
@@ -230,21 +231,21 @@ public class PlayerEvents extends PlotListener implements Listener {
         Block block = event.getBlock();
         switch (block.getType()) {
             case OBSERVER:
-            case REDSTONE_LAMP_OFF:
+            case LEGACY_REDSTONE_LAMP_OFF:
             case REDSTONE_WIRE:
-            case REDSTONE_LAMP_ON:
-            case PISTON_BASE:
-            case PISTON_STICKY_BASE:
-            case IRON_DOOR_BLOCK:
+            case LEGACY_REDSTONE_LAMP_ON:
+            case LEGACY_PISTON_BASE:
+            case LEGACY_PISTON_STICKY_BASE:
+            case LEGACY_IRON_DOOR_BLOCK:
             case LEVER:
-            case WOODEN_DOOR:
-            case FENCE_GATE:
-            case WOOD_BUTTON:
+            case LEGACY_WOODEN_DOOR:
+            case LEGACY_FENCE_GATE:
+            case LEGACY_WOOD_BUTTON:
             case STONE_BUTTON:
-            case IRON_PLATE:
-            case WOOD_PLATE:
-            case STONE_PLATE:
-            case GOLD_PLATE:
+            case LEGACY_IRON_PLATE:
+            case LEGACY_WOOD_PLATE:
+            case LEGACY_STONE_PLATE:
+            case LEGACY_GOLD_PLATE:
             case SPRUCE_DOOR:
             case BIRCH_DOOR:
             case JUNGLE_DOOR:
@@ -312,8 +313,8 @@ public class PlayerEvents extends PlotListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPhysicsEvent(BlockPhysicsEvent event) {
         switch (event.getChangedType()) {
-            case REDSTONE_COMPARATOR_OFF:
-            case REDSTONE_COMPARATOR_ON: {
+            case LEGACY_REDSTONE_COMPARATOR_OFF:
+            case LEGACY_REDSTONE_COMPARATOR_ON: {
                 Block block = event.getBlock();
                 Location loc = BukkitUtil.getLocation(block.getLocation());
                 PlotArea area = loc.getPlotArea();
@@ -352,8 +353,8 @@ public class PlayerEvents extends PlotListener implements Listener {
                 if (Settings.Redstone.DETECT_INVALID_EDGE_PISTONS) {
                     Block block = event.getBlock();
                     switch (block.getType()) {
-                        case PISTON_BASE:
-                        case PISTON_STICKY_BASE:
+                        case LEGACY_PISTON_BASE:
+                        case LEGACY_PISTON_STICKY_BASE:
                             Location loc = BukkitUtil.getLocation(block.getLocation());
                             PlotArea area = loc.getPlotArea();
                             if (area == null) {
@@ -919,7 +920,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
                 Block block = event.getBlock();
                 if (destroy.isPresent() && destroy.get()
-                    .contains(PlotBlock.get((short) block.getTypeId(), block.getData()))) {
+                    .contains(PlotBlock.get(block.getType().name()))) {
                     return;
                 }
                 if (Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
@@ -943,8 +944,8 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         if (PlotSquared.get().worldedit != null && pp.getAttribute("worldedit")) {
-            if (player.getItemInHand().getTypeId() == PlotSquared.get().worldedit
-                .getConfiguration().wandItem) {
+            if (player.getInventory().getItemInMainHand().getType() == LegacyMappings.fromLegacyId(PlotSquared.get().worldedit
+                .getConfiguration().wandItem).getMaterial()) {
                 return;
             }
         }
@@ -1118,7 +1119,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     event.setCancelled(true);
                 }
                 break;
-            case MYCEL:
+            case LEGACY_MYCEL:
                 if (Flags.MYCEL_GROW.isFalse(plot)) {
                     event.setCancelled(true);
                 }
@@ -1202,7 +1203,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
                 Block block = event.getBlock();
                 if (destroy.isPresent() && destroy.get()
-                    .contains(PlotBlock.get((short) block.getTypeId(), block.getData()))
+                    .contains(PlotBlock.get(block.getType().name()))
                     || Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }
@@ -1242,7 +1243,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     event.setCancelled(true);
                 }
                 break;
-            case SOIL:
+            case LEGACY_SOIL:
                 if (Flags.SOIL_DRY.isFalse(plot)) {
                     event.setCancelled(true);
                 }
@@ -1273,9 +1274,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             if (Flags.LIQUID_FLOW.isFalse(plot)) {
                 switch (to.getType()) {
                     case WATER:
-                    case STATIONARY_WATER:
                     case LAVA:
-                    case STATIONARY_LAVA:
                         event.setCancelled(true);
                 }
             }
@@ -1356,7 +1355,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     this.pistonBlocks = false;
                 }
             }
-            if (!this.pistonBlocks && block.getType() != Material.PISTON_BASE) {
+            if (!this.pistonBlocks && block.getType() != Material.LEGACY_PISTON_BASE) {
                 BlockFace dir = event.getDirection();
                 location = BukkitUtil.getLocation(block.getLocation()
                     .add(dir.getModX() * 2, dir.getModY() * 2, dir.getModZ() * 2));
@@ -1397,7 +1396,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 this.pistonBlocks = false;
             }
         }
-        if (!this.pistonBlocks && block.getType() != Material.PISTON_BASE) {
+        if (!this.pistonBlocks && block.getType() != Material.LEGACY_PISTON_BASE) {
             location = BukkitUtil.getLocation(
                 block.getLocation().add(dir.getModX() * 2, dir.getModY() * 2, dir.getModZ() * 2));
             if (!area.contains(location)) {
@@ -1521,48 +1520,47 @@ public class PlayerEvents extends PlotListener implements Listener {
                     case IRON_DOOR:
                     case JUNGLE_DOOR:
                     case SPRUCE_DOOR:
-                    case TRAP_DOOR:
+                    case LEGACY_TRAP_DOOR:
                     case IRON_TRAPDOOR:
-                    case WOOD_DOOR:
-                    case WOODEN_DOOR:
+                    case LEGACY_WOOD_DOOR:
+                    case LEGACY_WOODEN_DOOR:
                     case TRAPPED_CHEST:
                     case ENDER_CHEST:
                     case CHEST:
                     case ACACIA_FENCE_GATE:
                     case BIRCH_FENCE_GATE:
                     case DARK_OAK_FENCE_GATE:
-                    case FENCE_GATE:
+                    case LEGACY_FENCE_GATE:
                     case JUNGLE_FENCE_GATE:
                     case SPRUCE_FENCE_GATE:
                     case LEVER:
-                    case DIODE:
-                    case DIODE_BLOCK_OFF:
-                    case DIODE_BLOCK_ON:
-                    case COMMAND:
-                    case REDSTONE_COMPARATOR:
-                    case REDSTONE_COMPARATOR_OFF:
-                    case REDSTONE_COMPARATOR_ON:
+                    case LEGACY_DIODE:
+                    case LEGACY_DIODE_BLOCK_OFF:
+                    case LEGACY_DIODE_BLOCK_ON:
+                    case COMMAND_BLOCK:
+                    case LEGACY_REDSTONE_COMPARATOR:
+                    case LEGACY_REDSTONE_COMPARATOR_OFF:
+                    case LEGACY_REDSTONE_COMPARATOR_ON:
                     case REDSTONE_ORE:
-                    case WOOD_BUTTON:
+                    case LEGACY_WOOD_BUTTON:
                     case STONE_BUTTON:
                     case BEACON:
-                    case BED_BLOCK:
+                    case LEGACY_BED_BLOCK:
                     case SIGN:
                     case WALL_SIGN:
-                    case SIGN_POST:
-                    case ENCHANTMENT_TABLE:
+                    case LEGACY_ENCHANTMENT_TABLE:
                     case BREWING_STAND:
-                    case STANDING_BANNER:
-                    case BURNING_FURNACE:
+                    case LEGACY_STANDING_BANNER:
+                    case LEGACY_BURNING_FURNACE:
                     case FURNACE:
-                    case CAKE_BLOCK:
+                    case CAKE:
                     case DISPENSER:
                     case DROPPER:
                     case HOPPER:
                     case NOTE_BLOCK:
                     case JUKEBOX:
-                    case WORKBENCH:
-                    case SILVER_SHULKER_BOX:
+                    case CRAFTING_TABLE:
+                    case LEGACY_SILVER_SHULKER_BOX:
                     case BLACK_SHULKER_BOX:
                     case BLUE_SHULKER_BOX:
                     case RED_SHULKER_BOX:
@@ -1578,8 +1576,8 @@ public class PlayerEvents extends PlotListener implements Listener {
                     case LIME_SHULKER_BOX:
                     case LIGHT_BLUE_SHULKER_BOX:
                     case MAGENTA_SHULKER_BOX:
-                    case COMMAND_REPEATING:
-                    case COMMAND_CHAIN:
+                    case LEGACY_COMMAND_REPEATING:
+                    case LEGACY_COMMAND_CHAIN:
 
                         eventType = PlayerBlockEventType.INTERACT_BLOCK;
                         break;
@@ -1592,7 +1590,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                         }
                         break;
                 }
-                lb = new BukkitLazyBlock(blockId, block);
+                lb = new BukkitLazyBlock(PlotBlock.get(block.getType().toString()));
                 ItemStack hand = player.getItemInHand();
                 if (eventType != null && (eventType != PlayerBlockEventType.INTERACT_BLOCK
                     || !player.isSneaking())) {
@@ -1608,15 +1606,14 @@ public class PlayerEvents extends PlotListener implements Listener {
                     location = BukkitUtil
                         .getLocation(block.getRelative(event.getBlockFace()).getLocation());
                     eventType = PlayerBlockEventType.PLACE_BLOCK;
-                    lb = new BukkitLazyBlock(id, block);
                     break;
                 }
                 Material handType = hand.getType();
-                lb = new BukkitLazyBlock(PlotBlock.get((short) handType.getId(), (byte) 0));
+                lb = new BukkitLazyBlock(PlotBlock.get(handType.toString()));
                 switch (handType) {
-                    case FIREWORK:
-                    case MONSTER_EGG:
-                    case MONSTER_EGGS:
+                    case LEGACY_FIREWORK:
+                    case LEGACY_MONSTER_EGG:
+                    case LEGACY_MONSTER_EGGS:
                         eventType = PlayerBlockEventType.SPAWN_MOB;
                         break;
                     case ARMOR_STAND:
@@ -1625,40 +1622,40 @@ public class PlayerEvents extends PlotListener implements Listener {
                         eventType = PlayerBlockEventType.PLACE_MISC;
                         break;
                     case WRITTEN_BOOK:
-                    case BOOK_AND_QUILL:
+                    case LEGACY_BOOK_AND_QUILL:
                     case BOOK:
                         eventType = PlayerBlockEventType.READ;
                         break;
                     case APPLE:
                     case BAKED_POTATO:
-                    case MUSHROOM_SOUP:
+                    case LEGACY_MUSHROOM_SOUP:
                     case BREAD:
                     case CARROT:
-                    case CARROT_ITEM:
+                    case LEGACY_CARROT_ITEM:
                     case COOKIE:
-                    case GRILLED_PORK:
+                    case LEGACY_GRILLED_PORK:
                     case POISONOUS_POTATO:
                     case MUTTON:
-                    case PORK:
+                    case LEGACY_PORK:
                     case POTATO:
-                    case POTATO_ITEM:
+                    case LEGACY_POTATO_ITEM:
                     case POTION:
                     case PUMPKIN_PIE:
                     case RABBIT:
                     case RABBIT_FOOT:
                     case RABBIT_STEW:
-                    case RAW_BEEF:
-                    case RAW_FISH:
-                    case RAW_CHICKEN:
+                    case LEGACY_RAW_BEEF:
+                    case LEGACY_RAW_FISH:
+                    case LEGACY_RAW_CHICKEN:
                         eventType = PlayerBlockEventType.EAT;
                         break;
                     case MINECART:
-                    case STORAGE_MINECART:
-                    case POWERED_MINECART:
+                    case LEGACY_STORAGE_MINECART:
+                    case LEGACY_POWERED_MINECART:
                     case HOPPER_MINECART:
-                    case EXPLOSIVE_MINECART:
-                    case COMMAND_MINECART:
-                    case BOAT:
+                    case LEGACY_EXPLOSIVE_MINECART:
+                    case LEGACY_COMMAND_MINECART:
+                    case LEGACY_BOAT:
                         eventType = PlayerBlockEventType.PLACE_VEHICLE;
                         break;
                     case PAINTING:
@@ -1683,8 +1680,8 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return;
         }
         if (PlotSquared.get().worldedit != null && pp.getAttribute("worldedit")) {
-            if (player.getItemInHand().getTypeId() == PlotSquared.get().worldedit
-                .getConfiguration().wandItem) {
+            if (player.getInventory().getItemInMainHand().getType() == LegacyMappings.fromLegacyId(PlotSquared.get().worldedit
+                .getConfiguration().wandItem).getMaterial()) {
                 return;
             }
         }
@@ -1996,7 +1993,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             Optional<HashSet<PlotBlock>> use = plot.getFlag(Flags.USE);
             Block block = event.getBlockClicked();
             if (use.isPresent() && use.get()
-                .contains(PlotBlock.get(block.getTypeId(), block.getData()))) {
+                .contains(PlotBlock.get(block.getType().name()))) {
                 return;
             }
             if (Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_BUILD_OTHER)) {
@@ -2520,7 +2517,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 Set<PlotBlock> place = plot.getFlag(Flags.PLACE, null);
                 if (place != null) {
                     Block block = event.getBlock();
-                    if (place.contains(PlotBlock.get((short) block.getTypeId(), block.getData()))) {
+                    if (place.contains(PlotBlock.get(block.getType().name()))) {
                         return;
                     }
                 }

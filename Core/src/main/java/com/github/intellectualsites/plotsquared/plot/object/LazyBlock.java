@@ -2,9 +2,9 @@ package com.github.intellectualsites.plotsquared.plot.object;
 
 public abstract class LazyBlock {
 
-    public abstract PlotBlock getPlotBlock();
+    public abstract StringPlotBlock getPlotBlock();
 
-    public int getId() {
-        return getPlotBlock().id;
+    public String getId() {
+        return getPlotBlock().getItemId();
     }
 }

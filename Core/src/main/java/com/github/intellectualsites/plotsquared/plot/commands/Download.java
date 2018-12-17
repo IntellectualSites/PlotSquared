@@ -66,27 +66,6 @@ public class Download extends SubCommand {
                 }
             });
         } else if (args.length == 1 && StringMan
-            .isEqualIgnoreCaseToAny(args[0], "bo3", "bo2", "b03", "b02")) {
-            if (!Permissions.hasPermission(player, C.PERMISSION_DOWNLOAD_BO3)) {
-                C.NO_PERMISSION.send(player, C.PERMISSION_DOWNLOAD_BO3);
-                return false;
-            }
-            if (plot.getVolume() > 128d * 128d * 256) {
-                C.SCHEMATIC_TOO_LARGE.send(player);
-                return false;
-            }
-            plot.addRunning();
-            BO3Handler.upload(plot, null, null, new RunnableVal<URL>() {
-                @Override public void run(URL url) {
-                    plot.removeRunning();
-                    if (url == null) {
-                        MainUtil.sendMessage(player, C.GENERATING_LINK_FAILED);
-                        return;
-                    }
-                    MainUtil.sendMessage(player, url.toString());
-                }
-            });
-        } else if (args.length == 1 && StringMan
             .isEqualIgnoreCaseToAny(args[0], "mcr", "world", "mca")) {
             if (!Permissions.hasPermission(player, C.PERMISSION_DOWNLOAD_WORLD)) {
                 C.NO_PERMISSION.send(player, C.PERMISSION_DOWNLOAD_WORLD);

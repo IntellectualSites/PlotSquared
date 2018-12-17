@@ -1,17 +1,23 @@
 package com.github.intellectualsites.plotsquared.bukkit.util.block;
 
+import com.github.intellectualsites.plotsquared.bukkit.util.LegacyMappings;
+import com.github.intellectualsites.plotsquared.plot.object.LegacyPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.github.intellectualsites.plotsquared.plot.object.StringPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.block.BasicLocalBlockQueue;
+import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Locale;
 
 public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
 
@@ -38,11 +44,12 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
         if (block == null) {
             return PlotBlock.get(0, 0);
         }
-        int id = block.getTypeId();
-        if (id == 0) {
-            return PlotBlock.get(0, 0);
-        }
-        return PlotBlock.get(id, block.getData());
+        // int id = block.getTypeId();
+        // if (id == 0) {
+        //     return PlotBlock.get(0, 0);
+        // }
+        // return PlotBlock.get(id, block.getData());
+        return PlotBlock.get(block.getType().toString());
     }
 
     @Override public void refreshChunk(int x, int z) {
@@ -86,20 +93,46 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
                         int y = MainUtil.y_loc[layer][j];
                         int z = MainUtil.z_loc[layer][j];
                         Block existing = chunk.getBlock(x, y, z);
-                        int existingId = existing.getTypeId();
-                        if (existingId == block.id) {
-                            if (existingId == 0) {
-                                continue;
-                            }
-                            if (existing.getData() == block.data) {
-                                continue;
-                            }
+                        // int existingId = existing.getTypeId();
+                        // if (existingId == block.id) {
+                        //    if (existingId == 0) {
+                        //        continue;
+                        //    }
+                        //    if (existing.getData() == block.data) {
+                        //        continue;
+                        //    }
+                        //}
+                        if (equals(block, existing)) {
+                            continue;
                         }
-                        existing.setTypeIdAndData(block.id, block.data, false);
+                        setMaterial(block, existing);
                     }
                 }
             }
         }
+    }
+
+    private void setMaterial(@NonNull final PlotBlock plotBlock, @NonNull final Block block) {
+        if (plotBlock instanceof StringPlotBlock) {
+            final Material material = Material.getMaterial(((StringPlotBlock) plotBlock).getItemId().toLowerCase(
+                Locale.ENGLISH));
+            if (material == null) {
+                throw new IllegalStateException(String.format("Could not find material that matches %s", block.toString()));
+            }
+            block.setType(material, false);
+        } else {
+            final LegacyPlotBlock legacyPlotBlock = (LegacyPlotBlock) plotBlock;
+            block.setType(LegacyMappings.fromIdAndData(legacyPlotBlock.getId(), legacyPlotBlock.getData()).getMaterial());
+            // block.setTypeIdAndData(legacyPlotBlock.getId(), legacyPlotBlock.getData(), false);
+        }
+    }
+
+    private boolean equals(@NonNull final PlotBlock plotBlock, @NonNull final Block block) {
+        if (plotBlock instanceof StringPlotBlock) {
+            return ((StringPlotBlock) plotBlock).idEquals(block.getType().name());
+        }
+        final LegacyPlotBlock legacyPlotBlock = (LegacyPlotBlock) plotBlock;
+        return LegacyMappings.fromLegacyId(((LegacyPlotBlock) plotBlock).id).getMaterial() == block.getType() && (legacyPlotBlock.id == 0 || legacyPlotBlock.data == block.getData());
     }
 
     public void setBiomes(LocalChunk<T> lc) {

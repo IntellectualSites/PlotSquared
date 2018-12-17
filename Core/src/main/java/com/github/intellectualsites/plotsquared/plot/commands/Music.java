@@ -25,11 +25,10 @@ public class Music extends SubCommand {
                 if (item == null) {
                     return true;
                 }
-                int id = item.id == 7 ? 0 : item.id;
-                if (id == 0) {
+                if (item.getPlotBlock().equalsAny(7, "bedrock")) {
                     plot.removeFlag(Flags.MUSIC);
                 } else {
-                    plot.setFlag(Flags.MUSIC, id);
+                    plot.setFlag(Flags.MUSIC, item.getPlotBlock().getRawId());
                 }
                 return false;
             }

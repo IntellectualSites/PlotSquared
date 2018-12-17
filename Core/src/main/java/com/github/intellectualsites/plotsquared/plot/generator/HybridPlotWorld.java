@@ -277,7 +277,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         this.ROAD_SCHEMATIC_ENABLED = true;
         // Do not populate road if using schematic population
-        this.ROAD_BLOCK = PlotBlock.get(this.ROAD_BLOCK.id, (byte) 0);
+        this.ROAD_BLOCK = PlotBlock.getEmptyData(this.ROAD_BLOCK); // PlotBlock.get(this.ROAD_BLOCK.id, (byte) 0);
 
         short[] ids1 = schematic1.getIds();
         byte[] datas1 = schematic1.getDatas();

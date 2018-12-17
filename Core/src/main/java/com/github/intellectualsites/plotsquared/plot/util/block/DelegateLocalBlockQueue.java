@@ -57,6 +57,10 @@ public class DelegateLocalBlockQueue extends LocalBlockQueue {
         }
     }
 
+    @Override public boolean setBlock(int x, int y, int z, String id) {
+        return parent.setBlock(x, y, z, id);
+    }
+
     @Override public boolean setBlock(int x, int y, int z, int id, int data) {
         return parent.setBlock(x, y, z, id, data);
     }

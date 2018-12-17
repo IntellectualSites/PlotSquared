@@ -77,7 +77,7 @@ public class Set extends SubCommand {
                                         }
                                     }
                                     return false;
-                                } else if (!allowUnsafe && (block.id != 0 && !WorldUtil.IMP
+                                } else if (!allowUnsafe && (!block.isAir() && !WorldUtil.IMP
                                     .isBlockSolid(block))) {
                                     MainUtil
                                         .sendMessage(player, C.NOT_ALLOWED_BLOCK, block.toString());
@@ -86,7 +86,7 @@ public class Set extends SubCommand {
                             }
                             if (!allowUnsafe) {
                                 for (PlotBlock block : blocks) {
-                                    if (block.id != 0 && !WorldUtil.IMP.isBlockSolid(block)) {
+                                    if (!block.isAir() && !WorldUtil.IMP.isBlockSolid(block)) {
                                         MainUtil.sendMessage(player, C.NOT_ALLOWED_BLOCK,
                                             block.toString());
                                         return false;

@@ -1,26 +1,26 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import lombok.NonNull;
 
-public class PlotBlock {
+import java.util.Collection;
 
-    public static final PlotBlock EVERYTHING = new PlotBlock((short) 0, (byte) 0);
-    private static final PlotBlock[] CACHE = new PlotBlock[65535];
+public abstract class PlotBlock {
 
-    static {
-        for (int i = 0; i < 65535; i++) {
-            short id = (short) (i >> 4);
-            byte data = (byte) (i & 15);
-            CACHE[i] = new PlotBlock(id, data);
-        }
+    public static boolean isEverything(@NonNull final PlotBlock block) {
+        return block.equals(LegacyPlotBlock.EVERYTHING) || block.equals(StringPlotBlock.EVERYTHING);
     }
 
-    public final short id;
-    public final byte data;
+    public static boolean containsEverything(@NonNull final Collection<PlotBlock> blocks) {
+        for (final PlotBlock block : blocks) {
+            if (isEverything(block)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-    public PlotBlock(short id, byte data) {
-        this.id = id;
-        this.data = data;
+    protected PlotBlock() {
     }
 
     public static PlotBlock get(char combinedId) {
@@ -34,35 +34,43 @@ public class PlotBlock {
         }
     }
 
+    public abstract boolean isAir();
+
+    public static StringPlotBlock get(@NonNull final String itemId) {
+        if (Settings.Enabled_Components.BLOCK_CACHE) {
+            return StringPlotBlock.getOrAdd(itemId);
+        }
+        return new StringPlotBlock(itemId);
+    }
+
     public static PlotBlock get(int id, int data) {
         return Settings.Enabled_Components.BLOCK_CACHE && data > 0 ?
-            CACHE[(id << 4) + data] :
-            new PlotBlock((short) id, (byte) data);
+            LegacyPlotBlock.CACHE[(id << 4) + data] :
+            new LegacyPlotBlock((short) id, (byte) data);
     }
 
-    @Override public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
+    public static PlotBlock getEmptyData(@NonNull final PlotBlock plotBlock) {
+        if (plotBlock instanceof StringPlotBlock) {
+            return plotBlock;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        PlotBlock other = (PlotBlock) obj;
-        return (this.id == other.id) && ((this.data == other.data) || (this.data == -1) || (
-            other.data == -1));
+        return get(((LegacyPlotBlock) plotBlock).getId(), (byte) 0);
     }
 
-    @Override public int hashCode() {
-        return this.id;
+    public final boolean equalsAny(final int id, @NonNull final String stringId) {
+        if (this instanceof StringPlotBlock) {
+            final StringPlotBlock stringPlotBlock = (StringPlotBlock) this;
+            return stringPlotBlock.idEquals(stringId);
+        }
+        final LegacyPlotBlock legacyPlotBlock = (LegacyPlotBlock) this;
+        return legacyPlotBlock.id == id;
     }
 
-    @Override public String toString() {
-        if (this.data == -1) {
-            return this.id + "";
-        }
-        return this.id + ":" + this.data;
-    }
+    @Override public abstract boolean equals(Object obj);
+
+    @Override public abstract int hashCode();
+
+    @Override public abstract String toString();
+
+    public abstract Object getRawId();
+
 }

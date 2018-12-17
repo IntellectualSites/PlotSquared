@@ -88,7 +88,6 @@ import java.util.Arrays;
             new Trim();
             new Done();
             new Continue();
-            new BO3();
             new Middle();
             new Grant();
             // Set commands

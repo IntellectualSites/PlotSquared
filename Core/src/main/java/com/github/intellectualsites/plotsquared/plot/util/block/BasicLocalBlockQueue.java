@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import lombok.NonNull;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -82,6 +83,33 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
 
     @Override public final void setModified(long modified) {
         this.modified = modified;
+    }
+
+    @Override public boolean setBlock(int x, int y, int z, String id) {
+        if ((y > 255) || (y < 0)) {
+            return false;
+        }
+        int cx = x >> 4;
+        int cz = z >> 4;
+        if (cx != lastX || cz != lastZ) {
+            lastX = cx;
+            lastZ = cz;
+            long pair = (long) (cx) << 32 | (cz) & 0xFFFFFFFFL;
+            lastWrappedChunk = this.blocks.get(pair);
+            if (lastWrappedChunk == null) {
+                lastWrappedChunk = this.getLocalChunk(x >> 4, z >> 4);
+                lastWrappedChunk.setBlock(x & 15, y, z & 15, id);
+                LocalChunk previous = this.blocks.put(pair, lastWrappedChunk);
+                if (previous == null) {
+                    chunks.add(lastWrappedChunk);
+                    return true;
+                }
+                this.blocks.put(pair, previous);
+                lastWrappedChunk = previous;
+            }
+        }
+        lastWrappedChunk.setBlock(x & 15, y, z & 15, id);
+        return true;
     }
 
     @Override public final boolean setBlock(int x, int y, int z, int id, int data) {
@@ -211,6 +239,18 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
             }
         }
 
+        public void fillCuboid(int x1, int x2, int y1, int y2, int z1, int z2, String id) {
+            for (int x = x1; x <= x2; x++) {
+                for (int y = y1; y <= y2; y++) {
+                    for (int z = z1; z <= z2; z++) {
+                        setBlock(x, y, z, id);
+                    }
+                }
+            }
+        }
+
+        public abstract void setBlock(final int x, final int y, final int z, final String id);
+
         public abstract void setBlock(final int x, final int y, final int z, final int id,
             final int data);
 
@@ -241,20 +281,28 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
             blocks = new PlotBlock[16][];
         }
 
-        public void setBlock(final int x, final int y, final int z, final int id, final int data) {
-            PlotBlock block = PlotBlock.get(id, data);
-            int i = MainUtil.CACHE_I[y][x][z];
-            int j = MainUtil.CACHE_J[y][x][z];
+        @Override public void setBlock(final int x, final int y, final int z, @NonNull final String id) {
+            final PlotBlock block = PlotBlock.get(id);
+            this.setInternal(x, y, z, block);
+        }
+
+        private void setInternal(final int x, final int y, final int z, final PlotBlock plotBlock) {
+            final int i = MainUtil.CACHE_I[y][x][z];
+            final int j = MainUtil.CACHE_J[y][x][z];
             PlotBlock[] array = blocks[i];
             if (array == null) {
                 array = (blocks[i] = new PlotBlock[4096]);
             }
-            array[j] = block;
+            array[j] = plotBlock;
+        }
+
+        public void setBlock(final int x, final int y, final int z, final int id, final int data) {
+            final PlotBlock block = PlotBlock.get(id, data);
+            this.setInternal(x, y, z, block);
         }
     }
 
-
-    public class CharLocalChunk extends LocalChunk<char[]> {
+    /* public class CharLocalChunk extends LocalChunk<char[]> {
 
         public CharLocalChunk(BasicLocalBlockQueue parent, int x, int z) {
             super(parent, x, z);
@@ -271,5 +319,5 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
             }
             array[j] = (char) ((block.id << 4) + block.data);
         }
-    }
+    } */
 }

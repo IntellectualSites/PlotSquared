@@ -6,10 +6,7 @@ import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
-import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
-import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
@@ -100,7 +97,7 @@ public abstract class HybridUtils {
                     PlotBlock block = queue.getBlock(x, y, z);
                     boolean same = false;
                     for (PlotBlock p : blocks) {
-                        if (block.id == p.id) {
+                        if (WorldUtil.IMP.isBlockSame(block, p)) {
                             same = true;
                             break;
                         }
@@ -333,7 +330,7 @@ public abstract class HybridUtils {
                 for (int y = sy; y <= pm.getWorldHeight(); y++) {
                     if (y > ey) {
                         PlotBlock block = queue.getBlock(x, y, z);
-                        if (block.id != 0) {
+                        if (!block.isAir()) {
                             ey = y;
                         }
                     }

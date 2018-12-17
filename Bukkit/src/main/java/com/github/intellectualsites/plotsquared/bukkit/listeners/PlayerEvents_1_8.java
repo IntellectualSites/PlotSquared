@@ -73,8 +73,8 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
         }
         if (!"[(+NBT)]".equals(newLore) || (current.equals(newItem) && newLore.equals(oldLore))) {
             switch (newItem.getType()) {
-                case BANNER:
-                case SKULL_ITEM:
+                case LEGACY_BANNER:
+                case PLAYER_HEAD:
                     if (newMeta != null)
                         break;
                 default:
@@ -92,12 +92,12 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
         Material itemType = newItem.getType();
         if (stateType != itemType) {
             switch (stateType) {
-                case STANDING_BANNER:
-                case WALL_BANNER:
-                    if (itemType == Material.BANNER)
+                case LEGACY_STANDING_BANNER:
+                case LEGACY_WALL_BANNER:
+                    if (itemType == Material.LEGACY_BANNER)
                         break;
-                case SKULL:
-                    if (itemType == Material.SKULL_ITEM)
+                case LEGACY_SKULL:
+                    if (itemType == Material.LEGACY_SKULL_ITEM)
                         break;
                 default:
                     return;

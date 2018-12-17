@@ -134,16 +134,14 @@ public abstract class EventUtil {
                 Optional<HashSet<PlotBlock>> use = plot.getFlag(Flags.USE);
                 if (use.isPresent()) {
                     HashSet<PlotBlock> value = use.get();
-                    if (value.contains(PlotBlock.EVERYTHING) || value
-                        .contains(block.getPlotBlock())) {
+                    if (PlotBlock.containsEverything(value) || value.contains(block.getPlotBlock())) {
                         return true;
                     }
                 }
                 Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
                 if (destroy.isPresent()) {
                     HashSet<PlotBlock> value = destroy.get();
-                    if (value.contains(PlotBlock.EVERYTHING) || value
-                        .contains(block.getPlotBlock())) {
+                    if (PlotBlock.containsEverything(value) || value.contains(block.getPlotBlock())) {
                         return true;
                     }
                 }
@@ -220,7 +218,7 @@ public abstract class EventUtil {
                 } else {
                     value = null;
                 }
-                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value
+                if (value == null || !PlotBlock.containsEverything(value) && !value
                     .contains(block.getPlotBlock())) {
                     return Permissions
                         .hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false) || !(
@@ -245,7 +243,7 @@ public abstract class EventUtil {
                 } else {
                     value = null;
                 }
-                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value
+                if (value == null || !PlotBlock.containsEverything(value) && !value
                     .contains(block.getPlotBlock())) {
                     if (Permissions
                         .hasPermission(player, C.PERMISSION_ADMIN_BUILD_OTHER.s(), false)) {
@@ -275,7 +273,7 @@ public abstract class EventUtil {
                 } else {
                     value = null;
                 }
-                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value
+                if (value == null || !PlotBlock.containsEverything(value) && !value
                     .contains(block.getPlotBlock())) {
                     if (Permissions
                         .hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false)) {
@@ -305,7 +303,7 @@ public abstract class EventUtil {
                 } else {
                     value = null;
                 }
-                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value
+                if (value == null || !PlotBlock.containsEverything(value) && !value
                     .contains(block.getPlotBlock())) {
                     if (Permissions
                         .hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false)) {
@@ -336,7 +334,7 @@ public abstract class EventUtil {
                 } else {
                     value = null;
                 }
-                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value
+                if (value == null || !PlotBlock.containsEverything(value) && !value
                     .contains(block.getPlotBlock())) {
                     if (Permissions
                         .hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false)) {
@@ -367,7 +365,7 @@ public abstract class EventUtil {
                 } else {
                     value = null;
                 }
-                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value
+                if (value == null || !PlotBlock.containsEverything(value) && !value
                     .contains(block.getPlotBlock())) {
                     if (Permissions
                         .hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false)) {
@@ -398,7 +396,7 @@ public abstract class EventUtil {
                 } else {
                     value = null;
                 }
-                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value
+                if (value == null || !PlotBlock.containsEverything(value) && !value
                     .contains(block.getPlotBlock())) {
                     if (Permissions
                         .hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false)) {
@@ -431,7 +429,7 @@ public abstract class EventUtil {
                 } else {
                     value = null;
                 }
-                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value
+                if (value == null || !PlotBlock.containsEverything(value) && !value
                     .contains(block.getPlotBlock())) {
                     if (Permissions
                         .hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false)) {
@@ -463,7 +461,7 @@ public abstract class EventUtil {
                 } else {
                     value = null;
                 }
-                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value
+                if (value == null || !PlotBlock.containsEverything(value) && !value
                     .contains(block.getPlotBlock())) {
                     if (Permissions
                         .hasPermission(player, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false)) {

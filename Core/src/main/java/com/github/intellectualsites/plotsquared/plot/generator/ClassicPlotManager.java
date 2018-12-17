@@ -46,7 +46,7 @@ public class ClassicPlotManager extends SquarePlotManager {
     @Override public boolean unclaimPlot(PlotArea plotArea, Plot plot, Runnable whenDone) {
         ClassicPlotWorld dpw = (ClassicPlotWorld) plotArea;
         setWallFilling(dpw, plot.getId(), new PlotBlock[] {dpw.WALL_FILLING});
-        if (dpw.WALL_BLOCK.id != 0 || !dpw.WALL_BLOCK.equals(dpw.CLAIMED_WALL_BLOCK)) {
+        if (!dpw.WALL_BLOCK.isAir() || !dpw.WALL_BLOCK.equals(dpw.CLAIMED_WALL_BLOCK)) {
             setWall(dpw, plot.getId(), new PlotBlock[] {dpw.WALL_BLOCK});
         }
         GlobalBlockQueue.IMP.addTask(whenDone);
@@ -431,7 +431,7 @@ public class ClassicPlotManager extends SquarePlotManager {
     @Override public boolean finishPlotMerge(PlotArea plotArea, ArrayList<PlotId> plotIds) {
         PlotBlock block = ((ClassicPlotWorld) plotArea).CLAIMED_WALL_BLOCK;
         PlotBlock unclaim = ((ClassicPlotWorld) plotArea).WALL_BLOCK;
-        if (block.id != 0 || !block.equals(unclaim)) {
+        if (!block.isAir() || !block.equals(unclaim)) {
             for (PlotId id : plotIds) {
                 setWall(plotArea, id, new PlotBlock[] {block});
             }
@@ -443,7 +443,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         PlotBlock block = ((ClassicPlotWorld) plotArea).CLAIMED_WALL_BLOCK;
         PlotBlock unclaim = ((ClassicPlotWorld) plotArea).WALL_BLOCK;
         for (PlotId id : plotIds) {
-            if (block.id != 0 || !block.equals(unclaim)) {
+            if (block.isAir() || !block.equals(unclaim)) {
                 setWall(plotArea, id, new PlotBlock[] {block});
             }
         }
@@ -461,7 +461,7 @@ public class ClassicPlotManager extends SquarePlotManager {
     @Override public boolean claimPlot(PlotArea plotArea, Plot plot) {
         PlotBlock unclaim = ((ClassicPlotWorld) plotArea).WALL_BLOCK;
         PlotBlock claim = ((ClassicPlotWorld) plotArea).CLAIMED_WALL_BLOCK;
-        if (claim.id != 0 || !claim.equals(unclaim)) {
+        if (!claim.isAir() || !claim.equals(unclaim)) {
             setWall(plotArea, plot.getId(), new PlotBlock[] {claim});
         }
         return true;

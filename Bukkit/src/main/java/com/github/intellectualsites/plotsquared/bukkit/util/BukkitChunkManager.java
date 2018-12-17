@@ -13,6 +13,7 @@ import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlock
 import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -58,29 +59,35 @@ public class BukkitChunkManager extends ChunkManager {
                 map.saveBlocks(world1, 256, sx, sz, relX, relZ, false);
                 for (int y = 0; y < 256; y++) {
                     Block block1 = world1.getBlockAt(x, y, z);
-                    int id1 = block1.getTypeId();
-                    byte data1 = block1.getData();
+                    // int id1 = block1.getTypeId();
+                    Material id1 = block1.getType();
+                    BlockData data1 = block1.getBlockData();
+                    // byte data1 = block1.getData();
                     int xx = x + relX;
                     int zz = z + relZ;
                     Block block2 = world2.getBlockAt(xx, y, zz);
-                    int id2 = block2.getTypeId();
-                    byte data2 = block2.getData();
-                    if (id1 == 0) {
-                        if (id2 != 0) {
-                            queue1.setBlock(x, y, z, (short) id2, data2);
+                    // int id2 = block2.getTypeId();
+                    Material id2 = block2.getType();
+                    BlockData data2 = block2.getBlockData();
+                    // byte data2 = block2.getData();
+                    if (id1 == Material.AIR) {
+                        if (id2 != Material.AIR) {
+                            queue1.setBlock(x, y, z, id2.name());
                             queue2.setBlock(xx, y, zz, (short) 0, (byte) 0);
                         }
-                    } else if (id2 == 0) {
+                    } else if (id2 == Material.AIR) {
                         queue1.setBlock(x, y, z, (short) 0, (byte) 0);
-                        queue2.setBlock(xx, y, zz, (short) id1, data1);
+                        queue2.setBlock(xx, y, zz, id1.name());
                     } else if (id1 == id2) {
                         if (data1 != data2) {
-                            block1.setData(data2);
-                            block2.setData(data1);
+                            block1.setBlockData(data2);
+                            block2.setBlockData(data1);
                         }
                     } else {
-                        queue1.setBlock(x, y, z, (short) id2, data2);
-                        queue2.setBlock(xx, y, zz, (short) id1, data1);
+                        queue1.setBlock(x, y, z, id2.name());
+                        queue2.setBlock(xx, y, zz, id1.name());
+                        // queue1.setBlock(x, y, z, (short) id2, data2);
+                        // queue2.setBlock(xx, y, zz, (short) id1, data1);
                     }
                 }
             }
@@ -1092,7 +1099,7 @@ public class BukkitChunkManager extends ChunkManager {
                 if (storeNormal) {
                     int typeId = id.getId();
                     if (typeId == 0) {
-                        ids[y] = PlotBlock.EVERYTHING;
+                        ids[y] = StringPlotBlock.EVERYTHING;
                     } else {
                         ids[y] = PlotBlock.get((short) typeId, block.getData());
                     }
@@ -1131,7 +1138,7 @@ public class BukkitChunkManager extends ChunkManager {
                                     this.brewingStandContents.put(bl, invBre);
                                     break;
                                 case FURNACE:
-                                case BURNING_FURNACE:
+                                case LEGACY_BURNING_FURNACE:
                                     Furnace furnace = (Furnace) inventoryHolder;
                                     short burn = furnace.getBurnTime();
                                     short cook = furnace.getCookTime();

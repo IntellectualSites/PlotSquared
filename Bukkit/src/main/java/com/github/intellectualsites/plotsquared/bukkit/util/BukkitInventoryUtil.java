@@ -7,6 +7,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.InventoryUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -23,7 +24,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
         if (item == null) {
             return null;
         }
-        ItemStack stack = new ItemStack(item.id, item.amount, item.data);
+        ItemStack stack = new ItemStack(BukkitUtil.getMaterial(item.getPlotBlock()), item.amount);
         ItemMeta meta = null;
         if (item.name != null) {
             meta = stack.getItemMeta();
@@ -82,7 +83,8 @@ public class BukkitInventoryUtil extends InventoryUtil {
         if (item == null) {
             return null;
         }
-        int id = item.getTypeId();
+        // int id = item.getTypeId();
+        Material id = item.getType();
         short data = item.getDurability();
         int amount = item.getAmount();
         String name = null;
@@ -97,7 +99,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
                 lore = itemLore.toArray(new String[itemLore.size()]);
             }
         }
-        return new PlotItemStack(id, data, amount, name, lore);
+        return new PlotItemStack(id.name(), amount, name, lore);
     }
 
     @Override public PlotItemStack[] getItems(PlotPlayer player) {

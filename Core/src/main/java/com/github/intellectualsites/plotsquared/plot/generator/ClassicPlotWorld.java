@@ -12,8 +12,8 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     public int ROAD_HEIGHT = 64;
     public int PLOT_HEIGHT = 64;
     public int WALL_HEIGHT = 64;
-    public PlotBlock[] MAIN_BLOCK = new PlotBlock[] {PlotBlock.get((short) 1, (byte) 0)};
-    public PlotBlock[] TOP_BLOCK = new PlotBlock[] {PlotBlock.get((short) 2, (byte) 0)};
+    public PlotBlock[] MAIN_BLOCK = new PlotBlock[] {PlotBlock.get("stone")};
+    public PlotBlock[] TOP_BLOCK = new PlotBlock[] {PlotBlock.get("grass")};
     public PlotBlock WALL_BLOCK = PlotBlock.get((short) 44, (byte) 0);
     public PlotBlock CLAIMED_WALL_BLOCK = PlotBlock.get((short) 44, (byte) 1);
     public PlotBlock WALL_FILLING = PlotBlock.get((short) 1, (byte) 0);
@@ -45,12 +45,14 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
             new ConfigurationNode("wall.block", this.WALL_BLOCK, "Top wall block",
                 Configuration.BLOCK),
             new ConfigurationNode("wall.block_claimed", this.CLAIMED_WALL_BLOCK,
-                "Wall block (claimed)", Configuration.BLOCK),
+                "Wall block (claimed)",
+                Configuration.BLOCK),
             new ConfigurationNode("road.width", this.ROAD_WIDTH, "Road width",
                 Configuration.INTEGER),
             new ConfigurationNode("road.height", this.ROAD_HEIGHT, "Road height",
                 Configuration.INTEGER),
-            new ConfigurationNode("road.block", this.ROAD_BLOCK, "Road block", Configuration.BLOCK),
+            new ConfigurationNode("road.block", this.ROAD_BLOCK, "Road block",
+                Configuration.BLOCK),
             new ConfigurationNode("wall.filling", this.WALL_FILLING, "Wall filling block",
                 Configuration.BLOCK),
             new ConfigurationNode("wall.height", this.WALL_HEIGHT, "Wall height",

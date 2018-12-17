@@ -1203,7 +1203,7 @@ public class Plot {
                 bot.getZ() + home.z, home.yaw, home.pitch);
             if (!isLoaded())
                 return loc;
-            if (WorldUtil.IMP.getBlock(loc).id != 0) {
+            if (!WorldUtil.IMP.getBlock(loc).isAir()) {
                 loc.setY(Math.max(
                     1 + WorldUtil.IMP.getHighestBlock(this.getWorldName(), loc.getX(), loc.getZ()),
                     bot.getY()));
@@ -1849,22 +1849,6 @@ public class Plot {
     }
 
     /**
-     * Export the plot as a BO3 object<br>
-     * - bedrock, floor and main block are ignored in their respective sections
-     * - air is ignored
-     * - The center is considered to be on top of the plot in the center
-     *
-     * @param whenDone value will be false if exporting fails
-     */
-    public void exportBO3(RunnableVal<Boolean> whenDone) {
-        boolean result = BO3Handler.saveBO3(this);
-        if (whenDone != null) {
-            whenDone.value = result;
-        }
-        TaskManager.runTask(whenDone);
-    }
-
-    /**
      * Upload the plot as a schematic to the configured web interface.
      *
      * @param whenDone value will be null if uploading fails
@@ -1887,18 +1871,6 @@ public class Plot {
      */
     public void uploadWorld(RunnableVal<URL> whenDone) {
         WorldUtil.IMP.upload(this, null, null, whenDone);
-    }
-
-    /**
-     * Upload this plot as a BO3<br>
-     * - May not work on non default generator<br>
-     * - BO3 includes flags/ignores plot main/floor block<br>
-     *
-     * @param whenDone
-     * @see BO3Handler
-     */
-    public void uploadBO3(RunnableVal<URL> whenDone) {
-        BO3Handler.upload(this, null, null, whenDone);
     }
 
     @Override public boolean equals(Object obj) {

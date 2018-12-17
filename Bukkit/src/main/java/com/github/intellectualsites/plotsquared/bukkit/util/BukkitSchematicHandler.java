@@ -140,7 +140,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                                 int rx = x - bx;
                                                 int index = i2 + rx;
                                                 Block block = worldObj.getBlockAt(x, y, z);
-                                                int id = block.getTypeId();
+                                                int id = LegacyMappings.fromNewName(block.getType().name()).getNumericalId();
                                                 switch (id) {
                                                     case 0:
                                                     case 2:

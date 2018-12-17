@@ -60,6 +60,14 @@ import java.util.*;
         return getLocation(location).getPlot();
     }
 
+    @Override public boolean isBlockSame(PlotBlock block1, PlotBlock block2) {
+        if (block1.equals(block2)) {
+            return true;
+        }
+        Material mat1 = getMaterial(block1), mat2 = getMaterial(block2);
+        return mat1 == mat2;
+    }
+
     /**
      * Get a plot based on the player location.
      *
@@ -248,7 +256,7 @@ import java.util.*;
         final Block block = world.getBlockAt(x, y, z);
         //        block.setType(Material.AIR);
         final Material type = block.getType();
-        if (type != Material.SIGN && type != Material.SIGN_POST) {
+        if (type != Material.SIGN && type != Material.WALL_SIGN) {
             int data = 2;
             if (world.getBlockAt(x, y, z + 1).getType().isSolid())
                 data = 2;
@@ -258,7 +266,9 @@ import java.util.*;
                 data = 3;
             else if (world.getBlockAt(x - 1, y, z).getType().isSolid())
                 data = 5;
-            block.setTypeIdAndData(Material.WALL_SIGN.getId(), (byte) data, false);
+            block.setType(Material.WALL_SIGN, false);
+            final Sign sign = (Sign) block.getBlockData();
+            sign.setRawData((byte) data);
         }
         final BlockState blockstate = block.getState();
         if (blockstate instanceof Sign) {
@@ -322,8 +332,6 @@ import java.util.*;
                     switch (type) {
                         case WATER:
                         case LAVA:
-                        case STATIONARY_LAVA:
-                        case STATIONARY_WATER:
                             return y;
                     }
                     air++;
@@ -363,7 +371,7 @@ import java.util.*;
             InventoryHolder holder = (InventoryHolder) state;
             Inventory inv = holder.getInventory();
             for (int i = 0; i < items.id.length; i++) {
-                ItemStack item = new ItemStack(items.id[i], items.amount[i], items.data[i]);
+                ItemStack item = new ItemStack(LegacyMappings.fromLegacyId(items.id[i]).getMaterial(), items.amount[i], items.data[i]);
                 inv.addItem(item);
             }
             state.update(true);
@@ -372,9 +380,18 @@ import java.util.*;
         return false;
     }
 
+    public static Material getMaterial(@NonNull final PlotBlock plotBlock) {
+        if (plotBlock instanceof StringPlotBlock) {
+            return Material.getMaterial(((StringPlotBlock) plotBlock).getItemId().toUpperCase(Locale.ENGLISH));
+        } else {
+            final LegacyPlotBlock legacyPlotBlock = (LegacyPlotBlock) plotBlock;
+            return LegacyMappings.fromLegacyId(legacyPlotBlock.getId()).getMaterial();
+        }
+    }
+
     @Override public boolean isBlockSolid(@NonNull final PlotBlock block) {
         try {
-            final Material material = Material.getMaterial(block.id);
+            final Material material = getMaterial(block);
             if (material.isBlock() && material.isSolid() && !material.hasGravity()) {
                 Class<? extends MaterialData> data = material.getData();
                 if (data.equals(MaterialData.class) && !material.isTransparent() && material
@@ -383,7 +400,7 @@ import java.util.*;
                     .equals(WoodenStep.class)) {
                     switch (material) {
                         case NOTE_BLOCK:
-                        case MOB_SPAWNER:
+                        case SPAWNER:
                             return false;
                         default:
                             return true;
@@ -398,7 +415,7 @@ import java.util.*;
 
     @Override public String getClosestMatchingName(@NonNull final PlotBlock block) {
         try {
-            return Material.getMaterial(block.id).name();
+            return getMaterial(block).name();
         } catch (Exception ignored) {
             return null;
         }
@@ -408,8 +425,8 @@ import java.util.*;
     public StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name) {
         try {
             final Material material = Material.valueOf(name.toUpperCase());
-            return new StringComparison<PlotBlock>().new ComparisonResult(0,
-                PlotBlock.get((short) material.getId(), (byte) 0));
+            return new StringComparison<PlotBlock>().new ComparisonResult(1,
+                PlotBlock.get(name));
         } catch (IllegalArgumentException ignored) {
         }
         try {
@@ -457,9 +474,9 @@ import java.util.*;
         final World world = getWorld(location.getWorld());
         final Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
         if (block == null) {
-            return PlotBlock.EVERYTHING;
+            return StringPlotBlock.EVERYTHING;
         }
-        return PlotBlock.get((short) block.getTypeId(), block.getData());
+        return PlotBlock.get(block.getType().name());
     }
 
     @Override public String getMainWorld() {

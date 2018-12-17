@@ -142,4 +142,6 @@ public abstract class WorldUtil {
         }
         return null;
     }
+
+    public abstract boolean isBlockSame(PlotBlock block1, PlotBlock block2);
 }

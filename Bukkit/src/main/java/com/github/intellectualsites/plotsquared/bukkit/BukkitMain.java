@@ -1,14 +1,46 @@
 package com.github.intellectualsites.plotsquared.bukkit;
 
+import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getRefClass;
+
 import com.github.intellectualsites.plotsquared.bukkit.database.plotme.ClassicPlotMeConnector;
 import com.github.intellectualsites.plotsquared.bukkit.database.plotme.LikePlotMeConverter;
 import com.github.intellectualsites.plotsquared.bukkit.database.plotme.PlotMeConnector_017;
 import com.github.intellectualsites.plotsquared.bukkit.generator.BukkitPlotGenerator;
-import com.github.intellectualsites.plotsquared.bukkit.listeners.*;
+import com.github.intellectualsites.plotsquared.bukkit.listeners.ChunkListener;
+import com.github.intellectualsites.plotsquared.bukkit.listeners.EntityPortal_1_7_9;
+import com.github.intellectualsites.plotsquared.bukkit.listeners.EntitySpawnListener;
+import com.github.intellectualsites.plotsquared.bukkit.listeners.PlayerEvents;
+import com.github.intellectualsites.plotsquared.bukkit.listeners.PlayerEvents183;
+import com.github.intellectualsites.plotsquared.bukkit.listeners.PlayerEvents_1_8;
+import com.github.intellectualsites.plotsquared.bukkit.listeners.PlayerEvents_1_9;
+import com.github.intellectualsites.plotsquared.bukkit.listeners.PlotPlusListener;
+import com.github.intellectualsites.plotsquared.bukkit.listeners.PlotPlusListener_1_12;
+import com.github.intellectualsites.plotsquared.bukkit.listeners.PlotPlusListener_Legacy;
+import com.github.intellectualsites.plotsquared.bukkit.listeners.SingleWorldListener;
+import com.github.intellectualsites.plotsquared.bukkit.listeners.WorldEvents;
 import com.github.intellectualsites.plotsquared.bukkit.titles.DefaultTitle_111;
-import com.github.intellectualsites.plotsquared.bukkit.util.*;
-import com.github.intellectualsites.plotsquared.bukkit.util.block.*;
-import com.github.intellectualsites.plotsquared.bukkit.uuid.*;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitChatManager;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitChunkManager;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitCommand;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitEconHandler;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitEventUtil;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitHybridUtils;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitInventoryUtil;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitSchematicHandler;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitSetupUtils;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitTaskManager;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitVersion;
+import com.github.intellectualsites.plotsquared.bukkit.util.LegacyMappings;
+import com.github.intellectualsites.plotsquared.bukkit.util.Metrics;
+import com.github.intellectualsites.plotsquared.bukkit.util.SendChunk;
+import com.github.intellectualsites.plotsquared.bukkit.util.SetGenCB;
+import com.github.intellectualsites.plotsquared.bukkit.util.block.BukkitLocalQueue;
+import com.github.intellectualsites.plotsquared.bukkit.uuid.DefaultUUIDWrapper;
+import com.github.intellectualsites.plotsquared.bukkit.uuid.FileUUIDHandler;
+import com.github.intellectualsites.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
+import com.github.intellectualsites.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
+import com.github.intellectualsites.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.plot.IPlotMain;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
@@ -19,20 +51,55 @@ import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridGen;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
+import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
 import com.github.intellectualsites.plotsquared.plot.object.chat.PlainChatManager;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.PlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SingleWorldGenerator;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.AbstractTitle;
+import com.github.intellectualsites.plotsquared.plot.util.ChatManager;
+import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
+import com.github.intellectualsites.plotsquared.plot.util.ConsoleColors;
+import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
+import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
+import com.github.intellectualsites.plotsquared.plot.util.InventoryUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils;
+import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
+import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandlerImplementation;
+import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
+import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import javax.annotation.Nullable;
 import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -44,15 +111,6 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import javax.annotation.Nullable;
-import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getRefClass;
 
 public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
@@ -138,6 +196,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
         this.pluginName = getDescription().getName();
         getServer().getName();
+
+        LegacyMappings.initialize();
+
         new PlotSquared(this, "Bukkit");
         if (Settings.Enabled_Components.METRICS) {
             new Metrics(this).start();
@@ -646,19 +707,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 SendChunk.class + " does not support " + StringMan.getString(getServerVersion()));
             MainUtil.canSendChunk = false;
         }
-        if (PlotSquared.get().checkVersion(getServerVersion(), BukkitVersion.v1_13_0)) {
-            return QueueProvider.of(BukkitLocalQueue.class, BukkitLocalQueue.class);
-        }
-        if (PlotSquared.get().checkVersion(getServerVersion(), BukkitVersion.v1_9_0)) {
-            return QueueProvider.of(BukkitLocalQueue_1_9.class, BukkitLocalQueue.class);
-        }
-        if (PlotSquared.get().checkVersion(getServerVersion(), BukkitVersion.v1_8_3)) {
-            return QueueProvider.of(BukkitLocalQueue_1_8_3.class, BukkitLocalQueue.class);
-        }
-        if (PlotSquared.get().checkVersion(getServerVersion(), BukkitVersion.v1_8_0)) {
-            return QueueProvider.of(BukkitLocalQueue_1_8.class, BukkitLocalQueue.class);
-        }
-        return QueueProvider.of(BukkitLocalQueue_1_7.class, BukkitLocalQueue.class);
+        return QueueProvider.of(BukkitLocalQueue.class, BukkitLocalQueue.class);
     }
 
     @Override public WorldUtil initWorldUtil() {
