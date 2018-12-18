@@ -13,6 +13,9 @@ public abstract class BlockRegistry<T> {
 
   public BlockRegistry(@NonNull final Class<T> type, final T... preInitializedItems) {
     this.type = type;
+    for (final T preInitializedItem : preInitializedItems) {
+      this.addMapping(getPlotBlock(preInitializedItem), preInitializedItem);
+    }
   }
 
   public final void addMapping(@NonNull final PlotBlock plotBlock, @NonNull final T t) {
