@@ -69,7 +69,7 @@ public abstract class PlotBlock {
             }
             conversionType = blockRegistry.getType();
         }
-        if (!type.getClass().equals(blockRegistry.getClass())) {
+        if (!type.getClass().equals(conversionType)) {
             throw new UnsupportedOperationException("The PlotSquared implementation has not registered a block registry for this object type");
         }
         return blockRegistry.getPlotBlock(type);
