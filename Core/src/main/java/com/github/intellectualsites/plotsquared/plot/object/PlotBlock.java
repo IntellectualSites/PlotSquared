@@ -1,11 +1,15 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import lombok.NonNull;
 
 import java.util.Collection;
 
 public abstract class PlotBlock {
+
+    private static Class<?> conversionType;
+    private static BlockRegistry blockRegistry;
 
     public static boolean isEverything(@NonNull final PlotBlock block) {
         return block.equals(LegacyPlotBlock.EVERYTHING) || block.equals(StringPlotBlock.EVERYTHING);
@@ -54,6 +58,21 @@ public abstract class PlotBlock {
             return plotBlock;
         }
         return get(((LegacyPlotBlock) plotBlock).getId(), (byte) 0);
+    }
+
+    public static PlotBlock get(@NonNull final Object type) {
+        if (blockRegistry == null) {
+            blockRegistry = PlotSquared.imp().getBlockRegistry();
+            if (blockRegistry == null) {
+                throw new UnsupportedOperationException("The PlotSquared implementation has not registered a custom block registry."
+                    + " This method can't be used.");
+            }
+            conversionType = blockRegistry.getType();
+        }
+        if (!type.getClass().equals(blockRegistry.getClass())) {
+            throw new UnsupportedOperationException("The PlotSquared implementation has not registered a block registry for this object type");
+        }
+        return blockRegistry.getPlotBlock(type);
     }
 
     public final boolean equalsAny(final int id, @NonNull final String stringId) {

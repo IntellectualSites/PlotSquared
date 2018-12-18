@@ -4,6 +4,7 @@ import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
 import com.github.intellectualsites.plotsquared.plot.logger.ILogger;
+import com.github.intellectualsites.plotsquared.plot.object.BlockRegistry;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
@@ -11,7 +12,7 @@ import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
 import java.io.File;
 import java.util.List;
 
-public interface IPlotMain extends ILogger {
+public interface IPlotMain<BlockType> extends ILogger {
 
     /**
      * Log a message to console.
@@ -272,4 +273,6 @@ public interface IPlotMain extends ILogger {
     AbstractTitle initTitleManager();
 
     List<String> getPluginIds();
+
+    BlockRegistry<BlockType> getBlockRegistry();
 }

@@ -19,6 +19,7 @@ import com.github.intellectualsites.plotsquared.bukkit.listeners.PlotPlusListene
 import com.github.intellectualsites.plotsquared.bukkit.listeners.SingleWorldListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.WorldEvents;
 import com.github.intellectualsites.plotsquared.bukkit.titles.DefaultTitle_111;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitBlockRegistry;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitChatManager;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitChunkManager;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitCommand;
@@ -51,6 +52,7 @@ import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridGen;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
+import com.github.intellectualsites.plotsquared.plot.object.BlockRegistry;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
@@ -98,6 +100,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
@@ -112,7 +115,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
+public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<Material> {
 
     @Getter private static WorldEdit worldEdit;
     private static Map<String, Plugin> pluginMap;
@@ -168,6 +171,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Getter private SingleWorldListener singleWorldListener;
     private Method methodUnloadChunk0;
     private boolean methodUnloadSetup = false;
+    private final BlockRegistry<Material> blockRegistry = new BukkitBlockRegistry(Material.values());
 
     @Override public int[] getServerVersion() {
         if (this.version == null) {
@@ -919,5 +923,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 .isEnabled());
         }
         return names;
+    }
+
+    @Override
+    public BlockRegistry<Material> getBlockRegistry() {
+        return this.blockRegistry;
     }
 }
