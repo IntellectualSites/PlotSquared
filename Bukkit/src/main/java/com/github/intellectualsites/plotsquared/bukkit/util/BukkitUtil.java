@@ -1,10 +1,28 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.LegacyPlotBlock;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.github.intellectualsites.plotsquared.plot.object.StringPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import javax.annotation.Nullable;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -19,10 +37,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.*;
-
-import javax.annotation.Nullable;
-import java.util.*;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.Sandstone;
+import org.bukkit.material.Step;
+import org.bukkit.material.Tree;
+import org.bukkit.material.WoodenStep;
+import org.bukkit.material.Wool;
 
 @SuppressWarnings({"unused", "WeakerAccess"}) public class BukkitUtil extends WorldUtil {
 
@@ -359,6 +379,10 @@ import java.util.*;
         return list;
     }
 
+    public static BukkitLegacyMappings getBukkitLegacyMappings() {
+        return (BukkitLegacyMappings) PlotSquared.imp().getLegacyMappings();
+    }
+
     @Override
     public boolean addItems(@NonNull final String worldName, @NonNull final PlotItem items) {
         final World world = getWorld(worldName);
@@ -370,8 +394,9 @@ import java.util.*;
         if (state instanceof InventoryHolder) {
             InventoryHolder holder = (InventoryHolder) state;
             Inventory inv = holder.getInventory();
-            for (int i = 0; i < items.id.length; i++) {
-                ItemStack item = new ItemStack(LegacyMappings.fromLegacyId(items.id[i]).getMaterial(), items.amount[i], items.data[i]);
+            for (int i = 0; i < items.types.length; i++) {
+                // ItemStack item = new ItemStack(LegacyMappings.fromLegacyId(items.id[i]).getMaterial(), items.amount[i], items.data[i]);
+                ItemStack item = new ItemStack(items.types[i].to(Material.class), items.amount[i]);
                 inv.addItem(item);
             }
             state.update(true);
@@ -385,7 +410,7 @@ import java.util.*;
             return Material.getMaterial(((StringPlotBlock) plotBlock).getItemId().toUpperCase(Locale.ENGLISH));
         } else {
             final LegacyPlotBlock legacyPlotBlock = (LegacyPlotBlock) plotBlock;
-            return LegacyMappings.fromLegacyId(legacyPlotBlock.getId()).getMaterial();
+            return getBukkitLegacyMappings().fromLegacyToString(legacyPlotBlock.getId(), legacyPlotBlock.getData()).to(Material.class);
         }
     }
 

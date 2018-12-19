@@ -43,13 +43,28 @@ public abstract class PlotBlock implements ConfigurationSerializable {
     public static PlotBlock deserialize(@NonNull final Map<String, Object> map) {
         if (map.containsKey("material")) {
             final Object object = map.get("material");
-            return get(object);
+            return get(object.toString());
         }
         return null;
     }
 
     @Override public Map<String, Object> serialize() {
         return ImmutableMap.of("material", this.getRawId());
+    }
+
+    public <T> T to(@NonNull final Class<T> clazz) {
+        if (blockRegistry == null) {
+            blockRegistry = PlotSquared.imp().getBlockRegistry();
+            if (blockRegistry == null) {
+                throw new UnsupportedOperationException("The PlotSquared implementation has not registered a custom block registry."
+                    + " This method can't be used.");
+            }
+            conversionType = blockRegistry.getType();
+        }
+        if (!clazz.equals(conversionType)) {
+            throw new UnsupportedOperationException("The PlotSquared implementation has not registered a block registry for this object type");
+        }
+        return clazz.cast(blockRegistry.getItem(this));
     }
 
     public abstract boolean isAir();
