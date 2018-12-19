@@ -275,4 +275,7 @@ public interface IPlotMain<BlockType> extends ILogger {
     List<String> getPluginIds();
 
     BlockRegistry<BlockType> getBlockRegistry();
+
+    LegacyMappings getLegacyMappings();
+
 }

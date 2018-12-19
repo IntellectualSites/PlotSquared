@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.bukkit.util.block;
 
-import com.github.intellectualsites.plotsquared.bukkit.util.LegacyMappings;
+import com.github.intellectualsites.plotsquared.plot.util.LegacyMappings;
 import com.github.intellectualsites.plotsquared.plot.object.LegacyPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.StringPlotBlock;

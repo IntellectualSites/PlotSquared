@@ -166,6 +166,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         }
     }
 
+    private final LegacyMappings legacyMappings = new BukkitLegacyMappings();
     private int[] version;
     @Getter private String pluginName;
     @Getter private SingleWorldListener singleWorldListener;
@@ -928,5 +929,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
     @Override
     public BlockRegistry<Material> getBlockRegistry() {
         return this.blockRegistry;
+    }
+  
+    @Override public LegacyMappings getLegacyMappings() {
+        return this.legacyMappings;
     }
 }
