@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.bukkit.util.block;
 
-import com.github.intellectualsites.plotsquared.plot.util.LegacyMappings;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.LegacyPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.StringPlotBlock;
@@ -114,15 +114,18 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
 
     private void setMaterial(@NonNull final PlotBlock plotBlock, @NonNull final Block block) {
         if (plotBlock instanceof StringPlotBlock) {
-            final Material material = Material.getMaterial(((StringPlotBlock) plotBlock).getItemId().toLowerCase(
-                Locale.ENGLISH));
+            final Material material = Material
+                .getMaterial(((StringPlotBlock) plotBlock).getItemId().toLowerCase(Locale.ENGLISH));
             if (material == null) {
-                throw new IllegalStateException(String.format("Could not find material that matches %s", block.toString()));
+                throw new IllegalStateException(
+                    String.format("Could not find material that matches %s", block.toString()));
             }
             block.setType(material, false);
         } else {
             final LegacyPlotBlock legacyPlotBlock = (LegacyPlotBlock) plotBlock;
-            block.setType(LegacyMappings.fromIdAndData(legacyPlotBlock.getId(), legacyPlotBlock.getData()).getMaterial());
+            block.setType(Material.getMaterial(PlotSquared.get().IMP.getLegacyMappings()
+                .fromLegacyToString(legacyPlotBlock.getId(), legacyPlotBlock.getData())
+                .toString()));
             // block.setTypeIdAndData(legacyPlotBlock.getId(), legacyPlotBlock.getData(), false);
         }
     }
@@ -132,7 +135,9 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
             return ((StringPlotBlock) plotBlock).idEquals(block.getType().name());
         }
         final LegacyPlotBlock legacyPlotBlock = (LegacyPlotBlock) plotBlock;
-        return LegacyMappings.fromLegacyId(((LegacyPlotBlock) plotBlock).id).getMaterial() == block.getType() && (legacyPlotBlock.id == 0 || legacyPlotBlock.data == block.getData());
+        return Material.getMaterial(PlotSquared.get().IMP.getLegacyMappings()
+            .fromLegacyToString(((LegacyPlotBlock) plotBlock).id).toString()) == block.getType()
+            && (legacyPlotBlock.id == 0 || legacyPlotBlock.data == block.getData());
     }
 
     public void setBiomes(LocalChunk<T> lc) {
