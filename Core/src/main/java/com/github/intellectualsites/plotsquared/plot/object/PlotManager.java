@@ -42,7 +42,7 @@ public abstract class PlotManager {
     public abstract String[] getPlotComponents(PlotArea plotArea, PlotId plotId);
 
     public abstract boolean setComponent(PlotArea plotArea, PlotId plotId, String component,
-        PlotBlock[] blocks);
+        BlockBucket blocks);
 
     /*
      * PLOT MERGING (return false if your generator does not support plot

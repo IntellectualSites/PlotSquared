@@ -4,6 +4,7 @@ import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
+import com.github.intellectualsites.plotsquared.plot.config.Configuration.UnknownBlockException;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
@@ -49,46 +50,37 @@ public class Set extends SubCommand {
                                 C.PERMISSION_SET_COMPONENT.f(component));
                             return false;
                         }
-                        PlotBlock[] blocks;
+                        // PlotBlock[] blocks;
+                        BlockBucket bucket;
                         try {
                             if (args.length < 2) {
                                 MainUtil.sendMessage(player, C.NEED_BLOCK);
                                 return true;
                             }
                             String[] split = material.split(",");
-                            blocks = Configuration.BLOCKLIST.parseString(material);
-                            for (int i = 0; i < blocks.length; i++) {
-                                PlotBlock block = blocks[i];
-                                if (block == null) {
-                                    MainUtil.sendMessage(player, C.NOT_VALID_BLOCK, split[i]);
-                                    String name;
-                                    if (split[i].contains("%")) {
-                                        name = split[i].split("%")[1];
-                                    } else {
-                                        name = split[i];
+                            // blocks = Configuration.BLOCKLIST.parseString(material);
+
+                            try {
+                                bucket = Configuration.BLOCK_BUCKET.parseString(material);
+                            } catch (final UnknownBlockException unknownBlockException) {
+                                final String unknownBlock = unknownBlockException.getUnknownValue();
+                                C.NOT_VALID_BLOCK.send(player, unknownBlock);
+                                StringComparison<PlotBlock>.ComparisonResult match =
+                                    WorldUtil.IMP.getClosestBlock(unknownBlock);
+                                if (match != null) {
+                                    final String found = WorldUtil.IMP.getClosestMatchingName(match.best);
+                                    if (found != null) {
+                                        MainUtil.sendMessage(player, C.DID_YOU_MEAN,
+                                            found.toLowerCase());
                                     }
-                                    StringComparison<PlotBlock>.ComparisonResult match =
-                                        WorldUtil.IMP.getClosestBlock(name);
-                                    if (match != null) {
-                                        name = WorldUtil.IMP.getClosestMatchingName(match.best);
-                                        if (name != null) {
-                                            MainUtil.sendMessage(player, C.DID_YOU_MEAN,
-                                                name.toLowerCase());
-                                        }
-                                    }
-                                    return false;
-                                } else if (!allowUnsafe && (!block.isAir() && !WorldUtil.IMP
-                                    .isBlockSolid(block))) {
-                                    MainUtil
-                                        .sendMessage(player, C.NOT_ALLOWED_BLOCK, block.toString());
-                                    return false;
                                 }
+                                return false;
                             }
+
                             if (!allowUnsafe) {
-                                for (PlotBlock block : blocks) {
+                                for (final PlotBlock block : bucket.getBlocks()) {
                                     if (!block.isAir() && !WorldUtil.IMP.isBlockSolid(block)) {
-                                        MainUtil.sendMessage(player, C.NOT_ALLOWED_BLOCK,
-                                            block.toString());
+                                        C.NOT_ALLOWED_BLOCK.send(player, block.toString());
                                         return false;
                                     }
                                 }
@@ -103,7 +95,7 @@ public class Set extends SubCommand {
                         }
                         plot.addRunning();
                         for (Plot current : plot.getConnectedPlots()) {
-                            current.setComponent(component, blocks);
+                            current.setComponent(component, bucket);
                         }
                         MainUtil.sendMessage(player, C.GENERATING_COMPONENT);
                         GlobalBlockQueue.IMP.addTask(new Runnable() {

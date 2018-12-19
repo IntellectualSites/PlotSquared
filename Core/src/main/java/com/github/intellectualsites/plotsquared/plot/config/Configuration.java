@@ -1,10 +1,13 @@
 package com.github.intellectualsites.plotsquared.plot.config;
 
+import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 
 import java.util.ArrayList;
+import lombok.Getter;
+import lombok.NonNull;
 
 /**
  * Main Configuration Utility
@@ -101,6 +104,87 @@ public class Configuration {
             return value.best;
         }
     };
+
+    public static final class UnknownBlockException extends IllegalArgumentException {
+
+        @Getter
+        private final String unknownValue;
+
+        public UnknownBlockException(@NonNull final String unknownValue) {
+            super(String.format("\"%s\" is not a valid block", unknownValue));
+            this.unknownValue = unknownValue;
+        }
+
+    }
+
+
+    public static final SettingValue<BlockBucket> BLOCK_BUCKET =
+        new SettingValue<BlockBucket>("BLOCK_BUCKET") {
+            @Override
+            public BlockBucket parseString(final String string) {
+                if (string == null || string.isEmpty()) {
+                    return new BlockBucket();
+                }
+                final BlockBucket blockBucket = new BlockBucket();
+                final String[] parts = string.split(",");
+                for (final String part : parts) {
+                    String block;
+                    int chance = -1;
+
+                    if (part.contains(":")) {
+                        final String[] innerParts = part.split(":");
+                        if (innerParts.length > 1) {
+                            chance = Integer.parseInt(innerParts[1]);
+                        }
+                        block = innerParts[0];
+                    } else {
+                        block = part;
+                    }
+                    final StringComparison<PlotBlock>.ComparisonResult value =
+                        WorldUtil.IMP.getClosestBlock(block);
+                    if (value == null) {
+                        throw new UnknownBlockException(block);
+                    }
+                    blockBucket.addBlock(value.best, chance);
+                }
+                blockBucket.compile(); // Pre-compile :D
+                return blockBucket;
+            }
+
+            @Override
+            public boolean validateValue(final String string) {
+                try {
+                    if (string == null || string.isEmpty()) {
+                        return false;
+                    }
+                    final String[] parts = string.split(",");
+                    for (final String part : parts) {
+                        String block;
+                        if (part.contains(":")) {
+                            final String[] innerParts = part.split(":");
+                            if (innerParts.length > 1) {
+                                final int chance = Integer.parseInt(innerParts[1]);
+                                if (chance < 1 || chance > 100) {
+                                    return false;
+                                }
+                            }
+                            block = innerParts[0];
+                        } else {
+                            block = part;
+                        }
+                        StringComparison<PlotBlock>.ComparisonResult value =
+                            WorldUtil.IMP.getClosestBlock(block);
+                        if (value == null || value.match > 1) {
+                            return false;
+                        }
+                    }
+                } catch (final Throwable exception) {
+                    return false;
+                }
+                return true;
+            }
+        };
+
     public static final SettingValue<PlotBlock[]> BLOCKLIST =
         new SettingValue<PlotBlock[]>("BLOCKLIST") {
             @Override public boolean validateValue(String string) {

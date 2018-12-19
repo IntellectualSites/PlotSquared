@@ -109,13 +109,13 @@ public abstract class LocalBlockQueue {
         }
     }
 
-    public void setCuboid(Location pos1, Location pos2, PlotBlock[] blocks) {
+    public void setCuboid(Location pos1, Location pos2, BlockBucket blocks) {
         for (int y = pos1.getY(); y <= Math.min(255, pos2.getY()); y++) {
             for (int x = pos1.getX(); x <= pos2.getX(); x++) {
                 for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
-                    int i = PseudoRandom.random.random(blocks.length);
-                    PlotBlock block = blocks[i];
-                    setBlock(x, y, z, block);
+                    // int i = PseudoRandom.random.random(blocks.length);
+                    // PlotBlock block = blocks[i];
+                    setBlock(x, y, z, blocks.getBlock());
                 }
             }
         }

@@ -1,11 +1,17 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
+import com.github.intellectualsites.plotsquared.configuration.serialization.ConfigurationSerializable;
 import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Configuration;
+import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,14 +22,27 @@ import lombok.RequiredArgsConstructor;
  * A block bucket is a container of block types, where each block
  * has a specified chance of being randomly picked
  */
+@EqualsAndHashCode
 @SuppressWarnings({"unused", "WeakerAccess"})
-public final class BlockBucket implements Iterable<PlotBlock> {
+public final class BlockBucket implements Iterable<PlotBlock>, ConfigurationSerializable  {
 
   private final Random random = new Random();
   private final Map<Range, PlotBlock> ranges = new HashMap<>();
   private final Map<PlotBlock, Integer> blocks;
   private final BucketIterator bucketIterator = new BucketIterator();
   private boolean compiled;
+
+  public static BlockBucket withSingle(@NonNull final PlotBlock block) {
+    final BlockBucket blockBucket = new BlockBucket();
+    blockBucket.addBlock(block);
+    return blockBucket;
+  }
+
+  public static BlockBucket empty() {
+    final BlockBucket bucket = new BlockBucket();
+    bucket.compiled = true;
+    return bucket;
+  }
 
   public BlockBucket() {
     this.blocks = new HashMap<>();
@@ -38,10 +57,51 @@ public final class BlockBucket implements Iterable<PlotBlock> {
     this.compiled = false;
   }
 
+  public boolean isEmpty() {
+    if (isCompiled()) {
+      return ranges.isEmpty();
+    }
+    return blocks.isEmpty();
+  }
+
+  /**
+   * Get all blocks that are configured in the bucket
+   *
+   * @return Immutable collection containing all blocks that can
+   *         be found in the bucket
+   */
+  public Collection<PlotBlock> getBlocks() {
+    if (!isCompiled()) {
+      this.compile();
+    }
+    return Collections.unmodifiableCollection(this.ranges.values());
+  }
+
+  /**
+   * Get a collection containing a specified amount of randomly selected blocks
+   *
+   * @param count Number of blocks
+   * @return Immutable collection containing randomly selected blocks
+   */
+  public Collection<PlotBlock> getBlocks(final int count) {
+    final List<PlotBlock> blocks = new ArrayList<>(count);
+    for (int i = 0; i < count; i++) {
+      blocks.add(getBlock());
+    }
+    return Collections.unmodifiableCollection(blocks);
+  }
+
   public void compile() {
     if (isCompiled()) {
       return;
     }
+
+    if (blocks.size() == 1) {
+      this.ranges.put(new Range(0, 100, true), blocks.keySet().toArray(new PlotBlock[1])[0]);
+      this.compiled = true;
+      return;
+    }
+
     final Map<PlotBlock, Integer> temp = new HashMap<>(blocks.size());
     final List<PlotBlock> unassigned = new ArrayList<>(blocks.size());
 
@@ -91,7 +151,7 @@ public final class BlockBucket implements Iterable<PlotBlock> {
       final int rangeStart = start;
       final int rangeEnd = rangeStart + entry.getValue();
       start = rangeEnd + 1;
-      final Range range = new Range(rangeStart, rangeEnd);
+      final Range range = new Range(rangeStart, rangeEnd, unassigned.contains(entry.getKey()));
       this.ranges.put(range, entry.getKey());
     }
     this.blocks.clear();
@@ -116,6 +176,9 @@ public final class BlockBucket implements Iterable<PlotBlock> {
     if (!isCompiled()) {
       this.compile();
     }
+    if (this.isEmpty()) {
+      return StringPlotBlock.EVERYTHING;
+    }
     final int number = random.nextInt(101);
     for (final Map.Entry<Range, PlotBlock> entry : ranges.entrySet()) {
       if (entry.getKey().isInRange(number)) {
@@ -124,6 +187,34 @@ public final class BlockBucket implements Iterable<PlotBlock> {
     }
     // Didn't find a block? Try again
     return getBlock();
+  }
+
+  @Override public String toString() {
+    final StringBuilder builder = new StringBuilder();
+    final Iterator<Entry<Range, PlotBlock>> iterator = this.ranges.entrySet().iterator();
+    while (iterator.hasNext()) {
+      final Entry<Range, PlotBlock> entry = iterator.next();
+      builder.append(entry.getValue().getRawId());
+      if (!entry.getKey().isAutomatic()) {
+        builder.append(":").append(entry.getKey().getWeight());
+      }
+      if (iterator.hasNext()) {
+        builder.append(",");
+      }
+    }
+    return builder.toString();
+  }
+
+  @Override
+  public Map<String, Object> serialize() {
+    return ImmutableMap.of("blocks", this.toString());
+  }
+
+  public static BlockBucket deserialize(@NonNull final Map<String, Object> map) {
+    if (!map.containsKey("blocks")) {
+      return null;
+    }
+    return Configuration.BLOCK_BUCKET.parseString(map.get("blocks").toString());
   }
 
   private final class BucketIterator implements Iterator<PlotBlock> {
@@ -146,6 +237,12 @@ public final class BlockBucket implements Iterable<PlotBlock> {
 
     private final int min;
     private final int max;
+    @Getter
+    private final boolean automatic;
+
+    public int getWeight() {
+      return max - min;
+    }
 
     public boolean isInRange(final int num) {
       return num <= max && num >= min;

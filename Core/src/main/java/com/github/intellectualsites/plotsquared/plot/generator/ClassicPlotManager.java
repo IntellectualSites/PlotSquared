@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class ClassicPlotManager extends SquarePlotManager {
 
     @Override public boolean setComponent(PlotArea plotArea, PlotId plotId, String component,
-        PlotBlock[] blocks) {
+        BlockBucket blocks) {
         switch (component) {
             case "floor":
                 setFloor(plotArea, plotId, blocks);
@@ -45,15 +45,13 @@ public class ClassicPlotManager extends SquarePlotManager {
 
     @Override public boolean unclaimPlot(PlotArea plotArea, Plot plot, Runnable whenDone) {
         ClassicPlotWorld dpw = (ClassicPlotWorld) plotArea;
-        setWallFilling(dpw, plot.getId(), new PlotBlock[] {dpw.WALL_FILLING});
-        if (!dpw.WALL_BLOCK.isAir() || !dpw.WALL_BLOCK.equals(dpw.CLAIMED_WALL_BLOCK)) {
-            setWall(dpw, plot.getId(), new PlotBlock[] {dpw.WALL_BLOCK});
-        }
+        setWallFilling(dpw, plot.getId(), dpw.WALL_FILLING);
+        setWall(dpw, plot.getId(), dpw.WALL_BLOCK);
         GlobalBlockQueue.IMP.addTask(whenDone);
         return true;
     }
 
-    public boolean setFloor(PlotArea plotArea, PlotId plotId, PlotBlock[] blocks) {
+    public boolean setFloor(PlotArea plotArea, PlotId plotId, BlockBucket blocks) {
         Plot plot = plotArea.getPlotAbs(plotId);
         LocalBlockQueue queue = plotArea.getQueue(false);
         if (plot.isBasePlot()) {
@@ -70,7 +68,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         return true;
     }
 
-    public boolean setAll(PlotArea plotArea, PlotId plotId, PlotBlock[] blocks) {
+    public boolean setAll(PlotArea plotArea, PlotId plotId, BlockBucket blocks) {
         Plot plot = plotArea.getPlotAbs(plotId);
         if (!plot.isBasePlot()) {
             return false;
@@ -86,7 +84,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         return true;
     }
 
-    public boolean setAir(PlotArea plotArea, PlotId plotId, PlotBlock[] blocks) {
+    public boolean setAir(PlotArea plotArea, PlotId plotId, BlockBucket blocks) {
         Plot plot = plotArea.getPlotAbs(plotId);
         if (!plot.isBasePlot()) {
             return false;
@@ -104,7 +102,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         return true;
     }
 
-    public boolean setMain(PlotArea plotArea, PlotId plotId, PlotBlock[] blocks) {
+    public boolean setMain(PlotArea plotArea, PlotId plotId, BlockBucket blocks) {
         Plot plot = plotArea.getPlotAbs(plotId);
         if (!plot.isBasePlot()) {
             return false;
@@ -121,7 +119,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         return true;
     }
 
-    public boolean setMiddle(PlotArea plotArea, PlotId plotId, PlotBlock[] blocks) {
+    public boolean setMiddle(PlotArea plotArea, PlotId plotId, BlockBucket blocks) {
         Plot plot = plotArea.getPlotAbs(plotId);
         if (!plot.isBasePlot()) {
             return false;
@@ -132,12 +130,12 @@ public class ClassicPlotManager extends SquarePlotManager {
 
         int x = MathMan.average(corners[0].getX(), corners[1].getX());
         int z = MathMan.average(corners[0].getZ(), corners[1].getZ());
-        queue.setBlock(x, dpw.PLOT_HEIGHT, z, blocks[0]);
+        queue.setBlock(x, dpw.PLOT_HEIGHT, z, blocks.getBlock());
         queue.enqueue();
         return true;
     }
 
-    public boolean setOutline(PlotArea plotArea, PlotId plotId, PlotBlock[] blocks) {
+    public boolean setOutline(PlotArea plotArea, PlotId plotId, BlockBucket blocks) {
         ClassicPlotWorld dpw = (ClassicPlotWorld) plotArea;
         if (dpw.ROAD_WIDTH == 0) {
             return false;
@@ -145,14 +143,13 @@ public class ClassicPlotManager extends SquarePlotManager {
         Plot plot = plotArea.getPlotAbs(plotId);
         Location bottom = plot.getBottomAbs();
         Location top = plot.getExtendedTopAbs();
-        PseudoRandom random = new PseudoRandom();
         LocalBlockQueue queue = plotArea.getQueue(false);
         int maxY = plotArea.getPlotManager().getWorldHeight();
         if (!plot.getMerged(0)) {
             int z = bottom.getZ();
             for (int x = bottom.getX(); x <= top.getX(); x++) {
                 for (int y = dpw.PLOT_HEIGHT; y <= maxY; y++) {
-                    queue.setBlock(x, y, z, blocks[random.random(blocks.length)]);
+                    queue.setBlock(x, y, z, blocks.getBlock());
                 }
             }
         }
@@ -160,7 +157,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             int x = bottom.getX();
             for (int z = bottom.getZ(); z <= top.getZ(); z++) {
                 for (int y = dpw.PLOT_HEIGHT; y <= maxY; y++) {
-                    queue.setBlock(x, y, z, blocks[random.random(blocks.length)]);
+                    queue.setBlock(x, y, z, blocks.getBlock());
                 }
             }
         }
@@ -169,7 +166,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             int z = top.getZ();
             for (int x = bottom.getX(); x <= top.getX(); x++) {
                 for (int y = dpw.PLOT_HEIGHT; y <= maxY; y++) {
-                    queue.setBlock(x, y, z, blocks[random.random(blocks.length)]);
+                    queue.setBlock(x, y, z, blocks.getBlock());
                 }
             }
         }
@@ -177,7 +174,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             int x = top.getX();
             for (int z = bottom.getZ(); z <= top.getZ(); z++) {
                 for (int y = dpw.PLOT_HEIGHT; y <= maxY; y++) {
-                    queue.setBlock(x, y, z, blocks[random.random(blocks.length)]);
+                    queue.setBlock(x, y, z, blocks.getBlock());
                 }
             }
         }
@@ -192,7 +189,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         return true;
     }
 
-    public boolean setWallFilling(PlotArea plotArea, PlotId plotId, PlotBlock[] blocks) {
+    public boolean setWallFilling(PlotArea plotArea, PlotId plotId, BlockBucket blocks) {
         ClassicPlotWorld dpw = (ClassicPlotWorld) plotArea;
         if (dpw.ROAD_WIDTH == 0) {
             return false;
@@ -201,13 +198,12 @@ public class ClassicPlotManager extends SquarePlotManager {
         Location bot = plot.getExtendedBottomAbs()
             .subtract(plot.getMerged(3) ? 0 : 1, 0, plot.getMerged(0) ? 0 : 1);
         Location top = plot.getExtendedTopAbs().add(1, 0, 1);
-        PseudoRandom random = new PseudoRandom();
         LocalBlockQueue queue = plotArea.getQueue(false);
         if (!plot.getMerged(0)) {
             int z = bot.getZ();
             for (int x = bot.getX(); x < top.getX(); x++) {
                 for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
-                    queue.setBlock(x, y, z, blocks[random.random(blocks.length)]);
+                    queue.setBlock(x, y, z, blocks.getBlock());
                 }
             }
         }
@@ -215,7 +211,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             int x = bot.getX();
             for (int z = bot.getZ(); z < top.getZ(); z++) {
                 for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
-                    queue.setBlock(x, y, z, blocks[random.random(blocks.length)]);
+                    queue.setBlock(x, y, z, blocks.getBlock());
                 }
             }
         }
@@ -223,7 +219,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             int z = top.getZ();
             for (int x = bot.getX(); x < top.getX() + (plot.getMerged(1) ? 0 : 1); x++) {
                 for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
-                    queue.setBlock(x, y, z, blocks[random.random(blocks.length)]);
+                    queue.setBlock(x, y, z, blocks.getBlock());
                 }
             }
         }
@@ -231,7 +227,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             int x = top.getX();
             for (int z = bot.getZ(); z < top.getZ() + (plot.getMerged(2) ? 0 : 1); z++) {
                 for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
-                    queue.setBlock(x, y, z, blocks[random.random(blocks.length)]);
+                    queue.setBlock(x, y, z, blocks.getBlock());
                 }
             }
         }
@@ -239,7 +235,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         return true;
     }
 
-    public boolean setWall(PlotArea plotArea, PlotId plotId, PlotBlock[] blocks) {
+    public boolean setWall(PlotArea plotArea, PlotId plotId, BlockBucket blocks) {
         ClassicPlotWorld dpw = (ClassicPlotWorld) plotArea;
         if (dpw.ROAD_WIDTH == 0) {
             return false;
@@ -254,25 +250,25 @@ public class ClassicPlotManager extends SquarePlotManager {
         if (!plot.getMerged(0)) {
             int z = bot.getZ();
             for (int x = bot.getX(); x < top.getX(); x++) {
-                queue.setBlock(x, y, z, blocks[random.random(blocks.length)]);
+                queue.setBlock(x, y, z, blocks.getBlock());
             }
         }
         if (!plot.getMerged(3)) {
             int x = bot.getX();
             for (int z = bot.getZ(); z < top.getZ(); z++) {
-                queue.setBlock(x, y, z, blocks[random.random(blocks.length)]);
+                queue.setBlock(x, y, z, blocks.getBlock());
             }
         }
         if (!plot.getMerged(2)) {
             int z = top.getZ();
             for (int x = bot.getX(); x < top.getX() + (plot.getMerged(1) ? 0 : 1); x++) {
-                queue.setBlock(x, y, z, blocks[random.random(blocks.length)]);
+                queue.setBlock(x, y, z, blocks.getBlock());
             }
         }
         if (!plot.getMerged(1)) {
             int x = top.getX();
             for (int z = bot.getZ(); z < top.getZ() + (plot.getMerged(2) ? 0 : 1); z++) {
-                queue.setBlock(x, y, z, blocks[random.random(blocks.length)]);
+                queue.setBlock(x, y, z, blocks.getBlock());
             }
         }
         queue.enqueue();
@@ -429,24 +425,14 @@ public class ClassicPlotManager extends SquarePlotManager {
      * Finishing off plot merging by adding in the walls surrounding the plot (OPTIONAL)(UNFINISHED).
      */
     @Override public boolean finishPlotMerge(PlotArea plotArea, ArrayList<PlotId> plotIds) {
-        PlotBlock block = ((ClassicPlotWorld) plotArea).CLAIMED_WALL_BLOCK;
-        PlotBlock unclaim = ((ClassicPlotWorld) plotArea).WALL_BLOCK;
-        if (!block.isAir() || !block.equals(unclaim)) {
-            for (PlotId id : plotIds) {
-                setWall(plotArea, id, new PlotBlock[] {block});
-            }
-        }
+        final BlockBucket block = ((ClassicPlotWorld) plotArea).CLAIMED_WALL_BLOCK;
+        plotIds.forEach(id -> setWall(plotArea, id, block));
         return true;
     }
 
     @Override public boolean finishPlotUnlink(PlotArea plotArea, ArrayList<PlotId> plotIds) {
-        PlotBlock block = ((ClassicPlotWorld) plotArea).CLAIMED_WALL_BLOCK;
-        PlotBlock unclaim = ((ClassicPlotWorld) plotArea).WALL_BLOCK;
-        for (PlotId id : plotIds) {
-            if (block.isAir() || !block.equals(unclaim)) {
-                setWall(plotArea, id, new PlotBlock[] {block});
-            }
-        }
+        final BlockBucket block = ((ClassicPlotWorld) plotArea).CLAIMED_WALL_BLOCK;
+        plotIds.forEach(id -> setWall(plotArea, id, block));
         return true;
     }
 
@@ -459,11 +445,8 @@ public class ClassicPlotManager extends SquarePlotManager {
     }
 
     @Override public boolean claimPlot(PlotArea plotArea, Plot plot) {
-        PlotBlock unclaim = ((ClassicPlotWorld) plotArea).WALL_BLOCK;
-        PlotBlock claim = ((ClassicPlotWorld) plotArea).CLAIMED_WALL_BLOCK;
-        if (!claim.isAir() || !claim.equals(unclaim)) {
-            setWall(plotArea, plot.getId(), new PlotBlock[] {claim});
-        }
+        final BlockBucket claim = ((ClassicPlotWorld) plotArea).CLAIMED_WALL_BLOCK;
+        setWall(plotArea, plot.getId(), claim);
         return true;
     }
 

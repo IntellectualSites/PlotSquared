@@ -17,11 +17,30 @@ import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import lombok.NonNull;
 
 /**
  * The abstract class supporting {@code BukkitPlayer} and {@code SpongePlayer}.
  */
 public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
+
+    public interface PlotPlayerConverter<BaseObject> {
+        PlotPlayer convert(BaseObject object);
+    }
+    private static final Map<Class, PlotPlayerConverter> converters = new HashMap<>();
+
+    public static <T> PlotPlayer from(@NonNull final T object) {
+        if (!converters.containsKey(object.getClass())) {
+            throw new IllegalArgumentException(
+                String.format("There is no registered PlotPlayer converter for type %s",
+                    object.getClass().getSimpleName()));
+        }
+        return converters.get(object.getClass()).convert(object);
+    }
+
+    public static <T> void registerConverter(@NonNull final Class<T> clazz, final PlotPlayerConverter<T> converter) {
+        converters.put(clazz, converter);
+    }
 
     public static final String META_LAST_PLOT = "lastplot";
     public static final String META_LOCATION = "location";

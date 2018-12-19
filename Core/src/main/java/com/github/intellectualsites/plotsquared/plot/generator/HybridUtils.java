@@ -123,63 +123,6 @@ public abstract class HybridUtils {
         return chunks;
     }
 
-    /**
-     * Checks all connected plots.
-     *
-     * @param plot
-     * @param whenDone
-     */
-    public void checkModified(final Plot plot, final RunnableVal<Integer> whenDone) {
-        if (whenDone == null) {
-            return;
-        }
-        PlotArea plotArea = plot.getArea();
-        if (!(plotArea instanceof ClassicPlotWorld)) {
-            whenDone.value = -1;
-            TaskManager.runTask(whenDone);
-            return;
-        }
-        whenDone.value = 0;
-        final ClassicPlotWorld cpw = (ClassicPlotWorld) plotArea;
-        final ArrayDeque<RegionWrapper> zones = new ArrayDeque<>(plot.getRegions());
-        final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(cpw.worldname, false);
-        Runnable run = new Runnable() {
-            @Override public void run() {
-                if (zones.isEmpty()) {
-
-                    TaskManager.runTask(whenDone);
-                    return;
-                }
-                RegionWrapper region = zones.poll();
-                Location pos1 =
-                    new Location(plot.getWorldName(), region.minX, region.minY, region.minZ);
-                Location pos2 =
-                    new Location(plot.getWorldName(), region.maxX, region.maxY, region.maxZ);
-                ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
-                    @Override public void run(int[] value) {
-                        ChunkLoc loc = new ChunkLoc(value[0], value[1]);
-                        ChunkManager.manager.loadChunk(plot.getWorldName(), loc, false);
-                        int bx = value[2];
-                        int bz = value[3];
-                        int ex = value[4];
-                        int ez = value[5];
-                        whenDone.value +=
-                            checkModified(queue, bx, ex, 1, cpw.PLOT_HEIGHT - 1, bz, ez,
-                                cpw.MAIN_BLOCK);
-                        whenDone.value +=
-                            checkModified(queue, bx, ex, cpw.PLOT_HEIGHT, cpw.PLOT_HEIGHT, bz, ez,
-                                cpw.TOP_BLOCK);
-                        whenDone.value +=
-                            checkModified(queue, bx, ex, cpw.PLOT_HEIGHT + 1, 255, bz, ez,
-                                new PlotBlock[] {PlotBlock.get((short) 0, (byte) 0)});
-                    }
-                }, this, 5);
-
-            }
-        };
-        run.run();
-    }
-
     public boolean scheduleRoadUpdate(PlotArea area, int extend) {
         if (HybridUtils.UPDATE) {
             return false;

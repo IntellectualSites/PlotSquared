@@ -12,7 +12,7 @@ import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
 import java.io.File;
 import java.util.List;
 
-public interface IPlotMain<BlockType> extends ILogger {
+public interface IPlotMain extends ILogger {
 
     /**
      * Log a message to console.
@@ -274,7 +274,7 @@ public interface IPlotMain<BlockType> extends ILogger {
 
     List<String> getPluginIds();
 
-    BlockRegistry<BlockType> getBlockRegistry();
+    BlockRegistry<?> getBlockRegistry();
 
     LegacyMappings getLegacyMappings();
 

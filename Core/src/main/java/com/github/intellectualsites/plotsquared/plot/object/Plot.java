@@ -1495,8 +1495,8 @@ public class Plot {
      * (components are generator specific)
      */
     public boolean setComponent(String component, String blocks) {
-        PlotBlock[] parsed = Configuration.BLOCKLIST.parseString(blocks);
-        return !(parsed == null || parsed.length == 0) && this.setComponent(component, parsed);
+        BlockBucket parsed = Configuration.BLOCK_BUCKET.parseString(blocks);
+        return !(parsed == null || parsed.isEmpty()) && this.setComponent(component, parsed);
     }
 
     /**
@@ -2722,7 +2722,7 @@ public class Plot {
      * @param blocks
      * @return
      */
-    public boolean setComponent(String component, PlotBlock[] blocks) {
+    public boolean setComponent(String component, BlockBucket blocks) {
         if (StringMan
             .isEqualToAny(component, getManager().getPlotComponents(this.area, this.getId()))) {
             EventUtil.manager.callComponentSet(this, component);

@@ -5,7 +5,6 @@ import com.github.intellectualsites.plotsquared.bukkit.object.BukkitLazyBlock;
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitVersion;
-import com.github.intellectualsites.plotsquared.bukkit.util.LegacyMappings;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;

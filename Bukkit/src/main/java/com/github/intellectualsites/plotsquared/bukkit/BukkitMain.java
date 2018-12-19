@@ -27,12 +27,12 @@ import com.github.intellectualsites.plotsquared.bukkit.util.BukkitEconHandler;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitEventUtil;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitHybridUtils;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitInventoryUtil;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitLegacyMappings;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitSchematicHandler;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitSetupUtils;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitTaskManager;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitVersion;
-import com.github.intellectualsites.plotsquared.bukkit.util.LegacyMappings;
 import com.github.intellectualsites.plotsquared.bukkit.util.Metrics;
 import com.github.intellectualsites.plotsquared.bukkit.util.SendChunk;
 import com.github.intellectualsites.plotsquared.bukkit.util.SetGenCB;
@@ -71,6 +71,7 @@ import com.github.intellectualsites.plotsquared.plot.util.ConsoleColors;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.InventoryUtil;
+import com.github.intellectualsites.plotsquared.plot.util.LegacyMappings;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
@@ -115,7 +116,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<Material> {
+public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Getter private static WorldEdit worldEdit;
     private static Map<String, Plugin> pluginMap;
@@ -202,7 +203,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         this.pluginName = getDescription().getName();
         getServer().getName();
 
-        LegacyMappings.initialize();
+        PlotPlayer.registerConverter(Player.class, BukkitUtil::getPlayer);
 
         new PlotSquared(this, "Bukkit");
         if (Settings.Enabled_Components.METRICS) {

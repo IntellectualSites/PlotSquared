@@ -1,12 +1,14 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
+import com.github.intellectualsites.plotsquared.configuration.serialization.ConfigurationSerializable;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import com.google.common.collect.ImmutableMap;
+import java.util.Collection;
+import java.util.Map;
 import lombok.NonNull;
 
-import java.util.Collection;
-
-public abstract class PlotBlock {
+public abstract class PlotBlock implements ConfigurationSerializable {
 
     private static Class<?> conversionType;
     private static BlockRegistry blockRegistry;
@@ -36,6 +38,18 @@ public abstract class PlotBlock {
             default:
                 return get(combinedId >> 4, combinedId & 15);
         }
+    }
+
+    public static PlotBlock deserialize(@NonNull final Map<String, Object> map) {
+        if (map.containsKey("material")) {
+            final Object object = map.get("material");
+            return get(object);
+        }
+        return null;
+    }
+
+    @Override public Map<String, Object> serialize() {
+        return ImmutableMap.of("material", this.getRawId());
     }
 
     public abstract boolean isAir();

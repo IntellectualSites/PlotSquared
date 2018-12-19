@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot;
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.configuration.MemorySection;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
+import com.github.intellectualsites.plotsquared.configuration.serialization.ConfigurationSerialization;
 import com.github.intellectualsites.plotsquared.plot.commands.WE_Anywhere;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
@@ -95,6 +96,12 @@ import java.util.zip.ZipInputStream;
         this.IMP = iPlotMain;
         this.logger = iPlotMain;
         Settings.PLATFORM = platform;
+
+        //
+        // Register configuration serializable classes
+        //
+        ConfigurationSerialization.registerClass(PlotBlock.class);
+        ConfigurationSerialization.registerClass(BlockBucket.class);
 
         try {
             new ReflectionUtils(this.IMP.getNMSPackage());

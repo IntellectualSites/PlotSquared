@@ -60,7 +60,7 @@ public class SinglePlotManager extends PlotManager {
     }
 
     @Override public boolean setComponent(PlotArea plotArea, PlotId plotId, String component,
-        PlotBlock[] blocks) {
+        BlockBucket blocks) {
         return false;
     }
 
