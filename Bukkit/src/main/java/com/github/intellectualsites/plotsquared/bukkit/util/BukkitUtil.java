@@ -448,39 +448,11 @@ import org.bukkit.material.Wool;
 
     @Override @Nullable
     public StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name) {
-        try {
-            final Material material = Material.valueOf(name.toUpperCase());
-            return new StringComparison<PlotBlock>().new ComparisonResult(1,
-                PlotBlock.get(name));
-        } catch (IllegalArgumentException ignored) {
+        final PlotBlock plotBlock = BukkitUtil.getBukkitLegacyMappings().fromAny(name);
+        if (plotBlock != null) {
+          return new StringComparison<PlotBlock>().new ComparisonResult(1, plotBlock);
         }
-        try {
-            byte data;
-            String[] split = name.split(":");
-            if (split.length == 2) {
-                data = Byte.parseByte(split[1]);
-                name = split[0];
-            } else {
-                data = 0;
-            }
-            double match;
-            short id;
-            if (MathMan.isInteger(split[0])) {
-                id = Short.parseShort(split[0]);
-                match = 0;
-            } else {
-                StringComparison<Material>.ComparisonResult comparison =
-                    new StringComparison<>(name, Material.values()).getBestMatchAdvanced();
-                match = comparison.match;
-                id = (short) comparison.best.getId();
-            }
-            PlotBlock block = PlotBlock.get(id, data);
-            StringComparison<PlotBlock> outer = new StringComparison<>();
-            return outer.new ComparisonResult(match, block);
-
-        } catch (NumberFormatException ignored) {
-        }
-        return null;
+        return BukkitUtil.getBukkitLegacyMappings().getClosestsMatch(name);
     }
 
     @Override

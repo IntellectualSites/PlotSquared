@@ -4,12 +4,20 @@ import com.github.intellectualsites.plotsquared.plot.object.LegacyPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.StringPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.util.LegacyMappings;
-import lombok.*;
-import org.bukkit.Material;
-
+import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import org.bukkit.Material;
 
 /**
  * Borrowed from https://github.com/Phoenix616/IDConverter/blob/master/mappings/src/main/java/de/themoep/idconverter/IdMappings.java
@@ -692,6 +700,16 @@ public class BukkitLegacyMappings extends LegacyMappings {
         }
     }
 
+    public Collection<PlotBlock> getPlotBlocks() {
+        return Arrays.stream(BLOCKS).map(block -> PlotBlock.get(block.getNewName()))
+            .collect(Collectors.toList());
+    }
+
+    public StringComparison<PlotBlock>.ComparisonResult getClosestsMatch(@NonNull final String string) {
+        final StringComparison<PlotBlock> comparison = new StringComparison<>(string, getPlotBlocks());
+        return comparison.getBestMatchAdvanced();
+    }
+
     /**
      * Try to find a legacy plot block by any means possible.
      * Strategy:
@@ -794,7 +812,10 @@ public class BukkitLegacyMappings extends LegacyMappings {
             return LegacyPlotBlock.get(numericalId, dataValue);
         }
 
-
+        @Override
+        public String toString() {
+            return this.newName;
+        }
     }
 
 }
