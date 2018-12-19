@@ -16,8 +16,7 @@ import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 
-@SuppressWarnings("unused")
-public class EntitySpawnListener implements Listener {
+@SuppressWarnings("unused") public class EntitySpawnListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void creatureSpawnEvent(EntitySpawnEvent event) {
         Entity entity = event.getEntity();

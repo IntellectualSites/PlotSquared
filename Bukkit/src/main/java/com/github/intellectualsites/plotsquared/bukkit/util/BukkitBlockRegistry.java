@@ -7,13 +7,12 @@ import org.bukkit.Material;
 
 public class BukkitBlockRegistry extends BlockRegistry<Material> {
 
-  public BukkitBlockRegistry(final Material... preInitializedItems) {
-    super(Material.class, preInitializedItems);
-  }
+    public BukkitBlockRegistry(final Material... preInitializedItems) {
+        super(Material.class, preInitializedItems);
+    }
 
-  @Override
-  public PlotBlock getPlotBlock(@NonNull final Material item) {
-    return PlotBlock.get(item.name());
-  }
+    @Override public PlotBlock getPlotBlock(@NonNull final Material item) {
+        return PlotBlock.get(item.name());
+    }
 
 }

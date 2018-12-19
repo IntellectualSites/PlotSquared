@@ -18,8 +18,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
-@SuppressWarnings("unused")
-public class EntityPortal_1_7_9 implements Listener {
+@SuppressWarnings("unused") public class EntityPortal_1_7_9 implements Listener {
     private static boolean ignoreTP = false;
 
     public EntityPortal_1_7_9() {

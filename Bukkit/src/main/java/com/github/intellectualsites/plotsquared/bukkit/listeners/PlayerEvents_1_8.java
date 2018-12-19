@@ -32,8 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-@SuppressWarnings("unused")
-public class PlayerEvents_1_8 extends PlotListener implements Listener {
+@SuppressWarnings("unused") public class PlayerEvents_1_8 extends PlotListener implements Listener {
 
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

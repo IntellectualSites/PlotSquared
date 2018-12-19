@@ -5,13 +5,12 @@ import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import lombok.Getter;
 
 public class PlotItemStack {
-    // public final int id;
-    // public final short data;
-    @Getter
-    private final PlotBlock plotBlock;
     public final int amount;
     public final String name;
     public final String[] lore;
+    // public final int id;
+    // public final short data;
+    @Getter private final PlotBlock plotBlock;
 
     @Deprecated
     public PlotItemStack(final int id, final short data, final int amount, final String name,

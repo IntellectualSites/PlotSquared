@@ -32,8 +32,7 @@ import java.util.HashSet;
 
 import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getRefClass;
 
-@SuppressWarnings("unused")
-public class ChunkListener implements Listener {
+@SuppressWarnings("unused") public class ChunkListener implements Listener {
 
     private RefMethod methodGetHandleChunk;
     private RefField mustSave;

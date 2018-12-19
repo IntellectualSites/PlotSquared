@@ -4,10 +4,10 @@ import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
-
-import java.util.ArrayList;
 import lombok.Getter;
 import lombok.NonNull;
+
+import java.util.ArrayList;
 
 /**
  * Main Configuration Utility
@@ -104,24 +104,9 @@ public class Configuration {
             return value.best;
         }
     };
-
-    public static final class UnknownBlockException extends IllegalArgumentException {
-
-        @Getter
-        private final String unknownValue;
-
-        public UnknownBlockException(@NonNull final String unknownValue) {
-            super(String.format("\"%s\" is not a valid block", unknownValue));
-            this.unknownValue = unknownValue;
-        }
-
-    }
-
-
     public static final SettingValue<BlockBucket> BLOCK_BUCKET =
         new SettingValue<BlockBucket>("BLOCK_BUCKET") {
-            @Override
-            public BlockBucket parseString(final String string) {
+            @Override public BlockBucket parseString(final String string) {
                 if (string == null || string.isEmpty()) {
                     return new BlockBucket();
                 }
@@ -151,8 +136,7 @@ public class Configuration {
                 return blockBucket;
             }
 
-            @Override
-            public boolean validateValue(final String string) {
+            @Override public boolean validateValue(final String string) {
                 try {
                     if (string == null || string.isEmpty()) {
                         return false;
@@ -184,7 +168,6 @@ public class Configuration {
                 return true;
             }
         };
-
     public static final SettingValue<PlotBlock[]> BLOCKLIST =
         new SettingValue<PlotBlock[]>("BLOCKLIST") {
             @Override public boolean validateValue(String string) {
@@ -262,6 +245,19 @@ public class Configuration {
         }
         return result;
     }
+
+
+    public static final class UnknownBlockException extends IllegalArgumentException {
+
+        @Getter private final String unknownValue;
+
+        public UnknownBlockException(@NonNull final String unknownValue) {
+            super(String.format("\"%s\" is not a valid block", unknownValue));
+            this.unknownValue = unknownValue;
+        }
+
+    }
+
 
     /**
      * Create your own SettingValue object to make the management of plotworld configuration easier

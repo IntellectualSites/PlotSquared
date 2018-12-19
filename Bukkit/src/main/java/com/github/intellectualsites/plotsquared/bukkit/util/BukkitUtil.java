@@ -3,26 +3,9 @@ package com.github.intellectualsites.plotsquared.bukkit.util;
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
-import com.github.intellectualsites.plotsquared.plot.object.LegacyPlotBlock;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
-import com.github.intellectualsites.plotsquared.plot.object.StringPlotBlock;
+import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
-import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
-import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
-import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import javax.annotation.Nullable;
+import com.github.intellectualsites.plotsquared.plot.util.*;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -37,12 +20,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
-import org.bukkit.material.Sandstone;
-import org.bukkit.material.Step;
-import org.bukkit.material.Tree;
-import org.bukkit.material.WoodenStep;
-import org.bukkit.material.Wool;
+import org.bukkit.material.*;
+
+import javax.annotation.Nullable;
+import java.util.*;
 
 @SuppressWarnings({"unused", "WeakerAccess"}) public class BukkitUtil extends WorldUtil {
 
@@ -78,14 +59,6 @@ import org.bukkit.material.Wool;
             return null;
         }
         return getLocation(location).getPlot();
-    }
-
-    @Override public boolean isBlockSame(PlotBlock block1, PlotBlock block2) {
-        if (block1.equals(block2)) {
-            return true;
-        }
-        Material mat1 = getMaterial(block1), mat2 = getMaterial(block2);
-        return mat1 == mat2;
     }
 
     /**
@@ -261,6 +234,30 @@ import org.bukkit.material.Wool;
             location.getPitch());
     }
 
+    public static BukkitLegacyMappings getBukkitLegacyMappings() {
+        return (BukkitLegacyMappings) PlotSquared.imp().getLegacyMappings();
+    }
+
+    public static Material getMaterial(@NonNull final PlotBlock plotBlock) {
+        if (plotBlock instanceof StringPlotBlock) {
+            return Material
+                .getMaterial(((StringPlotBlock) plotBlock).getItemId().toUpperCase(Locale.ENGLISH));
+        } else {
+            final LegacyPlotBlock legacyPlotBlock = (LegacyPlotBlock) plotBlock;
+            return getBukkitLegacyMappings()
+                .fromLegacyToString(legacyPlotBlock.getId(), legacyPlotBlock.getData())
+                .to(Material.class);
+        }
+    }
+
+    @Override public boolean isBlockSame(PlotBlock block1, PlotBlock block2) {
+        if (block1.equals(block2)) {
+            return true;
+        }
+        Material mat1 = getMaterial(block1), mat2 = getMaterial(block2);
+        return mat1 == mat2;
+    }
+
     @Override public boolean isWorld(@NonNull final String worldName) {
         return getWorld(worldName) != null;
     }
@@ -379,10 +376,6 @@ import org.bukkit.material.Wool;
         return list;
     }
 
-    public static BukkitLegacyMappings getBukkitLegacyMappings() {
-        return (BukkitLegacyMappings) PlotSquared.imp().getLegacyMappings();
-    }
-
     @Override
     public boolean addItems(@NonNull final String worldName, @NonNull final PlotItem items) {
         final World world = getWorld(worldName);
@@ -403,15 +396,6 @@ import org.bukkit.material.Wool;
             return true;
         }
         return false;
-    }
-
-    public static Material getMaterial(@NonNull final PlotBlock plotBlock) {
-        if (plotBlock instanceof StringPlotBlock) {
-            return Material.getMaterial(((StringPlotBlock) plotBlock).getItemId().toUpperCase(Locale.ENGLISH));
-        } else {
-            final LegacyPlotBlock legacyPlotBlock = (LegacyPlotBlock) plotBlock;
-            return getBukkitLegacyMappings().fromLegacyToString(legacyPlotBlock.getId(), legacyPlotBlock.getData()).to(Material.class);
-        }
     }
 
     @Override public boolean isBlockSolid(@NonNull final PlotBlock block) {
@@ -450,7 +434,7 @@ import org.bukkit.material.Wool;
     public StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name) {
         final PlotBlock plotBlock = BukkitUtil.getBukkitLegacyMappings().fromAny(name);
         if (plotBlock != null) {
-          return new StringComparison<PlotBlock>().new ComparisonResult(1, plotBlock);
+            return new StringComparison<PlotBlock>().new ComparisonResult(1, plotBlock);
         }
         return BukkitUtil.getBukkitLegacyMappings().getClosestsMatch(name);
     }

@@ -13,12 +13,18 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     public int ROAD_HEIGHT = 64;
     public int PLOT_HEIGHT = 64;
     public int WALL_HEIGHT = 64;
-    public BlockBucket MAIN_BLOCK = BlockBucket.withSingle(PlotBlock.get("stone")); // new PlotBlock[] {PlotBlock.get("stone")};
-    public BlockBucket TOP_BLOCK = BlockBucket.withSingle(PlotBlock.get("grass")); //new PlotBlock[] {PlotBlock.get("grass")};
-    public BlockBucket WALL_BLOCK = BlockBucket.withSingle(PlotBlock.get("stone_slab")); // PlotBlock.get((short) 44, (byte) 0);
-    public BlockBucket CLAIMED_WALL_BLOCK = BlockBucket.withSingle(PlotBlock.get("sandstone_slab")); // PlotBlock.get((short) 44, (byte) 1);
-    public BlockBucket WALL_FILLING = BlockBucket.withSingle(PlotBlock.get("stone")); //PlotBlock.get((short) 1, (byte) 0);
-    public BlockBucket ROAD_BLOCK = BlockBucket.withSingle(PlotBlock.get("quartz_block")); // PlotBlock.get((short) 155, (byte) 0);
+    public BlockBucket MAIN_BLOCK = BlockBucket.withSingle(PlotBlock.get("stone"));
+        // new PlotBlock[] {PlotBlock.get("stone")};
+    public BlockBucket TOP_BLOCK = BlockBucket.withSingle(PlotBlock.get("grass"));
+        //new PlotBlock[] {PlotBlock.get("grass")};
+    public BlockBucket WALL_BLOCK = BlockBucket.withSingle(PlotBlock.get("stone_slab"));
+        // PlotBlock.get((short) 44, (byte) 0);
+    public BlockBucket CLAIMED_WALL_BLOCK = BlockBucket.withSingle(PlotBlock.get("sandstone_slab"));
+        // PlotBlock.get((short) 44, (byte) 1);
+    public BlockBucket WALL_FILLING = BlockBucket.withSingle(PlotBlock.get("stone"));
+        //PlotBlock.get((short) 1, (byte) 0);
+    public BlockBucket ROAD_BLOCK = BlockBucket.withSingle(PlotBlock.get("quartz_block"));
+        // PlotBlock.get((short) 155, (byte) 0);
     public boolean PLOT_BEDROCK = true;
 
     public ClassicPlotWorld(String worldName, String id, IndependentPlotGenerator generator,
@@ -46,8 +52,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
             new ConfigurationNode("wall.block", this.WALL_BLOCK, "Top wall block",
                 Configuration.BLOCK_BUCKET),
             new ConfigurationNode("wall.block_claimed", this.CLAIMED_WALL_BLOCK,
-                "Wall block (claimed)",
-                Configuration.BLOCK_BUCKET),
+                "Wall block (claimed)", Configuration.BLOCK_BUCKET),
             new ConfigurationNode("road.width", this.ROAD_WIDTH, "Road width",
                 Configuration.INTEGER),
             new ConfigurationNode("road.height", this.ROAD_HEIGHT, "Road height",
@@ -77,7 +82,8 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
         this.WALL_BLOCK = Configuration.BLOCK_BUCKET.parseString(config.getString("wall.block"));
         this.ROAD_HEIGHT = Math.min(255, config.getInt("road.height"));
         this.ROAD_BLOCK = Configuration.BLOCK_BUCKET.parseString(config.getString("road.block"));
-        this.WALL_FILLING = Configuration.BLOCK_BUCKET.parseString(config.getString("wall.filling"));
+        this.WALL_FILLING =
+            Configuration.BLOCK_BUCKET.parseString(config.getString("wall.filling"));
         this.WALL_HEIGHT = Math.min(254, config.getInt("wall.height"));
         this.CLAIMED_WALL_BLOCK =
             Configuration.BLOCK_BUCKET.parseString(config.getString("wall.block_claimed"));

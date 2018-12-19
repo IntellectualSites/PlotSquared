@@ -199,7 +199,8 @@ public class Area extends SubCommand {
                                     break;
                                 case "w":
                                 case "wall":
-                                    pa.WALL_FILLING = Configuration.BLOCK_BUCKET.parseString(pair[1]);
+                                    pa.WALL_FILLING =
+                                        Configuration.BLOCK_BUCKET.parseString(pair[1]);
                                     break;
                                 case "b":
                                 case "border":

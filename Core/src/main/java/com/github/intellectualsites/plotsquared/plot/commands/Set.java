@@ -68,7 +68,8 @@ public class Set extends SubCommand {
                                 StringComparison<PlotBlock>.ComparisonResult match =
                                     WorldUtil.IMP.getClosestBlock(unknownBlock);
                                 if (match != null) {
-                                    final String found = WorldUtil.IMP.getClosestMatchingName(match.best);
+                                    final String found =
+                                        WorldUtil.IMP.getClosestMatchingName(match.best);
                                     if (found != null) {
                                         MainUtil.sendMessage(player, C.DID_YOU_MEAN,
                                             found.toLowerCase());

@@ -17,6 +17,7 @@ public class StringPlotBlock extends PlotBlock {
     @Getter private final String itemId;
     @Getter @Setter private BaseBlock baseBlock = null;
     private boolean isForeign = false;
+
     public StringPlotBlock(@NonNull final String nameSpace, @NonNull final String itemId) {
         this.nameSpace = nameSpace.toLowerCase(Locale.ENGLISH);
         this.itemId = itemId.toLowerCase(Locale.ENGLISH);

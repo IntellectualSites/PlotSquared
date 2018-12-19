@@ -12,45 +12,40 @@ import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAre
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
+import lombok.NonNull;
 
 import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import lombok.NonNull;
 
 /**
  * The abstract class supporting {@code BukkitPlayer} and {@code SpongePlayer}.
  */
 public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
 
-    public interface PlotPlayerConverter<BaseObject> {
-        PlotPlayer convert(BaseObject object);
-    }
+    public static final String META_LAST_PLOT = "lastplot";
+    public static final String META_LOCATION = "location";
     private static final Map<Class, PlotPlayerConverter> converters = new HashMap<>();
+    private Map<String, byte[]> metaMap = new HashMap<>();
+    /**
+     * The metadata map.
+     */
+    private ConcurrentHashMap<String, Object> meta;
 
     public static <T> PlotPlayer from(@NonNull final T object) {
         if (!converters.containsKey(object.getClass())) {
-            throw new IllegalArgumentException(
-                String.format("There is no registered PlotPlayer converter for type %s",
+            throw new IllegalArgumentException(String
+                .format("There is no registered PlotPlayer converter for type %s",
                     object.getClass().getSimpleName()));
         }
         return converters.get(object.getClass()).convert(object);
     }
 
-    public static <T> void registerConverter(@NonNull final Class<T> clazz, final PlotPlayerConverter<T> converter) {
+    public static <T> void registerConverter(@NonNull final Class<T> clazz,
+        final PlotPlayerConverter<T> converter) {
         converters.put(clazz, converter);
     }
-
-    public static final String META_LAST_PLOT = "lastplot";
-    public static final String META_LOCATION = "location";
-
-    private Map<String, byte[]> metaMap = new HashMap<>();
-
-    /**
-     * The metadata map.
-     */
-    private ConcurrentHashMap<String, Object> meta;
 
     /**
      * Efficiently wrap a Player, or OfflinePlayer object to get a PlotPlayer (or fetch if it's already cached)<br>
@@ -304,10 +299,6 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         return RequiredType.PLAYER;
     }
 
-    /////////////// PLAYER META ///////////////
-
-    ////////////// PARTIALLY IMPLEMENTED ///////////
-
     /**
      * Get this player's last recorded location or null if they don't any plot relevant location.
      *
@@ -321,7 +312,9 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         return getLocationFull();
     }
 
-    ////////////////////////////////////////////////
+    /////////////// PLAYER META ///////////////
+
+    ////////////// PARTIALLY IMPLEMENTED ///////////
 
     /**
      * Get this player's full location (including yaw/pitch)
@@ -329,6 +322,8 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      * @return
      */
     public abstract Location getLocationFull();
+
+    ////////////////////////////////////////////////
 
     /**
      * Get this player's UUID.
@@ -375,7 +370,6 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     public void setAttribute(String key) {
         setPersistentMeta("attrib_" + key, new byte[] {(byte) 1});
     }
-
 
     /**
      * Retrieves the attribute of this player.
@@ -665,5 +659,9 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         if (EconHandler.manager != null) {
             EconHandler.manager.depositMoney(this, amount);
         }
+    }
+
+    public interface PlotPlayerConverter<BaseObject> {
+        PlotPlayer convert(BaseObject object);
     }
 }

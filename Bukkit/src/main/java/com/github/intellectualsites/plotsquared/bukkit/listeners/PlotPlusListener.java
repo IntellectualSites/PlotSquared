@@ -28,8 +28,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-@SuppressWarnings("unused")
-public class PlotPlusListener extends PlotListener implements Listener {
+@SuppressWarnings("unused") public class PlotPlusListener extends PlotListener implements Listener {
 
     private static final HashMap<String, Interval> feedRunnable = new HashMap<>();
     private static final HashMap<String, Interval> healRunnable = new HashMap<>();

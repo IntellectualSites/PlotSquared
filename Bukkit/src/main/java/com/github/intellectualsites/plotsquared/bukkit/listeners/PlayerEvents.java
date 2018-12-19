@@ -56,8 +56,7 @@ import java.util.regex.Pattern;
 /**
  * Player Events involving plots.
  */
-@SuppressWarnings("unused")
-public class PlayerEvents extends PlotListener implements Listener {
+@SuppressWarnings("unused") public class PlayerEvents extends PlotListener implements Listener {
 
     private boolean pistonBlocks = true;
     private float lastRadius;
@@ -175,7 +174,8 @@ public class PlayerEvents extends PlotListener implements Listener {
             case ZOMBIE_HORSE:
             case SKELETON_HORSE:
                 // animal
-                return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.ANIMAL_CAP);
+                return EntityUtil
+                    .checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.ANIMAL_CAP);
             case BLAZE:
             case CAVE_SPIDER:
             case CREEPER:
@@ -204,14 +204,16 @@ public class PlayerEvents extends PlotListener implements Listener {
             case VEX:
             case ZOMBIE_VILLAGER:
                 // monster
-                return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.HOSTILE_CAP);
+                return EntityUtil
+                    .checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.HOSTILE_CAP);
             default:
                 if (entity instanceof LivingEntity) {
                     if (entity instanceof Animals) {
-                        return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.ANIMAL_CAP);
+                        return EntityUtil
+                            .checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.ANIMAL_CAP);
                     } else if (entity instanceof Monster) {
-                        return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP,
-                            Flags.HOSTILE_CAP);
+                        return EntityUtil
+                            .checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.HOSTILE_CAP);
                     } else {
                         return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP);
                     }
@@ -943,8 +945,9 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         if (PlotSquared.get().worldedit != null && pp.getAttribute("worldedit")) {
-            if (player.getInventory().getItemInMainHand().getType() == LegacyMappings.fromLegacyId(PlotSquared.get().worldedit
-                .getConfiguration().wandItem).getMaterial()) {
+            if (player.getInventory().getItemInMainHand().getType() == LegacyMappings
+                .fromLegacyId(PlotSquared.get().worldedit.getConfiguration().wandItem)
+                .getMaterial()) {
                 return;
             }
         }
@@ -1202,8 +1205,8 @@ public class PlayerEvents extends PlotListener implements Listener {
                 Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
                 Block block = event.getBlock();
                 if (destroy.isPresent() && destroy.get()
-                    .contains(PlotBlock.get(block.getType().name()))
-                    || Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
+                    .contains(PlotBlock.get(block.getType().name())) || Permissions
+                    .hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }
                 event.setCancelled(true);
@@ -1679,8 +1682,9 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return;
         }
         if (PlotSquared.get().worldedit != null && pp.getAttribute("worldedit")) {
-            if (player.getInventory().getItemInMainHand().getType() == LegacyMappings.fromLegacyId(PlotSquared.get().worldedit
-                .getConfiguration().wandItem).getMaterial()) {
+            if (player.getInventory().getItemInMainHand().getType() == LegacyMappings
+                .fromLegacyId(PlotSquared.get().worldedit.getConfiguration().wandItem)
+                .getMaterial()) {
                 return;
             }
         }
@@ -1991,8 +1995,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         } else if (!plot.isAdded(plotPlayer.getUUID())) {
             Optional<HashSet<PlotBlock>> use = plot.getFlag(Flags.USE);
             Block block = event.getBlockClicked();
-            if (use.isPresent() && use.get()
-                .contains(PlotBlock.get(block.getType().name()))) {
+            if (use.isPresent() && use.get().contains(PlotBlock.get(block.getType().name()))) {
                 return;
             }
             if (Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_BUILD_OTHER)) {

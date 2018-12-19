@@ -9,8 +9,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 
-@SuppressWarnings("unused")
-public class PlayerEvents_1_9 implements Listener {
+@SuppressWarnings("unused") public class PlayerEvents_1_9 implements Listener {
 
     private final PlayerEvents parent;
 

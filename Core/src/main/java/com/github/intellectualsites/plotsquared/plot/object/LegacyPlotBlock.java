@@ -15,10 +15,8 @@ public class LegacyPlotBlock extends PlotBlock {
         }
     }
 
-    @Getter
-    public final short id;
-    @Getter
-    public final byte data;
+    @Getter public final short id;
+    @Getter public final byte data;
 
     public LegacyPlotBlock(short id, byte data) {
         this.id = id;

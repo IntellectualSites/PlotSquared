@@ -14,8 +14,7 @@ import org.bukkit.event.block.BlockExplodeEvent;
 
 import java.util.Iterator;
 
-@SuppressWarnings("unused")
-public class PlayerEvents183 implements Listener {
+@SuppressWarnings("unused") public class PlayerEvents183 implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBigBoom(BlockExplodeEvent event) {

@@ -134,14 +134,16 @@ public abstract class EventUtil {
                 Optional<HashSet<PlotBlock>> use = plot.getFlag(Flags.USE);
                 if (use.isPresent()) {
                     HashSet<PlotBlock> value = use.get();
-                    if (PlotBlock.containsEverything(value) || value.contains(block.getPlotBlock())) {
+                    if (PlotBlock.containsEverything(value) || value
+                        .contains(block.getPlotBlock())) {
                         return true;
                     }
                 }
                 Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
                 if (destroy.isPresent()) {
                     HashSet<PlotBlock> value = destroy.get();
-                    if (PlotBlock.containsEverything(value) || value.contains(block.getPlotBlock())) {
+                    if (PlotBlock.containsEverything(value) || value
+                        .contains(block.getPlotBlock())) {
                         return true;
                     }
                 }

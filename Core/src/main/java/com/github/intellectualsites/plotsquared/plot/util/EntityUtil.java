@@ -10,8 +10,7 @@ import lombok.experimental.UtilityClass;
 /**
  * Entity related general utility methods
  */
-@UtilityClass
-public final class EntityUtil {
+@UtilityClass public final class EntityUtil {
 
     private static int capNumeral(@NonNull final String flagName) {
         int i;
