@@ -6,6 +6,7 @@ import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
 import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.sk89q.worldedit.bukkit.BukkitWorld;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

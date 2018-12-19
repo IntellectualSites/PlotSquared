@@ -576,34 +576,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         } catch (final NoSuchMethodException | ClassNotFoundException ignored) {
             PlotSquared.debug("Not running Spigot. Skipping EntitySpawnListener event.");
         }
-        if (PlotSquared.get().checkVersion(getServerVersion(), 1, 7, 9)) {
-            try {
-                getServer().getPluginManager().registerEvents(new EntityPortal_1_7_9(), this);
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }
-        if (PlotSquared.get().checkVersion(getServerVersion(), BukkitVersion.v1_8_0)) {
-            try {
-                getServer().getPluginManager().registerEvents(new PlayerEvents_1_8(), this);
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }
-        if (PlotSquared.get().checkVersion(getServerVersion(), BukkitVersion.v1_8_3)) {
-            try {
-                getServer().getPluginManager().registerEvents(new PlayerEvents183(), this);
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }
-        if (PlotSquared.get().checkVersion(getServerVersion(), BukkitVersion.v1_9_0)) {
-            try {
-                getServer().getPluginManager().registerEvents(new PlayerEvents_1_9(main), this);
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     @Override public void registerInventoryEvents() {
@@ -613,11 +585,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Override public void registerPlotPlusEvents() {
         PlotPlusListener.startRunnable(this);
         getServer().getPluginManager().registerEvents(new PlotPlusListener(), this);
-        if (PlotSquared.get().checkVersion(getServerVersion(), BukkitVersion.v1_12_0)) {
-            getServer().getPluginManager().registerEvents(new PlotPlusListener_1_12(), this);
-        } else {
-            getServer().getPluginManager().registerEvents(new PlotPlusListener_Legacy(), this);
-        }
     }
 
     @Override public void registerForceFieldEvents() {

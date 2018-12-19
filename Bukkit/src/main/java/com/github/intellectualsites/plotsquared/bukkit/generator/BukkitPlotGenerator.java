@@ -296,7 +296,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
         ChunkManager.postProcessChunk(result);
     }
 
-    @Override public short[][] generateExtBlockSections(World world, Random r, int cx, int cz,
+    public short[][] generateExtBlockSections(World world, Random r, int cx, int cz,
         BiomeGrid grid) {
         GenChunk result = this.chunkSetter;
         // Set the chunk location

@@ -4,7 +4,6 @@ import com.github.intellectualsites.plotsquared.bukkit.BukkitMain;
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitLazyBlock;
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
-import com.github.intellectualsites.plotsquared.bukkit.util.BukkitVersion;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
@@ -30,6 +29,7 @@ import org.bukkit.event.block.*;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
@@ -39,6 +39,8 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.help.HelpTopic;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
@@ -46,9 +48,7 @@ import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
@@ -64,8 +64,6 @@ import java.util.regex.Pattern;
     private boolean tmpTeleport = true;
     private Field fieldPlayer;
     private PlayerMoveEvent moveTmp;
-    private boolean v112 =
-        PlotSquared.get().checkVersion(PlotSquared.imp().getServerVersion(), BukkitVersion.v1_12_0);
 
     {
         try {
@@ -646,11 +644,7 @@ import java.util.regex.Pattern;
                 moveTmp.setCancelled(false);
                 fieldPlayer.set(moveTmp, player);
 
-                List<Entity> passengers;
-                if (v112)
-                    passengers = vehicle.getPassengers();
-                else
-                    passengers = null;
+                List<Entity> passengers = vehicle.getPassengers();
 
                 this.playerMove(moveTmp);
                 org.bukkit.Location dest;
@@ -945,9 +939,8 @@ import java.util.regex.Pattern;
             return;
         }
         if (PlotSquared.get().worldedit != null && pp.getAttribute("worldedit")) {
-            if (player.getInventory().getItemInMainHand().getType() == LegacyMappings
-                .fromLegacyId(PlotSquared.get().worldedit.getConfiguration().wandItem)
-                .getMaterial()) {
+            if (player.getInventory().getItemInMainHand().getType() == Material
+                .getMaterial(PlotSquared.get().worldedit.getConfiguration().wandItem)) {
                 return;
             }
         }
@@ -1489,6 +1482,205 @@ import java.util.regex.Pattern;
         }
     }
 
+    @SuppressWarnings("deprecation")
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (!event.isLeftClick() || (event.getAction() != InventoryAction.PLACE_ALL) || event
+            .isShiftClick()) {
+            return;
+        }
+        HumanEntity entity = event.getWhoClicked();
+        if (!(entity instanceof Player) || !PlotSquared.get()
+            .hasPlotArea(entity.getWorld().getName())) {
+            return;
+        }
+
+        HumanEntity clicker = event.getWhoClicked();
+        if (!(clicker instanceof Player)) {
+            return;
+        }
+        Player player = (Player) clicker;
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        PlotInventory inventory = pp.getMeta("inventory");
+        if (inventory != null && event.getRawSlot() == event.getSlot()) {
+            if (!inventory.onClick(event.getSlot())) {
+                event.setCancelled(true);
+                inventory.close();
+            }
+        }
+        PlayerInventory inv = player.getInventory();
+        int slot = inv.getHeldItemSlot();
+        if ((slot > 8) || !event.getEventName().equals("InventoryCreativeEvent")) {
+            return;
+        }
+        ItemStack current = inv.getItemInHand();
+        ItemStack newItem = event.getCursor();
+        ItemMeta newMeta = newItem.getItemMeta();
+        ItemMeta oldMeta = newItem.getItemMeta();
+        String newLore = "";
+        if (newMeta != null) {
+            List<String> lore = newMeta.getLore();
+            if (lore != null) {
+                newLore = lore.toString();
+            }
+        }
+        String oldLore = "";
+        if (oldMeta != null) {
+            List<String> lore = oldMeta.getLore();
+            if (lore != null) {
+                oldLore = lore.toString();
+            }
+        }
+        if (!"[(+NBT)]".equals(newLore) || (current.equals(newItem) && newLore.equals(oldLore))) {
+            switch (newItem.getType()) {
+                case LEGACY_BANNER:
+                case PLAYER_HEAD:
+                    if (newMeta != null)
+                        break;
+                default:
+                    return;
+            }
+        }
+
+        HashSet<Material> blocks = null;
+        Block block = player.getTargetBlock(blocks, 7);
+        BlockState state = block.getState();
+        if (state == null) {
+            return;
+        }
+        Material stateType = state.getType();
+        Material itemType = newItem.getType();
+        if (stateType != itemType) {
+            switch (stateType) {
+                case LEGACY_STANDING_BANNER:
+                case LEGACY_WALL_BANNER:
+                    if (itemType == Material.LEGACY_BANNER)
+                        break;
+                case LEGACY_SKULL:
+                    if (itemType == Material.LEGACY_SKULL_ITEM)
+                        break;
+                default:
+                    return;
+            }
+        }
+        Location l = BukkitUtil.getLocation(state.getLocation());
+        PlotArea area = l.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = area.getPlotAbs(l);
+        boolean cancelled = false;
+        if (plot == null) {
+            if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.road");
+                cancelled = true;
+            }
+        } else if (!plot.hasOwner()) {
+            if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.unowned");
+                cancelled = true;
+            }
+        } else {
+            UUID uuid = pp.getUUID();
+            if (!plot.isAdded(uuid)) {
+                if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.other");
+                    cancelled = true;
+                }
+            }
+        }
+        if (cancelled) {
+            if ((current.getType() == newItem.getType()) && (current.getDurability() == newItem
+                .getDurability())) {
+                event.setCursor(
+                    new ItemStack(newItem.getType(), newItem.getAmount(), newItem.getDurability()));
+                event.setCancelled(true);
+                return;
+            }
+            event.setCursor(
+                new ItemStack(newItem.getType(), newItem.getAmount(), newItem.getDurability()));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPotionSplash(LingeringPotionSplashEvent event) {
+        LingeringPotion entity = event.getEntity();
+        Location l = BukkitUtil.getLocation(entity);
+        if (!PlotSquared.get().hasPlotArea(l.getWorld())) {
+            return;
+        }
+        if (!this.onProjectileHit(event)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onInteract(PlayerInteractAtEntityEvent e) {
+        Entity entity = e.getRightClicked();
+        if (!(entity instanceof ArmorStand)) {
+            return;
+        }
+        Location l = BukkitUtil.getLocation(e.getRightClicked().getLocation());
+        PlotArea area = l.getPlotArea();
+        if (area == null) {
+            return;
+        }
+
+        EntitySpawnListener.test(entity);
+
+        Plot plot = area.getPlotAbs(l);
+        PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
+        if (plot == null) {
+            if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.road");
+                e.setCancelled(true);
+            }
+        } else if (!plot.hasOwner()) {
+            if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.unowned");
+                e.setCancelled(true);
+            }
+        } else {
+            UUID uuid = pp.getUUID();
+            if (!plot.isAdded(uuid)) {
+                if (Flags.MISC_INTERACT.isTrue(plot)) {
+                    return;
+                }
+                if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.other");
+                    e.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBigBoom(BlockExplodeEvent event) {
+        Block block = event.getBlock();
+        Location location = BukkitUtil.getLocation(block.getLocation());
+        String world = location.getWorld();
+        if (!PlotSquared.get().hasPlotArea(world)) {
+            return;
+        }
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            Iterator<Block> iterator = event.blockList().iterator();
+            while (iterator.hasNext()) {
+                location = BukkitUtil.getLocation(iterator.next().getLocation());
+                if (location.getPlotArea() != null) {
+                    iterator.remove();
+                }
+            }
+            return;
+        }
+        Plot plot = area.getOwnedPlot(location);
+        if (plot == null || !plot.getFlag(Flags.EXPLOSION).or(false)) {
+            event.setCancelled(true);
+        }
+        event.blockList().removeIf(
+            b -> !plot.equals(area.getOwnedPlot(BukkitUtil.getLocation(b.getLocation()))));
+    }
+
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
@@ -1682,9 +1874,8 @@ import java.util.regex.Pattern;
                 return;
         }
         if (PlotSquared.get().worldedit != null && pp.getAttribute("worldedit")) {
-            if (player.getInventory().getItemInMainHand().getType() == LegacyMappings
-                .fromLegacyId(PlotSquared.get().worldedit.getConfiguration().wandItem)
-                .getMaterial()) {
+            if (player.getInventory().getItemInMainHand().getType() == Material
+                .getMaterial(PlotSquared.get().worldedit.getConfiguration().wandItem)) {
                 return;
             }
         }
@@ -1930,23 +2121,6 @@ import java.util.regex.Pattern;
             }
             MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
             event.setCancelled(true);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onInventoryClick(InventoryClickEvent event) {
-        HumanEntity clicker = event.getWhoClicked();
-        if (!(clicker instanceof Player)) {
-            return;
-        }
-        Player player = (Player) clicker;
-        PlotPlayer pp = BukkitUtil.getPlayer(player);
-        PlotInventory inventory = pp.getMeta("inventory");
-        if (inventory != null && event.getRawSlot() == event.getSlot()) {
-            if (!inventory.onClick(event.getSlot())) {
-                event.setCancelled(true);
-                inventory.close();
-            }
         }
     }
 
@@ -2253,24 +2427,8 @@ import java.util.regex.Pattern;
     @SuppressWarnings("deprecation") @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityCombustByEntity(EntityCombustByEntityEvent event) {
         EntityDamageByEntityEvent eventChange = null;
-        if (PlotSquared.get()
-            .checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_11_0)) {
-            eventChange = new EntityDamageByEntityEvent(event.getCombuster(), event.getEntity(),
-                EntityDamageEvent.DamageCause.FIRE_TICK, (double) event.getDuration());
-        } else {
-            try {
-                Constructor<EntityDamageByEntityEvent> constructor = EntityDamageByEntityEvent.class
-                    .getConstructor(Entity.class, Entity.class, EntityDamageEvent.DamageCause.class,
-                        Integer.TYPE);
-                eventChange = constructor.newInstance(event.getCombuster(), event.getEntity(),
-                    EntityDamageEvent.DamageCause.FIRE_TICK, event.getDuration());
-            } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        }
-        if (eventChange == null) {
-            return;
-        }
+        eventChange = new EntityDamageByEntityEvent(event.getCombuster(), event.getEntity(),
+            EntityDamageEvent.DamageCause.FIRE_TICK, (double) event.getDuration());
         onEntityDamageByEntityEvent(eventChange);
         if (eventChange.isCancelled()) {
             event.setCancelled(true);
