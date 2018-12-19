@@ -272,4 +272,6 @@ public interface IPlotMain extends ILogger {
     AbstractTitle initTitleManager();
 
     List<String> getPluginIds();
+
+    LegacyMappings getLegacyMappings();
 }
