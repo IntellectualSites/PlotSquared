@@ -1,11 +1,15 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
-import lombok.*;
-import org.bukkit.Material;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import org.bukkit.Material;
 
 /**
  * Borrowed from https://github.com/Phoenix616/IDConverter/blob/master/mappings/src/main/java/de/themoep/idconverter/IdMappings.java
@@ -846,6 +850,51 @@ public class LegacyMappings {
                 material = Material.getMaterial(legacyBlock.getLegacyName(), true);
             }
             legacyBlock.material = material;
+        }
+    }
+
+    /**
+     * Try to find a legacy plot block by any means possible.
+     * Strategy:
+     * - Check if the name contains a namespace, if so, strip it
+     * - Check if there's a (new) material matching the name
+     * - Check if there's a legacy material matching the name
+     * - Check if there's a numerical ID matching the name
+     * - Return null if everything else fails
+     *
+     * @param string String ID
+     * @return LegacyBlock if found, else null
+     */
+    public static LegacyBlock fromAny(@NonNull final String string) {
+        String workingString = string;
+        String[] parts = null;
+        if (string.contains(":")) {
+            parts = string.split(":");
+            if (parts.length > 1) {
+                if (parts[0].equalsIgnoreCase("minecraft")) {
+                    workingString = parts[1];
+                } else {
+                    workingString = parts[0];
+                }
+            }
+        }
+        LegacyBlock plotBlock = fromNewName(workingString);
+        if (plotBlock != null) {
+            return plotBlock;
+        } else if ((plotBlock = fromLegacyName(workingString)) != null) {
+            return plotBlock;
+        } else {
+            try {
+                if (parts != null && parts.length > 1) {
+                    final int id = Integer.parseInt(parts[0]);
+                    final int data = Integer.parseInt(parts[1]);
+                    return fromIdAndData(id, data);
+                } else {
+                    return fromLegacyId(Integer.parseInt(workingString));
+                }
+            } catch (final Throwable exception) {
+                return null;
+            }
         }
     }
 

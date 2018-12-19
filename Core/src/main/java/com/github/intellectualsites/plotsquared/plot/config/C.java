@@ -831,7 +831,11 @@ public enum C {
     HELP_FOOTER("$3&m---------&r $1Plot\u00B2 Help $3&m---------", "Help"),
 
     HELP_INFO_ITEM("$1/plot help %category% $3- $2%category_desc%", "Help"), HELP_ITEM(
-        "$1%usage% [%alias%]&- $3- $2%desc%&-", "Help"), /*
+        "$1%usage% [%alias%]&- $3- $2%desc%&-", "Help"),
+
+    BUCKET_ENTRIES_IGNORED("$2Total bucket values add up to 1 or more. Blocks without a spcified chance will be ignored", "Generator_Bucket"),
+
+    /*
      * Direction
      */
 
