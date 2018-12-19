@@ -1,14 +1,24 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.jnbt.*;
 import com.github.intellectualsites.plotsquared.json.JSONArray;
 import com.github.intellectualsites.plotsquared.json.JSONException;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
+import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.generator.ClassicPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
+import com.sk89q.jnbt.*;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
+import com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.MCEditSchematicReader;
+import com.sk89q.worldedit.extent.clipboard.io.SpongeSchematicReader;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.world.block.BaseBlock;
 
 import java.io.*;
 import java.net.URL;
@@ -45,7 +55,7 @@ public abstract class SchematicHandler {
                 Iterator<Plot> i = plots.iterator();
                 final Plot plot = i.next();
                 i.remove();
-                String o = UUIDHandler.getName(plot.owner);
+                String o = UUIDHandler.getName(plot.guessOwner());
                 if (o == null) {
                     o = "unknown";
                 }
@@ -108,13 +118,13 @@ public abstract class SchematicHandler {
      * @return boolean true if succeeded
      */
     public void paste(final Schematic schematic, final Plot plot, final int xOffset,
-        final int yOffset, final int zOffset, final boolean autoHeight,
-        final RunnableVal<Boolean> whenDone) {
+        final int yOffset, final int zOffset, final boolean autoHeight, final Runnable whenDone) {
+
+        EditSession editSession = WorldEdit.getInstance().getEditSessionFactory()
+            .getEditSession(WorldUtil.IMP.getWeWorld(plot.getWorldName()), -1);
+
         TaskManager.runTask(new Runnable() {
             @Override public void run() {
-                if (whenDone != null) {
-                    whenDone.value = false;
-                }
                 if (schematic == null) {
                     PlotSquared.debug("Schematic == null :|");
                     TaskManager.runTask(whenDone);
@@ -126,13 +136,14 @@ public abstract class SchematicHandler {
                         Map<String, Tag> flags = schematic.getFlags();
                         if (!flags.isEmpty()) {
                             for (Map.Entry<String, Tag> entry : flags.entrySet()) {
-                                //plot.setFlag(entry.getKey(), StringTag.class.cast(entry.getValue()).getValue());
+                                plot.setFlag(Flags.getFlag(entry.getKey()),
+                                    StringTag.class.cast(entry.getValue()).getValue());
                             }
 
                         }
                     }
                     final LocalBlockQueue queue = plot.getArea().getQueue(false);
-                    Dimension dimension = schematic.getSchematicDimension();
+                    BlockVector3 dimension = schematic.getClipboard().getDimensions();
                     final int WIDTH = dimension.getX();
                     final int LENGTH = dimension.getZ();
                     final int HEIGHT = dimension.getY();
@@ -149,8 +160,7 @@ public abstract class SchematicHandler {
                         return;
                     }
                     // block type and data arrays
-                    final short[] ids = schematic.ids;
-                    final byte[] datas = schematic.datas;
+                    final BlockArrayClipboard blockArrayClipboard = schematic.getClipboard();
                     // Calculate the optimal height to paste the schematic at
                     final int y_offset_actual;
                     if (autoHeight) {
@@ -173,7 +183,6 @@ public abstract class SchematicHandler {
                         new Location(plot.getWorldName(), region.minX + xOffset, y_offset_actual,
                             region.minZ + zOffset);
                     Location pos2 = pos1.clone().add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
-                    // TODO switch to ChunkManager.chunkTask(pos1, pos2, task, whenDone, allocate);
                     final int p1x = pos1.getX();
                     final int p1z = pos1.getZ();
                     final int p2x = pos2.getX();
@@ -182,14 +191,14 @@ public abstract class SchematicHandler {
                     final int bcz = p1z >> 4;
                     final int tcx = p2x >> 4;
                     final int tcz = p2z >> 4;
-                    final ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
+                    final ArrayList<ChunkLoc> chunks = new ArrayList<>();
                     for (int x = bcx; x <= tcx; x++) {
                         for (int z = bcz; z <= tcz; z++) {
                             chunks.add(new ChunkLoc(x, z));
                         }
                     }
-                    TaskManager.runTaskAsync(new Runnable() {
-                        @Override public void run() {
+                    ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
+                        @Override public void run(int[] value) {
                             int count = 0;
                             while (!chunks.isEmpty() && count < 256) {
                                 count++;
@@ -226,82 +235,9 @@ public abstract class SchematicHandler {
                                             int i = i2 + rx;
                                             int xx = p1x + rx;
                                             int zz = p1z + rz;
-                                            int id = ids[i];
-                                            switch (id) {
-                                                case 0:
-                                                case 2:
-                                                case 4:
-                                                case 13:
-                                                case 14:
-                                                case 15:
-                                                case 20:
-                                                case 21:
-                                                case 22:
-                                                case 30:
-                                                case 32:
-                                                case 37:
-                                                case 39:
-                                                case 40:
-                                                case 41:
-                                                case 42:
-                                                case 45:
-                                                case 46:
-                                                case 47:
-                                                case 48:
-                                                case 49:
-                                                case 51:
-                                                case 55:
-                                                case 56:
-                                                case 57:
-                                                case 58:
-                                                case 60:
-                                                case 7:
-                                                case 8:
-                                                case 9:
-                                                case 10:
-                                                case 11:
-                                                case 73:
-                                                case 74:
-                                                case 78:
-                                                case 79:
-                                                case 80:
-                                                case 81:
-                                                case 82:
-                                                case 83:
-                                                case 85:
-                                                case 87:
-                                                case 88:
-                                                case 101:
-                                                case 102:
-                                                case 103:
-                                                case 110:
-                                                case 112:
-                                                case 113:
-                                                case 121:
-                                                case 122:
-                                                case 129:
-                                                case 133:
-                                                case 165:
-                                                case 166:
-                                                case 169:
-                                                case 170:
-                                                case 172:
-                                                case 173:
-                                                case 174:
-                                                case 181:
-                                                case 182:
-                                                case 188:
-                                                case 189:
-                                                case 190:
-                                                case 191:
-                                                case 192:
-                                                    queue.setBlock(xx, yy, zz, id);
-                                                    break;
-                                                default:
-                                                    queue.setBlock(xx, yy, zz,
-                                                        PlotBlock.get((short) id, datas[i]));
-                                                    break;
-                                            }
+                                            BaseBlock id = blockArrayClipboard
+                                                .getFullBlock(BlockVector3.at(rx, ry, rz));
+                                            queue.setBlock(xx, yy, zz, id);
                                         }
                                     }
                                 }
@@ -310,7 +246,7 @@ public abstract class SchematicHandler {
                                 this.run();
                             } else {
                                 queue.flush();
-                                HashMap<BlockLoc, CompoundTag> tiles = schematic.getTiles();
+                                /*HashMap<BlockLoc, CompoundTag> tiles = schematic.getClipboard().getTiles();
                                 if (!tiles.isEmpty()) {
                                     TaskManager.IMP.sync(new RunnableVal<Object>() {
                                         @Override public void run(Object value) {
@@ -323,99 +259,16 @@ public abstract class SchematicHandler {
                                             }
                                         }
                                     });
-                                }
-                                if (whenDone != null) {
-                                    whenDone.value = true;
-                                    whenDone.run();
-                                }
+                                }*/
                             }
                         }
-                    });
+                    }, whenDone, 10);
                 } catch (Exception e) {
                     e.printStackTrace();
                     TaskManager.runTask(whenDone);
                 }
             }
         });
-    }
-
-    public Schematic getSchematic(CompoundTag tag) {
-        Map<String, Tag> tagMap = tag.getValue();
-        byte[] addBlocks = null;
-        if (tagMap.containsKey("AddBlocks")) {
-            addBlocks = ByteArrayTag.class.cast(tagMap.get("AddBlocks")).getValue();
-        }
-
-        short width = ShortTag.class.cast(tagMap.get("Width")).getValue();
-        short length = ShortTag.class.cast(tagMap.get("Length")).getValue();
-        short height = ShortTag.class.cast(tagMap.get("Height")).getValue();
-        byte[] block_sml = ByteArrayTag.class.cast(tagMap.get("Blocks")).getValue();
-        byte[] data = ByteArrayTag.class.cast(tagMap.get("Data")).getValue();
-        Map<String, Tag> flags;
-        if (tagMap.containsKey("Flags")) {
-            flags = CompoundTag.class.cast(tagMap.get("Flags")).getValue();
-        } else {
-            flags = null;
-        }
-
-        short[] block = new short[block_sml.length];
-        for (int i = 0; i < block.length; i++) {
-            short id = block_sml[i];
-            if (id < 0) {
-                id = (short) (id & 0xFF);
-            }
-            block[i] = id;
-        }
-
-        if (addBlocks != null) {
-            if (addBlocks.length == block.length) {
-                for (int i = 0; i < addBlocks.length; i++) {
-                    byte val = addBlocks[i];
-                    if (val != 0) {
-                        block[i] |= (val << 8);
-                    }
-                }
-            } else {
-                for (int index = 0; index < block.length; index++) {
-                    if ((index & 1) == 0) {
-                        block[index] =
-                            (short) (((addBlocks[index >> 1] & 0x0F) << 8) + (block[index]));
-                    } else {
-                        block[index] =
-                            (short) (((addBlocks[index >> 1] & 0xF0) << 4) + (block[index]));
-                    }
-                }
-            }
-        }
-
-        // Slow as wrapper for each block
-        //        final DataCollection[] collection = new DataCollection[b.length];
-        //        for (int x = 0; x < b.length; x++) {
-        //            collection[x] = new DataCollection(blocks[x], d[x]);
-        //        }
-        //        Schematic schem = new Schematic(collection, dimension, file);
-
-        Dimension dimensions = new Dimension(width, height, length);
-        Schematic schem = new Schematic(block, data, dimensions, flags);
-        // Slow
-        try {
-            List<Tag> blockStates = ListTag.class.cast(tagMap.get("TileEntities")).getValue();
-            for (Tag stateTag : blockStates) {
-                try {
-                    CompoundTag ct = (CompoundTag) stateTag;
-                    Map<String, Tag> state = ct.getValue();
-                    short x = IntTag.class.cast(state.get("x")).getValue().shortValue();
-                    short y = IntTag.class.cast(state.get("y")).getValue().shortValue();
-                    short z = IntTag.class.cast(state.get("z")).getValue().shortValue();
-                    schem.addTile(new BlockLoc(x, y, z), ct);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return schem;
     }
 
     public abstract boolean restoreTile(LocalBlockQueue queue, CompoundTag tag, int x, int y,
@@ -427,7 +280,7 @@ public abstract class SchematicHandler {
      * @param name to check
      * @return schematic if found, else null
      */
-    public Schematic getSchematic(String name) {
+    public Schematic getSchematic(String name) throws UnsupportedFormatException {
         File parent =
             MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS);
         if (!parent.exists()) {
@@ -436,7 +289,7 @@ public abstract class SchematicHandler {
             }
         }
         File file = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
-            Settings.Paths.SCHEMATICS + File.separator + name + (name.endsWith(".schematic") ?
+            Settings.Paths.SCHEMATICS + File.separator + name + (name.endsWith(".schem") ?
                 "" :
                 ".schematic"));
         return getSchematic(file);
@@ -448,12 +301,14 @@ public abstract class SchematicHandler {
      * @return Immutable collection with schematic names
      */
     public Collection<String> getShematicNames() {
-        final File parent = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS);
+        final File parent =
+            MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS);
         final List<String> names = new ArrayList<>();
         if (parent.exists()) {
             final String[] rawNames = parent.list((dir, name) -> name.endsWith(".schematic"));
             if (rawNames != null) {
-                final List<String> transformed = Arrays.stream(rawNames).map(rawName -> rawName.substring(0, rawName.length() - 10))
+                final List<String> transformed = Arrays.stream(rawNames)
+                    .map(rawName -> rawName.substring(0, rawName.length() - 10))
                     .collect(Collectors.toList());
                 names.addAll(transformed);
             }
@@ -467,13 +322,26 @@ public abstract class SchematicHandler {
      * @param file to check
      * @return schematic if found, else null
      */
-    public Schematic getSchematic(File file) {
+    public Schematic getSchematic(File file) throws UnsupportedFormatException {
         if (!file.exists()) {
             return null;
         }
         try {
-            return getSchematic(new FileInputStream(file));
-        } catch (FileNotFoundException e) {
+            if (BuiltInClipboardFormat.SPONGE_SCHEMATIC.isFormat(file)) {
+                SpongeSchematicReader ssr =
+                    new SpongeSchematicReader(new NBTInputStream(new FileInputStream(file)));
+                BlockArrayClipboard clip = (BlockArrayClipboard) ssr.read();
+                return new Schematic(clip);
+            } else if (BuiltInClipboardFormat.MCEDIT_SCHEMATIC.isFormat(file)) {
+                MCEditSchematicReader msr =
+                    new MCEditSchematicReader(new NBTInputStream(new FileInputStream(file)));
+                BlockArrayClipboard clip = (BlockArrayClipboard) msr.read();
+                return new Schematic(clip);
+            } else {
+                throw new UnsupportedFormatException(
+                    "This schematic format is not recognised or supported.");
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
@@ -495,15 +363,21 @@ public abstract class SchematicHandler {
             return null;
         }
         try {
-            NBTInputStream stream = new NBTInputStream(new GZIPInputStream(is));
-            CompoundTag tag = (CompoundTag) stream.readTag(1073741824);
-            is.close();
-            stream.close();
-            return getSchematic(tag);
-        } catch (IOException e) {
-            e.printStackTrace();
-            PlotSquared.debug(is.toString() + " | " + is.getClass().getCanonicalName()
-                + " is not in GZIP format : " + e.getMessage());
+            SpongeSchematicReader ssr =
+                new SpongeSchematicReader(new NBTInputStream(new GZIPInputStream(is)));
+            BlockArrayClipboard clip = (BlockArrayClipboard) ssr.read();
+            return new Schematic(clip);
+        } catch (IOException ignored) {
+            try {
+                MCEditSchematicReader msr =
+                    new MCEditSchematicReader(new NBTInputStream(new GZIPInputStream(is)));
+                BlockArrayClipboard clip = (BlockArrayClipboard) msr.read();
+                return new Schematic(clip);
+            } catch (IOException e) {
+                e.printStackTrace();
+                PlotSquared.debug(is.toString() + " | " + is.getClass().getCanonicalName()
+                    + " is not in GZIP format : " + e.getMessage());
+            }
         }
         return null;
     }
@@ -547,7 +421,7 @@ public abstract class SchematicHandler {
                 try {
                     try (GZIPOutputStream gzip = new GZIPOutputStream(output, true)) {
                         try (NBTOutputStream nos = new NBTOutputStream(gzip)) {
-                            nos.writeTag(tag);
+                            nos.writeNamedTag("Schematic", tag);
                         }
                     }
                 } catch (IOException e) {
@@ -574,7 +448,7 @@ public abstract class SchematicHandler {
             tmp.getParentFile().mkdirs();
             try (OutputStream stream = new FileOutputStream(tmp);
                 NBTOutputStream output = new NBTOutputStream(new GZIPOutputStream(stream))) {
-                output.writeTag(tag);
+                output.writeNamedTag("Schematic", tag);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -583,35 +457,6 @@ public abstract class SchematicHandler {
             return false;
         }
         return true;
-    }
-
-    /**
-     * Create a compound tag from blocks
-     * - Untested
-     *
-     * @param blocks
-     * @param blockData
-     * @param dimension
-     * @return
-     */
-    public CompoundTag createTag(byte[] blocks, byte[] blockData, Dimension dimension) {
-        HashMap<String, Tag> schematic = new HashMap<>();
-        schematic.put("Width", new ShortTag("Width", (short) dimension.getX()));
-        schematic.put("Length", new ShortTag("Length", (short) dimension.getZ()));
-        schematic.put("Height", new ShortTag("Height", (short) dimension.getY()));
-        schematic.put("Materials", new StringTag("Materials", "Alpha"));
-        schematic.put("WEOriginX", new IntTag("WEOriginX", 0));
-        schematic.put("WEOriginY", new IntTag("WEOriginY", 0));
-        schematic.put("WEOriginZ", new IntTag("WEOriginZ", 0));
-        schematic.put("WEOffsetX", new IntTag("WEOffsetX", 0));
-        schematic.put("WEOffsetY", new IntTag("WEOffsetY", 0));
-        schematic.put("WEOffsetZ", new IntTag("WEOffsetZ", 0));
-        schematic.put("Blocks", new ByteArrayTag("Blocks", blocks));
-        schematic.put("Data", new ByteArrayTag("Data", blockData));
-        schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<Tag>()));
-        schematic.put("TileEntities",
-            new ListTag("TileEntities", CompoundTag.class, new ArrayList<Tag>()));
-        return new CompoundTag("Schematic", schematic);
     }
 
     public abstract void getCompoundTag(String world, Set<RegionWrapper> regions,
@@ -625,9 +470,9 @@ public abstract class SchematicHandler {
                     for (Map.Entry<Flag<?>, Object> entry : plot.getFlags().entrySet()) {
                         String key = entry.getKey().getName();
                         flagMap.put(key,
-                            new StringTag(key, entry.getKey().valueToString(entry.getValue())));
+                            new StringTag(entry.getKey().valueToString(entry.getValue())));
                     }
-                    CompoundTag tag = new CompoundTag("Flags", flagMap);
+                    CompoundTag tag = new CompoundTag(flagMap);
                     HashMap<String, Tag> map = new HashMap<>(value.getValue());
                     map.put("Flags", tag);
                     value.setValue(map);
@@ -637,160 +482,26 @@ public abstract class SchematicHandler {
         });
     }
 
-    /**
-     * Schematic Dimensions.
-     */
-    public static class Dimension {
-
-        private final int x;
-        private final int y;
-        private final int z;
-
-        public Dimension(int x, int y, int z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-        public int getX() {
-            return this.x;
-        }
-
-        public int getY() {
-            return this.y;
-        }
-
-        public int getZ() {
-            return this.z;
-        }
-    }
-
-
-    /**
-     * Schematic Class
-     */
-    public class Schematic {
-        // Lossy but fast
-        private final short[] ids;
-        private final byte[] datas;
-        private final Dimension schematicDimension;
-        private Map<String, Tag> flags;
-        private HashMap<BlockLoc, CompoundTag> tiles;
-
-        public Schematic(short[] i, byte[] b, Dimension d, Map<String, Tag> flags) {
-            this.ids = i;
-            this.datas = b;
-            this.schematicDimension = d;
-            setFlags(flags);
-        }
-
-        public Map<String, Tag> getFlags() {
-            return this.flags;
-        }
-
-        public void setFlags(Map<String, Tag> flags) {
-            this.flags = flags == null ? new HashMap<String, Tag>() : flags;
+    public class UnsupportedFormatException extends Exception {
+        /**
+         * Throw with a message.
+         *
+         * @param message the message
+         */
+        public UnsupportedFormatException(String message) {
+            super(message);
         }
 
         /**
-         * Add a tile entity
+         * Throw with a message and a cause.
          *
-         * @param loc
-         * @param tag
+         * @param message the message
+         * @param cause   the cause
          */
-        public void addTile(BlockLoc loc, CompoundTag tag) {
-            if (this.tiles == null) {
-                this.tiles = new HashMap<>();
-            }
-            this.tiles.put(loc, tag);
+        public UnsupportedFormatException(String message, Throwable cause) {
+            super(message, cause);
         }
 
-        /**
-         * Get the tile entities
-         *
-         * @return Map of block location to tag
-         */
-        public HashMap<BlockLoc, CompoundTag> getTiles() {
-            return this.tiles == null ? new HashMap<BlockLoc, CompoundTag>() : this.tiles;
-        }
-
-        /**
-         * Get the schematic dimensions.
-         *
-         * @return
-         */
-        public Dimension getSchematicDimension() {
-            return this.schematicDimension;
-        }
-
-        /**
-         * Get the block type array.
-         *
-         * @return
-         */
-        public short[] getIds() {
-            return this.ids;
-        }
-
-        /**
-         * Get the block data array.
-         *
-         * @return
-         */
-        public byte[] getDatas() {
-            return this.datas;
-        }
-
-        public Schematic copySection(RegionWrapper region) {
-
-            int x1 = region.minX;
-            int x2 = region.maxX;
-
-            int z1 = region.minZ;
-            int z2 = region.maxZ;
-
-            int y1 = region.minY;
-            int y2 = Math.min(region.maxY, 255);
-
-            int width = x2 - x1 + 1;
-            int length = z2 - z1 + 1;
-            int height = y2 - y1 + 1;
-
-            short[] ids2 = new short[width * length * height];
-            byte[] datas2 = new byte[width * length * height];
-
-            int dx = this.schematicDimension.getX();
-            int dy = this.schematicDimension.getY();
-            int dz = this.schematicDimension.getZ();
-
-            for (int y = y1; y <= y2; y++) {
-                int yy = y >= 0 ? y < dy ? y : y - dy : y + dy;
-                int i1 = yy * dx * dz;
-                int j1 = (y - y1) * width * length;
-                for (int z = z1; z <= z2; z++) {
-                    int zz = z >= 0 ? z < dz ? z : z - dz : z + dz;
-                    int i2 = i1 + zz * dx;
-                    int j2 = j1 + (z - z1) * width;
-                    for (int x = x1; x <= x2; x++) {
-                        int xx = x >= 0 ? x < dx ? x : x - dx : x + dx;
-                        int i3 = i2 + xx;
-                        int j3 = j2 + (x - x1);
-                        ids2[j3] = this.ids[i3];
-                        datas2[j3] = this.datas[i3];
-                    }
-                }
-            }
-            return new Schematic(ids2, datas2, new Dimension(width, height, length), null);
-        }
-
-        public void save(File file) {
-            byte[] ids2 = new byte[this.ids.length];
-            for (int i = 0; i < this.ids.length; i++) {
-                ids2[i] = (byte) this.ids[i];
-            }
-            CompoundTag tag = createTag(ids2, this.datas, this.schematicDimension);
-            SchematicHandler.this.save(tag, file.getAbsolutePath());
-        }
     }
 
 }

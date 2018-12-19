@@ -1,9 +1,8 @@
 package com.github.intellectualsites.plotsquared.bukkit.object.schematic;
 
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
-import com.github.intellectualsites.plotsquared.jnbt.*;
-import com.github.intellectualsites.plotsquared.plot.object.schematic.ItemType;
-import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.sk89q.jnbt.*;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -39,21 +38,14 @@ public class StateWrapper {
             case "chest":
                 List<Tag> itemsTag = this.tag.getListTag("Items").getValue();
                 int length = itemsTag.size();
-                short[] ids = new short[length];
-                byte[] datas = new byte[length];
+                String[] ids = new String[length];
                 byte[] amounts = new byte[length];
                 byte[] slots = new byte[length];
                 for (int i = 0; i < length; i++) {
                     Tag itemTag = itemsTag.get(i);
                     CompoundTag itemComp = (CompoundTag) itemTag;
-                    short id = itemComp.getShort("id");
-                    String idStr = itemComp.getString("id");
-                    if (idStr != null && !MathMan.isInteger(idStr)) {
-                        idStr = idStr.split(":")[1].toLowerCase();
-                        id = (short) ItemType.getId(idStr);
-                    }
+                    String id = itemComp.getString("id");
                     ids[i] = id;
-                    datas[i] = (byte) itemComp.getShort("Damage");
                     amounts[i] = itemComp.getByte("Count");
                     slots[i] = itemComp.getByte("Slot");
                 }
@@ -67,7 +59,8 @@ public class StateWrapper {
                     InventoryHolder holder = (InventoryHolder) state;
                     Inventory inv = holder.getInventory();
                     for (int i = 0; i < ids.length; i++) {
-                        ItemStack item = new ItemStack(ids[i], amounts[i], datas[i]);
+                        ItemStack item =
+                            new ItemStack(Material.getMaterial(ids[i]), (int) amounts[i]);
                         inv.addItem(item);
                     }
                     state.update(true);
@@ -85,8 +78,7 @@ public class StateWrapper {
             InventoryHolder inv = (InventoryHolder) this.state;
             ItemStack[] contents = inv.getInventory().getContents();
             Map<String, Tag> values = new HashMap<>();
-            values.put("Items",
-                new ListTag("Items", CompoundTag.class, serializeInventory(contents)));
+            values.put("Items", new ListTag(CompoundTag.class, serializeInventory(contents)));
             return new CompoundTag(values);
         }
         return null;
@@ -101,41 +93,29 @@ public class StateWrapper {
         for (int i = 0; i < items.length; ++i) {
             if (items[i] != null) {
                 Map<String, Tag> tagData = serializeItem(items[i]);
-                tagData.put("Slot", new ByteTag("Slot", (byte) i));
+                tagData.put("Slot", new ByteTag((byte) i));
                 tags.add(new CompoundTag(tagData));
             }
         }
         return tags;
     }
 
-    /*
-     * TODO: Move this into the sponge module!
-     *
-    public Map<String, Tag> serializeItem(final org.spongepowered.api.item.inventory.ItemStack item) {
-        final Map<String, Tag> data = new HashMap<String, Tag>();
-        
-        // FIXME serialize sponge item
-        
-        return data;
-    }
-    */
-
     public Map<String, Tag> serializeItem(ItemStack item) {
         Map<String, Tag> data = new HashMap<>();
-        data.put("id", new ShortTag("id", (short) item.getTypeId()));
-        data.put("Damage", new ShortTag("Damage", item.getDurability()));
-        data.put("Count", new ByteTag("Count", (byte) item.getAmount()));
+        data.put("id", new StringTag(item.getType().name()));
+        data.put("Damage", new ShortTag(item.getDurability()));
+        data.put("Count", new ByteTag((byte) item.getAmount()));
         if (!item.getEnchantments().isEmpty()) {
             List<CompoundTag> enchantmentList = new ArrayList<>();
             for (Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
                 Map<String, Tag> enchantment = new HashMap<>();
-                enchantment.put("id", new ShortTag("id", (short) entry.getKey().getId()));
-                enchantment.put("lvl", new ShortTag("lvl", entry.getValue().shortValue()));
+                enchantment.put("id", new StringTag(entry.getKey().toString()));
+                enchantment.put("lvl", new ShortTag(entry.getValue().shortValue()));
                 enchantmentList.add(new CompoundTag(enchantment));
             }
             Map<String, Tag> auxData = new HashMap<>();
-            auxData.put("ench", new ListTag("ench", CompoundTag.class, enchantmentList));
-            data.put("tag", new CompoundTag("tag", auxData));
+            auxData.put("ench", new ListTag(CompoundTag.class, enchantmentList));
+            data.put("tag", new CompoundTag(auxData));
         }
         return data;
     }

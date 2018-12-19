@@ -1,6 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
-import com.github.intellectualsites.plotsquared.jnbt.CompoundTag;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
@@ -10,6 +9,7 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
+import com.sk89q.jnbt.CompoundTag;
 
 import java.io.File;
 import java.util.*;
@@ -257,7 +257,11 @@ public abstract class HybridUtils {
                         @Override public void run(CompoundTag value) {
                             SchematicHandler.manager.save(value, dir + "intersection.schematic");
                             plotworld.ROAD_SCHEMATIC_ENABLED = true;
-                            plotworld.setupSchematics();
+                            try {
+                                plotworld.setupSchematics();
+                            } catch (SchematicHandler.UnsupportedFormatException e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
             }
@@ -348,7 +352,7 @@ public abstract class HybridUtils {
                             condition = !gx || !gz || !lx || !lz;
                         }
                         if (condition) {
-                            char[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
+                            String[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
                             int minY = Math.min(plotWorld.PLOT_HEIGHT, plotWorld.ROAD_HEIGHT);
                             if (blocks != null) {
                                 for (int y = 0; y < blocks.length; y++) {

@@ -1,6 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
-import com.github.intellectualsites.plotsquared.jnbt.CompoundTag;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
@@ -8,6 +7,7 @@ import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
+import com.sk89q.jnbt.CompoundTag;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -21,7 +21,7 @@ public class HybridGen extends IndependentPlotGenerator {
     private void placeSchem(HybridPlotWorld world, ScopedLocalBlockQueue result, short relativeX,
         short relativeZ, int x, int z) {
         int minY = Math.min(world.PLOT_HEIGHT, world.ROAD_HEIGHT);
-        char[] blocks = world.G_SCH.get(MathMan.pair(relativeX, relativeZ));
+        String[] blocks = world.G_SCH.get(MathMan.pair(relativeX, relativeZ));
         if (blocks != null) {
             for (int y = 0; y < blocks.length; y++) {
                 PlotBlock block = PlotBlock.get(blocks[y]);
@@ -92,7 +92,7 @@ public class HybridGen extends IndependentPlotGenerator {
             }
         }
         // generation
-        HashMap<Integer, char[]> sch = hpw.G_SCH;
+        HashMap<Integer, String[]> sch = hpw.G_SCH;
         for (short x = 0; x < 16; x++) {
             if (gx[x]) {
                 for (short z = 0; z < 16; z++) {
@@ -149,11 +149,9 @@ public class HybridGen extends IndependentPlotGenerator {
                     } else {
                         // plot
                         for (int y = 1; y < hpw.PLOT_HEIGHT; y++) {
-                            result.setBlock(x, y, z,
-                                hpw.MAIN_BLOCK.getBlock());
+                            result.setBlock(x, y, z, hpw.MAIN_BLOCK.getBlock());
                         }
-                        result.setBlock(x, hpw.PLOT_HEIGHT, z,
-                            hpw.TOP_BLOCK.getBlock());
+                        result.setBlock(x, hpw.PLOT_HEIGHT, z, hpw.TOP_BLOCK.getBlock());
                         if (hpw.PLOT_SCHEMATIC) {
                             placeSchem(hpw, result, rx[x], rz[z], x, z);
                         }

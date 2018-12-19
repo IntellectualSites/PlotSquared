@@ -1,6 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import com.github.intellectualsites.plotsquared.jnbt.CompoundTag;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
@@ -11,6 +10,7 @@ import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.generator.SquarePlotWorld;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
+import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
@@ -19,6 +19,7 @@ import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
 import com.google.common.base.Optional;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableSet;
+import com.sk89q.jnbt.CompoundTag;
 
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
@@ -1422,14 +1423,19 @@ public class Plot {
         }
         PlotArea plotworld = getArea();
         if (plotworld.SCHEMATIC_ON_CLAIM) {
-            SchematicHandler.Schematic sch;
-            if (schematic == null || schematic.isEmpty()) {
-                sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
-            } else {
-                sch = SchematicHandler.manager.getSchematic(schematic);
-                if (sch == null) {
+            Schematic sch = null;
+            try {
+                if (schematic == null || schematic.isEmpty()) {
                     sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
+                } else {
+                    sch = SchematicHandler.manager.getSchematic(schematic);
+                    if (sch == null) {
+                        sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
+                    }
                 }
+            } catch (SchematicHandler.UnsupportedFormatException e) {
+                e.printStackTrace();
+                return true;
             }
             SchematicHandler.manager.paste(sch, this, 0, 0, 0, true, new RunnableVal<Boolean>() {
                 @Override public void run(Boolean value) {

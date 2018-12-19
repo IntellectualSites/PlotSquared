@@ -1,9 +1,9 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.jnbt.*;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
+import com.sk89q.jnbt.*;
 
 import java.io.*;
 import java.net.URL;
@@ -54,6 +54,8 @@ public abstract class WorldUtil {
 
     public abstract void setBiomes(String world, RegionWrapper region, String biome);
 
+    public abstract com.sk89q.worldedit.world.World getWeWorld(String world);
+
     public void upload(final Plot plot, UUID uuid, String file, RunnableVal<URL> whenDone) {
         if (plot == null) {
             throw new IllegalArgumentException("Plot may not be null!");
@@ -70,16 +72,17 @@ public abstract class WorldUtil {
                         zos.putNextEntry(ze);
                         try (NBTInputStream nis = new NBTInputStream(
                             new GZIPInputStream(new FileInputStream(dat)))) {
-                            CompoundTag tag = (CompoundTag) nis.readTag();
+                            CompoundTag tag = (CompoundTag) nis.readNamedTag().getTag();
                             CompoundTag data = (CompoundTag) tag.getValue().get("Data");
                             Map<String, Tag> map = ReflectionUtils.getMap(data.getValue());
-                            map.put("SpawnX", new IntTag("SpawnX", home.getX()));
-                            map.put("SpawnY", new IntTag("SpawnY", home.getY()));
-                            map.put("SpawnZ", new IntTag("SpawnZ", home.getZ()));
+                            map.put("SpawnX", new IntTag(home.getX()));
+                            map.put("SpawnY", new IntTag(home.getY()));
+                            map.put("SpawnZ", new IntTag(home.getZ()));
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             try (NBTOutputStream out = new NBTOutputStream(
                                 new GZIPOutputStream(baos, true))) {
-                                out.writeTag(tag);
+                                //TODO Find what this should be called
+                                out.writeNamedTag("Schematic????", tag);
                             }
                             zos.write(baos.toByteArray());
                         }

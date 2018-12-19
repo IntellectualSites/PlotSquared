@@ -1,7 +1,9 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
+import com.sk89q.worldedit.world.block.BaseBlock;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -11,25 +13,10 @@ public class StringPlotBlock extends PlotBlock {
 
     public static final PlotBlock EVERYTHING = new StringPlotBlock("");
     private static final Map<String, StringPlotBlock> STRING_PLOT_BLOCK_CACHE = new HashMap<>();
-
-    public static StringPlotBlock getOrAdd(@NonNull final String itemId) {
-        // final String id = itemId.toLowerCase(Locale.ENGLISH);
-
-        StringPlotBlock plotBlock = STRING_PLOT_BLOCK_CACHE.get(itemId);
-        if (plotBlock == null) {
-            plotBlock = new StringPlotBlock(itemId);
-            STRING_PLOT_BLOCK_CACHE.put(itemId, plotBlock);
-        }
-
-        return plotBlock;
-    }
-
-    @Getter
-    private final String nameSpace;
-    @Getter
-    private final String itemId;
+    @Getter private final String nameSpace;
+    @Getter private final String itemId;
+    @Getter @Setter private BaseBlock baseBlock = null;
     private boolean isForeign = false;
-
     public StringPlotBlock(@NonNull final String nameSpace, @NonNull final String itemId) {
         this.nameSpace = nameSpace.toLowerCase(Locale.ENGLISH);
         this.itemId = itemId.toLowerCase(Locale.ENGLISH);
@@ -49,6 +36,18 @@ public class StringPlotBlock extends PlotBlock {
             this.itemId = itemId.toLowerCase(Locale.ENGLISH);
         }
         this.determineForeign();
+    }
+
+    public static StringPlotBlock getOrAdd(@NonNull final String itemId) {
+        // final String id = itemId.toLowerCase(Locale.ENGLISH);
+
+        StringPlotBlock plotBlock = STRING_PLOT_BLOCK_CACHE.get(itemId);
+        if (plotBlock == null) {
+            plotBlock = new StringPlotBlock(itemId);
+            STRING_PLOT_BLOCK_CACHE.put(itemId, plotBlock);
+        }
+
+        return plotBlock;
     }
 
     private void determineForeign() {

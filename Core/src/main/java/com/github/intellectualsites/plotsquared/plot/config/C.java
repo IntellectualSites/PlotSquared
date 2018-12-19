@@ -31,8 +31,7 @@ public enum C {
         "static.flags"), FLAG_PLAYER_INTERACT("player-interact",
         "static.flags"), FLAG_TAMED_INTERACT("tamed-interact",
         "static.flags"), FLAG_DISABLE_PHYSICS("disable-physics", "static.flags"), FLAG_MOB_PLACE(
-        "mob-place", "static.flags"),
-    /*
+        "mob-place", "static.flags"), /*
      * Static permission
      */
     PERMISSION_STAR("*", "static.permissions"), PERMISSION_ADMIN("plots.admin",
@@ -833,7 +832,9 @@ public enum C {
     HELP_INFO_ITEM("$1/plot help %category% $3- $2%category_desc%", "Help"), HELP_ITEM(
         "$1%usage% [%alias%]&- $3- $2%desc%&-", "Help"),
 
-    BUCKET_ENTRIES_IGNORED("$2Total bucket values add up to 1 or more. Blocks without a spcified chance will be ignored", "Generator_Bucket"),
+    BUCKET_ENTRIES_IGNORED(
+        "$2Total bucket values add up to 1 or more. Blocks without a spcified chance will be ignored",
+        "Generator_Bucket"),
 
     /*
      * Direction
@@ -1047,4 +1048,5 @@ public enum C {
         } else {
             caller.sendMessage(msg);
         }
-    }}
+    }
+}

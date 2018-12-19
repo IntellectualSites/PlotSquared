@@ -89,7 +89,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                 if (absZ < 0) {
                     absZ += size;
                 }
-                char[] blocks = hpw.G_SCH.get(MathMan.pair(absX, absZ));
+                String[] blocks = hpw.G_SCH.get(MathMan.pair(absX, absZ));
                 if (blocks != null) {
                     for (int y = 0; y < blocks.length; y++) {
                         PlotBlock block = PlotBlock.get(blocks[y]);

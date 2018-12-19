@@ -467,6 +467,10 @@ import org.bukkit.material.Wool;
         }
     }
 
+    public com.sk89q.worldedit.world.World getWeWorld(String world) {
+        return new BukkitWorld(Bukkit.getWorld(world));
+    }
+
     @Override public PlotBlock getBlock(@NonNull final Location location) {
         final World world = getWorld(location.getWorld());
         final Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());

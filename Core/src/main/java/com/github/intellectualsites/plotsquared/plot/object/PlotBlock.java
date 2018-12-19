@@ -4,14 +4,19 @@ import com.github.intellectualsites.plotsquared.configuration.serialization.Conf
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.google.common.collect.ImmutableMap;
+import com.sk89q.worldedit.world.block.BaseBlock;
+import lombok.NonNull;
+
 import java.util.Collection;
 import java.util.Map;
-import lombok.NonNull;
 
 public abstract class PlotBlock implements ConfigurationSerializable {
 
     private static Class<?> conversionType;
     private static BlockRegistry blockRegistry;
+
+    protected PlotBlock() {
+    }
 
     public static boolean isEverything(@NonNull final PlotBlock block) {
         return block.equals(LegacyPlotBlock.EVERYTHING) || block.equals(StringPlotBlock.EVERYTHING);
@@ -24,9 +29,6 @@ public abstract class PlotBlock implements ConfigurationSerializable {
             }
         }
         return false;
-    }
-
-    protected PlotBlock() {
     }
 
     public static PlotBlock get(char combinedId) {
@@ -48,27 +50,6 @@ public abstract class PlotBlock implements ConfigurationSerializable {
         return null;
     }
 
-    @Override public Map<String, Object> serialize() {
-        return ImmutableMap.of("material", this.getRawId());
-    }
-
-    public <T> T to(@NonNull final Class<T> clazz) {
-        if (blockRegistry == null) {
-            blockRegistry = PlotSquared.imp().getBlockRegistry();
-            if (blockRegistry == null) {
-                throw new UnsupportedOperationException("The PlotSquared implementation has not registered a custom block registry."
-                    + " This method can't be used.");
-            }
-            conversionType = blockRegistry.getType();
-        }
-        if (!clazz.equals(conversionType)) {
-            throw new UnsupportedOperationException("The PlotSquared implementation has not registered a block registry for this object type");
-        }
-        return clazz.cast(blockRegistry.getItem(this));
-    }
-
-    public abstract boolean isAir();
-
     public static StringPlotBlock get(@NonNull final String itemId) {
         if (Settings.Enabled_Components.BLOCK_CACHE) {
             return StringPlotBlock.getOrAdd(itemId);
@@ -89,20 +70,51 @@ public abstract class PlotBlock implements ConfigurationSerializable {
         return get(((LegacyPlotBlock) plotBlock).getId(), (byte) 0);
     }
 
+    public static PlotBlock get(@NonNull final BaseBlock baseBlock) {
+        StringPlotBlock plotBlock = get(baseBlock.getBlockType().getId());
+        plotBlock.setBaseBlock(baseBlock);
+        return plotBlock;
+    }
+
     public static PlotBlock get(@NonNull final Object type) {
         if (blockRegistry == null) {
             blockRegistry = PlotSquared.imp().getBlockRegistry();
             if (blockRegistry == null) {
-                throw new UnsupportedOperationException("The PlotSquared implementation has not registered a custom block registry."
-                    + " This method can't be used.");
+                throw new UnsupportedOperationException(
+                    "The PlotSquared implementation has not registered a custom block registry."
+                        + " This method can't be used.");
             }
             conversionType = blockRegistry.getType();
         }
         if (!type.getClass().equals(conversionType)) {
-            throw new UnsupportedOperationException("The PlotSquared implementation has not registered a block registry for this object type");
+            throw new UnsupportedOperationException(
+                "The PlotSquared implementation has not registered a block registry for this object type");
         }
         return blockRegistry.getPlotBlock(type);
     }
+
+    @Override public Map<String, Object> serialize() {
+        return ImmutableMap.of("material", this.getRawId());
+    }
+
+    public <T> T to(@NonNull final Class<T> clazz) {
+        if (blockRegistry == null) {
+            blockRegistry = PlotSquared.imp().getBlockRegistry();
+            if (blockRegistry == null) {
+                throw new UnsupportedOperationException(
+                    "The PlotSquared implementation has not registered a custom block registry."
+                        + " This method can't be used.");
+            }
+            conversionType = blockRegistry.getType();
+        }
+        if (!clazz.equals(conversionType)) {
+            throw new UnsupportedOperationException(
+                "The PlotSquared implementation has not registered a block registry for this object type");
+        }
+        return clazz.cast(blockRegistry.getItem(this));
+    }
+
+    public abstract boolean isAir();
 
     public final boolean equalsAny(final int id, @NonNull final String stringId) {
         if (this instanceof StringPlotBlock) {

@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.sk89q.worldedit.world.block.BaseBlock;
 import lombok.NonNull;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -83,6 +84,33 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
 
     @Override public final void setModified(long modified) {
         this.modified = modified;
+    }
+
+    @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
+        if ((y > 255) || (y < 0)) {
+            return false;
+        }
+        int cx = x >> 4;
+        int cz = z >> 4;
+        if (cx != lastX || cz != lastZ) {
+            lastX = cx;
+            lastZ = cz;
+            long pair = (long) (cx) << 32 | (cz) & 0xFFFFFFFFL;
+            lastWrappedChunk = this.blocks.get(pair);
+            if (lastWrappedChunk == null) {
+                lastWrappedChunk = this.getLocalChunk(x >> 4, z >> 4);
+                lastWrappedChunk.setBlock(x & 15, y, z & 15, id);
+                LocalChunk previous = this.blocks.put(pair, lastWrappedChunk);
+                if (previous == null) {
+                    chunks.add(lastWrappedChunk);
+                    return true;
+                }
+                this.blocks.put(pair, previous);
+                lastWrappedChunk = previous;
+            }
+        }
+        lastWrappedChunk.setBlock(x & 15, y, z & 15, id);
+        return true;
     }
 
     @Override public boolean setBlock(int x, int y, int z, String id) {
@@ -249,6 +277,8 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
             }
         }
 
+        public abstract void setBlock(final int x, final int y, final int z, final BaseBlock id);
+
         public abstract void setBlock(final int x, final int y, final int z, final String id);
 
         public abstract void setBlock(final int x, final int y, final int z, final int id,
@@ -281,9 +311,25 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
             blocks = new PlotBlock[16][];
         }
 
-        @Override public void setBlock(final int x, final int y, final int z, @NonNull final String id) {
+        @Override
+        public void setBlock(final int x, final int y, final int z, @NonNull final BaseBlock id) {
+            this.setInternal(x, y, z, id);
+        }
+
+        @Override
+        public void setBlock(final int x, final int y, final int z, @NonNull final String id) {
             final PlotBlock block = PlotBlock.get(id);
             this.setInternal(x, y, z, block);
+        }
+
+        private void setInternal(final int x, final int y, final int z, final BaseBlock bsh) {
+            final int i = MainUtil.CACHE_I[y][x][z];
+            final int j = MainUtil.CACHE_J[y][x][z];
+            PlotBlock[] array = blocks[i];
+            if (array == null) {
+                array = (blocks[i] = new PlotBlock[4096]);
+            }
+            array[j] = PlotBlock.get(bsh);
         }
 
         private void setInternal(final int x, final int y, final int z, final PlotBlock plotBlock) {

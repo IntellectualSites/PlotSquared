@@ -1,6 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.sk89q.worldedit.world.block.BaseBlock;
 
 public class DelegateLocalBlockQueue extends LocalBlockQueue {
 
@@ -55,6 +56,10 @@ public class DelegateLocalBlockQueue extends LocalBlockQueue {
         if (parent != null) {
             parent.setModified(modified);
         }
+    }
+
+    @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
+        return parent.setBlock(x, y, z, id);
     }
 
     @Override public boolean setBlock(int x, int y, int z, String id) {

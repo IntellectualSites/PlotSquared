@@ -1,11 +1,12 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
-import com.github.intellectualsites.plotsquared.jnbt.CompoundTag;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.worldedit.world.block.BaseBlock;
 import lombok.NonNull;
 
 import java.util.Map;
@@ -45,6 +46,8 @@ public abstract class LocalBlockQueue {
     }
 
     public abstract boolean setBlock(final int x, final int y, final int z, final String id);
+
+    public abstract boolean setBlock(final int x, final int y, final int z, final BaseBlock id);
 
     public final boolean setBlock(int x, int y, int z, @NonNull final PlotBlock block) {
         if (block instanceof LegacyPlotBlock) {

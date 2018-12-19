@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
@@ -70,8 +71,7 @@ public class Load extends SubCommand {
                 MainUtil.sendMessage(player, C.GENERATING_COMPONENT);
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override public void run() {
-                        SchematicHandler.Schematic schematic =
-                            SchematicHandler.manager.getSchematic(url);
+                        Schematic schematic = SchematicHandler.manager.getSchematic(url);
                         if (schematic == null) {
                             plot.removeRunning();
                             sendMessage(player, C.SCHEMATIC_INVALID,

@@ -1,27 +1,37 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
-import com.github.intellectualsites.plotsquared.jnbt.CompoundTag;
-import com.github.intellectualsites.plotsquared.jnbt.Tag;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
+import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.jnbt.CompoundTagBuilder;
+import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
+import com.sk89q.worldedit.internal.helper.MCDirections;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.math.Vector3;
+import com.sk89q.worldedit.math.transform.AffineTransform;
+import com.sk89q.worldedit.util.Direction;
+import com.sk89q.worldedit.world.block.BaseBlock;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Map;
 
 public class HybridPlotWorld extends ClassicPlotWorld {
 
+    private static AffineTransform transform = new AffineTransform().rotateY(-90);
     public boolean ROAD_SCHEMATIC_ENABLED;
     public boolean PLOT_SCHEMATIC = false;
     public short PATH_WIDTH_LOWER;
     public short PATH_WIDTH_UPPER;
-    public HashMap<Integer, char[]> G_SCH;
+    public HashMap<Integer, String[]> G_SCH;
     public HashMap<Integer, HashMap<Integer, CompoundTag>> G_SCH_STATE;
     private Location SIGN_LOCATION;
 
@@ -46,98 +56,34 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
     // FIXME depends on block ids
     // Possibly make abstract?
-    public static byte rotate(short id, byte data) {
-        switch (id) {
-            case 162:
-            case 17:
-                if (data >= 4 && data < 12) {
-                    if (data >= 8) {
-                        return (byte) (data - 4);
-                    }
-                    return (byte) (data + 4);
-                }
-                return data;
-            case 26: // bed
-            case 86: // pumpkin
-            case 91:
-            case 183: // fence gate
-            case 184:
-            case 185:
-            case 186:
-            case 187:
-            case 107:
-                data = wrap2(data, 0);
-                data = wrap2(data, 2);
-                data = wrap2(data, 4);
-                data = wrap2(data, 6);
-                return data;
-            case 53:
-            case 67:
-            case 108:
-            case 109:
-            case 114:
-            case 128:
-            case 134:
-            case 135:
-            case 136:
-            case 156:
-            case 163:
-            case 164:
-            case 180:
-            case 64:
-            case 71:
-            case 193:
-            case 194:
-            case 195:
-            case 196:
-            case 197:
-            case 93:
-            case 94:
-            case 131:
-            case 145:
-            case 149:
-            case 150:
-            case 96:
-            case 167:
-                data = wrap(data, 0);
-                data = wrap(data, 4);
-                data = wrap(data, 8);
-                data = wrap(data, 12);
-                return data;
-            case 28:
-            case 66:
-            case 157:
-            case 27:
-                data = wrap2(data, 0);
-                data = wrap2(data, 3);
-                if (data == 2) {
-                    data = 5;
-                } else if (data == 5) {
-                    data = 2;
-                }
-                return data;
+    public static BaseBlock rotate(BaseBlock id) {
+        CompoundTag tag = id.toBaseBlock().getNbtData();
 
-            case 23:
-            case 29:
-            case 33:
-            case 158:
-            case 54:
-            case 130:
-            case 146:
-            case 61:
-            case 62:
-            case 65:
-            case 68:
-            case 144:
-                data = wrap(data, 2);
-                return data;
-            case 143:
-            case 77:
-                data = wrap(data, 1);
-                return data;
-            default:
-                return data;
+        if (tag != null) {
+            // Handle blocks which store their rotation in NBT
+            if (tag.containsKey("Rot")) {
+                int rot = tag.asInt("Rot");
+
+                Direction direction = MCDirections.fromRotation(rot);
+
+                if (direction != null) {
+                    Vector3 vector = transform.apply(direction.toVector())
+                        .subtract(transform.apply(Vector3.ZERO)).normalize();
+                    Direction newDirection = Direction.findClosest(vector,
+                        Direction.Flag.CARDINAL | Direction.Flag.ORDINAL
+                            | Direction.Flag.SECONDARY_ORDINAL);
+
+                    if (newDirection != null) {
+                        CompoundTagBuilder builder = tag.createBuilder();
+
+                        builder.putByte("Rot", (byte) MCDirections.toRotation(newDirection));
+
+                        return id.toBaseBlock(builder.build());
+                    }
+                }
+            }
         }
+        return id;
     }
 
     public Location getSignLocation(Plot plot) {
@@ -184,7 +130,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         return ((SquarePlotWorld) plotArea).PLOT_WIDTH == this.PLOT_WIDTH;
     }
 
-    public void setupSchematics() {
+    public void setupSchematics() throws SchematicHandler.UnsupportedFormatException {
         this.G_SCH = new HashMap<>();
         File schematic1File = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
             "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/sideroad.schematic");
@@ -192,19 +138,15 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/intersection.schematic");
         File schem3File = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
             "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/plot.schematic");
-        SchematicHandler.Schematic schematic1 =
-            SchematicHandler.manager.getSchematic(schematic1File);
-        SchematicHandler.Schematic schematic2 =
-            SchematicHandler.manager.getSchematic(schematic2File);
-        SchematicHandler.Schematic schematic3 = SchematicHandler.manager.getSchematic(schem3File);
+        Schematic schematic1 = SchematicHandler.manager.getSchematic(schematic1File);
+        Schematic schematic2 = SchematicHandler.manager.getSchematic(schematic2File);
+        Schematic schematic3 = SchematicHandler.manager.getSchematic(schem3File);
         int shift = this.ROAD_WIDTH / 2;
         int oddshift = (this.ROAD_WIDTH & 1) == 0 ? 0 : 1;
         int minY = Math.min(PLOT_HEIGHT, ROAD_HEIGHT);
         if (schematic3 != null) {
             this.PLOT_SCHEMATIC = true;
-            short[] ids = schematic3.getIds();
-            byte[] datas = schematic3.getDatas();
-            SchematicHandler.Dimension d3 = schematic3.getSchematicDimension();
+            BlockVector3 d3 = schematic3.getClipboard().getDimensions();
             short w3 = (short) d3.getX();
             short l3 = (short) d3.getZ();
             short h3 = (short) d3.getY();
@@ -225,51 +167,52 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             }
 
             int startY = minY - PLOT_HEIGHT;
-            for (short x = 0; x < w3; x++) {
-                for (short z = 0; z < l3; z++) {
-                    for (short y = 0; y < h3; y++) {
-                        int index = (y * w3 * l3) + (z * w3) + x;
-                        short id = ids[index];
-                        byte data = datas[index];
-                        if (id != 0) {
-                            addOverlayBlock((short) (x + shift + oddshift + centerShiftX),
-                                (short) (y + startY), (short) (z + shift + oddshift + centerShiftZ),
-                                id, data, false, h3);
-                        }
-                    }
-                }
-            }
-            HashMap<BlockLoc, CompoundTag> items = schematic3.getTiles();
-            if (!items.isEmpty()) {
-                this.G_SCH_STATE = new HashMap<>();
-                outer:
-                for (Map.Entry<BlockLoc, CompoundTag> entry : items.entrySet()) {
-                    BlockLoc loc = entry.getKey();
-                    short x = (short) (loc.x + shift + oddshift + centerShiftX);
-                    short z = (short) (loc.z + shift + oddshift + centerShiftZ);
-                    short y = (short) (loc.y + this.PLOT_HEIGHT);
-                    int pair = MathMan.pair(x, z);
-                    HashMap<Integer, CompoundTag> existing = this.G_SCH_STATE.get(pair);
-                    if (existing == null) {
-                        existing = new HashMap<>();
-                        this.G_SCH_STATE.put(pair, existing);
-                    }
-                    existing.put((int) y, entry.getValue());
 
-                    CompoundTag tag = entry.getValue();
-                    Map<String, Tag> map = ReflectionUtils.getMap(tag.getValue());
-                    for (int i = 1; i <= 4; i++) {
-                        String ln = tag.getString("Line" + i);
-                        if (ln == null || ln.length() > 11)
-                            continue outer;
-                    }
-                    SIGN_LOCATION =
-                        new Location(worldname, loc.x + centerShiftX, this.PLOT_HEIGHT + loc.y,
-                            loc.z + centerShiftZ);
-                    ALLOW_SIGNS = true;
-                    continue outer;
-                }
-            }
+            //            for (short x = 0; x < w3; x++) {
+            //                for (short z = 0; z < l3; z++) {
+            //                    for (short y = 0; y < h3; y++) {
+            //                        int index = (y * w3 * l3) + (z * w3) + x;
+            //                        short id = ids[index];
+            //                        byte data = datas[index];
+            //                        if (id != 0) {
+            //                            addOverlayBlock((short) (x + shift + oddshift + centerShiftX),
+            //                                (short) (y + startY), (short) (z + shift + oddshift + centerShiftZ),
+            //                                id, data, false, h3);
+            //                        }
+            //                    }
+            //                }
+            //            }
+            //            HashMap<BlockLoc, CompoundTag> items = schematic3.getTiles();
+            //            if (!items.isEmpty()) {
+            //                this.G_SCH_STATE = new HashMap<>();
+            //                outer:
+            //                for (Map.Entry<BlockLoc, CompoundTag> entry : items.entrySet()) {
+            //                    BlockLoc loc = entry.getKey();
+            //                    short x = (short) (loc.x + shift + oddshift + centerShiftX);
+            //                    short z = (short) (loc.z + shift + oddshift + centerShiftZ);
+            //                    short y = (short) (loc.y + this.PLOT_HEIGHT);
+            //                    int pair = MathMan.pair(x, z);
+            //                    HashMap<Integer, CompoundTag> existing = this.G_SCH_STATE.get(pair);
+            //                    if (existing == null) {
+            //                        existing = new HashMap<>();
+            //                        this.G_SCH_STATE.put(pair, existing);
+            //                    }
+            //                    existing.put((int) y, entry.getValue());
+            //
+            //                    CompoundTag tag = entry.getValue();
+            //                    Map<String, Tag> map = ReflectionUtils.getMap(tag.getValue());
+            //                    for (int i = 1; i <= 4; i++) {
+            //                        String ln = tag.getString("Line" + i);
+            //                        if (ln == null || ln.length() > 11)
+            //                            continue outer;
+            //                    }
+            //                    SIGN_LOCATION =
+            //                        new Location(worldname, loc.x + centerShiftX, this.PLOT_HEIGHT + loc.y,
+            //                            loc.z + centerShiftZ);
+            //                    ALLOW_SIGNS = true;
+            //                    continue outer;
+            //                }
+            //            }
         }
         if (schematic1 == null || schematic2 == null || this.ROAD_WIDTH == 0) {
             PlotSquared.debug(C.PREFIX + "&3 - schematic: &7false");
@@ -279,17 +222,14 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         // Do not populate road if using schematic population
         // TODO: What? this.ROAD_BLOCK = BlockBucket.empty(); // PlotBlock.getEmptyData(this.ROAD_BLOCK); // PlotBlock.get(this.ROAD_BLOCK.id, (byte) 0);
 
-        short[] ids1 = schematic1.getIds();
-        byte[] datas1 = schematic1.getDatas();
+        BlockArrayClipboard blockArrayClipboard1 = schematic1.getClipboard();
+        BlockArrayClipboard blockArrayClipboard2 = schematic2.getClipboard();
 
-        short[] ids2 = schematic2.getIds();
-        byte[] datas2 = schematic2.getDatas();
-
-        SchematicHandler.Dimension d1 = schematic1.getSchematicDimension();
+        BlockVector3 d1 = blockArrayClipboard1.getDimensions();
         short w1 = (short) d1.getX();
         short l1 = (short) d1.getZ();
         short h1 = (short) d1.getY();
-        SchematicHandler.Dimension d2 = schematic2.getSchematicDimension();
+        BlockVector3 d2 = blockArrayClipboard2.getDimensions();
         short w2 = (short) d2.getX();
         short l2 = (short) d2.getZ();
         short h2 = (short) d2.getY();
@@ -297,14 +237,13 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         for (short x = 0; x < w1; x++) {
             for (short z = 0; z < l1; z++) {
                 for (short y = 0; y < h1; y++) {
-                    int index = (y * w1 * l1) + (z * w1) + x;
-                    short id = ids1[index];
-                    byte data = datas1[index];
-                    if (id != 0) {
+                    BaseBlock id =
+                        blockArrayClipboard1.getFullBlock(BlockVector3.at(x, y, z)).toBaseBlock();
+                    if (!id.getBlockType().getId().toLowerCase().contains("air")) {
                         addOverlayBlock((short) (x - shift), (short) (y + startY),
-                            (short) (z + shift + oddshift), id, data, false, h1);
+                            (short) (z + shift + oddshift), id, false, h1);
                         addOverlayBlock((short) (z + shift + oddshift), (short) (y + startY),
-                            (short) (x - shift), id, data, true, h1);
+                            (short) (x - shift), id, true, h1);
                     }
                 }
             }
@@ -312,19 +251,17 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         for (short x = 0; x < w2; x++) {
             for (short z = 0; z < l2; z++) {
                 for (short y = 0; y < h2; y++) {
-                    int index = (y * w2 * l2) + (z * w2) + x;
-                    short id = ids2[index];
-                    byte data = datas2[index];
-                    if (id != 0) {
+                    BaseBlock id = blockArrayClipboard2.getFullBlock(BlockVector3.at(x, y, z));
+                    if (!id.getBlockType().getId().toLowerCase().contains("air")) {
                         addOverlayBlock((short) (x - shift), (short) (y + startY),
-                            (short) (z - shift), id, data, false, h2);
+                            (short) (z - shift), id, false, h2);
                     }
                 }
             }
         }
     }
 
-    public void addOverlayBlock(short x, short y, short z, short id, byte data, boolean rotate,
+    public void addOverlayBlock(short x, short y, short z, BaseBlock id, boolean rotate,
         int height) {
         if (z < 0) {
             z += this.SIZE;
@@ -337,20 +274,14 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             x -= this.SIZE;
         }
         if (rotate) {
-            byte newData = rotate(id, data);
-            if (data != 0 || newData != 0) {
-                data = newData;
-            }
+            id = rotate(id);
         }
         int pair = MathMan.pair(x, z);
-        char[] existing = this.G_SCH.get(pair);
+        String[] existing = this.G_SCH.get(pair);
         if (existing == null) {
-            existing = new char[height];
+            existing = new String[height];
             this.G_SCH.put(pair, existing);
         }
-        if (id == 0) {
-            data = 1;
-        }
-        existing[y] = (char) ((id << 4) + data);
+        existing[y] = id.getBlockType().getId();
     }
 }

@@ -5,8 +5,8 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
 import com.github.intellectualsites.plotsquared.plot.util.*;
-import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler.Schematic;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class SchematicCmd extends SubCommand {
                 this.running = true;
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override public void run() {
-                        Schematic schematic;
+                        Schematic schematic = null;
                         if (location.startsWith("url:")) {
                             try {
                                 UUID uuid = UUID.fromString(location.substring(4));
@@ -72,7 +72,11 @@ public class SchematicCmd extends SubCommand {
                                 return;
                             }
                         } else {
-                            schematic = SchematicHandler.manager.getSchematic(location);
+                            try {
+                                schematic = SchematicHandler.manager.getSchematic(location);
+                            } catch (SchematicHandler.UnsupportedFormatException e) {
+                                e.printStackTrace();
+                            }
                         }
                         if (schematic == null) {
                             SchematicCmd.this.running = false;
@@ -212,9 +216,11 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SCHEMATIC_LIST);
                     return false;
                 }
-                final String string = StringMan.join(SchematicHandler.manager.getShematicNames(), "$2, $1");
+                final String string =
+                    StringMan.join(SchematicHandler.manager.getShematicNames(), "$2, $1");
                 C.SCHEMATIC_LIST.send(player, string);
-            } break;
+            }
+            break;
             default:
                 sendMessage(player, C.SCHEMATIC_MISSING_ARG);
                 break;

@@ -1,28 +1,29 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.schematic.StateWrapper;
-import com.github.intellectualsites.plotsquared.jnbt.*;
 import com.github.intellectualsites.plotsquared.plot.object.ChunkLoc;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
-import com.github.intellectualsites.plotsquared.plot.util.LegacyMappings;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
+import com.sk89q.jnbt.*;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.block.BaseBlock;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 
+import java.io.ByteArrayOutputStream;
 import java.util.*;
 
 /**
  * Schematic Handler.
  */
-public class BukkitSchematicHandler extends SchematicHandler {
+public abstract class BukkitSchematicHandler extends SchematicHandler {
 
     @Override public void getCompoundTag(final String world, final Set<RegionWrapper> regions,
         final RunnableVal<CompoundTag> whenDone) {
@@ -34,25 +35,35 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 final Location bot = corners[0];
                 Location top = corners[1];
 
+                CuboidRegion cuboidRegion =
+                    new CuboidRegion(BukkitUtil.IMP.getWeWorld(world), bot.getBlockVector3(),
+                        top.getBlockVector3());
+
                 final int width = top.getX() - bot.getX() + 1;
                 int height = top.getY() - bot.getY() + 1;
                 final int length = top.getZ() - bot.getZ() + 1;
-                // Main Schematic tag
-                final HashMap<String, Tag> schematic = new HashMap<>();
-                schematic.put("Width", new ShortTag("Width", (short) width));
-                schematic.put("Length", new ShortTag("Length", (short) length));
-                schematic.put("Height", new ShortTag("Height", (short) height));
-                schematic.put("Materials", new StringTag("Materials", "Alpha"));
-                schematic.put("WEOriginX", new IntTag("WEOriginX", 0));
-                schematic.put("WEOriginY", new IntTag("WEOriginY", 0));
-                schematic.put("WEOriginZ", new IntTag("WEOriginZ", 0));
-                schematic.put("WEOffsetX", new IntTag("WEOffsetX", 0));
-                schematic.put("WEOffsetY", new IntTag("WEOffsetY", 0));
-                schematic.put("WEOffsetZ", new IntTag("WEOffsetZ", 0));
-                // Arrays of data types
-                final List<CompoundTag> tileEntities = new ArrayList<>();
-                final byte[] blocks = new byte[width * height * length];
-                final byte[] blockData = new byte[width * height * length];
+                Map<String, Tag> schematic = new HashMap<>();
+                schematic.put("Version", new IntTag(1));
+
+                Map<String, Tag> metadata = new HashMap<>();
+                metadata.put("WEOffsetX", new IntTag(0));
+                metadata.put("WEOffsetY", new IntTag(0));
+                metadata.put("WEOffsetZ", new IntTag(0));
+
+                schematic.put("Metadata", new CompoundTag(metadata));
+
+                schematic.put("Width", new ShortTag((short) width));
+                schematic.put("Height", new ShortTag((short) height));
+                schematic.put("Length", new ShortTag((short) length));
+
+                // The Sponge format Offset refers to the 'min' points location in the world. That's our 'Origin'
+                schematic.put("Offset", new IntArrayTag(new int[] {0, 0, 0,}));
+
+                final int[] paletteMax = {0};
+                Map<String, Integer> palette = new HashMap<>();
+
+                List<CompoundTag> tileEntities = new ArrayList<>();
+                ByteArrayOutputStream buffer = new ByteArrayOutputStream(width * height * length);
                 // Queue
                 final ArrayDeque<RegionWrapper> queue = new ArrayDeque<>(regions);
                 TaskManager.runTask(new Runnable() {
@@ -60,15 +71,18 @@ public class BukkitSchematicHandler extends SchematicHandler {
                         if (queue.isEmpty()) {
                             TaskManager.runTaskAsync(new Runnable() {
                                 @Override public void run() {
-                                    schematic.put("Blocks", new ByteArrayTag("Blocks", blocks));
-                                    schematic.put("Data", new ByteArrayTag("Data", blockData));
-                                    schematic.put("Entities",
-                                        new ListTag("Entities", CompoundTag.class,
-                                            new ArrayList<Tag>()));
+                                    schematic.put("PaletteMax", new IntTag(paletteMax[0]));
+
+                                    Map<String, Tag> paletteTag = new HashMap<>();
+                                    palette.forEach(
+                                        (key, value) -> paletteTag.put(key, new IntTag(value)));
+
+                                    schematic.put("Palette", new CompoundTag(paletteTag));
+                                    schematic
+                                        .put("BlockData", new ByteArrayTag(buffer.toByteArray()));
                                     schematic.put("TileEntities",
-                                        new ListTag("TileEntities", CompoundTag.class,
-                                            tileEntities));
-                                    whenDone.value = new CompoundTag("Schematic", schematic);
+                                        new ListTag(CompoundTag.class, tileEntities));
+                                    whenDone.value = new CompoundTag(schematic);
                                     TaskManager.runTask(whenDone);
                                     System.gc();
                                     System.gc();
@@ -140,148 +154,48 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                             for (int x = xxb; x <= xxt; x++) {
                                                 int rx = x - bx;
                                                 int index = i2 + rx;
-                                                Block block = worldObj.getBlockAt(x, y, z);
-                                                int id = LegacyMappings.fromNewName(block.getType().name()).getNumericalId();
-                                                switch (id) {
-                                                    case 0:
-                                                    case 2:
-                                                    case 4:
-                                                    case 13:
-                                                    case 14:
-                                                    case 15:
-                                                    case 20:
-                                                    case 21:
-                                                    case 22:
-                                                    case 24:
-                                                    case 30:
-                                                    case 32:
-                                                    case 37:
-                                                    case 39:
-                                                    case 40:
-                                                    case 41:
-                                                    case 42:
-                                                    case 45:
-                                                    case 46:
-                                                    case 47:
-                                                    case 48:
-                                                    case 49:
-                                                    case 51:
-                                                    case 55:
-                                                    case 56:
-                                                    case 57:
-                                                    case 58:
-                                                    case 60:
-                                                    case 7:
-                                                    case 8:
-                                                    case 9:
-                                                    case 10:
-                                                    case 11:
-                                                    case 73:
-                                                    case 74:
-                                                    case 78:
-                                                    case 79:
-                                                    case 80:
-                                                    case 81:
-                                                    case 82:
-                                                    case 83:
-                                                    case 85:
-                                                    case 87:
-                                                    case 88:
-                                                    case 101:
-                                                    case 102:
-                                                    case 103:
-                                                    case 110:
-                                                    case 112:
-                                                    case 113:
-                                                    case 121:
-                                                    case 122:
-                                                    case 129:
-                                                    case 133:
-                                                    case 165:
-                                                    case 166:
-                                                    case 169:
-                                                    case 170:
-                                                    case 172:
-                                                    case 173:
-                                                    case 174:
-                                                    case 181:
-                                                    case 182:
-                                                    case 188:
-                                                    case 189:
-                                                    case 190:
-                                                    case 191:
-                                                    case 192:
-                                                        break;
-                                                    case 54:
-                                                    case 130:
-                                                    case 142:
-                                                    case 27:
-                                                    case 137:
-                                                    case 52:
-                                                    case 154:
-                                                    case 84:
-                                                    case 25:
-                                                    case 144:
-                                                    case 138:
-                                                    case 176:
-                                                    case 177:
-                                                    case 63:
-                                                    case 68:
-                                                    case 323:
-                                                    case 117:
-                                                    case 116:
-                                                    case 28:
-                                                    case 66:
-                                                    case 157:
-                                                    case 61:
-                                                    case 62:
-                                                    case 140:
-                                                    case 146:
-                                                    case 149:
-                                                    case 150:
-                                                    case 158:
-                                                    case 23:
-                                                    case 123:
-                                                    case 124:
-                                                    case 29:
-                                                    case 33:
-                                                    case 151:
-                                                    case 178:
-                                                        // TODO implement fully
-                                                        BlockState state = block.getState();
-                                                        if (state != null) {
-                                                            StateWrapper wrapper =
-                                                                new StateWrapper(state);
-                                                            CompoundTag rawTag = wrapper.getTag();
-                                                            if (rawTag != null) {
-                                                                Map<String, Tag> values =
-                                                                    new HashMap<>(
-                                                                        rawTag.getValue());
-                                                                values.put("id", new StringTag("id",
-                                                                    wrapper.getId()));
-                                                                values.put("x", new IntTag("x", x));
-                                                                values.put("y", new IntTag("y", y));
-                                                                values.put("z", new IntTag("z", z));
-                                                                CompoundTag tileEntityTag =
-                                                                    new CompoundTag(values);
-                                                                tileEntities.add(tileEntityTag);
-                                                            }
-                                                        }
-                                                    default:
-                                                        blockData[index] = block.getData();
+                                                BlockVector3 point = BlockVector3.at(x, y, z);
+                                                BaseBlock block =
+                                                    cuboidRegion.getWorld().getFullBlock(point);
+                                                if (block.getNbtData() != null) {
+                                                    Map<String, Tag> values = new HashMap<>();
+                                                    for (Map.Entry<String, Tag> entry : block
+                                                        .getNbtData().getValue().entrySet()) {
+                                                        values
+                                                            .put(entry.getKey(), entry.getValue());
+                                                    }
+
+                                                    values.remove(
+                                                        "id"); // Remove 'id' if it exists. We want 'Id'
+
+                                                    // Positions are kept in NBT, we don't want that.
+                                                    values.remove("x");
+                                                    values.remove("y");
+                                                    values.remove("z");
+
+                                                    values
+                                                        .put("Id", new StringTag(block.getNbtId()));
+                                                    values.put("Pos",
+                                                        new IntArrayTag(new int[] {x, y, z}));
+
+                                                    tileEntities.add(new CompoundTag(values));
                                                 }
-                                                // For optimization reasons, we are not supporting custom data types
-                                                // Especially since the most likely reason beyond  this range is modded servers in which the blocks
-                                                // have NBT
-                                                //                                        if (type > 255) {
-                                                //                                            if (addBlocks == null) {
-                                                //                                                addBlocks = new byte[(blocks.length >> 1) + 1];
-                                                //                                            }
-                                                //                                            addBlocks[index >> 1] = (byte) (((index & 1) == 0) ?
-                                                // (addBlocks[index >> 1] & 0xF0) | ((type >> 8) & 0xF) : (addBlocks[index >> 1] & 0xF) | (((type
-                                                // >> 8) & 0xF) << 4));
-                                                //                                        }
-                                                blocks[index] = (byte) id;
+                                                String blockKey =
+                                                    block.toImmutableState().getAsString();
+                                                int blockId;
+                                                if (palette.containsKey(blockKey)) {
+                                                    blockId = palette.get(blockKey);
+                                                } else {
+                                                    blockId = paletteMax[0];
+                                                    palette.put(blockKey, blockId);
+                                                    paletteMax[0]++;
+                                                }
+
+                                                while ((blockId & -128) != 0) {
+                                                    buffer.write(blockId & 127 | 128);
+                                                    blockId >>>= 7;
+                                                }
+                                                buffer.write(blockId);
                                             }
                                         }
                                     }

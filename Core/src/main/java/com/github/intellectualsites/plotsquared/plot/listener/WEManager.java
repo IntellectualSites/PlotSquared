@@ -4,14 +4,16 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.sk89q.worldedit.blocks.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockState;
+import com.sk89q.worldedit.world.block.BlockType;
 
 import java.util.HashSet;
 import java.util.UUID;
 
 public class WEManager {
 
-    public static BaseBlock AIR = new BaseBlock(0, 0);
+
+    public static BlockState AIR = new BlockType("AIR").getDefaultState();
 
     public static boolean maskContains(HashSet<RegionWrapper> mask, int x, int y, int z) {
         for (RegionWrapper region : mask) {
@@ -23,6 +25,30 @@ public class WEManager {
     }
 
     public static boolean maskContains(HashSet<RegionWrapper> mask, int x, int z) {
+        for (RegionWrapper region : mask) {
+            if (region.isIn(x, z)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean maskContains(HashSet<RegionWrapper> mask, double dx, double dy,
+        double dz) {
+        int x = Math.toIntExact(Math.round(dx >= 0 ? dx - 0.5 : dx + 0.5));
+        int y = Math.toIntExact(Math.round(dy - 0.5));
+        int z = Math.toIntExact(Math.round(dz >= 0 ? dz - 0.5 : dz + 0.5));
+        for (RegionWrapper region : mask) {
+            if (region.isIn(x, y, z)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean maskContains(HashSet<RegionWrapper> mask, double dx, double dz) {
+        int x = Math.toIntExact(Math.round(dx >= 0 ? dx - 0.5 : dx + 0.5));
+        int z = Math.toIntExact(Math.round(dz >= 0 ? dz - 0.5 : dz + 0.5));
         for (RegionWrapper region : mask) {
             if (region.isIn(x, z)) {
                 return true;

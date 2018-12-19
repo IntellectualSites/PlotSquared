@@ -2,15 +2,19 @@ package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.sk89q.worldedit.math.BlockVector3;
+import lombok.Getter;
+import lombok.Setter;
 
 public class Location implements Cloneable, Comparable<Location> {
 
-    private int x;
-    private int y;
-    private int z;
-    private float yaw;
-    private float pitch;
-    private String world;
+    @Getter private int x;
+    @Getter private int y;
+    @Getter private int z;
+    @Getter @Setter private float yaw;
+    @Getter @Setter private float pitch;
+    @Getter @Setter private String world;
+    @Getter private BlockVector3 blockVector3;
 
     public Location(String world, int x, int y, int z, float yaw, float pitch) {
         this.world = world;
@@ -19,6 +23,7 @@ public class Location implements Cloneable, Comparable<Location> {
         this.z = z;
         this.yaw = yaw;
         this.pitch = pitch;
+        this.blockVector3 = BlockVector3.at(x, y, z);
     }
 
     public Location() {
@@ -29,40 +34,30 @@ public class Location implements Cloneable, Comparable<Location> {
         this(world, x, y, z, 0f, 0f);
     }
 
-    @Override public Location clone() {
-        return new Location(this.world, this.x, this.y, this.z, this.yaw, this.pitch);
-    }
-
-    public int getX() {
-        return this.x;
-    }
-
     public void setX(int x) {
         this.x = x;
-    }
-
-    public int getY() {
-        return this.y;
+        this.blockVector3 = BlockVector3.at(x, y, z);
     }
 
     public void setY(int y) {
         this.y = y;
-    }
-
-    public int getZ() {
-        return this.z;
+        this.blockVector3 = BlockVector3.at(x, y, z);
     }
 
     public void setZ(int z) {
         this.z = z;
+        this.blockVector3 = BlockVector3.at(x, y, z);
     }
 
-    public String getWorld() {
-        return this.world;
+    public void setBlockVector3(BlockVector3 blockVector3) {
+        this.blockVector3 = blockVector3;
+        this.x = blockVector3.getX();
+        this.y = blockVector3.getY();
+        this.z = blockVector3.getZ();
     }
 
-    public void setWorld(String world) {
-        this.world = world;
+    @Override public Location clone() {
+        return new Location(this.world, this.x, this.y, this.z, this.yaw, this.pitch);
     }
 
     public PlotArea getPlotArea() {
@@ -130,22 +125,6 @@ public class Location implements Cloneable, Comparable<Location> {
 
     public ChunkLoc getChunkLoc() {
         return new ChunkLoc(this.x >> 4, this.z >> 4);
-    }
-
-    public float getYaw() {
-        return this.yaw;
-    }
-
-    public void setYaw(float yaw) {
-        this.yaw = yaw;
-    }
-
-    public float getPitch() {
-        return this.pitch;
-    }
-
-    public void setPitch(float pitch) {
-        this.pitch = pitch;
     }
 
     public Location add(int x, int y, int z) {

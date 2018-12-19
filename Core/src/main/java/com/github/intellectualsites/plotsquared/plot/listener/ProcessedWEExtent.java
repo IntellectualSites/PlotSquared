@@ -4,17 +4,19 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.Vector2D;
 import com.sk89q.worldedit.WorldEditException;
-import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.entity.BaseEntity;
 import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.extent.AbstractDelegateExtent;
 import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.extent.NullExtent;
+import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.biome.BaseBiome;
+import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockState;
+import com.sk89q.worldedit.world.block.BlockStateHolder;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
@@ -44,52 +46,59 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         this.parent = parent;
     }
 
-    @Override public BaseBlock getBlock(Vector location) {
-        if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),
-            location.getBlockZ())) {
+    @Override public BlockState getBlock(BlockVector3 location) {
+        if (WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
             return super.getBlock(location);
         }
         return WEManager.AIR;
     }
 
-    @Override public boolean setBlock(Vector location, BaseBlock block) throws WorldEditException {
-        int id = block.getType();
+    @Override public BaseBlock getFullBlock(BlockVector3 location) {
+        if (WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
+            return super.getFullBlock(location);
+        }
+        return WEManager.AIR.toBaseBlock();
+    }
+
+    @Override public boolean setBlock(BlockVector3 location, BlockStateHolder block)
+        throws WorldEditException {
+        String id = block.getBlockType().getId();
         switch (id) {
-            case 54:
-            case 130:
-            case 142:
-            case 27:
-            case 137:
-            case 52:
-            case 154:
-            case 84:
-            case 25:
-            case 144:
-            case 138:
-            case 176:
-            case 177:
-            case 63:
-            case 68:
-            case 323:
-            case 117:
-            case 116:
-            case 28:
-            case 66:
-            case 157:
-            case 61:
-            case 62:
-            case 140:
-            case 146:
-            case 149:
-            case 150:
-            case 158:
-            case 23:
-            case 123:
-            case 124:
-            case 29:
-            case 33:
-            case 151:
-            case 178:
+            case "54":
+            case "130":
+            case "142":
+            case "27":
+            case "137":
+            case "52":
+            case "154":
+            case "84":
+            case "25":
+            case "144":
+            case "138":
+            case "176":
+            case "177":
+            case "63":
+            case "68":
+            case "323":
+            case "117":
+            case "116":
+            case "28":
+            case "66":
+            case "157":
+            case "61":
+            case "62":
+            case "140":
+            case "146":
+            case "149":
+            case "150":
+            case "158":
+            case "23":
+            case "123":
+            case "124":
+            case "29":
+            case "33":
+            case "151":
+            case "178":
                 if (this.BSblocked) {
                     return false;
                 }
@@ -97,11 +106,11 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                 if (this.BScount > Settings.Chunk_Processor.MAX_TILES) {
                     this.BSblocked = true;
                     PlotSquared.debug(
-                        C.PREFIX + "&cdetected unsafe WorldEdit: " + location.getBlockX() + ","
-                            + location.getBlockZ());
+                        C.PREFIX + "&cdetected unsafe WorldEdit: " + location.getX() + ","
+                            + location.getZ());
                 }
-                if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),
-                    location.getBlockZ())) {
+                if (WEManager
+                    .maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
                     if (this.count++ > this.max) {
                         if (this.parent != null) {
                             try {
@@ -120,11 +129,8 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                 }
                 break;
             default:
-                int x = location.getBlockX();
-                int y = location.getBlockY();
-                int z = location.getBlockZ();
-                if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),
-                    location.getBlockZ())) {
+                if (WEManager
+                    .maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
                     if (this.count++ > this.max) {
                         if (this.parent != null) {
                             try {
@@ -139,99 +145,9 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                         }
                         return false;
                     }
-                    switch (id) {
-                        case 0:
-                        case 2:
-                        case 4:
-                        case 13:
-                        case 14:
-                        case 15:
-                        case 20:
-                        case 21:
-                        case 22:
-                        case 24:
-                        case 25:
-                        case 30:
-                        case 32:
-                        case 37:
-                        case 39:
-                        case 40:
-                        case 41:
-                        case 42:
-                        case 45:
-                        case 46:
-                        case 47:
-                        case 48:
-                        case 49:
-                        case 51:
-                        case 52:
-                        case 54:
-                        case 55:
-                        case 56:
-                        case 57:
-                        case 58:
-                        case 60:
-                        case 61:
-                        case 62:
-                        case 7:
-                        case 8:
-                        case 9:
-                        case 10:
-                        case 11:
-                        case 73:
-                        case 74:
-                        case 78:
-                        case 79:
-                        case 80:
-                        case 81:
-                        case 82:
-                        case 83:
-                        case 84:
-                        case 85:
-                        case 87:
-                        case 88:
-                        case 101:
-                        case 102:
-                        case 103:
-                        case 110:
-                        case 112:
-                        case 113:
-                        case 117:
-                        case 121:
-                        case 122:
-                        case 123:
-                        case 124:
-                        case 129:
-                        case 133:
-                        case 138:
-                        case 137:
-                        case 140:
-                        case 165:
-                        case 166:
-                        case 169:
-                        case 170:
-                        case 172:
-                        case 173:
-                        case 174:
-                        case 176:
-                        case 177:
-                        case 181:
-                        case 182:
-                        case 188:
-                        case 189:
-                        case 190:
-                        case 191:
-                        case 192: {
-                            super.setBlock(location, block);
-                        }
-                        break;
-                        default: {
-                            super.setBlock(location, block);
-                        }
-                        break;
-                    }
-                    return true;
+                    super.setBlock(location, block);
                 }
+                return true;
 
         }
         return false;
@@ -255,8 +171,8 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         return null;
     }
 
-    @Override public boolean setBiome(Vector2D position, BaseBiome biome) {
-        return WEManager.maskContains(this.mask, position.getBlockX(), position.getBlockZ())
-            && super.setBiome(position, biome);
+    @Override public boolean setBiome(BlockVector2 position, BaseBiome biome) {
+        return WEManager.maskContains(this.mask, position.getX(), position.getZ()) && super
+            .setBiome(position, biome);
     }
 }

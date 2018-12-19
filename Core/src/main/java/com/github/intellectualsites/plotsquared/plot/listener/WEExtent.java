@@ -1,16 +1,18 @@
 package com.github.intellectualsites.plotsquared.plot.listener;
 
 import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.Vector2D;
 import com.sk89q.worldedit.WorldEditException;
-import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.entity.BaseEntity;
 import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.extent.AbstractDelegateExtent;
 import com.sk89q.worldedit.extent.Extent;
+import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.biome.BaseBiome;
+import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockState;
+import com.sk89q.worldedit.world.block.BlockStateHolder;
 
 import java.util.HashSet;
 
@@ -23,9 +25,10 @@ public class WEExtent extends AbstractDelegateExtent {
         this.mask = mask;
     }
 
-    @Override public boolean setBlock(Vector location, BaseBlock block) throws WorldEditException {
-        return WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),
-            location.getBlockZ()) && super.setBlock(location, block);
+    @Override public boolean setBlock(BlockVector3 location, BlockStateHolder block)
+        throws WorldEditException {
+        return WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())
+            && super.setBlock(location, block);
     }
 
     @Override public Entity createEntity(Location location, BaseEntity entity) {
@@ -36,16 +39,22 @@ public class WEExtent extends AbstractDelegateExtent {
         return null;
     }
 
-    @Override public boolean setBiome(Vector2D position, BaseBiome biome) {
-        return WEManager.maskContains(this.mask, position.getBlockX(), position.getBlockZ())
-            && super.setBiome(position, biome);
+    @Override public boolean setBiome(BlockVector2 position, BaseBiome biome) {
+        return WEManager.maskContains(this.mask, position.getX(), position.getZ()) && super
+            .setBiome(position, biome);
     }
 
-    @Override public BaseBlock getBlock(Vector location) {
-        if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),
-            location.getBlockZ())) {
+    @Override public BlockState getBlock(BlockVector3 location) {
+        if (WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
             return super.getBlock(location);
         }
         return WEManager.AIR;
+    }
+
+    @Override public BaseBlock getFullBlock(BlockVector3 location) {
+        if (WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
+            return super.getFullBlock(location);
+        }
+        return WEManager.AIR.toBaseBlock();
     }
 }
