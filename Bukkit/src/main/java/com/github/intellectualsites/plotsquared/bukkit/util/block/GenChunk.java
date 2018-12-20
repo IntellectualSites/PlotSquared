@@ -79,8 +79,6 @@ public class GenChunk extends ScopedLocalBlockQueue {
                 int end = start + 256;
                 Arrays.fill(data, start, end, block);
             }
-        } else {
-            super.setCuboid(pos1, pos2, block);
         }
         int minx = pos1.getX() < pos2.getX() ? pos1.getX() : pos2.getX();
         int miny = pos1.getY() < pos2.getY() ? pos1.getY() : pos2.getY();
