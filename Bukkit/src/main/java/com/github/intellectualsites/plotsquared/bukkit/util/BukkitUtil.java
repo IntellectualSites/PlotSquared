@@ -12,10 +12,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
+import org.bukkit.block.*;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.Rotatable;
+import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -275,18 +275,17 @@ import java.util.*;
         //        block.setType(Material.AIR);
         final Material type = block.getType();
         if (type != Material.SIGN && type != Material.WALL_SIGN) {
-            int data = 2;
+            BlockFace facing = BlockFace.EAST;
             if (world.getBlockAt(x, y, z + 1).getType().isSolid())
-                data = 2;
+                facing = BlockFace.NORTH;
             else if (world.getBlockAt(x + 1, y, z).getType().isSolid())
-                data = 4;
+                facing = BlockFace.WEST;
             else if (world.getBlockAt(x, y, z - 1).getType().isSolid())
-                data = 3;
-            else if (world.getBlockAt(x - 1, y, z).getType().isSolid())
-                data = 5;
+                facing = BlockFace.SOUTH;
             block.setType(Material.WALL_SIGN, false);
-            final Sign sign = (Sign) block.getBlockData();
-            sign.setRawData((byte) data);
+            final WallSign sign = (WallSign) block.getBlockData();
+            sign.setFacing(facing);
+            block.setBlockData(sign, false);
         }
         final BlockState blockstate = block.getState();
         if (blockstate instanceof Sign) {
@@ -403,7 +402,7 @@ import java.util.*;
         try {
             final Material material = getMaterial(block);
             if (material.isBlock() && material.isSolid() && !material.hasGravity()) {
-                Class<? extends MaterialData> data = material.getData();
+                Class<?> data = material.data;
                 if (data.equals(MaterialData.class) && !material.isTransparent() && material
                     .isOccluding() || data.equals(Tree.class) || data.equals(Sandstone.class)
                     || data.equals(Wool.class) || data.equals(Step.class) || data
@@ -419,6 +418,7 @@ import java.util.*;
             }
             return false;
         } catch (Exception ignored) {
+            ignored.printStackTrace();
             return false;
         }
     }

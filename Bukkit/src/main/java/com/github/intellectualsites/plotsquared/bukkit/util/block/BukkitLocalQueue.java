@@ -113,21 +113,27 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
     }
 
     private void setMaterial(@NonNull final PlotBlock plotBlock, @NonNull final Block block) {
+        final Material material;
         if (plotBlock instanceof StringPlotBlock) {
-            final Material material = Material
-                .getMaterial(((StringPlotBlock) plotBlock).getItemId().toLowerCase(Locale.ENGLISH));
+            material = Material
+                .getMaterial(((StringPlotBlock) plotBlock).getItemId().toUpperCase(Locale.ENGLISH));
             if (material == null) {
-                throw new IllegalStateException(
-                    String.format("Could not find material that matches %s", block.toString()));
+                throw new IllegalStateException(String
+                    .format("Could not find material that matches %s",
+                        ((StringPlotBlock) plotBlock).getItemId()));
             }
-            block.setType(material, false);
         } else {
             final LegacyPlotBlock legacyPlotBlock = (LegacyPlotBlock) plotBlock;
-            block.setType(Material.getMaterial(PlotSquared.get().IMP.getLegacyMappings()
-                .fromLegacyToString(legacyPlotBlock.getId(), legacyPlotBlock.getData())
-                .toString()));
-            // block.setTypeIdAndData(legacyPlotBlock.getId(), legacyPlotBlock.getData(), false);
+            material = PlotSquared.get().IMP.getLegacyMappings()
+                .fromLegacyToString(legacyPlotBlock.getId()).to(Material.class);
+            if (material == null) {
+                throw new IllegalStateException(String
+                    .format("Could not find material that matches %s",
+                        PlotSquared.get().IMP.getLegacyMappings()
+                            .fromLegacyToString(legacyPlotBlock.getId())));
+            }
         }
+        block.setType(material, false);
     }
 
     private boolean equals(@NonNull final PlotBlock plotBlock, @NonNull final Block block) {

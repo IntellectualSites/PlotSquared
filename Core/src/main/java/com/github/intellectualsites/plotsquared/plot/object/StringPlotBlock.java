@@ -34,7 +34,11 @@ public class StringPlotBlock extends PlotBlock {
             this.itemId = parts[1].toLowerCase(Locale.ENGLISH);
         } else {
             this.nameSpace = "minecraft";
-            this.itemId = itemId.toLowerCase(Locale.ENGLISH);
+            if (itemId.isEmpty()) {
+                this.itemId = "air";
+            } else {
+                this.itemId = itemId.toLowerCase(Locale.ENGLISH);
+            }
         }
         this.determineForeign();
     }
