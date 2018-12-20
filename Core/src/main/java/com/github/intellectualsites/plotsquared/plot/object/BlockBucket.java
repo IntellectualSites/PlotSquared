@@ -110,6 +110,7 @@ import java.util.Map.Entry;
                 unassigned.add(entry.getKey());
             } else {
                 sum += entry.getValue();
+                temp.put(entry.getKey(), entry.getValue());
             }
         }
         //
