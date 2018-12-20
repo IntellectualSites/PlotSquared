@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class StringPlotBlock extends PlotBlock {
 
-    public static final PlotBlock EVERYTHING = new StringPlotBlock("");
+    public static final PlotBlock EVERYTHING = new StringPlotBlock("air");
     private static final Map<String, StringPlotBlock> STRING_PLOT_BLOCK_CACHE = new HashMap<>();
     @Getter private final String nameSpace;
     @Getter private final String itemId;

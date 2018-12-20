@@ -297,7 +297,8 @@ public class BukkitChunkManager extends ChunkManager {
                                                     if (id != null) {
                                                         value.setBlock(x, y, z, id);
                                                     } else {
-                                                        value.setBlock(x, y, z, PlotBlock.get("air"));
+                                                        value.setBlock(x, y, z,
+                                                            PlotBlock.get("air"));
                                                     }
                                                 }
                                                 for (int y = Math.min(128, ids.length);
@@ -1095,14 +1096,13 @@ public class BukkitChunkManager extends ChunkManager {
                 Block block = world.getBlockAt(x, y, z);
                 Material id = block.getType();
                 if (storeNormal) {
-                    int typeId = id.getId();
-                    if (typeId == 0) {
+                    if (id.name().contains("AIR")) {
                         ids[y] = StringPlotBlock.EVERYTHING;
                     } else {
-                        ids[y] = PlotBlock.get((short) typeId, block.getData());
+                        ids[y] = PlotBlock.get(id.name());
                     }
                 }
-                if (!id.equals(Material.AIR)) {
+                if (!id.name().contains("AIR")) {
                     try {
                         BlockLoc bl = new BlockLoc(x + offsetX, y, z + offsetZ);
                         if (block.getState() instanceof InventoryHolder) {
@@ -1136,7 +1136,6 @@ public class BukkitChunkManager extends ChunkManager {
                                     this.brewingStandContents.put(bl, invBre);
                                     break;
                                 case FURNACE:
-                                case LEGACY_BURNING_FURNACE:
                                     Furnace furnace = (Furnace) inventoryHolder;
                                     short burn = furnace.getBurnTime();
                                     short cook = furnace.getCookTime();

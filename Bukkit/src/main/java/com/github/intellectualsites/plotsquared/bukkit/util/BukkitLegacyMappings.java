@@ -729,9 +729,9 @@ public class BukkitLegacyMappings extends LegacyMappings {
                 }
             }
         }
-        PlotBlock plotBlock = fromStringToLegacy(workingString);
-        if (plotBlock != null) {
-            return plotBlock;
+        PlotBlock plotBlock;
+        if (NEW_STRING_TO_LEGACY_PLOT_BLOCK.keySet().contains(workingString.toLowerCase())) {
+            return PlotBlock.get(workingString);
         } else if ((plotBlock = fromLegacyToString(workingString)) != null) {
             return plotBlock;
         } else {
