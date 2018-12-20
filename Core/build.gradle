@@ -2,11 +2,10 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'org.yaml:snakeyaml:1.16'
     compile 'com.google.code.gson:gson:2.2.4'
-    compileOnly 'org.projectlombok:lombok:1.16.18'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 
 processResources {
@@ -19,7 +18,7 @@ processResources {
     }
 }
 
-jar.archiveName = "plotsquared-api-${project.parent.version}.jar"
+jar.archiveName="plotsquared-api-${project.parent.version}.jar"
 jar.destinationDir = file '../mvn/com/plotsquared/plotsquared-api/' + project.parent.version
 task createPom << {
     pom {
@@ -44,7 +43,7 @@ task copyFiles {
             from "../mvn/com/plotsquared/plotsquared-api/${project.parent.version}/"
             into '../mvn/com/plotsquared/plotsquared-api/latest/'
             include('*.jar')
-            rename("plotsquared-api-${project.parent.version}.jar", 'plotsquared-api-latest.jar')
+            rename ("plotsquared-api-${project.parent.version}.jar", 'plotsquared-api-latest.jar')
         }
     }
 }
