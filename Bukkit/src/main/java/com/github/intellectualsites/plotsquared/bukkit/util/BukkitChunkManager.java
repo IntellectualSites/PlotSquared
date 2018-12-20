@@ -124,7 +124,6 @@ public class BukkitChunkManager extends ChunkManager {
         final World oldWorld = Bukkit.getWorld(pos1.getWorld());
         final World newWorld = Bukkit.getWorld(newPos.getWorld());
         final String newWorldName = newWorld.getName();
-        List<ChunkLoc> chunks = new ArrayList<>();
         final ContentMap map = new ContentMap();
         final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(newWorldName, false);
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
@@ -144,27 +143,23 @@ public class BukkitChunkManager extends ChunkManager {
                     }
                 }
             }
-        }, new Runnable() {
-            @Override public void run() {
-                for (Entry<PlotLoc, PlotBlock[]> entry : map.allBlocks.entrySet()) {
-                    PlotLoc loc = entry.getKey();
-                    PlotBlock[] blocks = entry.getValue();
-                    for (int y = 0; y < blocks.length; y++) {
+        }, () -> {
+            for (Entry<PlotLoc, PlotBlock[]> entry : map.allBlocks.entrySet()) {
+                PlotLoc loc = entry.getKey();
+                PlotBlock[] blocks = entry.getValue();
+                for (int y = 0; y < blocks.length; y++) {
+                    if (blocks[y] != null) {
                         PlotBlock block = blocks[y];
-                        if (block != null) {
-                            queue.setBlock(loc.x, y, loc.z, block);
-                        }
+                        queue.setBlock(loc.x, y, loc.z, block);
                     }
                 }
-                queue.enqueue();
-                GlobalBlockQueue.IMP.addTask(new Runnable() {
-                    @Override public void run() {
-                        map.restoreBlocks(newWorld, 0, 0);
-                        map.restoreEntities(newWorld, relX, relZ);
-                        TaskManager.runTask(whenDone);
-                    }
-                });
             }
+            queue.enqueue();
+            GlobalBlockQueue.IMP.addTask(() -> {
+                map.restoreBlocks(newWorld, 0, 0);
+                map.restoreEntities(newWorld, relX, relZ);
+                TaskManager.runTask(whenDone);
+            });
         }, 5);
         return true;
     }
@@ -211,11 +206,8 @@ public class BukkitChunkManager extends ChunkManager {
                     RegionWrapper currentPlotClear =
                         new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
                     if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z) {
-                        AugmentedUtils.bypass(ignoreAugment, new Runnable() {
-                            @Override public void run() {
-                                queue.regenChunkSafe(chunk.x, chunk.z);
-                            }
-                        });
+                        AugmentedUtils.bypass(ignoreAugment,
+                            () -> queue.regenChunkSafe(chunk.x, chunk.z));
                         continue;
                     }
                     boolean checkX1 = false;
@@ -278,43 +270,39 @@ public class BukkitChunkManager extends ChunkManager {
                         map.saveRegion(worldObj, xxt2, xxt, zzt2, zzt); //
                     }
                     map.saveEntitiesOut(chunkObj, currentPlotClear);
-                    AugmentedUtils.bypass(ignoreAugment, new Runnable() {
-                        @Override public void run() {
-                            setChunkInPlotArea(null, new RunnableVal<ScopedLocalBlockQueue>() {
-                                @Override public void run(ScopedLocalBlockQueue value) {
-                                    com.github.intellectualsites.plotsquared.plot.object.Location
-                                        min = value.getMin();
-                                    int bx = min.getX();
-                                    int bz = min.getZ();
-                                    for (int x = 0; x < 16; x++) {
-                                        for (int z = 0; z < 16; z++) {
-                                            PlotLoc loc = new PlotLoc(bx + x, bz + z);
-                                            PlotBlock[] ids = map.allBlocks.get(loc);
-                                            if (ids != null) {
-                                                for (int y = 0;
-                                                     y < Math.min(128, ids.length); y++) {
-                                                    PlotBlock id = ids[y];
-                                                    if (id != null) {
-                                                        value.setBlock(x, y, z, id);
-                                                    } else {
-                                                        value.setBlock(x, y, z,
-                                                            PlotBlock.get("air"));
-                                                    }
-                                                }
-                                                for (int y = Math.min(128, ids.length);
-                                                     y < ids.length; y++) {
-                                                    PlotBlock id = ids[y];
-                                                    if (id != null) {
-                                                        value.setBlock(x, y, z, id);
-                                                    }
-                                                }
+                    AugmentedUtils.bypass(ignoreAugment, () -> setChunkInPlotArea(null, new RunnableVal<ScopedLocalBlockQueue>() {
+                        @Override public void run(ScopedLocalBlockQueue value) {
+                            com.github.intellectualsites.plotsquared.plot.object.Location
+                                min = value.getMin();
+                            int bx = min.getX();
+                            int bz = min.getZ();
+                            for (int x1 = 0; x1 < 16; x1++) {
+                                for (int z1 = 0; z1 < 16; z1++) {
+                                    PlotLoc loc = new PlotLoc(bx + x1, bz + z1);
+                                    PlotBlock[] ids = map.allBlocks.get(loc);
+                                    if (ids != null) {
+                                        for (int y = 0;
+                                             y < Math.min(128, ids.length); y++) {
+                                            PlotBlock id = ids[y];
+                                            if (id != null) {
+                                                value.setBlock(x1, y, z1, id);
+                                            } else {
+                                                value.setBlock(x1, y, z1,
+                                                    PlotBlock.get("air"));
+                                            }
+                                        }
+                                        for (int y = Math.min(128, ids.length);
+                                             y < ids.length; y++) {
+                                            PlotBlock id = ids[y];
+                                            if (id != null) {
+                                                value.setBlock(x1, y, z1, id);
                                             }
                                         }
                                     }
                                 }
-                            }, world, chunk);
+                            }
                         }
-                    });
+                    }, world, chunk));
                     map.restoreBlocks(worldObj, 0, 0);
                     map.restoreEntities(worldObj, 0, 0);
                 }
@@ -359,11 +347,8 @@ public class BukkitChunkManager extends ChunkManager {
     public void unloadChunk(final String world, final ChunkLoc loc, final boolean save,
         final boolean safe) {
         if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
-            TaskManager.runTask(new Runnable() {
-                @SuppressWarnings("deprecation") @Override public void run() {
-                    BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save, safe);
-                }
-            });
+            TaskManager.runTask(
+                () -> BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save, safe));
         } else {
             BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save, safe);
         }

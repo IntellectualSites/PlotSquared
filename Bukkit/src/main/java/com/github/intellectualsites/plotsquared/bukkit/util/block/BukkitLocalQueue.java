@@ -87,8 +87,8 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
             PlotBlock[] blocksLayer = (PlotBlock[]) lc.blocks[layer];
             if (blocksLayer != null) {
                 for (int j = 0; j < blocksLayer.length; j++) {
-                    PlotBlock block = blocksLayer[j];
-                    if (block != null) {
+                    if (blocksLayer[j] != null) {
+                        PlotBlock block = blocksLayer[j];
                         int x = MainUtil.x_loc[layer][j];
                         int y = MainUtil.y_loc[layer][j];
                         int z = MainUtil.z_loc[layer][j];

@@ -24,8 +24,8 @@ public class HybridGen extends IndependentPlotGenerator {
         String[] blocks = world.G_SCH.get(MathMan.pair(relativeX, relativeZ));
         if (blocks != null) {
             for (int y = 0; y < blocks.length; y++) {
-                PlotBlock block = PlotBlock.get(blocks[y]);
-                if (block != null) {
+                if (blocks[y] != null) {
+                    PlotBlock block = PlotBlock.get(blocks[y]);
                     result.setBlock(x, minY + y, z, block);
                 }
             }

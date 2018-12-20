@@ -11,12 +11,8 @@ import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.sk89q.jnbt.*;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
-import com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat;
-import com.sk89q.worldedit.extent.clipboard.io.MCEditSchematicReader;
-import com.sk89q.worldedit.extent.clipboard.io.SpongeSchematicReader;
+import com.sk89q.worldedit.extent.clipboard.io.*;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BaseBlock;
 
@@ -118,13 +114,14 @@ public abstract class SchematicHandler {
      * @return boolean true if succeeded
      */
     public void paste(final Schematic schematic, final Plot plot, final int xOffset,
-        final int yOffset, final int zOffset, final boolean autoHeight, final Runnable whenDone) {
-
-        EditSession editSession = WorldEdit.getInstance().getEditSessionFactory()
-            .getEditSession(WorldUtil.IMP.getWeWorld(plot.getWorldName()), -1);
+        final int yOffset, final int zOffset, final boolean autoHeight,
+        final RunnableVal<Boolean> whenDone) {
 
         TaskManager.runTask(new Runnable() {
             @Override public void run() {
+                if (whenDone != null) {
+                    whenDone.value = false;
+                }
                 if (schematic == null) {
                     PlotSquared.debug("Schematic == null :|");
                     TaskManager.runTask(whenDone);
@@ -191,62 +188,63 @@ public abstract class SchematicHandler {
                     final int bcz = p1z >> 4;
                     final int tcx = p2x >> 4;
                     final int tcz = p2z >> 4;
-                    final ArrayList<ChunkLoc> chunks = new ArrayList<>();
+/*                    final ArrayList<ChunkLoc> chunks = new ArrayList<>();
                     for (int x = bcx; x <= tcx; x++) {
                         for (int z = bcz; z <= tcz; z++) {
                             chunks.add(new ChunkLoc(x, z));
                         }
-                    }
+                    }*/
                     ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
                         @Override public void run(int[] value) {
-                            int count = 0;
-                            while (!chunks.isEmpty() && count < 256) {
-                                count++;
-                                ChunkLoc chunk = chunks.remove(0);
-                                int x = chunk.x;
-                                int z = chunk.z;
-                                int xxb = x << 4;
-                                int zzb = z << 4;
-                                int xxt = xxb + 15;
-                                int zzt = zzb + 15;
-                                if (x == bcx) {
-                                    xxb = p1x;
-                                }
-                                if (x == tcx) {
-                                    xxt = p2x;
-                                }
-                                if (z == bcz) {
-                                    zzb = p1z;
-                                }
-                                if (z == tcz) {
-                                    zzt = p2z;
-                                }
-                                // Paste schematic here
+                            //int count = 0;
+                            //while (!chunks.isEmpty() && count < 256) {
+                            //count++;
+                            ChunkLoc chunk = new ChunkLoc(value[0], value[1]);
+                            PlotSquared.log(chunk.toString());
+                            int x = chunk.x;
+                            int z = chunk.z;
+                            int xxb = x << 4;
+                            int zzb = z << 4;
+                            int xxt = xxb + 15;
+                            int zzt = zzb + 15;
+                            if (x == bcx) {
+                                xxb = p1x;
+                            }
+                            if (x == tcx) {
+                                xxt = p2x;
+                            }
+                            if (z == bcz) {
+                                zzb = p1z;
+                            }
+                            if (z == tcz) {
+                                zzt = p2z;
+                            }
+                            // Paste schematic here
 
-                                for (int ry = 0; ry < Math.min(256, HEIGHT); ry++) {
-                                    int yy = y_offset_actual + ry;
-                                    if (yy > 255) {
-                                        continue;
-                                    }
-                                    int i1 = ry * WIDTH * LENGTH;
-                                    for (int rz = zzb - p1z; rz <= (zzt - p1z); rz++) {
-                                        int i2 = (rz * WIDTH) + i1;
-                                        for (int rx = xxb - p1x; rx <= (xxt - p1x); rx++) {
-                                            int i = i2 + rx;
-                                            int xx = p1x + rx;
-                                            int zz = p1z + rz;
-                                            BaseBlock id = blockArrayClipboard
-                                                .getFullBlock(BlockVector3.at(rx, ry, rz));
-                                            queue.setBlock(xx, yy, zz, id);
-                                        }
+                            for (int ry = 0; ry < Math.min(256, HEIGHT); ry++) {
+                                int yy = y_offset_actual + ry;
+                                if (yy > 255) {
+                                    continue;
+                                }
+                                int i1 = ry * WIDTH * LENGTH;
+                                for (int rz = zzb - p1z; rz <= (zzt - p1z); rz++) {
+                                    int i2 = (rz * WIDTH) + i1;
+                                    for (int rx = xxb - p1x; rx <= (xxt - p1x); rx++) {
+                                        int i = i2 + rx;
+                                        int xx = p1x + rx;
+                                        int zz = p1z + rz;
+                                        BaseBlock id = blockArrayClipboard
+                                            .getFullBlock(BlockVector3.at(rx, ry, rz));
+                                        queue.setBlock(xx, yy, zz, id);
                                     }
                                 }
                             }
+/*                            }
                             if (!chunks.isEmpty()) {
                                 this.run();
                             } else {
                                 queue.flush();
-                                /*HashMap<BlockLoc, CompoundTag> tiles = schematic.getClipboard().getTiles();
+                                HashMap<BlockLoc, CompoundTag> tiles = schematic.getClipboard().getTiles();
                                 if (!tiles.isEmpty()) {
                                     TaskManager.IMP.sync(new RunnableVal<Object>() {
                                         @Override public void run(Object value) {
@@ -259,10 +257,14 @@ public abstract class SchematicHandler {
                                             }
                                         }
                                     });
-                                }*/
-                            }
+                                }
+                            }*/
                         }
-                    }, whenDone, 10);
+                    }, null, 10);
+                    if (whenDone != null) {
+                        whenDone.value = true;
+                        whenDone.run();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     TaskManager.runTask(whenDone);
@@ -327,14 +329,15 @@ public abstract class SchematicHandler {
             return null;
         }
         try {
-            if (BuiltInClipboardFormat.SPONGE_SCHEMATIC.isFormat(file)) {
-                SpongeSchematicReader ssr =
-                    new SpongeSchematicReader(new NBTInputStream(new FileInputStream(file)));
+            ClipboardFormat format = ClipboardFormats.findByFile(file);
+            if (format == BuiltInClipboardFormat.SPONGE_SCHEMATIC) {
+                SpongeSchematicReader ssr = new SpongeSchematicReader(
+                    new NBTInputStream(new GZIPInputStream(new FileInputStream(file))));
                 BlockArrayClipboard clip = (BlockArrayClipboard) ssr.read();
                 return new Schematic(clip);
-            } else if (BuiltInClipboardFormat.MCEDIT_SCHEMATIC.isFormat(file)) {
-                MCEditSchematicReader msr =
-                    new MCEditSchematicReader(new NBTInputStream(new FileInputStream(file)));
+            } else if (format == BuiltInClipboardFormat.MCEDIT_SCHEMATIC) {
+                MCEditSchematicReader msr = new MCEditSchematicReader(
+                    new NBTInputStream(new GZIPInputStream(new FileInputStream(file))));
                 BlockArrayClipboard clip = (BlockArrayClipboard) msr.read();
                 return new Schematic(clip);
             } else {
@@ -446,9 +449,9 @@ public abstract class SchematicHandler {
         try {
             File tmp = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), path);
             tmp.getParentFile().mkdirs();
-            try (OutputStream stream = new FileOutputStream(tmp);
-                NBTOutputStream output = new NBTOutputStream(new GZIPOutputStream(stream))) {
-                output.writeNamedTag("Schematic", tag);
+            try (NBTOutputStream nbtStream = new NBTOutputStream(
+                new GZIPOutputStream(new FileOutputStream(tmp)))) {
+                nbtStream.writeNamedTag("Schematic", tag);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

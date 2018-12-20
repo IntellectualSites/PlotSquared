@@ -33,7 +33,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 // Main positions
                 Location[] corners = MainUtil.getCorners(world, regions);
                 final Location bot = corners[0];
-                Location top = corners[1];
+                final Location top = corners[1];
 
                 CuboidRegion cuboidRegion =
                     new CuboidRegion(BukkitUtil.IMP.getWeWorld(world), bot.getBlockVector3(),
@@ -59,7 +59,6 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 // The Sponge format Offset refers to the 'min' points location in the world. That's our 'Origin'
                 schematic.put("Offset", new IntArrayTag(new int[] {0, 0, 0,}));
 
-                final int[] paletteMax = {0};
                 Map<String, Integer> palette = new HashMap<>();
 
                 List<CompoundTag> tileEntities = new ArrayList<>();
@@ -69,24 +68,20 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 TaskManager.runTask(new Runnable() {
                     @Override public void run() {
                         if (queue.isEmpty()) {
-                            TaskManager.runTaskAsync(new Runnable() {
-                                @Override public void run() {
-                                    schematic.put("PaletteMax", new IntTag(paletteMax[0]));
+                            TaskManager.runTaskAsync(() -> {
+                                schematic.put("PaletteMax", new IntTag(palette.size()));
 
-                                    Map<String, Tag> paletteTag = new HashMap<>();
-                                    palette.forEach(
-                                        (key, value) -> paletteTag.put(key, new IntTag(value)));
+                                Map<String, Tag> paletteTag = new HashMap<>();
+                                palette.forEach(
+                                    (key, value) -> paletteTag.put(key, new IntTag(value)));
 
-                                    schematic.put("Palette", new CompoundTag(paletteTag));
-                                    schematic
-                                        .put("BlockData", new ByteArrayTag(buffer.toByteArray()));
-                                    schematic.put("TileEntities",
-                                        new ListTag(CompoundTag.class, tileEntities));
-                                    whenDone.value = new CompoundTag(schematic);
-                                    TaskManager.runTask(whenDone);
-                                    System.gc();
-                                    System.gc();
-                                }
+                                schematic.put("Palette", new CompoundTag(paletteTag));
+                                schematic.put("BlockData", new ByteArrayTag(buffer.toByteArray()));
+                                schematic.put("TileEntities",
+                                    new ListTag(CompoundTag.class, tileEntities));
+                                whenDone.value = new CompoundTag(schematic);
+                                TaskManager.runTask(whenDone);
+                                System.gc();
                             });
                             return;
                         }
@@ -147,13 +142,10 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                     }
                                     for (int y = sy; y <= Math.min(255, ey); y++) {
                                         int ry = y - sy;
-                                        int i1 = ry * width * length;
                                         for (int z = zzb; z <= zzt; z++) {
                                             int rz = z - bz;
-                                            int i2 = i1 + rz * width;
                                             for (int x = xxb; x <= xxt; x++) {
                                                 int rx = x - bx;
-                                                int index = i2 + rx;
                                                 BlockVector3 point = BlockVector3.at(x, y, z);
                                                 BaseBlock block =
                                                     cuboidRegion.getWorld().getFullBlock(point);
@@ -164,9 +156,8 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                                         values
                                                             .put(entry.getKey(), entry.getValue());
                                                     }
-
-                                                    values.remove(
-                                                        "id"); // Remove 'id' if it exists. We want 'Id'
+                                                    // Remove 'id' if it exists. We want 'Id'
+                                                    values.remove("id");
 
                                                     // Positions are kept in NBT, we don't want that.
                                                     values.remove("x");
@@ -176,7 +167,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                                     values
                                                         .put("Id", new StringTag(block.getNbtId()));
                                                     values.put("Pos",
-                                                        new IntArrayTag(new int[] {x, y, z}));
+                                                        new IntArrayTag(new int[] {rx, ry, rz}));
 
                                                     tileEntities.add(new CompoundTag(values));
                                                 }
@@ -186,9 +177,8 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                                 if (palette.containsKey(blockKey)) {
                                                     blockId = palette.get(blockKey);
                                                 } else {
-                                                    blockId = paletteMax[0];
-                                                    palette.put(blockKey, blockId);
-                                                    paletteMax[0]++;
+                                                    blockId = palette.size();
+                                                    palette.put(blockKey, palette.size());
                                                 }
 
                                                 while ((blockId & -128) != 0) {

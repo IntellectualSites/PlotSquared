@@ -3,10 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.generator;
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
@@ -146,7 +143,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         int minY = Math.min(PLOT_HEIGHT, ROAD_HEIGHT);
         if (schematic3 != null) {
             this.PLOT_SCHEMATIC = true;
-            BlockVector3 d3 = schematic3.getClipboard().getDimensions();
+            BlockArrayClipboard blockArrayClipboard3 = schematic3.getClipboard();
+
+            BlockVector3 d3 = blockArrayClipboard3.getDimensions();
             short w3 = (short) d3.getX();
             short l3 = (short) d3.getZ();
             short h3 = (short) d3.getY();
@@ -168,51 +167,50 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
             int startY = minY - PLOT_HEIGHT;
 
-            //            for (short x = 0; x < w3; x++) {
-            //                for (short z = 0; z < l3; z++) {
-            //                    for (short y = 0; y < h3; y++) {
-            //                        int index = (y * w3 * l3) + (z * w3) + x;
-            //                        short id = ids[index];
-            //                        byte data = datas[index];
-            //                        if (id != 0) {
-            //                            addOverlayBlock((short) (x + shift + oddshift + centerShiftX),
-            //                                (short) (y + startY), (short) (z + shift + oddshift + centerShiftZ),
-            //                                id, data, false, h3);
-            //                        }
-            //                    }
-            //                }
-            //            }
-            //            HashMap<BlockLoc, CompoundTag> items = schematic3.getTiles();
-            //            if (!items.isEmpty()) {
-            //                this.G_SCH_STATE = new HashMap<>();
-            //                outer:
-            //                for (Map.Entry<BlockLoc, CompoundTag> entry : items.entrySet()) {
-            //                    BlockLoc loc = entry.getKey();
-            //                    short x = (short) (loc.x + shift + oddshift + centerShiftX);
-            //                    short z = (short) (loc.z + shift + oddshift + centerShiftZ);
-            //                    short y = (short) (loc.y + this.PLOT_HEIGHT);
-            //                    int pair = MathMan.pair(x, z);
-            //                    HashMap<Integer, CompoundTag> existing = this.G_SCH_STATE.get(pair);
-            //                    if (existing == null) {
-            //                        existing = new HashMap<>();
-            //                        this.G_SCH_STATE.put(pair, existing);
-            //                    }
-            //                    existing.put((int) y, entry.getValue());
-            //
-            //                    CompoundTag tag = entry.getValue();
-            //                    Map<String, Tag> map = ReflectionUtils.getMap(tag.getValue());
-            //                    for (int i = 1; i <= 4; i++) {
-            //                        String ln = tag.getString("Line" + i);
-            //                        if (ln == null || ln.length() > 11)
-            //                            continue outer;
-            //                    }
-            //                    SIGN_LOCATION =
-            //                        new Location(worldname, loc.x + centerShiftX, this.PLOT_HEIGHT + loc.y,
-            //                            loc.z + centerShiftZ);
-            //                    ALLOW_SIGNS = true;
-            //                    continue outer;
-            //                }
-            //            }
+            for (short x = 0; x < w3; x++) {
+                for (short z = 0; z < l3; z++) {
+                    for (short y = 0; y < h3; y++) {
+                        BaseBlock id = blockArrayClipboard3.getFullBlock(BlockVector3.at(x, y, z))
+                            .toBaseBlock();
+                        if (!id.getBlockType().getId().toLowerCase().contains("air")) {
+                            addOverlayBlock((short) (x + shift + oddshift + centerShiftX),
+                                (short) (y + startY), (short) (z + shift + oddshift + centerShiftZ),
+                                id, false, h3);
+                        }
+                    }
+                }
+            }
+/*            HashMap<BlockLoc, CompoundTag> items = schematic3.getTiles();
+            if (!items.isEmpty()) {
+                this.G_SCH_STATE = new HashMap<>();
+                outer:
+                for (Map.Entry<BlockLoc, CompoundTag> entry : items.entrySet()) {
+                    BlockLoc loc = entry.getKey();
+                    short x = (short) (loc.x + shift + oddshift + centerShiftX);
+                    short z = (short) (loc.z + shift + oddshift + centerShiftZ);
+                    short y = (short) (loc.y + this.PLOT_HEIGHT);
+                    int pair = MathMan.pair(x, z);
+                    HashMap<Integer, CompoundTag> existing = this.G_SCH_STATE.get(pair);
+                    if (existing == null) {
+                        existing = new HashMap<>();
+                        this.G_SCH_STATE.put(pair, existing);
+                    }
+                    existing.put((int) y, entry.getValue());
+
+                    CompoundTag tag = entry.getValue();
+                    Map<String, Tag> map = ReflectionUtils.getMap(tag.getValue());
+                    for (int i = 1; i <= 4; i++) {
+                        String ln = tag.getString("Line" + i);
+                        if (ln == null || ln.length() > 11)
+                            continue outer;
+                    }
+                    SIGN_LOCATION =
+                        new Location(worldname, loc.x + centerShiftX, this.PLOT_HEIGHT + loc.y,
+                            loc.z + centerShiftZ);
+                    ALLOW_SIGNS = true;
+                    continue outer;
+                }
+            }*/
         }
         if (schematic1 == null || schematic2 == null || this.ROAD_WIDTH == 0) {
             PlotSquared.debug(C.PREFIX + "&3 - schematic: &7false");
