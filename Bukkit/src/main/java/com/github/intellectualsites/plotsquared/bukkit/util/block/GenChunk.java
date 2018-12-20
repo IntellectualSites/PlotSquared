@@ -80,12 +80,12 @@ public class GenChunk extends ScopedLocalBlockQueue {
                 Arrays.fill(data, start, end, block);
             }
         }
-        int minx = pos1.getX() < pos2.getX() ? pos1.getX() : pos2.getX();
-        int miny = pos1.getY() < pos2.getY() ? pos1.getY() : pos2.getY();
-        int minz = pos1.getZ() < pos2.getZ() ? pos1.getZ() : pos2.getZ();
-        int maxx = pos1.getX() > pos2.getX() ? pos1.getX() : pos2.getX();
-        int maxy = pos1.getY() > pos2.getY() ? pos1.getY() : pos2.getY();
-        int maxz = pos1.getZ() > pos2.getZ() ? pos1.getZ() : pos2.getZ();
+        int minx = Math.min(pos1.getX(), pos2.getX());
+        int miny = Math.min(pos1.getY(), pos2.getY());
+        int minz = Math.min(pos1.getZ(), pos2.getZ());
+        int maxx = Math.max(pos1.getX(), pos2.getX());
+        int maxy = Math.max(pos1.getY(), pos2.getY());
+        int maxz = Math.max(pos1.getZ(), pos2.getZ());
         cd.setRegion(minx, miny, minz, maxx, maxy, maxz, block.to(Material.class));
     }
 
