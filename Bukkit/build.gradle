@@ -13,8 +13,8 @@ dependencies {
     }
 }
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 processResources {
     from('src/main/resources') {
@@ -32,7 +32,6 @@ shadowJar {
     dependencies {
         include(dependency(':Core'))
     }
-    relocate('org.mcstats', 'com.plotsquared.stats')
     archiveName = "${parent.name}-${project.name}-${parent.version}.jar"
     destinationDir = file '../target'
 }
