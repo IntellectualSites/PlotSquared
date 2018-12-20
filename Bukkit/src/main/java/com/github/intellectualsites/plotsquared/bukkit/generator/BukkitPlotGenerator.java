@@ -211,7 +211,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
     public ChunkData generateChunkData(World world, Random random, int cx, int cz, BiomeGrid grid) {
         GenChunk result = this.chunkSetter;
         if (this.getPlotGenerator() instanceof SingleWorldGenerator) {
-            if (result.cd != null) {
+            if (result.getCd() != null) {
                 for (int x = 0; x < 16; x++) {
                     for (int z = 0; z < 16; z++) {
                         grid.setBiome(x, z, Biome.PLAINS);
