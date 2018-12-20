@@ -356,7 +356,7 @@ public abstract class HybridUtils {
                             int minY = Math.min(plotWorld.PLOT_HEIGHT, plotWorld.ROAD_HEIGHT);
                             if (blocks != null) {
                                 for (int y = 0; y < blocks.length; y++) {
-                                    if ((blocks[y] != null) {
+                                    if (blocks[y] != null) {
                                         PlotBlock block = PlotBlock.get(blocks[y]);
                                         queue.setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y,
                                             z + Z + plotWorld.ROAD_OFFSET_Z, block);
@@ -365,9 +365,11 @@ public abstract class HybridUtils {
                             }
                         }
                     }
-                } queue.enqueue();
+                }
+                queue.enqueue();
                 return true;
             }
-        } return false;
+        }
+        return false;
     }
 }
