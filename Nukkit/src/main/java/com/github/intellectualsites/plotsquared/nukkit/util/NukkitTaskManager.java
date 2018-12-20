@@ -1,0 +1,63 @@
+package com.github.intellectualsites.plotsquared.nukkit.util;
+
+import cn.nukkit.scheduler.TaskHandler;
+import com.github.intellectualsites.plotsquared.nukkit.NukkitMain;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class NukkitTaskManager extends TaskManager {
+
+    private final NukkitMain plugin;
+    private AtomicInteger index = new AtomicInteger(0);
+    private HashMap<Integer, Integer> tasks = new HashMap<>();
+
+    public NukkitTaskManager(NukkitMain bukkitMain) {
+        this.plugin = bukkitMain;
+    }
+
+    @Override public int taskRepeat(Runnable r, int interval) {
+        TaskHandler task =
+            this.plugin.getServer().getScheduler().scheduleRepeatingTask(r, interval, false);
+        return task.getTaskId();
+    }
+
+    @SuppressWarnings("deprecation") @Override
+    public int taskRepeatAsync(Runnable r, int interval) {
+        TaskHandler task =
+            this.plugin.getServer().getScheduler().scheduleRepeatingTask(r, interval, true);
+        return task.getTaskId();
+    }
+
+    @Override public void taskAsync(Runnable r) {
+        if (r == null) {
+            return;
+        }
+        this.plugin.getServer().getScheduler().scheduleTask(r, true);
+    }
+
+    @Override public void task(Runnable r) {
+        if (r == null) {
+            return;
+        }
+        this.plugin.getServer().getScheduler().scheduleTask(r, false);
+    }
+
+    @Override public void taskLater(Runnable r, int delay) {
+        if (r == null) {
+            return;
+        }
+        this.plugin.getServer().getScheduler().scheduleDelayedTask(r, delay);
+    }
+
+    @Override public void taskLaterAsync(Runnable r, int delay) {
+        this.plugin.getServer().getScheduler().scheduleDelayedTask(r, delay, true);
+    }
+
+    @Override public void cancelTask(int task) {
+        if (task != -1) {
+            this.plugin.getServer().getScheduler().cancelTask(task);
+        }
+    }
+}

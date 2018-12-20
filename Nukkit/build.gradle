@@ -1,8 +1,8 @@
 repositories {
-    maven { url = "https://oss.sonatype.org/content/repositories/snapshots/"}
-    maven {url "http://nexus.hc.to/content/repositories/pub_releases"}
-    maven {url "https://repo.potestas.xyz/main/"}
-    flatDir {dirs 'lib'}
+    maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url "http://nexus.hc.to/content/repositories/pub_releases" }
+    maven { url "https://repo.potestas.xyz/main/" }
+    flatDir { dirs 'lib' }
 }
 
 dependencies {
@@ -23,8 +23,8 @@ processResources {
     from('src/main/resources') {
         include 'plugin.yml'
         expand(
-            name: project.parent.name,
-            version: project.parent.version
+                name: project.parent.name,
+                version: project.parent.version
         )
     }
 }
@@ -45,7 +45,7 @@ shadowJar {
 
 shadowJar.doLast {
     task ->
-    ant.checksum file: task.archivePath
+        ant.checksum file: task.archivePath
 }
 
 build.dependsOn(shadowJar);

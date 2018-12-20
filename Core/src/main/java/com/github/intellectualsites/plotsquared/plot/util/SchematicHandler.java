@@ -1,0 +1,507 @@
+package com.github.intellectualsites.plotsquared.plot.util;
+
+import com.github.intellectualsites.plotsquared.json.JSONArray;
+import com.github.intellectualsites.plotsquared.json.JSONException;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import com.github.intellectualsites.plotsquared.plot.flag.Flag;
+import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.generator.ClassicPlotWorld;
+import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
+import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
+import com.sk89q.jnbt.*;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
+import com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.MCEditSchematicReader;
+import com.sk89q.worldedit.extent.clipboard.io.SpongeSchematicReader;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.world.block.BaseBlock;
+
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+
+public abstract class SchematicHandler {
+    public static SchematicHandler manager;
+
+    private boolean exportAll = false;
+
+    public boolean exportAll(Collection<Plot> collection, final File outputDir,
+        final String namingScheme, final Runnable ifSuccess) {
+        if (this.exportAll) {
+            return false;
+        }
+        if (collection.isEmpty()) {
+            return false;
+        }
+        this.exportAll = true;
+        final ArrayList<Plot> plots = new ArrayList<>(collection);
+        TaskManager.runTask(new Runnable() {
+            @Override public void run() {
+                if (plots.isEmpty()) {
+                    SchematicHandler.this.exportAll = false;
+                    TaskManager.runTask(ifSuccess);
+                    return;
+                }
+                Iterator<Plot> i = plots.iterator();
+                final Plot plot = i.next();
+                i.remove();
+                String o = UUIDHandler.getName(plot.guessOwner());
+                if (o == null) {
+                    o = "unknown";
+                }
+                final String name;
+                if (namingScheme == null) {
+                    name = plot.getId().x + ";" + plot.getId().y + ',' + plot.getArea() + ',' + o;
+                } else {
+                    name = namingScheme.replaceAll("%owner%", o)
+                        .replaceAll("%id%", plot.getId().toString())
+                        .replaceAll("%idx%", plot.getId().x + "")
+                        .replaceAll("%idy%", plot.getId().y + "")
+                        .replaceAll("%world%", plot.getArea().toString());
+                }
+                final String directory;
+                if (outputDir == null) {
+                    directory = Settings.Paths.SCHEMATICS;
+                } else {
+                    directory = outputDir.getAbsolutePath();
+                }
+                final Runnable THIS = this;
+                SchematicHandler.manager.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
+                    @Override public void run(final CompoundTag value) {
+                        if (value == null) {
+                            MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.getId());
+                        } else {
+                            TaskManager.runTaskAsync(new Runnable() {
+                                @Override public void run() {
+                                    MainUtil.sendMessage(null, "&6ID: " + plot.getId());
+                                    boolean result = SchematicHandler.manager.save(value,
+                                        directory + File.separator + name + ".schematic");
+                                    if (!result) {
+                                        MainUtil.sendMessage(null,
+                                            "&7 - Failed to save &c" + plot.getId());
+                                    } else {
+                                        MainUtil
+                                            .sendMessage(null, "&7 - &a  success: " + plot.getId());
+                                    }
+                                    TaskManager.runTask(new Runnable() {
+                                        @Override public void run() {
+                                            THIS.run();
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
+        return true;
+    }
+
+    /**
+     * Paste a schematic.
+     *
+     * @param schematic the schematic object to paste
+     * @param plot      plot to paste in
+     * @param xOffset   offset x to paste it from plot origin
+     * @param zOffset   offset z to paste it from plot origin
+     * @return boolean true if succeeded
+     */
+    public void paste(final Schematic schematic, final Plot plot, final int xOffset,
+        final int yOffset, final int zOffset, final boolean autoHeight, final Runnable whenDone) {
+
+        EditSession editSession = WorldEdit.getInstance().getEditSessionFactory()
+            .getEditSession(WorldUtil.IMP.getWeWorld(plot.getWorldName()), -1);
+
+        TaskManager.runTask(new Runnable() {
+            @Override public void run() {
+                if (schematic == null) {
+                    PlotSquared.debug("Schematic == null :|");
+                    TaskManager.runTask(whenDone);
+                    return;
+                }
+                try {
+                    // Set flags
+                    if (plot.hasOwner()) {
+                        Map<String, Tag> flags = schematic.getFlags();
+                        if (!flags.isEmpty()) {
+                            for (Map.Entry<String, Tag> entry : flags.entrySet()) {
+                                plot.setFlag(Flags.getFlag(entry.getKey()),
+                                    StringTag.class.cast(entry.getValue()).getValue());
+                            }
+
+                        }
+                    }
+                    final LocalBlockQueue queue = plot.getArea().getQueue(false);
+                    BlockVector3 dimension = schematic.getClipboard().getDimensions();
+                    final int WIDTH = dimension.getX();
+                    final int LENGTH = dimension.getZ();
+                    final int HEIGHT = dimension.getY();
+                    // Validate dimensions
+                    RegionWrapper region = plot.getLargestRegion();
+                    if (((region.maxX - region.minX + xOffset + 1) < WIDTH) || (
+                        (region.maxZ - region.minZ + zOffset + 1) < LENGTH) || (HEIGHT > 256)) {
+                        PlotSquared.debug("Schematic is too large");
+                        PlotSquared.debug(
+                            "(" + WIDTH + ',' + LENGTH + ',' + HEIGHT + ") is bigger than (" + (
+                                region.maxX - region.minX) + ',' + (region.maxZ - region.minZ)
+                                + ",256)");
+                        TaskManager.runTask(whenDone);
+                        return;
+                    }
+                    // block type and data arrays
+                    final BlockArrayClipboard blockArrayClipboard = schematic.getClipboard();
+                    // Calculate the optimal height to paste the schematic at
+                    final int y_offset_actual;
+                    if (autoHeight) {
+                        if (HEIGHT >= 256) {
+                            y_offset_actual = yOffset;
+                        } else {
+                            PlotArea pw = plot.getArea();
+                            if (pw instanceof ClassicPlotWorld) {
+                                y_offset_actual = yOffset + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
+                            } else {
+                                y_offset_actual = yOffset + 1 + MainUtil
+                                    .getHeighestBlock(plot.getWorldName(), region.minX + 1,
+                                        region.minZ + 1);
+                            }
+                        }
+                    } else {
+                        y_offset_actual = yOffset;
+                    }
+                    Location pos1 =
+                        new Location(plot.getWorldName(), region.minX + xOffset, y_offset_actual,
+                            region.minZ + zOffset);
+                    Location pos2 = pos1.clone().add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
+                    final int p1x = pos1.getX();
+                    final int p1z = pos1.getZ();
+                    final int p2x = pos2.getX();
+                    final int p2z = pos2.getZ();
+                    final int bcx = p1x >> 4;
+                    final int bcz = p1z >> 4;
+                    final int tcx = p2x >> 4;
+                    final int tcz = p2z >> 4;
+                    final ArrayList<ChunkLoc> chunks = new ArrayList<>();
+                    for (int x = bcx; x <= tcx; x++) {
+                        for (int z = bcz; z <= tcz; z++) {
+                            chunks.add(new ChunkLoc(x, z));
+                        }
+                    }
+                    ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
+                        @Override public void run(int[] value) {
+                            int count = 0;
+                            while (!chunks.isEmpty() && count < 256) {
+                                count++;
+                                ChunkLoc chunk = chunks.remove(0);
+                                int x = chunk.x;
+                                int z = chunk.z;
+                                int xxb = x << 4;
+                                int zzb = z << 4;
+                                int xxt = xxb + 15;
+                                int zzt = zzb + 15;
+                                if (x == bcx) {
+                                    xxb = p1x;
+                                }
+                                if (x == tcx) {
+                                    xxt = p2x;
+                                }
+                                if (z == bcz) {
+                                    zzb = p1z;
+                                }
+                                if (z == tcz) {
+                                    zzt = p2z;
+                                }
+                                // Paste schematic here
+
+                                for (int ry = 0; ry < Math.min(256, HEIGHT); ry++) {
+                                    int yy = y_offset_actual + ry;
+                                    if (yy > 255) {
+                                        continue;
+                                    }
+                                    int i1 = ry * WIDTH * LENGTH;
+                                    for (int rz = zzb - p1z; rz <= (zzt - p1z); rz++) {
+                                        int i2 = (rz * WIDTH) + i1;
+                                        for (int rx = xxb - p1x; rx <= (xxt - p1x); rx++) {
+                                            int i = i2 + rx;
+                                            int xx = p1x + rx;
+                                            int zz = p1z + rz;
+                                            BaseBlock id = blockArrayClipboard
+                                                .getFullBlock(BlockVector3.at(rx, ry, rz));
+                                            queue.setBlock(xx, yy, zz, id);
+                                        }
+                                    }
+                                }
+                            }
+                            if (!chunks.isEmpty()) {
+                                this.run();
+                            } else {
+                                queue.flush();
+                                /*HashMap<BlockLoc, CompoundTag> tiles = schematic.getClipboard().getTiles();
+                                if (!tiles.isEmpty()) {
+                                    TaskManager.IMP.sync(new RunnableVal<Object>() {
+                                        @Override public void run(Object value) {
+                                            for (Map.Entry<BlockLoc, CompoundTag> entry : schematic
+                                                .getTiles().entrySet()) {
+                                                BlockLoc loc = entry.getKey();
+                                                restoreTile(queue, entry.getValue(),
+                                                    p1x + xOffset + loc.x, loc.y + y_offset_actual,
+                                                    p1z + zOffset + loc.z);
+                                            }
+                                        }
+                                    });
+                                }*/
+                            }
+                        }
+                    }, whenDone, 10);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    TaskManager.runTask(whenDone);
+                }
+            }
+        });
+    }
+
+    public abstract boolean restoreTile(LocalBlockQueue queue, CompoundTag tag, int x, int y,
+        int z);
+
+    /**
+     * Get a schematic
+     *
+     * @param name to check
+     * @return schematic if found, else null
+     */
+    public Schematic getSchematic(String name) throws UnsupportedFormatException {
+        File parent =
+            MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS);
+        if (!parent.exists()) {
+            if (!parent.mkdir()) {
+                throw new RuntimeException("Could not create schematic parent directory");
+            }
+        }
+        File file = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
+            Settings.Paths.SCHEMATICS + File.separator + name + (name.endsWith(".schem") ?
+                "" :
+                ".schematic"));
+        return getSchematic(file);
+    }
+
+    /**
+     * Get an immutable collection containing all schematic names
+     *
+     * @return Immutable collection with schematic names
+     */
+    public Collection<String> getShematicNames() {
+        final File parent =
+            MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS);
+        final List<String> names = new ArrayList<>();
+        if (parent.exists()) {
+            final String[] rawNames = parent.list((dir, name) -> name.endsWith(".schematic"));
+            if (rawNames != null) {
+                final List<String> transformed = Arrays.stream(rawNames)
+                    .map(rawName -> rawName.substring(0, rawName.length() - 10))
+                    .collect(Collectors.toList());
+                names.addAll(transformed);
+            }
+        }
+        return Collections.unmodifiableList(names);
+    }
+
+    /**
+     * Get a schematic
+     *
+     * @param file to check
+     * @return schematic if found, else null
+     */
+    public Schematic getSchematic(File file) throws UnsupportedFormatException {
+        if (!file.exists()) {
+            return null;
+        }
+        try {
+            if (BuiltInClipboardFormat.SPONGE_SCHEMATIC.isFormat(file)) {
+                SpongeSchematicReader ssr =
+                    new SpongeSchematicReader(new NBTInputStream(new FileInputStream(file)));
+                BlockArrayClipboard clip = (BlockArrayClipboard) ssr.read();
+                return new Schematic(clip);
+            } else if (BuiltInClipboardFormat.MCEDIT_SCHEMATIC.isFormat(file)) {
+                MCEditSchematicReader msr =
+                    new MCEditSchematicReader(new NBTInputStream(new FileInputStream(file)));
+                BlockArrayClipboard clip = (BlockArrayClipboard) msr.read();
+                return new Schematic(clip);
+            } else {
+                throw new UnsupportedFormatException(
+                    "This schematic format is not recognised or supported.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Schematic getSchematic(URL url) {
+        try {
+            ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+            InputStream is = Channels.newInputStream(rbc);
+            return getSchematic(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Schematic getSchematic(InputStream is) {
+        if (is == null) {
+            return null;
+        }
+        try {
+            SpongeSchematicReader ssr =
+                new SpongeSchematicReader(new NBTInputStream(new GZIPInputStream(is)));
+            BlockArrayClipboard clip = (BlockArrayClipboard) ssr.read();
+            return new Schematic(clip);
+        } catch (IOException ignored) {
+            try {
+                MCEditSchematicReader msr =
+                    new MCEditSchematicReader(new NBTInputStream(new GZIPInputStream(is)));
+                BlockArrayClipboard clip = (BlockArrayClipboard) msr.read();
+                return new Schematic(clip);
+            } catch (IOException e) {
+                e.printStackTrace();
+                PlotSquared.debug(is.toString() + " | " + is.getClass().getCanonicalName()
+                    + " is not in GZIP format : " + e.getMessage());
+            }
+        }
+        return null;
+    }
+
+    public List<String> getSaves(UUID uuid) {
+        StringBuilder rawJSON = new StringBuilder();
+        try {
+            String website = Settings.Web.URL + "list.php?" + uuid.toString();
+            URL url = new URL(website);
+            URLConnection connection = new URL(url.toString()).openConnection();
+            connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+            BufferedReader reader =
+                new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                rawJSON.append(line);
+            }
+            reader.close();
+            JSONArray array = new JSONArray(rawJSON.toString());
+            List<String> schematics = new ArrayList<>();
+            for (int i = 0; i < array.length(); i++) {
+                String schematic = array.getString(i);
+                schematics.add(schematic);
+            }
+            return schematics;
+        } catch (JSONException | IOException e) {
+            e.printStackTrace();
+            PlotSquared.debug("ERROR PARSING: " + rawJSON);
+        }
+        return null;
+    }
+
+    public void upload(final CompoundTag tag, UUID uuid, String file, RunnableVal<URL> whenDone) {
+        if (tag == null) {
+            PlotSquared.debug("&cCannot save empty tag");
+            TaskManager.runTask(whenDone);
+            return;
+        }
+        MainUtil.upload(uuid, file, "schematic", new RunnableVal<OutputStream>() {
+            @Override public void run(OutputStream output) {
+                try {
+                    try (GZIPOutputStream gzip = new GZIPOutputStream(output, true)) {
+                        try (NBTOutputStream nos = new NBTOutputStream(gzip)) {
+                            nos.writeNamedTag("Schematic", tag);
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, whenDone);
+    }
+
+    /**
+     * Saves a schematic to a file path.
+     *
+     * @param tag  to save
+     * @param path to save in
+     * @return true if succeeded
+     */
+    public boolean save(CompoundTag tag, String path) {
+        if (tag == null) {
+            PlotSquared.debug("&cCannot save empty tag");
+            return false;
+        }
+        try {
+            File tmp = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), path);
+            tmp.getParentFile().mkdirs();
+            try (OutputStream stream = new FileOutputStream(tmp);
+                NBTOutputStream output = new NBTOutputStream(new GZIPOutputStream(stream))) {
+                output.writeNamedTag("Schematic", tag);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public abstract void getCompoundTag(String world, Set<RegionWrapper> regions,
+        RunnableVal<CompoundTag> whenDone);
+
+    public void getCompoundTag(final Plot plot, final RunnableVal<CompoundTag> whenDone) {
+        getCompoundTag(plot.getWorldName(), plot.getRegions(), new RunnableVal<CompoundTag>() {
+            @Override public void run(CompoundTag value) {
+                if (!plot.getFlags().isEmpty()) {
+                    HashMap<String, Tag> flagMap = new HashMap<>();
+                    for (Map.Entry<Flag<?>, Object> entry : plot.getFlags().entrySet()) {
+                        String key = entry.getKey().getName();
+                        flagMap.put(key,
+                            new StringTag(entry.getKey().valueToString(entry.getValue())));
+                    }
+                    CompoundTag tag = new CompoundTag(flagMap);
+                    HashMap<String, Tag> map = new HashMap<>(value.getValue());
+                    map.put("Flags", tag);
+                    value.setValue(map);
+                }
+                whenDone.run(value);
+            }
+        });
+    }
+
+    public class UnsupportedFormatException extends Exception {
+        /**
+         * Throw with a message.
+         *
+         * @param message the message
+         */
+        public UnsupportedFormatException(String message) {
+            super(message);
+        }
+
+        /**
+         * Throw with a message and a cause.
+         *
+         * @param message the message
+         * @param cause   the cause
+         */
+        public UnsupportedFormatException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+    }
+
+}

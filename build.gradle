@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         mavenCentral()
-        maven { url = "https://oss.sonatype.org/content/repositories/snapshots/"}
+        maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
         jcenter()
     }
     dependencies {
@@ -17,10 +17,12 @@ buildscript {
 
 plugins {
     id 'maven-publish'
+    id 'io.franzbecker.gradle-lombok' version '1.14'
 }
 
 group = 'com.intellectualcrafters'
 
+def rootVersion = "4"
 def revision = ""
 def buildNumber = ""
 def date = ""
@@ -30,16 +32,16 @@ ext {
     revision = "-${git.head().abbreviatedId}"
     parents = git.head().parentIds;
     index = 0;  // Offset to match CI
-    for (;parents != null && !parents.isEmpty();index++) {
+    for (; parents != null && !parents.isEmpty(); index++) {
         parents = git.getResolve().toCommit(parents.get(0)).getParentIds()
     }
     buildNumber = "-${index}"
 }
 
-version = date + revision + buildNumber
+version = String.format("%s.%s%s%s", rootVersion, date, revision, buildNumber)
 
 description = rootProject.name
-if ( project.hasProperty("lzNoVersion") ) { // gradle build -PlzNoVersion
+if (project.hasProperty("lzNoVersion")) { // gradle build -PlzNoVersion
     version = "unknown";
 }
 
@@ -50,23 +52,26 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'com.github.johnrengelman.shadow'
 
+    lombok {
+        version = '1.18.2'
+        sha256 = ""
+    }
 
     dependencies {
-        compile(group: 'com.sk89q.worldedit', name: 'worldedit-core', version:'6.1.3-SNAPSHOT') {
+        compile(group: 'com.sk89q.worldedit', name: 'worldedit-core', version: '7.0.0-SNAPSHOT') {
             exclude(module: 'bukkit-classloader-check')
             exclude(module: 'mockito-core')
             exclude(module: 'dummypermscompat')
         }
         compile 'com.google.guava:guava:10.0'
+        compileOnly 'org.projectlombok:lombok:1.18.4'
     }
-    clean{
+    clean {
         delete file("../target")
     }
     repositories {
         mavenCentral()
-        maven {url "http://empcraft.com/maven2"}
-        maven {url "http://repo.mcstats.org/content/repositories/public"}
-        maven {url "http://maven.sk89q.com/repo/"}
-        maven {url "http://repo.maven.apache.org/maven2"}
+        maven { url "http://maven.sk89q.com/repo/" }
+        maven { url "http://repo.maven.apache.org/maven2" }
     }
 }
