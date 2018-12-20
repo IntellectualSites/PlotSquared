@@ -82,6 +82,13 @@ public class GenChunk extends ScopedLocalBlockQueue {
         } else {
             super.setCuboid(pos1, pos2, block);
         }
+        int minx = pos1.getX() < pos2.getX() ? pos1.getX() : pos2.getX();
+        int miny = pos1.getY() < pos2.getY() ? pos1.getY() : pos2.getY();
+        int minz = pos1.getZ() < pos2.getZ() ? pos1.getZ() : pos2.getZ();
+        int maxx = pos1.getX() > pos2.getX() ? pos1.getX() : pos2.getX();
+        int maxy = pos1.getY() > pos2.getY() ? pos1.getY() : pos2.getY();
+        int maxz = pos1.getZ() > pos2.getZ() ? pos1.getZ() : pos2.getZ();
+        cd.setRegion(minx, miny, minz, maxx, maxy, maxz, block.to(Material.class));
     }
 
     @Override public boolean setBiome(int x, int z, String biome) {
@@ -101,6 +108,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
             this.cd.setBlock(x, y, z, id.to(Material.class));
             return true;
         }
+        this.cd.setBlock(x, y, z, id.to(Material.class));
         int i = MainUtil.CACHE_I[y][x][z];
         PlotBlock[] v = this.result[i];
         if (v == null) {
