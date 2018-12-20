@@ -50,8 +50,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
                 PlotArea area = PlotSquared.get().getPlotArea(world.getName(), null);
                 ChunkWrapper wrap = new ChunkWrapper(area.worldname, c.getX(), c.getZ());
                 ScopedLocalBlockQueue chunk = queue.getForChunk(wrap.x, wrap.z);
-                if (BukkitPlotGenerator.this.plotGenerator
-                    .populateChunk(chunk, area)) {
+                if (BukkitPlotGenerator.this.plotGenerator.populateChunk(chunk, area)) {
                     queue.flush();
                 }
             }
@@ -218,15 +217,16 @@ public class BukkitPlotGenerator extends ChunkGenerator
                         grid.setBiome(x, z, Biome.PLAINS);
                     }
                 }
-                return result.cd;
+                return result.getCd();
             }
         }
         // Set the chunk location
         result.setChunk(new ChunkWrapper(world.getName(), cx, cz));
         // Set the result data
-        result.cd = createChunkData(world);
+        result.setCd(createChunkData(world));
         result.grid = grid;
         result.result = generateExtBlockSections(world, random, cx, cz, grid);
+
         // Catch any exceptions (as exceptions usually thrown)
         try {
             // Fill the result data if necessary
@@ -239,7 +239,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
             e.printStackTrace();
         }
         // Return the result data
-        return result.cd;
+        return result.getCd();
     }
 
     public void generate(World world, ScopedLocalBlockQueue result) {
@@ -272,11 +272,11 @@ public class BukkitPlotGenerator extends ChunkGenerator
         // Set the result data
         result.result = new PlotBlock[16][];
         result.grid = grid;
-        result.cd = null;
         // Catch any exceptions (as exceptions usually thrown)
         try {
             if (this.platformGenerator != this) {
-                final ChunkData chunkData = this.platformGenerator.generateChunkData(world, r, cx, cz, grid);
+                final ChunkData chunkData =
+                    this.platformGenerator.generateChunkData(world, r, cx, cz, grid);
                 final PlotBlock[][] blocks = new PlotBlock[world.getMaxHeight() / 16][];
                 // section ID = Y >> 4
                 for (int x = 0; x < 16; x++) {
@@ -285,7 +285,8 @@ public class BukkitPlotGenerator extends ChunkGenerator
                             if (blocks[y >> 4] == null) {
                                 blocks[y >> 4] = new PlotBlock[4096];
                             }
-                            blocks[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = PlotBlock.get(chunkData.getType(x, y, z));
+                            blocks[y >> 4][((y & 0xF) << 8) | (z << 4) | x] =
+                                PlotBlock.get(chunkData.getType(x, y, z));
                         }
                     }
                 }

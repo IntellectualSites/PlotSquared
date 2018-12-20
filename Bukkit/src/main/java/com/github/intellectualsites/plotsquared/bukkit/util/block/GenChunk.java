@@ -6,6 +6,8 @@ import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -19,13 +21,12 @@ public class GenChunk extends ScopedLocalBlockQueue {
 
     public final Biome[] biomes;
     public PlotBlock[][] result;
-    public ChunkData cd;
     public BiomeGrid grid;
-
     public Chunk chunk;
     public String world;
     public int cx;
     public int cz;
+    @Getter @Setter private ChunkData cd = null;
 
     public GenChunk(Chunk chunk, ChunkWrapper wrap) {
         super(null, new Location(null, 0, 0, 0), new Location(null, 15, 255, 15));
@@ -66,8 +67,8 @@ public class GenChunk extends ScopedLocalBlockQueue {
     }
 
     @Override public void setCuboid(Location pos1, Location pos2, PlotBlock block) {
-        if (result != null && pos1.getX() == 0 && pos1.getZ() == 0
-            && pos2.getX() == 15 && pos2.getZ() == 15) {
+        if (result != null && pos1.getX() == 0 && pos1.getZ() == 0 && pos2.getX() == 15
+            && pos2.getZ() == 15) {
             for (int y = pos1.getY(); y <= pos2.getY(); y++) {
                 int layer = y >> 4;
                 PlotBlock[] data = result[layer];
