@@ -1,6 +1,5 @@
 package com.github.intellectualsites.plotsquared.bukkit.object.entity;
 
-import com.github.intellectualsites.plotsquared.bukkit.util.BukkitVersion;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
@@ -53,21 +52,15 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         if (depth == 1) {
             return;
         }
-        if (PlotSquared.get()
-            .checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_10_0)
-            || entity instanceof ArmorStand) {
-            if (!entity.hasGravity()) {
-                this.noGravity = true;
-            }
+        if (!entity.hasGravity()) {
+            this.noGravity = true;
         }
         switch (entity.getType()) {
-            case ARROW:
             case BOAT:
-                if (PlotSquared.get()
-                    .checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
-                    Boat boat = (Boat) entity;
-                    this.dataByte = getOrdinal(TreeSpecies.values(), boat.getWoodType());
-                }
+                Boat boat = (Boat) entity;
+                this.dataByte = getOrdinal(TreeSpecies.values(), boat.getWoodType());
+                return;
+            case ARROW:
             case COMPLEX_PART:
             case EGG:
             case ENDER_CRYSTAL:
@@ -102,9 +95,6 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             case LINGERING_POTION:
             case AREA_EFFECT_CLOUD:
                 // Do this stuff later
-                return;
-            default:
-                PlotSquared.debug("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
                 return;
             // MISC //
             case DROPPED_ITEM:
@@ -284,6 +274,8 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 }
                 storeLiving((LivingEntity) entity);
                 // END LIVING //
+            default:
+                PlotSquared.debug("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
         }
     }
 
@@ -324,13 +316,8 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
 
     void restoreEquipment(LivingEntity entity) {
         EntityEquipment equipment = entity.getEquipment();
-        if (PlotSquared.get()
-            .checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
-            equipment.setItemInMainHand(this.lived.mainHand);
-            equipment.setItemInOffHand(this.lived.offHand);
-        } else {
-            equipment.setItemInHand(this.lived.mainHand);
-        }
+        equipment.setItemInMainHand(this.lived.mainHand);
+        equipment.setItemInOffHand(this.lived.offHand);
         equipment.setHelmet(this.lived.helmet);
         equipment.setChestplate(this.lived.chestplate);
         equipment.setLeggings(this.lived.leggings);
@@ -369,14 +356,8 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
     }
 
     void storeEquipment(EntityEquipment equipment) {
-        if (PlotSquared.get()
-            .checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
-            this.lived.mainHand = equipment.getItemInMainHand().clone();
-            this.lived.offHand = equipment.getItemInOffHand().clone();
-        } else {
-            this.lived.mainHand = equipment.getItemInHand().clone();
-            this.lived.offHand = null;
-        }
+        this.lived.mainHand = equipment.getItemInMainHand().clone();
+        this.lived.offHand = equipment.getItemInOffHand().clone();
         this.lived.boots = equipment.getBoots().clone();
         this.lived.leggings = equipment.getLeggings().clone();
         this.lived.chestplate = equipment.getChestplate().clone();
@@ -461,22 +442,18 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         if (this.depth == 1) {
             return entity;
         }
-        if (PlotSquared.get()
-            .checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_10_0)
-            || entity instanceof ArmorStand) {
-            if (this.noGravity) {
-                entity.setGravity(false);
-            }
+        if (this.noGravity) {
+            entity.setGravity(false);
         }
         switch (entity.getType()) {
-            case ARROW:
             case BOAT:
-                if (PlotSquared.get()
-                    .checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_0)) {
-                    Boat boat = (Boat) entity;
-                    boat.setWoodType(TreeSpecies.values()[dataByte]);
-                }
-
+                Boat boat = (Boat) entity;
+                boat.setWoodType(TreeSpecies.values()[dataByte]);
+                return entity;
+            case SLIME:
+                ((Slime) entity).setSize(this.dataByte);
+                return entity;
+            case ARROW:
             case COMPLEX_PART:
             case EGG:
             case ENDER_CRYSTAL:
@@ -496,10 +473,6 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             case MINECART_TNT:
             case PLAYER:
             case PRIMED_TNT:
-                return entity;
-            case SLIME:
-                ((Slime) entity).setSize(this.dataByte);
-                return entity;
             case SMALL_FIREBALL:
             case SNOWBALL:
             case SPLASH_POTION:
@@ -515,9 +488,6 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             case MINECART_FURNACE:
             case UNKNOWN:
                 // Do this stuff later
-                return entity;
-            default:
-                PlotSquared.debug("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
                 return entity;
             // MISC //
             case ITEM_FRAME:
@@ -702,6 +672,9 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                     ((IronGolem) entity).setPlayerCreated(true);
                 }
                 restoreLiving((LivingEntity) entity);
+                return entity;
+            default:
+                PlotSquared.debug("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
                 return entity;
             // END LIVING
         }

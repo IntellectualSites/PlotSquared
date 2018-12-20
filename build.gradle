@@ -16,6 +16,7 @@ buildscript {
 }
 
 plugins {
+    id 'maven-publish'
     id 'io.franzbecker.gradle-lombok' version '1.14'
 }
 

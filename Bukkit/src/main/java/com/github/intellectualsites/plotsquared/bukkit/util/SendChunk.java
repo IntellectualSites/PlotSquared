@@ -50,19 +50,7 @@ public class SendChunk {
         RefClass classChunk = getRefClass("{nms}.Chunk");
         this.methodInitLighting = classChunk.getMethod("initLighting");
         RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
-        if (PlotSquared.get()
-            .checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_4)) {
-            //this works for 1.9.4 and 1.10
-            tempMapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), int.class);
-        } else {
-            try {
-                tempMapChunk = classMapChunk
-                    .getConstructor(classChunk.getRealClass(), boolean.class, int.class);
-            } catch (NoSuchMethodException ignored) {
-                tempMapChunk = classMapChunk
-                    .getConstructor(classChunk.getRealClass(), boolean.class, int.class, int.class);
-            }
-        }
+        tempMapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), int.class);
         this.mapChunk = tempMapChunk;
         RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
         this.connection = classEntityPlayer.getField("playerConnection");
@@ -119,22 +107,9 @@ public class SendChunk {
                 chunks.remove(chunk);
                 Object con = this.connection.of(entity).get();
                 Object packet = null;
-                if (PlotSquared.get()
-                    .checkVersion(PlotSquared.get().IMP.getServerVersion(), BukkitVersion.v1_9_4)) {
-                    try {
-                        packet = this.mapChunk.create(c, 65535);
-                    } catch (Exception ignored) {
-                    }
-                } else {
-                    try {
-                        packet = this.mapChunk.create(c, true, 65535);
-                    } catch (ReflectiveOperationException | IllegalArgumentException e) {
-                        try {
-                            packet = this.mapChunk.create(c, true, 65535, 5);
-                        } catch (ReflectiveOperationException | IllegalArgumentException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
+                try {
+                    packet = this.mapChunk.create(c, 65535);
+                } catch (Exception ignored) {
                 }
                 if (packet == null) {
                     PlotSquared.debug("Error with PacketPlayOutMapChunk reflection.");
