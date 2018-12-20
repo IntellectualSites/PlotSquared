@@ -82,11 +82,7 @@ import java.util.Map.Entry;
      * @return Immutable collection containing randomly selected blocks
      */
     public Collection<PlotBlock> getBlocks(final int count) {
-        final List<PlotBlock> blocks = new ArrayList<>(count);
-        for (int i = 0; i < count; i++) {
-            blocks.add(getBlock());
-        }
-        return Collections.unmodifiableCollection(blocks);
+        return Arrays.asList(getBlockArray(count));
     }
 
     /**
