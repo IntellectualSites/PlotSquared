@@ -23,7 +23,7 @@ import java.util.*;
 /**
  * Schematic Handler.
  */
-public abstract class BukkitSchematicHandler extends SchematicHandler {
+public class BukkitSchematicHandler extends SchematicHandler {
 
     @Override public void getCompoundTag(final String world, final Set<RegionWrapper> regions,
         final RunnableVal<CompoundTag> whenDone) {

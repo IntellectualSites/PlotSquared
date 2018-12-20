@@ -31,14 +31,8 @@ import java.util.Map.Entry;
 
     public static BlockBucket withSingle(@NonNull final PlotBlock block) {
         final BlockBucket blockBucket = new BlockBucket();
-        blockBucket.addBlock(block);
+        blockBucket.addBlock(block, 100);
         return blockBucket;
-    }
-
-    public static BlockBucket empty() {
-        final BlockBucket bucket = new BlockBucket();
-        bucket.compiled = true;
-        return bucket;
     }
 
     public static BlockBucket deserialize(@NonNull final Map<String, Object> map) {
@@ -93,6 +87,11 @@ import java.util.Map.Entry;
 
     public void compile() {
         if (isCompiled()) {
+            return;
+        }
+
+        if (blocks.size() == 0) {
+            this.compiled = true;
             return;
         }
 
@@ -190,6 +189,9 @@ import java.util.Map.Entry;
     }
 
     @Override public String toString() {
+        if (!isCompiled()) {
+            compile();
+        }
         final StringBuilder builder = new StringBuilder();
         final Iterator<Entry<Range, PlotBlock>> iterator = this.ranges.entrySet().iterator();
         while (iterator.hasNext()) {
@@ -206,6 +208,9 @@ import java.util.Map.Entry;
     }
 
     @Override public Map<String, Object> serialize() {
+        if (!isCompiled()) {
+            compile();
+        }
         return ImmutableMap.of("blocks", this.toString());
     }
 

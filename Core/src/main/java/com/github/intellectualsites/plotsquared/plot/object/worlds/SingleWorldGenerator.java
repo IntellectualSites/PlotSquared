@@ -17,13 +17,12 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
         return "PlotSquared:single";
     }
 
-    @Override public void generateChunk(ScopedLocalBlockQueue result, PlotArea settings,
-        PseudoRandom random) {
+    @Override public void generateChunk(ScopedLocalBlockQueue result, PlotArea settings) {
         SinglePlotArea area = (SinglePlotArea) settings;
         if (area.VOID) {
             Location min = result.getMin();
             if (min.getX() == 0 && min.getZ() == 0) {
-                result.setBlock(0, 0, 0, 7, 0);
+                result.setBlock(0, 0, 0, PlotBlock.get("bedrock"));
             }
         } else {
             result.setCuboid(bedrock1, bedrock2, PlotBlock.get(7, 0));

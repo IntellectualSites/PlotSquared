@@ -100,8 +100,8 @@ import java.util.zip.ZipInputStream;
         //
         // Register configuration serializable classes
         //
-        ConfigurationSerialization.registerClass(PlotBlock.class);
-        ConfigurationSerialization.registerClass(BlockBucket.class);
+        ConfigurationSerialization.registerClass(PlotBlock.class, "PlotBlock");
+        ConfigurationSerialization.registerClass(BlockBucket.class, "BlockBucket");
 
         try {
             new ReflectionUtils(this.IMP.getNMSPackage());
@@ -117,9 +117,6 @@ import java.util.zip.ZipInputStream;
                     this.jarFile = new File(this.IMP.getDirectory().getParentFile(),
                         "PlotSquared-" + platform + ".jar");
                 }
-            }
-            if (getJavaVersion() < 1.8) {
-                PlotSquared.log(C.CONSOLE_JAVA_OUTDATED.f(IMP.getPluginName()));
             }
             TaskManager.IMP = this.IMP.getTaskManager();
             setupConfigs();

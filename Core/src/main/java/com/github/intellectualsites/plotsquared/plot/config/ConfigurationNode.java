@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.config;
 
+import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
@@ -58,6 +59,9 @@ public class ConfigurationNode {
                 values.add(value.toString());
             }
             return values;
+        }
+        if (this.value instanceof BlockBucket) {
+            return this.value.toString();
         }
         if (this.value instanceof PlotBlock) {
             return this.value.toString();

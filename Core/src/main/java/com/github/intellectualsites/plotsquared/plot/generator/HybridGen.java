@@ -32,8 +32,7 @@ public class HybridGen extends IndependentPlotGenerator {
         }
     }
 
-    @Override public void generateChunk(ScopedLocalBlockQueue result, PlotArea settings,
-        PseudoRandom random) {
+    @Override public void generateChunk(ScopedLocalBlockQueue result, PlotArea settings) {
         HybridPlotWorld hpw = (HybridPlotWorld) settings;
         // Biome
         result.fillBiome(hpw.PLOT_BIOME);
@@ -41,7 +40,7 @@ public class HybridGen extends IndependentPlotGenerator {
         if (hpw.PLOT_BEDROCK) {
             for (short x = 0; x < 16; x++) {
                 for (short z = 0; z < 16; z++) {
-                    result.setBlock(x, 0, z, (short) 7, (byte) 0);
+                    result.setBlock(x, 0, z, PlotBlock.get("bedrock"));
                 }
             }
         }
@@ -161,8 +160,7 @@ public class HybridGen extends IndependentPlotGenerator {
         }
     }
 
-    @Override public boolean populateChunk(ScopedLocalBlockQueue result, PlotArea settings,
-        PseudoRandom random) {
+    @Override public boolean populateChunk(ScopedLocalBlockQueue result, PlotArea settings) {
         HybridPlotWorld hpw = (HybridPlotWorld) settings;
         if (hpw.G_SCH_STATE != null) {
             Location min = result.getMin();

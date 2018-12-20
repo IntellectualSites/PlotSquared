@@ -23,13 +23,10 @@ public abstract class IndependentPlotGenerator {
      *
      * @param result
      * @param settings
-     * @param random
      */
-    public abstract void generateChunk(ScopedLocalBlockQueue result, PlotArea settings,
-        PseudoRandom random);
+    public abstract void generateChunk(ScopedLocalBlockQueue result, PlotArea settings);
 
-    public boolean populateChunk(ScopedLocalBlockQueue result, PlotArea settings,
-        PseudoRandom random) {
+    public boolean populateChunk(ScopedLocalBlockQueue result, PlotArea setting) {
         return false;
     }
 

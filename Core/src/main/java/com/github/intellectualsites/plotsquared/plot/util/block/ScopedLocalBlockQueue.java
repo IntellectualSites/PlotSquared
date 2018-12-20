@@ -50,14 +50,9 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
             .setBlock(x + minX, y + minY, z + minZ, id);
     }
 
-    @Override public boolean setBlock(int x, int y, int z, String id) {
+    @Override public boolean setBlock(int x, int y, int z, PlotBlock id) {
         return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super
             .setBlock(x + minX, y + minY, z + minZ, id);
-    }
-
-    @Override public boolean setBlock(int x, int y, int z, int id, int data) {
-        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super
-            .setBlock(x + minX, y + minY, z + minZ, id, data);
     }
 
     public Location getMin() {

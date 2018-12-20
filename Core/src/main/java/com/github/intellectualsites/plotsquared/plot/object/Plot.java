@@ -1372,7 +1372,7 @@ public class Plot {
         }
         Location loc = manager.getSignLoc(this.area, this);
         LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(getWorldName(), false);
-        queue.setBlock(loc.getX(), loc.getY(), loc.getZ(), 0);
+        queue.setBlock(loc.getX(), loc.getY(), loc.getZ(), PlotBlock.get("air"));
         queue.flush();
     }
 

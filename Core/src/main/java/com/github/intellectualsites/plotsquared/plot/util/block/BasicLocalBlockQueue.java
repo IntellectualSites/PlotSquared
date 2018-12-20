@@ -113,7 +113,7 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
         return true;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, String id) {
+    @Override public boolean setBlock(int x, int y, int z, PlotBlock id) {
         if ((y > 255) || (y < 0)) {
             return false;
         }
@@ -140,33 +140,6 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
         return true;
     }
 
-    @Override public final boolean setBlock(int x, int y, int z, int id, int data) {
-        if ((y > 255) || (y < 0)) {
-            return false;
-        }
-        int cx = x >> 4;
-        int cz = z >> 4;
-        if (cx != lastX || cz != lastZ) {
-            lastX = cx;
-            lastZ = cz;
-            long pair = (long) (cx) << 32 | (cz) & 0xFFFFFFFFL;
-            lastWrappedChunk = this.blocks.get(pair);
-            if (lastWrappedChunk == null) {
-                lastWrappedChunk = this.getLocalChunk(x >> 4, z >> 4);
-                lastWrappedChunk.setBlock(x & 15, y, z & 15, id, data);
-                LocalChunk previous = this.blocks.put(pair, lastWrappedChunk);
-                if (previous == null) {
-                    chunks.add(lastWrappedChunk);
-                    return true;
-                }
-                this.blocks.put(pair, previous);
-                lastWrappedChunk = previous;
-            }
-        }
-        lastWrappedChunk.setBlock(x & 15, y, z & 15, id, data);
-        return true;
-    }
-
     @Override public final boolean setBiome(int x, int z, String biome) {
         long pair = (long) (x >> 4) << 32 | (z >> 4) & 0xFFFFFFFFL;
         LocalChunk result = this.blocks.get(pair);
@@ -185,11 +158,11 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
     }
 
     public final void setChunk(LocalChunk<T> chunk) {
-        LocalChunk previous = this.blocks.put(chunk.longHash(), (LocalChunk) chunk);
+        LocalChunk previous = this.blocks.put(chunk.longHash(), chunk);
         if (previous != null) {
             chunks.remove(previous);
         }
-        chunks.add((LocalChunk) chunk);
+        chunks.add(chunk);
     }
 
     @Override public void flush() {
@@ -234,55 +207,9 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
             return z;
         }
 
-        /**
-         * Add the chunk to the queue
-         */
-        public void addToQueue() {
-            parent.setChunk(this);
-        }
-
-        public void fill(int id, int data) {
-            fillCuboid(0, 15, 0, 255, 0, 15, id, data);
-        }
-
-        /**
-         * Fill a cuboid in this chunk with a block
-         *
-         * @param x1
-         * @param x2
-         * @param y1
-         * @param y2
-         * @param z1
-         * @param z2
-         * @param id
-         * @param data
-         */
-        public void fillCuboid(int x1, int x2, int y1, int y2, int z1, int z2, int id, int data) {
-            for (int x = x1; x <= x2; x++) {
-                for (int y = y1; y <= y2; y++) {
-                    for (int z = z1; z <= z2; z++) {
-                        setBlock(x, y, z, id, data);
-                    }
-                }
-            }
-        }
-
-        public void fillCuboid(int x1, int x2, int y1, int y2, int z1, int z2, String id) {
-            for (int x = x1; x <= x2; x++) {
-                for (int y = y1; y <= y2; y++) {
-                    for (int z = z1; z <= z2; z++) {
-                        setBlock(x, y, z, id);
-                    }
-                }
-            }
-        }
+        public abstract void setBlock(final int x, final int y, final int z, final PlotBlock block);
 
         public abstract void setBlock(final int x, final int y, final int z, final BaseBlock id);
-
-        public abstract void setBlock(final int x, final int y, final int z, final String id);
-
-        public abstract void setBlock(final int x, final int y, final int z, final int id,
-            final int data);
 
         public void setBiome(int x, int z, String biome) {
             if (this.biomes == null) {
@@ -311,15 +238,13 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
             blocks = new PlotBlock[16][];
         }
 
-        @Override
-        public void setBlock(final int x, final int y, final int z, @NonNull final BaseBlock id) {
-            this.setInternal(x, y, z, id);
+        @Override public void setBlock(int x, int y, int z, PlotBlock block) {
+            this.setInternal(x, y, z, block);
         }
 
         @Override
-        public void setBlock(final int x, final int y, final int z, @NonNull final String id) {
-            final PlotBlock block = PlotBlock.get(id);
-            this.setInternal(x, y, z, block);
+        public void setBlock(final int x, final int y, final int z, @NonNull final BaseBlock id) {
+            this.setInternal(x, y, z, id);
         }
 
         private void setInternal(final int x, final int y, final int z, final BaseBlock bsh) {
@@ -347,23 +272,4 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
             this.setInternal(x, y, z, block);
         }
     }
-
-    /* public class CharLocalChunk extends LocalChunk<char[]> {
-
-        public CharLocalChunk(BasicLocalBlockQueue parent, int x, int z) {
-            super(parent, x, z);
-            blocks = new char[16][];
-        }
-
-        public void setBlock(final int x, final int y, final int z, final int id, final int data) {
-            PlotBlock block = PlotBlock.get(id, data);
-            int i = MainUtil.CACHE_I[y][x][z];
-            int j = MainUtil.CACHE_J[y][x][z];
-            char[] array = blocks[i];
-            if (array == null) {
-                array = (blocks[i] = new char[4096]);
-            }
-            array[j] = (char) ((block.id << 4) + block.data);
-        }
-    } */
 }

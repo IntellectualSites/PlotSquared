@@ -7,7 +7,6 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.world.block.BaseBlock;
-import lombok.NonNull;
 
 import java.util.Map;
 
@@ -38,26 +37,9 @@ public abstract class LocalBlockQueue {
 
     public abstract void setModified(long modified);
 
-    public abstract boolean setBlock(final int x, final int y, final int z, final int id,
-        final int data);
-
-    public final boolean setBlock(int x, int y, int z, int id) {
-        return setBlock(x, y, z, id, 0);
-    }
-
-    public abstract boolean setBlock(final int x, final int y, final int z, final String id);
+    public abstract boolean setBlock(final int x, final int y, final int z, final PlotBlock id);
 
     public abstract boolean setBlock(final int x, final int y, final int z, final BaseBlock id);
-
-    public final boolean setBlock(int x, int y, int z, @NonNull final PlotBlock block) {
-        if (block instanceof LegacyPlotBlock) {
-            final LegacyPlotBlock legacyPlotBlock = (LegacyPlotBlock) block;
-            return this.setBlock(x, y, z, legacyPlotBlock.id, legacyPlotBlock.data);
-        } else {
-            final StringPlotBlock stringPlotBlock = (StringPlotBlock) block;
-            return this.setBlock(x, y, z, stringPlotBlock.getItemId());
-        }
-    }
 
     public boolean setTile(int x, int y, int z, CompoundTag tag) {
         SchematicHandler.manager.restoreTile(this, tag, x, y, z);

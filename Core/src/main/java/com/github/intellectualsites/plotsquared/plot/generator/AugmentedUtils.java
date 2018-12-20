@@ -32,8 +32,6 @@ public class AugmentedUtils {
         if (areas.isEmpty()) {
             return false;
         }
-        PseudoRandom r = new PseudoRandom();
-        r.state = (cx << 16) | (cz & 0xFFFF);
         boolean toReturn = false;
         for (final PlotArea area : areas) {
             if (area.TYPE == 0) {
@@ -63,9 +61,9 @@ public class AugmentedUtils {
                 txx = Math.min(15, area.getRegion().maxX - bx);
                 tzz = Math.min(15, area.getRegion().maxZ - bz);
                 primaryMask = new DelegateLocalBlockQueue(queue) {
-                    @Override public boolean setBlock(int x, int y, int z, int id, int data) {
+                    @Override public boolean setBlock(int x, int y, int z, PlotBlock id) {
                         if (area.contains(x, z)) {
-                            return super.setBlock(x, y, z, id, data);
+                            return super.setBlock(x, y, z, id);
                         }
                         return false;
                     }
@@ -107,9 +105,9 @@ public class AugmentedUtils {
                 }
                 toReturn = true;
                 secondaryMask = new DelegateLocalBlockQueue(primaryMask) {
-                    @Override public boolean setBlock(int x, int y, int z, int id, int data) {
+                    @Override public boolean setBlock(int x, int y, int z, PlotBlock id) {
                         if (canPlace[x - bx][z - bz]) {
-                            return super.setBlock(x, y, z, id, data);
+                            return super.setBlock(x, y, z, id);
                         }
                         return false;
                     }
@@ -132,8 +130,8 @@ public class AugmentedUtils {
             ScopedLocalBlockQueue scoped =
                 new ScopedLocalBlockQueue(secondaryMask, new Location(area.worldname, bx, 0, bz),
                     new Location(area.worldname, bx + 15, 255, bz + 15));
-            generator.generateChunk(scoped, area, r);
-            generator.populateChunk(scoped, area, r);
+            generator.generateChunk(scoped, area);
+            generator.populateChunk(scoped, area);
         }
         if (queue != null) {
             queue.flush();

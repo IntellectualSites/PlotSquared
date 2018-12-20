@@ -72,20 +72,20 @@ public class BukkitChunkManager extends ChunkManager {
                     // byte data2 = block2.getData();
                     if (id1 == Material.AIR) {
                         if (id2 != Material.AIR) {
-                            queue1.setBlock(x, y, z, id2.name());
-                            queue2.setBlock(xx, y, zz, (short) 0, (byte) 0);
+                            queue1.setBlock(x, y, z, PlotBlock.get(id2));
+                            queue2.setBlock(xx, y, zz, PlotBlock.get("air"));
                         }
                     } else if (id2 == Material.AIR) {
-                        queue1.setBlock(x, y, z, (short) 0, (byte) 0);
-                        queue2.setBlock(xx, y, zz, id1.name());
+                        queue1.setBlock(x, y, z, PlotBlock.get("air"));
+                        queue2.setBlock(xx, y, zz, PlotBlock.get(id1));
                     } else if (id1 == id2) {
                         if (data1 != data2) {
                             block1.setBlockData(data2);
                             block2.setBlockData(data1);
                         }
                     } else {
-                        queue1.setBlock(x, y, z, id2.name());
-                        queue2.setBlock(xx, y, zz, id1.name());
+                        queue1.setBlock(x, y, z, PlotBlock.get(id2));
+                        queue2.setBlock(xx, y, zz, PlotBlock.get(id1));
                         // queue1.setBlock(x, y, z, (short) id2, data2);
                         // queue2.setBlock(xx, y, zz, (short) id1, data1);
                     }
@@ -297,7 +297,7 @@ public class BukkitChunkManager extends ChunkManager {
                                                     if (id != null) {
                                                         value.setBlock(x, y, z, id);
                                                     } else {
-                                                        value.setBlock(x, y, z, 0, (byte) 0);
+                                                        value.setBlock(x, y, z, PlotBlock.get("air"));
                                                     }
                                                 }
                                                 for (int y = Math.min(128, ids.length);
@@ -392,13 +392,11 @@ public class BukkitChunkManager extends ChunkManager {
                 maps.add(swapChunk(world1, world2, chunk1, chunk2, region1, region2));
             }
         }
-        GlobalBlockQueue.IMP.addTask(new Runnable() {
-            @Override public void run() {
-                for (ContentMap map : maps) {
-                    map.restoreBlocks(world1, 0, 0);
-                    map.restoreEntities(world1, 0, 0);
-                    TaskManager.runTaskLater(whenDone, 1);
-                }
+        GlobalBlockQueue.IMP.addTask(() -> {
+            for (ContentMap map : maps) {
+                map.restoreBlocks(world1, 0, 0);
+                map.restoreEntities(world1, 0, 0);
+                TaskManager.runTaskLater(whenDone, 1);
             }
         });
     }

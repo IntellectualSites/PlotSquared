@@ -1,28 +1,9 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
-import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
-import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
-import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
-import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.generator.ChunkGenerator.BiomeGrid;
-import org.bukkit.material.Directional;
-import org.bukkit.material.MaterialData;
-
-import java.util.HashSet;
-import java.util.Random;
 
 public class BukkitHybridUtils extends HybridUtils {
 
@@ -40,6 +21,7 @@ public class BukkitHybridUtils extends HybridUtils {
          *  - recheck each block
          *
          */
+        /* TODO: Redo
         TaskManager.runTaskAsync(new Runnable() {
             @Override public void run() {
                 final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
@@ -275,5 +257,6 @@ public class BukkitHybridUtils extends HybridUtils {
                 }, 5);
             }
         });
+        */
     }
 }

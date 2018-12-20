@@ -12,15 +12,13 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
-import org.bukkit.material.MaterialData;
 
 import java.util.Arrays;
 
 public class GenChunk extends ScopedLocalBlockQueue {
 
     public final Biome[] biomes;
-    public short[][] result;
-    public byte[][] result_data;
+    public PlotBlock[][] result;
     public ChunkData cd;
     public BiomeGrid grid;
 
@@ -55,13 +53,6 @@ public class GenChunk extends ScopedLocalBlockQueue {
         cz = wrap.z;
     }
 
-    public ChunkWrapper getChunkWrapper() {
-        if (chunk == null) {
-            return new ChunkWrapper(world, cx, cz);
-        }
-        return new ChunkWrapper(chunk.getWorld().getName(), chunk.getX(), chunk.getZ());
-    }
-
     @Override public void fillBiome(String biomeName) {
         if (grid == null) {
             return;
@@ -75,17 +66,17 @@ public class GenChunk extends ScopedLocalBlockQueue {
     }
 
     @Override public void setCuboid(Location pos1, Location pos2, PlotBlock block) {
-        if (block.data == 0 && result != null && pos1.getX() == 0 && pos1.getZ() == 0
+        if (result != null && pos1.getX() == 0 && pos1.getZ() == 0
             && pos2.getX() == 15 && pos2.getZ() == 15) {
             for (int y = pos1.getY(); y <= pos2.getY(); y++) {
                 int layer = y >> 4;
-                short[] data = result[layer];
+                PlotBlock[] data = result[layer];
                 if (data == null) {
-                    result[layer] = data = new short[4096];
+                    result[layer] = data = new PlotBlock[4096];
                 }
                 int start = y << 8;
                 int end = start + 256;
-                Arrays.fill(data, start, end, block.id);
+                Arrays.fill(data, start, end, block);
             }
         } else {
             super.setCuboid(pos1, pos2, block);
@@ -96,14 +87,6 @@ public class GenChunk extends ScopedLocalBlockQueue {
         return setBiome(x, z, Biome.valueOf(biome.toUpperCase()));
     }
 
-    public boolean setBiome(int x, int z, int biome) {
-        if (this.grid != null) {
-            this.grid.setBiome(x, z, this.biomes[biome]);
-            return true;
-        }
-        return false;
-    }
-
     public boolean setBiome(int x, int z, Biome biome) {
         if (this.grid != null) {
             this.grid.setBiome(x, z, biome);
@@ -112,48 +95,32 @@ public class GenChunk extends ScopedLocalBlockQueue {
         return false;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, int id, int data) {
+    @Override public boolean setBlock(int x, int y, int z, PlotBlock id) {
         if (this.result == null) {
-            this.cd.setBlock(x, y, z, new MaterialData(Material.getMaterial(id), (byte) data));
+            this.cd.setBlock(x, y, z, id.to(Material.class));
             return true;
         }
         int i = MainUtil.CACHE_I[y][x][z];
-        short[] v = this.result[i];
+        PlotBlock[] v = this.result[i];
         if (v == null) {
-            this.result[i] = v = new short[4096];
+            this.result[i] = v = new PlotBlock[4096];
         }
         int j = MainUtil.CACHE_J[y][x][z];
-        v[j] = (short) id;
-        if (data != 0) {
-            byte[] vd = this.result_data[i];
-            if (vd == null) {
-                this.result_data[i] = vd = new byte[4096];
-            }
-            vd[j] = (byte) data;
-        }
+        v[j] = id;
         return true;
     }
 
     @Override public PlotBlock getBlock(int x, int y, int z) {
         int i = MainUtil.CACHE_I[y][x][z];
         if (result == null) {
-            MaterialData md = cd.getTypeAndData(x, y, z);
-            return PlotBlock.get(md.getItemTypeId(), md.getData());
+            return PlotBlock.get(cd.getType(x, y, z));
         }
-        short[] array = result[i];
+        PlotBlock[] array = result[i];
         if (array == null) {
-            return PlotBlock.get(0, 0);
+            return PlotBlock.get("");
         }
         int j = MainUtil.CACHE_J[y][x][z];
-        short id = array[j];
-        if (id == 0) {
-            return PlotBlock.get(id, 0);
-        }
-        byte[] dataArray = result_data[i];
-        if (dataArray == null) {
-            return PlotBlock.get(id, 0);
-        }
-        return PlotBlock.get(id, dataArray[j]);
+        return array[j];
     }
 
     public int getX() {
@@ -181,28 +148,13 @@ public class GenChunk extends ScopedLocalBlockQueue {
             new GenChunk(chunk, new ChunkWrapper(getWorld(), chunk.getX(), chunk.getZ()));
         if (this.result != null) {
             for (int i = 0; i < this.result.length; i++) {
-                short[] matrix = this.result[i];
+                PlotBlock[] matrix = this.result[i];
                 if (matrix != null) {
-                    toReturn.result[i] = new short[matrix.length];
+                    toReturn.result[i] = new PlotBlock[matrix.length];
                     System.arraycopy(matrix, 0, toReturn.result[i], 0, matrix.length);
                 }
             }
-            for (int i = 0; i < this.result_data.length; i++) {
-                byte[] matrix = this.result_data[i];
-                if (matrix != null) {
-                    toReturn.result_data[i] = new byte[matrix.length];
-                    System.arraycopy(matrix, 0, toReturn.result_data[i], 0, matrix.length);
-                }
-            }
         }
-        toReturn.cd = this.cd;
-        return toReturn;
-    }
-
-    public GenChunk shallowClone() {
-        GenChunk toReturn = new GenChunk(chunk, new ChunkWrapper(getWorld(), getX(), getZ()));
-        toReturn.result = this.result;
-        toReturn.result_data = this.result_data;
         toReturn.cd = this.cd;
         return toReturn;
     }

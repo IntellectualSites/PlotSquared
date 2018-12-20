@@ -945,9 +945,9 @@ import java.util.regex.Pattern;
             return;
         }
         if (PlotSquared.get().worldedit != null && pp.getAttribute("worldedit")) {
-            if (player.getInventory().getItemInMainHand().getType() == LegacyMappings
-                .fromLegacyId(PlotSquared.get().worldedit.getConfiguration().wandItem)
-                .getMaterial()) {
+            if (player.getInventory().getItemInMainHand().getType() == BukkitUtil.getBukkitLegacyMappings()
+                .fromLegacyToString(PlotSquared.get().worldedit.getConfiguration().wandItem)
+                .to(Material.class)) {
                 return;
             }
         }
@@ -1682,10 +1682,12 @@ import java.util.regex.Pattern;
                 return;
         }
         if (PlotSquared.get().worldedit != null && pp.getAttribute("worldedit")) {
-            if (player.getInventory().getItemInMainHand().getType() == LegacyMappings
-                .fromLegacyId(PlotSquared.get().worldedit.getConfiguration().wandItem)
-                .getMaterial()) {
-                return;
+            if (PlotSquared.get().worldedit != null && pp.getAttribute("worldedit")) {
+                if (player.getInventory().getItemInMainHand().getType() == BukkitUtil.getBukkitLegacyMappings()
+                    .fromLegacyToString(PlotSquared.get().worldedit.getConfiguration().wandItem)
+                    .to(Material.class)) {
+                    return;
+                }
             }
         }
         if (!EventUtil.manager.checkPlayerBlockEvent(pp, eventType, location, lb, true)) {
