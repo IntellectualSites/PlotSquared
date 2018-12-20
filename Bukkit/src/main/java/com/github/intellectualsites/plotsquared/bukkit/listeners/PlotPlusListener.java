@@ -32,16 +32,16 @@ import java.util.UUID;
 
 @SuppressWarnings("unused") public class PlotPlusListener extends PlotListener implements Listener {
 
-    private static final HashMap<String, Interval> feedRunnable = new HashMap<>();
-    private static final HashMap<String, Interval> healRunnable = new HashMap<>();
+    private static final HashMap<UUID, Interval> feedRunnable = new HashMap<>();
+    private static final HashMap<UUID, Interval> healRunnable = new HashMap<>();
 
     public static void startRunnable(JavaPlugin plugin) {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override public void run() {
                 if (!healRunnable.isEmpty()) {
-                    for (Iterator<Entry<String, Interval>> iterator =
+                    for (Iterator<Entry<UUID, Interval>> iterator =
                          healRunnable.entrySet().iterator(); iterator.hasNext(); ) {
-                        Entry<String, Interval> entry = iterator.next();
+                        Entry<UUID, Interval> entry = iterator.next();
                         Interval value = entry.getValue();
                         ++value.count;
                         if (value.count == value.interval) {
@@ -59,9 +59,9 @@ import java.util.UUID;
                     }
                 }
                 if (!feedRunnable.isEmpty()) {
-                    for (Iterator<Entry<String, Interval>> iterator =
+                    for (Iterator<Entry<UUID, Interval>> iterator =
                          feedRunnable.entrySet().iterator(); iterator.hasNext(); ) {
-                        Entry<String, Interval> entry = iterator.next();
+                        Entry<UUID, Interval> entry = iterator.next();
                         Interval value = entry.getValue();
                         ++value.count;
                         if (value.count == value.interval) {
@@ -136,20 +136,19 @@ import java.util.UUID;
         Optional<Integer[]> feed = plot.getFlag(Flags.FEED);
         if (feed.isPresent()) {
             Integer[] value = feed.get();
-            feedRunnable.put(player.getName(), new Interval(value[0], value[1], 20));
+            feedRunnable.put(player.getUniqueId(), new Interval(value[0], value[1], 20));
         }
         Optional<Integer[]> heal = plot.getFlag(Flags.HEAL);
         if (heal.isPresent()) {
             Integer[] value = heal.get();
-            healRunnable.put(player.getName(), new Interval(value[0], value[1], 20));
+            healRunnable.put(player.getUniqueId(), new Interval(value[0], value[1], 20));
         }
     }
 
     @EventHandler public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        String name = player.getName();
-        feedRunnable.remove(name);
-        healRunnable.remove(name);
+        feedRunnable.remove(player.getUniqueId());
+        healRunnable.remove(player.getUniqueId());
     }
 
     @EventHandler public void onPlotLeave(PlayerLeavePlotEvent event) {
@@ -159,9 +158,8 @@ import java.util.UUID;
             return;
         }
         BukkitUtil.getPlayer(leaver);
-        String name = leaver.getName();
-        feedRunnable.remove(name);
-        healRunnable.remove(name);
+        feedRunnable.remove(leaver.getUniqueId());
+        healRunnable.remove(leaver.getUniqueId());
     }
 
     @EventHandler public void onItemPickup(EntityPickupItemEvent event) {

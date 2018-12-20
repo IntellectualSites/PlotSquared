@@ -20,6 +20,8 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Piston;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -74,8 +76,7 @@ import java.util.regex.Pattern;
         }
     }
 
-    public static void sendBlockChange(final org.bukkit.Location bloc, final Material type,
-        final byte data) {
+    public static void sendBlockChange(final org.bukkit.Location bloc, final BlockData data) {
         TaskManager.runTaskLater(() -> {
             String world = bloc.getWorld().getName();
             int x = bloc.getBlockX();
@@ -89,7 +90,7 @@ import java.util.regex.Pattern;
                         || 16 * Math.abs(loc.getZ() - z) / 16 > distance) {
                         continue;
                     }
-                    ((BukkitPlayer) player).player.sendBlockChange(bloc, type, data);
+                    ((BukkitPlayer) player).player.sendBlockChange(bloc, data);
                 }
             }
         }, 3);
@@ -230,32 +231,48 @@ import java.util.regex.Pattern;
         Block block = event.getBlock();
         switch (block.getType()) {
             case OBSERVER:
-            case LEGACY_REDSTONE_LAMP_OFF:
+            case REDSTONE:
+            case REDSTONE_ORE:
+            case REDSTONE_BLOCK:
+            case REDSTONE_TORCH:
+            case REDSTONE_WALL_TORCH:
             case REDSTONE_WIRE:
-            case LEGACY_REDSTONE_LAMP_ON:
-            case LEGACY_PISTON_BASE:
-            case LEGACY_PISTON_STICKY_BASE:
-            case LEGACY_IRON_DOOR_BLOCK:
+            case REDSTONE_LAMP:
+            case PISTON_HEAD:
+            case PISTON:
+            case STICKY_PISTON:
+            case MOVING_PISTON:
             case LEVER:
-            case LEGACY_WOODEN_DOOR:
-            case LEGACY_FENCE_GATE:
-            case LEGACY_WOOD_BUTTON:
+            case ACACIA_BUTTON:
+            case BIRCH_BUTTON:
+            case DARK_OAK_BUTTON:
+            case JUNGLE_BUTTON:
+            case OAK_BUTTON:
+            case SPRUCE_BUTTON:
             case STONE_BUTTON:
-            case LEGACY_IRON_PLATE:
-            case LEGACY_WOOD_PLATE:
-            case LEGACY_STONE_PLATE:
-            case LEGACY_GOLD_PLATE:
+            case STONE_PRESSURE_PLATE:
+            case ACACIA_PRESSURE_PLATE:
+            case BIRCH_PRESSURE_PLATE:
+            case DARK_OAK_PRESSURE_PLATE:
+            case HEAVY_WEIGHTED_PRESSURE_PLATE:
+            case JUNGLE_PRESSURE_PLATE:
+            case LIGHT_WEIGHTED_PRESSURE_PLATE:
+            case OAK_PRESSURE_PLATE:
+            case SPRUCE_PRESSURE_PLATE:
             case SPRUCE_DOOR:
             case BIRCH_DOOR:
             case JUNGLE_DOOR:
             case ACACIA_DOOR:
             case DARK_OAK_DOOR:
+            case IRON_DOOR:
+            case OAK_DOOR:
             case IRON_TRAPDOOR:
             case SPRUCE_FENCE_GATE:
             case BIRCH_FENCE_GATE:
             case JUNGLE_FENCE_GATE:
             case ACACIA_FENCE_GATE:
             case DARK_OAK_FENCE_GATE:
+            case OAK_FENCE_GATE:
             case POWERED_RAIL:
                 return;
             default:
@@ -283,7 +300,7 @@ import java.util.regex.Pattern;
                             }
                         }
                     } else {
-                        disable = UUIDHandler.getPlayer(plot.owner) == null;
+                        disable = UUIDHandler.getPlayer(plot.guessOwner()) == null;
                     }
                     if (disable) {
                         for (UUID trusted : plot.getTrusted()) {
@@ -312,8 +329,7 @@ import java.util.regex.Pattern;
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPhysicsEvent(BlockPhysicsEvent event) {
         switch (event.getChangedType()) {
-            case LEGACY_REDSTONE_COMPARATOR_OFF:
-            case LEGACY_REDSTONE_COMPARATOR_ON: {
+            case COMPARATOR: {
                 Block block = event.getBlock();
                 Location loc = BukkitUtil.getLocation(block.getLocation());
                 PlotArea area = loc.getPlotArea();
@@ -352,8 +368,9 @@ import java.util.regex.Pattern;
                 if (Settings.Redstone.DETECT_INVALID_EDGE_PISTONS) {
                     Block block = event.getBlock();
                     switch (block.getType()) {
-                        case LEGACY_PISTON_BASE:
-                        case LEGACY_PISTON_STICKY_BASE:
+                        case PISTON:
+                        case STICKY_PISTON:
+                            Piston piston = (Piston) block.getBlockData();
                             Location loc = BukkitUtil.getLocation(block.getLocation());
                             PlotArea area = loc.getPlotArea();
                             if (area == null) {
@@ -363,22 +380,17 @@ import java.util.regex.Pattern;
                             if (plot == null) {
                                 return;
                             }
-                            int data = block.getData();
-                            switch (data) {
-                                case 5:
-                                case 13:
+                            switch (piston.getFacing()) {
+                                case EAST:
                                     loc.setX(loc.getX() + 1);
                                     break;
-                                case 4:
-                                case 12:
+                                case SOUTH:
                                     loc.setX(loc.getX() - 1);
                                     break;
-                                case 3:
-                                case 11:
+                                case WEST:
                                     loc.setZ(loc.getZ() + 1);
                                     break;
-                                case 2:
-                                case 10:
+                                case NORTH:
                                     loc.setZ(loc.getZ() - 1);
                                     break;
                             }
@@ -632,7 +644,7 @@ import java.util.regex.Pattern;
             // Check allowed
 
 
-            Entity passenger = vehicle.getPassenger();
+            Entity passenger = vehicle.getPassengers().get(1);
 
             if (passenger instanceof Player) {
                 final Player player = (Player) passenger;
@@ -1114,7 +1126,7 @@ import java.util.regex.Pattern;
                     event.setCancelled(true);
                 }
                 break;
-            case LEGACY_MYCEL:
+            case MYCELIUM:
                 if (Flags.MYCEL_GROW.isFalse(plot)) {
                     event.setCancelled(true);
                 }
@@ -1238,7 +1250,7 @@ import java.util.regex.Pattern;
                     event.setCancelled(true);
                 }
                 break;
-            case LEGACY_SOIL:
+            case FARMLAND:
                 if (Flags.SOIL_DRY.isFalse(plot)) {
                     event.setCancelled(true);
                 }
@@ -1274,7 +1286,7 @@ import java.util.regex.Pattern;
                 }
             }
         } else if (!area.contains(fLocation.getX(), fLocation.getZ()) || !Objects
-            .equals(plot, area.getOwnedPlot(fLocation))) {
+            .equals(null, area.getOwnedPlot(fLocation))) {
             event.setCancelled(true);
         }
     }
@@ -1350,7 +1362,7 @@ import java.util.regex.Pattern;
                     this.pistonBlocks = false;
                 }
             }
-            if (!this.pistonBlocks && block.getType() != Material.LEGACY_PISTON_BASE) {
+            if (!this.pistonBlocks && !block.getType().toString().contains("PISTON")) {
                 BlockFace dir = event.getDirection();
                 location = BukkitUtil.getLocation(block.getLocation()
                     .add(dir.getModX() * 2, dir.getModY() * 2, dir.getModZ() * 2));
@@ -1391,7 +1403,7 @@ import java.util.regex.Pattern;
                 this.pistonBlocks = false;
             }
         }
-        if (!this.pistonBlocks && block.getType() != Material.LEGACY_PISTON_BASE) {
+        if (!this.pistonBlocks && !block.getType().toString().contains("PISTON")) {
             location = BukkitUtil.getLocation(
                 block.getLocation().add(dir.getModX() * 2, dir.getModY() * 2, dir.getModZ() * 2));
             if (!area.contains(location)) {
@@ -1541,9 +1553,7 @@ import java.util.regex.Pattern;
                     return;
             }
         }
-
-        HashSet<Material> blocks = null;
-        Block block = player.getTargetBlock(blocks, 7);
+        Block block = player.getTargetBlock(null, 7);
         BlockState state = block.getState();
         if (state == null) {
             return;
@@ -1705,7 +1715,8 @@ import java.util.regex.Pattern;
                 Block block = event.getClickedBlock();
                 location = BukkitUtil.getLocation(block.getLocation());
                 Material blockType = block.getType();
-                int blockId = blockType.getId();
+                int blockId = ((LegacyPlotBlock) PlotSquared.get().IMP.getLegacyMappings()
+                    .fromStringToLegacy(blockType.name())).id;
                 switch (blockType) {
                     case ANVIL:
                     case ACACIA_DOOR:
@@ -1714,38 +1725,89 @@ import java.util.regex.Pattern;
                     case IRON_DOOR:
                     case JUNGLE_DOOR:
                     case SPRUCE_DOOR:
-                    case LEGACY_TRAP_DOOR:
+                    case OAK_DOOR:
+                    case ACACIA_TRAPDOOR:
+                    case BIRCH_TRAPDOOR:
+                    case DARK_OAK_TRAPDOOR:
+                    case JUNGLE_TRAPDOOR:
+                    case OAK_TRAPDOOR:
+                    case SPRUCE_TRAPDOOR:
                     case IRON_TRAPDOOR:
-                    case LEGACY_WOOD_DOOR:
-                    case LEGACY_WOODEN_DOOR:
                     case TRAPPED_CHEST:
                     case ENDER_CHEST:
                     case CHEST:
                     case ACACIA_FENCE_GATE:
                     case BIRCH_FENCE_GATE:
                     case DARK_OAK_FENCE_GATE:
-                    case LEGACY_FENCE_GATE:
+                    case OAK_FENCE_GATE:
                     case JUNGLE_FENCE_GATE:
                     case SPRUCE_FENCE_GATE:
                     case LEVER:
-                    case LEGACY_DIODE:
-                    case LEGACY_DIODE_BLOCK_OFF:
-                    case LEGACY_DIODE_BLOCK_ON:
+                    case REDSTONE_TORCH:
+                    case REDSTONE_WALL_TORCH:
                     case COMMAND_BLOCK:
-                    case LEGACY_REDSTONE_COMPARATOR:
-                    case LEGACY_REDSTONE_COMPARATOR_OFF:
-                    case LEGACY_REDSTONE_COMPARATOR_ON:
+                    case COMPARATOR:
                     case REDSTONE_ORE:
-                    case LEGACY_WOOD_BUTTON:
+                    case BIRCH_BUTTON:
+                    case DARK_OAK_BUTTON:
+                    case JUNGLE_BUTTON:
+                    case ACACIA_BUTTON:
+                    case OAK_BUTTON:
+                    case SPRUCE_BUTTON:
                     case STONE_BUTTON:
                     case BEACON:
-                    case LEGACY_BED_BLOCK:
+                    case BLACK_BED:
+                    case BLUE_BED:
+                    case BROWN_BED:
+                    case CYAN_BED:
+                    case GRAY_BED:
+                    case GREEN_BED:
+                    case LIGHT_BLUE_BED:
+                    case LIGHT_GRAY_BED:
+                    case LIME_BED:
+                    case MAGENTA_BED:
+                    case ORANGE_BED:
+                    case PINK_BED:
+                    case PURPLE_BED:
+                    case RED_BED:
+                    case WHITE_BED:
+                    case YELLOW_BED:
                     case SIGN:
                     case WALL_SIGN:
-                    case LEGACY_ENCHANTMENT_TABLE:
+                    case ENCHANTING_TABLE:
                     case BREWING_STAND:
-                    case LEGACY_STANDING_BANNER:
-                    case LEGACY_BURNING_FURNACE:
+                    case BLACK_BANNER:
+                    case BLACK_WALL_BANNER:
+                    case BLUE_BANNER:
+                    case BLUE_WALL_BANNER:
+                    case BROWN_BANNER:
+                    case BROWN_WALL_BANNER:
+                    case CYAN_BANNER:
+                    case CYAN_WALL_BANNER:
+                    case GRAY_BANNER:
+                    case GRAY_WALL_BANNER:
+                    case GREEN_BANNER:
+                    case GREEN_WALL_BANNER:
+                    case LIGHT_BLUE_BANNER:
+                    case LIGHT_BLUE_WALL_BANNER:
+                    case LIGHT_GRAY_BANNER:
+                    case LIGHT_GRAY_WALL_BANNER:
+                    case LIME_BANNER:
+                    case LIME_WALL_BANNER:
+                    case MAGENTA_BANNER:
+                    case MAGENTA_WALL_BANNER:
+                    case ORANGE_BANNER:
+                    case ORANGE_WALL_BANNER:
+                    case PINK_BANNER:
+                    case PINK_WALL_BANNER:
+                    case PURPLE_BANNER:
+                    case PURPLE_WALL_BANNER:
+                    case RED_BANNER:
+                    case RED_WALL_BANNER:
+                    case WHITE_BANNER:
+                    case WHITE_WALL_BANNER:
+                    case YELLOW_BANNER:
+                    case YELLOW_WALL_BANNER:
                     case FURNACE:
                     case CAKE:
                     case DISPENSER:
@@ -1754,7 +1816,7 @@ import java.util.regex.Pattern;
                     case NOTE_BLOCK:
                     case JUKEBOX:
                     case CRAFTING_TABLE:
-                    case LEGACY_SILVER_SHULKER_BOX:
+                    case LIGHT_GRAY_SHULKER_BOX:
                     case BLACK_SHULKER_BOX:
                     case BLUE_SHULKER_BOX:
                     case RED_SHULKER_BOX:
@@ -1770,8 +1832,8 @@ import java.util.regex.Pattern;
                     case LIME_SHULKER_BOX:
                     case LIGHT_BLUE_SHULKER_BOX:
                     case MAGENTA_SHULKER_BOX:
-                    case LEGACY_COMMAND_REPEATING:
-                    case LEGACY_COMMAND_CHAIN:
+                    case CHAIN_COMMAND_BLOCK:
+                    case REPEATING_COMMAND_BLOCK:
 
                         eventType = PlayerBlockEventType.INTERACT_BLOCK;
                         break;
@@ -1785,18 +1847,17 @@ import java.util.regex.Pattern;
                         break;
                 }
                 lb = new BukkitLazyBlock(PlotBlock.get(block.getType().toString()));
-                ItemStack hand = player.getItemInHand();
+                ItemStack hand = player.getInventory().getItemInMainHand();
                 if (eventType != null && (eventType != PlayerBlockEventType.INTERACT_BLOCK
                     || !player.isSneaking())) {
                     break;
                 }
                 Material type = (hand == null) ? null : hand.getType();
-                int id = (type == null) ? 0 : type.getId();
                 if (type == Material.AIR) {
                     eventType = PlayerBlockEventType.INTERACT_BLOCK;
                     break;
                 }
-                if (id < 198) {
+                if (type == null || type.isBlock()) {
                     location = BukkitUtil
                         .getLocation(block.getRelative(event.getBlockFace()).getLocation());
                     eventType = PlayerBlockEventType.PLACE_BLOCK;
@@ -1804,63 +1865,81 @@ import java.util.regex.Pattern;
                 }
                 Material handType = hand.getType();
                 lb = new BukkitLazyBlock(PlotBlock.get(handType.toString()));
-                switch (handType) {
-                    case LEGACY_FIREWORK:
-                    case LEGACY_MONSTER_EGG:
-                    case LEGACY_MONSTER_EGGS:
-                        eventType = PlayerBlockEventType.SPAWN_MOB;
-                        break;
-                    case ARMOR_STAND:
-                        location = BukkitUtil
-                            .getLocation(block.getRelative(event.getBlockFace()).getLocation());
-                        eventType = PlayerBlockEventType.PLACE_MISC;
-                        break;
-                    case WRITTEN_BOOK:
-                    case LEGACY_BOOK_AND_QUILL:
-                    case BOOK:
-                        eventType = PlayerBlockEventType.READ;
-                        break;
-                    case APPLE:
-                    case BAKED_POTATO:
-                    case LEGACY_MUSHROOM_SOUP:
-                    case BREAD:
-                    case CARROT:
-                    case LEGACY_CARROT_ITEM:
-                    case COOKIE:
-                    case LEGACY_GRILLED_PORK:
-                    case POISONOUS_POTATO:
-                    case MUTTON:
-                    case LEGACY_PORK:
-                    case POTATO:
-                    case LEGACY_POTATO_ITEM:
-                    case POTION:
-                    case PUMPKIN_PIE:
-                    case RABBIT:
-                    case RABBIT_FOOT:
-                    case RABBIT_STEW:
-                    case LEGACY_RAW_BEEF:
-                    case LEGACY_RAW_FISH:
-                    case LEGACY_RAW_CHICKEN:
-                        eventType = PlayerBlockEventType.EAT;
-                        break;
-                    case MINECART:
-                    case LEGACY_STORAGE_MINECART:
-                    case LEGACY_POWERED_MINECART:
-                    case HOPPER_MINECART:
-                    case LEGACY_EXPLOSIVE_MINECART:
-                    case LEGACY_COMMAND_MINECART:
-                    case LEGACY_BOAT:
-                        eventType = PlayerBlockEventType.PLACE_VEHICLE;
-                        break;
-                    case PAINTING:
-                    case ITEM_FRAME:
-                        location = BukkitUtil
-                            .getLocation(block.getRelative(event.getBlockFace()).getLocation());
-                        eventType = PlayerBlockEventType.PLACE_HANGING;
-                        break;
-                    default:
-                        eventType = PlayerBlockEventType.INTERACT_BLOCK;
-                        break;
+                if (handType.toString().endsWith("egg")) {
+                    eventType = PlayerBlockEventType.SPAWN_MOB;
+                } else {
+                    switch (handType) {
+                        case FIREWORK_ROCKET:
+                        case FIREWORK_STAR:
+                            eventType = PlayerBlockEventType.SPAWN_MOB;
+                            break;
+                        case ARMOR_STAND:
+                            location = BukkitUtil
+                                .getLocation(block.getRelative(event.getBlockFace()).getLocation());
+                            eventType = PlayerBlockEventType.PLACE_MISC;
+                            break;
+                        case WRITTEN_BOOK:
+                        case WRITABLE_BOOK:
+                        case ENCHANTED_BOOK:
+                        case KNOWLEDGE_BOOK:
+                        case BOOK:
+                            eventType = PlayerBlockEventType.READ;
+                            break;
+                        case APPLE:
+                        case BAKED_POTATO:
+                        case MUSHROOM_STEW:
+                        case BREAD:
+                        case CARROT:
+                        case GOLDEN_CARROT:
+                        case COOKIE:
+                        case PORKCHOP:
+                        case POISONOUS_POTATO:
+                        case MUTTON:
+                        case COOKED_PORKCHOP:
+                        case POTATO:
+                        case POTION:
+                        case PUMPKIN_PIE:
+                        case RABBIT:
+                        case RABBIT_FOOT:
+                        case RABBIT_STEW:
+                        case BEEF:
+                        case COOKED_BEEF:
+                        case TROPICAL_FISH:
+                        case PUFFERFISH:
+                        case CHICKEN:
+                        case COOKED_CHICKEN:
+                        case COOKED_MUTTON:
+                        case COOKED_RABBIT:
+                        case COOKED_SALMON:
+                        case SALMON:
+                        case COD:
+                        case COOKED_COD:
+                            eventType = PlayerBlockEventType.EAT;
+                            break;
+                        case MINECART:
+                        case CHEST_MINECART:
+                        case FURNACE_MINECART:
+                        case HOPPER_MINECART:
+                        case TNT_MINECART:
+                        case COMMAND_BLOCK_MINECART:
+                        case BIRCH_BOAT:
+                        case ACACIA_BOAT:
+                        case DARK_OAK_BOAT:
+                        case JUNGLE_BOAT:
+                        case OAK_BOAT:
+                        case SPRUCE_BOAT:
+                            eventType = PlayerBlockEventType.PLACE_VEHICLE;
+                            break;
+                        case PAINTING:
+                        case ITEM_FRAME:
+                            location = BukkitUtil
+                                .getLocation(block.getRelative(event.getBlockFace()).getLocation());
+                            eventType = PlayerBlockEventType.PLACE_HANGING;
+                            break;
+                        default:
+                            eventType = PlayerBlockEventType.INTERACT_BLOCK;
+                            break;
+                    }
                 }
                 break;
             }
@@ -1912,7 +1991,7 @@ import java.util.regex.Pattern;
             case BUILD_WITHER:
             case BUILD_SNOWMAN:
             case CUSTOM:
-                if (!area.SPAWN_CUSTOM && entity.getType().getTypeId() != 30) {
+                if (!area.SPAWN_CUSTOM && entity.getType() != EntityType.ARMOR_STAND) {
                     event.setCancelled(true);
                     return;
                 }
@@ -2610,8 +2689,8 @@ import java.util.regex.Pattern;
                 }
             }
             return true;
-        } else if (dplot != null && (!(dplot.equals(vplot)) || (vplot != null && Objects
-            .equals(dplot.owner, vplot.owner)))) {
+        } else if (dplot != null && (!dplot.equals(vplot) || Objects
+            .equals(dplot.guessOwner(), vplot.guessOwner()))) {
             return vplot != null && Flags.PVE.isTrue(vplot);
         }
         return ((vplot != null && Flags.PVE.isTrue(vplot)) || !(damager instanceof Arrow
@@ -2696,7 +2775,7 @@ import java.util.regex.Pattern;
             if (plot.getFlag(Flags.DISABLE_PHYSICS, false)) {
                 Block block = event.getBlockPlaced();
                 if (block.getType().hasGravity()) {
-                    sendBlockChange(block.getLocation(), block.getType(), block.getData());
+                    sendBlockChange(block.getLocation(), block.getBlockData());
                 }
             }
         } else if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD)) {

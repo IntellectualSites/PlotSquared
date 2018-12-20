@@ -25,7 +25,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
-public class EntitySpawnListener implements Listener {
+@SuppressWarnings("unused") public class EntitySpawnListener implements Listener {
 
     private static boolean ignoreTP = false;
 
