@@ -17,8 +17,6 @@ is to provide a lag-free and smooth experience.
 * [Download](https://github.com/IntellectualSites/PlotSquared/releases/tag/dev)
 * [Jenkins](https://ci.athion.net/job/PlotSquared/)
 * [Spigot Page](https://www.spigotmc.org/resources/plotsquared.1177/)
-* [Discord](https://discord.gg/a6NZPV2)
-* [WebChat/IRC]: #IntellectualCrafters on irc.esper.net
 * [Discord](https://discord.gg/ngZCzbU)
 * [Wiki](https://github.com/intellectualcrafters/plotsquared/wiki)
 
@@ -67,5 +65,3 @@ Suggestions are welcome! We have a separate issue tracker for suggestions, that 
 * [PlotSquaredMG](https://www.spigotmc.org/resources/plotsquaredmg.8025/)
 * [BasicPlots](https://www.spigotmc.org/resources/basicplots.6901/)
 * [HoloPlots](https://www.spigotmc.org/resources/holoplots.4880/)
-
-[WebChat/IRC]: https://webchat.esper.net/?nick=&channels=IntellectualCrafters
