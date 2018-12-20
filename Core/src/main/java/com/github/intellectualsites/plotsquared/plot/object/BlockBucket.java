@@ -23,7 +23,8 @@ import java.util.Map.Entry;
     private final Map<Range, PlotBlock> ranges = new HashMap<>();
     private final Map<PlotBlock, Integer> blocks;
     private final BucketIterator bucketIterator = new BucketIterator();
-    private boolean compiled;
+    private boolean compiled, singleItem;
+    private PlotBlock head;
 
     public BlockBucket() {
         this.blocks = new HashMap<>();
@@ -49,6 +50,9 @@ import java.util.Map.Entry;
     public void addBlock(@NonNull final PlotBlock block, final int chance) {
         this.blocks.put(block, chance);
         this.compiled = false;
+        if (head == null) {
+            head = block;
+        }
     }
 
     public boolean isEmpty() {
@@ -85,6 +89,28 @@ import java.util.Map.Entry;
         return Collections.unmodifiableCollection(blocks);
     }
 
+    /**
+     * Get an array containing a specified amount of randomly selected blocks
+     *
+     * @param count Number of blocks
+     * @return Immutable collection containing randomly selected blocks
+     */
+    public PlotBlock[] getBlockArray(final int count) {
+        final PlotBlock[] blocks = new PlotBlock[count];
+        if (this.singleItem) {
+            Arrays.fill(blocks, 0, count, getBlock());
+        } else {
+            for (int i = 0; i < count; i++) {
+                blocks[i] = getBlock();
+            }
+        }
+        return blocks;
+    }
+
+    public boolean hasSingleItem() {
+        return this.singleItem;
+    }
+
     public void compile() {
         if (isCompiled()) {
             return;
@@ -98,6 +124,7 @@ import java.util.Map.Entry;
         if (blocks.size() == 1) {
             this.ranges.put(new Range(0, 100, true), blocks.keySet().toArray(new PlotBlock[1])[0]);
             this.compiled = true;
+            this.singleItem = true;
             return;
         }
 
@@ -178,6 +205,8 @@ import java.util.Map.Entry;
         }
         if (this.isEmpty()) {
             return StringPlotBlock.EVERYTHING;
+        } else if (this.hasSingleItem()) {
+            return this.head;
         }
         final int number = random.nextInt(101);
         for (final Map.Entry<Range, PlotBlock> entry : ranges.entrySet()) {
