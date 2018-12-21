@@ -77,24 +77,17 @@ public abstract class SchematicHandler {
                         if (value == null) {
                             MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.getId());
                         } else {
-                            TaskManager.runTaskAsync(new Runnable() {
-                                @Override public void run() {
-                                    MainUtil.sendMessage(null, "&6ID: " + plot.getId());
-                                    boolean result = SchematicHandler.manager.save(value,
-                                        directory + File.separator + name + ".schematic");
-                                    if (!result) {
-                                        MainUtil.sendMessage(null,
-                                            "&7 - Failed to save &c" + plot.getId());
-                                    } else {
-                                        MainUtil
-                                            .sendMessage(null, "&7 - &a  success: " + plot.getId());
-                                    }
-                                    TaskManager.runTask(new Runnable() {
-                                        @Override public void run() {
-                                            THIS.run();
-                                        }
-                                    });
+                            TaskManager.runTaskAsync(() -> {
+                                MainUtil.sendMessage(null, "&6ID: " + plot.getId());
+                                boolean result = SchematicHandler.manager
+                                    .save(value, directory + File.separator + name + ".schematic");
+                                if (!result) {
+                                    MainUtil
+                                        .sendMessage(null, "&7 - Failed to save &c" + plot.getId());
+                                } else {
+                                    MainUtil.sendMessage(null, "&7 - &a  success: " + plot.getId());
                                 }
+                                TaskManager.runTask(() -> THIS.run());
                             });
                         }
                     }
@@ -117,158 +110,156 @@ public abstract class SchematicHandler {
         final int yOffset, final int zOffset, final boolean autoHeight,
         final RunnableVal<Boolean> whenDone) {
 
-        TaskManager.runTask(new Runnable() {
-            @Override public void run() {
-                if (whenDone != null) {
-                    whenDone.value = false;
+        TaskManager.runTask(() -> {
+            if (whenDone != null) {
+                whenDone.value = false;
+            }
+            if (schematic == null) {
+                PlotSquared.debug("Schematic == null :|");
+                TaskManager.runTask(whenDone);
+                return;
+            }
+            try {
+                // Set flags
+                if (plot.hasOwner()) {
+                    Map<String, Tag> flags = schematic.getFlags();
+                    if (!flags.isEmpty()) {
+                        for (Map.Entry<String, Tag> entry : flags.entrySet()) {
+                            plot.setFlag(Flags.getFlag(entry.getKey()),
+                                StringTag.class.cast(entry.getValue()).getValue());
+                        }
+
+                    }
                 }
-                if (schematic == null) {
-                    PlotSquared.debug("Schematic == null :|");
+                final LocalBlockQueue queue = plot.getArea().getQueue(false);
+                BlockVector3 dimension = schematic.getClipboard().getDimensions();
+                final int WIDTH = dimension.getX();
+                final int LENGTH = dimension.getZ();
+                final int HEIGHT = dimension.getY();
+                // Validate dimensions
+                RegionWrapper region = plot.getLargestRegion();
+                if (((region.maxX - region.minX + xOffset + 1) < WIDTH) || (
+                    (region.maxZ - region.minZ + zOffset + 1) < LENGTH) || (HEIGHT > 256)) {
+                    PlotSquared.debug("Schematic is too large");
+                    PlotSquared.debug(
+                        "(" + WIDTH + ',' + LENGTH + ',' + HEIGHT + ") is bigger than (" + (
+                            region.maxX - region.minX) + ',' + (region.maxZ - region.minZ)
+                            + ",256)");
                     TaskManager.runTask(whenDone);
                     return;
                 }
-                try {
-                    // Set flags
-                    if (plot.hasOwner()) {
-                        Map<String, Tag> flags = schematic.getFlags();
-                        if (!flags.isEmpty()) {
-                            for (Map.Entry<String, Tag> entry : flags.entrySet()) {
-                                plot.setFlag(Flags.getFlag(entry.getKey()),
-                                    StringTag.class.cast(entry.getValue()).getValue());
-                            }
-
-                        }
-                    }
-                    final LocalBlockQueue queue = plot.getArea().getQueue(false);
-                    BlockVector3 dimension = schematic.getClipboard().getDimensions();
-                    final int WIDTH = dimension.getX();
-                    final int LENGTH = dimension.getZ();
-                    final int HEIGHT = dimension.getY();
-                    // Validate dimensions
-                    RegionWrapper region = plot.getLargestRegion();
-                    if (((region.maxX - region.minX + xOffset + 1) < WIDTH) || (
-                        (region.maxZ - region.minZ + zOffset + 1) < LENGTH) || (HEIGHT > 256)) {
-                        PlotSquared.debug("Schematic is too large");
-                        PlotSquared.debug(
-                            "(" + WIDTH + ',' + LENGTH + ',' + HEIGHT + ") is bigger than (" + (
-                                region.maxX - region.minX) + ',' + (region.maxZ - region.minZ)
-                                + ",256)");
-                        TaskManager.runTask(whenDone);
-                        return;
-                    }
-                    // block type and data arrays
-                    final BlockArrayClipboard blockArrayClipboard = schematic.getClipboard();
-                    // Calculate the optimal height to paste the schematic at
-                    final int y_offset_actual;
-                    if (autoHeight) {
-                        if (HEIGHT >= 256) {
-                            y_offset_actual = yOffset;
-                        } else {
-                            PlotArea pw = plot.getArea();
-                            if (pw instanceof ClassicPlotWorld) {
-                                y_offset_actual = yOffset + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
-                            } else {
-                                y_offset_actual = yOffset + 1 + MainUtil
-                                    .getHeighestBlock(plot.getWorldName(), region.minX + 1,
-                                        region.minZ + 1);
-                            }
-                        }
-                    } else {
+                // block type and data arrays
+                final BlockArrayClipboard blockArrayClipboard = schematic.getClipboard();
+                // Calculate the optimal height to paste the schematic at
+                final int y_offset_actual;
+                if (autoHeight) {
+                    if (HEIGHT >= 256) {
                         y_offset_actual = yOffset;
-                    }
-                    Location pos1 =
-                        new Location(plot.getWorldName(), region.minX + xOffset, y_offset_actual,
-                            region.minZ + zOffset);
-                    Location pos2 = pos1.clone().add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
-                    final int p1x = pos1.getX();
-                    final int p1z = pos1.getZ();
-                    final int p2x = pos2.getX();
-                    final int p2z = pos2.getZ();
-                    final int bcx = p1x >> 4;
-                    final int bcz = p1z >> 4;
-                    final int tcx = p2x >> 4;
-                    final int tcz = p2z >> 4;
-/*                    final ArrayList<ChunkLoc> chunks = new ArrayList<>();
-                    for (int x = bcx; x <= tcx; x++) {
-                        for (int z = bcz; z <= tcz; z++) {
-                            chunks.add(new ChunkLoc(x, z));
+                    } else {
+                        PlotArea pw = plot.getArea();
+                        if (pw instanceof ClassicPlotWorld) {
+                            y_offset_actual = yOffset + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
+                        } else {
+                            y_offset_actual = yOffset + 1 + MainUtil
+                                .getHeighestBlock(plot.getWorldName(), region.minX + 1,
+                                    region.minZ + 1);
                         }
-                    }*/
-                    ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
-                        @Override public void run(int[] value) {
-                            //int count = 0;
-                            //while (!chunks.isEmpty() && count < 256) {
-                            //count++;
-                            ChunkLoc chunk = new ChunkLoc(value[0], value[1]);
-                            PlotSquared.log(chunk.toString());
-                            int x = chunk.x;
-                            int z = chunk.z;
-                            int xxb = x << 4;
-                            int zzb = z << 4;
-                            int xxt = xxb + 15;
-                            int zzt = zzb + 15;
-                            if (x == bcx) {
-                                xxb = p1x;
-                            }
-                            if (x == tcx) {
-                                xxt = p2x;
-                            }
-                            if (z == bcz) {
-                                zzb = p1z;
-                            }
-                            if (z == tcz) {
-                                zzt = p2z;
-                            }
-                            // Paste schematic here
-
-                            for (int ry = 0; ry < Math.min(256, HEIGHT); ry++) {
-                                int yy = y_offset_actual + ry;
-                                if (yy > 255) {
-                                    continue;
-                                }
-                                int i1 = ry * WIDTH * LENGTH;
-                                for (int rz = zzb - p1z; rz <= (zzt - p1z); rz++) {
-                                    int i2 = (rz * WIDTH) + i1;
-                                    for (int rx = xxb - p1x; rx <= (xxt - p1x); rx++) {
-                                        int i = i2 + rx;
-                                        int xx = p1x + rx;
-                                        int zz = p1z + rz;
-                                        BaseBlock id = blockArrayClipboard
-                                            .getFullBlock(BlockVector3.at(rx, ry, rz));
-                                        queue.setBlock(xx, yy, zz, id);
-                                    }
-                                }
-                            }
-/*                            }
-                            if (!chunks.isEmpty()) {
-                                this.run();
-                            } else {
-                                queue.flush();
-                                HashMap<BlockLoc, CompoundTag> tiles = schematic.getClipboard().getTiles();
-                                if (!tiles.isEmpty()) {
-                                    TaskManager.IMP.sync(new RunnableVal<Object>() {
-                                        @Override public void run(Object value) {
-                                            for (Map.Entry<BlockLoc, CompoundTag> entry : schematic
-                                                .getTiles().entrySet()) {
-                                                BlockLoc loc = entry.getKey();
-                                                restoreTile(queue, entry.getValue(),
-                                                    p1x + xOffset + loc.x, loc.y + y_offset_actual,
-                                                    p1z + zOffset + loc.z);
-                                            }
-                                        }
-                                    });
-                                }
-                            }*/
-                        }
-                    }, null, 10);
-                    if (whenDone != null) {
-                        whenDone.value = true;
-                        whenDone.run();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    TaskManager.runTask(whenDone);
+                } else {
+                    y_offset_actual = yOffset;
                 }
+                Location pos1 =
+                    new Location(plot.getWorldName(), region.minX + xOffset, y_offset_actual,
+                        region.minZ + zOffset);
+                Location pos2 = pos1.clone().add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
+                final int p1x = pos1.getX();
+                final int p1z = pos1.getZ();
+                final int p2x = pos2.getX();
+                final int p2z = pos2.getZ();
+                final int bcx = p1x >> 4;
+                final int bcz = p1z >> 4;
+                final int tcx = p2x >> 4;
+                final int tcz = p2z >> 4;
+/*                    final ArrayList<ChunkLoc> chunks = new ArrayList<>();
+                for (int x = bcx; x <= tcx; x++) {
+                    for (int z = bcz; z <= tcz; z++) {
+                        chunks.add(new ChunkLoc(x, z));
+                    }
+                }*/
+                ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
+                    @Override public void run(int[] value) {
+                        //int count = 0;
+                        //while (!chunks.isEmpty() && count < 256) {
+                        //count++;
+                        ChunkLoc chunk = new ChunkLoc(value[0], value[1]);
+                        PlotSquared.log(chunk.toString());
+                        int x = chunk.x;
+                        int z = chunk.z;
+                        int xxb = x << 4;
+                        int zzb = z << 4;
+                        int xxt = xxb + 15;
+                        int zzt = zzb + 15;
+                        if (x == bcx) {
+                            xxb = p1x;
+                        }
+                        if (x == tcx) {
+                            xxt = p2x;
+                        }
+                        if (z == bcz) {
+                            zzb = p1z;
+                        }
+                        if (z == tcz) {
+                            zzt = p2z;
+                        }
+                        // Paste schematic here
+
+                        for (int ry = 0; ry < Math.min(256, HEIGHT); ry++) {
+                            int yy = y_offset_actual + ry;
+                            if (yy > 255) {
+                                continue;
+                            }
+                            int i1 = ry * WIDTH * LENGTH;
+                            for (int rz = zzb - p1z; rz <= (zzt - p1z); rz++) {
+                                int i2 = (rz * WIDTH) + i1;
+                                for (int rx = xxb - p1x; rx <= (xxt - p1x); rx++) {
+                                    int i = i2 + rx;
+                                    int xx = p1x + rx;
+                                    int zz = p1z + rz;
+                                    BaseBlock id = blockArrayClipboard
+                                        .getFullBlock(BlockVector3.at(rx, ry, rz));
+                                    queue.setBlock(xx, yy, zz, id);
+                                }
+                            }
+                        }
+/*                            }
+                        if (!chunks.isEmpty()) {
+                            this.run();
+                        } else {
+                            queue.flush();
+                            HashMap<BlockLoc, CompoundTag> tiles = schematic.getClipboard().getTiles();
+                            if (!tiles.isEmpty()) {
+                                TaskManager.IMP.sync(new RunnableVal<Object>() {
+                                    @Override public void run(Object value) {
+                                        for (Map.Entry<BlockLoc, CompoundTag> entry : schematic
+                                            .getTiles().entrySet()) {
+                                            BlockLoc loc = entry.getKey();
+                                            restoreTile(queue, entry.getValue(),
+                                                p1x + xOffset + loc.x, loc.y + y_offset_actual,
+                                                p1z + zOffset + loc.z);
+                                        }
+                                    }
+                                });
+                            }
+                        }*/
+                    }
+                }, null, 10);
+                if (whenDone != null) {
+                    whenDone.value = true;
+                    whenDone.run();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                TaskManager.runTask(whenDone);
             }
         });
     }

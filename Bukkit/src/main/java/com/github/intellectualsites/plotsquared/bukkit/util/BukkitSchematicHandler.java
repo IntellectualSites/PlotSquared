@@ -1,7 +1,6 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.schematic.StateWrapper;
-import com.github.intellectualsites.plotsquared.plot.object.ChunkLoc;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
@@ -13,12 +12,10 @@ import com.sk89q.jnbt.*;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BaseBlock;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.World;
 
 import java.io.ByteArrayOutputStream;
 import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * Schematic Handler.
@@ -39,9 +36,9 @@ public class BukkitSchematicHandler extends SchematicHandler {
                     new CuboidRegion(BukkitUtil.IMP.getWeWorld(world), bot.getBlockVector3(),
                         top.getBlockVector3());
 
-                final int width = top.getX() - bot.getX() + 1;
-                int height = top.getY() - bot.getY() + 1;
-                final int length = top.getZ() - bot.getZ() + 1;
+                final int width = cuboidRegion.getWidth();
+                int height = cuboidRegion.getHeight();
+                final int length = cuboidRegion.getLength();
                 Map<String, Tag> schematic = new HashMap<>();
                 schematic.put("Version", new IntTag(1));
 
@@ -89,109 +86,106 @@ public class BukkitSchematicHandler extends SchematicHandler {
                         RegionWrapper region = queue.poll();
                         Location pos1 = new Location(world, region.minX, region.minY, region.minZ);
                         Location pos2 = new Location(world, region.maxX, region.maxY, region.maxZ);
-                        final int bx = bot.getX();
-                        final int bz = bot.getZ();
                         final int p1x = pos1.getX();
                         final int p1z = pos1.getZ();
                         final int p2x = pos2.getX();
                         final int p2z = pos2.getZ();
-                        final int bcx = p1x >> 4;
-                        final int bcz = p1z >> 4;
-                        final int tcx = p2x >> 4;
-                        final int tcz = p2z >> 4;
                         final int sy = pos1.getY();
                         final int ey = pos2.getY();
-                        // Generate list of chunks
-                        final ArrayList<ChunkLoc> chunks = new ArrayList<>();
-                        for (int x = bcx; x <= tcx; x++) {
-                            for (int z = bcz; z <= tcz; z++) {
-                                chunks.add(new ChunkLoc(x, z));
-                            }
-                        }
-                        final World worldObj = Bukkit.getWorld(world);
-                        // Main thread
+                        Iterator<Integer> yiter = IntStream.range(sy, ey).iterator();
                         TaskManager.runTask(new Runnable() {
                             @Override public void run() {
-                                long start = System.currentTimeMillis();
-                                while (!chunks.isEmpty()
-                                    && System.currentTimeMillis() - start < 20) {
-                                    // save schematics
-                                    ChunkLoc chunk = chunks.remove(0);
-                                    Chunk bc = worldObj.getChunkAt(chunk.x, chunk.z);
-                                    if (!bc.load(false)) {
-                                        continue;
-                                    }
-                                    int X = chunk.x;
-                                    int Z = chunk.z;
-                                    int xxb = X << 4;
-                                    int zzb = Z << 4;
-                                    int xxt = xxb + 15;
-                                    int zzt = zzb + 15;
+                                final Runnable yTask = this;
+                                long ystart = System.currentTimeMillis();
+                                while (yiter.hasNext()
+                                    && System.currentTimeMillis() - ystart < 20) {
+                                    final int fy = yiter.next();
+                                    Iterator<Integer> ziter = IntStream.range(p1z, p2z).iterator();
+                                    TaskManager.runTask(new Runnable() {
+                                        @Override public void run() {
+                                            final Runnable zTask = this;
+                                            long zstart = System.currentTimeMillis();
+                                            Iterator<Integer> xiter =
+                                                IntStream.range(p1x, p2x).iterator();
+                                            while (ziter.hasNext()
+                                                && System.currentTimeMillis() - zstart < 20) {
+                                                final int fz = ziter.next();
+                                                TaskManager.runTask(new Runnable() {
+                                                    @Override public void run() {
+                                                        long xstart = System.currentTimeMillis();
+                                                        while (xiter.hasNext()
+                                                            && System.currentTimeMillis() - xstart
+                                                            < 20) {
+                                                            final int x = xiter.next();
+                                                            int rx = x - p1x;
+                                                            int ry = fy - sy;
+                                                            int rz = fz - p1z;
+                                                            BlockVector3 point =
+                                                                BlockVector3.at(x, fy, fz);
+                                                            BaseBlock block =
+                                                                cuboidRegion.getWorld()
+                                                                    .getFullBlock(point);
+                                                            if (block.getNbtData() != null) {
+                                                                Map<String, Tag> values =
+                                                                    new HashMap<>();
+                                                                for (Map.Entry<String, Tag> entry : block
+                                                                    .getNbtData().getValue()
+                                                                    .entrySet()) {
+                                                                    values.put(entry.getKey(),
+                                                                        entry.getValue());
+                                                                }
+                                                                // Remove 'id' if it exists. We want 'Id'
+                                                                values.remove("id");
 
-                                    if (X == bcx) {
-                                        xxb = p1x;
-                                    }
-                                    if (X == tcx) {
-                                        xxt = p2x;
-                                    }
-                                    if (Z == bcz) {
-                                        zzb = p1z;
-                                    }
-                                    if (Z == tcz) {
-                                        zzt = p2z;
-                                    }
-                                    for (int y = sy; y <= Math.min(255, ey); y++) {
-                                        int ry = y - sy;
-                                        for (int z = zzb; z <= zzt; z++) {
-                                            int rz = z - bz;
-                                            for (int x = xxb; x <= xxt; x++) {
-                                                int rx = x - bx;
-                                                BlockVector3 point = BlockVector3.at(x, y, z);
-                                                BaseBlock block =
-                                                    cuboidRegion.getWorld().getFullBlock(point);
-                                                if (block.getNbtData() != null) {
-                                                    Map<String, Tag> values = new HashMap<>();
-                                                    for (Map.Entry<String, Tag> entry : block
-                                                        .getNbtData().getValue().entrySet()) {
-                                                        values
-                                                            .put(entry.getKey(), entry.getValue());
+                                                                // Positions are kept in NBT, we don't want that.
+                                                                values.remove("x");
+                                                                values.remove("y");
+                                                                values.remove("z");
+
+                                                                values.put("Id", new StringTag(
+                                                                    block.getNbtId()));
+                                                                values.put("Pos", new IntArrayTag(
+                                                                    new int[] {rx, ry, rz}));
+
+                                                                tileEntities
+                                                                    .add(new CompoundTag(values));
+                                                            }
+                                                            String blockKey =
+                                                                block.toImmutableState()
+                                                                    .getAsString();
+                                                            int blockId;
+                                                            if (palette.containsKey(blockKey)) {
+                                                                blockId = palette.get(blockKey);
+                                                            } else {
+                                                                blockId = palette.size();
+                                                                palette
+                                                                    .put(blockKey, palette.size());
+                                                            }
+
+                                                            while ((blockId & -128) != 0) {
+                                                                buffer.write(blockId & 127 | 128);
+                                                                blockId >>>= 7;
+                                                            }
+                                                            buffer.write(blockId);
+                                                        }
+                                                        if (xiter.hasNext()) {
+                                                            TaskManager.runTaskLater(this, 1);
+                                                        } else {
+                                                            zTask.run();
+                                                        }
                                                     }
-                                                    // Remove 'id' if it exists. We want 'Id'
-                                                    values.remove("id");
-
-                                                    // Positions are kept in NBT, we don't want that.
-                                                    values.remove("x");
-                                                    values.remove("y");
-                                                    values.remove("z");
-
-                                                    values
-                                                        .put("Id", new StringTag(block.getNbtId()));
-                                                    values.put("Pos",
-                                                        new IntArrayTag(new int[] {rx, ry, rz}));
-
-                                                    tileEntities.add(new CompoundTag(values));
-                                                }
-                                                String blockKey =
-                                                    block.toImmutableState().getAsString();
-                                                int blockId;
-                                                if (palette.containsKey(blockKey)) {
-                                                    blockId = palette.get(blockKey);
-                                                } else {
-                                                    blockId = palette.size();
-                                                    palette.put(blockKey, palette.size());
-                                                }
-
-                                                while ((blockId & -128) != 0) {
-                                                    buffer.write(blockId & 127 | 128);
-                                                    blockId >>>= 7;
-                                                }
-                                                buffer.write(blockId);
+                                                });
+                                            }
+                                            if (ziter.hasNext()) {
+                                                TaskManager.runTaskLater(zTask, 1);
+                                            } else {
+                                                yTask.run();
                                             }
                                         }
-                                    }
+                                    });
                                 }
-                                if (!chunks.isEmpty()) {
-                                    TaskManager.runTaskLater(this, 1);
+                                if (yiter.hasNext()) {
+                                    TaskManager.runTaskLater(yTask, 1);
                                 } else {
                                     regionTask.run();
                                 }
