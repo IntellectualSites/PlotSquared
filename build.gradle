@@ -8,11 +8,11 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.2'
-        classpath 'org.ajoberstar:grgit:1.7.0'
+        classpath 'org.ajoberstar.grgit:grgit-gradle:3.0.0'
     }
     configurations.all {
         resolutionStrategy {
-            force 'org.ow2.asm:asm:6.0_BETA'
+            force 'org.ow2.asm:asm:7.0'
         }
     }
 }
@@ -21,15 +21,15 @@ plugins {
     id 'io.franzbecker.gradle-lombok' version '1.14'
 }
 
-group = 'com.intellectualcrafters'
+group = 'com.github.intellectualsites,plotsquared'
 
 def rootVersion = "4"
 def revision = ""
 def buildNumber = ""
 def date = ""
 ext {
-    git = Grgit.open(file(".git"))
-    date = git.head().date.format("yy.MM.dd")
+    git = Grgit.open(dir: '.git')
+    date = git.head().getDate().format("yy.MM.dd")
     revision = "-${git.head().abbreviatedId}"
     parents = git.head().parentIds;
     index = 0;  // Offset to match CI
@@ -53,6 +53,8 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'com.github.johnrengelman.shadow'
 
+    group = 'com.github.intellectualsites,plotsquared'
+
     lombok {
         version = '1.18.4'
         sha256 = ""
@@ -66,6 +68,7 @@ subprojects {
         }
         compile 'com.google.guava:guava:27.0.1-jre'
         compileOnly 'org.projectlombok:lombok:1.18.4'
+        testImplementation "junit:junit:4.12"
     }
     clean {
         delete file("../target")
