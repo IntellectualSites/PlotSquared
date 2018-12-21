@@ -670,7 +670,21 @@ public class BukkitLegacyMappings extends LegacyMappings {
     private static final Map<String, PlotBlock> OLD_STRING_TO_STRING_PLOT_BLOCK = new HashMap<>();
 
     public BukkitLegacyMappings() {
-        for (final LegacyBlock legacyBlock : BLOCKS) {
+        this.addAll(Arrays.asList(BLOCKS));
+        // Make sure to add new blocks as well
+        final List<LegacyBlock> missing = new ArrayList<>();
+        for (final Material material : Material.values()) {
+            final String materialName = material.name().toLowerCase(Locale.ENGLISH);
+            if (OLD_STRING_TO_STRING_PLOT_BLOCK.get(materialName) == null) {
+                final LegacyBlock missingBlock = new LegacyBlock(material.getId(), materialName, materialName);
+                missing.add(missingBlock);
+            }
+        }
+        addAll(missing);
+    }
+
+    private void addAll(@NonNull final Collection<LegacyBlock> blocks) {
+        for (final LegacyBlock legacyBlock : blocks) {
             LEGACY_ID_TO_STRING_PLOT_BLOCK
                 .put(legacyBlock.getNumericalId(), legacyBlock.toStringPlotBlock());
             if (legacyBlock.getDataValue() != 0) {
