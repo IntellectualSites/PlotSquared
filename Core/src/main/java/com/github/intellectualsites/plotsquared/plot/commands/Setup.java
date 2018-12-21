@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -246,7 +247,13 @@ import java.util.Map.Entry;
                         step.getType().getType(), String.valueOf(step.getDefaultValue()));
                     return false;
                 }
-                boolean valid = step.isValid(args[0]);
+
+                boolean valid = false;
+                try {
+                    step.isValid(args[0]);
+                } catch (final Configuration.UnsafeBlockException e) {
+                    C.NOT_ALLOWED_BLOCK.send(player, e.getUnsafeBlock().toString());
+                }
                 if (valid) {
                     sendMessage(player, C.SETUP_VALID_ARG, step.getConstant(), args[0]);
                     step.setValue(args[0]);
