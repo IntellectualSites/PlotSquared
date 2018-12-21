@@ -13,15 +13,12 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.*;
-import org.bukkit.block.Sign;
-import org.bukkit.block.data.Rotatable;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.*;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -400,13 +397,15 @@ import java.util.*;
 
     @Override public boolean isBlockSolid(@NonNull final PlotBlock block) {
         try {
-            final Material material = getMaterial(block);
+            Material material = getMaterial(block);
+            if (material.isLegacy()) {
+                material = getBukkitLegacyMappings().fromLegacyToString(material.name())
+                    .to(Material.class);
+            }
             if (material.isBlock() && material.isSolid() && !material.hasGravity()) {
-                Class<?> data = material.data;
-                if (data.equals(MaterialData.class) && !material.isTransparent() && material
-                    .isOccluding() || data.equals(Tree.class) || data.equals(Sandstone.class)
-                    || data.equals(Wool.class) || data.equals(Step.class) || data
-                    .equals(WoodenStep.class)) {
+                String name = material.name().toLowerCase(Locale.ENGLISH);
+                if (material.isOccluding() || name.contains("stairs") || name.contains("slab")
+                    || name.contains("wool")) {
                     switch (material) {
                         case NOTE_BLOCK:
                         case SPAWNER:
@@ -418,7 +417,6 @@ import java.util.*;
             }
             return false;
         } catch (Exception ignored) {
-            ignored.printStackTrace();
             return false;
         }
     }
