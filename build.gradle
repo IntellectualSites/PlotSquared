@@ -1,3 +1,5 @@
+import org.ajoberstar.grgit.Grgit
+
 buildscript {
     repositories {
         mavenCentral()
@@ -5,7 +7,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.2'
         classpath 'org.ajoberstar:grgit:1.7.0'
     }
     configurations.all {
@@ -16,7 +18,6 @@ buildscript {
 }
 
 plugins {
-    id 'maven-publish'
     id 'io.franzbecker.gradle-lombok' version '1.14'
 }
 
@@ -27,7 +28,7 @@ def revision = ""
 def buildNumber = ""
 def date = ""
 ext {
-    git = org.ajoberstar.grgit.Grgit.open(file(".git"))
+    git = Grgit.open(file(".git"))
     date = git.head().date.format("yy.MM.dd")
     revision = "-${git.head().abbreviatedId}"
     parents = git.head().parentIds;
@@ -42,7 +43,7 @@ version = String.format("%s.%s%s%s", rootVersion, date, revision, buildNumber)
 
 description = rootProject.name
 if (project.hasProperty("lzNoVersion")) { // gradle build -PlzNoVersion
-    version = "unknown";
+    version = "unknown"
 }
 
 subprojects {
@@ -53,7 +54,7 @@ subprojects {
     apply plugin: 'com.github.johnrengelman.shadow'
 
     lombok {
-        version = '1.18.2'
+        version = '1.18.4'
         sha256 = ""
     }
 
@@ -63,7 +64,7 @@ subprojects {
             exclude(module: 'mockito-core')
             exclude(module: 'dummypermscompat')
         }
-        compile 'com.google.guava:guava:10.0'
+        compile 'com.google.guava:guava:27.0.1-jre'
         compileOnly 'org.projectlombok:lombok:1.18.4'
     }
     clean {

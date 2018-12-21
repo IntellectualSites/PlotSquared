@@ -12,7 +12,7 @@ dependencies {
     compile("net.milkbowl.vault:VaultAPI:1.6") {
         exclude module: 'bukkit'
     }
-    compileOnly 'org.projectlombok:lombok:1.16.18'
+    compileOnly 'org.projectlombok:lombok:1.18.4'
 }
 
 sourceCompatibility = 1.8
