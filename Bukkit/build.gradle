@@ -1,27 +1,30 @@
 repositories {
-    maven {url "https://hub.spigotmc.org/nexus/content/groups/public/"}
-    maven { url = "https://oss.sonatype.org/content/repositories/snapshots/"}
-    maven {url "http://nexus.hc.to/content/repositories/pub_releases"}
+    maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
+    maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url "http://nexus.hc.to/content/repositories/pub_releases" }
     mavenLocal()
 }
 
 dependencies {
     compile project(':Core')
-    compile 'org.spigotmc:spigot-api:1.12.1-R0.1-SNAPSHOT'
-    compile("net.milkbowl.vault:VaultAPI:1.6") {
+    testCompile project(':Core')
+    compile 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
+    compile(group: 'com.sk89q.worldedit', name: 'worldedit-bukkit', version: '7.0.0-SNAPSHOT')
+    compile("net.milkbowl.vault:VaultAPI:1.7") {
         exclude module: 'bukkit'
     }
+    compileOnly 'org.projectlombok:lombok:1.18.4'
 }
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 processResources {
     from('src/main/resources') {
         include 'plugin.yml'
         expand(
-            name: project.parent.name,
-            version: project.parent.version
+                name: project.parent.name,
+                version: project.parent.version
         )
     }
 }
@@ -39,7 +42,7 @@ shadowJar {
 
 shadowJar.doLast {
     task ->
-    ant.checksum file: task.archivePath
+        ant.checksum file: task.archivePath
 }
 
-build.dependsOn(shadowJar);
+build.dependsOn(shadowJar)

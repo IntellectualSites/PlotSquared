@@ -26,7 +26,7 @@ is to provide a lag-free and smooth experience.
 * [API Documentation](https://github.com/IntellectualSites/PlotSquared/wiki/Developer-documentation-(WIP))
 
 # Building
-Gradle is the **recommended** way to build the project. Use `./gradlew build` in the main project directory to build the project. Gradle is required if you intend to build or develop the Sponge module.
+Gradle is the **recommended** way to build the project. Use `./gradlew :Bukkit:build :Core:build` in the main project directory to build the project. Gradle is required if you intend to build or develop the Sponge module.
 If you prefer to use maven, a `pom.xml` file is provided for working with the Bukkit part of the plugin.
 
 # Contributing
