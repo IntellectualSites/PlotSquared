@@ -1380,25 +1380,23 @@ import java.util.zip.ZipInputStream;
                             break;
                         case "f":
                         case "floor":
-                            this.worlds.set(base + "plot.floor", new ArrayList<>(Arrays.asList(
-                                StringMan.join(Configuration.BLOCKLIST.parseString(value), ",")
-                                    .split(","))));
+                            this.worlds.set(base + "plot.floor",
+                                Configuration.BLOCK_BUCKET.parseString(value).toString());
                             break;
                         case "m":
                         case "main":
-                            this.worlds.set(base + "plot.filling", new ArrayList<>(Arrays.asList(
-                                StringMan.join(Configuration.BLOCKLIST.parseString(value), ",")
-                                    .split(","))));
+                            this.worlds.set(base + "plot.filling",
+                                Configuration.BLOCK_BUCKET.parseString(value).toString());
                             break;
                         case "w":
                         case "wall":
                             this.worlds.set(base + "wall.filling",
-                                Configuration.BLOCK.parseString(value).toString());
+                                Configuration.BLOCK_BUCKET.parseString(value).toString());
                             break;
                         case "b":
                         case "border":
                             this.worlds.set(base + "wall.block",
-                                Configuration.BLOCK.parseString(value).toString());
+                                Configuration.BLOCK_BUCKET.parseString(value).toString());
                             break;
                         default:
                             PlotSquared.log("&cKey not found: &7" + element);

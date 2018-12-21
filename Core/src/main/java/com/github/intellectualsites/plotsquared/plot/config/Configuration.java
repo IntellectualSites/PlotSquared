@@ -7,8 +7,6 @@ import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import lombok.Getter;
 import lombok.NonNull;
 
-import java.util.ArrayList;
-
 /**
  * Main Configuration Utility
  */
@@ -88,22 +86,7 @@ public class Configuration {
             return "FOREST";
         }
     };
-    public static final SettingValue<PlotBlock> BLOCK = new SettingValue<PlotBlock>("BLOCK") {
-        @Override public boolean validateValue(String string) {
-            StringComparison<PlotBlock>.ComparisonResult value =
-                WorldUtil.IMP.getClosestBlock(string);
-            return !(value == null || value.match > 1);
-        }
 
-        @Override public PlotBlock parseString(String string) {
-            StringComparison<PlotBlock>.ComparisonResult value =
-                WorldUtil.IMP.getClosestBlock(string);
-            if (value == null || value.match > 1) {
-                return null;
-            }
-            return value.best;
-        }
-    };
     public static final SettingValue<BlockBucket> BLOCK_BUCKET =
         new SettingValue<BlockBucket>("BLOCK_BUCKET") {
             @Override public BlockBucket parseString(final String string) {
@@ -129,6 +112,8 @@ public class Configuration {
                         WorldUtil.IMP.getClosestBlock(block);
                     if (value == null) {
                         throw new UnknownBlockException(block);
+                    } else if (!value.best.isAir() && !WorldUtil.IMP.isBlockSolid(value.best)) {
+                            throw new UnsafeBlockException(value.best);
                     }
                     blockBucket.addBlock(value.best, chance);
                 }
@@ -160,74 +145,14 @@ public class Configuration {
                             WorldUtil.IMP.getClosestBlock(block);
                         if (value == null || value.match > 1) {
                             return false;
+                        } else if (!value.best.isAir() && !WorldUtil.IMP.isBlockSolid(value.best)) {
+                                throw new UnsafeBlockException(value.best);
                         }
                     }
                 } catch (final Throwable exception) {
                     return false;
                 }
                 return true;
-            }
-        };
-    public static final SettingValue<PlotBlock[]> BLOCKLIST =
-        new SettingValue<PlotBlock[]>("BLOCKLIST") {
-            @Override public boolean validateValue(String string) {
-                try {
-                    for (String block : string.split(",")) {
-                        if (block.contains("%")) {
-                            String[] split = block.split("%");
-                            Integer.parseInt(split[0]);
-                            block = split[1];
-                        }
-                        StringComparison<PlotBlock>.ComparisonResult value =
-                            WorldUtil.IMP.getClosestBlock(block);
-                        if (value == null || value.match > 1) {
-                            return false;
-                        }
-                    }
-                    return true;
-                } catch (NumberFormatException ignored) {
-                    return false;
-                }
-            }
-
-            @Override public PlotBlock[] parseString(String string) {
-                String[] blocks = string.split(",");
-                ArrayList<PlotBlock> parsedvalues = new ArrayList<>();
-                PlotBlock[] values = new PlotBlock[blocks.length];
-                int[] counts = new int[blocks.length];
-                int min = 100;
-                for (int i = 0; i < blocks.length; i++) {
-                    try {
-                        if (blocks[i].contains("%")) {
-                            String[] split = blocks[i].split("%");
-                            blocks[i] = split[1];
-                            int value = Integer.parseInt(split[0]);
-                            counts[i] = value;
-                            if (value < min) {
-                                min = value;
-                            }
-                        } else {
-                            counts[i] = 1;
-                            if (1 < min) {
-                                min = 1;
-                            }
-                        }
-                        StringComparison<PlotBlock>.ComparisonResult result =
-                            WorldUtil.IMP.getClosestBlock(blocks[i]);
-                        if (result != null && result.match < 2) {
-                            values[i] = result.best;
-                        }
-                    } catch (NumberFormatException ignored) {
-                    }
-                }
-                int gcd = gcd(counts);
-                for (int i = 0; i < counts.length; i++) {
-                    int num = counts[i];
-                    for (int j = 0; j < num / gcd; j++) {
-                        parsedvalues.add(values[i]);
-                    }
-                }
-                return parsedvalues.toArray(new PlotBlock[parsedvalues.size()]);
             }
         };
 
@@ -278,4 +203,17 @@ public class Configuration {
 
         public abstract boolean validateValue(String string);
     }
+
+    public static final class UnsafeBlockException extends IllegalArgumentException {
+
+        @Getter
+        private final PlotBlock unsafeBlock;
+
+        public UnsafeBlockException(@NonNull final PlotBlock unsafeBlock) {
+            super(String.format("%s is not a valid block", unsafeBlock));
+            this.unsafeBlock = unsafeBlock;
+        }
+
+    }
+
 }

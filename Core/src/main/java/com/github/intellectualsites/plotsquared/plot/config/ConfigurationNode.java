@@ -36,7 +36,10 @@ public class ConfigurationNode {
         try {
             Object result = this.type.parseString(string);
             return result != null;
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            if (e instanceof Configuration.UnknownBlockException) {
+                throw e;
+            }
             return false;
         }
     }
