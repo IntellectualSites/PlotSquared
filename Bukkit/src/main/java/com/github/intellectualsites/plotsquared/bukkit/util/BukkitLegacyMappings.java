@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class BukkitLegacyMappings extends LegacyMappings {
+public final class BukkitLegacyMappings extends LegacyMappings {
 
     private static final LegacyBlock[] BLOCKS =
         new LegacyBlock[] {new LegacyBlock(0, "air"), new LegacyBlock(1, "stone"),
@@ -731,6 +731,9 @@ public class BukkitLegacyMappings extends LegacyMappings {
      * @return LegacyBlock if found, else null
      */
     public PlotBlock fromAny(@NonNull final String string) {
+        if (string.isEmpty()) {
+            return StringPlotBlock.EVERYTHING;
+        }
         String workingString = string;
         String[] parts = null;
         if (string.contains(":")) {

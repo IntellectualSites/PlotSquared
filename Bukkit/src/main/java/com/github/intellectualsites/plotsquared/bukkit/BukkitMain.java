@@ -113,6 +113,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Getter private SingleWorldListener singleWorldListener;
     private Method methodUnloadChunk0;
     private boolean methodUnloadSetup = false;
+    private boolean metricsStarted;
 
     @Override public int[] getServerVersion() {
         if (this.version == null) {
@@ -146,17 +147,14 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
         new PlotSquared(this, "Bukkit");
         if (Settings.Enabled_Components.METRICS) {
-            new Metrics(this).start();
-            PlotSquared.log(C.PREFIX + "&6Metrics enabled.");
+            // new Metrics(this).start();
+            // PlotSquared.log(C.PREFIX + "&6Metrics enabled.");
+            this.startMetrics();
         } else {
             PlotSquared.log(C.CONSOLE_PLEASE_ENABLE_METRICS.f(getPluginName()));
         }
         if (Settings.Enabled_Components.WORLDS) {
-            TaskManager.IMP.taskRepeat(new Runnable() {
-                @Override public void run() {
-                    unload();
-                }
-            }, 20);
+            TaskManager.IMP.taskRepeat(this::unload, 20);
             try {
                 singleWorldListener = new SingleWorldListener(this);
             } catch (Exception e) {
@@ -165,7 +163,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
     }
 
-    public void unload() {
+    private void unload() {
         if (!this.methodUnloadSetup) {
             this.methodUnloadSetup = true;
             try {
@@ -298,254 +296,250 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override @SuppressWarnings("deprecation") public void runEntityTask() {
         PlotSquared.log(C.PREFIX + "KillAllEntities started.");
-        TaskManager.runTaskRepeat(new Runnable() {
-            @Override public void run() {
-                PlotSquared.get().foreachPlotArea(new RunnableVal<PlotArea>() {
-                    @Override public void run(PlotArea plotArea) {
-                        final World world = Bukkit.getWorld(plotArea.worldname);
-                        try {
-                            if (world == null) {
-                                return;
-                            }
-                            List<Entity> entities = world.getEntities();
-                            Iterator<Entity> iterator = entities.iterator();
-                            while (iterator.hasNext()) {
-                                Entity entity = iterator.next();
-                                switch (entity.getType()) {
-                                    case EGG:
-                                    case COMPLEX_PART:
-                                    case FISHING_HOOK:
-                                    case ENDER_SIGNAL:
-                                    case LINGERING_POTION:
-                                    case AREA_EFFECT_CLOUD:
-                                    case EXPERIENCE_ORB:
-                                    case LEASH_HITCH:
-                                    case FIREWORK:
-                                    case WEATHER:
-                                    case LIGHTNING:
-                                    case WITHER_SKULL:
-                                    case UNKNOWN:
-                                    case PLAYER:
-                                        // non moving / unmovable
+        TaskManager.runTaskRepeat(() -> PlotSquared.get().foreachPlotArea(new RunnableVal<PlotArea>() {
+            @Override public void run(PlotArea plotArea) {
+                final World world = Bukkit.getWorld(plotArea.worldname);
+                try {
+                    if (world == null) {
+                        return;
+                    }
+                    List<Entity> entities = world.getEntities();
+                    Iterator<Entity> iterator = entities.iterator();
+                    while (iterator.hasNext()) {
+                        Entity entity = iterator.next();
+                        switch (entity.getType()) {
+                            case EGG:
+                            case COMPLEX_PART:
+                            case FISHING_HOOK:
+                            case ENDER_SIGNAL:
+                            case LINGERING_POTION:
+                            case AREA_EFFECT_CLOUD:
+                            case EXPERIENCE_ORB:
+                            case LEASH_HITCH:
+                            case FIREWORK:
+                            case WEATHER:
+                            case LIGHTNING:
+                            case WITHER_SKULL:
+                            case UNKNOWN:
+                            case PLAYER:
+                                // non moving / unmovable
+                                continue;
+                            case THROWN_EXP_BOTTLE:
+                            case SPLASH_POTION:
+                            case SNOWBALL:
+                            case SHULKER_BULLET:
+                            case SPECTRAL_ARROW:
+                            case TIPPED_ARROW:
+                            case ENDER_PEARL:
+                            case ARROW:
+                            case LLAMA_SPIT:
+                                // managed elsewhere | projectile
+                                continue;
+                            case ITEM_FRAME:
+                            case PAINTING:
+                                // Not vehicles
+                                continue;
+                            case ARMOR_STAND:
+                                // Temporarily classify as vehicle
+                            case MINECART:
+                            case MINECART_CHEST:
+                            case MINECART_COMMAND:
+                            case MINECART_FURNACE:
+                            case MINECART_HOPPER:
+                            case MINECART_MOB_SPAWNER:
+                            case ENDER_CRYSTAL:
+                            case MINECART_TNT:
+                            case BOAT:
+                                if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
+                                    com.github.intellectualsites.plotsquared.plot.object.Location
+                                        location =
+                                        BukkitUtil.getLocation(entity.getLocation());
+                                    Plot plot = location.getPlot();
+                                    if (plot == null) {
+                                        if (location.isPlotArea()) {
+                                            if (entity.hasMetadata("ps-tmp-teleport")) {
+                                                continue;
+                                            }
+                                            iterator.remove();
+                                            entity.remove();
+                                        }
                                         continue;
-                                    case THROWN_EXP_BOTTLE:
-                                    case SPLASH_POTION:
-                                    case SNOWBALL:
-                                    case SHULKER_BULLET:
-                                    case SPECTRAL_ARROW:
-                                    case TIPPED_ARROW:
-                                    case ENDER_PEARL:
-                                    case ARROW:
-                                    case LLAMA_SPIT:
-                                        // managed elsewhere | projectile
+                                    }
+                                    List<MetadataValue> meta = entity.getMetadata("plot");
+                                    if (meta.isEmpty()) {
                                         continue;
-                                    case ITEM_FRAME:
-                                    case PAINTING:
-                                        // Not vehicles
-                                        continue;
-                                    case ARMOR_STAND:
-                                        // Temporarily classify as vehicle
-                                    case MINECART:
-                                    case MINECART_CHEST:
-                                    case MINECART_COMMAND:
-                                    case MINECART_FURNACE:
-                                    case MINECART_HOPPER:
-                                    case MINECART_MOB_SPAWNER:
-                                    case ENDER_CRYSTAL:
-                                    case MINECART_TNT:
-                                    case BOAT:
-                                        if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
-                                            com.github.intellectualsites.plotsquared.plot.object.Location
-                                                location =
-                                                BukkitUtil.getLocation(entity.getLocation());
-                                            Plot plot = location.getPlot();
-                                            if (plot == null) {
-                                                if (location.isPlotArea()) {
-                                                    if (entity.hasMetadata("ps-tmp-teleport")) {
+                                    }
+                                    Plot origin = (Plot) meta.get(0).value();
+                                    if (!plot.equals(origin.getBasePlot(false))) {
+                                        if (entity.hasMetadata("ps-tmp-teleport")) {
+                                            continue;
+                                        }
+                                        iterator.remove();
+                                        entity.remove();
+                                    }
+                                    continue;
+                                } else {
+                                    continue;
+                                }
+                            case SMALL_FIREBALL:
+                            case FIREBALL:
+                            case DRAGON_FIREBALL:
+                            case DROPPED_ITEM:
+                                if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
+                                    entity.remove();
+                                }
+                                // dropped item
+                                continue;
+                            case PRIMED_TNT:
+                            case FALLING_BLOCK:
+                                // managed elsewhere
+                                continue;
+                            case LLAMA:
+                            case DONKEY:
+                            case MULE:
+                            case ZOMBIE_HORSE:
+                            case SKELETON_HORSE:
+                            case HUSK:
+                            case ELDER_GUARDIAN:
+                            case WITHER_SKELETON:
+                            case STRAY:
+                            case ZOMBIE_VILLAGER:
+                            case EVOKER:
+                            case EVOKER_FANGS:
+                            case VEX:
+                            case VINDICATOR:
+                            case POLAR_BEAR:
+                            case BAT:
+                            case BLAZE:
+                            case CAVE_SPIDER:
+                            case CHICKEN:
+                            case COW:
+                            case CREEPER:
+                            case ENDERMAN:
+                            case ENDERMITE:
+                            case ENDER_DRAGON:
+                            case GHAST:
+                            case GIANT:
+                            case GUARDIAN:
+                            case HORSE:
+                            case IRON_GOLEM:
+                            case MAGMA_CUBE:
+                            case MUSHROOM_COW:
+                            case OCELOT:
+                            case PIG:
+                            case PIG_ZOMBIE:
+                            case RABBIT:
+                            case SHEEP:
+                            case SILVERFISH:
+                            case SKELETON:
+                            case SLIME:
+                            case SNOWMAN:
+                            case SPIDER:
+                            case SQUID:
+                            case VILLAGER:
+                            case WITCH:
+                            case WITHER:
+                            case WOLF:
+                            case ZOMBIE:
+                            default: {
+                                if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
+                                    Location location = entity.getLocation();
+                                    if (BukkitUtil.getLocation(location).isPlotRoad()) {
+                                        if (entity instanceof LivingEntity) {
+                                            LivingEntity livingEntity =
+                                                (LivingEntity) entity;
+                                            if (!livingEntity.isLeashed() || !entity
+                                                .hasMetadata("keep")) {
+                                                Entity passenger = entity.getPassenger();
+                                                if (!(passenger instanceof Player) && entity
+                                                    .getMetadata("keep").isEmpty()) {
+                                                    if (entity
+                                                        .hasMetadata("ps-tmp-teleport")) {
                                                         continue;
                                                     }
                                                     iterator.remove();
                                                     entity.remove();
+                                                    continue;
                                                 }
-                                                continue;
                                             }
-                                            List<MetadataValue> meta = entity.getMetadata("plot");
-                                            if (meta.isEmpty()) {
-                                                continue;
-                                            }
-                                            Plot origin = (Plot) meta.get(0).value();
-                                            if (!plot.equals(origin.getBasePlot(false))) {
+                                        } else {
+                                            Entity passenger = entity.getPassenger();
+                                            if (!(passenger instanceof Player) && entity
+                                                .getMetadata("keep").isEmpty()) {
                                                 if (entity.hasMetadata("ps-tmp-teleport")) {
                                                     continue;
                                                 }
                                                 iterator.remove();
                                                 entity.remove();
+                                                continue;
                                             }
-                                            continue;
-                                        } else {
-                                            continue;
                                         }
-                                    case SMALL_FIREBALL:
-                                    case FIREBALL:
-                                    case DRAGON_FIREBALL:
-                                    case DROPPED_ITEM:
-                                        if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
-                                            entity.remove();
-                                        }
-                                        // dropped item
-                                        continue;
-                                    case PRIMED_TNT:
-                                    case FALLING_BLOCK:
-                                        // managed elsewhere
-                                        continue;
-                                    case LLAMA:
-                                    case DONKEY:
-                                    case MULE:
-                                    case ZOMBIE_HORSE:
-                                    case SKELETON_HORSE:
-                                    case HUSK:
-                                    case ELDER_GUARDIAN:
-                                    case WITHER_SKELETON:
-                                    case STRAY:
-                                    case ZOMBIE_VILLAGER:
-                                    case EVOKER:
-                                    case EVOKER_FANGS:
-                                    case VEX:
-                                    case VINDICATOR:
-                                    case POLAR_BEAR:
-                                    case BAT:
-                                    case BLAZE:
-                                    case CAVE_SPIDER:
-                                    case CHICKEN:
-                                    case COW:
-                                    case CREEPER:
-                                    case ENDERMAN:
-                                    case ENDERMITE:
-                                    case ENDER_DRAGON:
-                                    case GHAST:
-                                    case GIANT:
-                                    case GUARDIAN:
-                                    case HORSE:
-                                    case IRON_GOLEM:
-                                    case MAGMA_CUBE:
-                                    case MUSHROOM_COW:
-                                    case OCELOT:
-                                    case PIG:
-                                    case PIG_ZOMBIE:
-                                    case RABBIT:
-                                    case SHEEP:
-                                    case SILVERFISH:
-                                    case SKELETON:
-                                    case SLIME:
-                                    case SNOWMAN:
-                                    case SPIDER:
-                                    case SQUID:
-                                    case VILLAGER:
-                                    case WITCH:
-                                    case WITHER:
-                                    case WOLF:
-                                    case ZOMBIE:
-                                    default: {
-                                        if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
-                                            Location location = entity.getLocation();
-                                            if (BukkitUtil.getLocation(location).isPlotRoad()) {
-                                                if (entity instanceof LivingEntity) {
-                                                    LivingEntity livingEntity =
-                                                        (LivingEntity) entity;
-                                                    if (!livingEntity.isLeashed() || !entity
-                                                        .hasMetadata("keep")) {
-                                                        Entity passenger = entity.getPassenger();
-                                                        if (!(passenger instanceof Player) && entity
-                                                            .getMetadata("keep").isEmpty()) {
-                                                            if (entity
-                                                                .hasMetadata("ps-tmp-teleport")) {
-                                                                continue;
-                                                            }
-                                                            iterator.remove();
-                                                            entity.remove();
-                                                            continue;
-                                                        }
-                                                    }
-                                                } else {
-                                                    Entity passenger = entity.getPassenger();
-                                                    if (!(passenger instanceof Player) && entity
-                                                        .getMetadata("keep").isEmpty()) {
-                                                        if (entity.hasMetadata("ps-tmp-teleport")) {
-                                                            continue;
-                                                        }
-                                                        iterator.remove();
-                                                        entity.remove();
+                                    }
+                                }
+                                continue;
+                            }
+                            case SHULKER: {
+                                if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
+                                    LivingEntity livingEntity = (LivingEntity) entity;
+                                    List<MetadataValue> meta = entity.getMetadata("plot");
+                                    if (meta != null && !meta.isEmpty()) {
+                                        if (livingEntity.isLeashed())
+                                            continue;
+
+                                        List<MetadataValue> keep =
+                                            entity.getMetadata("keep");
+                                        if (keep != null && !keep.isEmpty())
+                                            continue;
+
+                                        PlotId originalPlotId =
+                                            (PlotId) meta.get(0).value();
+                                        if (originalPlotId != null) {
+                                            com.github.intellectualsites.plotsquared.plot.object.Location
+                                                pLoc = BukkitUtil
+                                                .getLocation(entity.getLocation());
+                                            PlotArea area = pLoc.getPlotArea();
+                                            if (area != null) {
+                                                PlotId currentPlotId =
+                                                    PlotId.of(area.getPlotAbs(pLoc));
+                                                if (!originalPlotId.equals(currentPlotId)
+                                                    && (currentPlotId == null || !area
+                                                    .getPlot(originalPlotId)
+                                                    .equals(area.getPlot(currentPlotId)))) {
+                                                    if (entity
+                                                        .hasMetadata("ps-tmp-teleport")) {
                                                         continue;
                                                     }
+                                                    iterator.remove();
+                                                    entity.remove();
                                                 }
                                             }
                                         }
-                                        continue;
-                                    }
-                                    case SHULKER: {
-                                        if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
-                                            LivingEntity livingEntity = (LivingEntity) entity;
-                                            List<MetadataValue> meta = entity.getMetadata("plot");
-                                            if (meta != null && !meta.isEmpty()) {
-                                                if (livingEntity.isLeashed())
-                                                    continue;
-
-                                                List<MetadataValue> keep =
-                                                    entity.getMetadata("keep");
-                                                if (keep != null && !keep.isEmpty())
-                                                    continue;
-
-                                                PlotId originalPlotId =
-                                                    (PlotId) meta.get(0).value();
-                                                if (originalPlotId != null) {
-                                                    com.github.intellectualsites.plotsquared.plot.object.Location
-                                                        pLoc = BukkitUtil
-                                                        .getLocation(entity.getLocation());
-                                                    PlotArea area = pLoc.getPlotArea();
-                                                    if (area != null) {
-                                                        PlotId currentPlotId =
-                                                            PlotId.of(area.getPlotAbs(pLoc));
-                                                        if (!originalPlotId.equals(currentPlotId)
-                                                            && (currentPlotId == null || !area
-                                                            .getPlot(originalPlotId)
-                                                            .equals(area.getPlot(currentPlotId)))) {
-                                                            if (entity
-                                                                .hasMetadata("ps-tmp-teleport")) {
-                                                                continue;
-                                                            }
-                                                            iterator.remove();
-                                                            entity.remove();
-                                                        }
-                                                    }
-                                                }
-                                            } else {
-                                                //This is to apply the metadata to already spawned shulkers (see EntitySpawnListener.java)
-                                                com.github.intellectualsites.plotsquared.plot.object.Location
-                                                    pLoc =
-                                                    BukkitUtil.getLocation(entity.getLocation());
-                                                PlotArea area = pLoc.getPlotArea();
-                                                if (area != null) {
-                                                    PlotId currentPlotId =
-                                                        PlotId.of(area.getPlotAbs(pLoc));
-                                                    if (currentPlotId != null) {
-                                                        entity.setMetadata("plot",
-                                                            new FixedMetadataValue(
-                                                                (Plugin) PlotSquared.get().IMP,
-                                                                currentPlotId));
-                                                    }
-                                                }
+                                    } else {
+                                        //This is to apply the metadata to already spawned shulkers (see EntitySpawnListener.java)
+                                        com.github.intellectualsites.plotsquared.plot.object.Location
+                                            pLoc =
+                                            BukkitUtil.getLocation(entity.getLocation());
+                                        PlotArea area = pLoc.getPlotArea();
+                                        if (area != null) {
+                                            PlotId currentPlotId =
+                                                PlotId.of(area.getPlotAbs(pLoc));
+                                            if (currentPlotId != null) {
+                                                entity.setMetadata("plot",
+                                                    new FixedMetadataValue(
+                                                        (Plugin) PlotSquared.get().IMP,
+                                                        currentPlotId));
                                             }
                                         }
                                     }
                                 }
                             }
-                        } catch (Throwable e) {
-                            e.printStackTrace();
                         }
                     }
-                });
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
             }
-        }, 20);
+        }), 20);
     }
 
     @Override @Nullable
@@ -740,8 +734,13 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     @Override public void startMetrics() {
-        new Metrics(this).start();
+        if (this.metricsStarted) {
+            return;
+        }
+        // new Metrics(this).start(); mcstats
+        new org.bstats.bukkit.Metrics(this); // bstats
         PlotSquared.log(C.PREFIX + "&6Metrics enabled.");
+        this.metricsStarted = true;
     }
 
     @Override public void setGenerator(@NonNull final String worldName) {
@@ -765,8 +764,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 if (!PlotSquared.get().hasPlotArea(worldName)) {
                     SetGenCB.setGenerator(BukkitUtil.getWorld(worldName));
                 }
-            } catch (Exception ignored) {
-                PlotSquared.log("Failed to reload world: " + world + " | " + ignored.getMessage());
+            } catch (Exception e) {
+                PlotSquared.log("Failed to reload world: " + world + " | " + e.getMessage());
                 Bukkit.getServer().unloadWorld(world, false);
                 return;
             }
