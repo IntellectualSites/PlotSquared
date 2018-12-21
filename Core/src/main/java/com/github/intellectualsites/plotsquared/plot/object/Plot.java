@@ -1169,7 +1169,7 @@ public class Plot {
         if (!isLoaded())
             return loc;
         int y =
-            isLoaded() ? WorldUtil.IMP.getHighestBlock(getWorldName(), loc.getX(), loc.getZ()) : 64;
+            isLoaded() ? WorldUtil.IMP.getHighestBlock(getWorldName(), loc.getX(), loc.getZ()) : 62;
         if (area.ALLOW_SIGNS) {
             y = Math.max(y, getManager().getSignLoc(area, this).getY());
         }
@@ -1182,7 +1182,7 @@ public class Plot {
         int x = (largest.maxX >> 1) - (largest.minX >> 1) + largest.minX;
         int z = largest.minZ - 1;
         PlotManager manager = getManager();
-        int y = isLoaded() ? WorldUtil.IMP.getHighestBlock(getWorldName(), x, z) : 64;
+        int y = isLoaded() ? WorldUtil.IMP.getHighestBlock(getWorldName(), x, z) : 62;
         if (area.ALLOW_SIGNS && (y <= 0 || y >= 255)) {
             y = Math.max(y, manager.getSignLoc(area, this).getY() - 1);
         }
@@ -1258,7 +1258,7 @@ public class Plot {
                 x = bot.getX() + loc.x;
                 z = bot.getZ() + loc.z;
             }
-            int y = isLoaded() ? WorldUtil.IMP.getHighestBlock(plot.getWorldName(), x, z) : 64;
+            int y = isLoaded() ? WorldUtil.IMP.getHighestBlock(plot.getWorldName(), x, z) : 62;
             return new Location(plot.getWorldName(), x, y + 1, z);
         }
         // Side

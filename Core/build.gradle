@@ -1,10 +1,9 @@
 dependencies {
     testCompile 'junit:junit:4.12'
-    compile 'org.yaml:snakeyaml:1.16'
-    compile 'com.google.code.gson:gson:2.2.4'
-    compileOnly 'org.projectlombok:lombok:1.16.18'
+    compile 'org.yaml:snakeyaml:1.23'
+    compile 'com.google.code.gson:gson:2.8.5'
+    compileOnly 'org.projectlombok:lombok:1.18.4'
 }
-
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -21,21 +20,23 @@ processResources {
 
 jar.archiveName = "plotsquared-api-${project.parent.version}.jar"
 jar.destinationDir = file '../mvn/com/plotsquared/plotsquared-api/' + project.parent.version
-task createPom << {
-    pom {
-        project {
-            groupId 'com.plotsquared'
-            artifactId 'plotsquared-api'
-            version project.parent.version
-        }
-    }.writeTo("../mvn/com/plotsquared/plotsquared-api/${project.parent.version}/plotsquared-api-${project.parent.version}.pom")
-    pom {
-        project {
-            groupId 'com.plotsquared'
-            artifactId 'plotsquared-api'
-            version 'latest'
-        }
-    }.writeTo("../mvn/com/plotsquared/plotsquared-api/latest/plotsquared-api-latest.pom")
+task createPom {
+    doLast {
+        pom {
+            project {
+                groupId 'com.plotsquared'
+                artifactId 'plotsquared-api'
+                version project.parent.version
+            }
+        }.writeTo("../mvn/com/plotsquared/plotsquared-api/${project.parent.version}/plotsquared-api-${project.parent.version}.pom")
+        pom {
+            project {
+                groupId 'com.plotsquared'
+                artifactId 'plotsquared-api'
+                version 'latest'
+            }
+        }.writeTo("../mvn/com/plotsquared/plotsquared-api/latest/plotsquared-api-latest.pom")
+    }
 }
 
 task copyFiles {

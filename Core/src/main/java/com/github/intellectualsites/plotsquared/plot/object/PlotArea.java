@@ -955,7 +955,7 @@ public abstract class PlotArea {
 
     public void addCluster(PlotCluster plotCluster) {
         if (this.clusters == null) {
-            this.clusters = new QuadMap<PlotCluster>(Integer.MAX_VALUE, 0, 0, 64) {
+            this.clusters = new QuadMap<PlotCluster>(Integer.MAX_VALUE, 0, 0, 62) {
                 @Override public RegionWrapper getRegion(PlotCluster value) {
                     return new RegionWrapper(value.getP1().x, value.getP2().x, value.getP1().y,
                         value.getP2().y);
