@@ -147,8 +147,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
         new PlotSquared(this, "Bukkit");
         if (Settings.Enabled_Components.METRICS) {
-            // new Metrics(this).start();
-            // PlotSquared.log(C.PREFIX + "&6Metrics enabled.");
             this.startMetrics();
         } else {
             PlotSquared.log(C.CONSOLE_PLEASE_ENABLE_METRICS.f(getPluginName()));
@@ -737,7 +735,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         if (this.metricsStarted) {
             return;
         }
-        // new Metrics(this).start(); mcstats
         new org.bstats.bukkit.Metrics(this); // bstats
         PlotSquared.log(C.PREFIX + "&6Metrics enabled.");
         this.metricsStarted = true;
