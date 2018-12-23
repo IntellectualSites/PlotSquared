@@ -114,68 +114,66 @@ public class MainUtil {
             whenDone.run();
             return;
         }
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override public void run() {
-                try {
-                    String boundary = Long.toHexString(System.currentTimeMillis());
-                    URLConnection con = new URL(website).openConnection();
-                    con.setDoOutput(true);
-                    con.setRequestProperty("Content-Type",
-                        "multipart/form-data; boundary=" + boundary);
-                    try (OutputStream output = con.getOutputStream();
-                        PrintWriter writer = new PrintWriter(
-                            new OutputStreamWriter(output, StandardCharsets.UTF_8), true)) {
-                        String CRLF = "\r\n";
-                        writer.append("--" + boundary).append(CRLF);
-                        writer.append("Content-Disposition: form-data; name=\"param\"")
-                            .append(CRLF);
-                        writer.append("Content-Type: text/plain; charset=" + StandardCharsets.UTF_8
-                            .displayName()).append(CRLF);
-                        String param = "value";
-                        writer.append(CRLF).append(param).append(CRLF).flush();
-                        writer.append("--" + boundary).append(CRLF);
-                        writer.append(
-                            "Content-Disposition: form-data; name=\"schematicFile\"; filename=\""
-                                + filename + '"').append(CRLF);
-                        writer.append(
-                            "Content-Type: " + URLConnection.guessContentTypeFromName(filename))
-                            .append(CRLF);
-                        writer.append("Content-Transfer-Encoding: binary").append(CRLF);
-                        writer.append(CRLF).flush();
-                        writeTask.value = new AbstractDelegateOutputStream(output) {
-                            @Override public void close() {
-                            } // Don't close
-                        };
-                        writeTask.run();
-                        output.flush();
-                        writer.append(CRLF).flush();
-                        writer.append("--" + boundary + "--").append(CRLF).flush();
+        TaskManager.runTaskAsync(() -> {
+            try {
+                String boundary = Long.toHexString(System.currentTimeMillis());
+                URLConnection con = new URL(website).openConnection();
+                con.setDoOutput(true);
+                con.setRequestProperty("Content-Type",
+                    "multipart/form-data; boundary=" + boundary);
+                try (OutputStream output = con.getOutputStream();
+                    PrintWriter writer = new PrintWriter(
+                        new OutputStreamWriter(output, StandardCharsets.UTF_8), true)) {
+                    String CRLF = "\r\n";
+                    writer.append("--" + boundary).append(CRLF);
+                    writer.append("Content-Disposition: form-data; name=\"param\"")
+                        .append(CRLF);
+                    writer.append("Content-Type: text/plain; charset=" + StandardCharsets.UTF_8
+                        .displayName()).append(CRLF);
+                    String param = "value";
+                    writer.append(CRLF).append(param).append(CRLF).flush();
+                    writer.append("--" + boundary).append(CRLF);
+                    writer.append(
+                        "Content-Disposition: form-data; name=\"schematicFile\"; filename=\""
+                            + filename + '"').append(CRLF);
+                    writer.append(
+                        "Content-Type: " + URLConnection.guessContentTypeFromName(filename))
+                        .append(CRLF);
+                    writer.append("Content-Transfer-Encoding: binary").append(CRLF);
+                    writer.append(CRLF).flush();
+                    writeTask.value = new AbstractDelegateOutputStream(output) {
+                        @Override public void close() {
+                        } // Don't close
+                    };
+                    writeTask.run();
+                    output.flush();
+                    writer.append(CRLF).flush();
+                    writer.append("--" + boundary + "--").append(CRLF).flush();
+                }
+                try (Reader response = new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8)) {
+                    final char[] buffer = new char[256];
+                    final StringBuilder result = new StringBuilder();
+                    while (true) {
+                        final int r = response.read(buffer);
+                        if (r < 0) {
+                            break;
+                        }
+                        result.append(buffer, 0, r);
                     }
-                    //                    try (Reader response = new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8)) {
-                    //                        final char[] buffer = new char[256];
-                    //                        final StringBuilder result = new StringBuilder();
-                    //                        while (true) {
-                    //                            final int r = response.read(buffer);
-                    //                            if (r < 0) {
-                    //                                break;
-                    //                            }
-                    //                            result.append(buffer, 0, r);
-                    //                        }
-                    //                        if (!result.toString().startsWith("Success")) {
-                    //                            PS.debug(result);
-                    //                        }
-                    //                    } catch (IOException e) {
-                    //                        e.printStackTrace();
-                    //                    }
-                    int responseCode = ((HttpURLConnection) con).getResponseCode();
-                    if (responseCode == 200) {
-                        whenDone.value = url;
+                    if (!result.toString().startsWith("Success")) {
+                        PlotSquared.debug(result);
                     }
-                    TaskManager.runTask(whenDone);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    TaskManager.runTask(whenDone);
                 }
+                int responseCode = ((HttpURLConnection) con).getResponseCode();
+                if (responseCode == 200) {
+                    whenDone.value = url;
+                }
+                TaskManager.runTask(whenDone);
+            } catch (IOException e) {
+                e.printStackTrace();
+                TaskManager.runTask(whenDone);
             }
         });
     }

@@ -412,14 +412,11 @@ public abstract class SchematicHandler {
         }
         MainUtil.upload(uuid, file, "schematic", new RunnableVal<OutputStream>() {
             @Override public void run(OutputStream output) {
-                try {
-                    try (GZIPOutputStream gzip = new GZIPOutputStream(output, true)) {
-                        try (NBTOutputStream nos = new NBTOutputStream(gzip)) {
-                            nos.writeNamedTag("Schematic", tag);
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                try (NBTOutputStream nos = new NBTOutputStream(
+                    new GZIPOutputStream(output, true))) {
+                    nos.writeNamedTag("Schematic", tag);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
                 }
             }
         }, whenDone);
@@ -475,6 +472,7 @@ public abstract class SchematicHandler {
             }
         });
     }
+
 
     public class UnsupportedFormatException extends Exception {
         /**

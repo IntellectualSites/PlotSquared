@@ -78,7 +78,6 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                     new ListTag(CompoundTag.class, tileEntities));
                                 whenDone.value = new CompoundTag(schematic);
                                 TaskManager.runTask(whenDone);
-                                System.gc();
                             });
                             return;
                         }
@@ -87,41 +86,40 @@ public class BukkitSchematicHandler extends SchematicHandler {
                         Location pos1 = new Location(world, region.minX, region.minY, region.minZ);
                         Location pos2 = new Location(world, region.maxX, region.maxY, region.maxZ);
                         final int p1x = pos1.getX();
+                        final int sy = pos1.getY();
                         final int p1z = pos1.getZ();
                         final int p2x = pos2.getX();
                         final int p2z = pos2.getZ();
-                        final int sy = pos1.getY();
                         final int ey = pos2.getY();
-                        Iterator<Integer> yiter = IntStream.range(sy, ey).iterator();
-                        TaskManager.runTask(new Runnable() {
+                        Iterator<Integer> yiter = IntStream.range(sy, ey + 1).iterator();
+                        final Runnable yTask = new Runnable() {
                             @Override public void run() {
-                                final Runnable yTask = this;
                                 long ystart = System.currentTimeMillis();
                                 while (yiter.hasNext()
                                     && System.currentTimeMillis() - ystart < 20) {
-                                    final int fy = yiter.next();
-                                    Iterator<Integer> ziter = IntStream.range(p1z, p2z).iterator();
-                                    TaskManager.runTask(new Runnable() {
+                                    final int y = yiter.next();
+                                    Iterator<Integer> ziter =
+                                        IntStream.range(p1z, p2z + 1).iterator();
+                                    final Runnable zTask = new Runnable() {
                                         @Override public void run() {
-                                            final Runnable zTask = this;
                                             long zstart = System.currentTimeMillis();
-                                            Iterator<Integer> xiter =
-                                                IntStream.range(p1x, p2x).iterator();
                                             while (ziter.hasNext()
                                                 && System.currentTimeMillis() - zstart < 20) {
-                                                final int fz = ziter.next();
-                                                TaskManager.runTask(new Runnable() {
+                                                final int z = ziter.next();
+                                                Iterator<Integer> xiter =
+                                                    IntStream.range(p1x, p2x + 1).iterator();
+                                                final Runnable xTask = new Runnable() {
                                                     @Override public void run() {
                                                         long xstart = System.currentTimeMillis();
+                                                        final int ry = y - sy;
+                                                        final int rz = z - p1z;
                                                         while (xiter.hasNext()
                                                             && System.currentTimeMillis() - xstart
                                                             < 20) {
                                                             final int x = xiter.next();
-                                                            int rx = x - p1x;
-                                                            int ry = fy - sy;
-                                                            int rz = fz - p1z;
+                                                            final int rx = x - p1x;
                                                             BlockVector3 point =
-                                                                BlockVector3.at(x, fy, fz);
+                                                                BlockVector3.at(x, y, z);
                                                             BaseBlock block =
                                                                 cuboidRegion.getWorld()
                                                                     .getFullBlock(point);
@@ -169,28 +167,27 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                                             buffer.write(blockId);
                                                         }
                                                         if (xiter.hasNext()) {
-                                                            TaskManager.runTaskLater(this, 1);
-                                                        } else {
-                                                            zTask.run();
+                                                            this.run();
                                                         }
                                                     }
-                                                });
+                                                };
+                                                xTask.run();
                                             }
                                             if (ziter.hasNext()) {
-                                                TaskManager.runTaskLater(zTask, 1);
-                                            } else {
-                                                yTask.run();
+                                                this.run();
                                             }
                                         }
-                                    });
+                                    };
+                                    zTask.run();
                                 }
                                 if (yiter.hasNext()) {
-                                    TaskManager.runTaskLater(yTask, 1);
+                                    TaskManager.runTaskLater(this, 1);
                                 } else {
                                     regionTask.run();
                                 }
                             }
-                        });
+                        };
+                        yTask.run();
                     }
                 });
             }
