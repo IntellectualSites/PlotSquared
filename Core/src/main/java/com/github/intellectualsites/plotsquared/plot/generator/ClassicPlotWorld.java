@@ -6,7 +6,6 @@ import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
-import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 public abstract class ClassicPlotWorld extends SquarePlotWorld {
 
@@ -75,10 +74,8 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
         super.loadConfiguration(config);
         this.PLOT_BEDROCK = config.getBoolean("plot.bedrock");
         this.PLOT_HEIGHT = Math.min(255, config.getInt("plot.height"));
-        this.MAIN_BLOCK = Configuration.BLOCK_BUCKET
-            .parseString(StringMan.join(config.getStringList("plot.filling"), ','));
-        this.TOP_BLOCK = Configuration.BLOCK_BUCKET
-            .parseString(StringMan.join(config.getStringList("plot.floor"), ','));
+        this.MAIN_BLOCK = Configuration.BLOCK_BUCKET.parseString(config.getString("plot.filling"));
+        this.TOP_BLOCK = Configuration.BLOCK_BUCKET.parseString(config.getString("plot.floor"));
         this.WALL_BLOCK = Configuration.BLOCK_BUCKET.parseString(config.getString("wall.block"));
         this.ROAD_HEIGHT = Math.min(255, config.getInt("road.height"));
         this.ROAD_BLOCK = Configuration.BLOCK_BUCKET.parseString(config.getString("road.block"));
