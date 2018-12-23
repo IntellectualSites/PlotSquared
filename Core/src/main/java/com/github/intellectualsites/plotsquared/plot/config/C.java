@@ -851,6 +851,21 @@ public enum C {
      * Custom
      */
 
+    /**
+     * Legacy Configuration Conversion
+     */
+    LEGACY_CONFIG_FOUND("A legacy configuration file was detected. Conversion will be attempted.",
+        "LegacyConfig"), LEGACY_CONFIG_BACKUP(
+        "A copy of worlds.yml $1have been saved in the file worlds.yml.old$1.",
+        "LegacyConfig"), LEGACY_CONFIG_REPLACED("> %s has been replaced with %s",
+        "LegacyConfig"), LEGACY_CONFIG_DONE(
+        "The conversion has finished. PlotSquared will now be disabled and the new configuration file will"
+            + " be used at next startup. Please review the new worlds.yml file. "
+            + "Please note that schematics will not be converted, as we are now using WorldEdit to handle schematics. "
+            + "You need to re-generate the schematics.",
+        "LegacyConfig"), LEGACY_CONFIG_CONVERSION_FAILED(
+        "Failed to convert the legacy configuration file. See stack trace for information.", "LegacyConfig"),
+
     CUSTOM_STRING("-", "-");
 
     public static final HashMap<String, String> replacements = new HashMap<>();
@@ -1048,5 +1063,4 @@ public enum C {
         } else {
             caller.sendMessage(msg);
         }
-    }
-}
+    }}

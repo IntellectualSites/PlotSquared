@@ -663,7 +663,7 @@ public final class BukkitLegacyMappings extends LegacyMappings {
             new LegacyBlock(2266, "record_11", "music_disc_11"),
             new LegacyBlock(2267, "record_12", "music_disc_wait")};
 
-    private static final Map<Integer, PlotBlock> LEGACY_ID_TO_STRING_PLOT_BLOCK = new HashMap<>();
+    // private static final Map<Integer, PlotBlock> LEGACY_ID_TO_STRING_PLOT_BLOCK = new HashMap<>();
     private static final Map<IdDataPair, PlotBlock> LEGACY_ID_AND_DATA_TO_STRING_PLOT_BLOCK =
         new HashMap<>();
     private static final Map<String, PlotBlock> NEW_STRING_TO_LEGACY_PLOT_BLOCK = new HashMap<>();
@@ -685,13 +685,15 @@ public final class BukkitLegacyMappings extends LegacyMappings {
 
     private void addAll(@NonNull final Collection<LegacyBlock> blocks) {
         for (final LegacyBlock legacyBlock : blocks) {
-            LEGACY_ID_TO_STRING_PLOT_BLOCK
-                .put(legacyBlock.getNumericalId(), legacyBlock.toStringPlotBlock());
-            if (legacyBlock.getDataValue() != 0) {
+            // LEGACY_ID_TO_STRING_PLOT_BLOCK
+            //     .put(legacyBlock.getNumericalId(), legacyBlock.toStringPlotBlock());
+            /*if (legacyBlock.getDataValue() != 0) {
                 LEGACY_ID_AND_DATA_TO_STRING_PLOT_BLOCK
                     .put(new IdDataPair(legacyBlock.getNumericalId(), legacyBlock.getDataValue()),
                         legacyBlock.toStringPlotBlock());
-            }
+            } */
+            LEGACY_ID_AND_DATA_TO_STRING_PLOT_BLOCK.put(new IdDataPair(legacyBlock.getNumericalId(),
+                legacyBlock.getDataValue()), legacyBlock.toStringPlotBlock());
             NEW_STRING_TO_LEGACY_PLOT_BLOCK
                 .put(legacyBlock.getLegacyName(), legacyBlock.toStringPlotBlock());
             OLD_STRING_TO_STRING_PLOT_BLOCK
@@ -758,7 +760,7 @@ public final class BukkitLegacyMappings extends LegacyMappings {
                     final int data = Integer.parseInt(parts[1]);
                     return fromLegacyToString(id, data);
                 } else {
-                    return fromLegacyToString(Integer.parseInt(workingString));
+                    return fromLegacyToString(Integer.parseInt(workingString), 0);
                 }
             } catch (final Throwable exception) {
                 return null;
@@ -766,14 +768,7 @@ public final class BukkitLegacyMappings extends LegacyMappings {
         }
     }
 
-    public PlotBlock fromLegacyToString(final int id) {
-        return LEGACY_ID_TO_STRING_PLOT_BLOCK.get(id);
-    }
-
     public PlotBlock fromLegacyToString(final int id, final int data) {
-        if (data == 0) {
-            return fromLegacyToString(id);
-        }
         return LEGACY_ID_AND_DATA_TO_STRING_PLOT_BLOCK.get(new IdDataPair(id, data));
     }
 

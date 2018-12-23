@@ -254,6 +254,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
     }
 
+    @Override public void shutdown() {
+        this.getServer().getPluginManager().disablePlugin(this);
+    }
+
     @Override public void disable() {
         onDisable();
     }

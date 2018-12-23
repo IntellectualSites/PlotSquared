@@ -247,7 +247,7 @@ import java.util.Map.Entry;
 
                 boolean valid = false;
                 try {
-                    step.isValid(args[0]);
+                    valid = step.isValid(args[0]);
                 } catch (final Configuration.UnsafeBlockException e) {
                     C.NOT_ALLOWED_BLOCK.send(player, e.getUnsafeBlock().toString());
                 }

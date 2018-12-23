@@ -119,7 +119,13 @@ import java.util.zip.ZipInputStream;
                 }
             }
             TaskManager.IMP = this.IMP.getTaskManager();
-            setupConfigs();
+
+            // World Util. Has to be done before config files are loaded
+            WorldUtil.IMP = this.IMP.initWorldUtil();
+
+            if (!setupConfigs()) {
+                return;
+            }
             this.translationFile = MainUtil.getFile(this.IMP.getDirectory(),
                 Settings.Paths.TRANSLATIONS + File.separator + IMP.getPluginName()
                     + ".use_THIS.yml");
@@ -176,8 +182,6 @@ import java.util.zip.ZipInputStream;
             InventoryUtil.manager = this.IMP.initInventoryUtil();
             // create setup util class
             SetupUtils.manager = this.IMP.initSetupUtils();
-            // World Util
-            WorldUtil.IMP = this.IMP.initWorldUtil();
             // Set block
             GlobalBlockQueue.IMP = new GlobalBlockQueue(IMP.initBlockQueue(), 1);
             GlobalBlockQueue.IMP.runTask();
@@ -1543,11 +1547,13 @@ import java.util.zip.ZipInputStream;
         try {
             // Validate that all data in the db is correct
             final HashSet<Plot> plots = new HashSet<>();
-            foreachPlotRaw(new RunnableVal<Plot>() {
-                @Override public void run(Plot value) {
-                    plots.add(value);
-                }
-            });
+            try {
+                foreachPlotRaw(new RunnableVal<Plot>() {
+                    @Override public void run(Plot value) {
+                        plots.add(value);
+                    }
+                });
+            } catch (final Exception ignored) {}
             DBFunc.validatePlots(plots);
 
             // Close the connection
@@ -1661,7 +1667,7 @@ import java.util.zip.ZipInputStream;
      * - Storage: storage.yml<br>
      * - Translation: PlotSquared.use_THIS.yml, style.yml<br>
      */
-    public void setupConfigs() {
+    public boolean setupConfigs() {
         File folder = new File(this.IMP.getDirectory(), "config");
         if (!folder.exists() && !folder.mkdirs()) {
             PlotSquared.log(C.PREFIX
@@ -1674,6 +1680,34 @@ import java.util.zip.ZipInputStream;
                     "Could not create the worlds file, please create \"worlds.yml\" manually.");
             }
             this.worlds = YamlConfiguration.loadConfiguration(this.worldsFile);
+
+            if (this.worlds.contains("worlds")) {
+                if (!this.worlds.contains("configuration_version") || !this.worlds
+                    .getString("configuration_version").equalsIgnoreCase(LegacyConverter.CONFIGURATION_VERSION)) {
+                    // Conversion needed
+                    log(C.LEGACY_CONFIG_FOUND.s());
+                    try {
+                        com.google.common.io.Files
+                            .copy(this.worldsFile, new File(folder, "worlds.yml.old"));
+                        log(C.LEGACY_CONFIG_BACKUP.s());
+                        final ConfigurationSection worlds = this.worlds.getConfigurationSection("worlds");
+                        final LegacyConverter converter = new LegacyConverter(worlds);
+                        converter.convert();
+                        this.worlds.set("configuration_version", LegacyConverter.CONFIGURATION_VERSION);
+                        this.worlds.set("worlds", worlds); // Redundant, but hey... ¯\_(ツ)_/¯
+                        this.worlds.save(this.worldsFile);
+                        log(C.LEGACY_CONFIG_DONE.s());
+                    } catch (final Exception e) {
+                        log(C.LEGACY_CONFIG_CONVERSION_FAILED.s());
+                        e.printStackTrace();
+                    }
+                    // Disable plugin
+                    this.IMP.shutdown();
+                    return false;
+                }
+            } else {
+                this.worlds.set("configuration_version", LegacyConverter.CONFIGURATION_VERSION);
+            }
         } catch (IOException ignored) {
             PlotSquared.log("Failed to save settings.yml");
         }
@@ -1734,6 +1768,7 @@ import java.util.zip.ZipInputStream;
             PlotSquared.log("Configuration file saving failed");
             e.printStackTrace();
         }
+        return true;
     }
 
     /**

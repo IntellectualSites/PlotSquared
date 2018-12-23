@@ -1,17 +1,24 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import lombok.NonNull;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Converts legacy configurations into the new (BlockBucket) format
  */
 @SuppressWarnings("unused")
 public final class LegacyConverter {
+
+    public static final String CONFIGURATION_VERSION = "post_flattening";
 
     private enum ConfigurationType {
         BLOCK, BLOCK_LIST
@@ -40,7 +47,7 @@ public final class LegacyConverter {
     }
 
     private void setString(@NonNull final ConfigurationSection section, @NonNull final String string, @NonNull final BlockBucket blocks) {
-        if (!this.configuration.contains(string)) {
+        if (!section.contains(string)) {
             throw new IllegalArgumentException(String.format("No such key: %s", string));
         }
         section.set(string, blocks.toString());
@@ -85,6 +92,7 @@ public final class LegacyConverter {
         @NonNull final String block) {
         final BlockBucket bucket = this.blockToBucket(block);
         this.setString(section, key, bucket);
+        PlotSquared.log(C.LEGACY_CONFIG_REPLACED.f(block, bucket.toString()));
     }
 
     private void convertBlockList(@NonNull final ConfigurationSection section, @NonNull final String key,
@@ -92,6 +100,18 @@ public final class LegacyConverter {
         final PlotBlock[] blocks = this.splitBlockList(blockList);
         final BlockBucket bucket = this.blockListToBucket(blocks);
         this.setString(section, key, bucket);
+        PlotSquared.log(C.LEGACY_CONFIG_REPLACED.f(plotBlockArrayString(blocks), bucket.toString()));
+    }
+
+    private String plotBlockArrayString(@NonNull final PlotBlock[] blocks) {
+        final StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < blocks.length; i++) {
+            builder.append(blocks[i].toString());
+            if ((i + 1) < blocks.length) {
+                builder.append(",");
+            }
+        }
+        return builder.toString();
     }
 
     public void convert() {

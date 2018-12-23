@@ -53,6 +53,11 @@ public interface IPlotMain extends ILogger {
     void disable();
 
     /**
+     * Completely shut down the plugin
+     */
+    void shutdown();
+
+    /**
      * Get the version of the PlotSquared being used.
      *
      * @return the plugin version

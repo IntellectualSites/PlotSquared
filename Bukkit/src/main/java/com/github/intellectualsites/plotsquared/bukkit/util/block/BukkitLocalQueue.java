@@ -125,12 +125,10 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
         } else {
             final LegacyPlotBlock legacyPlotBlock = (LegacyPlotBlock) plotBlock;
             material = PlotSquared.get().IMP.getLegacyMappings()
-                .fromLegacyToString(legacyPlotBlock.getId()).to(Material.class);
+                .fromLegacyToString(legacyPlotBlock.getId(), legacyPlotBlock.getData()).to(Material.class);
             if (material == null) {
                 throw new IllegalStateException(String
-                    .format("Could not find material that matches %s",
-                        PlotSquared.get().IMP.getLegacyMappings()
-                            .fromLegacyToString(legacyPlotBlock.getId())));
+                    .format("Could not find material that matches %s", legacyPlotBlock.toString()));
             }
         }
         block.setType(material, false);
@@ -142,7 +140,7 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
         }
         final LegacyPlotBlock legacyPlotBlock = (LegacyPlotBlock) plotBlock;
         return Material.getMaterial(PlotSquared.get().IMP.getLegacyMappings()
-            .fromLegacyToString(((LegacyPlotBlock) plotBlock).id).toString()) == block.getType()
+            .fromLegacyToString(((LegacyPlotBlock) plotBlock).id, ((LegacyPlotBlock) plotBlock).data).toString()) == block.getType()
             && (legacyPlotBlock.id == 0 || legacyPlotBlock.data == block.getData());
     }
 
