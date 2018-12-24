@@ -1437,7 +1437,7 @@ public class Plot {
                 e.printStackTrace();
                 return true;
             }
-            SchematicHandler.manager.paste(sch, this, 0, 0, 0, true, new RunnableVal<Boolean>() {
+            SchematicHandler.manager.paste(sch, this, 0, 1, 0, false, new RunnableVal<Boolean>() {
                 @Override public void run(Boolean value) {
                     if (value) {
                         MainUtil.sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);

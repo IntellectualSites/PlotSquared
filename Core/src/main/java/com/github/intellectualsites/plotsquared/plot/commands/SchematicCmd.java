@@ -85,7 +85,7 @@ public class SchematicCmd extends SubCommand {
                             return;
                         }
                         SchematicHandler.manager
-                            .paste(schematic, plot, 0, 0, 0, true, new RunnableVal<Boolean>() {
+                            .paste(schematic, plot, 0, 1, 0, false, new RunnableVal<Boolean>() {
                                 @Override public void run(Boolean value) {
                                     SchematicCmd.this.running = false;
                                     if (value) {

@@ -231,6 +231,8 @@ public abstract class SchematicHandler {
                                 }
                             }
                         }
+
+                        queue.enqueue();
 /*                            }
                         if (!chunks.isEmpty()) {
                             this.run();
