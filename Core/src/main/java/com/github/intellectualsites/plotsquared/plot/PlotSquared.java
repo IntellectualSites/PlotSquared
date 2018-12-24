@@ -1350,7 +1350,52 @@ import java.util.zip.ZipInputStream;
     public boolean setupPlotWorld(String world, String args, IndependentPlotGenerator generator) {
         if (args != null && !args.isEmpty()) {
             // save configuration
-            String[] split = args.split(",");
+
+            final List<String> validArguments = Arrays
+                .asList("s=", "size=", "g=", "gap=", "h=", "height=", "f=", "floor=", "m=", "main=",
+                    "w=", "wall=", "b=", "border=");
+
+            // Calculate the number of expected arguments
+            int expected = 0;
+            for (final String validArgument : validArguments) {
+                if (args.toLowerCase(Locale.ENGLISH).contains(validArgument)) {
+                    expected += 1;
+                }
+            }
+
+            String[] split = args.toLowerCase(Locale.ENGLISH).split(",");
+
+            if (split.length > expected) {
+                // This means we have multi-block block buckets
+                String[] combinedArgs = new String[expected];
+                int index = 0;
+
+                StringBuilder argBuilder = new StringBuilder();
+                outer:
+                for (final String string : split) {
+                    for (final String validArgument : validArguments) {
+                        if (string.contains(validArgument)) {
+                            if (!argBuilder.toString().isEmpty()) {
+                                combinedArgs[index++] = argBuilder.toString();
+                                argBuilder = new StringBuilder();
+                            }
+                            argBuilder.append(string);
+                            continue outer;
+                        }
+                    }
+                    if (argBuilder.toString().charAt(argBuilder.length() - 1) != '=') {
+                        argBuilder.append(",");
+                    }
+                    argBuilder.append(string);
+                }
+
+                if (!argBuilder.toString().isEmpty()) {
+                    combinedArgs[index] = argBuilder.toString();
+                }
+
+                split = combinedArgs;
+            }
+
             HybridPlotWorld plotworld = new HybridPlotWorld(world, null, generator, null, null);
             for (String element : split) {
                 String[] pair = element.split("=");
@@ -1553,7 +1598,8 @@ import java.util.zip.ZipInputStream;
                         plots.add(value);
                     }
                 });
-            } catch (final Exception ignored) {}
+            } catch (final Exception ignored) {
+            }
             DBFunc.validatePlots(plots);
 
             // Close the connection
@@ -1683,17 +1729,20 @@ import java.util.zip.ZipInputStream;
 
             if (this.worlds.contains("worlds")) {
                 if (!this.worlds.contains("configuration_version") || !this.worlds
-                    .getString("configuration_version").equalsIgnoreCase(LegacyConverter.CONFIGURATION_VERSION)) {
+                    .getString("configuration_version")
+                    .equalsIgnoreCase(LegacyConverter.CONFIGURATION_VERSION)) {
                     // Conversion needed
                     log(C.LEGACY_CONFIG_FOUND.s());
                     try {
                         com.google.common.io.Files
                             .copy(this.worldsFile, new File(folder, "worlds.yml.old"));
                         log(C.LEGACY_CONFIG_BACKUP.s());
-                        final ConfigurationSection worlds = this.worlds.getConfigurationSection("worlds");
+                        final ConfigurationSection worlds =
+                            this.worlds.getConfigurationSection("worlds");
                         final LegacyConverter converter = new LegacyConverter(worlds);
                         converter.convert();
-                        this.worlds.set("configuration_version", LegacyConverter.CONFIGURATION_VERSION);
+                        this.worlds
+                            .set("configuration_version", LegacyConverter.CONFIGURATION_VERSION);
                         this.worlds.set("worlds", worlds); // Redundant, but hey... ¯\_(ツ)_/¯
                         this.worlds.save(this.worldsFile);
                         log(C.LEGACY_CONFIG_DONE.s());
@@ -1970,7 +2019,7 @@ import java.util.zip.ZipInputStream;
      *
      * @param alias     to search plots
      * @param worldname to filter alias to a specific world [optional] null means all worlds
-     * @return Set<{                                                                                                                                                                                                                                                               @                                                                                                                                                                                                                                                               link                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Plot                                                                                                                                                                                                                                                               }> empty if nothing found
+     * @return Set<{                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               link                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Plot                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               }> empty if nothing found
      */
     public Set<Plot> getPlotsByAlias(@Nullable final String alias,
         @NonNull final String worldname) {
