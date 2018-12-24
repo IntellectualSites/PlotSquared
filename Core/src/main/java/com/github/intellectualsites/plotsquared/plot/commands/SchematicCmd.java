@@ -55,47 +55,45 @@ public class SchematicCmd extends SubCommand {
                 }
                 final String location = args[1];
                 this.running = true;
-                TaskManager.runTaskAsync(new Runnable() {
-                    @Override public void run() {
-                        Schematic schematic = null;
-                        if (location.startsWith("url:")) {
-                            try {
-                                UUID uuid = UUID.fromString(location.substring(4));
-                                URL base = new URL(Settings.Web.URL);
-                                URL url = new URL(base, "uploads/" + uuid + ".schematic");
-                                schematic = SchematicHandler.manager.getSchematic(url);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                sendMessage(player, C.SCHEMATIC_INVALID,
-                                    "non-existent url: " + location);
-                                SchematicCmd.this.running = false;
-                                return;
-                            }
-                        } else {
-                            try {
-                                schematic = SchematicHandler.manager.getSchematic(location);
-                            } catch (SchematicHandler.UnsupportedFormatException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (schematic == null) {
-                            SchematicCmd.this.running = false;
+                TaskManager.runTaskAsync(() -> {
+                    Schematic schematic = null;
+                    if (location.startsWith("url:")) {
+                        try {
+                            UUID uuid = UUID.fromString(location.substring(4));
+                            URL base = new URL(Settings.Web.URL);
+                            URL url = new URL(base, "uploads/" + uuid + ".schematic");
+                            schematic = SchematicHandler.manager.getSchematic(url);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                             sendMessage(player, C.SCHEMATIC_INVALID,
-                                "non-existent or not in gzip format");
+                                "non-existent url: " + location);
+                            SchematicCmd.this.running = false;
                             return;
                         }
-                        SchematicHandler.manager
-                            .paste(schematic, plot, 0, 1, 0, false, new RunnableVal<Boolean>() {
-                                @Override public void run(Boolean value) {
-                                    SchematicCmd.this.running = false;
-                                    if (value) {
-                                        sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);
-                                    } else {
-                                        sendMessage(player, C.SCHEMATIC_PASTE_FAILED);
-                                    }
-                                }
-                            });
+                    } else {
+                        try {
+                            schematic = SchematicHandler.manager.getSchematic(location);
+                        } catch (SchematicHandler.UnsupportedFormatException e) {
+                            e.printStackTrace();
+                        }
                     }
+                    if (schematic == null) {
+                        SchematicCmd.this.running = false;
+                        sendMessage(player, C.SCHEMATIC_INVALID,
+                            "non-existent or not in gzip format");
+                        return;
+                    }
+                    SchematicHandler.manager
+                        .paste(schematic, plot, 0, 1, 0, false, new RunnableVal<Boolean>() {
+                            @Override public void run(Boolean value) {
+                                SchematicCmd.this.running = false;
+                                if (value) {
+                                    sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);
+                                } else {
+                                    sendMessage(player, C.SCHEMATIC_PASTE_FAILED);
+                                }
+                            }
+                        });
                 });
                 break;
             }
@@ -153,12 +151,8 @@ public class SchematicCmd extends SubCommand {
                         .sendMessage(player, "&cInvalid world. Use &7/plot sch exportall <area>");
                     return false;
                 }
-                boolean result =
-                    SchematicHandler.manager.exportAll(plots, null, null, new Runnable() {
-                        @Override public void run() {
-                            MainUtil.sendMessage(player, "&aFinished mass export");
-                        }
-                    });
+                boolean result = SchematicHandler.manager.exportAll(plots, null, null,
+                    () -> MainUtil.sendMessage(player, "&aFinished mass export"));
                 if (!result) {
                     MainUtil.sendMessage(player, "&cTask is already running.");
                     return false;
@@ -197,13 +191,10 @@ public class SchematicCmd extends SubCommand {
                 location.getWorld();
                 Collection<Plot> plots = new ArrayList<>();
                 plots.add(plot);
-                boolean result =
-                    SchematicHandler.manager.exportAll(plots, null, null, new Runnable() {
-                        @Override public void run() {
-                            MainUtil.sendMessage(player, "&aFinished export");
-                            SchematicCmd.this.running = false;
-                        }
-                    });
+                boolean result = SchematicHandler.manager.exportAll(plots, null, null, () -> {
+                    MainUtil.sendMessage(player, "&aFinished export");
+                    SchematicCmd.this.running = false;
+                });
                 if (!result) {
                     MainUtil.sendMessage(player, "&cTask is already running.");
                     return false;

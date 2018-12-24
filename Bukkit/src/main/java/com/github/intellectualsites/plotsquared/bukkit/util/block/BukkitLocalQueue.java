@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.bukkit.util.block;
 
+import com.github.intellectualsites.plotsquared.bukkit.object.schematic.StateWrapper;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.LegacyPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
@@ -7,6 +8,9 @@ import com.github.intellectualsites.plotsquared.plot.object.StringPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.block.BasicLocalBlockQueue;
+import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.world.block.BaseBlock;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -67,8 +71,11 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
     }
 
     @Override public final void setComponents(LocalChunk<T> lc) {
-        setBlocks(lc);
-        setBiomes(lc);
+        if (isBaseBlocks()) {
+            setBaseBlocks(lc);
+        } else {
+            setBlocks(lc);
+        }
     }
 
     public World getBukkitWorld() {
@@ -93,19 +100,45 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
                         int y = MainUtil.y_loc[layer][j];
                         int z = MainUtil.z_loc[layer][j];
                         Block existing = chunk.getBlock(x, y, z);
-                        // int existingId = existing.getTypeId();
-                        // if (existingId == block.id) {
-                        //    if (existingId == 0) {
-                        //        continue;
-                        //    }
-                        //    if (existing.getData() == block.data) {
-                        //        continue;
-                        //    }
-                        //}
                         if (equals(block, existing)) {
                             continue;
                         }
                         setMaterial(block, existing);
+                    }
+                }
+            }
+        }
+    }
+
+    public void setBaseBlocks(LocalChunk<T> lc) {
+        World worldObj = Bukkit.getWorld(getWorld());
+        Chunk chunk = worldObj.getChunkAt(lc.getX(), lc.getZ());
+        chunk.load(true);
+        for (int layer = 0; layer < lc.baseblocks.length; layer++) {
+            BaseBlock[] blocksLayer = lc.baseblocks[layer];
+            if (blocksLayer != null) {
+                for (int j = 0; j < blocksLayer.length; j++) {
+                    if (blocksLayer[j] != null) {
+                        BaseBlock block = blocksLayer[j];
+                        int x = MainUtil.x_loc[layer][j];
+                        int y = MainUtil.y_loc[layer][j];
+                        int z = MainUtil.z_loc[layer][j];
+
+                        Block existing = chunk.getBlock(x, y, z);
+                        if (equals(PlotBlock.get(block), existing) && existing.getBlockData()
+                            .matches(BukkitAdapter.adapt(block))) {
+                            continue;
+                        }
+
+                        existing.setType(BukkitAdapter.adapt(block.getBlockType()), false);
+                        existing.setBlockData(BukkitAdapter.adapt(block), false);
+                        if (block.hasNbtData()) {
+                            CompoundTag tag = block.getNbtData();
+                            StateWrapper sw = new StateWrapper(tag);
+
+                            sw.restoreTag(worldObj.getName(), existing.getX(), existing.getY(),
+                                existing.getZ());
+                        }
                     }
                 }
             }
@@ -125,7 +158,8 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
         } else {
             final LegacyPlotBlock legacyPlotBlock = (LegacyPlotBlock) plotBlock;
             material = PlotSquared.get().IMP.getLegacyMappings()
-                .fromLegacyToString(legacyPlotBlock.getId(), legacyPlotBlock.getData()).to(Material.class);
+                .fromLegacyToString(legacyPlotBlock.getId(), legacyPlotBlock.getData())
+                .to(Material.class);
             if (material == null) {
                 throw new IllegalStateException(String
                     .format("Could not find material that matches %s", legacyPlotBlock.toString()));
@@ -140,8 +174,9 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
         }
         final LegacyPlotBlock legacyPlotBlock = (LegacyPlotBlock) plotBlock;
         return Material.getMaterial(PlotSquared.get().IMP.getLegacyMappings()
-            .fromLegacyToString(((LegacyPlotBlock) plotBlock).id, ((LegacyPlotBlock) plotBlock).data).toString()) == block.getType()
-            && (legacyPlotBlock.id == 0 || legacyPlotBlock.data == block.getData());
+            .fromLegacyToString(((LegacyPlotBlock) plotBlock).id,
+                ((LegacyPlotBlock) plotBlock).data).toString()) == block.getType() && (
+            legacyPlotBlock.id == 0 || legacyPlotBlock.data == block.getData());
     }
 
     public void setBiomes(LocalChunk<T> lc) {

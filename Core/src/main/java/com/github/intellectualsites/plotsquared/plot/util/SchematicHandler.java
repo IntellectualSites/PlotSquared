@@ -180,19 +180,10 @@ public abstract class SchematicHandler {
                 final int bcz = p1z >> 4;
                 final int tcx = p2x >> 4;
                 final int tcz = p2z >> 4;
-/*                    final ArrayList<ChunkLoc> chunks = new ArrayList<>();
-                for (int x = bcx; x <= tcx; x++) {
-                    for (int z = bcz; z <= tcz; z++) {
-                        chunks.add(new ChunkLoc(x, z));
-                    }
-                }*/
+
                 ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
                     @Override public void run(int[] value) {
-                        //int count = 0;
-                        //while (!chunks.isEmpty() && count < 256) {
-                        //count++;
                         ChunkLoc chunk = new ChunkLoc(value[0], value[1]);
-                        PlotSquared.log(chunk.toString());
                         int x = chunk.x;
                         int z = chunk.z;
                         int xxb = x << 4;
@@ -218,47 +209,24 @@ public abstract class SchematicHandler {
                             if (yy > 255) {
                                 continue;
                             }
-                            int i1 = ry * WIDTH * LENGTH;
                             for (int rz = zzb - p1z; rz <= (zzt - p1z); rz++) {
-                                int i2 = (rz * WIDTH) + i1;
                                 for (int rx = xxb - p1x; rx <= (xxt - p1x); rx++) {
-                                    int i = i2 + rx;
-                                    int xx = p1x + rx;
-                                    int zz = p1z + rz;
+                                    int xx = p1x + xOffset + rx;
+                                    int zz = p1z + zOffset + rz;
                                     BaseBlock id = blockArrayClipboard
                                         .getFullBlock(BlockVector3.at(rx, ry, rz));
                                     queue.setBlock(xx, yy, zz, id);
                                 }
                             }
                         }
-
                         queue.enqueue();
-/*                            }
-                        if (!chunks.isEmpty()) {
-                            this.run();
-                        } else {
-                            queue.flush();
-                            HashMap<BlockLoc, CompoundTag> tiles = schematic.getClipboard().getTiles();
-                            if (!tiles.isEmpty()) {
-                                TaskManager.IMP.sync(new RunnableVal<Object>() {
-                                    @Override public void run(Object value) {
-                                        for (Map.Entry<BlockLoc, CompoundTag> entry : schematic
-                                            .getTiles().entrySet()) {
-                                            BlockLoc loc = entry.getKey();
-                                            restoreTile(queue, entry.getValue(),
-                                                p1x + xOffset + loc.x, loc.y + y_offset_actual,
-                                                p1z + zOffset + loc.z);
-                                        }
-                                    }
-                                });
-                            }
-                        }*/
                     }
-                }, null, 10);
-                if (whenDone != null) {
-                    whenDone.value = true;
-                    whenDone.run();
-                }
+                }, () -> {
+                    if (whenDone != null) {
+                        whenDone.value = true;
+                        whenDone.run();
+                    }
+                }, 10);
             } catch (Exception e) {
                 e.printStackTrace();
                 TaskManager.runTask(whenDone);

@@ -50,9 +50,9 @@ public class Load extends SubCommand {
                     MainUtil.sendMessage(player, C.LOAD_NULL);
                     return false;
                 }
-                String schematic;
+                String schem;
                 try {
-                    schematic = schematics.get(Integer.parseInt(args[0]) - 1);
+                    schem = schematics.get(Integer.parseInt(args[0]) - 1);
                 } catch (Exception ignored) {
                     // use /plot load <index>
                     MainUtil
@@ -61,7 +61,7 @@ public class Load extends SubCommand {
                 }
                 final URL url;
                 try {
-                    url = new URL(Settings.Web.URL + "saves/" + player.getUUID() + '/' + schematic);
+                    url = new URL(Settings.Web.URL + "saves/" + player.getUUID() + '/' + schem);
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                     MainUtil.sendMessage(player, C.LOAD_FAILED);
@@ -69,29 +69,27 @@ public class Load extends SubCommand {
                 }
                 plot.addRunning();
                 MainUtil.sendMessage(player, C.GENERATING_COMPONENT);
-                TaskManager.runTaskAsync(new Runnable() {
-                    @Override public void run() {
-                        Schematic schematic = SchematicHandler.manager.getSchematic(url);
-                        if (schematic == null) {
-                            plot.removeRunning();
-                            sendMessage(player, C.SCHEMATIC_INVALID,
-                                "non-existent or not in gzip format");
-                            return;
-                        }
-                        PlotArea area = plot.getArea();
-                        SchematicHandler.manager
-                            .paste(schematic, plot, 0, area.MIN_BUILD_HEIGHT, 0, false,
-                                new RunnableVal<Boolean>() {
-                                    @Override public void run(Boolean value) {
-                                        plot.removeRunning();
-                                        if (value) {
-                                            sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);
-                                        } else {
-                                            sendMessage(player, C.SCHEMATIC_PASTE_FAILED);
-                                        }
-                                    }
-                                });
+                TaskManager.runTaskAsync(() -> {
+                    Schematic schematic = SchematicHandler.manager.getSchematic(url);
+                    if (schematic == null) {
+                        plot.removeRunning();
+                        sendMessage(player, C.SCHEMATIC_INVALID,
+                            "non-existent or not in gzip format");
+                        return;
                     }
+                    PlotArea area = plot.getArea();
+                    SchematicHandler.manager
+                        .paste(schematic, plot, 0, area.MIN_BUILD_HEIGHT, 0, false,
+                            new RunnableVal<Boolean>() {
+                                @Override public void run(Boolean value) {
+                                    plot.removeRunning();
+                                    if (value) {
+                                        sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);
+                                    } else {
+                                        sendMessage(player, C.SCHEMATIC_PASTE_FAILED);
+                                    }
+                                }
+                            });
                 });
                 return true;
             }
