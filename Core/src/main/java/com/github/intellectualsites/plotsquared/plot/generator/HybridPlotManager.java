@@ -9,6 +9,7 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
+import com.sk89q.worldedit.world.block.BaseBlock;
 
 import java.io.File;
 import java.io.IOException;
@@ -89,12 +90,11 @@ public class HybridPlotManager extends ClassicPlotManager {
                 if (absZ < 0) {
                     absZ += size;
                 }
-                String[] blocks = hpw.G_SCH.get(MathMan.pair(absX, absZ));
+                BaseBlock[] blocks = hpw.G_SCH.get(MathMan.pair(absX, absZ));
                 if (blocks != null) {
                     for (int y = 0; y < blocks.length; y++) {
                         if (blocks[y] != null) {
-                            PlotBlock block = PlotBlock.get(blocks[y]);
-                            queue.setBlock(x, minY + y, z, block);
+                            queue.setBlock(x, minY + y, z, blocks[y]);
                         }
                     }
                 }
