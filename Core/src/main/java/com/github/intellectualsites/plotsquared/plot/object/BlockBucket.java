@@ -141,16 +141,22 @@ import java.util.Map.Entry;
         //
         if (sum < 100) {
             final int remaining = 100 - sum;
-            final int perUnassigned = remaining / unassigned.size();
-            for (final PlotBlock block : unassigned) {
-                temp.put(block, perUnassigned);
-                sum += perUnassigned;
-            }
-            // Make sure there isn't a tiny difference remaining
-            if (sum < 100) {
-                final int difference = 100 - sum;
-                temp.put(unassigned.get(0), perUnassigned + difference);
-                sum = 100;
+            if (unassigned.isEmpty()) {
+                // If there are no unassigned values, we just add it to the first value
+                final Entry<PlotBlock, Integer> entry = temp.entrySet().iterator().next();
+                temp.put(entry.getKey(), (entry.getValue() + 1 + remaining));
+            } else {
+                final int perUnassigned = remaining / unassigned.size();
+                for (final PlotBlock block : unassigned) {
+                    temp.put(block, perUnassigned);
+                    sum += perUnassigned;
+                }
+                // Make sure there isn't a tiny difference remaining
+                if (sum < 100) {
+                    final int difference = 100 - sum;
+                    temp.put(unassigned.get(0), perUnassigned + difference);
+                    sum = 100;
+                }
             }
         } else if (!unassigned.isEmpty()) {
             C.BUCKET_ENTRIES_IGNORED.send(ConsolePlayer.getConsole());

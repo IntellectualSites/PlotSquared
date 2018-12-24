@@ -1423,7 +1423,7 @@ public class Plot {
         }
         PlotArea plotworld = getArea();
         if (plotworld.SCHEMATIC_ON_CLAIM) {
-            Schematic sch = null;
+            Schematic sch;
             try {
                 if (schematic == null || schematic.isEmpty()) {
                     sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
