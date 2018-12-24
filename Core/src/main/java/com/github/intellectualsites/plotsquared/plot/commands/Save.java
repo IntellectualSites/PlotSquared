@@ -43,34 +43,32 @@ public class Save extends SubCommand {
         plot.addRunning();
         SchematicHandler.manager.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
             @Override public void run(final CompoundTag value) {
-                TaskManager.runTaskAsync(new Runnable() {
-                    @Override public void run() {
-                        String time = (System.currentTimeMillis() / 1000) + "";
-                        Location[] corners = plot.getCorners();
-                        corners[0].setY(0);
-                        corners[1].setY(255);
-                        int size = (corners[1].getX() - corners[0].getX()) + 1;
-                        PlotId id = plot.getId();
-                        String world = plot.getArea().toString().replaceAll(";", "-")
-                            .replaceAll("[^A-Za-z0-9]", "");
-                        final String file =
-                            time + '_' + world + '_' + id.x + '_' + id.y + '_' + size;
-                        UUID uuid = player.getUUID();
-                        SchematicHandler.manager.upload(value, uuid, file, new RunnableVal<URL>() {
-                            @Override public void run(URL url) {
-                                plot.removeRunning();
-                                if (url == null) {
-                                    MainUtil.sendMessage(player, C.SAVE_FAILED);
-                                    return;
-                                }
-                                MainUtil.sendMessage(player, C.SAVE_SUCCESS);
-                                List<String> schematics = player.getMeta("plot_schematics");
-                                if (schematics != null) {
-                                    schematics.add(file);
-                                }
+                TaskManager.runTaskAsync(() -> {
+                    String time = (System.currentTimeMillis() / 1000) + "";
+                    Location[] corners = plot.getCorners();
+                    corners[0].setY(0);
+                    corners[1].setY(255);
+                    int size = (corners[1].getX() - corners[0].getX()) + 1;
+                    PlotId id = plot.getId();
+                    String world1 = plot.getArea().toString().replaceAll(";", "-")
+                        .replaceAll("[^A-Za-z0-9]", "");
+                    final String file =
+                        time + '_' + world1 + '_' + id.x + '_' + id.y + '_' + size;
+                    UUID uuid = player.getUUID();
+                    SchematicHandler.manager.upload(value, uuid, file, new RunnableVal<URL>() {
+                        @Override public void run(URL url) {
+                            plot.removeRunning();
+                            if (url == null) {
+                                MainUtil.sendMessage(player, C.SAVE_FAILED);
+                                return;
                             }
-                        });
-                    }
+                            MainUtil.sendMessage(player, C.SAVE_SUCCESS);
+                            List<String> schematics = player.getMeta("plot_schematics");
+                            if (schematics != null) {
+                                schematics.add(file);
+                            }
+                        }
+                    });
                 });
             }
         });
