@@ -24,18 +24,18 @@ task createPom {
     doLast {
         pom {
             project {
-                groupId 'com.plotsquared'
-                artifactId 'plotsquared-api'
+                groupId 'com.github.intellectualsites.plotsquared'
+                artifactId 'Plotsquared'
                 version project.parent.version
             }
-        }.writeTo("../mvn/com/plotsquared/plotsquared-api/${project.parent.version}/plotsquared-api-${project.parent.version}.pom")
+        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/Plotsquared-Api/${project.parent.version}/Plotsquared-Api-${project.parent.version}.pom")
         pom {
             project {
-                groupId 'com.plotsquared'
-                artifactId 'plotsquared-api'
+                groupId 'com.github.intellectualsites.plotsquared'
+                artifactId 'Plotsquared'
                 version 'latest'
             }
-        }.writeTo("../mvn/com/plotsquared/plotsquared-api/latest/plotsquared-api-latest.pom")
+        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/Plotsquared-Api/${project.parent.version}/Plotsquared-Api-latest.pom")
     }
 }
 
