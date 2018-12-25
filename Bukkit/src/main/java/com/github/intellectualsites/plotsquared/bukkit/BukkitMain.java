@@ -29,10 +29,12 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.extension.platform.Capability;
 import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.*;
 import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -103,8 +105,19 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             }
         } catch (Throwable ignore) {
         }
+        // Force WorldEdit to load
+        try {
+            System.out.println("[P2] Force loading WorldEdit");
+            if (!manager.isPluginEnabled("WorldEdit")) {
+                manager.enablePlugin(WorldEditPlugin.getPlugin(WorldEditPlugin.class));
+            }
+            System.out.println("[P2] Testing platform capabilities");
+            WorldEdit.getInstance().getPlatformManager().queryCapability(Capability.GAME_HOOKS);
+        } catch (final Throwable throwable) {
+            throw new IllegalStateException("Failed to force load WorldEdit."
+                + " Road schematics will fail to generate", throwable);
+        }
     }
-
     private final LegacyMappings legacyMappings = new BukkitLegacyMappings();
     private final BlockRegistry<Material> blockRegistry =
         new BukkitBlockRegistry(Material.values());
