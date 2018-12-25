@@ -35,7 +35,7 @@ task createPom {
                 artifactId 'Plotsquared'
                 version 'latest'
             }
-        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/Plotsquared-Api/${project.parent.version}/Plotsquared-Api-latest.pom")
+        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/Plotsquared-Api/latest/Plotsquared-Api-latest.pom")
     }
 }
 
