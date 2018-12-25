@@ -18,8 +18,8 @@ processResources {
     }
 }
 
-jar.archiveName = "plotsquared-api-${project.parent.version}.jar"
-jar.destinationDir = file '../mvn/com/plotsquared/plotsquared-api/' + project.parent.version
+jar.archiveName = "Plotsquared-Api-${project.parent.version}.jar"
+jar.destinationDir = file '../mvn/com/github/intellectualsites/plotsquared/Plotsquared-Api/' + project.parent.version
 task createPom {
     doLast {
         pom {
@@ -42,10 +42,10 @@ task createPom {
 task copyFiles {
     doLast {
         copy {
-            from "../mvn/com/plotsquared/plotsquared-api/${project.parent.version}/"
-            into '../mvn/com/plotsquared/plotsquared-api/latest/'
+            from "../mvn/com/github/intellectualsites/plotsquared/Plotsquared-Api/${project.parent.version}/"
+            into '../mvn/com/github/intellectualsites/plotsquared/Plotsquared-Api/latest/'
             include('*.jar')
-            rename("plotsquared-api-${project.parent.version}.jar", 'plotsquared-api-latest.jar')
+            rename("Plotsquared-Api-${project.parent.version}.jar", 'Plotsquared-Api-latest.jar')
         }
     }
 }
