@@ -10,6 +10,7 @@ import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
 import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.worldedit.world.block.BaseBlock;
 
 import java.io.File;
 import java.util.*;
@@ -352,7 +353,7 @@ public abstract class HybridUtils {
                             condition = !gx || !gz || !lx || !lz;
                         }
                         if (condition) {
-                            String[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
+                            BaseBlock[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
                             int minY = Math.min(plotWorld.PLOT_HEIGHT, plotWorld.ROAD_HEIGHT);
                             if (blocks != null) {
                                 for (int y = 0; y < blocks.length; y++) {

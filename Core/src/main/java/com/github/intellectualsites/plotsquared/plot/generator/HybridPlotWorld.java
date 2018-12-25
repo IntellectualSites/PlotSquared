@@ -3,7 +3,10 @@ package com.github.intellectualsites.plotsquared.plot.generator;
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
@@ -15,11 +18,14 @@ import com.sk89q.worldedit.internal.helper.MCDirections;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.math.transform.AffineTransform;
+import com.sk89q.worldedit.registry.state.DirectionalProperty;
+import com.sk89q.worldedit.registry.state.Property;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.world.block.BaseBlock;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 
 public class HybridPlotWorld extends ClassicPlotWorld {
 
@@ -28,8 +34,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public boolean PLOT_SCHEMATIC = false;
     public short PATH_WIDTH_LOWER;
     public short PATH_WIDTH_UPPER;
-    public HashMap<Integer, String[]> G_SCH;
-    public HashMap<Integer, HashMap<Integer, CompoundTag>> G_SCH_STATE;
+    public HashMap<Integer, BaseBlock[]> G_SCH;
     private Location SIGN_LOCATION;
 
     public HybridPlotWorld(String worldName, String id, IndependentPlotGenerator generator,
@@ -54,10 +59,37 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     // FIXME depends on block ids
     // Possibly make abstract?
     public static BaseBlock rotate(BaseBlock id) {
-        CompoundTag tag = id.toBaseBlock().getNbtData();
+        Map<Property<?>, Object> stateMap = id.getStates();
+
+        if (stateMap != null) {
+            for (Map.Entry<Property<?>, Object> entry : stateMap.entrySet()) {
+                if (entry.getKey() instanceof DirectionalProperty) {
+                    Direction dir = (Direction) entry.getValue();
+                    Property property = entry.getKey();
+                    switch (dir) {
+                        case NORTH:
+                            id = id.with(property, Direction.EAST);
+                            break;
+                        case EAST:
+                            id = id.with(property, Direction.SOUTH);
+                            break;
+                        case SOUTH:
+                            id = id.with(property, Direction.WEST);
+                            break;
+                        case WEST:
+                            id = id.with(property, Direction.NORTH);
+                            break;
+                    }
+                }
+            }
+            return id;
+        }
+
+        CompoundTag tag = id.getNbtData();
 
         if (tag != null) {
             // Handle blocks which store their rotation in NBT
+            PlotSquared.log(tag.getValue().toString());
             if (tag.containsKey("Rot")) {
                 int rot = tag.asInt("Rot");
 
@@ -172,7 +204,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     for (short y = 0; y < h3; y++) {
                         BaseBlock id = blockArrayClipboard3.getFullBlock(BlockVector3.at(x, y, z))
                             .toBaseBlock();
-                        if (!id.getBlockType().getId().toLowerCase().contains("air")) {
+                        if (!id.getBlockType().getMaterial().isAir()) {
                             addOverlayBlock((short) (x + shift + oddshift + centerShiftX),
                                 (short) (y + startY), (short) (z + shift + oddshift + centerShiftZ),
                                 id, false, h3);
@@ -237,7 +269,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 for (short y = 0; y < h1; y++) {
                     BaseBlock id =
                         blockArrayClipboard1.getFullBlock(BlockVector3.at(x, y, z)).toBaseBlock();
-                    if (!id.getBlockType().getId().toLowerCase().contains("air")) {
+                    if (!id.getBlockType().getMaterial().isAir()) {
                         addOverlayBlock((short) (x - shift), (short) (y + startY),
                             (short) (z + shift + oddshift), id, false, h1);
                         addOverlayBlock((short) (z + shift + oddshift), (short) (y + startY),
@@ -250,7 +282,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             for (short z = 0; z < l2; z++) {
                 for (short y = 0; y < h2; y++) {
                     BaseBlock id = blockArrayClipboard2.getFullBlock(BlockVector3.at(x, y, z));
-                    if (!id.getBlockType().getId().toLowerCase().contains("air")) {
+                    if (!id.getBlockType().getMaterial().isAir()) {
                         addOverlayBlock((short) (x - shift), (short) (y + startY),
                             (short) (z - shift), id, false, h2);
                     }
@@ -275,11 +307,11 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             id = rotate(id);
         }
         int pair = MathMan.pair(x, z);
-        String[] existing = this.G_SCH.get(pair);
+        BaseBlock[] existing = this.G_SCH.get(pair);
         if (existing == null) {
-            existing = new String[height];
+            existing = new BaseBlock[height];
             this.G_SCH.put(pair, existing);
         }
-        existing[y] = id.getBlockType().getId();
+        existing[y] = id;
     }
 }
