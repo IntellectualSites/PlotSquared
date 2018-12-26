@@ -10,7 +10,10 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -47,7 +50,7 @@ public abstract class Command {
         this.perm = perm;
         this.required = required;
         this.category = cat;
-        this.aliases = Arrays.asList(id);
+        this.aliases = Collections.singletonList(id);
         if (this.parent != null) {
             this.parent.register(this);
         }
@@ -114,12 +117,7 @@ public abstract class Command {
     public List<Command> getCommands(CommandCategory cat, PlotPlayer player) {
         List<Command> commands = getCommands(player);
         if (cat != null) {
-            Iterator<Command> iterator = commands.iterator();
-            while (iterator.hasNext()) {
-                if (iterator.next().category != cat) {
-                    iterator.remove();
-                }
-            }
+            commands.removeIf(command -> command.category != cat);
         }
         return commands;
     }
@@ -249,8 +247,7 @@ public abstract class Command {
         }
         if (page == 0 && totalPages != 0) { // Next
             new PlotMessage().text("<-").color("$3").text(" | ").color("$3").text("->").color("$1")
-                .command(baseCommand + " " + (0 + 2)).text(C.CLICKABLE.s()).color("$2")
-                .send(player);
+                .command(baseCommand + " " + 2).text(C.CLICKABLE.s()).color("$2").send(player);
             return;
         }
         if (page == totalPages && totalPages != 0) { // Back
@@ -276,7 +273,7 @@ public abstract class Command {
             }
             return;
         }
-        if (this.allCommands == null || this.allCommands.isEmpty()) {
+        if (this.allCommands.isEmpty()) {
             player.sendMessage(
                 "Not Implemented: https://github.com/IntellectualSites/PlotSquared/issues/new");
             return;
@@ -289,13 +286,10 @@ public abstract class Command {
             }
             // Help command
             try {
-                if (args.length == 0 || MathMan.isInteger(args[0])
-                    || CommandCategory.valueOf(args[0].toUpperCase()) != null) {
-                    // This will default certain syntax to the help command
-                    // e.g. /plot, /plot 1, /plot claiming
-                    MainCommand.getInstance().help.execute(player, args, null, null);
-                    return;
-                }
+                // This will default certain syntax to the help command
+                // e.g. /plot, /plot 1, /plot claiming
+                MainCommand.getInstance().help.execute(player, args, null, null);
+                return;
             } catch (IllegalArgumentException ignored) {
             }
             // Command recommendation
@@ -341,7 +335,6 @@ public abstract class Command {
             boolean failed = args.length < reqArgs.length;
             String[] baseSplit = getCommandString().split(" ");
             String[] fullSplit = getUsage().split(" ");
-            String base = getCommandString();
             if (fullSplit.length - baseSplit.length < reqArgs.length) {
                 String[] tmp = new String[baseSplit.length + reqArgs.length];
                 System.arraycopy(fullSplit, 0, tmp, 0, fullSplit.length);
@@ -457,7 +450,6 @@ public abstract class Command {
     }
 
     public String getCommandString() {
-        String base;
         if (this.parent == null) {
             return "/" + toString();
         } else {
@@ -490,7 +482,7 @@ public abstract class Command {
             return null;
         }
         List<Command> result = new ArrayList<>();
-        int index = input.length - (space ? 0 : 1);
+        int index = input.length;
         for (String arg : args) {
             arg = arg.replace(getCommandString() + " ", "");
             String[] split = arg.split(" ");
@@ -519,7 +511,7 @@ public abstract class Command {
                         return null;
                     }
                 } else {
-                    Set<Command> commands = new HashSet<Command>();
+                    Set<Command> commands = new HashSet<>();
                     for (Map.Entry<String, Command> entry : this.staticCommands.entrySet()) {
                         if (entry.getKey().startsWith(arg) && entry.getValue()
                             .canExecute(player, false)) {
@@ -566,7 +558,7 @@ public abstract class Command {
         }
     }
 
-    public <T extends Object> T check(T object, C message, Object... args) {
+    public <T> T check(T object, C message, Object... args) {
         if (object == null) {
             throw new CommandException(message, args);
         }

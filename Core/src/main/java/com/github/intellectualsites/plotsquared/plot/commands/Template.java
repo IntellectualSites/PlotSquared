@@ -15,7 +15,10 @@ import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -63,9 +66,6 @@ import java.util.zip.ZipOutputStream;
                 zis.closeEntry();
             }
             return true;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return false;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -147,8 +147,8 @@ import java.util.zip.ZipOutputStream;
                 } catch (InvalidConfigurationException | IOException e) {
                     e.printStackTrace();
                 }
-                String manager =
-                    worldConfig.getString("generator.plugin", PlotSquared.imp().getPluginName());
+                String manager = worldConfig
+                    .getString("generator.plugin", PlotSquared.get().IMP.getPluginName());
                 String generator = worldConfig.getString("generator.init", manager);
                 int type = worldConfig.getInt("generator.type");
                 int terrain = worldConfig.getInt("generator.terrain");
@@ -161,11 +161,9 @@ import java.util.zip.ZipOutputStream;
                 setup.step = new ConfigurationNode[0];
                 setup.world = world;
                 SetupUtils.manager.setupWorld(setup);
-                GlobalBlockQueue.IMP.addTask(new Runnable() {
-                    @Override public void run() {
-                        MainUtil.sendMessage(player, "Done!");
-                        player.teleport(WorldUtil.IMP.getSpawn(world));
-                    }
+                GlobalBlockQueue.IMP.addTask(() -> {
+                    MainUtil.sendMessage(player, "Done!");
+                    player.teleport(WorldUtil.IMP.getSpawn(world));
                 });
                 return true;
             }
@@ -180,17 +178,15 @@ import java.util.zip.ZipOutputStream;
                     return false;
                 }
                 final PlotManager manager = area.getPlotManager();
-                TaskManager.runTaskAsync(new Runnable() {
-                    @Override public void run() {
-                        try {
-                            manager.exportTemplate(area);
-                        } catch (Exception e) { // Must recover from any exception thrown a third party template manager
-                            e.printStackTrace();
-                            MainUtil.sendMessage(player, "Failed: " + e.getMessage());
-                            return;
-                        }
-                        MainUtil.sendMessage(player, "Done!");
+                TaskManager.runTaskAsync(() -> {
+                    try {
+                        manager.exportTemplate(area);
+                    } catch (Exception e) { // Must recover from any exception thrown a third party template manager
+                        e.printStackTrace();
+                        MainUtil.sendMessage(player, "Failed: " + e.getMessage());
+                        return;
                     }
+                    MainUtil.sendMessage(player, "Done!");
                 });
                 return true;
             default:

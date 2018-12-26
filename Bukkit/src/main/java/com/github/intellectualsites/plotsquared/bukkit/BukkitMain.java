@@ -72,12 +72,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 pluginsField.setAccessible(true);
                 lookupNamesField.setAccessible(true);
                 List<Plugin> plugins = (List<Plugin>) pluginsField.get(manager);
-                Iterator<Plugin> iter = plugins.iterator();
-                while (iter.hasNext()) {
-                    if (iter.next().getName().startsWith("PlotMe")) {
-                        iter.remove();
-                    }
-                }
+                plugins.removeIf(plugin -> plugin.getName().startsWith("PlotMe"));
                 Map<String, Plugin> lookupNames =
                     (Map<String, Plugin>) lookupNamesField.get(manager);
                 lookupNames.remove("PlotMe");
@@ -201,8 +196,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 this.methodUnloadChunk0 = classCraftWorld.getRealClass()
                     .getDeclaredMethod("unloadChunk0", int.class, int.class, boolean.class);
                 this.methodUnloadChunk0.setAccessible(true);
-            } catch (Throwable ignore) {
-                ignore.printStackTrace();
+            } catch (Throwable e) {
+                e.printStackTrace();
             }
         }
         final PlotAreaManager manager = PlotSquared.get().getPlotAreaManager();
@@ -226,7 +221,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 if (id != null) {
                     final Plot plot = area.getOwnedPlot(id);
                     if (plot != null) {
-                        if (PlotPlayer.wrap(plot.owner) == null) {
+                        if (PlotPlayer.wrap(plot.guessOwner()) == null) {
                             if (world.getKeepSpawnInMemory()) {
                                 world.setKeepSpawnInMemory(false);
                                 return;
@@ -651,10 +646,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Override public boolean initPlotMeConverter() {
         if (new LikePlotMeConverter("PlotMe").run(new ClassicPlotMeConnector())) {
             return true;
-        } else if (new LikePlotMeConverter("PlotMe").run(new PlotMeConnector_017())) {
-            return true;
-        }
-        return false;
+        } else
+            return new LikePlotMeConverter("PlotMe").run(new PlotMeConnector_017());
     }
 
     @Override @Nullable public GeneratorWrapper<?> getGenerator(@NonNull final String world,

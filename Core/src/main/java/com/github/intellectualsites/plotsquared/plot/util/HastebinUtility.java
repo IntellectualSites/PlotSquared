@@ -51,7 +51,6 @@ public class HastebinUtility {
         List<String> lines = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
-            int i = 0;
             while ((line = reader.readLine()) != null) {
                 lines.add(line);
             }

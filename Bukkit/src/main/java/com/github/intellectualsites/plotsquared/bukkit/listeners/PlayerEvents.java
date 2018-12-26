@@ -590,13 +590,11 @@ import java.util.regex.Pattern;
         // Delayed
 
         // Async
-        TaskManager.runTaskLaterAsync(new Runnable() {
-            @Override public void run() {
-                if (!player.hasPlayedBefore() && player.isOnline()) {
-                    player.saveData();
-                }
-                EventUtil.manager.doJoinTask(pp);
+        TaskManager.runTaskLaterAsync(() -> {
+            if (!player.hasPlayedBefore() && player.isOnline()) {
+                player.saveData();
             }
+            EventUtil.manager.doJoinTask(pp);
         }, 20);
     }
 
@@ -2194,7 +2192,7 @@ import java.util.regex.Pattern;
             MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_UNOWNED);
             event.setCancelled(true);
         } else if (!plot.isAdded(pp.getUUID())) {
-            if (Flags.USE.contains(plot, PlotBlock.get(event.getBucket().getId(), 0))) {
+            if (Flags.USE.contains(plot, PlotBlock.get(event.getBucket()))) {
                 return;
             }
             if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
@@ -2216,9 +2214,7 @@ import java.util.regex.Pattern;
     }
 
     @EventHandler(priority = EventPriority.MONITOR) public void onLeave(PlayerQuitEvent event) {
-        if (TaskManager.TELEPORT_QUEUE.contains(event.getPlayer().getName())) {
-            TaskManager.TELEPORT_QUEUE.remove(event.getPlayer().getName());
-        }
+        TaskManager.TELEPORT_QUEUE.remove(event.getPlayer().getName());
         PlotPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
         pp.unregister();
     }
@@ -2507,7 +2503,7 @@ import java.util.regex.Pattern;
 
     @SuppressWarnings("deprecation") @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityCombustByEntity(EntityCombustByEntityEvent event) {
-        EntityDamageByEntityEvent eventChange = null;
+        EntityDamageByEntityEvent eventChange;
         eventChange = new EntityDamageByEntityEvent(event.getCombuster(), event.getEntity(),
             EntityDamageEvent.DamageCause.FIRE_TICK, (double) event.getDuration());
         onEntityDamageByEntityEvent(eventChange);

@@ -101,9 +101,7 @@ public class BukkitChunkManager extends ChunkManager {
         Set<ChunkLoc> chunks = super.getChunkChunks(world);
         for (Chunk chunk : Bukkit.getWorld(world).getLoadedChunks()) {
             ChunkLoc loc = new ChunkLoc(chunk.getX() >> 5, chunk.getZ() >> 5);
-            if (!chunks.contains(loc)) {
-                chunks.add(loc);
-            }
+            chunks.add(loc);
         }
         return chunks;
     }
@@ -115,10 +113,6 @@ public class BukkitChunkManager extends ChunkManager {
         final Runnable whenDone) {
         final int relX = newPos.getX() - pos1.getX();
         final int relZ = newPos.getZ() - pos1.getZ();
-        com.github.intellectualsites.plotsquared.plot.object.Location pos4 =
-            new com.github.intellectualsites.plotsquared.plot.object.Location(newPos.getWorld(),
-                newPos.getX() + relX, 256, newPos.getZ() + relZ);
-
         final RegionWrapper region =
             new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
         final World oldWorld = Bukkit.getWorld(pos1.getWorld());

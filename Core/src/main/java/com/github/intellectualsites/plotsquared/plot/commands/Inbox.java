@@ -43,7 +43,7 @@ import java.util.List;
         StringBuilder string = new StringBuilder();
         string.append(StringMan
             .replaceAll(C.COMMENT_LIST_HEADER_PAGED.s(), "%amount%", comments.length, "%cur",
-                page + 1, "%max", totalPages + 1, "%word", "all") + '\n');
+                page + 1, "%max", totalPages + 1, "%word", "all")).append('\n');
 
         // This might work xD
         for (int x = page * 12; x < max; x++) {

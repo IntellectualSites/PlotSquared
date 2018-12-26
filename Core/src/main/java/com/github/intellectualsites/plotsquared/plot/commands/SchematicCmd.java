@@ -189,7 +189,6 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
                     return false;
                 }
-                location.getWorld();
                 Collection<Plot> plots = new ArrayList<>();
                 plots.add(plot);
                 boolean result = SchematicHandler.manager.exportAll(plots, null, null, () -> {

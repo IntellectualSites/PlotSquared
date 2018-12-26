@@ -33,8 +33,8 @@ public class PlotVersion {
     public static PlotVersion tryParse(String version) {
         try {
             return new PlotVersion(version);
-        } catch (Exception ignore) {
-            ignore.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
             return new PlotVersion(0, 0, 0, 0, 0);
         }
     }

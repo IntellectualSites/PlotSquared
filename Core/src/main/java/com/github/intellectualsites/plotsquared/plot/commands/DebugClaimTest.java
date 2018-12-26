@@ -34,8 +34,6 @@ public class DebugClaimTest extends SubCommand {
         }
         PlotId min, max;
         try {
-            args[1].split(";");
-            args[2].split(";");
             min = PlotId.fromString(args[1]);
             max = PlotId.fromString(args[2]);
         } catch (Exception ignored) {
@@ -96,11 +94,8 @@ public class DebugClaimTest extends SubCommand {
         if (!plots.isEmpty()) {
             MainUtil.sendMessage(player,
                 "&3Sign Block&8->&3Plot&8: &7Updating '" + plots.size() + "' plots!");
-            DBFunc.createPlotsAndData(plots, new Runnable() {
-                @Override public void run() {
-                    MainUtil.sendMessage(player, "&6Database update finished!");
-                }
-            });
+            DBFunc.createPlotsAndData(plots,
+                () -> MainUtil.sendMessage(player, "&6Database update finished!"));
             for (Plot plot : plots) {
                 plot.create();
             }

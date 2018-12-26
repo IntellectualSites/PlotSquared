@@ -57,9 +57,7 @@ public class Help extends Command {
     public void displayHelp(PlotPlayer player, String cat, int page) {
         CommandCategory catEnum = null;
         if (cat != null) {
-            if (StringMan.isEqualIgnoreCase(cat, "all")) {
-                catEnum = null;
-            } else {
+            if (!StringMan.isEqualIgnoreCase(cat, "all")) {
                 for (CommandCategory c : CommandCategory.values()) {
                     if (StringMan.isEqualIgnoreCaseToAny(cat, c.name(), c.toString())) {
                         catEnum = c;
@@ -76,13 +74,13 @@ public class Help extends Command {
             StringBuilder builder = new StringBuilder();
             builder.append(C.HELP_HEADER.s());
             for (CommandCategory c : CommandCategory.values()) {
-                builder.append("\n" + StringMan
+                builder.append("\n").append(StringMan
                     .replaceAll(C.HELP_INFO_ITEM.s(), "%category%", c.toString().toLowerCase(),
                         "%category_desc%", c.toString()));
             }
             builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", "all")
                 .replaceAll("%category_desc%", "Display all commands"));
-            builder.append("\n" + C.HELP_FOOTER.s());
+            builder.append("\n").append(C.HELP_FOOTER.s());
             MainUtil.sendMessage(player, builder.toString(), false);
             return;
         }

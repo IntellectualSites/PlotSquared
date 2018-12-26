@@ -78,7 +78,7 @@ public abstract class PlotBlock implements ConfigurationSerializable {
 
     public static PlotBlock get(@NonNull final Object type) {
         if (blockRegistry == null) {
-            blockRegistry = PlotSquared.imp().getBlockRegistry();
+            blockRegistry = PlotSquared.get().IMP.getBlockRegistry();
             if (blockRegistry == null) {
                 throw new UnsupportedOperationException(
                     "The PlotSquared implementation has not registered a custom block registry."
@@ -99,7 +99,7 @@ public abstract class PlotBlock implements ConfigurationSerializable {
 
     public <T> T to(@NonNull final Class<T> clazz) {
         if (blockRegistry == null) {
-            blockRegistry = PlotSquared.imp().getBlockRegistry();
+            blockRegistry = PlotSquared.get().IMP.getBlockRegistry();
             if (blockRegistry == null) {
                 throw new UnsupportedOperationException(
                     "The PlotSquared implementation has not registered a custom block registry."

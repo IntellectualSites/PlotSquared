@@ -27,7 +27,7 @@ public class InboxOwner extends CommentInbox {
                         plot.getSettings().addComment(comment);
                     }
                 } else {
-                    plot.getSettings().setComments(new ArrayList<PlotComment>());
+                    plot.getSettings().setComments(new ArrayList<>());
                 }
                 TaskManager.runTask(whenDone);
             }
@@ -36,7 +36,7 @@ public class InboxOwner extends CommentInbox {
     }
 
     @Override public boolean addComment(Plot plot, PlotComment comment) {
-        if (plot.owner == null) {
+        if (plot.guessOwner() == null) {
             return false;
         }
         plot.getSettings().addComment(comment);

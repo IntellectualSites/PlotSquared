@@ -38,7 +38,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         if (depth == 0) {
             return;
         }
-        Entity passenger = entity.getPassenger();
+        Entity passenger = entity.getPassengers().get(0);
         if (passenger != null) {
             this.base.passenger = new ReplicatingEntityWrapper(passenger, depth);
         }

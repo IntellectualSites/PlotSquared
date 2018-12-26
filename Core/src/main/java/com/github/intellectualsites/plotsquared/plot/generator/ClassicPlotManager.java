@@ -244,7 +244,6 @@ public class ClassicPlotManager extends SquarePlotManager {
         Location bot = plot.getExtendedBottomAbs()
             .subtract(plot.getMerged(3) ? 0 : 1, 0, plot.getMerged(0) ? 0 : 1);
         Location top = plot.getExtendedTopAbs().add(1, 0, 1);
-        PseudoRandom random = new PseudoRandom();
         LocalBlockQueue queue = plotArea.getQueue(false);
         int y = dpw.WALL_HEIGHT + 1;
         if (!plot.getMerged(0)) {

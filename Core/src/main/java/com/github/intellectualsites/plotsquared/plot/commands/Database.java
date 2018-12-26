@@ -30,25 +30,18 @@ import java.util.Map.Entry;
 
     public static void insertPlots(final SQLManager manager, final List<Plot> plots,
         final PlotPlayer player) {
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override public void run() {
-                try {
-                    ArrayList<Plot> ps = new ArrayList<>();
-                    for (Plot p : plots) {
-                        ps.add(p);
-                    }
-                    MainUtil.sendMessage(player, "&6Starting...");
-                    manager.createPlotsAndData(ps, new Runnable() {
-                        @Override public void run() {
-                            MainUtil.sendMessage(player, "&6Database conversion finished!");
-                            manager.close();
-                        }
-                    });
-                } catch (Exception e) {
-                    MainUtil.sendMessage(player,
-                        "Failed to insert plot objects, see stacktrace for info");
-                    e.printStackTrace();
-                }
+        TaskManager.runTaskAsync(() -> {
+            try {
+                ArrayList<Plot> ps = new ArrayList<>(plots);
+                MainUtil.sendMessage(player, "&6Starting...");
+                manager.createPlotsAndData(ps, () -> {
+                    MainUtil.sendMessage(player, "&6Database conversion finished!");
+                    manager.close();
+                });
+            } catch (Exception e) {
+                MainUtil
+                    .sendMessage(player, "Failed to insert plot objects, see stacktrace for info");
+                e.printStackTrace();
             }
         });
     }
@@ -106,12 +99,12 @@ import java.util.Map.Entry;
                                             PlotId newId = newPlot.getId();
                                             PlotId id = plot.getId();
                                             File worldFile =
-                                                new File(PlotSquared.imp().getWorldContainer(),
+                                                new File(PlotSquared.get().IMP.getWorldContainer(),
                                                     id.toCommaSeparatedString());
                                             if (worldFile.exists()) {
-                                                File newFile =
-                                                    new File(PlotSquared.imp().getWorldContainer(),
-                                                        newId.toCommaSeparatedString());
+                                                File newFile = new File(
+                                                    PlotSquared.get().IMP.getWorldContainer(),
+                                                    newId.toCommaSeparatedString());
                                                 worldFile.renameTo(newFile);
                                             }
                                             id.x = newId.x;
@@ -130,20 +123,13 @@ import java.util.Map.Entry;
                                 plots.add(plot);
                             }
                         } else {
-                            HashMap<PlotId, Plot> plotmap =
-                                PlotSquared.get().plots_tmp.get(areaname);
-                            if (plotmap == null) {
-                                plotmap = new HashMap<>();
-                                PlotSquared.get().plots_tmp.put(areaname, plotmap);
-                            }
+                            HashMap<PlotId, Plot> plotmap = PlotSquared.get().plots_tmp
+                                .computeIfAbsent(areaname, k -> new HashMap<>());
                             plotmap.putAll(entry.getValue());
                         }
                     }
-                    DBFunc.createPlotsAndData(plots, new Runnable() {
-                        @Override public void run() {
-                            MainUtil.sendMessage(player, "&6Database conversion finished!");
-                        }
-                    });
+                    DBFunc.createPlotsAndData(plots,
+                        () -> MainUtil.sendMessage(player, "&6Database conversion finished!"));
                     return true;
                 case "mysql":
                     if (args.length < 6) {

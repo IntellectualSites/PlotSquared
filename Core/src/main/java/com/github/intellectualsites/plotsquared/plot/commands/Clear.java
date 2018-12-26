@@ -35,33 +35,27 @@ import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue
         checkTrue(plot.getRunning() == 0, C.WAIT_FOR_TIMER);
         checkTrue(!Settings.Done.RESTRICT_BUILDING || !Flags.DONE.isSet(plot) || Permissions
             .hasPermission(player, C.PERMISSION_CONTINUE), C.DONE_ALREADY_DONE);
-        confirm.run(this, new Runnable() {
-            @Override public void run() {
-                final long start = System.currentTimeMillis();
-                boolean result = plot.clear(true, false, new Runnable() {
-                    @Override public void run() {
-                        plot.unlink();
-                        GlobalBlockQueue.IMP.addTask(new Runnable() {
-                            @Override public void run() {
-                                plot.removeRunning();
-                                // If the state changes, then mark it as no longer done
-                                if (plot.getFlag(Flags.DONE).isPresent()) {
-                                    FlagManager.removePlotFlag(plot, Flags.DONE);
-                                }
-                                if (plot.getFlag(Flags.ANALYSIS).isPresent()) {
-                                    FlagManager.removePlotFlag(plot, Flags.ANALYSIS);
-                                }
-                                MainUtil.sendMessage(player, C.CLEARING_DONE,
-                                    "" + (System.currentTimeMillis() - start));
-                            }
-                        });
+        confirm.run(this, () -> {
+            final long start = System.currentTimeMillis();
+            boolean result = plot.clear(true, false, () -> {
+                plot.unlink();
+                GlobalBlockQueue.IMP.addTask(() -> {
+                    plot.removeRunning();
+                    // If the state changes, then mark it as no longer done
+                    if (plot.getFlag(Flags.DONE).isPresent()) {
+                        FlagManager.removePlotFlag(plot, Flags.DONE);
                     }
+                    if (plot.getFlag(Flags.ANALYSIS).isPresent()) {
+                        FlagManager.removePlotFlag(plot, Flags.ANALYSIS);
+                    }
+                    MainUtil.sendMessage(player, C.CLEARING_DONE,
+                        "" + (System.currentTimeMillis() - start));
                 });
-                if (!result) {
-                    MainUtil.sendMessage(player, C.WAIT_FOR_TIMER);
-                } else {
-                    plot.addRunning();
-                }
+            });
+            if (!result) {
+                MainUtil.sendMessage(player, C.WAIT_FOR_TIMER);
+            } else {
+                plot.addRunning();
             }
         }, null);
     }

@@ -98,42 +98,40 @@ import java.util.Set;
                                 object.type = area.TYPE;
                                 object.min = new PlotId(1, 1);
                                 object.max = new PlotId(numX, numZ);
-                                object.plotManager = PlotSquared.imp().getPluginName();
-                                object.setupGenerator = PlotSquared.imp().getPluginName();
+                                object.plotManager = PlotSquared.get().IMP.getPluginName();
+                                object.setupGenerator = PlotSquared.get().IMP.getPluginName();
                                 object.step = area.getSettingNodes();
                                 final String path =
                                     "worlds." + area.worldname + ".areas." + area.id + '-'
                                         + object.min + '-' + object.max;
-                                Runnable run = new Runnable() {
-                                    @Override public void run() {
-                                        if (offsetX != 0) {
-                                            PlotSquared.get().worlds
-                                                .set(path + ".road.offset.x", offsetX);
+                                Runnable run = () -> {
+                                    if (offsetX != 0) {
+                                        PlotSquared.get().worlds
+                                            .set(path + ".road.offset.x", offsetX);
+                                    }
+                                    if (offsetZ != 0) {
+                                        PlotSquared.get().worlds
+                                            .set(path + ".road.offset.z", offsetZ);
+                                    }
+                                    final String world = SetupUtils.manager.setupWorld(object);
+                                    if (WorldUtil.IMP.isWorld(world)) {
+                                        PlotSquared.get().loadWorld(world, null);
+                                        C.SETUP_FINISHED.send(player);
+                                        player.teleport(WorldUtil.IMP.getSpawn(world));
+                                        if (area.TERRAIN != 3) {
+                                            ChunkManager.largeRegionTask(world, region,
+                                                new RunnableVal<ChunkLoc>() {
+                                                    @Override public void run(ChunkLoc value) {
+                                                        AugmentedUtils
+                                                            .generate(world, value.x, value.z,
+                                                                null);
+                                                    }
+                                                }, null);
                                         }
-                                        if (offsetZ != 0) {
-                                            PlotSquared.get().worlds
-                                                .set(path + ".road.offset.z", offsetZ);
-                                        }
-                                        final String world = SetupUtils.manager.setupWorld(object);
-                                        if (WorldUtil.IMP.isWorld(world)) {
-                                            PlotSquared.get().loadWorld(world, null);
-                                            C.SETUP_FINISHED.send(player);
-                                            player.teleport(WorldUtil.IMP.getSpawn(world));
-                                            if (area.TERRAIN != 3) {
-                                                ChunkManager.largeRegionTask(world, region,
-                                                    new RunnableVal<ChunkLoc>() {
-                                                        @Override public void run(ChunkLoc value) {
-                                                            AugmentedUtils
-                                                                .generate(world, value.x, value.z,
-                                                                    null);
-                                                        }
-                                                    }, null);
-                                            }
-                                        } else {
-                                            MainUtil.sendMessage(player,
-                                                "An error occurred while creating the world: "
-                                                    + area.worldname);
-                                        }
+                                    } else {
+                                        MainUtil.sendMessage(player,
+                                            "An error occurred while creating the world: "
+                                                + area.worldname);
                                     }
                                 };
                                 if (hasConfirmation(player)) {
@@ -228,32 +226,30 @@ import java.util.Set;
                                 C.SETUP_WORLD_TAKEN.send(player, pa.worldname);
                                 return false;
                             }
-                            Runnable run = new Runnable() {
-                                @Override public void run() {
-                                    String path = "worlds." + pa.worldname;
-                                    if (!PlotSquared.get().worlds.contains(path)) {
-                                        PlotSquared.get().worlds.createSection(path);
-                                    }
-                                    ConfigurationSection section =
-                                        PlotSquared.get().worlds.getConfigurationSection(path);
-                                    pa.saveConfiguration(section);
-                                    pa.loadConfiguration(section);
-                                    object.plotManager = PlotSquared.imp().getPluginName();
-                                    object.setupGenerator = PlotSquared.imp().getPluginName();
-                                    String world = SetupUtils.manager.setupWorld(object);
-                                    if (WorldUtil.IMP.isWorld(world)) {
-                                        C.SETUP_FINISHED.send(player);
-                                        player.teleport(WorldUtil.IMP.getSpawn(world));
-                                    } else {
-                                        MainUtil.sendMessage(player,
-                                            "An error occurred while creating the world: "
-                                                + pa.worldname);
-                                    }
-                                    try {
-                                        PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
+                            Runnable run = () -> {
+                                String path = "worlds." + pa.worldname;
+                                if (!PlotSquared.get().worlds.contains(path)) {
+                                    PlotSquared.get().worlds.createSection(path);
+                                }
+                                ConfigurationSection section =
+                                    PlotSquared.get().worlds.getConfigurationSection(path);
+                                pa.saveConfiguration(section);
+                                pa.loadConfiguration(section);
+                                object.plotManager = PlotSquared.get().IMP.getPluginName();
+                                object.setupGenerator = PlotSquared.get().IMP.getPluginName();
+                                String world = SetupUtils.manager.setupWorld(object);
+                                if (WorldUtil.IMP.isWorld(world)) {
+                                    C.SETUP_FINISHED.send(player);
+                                    player.teleport(WorldUtil.IMP.getSpawn(world));
+                                } else {
+                                    MainUtil.sendMessage(player,
+                                        "An error occurred while creating the world: "
+                                            + pa.worldname);
+                                }
+                                try {
+                                    PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
                             };
                             if (hasConfirmation(player)) {
@@ -422,11 +418,7 @@ import java.util.Set;
                         @Override public void run(ChunkLoc value) {
                             AugmentedUtils.generate(area.worldname, value.x, value.z, null);
                         }
-                    }, new Runnable() {
-                        @Override public void run() {
-                            player.sendMessage("Regen complete");
-                        }
-                    });
+                    }, () -> player.sendMessage("Regen complete"));
                 return true;
             }
             case "goto":
@@ -464,7 +456,7 @@ import java.util.Set;
             case "remove":
                 MainUtil.sendMessage(player,
                     "$1World creation settings may be stored in multiple locations:"
-                        + "\n$3 - $2Bukkit bukkit.yml" + "\n$3 - $2" + PlotSquared.imp()
+                        + "\n$3 - $2Bukkit bukkit.yml" + "\n$3 - $2" + PlotSquared.get().IMP
                         .getPluginName() + " settings.yml"
                         + "\n$3 - $2Multiverse worlds.yml (or any world management plugin)"
                         + "\n$1Stop the server and delete it from these locations.");

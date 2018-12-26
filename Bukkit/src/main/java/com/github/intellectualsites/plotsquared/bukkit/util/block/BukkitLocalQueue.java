@@ -189,11 +189,11 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
             for (int x = 0; x < lc.biomes.length; x++) {
                 String[] biomes2 = lc.biomes[x];
                 if (biomes2 != null) {
-                    for (int y = 0; y < biomes2.length; y++) {
-                        String biomeStr = biomes2[y];
+                    for (String biomeStr : biomes2) {
                         if (biomeStr != null) {
                             if (last == null || !StringMan.isEqual(last, biomeStr)) {
                                 biome = Biome.valueOf(biomeStr.toUpperCase());
+                                last = biomeStr;
                             }
                             worldObj.setBiome(bx, bz, biome);
                         }
@@ -244,8 +244,8 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
         if (disableResult != null) {
             try {
                 fieldNeighbors.set(disableResult[0], disableResult[1]);
-            } catch (Throwable ignore) {
-                ignore.printStackTrace();
+            } catch (Throwable e) {
+                e.printStackTrace();
             }
         }
     }

@@ -16,10 +16,6 @@ import java.util.Set;
     description = "Claim the nearest plot", aliases = "a", usage = "/plot auto [length,width]")
 public class Auto extends SubCommand {
 
-    @Deprecated public static PlotId getNextPlotId(PlotId id, int step) {
-        return id.getNextId(step);
-    }
-
     private static boolean checkAllowedPlots(PlotPlayer player, PlotArea plotarea,
         @Nullable Integer allowed_plots, int size_x, int size_z) {
         if (allowed_plots == null)
@@ -128,12 +124,9 @@ public class Auto extends SubCommand {
             return;
         }
         whenDone.value = plot;
-        plot.owner = player.getUUID();
-        DBFunc.createPlotSafe(plot, whenDone, new Runnable() {
-            @Override public void run() {
-                autoClaimFromDatabase(player, area, plot.getId(), whenDone);
-            }
-        });
+        plot.setOwner(player.getUUID());
+        DBFunc.createPlotSafe(plot, whenDone,
+            () -> autoClaimFromDatabase(player, area, plot.getId(), whenDone));
     }
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {

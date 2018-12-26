@@ -105,12 +105,10 @@ import java.util.UUID;
             if (added != null && !plot.isAdded(added)) {
                 continue;
             }
-            if (unknown && UUIDHandler.getName(plot.owner) != null) {
+            if (unknown && UUIDHandler.getName(plot.guessOwner()) != null) {
                 continue;
             }
-            for (Plot current : plot.getConnectedPlots()) {
-                toDelete.add(current);
-            }
+            toDelete.addAll(plot.getConnectedPlots());
         }
         if (PlotSquared.get().plots_tmp != null) {
             for (Entry<String, HashMap<PlotId, Plot>> entry : PlotSquared.get().plots_tmp
@@ -130,7 +128,7 @@ import java.util.UUID;
                     if (added != null && !plot.isAdded(added)) {
                         continue;
                     }
-                    if (unknown && UUIDHandler.getName(plot.owner) != null) {
+                    if (unknown && UUIDHandler.getName(plot.guessOwner()) != null) {
                         continue;
                     }
                     toDelete.add(plot);
@@ -143,23 +141,21 @@ import java.util.UUID;
         }
         String cmd =
             "/plot purge " + StringMan.join(args, " ") + " (" + toDelete.size() + " plots)";
-        Runnable run = new Runnable() {
-            @Override public void run() {
-                PlotSquared.debug("Calculating plots to purge, please wait...");
-                HashSet<Integer> ids = new HashSet<>();
-                for (Plot plot : toDelete) {
-                    if (plot.temp != Integer.MAX_VALUE) {
-                        ids.add(plot.temp);
-                        plot.getArea().removePlot(plot.getId());
-                        for (PlotPlayer pp : plot.getPlayersInPlot()) {
-                            PlotListener.plotEntry(pp, plot);
-                        }
-                        plot.removeSign();
+        Runnable run = () -> {
+            PlotSquared.debug("Calculating plots to purge, please wait...");
+            HashSet<Integer> ids = new HashSet<>();
+            for (Plot plot : toDelete) {
+                if (plot.temp != Integer.MAX_VALUE) {
+                    ids.add(plot.temp);
+                    plot.getArea().removePlot(plot.getId());
+                    for (PlotPlayer pp : plot.getPlayersInPlot()) {
+                        PlotListener.plotEntry(pp, plot);
                     }
+                    plot.removeSign();
                 }
-                DBFunc.purgeIds(ids);
-                C.PURGE_SUCCESS.send(player, ids.size() + "/" + toDelete.size());
             }
+            DBFunc.purgeIds(ids);
+            C.PURGE_SUCCESS.send(player, ids.size() + "/" + toDelete.size());
         };
         if (hasConfirmation(player)) {
             CmdConfirm.addPending(player, cmd, run);

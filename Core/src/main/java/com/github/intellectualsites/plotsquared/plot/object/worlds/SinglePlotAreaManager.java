@@ -35,8 +35,7 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
         if (chars.length == 1 && chars[0] == '*') {
             return true;
         }
-        for (int i = 0; i < chars.length; i++) {
-            char c = chars[i];
+        for (char c : chars) {
             switch (mode) {
                 case 0:
                     mode = 1;
@@ -62,7 +61,6 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
                     if ((c <= '/') || (c >= ':')) {
                         return false;
                     }
-                    continue;
             }
         }
         return true;

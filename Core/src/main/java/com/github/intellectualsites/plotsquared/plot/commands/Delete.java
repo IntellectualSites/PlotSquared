@@ -33,33 +33,28 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
         final java.util.Set<Plot> plots = plot.getConnectedPlots();
         final int currentPlots =
             Settings.Limit.GLOBAL ? player.getPlotCount() : player.getPlotCount(loc.getWorld());
-        Runnable run = new Runnable() {
-            @Override public void run() {
-                if (plot.getRunning() > 0) {
-                    MainUtil.sendMessage(player, C.WAIT_FOR_TIMER);
-                    return;
-                }
-                final long start = System.currentTimeMillis();
-                boolean result = plot.deletePlot(new Runnable() {
-                    @Override public void run() {
-                        plot.removeRunning();
-                        if ((EconHandler.manager != null) && plotArea.USE_ECONOMY) {
-                            Expression<Double> valueExr = plotArea.PRICES.get("sell");
-                            double value = plots.size() * valueExr.evaluate((double) currentPlots);
-                            if (value > 0d) {
-                                EconHandler.manager.depositMoney(player, value);
-                                sendMessage(player, C.ADDED_BALANCE, String.valueOf(value));
-                            }
-                        }
-                        MainUtil.sendMessage(player, C.DELETING_DONE,
-                            System.currentTimeMillis() - start);
+        Runnable run = () -> {
+            if (plot.getRunning() > 0) {
+                MainUtil.sendMessage(player, C.WAIT_FOR_TIMER);
+                return;
+            }
+            final long start = System.currentTimeMillis();
+            boolean result = plot.deletePlot(() -> {
+                plot.removeRunning();
+                if ((EconHandler.manager != null) && plotArea.USE_ECONOMY) {
+                    Expression<Double> valueExr = plotArea.PRICES.get("sell");
+                    double value = plots.size() * valueExr.evaluate((double) currentPlots);
+                    if (value > 0d) {
+                        EconHandler.manager.depositMoney(player, value);
+                        sendMessage(player, C.ADDED_BALANCE, String.valueOf(value));
                     }
-                });
-                if (result) {
-                    plot.addRunning();
-                } else {
-                    MainUtil.sendMessage(player, C.WAIT_FOR_TIMER);
                 }
+                MainUtil.sendMessage(player, C.DELETING_DONE, System.currentTimeMillis() - start);
+            });
+            if (result) {
+                plot.addRunning();
+            } else {
+                MainUtil.sendMessage(player, C.WAIT_FOR_TIMER);
             }
         };
         if (hasConfirmation(player)) {

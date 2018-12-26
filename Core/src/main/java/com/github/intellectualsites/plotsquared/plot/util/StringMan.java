@@ -145,12 +145,7 @@ public class StringMan {
 
     public static String joinOrdered(Collection<?> collection, String delimiter) {
         Object[] array = collection.toArray();
-        Arrays.sort(array, new Comparator<Object>() {
-            @Override public int compare(Object a, Object b) {
-                return a.hashCode() - b.hashCode();
-            }
-
-        });
+        Arrays.sort(array, Comparator.comparingInt(Object::hashCode));
         return join(array, delimiter);
     }
 
@@ -245,13 +240,12 @@ public class StringMan {
     }
 
     public static boolean isEqual(String a, String b) {
-        return (a == b) || ((a != null) && (b != null) && (a.length() == b.length()) && (
-            a.hashCode() == b.hashCode()) && a.equals(b));
+        return a.equals(b) || b != null && a.length() == b.length() && a.hashCode() == b.hashCode()
+            && a.equals(b);
     }
 
     public static boolean isEqualIgnoreCase(String a, String b) {
-        return (a == b) || ((a != null) && (b != null) && (a.length() == b.length()) && a
-            .equalsIgnoreCase(b));
+        return a.equals(b) || b != null && a.length() == b.length() && a.equalsIgnoreCase(b);
     }
 
     public static String repeat(String s, int n) {

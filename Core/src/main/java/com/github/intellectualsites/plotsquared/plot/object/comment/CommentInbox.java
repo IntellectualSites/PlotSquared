@@ -14,10 +14,8 @@ public abstract class CommentInbox {
 
     public boolean canRead(Plot plot, PlotPlayer player) {
         if (Permissions.hasPermission(player, "plots.inbox.read." + toString(), true)) {
-            if (plot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, "plots.inbox.read." + toString() + ".other", true)) {
-                return true;
-            }
+            return plot.isOwner(player.getUUID()) || Permissions
+                .hasPermission(player, "plots.inbox.read." + toString() + ".other", true);
         }
         return false;
     }
@@ -33,10 +31,8 @@ public abstract class CommentInbox {
 
     public boolean canModify(Plot plot, PlotPlayer player) {
         if (Permissions.hasPermission(player, "plots.inbox.modify." + toString(), true)) {
-            if (plot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, "plots.inbox.modify." + toString() + ".other", true)) {
-                return true;
-            }
+            return plot.isOwner(player.getUUID()) || Permissions
+                .hasPermission(player, "plots.inbox.modify." + toString() + ".other", true);
         }
         return false;
     }

@@ -104,7 +104,7 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
     }
 
     @Override public void removePlotArea(PlotArea area) {
-        ArrayList<PlotArea> globalAreas = new ArrayList<PlotArea>(Arrays.asList(plotAreas));
+        ArrayList<PlotArea> globalAreas = new ArrayList<>(Arrays.asList(plotAreas));
         globalAreas.remove(area);
         this.plotAreas = globalAreas.toArray(new PlotArea[globalAreas.size()]);
         if (globalAreas.isEmpty()) {

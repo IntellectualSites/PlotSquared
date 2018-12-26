@@ -58,8 +58,6 @@ import java.util.HashSet;
                                 MainUtil.sendMessage(player, C.NEED_BLOCK);
                                 return true;
                             }
-                            String[] split = material.split(",");
-                            // blocks = Configuration.BLOCKLIST.parseString(material);
 
                             try {
                                 bucket = Configuration.BLOCK_BUCKET.parseString(material);
@@ -100,11 +98,7 @@ import java.util.HashSet;
                             current.setComponent(component, bucket);
                         }
                         MainUtil.sendMessage(player, C.GENERATING_COMPONENT);
-                        GlobalBlockQueue.IMP.addTask(new Runnable() {
-                            @Override public void run() {
-                                plot.removeRunning();
-                            }
-                        });
+                        GlobalBlockQueue.IMP.addTask(() -> plot.removeRunning());
                         return true;
                     }
                 }
@@ -114,8 +108,8 @@ import java.util.HashSet;
     }
 
     public boolean noArgs(PlotPlayer player) {
-        ArrayList<String> newValues = new ArrayList<>();
-        newValues.addAll(Arrays.asList("biome", "alias", "home", "flag"));
+        ArrayList<String> newValues =
+            new ArrayList<>(Arrays.asList("biome", "alias", "home", "flag"));
         Plot plot = player.getCurrentPlot();
         if (plot != null) {
             newValues.addAll(

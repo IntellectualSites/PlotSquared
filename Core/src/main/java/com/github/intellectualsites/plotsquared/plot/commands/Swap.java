@@ -40,11 +40,7 @@ public class Swap extends SubCommand {
             C.PLOTWORLD_INCOMPATIBLE.send(player);
             return false;
         }
-        if (plot1.move(plot2, new Runnable() {
-            @Override public void run() {
-                MainUtil.sendMessage(player, C.SWAP_SUCCESS);
-            }
-        }, true)) {
+        if (plot1.move(plot2, () -> MainUtil.sendMessage(player, C.SWAP_SUCCESS), true)) {
             return true;
         } else {
             MainUtil.sendMessage(player, C.SWAP_OVERLAP);

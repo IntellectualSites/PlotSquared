@@ -5,6 +5,8 @@ import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.object.chat.PlainChatManager;
 import com.github.intellectualsites.plotsquared.plot.util.ChatManager;
 
+import java.util.Arrays;
+
 public class PlotMessage {
 
     private Object builder;
@@ -14,8 +16,8 @@ public class PlotMessage {
             reset(ChatManager.manager);
         } catch (Throwable e) {
             PlotSquared.debug(
-                PlotSquared.imp().getPluginName() + " doesn't support fancy chat for " + PlotSquared
-                    .get().IMP.getServerVersion());
+                PlotSquared.imp().getPluginName() + " doesn't support fancy chat for " + Arrays
+                    .toString(PlotSquared.get().IMP.getServerVersion()));
             ChatManager.manager = new PlainChatManager();
             reset(ChatManager.manager);
         }

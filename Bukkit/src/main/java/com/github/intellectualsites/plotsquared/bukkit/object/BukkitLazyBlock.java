@@ -10,7 +10,7 @@ public class BukkitLazyBlock extends LazyBlock {
     private StringPlotBlock pb;
 
     public BukkitLazyBlock(Block block) {
-        this.pb = (StringPlotBlock) PlotBlock.get(block.getType().toString());
+        this.pb = PlotBlock.get(block.getType().toString());
     }
 
     public BukkitLazyBlock(StringPlotBlock pb) {

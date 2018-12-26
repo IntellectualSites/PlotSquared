@@ -19,7 +19,10 @@ import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 public class BukkitPlotGenerator extends ChunkGenerator
     implements GeneratorWrapper<ChunkGenerator> {
@@ -28,7 +31,6 @@ public class BukkitPlotGenerator extends ChunkGenerator
     private final IndependentPlotGenerator plotGenerator;
     private final ChunkGenerator platformGenerator;
     private final boolean full;
-    private final HashMap<ChunkLoc, byte[][]> dataMap = new HashMap<>();
     private List<BlockPopulator> populators;
     private boolean loaded = false;
 
@@ -199,9 +201,11 @@ public class BukkitPlotGenerator extends ChunkGenerator
         if (populators == null && platformGenerator != null) {
             populators = new ArrayList<>(platformGenerator.getDefaultPopulators(world));
         }
-        for (BlockPopulator populator : this.populators) {
-            if (!existing.contains(populator)) {
-                toAdd.add(populator);
+        if (this.populators != null) {
+            for (BlockPopulator populator : this.populators) {
+                if (!existing.contains(populator)) {
+                    toAdd.add(populator);
+                }
             }
         }
         return toAdd;

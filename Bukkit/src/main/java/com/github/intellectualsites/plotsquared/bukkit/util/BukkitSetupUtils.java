@@ -208,8 +208,6 @@ public class BukkitSetupUtils extends SetupUtils {
                     return world;
                 }
             }
-            World bw =
-                Bukkit.createWorld(new WorldCreator(object.world).environment(Environment.NORMAL));
         }
         return object.world;
     }
