@@ -13,10 +13,10 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 
 import java.util.*;
 
-@CommandDeclaration(command = "visit", permission = "plots.visit", description = "Visit someones plot", usage = "/plot visit [<player>|<alias>|<world>|<id>] [#]", aliases = {
-    "v", "tp", "teleport", "goto", "home",
-    "h"}, requiredType = RequiredType.NONE, category = CommandCategory.TELEPORT) public class Visit
-    extends Command {
+@CommandDeclaration(command = "visit", permission = "plots.visit",
+    description = "Visit someones plot", usage = "/plot visit [<player>|<alias>|<world>|<id>] [#]",
+    aliases = {"v", "tp", "teleport", "goto", "home", "h"}, requiredType = RequiredType.NONE,
+    category = CommandCategory.TELEPORT) public class Visit extends Command {
 
     public Visit() {
         super(MainCommand.getInstance(), true);

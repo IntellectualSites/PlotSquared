@@ -14,9 +14,9 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
 
-@CommandDeclaration(command = "done", aliases = {
-    "submit"}, description = "Mark a plot as done", permission = "plots.done", category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE)
-public class Done extends SubCommand {
+@CommandDeclaration(command = "done", aliases = {"submit"}, description = "Mark a plot as done",
+    permission = "plots.done", category = CommandCategory.SETTINGS,
+    requiredType = RequiredType.NONE) public class Done extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         Location loc = player.getLocation();

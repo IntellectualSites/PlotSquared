@@ -291,15 +291,9 @@ public abstract class SchematicHandler {
         }
         try {
             ClipboardFormat format = ClipboardFormats.findByFile(file);
-            if (format == BuiltInClipboardFormat.SPONGE_SCHEMATIC) {
-                SpongeSchematicReader ssr = new SpongeSchematicReader(
-                    new NBTInputStream(new GZIPInputStream(new FileInputStream(file))));
-                BlockArrayClipboard clip = (BlockArrayClipboard) ssr.read();
-                return new Schematic(clip);
-            } else if (format == BuiltInClipboardFormat.MCEDIT_SCHEMATIC) {
-                MCEditSchematicReader msr = new MCEditSchematicReader(
-                    new NBTInputStream(new GZIPInputStream(new FileInputStream(file))));
-                BlockArrayClipboard clip = (BlockArrayClipboard) msr.read();
+            if (format != null) {
+                ClipboardReader reader = format.getReader(new FileInputStream(file));
+                BlockArrayClipboard clip = (BlockArrayClipboard) reader.read();
                 return new Schematic(clip);
             } else {
                 throw new UnsupportedFormatException(

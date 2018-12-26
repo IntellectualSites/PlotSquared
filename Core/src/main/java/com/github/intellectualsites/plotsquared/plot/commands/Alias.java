@@ -12,10 +12,11 @@ import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 
-@CommandDeclaration(command = "setalias", permission = "plots.alias", description = "Set the plot name", usage = "/plot alias <set|remove> <alias>", aliases = {
-    "alias", "sa", "name", "rename", "setname", "seta",
-    "nameplot"}, category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE)
-public class Alias extends SubCommand {
+@CommandDeclaration(command = "setalias", permission = "plots.alias",
+    description = "Set the plot name", usage = "/plot alias <set|remove> <alias>",
+    aliases = {"alias", "sa", "name", "rename", "setname", "seta", "nameplot"},
+    category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE) public class Alias
+    extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
 

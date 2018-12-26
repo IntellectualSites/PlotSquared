@@ -12,8 +12,9 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 
 import java.util.UUID;
 
-@CommandDeclaration(command = "leave", description = "Leave a plot", permission = "plots.leave", category = CommandCategory.CLAIMING, requiredType = RequiredType.NONE)
-public class Leave extends Command {
+@CommandDeclaration(command = "leave", description = "Leave a plot", permission = "plots.leave",
+    category = CommandCategory.CLAIMING, requiredType = RequiredType.NONE) public class Leave
+    extends Command {
     public Leave() {
         super(MainCommand.getInstance(), true);
     }

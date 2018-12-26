@@ -13,8 +13,9 @@ import com.google.common.base.Optional;
 import java.util.*;
 import java.util.Map.Entry;
 
-@CommandDeclaration(command = "list", aliases = {"l", "find",
-    "search"}, description = "List plots", permission = "plots.list", category = CommandCategory.INFO, usage = "/plot list <forsale|mine|shared|world|top|all|unowned|unknown|player|world|done|fuzzy <search...>> [#]")
+@CommandDeclaration(command = "list", aliases = {"l", "find", "search"}, description = "List plots",
+    permission = "plots.list", category = CommandCategory.INFO,
+    usage = "/plot list <forsale|mine|shared|world|top|all|unowned|unknown|player|world|done|fuzzy <search...>> [#]")
 public class ListCmd extends SubCommand {
 
     private String[] getArgumentList(PlotPlayer player) {

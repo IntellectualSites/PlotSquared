@@ -9,9 +9,10 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 /**
  * @author manuelgu, altered by Citymonstret
  */
-@CommandDeclaration(command = "middle", aliases = {"center",
-    "centre"}, description = "Teleports you to the center of the plot", usage = "/plot middle", category = CommandCategory.TELEPORT, requiredType = RequiredType.NONE)
-public class Middle extends SubCommand {
+@CommandDeclaration(command = "middle", aliases = {"center", "centre"},
+    description = "Teleports you to the center of the plot", usage = "/plot middle",
+    category = CommandCategory.TELEPORT, requiredType = RequiredType.NONE) public class Middle
+    extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] arguments) {
         Location location = player.getLocation();

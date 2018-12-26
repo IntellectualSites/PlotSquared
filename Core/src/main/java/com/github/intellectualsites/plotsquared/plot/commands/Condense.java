@@ -15,8 +15,9 @@ import java.util.*;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@CommandDeclaration(command = "condense", permission = "plots.admin", description = "Condense a plotworld", category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.CONSOLE)
-public class Condense extends SubCommand {
+@CommandDeclaration(command = "condense", permission = "plots.admin",
+    description = "Condense a plotworld", category = CommandCategory.ADMINISTRATION,
+    requiredType = RequiredType.CONSOLE) public class Condense extends SubCommand {
 
     public static boolean TASK = false;
 

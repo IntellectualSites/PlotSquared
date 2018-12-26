@@ -14,8 +14,9 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 
-@CommandDeclaration(command = "clear", description = "Clear the plot you stand on", permission = "plots.clear", category = CommandCategory.APPEARANCE, usage = "/plot clear", aliases = "reset", confirmation = true)
-public class Clear extends Command {
+@CommandDeclaration(command = "clear", description = "Clear the plot you stand on",
+    permission = "plots.clear", category = CommandCategory.APPEARANCE, usage = "/plot clear",
+    aliases = "reset", confirmation = true) public class Clear extends Command {
 
     // Note: To clear a specific plot use /plot <plot> clear
     // The syntax also works with any command: /plot <plot> <command>

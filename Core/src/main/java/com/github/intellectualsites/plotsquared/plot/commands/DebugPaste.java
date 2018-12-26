@@ -13,8 +13,10 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import java.io.File;
 import java.io.IOException;
 
-@CommandDeclaration(command = "debugpaste", aliases = "dp", usage = "/plot debugpaste", description = "Upload settings.yml, worlds.yml, commands.yml and latest.log to www.hastebin.com", permission = "plots.debugpaste", category = CommandCategory.DEBUG)
-public class DebugPaste extends SubCommand {
+@CommandDeclaration(command = "debugpaste", aliases = "dp", usage = "/plot debugpaste",
+    description = "Upload settings.yml, worlds.yml, commands.yml and latest.log to www.hastebin.com",
+    permission = "plots.debugpaste", category = CommandCategory.DEBUG) public class DebugPaste
+    extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         TaskManager.runTaskAsync(new Runnable() {

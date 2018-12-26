@@ -24,8 +24,9 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.*;
 
-@CommandDeclaration(command = "debugexec", permission = "plots.admin", description = "Mutli-purpose debug command", aliases = {
-    "exec", "$"}, category = CommandCategory.DEBUG) public class DebugExec extends SubCommand {
+@CommandDeclaration(command = "debugexec", permission = "plots.admin",
+    description = "Mutli-purpose debug command", aliases = {"exec", "$"},
+    category = CommandCategory.DEBUG) public class DebugExec extends SubCommand {
     private ScriptEngine engine;
     private Bindings scope;
 

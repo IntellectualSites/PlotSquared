@@ -16,9 +16,10 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
-@CommandDeclaration(command = "trust", aliases = {
-    "t"}, requiredType = RequiredType.NONE, usage = "/plot trust <player>", description = "Allow a user to build in a plot while you are offline", category = CommandCategory.SETTINGS)
-public class Trust extends Command {
+@CommandDeclaration(command = "trust", aliases = {"t"}, requiredType = RequiredType.NONE,
+    usage = "/plot trust <player>",
+    description = "Allow a user to build in a plot while you are offline",
+    category = CommandCategory.SETTINGS) public class Trust extends Command {
 
     public Trust() {
         super(MainCommand.getInstance(), true);

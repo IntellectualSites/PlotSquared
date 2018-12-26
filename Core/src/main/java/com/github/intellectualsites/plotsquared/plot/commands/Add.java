@@ -16,8 +16,10 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
-@CommandDeclaration(command = "add", description = "Allow a user to build in a plot while you are online", usage = "/plot add <player>", category = CommandCategory.SETTINGS, permission = "plots.add", requiredType = RequiredType.NONE)
-public class Add extends Command {
+@CommandDeclaration(command = "add",
+    description = "Allow a user to build in a plot while you are online",
+    usage = "/plot add <player>", category = CommandCategory.SETTINGS, permission = "plots.add",
+    requiredType = RequiredType.NONE) public class Add extends Command {
 
     public Add() {
         super(MainCommand.getInstance(), true);

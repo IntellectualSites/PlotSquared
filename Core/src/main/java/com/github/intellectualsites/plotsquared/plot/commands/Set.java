@@ -16,9 +16,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
-@CommandDeclaration(command = "set", description = "Set a plot value", aliases = {
-    "s"}, usage = "/plot set <biome|alias|home|flag> <value...>", permission = "plots.set", category = CommandCategory.APPEARANCE, requiredType = RequiredType.NONE)
-public class Set extends SubCommand {
+@CommandDeclaration(command = "set", description = "Set a plot value", aliases = {"s"},
+    usage = "/plot set <biome|alias|home|flag> <value...>", permission = "plots.set",
+    category = CommandCategory.APPEARANCE, requiredType = RequiredType.NONE) public class Set
+    extends SubCommand {
 
     public static final String[] values = new String[] {"biome", "alias", "home", "flag"};
     public static final String[] aliases = new String[] {"b", "w", "wf", "f", "a", "h", "fl"};

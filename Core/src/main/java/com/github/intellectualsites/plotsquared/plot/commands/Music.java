@@ -9,8 +9,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 
-@CommandDeclaration(command = "music", permission = "plots.music", description = "Play music in your plot", usage = "/plot music", category = CommandCategory.APPEARANCE, requiredType = RequiredType.PLAYER)
-public class Music extends SubCommand {
+@CommandDeclaration(command = "music", permission = "plots.music",
+    description = "Play music in your plot", usage = "/plot music",
+    category = CommandCategory.APPEARANCE, requiredType = RequiredType.PLAYER) public class Music
+    extends SubCommand {
 
     private static final Collection<String> DISCS = Arrays.asList("music_disc_13", "music_disc_cat",
         "music_disc_blocks", "music_disc_chirp", "music_disc_far", "music_disc_mall", "music_disc_mellohi",

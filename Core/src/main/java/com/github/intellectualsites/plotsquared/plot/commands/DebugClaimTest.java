@@ -17,7 +17,8 @@ import java.util.UUID;
 
 @CommandDeclaration(command = "debugclaimtest", description =
     "If you accidentally delete your database, this command will attempt to restore all plots based on the data from plot signs. "
-        + "Execution time may vary", category = CommandCategory.DEBUG, requiredType = RequiredType.CONSOLE, permission = "plots.debugclaimtest")
+        + "Execution time may vary", category = CommandCategory.DEBUG,
+    requiredType = RequiredType.CONSOLE, permission = "plots.debugclaimtest")
 public class DebugClaimTest extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {

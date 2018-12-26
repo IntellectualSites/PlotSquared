@@ -676,7 +676,8 @@ public final class BukkitLegacyMappings extends LegacyMappings {
         for (final Material material : Material.values()) {
             final String materialName = material.name().toLowerCase(Locale.ENGLISH);
             if (OLD_STRING_TO_STRING_PLOT_BLOCK.get(materialName) == null) {
-                final LegacyBlock missingBlock = new LegacyBlock(material.getId(), materialName, materialName);
+                final LegacyBlock missingBlock =
+                    new LegacyBlock(material.getId(), materialName, materialName);
                 missing.add(missingBlock);
             }
         }
@@ -692,8 +693,9 @@ public final class BukkitLegacyMappings extends LegacyMappings {
                     .put(new IdDataPair(legacyBlock.getNumericalId(), legacyBlock.getDataValue()),
                         legacyBlock.toStringPlotBlock());
             } */
-            LEGACY_ID_AND_DATA_TO_STRING_PLOT_BLOCK.put(new IdDataPair(legacyBlock.getNumericalId(),
-                legacyBlock.getDataValue()), legacyBlock.toStringPlotBlock());
+            LEGACY_ID_AND_DATA_TO_STRING_PLOT_BLOCK
+                .put(new IdDataPair(legacyBlock.getNumericalId(), legacyBlock.getDataValue()),
+                    legacyBlock.toStringPlotBlock());
             NEW_STRING_TO_LEGACY_PLOT_BLOCK
                 .put(legacyBlock.getLegacyName(), legacyBlock.toStringPlotBlock());
             OLD_STRING_TO_STRING_PLOT_BLOCK

@@ -119,25 +119,24 @@ public class MainUtil {
                 String boundary = Long.toHexString(System.currentTimeMillis());
                 URLConnection con = new URL(website).openConnection();
                 con.setDoOutput(true);
-                con.setRequestProperty("Content-Type",
-                    "multipart/form-data; boundary=" + boundary);
+                con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
                 try (OutputStream output = con.getOutputStream();
                     PrintWriter writer = new PrintWriter(
                         new OutputStreamWriter(output, StandardCharsets.UTF_8), true)) {
                     String CRLF = "\r\n";
                     writer.append("--" + boundary).append(CRLF);
-                    writer.append("Content-Disposition: form-data; name=\"param\"")
+                    writer.append("Content-Disposition: form-data; name=\"param\"").append(CRLF);
+                    writer.append(
+                        "Content-Type: text/plain; charset=" + StandardCharsets.UTF_8.displayName())
                         .append(CRLF);
-                    writer.append("Content-Type: text/plain; charset=" + StandardCharsets.UTF_8
-                        .displayName()).append(CRLF);
                     String param = "value";
                     writer.append(CRLF).append(param).append(CRLF).flush();
                     writer.append("--" + boundary).append(CRLF);
                     writer.append(
                         "Content-Disposition: form-data; name=\"schematicFile\"; filename=\""
                             + filename + '"').append(CRLF);
-                    writer.append(
-                        "Content-Type: " + URLConnection.guessContentTypeFromName(filename))
+                    writer
+                        .append("Content-Type: " + URLConnection.guessContentTypeFromName(filename))
                         .append(CRLF);
                     writer.append("Content-Transfer-Encoding: binary").append(CRLF);
                     writer.append(CRLF).flush();
@@ -150,7 +149,8 @@ public class MainUtil {
                     writer.append(CRLF).flush();
                     writer.append("--" + boundary + "--").append(CRLF).flush();
                 }
-                try (Reader response = new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8)) {
+                try (Reader response = new InputStreamReader(con.getInputStream(),
+                    StandardCharsets.UTF_8)) {
                     final char[] buffer = new char[256];
                     final StringBuilder result = new StringBuilder();
                     while (true) {

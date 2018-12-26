@@ -11,8 +11,8 @@ import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.helpmenu.HelpMenu;
 
-@CommandDeclaration(command = "help", description = "Get this help menu", aliases = {"he",
-    "?"}, category = CommandCategory.INFO, usage = "help [category|#]", permission = "plots.use")
+@CommandDeclaration(command = "help", description = "Get this help menu", aliases = {"he", "?"},
+    category = CommandCategory.INFO, usage = "help [category|#]", permission = "plots.use")
 public class Help extends Command {
     public Help(Command parent) {
         super(parent, true);

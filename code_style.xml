@@ -259,7 +259,7 @@
                 id="org.eclipse.jdt.core.formatter.insert_space_before_opening_brace_in_enum_constant"
                 value="insert"/>
         <setting id="org.eclipse.jdt.core.formatter.insert_space_before_comma_in_annotation"
-                 value="do not insert"/>
+                 value="insert"/>
         <setting
                 id="org.eclipse.jdt.core.formatter.insert_space_after_at_in_annotation_type_declaration"
                 value="do not insert"/>
@@ -312,7 +312,7 @@
                  value="end_of_line"/>
         <setting id="org.eclipse.jdt.core.formatter.compact_else_if" value="true"/>
         <setting id="org.eclipse.jdt.core.formatter.wrap_non_simple_parameter_annotation"
-                 value="false"/>
+                 value="true"/>
         <setting id="org.eclipse.jdt.core.formatter.wrap_before_or_operator_multicatch"
                  value="true"/>
         <setting id="org.eclipse.jdt.core.formatter.insert_space_before_comma_in_array_initializer"

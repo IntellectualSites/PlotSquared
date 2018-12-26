@@ -13,8 +13,9 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
 import java.util.*;
 import java.util.Map.Entry;
 
-@CommandDeclaration(command = "rate", permission = "plots.rate", description = "Rate the plot", usage = "/plot rate [#|next|purge]", aliases = "rt", category = CommandCategory.INFO, requiredType = RequiredType.NONE)
-public class Rate extends SubCommand {
+@CommandDeclaration(command = "rate", permission = "plots.rate", description = "Rate the plot",
+    usage = "/plot rate [#|next|purge]", aliases = "rt", category = CommandCategory.INFO,
+    requiredType = RequiredType.NONE) public class Rate extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length == 1) {
