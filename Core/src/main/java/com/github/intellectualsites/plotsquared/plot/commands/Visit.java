@@ -94,12 +94,8 @@ import java.util.*;
             C.FOUND_NO_PLOTS.send(player);
             return;
         }
-        Iterator<Plot> iterator = unsorted.iterator();
-        while (iterator.hasNext()) {
-            if (!iterator.next().isBasePlot()) {
-                iterator.remove();
-            }
-        }
+        unsorted = new ArrayList<>(unsorted);
+        unsorted.removeIf(plot -> !plot.isBasePlot());
         if (page < 1 || page > unsorted.size()) {
             C.NOT_VALID_NUMBER.send(player, "(1, " + unsorted.size() + ")");
             return;
@@ -134,19 +130,13 @@ import java.util.*;
                 return;
             }
         }
-        confirm.run(this, new Runnable() {
-            @Override public void run() {
-                if (plot.teleportPlayer(player)) {
-                    whenDone.run(Visit.this, CommandResult.SUCCESS);
-                } else {
-                    whenDone.run(Visit.this, CommandResult.FAILURE);
-                }
-            }
-        }, new Runnable() {
-            @Override public void run() {
+        confirm.run(this, () -> {
+            if (plot.teleportPlayer(player)) {
+                whenDone.run(Visit.this, CommandResult.SUCCESS);
+            } else {
                 whenDone.run(Visit.this, CommandResult.FAILURE);
             }
-        });
+        }, () -> whenDone.run(Visit.this, CommandResult.FAILURE));
     }
 
 }
