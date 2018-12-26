@@ -1,8 +1,29 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.util.InventoryUtil;
+import lombok.NonNull;
 
 public class PlotInventory {
+
+    private static final String META_KEY = "inventory";
+
+    public static boolean hasPlotInventoryOpen(@NonNull final PlotPlayer plotPlayer) {
+        return getOpenPlotInventory(plotPlayer) != null;
+    }
+
+    public static PlotInventory getOpenPlotInventory(@NonNull final PlotPlayer plotPlayer) {
+        return plotPlayer.getMeta(META_KEY, null);
+    }
+
+    public static void setPlotInventoryOpen(@NonNull final PlotPlayer plotPlayer,
+        @NonNull final PlotInventory plotInventory) {
+        plotPlayer.setMeta(META_KEY, plotInventory);
+    }
+
+    public static void removePlotInventoryOpen(@NonNull final PlotPlayer plotPlayer) {
+        plotPlayer.deleteMeta(META_KEY);
+    }
 
     public final PlotPlayer player;
     public final int size;
@@ -32,14 +53,21 @@ public class PlotInventory {
         if (this.title == null) {
             return;
         }
-        this.open = true;
-        InventoryUtil.manager.open(this);
+        if (hasPlotInventoryOpen(player)) {
+            PlotSquared.debug(String.format("Failed to open plot inventory for %s "
+                + "because the player already has an open plot inventory", player.getName()));
+        } else {
+            this.open = true;
+            setPlotInventoryOpen(player, this);
+            InventoryUtil.manager.open(this);
+        }
     }
 
     public void close() {
         if (this.title == null) {
             return;
         }
+        removePlotInventoryOpen(player);
         InventoryUtil.manager.close(this);
         this.open = false;
     }

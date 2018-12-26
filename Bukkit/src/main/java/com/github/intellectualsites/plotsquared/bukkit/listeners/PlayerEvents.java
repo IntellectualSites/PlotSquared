@@ -32,7 +32,6 @@ import org.bukkit.event.block.*;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
@@ -1498,10 +1497,10 @@ import java.util.regex.Pattern;
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
-        if (!event.isLeftClick() || (event.getAction() != InventoryAction.PLACE_ALL) || event
+        /*if (!event.isLeftClick() || (event.getAction() != InventoryAction.PLACE_ALL) || event
             .isShiftClick()) {
             return;
-        }
+        }*/
         HumanEntity entity = event.getWhoClicked();
         if (!(entity instanceof Player) || !PlotSquared.get()
             .hasPlotArea(entity.getWorld().getName())) {
@@ -1514,7 +1513,7 @@ import java.util.regex.Pattern;
         }
         Player player = (Player) clicker;
         PlotPlayer pp = BukkitUtil.getPlayer(player);
-        PlotInventory inventory = pp.getMeta("inventory");
+        final PlotInventory inventory = PlotInventory.getOpenPlotInventory(pp);
         if (inventory != null && event.getRawSlot() == event.getSlot()) {
             if (!inventory.onClick(event.getSlot())) {
                 event.setResult(Event.Result.DENY);
@@ -2212,7 +2211,7 @@ import java.util.regex.Pattern;
             return;
         }
         Player player = (Player) closer;
-        BukkitUtil.getPlayer(player).deleteMeta("inventory");
+        PlotInventory.removePlotInventoryOpen(BukkitUtil.getPlayer(player));
     }
 
     @EventHandler(priority = EventPriority.MONITOR) public void onLeave(PlayerQuitEvent event) {

@@ -15,7 +15,7 @@ import java.util.HashMap;
 
 public final class Flags {
 
-    public static final IntegerFlag MUSIC = new IntegerFlag("music");
+    public static final StringFlag MUSIC = new StringFlag("music");
     public static final StringFlag DESCRIPTION = new StringFlag("description");
     public static final IntegerListFlag ANALYSIS =
         (IntegerListFlag) new IntegerListFlag("analysis").reserve();
