@@ -158,6 +158,15 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
         PlotPlayer.registerConverter(Player.class, BukkitUtil::getPlayer);
 
+        if (Bukkit.getVersion().contains("git-Spigot")) {
+            // Uses System.out.println because the logger isn't initialized yet
+            System.out.println("[P2] ====== USE PAPER ======");
+            System.out.println("[P2] DOWNLOAD: https://papermc.io/downloads");
+            System.out.println("[P2] GUIDE: https://www.spigotmc.org/threads/21726/");
+            System.out.println("[P2] - This is only a recommendation");
+            System.out.println("[P2] ==============================");
+        }
+
         new PlotSquared(this, "Bukkit");
         if (Settings.Enabled_Components.METRICS) {
             this.startMetrics();

@@ -45,19 +45,19 @@ public class StringMan {
             return (String) obj;
         }
         if (obj.getClass().isArray()) {
-            String result = "";
+            StringBuilder result = new StringBuilder();
             String prefix = "";
 
             for (int i = 0; i < Array.getLength(obj); i++) {
-                result += prefix + getString(Array.get(obj, i));
+                result.append(prefix).append(getString(Array.get(obj, i)));
                 prefix = ",";
             }
             return "( " + result + " )";
         } else if (obj instanceof Collection<?>) {
-            String result = "";
+            StringBuilder result = new StringBuilder();
             String prefix = "";
             for (Object element : (Collection<?>) obj) {
-                result += prefix + getString(element);
+                result.append(prefix).append(getString(element));
                 prefix = ",";
             }
             return "[ " + result + " ]";

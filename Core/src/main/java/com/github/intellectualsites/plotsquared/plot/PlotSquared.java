@@ -314,7 +314,11 @@ import java.util.zip.ZipInputStream;
         if (message == null || message.toString().isEmpty()) {
             return;
         }
-        PlotSquared.get().getLogger().log(StringMan.getString(message));
+        if (PlotSquared.get() == null || PlotSquared.get().getLogger() == null) {
+            System.out.printf("[P2][Info] %s\n", StringMan.getString(message));
+        } else {
+            PlotSquared.get().getLogger().log(StringMan.getString(message));
+        }
     }
 
     /**
@@ -325,7 +329,11 @@ import java.util.zip.ZipInputStream;
      */
     public static void debug(@Nullable Object message) {
         if (Settings.DEBUG) {
-            PlotSquared.log(message);
+            if (PlotSquared.get() == null || PlotSquared.get().getLogger() == null) {
+                System.out.printf("[P2][Debug] %s\n", StringMan.getString(message));
+            } else {
+                PlotSquared.get().getLogger().log(StringMan.getString(message));
+            }
         }
     }
 

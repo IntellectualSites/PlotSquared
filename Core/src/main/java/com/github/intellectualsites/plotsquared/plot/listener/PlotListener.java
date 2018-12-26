@@ -128,20 +128,20 @@ public class PlotListener {
 
                 Optional<Integer> musicFlag = plot.getFlag(Flags.MUSIC);
                 if (musicFlag.isPresent()) {
-                    Integer id = musicFlag.get();
-                    if ((id >= 2256 && id <= 2267) || (id == 0)) {
+                    Number id = musicFlag.get();
+                    if ((id.intValue() >= 2256 && id.intValue() <= 2267) || (id.intValue() == 0)) {
                         Location loc = player.getLocation();
                         Location lastLoc = player.getMeta("music");
                         if (lastLoc != null) {
                             player.playMusic(lastLoc, 0);
-                            if (id == 0) {
+                            if (id.intValue() == 0) {
                                 player.deleteMeta("music");
                             }
                         }
-                        if (id != 0) {
+                        if (id.intValue() != 0) {
                             try {
                                 player.setMeta("music", loc);
-                                player.playMusic(loc, id);
+                                player.playMusic(loc, id.intValue());
                             } catch (Exception ignored) {
                             }
                         }

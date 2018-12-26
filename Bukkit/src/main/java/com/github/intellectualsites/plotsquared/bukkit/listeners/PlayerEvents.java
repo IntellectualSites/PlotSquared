@@ -24,6 +24,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Piston;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.*;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -1516,6 +1517,7 @@ import java.util.regex.Pattern;
         PlotInventory inventory = pp.getMeta("inventory");
         if (inventory != null && event.getRawSlot() == event.getSlot()) {
             if (!inventory.onClick(event.getSlot())) {
+                event.setResult(Event.Result.DENY);
                 event.setCancelled(true);
                 inventory.close();
             }
