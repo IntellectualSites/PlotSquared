@@ -124,24 +124,24 @@ public class PlotListener {
                 Optional<PlotWeather> weatherFlag = plot.getFlag(Flags.WEATHER);
                 if (weatherFlag.isPresent()) {
                     player.setWeather(weatherFlag.get());
-                }
-
-                Optional<Integer> musicFlag = plot.getFlag(Flags.MUSIC);
+                }  Optional<String> musicFlag = plot.getFlag(Flags.MUSIC);
                 if (musicFlag.isPresent()) {
-                    Number id = musicFlag.get();
-                    if ((id.intValue() >= 2256 && id.intValue() <= 2267) || (id.intValue() == 0)) {
+                    final String id = musicFlag.get();
+                    final PlotBlock block = PlotBlock.get(id);
+                    final String rawId = block.getRawId().toString();
+                    if (rawId.contains("disc") || PlotBlock.isEverything(block) || block.isAir()) {
                         Location loc = player.getLocation();
                         Location lastLoc = player.getMeta("music");
                         if (lastLoc != null) {
-                            player.playMusic(lastLoc, 0);
-                            if (id.intValue() == 0) {
+                            player.playMusic(lastLoc, PlotBlock.get("air"));
+                            if (PlotBlock.isEverything(block) || block.isAir()) {
                                 player.deleteMeta("music");
                             }
                         }
-                        if (id.intValue() != 0) {
+                        if (!(PlotBlock.isEverything(block) || block.isAir())) {
                             try {
                                 player.setMeta("music", loc);
-                                player.playMusic(loc, id.intValue());
+                                player.playMusic(loc, block);
                             } catch (Exception ignored) {
                             }
                         }
@@ -150,7 +150,7 @@ public class PlotListener {
                     Location lastLoc = player.getMeta("music");
                     if (lastLoc != null) {
                         player.deleteMeta("music");
-                        player.playMusic(lastLoc, 0);
+                        player.playMusic(lastLoc, PlotBlock.get("air"));
                     }
                 }
                 CommentManager.sendTitle(player, plot);
@@ -255,7 +255,7 @@ public class PlotListener {
             Location lastLoc = player.getMeta("music");
             if (lastLoc != null) {
                 player.deleteMeta("music");
-                player.playMusic(lastLoc, 0);
+                player.playMusic(lastLoc, PlotBlock.get("air"));
             }
         }
         return true;

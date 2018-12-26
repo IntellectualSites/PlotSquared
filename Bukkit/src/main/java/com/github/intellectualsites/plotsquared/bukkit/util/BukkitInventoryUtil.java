@@ -56,7 +56,6 @@ public class BukkitInventoryUtil extends InventoryUtil {
                 inventory.setItem(i, getItem(item));
             }
         }
-        inv.player.setMeta("inventory", inv);
         bp.player.openInventory(inventory);
     }
 
@@ -64,7 +63,6 @@ public class BukkitInventoryUtil extends InventoryUtil {
         if (!inv.isOpen()) {
             return;
         }
-        inv.player.deleteMeta("inventory");
         BukkitPlayer bp = (BukkitPlayer) inv.player;
         bp.player.closeInventory();
     }

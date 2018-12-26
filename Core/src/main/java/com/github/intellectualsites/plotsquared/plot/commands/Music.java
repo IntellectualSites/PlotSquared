@@ -4,12 +4,19 @@ import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Locale;
 
 @CommandDeclaration(command = "music", permission = "plots.music",
     description = "Play music in your plot", usage = "/plot music",
     category = CommandCategory.APPEARANCE, requiredType = RequiredType.PLAYER) public class Music
     extends SubCommand {
+
+    private static final Collection<String> DISCS = Arrays.asList("music_disc_13", "music_disc_cat",
+        "music_disc_blocks", "music_disc_chirp", "music_disc_far", "music_disc_mall", "music_disc_mellohi",
+        "music_disc_stal", "music_disc_strad", "music_disc_ward", "music_disc_11", "music_disc_wait");
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
         Location loc = player.getLocation();
@@ -29,26 +36,32 @@ import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
                 }
                 if (item.getPlotBlock().equalsAny(7, "bedrock")) {
                     plot.removeFlag(Flags.MUSIC);
-                } else {
+                    C.FLAG_REMOVED.send(player);
+                } else if (item.name.toLowerCase(Locale.ENGLISH).contains("disc")) {
                     plot.setFlag(Flags.MUSIC, item.getPlotBlock().getRawId());
+                    C.FLAG_ADDED.send(player);
+                } else {
+                    C.FLAG_NOT_ADDED.send(player);
                 }
                 return false;
             }
         };
         int index = 0;
-        for (int i = 2256; i < 2268; i++) {
-            String name =
-                "&r&6" + WorldUtil.IMP.getClosestMatchingName(PlotBlock.get((short) i, (byte) 0));
-            String[] lore = {"&r&aClick to play!"};
-            PlotItemStack item = new PlotItemStack(i, (byte) 0, 1, name, lore);
-            inv.setItem(index, item);
-            index++;
+
+        for (final String disc : DISCS) {
+            final String name = String.format("&r&6%s", disc);
+            final String[] lore = {"&r&aClick to play!"};
+            final PlotItemStack item = new PlotItemStack(disc, 1, name, lore);
+            inv.setItem(index++, item);
         }
-        if (player.getMeta("music") != null) {
-            String name = "&r&6Cancel music";
-            String[] lore = {"&r&cClick to cancel!"};
-            inv.setItem(index, new PlotItemStack(7, (short) 0, 1, name, lore));
-        }
+
+        // Always add the cancel button
+        // if (player.getMeta("music") != null) {
+        String name = "&r&6Cancel music";
+        String[] lore = {"&r&cClick to cancel!"};
+        inv.setItem(index, new PlotItemStack("bedrock", 1, name, lore));
+        // }
+
         inv.openInventory();
         return true;
     }

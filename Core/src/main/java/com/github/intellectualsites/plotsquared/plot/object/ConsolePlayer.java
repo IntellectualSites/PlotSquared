@@ -115,7 +115,7 @@ public class ConsolePlayer extends PlotPlayer {
     @Override public void setFlight(boolean fly) {
     }
 
-    @Override public void playMusic(Location location, int id) {
+    @Override public void playMusic(Location location, PlotBlock id) {
     }
 
     @Override public void kick(String message) {
