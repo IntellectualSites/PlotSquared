@@ -10,8 +10,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Scanner;
 
-@CommandDeclaration(command = "changelog", permission = "plots.admin.command.changelog", description = "View the changelog", usage = "/plot changelog", requiredType = RequiredType.NONE, aliases = {
-    "cl"}, category = CommandCategory.ADMINISTRATION) public class Changelog extends SubCommand {
+@CommandDeclaration(command = "changelog", permission = "plots.admin.command.changelog",
+    description = "View the changelog", usage = "/plot changelog", requiredType = RequiredType.NONE,
+    aliases = {"cl"}, category = CommandCategory.ADMINISTRATION) public class Changelog
+    extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
         try {

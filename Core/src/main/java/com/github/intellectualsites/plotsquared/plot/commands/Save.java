@@ -14,9 +14,9 @@ import java.net.URL;
 import java.util.List;
 import java.util.UUID;
 
-@CommandDeclaration(command = "save", aliases = {
-    "backup"}, description = "Save your plot", category = CommandCategory.SCHEMATIC, requiredType = RequiredType.NONE, permission = "plots.save")
-public class Save extends SubCommand {
+@CommandDeclaration(command = "save", aliases = {"backup"}, description = "Save your plot",
+    category = CommandCategory.SCHEMATIC, requiredType = RequiredType.NONE,
+    permission = "plots.save") public class Save extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         String world = player.getLocation().getWorld();
@@ -52,8 +52,7 @@ public class Save extends SubCommand {
                     PlotId id = plot.getId();
                     String world1 = plot.getArea().toString().replaceAll(";", "-")
                         .replaceAll("[^A-Za-z0-9]", "");
-                    final String file =
-                        time + '_' + world1 + '_' + id.x + '_' + id.y + '_' + size;
+                    final String file = time + '_' + world1 + '_' + id.x + '_' + id.y + '_' + size;
                     UUID uuid = player.getUUID();
                     SchematicHandler.manager.upload(value, uuid, file, new RunnableVal<URL>() {
                         @Override public void run(URL url) {

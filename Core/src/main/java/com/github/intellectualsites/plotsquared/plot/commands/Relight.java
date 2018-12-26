@@ -9,8 +9,8 @@ import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 
 import java.util.HashSet;
 
-@CommandDeclaration(command = "relight", description = "Relight your plot", usage = "/plot relight", category = CommandCategory.DEBUG)
-public class Relight extends Command {
+@CommandDeclaration(command = "relight", description = "Relight your plot", usage = "/plot relight",
+    category = CommandCategory.DEBUG) public class Relight extends Command {
     public Relight() {
         super(MainCommand.getInstance(), true);
     }

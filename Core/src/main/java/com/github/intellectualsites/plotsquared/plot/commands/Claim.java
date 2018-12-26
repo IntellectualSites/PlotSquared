@@ -10,7 +10,9 @@ import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 
-@CommandDeclaration(command = "claim", aliases = "c", description = "Claim the current plot you're standing on", category = CommandCategory.CLAIMING, requiredType = RequiredType.NONE, permission = "plots.claim", usage = "/plot claim")
+@CommandDeclaration(command = "claim", aliases = "c",
+    description = "Claim the current plot you're standing on", category = CommandCategory.CLAIMING,
+    requiredType = RequiredType.NONE, permission = "plots.claim", usage = "/plot claim")
 public class Claim extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {

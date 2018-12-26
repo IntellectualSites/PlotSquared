@@ -16,7 +16,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-@CommandDeclaration(command = "debugfixflags", usage = "/plot debugfixflags <world>", permission = "plots.debugfixflags", description = "Attempt to fix all flags for a world", requiredType = RequiredType.CONSOLE, category = CommandCategory.DEBUG)
+@CommandDeclaration(command = "debugfixflags", usage = "/plot debugfixflags <world>",
+    permission = "plots.debugfixflags", description = "Attempt to fix all flags for a world",
+    requiredType = RequiredType.CONSOLE, category = CommandCategory.DEBUG)
 public class DebugFixFlags extends SubCommand {
 
     public DebugFixFlags() {

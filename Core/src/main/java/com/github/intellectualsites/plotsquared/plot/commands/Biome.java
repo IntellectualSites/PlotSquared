@@ -8,10 +8,10 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 
-@CommandDeclaration(command = "setbiome", permission = "plots.set.biome", description = "Set the plot biome", usage = "/plot biome [biome]", aliases = {
-    "biome", "sb", "setb",
-    "b"}, category = CommandCategory.APPEARANCE, requiredType = RequiredType.NONE)
-public class Biome extends SetCommand {
+@CommandDeclaration(command = "setbiome", permission = "plots.set.biome",
+    description = "Set the plot biome", usage = "/plot biome [biome]",
+    aliases = {"biome", "sb", "setb", "b"}, category = CommandCategory.APPEARANCE,
+    requiredType = RequiredType.NONE) public class Biome extends SetCommand {
 
     @Override public boolean set(final PlotPlayer player, final Plot plot, final String value) {
         int biome = WorldUtil.IMP.getBiomeFromString(value);

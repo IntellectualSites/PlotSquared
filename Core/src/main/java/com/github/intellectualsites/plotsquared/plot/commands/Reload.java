@@ -14,8 +14,9 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import java.io.IOException;
 import java.util.Objects;
 
-@CommandDeclaration(command = "reload", aliases = "rl", permission = "plots.admin.command.reload", description = "Reload translations and world settings", usage = "/plot reload", category = CommandCategory.ADMINISTRATION)
-public class Reload extends SubCommand {
+@CommandDeclaration(command = "reload", aliases = "rl", permission = "plots.admin.command.reload",
+    description = "Reload translations and world settings", usage = "/plot reload",
+    category = CommandCategory.ADMINISTRATION) public class Reload extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
         try {

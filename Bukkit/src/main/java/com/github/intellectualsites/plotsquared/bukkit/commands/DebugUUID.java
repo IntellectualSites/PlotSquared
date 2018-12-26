@@ -27,8 +27,10 @@ import java.nio.file.Files;
 import java.util.*;
 import java.util.Map.Entry;
 
-@CommandDeclaration(command = "uuidconvert", permission = "plots.admin", description = "Debug UUID conversion", usage = "/plot uuidconvert <lower|offline|online>", requiredType = RequiredType.CONSOLE, category = CommandCategory.DEBUG)
-public class DebugUUID extends SubCommand {
+@CommandDeclaration(command = "uuidconvert", permission = "plots.admin",
+    description = "Debug UUID conversion", usage = "/plot uuidconvert <lower|offline|online>",
+    requiredType = RequiredType.CONSOLE, category = CommandCategory.DEBUG) public class DebugUUID
+    extends SubCommand {
 
     public DebugUUID() {
         super(Argument.String);

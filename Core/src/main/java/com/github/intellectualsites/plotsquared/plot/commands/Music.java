@@ -6,8 +6,10 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 
-@CommandDeclaration(command = "music", permission = "plots.music", description = "Play music in your plot", usage = "/plot music", category = CommandCategory.APPEARANCE, requiredType = RequiredType.PLAYER)
-public class Music extends SubCommand {
+@CommandDeclaration(command = "music", permission = "plots.music",
+    description = "Play music in your plot", usage = "/plot music",
+    category = CommandCategory.APPEARANCE, requiredType = RequiredType.PLAYER) public class Music
+    extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
         Location loc = player.getLocation();

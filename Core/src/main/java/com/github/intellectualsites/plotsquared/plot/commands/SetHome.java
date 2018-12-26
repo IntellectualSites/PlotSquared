@@ -8,8 +8,9 @@ import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 
-@CommandDeclaration(command = "sethome", permission = "plots.set.home", description = "Set the plot home to your current position", usage = "/plot sethome [none]", aliases = {
-    "sh", "seth"}, category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "sethome", permission = "plots.set.home",
+    description = "Set the plot home to your current position", usage = "/plot sethome [none]",
+    aliases = {"sh", "seth"}, category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE)
 public class SetHome extends SetCommand {
 
     @Override public boolean set(PlotPlayer player, Plot plot, String value) {

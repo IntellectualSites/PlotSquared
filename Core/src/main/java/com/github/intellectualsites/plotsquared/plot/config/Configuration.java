@@ -113,7 +113,7 @@ public class Configuration {
                     if (value == null) {
                         throw new UnknownBlockException(block);
                     } else if (!value.best.isAir() && !WorldUtil.IMP.isBlockSolid(value.best)) {
-                            throw new UnsafeBlockException(value.best);
+                        throw new UnsafeBlockException(value.best);
                     }
                     blockBucket.addBlock(value.best, chance);
                 }
@@ -146,7 +146,7 @@ public class Configuration {
                         if (value == null || value.match > 1) {
                             return false;
                         } else if (!value.best.isAir() && !WorldUtil.IMP.isBlockSolid(value.best)) {
-                                throw new UnsafeBlockException(value.best);
+                            throw new UnsafeBlockException(value.best);
                         }
                     }
                 } catch (final Throwable exception) {
@@ -204,10 +204,10 @@ public class Configuration {
         public abstract boolean validateValue(String string);
     }
 
+
     public static final class UnsafeBlockException extends IllegalArgumentException {
 
-        @Getter
-        private final PlotBlock unsafeBlock;
+        @Getter private final PlotBlock unsafeBlock;
 
         public UnsafeBlockException(@NonNull final PlotBlock unsafeBlock) {
             super(String.format("%s is not a valid block", unsafeBlock));

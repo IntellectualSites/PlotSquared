@@ -8,7 +8,10 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
 
 import java.util.UUID;
 
-@CommandDeclaration(command = "merge", aliases = "m", description = "Merge the plot you are standing on, with another plot", permission = "plots.merge", usage = "/plot merge <all|n|e|s|w> [removeroads]", category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE, confirmation = true)
+@CommandDeclaration(command = "merge", aliases = "m",
+    description = "Merge the plot you are standing on, with another plot",
+    permission = "plots.merge", usage = "/plot merge <all|n|e|s|w> [removeroads]",
+    category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE, confirmation = true)
 public class Merge extends SubCommand {
 
     public static final String[] values = new String[] {"north", "east", "south", "west", "auto"};

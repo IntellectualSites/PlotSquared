@@ -13,9 +13,10 @@ import com.sk89q.jnbt.CompoundTag;
 
 import java.net.URL;
 
-@CommandDeclaration(usage = "/plot download [schematic|bo3|world]", command = "download", aliases = {
-    "dl"}, category = CommandCategory.SCHEMATIC, requiredType = RequiredType.NONE, description = "Download your plot", permission = "plots.download")
-public class Download extends SubCommand {
+@CommandDeclaration(usage = "/plot download [schematic|bo3|world]", command = "download",
+    aliases = {"dl"}, category = CommandCategory.SCHEMATIC, requiredType = RequiredType.NONE,
+    description = "Download your plot", permission = "plots.download") public class Download
+    extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         String world = player.getLocation().getWorld();

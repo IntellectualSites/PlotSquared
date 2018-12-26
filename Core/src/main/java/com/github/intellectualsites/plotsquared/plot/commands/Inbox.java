@@ -15,8 +15,10 @@ import com.google.common.base.Optional;
 import java.util.ArrayList;
 import java.util.List;
 
-@CommandDeclaration(command = "inbox", description = "Review the comments for a plot", usage = "/plot inbox [inbox] [delete <index>|clear|page]", permission = "plots.inbox", category = CommandCategory.CHAT, requiredType = RequiredType.NONE)
-public class Inbox extends SubCommand {
+@CommandDeclaration(command = "inbox", description = "Review the comments for a plot",
+    usage = "/plot inbox [inbox] [delete <index>|clear|page]", permission = "plots.inbox",
+    category = CommandCategory.CHAT, requiredType = RequiredType.NONE) public class Inbox
+    extends SubCommand {
 
     public void displayComments(PlotPlayer player, List<PlotComment> oldComments, int page) {
         if (oldComments == null || oldComments.isEmpty()) {

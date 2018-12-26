@@ -864,7 +864,8 @@ public enum C {
             + "Please note that schematics will not be converted, as we are now using WorldEdit to handle schematics. "
             + "You need to re-generate the schematics.",
         "LegacyConfig"), LEGACY_CONFIG_CONVERSION_FAILED(
-        "Failed to convert the legacy configuration file. See stack trace for information.", "LegacyConfig"),
+        "Failed to convert the legacy configuration file. See stack trace for information.",
+        "LegacyConfig"),
 
     CUSTOM_STRING("-", "-");
 
@@ -1063,4 +1064,5 @@ public enum C {
         } else {
             caller.sendMessage(msg);
         }
-    }}
+    }
+}

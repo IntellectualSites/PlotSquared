@@ -301,7 +301,8 @@ public class Settings extends Config {
             false;
         @Comment("Disable redstone when all owners/trusted/members are offline")
         public static boolean DISABLE_OFFLINE = false;
-        @Comment("Detect and cancel invalid pistons on the edge of plots (e.g. placed with WorldEdit)")
+        @Comment(
+            "Detect and cancel invalid pistons on the edge of plots (e.g. placed with WorldEdit)")
         public static boolean DETECT_INVALID_EDGE_PISTONS = false;
     }
 
@@ -317,8 +318,8 @@ public class Settings extends Config {
     }
 
 
-    @Comment({"Enable or disable part of the plugin",
-        "Note: A cache will use some memory if enabled"})
+    @Comment(
+        {"Enable or disable part of the plugin", "Note: A cache will use some memory if enabled"})
     public static final class Enabled_Components { // Group the following values into a new config section
         @Comment("The database stores all the plots") public static boolean DATABASE = true;
         @Comment("Events are needed to track a lot of things") public static boolean EVENTS = true;
