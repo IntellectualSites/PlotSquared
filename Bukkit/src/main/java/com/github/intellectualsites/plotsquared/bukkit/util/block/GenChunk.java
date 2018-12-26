@@ -6,6 +6,7 @@ import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
+import com.sk89q.worldedit.world.block.BaseBlock;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Chunk;
@@ -115,6 +116,10 @@ public class GenChunk extends ScopedLocalBlockQueue {
         int j = MainUtil.CACHE_J[y][x][z];
         v[j] = id;
         return true;
+    }
+
+    @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
+        return this.setBlock(x, y, z, PlotBlock.get(id.getBlockType().getId()));
     }
 
     @Override public PlotBlock getBlock(int x, int y, int z) {

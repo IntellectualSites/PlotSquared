@@ -242,7 +242,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return result.getCd();
     }
 
-    public void generate(World world, ScopedLocalBlockQueue result) {
+    private void generate(World world, ScopedLocalBlockQueue result) {
         // Load if improperly loaded
         if (!this.loaded) {
             String name = world.getName();
