@@ -20,24 +20,7 @@ public class DebugRoadRegen extends SubCommand {
         }
         Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
-            int extend = 0;
-            if (args.length == 1) {
-                if (MathMan.isInteger(args[0])) {
-                    try {
-                        extend = Integer.parseInt(args[0]);
-                    } catch (NumberFormatException ignored) {
-                        C.NOT_VALID_NUMBER.send(player, "(0, <EXTEND HEIGHT>)");
-                        return false;
-                    }
-                }
-            }
-            boolean result = HybridUtils.manager.regenerateRoad(plotArea, chunk, extend);
-            MainUtil.sendMessage(player,
-                "&6Regenerating chunk: " + chunk.x + ',' + chunk.z + "\n&6 - Result: " + (result ?
-                    "&aSuccess" :
-                    "&cFailed"));
-            MainUtil.sendMessage(player, "&cTo regenerate all roads: /plot regenallroads");
+           C.NOT_IN_PLOT.send(player);
         } else {
             HybridPlotManager manager = (HybridPlotManager) plotArea.getPlotManager();
             manager.createRoadEast(plotArea, plot);
