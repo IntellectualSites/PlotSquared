@@ -6,6 +6,7 @@ import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import lombok.Getter;
 import lombok.Setter;
@@ -108,6 +109,11 @@ public class GenChunk extends ScopedLocalBlockQueue {
             return true;
         }
         this.cd.setBlock(x, y, z, id.to(Material.class));
+        this.storeCache(x, y, z, id);
+        return true;
+    }
+
+    private void storeCache(final int x, final int y, final int z, final PlotBlock id) {
         int i = MainUtil.CACHE_I[y][x][z];
         PlotBlock[] v = this.result[i];
         if (v == null) {
@@ -115,11 +121,16 @@ public class GenChunk extends ScopedLocalBlockQueue {
         }
         int j = MainUtil.CACHE_J[y][x][z];
         v[j] = id;
-        return true;
     }
 
     @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
-        return this.setBlock(x, y, z, PlotBlock.get(id.getBlockType().getId()));
+        if (this.result == null) {
+            this.cd.setBlock(x, y, z, BukkitAdapter.adapt(id));
+            return true;
+        }
+        this.cd.setBlock(x, y, z, BukkitAdapter.adapt(id));
+        this.storeCache(x, y, z, PlotBlock.get(id.getBlockType().getId()));
+        return true;
     }
 
     @Override public PlotBlock getBlock(int x, int y, int z) {
