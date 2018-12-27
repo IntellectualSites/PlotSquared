@@ -30,7 +30,8 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-@SuppressWarnings("unused") public class PlotPlusListener extends PlotListener implements Listener {
+@SuppressWarnings("unused")
+public class PlotPlusListener extends PlotListener implements Listener {
 
     private static final HashMap<UUID, Interval> feedRunnable = new HashMap<>();
     private static final HashMap<UUID, Interval> healRunnable = new HashMap<>();
@@ -80,7 +81,8 @@ import java.util.UUID;
         }, 0L, 20L);
     }
 
-    @EventHandler(priority = EventPriority.HIGH) public void onInteract(BlockDamageEvent event) {
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onInteract(BlockDamageEvent event) {
         Player player = event.getPlayer();
         if (player.getGameMode() != GameMode.SURVIVAL) {
             return;
@@ -99,7 +101,8 @@ import java.util.UUID;
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH) public void onDamage(EntityDamageEvent event) {
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onDamage(EntityDamageEvent event) {
         if (event.getEntityType() != EntityType.PLAYER) {
             return;
         }
@@ -113,7 +116,8 @@ import java.util.UUID;
         }
     }
 
-    @EventHandler public void onItemDrop(PlayerDropItemEvent event) {
+    @EventHandler
+    public void onItemDrop(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
         Plot plot = BukkitUtil.getLocation(player).getOwnedPlot();
@@ -128,7 +132,8 @@ import java.util.UUID;
         }
     }
 
-    @EventHandler public void onPlotEnter(PlayerEnterPlotEvent event) {
+    @EventHandler
+    public void onPlotEnter(PlayerEnterPlotEvent event) {
         Player player = event.getPlayer();
         Plot plot = event.getPlot();
         Optional<Integer[]> feed = plot.getFlag(Flags.FEED);
@@ -143,13 +148,15 @@ import java.util.UUID;
         }
     }
 
-    @EventHandler public void onPlayerQuit(PlayerQuitEvent event) {
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         feedRunnable.remove(player.getUniqueId());
         healRunnable.remove(player.getUniqueId());
     }
 
-    @EventHandler public void onPlotLeave(PlayerLeavePlotEvent event) {
+    @EventHandler
+    public void onPlotLeave(PlayerLeavePlotEvent event) {
         Player leaver = event.getPlayer();
         Plot plot = event.getPlot();
         if (!plot.hasOwner()) {
@@ -160,7 +167,8 @@ import java.util.UUID;
         healRunnable.remove(leaver.getUniqueId());
     }
 
-    @EventHandler public void onItemPickup(EntityPickupItemEvent event) {
+    @EventHandler
+    public void onItemPickup(EntityPickupItemEvent event) {
         LivingEntity ent = event.getEntity();
         if (ent instanceof Player) {
             Player player = (Player) ent;
@@ -181,7 +189,7 @@ import java.util.UUID;
         final int interval;
         final int amount;
         final int max;
-        public int count = 0;
+        int count = 0;
 
         Interval(int interval, int amount, int max) {
             this.interval = interval;

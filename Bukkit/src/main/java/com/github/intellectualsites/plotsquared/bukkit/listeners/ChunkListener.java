@@ -32,7 +32,8 @@ import java.util.HashSet;
 
 import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getRefClass;
 
-@SuppressWarnings("unused") public class ChunkListener implements Listener {
+@SuppressWarnings("unused")
+public class ChunkListener implements Listener {
 
     private RefMethod methodGetHandleChunk;
     private RefField mustSave;
@@ -48,7 +49,7 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
                 this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
             } catch (Throwable ignored) {
                 PlotSquared.debug(PlotSquared.get().IMP.getPluginName()
-                    + "/Server not compatible for chunk processor trim/gc");
+                        + "/Server not compatible for chunk processor trim/gc");
                 Settings.Chunk_Processor.AUTO_TRIM = false;
             }
         }
@@ -69,11 +70,11 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
                     Object w = world.getClass().getDeclaredMethod("getHandle").invoke(world);
                     Object chunkMap = w.getClass().getDeclaredMethod("getPlayerChunkMap").invoke(w);
                     Method methodIsChunkInUse =
-                        chunkMap.getClass().getDeclaredMethod("isChunkInUse", int.class, int.class);
+                            chunkMap.getClass().getDeclaredMethod("isChunkInUse", int.class, int.class);
                     Chunk[] chunks = world.getLoadedChunks();
                     for (Chunk chunk : chunks) {
                         if ((boolean) methodIsChunkInUse
-                            .invoke(chunkMap, chunk.getX(), chunk.getZ())) {
+                                .invoke(chunkMap, chunk.getX(), chunk.getZ())) {
                             continue;
                         }
                         int x = chunk.getX();
@@ -143,7 +144,8 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
         return plot != null && plot.hasOwner();
     }
 
-    @EventHandler public void onChunkUnload(ChunkUnloadEvent event) {
+    @EventHandler
+    public void onChunkUnload(ChunkUnloadEvent event) {
         if (ignoreUnload) {
             return;
         }
@@ -161,11 +163,13 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
         }
     }
 
-    @EventHandler public void onChunkLoad(ChunkLoadEvent event) {
+    @EventHandler
+    public void onChunkLoad(ChunkLoadEvent event) {
         processChunk(event.getChunk(), false);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST) public void onItemSpawn(ItemSpawnEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onItemSpawn(ItemSpawnEvent event) {
         Item entity = event.getEntity();
         Chunk chunk = entity.getLocation().getChunk();
         if (chunk == this.lastChunk) {
@@ -241,7 +245,7 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
                     Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                     TaskManager.tasks.remove(currentIndex);
                     PlotSquared
-                        .debug(C.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
+                            .debug(C.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
                     chunk.unload(true, true);
                     return;
                 }
@@ -265,14 +269,14 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
                 }
             }
             PlotSquared.debug(
-                C.PREFIX.s() + "&a detected unsafe chunk and processed: " + (chunk.getX() << 4)
-                    + "," + (chunk.getX() << 4));
+                    C.PREFIX.s() + "&a detected unsafe chunk and processed: " + (chunk.getX() << 4)
+                            + "," + (chunk.getX() << 4));
         }
         if (tiles.length > Settings.Chunk_Processor.MAX_TILES) {
             if (unload) {
                 PlotSquared.debug(
-                    C.PREFIX.s() + "&c detected unsafe chunk: " + (chunk.getX() << 4) + "," + (
-                        chunk.getX() << 4));
+                        C.PREFIX.s() + "&c detected unsafe chunk: " + (chunk.getX() << 4) + "," + (
+                                chunk.getX() << 4));
                 cleanChunk(chunk);
                 return true;
             }

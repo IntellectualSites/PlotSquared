@@ -1072,22 +1072,22 @@ public class BukkitChunkManager extends ChunkManager {
             }
             for (short y = 0; y <= maxY; y++) {
                 Block block = world.getBlockAt(x, y, z);
-                Material id = block.getType();
+                Material blockType = block.getType();
                 if (storeNormal) {
-                    if (id.name().contains("AIR")) {
+                    if (blockType.name().contains("AIR")) {
                         ids[y] = StringPlotBlock.EVERYTHING;
                     } else {
-                        ids[y] = PlotBlock.get(id.name());
+                        ids[y] = PlotBlock.get(blockType.name());
                     }
                 }
-                if (!id.name().contains("AIR")) {
+                if (!blockType.name().contains("AIR")) {
                     try {
                         BlockLoc bl = new BlockLoc(x + offsetX, y, z + offsetZ);
                         if (block.getState() instanceof InventoryHolder) {
                             InventoryHolder inventoryHolder = (InventoryHolder) block.getState();
                             ItemStack[] inventory =
                                 inventoryHolder.getInventory().getContents().clone();
-                            switch (id) {
+                            switch (blockType) {
                                 case CHEST:
                                     this.chestContents.put(bl, inventory);
                                     break;
