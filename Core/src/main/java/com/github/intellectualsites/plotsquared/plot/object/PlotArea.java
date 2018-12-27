@@ -272,16 +272,16 @@ public abstract class PlotArea {
             this.NONMEMBER_HOME = PlotLoc.fromString(homeNonMembers);
         }
 
-
         if ("side".equalsIgnoreCase(homeDefault)) {
             this.DEFAULT_HOME = null;
         } else if (StringMan.isEqualIgnoreCaseToAny(homeDefault, "center", "middle")) {
             this.DEFAULT_HOME = new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE);
         } else {
             try {
-                String[] split = homeDefault.split(",");
+                /*String[] split = homeDefault.split(",");
                 this.DEFAULT_HOME =
-                    new PlotLoc(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+                    new PlotLoc(Integer.parseInt(split[0]), Integer.parseInt(split[1]));*/
+                this.DEFAULT_HOME = PlotLoc.fromString(homeDefault);
             } catch (NumberFormatException ignored) {
                 this.DEFAULT_HOME = null;
             }

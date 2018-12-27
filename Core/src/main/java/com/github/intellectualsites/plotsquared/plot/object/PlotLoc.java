@@ -3,11 +3,20 @@ package com.github.intellectualsites.plotsquared.plot.object;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 public class PlotLoc {
+
     public int x;
+    public int y;
     public int z;
 
     public PlotLoc(int x, int z) {
         this.x = x;
+        this.y = -1;
+        this.z = z;
+    }
+
+    public PlotLoc(int x, int y, int z) {
+        this.x = x;
+        this.y = y;
         this.z = z;
     }
 
@@ -19,7 +28,13 @@ public class PlotLoc {
         } else {
             try {
                 String[] split = input.split(",");
-                return new PlotLoc(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+                if (split.length == 2) {
+                    return new PlotLoc(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+                } else if (split.length == 3) {
+                    return new PlotLoc(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+                } else {
+                    throw new  IllegalArgumentException(String.format("Unable to deserialize: %s", input));
+                }
             } catch (NumberFormatException ignored) {
                 return null;
             }
@@ -30,12 +45,16 @@ public class PlotLoc {
         int prime = 31;
         int result = 1;
         result = (prime * result) + this.x;
+        result = (prime * result) + this.y;
         result = (prime * result) + this.z;
         return result;
     }
 
     @Override public String toString() {
-        return this.x + "," + this.z;
+        if (this.y == -1) {
+            return String.format("%d,%d", x, z);
+        }
+        return String.format("%d,%d,%d", x, y, z);
     }
 
     @Override public boolean equals(Object obj) {
@@ -49,6 +68,6 @@ public class PlotLoc {
             return false;
         }
         PlotLoc other = (PlotLoc) obj;
-        return (this.x == other.x) && (this.z == other.z);
+        return (this.x == other.x) && (this.y == other.y) && (this.z == other.z);
     }
 }
