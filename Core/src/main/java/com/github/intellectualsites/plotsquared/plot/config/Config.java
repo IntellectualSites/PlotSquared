@@ -120,8 +120,7 @@ public class Config {
      * @param clazz
      * @return
      */
-    public static Map<String, Object> getFields(
-        Class<? extends Settings.Enabled_Components> clazz) {
+    public static Map<String, Object> getFields(Class clazz) {
         HashMap<String, Object> map = new HashMap<>();
         for (Field field : clazz.getFields()) {
             if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
@@ -143,8 +142,7 @@ public class Config {
             }
             StringBuilder m = new StringBuilder();
             for (Object obj : listValue) {
-                m.append(System.lineSeparator()).append(spacing).append("- ")
-                    .append(toYamlString(obj, spacing));
+                m.append(System.lineSeparator() + spacing + "- " + toYamlString(obj, spacing));
             }
             return m.toString();
         }
@@ -178,7 +176,7 @@ public class Config {
                     if (value == null && field.getType() != ConfigBlock.class) {
                         setAccessible(field);
                         Class<?>[] classes = clazz.getDeclaredClasses();
-                        for (Class<? extends Object> current : classes) {
+                        for (Class current : classes) {
                             if (StringMan.isEqual(current.getSimpleName(), field.getName())) {
                                 field.set(instance, current.newInstance());
                                 break;

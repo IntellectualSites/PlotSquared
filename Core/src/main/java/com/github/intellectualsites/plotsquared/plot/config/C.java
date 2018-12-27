@@ -915,16 +915,18 @@ public enum C {
             return m;
         }
         Map<String, String> map = new LinkedHashMap<>();
-        for (int i = args.length - 1; i >= 0; i--) {
-            String arg = "" + args[i];
-            if (arg.isEmpty()) {
-                map.put("%s" + i, "");
-            } else {
-                arg = C.color(arg);
-                map.put("%s" + i, arg);
-            }
-            if (i == 0) {
-                map.put("%s", arg);
+        if (args.length > 0) {
+            for (int i = args.length - 1; i >= 0; i--) {
+                String arg = "" + args[i];
+                if (arg == null || arg.isEmpty()) {
+                    map.put("%s" + i, "");
+                } else {
+                    arg = C.color(arg);
+                    map.put("%s" + i, arg);
+                }
+                if (i == 0) {
+                    map.put("%s", arg);
+                }
             }
         }
         m = StringMan.replaceFromMap(m, map);

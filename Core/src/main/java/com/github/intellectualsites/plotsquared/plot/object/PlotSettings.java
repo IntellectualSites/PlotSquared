@@ -15,6 +15,12 @@ import java.util.*;
 public class PlotSettings {
 
     /**
+     * Merged plots.
+     *
+     * @deprecated Raw access
+     */
+    @Deprecated public boolean[] merged = new boolean[] {false, false, false, false};
+    /**
      * Plot alias.
      *
      * @deprecated Raw access
@@ -26,24 +32,20 @@ public class PlotSettings {
      * @deprecated Raw access
      */
     @Deprecated public List<PlotComment> comments = null;
+
     /**
      * The ratings for a plot.
      *
      * @deprecated Raw access
      */
     @Deprecated public HashMap<UUID, Integer> ratings;
+
     /**
      * Flags.
      *
      * @deprecated Raw access
      */
     @Deprecated public HashMap<Flag<?>, Object> flags = new HashMap<>();
-    /**
-     * Merged plots.
-     *
-     * @deprecated Raw access
-     */
-    @Deprecated private boolean[] merged = new boolean[] {false, false, false, false};
     /**
      * Home Position.
      *

@@ -124,18 +124,20 @@ public class MainUtil {
                     PrintWriter writer = new PrintWriter(
                         new OutputStreamWriter(output, StandardCharsets.UTF_8), true)) {
                     String CRLF = "\r\n";
-                    writer.append("--").append(boundary).append(CRLF);
+                    writer.append("--" + boundary).append(CRLF);
                     writer.append("Content-Disposition: form-data; name=\"param\"").append(CRLF);
-                    writer.append("Content-Type: text/plain; charset=")
-                        .append(StandardCharsets.UTF_8.displayName()).append(CRLF);
+                    writer.append(
+                        "Content-Type: text/plain; charset=" + StandardCharsets.UTF_8.displayName())
+                        .append(CRLF);
                     String param = "value";
                     writer.append(CRLF).append(param).append(CRLF).flush();
-                    writer.append("--").append(boundary).append(CRLF);
+                    writer.append("--" + boundary).append(CRLF);
                     writer.append(
-                        "Content-Disposition: form-data; name=\"schematicFile\"; filename=\"")
-                        .append(filename).append(String.valueOf('"')).append(CRLF);
-                    writer.append("Content-Type: ")
-                        .append(URLConnection.guessContentTypeFromName(filename)).append(CRLF);
+                        "Content-Disposition: form-data; name=\"schematicFile\"; filename=\""
+                            + filename + '"').append(CRLF);
+                    writer
+                        .append("Content-Type: " + URLConnection.guessContentTypeFromName(filename))
+                        .append(CRLF);
                     writer.append("Content-Transfer-Encoding: binary").append(CRLF);
                     writer.append(CRLF).flush();
                     writeTask.value = new AbstractDelegateOutputStream(output) {
@@ -145,7 +147,7 @@ public class MainUtil {
                     writeTask.run();
                     output.flush();
                     writer.append(CRLF).flush();
-                    writer.append("--").append(boundary).append("--").append(CRLF).flush();
+                    writer.append("--" + boundary + "--").append(CRLF).flush();
                 }
                 try (Reader response = new InputStreamReader(con.getInputStream(),
                     StandardCharsets.UTF_8)) {
@@ -201,30 +203,30 @@ public class MainUtil {
         if (time >= 33868800) {
             int years = (int) (time / 33868800);
             time -= years * 33868800;
-            toreturn.append(years).append("y ");
+            toreturn.append(years + "y ");
         }
         if (time >= 604800) {
             int weeks = (int) (time / 604800);
             time -= weeks * 604800;
-            toreturn.append(weeks).append("w ");
+            toreturn.append(weeks + "w ");
         }
         if (time >= 86400) {
             int days = (int) (time / 86400);
             time -= days * 86400;
-            toreturn.append(days).append("d ");
+            toreturn.append(days + "d ");
         }
         if (time >= 3600) {
             int hours = (int) (time / 3600);
             time -= hours * 3600;
-            toreturn.append(hours).append("h ");
+            toreturn.append(hours + "h ");
         }
         if (time >= 60) {
             int minutes = (int) (time / 60);
             time -= minutes * 60;
-            toreturn.append(minutes).append("m ");
+            toreturn.append(minutes + "m ");
         }
         if (toreturn.equals("") || time > 0) {
-            toreturn.append(time).append("s ");
+            toreturn.append((time) + "s ");
         }
         return toreturn.toString().trim();
     }
@@ -408,7 +410,7 @@ public class MainUtil {
 
         ArrayList<ArrayList<Plot>> plotList = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            plotList.add(new ArrayList<>());
+            plotList.add(new ArrayList<Plot>());
         }
 
         for (Plot plot : PlotSquared.get().getPlots()) {
@@ -427,7 +429,7 @@ public class MainUtil {
                     count++;
                 }
             }
-            if (plot.getArea().equals(area)) {
+            if (area != null && plot.getArea().equals(area)) {
                 count++;
             }
             if (alias != null && alias.equals(plot.getAlias())) {
@@ -619,12 +621,14 @@ public class MainUtil {
         if (caption.s().isEmpty()) {
             return true;
         }
-        TaskManager.runTaskAsync(() -> {
-            String m = C.format(caption, args);
-            if (player == null) {
-                PlotSquared.log(m);
-            } else {
-                player.sendMessage(m);
+        TaskManager.runTaskAsync(new Runnable() {
+            @Override public void run() {
+                String m = C.format(caption, args);
+                if (player == null) {
+                    PlotSquared.log(m);
+                } else {
+                    player.sendMessage(m);
+                }
             }
         });
         return true;
@@ -770,28 +774,31 @@ public class MainUtil {
         info = info.replace("%desc%", "No description set.");
         if (info.contains("%rating%")) {
             final String newInfo = info;
-            TaskManager.runTaskAsync(() -> {
-                int max = 10;
-                if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES.isEmpty()) {
-                    max = 8;
-                }
-                String info1;
-                if (full && Settings.Ratings.CATEGORIES != null
-                    && Settings.Ratings.CATEGORIES.size() > 1) {
-                    double[] ratings = MainUtil.getAverageRatings(plot);
-                    StringBuilder rating = new StringBuilder();
-                    String prefix = "";
-                    for (int i = 0; i < ratings.length; i++) {
-                        rating.append(prefix).append(Settings.Ratings.CATEGORIES.get(i)).append('=')
-                            .append(String.format("%.1f", ratings[i]));
-                        prefix = ",";
+            TaskManager.runTaskAsync(new Runnable() {
+                @Override public void run() {
+                    int max = 10;
+                    if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES
+                        .isEmpty()) {
+                        max = 8;
                     }
-                    info1 = newInfo.replaceAll("%rating%", rating.toString());
-                } else {
-                    info1 = newInfo.replaceAll("%rating%",
-                        String.format("%.1f", plot.getAverageRating()) + '/' + max);
+                    String info;
+                    if (full && Settings.Ratings.CATEGORIES != null
+                        && Settings.Ratings.CATEGORIES.size() > 1) {
+                        double[] ratings = MainUtil.getAverageRatings(plot);
+                        String rating = "";
+                        String prefix = "";
+                        for (int i = 0; i < ratings.length; i++) {
+                            rating += prefix + Settings.Ratings.CATEGORIES.get(i) + '=' + String
+                                .format("%.1f", ratings[i]);
+                            prefix = ",";
+                        }
+                        info = newInfo.replaceAll("%rating%", rating);
+                    } else {
+                        info = newInfo.replaceAll("%rating%",
+                            String.format("%.1f", plot.getAverageRating()) + '/' + max);
+                    }
+                    whenDone.run(info);
                 }
-                whenDone.run(info1);
             });
             return;
         }
@@ -802,9 +809,10 @@ public class MainUtil {
         if (directory.exists()) {
             File[] files = directory.listFiles();
             if (null != files) {
-                for (File file : files) {
+                for (int i = 0; i < files.length; i++) {
+                    File file = files[i];
                     if (file.isDirectory()) {
-                        deleteDirectory(file);
+                        deleteDirectory(files[i]);
                     } else {
                         PlotSquared.debug("Deleting file: " + file + " | " + file.delete());
                     }

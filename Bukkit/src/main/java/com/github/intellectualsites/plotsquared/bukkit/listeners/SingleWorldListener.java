@@ -33,8 +33,8 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
             this.done = classChunk.getField("done").getRealField();
             this.lit = classChunk.getField("lit").getRealField();
             this.s = classChunk.getField("s").getRealField();
-        } catch (Throwable e) {
-            e.printStackTrace();
+        } catch (Throwable ignore) {
+            ignore.printStackTrace();
         }
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }

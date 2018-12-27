@@ -70,7 +70,7 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         PlotArea area = player.getApplicablePlotArea();
-        boolean chat = area != null && area.PLOT_CHAT;
+        boolean chat = area == null ? false : area.PLOT_CHAT;
         if (toggle(player, "disabletitles") != chat) {
             MainUtil.sendMessage(player, C.TOGGLE_ENABLED, command.toString());
         } else {

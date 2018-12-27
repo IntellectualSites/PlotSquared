@@ -45,7 +45,7 @@ public class MySQL extends Database {
         return this.connection;
     }
 
-    @Override public Connection openConnection() throws SQLException {
+    @Override public Connection openConnection() throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             return this.connection;
         }
@@ -69,7 +69,7 @@ public class MySQL extends Database {
         return true;
     }
 
-    @Override public ResultSet querySQL(String query) throws SQLException {
+    @Override public ResultSet querySQL(String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             openConnection();
         }
@@ -78,7 +78,7 @@ public class MySQL extends Database {
         }
     }
 
-    @Override public int updateSQL(String query) throws SQLException {
+    @Override public int updateSQL(String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             openConnection();
         }

@@ -39,12 +39,14 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
         } else {
             createRoad = true;
         }
-        Runnable runnable = () -> {
-            if (!plot.unlinkPlot(createRoad, createRoad)) {
-                MainUtil.sendMessage(player, "&cUnlink has been cancelled");
-                return;
+        Runnable runnable = new Runnable() {
+            @Override public void run() {
+                if (!plot.unlinkPlot(createRoad, createRoad)) {
+                    MainUtil.sendMessage(player, "&cUnlink has been cancelled");
+                    return;
+                }
+                MainUtil.sendMessage(player, C.UNLINK_SUCCESS);
             }
-            MainUtil.sendMessage(player, C.UNLINK_SUCCESS);
         };
         if (hasConfirmation(player)) {
             CmdConfirm.addPending(player, "/plot unlink " + plot.getId(), runnable);

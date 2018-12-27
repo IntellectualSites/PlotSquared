@@ -602,11 +602,13 @@ public class PlayerEvents extends PlotListener implements Listener {
         // Delayed
 
         // Async
-        TaskManager.runTaskLaterAsync(() -> {
-            if (!player.hasPlayedBefore() && player.isOnline()) {
-                player.saveData();
+        TaskManager.runTaskLaterAsync(new Runnable() {
+            @Override public void run() {
+                if (!player.hasPlayedBefore() && player.isOnline()) {
+                    player.saveData();
+                }
+                EventUtil.manager.doJoinTask(pp);
             }
-            EventUtil.manager.doJoinTask(pp);
         }, 20);
     }
 
@@ -2211,7 +2213,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_UNOWNED);
             event.setCancelled(true);
         } else if (!plot.isAdded(pp.getUUID())) {
-            if (Flags.USE.contains(plot, PlotBlock.get(event.getBucket()))) {
+            if (Flags.USE.contains(plot, PlotBlock.get(event.getBucket().getId(), 0))) {
                 return;
             }
             if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
@@ -2524,7 +2526,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityCombustByEntity(EntityCombustByEntityEvent event) {
-        EntityDamageByEntityEvent eventChange;
+        EntityDamageByEntityEvent eventChange = null;
         eventChange = new EntityDamageByEntityEvent(event.getCombuster(), event.getEntity(),
                 EntityDamageEvent.DamageCause.FIRE_TICK, (double) event.getDuration());
         onEntityDamageByEntityEvent(eventChange);

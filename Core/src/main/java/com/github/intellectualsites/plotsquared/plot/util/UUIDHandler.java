@@ -55,7 +55,7 @@ public class UUIDHandler {
         PlotSquared.get().foreachPlotRaw(new RunnableVal<Plot>() {
             @Override public void run(Plot plot) {
                 if (plot.hasOwner()) {
-                    uuids.add(plot.guessOwner());
+                    uuids.add(plot.owner);
                     uuids.addAll(plot.getTrusted());
                     uuids.addAll(plot.getMembers());
                     uuids.addAll(plot.getDenied());

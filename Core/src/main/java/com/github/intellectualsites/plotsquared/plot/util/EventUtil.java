@@ -76,7 +76,11 @@ public abstract class EventUtil {
         }
         final Plot plot = player.getCurrentPlot();
         if (Settings.Teleport.ON_LOGIN && plot != null) {
-            TaskManager.runTask(() -> plot.teleportPlayer(player));
+            TaskManager.runTask(new Runnable() {
+                @Override public void run() {
+                    plot.teleportPlayer(player);
+                }
+            });
             MainUtil.sendMessage(player,
                 C.TELEPORTED_TO_ROAD.f() + " (on-login) " + "(" + plot.getId().x + ";" + plot
                     .getId().y + ")");
@@ -86,7 +90,11 @@ public abstract class EventUtil {
     public void doRespawnTask(final PlotPlayer player) {
         final Plot plot = player.getCurrentPlot();
         if (Settings.Teleport.ON_DEATH && plot != null) {
-            TaskManager.runTask(() -> plot.teleportPlayer(player));
+            TaskManager.runTask(new Runnable() {
+                @Override public void run() {
+                    plot.teleportPlayer(player);
+                }
+            });
             MainUtil.sendMessage(player, C.TELEPORTED_TO_ROAD);
         }
     }

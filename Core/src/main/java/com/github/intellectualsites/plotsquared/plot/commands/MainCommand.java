@@ -127,23 +127,27 @@ public class MainCommand extends Command {
                 @Override
                 public void run(final Command cmd, final Runnable success, final Runnable failure) {
                     if (cmd.hasConfirmation(player)) {
-                        CmdConfirm.addPending(player, cmd.getUsage(), () -> {
-                            if (EconHandler.manager != null) {
-                                PlotArea area = player.getApplicablePlotArea();
-                                if (area != null) {
-                                    Expression<Double> priceEval = area.PRICES.get(cmd.getFullId());
-                                    Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
-                                    if (price != null
-                                        && EconHandler.manager.getMoney(player) < price) {
-                                        if (failure != null) {
-                                            failure.run();
+                        CmdConfirm.addPending(player, cmd.getUsage(), new Runnable() {
+                            @Override public void run() {
+                                if (EconHandler.manager != null) {
+                                    PlotArea area = player.getApplicablePlotArea();
+                                    if (area != null) {
+                                        Expression<Double> priceEval =
+                                            area.PRICES.get(cmd.getFullId());
+                                        Double price =
+                                            priceEval != null ? priceEval.evaluate(0d) : 0d;
+                                        if (price != null
+                                            && EconHandler.manager.getMoney(player) < price) {
+                                            if (failure != null) {
+                                                failure.run();
+                                            }
+                                            return;
                                         }
-                                        return;
                                     }
                                 }
-                            }
-                            if (success != null) {
-                                success.run();
+                                if (success != null) {
+                                    success.run();
+                                }
                             }
                         });
                         return;

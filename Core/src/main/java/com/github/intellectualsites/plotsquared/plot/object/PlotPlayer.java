@@ -222,6 +222,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
             return getClusterCount(getLocation().getWorld());
         }
         final AtomicInteger count = new AtomicInteger(0);
+        final UUID uuid = getUUID();
         PlotSquared.get().foreachPlotArea(new RunnableVal<PlotArea>() {
             @Override public void run(PlotArea value) {
                 for (PlotCluster cluster : value.getClusters()) {
@@ -258,6 +259,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     public int getClusterCount(String world) {
+        UUID uuid = getUUID();
         int count = 0;
         for (PlotArea area : PlotSquared.get().getPlotAreas(world)) {
             for (PlotCluster cluster : area.getClusters()) {
@@ -567,27 +569,31 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                                                 final Location loc =
                                                     new Location(plot.getWorldName(), x, y, z);
                                                 if (plot.isLoaded()) {
-                                                    TaskManager.runTask(() -> {
-                                                        if (getMeta("teleportOnLogin", true)) {
-                                                            teleport(loc);
-                                                            sendMessage(C.TELEPORTED_TO_PLOT.f()
-                                                                + " (quitLoc) (" + plotX + ","
-                                                                + plotZ + ")");
+                                                    TaskManager.runTask(new Runnable() {
+                                                        @Override public void run() {
+                                                            if (getMeta("teleportOnLogin", true)) {
+                                                                teleport(loc);
+                                                                sendMessage(C.TELEPORTED_TO_PLOT.f()
+                                                                    + " (quitLoc) (" + plotX + ","
+                                                                    + plotZ + ")");
+                                                            }
                                                         }
                                                     });
                                                 } else if (!PlotSquared.get()
                                                     .isMainThread(Thread.currentThread())) {
                                                     if (getMeta("teleportOnLogin", true)) {
                                                         if (plot.teleportPlayer(PlotPlayer.this)) {
-                                                            TaskManager.runTask(() -> {
-                                                                if (getMeta("teleportOnLogin",
-                                                                    true)) {
-                                                                    teleport(loc);
-                                                                    sendMessage(
-                                                                        C.TELEPORTED_TO_PLOT.f()
-                                                                            + " (quitLoc-unloaded) ("
-                                                                            + plotX + "," + plotZ
-                                                                            + ")");
+                                                            TaskManager.runTask(new Runnable() {
+                                                                @Override public void run() {
+                                                                    if (getMeta("teleportOnLogin",
+                                                                        true)) {
+                                                                        teleport(loc);
+                                                                        sendMessage(
+                                                                            C.TELEPORTED_TO_PLOT.f()
+                                                                                + " (quitLoc-unloaded) ("
+                                                                                + plotX + ","
+                                                                                + plotZ + ")");
+                                                                    }
                                                                 }
                                                             });
                                                         }
@@ -612,7 +618,9 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     public void removePersistentMeta(String key) {
-        this.metaMap.remove(key);
+        if (this.metaMap.containsKey(key)) {
+            this.metaMap.remove(key);
+        }
         if (Settings.Enabled_Components.PERSISTENT_META) {
             DBFunc.removePersistentMeta(getUUID(), key);
         }

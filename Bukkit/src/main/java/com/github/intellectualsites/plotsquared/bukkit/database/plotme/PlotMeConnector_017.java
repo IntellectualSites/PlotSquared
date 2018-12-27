@@ -75,7 +75,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                 int path = PlotSquared.get().worlds.getInt("worlds." + world + ".road.width");
                 plotWidth.put(world, plot);
                 roadWidth.put(world, path);
-                merges.put(world, new HashMap<>());
+                merges.put(world, new HashMap<PlotId, boolean[]>());
             }
             if (merge) {
                 int tx = resultSet.getInt("topX");
@@ -178,8 +178,11 @@ public class PlotMeConnector_017 extends APlotMeConnector {
         HashMap<String, HashMap<PlotId, Plot>> processed = new HashMap<>();
 
         for (Plot plot : plots.values()) {
-            HashMap<PlotId, Plot> map =
-                processed.computeIfAbsent(plot.getWorldName(), k -> new HashMap<>());
+            HashMap<PlotId, Plot> map = processed.get(plot.getWorldName());
+            if (map == null) {
+                map = new HashMap<>();
+                processed.put(plot.getWorldName(), map);
+            }
             map.put(plot.getId(), plot);
         }
         return processed;

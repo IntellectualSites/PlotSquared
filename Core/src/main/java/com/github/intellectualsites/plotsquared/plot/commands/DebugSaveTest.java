@@ -16,10 +16,14 @@ import java.util.ArrayList;
 public class DebugSaveTest extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
-        ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getPlots());
+        ArrayList<Plot> plots = new ArrayList<Plot>();
+        plots.addAll(PlotSquared.get().getPlots());
         MainUtil.sendMessage(player, "&6Starting `DEBUGSAVETEST`");
-        DBFunc.createPlotsAndData(plots,
-            () -> MainUtil.sendMessage(player, "&6Database sync finished!"));
+        DBFunc.createPlotsAndData(plots, new Runnable() {
+            @Override public void run() {
+                MainUtil.sendMessage(player, "&6Database sync finished!");
+            }
+        });
         return true;
     }
 }

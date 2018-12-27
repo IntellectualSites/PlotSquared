@@ -10,11 +10,8 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.google.common.base.Optional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.UUID;
 
 @CommandDeclaration(command = "list", aliases = {"l", "find", "search"}, description = "List plots",
     permission = "plots.list", category = CommandCategory.INFO,
@@ -135,7 +132,7 @@ public class ListCmd extends SubCommand {
                     return false;
                 }
                 plots = ExpireManager.IMP == null ?
-                    new ArrayList<>() :
+                    new ArrayList<Plot>() :
                     new ArrayList<>(ExpireManager.IMP.getPendingExpired());
                 break;
             case "area":
@@ -148,7 +145,7 @@ public class ListCmd extends SubCommand {
                         C.PERMISSION_LIST_WORLD_NAME.f(world));
                     return false;
                 }
-                plots = area == null ? new ArrayList<>() : new ArrayList<>(area.getPlots());
+                plots = area == null ? new ArrayList<Plot>() : new ArrayList<>(area.getPlots());
                 break;
             case "all":
                 if (!Permissions.hasPermission(player, C.PERMISSION_LIST_ALL)) {
@@ -170,16 +167,18 @@ public class ListCmd extends SubCommand {
                     }
                     plots.add(plot);
                 }
-                plots.sort((a, b) -> {
-                    String va = "" + a.getFlags().get(Flags.DONE);
-                    String vb = "" + b.getFlags().get(Flags.DONE);
-                    if (MathMan.isInteger(va)) {
-                        if (MathMan.isInteger(vb)) {
-                            return Integer.parseInt(vb) - Integer.parseInt(va);
+                Collections.sort(plots, new Comparator<Plot>() {
+                    @Override public int compare(Plot a, Plot b) {
+                        String va = "" + a.getFlags().get(Flags.DONE);
+                        String vb = "" + b.getFlags().get(Flags.DONE);
+                        if (MathMan.isInteger(va)) {
+                            if (MathMan.isInteger(vb)) {
+                                return Integer.parseInt(vb) - Integer.parseInt(va);
+                            }
+                            return -1;
                         }
-                        return -1;
+                        return 1;
                     }
-                    return 1;
                 });
                 sort = false;
                 break;
@@ -189,31 +188,33 @@ public class ListCmd extends SubCommand {
                     return false;
                 }
                 plots = new ArrayList<>(PlotSquared.get().getPlots());
-                plots.sort((p1, p2) -> {
-                    double v1 = 0;
-                    int p1s = p1.getSettings().getRatings().size();
-                    int p2s = p2.getRatings().size();
-                    if (!p1.getSettings().getRatings().isEmpty()) {
-                        for (Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
-                            double av = entry.getValue().getAverageRating();
-                            v1 += av * av;
+                Collections.sort(plots, new Comparator<Plot>() {
+                    @Override public int compare(Plot p1, Plot p2) {
+                        double v1 = 0;
+                        int p1s = p1.getSettings().getRatings().size();
+                        int p2s = p2.getRatings().size();
+                        if (!p1.getSettings().getRatings().isEmpty()) {
+                            for (Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
+                                double av = entry.getValue().getAverageRating();
+                                v1 += av * av;
+                            }
+                            v1 /= p1s;
+                            v1 += p1s;
                         }
-                        v1 /= p1s;
-                        v1 += p1s;
-                    }
-                    double v2 = 0;
-                    if (!p2.getSettings().getRatings().isEmpty()) {
-                        for (Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
-                            double av = entry.getValue().getAverageRating();
-                            v2 += av * av;
+                        double v2 = 0;
+                        if (!p2.getSettings().getRatings().isEmpty()) {
+                            for (Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
+                                double av = entry.getValue().getAverageRating();
+                                v2 += av * av;
+                            }
+                            v2 /= p2s;
+                            v2 += p2s;
                         }
-                        v2 /= p2s;
-                        v2 += p2s;
+                        if (v2 == v1 && v2 != 0) {
+                            return p2s - p1s;
+                        }
+                        return (int) Math.signum(v2 - v1);
                     }
-                    if (v2 == v1 && v2 != 0) {
-                        return p2s - p1s;
-                    }
-                    return (int) Math.signum(v2 - v1);
                 });
                 sort = false;
                 break;
@@ -240,7 +241,7 @@ public class ListCmd extends SubCommand {
                 }
                 plots = new ArrayList<>();
                 for (Plot plot : PlotSquared.get().getPlots()) {
-                    if (plot.guessOwner() == null) {
+                    if (plot.owner == null) {
                         plots.add(plot);
                     }
                 }
@@ -252,10 +253,10 @@ public class ListCmd extends SubCommand {
                 }
                 plots = new ArrayList<>();
                 for (Plot plot : PlotSquared.get().getPlots()) {
-                    if (plot.guessOwner() == null) {
+                    if (plot.owner == null) {
                         continue;
                     }
-                    if (UUIDHandler.getName(plot.guessOwner()) == null) {
+                    if (UUIDHandler.getName(plot.owner) == null) {
                         plots.add(plot);
                     }
                 }
@@ -329,7 +330,12 @@ public class ListCmd extends SubCommand {
     public void displayPlots(final PlotPlayer player, List<Plot> plots, int pageSize, int page,
         PlotArea area, String[] args, boolean sort) {
         // Header
-        plots.removeIf(plot -> !plot.isBasePlot());
+        Iterator<Plot> iterator = plots.iterator();
+        while (iterator.hasNext()) {
+            if (!iterator.next().isBasePlot()) {
+                iterator.remove();
+            }
+        }
         if (sort) {
             plots = PlotSquared.get().sortPlots(plots, SortType.CREATION_DATE, area);
         }
@@ -337,7 +343,7 @@ public class ListCmd extends SubCommand {
             new RunnableVal3<Integer, Plot, PlotMessage>() {
                 @Override public void run(Integer i, Plot plot, PlotMessage message) {
                     String color;
-                    if (plot.guessOwner() == null) {
+                    if (plot.owner == null) {
                         color = "$3";
                     } else if (plot.isOwner(player.getUUID())) {
                         color = "$1";

@@ -6,10 +6,12 @@ import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
 import com.sk89q.worldedit.world.block.BaseBlock;
 
+import java.util.HashMap;
+
 public class HybridGen extends IndependentPlotGenerator {
 
     @Override public String getName() {
-        return PlotSquared.get().IMP.getPluginName();
+        return PlotSquared.imp().getPluginName();
     }
 
     private void placeSchem(HybridPlotWorld world, ScopedLocalBlockQueue result, short relativeX,
@@ -39,6 +41,8 @@ public class HybridGen extends IndependentPlotGenerator {
         }
         // Coords
         Location min = result.getMin();
+        int cx = min.getX() >> 4;
+        int cz = min.getZ() >> 4;
         int bx = (min.getX()) - hpw.ROAD_OFFSET_X;
         int bz = (min.getZ()) - hpw.ROAD_OFFSET_Z;
         short rbx;
@@ -82,6 +86,7 @@ public class HybridGen extends IndependentPlotGenerator {
             }
         }
         // generation
+        HashMap<Integer, BaseBlock[]> sch = hpw.G_SCH;
         for (short x = 0; x < 16; x++) {
             if (gx[x]) {
                 for (short z = 0; z < 16; z++) {

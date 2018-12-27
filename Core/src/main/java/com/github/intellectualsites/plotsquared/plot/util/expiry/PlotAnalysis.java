@@ -378,19 +378,19 @@ public class PlotAnalysis {
     }
 
     public static String log(Object obj) {
-        StringBuilder result = new StringBuilder();
+        String result = "";
         if (obj.getClass().isArray()) {
             String prefix = "";
 
             for (int i = 0; i < Array.getLength(obj); i++) {
-                result.append(prefix).append(log(Array.get(obj, i)));
+                result += prefix + log(Array.get(obj, i));
                 prefix = ",";
             }
             return "( " + result + " )";
         } else if (obj instanceof List<?>) {
             String prefix = "";
             for (Object element : (List<?>) obj) {
-                result.append(prefix).append(log(element));
+                result += prefix + log(element);
                 prefix = ",";
             }
             return "[ " + result + " ]";

@@ -83,6 +83,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
         }
         // int id = item.getTypeId();
         Material id = item.getType();
+        short data = item.getDurability();
         int amount = item.getAmount();
         String name = null;
         String[] lore = null;

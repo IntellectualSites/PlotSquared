@@ -35,7 +35,7 @@ import java.util.UUID;
         }
         SinglePlotArea area = ((SinglePlotAreaManager) pam).getArea();
         PlotId id = new PlotId(0, 0);
-        File container = PlotSquared.get().IMP.getWorldContainer();
+        File container = PlotSquared.imp().getWorldContainer();
         for (File folder : container.listFiles()) {
             String name = folder.getName();
             if (!WorldUtil.IMP.isWorld(name) && PlotId.fromString(name) == null) {
@@ -45,7 +45,7 @@ import java.util.UUID;
                         UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
                 }
                 while (new File(container, id.toCommaSeparatedString()).exists()) {
-                    id = id.getNextId(1);
+                    id = Auto.getNextPlotId(id, 1);
                 }
                 File newDir = new File(container, id.toCommaSeparatedString());
                 if (folder.renameTo(newDir)) {

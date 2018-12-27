@@ -179,7 +179,7 @@ public abstract class PlotArea {
     }
 
     public Set<PlotCluster> getClusters() {
-        return this.clusters == null ? new HashSet<>() : this.clusters.getAll();
+        return this.clusters == null ? new HashSet<PlotCluster>() : this.clusters.getAll();
     }
 
     /**
@@ -496,7 +496,7 @@ public abstract class PlotArea {
         final HashSet<Plot> myPlots = new HashSet<>();
         foreachPlotAbs(new RunnableVal<Plot>() {
             @Override public void run(Plot value) {
-                if (uuid.equals(value.guessOwner())) {
+                if (uuid.equals(value.owner)) {
                     myPlots.add(value);
                 }
             }
@@ -657,7 +657,12 @@ public abstract class PlotArea {
 
     public Set<Plot> getBasePlots() {
         HashSet<Plot> myPlots = new HashSet<>(getPlots());
-        myPlots.removeIf(plot -> !plot.isBasePlot());
+        Iterator<Plot> iterator = myPlots.iterator();
+        while (iterator.hasNext()) {
+            if (!iterator.next().isBasePlot()) {
+                iterator.remove();
+            }
+        }
         return myPlots;
     }
 

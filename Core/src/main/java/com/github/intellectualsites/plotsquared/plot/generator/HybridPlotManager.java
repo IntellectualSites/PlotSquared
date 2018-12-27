@@ -197,10 +197,12 @@ public class HybridPlotManager extends ClassicPlotManager {
                 // And finally set the schematic, the y value is unimportant for this function
                 pastePlotSchematic(dpw, queue, bot, top);
             }
-        }, () -> {
-            queue.enqueue();
-            // And notify whatever called this when plot clearing is done
-            GlobalBlockQueue.IMP.addTask(whenDone);
+        }, new Runnable() {
+            @Override public void run() {
+                queue.enqueue();
+                // And notify whatever called this when plot clearing is done
+                GlobalBlockQueue.IMP.addTask(whenDone);
+            }
         }, 10);
         return true;
     }

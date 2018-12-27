@@ -247,21 +247,20 @@ import java.util.*;
                 for (Flag<?> flag1 : Flags.getFlags()) {
                     String type = flag1.getClass().getSimpleName();
                     if (!flags.containsKey(type)) {
-                        flags.put(type, new ArrayList<>());
+                        flags.put(type, new ArrayList<String>());
                     }
                     flags.get(type).add(flag1.getName());
                 }
-                StringBuilder message = new StringBuilder();
+                String message = "";
                 String prefix = "";
                 for (Map.Entry<String, ArrayList<String>> entry : flags.entrySet()) {
                     String category = entry.getKey();
                     List<String> flagNames = entry.getValue();
                     Collections.sort(flagNames);
-                    message.append(prefix).append("&6").append(category).append(": &7")
-                        .append(StringMan.join(flagNames, ", "));
+                    message += prefix + "&6" + category + ": &7" + StringMan.join(flagNames, ", ");
                     prefix = "\n";
                 }
-                MainUtil.sendMessage(player, message.toString());
+                MainUtil.sendMessage(player, message);
                 return true;
         }
         MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag <set|remove|add|list|info>");

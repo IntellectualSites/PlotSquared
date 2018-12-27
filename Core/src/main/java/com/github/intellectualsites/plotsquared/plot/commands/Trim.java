@@ -95,7 +95,8 @@ import java.util.Set;
             return false;
         }
         MainUtil.sendMessage(null, "Collecting region data...");
-        ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getPlots(world));
+        ArrayList<Plot> plots = new ArrayList<>();
+        plots.addAll(PlotSquared.get().getPlots(world));
         if (ExpireManager.IMP != null) {
             plots.removeAll(ExpireManager.IMP.getPendingExpired());
         }
@@ -197,9 +198,11 @@ import java.util.Set;
                         }
                     };
                 } else {
-                    regenTask = () -> {
-                        Trim.TASK = false;
-                        player.sendMessage("Trim done!");
+                    regenTask = new Runnable() {
+                        @Override public void run() {
+                            Trim.TASK = false;
+                            player.sendMessage("Trim done!");
+                        }
                     };
                 }
                 ChunkManager.manager.deleteRegionFiles(world, viable, regenTask);

@@ -148,9 +148,9 @@ import java.util.UUID;
                 // Add any existing plots to the current cluster
                 for (Plot plot : plots) {
                     if (plot.hasOwner()) {
-                        if (!cluster.isAdded(plot.guessOwner())) {
-                            cluster.invited.add(plot.guessOwner());
-                            DBFunc.setInvited(cluster, plot.guessOwner());
+                        if (!cluster.isAdded(plot.owner)) {
+                            cluster.invited.add(plot.owner);
+                            DBFunc.setInvited(cluster, plot.owner);
                         }
                     }
                 }

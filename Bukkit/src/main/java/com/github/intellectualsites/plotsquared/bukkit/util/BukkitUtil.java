@@ -215,7 +215,7 @@ import java.util.*;
 
     public static List<Entity> getEntities(@NonNull final String worldName) {
         World world = getWorld(worldName);
-        return world != null ? world.getEntities() : new ArrayList<>();
+        return world != null ? world.getEntities() : new ArrayList<Entity>();
     }
 
     public static Location getLocation(@NonNull final Entity entity) {
@@ -233,7 +233,7 @@ import java.util.*;
     }
 
     public static BukkitLegacyMappings getBukkitLegacyMappings() {
-        return (BukkitLegacyMappings) PlotSquared.get().IMP.getLegacyMappings();
+        return (BukkitLegacyMappings) PlotSquared.imp().getLegacyMappings();
     }
 
     public static Material getMaterial(@NonNull final PlotBlock plotBlock) {

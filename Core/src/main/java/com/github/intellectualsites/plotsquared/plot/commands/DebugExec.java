@@ -46,8 +46,8 @@ import java.util.*;
                     this.engine.eval(script, this.scope);
                 }
             }
-        } catch (IOException | ScriptException e) {
-            e.printStackTrace();
+        } catch (IOException | ScriptException ignored) {
+            ignored.printStackTrace();
         }
     }
 
@@ -164,8 +164,11 @@ import java.util.*;
                             "$1<threshold> $2= $1The percentage of plots you want to clear as a number between 0 - 100");
                         return false;
                     }
-                    PlotAnalysis.calcOptimalModifiers(() -> MainUtil
-                        .sendMessage(player, "$1Thank you for calibrating plot expiry"), threshold);
+                    PlotAnalysis.calcOptimalModifiers(new Runnable() {
+                        @Override public void run() {
+                            MainUtil.sendMessage(player, "$1Thank you for calibrating plot expiry");
+                        }
+                    }, threshold);
                     return true;
                 case "stop-expire":
                     if (ExpireManager.IMP == null || !ExpireManager.IMP.cancelTask()) {
@@ -401,16 +404,18 @@ import java.util.*;
             try {
                 if (async) {
                     final String toExec = script;
-                    TaskManager.runTaskAsync(() -> {
-                        long start = System.currentTimeMillis();
-                        Object result = null;
-                        try {
-                            result = DebugExec.this.engine.eval(toExec, DebugExec.this.scope);
-                        } catch (ScriptException e) {
-                            e.printStackTrace();
+                    TaskManager.runTaskAsync(new Runnable() {
+                        @Override public void run() {
+                            long start = System.currentTimeMillis();
+                            Object result = null;
+                            try {
+                                result = DebugExec.this.engine.eval(toExec, DebugExec.this.scope);
+                            } catch (ScriptException e) {
+                                e.printStackTrace();
+                            }
+                            PlotSquared.log(
+                                "> " + (System.currentTimeMillis() - start) + "ms -> " + result);
                         }
-                        PlotSquared
-                            .log("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
                     });
                 } else {
                     long start = System.currentTimeMillis();

@@ -209,7 +209,7 @@ public class GenerateDocs {
                 line =
                     line.replaceAll("/[*][*] ", "").replaceAll("[*]/ ", "").replaceAll("[*] ", "")
                         .trim();
-                result.append(line).append('\n');
+                result.append(line + '\n');
             }
         }
         return result.toString().trim();

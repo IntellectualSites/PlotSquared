@@ -37,43 +37,45 @@ public class PlotPlusListener extends PlotListener implements Listener {
     private static final HashMap<UUID, Interval> healRunnable = new HashMap<>();
 
     public static void startRunnable(JavaPlugin plugin) {
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
-            if (!healRunnable.isEmpty()) {
-                for (Iterator<Entry<UUID, Interval>> iterator =
-                     healRunnable.entrySet().iterator(); iterator.hasNext(); ) {
-                    Entry<UUID, Interval> entry = iterator.next();
-                    Interval value = entry.getValue();
-                    ++value.count;
-                    if (value.count == value.interval) {
-                        value.count = 0;
-                        Player player = Bukkit.getPlayer(entry.getKey());
-                        if (player == null) {
-                            iterator.remove();
-                            continue;
-                        }
-                        double level = player.getHealth();
-                        if (level != value.max) {
-                            player.setHealth(Math.min(level + value.amount, value.max));
+        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+            @Override public void run() {
+                if (!healRunnable.isEmpty()) {
+                    for (Iterator<Entry<UUID, Interval>> iterator =
+                         healRunnable.entrySet().iterator(); iterator.hasNext(); ) {
+                        Entry<UUID, Interval> entry = iterator.next();
+                        Interval value = entry.getValue();
+                        ++value.count;
+                        if (value.count == value.interval) {
+                            value.count = 0;
+                            Player player = Bukkit.getPlayer(entry.getKey());
+                            if (player == null) {
+                                iterator.remove();
+                                continue;
+                            }
+                            double level = player.getHealth();
+                            if (level != value.max) {
+                                player.setHealth(Math.min(level + value.amount, value.max));
+                            }
                         }
                     }
                 }
-            }
-            if (!feedRunnable.isEmpty()) {
-                for (Iterator<Entry<UUID, Interval>> iterator =
-                     feedRunnable.entrySet().iterator(); iterator.hasNext(); ) {
-                    Entry<UUID, Interval> entry = iterator.next();
-                    Interval value = entry.getValue();
-                    ++value.count;
-                    if (value.count == value.interval) {
-                        value.count = 0;
-                        Player player = Bukkit.getPlayer(entry.getKey());
-                        if (player == null) {
-                            iterator.remove();
-                            continue;
-                        }
-                        int level = player.getFoodLevel();
-                        if (level != value.max) {
-                            player.setFoodLevel(Math.min(level + value.amount, value.max));
+                if (!feedRunnable.isEmpty()) {
+                    for (Iterator<Entry<UUID, Interval>> iterator =
+                         feedRunnable.entrySet().iterator(); iterator.hasNext(); ) {
+                        Entry<UUID, Interval> entry = iterator.next();
+                        Interval value = entry.getValue();
+                        ++value.count;
+                        if (value.count == value.interval) {
+                            value.count = 0;
+                            Player player = Bukkit.getPlayer(entry.getKey());
+                            if (player == null) {
+                                iterator.remove();
+                                continue;
+                            }
+                            int level = player.getFoodLevel();
+                            if (level != value.max) {
+                                player.setFoodLevel(Math.min(level + value.amount, value.max));
+                            }
                         }
                     }
                 }

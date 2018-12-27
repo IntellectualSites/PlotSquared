@@ -71,17 +71,20 @@ import java.util.UUID;
         final String finalName = name;
         final UUID finalUUID = uuid;
         final boolean removeDenied = plot.isDenied(finalUUID);
-        Runnable run = () -> {
-            if (plot.setOwner(finalUUID, player)) {
-                if (removeDenied)
-                    plot.removeDenied(finalUUID);
-                plot.setSign(finalName);
-                MainUtil.sendMessage(player, C.SET_OWNER);
-                if (other != null) {
-                    MainUtil.sendMessage(other, C.NOW_OWNER, plot.getArea() + ";" + plot.getId());
-                }
-            } else
-                MainUtil.sendMessage(player, C.SET_OWNER_CANCELLED);
+        Runnable run = new Runnable() {
+            @Override public void run() {
+                if (plot.setOwner(finalUUID, player)) {
+                    if (removeDenied)
+                        plot.removeDenied(finalUUID);
+                    plot.setSign(finalName);
+                    MainUtil.sendMessage(player, C.SET_OWNER);
+                    if (other != null) {
+                        MainUtil
+                            .sendMessage(other, C.NOW_OWNER, plot.getArea() + ";" + plot.getId());
+                    }
+                } else
+                    MainUtil.sendMessage(player, C.SET_OWNER_CANCELLED);
+            }
         };
         if (hasConfirmation(player)) {
             CmdConfirm.addPending(player, "/plot set owner " + value, run);

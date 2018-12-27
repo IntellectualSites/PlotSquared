@@ -61,19 +61,21 @@ import java.util.UUID;
         checkTrue(!uuids.isEmpty(), null);
         checkTrue(size <= plot.getArea().MAX_PLOT_MEMBERS || Permissions
             .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_TRUST), C.PLOT_MAX_MEMBERS);
-        // Success
-        confirm.run(this, () -> {
-            for (UUID uuid : uuids) {
-                if (uuid != DBFunc.EVERYONE) {
-                    if (!plot.removeTrusted(uuid)) {
-                        if (plot.getDenied().contains(uuid)) {
-                            plot.removeDenied(uuid);
+        confirm.run(this, new Runnable() {
+            @Override // Success
+            public void run() {
+                for (UUID uuid : uuids) {
+                    if (uuid != DBFunc.EVERYONE) {
+                        if (!plot.removeTrusted(uuid)) {
+                            if (plot.getDenied().contains(uuid)) {
+                                plot.removeDenied(uuid);
+                            }
                         }
                     }
+                    plot.addMember(uuid);
+                    EventUtil.manager.callMember(player, plot, uuid, true);
+                    MainUtil.sendMessage(player, C.MEMBER_ADDED);
                 }
-                plot.addMember(uuid);
-                EventUtil.manager.callMember(player, plot, uuid, true);
-                MainUtil.sendMessage(player, C.MEMBER_ADDED);
             }
         }, null);
     }

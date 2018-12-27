@@ -117,7 +117,7 @@ public class NbtFactory {
      *
      * @return The NBT list.
      */
-    public static NbtList createList(Iterable<?> iterable) {
+    public static NbtList createList(Iterable<? extends Object> iterable) {
         NbtList list = get().new NbtList(INSTANCE.createNbtTag(NbtType.TAG_LIST, null));
 
         // Add the content as well
@@ -951,7 +951,8 @@ public class NbtFactory {
                 @Override public Entry<String, Object> next() {
                     Entry<String, Object> entry = proxy.next();
 
-                    return new SimpleEntry<>(entry.getKey(), wrapOutgoing(entry.getValue()));
+                    return new SimpleEntry<String, Object>(entry.getKey(),
+                        wrapOutgoing(entry.getValue()));
                 }
 
                 @Override public void remove() {

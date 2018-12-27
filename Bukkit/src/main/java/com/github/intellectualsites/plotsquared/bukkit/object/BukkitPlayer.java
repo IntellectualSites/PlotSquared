@@ -77,7 +77,7 @@ public class BukkitPlayer extends PlotPlayer {
     private void callEvent(final Event event) {
         RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
         for (RegisteredListener listener : listeners) {
-            if (listener.getPlugin().getName().equals(PlotSquared.get().IMP.getPluginName())) {
+            if (listener.getPlugin().getName().equals(PlotSquared.imp().getPluginName())) {
                 continue;
             }
             try {
@@ -144,7 +144,7 @@ public class BukkitPlayer extends PlotPlayer {
     }
 
     @Override public void sendMessage(String message) {
-        if (!StringMan.isEqual(this.getMeta("lastMessage"), message) || (
+        if (!StringMan.isEqual(this.<String>getMeta("lastMessage"), message) || (
             System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
             setMeta("lastMessage", message);
             setMeta("lastMessageTime", System.currentTimeMillis());

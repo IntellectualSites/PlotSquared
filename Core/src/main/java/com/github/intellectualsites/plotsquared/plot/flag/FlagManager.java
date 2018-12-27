@@ -146,7 +146,7 @@ public class FlagManager {
      * @return
      */
     public static <V> V getPlotFlagRaw(Plot plot, Flag<V> flag) {
-        if (plot.guessOwner() == null) {
+        if (plot.owner == null) {
             return null;
         }
         return getSettingFlag(plot.getArea(), plot.getSettings(), flag);

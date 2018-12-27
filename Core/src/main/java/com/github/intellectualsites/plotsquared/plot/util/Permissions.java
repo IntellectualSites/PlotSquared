@@ -75,7 +75,7 @@ public class Permissions {
         String[] nodes = permission.split("\\.");
         StringBuilder n = new StringBuilder();
         for (int i = 0; i <= (nodes.length - 1); i++) {
-            n.append(nodes[i]).append(".");
+            n.append(nodes[i] + ".");
             String combined = n + C.PERMISSION_STAR.s();
             if (!permission.equals(combined)) {
                 if (caller.hasPermission(combined)) {

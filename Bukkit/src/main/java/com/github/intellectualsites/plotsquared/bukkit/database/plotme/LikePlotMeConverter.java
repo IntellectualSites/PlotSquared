@@ -48,7 +48,7 @@ public class LikePlotMeConverter {
 
     private void sendMessage(String message) {
         PlotSquared
-            .debug("&3PlotMe&8->&3" + PlotSquared.get().IMP.getPluginName() + "&8: &7" + message);
+            .debug("&3PlotMe&8->&3" + PlotSquared.imp().getPluginName() + "&8: &7" + message);
     }
 
     public String getPlotMePath() {
@@ -97,7 +97,7 @@ public class LikePlotMeConverter {
                 return;
             }
             String content = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
-            String pluginName = PlotSquared.get().IMP.getPluginName();
+            String pluginName = PlotSquared.imp().getPluginName();
             content = content.replace("PlotMe-DefaultGenerator", pluginName);
             content = content.replace("PlotMe", pluginName);
             content = content.replace("AthionPlots", pluginName);
@@ -220,8 +220,8 @@ public class LikePlotMeConverter {
                     for (String world : allWorlds) {
                         copyConfig(plotmeDgYml, world);
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException ignored) {
+                    ignored.printStackTrace();
                 }
             }
             for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
@@ -266,21 +266,23 @@ public class LikePlotMeConverter {
             sendMessage("Creating plot DB");
             Thread.sleep(1000);
             final AtomicBoolean done = new AtomicBoolean(false);
-            DBFunc.createPlotsAndData(createdPlots, () -> {
-                if (done.get()) {
-                    done();
-                    sendMessage("&aDatabase conversion is now complete!");
-                    PlotSquared.debug("&c - Stop the server");
-                    PlotSquared.debug(
-                        "&c - Disable 'plotme-converter' and 'plotme-convert.cache-uuids' in the settings.yml");
-                    PlotSquared.debug(
-                        "&c - Correct any generator settings that haven't copied to 'settings.yml' properly");
-                    PlotSquared.debug("&c - Start the server");
-                    PlotSquared.get().setPlots(DBFunc.getPlots());
-                } else {
-                    sendMessage(
-                        "&cPlease wait until database conversion is complete. You will be notified with instructions when this happens!");
-                    done.set(true);
+            DBFunc.createPlotsAndData(createdPlots, new Runnable() {
+                @Override public void run() {
+                    if (done.get()) {
+                        done();
+                        sendMessage("&aDatabase conversion is now complete!");
+                        PlotSquared.debug("&c - Stop the server");
+                        PlotSquared.debug(
+                            "&c - Disable 'plotme-converter' and 'plotme-convert.cache-uuids' in the settings.yml");
+                        PlotSquared.debug(
+                            "&c - Correct any generator settings that haven't copied to 'settings.yml' properly");
+                        PlotSquared.debug("&c - Start the server");
+                        PlotSquared.get().setPlots(DBFunc.getPlots());
+                    } else {
+                        sendMessage(
+                            "&cPlease wait until database conversion is complete. You will be notified with instructions when this happens!");
+                        done.set(true);
+                    }
                 }
             });
             sendMessage("Saving configuration...");
@@ -289,88 +291,93 @@ public class LikePlotMeConverter {
             } catch (IOException ignored) {
                 sendMessage(" - &cFailed to save configuration.");
             }
-            TaskManager.runTask(() -> {
-                try {
-                    boolean mv = false;
-                    boolean mw = false;
-                    if ((Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) && Bukkit
-                        .getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
-                        mv = true;
-                    } else if ((Bukkit.getPluginManager().getPlugin("MultiWorld") != null) && Bukkit
-                        .getPluginManager().getPlugin("MultiWorld").isEnabled()) {
-                        mw = true;
-                    }
-                    for (String worldName : worlds) {
-                        World world = Bukkit.getWorld(getWorld(worldName));
-                        if (world == null) {
-                            sendMessage("&cInvalid world in PlotMe configuration: " + worldName);
-                            continue;
+            TaskManager.runTask(new Runnable() {
+                @Override public void run() {
+                    try {
+                        boolean mv = false;
+                        boolean mw = false;
+                        if ((Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null)
+                            && Bukkit.getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
+                            mv = true;
+                        } else if ((Bukkit.getPluginManager().getPlugin("MultiWorld") != null)
+                            && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
+                            mw = true;
                         }
-                        String actualWorldName = world.getName();
-                        sendMessage("Reloading generator for world: '" + actualWorldName + "'...");
-                        if (!Bukkit.getWorlds().isEmpty() && Bukkit.getWorlds().get(0).getName()
-                            .equals(worldName)) {
+                        for (String worldName : worlds) {
+                            World world = Bukkit.getWorld(getWorld(worldName));
+                            if (world == null) {
+                                sendMessage(
+                                    "&cInvalid world in PlotMe configuration: " + worldName);
+                                continue;
+                            }
+                            String actualWorldName = world.getName();
                             sendMessage(
-                                "&cYou need to stop the server to reload this world properly");
-                        } else {
-                            PlotSquared.get().removePlotAreas(actualWorldName);
-                            if (mv) {
-                                // unload world with MV
-                                Bukkit.getServer()
-                                    .dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                                        "mv unload " + actualWorldName);
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException ignored) {
-                                    Thread.currentThread().interrupt();
-                                }
-                                // load world with MV
-                                Bukkit.getServer()
-                                    .dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                                        "mv import " + actualWorldName + " normal -g " + PlotSquared
-                                            .get().IMP.getPluginName());
-                            } else if (mw) {
-                                // unload world with MW
-                                Bukkit.getServer()
-                                    .dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                                        "mw unload " + actualWorldName);
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException ignored) {
-                                    Thread.currentThread().interrupt();
-                                }
-                                // load world with MW
-                                Bukkit.getServer()
-                                    .dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                                        "mw create " + actualWorldName + " plugin:" + PlotSquared
-                                            .get().IMP.getPluginName());
+                                "Reloading generator for world: '" + actualWorldName + "'...");
+                            if (!Bukkit.getWorlds().isEmpty() && Bukkit.getWorlds().get(0).getName()
+                                .equals(worldName)) {
+                                sendMessage(
+                                    "&cYou need to stop the server to reload this world properly");
                             } else {
-                                // Load using Bukkit API
-                                // - User must set generator manually
-                                Bukkit.getServer().unloadWorld(world, true);
-                                World myWorld = WorldCreator.name(actualWorldName).generator(
-                                    new BukkitPlotGenerator(
-                                        PlotSquared.get().IMP.getDefaultGenerator())).createWorld();
-                                myWorld.save();
+                                PlotSquared.get().removePlotAreas(actualWorldName);
+                                if (mv) {
+                                    // unload world with MV
+                                    Bukkit.getServer()
+                                        .dispatchCommand(Bukkit.getServer().getConsoleSender(),
+                                            "mv unload " + actualWorldName);
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException ignored) {
+                                        Thread.currentThread().interrupt();
+                                    }
+                                    // load world with MV
+                                    Bukkit.getServer()
+                                        .dispatchCommand(Bukkit.getServer().getConsoleSender(),
+                                            "mv import " + actualWorldName + " normal -g "
+                                                + PlotSquared.imp().getPluginName());
+                                } else if (mw) {
+                                    // unload world with MW
+                                    Bukkit.getServer()
+                                        .dispatchCommand(Bukkit.getServer().getConsoleSender(),
+                                            "mw unload " + actualWorldName);
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException ignored) {
+                                        Thread.currentThread().interrupt();
+                                    }
+                                    // load world with MW
+                                    Bukkit.getServer()
+                                        .dispatchCommand(Bukkit.getServer().getConsoleSender(),
+                                            "mw create " + actualWorldName + " plugin:"
+                                                + PlotSquared.imp().getPluginName());
+                                } else {
+                                    // Load using Bukkit API
+                                    // - User must set generator manually
+                                    Bukkit.getServer().unloadWorld(world, true);
+                                    World myWorld = WorldCreator.name(actualWorldName).generator(
+                                        new BukkitPlotGenerator(
+                                            PlotSquared.get().IMP.getDefaultGenerator()))
+                                        .createWorld();
+                                    myWorld.save();
+                                }
                             }
                         }
+                    } catch (CommandException e) {
+                        e.printStackTrace();
                     }
-                } catch (CommandException e) {
-                    e.printStackTrace();
-                }
-                if (done.get()) {
-                    done();
-                    sendMessage("&aDatabase conversion is now complete!");
-                    PlotSquared.debug("&c - Stop the server");
-                    PlotSquared.debug(
-                        "&c - Disable 'plotme-converter' and 'plotme-convert.cache-uuids' in the settings.yml");
-                    PlotSquared.debug(
-                        "&c - Correct any generator settings that haven't copied to 'settings.yml' properly");
-                    PlotSquared.debug("&c - Start the server");
-                } else {
-                    sendMessage(
-                        "&cPlease wait until database conversion is complete. You will be notified with instructions when this happens!");
-                    done.set(true);
+                    if (done.get()) {
+                        done();
+                        sendMessage("&aDatabase conversion is now complete!");
+                        PlotSquared.debug("&c - Stop the server");
+                        PlotSquared.debug(
+                            "&c - Disable 'plotme-converter' and 'plotme-convert.cache-uuids' in the settings.yml");
+                        PlotSquared.debug(
+                            "&c - Correct any generator settings that haven't copied to 'settings.yml' properly");
+                        PlotSquared.debug("&c - Start the server");
+                    } else {
+                        sendMessage(
+                            "&cPlease wait until database conversion is complete. You will be notified with instructions when this happens!");
+                        done.set(true);
+                    }
                 }
             });
         } catch (InterruptedException | SQLException e) {

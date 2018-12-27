@@ -69,24 +69,24 @@ import java.util.UUID;
                 }
             };
             UUID uuid = player.getUUID();
-            String name = MainUtil.getName(plot.guessOwner());
-            inv.setItem(1,
-                new PlotItemStack("emerald", 1, "&cPlot Info", "&cID: &6" + plot.getId().toString(),
-                    "&cOwner: &6" + name, "&cAlias: &6" + plot.getAlias(),
-                    "&cBiome: &6" + plot.getBiome().replaceAll("_", "").toLowerCase(),
-                    "&cCan Build: &6" + plot.isAdded(uuid), "&cSeen: &6" + MainUtil
-                    .secToTime((int) (ExpireManager.IMP.getAge(plot) / 1000)),
-                    "&cIs Denied: &6" + plot.isDenied(uuid)));
-            inv.setItem(1, new PlotItemStack("emerald", 1, "&cTrusted",
+            String name = MainUtil.getName(plot.owner);
+            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cPlot Info",
+                "&cID: &6" + plot.getId().toString(), "&cOwner: &6" + name,
+                "&cAlias: &6" + plot.getAlias(),
+                "&cBiome: &6" + plot.getBiome().replaceAll("_", "").toLowerCase(),
+                "&cCan Build: &6" + plot.isAdded(uuid),
+                "&cSeen: &6" + MainUtil.secToTime((int) (ExpireManager.IMP.getAge(plot) / 1000)),
+                "&cIs Denied: &6" + plot.isDenied(uuid)));
+            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cTrusted",
                 "&cAmount: &6" + plot.getTrusted().size(),
                 "&8Click to view a list of the trusted users"));
-            inv.setItem(1, new PlotItemStack("emerald", 1, "&cMembers",
+            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cMembers",
                 "&cAmount: &6" + plot.getMembers().size(),
                 "&8Click to view a list of plot members"));
-            inv.setItem(1, new PlotItemStack("emerald", 1, "&cDenied", "&cDenied",
+            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cDenied", "&cDenied",
                 "&cAmount: &6" + plot.getDenied().size(),
                 "&8Click to view a list of denied players"));
-            inv.setItem(1, new PlotItemStack("emerald", 1, "&cFlags", "&cFlags",
+            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cFlags", "&cFlags",
                 "&cAmount: &6" + plot.getFlags().size(), "&8Click to view a list of plot flags"));
             inv.openInventory();
             return true;

@@ -5,10 +5,12 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import org.bukkit.World;
+import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class SetGenCB {
 
@@ -43,8 +45,12 @@ public class SetGenCB {
             }
         }
         if (!set) {
-            world.getPopulators()
-                .removeIf(blockPopulator -> blockPopulator instanceof BukkitAugmentedGenerator);
+            Iterator<BlockPopulator> iterator = world.getPopulators().iterator();
+            while (iterator.hasNext()) {
+                if (iterator.next() instanceof BukkitAugmentedGenerator) {
+                    iterator.remove();
+                }
+            }
         }
         PlotSquared.get()
             .loadWorld(world.getName(), PlotSquared.get().IMP.getGenerator(world.getName(), null));
