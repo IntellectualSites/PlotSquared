@@ -8,15 +8,11 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.generator.ClassicPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.github.intellectualsites.plotsquared.plot.object.schematic.MCEditSchematicReader;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
-import com.github.intellectualsites.plotsquared.plot.object.schematic.SpongeSchematicReader;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.sk89q.jnbt.*;
 import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
+import com.sk89q.worldedit.extent.clipboard.io.*;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BaseBlock;
 
@@ -294,47 +290,14 @@ public abstract class SchematicHandler {
             return null;
         }
         try {
-            NBTInputStream nbtInputStream =
-                new NBTInputStream(new GZIPInputStream(new FileInputStream(file)));
-            ClipboardReader reader = getReader(nbtInputStream, file);
-            if (reader != null) {
+            ClipboardFormat format = ClipboardFormats.findByFile(file);
+            if (format != null) {
+                ClipboardReader reader = format.getReader(new FileInputStream(file));
                 BlockArrayClipboard clip = (BlockArrayClipboard) reader.read();
                 return new Schematic(clip);
             } else {
                 throw new UnsupportedFormatException(
                     "This schematic format is not recognised or supported.");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * Get the ClipboardReader required to read the schematic
-     *
-     * @param nbtInputStream NBTInputStream (of file)
-     * @param file           File (to attempt generic check from WE if not found)
-     * @return ClipboardReader if found, else null
-     */
-    public ClipboardReader getReader(NBTInputStream nbtInputStream, File file) {
-        try {
-            NamedTag rootTag = nbtInputStream.readNamedTag();
-            if (rootTag.getName().equals("Schematic")) {
-                CompoundTag schematicTag = (CompoundTag) rootTag.getTag();
-
-                // Check
-                Map<String, Tag> schematic = schematicTag.getValue();
-                if (schematic.containsKey("Materials")) {
-                    return new SpongeSchematicReader(nbtInputStream);
-                } else if (schematic.containsKey("Version")) {
-                    return new MCEditSchematicReader(nbtInputStream);
-                }
-
-                if (ClipboardFormats.getAll().size() > 1) {
-                    ClipboardFormat format = ClipboardFormats.findByFile(file);
-                    return format != null ? format.getReader(new FileInputStream(file)) : null;
-                }
             }
         } catch (IOException e) {
             e.printStackTrace();
