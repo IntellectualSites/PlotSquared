@@ -244,7 +244,7 @@ public class Auto extends SubCommand {
                         }
                     }
                     if (!plotarea
-                        .mergePlots(MainUtil.getPlotSelectionIds(start, end), true, true)) {
+                        .mergePlots(MainUtil.getPlotSelectionIds(start, end), true)) {
                         return false;
                     }
                     break;

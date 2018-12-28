@@ -11,8 +11,8 @@ import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.google.common.base.Optional;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 public abstract class EventUtil {
@@ -45,9 +45,9 @@ public abstract class EventUtil {
 
     public abstract boolean callFlagRemove(Flag<?> flag, Object value, PlotCluster cluster);
 
-    public abstract boolean callMerge(Plot plot, ArrayList<PlotId> plots);
+    public abstract boolean callMerge(Plot plot, List<PlotId> plots);
 
-    public abstract boolean callUnlink(PlotArea area, ArrayList<PlotId> plots);
+    public abstract boolean callUnlink(PlotArea area, List<PlotId> plots);
 
     public abstract void callEntry(PlotPlayer player, Plot plot);
 
@@ -90,11 +90,7 @@ public abstract class EventUtil {
     public void doRespawnTask(final PlotPlayer player) {
         final Plot plot = player.getCurrentPlot();
         if (Settings.Teleport.ON_DEATH && plot != null) {
-            TaskManager.runTask(new Runnable() {
-                @Override public void run() {
-                    plot.teleportPlayer(player);
-                }
-            });
+            TaskManager.runTask(() -> plot.teleportPlayer(player));
             MainUtil.sendMessage(player, C.TELEPORTED_TO_ROAD);
         }
     }

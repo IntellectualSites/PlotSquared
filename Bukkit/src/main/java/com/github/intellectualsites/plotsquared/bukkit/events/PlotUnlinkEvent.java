@@ -2,20 +2,28 @@ package com.github.intellectualsites.plotsquared.bukkit.events;
 
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.World;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import java.util.ArrayList;
+import javax.annotation.Nonnull;
+import java.util.Collections;
+import java.util.List;
 
-public class PlotUnlinkEvent extends Event implements Cancellable {
+/**
+ * Event called when several merged plots are unlinked
+ * {@inheritDoc}
+ */
+public final class PlotUnlinkEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-    private final ArrayList<PlotId> plots;
-    private final World world;
-    private final PlotArea area;
-    private boolean cancelled;
+    private final List<PlotId> plots;
+    @Getter private final World world;
+    @Getter private final PlotArea area;
+    @Getter @Setter private boolean cancelled;
 
     /**
      * Called when a mega-plot is unlinked.
@@ -23,7 +31,8 @@ public class PlotUnlinkEvent extends Event implements Cancellable {
      * @param world World in which the event occurred
      * @param plots Plots that are involved in the event
      */
-    public PlotUnlinkEvent(World world, PlotArea area, ArrayList<PlotId> plots) {
+    public PlotUnlinkEvent(@Nonnull final World world, @Nonnull final PlotArea area,
+        @Nonnull final List<PlotId> plots) {
         this.plots = plots;
         this.world = world;
         this.area = area;
@@ -36,29 +45,13 @@ public class PlotUnlinkEvent extends Event implements Cancellable {
     /**
      * Get the plots involved.
      *
-     * @return The {@link PlotId}'s of the plots involved
+     * @return Unmodifiable list containing {@link PlotId PlotIds} of the plots involved
      */
-    public ArrayList<PlotId> getPlots() {
-        return this.plots;
-    }
-
-    public World getWorld() {
-        return this.world;
-    }
-
-    public PlotArea getArea() {
-        return this.area;
+    public List<PlotId> getPlots() {
+        return Collections.unmodifiableList(this.plots);
     }
 
     @Override public HandlerList getHandlers() {
         return handlers;
-    }
-
-    @Override public boolean isCancelled() {
-        return this.cancelled;
-    }
-
-    @Override public void setCancelled(boolean b) {
-        this.cancelled = b;
     }
 }

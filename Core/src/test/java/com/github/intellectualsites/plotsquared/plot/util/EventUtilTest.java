@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.util;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class EventUtilTest extends EventUtil {
@@ -43,11 +43,11 @@ public class EventUtilTest extends EventUtil {
         return true;
     }
 
-    @Override public boolean callMerge(Plot plot, ArrayList<PlotId> plots) {
+    @Override public boolean callMerge(Plot plot, List<PlotId> plots) {
         return false;
     }
 
-    @Override public boolean callUnlink(PlotArea area, ArrayList<PlotId> plots) {
+    @Override public boolean callUnlink(PlotArea area, List<PlotId> plots) {
         return false;
     }
 

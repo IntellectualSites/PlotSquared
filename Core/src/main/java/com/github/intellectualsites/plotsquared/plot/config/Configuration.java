@@ -12,25 +12,6 @@ import lombok.NonNull;
  */
 public class Configuration {
 
-    public static final SettingValue<String> STRING = new SettingValue<String>("STRING") {
-        @Override public boolean validateValue(String string) {
-            return true;
-        }
-
-        @Override public String parseString(String string) {
-            return string;
-        }
-    };
-    public static final SettingValue<String[]> STRINGLIST =
-        new SettingValue<String[]>("STRINGLIST") {
-            @Override public boolean validateValue(String string) {
-                return true;
-            }
-
-            @Override public String[] parseString(String string) {
-                return string.split(",");
-            }
-        };
     public static final SettingValue<Integer> INTEGER = new SettingValue<Integer>("INTEGER") {
         @Override public boolean validateValue(String string) {
             try {
@@ -47,26 +28,13 @@ public class Configuration {
     };
     public static final SettingValue<Boolean> BOOLEAN = new SettingValue<Boolean>("BOOLEAN") {
         @Override public boolean validateValue(String string) {
+            //noinspection ResultOfMethodCallIgnored
             Boolean.parseBoolean(string);
             return true;
         }
 
         @Override public Boolean parseString(String string) {
             return Boolean.parseBoolean(string);
-        }
-    };
-    public static final SettingValue<Double> DOUBLE = new SettingValue<Double>("DOUBLE") {
-        @Override public boolean validateValue(String string) {
-            try {
-                Double.parseDouble(string);
-                return true;
-            } catch (NumberFormatException ignored) {
-                return false;
-            }
-        }
-
-        @Override public Double parseString(String string) {
-            return Double.parseDouble(string);
         }
     };
     public static final SettingValue<String> BIOME = new SettingValue<String>("BIOME") {
@@ -112,7 +80,8 @@ public class Configuration {
                         WorldUtil.IMP.getClosestBlock(block);
                     if (value == null) {
                         throw new UnknownBlockException(block);
-                    } else if (!value.best.isAir() && !WorldUtil.IMP.isBlockSolid(value.best)) {
+                    } else if (Settings.Enabled_Components.PREVENT_UNSAFE && !value.best.isAir() &&
+                        !WorldUtil.IMP.isBlockSolid(value.best)) {
                         throw new UnsafeBlockException(value.best);
                     }
                     blockBucket.addBlock(value.best, chance);
@@ -145,7 +114,7 @@ public class Configuration {
                             WorldUtil.IMP.getClosestBlock(block);
                         if (value == null || value.match > 1) {
                             return false;
-                        } else if (!value.best.isAir() && !WorldUtil.IMP.isBlockSolid(value.best)) {
+                        } else if (Settings.Enabled_Components.PREVENT_UNSAFE && !value.best.isAir() && !WorldUtil.IMP.isBlockSolid(value.best)) {
                             throw new UnsafeBlockException(value.best);
                         }
                     }
@@ -156,27 +125,12 @@ public class Configuration {
             }
         };
 
-    public static int gcd(int a, int b) {
-        if (b == 0) {
-            return a;
-        }
-        return gcd(b, a % b);
-    }
-
-    private static int gcd(int[] a) {
-        int result = a[0];
-        for (int i = 1; i < a.length; i++) {
-            result = gcd(result, a[i]);
-        }
-        return result;
-    }
-
 
     public static final class UnknownBlockException extends IllegalArgumentException {
 
         @Getter private final String unknownValue;
 
-        public UnknownBlockException(@NonNull final String unknownValue) {
+        UnknownBlockException(@NonNull final String unknownValue) {
             super(String.format("\"%s\" is not a valid block", unknownValue));
             this.unknownValue = unknownValue;
         }
@@ -191,7 +145,7 @@ public class Configuration {
 
         private final String type;
 
-        public SettingValue(String type) {
+        SettingValue(String type) {
             this.type = type;
         }
 
@@ -209,7 +163,7 @@ public class Configuration {
 
         @Getter private final PlotBlock unsafeBlock;
 
-        public UnsafeBlockException(@NonNull final PlotBlock unsafeBlock) {
+        UnsafeBlockException(@NonNull final PlotBlock unsafeBlock) {
             super(String.format("%s is not a valid block", unsafeBlock));
             this.unsafeBlock = unsafeBlock;
         }

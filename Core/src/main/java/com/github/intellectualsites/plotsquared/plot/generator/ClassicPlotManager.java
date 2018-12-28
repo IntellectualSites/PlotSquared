@@ -5,7 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A plot manager with square plots which tessellate on a square grid with the following sections: ROAD, WALL, BORDER (wall), PLOT, FLOOR (plot).
@@ -424,23 +424,23 @@ public class ClassicPlotManager extends SquarePlotManager {
     /**
      * Finishing off plot merging by adding in the walls surrounding the plot (OPTIONAL)(UNFINISHED).
      */
-    @Override public boolean finishPlotMerge(PlotArea plotArea, ArrayList<PlotId> plotIds) {
+    @Override public boolean finishPlotMerge(PlotArea plotArea, List<PlotId> plotIds) {
         final BlockBucket block = ((ClassicPlotWorld) plotArea).CLAIMED_WALL_BLOCK;
         plotIds.forEach(id -> setWall(plotArea, id, block));
         return true;
     }
 
-    @Override public boolean finishPlotUnlink(PlotArea plotArea, ArrayList<PlotId> plotIds) {
+    @Override public boolean finishPlotUnlink(PlotArea plotArea, List<PlotId> plotIds) {
         final BlockBucket block = ((ClassicPlotWorld) plotArea).CLAIMED_WALL_BLOCK;
         plotIds.forEach(id -> setWall(plotArea, id, block));
         return true;
     }
 
-    @Override public boolean startPlotMerge(PlotArea plotArea, ArrayList<PlotId> plotIds) {
+    @Override public boolean startPlotMerge(PlotArea plotArea, List<PlotId> plotIds) {
         return true;
     }
 
-    @Override public boolean startPlotUnlink(PlotArea plotArea, ArrayList<PlotId> plotIds) {
+    @Override public boolean startPlotUnlink(PlotArea plotArea, List<PlotId> plotIds) {
         return true;
     }
 

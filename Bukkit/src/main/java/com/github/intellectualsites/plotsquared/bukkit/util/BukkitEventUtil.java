@@ -10,20 +10,24 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-public class BukkitEventUtil extends EventUtil {
+/**
+ * Utility class for handling Bukkit {@link Event events}
+ */
+public final class BukkitEventUtil extends EventUtil {
 
-    public Player getPlayer(PlotPlayer player) {
+    @Nullable public Player getPlayer(final PlotPlayer player) {
         if (player instanceof BukkitPlayer) {
             return ((BukkitPlayer) player).player;
         }
         return null;
     }
 
-    public boolean callEvent(Event event) {
+    private boolean callEvent(@Nonnull final Event event) {
         Bukkit.getServer().getPluginManager().callEvent(event);
         return !(event instanceof Cancellable) || !((Cancellable) event).isCancelled();
     }
@@ -56,11 +60,11 @@ public class BukkitEventUtil extends EventUtil {
         return callEvent(new PlotFlagRemoveEvent(flag, plot));
     }
 
-    @Override public boolean callMerge(Plot plot, ArrayList<PlotId> plots) {
+    @Override public boolean callMerge(Plot plot, List<PlotId> plots) {
         return callEvent(new PlotMergeEvent(BukkitUtil.getWorld(plot.getWorldName()), plot, plots));
     }
 
-    @Override public boolean callUnlink(PlotArea area, ArrayList<PlotId> plots) {
+    @Override public boolean callUnlink(PlotArea area, List<PlotId> plots) {
         return callEvent(new PlotUnlinkEvent(BukkitUtil.getWorld(area.worldname), area, plots));
     }
 

@@ -1,12 +1,19 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
+import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 
+import javax.annotation.Nonnull;
+import java.lang.reflect.Field;
+import java.util.Locale;
+
+@SuppressWarnings("WeakerAccess")
 public abstract class ClassicPlotWorld extends SquarePlotWorld {
 
     public int ROAD_HEIGHT = 62;
@@ -38,7 +45,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
      * command - this may be useful if a config value can be changed at a later date, and has no impact on the actual
      * world generation</p>
      */
-    @Override public ConfigurationNode[] getSettingNodes() {
+    @Nonnull @Override public ConfigurationNode[] getSettingNodes() {
         return new ConfigurationNode[] {
             new ConfigurationNode("plot.height", this.PLOT_HEIGHT, "Plot height",
                 Configuration.INTEGER),
@@ -84,5 +91,24 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
         this.WALL_HEIGHT = Math.min(254, config.getInt("wall.height"));
         this.CLAIMED_WALL_BLOCK =
             Configuration.BLOCK_BUCKET.parseString(config.getString("wall.block_claimed"));
+
+        // Dump world settings
+        if (Settings.DEBUG) {
+            PlotSquared.debug(String.format("- Dumping settings for ClassicPlotWorld with name %s", this.worldname));
+            final Field[] fields = this.getClass().getFields();
+            for (final Field field : fields) {
+                final String name = field.getName().toLowerCase(Locale.ENGLISH);
+                Object value;
+                try {
+                    final boolean accessible = field.isAccessible();
+                    field.setAccessible(true);
+                    value = field.get(this);
+                    field.setAccessible(accessible);
+                } catch (final IllegalAccessException e) {
+                    value = String.format("Failed to parse: %s", e.getMessage());
+                }
+                PlotSquared.debug(String.format("-- %s = %s", name, value));
+            }
+        }
     }
 }

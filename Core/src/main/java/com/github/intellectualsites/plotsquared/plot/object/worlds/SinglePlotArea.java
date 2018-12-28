@@ -9,6 +9,9 @@ import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class SinglePlotArea extends GridPlotWorld {
 
     public boolean VOID = false;
@@ -58,7 +61,7 @@ public class SinglePlotArea extends GridPlotWorld {
             new ConfigurationNode("void", this.VOID, "Void world", Configuration.BOOLEAN)};
     }
 
-    @Override public Plot getOwnedPlot(Location location) {
+    @Nullable @Override public Plot getOwnedPlot(@Nonnull final Location location) {
         PlotId pid = PlotId.fromString(location.getWorld());
         if (pid == null) {
             return null;
@@ -67,7 +70,7 @@ public class SinglePlotArea extends GridPlotWorld {
         return plot == null ? null : plot.getBasePlot(false);
     }
 
-    @Override public Plot getOwnedPlotAbs(Location location) {
+    @Nullable @Override public Plot getOwnedPlotAbs(@Nonnull Location location) {
         PlotId pid = PlotId.fromString(location.getWorld());
         if (pid == null) {
             return null;
@@ -75,7 +78,7 @@ public class SinglePlotArea extends GridPlotWorld {
         return plots.get(pid);
     }
 
-    @Override public Plot getPlot(Location location) {
+    @Nullable @Override public Plot getPlot(@Nonnull final Location location) {
         PlotId pid = PlotId.fromString(location.getWorld());
         if (pid == null) {
             return null;
@@ -83,30 +86,30 @@ public class SinglePlotArea extends GridPlotWorld {
         return getPlot(pid);
     }
 
-    @Override public Plot getPlotAbs(Location location) {
-        PlotId pid = PlotId.fromString(location.getWorld());
+    @Nullable @Override public Plot getPlotAbs(@Nonnull final Location location) {
+        final PlotId pid = PlotId.fromString(location.getWorld());
         if (pid == null) {
             return null;
         }
         return getPlotAbs(pid);
     }
 
-    public boolean addPlot(Plot plot) {
+    public boolean addPlot(@Nonnull Plot plot) {
         plot = adapt(plot);
         return super.addPlot(plot);
     }
 
-    @Override public boolean addPlotAbs(Plot plot) {
+    @Override public boolean addPlotAbs(@Nonnull Plot plot) {
         plot = adapt(plot);
         return super.addPlotAbs(plot);
     }
 
-    @Override public boolean addPlotIfAbsent(Plot plot) {
+    @Override public boolean addPlotIfAbsent(@Nonnull Plot plot) {
         plot = adapt(plot);
         return super.addPlotIfAbsent(plot);
     }
 
-    protected Plot adapt(Plot p) {
+    private Plot adapt(Plot p) {
         if (p instanceof SinglePlot) {
             return p;
         }
@@ -117,7 +120,7 @@ public class SinglePlotArea extends GridPlotWorld {
         return p;
     }
 
-    public Plot getPlotAbs(PlotId id) {
+    @Nullable public Plot getPlotAbs(@Nonnull final PlotId id) {
         Plot plot = getOwnedPlotAbs(id);
         if (plot == null) {
             return new SinglePlot(this, id);
@@ -125,7 +128,7 @@ public class SinglePlotArea extends GridPlotWorld {
         return plot;
     }
 
-    public Plot getPlot(PlotId id) {
+    @Nullable public Plot getPlot(@Nonnull PlotId id) {
         // TODO
         Plot plot = getOwnedPlotAbs(id);
         if (plot == null) {

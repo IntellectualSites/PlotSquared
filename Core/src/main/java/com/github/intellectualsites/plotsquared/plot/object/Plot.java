@@ -21,6 +21,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableSet;
 import com.sk89q.jnbt.CompoundTag;
 
+import javax.annotation.Nullable;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
@@ -2052,7 +2053,7 @@ public class Plot {
      * @param player the claiming player
      * @return
      */
-    public boolean canClaim(PlotPlayer player) {
+    public boolean canClaim(@Nullable PlotPlayer player) {
         PlotCluster cluster = this.getCluster();
         if (cluster != null && player != null) {
             if (!cluster.isAdded(player.getUUID()) && !Permissions

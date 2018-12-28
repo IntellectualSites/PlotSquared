@@ -4,9 +4,9 @@ import com.github.intellectualsites.plotsquared.plot.commands.Template;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 public abstract class PlotManager {
 
@@ -60,13 +60,13 @@ public abstract class PlotManager {
 
     public abstract boolean removeRoadSouthEast(PlotArea plotArea, Plot plot);
 
-    public abstract boolean startPlotMerge(PlotArea plotArea, ArrayList<PlotId> plotIds);
+    public abstract boolean startPlotMerge(PlotArea plotArea, List<PlotId> plotIds);
 
-    public abstract boolean startPlotUnlink(PlotArea plotArea, ArrayList<PlotId> plotIds);
+    public abstract boolean startPlotUnlink(PlotArea plotArea, List<PlotId> plotIds);
 
-    public abstract boolean finishPlotMerge(PlotArea plotArea, ArrayList<PlotId> plotIds);
+    public abstract boolean finishPlotMerge(PlotArea plotArea, List<PlotId> plotIds);
 
-    public abstract boolean finishPlotUnlink(PlotArea plotArea, ArrayList<PlotId> plotIds);
+    public abstract boolean finishPlotUnlink(PlotArea plotArea, List<PlotId> plotIds);
 
     public void exportTemplate(PlotArea plotArea) throws IOException {
         HashSet<FileBytes> files = new HashSet<>(Collections.singletonList(

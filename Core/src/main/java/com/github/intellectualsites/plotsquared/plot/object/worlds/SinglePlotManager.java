@@ -7,7 +7,7 @@ import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.List;
 
 public class SinglePlotManager extends PlotManager {
     @Override public PlotId getPlotIdAbs(PlotArea plotArea, int x, int y, int z) {
@@ -88,19 +88,19 @@ public class SinglePlotManager extends PlotManager {
         return false;
     }
 
-    @Override public boolean startPlotMerge(PlotArea plotArea, ArrayList<PlotId> plotIds) {
+    @Override public boolean startPlotMerge(PlotArea plotArea, List<PlotId> plotIds) {
         return false;
     }
 
-    @Override public boolean startPlotUnlink(PlotArea plotArea, ArrayList<PlotId> plotIds) {
+    @Override public boolean startPlotUnlink(PlotArea plotArea, List<PlotId> plotIds) {
         return false;
     }
 
-    @Override public boolean finishPlotMerge(PlotArea plotArea, ArrayList<PlotId> plotIds) {
+    @Override public boolean finishPlotMerge(PlotArea plotArea, List<PlotId> plotIds) {
         return false;
     }
 
-    @Override public boolean finishPlotUnlink(PlotArea plotArea, ArrayList<PlotId> plotIds) {
+    @Override public boolean finishPlotUnlink(PlotArea plotArea, List<PlotId> plotIds) {
         return false;
     }
 }

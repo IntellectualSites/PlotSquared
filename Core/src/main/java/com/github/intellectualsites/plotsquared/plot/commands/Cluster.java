@@ -244,10 +244,12 @@ import java.util.UUID;
                     MainUtil.sendMessage(player, C.CLUSTER_INTERSECTION, intersect.getName());
                     return false;
                 }
-                HashSet<Plot> existing =
+                Set<Plot> existing =
                     area.getPlotSelectionOwned(cluster.getP1(), cluster.getP2());
-                HashSet<Plot> newPlots = area.getPlotSelectionOwned(pos1, pos2);
-                HashSet<Plot> removed = (HashSet<Plot>) existing.clone();
+                Set<Plot> newPlots = area.getPlotSelectionOwned(pos1, pos2);
+                // Set<Plot> removed = (HashSet<Plot>) existing.clone();
+                Set<Plot> removed = new HashSet<>(existing);
+
                 removed.removeAll(newPlots);
                 // Check expand / shrink
                 if (!removed.isEmpty()) {
