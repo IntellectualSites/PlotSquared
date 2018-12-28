@@ -36,7 +36,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     private Location SIGN_LOCATION;
 
     public HybridPlotWorld(String worldName, String id, IndependentPlotGenerator generator,
-        PlotId min, PlotId max) {
+                           PlotId min, PlotId max) {
         super(worldName, id, generator, min, max);
     }
 
@@ -69,10 +69,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
                 if (direction != null) {
                     Vector3 vector = transform.apply(direction.toVector())
-                        .subtract(transform.apply(Vector3.ZERO)).normalize();
+                            .subtract(transform.apply(Vector3.ZERO)).normalize();
                     Direction newDirection = Direction.findClosest(vector,
-                        Direction.Flag.CARDINAL | Direction.Flag.ORDINAL
-                            | Direction.Flag.SECONDARY_ORDINAL);
+                            Direction.Flag.CARDINAL | Direction.Flag.ORDINAL
+                                    | Direction.Flag.SECONDARY_ORDINAL);
 
                     if (newDirection != null) {
                         CompoundTagBuilder builder = tag.createBuilder();
@@ -96,7 +96,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         } else {
             bot.setY(0);
             Location loc =
-                bot.add(SIGN_LOCATION.getX(), SIGN_LOCATION.getY(), SIGN_LOCATION.getZ());
+                    bot.add(SIGN_LOCATION.getX(), SIGN_LOCATION.getY(), SIGN_LOCATION.getZ());
             return loc;
         }
     }
@@ -134,11 +134,11 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public void setupSchematics() throws SchematicHandler.UnsupportedFormatException {
         this.G_SCH = new HashMap<>();
         File schematic1File = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
-            "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/sideroad.schematic");
+                "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/sideroad.schematic");
         File schematic2File = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
-            "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/intersection.schematic");
+                "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/intersection.schematic");
         File schem3File = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
-            "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/plot.schematic");
+                "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/plot.schematic");
         Schematic schematic1 = SchematicHandler.manager.getSchematic(schematic1File);
         Schematic schematic2 = SchematicHandler.manager.getSchematic(schematic2File);
         Schematic schematic3 = SchematicHandler.manager.getSchematic(schem3File);
@@ -177,8 +177,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                         BaseBlock id = blockArrayClipboard3.getFullBlock(BlockVector3.at(x, y, z));
                         if (!id.getBlockType().getMaterial().isAir()) {
                             addOverlayBlock((short) (x + shift + oddshift + centerShiftX),
-                                (short) (y + startY), (short) (z + shift + oddshift + centerShiftZ),
-                                id, false, h3);
+                                    (short) (y + startY), (short) (z + shift + oddshift + centerShiftZ),
+                                    id, false, h3);
                         }
                     }
                 }
@@ -241,9 +241,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     BaseBlock id = blockArrayClipboard1.getFullBlock(BlockVector3.at(x, y, z));
                     if (!id.getBlockType().getMaterial().isAir()) {
                         addOverlayBlock((short) (x - shift), (short) (y + startY),
-                            (short) (z + shift + oddshift), id, false, h1);
+                                (short) (z + shift + oddshift), id, false, h1);
                         addOverlayBlock((short) (z + shift + oddshift), (short) (y + startY),
-                            (short) (shift - x), id, true, h1);
+                                (short) (shift - x), id, true, h1);
                     }
                 }
             }
@@ -254,7 +254,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     BaseBlock id = blockArrayClipboard2.getFullBlock(BlockVector3.at(x, y, z));
                     if (!id.getBlockType().getMaterial().isAir()) {
                         addOverlayBlock((short) (x - shift), (short) (y + startY),
-                            (short) (z - shift), id, false, h2);
+                                (short) (z - shift), id, false, h2);
                     }
                 }
             }
@@ -262,7 +262,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     }
 
     public void addOverlayBlock(short x, short y, short z, BaseBlock id, boolean rotate,
-        int height) {
+                                int height) {
         if (z < 0) {
             z += this.SIZE;
         } else if (z >= this.SIZE) {
