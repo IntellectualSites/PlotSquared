@@ -2244,6 +2244,9 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
         } else if (!plot.isAdded(pp.getUUID())) {
             Entity entity = event.getRightClicked();
+            if (entity instanceof Creature && plot.getFlag(Flags.CREATURE_INTERACT, false)) {
+                return;
+            }
             if (entity instanceof Monster && plot.getFlag(Flags.HOSTILE_INTERACT, false)) {
                 return;
             }

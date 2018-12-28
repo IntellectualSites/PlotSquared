@@ -79,6 +79,7 @@ public final class Flags {
     public static final BooleanFlag ANIMAL_INTERACT = new BooleanFlag("animal-interact");
     public static final BooleanFlag HOSTILE_ATTACK = new BooleanFlag("hostile-attack");
     public static final BooleanFlag HOSTILE_INTERACT = new BooleanFlag("hostile-interact");
+    public static final BooleanFlag CREATURE_INTERACT = new BooleanFlag("creature-interact");
     public static final BooleanFlag MOB_PLACE = new BooleanFlag("mob-place");
     public static final BooleanFlag MOB_BREAK = new BooleanFlag("mob-break");
     public static final BooleanFlag FORCEFIELD = new BooleanFlag("forcefield");
