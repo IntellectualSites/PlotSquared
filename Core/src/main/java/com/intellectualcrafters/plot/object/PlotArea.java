@@ -10,28 +10,15 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.generator.GridPlotWorld;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.PlotGameMode;
-import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.area.QuadMap;
 import com.intellectualcrafters.plot.util.block.GlobalBlockQueue;
 import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+
 import javax.annotation.Nullable;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Jesse Boyd
@@ -283,8 +270,7 @@ public abstract class PlotArea {
             this.DEFAULT_HOME = new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE);
         } else {
             try {
-                String[] split = homeDefault.split(",");
-                this.DEFAULT_HOME = new PlotLoc(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+                this.DEFAULT_HOME = PlotLoc.fromString(homeDefault);
             } catch (NumberFormatException ignored) {
                 this.DEFAULT_HOME = null;
             }
