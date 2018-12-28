@@ -368,6 +368,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                 case ENDER_PEARL:
                                 case ARROW:
                                 case LLAMA_SPIT:
+                                case TRIDENT:
                                     // managed elsewhere | projectile
                                     continue;
                                 case ITEM_FRAME:
