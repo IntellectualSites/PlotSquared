@@ -27,7 +27,7 @@ import java.util.HashMap;
 
 public class HybridPlotWorld extends ClassicPlotWorld {
 
-    private static AffineTransform transform = new AffineTransform().rotateY(-90);
+    private static AffineTransform transform = new AffineTransform().rotateY(90);
     public boolean ROAD_SCHEMATIC_ENABLED;
     public boolean PLOT_SCHEMATIC = false;
     public short PATH_WIDTH_LOWER;
