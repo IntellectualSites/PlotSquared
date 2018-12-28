@@ -434,6 +434,7 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
 
     public void setBlocks(LocalChunk<char[]> lc) {
         World worldObj = getSpongeWorld();
+        net.minecraft.world.World nmsWorld = ((net.minecraft.world.World) worldObj);
         org.spongepowered.api.world.Chunk spongeChunk = (org.spongepowered.api.world.Chunk) getChunk(worldObj, lc.getX(), lc.getZ());
         Chunk nmsChunk = (Chunk) spongeChunk;
         char[][] ids = ((CharLocalChunk) lc).blocks;
@@ -442,7 +443,12 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
             if (array == null) {
                 continue;
             }
-            ExtendedBlockStorage section = nmsChunk.getBlockStorageArray()[layer];
+            ExtendedBlockStorage[] sections = nmsChunk.getBlockStorageArray();
+            ExtendedBlockStorage section = sections[layer];
+            if (section == null) {
+                section = sections[layer] = new ExtendedBlockStorage(layer << 4, nmsWorld.provider.hasSkyLight());
+            }
+
             short[] cacheX = MainUtil.x_loc[0];
             short[] cacheY = MainUtil.y_loc[0];
             short[] cacheZ = MainUtil.z_loc[0];

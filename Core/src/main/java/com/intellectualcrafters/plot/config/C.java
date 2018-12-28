@@ -692,6 +692,7 @@ public enum C {
      * Set Owner
      */
     SET_OWNER("$4You successfully set the plot owner", "Owner"),
+    SET_OWNER_CANCELLED("$2The setowner action was cancelled", "Owner"),
     NOW_OWNER("$4You are now owner of plot %s", "Owner"),
     /*
      * Signs

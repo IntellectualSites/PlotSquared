@@ -294,10 +294,13 @@ public class PS{
             copyFile("automerge.js", Settings.Paths.SCRIPTS);
             copyFile("town.template", Settings.Paths.TEMPLATES);
             copyFile("skyblock.template", Settings.Paths.TEMPLATES);
-            copyFile("german.yml", Settings.Paths.TRANSLATIONS);
-            copyFile("s_chinese_unescaped.yml", Settings.Paths.TRANSLATIONS);
-            copyFile("s_chinese.yml", Settings.Paths.TRANSLATIONS);
-            copyFile("italian.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("bridge.template", Settings.Paths.TEMPLATES);
+            copyFile("de-DE.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("es-ES.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("zh-CN.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("it-IT.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("ko-KR.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("fr-FR.yml", Settings.Paths.TRANSLATIONS);
             showDebug();
         } catch (Throwable e) {
             e.printStackTrace();
@@ -829,8 +832,12 @@ public class PS{
         Collections.sort(areas, new Comparator<PlotArea>() {
             @Override
             public int compare(PlotArea a, PlotArea b) {
-                if (priorityArea != null && StringMan.isEqual(a.toString(), b.toString())) {
-                    return -1;
+                if (priorityArea != null) {
+                    if (a.equals(priorityArea)) {
+                        return -1;
+                    } else if (b.equals(priorityArea)) {
+                        return 1;
+                    }
                 }
                 return a.hashCode() - b.hashCode();
             }

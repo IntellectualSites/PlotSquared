@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @CommandDeclaration(
         command = "add",
-        description = "Allow a user to build while you are online",
+        description = "Allow a user to build in a plot while you are online",
         usage = "/plot add <player>",
         category = CommandCategory.SETTINGS,
         permission = "plots.add",

@@ -14,7 +14,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 @CommandDeclaration(
         command = "music",
         permission = "plots.music",
-        description = "Player music in a plot",
+        description = "Play music in your plot",
         usage = "/plot music",
         category = CommandCategory.APPEARANCE,
         requiredType = RequiredType.PLAYER)

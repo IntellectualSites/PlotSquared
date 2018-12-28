@@ -10,22 +10,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.Rating;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.plotsquared.sponge.SpongeMain;
-import com.plotsquared.sponge.events.ClusterFlagRemoveEvent;
-import com.plotsquared.sponge.events.PlayerClaimPlotEvent;
-import com.plotsquared.sponge.events.PlayerEnterPlotEvent;
-import com.plotsquared.sponge.events.PlayerLeavePlotEvent;
-import com.plotsquared.sponge.events.PlayerPlotDeniedEvent;
-import com.plotsquared.sponge.events.PlayerPlotHelperEvent;
-import com.plotsquared.sponge.events.PlayerPlotTrustedEvent;
-import com.plotsquared.sponge.events.PlayerTeleportToPlotEvent;
-import com.plotsquared.sponge.events.PlotClearEvent;
-import com.plotsquared.sponge.events.PlotComponentSetEvent;
-import com.plotsquared.sponge.events.PlotDeleteEvent;
-import com.plotsquared.sponge.events.PlotFlagAddEvent;
-import com.plotsquared.sponge.events.PlotFlagRemoveEvent;
-import com.plotsquared.sponge.events.PlotMergeEvent;
-import com.plotsquared.sponge.events.PlotRateEvent;
-import com.plotsquared.sponge.events.PlotUnlinkEvent;
+import com.plotsquared.sponge.events.*;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.EventManager;
 
@@ -114,7 +99,12 @@ public class SpongeEventUtil extends EventUtil {
     public void callMember(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
         callEvent(new PlayerPlotHelperEvent(SpongeUtil.getPlayer(initiator), plot, player, added));
     }
-    
+
+    @Override
+    public boolean callOwnerChange(PlotPlayer initiator, Plot plot, UUID oldOwner, UUID newOwner, boolean hasOldOwner) {
+        return callEvent(new PlotChangeOwnerEvent(SpongeUtil.getPlayer(initiator), plot, oldOwner, newOwner, hasOldOwner));
+    }
+
     @Override
     public boolean callFlagRemove(Flag flag, Object object, PlotCluster cluster) {
         return callEvent(new ClusterFlagRemoveEvent(flag, cluster));

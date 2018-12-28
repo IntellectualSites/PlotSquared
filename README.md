@@ -1,6 +1,9 @@
-# PlotSquared [![forthebadge](http://forthebadge.com/images/badges/built-by-developers.svg)](http://forthebadge.com)
+<p align="center">
+    <img src="https://i.imgur.com/Kd7N6uf.png">
+</p>
 
-[![Join the chat at https://gitter.im/PlotSquared/Lobby](https://badges.gitter.im/PlotSquared/Lobby.svg)](https://gitter.im/PlotSquared/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+---
+
 For the end user, PlotSquared is packed with a tonne of cool features.
 It allows you to merge plots, and build together with your friends. 
 You can also change a lot of plot specific settings in the form of
@@ -11,16 +14,24 @@ is to provide a lag-free and smooth experience.
 
 ## Links
 
-### Server Owner
 * [Spigot Page](https://www.spigotmc.org/resources/plotsquared.1177/)
-* [WebChat/IRC]: #IntellectualCrafters on irc.esper.net
+* [Discord](https://discord.gg/ngZCzbU)
 * [Wiki](https://github.com/intellectualcrafters/plotsquared/wiki)
-* [Website](http://plotsquared.com)
+
+## Downloads
+### 1.13+ (Pre-Release)
+* [Download](https://github.com/IntellectualSites/PlotSquared/releases/tag/4.0-pre-breaking)
+* [Jenkins](https://ci.athion.net/job/PlotSquared-Breaking/)
+
+### <1.12.2
+* [Download](https://github.com/IntellectualSites/PlotSquared/releases/tag/dev)
+* [Jenkins](https://ci.athion.net/job/PlotSquared/)
+
 
 ### Developer Resources
-* [JavaDocs]  Link Temporarily Unavailable 
-* [Build Server] [![Build Status](http://ci.plotsquared.com/buildStatus/icon?job=PlotSquared)](http://ci.athion.net/job/PlotSquared/)
-* [Maven Repo] Link Temporarily Unavailable 
+* [Java Docs](http://empcraft.com/plotsquared/doc/)
+* [Maven Repo](http://ci.athion.net/job/PlotSquared/ws/mvn/)
+* [API Documentation](https://github.com/IntellectualSites/PlotSquared/wiki/Developer-documentation-(WIP))
 
 # Building
 Gradle is the **recommended** way to build the project. Use `./gradlew build` in the main project directory to build the project. Gradle is required if you intend to build or develop the Sponge module.
@@ -33,7 +44,9 @@ Feel free to contribute, if you feel like you can improve the plugin in any way.
 Suggestions are welcome! We have a separate issue tracker for suggestions, that can be found in [this](https://github.com/IntellectualSites/PlotSquaredSuggestions) repository.
 
 # Official Addons
-* [Plot2Dynmap](http://www.spigotmc.org/resources/plot2dynmap.1292/)
+## Updated
+* [Plot2Dynmap](https://github.com/IntellectualSites/plot2dynmap/releases)
+## Legacy 
 * [AdvPlots](http://www.spigotmc.org/resources/advplots-%CE%B2.1500/)
 * [PlotRankup](http://www.spigotmc.org/resources/plotrankup.1571/)
 * [PlotZSux](https://www.spigotmc.org/resources/plotzsux.9563/)
@@ -42,5 +55,3 @@ Suggestions are welcome! We have a separate issue tracker for suggestions, that 
 * [PlotSquaredMG](https://www.spigotmc.org/resources/plotsquaredmg.8025/)
 * [BasicPlots](https://www.spigotmc.org/resources/basicplots.6901/)
 * [HoloPlots](https://www.spigotmc.org/resources/holoplots.4880/)
-
-[WebChat/IRC]: http://webchat.esper.net/?nick=&channels=IntellectualCrafters&fg_color=000&fg_sec_color=000&bg_color=FFF

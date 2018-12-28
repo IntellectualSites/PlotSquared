@@ -4,11 +4,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.CmdConfirm;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.util.Set;
@@ -34,7 +30,8 @@ public class Owner extends SetCommand {
             try {
                 uuid = UUID.fromString(value);
                 name = MainUtil.getName(uuid);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         } else {
             uuid = UUIDHandler.getUUID(value, null);
             name = UUIDHandler.getName(uuid);
@@ -80,13 +77,15 @@ public class Owner extends SetCommand {
         Runnable run = new Runnable() {
             @Override
             public void run() {
-                if (removeDenied) plot.removeDenied(finalUUID);
-                plot.setOwner(finalUUID);
-                plot.setSign(finalName);
-                MainUtil.sendMessage(player, C.SET_OWNER);
-                if (other != null) {
-                    MainUtil.sendMessage(other, C.NOW_OWNER, plot.getArea() + ";" + plot.getId());
-                }
+                if (plot.setOwner(finalUUID, player)) {
+                    if (removeDenied) plot.removeDenied(finalUUID);
+                    plot.setSign(finalName);
+                    MainUtil.sendMessage(player, C.SET_OWNER);
+                    if (other != null) {
+                        MainUtil.sendMessage(other, C.NOW_OWNER, plot.getArea() + ";" + plot.getId());
+                    }
+                } else
+                    MainUtil.sendMessage(player, C.SET_OWNER_CANCELLED);
             }
         };
         if (hasConfirmation(player)) {

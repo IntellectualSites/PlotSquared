@@ -14,9 +14,11 @@ public class Settings extends Config {
     NOTE: Fields are saved in declaration order, classes in reverse order
      */
 
-    @Comment("These first 4 aren't configurable") // This is a comment
+    @Comment("These first 7 aren't configurable") // This is a comment
     @Final // Indicates that this value isn't configurable
     public static final String ISSUES = "https://github.com/IntellectualSites/PlotSquared/issues";
+    @Final
+    public static final String SUGGESTION = "https://github.com/IntellectualSites/PlotSquaredSuggestions";
     @Final
     public static final String WIKI = "https://github.com/IntellectualSites/PlotSquared/wiki";
     @Final

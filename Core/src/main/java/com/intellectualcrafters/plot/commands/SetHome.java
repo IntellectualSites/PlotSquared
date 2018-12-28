@@ -11,7 +11,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 @CommandDeclaration(
         command = "sethome",
         permission = "plots.set.home",
-        description = "Set the plot home",
+        description = "Set the plot home to your current position",
         usage = "/plot sethome [none]",
         aliases = {"sh", "seth"},
         category = CommandCategory.SETTINGS,
@@ -22,6 +22,7 @@ public class SetHome extends SetCommand {
     public boolean set(PlotPlayer player, Plot plot, String value) {
         switch (value.toLowerCase()) {
             case "unset":
+            case "reset":
             case "remove":
             case "none": {
                 Plot base = plot.getBasePlot(false);

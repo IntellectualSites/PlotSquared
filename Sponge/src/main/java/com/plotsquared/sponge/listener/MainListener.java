@@ -86,6 +86,9 @@ public class MainListener {
     @Listener
     public void onChat(MessageEvent event) {
         // TODO
+        if (event.isMessageCancelled())
+            return;
+
         Player player = SpongeUtil.getCause(event.getCause(), Player.class);
         if (player == null) {
             return;

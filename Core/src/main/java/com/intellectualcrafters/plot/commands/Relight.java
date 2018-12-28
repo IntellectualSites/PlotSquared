@@ -13,7 +13,10 @@ import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 import java.util.HashSet;
 
-@CommandDeclaration(command = "relight", description = "Relight your plot", category = CommandCategory.DEBUG)
+@CommandDeclaration(command = "relight",
+        description = "Relight your plot",
+        usage = "/plot relight",
+        category = CommandCategory.DEBUG)
 public class Relight extends Command {
     public Relight() {
         super(MainCommand.getInstance(), true);
