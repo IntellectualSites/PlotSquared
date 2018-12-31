@@ -287,6 +287,8 @@ public class Settings extends Config {
     public static final class Claim {
         @Comment("The max plots claimed in a single `/plot auto <size>` command")
         public static int MAX_AUTO_AREA = 4;
+        @Comment("Teleport upon claiming a plot")
+        public static boolean TELEPORT_ON_CLAIM = true;
     }
 
     public static final class Ratings {
