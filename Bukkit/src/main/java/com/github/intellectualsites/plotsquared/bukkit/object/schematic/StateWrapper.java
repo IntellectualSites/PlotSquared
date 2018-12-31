@@ -1,12 +1,14 @@
 package com.github.intellectualsites.plotsquared.bukkit.object.schematic;
 
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.sk89q.jnbt.*;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.Container;
 import org.bukkit.block.Sign;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
@@ -152,6 +154,13 @@ public class StateWrapper {
         BlockState state = block.getState();
         switch (tileid) {
             case "chest":
+            case "beacon":
+            case "brewingstand":
+            case "dispenser":
+            case "dropper":
+            case "furnace":
+            case "hopper":
+            case "shulkerbox":
                 List<Tag> itemsTag = this.tag.getListTag("Items").getValue();
                 int length = itemsTag.size();
                 String[] ids = new String[length];
@@ -160,20 +169,27 @@ public class StateWrapper {
                 for (int i = 0; i < length; i++) {
                     Tag itemTag = itemsTag.get(i);
                     CompoundTag itemComp = (CompoundTag) itemTag;
-                    String id = itemComp.getString("Id");
+                    String id = itemComp.getString("id");
+                    if (id.startsWith("minecraft:")) {
+                        id = id.replace("minecraft:", "");
+                    }
                     ids[i] = id;
                     amounts[i] = itemComp.getByte("Count");
                     slots[i] = itemComp.getByte("Slot");
                 }
-                if (state instanceof InventoryHolder) {
-                    InventoryHolder holder = (InventoryHolder) state;
-                    Inventory inv = holder.getInventory();
+                if (state instanceof Container) {
+                    Container container = (Container) state;
+                    Inventory inv = container.getSnapshotInventory();
                     for (int i = 0; i < ids.length; i++) {
-                        ItemStack item =
-                            new ItemStack(Material.getMaterial(ids[i]), (int) amounts[i]);
-                        inv.addItem(item);
+                        Material mat = Material.getMaterial(ids[i].toUpperCase());
+                        if (mat != null) {
+                            ItemStack item = new ItemStack(mat, (int) amounts[i]);
+                            inv.setItem(slots[i], item);
+                            PlotSquared.log(mat.name() + " " + slots[i]);
+                        }
                     }
-                    state.update(true);
+                    PlotSquared.log(inv.getStorageContents());
+                    container.update(true, true);
                     return true;
                 }
                 return false;

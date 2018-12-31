@@ -54,11 +54,7 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
             C.PLOTWORLD_INCOMPATIBLE.send(player);
             return false;
         }
-        if (plot1.move(plot2, new Runnable() {
-            @Override public void run() {
-                MainUtil.sendMessage(player, C.MOVE_SUCCESS);
-            }
-        }, false)) {
+        if (plot1.move(plot2, () -> MainUtil.sendMessage(player, C.MOVE_SUCCESS), false)) {
             return true;
         } else {
             MainUtil.sendMessage(player, C.REQUIRES_UNOWNED);

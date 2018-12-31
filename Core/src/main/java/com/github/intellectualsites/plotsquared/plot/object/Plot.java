@@ -806,14 +806,12 @@ public class Plot {
         Runnable run = new Runnable() {
             @Override public void run() {
                 if (queue.isEmpty()) {
-                    Runnable run = new Runnable() {
-                        @Override public void run() {
-                            for (RegionWrapper region : regions) {
-                                Location[] corners = region.getCorners(getWorldName());
-                                ChunkManager.manager.clearAllEntities(corners[0], corners[1]);
-                            }
-                            TaskManager.runTask(whenDone);
+                    Runnable run = () -> {
+                        for (RegionWrapper region : regions) {
+                            Location[] corners = region.getCorners(getWorldName());
+                            ChunkManager.manager.clearAllEntities(corners[0], corners[1]);
                         }
+                        TaskManager.runTask(whenDone);
                     };
                     for (Plot current : plots) {
                         if (isDelete || current.owner == null) {
@@ -928,11 +926,9 @@ public class Plot {
             current.setMerged(merged);
         }
         if (createSign) {
-            GlobalBlockQueue.IMP.addTask(new Runnable() {
-                @Override public void run() {
-                    for (Plot current : plots) {
-                        current.setSign(MainUtil.getName(current.owner));
-                    }
+            GlobalBlockQueue.IMP.addTask(() -> {
+                for (Plot current : plots) {
+                    current.setSign(MainUtil.getName(current.owner));
                 }
             });
         }
@@ -951,11 +947,7 @@ public class Plot {
         if (!isLoaded())
             return;
         if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
-            TaskManager.runTask(new Runnable() {
-                @Override public void run() {
-                    Plot.this.setSign(name);
-                }
-            });
+            TaskManager.runTask(() -> Plot.this.setSign(name));
             return;
         }
         PlotManager manager = this.area.getPlotManager();
@@ -1045,13 +1037,11 @@ public class Plot {
             return false;
         }
         final Set<Plot> plots = this.getConnectedPlots();
-        this.clear(false, true, new Runnable() {
-            @Override public void run() {
-                for (Plot current : plots) {
-                    current.unclaim();
-                }
-                TaskManager.runTask(whenDone);
+        this.clear(false, true, () -> {
+            for (Plot current : plots) {
+                current.unclaim();
             }
+            TaskManager.runTask(whenDone);
         });
         return true;
     }
@@ -1259,7 +1249,9 @@ public class Plot {
                 x = bot.getX() + loc.x;
                 z = bot.getZ() + loc.z;
             }
-            int y = loc.y < 1 ? (isLoaded() ? WorldUtil.IMP.getHighestBlock(plot.getWorldName(), x, z) + 1 : 63) : loc.y;
+            int y = loc.y < 1 ?
+                (isLoaded() ? WorldUtil.IMP.getHighestBlock(plot.getWorldName(), x, z) + 1 : 63) :
+                loc.y;
             PlotSquared.log("Getting home with Y " + y);
             return new Location(plot.getWorldName(), x, y, z);
         }
@@ -1485,12 +1477,10 @@ public class Plot {
         this.getDenied().clear();
         this.settings = new PlotSettings();
         if (this.area.addPlot(this)) {
-            DBFunc.createPlotAndSettings(this, new Runnable() {
-                @Override public void run() {
-                    PlotArea plotworld = Plot.this.area;
-                    if (notify && plotworld.AUTO_MERGE) {
-                        Plot.this.autoMerge(-1, Integer.MAX_VALUE, uuid, true);
-                    }
+            DBFunc.createPlotAndSettings(this, () -> {
+                PlotArea plotworld = Plot.this.area;
+                if (notify && plotworld.AUTO_MERGE) {
+                    Plot.this.autoMerge(-1, Integer.MAX_VALUE, uuid, true);
                 }
             });
             return true;
@@ -1839,16 +1829,14 @@ public class Plot {
                         TaskManager.runTask(whenDone);
                     }
                 } else {
-                    TaskManager.runTaskAsync(new Runnable() {
-                        @Override public void run() {
-                            String name = Plot.this.id + "," + Plot.this.area + ',' + MainUtil
-                                .getName(Plot.this.owner);
-                            boolean result = SchematicHandler.manager.save(value,
-                                Settings.Paths.SCHEMATICS + File.separator + name + ".schematic");
-                            if (whenDone != null) {
-                                whenDone.value = result;
-                                TaskManager.runTask(whenDone);
-                            }
+                    TaskManager.runTaskAsync(() -> {
+                        String name = Plot.this.id + "," + Plot.this.area + ',' + MainUtil
+                            .getName(Plot.this.owner);
+                        boolean result = SchematicHandler.manager.save(value,
+                            Settings.Paths.SCHEMATICS + File.separator + name + ".schematic");
+                        if (whenDone != null) {
+                            whenDone.value = result;
+                            TaskManager.runTask(whenDone);
                         }
                     });
                 }
@@ -2627,12 +2615,10 @@ public class Plot {
      * - Usually called when the plot state changes (unclaimed/claimed/flag change etc)
      */
     public void reEnter() {
-        TaskManager.runTaskLater(new Runnable() {
-            @Override public void run() {
-                for (PlotPlayer pp : Plot.this.getPlayersInPlot()) {
-                    PlotListener.plotExit(pp, Plot.this);
-                    PlotListener.plotEntry(pp, Plot.this);
-                }
+        TaskManager.runTaskLater(() -> {
+            for (PlotPlayer pp : Plot.this.getPlayersInPlot()) {
+                PlotListener.plotExit(pp, Plot.this);
+                PlotListener.plotEntry(pp, Plot.this);
             }
         }, 1);
     }
@@ -2688,17 +2674,15 @@ public class Plot {
             MainUtil.sendMessage(player, C.TELEPORT_IN_SECONDS, Settings.Teleport.DELAY + "");
             final String name = player.getName();
             TaskManager.TELEPORT_QUEUE.add(name);
-            TaskManager.runTaskLater(new Runnable() {
-                @Override public void run() {
-                    if (!TaskManager.TELEPORT_QUEUE.contains(name)) {
-                        MainUtil.sendMessage(player, C.TELEPORT_FAILED);
-                        return;
-                    }
-                    TaskManager.TELEPORT_QUEUE.remove(name);
-                    if (player.isOnline()) {
-                        MainUtil.sendMessage(player, C.TELEPORTED_TO_PLOT);
-                        player.teleport(location);
-                    }
+            TaskManager.runTaskLater(() -> {
+                if (!TaskManager.TELEPORT_QUEUE.contains(name)) {
+                    MainUtil.sendMessage(player, C.TELEPORT_FAILED);
+                    return;
+                }
+                TaskManager.TELEPORT_QUEUE.remove(name);
+                if (player.isOnline()) {
+                    MainUtil.sendMessage(player, C.TELEPORTED_TO_PLOT);
+                    player.teleport(location);
                 }
             }, Settings.Teleport.DELAY * 20);
             return true;
@@ -2885,11 +2869,8 @@ public class Plot {
                 final Location pos2 = corners[1];
                 Location newPos = pos1.clone().add(offsetX, 0, offsetZ);
                 newPos.setWorld(destination.getWorldName());
-                ChunkManager.manager.copyRegion(pos1, pos2, newPos, new Runnable() {
-                    @Override public void run() {
-                        ChunkManager.manager.regenerateRegion(pos1, pos2, false, task);
-                    }
-                });
+                ChunkManager.manager.copyRegion(pos1, pos2, newPos,
+                    () -> ChunkManager.manager.regenerateRegion(pos1, pos2, false, task));
             }
         };
         Runnable swap = new Runnable() {

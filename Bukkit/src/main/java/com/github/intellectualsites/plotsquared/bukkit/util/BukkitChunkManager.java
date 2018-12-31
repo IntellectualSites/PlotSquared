@@ -10,12 +10,14 @@ import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
+import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.world.block.BaseBlock;
 import org.bukkit.*;
-import org.bukkit.block.*;
+import org.bukkit.block.Block;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.*;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -51,43 +53,43 @@ public class BukkitChunkManager extends ChunkManager {
         String worldName1 = world1.getName();
         String worldName2 = world2.getName();
 
+        BukkitWorld bukkitWorld1 = new BukkitWorld(world1);
+        BukkitWorld bukkitWorld2 = new BukkitWorld(world2);
+
         LocalBlockQueue queue1 = GlobalBlockQueue.IMP.getNewQueue(worldName1, false);
         LocalBlockQueue queue2 = GlobalBlockQueue.IMP.getNewQueue(worldName2, false);
 
         for (int x = Math.max(r1.minX, sx); x <= Math.min(r1.maxX, sx + 15); x++) {
             for (int z = Math.max(r1.minZ, sz); z <= Math.min(r1.maxZ, sz + 15); z++) {
-                map.saveBlocks(world1, 256, sx, sz, relX, relZ, false);
+                map.saveBlocks(bukkitWorld1, 256, sx, sz, relX, relZ);
                 for (int y = 0; y < 256; y++) {
                     Block block1 = world1.getBlockAt(x, y, z);
-                    // int id1 = block1.getTypeId();
-                    Material id1 = block1.getType();
+                    BaseBlock baseBlock1 = bukkitWorld2.getFullBlock(BlockVector3.at(x, y, z));
                     BlockData data1 = block1.getBlockData();
-                    // byte data1 = block1.getData();
+
                     int xx = x + relX;
                     int zz = z + relZ;
+
                     Block block2 = world2.getBlockAt(xx, y, zz);
-                    // int id2 = block2.getTypeId();
-                    Material id2 = block2.getType();
+                    BaseBlock baseBlock2 = bukkitWorld2.getFullBlock(BlockVector3.at(xx, y, zz));
                     BlockData data2 = block2.getBlockData();
-                    // byte data2 = block2.getData();
-                    if (id1 == Material.AIR) {
-                        if (id2 != Material.AIR) {
-                            queue1.setBlock(x, y, z, PlotBlock.get(id2));
+
+                    if (block1.isEmpty()) {
+                        if (block2.isEmpty()) {
+                            queue1.setBlock(x, y, z, baseBlock2);
                             queue2.setBlock(xx, y, zz, PlotBlock.get("air"));
                         }
-                    } else if (id2 == Material.AIR) {
+                    } else if (block2.isEmpty()) {
                         queue1.setBlock(x, y, z, PlotBlock.get("air"));
-                        queue2.setBlock(xx, y, zz, PlotBlock.get(id1));
-                    } else if (id1 == id2) {
+                        queue2.setBlock(xx, y, zz, baseBlock1);
+                    } else if (block1.equals(block2)) {
                         if (data1 != data2) {
                             block1.setBlockData(data2);
                             block2.setBlockData(data1);
                         }
                     } else {
-                        queue1.setBlock(x, y, z, PlotBlock.get(id2));
-                        queue2.setBlock(xx, y, zz, PlotBlock.get(id1));
-                        // queue1.setBlock(x, y, z, (short) id2, data2);
-                        // queue2.setBlock(xx, y, zz, (short) id1, data1);
+                        queue1.setBlock(x, y, z, baseBlock2);
+                        queue2.setBlock(xx, y, zz, baseBlock1);
                     }
                 }
             }
@@ -115,13 +117,11 @@ public class BukkitChunkManager extends ChunkManager {
         final Runnable whenDone) {
         final int relX = newPos.getX() - pos1.getX();
         final int relZ = newPos.getZ() - pos1.getZ();
-        com.github.intellectualsites.plotsquared.plot.object.Location pos4 =
-            new com.github.intellectualsites.plotsquared.plot.object.Location(newPos.getWorld(),
-                newPos.getX() + relX, 256, newPos.getZ() + relZ);
 
         final RegionWrapper region =
             new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
         final World oldWorld = Bukkit.getWorld(pos1.getWorld());
+        final BukkitWorld oldBukkitWorld = new BukkitWorld(oldWorld);
         final World newWorld = Bukkit.getWorld(newPos.getWorld());
         final String newWorldName = newWorld.getName();
         final ContentMap map = new ContentMap();
@@ -139,24 +139,24 @@ public class BukkitChunkManager extends ChunkManager {
                 map.saveEntitiesIn(chunk, region);
                 for (int x = bx & 15; x <= (tx & 15); x++) {
                     for (int z = bz & 15; z <= (tz & 15); z++) {
-                        map.saveBlocks(oldWorld, 256, cxx + x, czz + z, relX, relZ, true);
+                        map.saveBlocks(oldBukkitWorld, 256, cxx + x, czz + z, relX, relZ);
                     }
                 }
             }
         }, () -> {
-            for (Entry<PlotLoc, PlotBlock[]> entry : map.allBlocks.entrySet()) {
+            for (Entry<PlotLoc, BaseBlock[]> entry : map.allBlocks.entrySet()) {
                 PlotLoc loc = entry.getKey();
-                PlotBlock[] blocks = entry.getValue();
+                BaseBlock[] blocks = entry.getValue();
                 for (int y = 0; y < blocks.length; y++) {
                     if (blocks[y] != null) {
-                        PlotBlock block = blocks[y];
+                        BaseBlock block = blocks[y];
                         queue.setBlock(loc.x, y, loc.z, block);
                     }
                 }
             }
             queue.enqueue();
             GlobalBlockQueue.IMP.addTask(() -> {
-                map.restoreBlocks(newWorld, 0, 0);
+                //map.restoreBlocks(newWorld, 0, 0);
                 map.restoreEntities(newWorld, relX, relZ);
                 TaskManager.runTask(whenDone);
             });
@@ -187,6 +187,7 @@ public class BukkitChunkManager extends ChunkManager {
             }
         }
         final World worldObj = Bukkit.getWorld(world);
+        final BukkitWorld bukkitWorldObj = new BukkitWorld(worldObj);
         TaskManager.runTask(new Runnable() {
             @Override public void run() {
                 long start = System.currentTimeMillis();
@@ -246,28 +247,28 @@ public class BukkitChunkManager extends ChunkManager {
                     }
                     final ContentMap map = new ContentMap();
                     if (checkX1) {
-                        map.saveRegion(worldObj, xxb, xxb2, zzb2, zzt2); //
+                        map.saveRegion(bukkitWorldObj, xxb, xxb2, zzb2, zzt2); //
                     }
                     if (checkX2) {
-                        map.saveRegion(worldObj, xxt2, xxt, zzb2, zzt2); //
+                        map.saveRegion(bukkitWorldObj, xxt2, xxt, zzb2, zzt2); //
                     }
                     if (checkZ1) {
-                        map.saveRegion(worldObj, xxb2, xxt2, zzb, zzb2); //
+                        map.saveRegion(bukkitWorldObj, xxb2, xxt2, zzb, zzb2); //
                     }
                     if (checkZ2) {
-                        map.saveRegion(worldObj, xxb2, xxt2, zzt2, zzt); //
+                        map.saveRegion(bukkitWorldObj, xxb2, xxt2, zzt2, zzt); //
                     }
                     if (checkX1 && checkZ1) {
-                        map.saveRegion(worldObj, xxb, xxb2, zzb, zzb2); //
+                        map.saveRegion(bukkitWorldObj, xxb, xxb2, zzb, zzb2); //
                     }
                     if (checkX2 && checkZ1) {
-                        map.saveRegion(worldObj, xxt2, xxt, zzb, zzb2); // ?
+                        map.saveRegion(bukkitWorldObj, xxt2, xxt, zzb, zzb2); // ?
                     }
                     if (checkX1 && checkZ2) {
-                        map.saveRegion(worldObj, xxb, xxb2, zzt2, zzt); // ?
+                        map.saveRegion(bukkitWorldObj, xxb, xxb2, zzt2, zzt); // ?
                     }
                     if (checkX2 && checkZ2) {
-                        map.saveRegion(worldObj, xxt2, xxt, zzt2, zzt); //
+                        map.saveRegion(bukkitWorldObj, xxt2, xxt, zzt2, zzt); //
                     }
                     map.saveEntitiesOut(chunkObj, currentPlotClear);
                     AugmentedUtils.bypass(ignoreAugment,
@@ -280,10 +281,10 @@ public class BukkitChunkManager extends ChunkManager {
                                 for (int x1 = 0; x1 < 16; x1++) {
                                     for (int z1 = 0; z1 < 16; z1++) {
                                         PlotLoc loc = new PlotLoc(bx + x1, bz + z1);
-                                        PlotBlock[] ids = map.allBlocks.get(loc);
+                                        BaseBlock[] ids = map.allBlocks.get(loc);
                                         if (ids != null) {
                                             for (int y = 0; y < Math.min(128, ids.length); y++) {
-                                                PlotBlock id = ids[y];
+                                                BaseBlock id = ids[y];
                                                 if (id != null) {
                                                     value.setBlock(x1, y, z1, id);
                                                 } else {
@@ -292,7 +293,7 @@ public class BukkitChunkManager extends ChunkManager {
                                             }
                                             for (int y = Math.min(128, ids.length);
                                                  y < ids.length; y++) {
-                                                PlotBlock id = ids[y];
+                                                BaseBlock id = ids[y];
                                                 if (id != null) {
                                                     value.setBlock(x1, y, z1, id);
                                                 }
@@ -302,7 +303,7 @@ public class BukkitChunkManager extends ChunkManager {
                                 }
                             }
                         }, world, chunk));
-                    map.restoreBlocks(worldObj, 0, 0);
+                    //map.restoreBlocks(worldObj, 0, 0);
                     map.restoreEntities(worldObj, 0, 0);
                 }
                 if (!chunks.isEmpty()) {
@@ -379,7 +380,7 @@ public class BukkitChunkManager extends ChunkManager {
         }
         GlobalBlockQueue.IMP.addTask(() -> {
             for (ContentMap map : maps) {
-                map.restoreBlocks(world1, 0, 0);
+                //map.restoreBlocks(world1, 0, 0);
                 map.restoreEntities(world1, 0, 0);
                 TaskManager.runTaskLater(whenDone, 1);
             }
@@ -606,7 +607,7 @@ public class BukkitChunkManager extends ChunkManager {
         final Map<BlockLoc, List<Pattern>> bannerPatterns;
         final Map<BlockLoc, DyeColor> bannerBase;
         final Set<EntityWrapper> entities;
-        final Map<PlotLoc, PlotBlock[]> allBlocks;
+        final Map<PlotLoc, BaseBlock[]> allBlocks;
 
         ContentMap() {
             this.chestContents = new HashMap<>();
@@ -630,7 +631,7 @@ public class BukkitChunkManager extends ChunkManager {
             this.allBlocks = new HashMap<>();
         }
 
-        public void saveRegion(World world, int x1, int x2, int z1, int z2) {
+        public void saveRegion(BukkitWorld world, int x1, int x2, int z1, int z2) {
             if (z1 > z2) {
                 int tmp = z1;
                 z1 = z2;
@@ -643,7 +644,7 @@ public class BukkitChunkManager extends ChunkManager {
             }
             for (int x = x1; x <= x2; x++) {
                 for (int z = z1; z <= z2; z++) {
-                    saveBlocks(world, 256, x, z, 0, 0, true);
+                    saveBlocks(world, 256, x, z, 0, 0);
                 }
             }
         }
@@ -708,7 +709,7 @@ public class BukkitChunkManager extends ChunkManager {
             this.entities.clear();
         }
 
-        public void restoreBlocks(World world, int xOffset, int zOffset) {
+/*        public void restoreBlocks(World world, int xOffset, int zOffset) {
             for (Entry<BlockLoc, ItemStack[]> blockLocEntry : this.chestContents.entrySet()) {
                 try {
                     Block block = world
@@ -1065,25 +1066,23 @@ public class BukkitChunkManager extends ChunkManager {
                         + ',' + (blockLocByteEntry.getKey().z + zOffset));
                 }
             }
-        }
+        }*/
 
-        public void saveBlocks(World world, int maxY, int x, int z, int offsetX, int offsetZ,
-            boolean storeNormal) {
+        public void saveBlocks(BukkitWorld world, int maxY, int x, int z, int offsetX,
+            int offsetZ) {
             maxY = Math.min(255, maxY);
-            PlotBlock[] ids;
-            if (storeNormal) {
-                ids = new PlotBlock[maxY + 1];
-            } else {
-                ids = null;
-            }
+            BaseBlock[] ids;
+            ids = new BaseBlock[maxY + 1];
             for (short y = 0; y <= maxY; y++) {
-                Block block = world.getBlockAt(x, y, z);
-                Material blockType = block.getType();
-                if (storeNormal) {
-                    if (blockType.name().contains("AIR")) {
-                        ids[y] = StringPlotBlock.EVERYTHING;
+                BaseBlock block = world.getFullBlock(BlockVector3.at(x, y, z));
+                ids[y] = block;
+/*                if (storeNormal) {
+                    if (block.isEmpty()) {
+                        BukkitAdapter.
+                            ids[y] =
+                            BukkitAdapter.adapt(Material.AIR.createBlockData()).toBaseBlock();
                     } else {
-                        ids[y] = PlotBlock.get(blockType.name());
+                        ids[y] = BukkitAdapter.adapt(block.getBlockData()).toBaseBlock();
                     }
                 }
                 if (!blockType.name().contains("AIR")) {
@@ -1169,7 +1168,7 @@ public class BukkitChunkManager extends ChunkManager {
                         e.printStackTrace();
                         PlotSquared.debug("------------ but we caught it ^ --------");
                     }
-                }
+                }*/
             }
             PlotLoc loc = new PlotLoc(x + offsetX, z + offsetZ);
             this.allBlocks.put(loc, ids);
