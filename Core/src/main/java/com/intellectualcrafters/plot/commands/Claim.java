@@ -93,7 +93,7 @@ public class Claim extends SubCommand {
                     TaskManager.IMP.sync(new RunnableVal<Object>() {
                         @Override
                         public void run(Object value) {
-                            plot.claim(player, true, finalSchematic, false);
+                            plot.claim(player, Settings.Claim.TELEPORT_ON_CLAIM, finalSchematic, false);
                             if (area.AUTO_MERGE) {
                                 plot.autoMerge(-1, Integer.MAX_VALUE, player.getUUID(), true);
                             }
