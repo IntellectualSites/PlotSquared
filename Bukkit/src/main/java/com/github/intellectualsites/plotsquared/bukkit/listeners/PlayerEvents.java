@@ -598,13 +598,11 @@ import java.util.regex.Pattern;
         // Delayed
 
         // Async
-        TaskManager.runTaskLaterAsync(new Runnable() {
-            @Override public void run() {
-                if (!player.hasPlayedBefore() && player.isOnline()) {
-                    player.saveData();
-                }
-                EventUtil.manager.doJoinTask(pp);
+        TaskManager.runTaskLaterAsync(() -> {
+            if (!player.hasPlayedBefore() && player.isOnline()) {
+                player.saveData();
             }
+            EventUtil.manager.doJoinTask(pp);
         }, 20);
     }
 
@@ -2214,6 +2212,11 @@ import java.util.regex.Pattern;
             }
             MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
             event.setCancelled(true);
+        } else if (Settings.Done.RESTRICT_BUILDING && plot.getFlags().containsKey(Flags.DONE)) {
+            if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
+                event.setCancelled(true);
+            }
         }
     }
 
