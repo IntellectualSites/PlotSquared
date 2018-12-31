@@ -162,8 +162,6 @@ public abstract class HybridUtils {
                 } else {
                     final Runnable task = this;
                     TaskManager.runTaskAsync(new Runnable() {
-                        private long last = System.currentTimeMillis();
-
                         @Override public void run() {
                             try {
                                 if (chunks.size() < 1024) {
@@ -212,11 +210,7 @@ public abstract class HybridUtils {
                                 PlotSquared.debug("&d - Potentially skipping 1024 chunks");
                                 PlotSquared.debug("&d - TODO: recommend chunkster if corrupt");
                             }
-                            GlobalBlockQueue.IMP.addTask(new Runnable() {
-                                @Override public void run() {
-                                    TaskManager.runTaskLater(task, 20);
-                                }
-                            });
+                            GlobalBlockQueue.IMP.addTask(() -> TaskManager.runTaskLater(task, 20));
                         }
                     });
                 }
@@ -358,7 +352,7 @@ public abstract class HybridUtils {
                             if (blocks != null) {
                                 for (int y = 0; y < blocks.length; y++) {
                                     if (blocks[y] != null) {
-                                        PlotBlock block = PlotBlock.get(blocks[y]);
+                                        BaseBlock block = blocks[y];
                                         queue.setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y,
                                             z + Z + plotWorld.ROAD_OFFSET_Z, block);
                                     }
