@@ -243,7 +243,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                         addOverlayBlock((short) (x - shift), (short) (y + startY),
                                 (short) (z + shift + oddshift), id, false, h1);
                         addOverlayBlock((short) (z + shift + oddshift), (short) (y + startY),
-                                (short) (shift - x), id, true, h1);
+                                (short) (shift - x + (oddshift - 1)), id, true, h1);
                     }
                 }
             }
