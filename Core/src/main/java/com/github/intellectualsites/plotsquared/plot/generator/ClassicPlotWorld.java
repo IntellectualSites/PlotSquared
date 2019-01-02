@@ -98,6 +98,9 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
             final Field[] fields = this.getClass().getFields();
             for (final Field field : fields) {
                 final String name = field.getName().toLowerCase(Locale.ENGLISH);
+                if(name.equalsIgnoreCase("g_sch")) {
+                    continue;
+                }
                 Object value;
                 try {
                     final boolean accessible = field.isAccessible();
