@@ -32,14 +32,15 @@ ext {
     date = git.head().getDate().format("yy.MM.dd")
     revision = "-${git.head().abbreviatedId}"
     parents = git.head().parentIds;
-    index = 0;  // Offset to match CI
+    index = -2048;  // Offset to match CI
     for (; parents != null && !parents.isEmpty(); index++) {
         parents = git.getResolve().toCommit(parents.get(0)).getParentIds()
     }
-    buildNumber = "-${index}"
+    buildNumber = "${index}"
 }
 
-version = String.format("%s.%s%s%s", rootVersion, date, revision, buildNumber)
+// version = String.format("%s.%s%s%s", rootVersion, date, revision, buildNumber)
+version = String.format("%s.%s", rootVersion, buildNumber)
 
 description = rootProject.name
 if (project.hasProperty("lzNoVersion")) { // gradle build -PlzNoVersion
