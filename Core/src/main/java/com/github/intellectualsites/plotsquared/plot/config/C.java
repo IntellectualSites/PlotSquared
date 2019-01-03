@@ -143,7 +143,7 @@ public enum C {
     PERMISSION_SET_COMPONENT("plots.set.%s0", "static.permissions"), PERMISSION_ADMIN_COMMAND(
         "plots.admin.command.%s0", "static.permissions"),
 
-    PERMISSION_ADMIN_COMMAND_UNLINK("", "static.permissions"), PERMISSION_VISIT_UNOWNED(
+    PERMISSION_ADMIN_COMMAND_UNLINK("plots.admin.command.unlink", "static.permissions"), PERMISSION_VISIT_UNOWNED(
         "plots.visit.unowned", "static.permissions"),
 
     PERMISSION_VISIT_OWNED("plots.visit.owned", "static.permissions"), PERMISSION_SHARED(
