@@ -150,7 +150,7 @@ public enum C {
     PERMISSION_ADMIN_COMMAND_SCHEMATIC_SAVE("plots.admin.command.schematic.save", "static.permissions"),
     PERMISSION_SET_COMPONENT("plots.set.%s0", "static.permissions"),
     PERMISSION_ADMIN_COMMAND("plots.admin.command.%s0", "static.permissions"),
-    PERMISSION_ADMIN_COMMAND_UNLINK("", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_UNLINK("plots.admin.command.unlink", "static.permissions"),
     PERMISSION_VISIT_UNOWNED("plots.visit.unowned", "static.permissions"),
     PERMISSION_VISIT_OWNED("plots.visit.owned", "static.permissions"),
     PERMISSION_SHARED("plots.visit.shared", "static.permissions"),
