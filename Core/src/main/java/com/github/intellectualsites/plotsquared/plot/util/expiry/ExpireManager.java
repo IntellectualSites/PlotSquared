@@ -12,7 +12,6 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
-import com.google.common.base.Optional;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

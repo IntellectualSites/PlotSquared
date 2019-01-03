@@ -8,7 +8,6 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
-import com.google.common.base.Optional;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -162,10 +161,9 @@ public class ListCmd extends SubCommand {
                 plots = new ArrayList<>();
                 for (Plot plot : PlotSquared.get().getPlots()) {
                     Optional<String> flag = plot.getFlag(Flags.DONE);
-                    if (!flag.isPresent()) {
-                        continue;
+                    if (flag.isPresent()) {
+                        plots.add(plot);
                     }
-                    plots.add(plot);
                 }
                 Collections.sort(plots, new Comparator<Plot>() {
                     @Override public int compare(Plot a, Plot b) {

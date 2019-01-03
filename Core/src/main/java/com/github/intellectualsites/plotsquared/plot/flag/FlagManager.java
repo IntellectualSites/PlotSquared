@@ -5,10 +5,8 @@ import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -16,38 +14,9 @@ import java.util.*;
  */
 public class FlagManager {
 
-
-    /**
-     * Some events can be called millions of times each second (e.g. physics)
-     * and reusing is a lot faster.
-     */
-    private static final Optional MUTABLE_OPTIONAL;
-    private static Field MUTABLE_OPTIONAL_FIELD;
-
-    static {
-        MUTABLE_OPTIONAL = Optional.of(new Object());
-        try {
-            MUTABLE_OPTIONAL_FIELD = MUTABLE_OPTIONAL.getClass().getDeclaredField("reference");
-            MUTABLE_OPTIONAL_FIELD.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static <V> Optional<V> getPlotFlag(Plot plot, Flag<V> key) {
         V value = FlagManager.getPlotFlagRaw(plot, key);
-        if (value != null) {
-            if (PlotSquared.get().isMainThread(Thread.currentThread())) {
-                try {
-                    MUTABLE_OPTIONAL_FIELD.set(MUTABLE_OPTIONAL, value);
-                    return MUTABLE_OPTIONAL;
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-            return Optional.of(value);
-        }
-        return Optional.absent();
+        return Optional.ofNullable(value);
     }
 
     /**

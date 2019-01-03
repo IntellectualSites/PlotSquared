@@ -10,7 +10,6 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.stream.AbstractDelegateOutputStream;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
-import com.google.common.base.Optional;
 
 import java.io.*;
 import java.net.HttpURLConnection;

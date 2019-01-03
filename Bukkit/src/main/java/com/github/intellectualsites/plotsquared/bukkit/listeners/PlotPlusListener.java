@@ -7,7 +7,6 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.google.common.base.Optional;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
@@ -28,6 +27,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
@@ -139,15 +139,11 @@ public class PlotPlusListener extends PlotListener implements Listener {
         Player player = event.getPlayer();
         Plot plot = event.getPlot();
         Optional<Integer[]> feed = plot.getFlag(Flags.FEED);
-        if (feed.isPresent()) {
-            Integer[] value = feed.get();
-            feedRunnable.put(player.getUniqueId(), new Interval(value[0], value[1], 20));
-        }
+        feed.ifPresent( value -> feedRunnable.put(player.getUniqueId(), new Interval(value[0], value[1], 20))
+        );
         Optional<Integer[]> heal = plot.getFlag(Flags.HEAL);
-        if (heal.isPresent()) {
-            Integer[] value = heal.get();
-            healRunnable.put(player.getUniqueId(), new Interval(value[0], value[1], 20));
-        }
+        heal.ifPresent( value -> healRunnable.put(player.getUniqueId(), new Interval(value[0], value[1], 20))
+        );
     }
 
     @EventHandler

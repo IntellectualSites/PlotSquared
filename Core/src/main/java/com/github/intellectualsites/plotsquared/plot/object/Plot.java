@@ -16,7 +16,6 @@ import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
-import com.google.common.base.Optional;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableSet;
 import com.sk89q.jnbt.CompoundTag;

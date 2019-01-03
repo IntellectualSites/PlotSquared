@@ -8,7 +8,6 @@ import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
-import com.google.common.base.Optional;
 
 import java.lang.reflect.Array;
 import java.util.*;

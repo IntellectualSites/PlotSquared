@@ -12,7 +12,6 @@ import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventTy
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.*;
-import com.google.common.base.Optional;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -1693,7 +1692,7 @@ import java.util.regex.Pattern;
             return;
         }
         Plot plot = area.getOwnedPlot(location);
-        if (plot == null || !plot.getFlag(Flags.EXPLOSION).or(false)) {
+        if (plot == null || !plot.getFlag(Flags.EXPLOSION).orElse(false)) {
             event.setCancelled(true);
         }
         event.blockList().removeIf(
@@ -2170,7 +2169,7 @@ import java.util.regex.Pattern;
                         || !plotIgnited.equals(plot)) ||
                     (igniteCause == BlockIgniteEvent.IgniteCause.SPREAD
                         || igniteCause == BlockIgniteEvent.IgniteCause.LAVA) && (
-                        !plot.getFlag(Flags.BLOCK_IGNITION).or(false) || plotIgnited == null
+                        !plot.getFlag(Flags.BLOCK_IGNITION).orElse(false) || plotIgnited == null
                             || !plotIgnited.equals(plot))) {
                     event.setCancelled(true);
                 }
