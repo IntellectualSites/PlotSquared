@@ -43,9 +43,6 @@ ext {
 version = String.format("%s.%s", rootVersion, buildNumber)
 
 description = rootProject.name
-if (project.hasProperty("lzNoVersion")) { // gradle build -PlzNoVersion
-    version = "unknown"
-}
 
 subprojects {
     apply plugin: 'java'

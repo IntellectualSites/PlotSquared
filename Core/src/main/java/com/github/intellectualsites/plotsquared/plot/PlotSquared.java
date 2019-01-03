@@ -223,7 +223,7 @@ import java.util.zip.ZipInputStream;
                 });
             }
 
-            // Check for updates
+/*            // Check for updates
             if (Settings.Enabled_Components.UPDATER) {
                 updater = new Updater();
                 TaskManager.IMP.taskAsync(new Runnable() {
@@ -236,7 +236,7 @@ import java.util.zip.ZipInputStream;
                         updater.update(getPlatform(), getVersion());
                     }
                 }, 36000);
-            }
+            }*/
 
             // World generators:
             final ConfigurationSection section = this.worlds.getConfigurationSection("worlds");
@@ -1699,10 +1699,14 @@ import java.util.zip.ZipInputStream;
         Settings.load(configFile);
         try {
             InputStream stream = getClass().getResourceAsStream("/plugin.properties");
-            java.util.Scanner scanner = new java.util.Scanner(stream).useDelimiter("\\A");
-            String versionString = scanner.next().trim();
-            scanner.close();
-            this.version = PlotVersion.tryParse(versionString);
+            BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+            //java.util.Scanner scanner = new java.util.Scanner(stream).useDelimiter("\\A");
+            String versionString = br.readLine();
+            String commitString = br.readLine();
+            String dateString = br.readLine();
+            //scanner.close();
+            br.close();
+            this.version = PlotVersion.tryParse(versionString, commitString, dateString);
             Settings.DATE = new Date(100 + version.year, version.month, version.day).toGMTString();
             Settings.BUILD = "https://ci.athion.net/job/PlotSquared/" + version.build;
             Settings.COMMIT = "https://github.com/IntellectualSites/PlotSquared/commit/" + Integer

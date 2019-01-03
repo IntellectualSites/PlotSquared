@@ -32,7 +32,7 @@ public class Updater {
         return newVersion != null;
     }
 
-    public void update(String platform, PlotVersion currentVersion) {
+    /*public void update(String platform, PlotVersion currentVersion) {
         if (currentVersion == null || platform == null) {
             return;
         }
@@ -78,5 +78,5 @@ public class Updater {
             }
         } catch (Throwable ignore) {
         }
-    }
+    }*/
 }

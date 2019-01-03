@@ -1,3 +1,5 @@
+import org.ajoberstar.grgit.Grgit
+
 dependencies {
     testCompile 'junit:junit:4.12'
     compile 'org.yaml:snakeyaml:1.23'
@@ -7,13 +9,14 @@ dependencies {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-
 processResources {
     from('src/main/resources') {
         include 'plugin.properties'
         expand(
                 version: "${project.parent.version}",
                 name: project.parent.name,
+                commit: "${git.head().abbreviatedId}",
+                date: "${git.head().getDate().format("yy.MM.dd")}",
         )
     }
 }
