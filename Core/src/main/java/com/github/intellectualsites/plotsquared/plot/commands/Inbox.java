@@ -10,10 +10,10 @@ import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 import com.github.intellectualsites.plotsquared.plot.util.CommentManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
-import com.google.common.base.Optional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @CommandDeclaration(command = "inbox", description = "Review the comments for a plot",
     usage = "/plot inbox [inbox] [delete <index>|clear|page]", permission = "plots.inbox",
