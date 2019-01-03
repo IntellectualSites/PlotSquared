@@ -2025,6 +2025,11 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
             MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
             event.setCancelled(true);
+        }  else if (Settings.Done.RESTRICT_BUILDING && plot.getFlags().containsKey(Flags.DONE)) {
+            if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -2098,6 +2103,11 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
             MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
             event.setCancelled(true);
+        } else if (Settings.Done.RESTRICT_BUILDING && plot.getFlags().containsKey(Flags.DONE)) {
+            if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_BUILD_OTHER)) {
+                MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -2244,6 +2254,9 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
         } else if (!plot.isAdded(pp.getUUID())) {
             Entity entity = event.getRightClicked();
+            if (entity instanceof Creature && plot.getFlag(Flags.CREATURE_INTERACT, false)) {
+                return;
+            }
             if (entity instanceof Monster && plot.getFlag(Flags.HOSTILE_INTERACT, false)) {
                 return;
             }

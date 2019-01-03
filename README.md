@@ -14,12 +14,19 @@ is to provide a lag-free and smooth experience.
 
 ## Links
 
-* [Download](https://github.com/IntellectualSites/PlotSquared/releases/tag/dev)
-* [Jenkins](https://ci.athion.net/job/PlotSquared/)
 * [Spigot Page](https://www.spigotmc.org/resources/plotsquared.1177/)
-* [WebChat/IRC]: #IntellectualCrafters on irc.esper.net
 * [Discord](https://discord.gg/ngZCzbU)
 * [Wiki](https://github.com/intellectualcrafters/plotsquared/wiki)
+
+## Downloads
+### 1.13+ (Pre-Release)
+* [Download](https://github.com/IntellectualSites/PlotSquared/releases/tag/4.0-pre-breaking)
+* [Jenkins](https://ci.athion.net/job/PlotSquared-Breaking/)
+
+### <1.12.2
+* [Download](https://github.com/IntellectualSites/PlotSquared/releases/tag/dev)
+* [Jenkins](https://ci.athion.net/job/PlotSquared/)
+
 
 ### Developer Resources
 * [Java Docs](http://empcraft.com/plotsquared/doc/)
@@ -37,7 +44,9 @@ Feel free to contribute, if you feel like you can improve the plugin in any way.
 Suggestions are welcome! We have a separate issue tracker for suggestions, that can be found in [this](https://github.com/IntellectualSites/PlotSquaredSuggestions) repository.
 
 # Official Addons
-* [Plot2Dynmap](http://www.spigotmc.org/resources/plot2dynmap.1292/)
+## Updated
+* [Plot2Dynmap](https://github.com/IntellectualSites/plot2dynmap/releases)
+## Legacy 
 * [AdvPlots](http://www.spigotmc.org/resources/advplots-%CE%B2.1500/)
 * [PlotRankup](http://www.spigotmc.org/resources/plotrankup.1571/)
 * [PlotZSux](https://www.spigotmc.org/resources/plotzsux.9563/)
@@ -46,5 +55,3 @@ Suggestions are welcome! We have a separate issue tracker for suggestions, that 
 * [PlotSquaredMG](https://www.spigotmc.org/resources/plotsquaredmg.8025/)
 * [BasicPlots](https://www.spigotmc.org/resources/basicplots.6901/)
 * [HoloPlots](https://www.spigotmc.org/resources/holoplots.4880/)
-
-[WebChat/IRC]: https://webchat.esper.net/?nick=&channels=IntellectualCrafters

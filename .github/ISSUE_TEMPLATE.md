@@ -16,7 +16,7 @@
 - [] I included a `/plot debugpaste` link
 - [] I made sure there are no duplicates of this report [(Use Search)](https://github.com/IntellectualSites/PlotSquared/issues?utf8=%E2%9C%93&q=is%3Aissue)
 - [] I made sure I am using an up-to-date version of PlotSquared
-- [] I Made sure the bug/error is not caused by any other plugin
+- [] I made sure the bug/error is not caused by any other plugin
 
 
 

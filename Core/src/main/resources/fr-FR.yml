@@ -1,0 +1,393 @@
+#Translated by Bobbber#5545
+#12.12.2018
+confirm:
+  expired_confirm: $2La confirmation a expiré, veuillez relancer la commande.!
+  failed_confirm: '$2Vous n''avez aucune action en attente à confirmer!'
+  requires_confirm: '$2Êtes-vous sûr de vouloir exécuter: $1%s$2?&-$2Ça ne peut pas être inversé! Si vous êtes certain: $1/plot confirm'
+move:
+  move_success: $4Parcelle déplacée avec succès.
+  copy_success: $4Parcelle copiée avec succès.
+  requires_unowned: '$2L''emplacement spécifié est déjà occupé.'
+set:
+  set_attribute: $4Réglé avec succès %s0 mis à %s1
+web:
+  generating_link: $1Parcelle en traitement...
+  generating_link_failed: $2Impossible de générer le lien de téléchargement!
+  save_failed: $2Échec de la sauvegarde
+  load_null: $2Veuillez utiliser $4/plot load $2pour obtenir une liste des schématics
+  load_failed: $2Impossible de charger le schématic
+  load_list: '$2Pour charger un schématic, utilisez $1/plot load #'
+  save_success: $1Enregistré avec succès!
+compass:
+  compass_target: $4Parcelle ciblée avec la boussole, réussi.
+cluster:
+  cluster_available_args: '$1Les sous-commandes suivantes sont disponibles: $4list$2, $4create$2,
+    $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4members$2, $4info$2,
+    $4tp$2, $4sethome'
+  cluster_list_heading: $2Il y a $1%s$2 clusters dans ce monde
+  cluster_list_element: $2 - $1%s&-
+  cluster_intersection: '$2La zone proposée chevauche avec: %s0'
+  cluster_outside: '$2La zone proposée est en dehors de la parcelle: %s0'
+  cluster_added: $4Cluster créé avec succès.
+  cluster_deleted: $4Cluster supprimé avec succès.
+  cluster_resized: $4Cluster redimensionné avec succès.
+  cluster_added_user: $4Utilisateur ajouté avec succès au cluster.
+  cannot_kick_player: $2Vous ne pouvez pas kick ce joueur
+  cluster_invited: '$1Vous avez été invité au cluster suivant: $2%s'
+  cluster_removed: '$1Vous avez été retiré du cluster: $2%s'
+  cluster_kicked_user: '$4Vous avez expulsé avec succès l''utilisateur'
+  invalid_cluster: '$1Nom de cluster non valide: $2%s'
+  cluster_not_added: '$2Ce joueur n''a pas été ajouté au parcelle de cluster'
+  cluster_cannot_leave: $1Vous devez supprimer ou transférer la propriété avant de partir
+  cluster_added_helper: '$4Ajout réussi d''un assistant au cluster'
+  cluster_removed_helper: '$4Suppression réussie d''un assistant du cluster'
+  cluster_regenerated: $4La régénération de cluster a démarré avec succès
+  cluster_teleporting: $4Téléportation...
+  cluster_info: '$1Cluster actuel: $2%id%&-$1Nom: $2%name%&-$1Propriétaire: $2%owner%&-$1Taille:
+    $2%size%&-$1Droits: $2%rights%'
+border:
+  border: $2Vous êtes en dehors de la bordure de la map actuelle
+unclaim:
+  unclaim_success: $4Vous avez réussi à canceller votre claim de plot.
+  unclaim_failed: $2Impossible de canceller votre claim de plot
+worldedit masks:
+  worldedit_delayed: $2Veuillez patienter pendant que nous traitons votre action WorldEdit...
+  worldedit_run: '$2Toutes mes excuses pour le délais. Nous exécutons: %s'
+  require_selection_in_mask: '$2%s de votre sélection n''est pas dans votre masque de parcelle. Vous pouvez seulement éditer dans votre parcelle.'
+  worldedit_volume: $2Vous ne pouvez pas sélectionner un volume de %current%. Le volume maximum que vous pouvez modifier est %max%.
+  worldedit_iterations: '$2Vous ne pouvez pas itérer %current% fois. Le nombre maximum d''itérations autorisé est %max%.'
+  worldedit_unsafe: '$2L''accès à cette commande a été bloqué'
+  worldedit_bypass: $2&oPour contourner vos restrictions, utilisez $4/plot wea
+  worldedit_bypassed: $2Restriction actuellement contourné de WorldEdit.
+  worldedit_unmasked: $1Votre WorldEdit est maintenant illimité.
+  worldedit_restricted: $1Votre WorldEdit est maintenant limité.
+gamemode:
+  gamemode_was_bypassed: $1Vous avez contourné le GameMode ($2{gamemode}$1) $1fixé pour $2{plot}
+height limit:
+  height_limit: $1Ce plot a une limite de hauteur de $2{limit}
+records:
+  record_play: $2%Joueur $2started playing record $1%name
+  notify_enter: $2%Joueur $2entré dans votre plot ($1%plot$2)
+  notify_leave: $2%Joueur $2quitté votre plot ($1%plot$2)
+swap:
+  swap_overlap: $2Les zones proposées ne peuvent pas se chevaucher
+  swap_dimensions: $2Les zones proposées doivent avoir des dimensions comparables
+  swap_syntax: $2/plot swap <id>
+  swap_success: $4Parcelles échangées avec succès
+  started_swap: '$2La tâche d''échange de parcelle est commencé. Vous serez averti quand elle sera terminée'
+comment:
+  inbox_notification: '%s messages non lus. Utilisez /plot inbox'
+  not_valid_inbox_index: '$2Aucun commentaire à l''index %s'
+  inbox_item: $2 - $4%s
+  comment_syntax: $2Utilisez /plot comment [X;Z] <%s> <comment>
+  invalid_inbox: '$2Ce n''est pas une boîte de réception valide.&-$1Valeurs acceptées: %s'
+  no_perm_inbox: '$2Vous n''avez pas la permission pour cette boîte de réception'
+  no_perm_inbox_modify: '$2Vous n''êtes pas autorisé à modifier cette boîte de réception'
+  no_plot_inbox: $2Vous devez être présent ou fournir un argument de plot
+  comment_removed: $4Commentaire supprimé avec succès/s:n$2 - '$3%s$2'
+  comment_added: $4Un commentaire a été laissé
+  comment_header: $2&m---------&r $1Commentaires $2&m---------&r
+  inbox_empty: $2Sans commentaires
+console:
+  not_console: $2Pour des raisons de sécurité, cette commande ne peut être exécutée que par la console.
+  is_console: $2Cette commande ne peut être exécutée que par un joueur.
+inventory:
+  inventory_usage: '&cUsage: &6{usage}'
+  inventory_desc: '&cDescription: &6{desc}'
+  inventory_category: '&cCatégorie: &6{category}'
+clipboard:
+  clipboard_set: $2Le plot actuel est maintenant copié dans votre presse-papiers, utilisez $1/plot paste$2 pour le coller
+  pasted: $4La sélection de plot a été collée avec succès. Il a été effacé de votre presse-papiers.
+  paste_failed: '$2Impossible de coller la sélection. Raison: $2%s'
+  no_clipboard: '$2Vous n''avez pas de choix dans votre presse-papiers'
+  clipboard_info: '$2Sélection actuelle - Plot ID: $1%id$2, Largeur: $1%width$2, nombre total de blocs: $1%total$2'
+toggle:
+  toggle_enabled: '$2Paramètre activé: %s'
+  toggle_disabled: '$2Paramètre désactivé: %s'
+blocked command:
+  command_blocked: '$2Cette commande n''est pas autorisée dans ce plot'
+done:
+  done_already_done: $2Ce plot est déjà marquée comme étant terminée
+  done_not_done: '$2Ce plot n''est pas marquée comme étant terminée.'
+  done_insufficient_complexity: '$2Ce complot est trop simple. S''il vous plaît ajouter plus de détails avant d''utiliser cette commande.'
+  done_success: $1Marqué avec succès ce plot comme étant terminée.
+  done_removed: $1Vous pouvez maintenant continuer à construire dans ce plot.
+ratings:
+  ratings_purged: $2Notes purgées pour ce plot
+  rating_not_valid: $2Vous devez spécifier un nombre entre 1 et 10
+  rating_already_exists: $2Vous avez déjà évalué ce plot $2%s
+  rating_applied: $4Vous avez évalué ce plot avec succès $2%s
+  rating_not_your_own: $2Vous ne pouvez pas évaluer votre propre plot
+  rating_not_done: $2Vous ne pouvez évaluer que les parcelles finies.
+  rating_not_owned: '$2Vous ne pouvez pas évaluer un terrain qui n''est revendiqué par personne'
+tutorial:
+  rate_this: $2Noter ce plot!
+  comment_this: '$2Laisser des commentaires sur ce plot: %s'
+economy:
+  econ_disabled: '$2L''économie n''est pas activée'
+  cannot_afford_plot: '$2Vous ne pouvez pas vous permettre d''acheter ce plot. Il coute $1%s'
+  not_for_sale: '$2Ce plot n''est pas à vendre'
+  cannot_buy_own: $2Vous ne pouvez pas acheter votre propre plot
+  plot_sold: $4Votre plot; $1%s0$4, a été vendu à $1%s1$4 pour $1$%s2
+  cannot_afford_merge: $2Vous ne pouvez pas vous permettre de fusionner ces plots. Il coute $1%s
+  added_balance: $1%s $2a été ajouté à votre solde
+  removed_balance: $1%s $2a été pris sur votre solde
+  removed_granted_plot: '$2Vous avez utilisé %s plot grant(s), il vous $2reste $1%s'
+setup:
+  setup_init: '$1Usage: $2/plot setup <valeur>'
+  setup_step: '$3[$1Step %s0$3] $1%s1 $2- $1Attendant: $2%s2 $1Défaut: $2%s3'
+  setup_invalid_arg: '$2%s0 n''est pas un argument valable pour l''étape %s1. Pour annuler la configuration, utilisez: $1/plot setup cancel'
+  setup_valid_arg: $2valeur $1%s0 $2mis à %s1
+  setup_finished: '$4Vous auriez dû être téléporté dans le monde créé. Sinon, vous devrez configurer le générateur manuellement à l''aide du fichier bukkit.yml ou du plug-in de gestion de monde votre choix.'
+  setup_world_taken: $2%s est déjà un monde
+  setup_missing_world: $2Vous devez spécifier un nom de monde ($1/plot setup &l<monde>$1
+    <generateur>$2)&-$1Commandes supplémentaires:&-$2 - $1/plot setup <valeur>&-$2 - $1/plot
+    setup back&-$2 - $1/plot setup cancel
+  setup_missing_generator: $2Vous devez spécifier un générateur ($1/plot setup <monde> $l<generateur>&r$2)&-$1Commandes supplémentaires:&-$2 - $1/plot setup <valeur>&-$2 - $1/plot
+    setup back&-$2 - $1/plot setup cancel
+  setup_invalid_generator: '$2Générateur invalide. Options possibles: %s'
+schematics:
+  schematic_too_large: $2Ce plot est trop grand pour cette action!
+  schematic_missing_arg: '$2Vous devez spécifier un argument. Valeurs possibles: $1test <nom>$2 , $1save$2 , $1paste $2, $1exportall'
+  schematic_invalid: '$2Ce n''est pas un schématic valide. Raison: $2%s'
+  schematic_valid: '$2C''est un schématic valide'
+  schematic_paste_failed: $2Impossible de coller le schématic
+  schematic_paste_success: $4Le schématic a été collé avec succès
+titles:
+  title_entered_plot: '$1Plot: %world%;%x%;%z%'
+  title_entered_plot_sub: $4Propriété de %s
+  prefix_greeting: '$1%id%$2> '
+  prefix_farewell: '$1%id%$2> '
+core:
+  task_start: Début de tâche...
+  prefix: $3[$1P2$3] $2
+  enabled: $1%s0 est maintenant activé
+reload:
+  reloaded_configs: $1Les traductions et les paramètres du monde ont été rechargés
+  reload_failed: $2Impossible de recharger les configurations de fichier
+desc:
+  desc_set: $2Description des configurations du plot
+  desc_unset: $2Description du plot non défini
+  missing_desc: $2Vous devez spécifier une description
+alias:
+  alias_set_to: $2Alias du plot défini sur $1%alias%
+  alias_removed: $2Alias du plot a été retiré
+  missing_alias: $2Vous devez spécifier un alias
+  alias_too_long: '$2L''alias doit être < 50 caractères de long'
+  alias_is_taken: $2Cet alias est déjà pris
+position:
+  missing_position: '$2Vous devez spécifier une position. Valeurs possibles: $1none'
+  position_set: $1Home définie sur votre position actuelle
+  position_unset: '$1Home, position réinitialisée à l''emplacement par défaut'
+  home_argument: $2Utilisez /plot set home [none]
+  invalid_position: '$2Ce n''est pas une valeur de position valide'
+cap:
+  entity_cap: '$2Vous n''êtes pas autorisé à générer plus de créatures'
+time:
+  time_format: $1%hours%, %min%, %sec%
+permission:
+  no_schematic_permission: '$2Vous ne disposez pas de l''autorisation nécessaire pour utiliser le schématic $1%s'
+  no_permission: '$2Il vous manque la permission: $1%s'
+  no_permission_event: '$2Il vous manque la permission: $1%s'
+  no_plot_perms: $2Vous devez être le propriétaire du plot pour effectuer cette action.
+  cant_claim_more_plots: $2Vous ne pouvez pas réclamer plus de plot.
+  cant_claim_more_clusters: $2Vous ne pouvez pas réclamer plus de clusters.
+  cant_transfer_more_plots: $2Vous ne pouvez pas envoyer plus de plot à cet utilisateur
+  cant_claim_more_plots_num: $2Vous ne pouvez pas réclamer plus que $1%s $2plots à la fois
+  you_be_denied: '$2Vous n''êtes pas autorisé à entrer dans ce plot'
+  merge_request_confirm: Demande de fusionnement de la part de %s
+merge:
+  merge_not_valid: '$2Cette demande de fusion n''est plus valide.'
+  merge_accepted: $2La demande de fusion a été acceptée.
+  success_merge: $2Les plots ont été fusionnés!
+  merge_requested: $2Envoyé avec succès une demande de fusion
+  no_perm_merge: '$2Vous n''êtes pas propriétaire du plot: $1%plot%'
+  no_available_automerge: '$2Vous ne possédez aucun plot adjacent dans la direction spécifiée ou vous n''êtes pas autorisé à fusionner à la taille requise.'
+  unlink_required: $2Une dissociation est nécessaire pour faire ceci.
+  unlink_impossible: $2Vous pouvez seulement dissocier un méga-plot
+  unlink_success: $2Plot dissocié avec succès.
+commandconfig:
+  not_valid_subcommand: '$2Ce n''est pas une sous-commande valide'
+  did_you_mean: '$2Vouliez-vous dire: $1%s'
+  name_little: $2%s0 Le nom est trop court, $1%s1$2<$1%s3
+  no_commands: '$2Je suis désolé, mais vous n''êtes autorisé à utiliser aucune sous-commande.'
+  subcommand_set_options_header: '$2Valeurs possibles: '
+  command_syntax: '$1Usage: $2%s'
+  flag_tutorial_usage: '$1Avoir un administrateur pour mettre le flag: $2%s'
+errors:
+  invalid_player_wait: '$2Joueur non trouvé: $1%s$2, Réessayez bientôt.'
+  invalid_player: '$2Joueur non trouvé: $1%s$2.'
+  invalid_player_offline: '$2Le joueur doit être en ligne: $1%s.'
+  invalid_command_flag: '$2Commande de flag invalide: %s0'
+  error: '$2Une erreur est survenue: %s'
+  command_went_wrong: '$2Quelque chose s''est mal passé lors de l''exécution de cette commande...'
+  no_free_plots: '$2Il n''y a plus de plots gratuits disponibles'
+  not_in_plot: '$2Vous n''êtes pas dans un plot'
+  not_loaded: '$2Le plot n''a pas pu être chargée'
+  not_in_cluster: $2Vous devez être dans un cluster de plot pour effectuer cette action.
+  not_in_plot_world: '$2Vous n''êtes pas dans un plot'
+  plotworld_incompatible: $2Les deux mondes doivent être compatibles
+  not_valid_world: '$2Ce n''est pas un monde valide (sensible aux majuscules et minuscules)'
+  not_valid_plot_world: '$2Ce n''est pas un plot valide (sensible aux majuscules et minuscules)'
+  no_plots: '$2Vous n''avez pas de plots'
+  wait_for_timer: $2Un minuteur est lié au plot actuel ou à vous. Merci d'attendre la fin
+paste:
+  debug_report_created: '$1Téléchargé un débogage complet vers: $1%url%'
+purge:
+  purge_success: $4Purgé avec succès %s plots
+trim:
+  trim_in_progress: Une tâche de trim du monde est déjà en cours!
+  not_valid_hybrid_plot_world: Le gestionnaire de plot hybride est requis pour effectuer cette action.
+block list:
+  block_list_separater: '$1,$2 '
+biome:
+  need_biome: $2Vous devez spécifier un biome valide.
+  biome_set_to: $2Biome du plot mis à $2
+teleport:
+  teleported_to_plot: $1Vous avez été téléporté
+  teleported_to_road: $2Vous avez été téléporté sur la route
+  teleport_in_seconds: $1Téléportation dans %s secondes. Ne bougez pas...
+  teleport_failed: $2Téléportation annulée pour cause de mouvement ou de dommage
+set block:
+  set_block_action_finished: $1La dernière action setblock est maintenant terminée.
+unsafe:
+  debugallowunsafe_on: $2Actions dangereuses autorisées
+  debugallowunsafe_off: $2Actions dangereuses désactivées
+debug:
+  debug_header: $1Informations de débogage&-
+  debug_section: $2>> $1&l%val%
+  debug_line: $2>> $1%var%$2:$1 %val%&-
+invalid:
+  not_valid_data: '$2Ce n''est pas un identifiant de données valide.'
+  not_valid_block: '$2Ce n''est pas un bloc valide: %s'
+  not_allowed_block: '$2Ce bloc n''est pas autorisé: %s'
+  not_valid_number: '$2Ce n''est pas un nombre valide: %s'
+  not_valid_plot_id: $2Ce n''est pas un identifiant de plot valide.
+  plot_id_form: '$2L''identifiant de plot doit être sous la forme: $1X;Y $2e.g. $1-5;7'
+  not_your_plot: '$2Ce n''est pas votre plot.'
+  no_such_plot: '$2Il n''y a pas un tel plot'
+  player_has_not_been_on: '$2Ce joueur n''a pas été dans ce monde de plot'
+  found_no_plots: '$2Nous n''avons trouvé aucun plot avec votre requête de recherche'
+  found_no_plots_for_player: '$2Aucun plot trouvé pour le joueur: %s'
+camera:
+  camera_started: $2Vous êtes entré en mode caméra pour le plot $1%s
+  camera_stopped: '$2Vous n''êtes plus en mode caméra'
+need:
+  need_plot_number: $2Vous devez spécifier un numéro de plot ou un alias
+  need_block: $2Vous devez spécifier un bloc
+  need_plot_id: $2Vous devez spécifier un identifiant de plot.
+  need_plot_world: $2Vous devez spécifier une zone ou plot.
+  need_user: '$2Vous devez spécifier un nom d''utilisateur'
+near:
+  plot_near: '$1Joueurs: %s0'
+info:
+  none: Aucun
+  now: À présent
+  never: Jamais
+  unknown: Inconnu
+  everyone: Toutes les personnes
+  plot_unowned: $2Le plot actuel doit avoir un propriétaire pour effectuer cette action
+  plot_info_unclaimed: '$2Plot $1%s$2 n''est pas encore réclamé'
+  plot_info_header: $3&m---------&r $1INFO $3&m---------
+  plot_info: '$1ID: $2%id%$1&-$1Alias: $2%alias%$1&-$1Propriétaire: $2%owner%$1&-$1Biome:
+    $2%biome%$1&-$1Can Construit: $2%build%$1&-$1Évaluation: $2%rating%&-$1Vu: $2%seen%&-$1De confiance:
+    $2%trusted%$1&-$1Membres: $2%members%$1&-$1Refusé: $2%denied%$1&-$1Flags: $2%flags%'
+  plot_info_footer: $3&m---------&r $1INFO $3&m---------
+  plot_info_trusted: $1De confiance:$2 %trusted%
+  plot_info_members: $1Membres:$2 %members%
+  plot_info_denied: $1Refusé:$2 %denied%
+  plot_info_flags: $1Flags:$2 %flags%
+  plot_info_biome: $1Biome:$2 %biome%
+  plot_info_rating: $1Évaluation:$2 %rating%
+  plot_info_owner: $1Propriétaire:$2 %owner%
+  plot_info_id: $1ID:$2 %id%
+  plot_info_alias: $1Alias:$2 %alias%
+  plot_info_size: $1Taille:$2 %size%
+  plot_info_seen: $1Vu:$2 %seen%
+  plot_user_list: ' $1%user%$2,'
+  plot_flag_list: $1%s0:%s1$2
+  info_syntax_console: $2/plot info X;Y
+working:
+  generating_component: $1Début de génération des composants à partir de vos paramètres
+  clearing_plot: $2Effacement des items du plot.
+  clearing_done: $4Effacer terminé! Cela a pris %sms.
+  deleting_done: $4Supprimer terminé! Cela a pris %sms.
+  plot_not_claimed: $2Plot non réclamé
+  plot_is_claimed: $2Ce plot a déja été réclamé
+  claimed: $4Vous avez réclamé avec succès ce plot
+list:
+  comment_list_header_paged: $2(Page $1%cur$2/$1%max$2) $1Liste de %amount% commentaires
+  clickable: ' (interactive)'
+  area_list_header_paged: $2(Page $1%cur$2/$1%max$2) $1Liste de  %amount% zones
+  plot_list_header_paged: $2(Page $1%cur$2/$1%max$2) $1Liste de  %amount% plots
+  plot_list_header: $1Liste de  %word% plots
+  plot_list_item: $2>> $1%id$2:$1%world $2- $1%owner
+  plot_list_item_ordered: $2[$1%in$2] >> $1%id$2:$1%world $2- $1%owner
+  plot_list_footer: $2>> $1%word% un total de $2%num% %plot% $1réclamé.
+left:
+  left_plot: $2Tu as quitté le plot
+chat:
+  plot_chat_spy_format: '$2[$1Plot Spy$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
+  plot_chat_format: '$2[$1Plot Chat$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
+  plot_chat_forced: $2Ce monde oblige tout le monde à utiliser le chat de plot.
+  plot_chat_on: $4Chat du plot activé.
+  plot_chat_off: $4Chat du plot désactivé.
+deny:
+  denied_removed: $4Vous avez réussi à retirer ce joueur de la liste des joueurs interdits
+  denied_added: $4Vous avez réussi à ajouter ce joueur à la liste des joueurs interdits
+  denied_need_argument: $2Arguments manquants. $1/plot denied add <nom du joueur> $2or $1/plot
+    denied remove <nom du joueur>
+  was_not_denied: '$2Ce joueur n''est pas interdit sur ce plot'
+  you_got_denied: $4Le plot sur lequel vous étiez précédemmment vous a été refusé et vous avez été téléporté au spawn
+kick:
+  you_got_kicked: $4Vous avez été expulsé!
+rain:
+  need_on_off: '$2Vous devez spécifier une valeur. Valeurs possibles: $1on$2, $1off'
+  setting_updated: $4Vous avez mis à jour les paramètres avec succès
+flag:
+  flag_key: '$2Key: %s'
+  flag_type: '$2Type: %s'
+  flag_desc: '$2Desc: %s'
+  not_valid_flag: '$2Ceci n''est pas un flag valide'
+  not_valid_flag_suggested: '$2Ce n''est pas un flag valide. Vouliez-vous dire: $1%s'
+  not_valid_value: $2Les valeurs du flag doivent être alphanumériques
+  flag_not_in_plot: '$2Ce plot n''a pas ce flag'
+  flag_not_removed: $2Ce flag ne peut pas etre retiré
+  flag_not_added: $2Ce flag ne peut pas etre ajouté
+  flag_removed: $4Flag retiré avec succès
+  flag_added: $4Flag ajouté avec succès
+trusted:
+  trusted_added: $4Vous avez réussi à ajouter ce joueur à la liste des joueurs fiables pour ce plot
+  trusted_removed: $4Vous avez réussi à retirer ce joueur de la liste des joueurs fiables pour ce plot
+  was_not_added: $2Ce joueur fait partie de la liste des joueurs non-fiables
+  plot_removed_user: 'Le $1Plot %s dont vous avez été ajouté a été supprimé en raison de l''inactivité du propriétaire'
+member:
+  removed_players: $2Suppression du joueur %s de ce plot.
+  already_owner: '$2Cet utilisateur est déjà propriétaire de ce plot: %s0'
+  already_added: '$2Cet utilisateur est déjà ajouté à cette catégorie: %s0'
+  member_added: $4Cet utilisateur peut maintenant construire pendant que le propriétaire du plot est en ligne
+  member_removed: $1Vous avez supprimé avec succès un utilisateur du plot
+  member_was_not_added: '$2Ce joueur n''a pas été ajouté en tant qu''utilisateur sur ce plot'
+  plot_max_members: '$2Vous n''êtes pas autorisé à ajouter d''autres joueurs à ce plot'
+owner:
+  set_owner: $4You successfully set the plot owner
+  set_owner_cancelled: $2The setowner action was cancelled
+  now_owner: $4You are now owner of plot %s
+signs:
+  owner_sign_line_1: '$1ID: $1%id%'
+  owner_sign_line_2: '$1Owner:'
+  owner_sign_line_3: $2%plr%
+  owner_sign_line_4: $3Claimed
+help:
+  help_header: $3&m---------&r $1Plot² Help $3&m---------
+  help_page_header: '$1Category: $2%category%$2,$1 Page: $2%current%$3/$2%max%$2'
+  help_footer: $3&m---------&r $1Plot² Help $3&m---------
+  help_info_item: $1/plot help %category% $3- $2%category_desc%
+  help_item: $1%usage% [%alias%]&- $3- $2%desc%&-
+  direction: '$1Current direction: %dir%'
+grants:
+  granted_plots: '$1Résultat: $2%s $1Ajout retiré'
+  granted_plot: $1Vous avez été ajouté %s0 au plot $2%s1
+  granted_plot_failed: '$1L''ajout a échoué: $2%s'
+'-':
+  custom_string: '-'
