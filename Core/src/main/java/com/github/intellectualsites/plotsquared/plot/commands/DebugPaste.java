@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @CommandDeclaration(command = "debugpaste", aliases = "dp", usage = "/plot debugpaste",
-    description = "Upload settings.yml, worlds.yml, commands.yml and latest.log to www.hastebin.com",
+    description = "Upload settings.yml, worlds.yml, PlotSquared.use_THIS.yml and your latest.log to https://incendo.org",
     permission = "plots.debugpaste", category = CommandCategory.DEBUG) public class DebugPaste
     extends SubCommand {
 
@@ -96,7 +96,7 @@ import java.util.List;
                             C.DEBUG_REPORT_CREATED.s().replace("%url%", link));
                     } else {
                         final String responseMessage = jsonObject.get("response").getAsString();
-                        MainUtil.sendMessage(player, String.format("&cFailed  to create the debug paste: %s", responseMessage));
+                        MainUtil.sendMessage(player, String.format("&cFailed to create the debug paste: %s", responseMessage));
                     }
                 } catch (final Throwable throwable) {
                     throwable.printStackTrace();
