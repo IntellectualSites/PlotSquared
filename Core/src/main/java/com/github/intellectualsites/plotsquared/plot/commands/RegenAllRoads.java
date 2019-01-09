@@ -5,14 +5,10 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotManager;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
-import com.github.intellectualsites.plotsquared.plot.object.ChunkLoc;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-
-import java.util.Set;
 
 @CommandDeclaration(command = "regenallroads",
     description = "Regenerate all roads in the map using the set road schematic",
@@ -46,13 +42,13 @@ import java.util.Set;
             MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
             return false;
         }
-        Set<ChunkLoc> chunks = ChunkManager.manager.getChunkChunks(name);
+        //Set<ChunkLoc> chunks = ChunkManager.manager.getChunkChunks(name);
         MainUtil
             .sendMessage(player, "&cIf no schematic is set, the following will not do anything");
         MainUtil.sendMessage(player,
             "&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
-        MainUtil.sendMessage(player, "&6Potential chunks to update: &7" + (chunks.size() * 1024));
-        MainUtil.sendMessage(player, "&6Estimated time: &7" + chunks.size() + " seconds");
+        //MainUtil.sendMessage(player, "&6Potential chunks to update: &7" + (chunks.size() * 1024));
+        //MainUtil.sendMessage(player, "&6Estimated time: &7" + chunks.size() + " seconds");
         boolean result = HybridUtils.manager.scheduleRoadUpdate(area, height);
         if (!result) {
             MainUtil.sendMessage(player,

@@ -11,6 +11,7 @@ import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockTypes;
 
 import java.io.File;
 import java.util.*;
@@ -23,6 +24,7 @@ public abstract class HybridUtils {
     public static Set<ChunkLoc> chunks = new HashSet<>();
     public static PlotArea area;
     public static boolean UPDATE = false;
+    private static BaseBlock air = BlockTypes.AIR.getDefaultState().toBaseBlock();
 
     public abstract void analyzeRegion(String world, RegionWrapper region,
         RunnableVal<PlotAnalysis> whenDone);
@@ -161,57 +163,55 @@ public abstract class HybridUtils {
                     // CANCEL TASK
                 } else {
                     final Runnable task = this;
-                    TaskManager.runTaskAsync(new Runnable() {
-                        @Override public void run() {
-                            try {
-                                if (chunks.size() < 1024) {
-                                    if (!regions.isEmpty()) {
-                                        Iterator<ChunkLoc> iterator = regions.iterator();
-                                        ChunkLoc loc = iterator.next();
-                                        iterator.remove();
-                                        PlotSquared.debug("&3Updating .mcr: " + loc.x + ", " + loc.z
-                                            + " (aprrox 1024 chunks)");
-                                        PlotSquared.debug(" - Remaining: " + regions.size());
-                                        chunks.addAll(getChunks(loc));
-                                        System.gc();
-                                    }
+                    TaskManager.runTaskAsync(() -> {
+                        try {
+                            if (chunks.size() < 1024) {
+                                if (!regions.isEmpty()) {
+                                    Iterator<ChunkLoc> iterator = regions.iterator();
+                                    ChunkLoc loc = iterator.next();
+                                    iterator.remove();
+                                    PlotSquared.debug("&3Updating .mcr: " + loc.x + ", " + loc.z
+                                        + " (aprrox 1024 chunks)");
+                                    PlotSquared.debug(" - Remaining: " + regions.size());
+                                    chunks.addAll(getChunks(loc));
+                                    System.gc();
                                 }
-                                if (!chunks.isEmpty()) {
-                                    TaskManager.IMP.sync(new RunnableVal<Object>() {
-                                        @Override public void run(Object value) {
-                                            long start = System.currentTimeMillis();
-                                            Iterator<ChunkLoc> iterator = chunks.iterator();
-                                            while (System.currentTimeMillis() - start < 20
-                                                && !chunks.isEmpty()) {
-                                                final ChunkLoc chunk = iterator.next();
-                                                iterator.remove();
-                                                regenerateRoad(area, chunk, extend);
-                                            }
-                                        }
-                                    });
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                Iterator<ChunkLoc> iterator = regions.iterator();
-                                ChunkLoc loc = iterator.next();
-                                iterator.remove();
-                                PlotSquared.debug(
-                                    "&c[ERROR]&7 Could not update '" + area.worldname + "/region/r."
-                                        + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
-                                int sx = loc.x << 5;
-                                int sz = loc.z << 5;
-                                for (int x = sx; x < sx + 32; x++) {
-                                    for (int z = sz; z < sz + 32; z++) {
-                                        ChunkManager.manager
-                                            .unloadChunk(area.worldname, new ChunkLoc(x, z), true,
-                                                true);
-                                    }
-                                }
-                                PlotSquared.debug("&d - Potentially skipping 1024 chunks");
-                                PlotSquared.debug("&d - TODO: recommend chunkster if corrupt");
                             }
-                            GlobalBlockQueue.IMP.addTask(() -> TaskManager.runTaskLater(task, 20));
+                            if (!chunks.isEmpty()) {
+                                TaskManager.IMP.sync(new RunnableVal<Object>() {
+                                    @Override public void run(Object value) {
+                                        long start = System.currentTimeMillis();
+                                        Iterator<ChunkLoc> iterator = chunks.iterator();
+                                        while (System.currentTimeMillis() - start < 20
+                                            && !chunks.isEmpty()) {
+                                            final ChunkLoc chunk = iterator.next();
+                                            iterator.remove();
+                                            regenerateRoad(area, chunk, extend);
+                                        }
+                                    }
+                                });
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Iterator<ChunkLoc> iterator = regions.iterator();
+                            ChunkLoc loc = iterator.next();
+                            iterator.remove();
+                            PlotSquared.debug(
+                                "&c[ERROR]&7 Could not update '" + area.worldname + "/region/r."
+                                    + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
+                            int sx = loc.x << 5;
+                            int sz = loc.z << 5;
+                            for (int x = sx; x < sx + 32; x++) {
+                                for (int z = sz; z < sz + 32; z++) {
+                                    ChunkManager.manager
+                                        .unloadChunk(area.worldname, new ChunkLoc(x, z), true,
+                                            true);
+                                }
+                            }
+                            PlotSquared.debug("&d - Potentially skipping 1024 chunks");
+                            PlotSquared.debug("&d - TODO: recommend chunkster if corrupt");
                         }
+                        GlobalBlockQueue.IMP.addTask(() -> TaskManager.runTaskLater(task, 20));
                     });
                 }
             }
@@ -283,6 +283,7 @@ public abstract class HybridUtils {
     }
 
     public boolean regenerateRoad(final PlotArea area, final ChunkLoc chunk, int extend) {
+        PlotSquared.log(chunk);
         int x = chunk.x << 4;
         int z = chunk.z << 4;
         int ex = x + 15;
@@ -353,8 +354,15 @@ public abstract class HybridUtils {
                                 for (int y = 0; y < blocks.length; y++) {
                                     if (blocks[y] != null) {
                                         BaseBlock block = blocks[y];
-                                        queue.setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y,
-                                            z + Z + plotWorld.ROAD_OFFSET_Z, block);
+                                        if (block != null) {
+                                            queue
+                                                .setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y,
+                                                    z + Z + plotWorld.ROAD_OFFSET_Z, block);
+                                        } else if (y <= extend) {
+                                            queue
+                                                .setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y,
+                                                    z + Z + plotWorld.ROAD_OFFSET_Z, air);
+                                        }
                                     }
                                 }
                             }
