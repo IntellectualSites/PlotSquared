@@ -86,6 +86,11 @@ public interface IPlotMain extends ILogger {
     int[] getServerVersion();
 
     /**
+     * Get the server implementation name and version
+     */
+    String getServerImplementation();
+
+    /**
      * Get the NMS package prefix.
      *
      * @return The NMS package prefix

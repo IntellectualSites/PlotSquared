@@ -151,6 +151,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return this.version;
     }
 
+    @Override public String getServerImplementation() {
+        return Bukkit.getVersion();
+    }
+
     @Override public void onEnable() {
         if (pluginMap != null) {
             pluginMap.put("PlotMe-DefaultGenerator", this);
