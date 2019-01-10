@@ -82,9 +82,23 @@ import java.util.List;
                         "&clatest.log is too big to be pasted, will ignore");
                 }
 
-                incendoPaster.addFile(new IncendoPaster.PasteFile("settings.yml", readFile(PlotSquared.get().configFile)));
-                incendoPaster.addFile(new IncendoPaster.PasteFile("worlds.yml", readFile(PlotSquared.get().worldsFile)));
-                incendoPaster.addFile(new IncendoPaster.PasteFile("PlotSquared.use_THIS.yml", readFile(PlotSquared.get().translationFile)));
+                try {
+                    incendoPaster.addFile(new IncendoPaster.PasteFile("settings.yml", readFile(PlotSquared.get().configFile)));
+                } catch (final IllegalArgumentException ignored) {
+                    MainUtil.sendMessage(player, "&cSkipping settings.yml because it's empty");
+                }
+                try {
+                    incendoPaster.addFile(new IncendoPaster.PasteFile("worlds.yml", readFile(PlotSquared.get().worldsFile)));
+                } catch (final IllegalArgumentException ignored) {
+                    MainUtil.sendMessage(player, "&cSkipping worlds.yml because it's empty");
+                }
+                try {
+                    incendoPaster.addFile(new IncendoPaster.PasteFile("PlotSquared.use_THIS.yml",
+                        readFile(PlotSquared.get().translationFile)));
+                } catch (final IllegalArgumentException ignored) {
+                    MainUtil.sendMessage(player, "&cSkipping PlotSquared.use_THIS.yml because it's empty");
+                }
+
                 try {
                     final String rawResponse = incendoPaster.upload();
                     final JsonObject jsonObject = new JsonParser().parse(rawResponse).getAsJsonObject();
