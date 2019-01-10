@@ -9,12 +9,12 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtilTest;
-import com.google.common.base.Optional;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -39,9 +39,7 @@ public class FlagTest {
             testBlock = PlotBlock.get((short) 1, (byte) 0);
             flag.get().add(testBlock);
         }
-        if (flag.isPresent()) {
-            System.out.println(Flags.USE.valueToString(flag.get()));
-        }
+        flag.ifPresent(collection -> System.out.println(Flags.USE.valueToString(collection)));
         Optional<HashSet<PlotBlock>> flag2 = plot.getFlag(Flags.USE);
         if (flag2.isPresent()) {
             //   assertThat(flag2.get(), (Matcher<? super HashSet<PlotBlock>>) IsCollectionContaining.hasItem(testBlock));

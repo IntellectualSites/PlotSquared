@@ -8,10 +8,10 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
-import com.google.common.base.Optional;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 public class PlotListener {
@@ -122,9 +122,8 @@ public class PlotListener {
                     }
                 }
                 Optional<PlotWeather> weatherFlag = plot.getFlag(Flags.WEATHER);
-                if (weatherFlag.isPresent()) {
-                    player.setWeather(weatherFlag.get());
-                }  Optional<String> musicFlag = plot.getFlag(Flags.MUSIC);
+                weatherFlag.ifPresent(player::setWeather);
+                Optional<String> musicFlag = plot.getFlag(Flags.MUSIC);
                 if (musicFlag.isPresent()) {
                     final String id = musicFlag.get();
                     final PlotBlock block = PlotBlock.get(id);
@@ -211,14 +210,13 @@ public class PlotListener {
                 }
             }
             Optional<String> farewell = plot.getFlag(Flags.FAREWELL);
-            if (farewell.isPresent()) {
-                MainUtil.format(C.PREFIX_FAREWELL.s() + farewell.get(), plot, player, false,
+            farewell.ifPresent(s -> MainUtil.format(C.PREFIX_FAREWELL.s() + s, plot, player, false,
                     new RunnableVal<String>() {
-                        @Override public void run(String value) {
+                        @Override
+                        public void run(String value) {
                             MainUtil.sendMessage(player, value);
                         }
-                    });
-            }
+                    }));
             Optional<Boolean> leave = plot.getFlag(Flags.NOTIFY_LEAVE);
             if (leave.isPresent() && leave.get()) {
                 if (!Permissions.hasPermission(player, "plots.flag.notify-enter.bypass")) {

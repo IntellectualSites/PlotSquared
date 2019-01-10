@@ -3,7 +3,6 @@ package com.github.intellectualsites.plotsquared.plot.object;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
-import com.google.common.base.Optional;
 
 import java.util.*;
 
@@ -146,7 +145,7 @@ public class PlotSettings {
     public Optional<ArrayList<PlotComment>> getComments(String inbox) {
         ArrayList<PlotComment> c = new ArrayList<>();
         if (this.comments == null) {
-            return Optional.absent();
+            return Optional.empty();
         }
         for (PlotComment comment : this.comments) {
             if (comment.inbox.equals(inbox)) {

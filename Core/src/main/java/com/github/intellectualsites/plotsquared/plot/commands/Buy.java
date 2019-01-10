@@ -11,8 +11,8 @@ import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
-import com.google.common.base.Optional;
 
+import java.util.Optional;
 import java.util.Set;
 
 @CommandDeclaration(command = "buy", description = "Buy the plot you are standing on",
