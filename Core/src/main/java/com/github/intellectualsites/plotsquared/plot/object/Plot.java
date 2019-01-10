@@ -791,8 +791,17 @@ public class Plot {
     }
 
     public boolean clear(boolean checkRunning, final boolean isDelete, final Runnable whenDone) {
-        if (checkRunning && this.getRunning() != 0 || !EventUtil.manager.callClear(this)) {
+        if (checkRunning && this.getRunning() != 0) {
             return false;
+        }
+        if (isDelete) {
+            if(!EventUtil.manager.callDelete(this)) {
+                return false;
+            }
+        } else {
+            if(!EventUtil.manager.callClear(this)) {
+                return false;
+            }
         }
         final HashSet<RegionWrapper> regions = this.getRegions();
         final Set<Plot> plots = this.getConnectedPlots();
@@ -2154,6 +2163,9 @@ public class Plot {
      */
     public boolean autoMerge(int dir, int max, UUID uuid, boolean removeRoads) {
         if (this.owner == null) {
+            return false;
+        }
+        if(!EventUtil.manager.callMerge(this, dir, max)) {
             return false;
         }
         HashSet<Plot> visited = new HashSet<>();

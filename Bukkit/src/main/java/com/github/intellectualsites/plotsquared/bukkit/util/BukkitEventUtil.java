@@ -48,8 +48,8 @@ public final class BukkitEventUtil extends EventUtil {
         return callEvent(new PlotClearEvent(plot));
     }
 
-    @Override public void callDelete(Plot plot) {
-        callEvent(new PlotDeleteEvent(plot));
+    @Override public boolean callDelete(Plot plot) {
+        return callEvent(new PlotDeleteEvent(plot));
     }
 
     @Override public boolean callFlagAdd(Flag flag, Plot plot) {
@@ -60,8 +60,12 @@ public final class BukkitEventUtil extends EventUtil {
         return callEvent(new PlotFlagRemoveEvent(flag, plot));
     }
 
-    @Override public boolean callMerge(Plot plot, List<PlotId> plots) {
-        return callEvent(new PlotMergeEvent(BukkitUtil.getWorld(plot.getWorldName()), plot, plots));
+    @Override public boolean callMerge(Plot plot, int dir, int max) {
+        return callEvent(new PlotMergeEvent(BukkitUtil.getWorld(plot.getWorldName()), plot, dir, max));
+    }
+
+    @Override public boolean callAutoMerge(Plot plot, List<PlotId> plots) {
+        return callEvent(new PlotAutoMergeEvent(BukkitUtil.getWorld(plot.getWorldName()), plot, plots));
     }
 
     @Override public boolean callUnlink(PlotArea area, List<PlotId> plots) {
