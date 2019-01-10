@@ -415,6 +415,8 @@ public abstract class HybridUtils {
                                     PlotBlock block = PlotBlock.get(blocks[y]);
                                     if (block != null) {
                                         queue.setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y, z + Z + plotWorld.ROAD_OFFSET_Z, block);
+                                    } else if (y <= extend) {
+                                        queue.setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y, z + Z + plotWorld.ROAD_OFFSET_Z, PlotBlock.EVERYTHING);
                                     }
                                 }
                             }
