@@ -119,7 +119,6 @@ public class Settings extends Config {
 
         // Schematics
         Paths.SCHEMATICS = config.getString("schematics.save_path", Paths.SCHEMATICS);
-        Paths.BO3 = config.getString("bo3.save_path", Paths.BO3);
 
         // Web
         Web.URL = config.getString("web.url", Web.URL);
@@ -230,7 +229,6 @@ public class Settings extends Config {
 
     @Comment("Configure the paths that will be used") public static final class Paths {
         public static String SCHEMATICS = "schematics";
-        public static String BO3 = "bo3";
         public static String SCRIPTS = "scripts";
         public static String TEMPLATES = "templates";
         public static String TRANSLATIONS = "translations";
