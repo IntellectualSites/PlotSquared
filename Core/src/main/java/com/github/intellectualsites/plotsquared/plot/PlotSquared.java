@@ -73,7 +73,6 @@ import java.util.zip.ZipInputStream;
     // Implementation logger
     @Setter @Getter private ILogger logger;
     // Platform / Version / Update URL
-    @Getter private Updater updater;
     private PlotVersion version;
     // Files and configuration
     @Getter private File jarFile = null; // This file

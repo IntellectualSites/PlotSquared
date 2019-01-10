@@ -36,7 +36,6 @@ public class MainCommand extends Command {
             new Confirm();
             new Template();
             new Download();
-            new Changelog();
             new Template();
             new Setup();
             new Area();
