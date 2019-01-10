@@ -55,8 +55,8 @@ public class BukkitEventUtil extends EventUtil {
     }
 
     @Override
-    public void callDelete(Plot plot) {
-        callEvent(new PlotDeleteEvent(plot));
+    public boolean callDelete(Plot plot) {
+        return callEvent(new PlotDeleteEvent(plot));
     }
 
     @Override
@@ -70,8 +70,13 @@ public class BukkitEventUtil extends EventUtil {
     }
 
     @Override
-    public boolean callMerge(Plot plot, ArrayList<PlotId> plots) {
-        return callEvent(new PlotMergeEvent(BukkitUtil.getWorld(plot.getWorldName()), plot, plots));
+    public boolean callMerge(Plot plot, int dir, int max) {
+        return callEvent(new PlotMergeEvent(BukkitUtil.getWorld(plot.getWorldName()), plot, dir, max));
+    }
+
+    @Override
+    public boolean callAutoMerge(Plot plot, ArrayList<PlotId> plots) {
+        return callEvent(new PlotAutoMergeEvent(BukkitUtil.getWorld(plot.getWorldName()), plot, plots));
     }
 
     @Override
