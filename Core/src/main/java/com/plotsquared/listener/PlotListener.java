@@ -99,13 +99,13 @@ public class PlotListener {
                     }
                 }
                 Optional<PlotGameMode> guestGamemodeFlag = plot.getFlag(Flags.GUEST_GAMEMODE);
-                if (gamemodeFlag.isPresent()) {
-                    if (player.getGameMode() != gamemodeFlag.get() && !plot.isAdded(player.getUUID())) {
+                if (guestGamemodeFlag.isPresent()) {
+                    if (player.getGameMode() != guestGamemodeFlag.get() && !plot.isAdded(player.getUUID())) {
                         if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
-                            player.setGameMode(gamemodeFlag.get());
+                            player.setGameMode(guestGamemodeFlag.get());
                         } else {
                             MainUtil.sendMessage(player,
-                                    StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.getId(), "{gamemode}", gamemodeFlag.get()));
+                                    StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.getId(), "{gamemode}", guestGamemodeFlag.get()));
                         }
                     }
                 }
