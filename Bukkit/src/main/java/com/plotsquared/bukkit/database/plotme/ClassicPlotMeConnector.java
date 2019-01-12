@@ -120,9 +120,9 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                     if (name.isEmpty()) {
                         PS.log("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
                         missing++;
+                        owner = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(Charsets.UTF_8));
                         continue;
                     }
-                    owner = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(Charsets.UTF_8));
                 }
             } else {
                 UUIDHandler.add(new StringWrapper(name), owner);
