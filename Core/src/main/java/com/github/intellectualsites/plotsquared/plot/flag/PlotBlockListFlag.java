@@ -1,9 +1,8 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
-import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
-import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 
 import java.util.HashSet;
 
@@ -20,30 +19,10 @@ public class PlotBlockListFlag extends ListFlag<HashSet<PlotBlock>> {
     @Override public HashSet<PlotBlock> parseValue(String value) {
         HashSet<PlotBlock> list = new HashSet<>();
         for (String item : value.split(",")) {
-            PlotBlock block;
-            try {
-                String[] split = item.split(":");
-                byte data;
-                if (split.length == 2) {
-                    if ("*".equals(split[1])) {
-                        data = -1;
-                    } else {
-                        data = Byte.parseByte(split[1]);
-                    }
-                } else {
-                    data = -1;
-                }
-                short id = Short.parseShort(split[0]);
-                block = PlotBlock.get(id, data);
-            } catch (NumberFormatException ignored) {
-                StringComparison<PlotBlock>.ComparisonResult str =
-                    WorldUtil.IMP.getClosestBlock(value);
-                if (str == null || str.match > 1) {
-                    continue;
-                }
-                block = str.best;
+            PlotBlock block = PlotSquared.get().IMP.getLegacyMappings().fromAny(item);
+            if (block != null) {
+                list.add(block);
             }
-            list.add(block);
         }
         return list;
     }

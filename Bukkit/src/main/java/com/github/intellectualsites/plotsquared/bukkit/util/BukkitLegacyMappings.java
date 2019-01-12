@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.LegacyPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.StringPlotBlock;
@@ -697,9 +698,9 @@ public final class BukkitLegacyMappings extends LegacyMappings {
                 .put(new IdDataPair(legacyBlock.getNumericalId(), legacyBlock.getDataValue()),
                     legacyBlock.toStringPlotBlock());
             NEW_STRING_TO_LEGACY_PLOT_BLOCK
-                .put(legacyBlock.getLegacyName(), legacyBlock.toStringPlotBlock());
-            OLD_STRING_TO_STRING_PLOT_BLOCK
                 .put(legacyBlock.getNewName(), legacyBlock.toLegacyPlotBlock());
+            OLD_STRING_TO_STRING_PLOT_BLOCK
+                .put(legacyBlock.getLegacyName(), legacyBlock.toStringPlotBlock());
             Material material;
             try {
                 material = Material.valueOf(legacyBlock.getNewName());

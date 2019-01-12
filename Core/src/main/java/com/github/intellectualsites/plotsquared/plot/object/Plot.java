@@ -145,7 +145,7 @@ public class Plot {
      * @param area  the PlotArea where the plot is located
      * @param id    the plot id
      * @param owner the owner of the plot
-     * @param temp
+     * @param temp  Represents whatever the database manager needs it to
      * @see Plot#getPlot(Location) for existing plots
      */
     public Plot(PlotArea area, PlotId id, UUID owner, int temp) {
@@ -160,9 +160,9 @@ public class Plot {
      *
      * @param id      the plot id
      * @param owner   the plot owner
-     * @param trusted
-     * @param denied
-     * @param merged
+     * @param trusted the plot trusted players
+     * @param denied  the plot denied players
+     * @param merged  array giving merged plots
      * @see Plot#getPlot(Location) for existing plots
      */
     public Plot(PlotId id, UUID owner, HashSet<UUID> trusted, HashSet<UUID> members,
@@ -221,7 +221,7 @@ public class Plot {
      * Return a new/cached plot object at a given location.
      *
      * @param location the location of the plot
-     * @return
+     * @return plot at location or null
      * @see PlotPlayer#getCurrentPlot() if a player is expected here.
      */
     public static Plot getPlot(Location location) {
@@ -241,8 +241,8 @@ public class Plot {
      * <br>
      * For persistent metadata use the flag system
      *
-     * @param key
-     * @param value
+     * @param key   metadata key
+     * @param value metadata value
      * @see FlagManager
      */
     public void setMeta(String key, Object value) {
@@ -257,8 +257,8 @@ public class Plot {
      * <br>
      * For persistent metadata use the flag system
      *
-     * @param key
-     * @return
+     * @param key metadata key to get value for
+     * @return Object value
      */
     public Object getMeta(String key) {
         if (this.meta != null) {
@@ -272,7 +272,7 @@ public class Plot {
      * - metadata is session only
      * - deleting other plugin's metadata may cause issues
      *
-     * @param key
+     * @param key key to delete
      */
     public void deleteMeta(String key) {
         if (this.meta != null) {
@@ -372,7 +372,7 @@ public class Plot {
     /**
      * Check if the player is either the owner or on the trusted/added list.
      *
-     * @param uuid
+     * @param uuid uuid to check
      * @return true if the player is added/trusted or is the owner
      */
     public boolean isAdded(UUID uuid) {
@@ -397,7 +397,7 @@ public class Plot {
     /**
      * Should the player be denied from entering.
      *
-     * @param uuid
+     * @param uuid uuid to check
      * @return boolean false if the player is allowed to enter
      */
     public boolean isDenied(UUID uuid) {
@@ -427,7 +427,7 @@ public class Plot {
      * (Mostly used during startup when worlds are being created)<br>
      * Note: Using this when it doesn't make sense will result in strange behavior
      *
-     * @param area
+     * @param area area to assign to
      */
     public void setArea(PlotArea area) {
         if (this.getArea() == area) {
@@ -467,7 +467,7 @@ public class Plot {
      * Returns true if the plot is not merged, or it is the base
      * plot of multiple merged plots.
      *
-     * @return
+     * @return Boolean
      */
     public boolean isBasePlot() {
         return !this.isMerged() || this.equals(this.getBasePlot(false));
@@ -546,7 +546,7 @@ public class Plot {
      * ----------<br>
      * Note: A plot that is merged north and east will not be merged northeast if the northeast plot is not part of the same group<br>
      *
-     * @param direction
+     * @param direction direction to check for merged plot
      * @return true if merged in that direction
      */
     public boolean getMerged(int direction) {
@@ -600,7 +600,7 @@ public class Plot {
     /**
      * Set the denied users for this plot.
      *
-     * @param uuids
+     * @param uuids uuids to deny
      */
     public void setDenied(Set<UUID> uuids) {
         boolean larger = uuids.size() > getDenied().size();
@@ -632,7 +632,7 @@ public class Plot {
     /**
      * Set the trusted users for this plot.
      *
-     * @param uuids
+     * @param uuids uuids to trust
      */
     public void setTrusted(Set<UUID> uuids) {
         boolean larger = uuids.size() > getTrusted().size();
@@ -664,7 +664,7 @@ public class Plot {
     /**
      * Set the members for this plot
      *
-     * @param uuids
+     * @param uuids uuids to set member status for
      */
     public void setMembers(Set<UUID> uuids) {
         boolean larger = uuids.size() > getMembers().size();
@@ -723,7 +723,7 @@ public class Plot {
     /**
      * Set the plot owner (and update the database)
      *
-     * @param owner
+     * @param owner uuid to set as owner
      */
     public void setOwner(UUID owner) {
         if (!hasOwner()) {
@@ -749,8 +749,8 @@ public class Plot {
     /**
      * Set the plot owner (and update the database)
      *
-     * @param owner
-     * @param initiator
+     * @param owner     uuid to set as owner
+     * @param initiator player initiating set owner
      * @return boolean
      */
     public boolean setOwner(UUID owner, PlotPlayer initiator) {
@@ -795,11 +795,11 @@ public class Plot {
             return false;
         }
         if (isDelete) {
-            if(!EventUtil.manager.callDelete(this)) {
+            if (!EventUtil.manager.callDelete(this)) {
                 return false;
             }
         } else {
-            if(!EventUtil.manager.callClear(this)) {
+            if (!EventUtil.manager.callClear(this)) {
                 return false;
             }
         }
@@ -888,9 +888,9 @@ public class Plot {
     /**
      * Unlink the plot and all connected plots.
      *
-     * @param createSign
-     * @param createRoad
-     * @return
+     * @param createSign whether to recreate signs
+     * @param createRoad whether to recreate road
+     * @return success/!cancelled
      */
     public boolean unlinkPlot(boolean createRoad, boolean createSign) {
         if (!this.isMerged()) {
@@ -949,7 +949,7 @@ public class Plot {
     /**
      * Set the sign for a plot to a specific name
      *
-     * @param name
+     * @param name name
      */
     public void setSign(final String name) {
         if (!isLoaded())
@@ -990,8 +990,8 @@ public class Plot {
     /**
      * Set a flag for this plot
      *
-     * @param flag
-     * @param value
+     * @param flag  Flag to set
+     * @param value Flag value
      */
     public <V> boolean setFlag(Flag<V> flag, Object value) {
         if (flag == Flags.KEEP && ExpireManager.IMP != null) {
@@ -1004,7 +1004,7 @@ public class Plot {
      * Remove a flag from this plot
      *
      * @param flag the flag to remove
-     * @return
+     * @return success
      */
     public boolean removeFlag(Flag<?> flag) {
         return FlagManager.removePlotFlag(this, flag);
@@ -1013,7 +1013,7 @@ public class Plot {
     /**
      * Get the flag for a given key
      *
-     * @param key
+     * @param key Flag to get value for
      */
     public <V> Optional<V> getFlag(Flag<V> key) {
         return FlagManager.getPlotFlag(this, key);
@@ -1057,7 +1057,7 @@ public class Plot {
     /**
      * Count the entities in a plot
      *
-     * @return
+     * @return array of entity counts
      * @see ChunkManager#countEntities(Plot)
      * 0 = Entity
      * 1 = Animal
@@ -1215,7 +1215,7 @@ public class Plot {
     /**
      * Set the home location
      *
-     * @param location
+     * @param location location to set as home
      */
     public void setHome(BlockLoc location) {
         Plot plot = this.getBasePlot(false);
@@ -1234,7 +1234,7 @@ public class Plot {
      * Get the default home location for a plot<br>
      * - Ignores any home location set for that specific plot
      *
-     * @return
+     * @return Location
      */
     public Location getDefaultHome() {
         return getDefaultHome(false);
@@ -1295,9 +1295,9 @@ public class Plot {
      * Set a rating for a user<br>
      * - If the user has already rated, the following will return false
      *
-     * @param uuid
-     * @param rating
-     * @return
+     * @param uuid   uuid of rater
+     * @param rating rating
+     * @return success
      */
     public boolean addRating(UUID uuid, Rating rating) {
         Plot base = this.getBasePlot(false);
@@ -1460,7 +1460,7 @@ public class Plot {
      * creation.
      *
      * @param uuid   the uuid of the plot owner
-     * @param notify
+     * @param notify notify
      * @return true if plot was created successfully
      */
     public boolean create(final UUID uuid, final boolean notify) {
@@ -2165,7 +2165,7 @@ public class Plot {
         if (this.owner == null) {
             return false;
         }
-        if(!EventUtil.manager.callMerge(this, dir, max)) {
+        if (!EventUtil.manager.callMerge(this, dir, max)) {
             return false;
         }
         HashSet<Plot> visited = new HashSet<>();
@@ -2819,10 +2819,10 @@ public class Plot {
     /**
      * Move a plot physically, as well as the corresponding settings.
      *
-     * @param destination
-     * @param whenDone
-     * @param allowSwap
-     * @return
+     * @param destination Plot moved to
+     * @param whenDone    task when done
+     * @param allowSwap   whether to swap plots
+     * @return success
      */
     public boolean move(final Plot destination, final Runnable whenDone, boolean allowSwap) {
         final PlotId offset = new PlotId(destination.getId().x - this.getId().x,
