@@ -776,11 +776,11 @@ public final class BukkitLegacyMappings extends LegacyMappings {
     }
 
     public PlotBlock fromLegacyToString(final String id) {
-        return NEW_STRING_TO_LEGACY_PLOT_BLOCK.get(id);
+        return OLD_STRING_TO_STRING_PLOT_BLOCK.get(id);
     }
 
     public PlotBlock fromStringToLegacy(final String id) {
-        return OLD_STRING_TO_STRING_PLOT_BLOCK.get(id.toLowerCase(Locale.ENGLISH));
+        return NEW_STRING_TO_LEGACY_PLOT_BLOCK.get(id.toLowerCase(Locale.ENGLISH));
     }
 
     @Getter @EqualsAndHashCode @ToString @RequiredArgsConstructor

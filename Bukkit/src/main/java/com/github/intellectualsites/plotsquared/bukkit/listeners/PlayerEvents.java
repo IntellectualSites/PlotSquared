@@ -1723,8 +1723,6 @@ import java.util.regex.Pattern;
                 Block block = event.getClickedBlock();
                 location = BukkitUtil.getLocation(block.getLocation());
                 Material blockType = block.getType();
-                int blockId = ((LegacyPlotBlock) PlotSquared.get().IMP.getLegacyMappings()
-                    .fromStringToLegacy(blockType.name())).id;
                 switch (blockType) {
                     case ANVIL:
                     case ACACIA_DOOR:
@@ -1849,6 +1847,8 @@ import java.util.regex.Pattern;
                         eventType = PlayerBlockEventType.TELEPORT_OBJECT;
                         break;
                     default:
+                        int blockId = ((LegacyPlotBlock) PlotSquared.get().IMP.getLegacyMappings()
+                            .fromStringToLegacy(blockType.name())).id;
                         if (blockId > 197) {
                             eventType = PlayerBlockEventType.INTERACT_BLOCK;
                         }
