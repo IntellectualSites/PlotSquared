@@ -958,6 +958,10 @@ public class Plot {
             TaskManager.runTask(() -> Plot.this.setSign(name));
             return;
         }
+        if(name == null) {
+            PlotSquared.log("Attempted to add null name to sign at plot: " + getId());
+            return;
+        }
         PlotManager manager = this.area.getPlotManager();
         if (this.area.ALLOW_SIGNS) {
             Location loc = manager.getSignLoc(this.area, this);

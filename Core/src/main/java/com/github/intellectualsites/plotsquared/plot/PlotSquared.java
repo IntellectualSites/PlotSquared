@@ -269,7 +269,13 @@ import java.util.zip.ZipInputStream;
             }
 
             // Copy files
+            copyFile("addplots.js", Settings.Paths.SCRIPTS);
+            copyFile("addsigns.js", Settings.Paths.SCRIPTS);
             copyFile("automerge.js", Settings.Paths.SCRIPTS);
+            copyFile("furthest.js", Settings.Paths.SCRIPTS);
+            copyFile("mycommand.js", Settings.Paths.SCRIPTS);
+            copyFile("setbiomes.js", Settings.Paths.SCRIPTS);
+            copyFile("start.js", Settings.Paths.SCRIPTS);
             copyFile("town.template", Settings.Paths.TEMPLATES);
             copyFile("skyblock.template", Settings.Paths.TEMPLATES);
             copyFile("bridge.template", Settings.Paths.TEMPLATES);
@@ -754,6 +760,10 @@ import java.util.zip.ZipInputStream;
             }
         });
         return list;
+    }
+
+    public ArrayList<Plot> sortPlots(Collection<Plot> plots) {
+        return sortPlots(plots, SortType.DISTANCE_FROM_ORIGIN, null);
     }
 
     /**
