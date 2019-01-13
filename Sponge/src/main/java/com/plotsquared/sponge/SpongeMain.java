@@ -19,44 +19,18 @@ import com.intellectualcrafters.plot.object.worlds.PlotAreaManager;
 import com.intellectualcrafters.plot.object.worlds.SinglePlotArea;
 import com.intellectualcrafters.plot.object.worlds.SinglePlotAreaManager;
 import com.intellectualcrafters.plot.object.worlds.SingleWorldGenerator;
-import com.intellectualcrafters.plot.util.AbstractTitle;
-import com.intellectualcrafters.plot.util.ChatManager;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.InventoryUtil;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
-import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.block.QueueProvider;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.sponge.generator.SpongePlotGenerator;
 import com.plotsquared.sponge.listener.ChunkProcessor;
 import com.plotsquared.sponge.listener.MainListener;
 import com.plotsquared.sponge.listener.WorldEvents;
-import com.plotsquared.sponge.util.KillRoadMobs;
-import com.plotsquared.sponge.util.SpongeChatManager;
-import com.plotsquared.sponge.util.SpongeChunkManager;
-import com.plotsquared.sponge.util.SpongeCommand;
-import com.plotsquared.sponge.util.SpongeEconHandler;
-import com.plotsquared.sponge.util.SpongeEventUtil;
-import com.plotsquared.sponge.util.SpongeHybridUtils;
-import com.plotsquared.sponge.util.SpongeInventoryUtil;
-import com.plotsquared.sponge.util.SpongeSchematicHandler;
-import com.plotsquared.sponge.util.SpongeSetupUtils;
-import com.plotsquared.sponge.util.SpongeTaskManager;
-import com.plotsquared.sponge.util.SpongeTitleManager;
-import com.plotsquared.sponge.util.SpongeUtil;
+import com.plotsquared.sponge.util.*;
 import com.plotsquared.sponge.util.block.SpongeLocalQueue;
 import com.plotsquared.sponge.uuid.SpongeLowerOfflineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeOnlineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeUUIDHandler;
-import java.io.IOException;
 import net.minecrell.mcstats.SpongeStatsLite;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
@@ -76,7 +50,9 @@ import org.spongepowered.api.world.gen.GenerationPopulator;
 import org.spongepowered.api.world.gen.WorldGenerator;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 
+import javax.annotation.Nonnull;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -241,6 +217,12 @@ public class SpongeMain implements IPlotMain {
         String version = this.game.getPlatform().getMinecraftVersion().getName();
         String[] split = version.split("\\.");
         return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), split.length == 3 ? Integer.parseInt(split[2]) : 0};
+    }
+
+    @Override
+    @Nonnull
+    public String getServerImplementation() {
+        return String.format("Sponge (MC %s)", this.game.getPlatform().getMinecraftVersion().getName());
     }
 
     @Override
@@ -456,7 +438,7 @@ public class SpongeMain implements IPlotMain {
 
     @Override
     public List<String> getPluginIds() {
-        return this.game.getPluginManager().getPlugins().stream().map(plugin1 -> plugin1.getName() + ';' + plugin1.getVersion() + ':' + true)
+        return this.game.getPluginManager().getPlugins().stream().map(plugin1 -> plugin1.getName() + ';' + plugin1.getVersion().orElse("unknown") + ':' + true)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 

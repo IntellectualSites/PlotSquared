@@ -18,6 +18,7 @@ import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.block.QueueProvider;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.List;
 
@@ -80,6 +81,12 @@ public interface IPlotMain extends ILogger {
      * @return
      */
     int[] getServerVersion();
+
+    /**
+     * Get the server implementation string
+     */
+    @Nonnull
+    String getServerImplementation();
 
     /**
      * Get the NMS package prefix.

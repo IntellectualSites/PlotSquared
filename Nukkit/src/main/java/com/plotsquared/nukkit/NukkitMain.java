@@ -8,7 +8,6 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.Generator;
-import cn.nukkit.level.generator.Normal;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginBase;
@@ -35,9 +34,10 @@ import com.plotsquared.nukkit.util.block.NukkitLocalQueue;
 import com.plotsquared.nukkit.uuid.FileUUIDHandler;
 import com.plotsquared.nukkit.uuid.LowerOfflineUUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
+
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public final class NukkitMain extends PluginBase implements Listener, IPlotMain {
@@ -63,6 +63,13 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
             }
         }
         return this.version;
+    }
+
+
+    @Override
+    @Nonnull
+    public String getServerImplementation() {
+        return this.getServer().getVersion();
     }
 
     @Override
