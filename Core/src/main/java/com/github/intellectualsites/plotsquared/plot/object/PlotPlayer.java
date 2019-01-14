@@ -354,6 +354,17 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     public abstract void teleport(Location location);
 
     /**
+     * Kick this player to a location
+     *
+     * @param location the target location
+     */
+    public void plotkick(Location location) {
+        setMeta("kick", true);
+        teleport(location);
+        deleteMeta("kick");
+    }
+
+    /**
      * Set this compass target.
      *
      * @param location the target location

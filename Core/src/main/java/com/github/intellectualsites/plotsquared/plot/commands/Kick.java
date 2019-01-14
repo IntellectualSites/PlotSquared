@@ -68,7 +68,7 @@ import java.util.UUID;
                 MainUtil.sendMessage(player, C.INVALID_PLAYER, args[0]);
                 return false;
             }
-            if (player2.hasPermission("plots.admin.entry.denied")) {
+            if (Permissions.hasPermission(player2, C.PERMISSION_ADMIN_ENTRY_DENIED)) {
                 C.CANNOT_KICK_PLAYER.send(player, player2.getName());
                 return false;
             }
@@ -81,10 +81,10 @@ import java.util.UUID;
                     // Kick from server if you can't be teleported to spawn
                     player2.kick(C.YOU_GOT_KICKED.s());
                 } else {
-                    player2.teleport(newSpawn);
+                    player2.plotkick(newSpawn);
                 }
             } else {
-                player2.teleport(spawn);
+                player2.plotkick(spawn);
             }
         }
         return true;

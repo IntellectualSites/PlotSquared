@@ -739,7 +739,8 @@ import java.util.regex.Pattern;
             Plot now = area.getPlot(loc);
             Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
             if (now == null) {
-                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
+                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !pp
+                    .getMeta("kick", false)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                     this.tmpTeleport = false;
                     if (lastPlot.equals(BukkitUtil.getLocation(from).getPlot())) {
@@ -800,7 +801,8 @@ import java.util.regex.Pattern;
             Plot now = area.getPlot(loc);
             Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
             if (now == null) {
-                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
+                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !pp
+                    .getMeta("kick", false)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                     this.tmpTeleport = false;
                     if (lastPlot.equals(BukkitUtil.getLocation(from).getPlot())) {
@@ -2272,7 +2274,8 @@ import java.util.regex.Pattern;
             event.setCancelled(true);
         } else if (Settings.Done.RESTRICT_BUILDING && plot.getFlags().containsKey(Flags.DONE)) {
             if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_BUILD_OTHER)) {
-                MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
+                MainUtil
+                    .sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
                 event.setCancelled(true);
             }
         }
