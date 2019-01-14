@@ -184,8 +184,6 @@ public enum C {
      * Area Create
      */
 
-    REQUIRES_UNMERGED("$2The plot cannot be merged", "debug"),
-
     SET_ATTRIBUTE("$4Successfully set %s0 set to %s1", "Set"), /*
      * Web
      */
@@ -619,7 +617,7 @@ public enum C {
      */
 
     DEBUG_HEADER("$1Debug Information&-", "Debug"), DEBUG_SECTION("$2>> $1&l%val%", "Debug"),
-
+    REQUIRES_UNMERGED("$2The plot cannot be merged", "Debug"),
     DEBUG_LINE("$2>> $1%var%$2:$1 %val%&-", "Debug"), /*
      * Invalid
      */
