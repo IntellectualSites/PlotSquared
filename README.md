@@ -55,3 +55,7 @@ Suggestions are welcome! We have a separate issue tracker for suggestions, that 
 * [PlotSquaredMG](https://www.spigotmc.org/resources/plotsquaredmg.8025/)
 * [BasicPlots](https://www.spigotmc.org/resources/basicplots.6901/)
 * [HoloPlots](https://www.spigotmc.org/resources/holoplots.4880/)
+
+# Sponsors
+<p align="center"><a href="https://incendo.org" title="Incendo"><img width="160" height="160" src="https://i.imgur.com/zjRmJkw.png"/></a></p>
+<p align="center"><a href="https://www.jetbrains.com/idea/" title="IntelliJ IDEA"><img height="100" src="https://i.imgur.com/xa2XsRN.png"/></a></p>
