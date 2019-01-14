@@ -4,6 +4,8 @@
 
 ---
 
+<p align="center"><a href="https://www.athion.net/" title="Athion network"><img height="180" src="https://athion.net/Athion.png"/></a></p>
+
 For the end user, PlotSquared is packed with a tonne of cool features.
 It allows you to merge plots, and build together with your friends. 
 You can also change a lot of plot specific settings in the form of
