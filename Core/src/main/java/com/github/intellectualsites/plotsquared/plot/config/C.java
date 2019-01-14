@@ -184,6 +184,8 @@ public enum C {
      * Area Create
      */
 
+    REQUIRES_UNMERGED("$2The plot cannot be merged", "debug"),
+
     SET_ATTRIBUTE("$4Successfully set %s0 set to %s1", "Set"), /*
      * Web
      */

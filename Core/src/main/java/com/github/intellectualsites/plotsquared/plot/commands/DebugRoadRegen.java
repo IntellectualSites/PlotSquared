@@ -25,6 +25,8 @@ public class DebugRoadRegen extends SubCommand {
         Plot plot = player.getCurrentPlot();
         if (plot == null) {
             C.NOT_IN_PLOT.send(player);
+        } else if (plot.isMerged()) {
+            C.REQUIRES_UNMERGED.send(player);
         } else {
             HybridPlotManager manager = (HybridPlotManager) plotArea.getPlotManager();
             manager.createRoadEast(plotArea, plot);
