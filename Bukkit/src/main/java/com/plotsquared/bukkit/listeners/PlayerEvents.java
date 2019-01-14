@@ -653,7 +653,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             Plot now = area.getPlot(loc);
             Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
-                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
+                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !pp.getMeta("kick", false)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                     this.tmpTeleport = false;
                     if (lastPlot.equals(BukkitUtil.getLocation(from).getPlot())) {
@@ -714,7 +714,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             Plot now = area.getPlot(loc);
             Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
-                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
+                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !pp.getMeta("kick", false)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                     this.tmpTeleport = false;
                     if (lastPlot.equals(BukkitUtil.getLocation(from).getPlot())) {

@@ -189,7 +189,7 @@ public class PlotListener {
             if (pw == null) {
                 return true;
             }
-            if (Flags.DENY_EXIT.isTrue(plot)) {
+            if (Flags.DENY_EXIT.isTrue(plot) && !player.getMeta("kick", false)) {
                 if (previous != null) {
                     player.setMeta("lastplot", previous);
                 }
