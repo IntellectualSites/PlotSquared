@@ -47,6 +47,8 @@ public class DebugRoadRegen extends SubCommand {
             MainUtil.sendMessage(player,
                     "&6Regenerating chunk: " + chunk.x + ',' + chunk.z + "\n&6 - Result: " + (result ? "&aSuccess" : "&cFailed"));
             MainUtil.sendMessage(player, "&cTo regenerate all roads: /plot regenallroads");
+        } else if (plot.isMerged()) {
+            C.REQUIRES_UNMERGED.send(player);
         } else {
             HybridPlotManager manager = (HybridPlotManager) plotArea.getPlotManager();
             manager.createRoadEast(plotArea, plot);
