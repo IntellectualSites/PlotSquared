@@ -157,23 +157,21 @@ public class PlotListener {
             if (titles) {
                 if (!C.TITLE_ENTERED_PLOT.s().isEmpty() || !C.TITLE_ENTERED_PLOT_SUB.s()
                     .isEmpty()) {
-                    TaskManager.runTaskLaterAsync(new Runnable() {
-                        @Override public void run() {
-                            Plot lastPlot = player.getMeta(PlotPlayer.META_LAST_PLOT);
-                            if ((lastPlot != null) && plot.getId().equals(lastPlot.getId())) {
-                                Map<String, String> replacements = new HashMap<>();
-                                replacements.put("%x%", String.valueOf(lastPlot.getId().x));
-                                replacements.put("%z%", lastPlot.getId().y + "");
-                                replacements.put("%world%", plot.getArea().toString());
-                                replacements.put("%greeting%", greeting);
-                                replacements.put("%alias", plot.toString());
-                                replacements.put("%s", MainUtil.getName(plot.owner));
-                                String main = StringMan
-                                    .replaceFromMap(C.TITLE_ENTERED_PLOT.s(), replacements);
-                                String sub = StringMan
-                                    .replaceFromMap(C.TITLE_ENTERED_PLOT_SUB.s(), replacements);
-                                AbstractTitle.sendTitle(player, main, sub);
-                            }
+                    TaskManager.runTaskLaterAsync(() -> {
+                        Plot lastPlot = player.getMeta(PlotPlayer.META_LAST_PLOT);
+                        if ((lastPlot != null) && plot.getId().equals(lastPlot.getId())) {
+                            Map<String, String> replacements = new HashMap<>();
+                            replacements.put("%x%", String.valueOf(lastPlot.getId().x));
+                            replacements.put("%z%", lastPlot.getId().y + "");
+                            replacements.put("%world%", plot.getArea().toString());
+                            replacements.put("%greeting%", greeting);
+                            replacements.put("%alias", plot.toString());
+                            replacements.put("%s", MainUtil.getName(plot.owner));
+                            String main = StringMan
+                                .replaceFromMap(C.TITLE_ENTERED_PLOT.s(), replacements);
+                            String sub = StringMan
+                                .replaceFromMap(C.TITLE_ENTERED_PLOT_SUB.s(), replacements);
+                            AbstractTitle.sendTitle(player, main, sub);
                         }
                     }, 20);
                 }
@@ -191,7 +189,7 @@ public class PlotListener {
             if (pw == null) {
                 return true;
             }
-            if (Flags.DENY_EXIT.isTrue(plot)) {
+            if (Flags.DENY_EXIT.isTrue(plot) && !player.getMeta("kick", false)) {
                 if (previous != null) {
                     player.setMeta(PlotPlayer.META_LAST_PLOT, previous);
                 }
