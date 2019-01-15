@@ -4,6 +4,8 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.listener.WEExtent;
+import com.github.intellectualsites.plotsquared.plot.listener.WEManager;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
@@ -24,7 +26,6 @@ public abstract class HybridUtils {
     public static Set<ChunkLoc> chunks = new HashSet<>();
     public static PlotArea area;
     public static boolean UPDATE = false;
-    private static BaseBlock air = BlockTypes.AIR.getDefaultState().toBaseBlock();
 
     public abstract void analyzeRegion(String world, RegionWrapper region,
         RunnableVal<PlotAnalysis> whenDone);
@@ -361,7 +362,7 @@ public abstract class HybridUtils {
                                         } else if (y <= extend) {
                                             queue
                                                 .setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y,
-                                                    z + Z + plotWorld.ROAD_OFFSET_Z, air);
+                                                    z + Z + plotWorld.ROAD_OFFSET_Z, WEExtent.AIRBASE);
                                         }
                                     }
                                 }

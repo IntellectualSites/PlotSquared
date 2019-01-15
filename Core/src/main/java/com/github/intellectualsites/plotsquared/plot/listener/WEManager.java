@@ -4,6 +4,7 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 
@@ -11,9 +12,6 @@ import java.util.HashSet;
 import java.util.UUID;
 
 public class WEManager {
-
-
-    public static BlockState AIR = new BlockType("AIR").getDefaultState();
 
     public static boolean maskContains(HashSet<RegionWrapper> mask, int x, int y, int z) {
         for (RegionWrapper region : mask) {

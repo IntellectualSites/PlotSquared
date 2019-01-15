@@ -18,6 +18,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -124,14 +125,16 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
                         int y = MainUtil.y_loc[layer][j];
                         int z = MainUtil.z_loc[layer][j];
 
+                        BlockData blockData = BukkitAdapter.adapt(block);
+
                         Block existing = chunk.getBlock(x, y, z);
                         if (equals(PlotBlock.get(block), existing) && existing.getBlockData()
-                            .matches(BukkitAdapter.adapt(block))) {
+                            .matches(blockData)) {
                             continue;
                         }
 
                         existing.setType(BukkitAdapter.adapt(block.getBlockType()), false);
-                        existing.setBlockData(BukkitAdapter.adapt(block), false);
+                        existing.setBlockData(blockData, false);
                         if (block.hasNbtData()) {
                             CompoundTag tag = block.getNbtData();
                             StateWrapper sw = new StateWrapper(tag);

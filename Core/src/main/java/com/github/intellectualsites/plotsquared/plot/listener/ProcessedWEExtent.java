@@ -50,14 +50,14 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         if (WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
             return super.getBlock(location);
         }
-        return WEManager.AIR;
+        return WEExtent.AIRSTATE;
     }
 
     @Override public BaseBlock getFullBlock(BlockVector3 location) {
         if (WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
             return super.getFullBlock(location);
         }
-        return WEManager.AIR.toBaseBlock();
+        return WEExtent.AIRBASE;
     }
 
     @Override public boolean setBlock(BlockVector3 location, BlockStateHolder block)

@@ -10,15 +10,16 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.biome.BaseBiome;
-import com.sk89q.worldedit.world.block.BaseBlock;
-import com.sk89q.worldedit.world.block.BlockState;
-import com.sk89q.worldedit.world.block.BlockStateHolder;
+import com.sk89q.worldedit.world.block.*;
 
 import java.util.HashSet;
 
 public class WEExtent extends AbstractDelegateExtent {
 
     private final HashSet<RegionWrapper> mask;
+
+    public static BlockState AIRSTATE = BlockTypes.AIR.getDefaultState();
+    public static BaseBlock AIRBASE = BlockTypes.AIR.getDefaultState().toBaseBlock();
 
     public WEExtent(HashSet<RegionWrapper> mask, Extent extent) {
         super(extent);
@@ -48,13 +49,13 @@ public class WEExtent extends AbstractDelegateExtent {
         if (WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
             return super.getBlock(location);
         }
-        return WEManager.AIR;
+        return AIRSTATE;
     }
 
     @Override public BaseBlock getFullBlock(BlockVector3 location) {
         if (WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
             return super.getFullBlock(location);
         }
-        return WEManager.AIR.toBaseBlock();
+        return AIRBASE;
     }
 }
