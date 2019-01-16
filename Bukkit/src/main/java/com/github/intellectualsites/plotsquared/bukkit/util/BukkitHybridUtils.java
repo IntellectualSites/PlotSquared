@@ -71,13 +71,13 @@ public class BukkitHybridUtils extends HybridUtils {
                 return;
 
             HybridPlotWorld hpw = (HybridPlotWorld) area;
+            final BlockBucket[][] result = hpw.getBlockBucketChunk();
 
             final Runnable run = () -> ChunkManager.chunkTask(bot, top, new RunnableVal<int[]>() {
                 @Override public void run(int[] value) {
                     // [chunkx, chunkz, pos1x, pos1z, pos2x, pos2z, isedge]
                     int X = value[0];
                     int Z = value[1];
-                    BlockBucket[][] result = hpw.getBlockBucketChunk();
                     int xb = (X << 4) - bx;
                     int zb = (Z << 4) - bz;
                     for (int i = 0; i < result.length; i++) {
@@ -183,11 +183,11 @@ public class BukkitHybridUtils extends HybridUtils {
                 analysis.air = (int) (MathMan.getMean(air) * 100);
                 analysis.variety = (int) (MathMan.getMean(variety) * 100);
 
-                analysis.changes_sd = (int) MathMan.getSD(changes, analysis.changes);
-                analysis.faces_sd = (int) MathMan.getSD(faces, analysis.faces);
-                analysis.data_sd = (int) MathMan.getSD(data, analysis.data);
-                analysis.air_sd = (int) MathMan.getSD(air, analysis.air);
-                analysis.variety_sd = (int) MathMan.getSD(variety, analysis.variety);
+                analysis.changes_sd = (int) (MathMan.getSD(changes, analysis.changes) * 100);
+                analysis.faces_sd = (int) (MathMan.getSD(faces, analysis.faces) * 100);
+                analysis.data_sd = (int) (MathMan.getSD(data, analysis.data) * 100);
+                analysis.air_sd = (int) (MathMan.getSD(air, analysis.air) * 100);
+                analysis.variety_sd = (int) (MathMan.getSD(variety, analysis.variety) * 100);
                 System.gc();
                 System.gc();
                 whenDone.value = analysis;
