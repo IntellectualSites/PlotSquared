@@ -5,7 +5,6 @@ import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.listener.WEExtent;
-import com.github.intellectualsites.plotsquared.plot.listener.WEManager;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
@@ -13,7 +12,6 @@ import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.world.block.BaseBlock;
-import com.sk89q.worldedit.world.block.BlockTypes;
 
 import java.io.File;
 import java.util.*;
@@ -183,8 +181,8 @@ public abstract class HybridUtils {
                                     @Override public void run(Object value) {
                                         long start = System.currentTimeMillis();
                                         Iterator<ChunkLoc> iterator = chunks.iterator();
-                                        while (System.currentTimeMillis() - start < 20
-                                            && !chunks.isEmpty()) {
+                                        while (System.currentTimeMillis() - start < 20 && !chunks
+                                            .isEmpty()) {
                                             final ChunkLoc chunk = iterator.next();
                                             iterator.remove();
                                             regenerateRoad(area, chunk, extend);
@@ -350,18 +348,23 @@ public abstract class HybridUtils {
                         if (condition) {
                             BaseBlock[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
                             int minY = Math.min(plotWorld.PLOT_HEIGHT, plotWorld.ROAD_HEIGHT);
+                            int maxY = Math.max(extend, blocks.length);
                             if (blocks != null) {
-                                for (int y = 0; y < blocks.length; y++) {
-                                    if (blocks[y] != null) {
+                                for (int y = 0; y < maxY; y++) {
+                                    if (y > blocks.length - 1) {
+                                        queue.setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y,
+                                            z + Z + plotWorld.ROAD_OFFSET_Z, WEExtent.AIRBASE);
+                                    } else {
                                         BaseBlock block = blocks[y];
                                         if (block != null) {
                                             queue
                                                 .setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y,
                                                     z + Z + plotWorld.ROAD_OFFSET_Z, block);
-                                        } else if (y <= extend) {
+                                        } else {
                                             queue
                                                 .setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y,
-                                                    z + Z + plotWorld.ROAD_OFFSET_Z, WEExtent.AIRBASE);
+                                                    z + Z + plotWorld.ROAD_OFFSET_Z,
+                                                    WEExtent.AIRBASE);
                                         }
                                     }
                                 }
