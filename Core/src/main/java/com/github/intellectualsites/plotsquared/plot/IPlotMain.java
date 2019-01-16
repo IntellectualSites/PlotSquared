@@ -231,14 +231,6 @@ public interface IPlotMain extends ILogger {
     InventoryUtil initInventoryUtil();
 
     /**
-     * Run the converter for the implementation (not necessarily PlotMe, just
-     * any plugin that we can convert from).
-     *
-     * @return
-     */
-    boolean initPlotMeConverter();
-
-    /**
      * Unregister a PlotPlayer from cache e.g. if they have logged off.
      *
      * @param player

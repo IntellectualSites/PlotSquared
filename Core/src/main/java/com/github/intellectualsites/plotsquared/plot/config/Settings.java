@@ -54,11 +54,6 @@ public class Settings extends Config {
         Redstone.DISABLE_UNOCCUPIED = config
             .getBoolean("protection.redstone.disable-unoccupied", Redstone.DISABLE_UNOCCUPIED);
 
-        // PlotMe
-        Enabled_Components.PLOTME_CONVERTER =
-            config.getBoolean("plotme-convert.enabled", Enabled_Components.PLOTME_CONVERTER);
-        PlotMe.CACHE_UUDS = config.getBoolean("plotme-convert.cache-uuids", PlotMe.CACHE_UUDS);
-
         // UUID
         UUID.USE_SQLUUIDHANDLER =
             config.getBoolean("uuid.use_sqluuidhandler", UUID.USE_SQLUUIDHANDLER);
@@ -272,13 +267,6 @@ public class Settings extends Config {
             MAX_PLOTS = 127;
     }
 
-
-    @Comment("Switching from PlotMe?") public static final class PlotMe {
-        @Comment("Cache the uuids from the PlotMe database") public static boolean CACHE_UUDS =
-            false;
-    }
-
-
     public static final class Confirmation {
         @Comment("Teleport to your plot on death") public static int CONFIRMATION_TIMEOUT_SECONDS =
             20;
@@ -331,8 +319,6 @@ public class Settings extends Config {
         @Comment("Optimizes block changing code") public static boolean BLOCK_CACHE = true;
         @Comment("Getting a rating won't need the database") public static boolean RATING_CACHE =
             true;
-        @Comment("The converter will attempt to convert the PlotMe database") public static boolean
-            PLOTME_CONVERTER = true;
         @Comment("Allow WorldEdit to be restricted to plots") public static boolean
             WORLDEDIT_RESTRICTIONS = true;
         @Comment("Allow economy to be used") public static boolean ECONOMY = true;

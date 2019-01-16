@@ -142,7 +142,7 @@ public abstract class UUIDHandlerImplementation {
                     UUID offlineUpper = UUID.nameUUIDFromBytes(
                         ("OfflinePlayer:" + name.value).getBytes(Charsets.UTF_8));
                     if (UUIDHandlerImplementation.this.unknown.contains(offlineUpper)
-                        && offlineUpper != null && !offlineUpper.equals(uuid)) {
+                        && !offlineUpper.equals(uuid)) {
                         UUIDHandlerImplementation.this.unknown.remove(offlineUpper);
                         Set<Plot> plots = PlotSquared.get().getPlotsAbs(offlineUpper);
                         if (!plots.isEmpty()) {

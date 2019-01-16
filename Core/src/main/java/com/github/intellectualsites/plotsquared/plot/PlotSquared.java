@@ -171,7 +171,6 @@ import java.util.zip.ZipInputStream;
                 // Start these separately
                 UUIDHandler.add(new StringWrapper("*"), DBFunc.EVERYONE);
                 startExpiryTasks();
-                startPlotMeConversion();
             }
             // create event util class
             EventUtil.manager = this.IMP.initEventUtil();
@@ -359,7 +358,6 @@ import java.util.zip.ZipInputStream;
                             }
                         });
                         startExpiryTasks();
-                        startPlotMeConversion();
                     }
                 });
             }
@@ -374,28 +372,6 @@ import java.util.zip.ZipInputStream;
                 ExpiryTask task = new ExpiryTask(settings);
                 ExpireManager.IMP.addTask(task);
             }
-        }
-    }
-
-    private void startPlotMeConversion() {
-        if (Settings.Enabled_Components.PLOTME_CONVERTER || Settings.PlotMe.CACHE_UUDS) {
-            TaskManager.IMP.taskAsync(new Runnable() {
-                @Override public void run() {
-                    if (PlotSquared.this.IMP.initPlotMeConverter()) {
-                        PlotSquared.log("&c=== IMPORTANT ===");
-                        PlotSquared.log(
-                            "&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PlotMe!");
-                        PlotSquared
-                            .log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
-                        PlotSquared.log(
-                            "&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
-                        PlotSquared.log(
-                            "&c - After the conversion is finished, please set 'plotme-converter' to false in the "
-                                + "'settings.yml'");
-                    }
-                    Settings.Enabled_Components.PLOTME_CONVERTER = false;
-                }
-            });
         }
     }
 
