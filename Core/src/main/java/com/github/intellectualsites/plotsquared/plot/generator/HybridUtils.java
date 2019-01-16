@@ -284,7 +284,6 @@ public abstract class HybridUtils {
     }
 
     public boolean regenerateRoad(final PlotArea area, final ChunkLoc chunk, int extend) {
-        PlotSquared.log(chunk);
         int x = chunk.x << 4;
         int z = chunk.z << 4;
         int ex = x + 15;
