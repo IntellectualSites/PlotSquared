@@ -27,6 +27,30 @@ public class HybridGen extends IndependentPlotGenerator {
         }
     }
 
+    @Override public BlockBucket[][] generateBlockBucketChunk(PlotArea settings) {
+        BlockBucket[][] blockBuckets = new BlockBucket[16][];
+        HybridPlotWorld hpw = (HybridPlotWorld) settings;
+        // Bedrock
+        if (hpw.PLOT_BEDROCK) {
+            for (short x = 0; x < 16; x++) {
+                for (short z = 0; z < 16; z++) {
+                    blockBuckets[0][(z << 4) | x] =
+                        BlockBucket.withSingle(PlotBlock.get("bedrock"));
+                }
+            }
+        }
+        for (short x = 0; x < 16; x++) {
+            for (short z = 0; z < 16; z++) {
+                for (int y = 1; y < hpw.PLOT_HEIGHT; y++) {
+                    blockBuckets[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = hpw.MAIN_BLOCK;
+                }
+                blockBuckets[hpw.PLOT_HEIGHT >> 4][((hpw.PLOT_HEIGHT & 0xF) << 8) | (z << 4) | x] =
+                    hpw.MAIN_BLOCK;
+            }
+        }
+        return blockBuckets;
+    }
+
     @Override public void generateChunk(ScopedLocalBlockQueue result, PlotArea settings) {
         HybridPlotWorld hpw = (HybridPlotWorld) settings;
         // Biome
