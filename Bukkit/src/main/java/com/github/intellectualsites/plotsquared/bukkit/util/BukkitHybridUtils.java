@@ -151,7 +151,9 @@ public class BukkitHybridUtils extends HybridUtils {
                                 continue;
                             }
                             int y = MainUtil.y_loc[i][j];
-                            oldBlocks[y][x][z] = result[i][j];
+                            oldBlocks[y][x][z] = result[i][j] != null ?
+                                result[i][j] :
+                                BlockBucket.withSingle(StringPlotBlock.EVERYTHING);
                         }
                     }
 
@@ -169,47 +171,58 @@ public class BukkitHybridUtils extends HybridUtils {
                         HashSet<PlotBlock> types = new HashSet<>();
                         for (int y = 0; y < 256; y++) {
                             BlockBucket old = oldBlocks[y][x][z];
-                            PlotBlock now = newBlocks[y][x][z];
-                            if (!old.getBlocks().contains(now)) {
-                                changes[i]++;
-                            }
-                            if (now.isAir()) {
-                                air[i]++;
-                            } else {
-                                // check vertices
-                                // modifications_adjacent
-                                if (x > 0 && z > 0 && y > 0 && x < width - 1 && z < length - 1
-                                    && y < 255) {
-                                    if (newBlocks[y - 1][x][z].isAir()) {
-                                        faces[i]++;
-                                    }
-                                    if (newBlocks[y][x - 1][z].isAir()) {
-                                        faces[i]++;
-                                    }
-                                    if (newBlocks[y][x][z - 1].isAir()) {
-                                        faces[i]++;
-                                    }
-                                    if (newBlocks[y + 1][x][z].isAir()) {
-                                        faces[i]++;
-                                    }
-                                    if (newBlocks[y][x + 1][z].isAir()) {
-                                        faces[i]++;
-                                    }
-                                    if (newBlocks[y][x][z + 1].isAir()) {
-                                        faces[i]++;
-                                    }
+                            try {
+                                if (old == null) {
+                                    old = BlockBucket.withSingle(StringPlotBlock.EVERYTHING);
                                 }
+                                PlotBlock now = newBlocks[y][x][z];
+                                if (!old.getBlocks().contains(now)) {
+                                    changes[i]++;
+                                }
+                                if (now.isAir()) {
+                                    air[i]++;
+                                } else {
+                                    // check vertices
+                                    // modifications_adjacent
+                                    if (x > 0 && z > 0 && y > 0 && x < width - 1 && z < length - 1
+                                        && y < 255) {
+                                        if (newBlocks[y - 1][x][z].isAir()) {
+                                            faces[i]++;
+                                        }
+                                        if (newBlocks[y][x - 1][z].isAir()) {
+                                            faces[i]++;
+                                        }
+                                        if (newBlocks[y][x][z - 1].isAir()) {
+                                            faces[i]++;
+                                        }
+                                        if (newBlocks[y + 1][x][z].isAir()) {
+                                            faces[i]++;
+                                        }
+                                        if (newBlocks[y][x + 1][z].isAir()) {
+                                            faces[i]++;
+                                        }
+                                        if (newBlocks[y][x][z + 1].isAir()) {
+                                            faces[i]++;
+                                        }
+                                    }
 
-                                Material material = now.to(Material.class);
-                                if (material != null) {
-                                    BlockData blockData = material.createBlockData();
-                                    if (blockData instanceof Directional) {
-                                        data[i] += 8;
-                                    } else if (!blockData.getClass().equals(BlockData.class)) {
-                                        data[i]++;
+                                    Material material = now.to(Material.class);
+                                    if (material != null) {
+                                        BlockData blockData = material.createBlockData();
+                                        if (blockData instanceof Directional) {
+                                            data[i] += 8;
+                                        } else if (!blockData.getClass().equals(BlockData.class)) {
+                                            data[i]++;
+                                        }
                                     }
+                                    types.add(now);
                                 }
-                                types.add(now);
+                            } catch (NullPointerException e) {
+                                PlotSquared.log(old.toString());
+                                PlotSquared.log(x);
+                                PlotSquared.log(y);
+                                PlotSquared.log(z);
+                                e.printStackTrace();
                             }
                         }
                         variety[i] = types.size();
