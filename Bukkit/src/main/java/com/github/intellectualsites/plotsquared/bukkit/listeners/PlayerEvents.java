@@ -103,45 +103,46 @@ import java.util.regex.Pattern;
         switch (entity.getType()) {
             case PLAYER:
                 return false;
-            case LLAMA_SPIT:
-            case SMALL_FIREBALL:
-            case FIREBALL:
+            case ARROW:
+            case DRAGON_FIREBALL:
             case DROPPED_ITEM:
             case EGG:
-            case THROWN_EXP_BOTTLE:
-            case SPLASH_POTION:
-            case LINGERING_POTION:
-            case SNOWBALL:
             case ENDER_PEARL:
-            case ARROW:
-            case TIPPED_ARROW:
-            case SPECTRAL_ARROW:
+            case FIREBALL:
+            case LINGERING_POTION:
+            case LLAMA_SPIT:
             case SHULKER_BULLET:
-            case DRAGON_FIREBALL:
+            case SMALL_FIREBALL:
+            case SNOWBALL:
+            case SPECTRAL_ARROW:
+            case SPLASH_POTION:
+            case THROWN_EXP_BOTTLE:
+            case TIPPED_ARROW:
                 // projectile
-            case PRIMED_TNT:
             case FALLING_BLOCK:
+            case PRIMED_TNT:
                 // Block entities
-            case ENDER_CRYSTAL:
-            case COMPLEX_PART:
-            case FISHING_HOOK:
-            case ENDER_SIGNAL:
-            case EXPERIENCE_ORB:
-            case LEASH_HITCH:
-            case FIREWORK:
-            case WEATHER:
             case AREA_EFFECT_CLOUD:
-            case LIGHTNING:
-            case WITHER_SKULL:
+            case COMPLEX_PART:
+            case ENDER_CRYSTAL:
+            case ENDER_SIGNAL:
             case EVOKER_FANGS:
+            case EXPERIENCE_ORB:
+            case FIREWORK:
+            case FISHING_HOOK:
+            case LEASH_HITCH:
+            case LIGHTNING:
             case UNKNOWN:
+            case WEATHER:
+            case WITHER_SKULL:
                 // non moving / unmovable
                 return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP);
+            case ARMOR_STAND:
             case ITEM_FRAME:
             case PAINTING:
-            case ARMOR_STAND:
                 return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MISC_CAP);
             // misc
+            case BOAT:
             case MINECART:
             case MINECART_CHEST:
             case MINECART_COMMAND:
@@ -149,67 +150,66 @@ import java.util.regex.Pattern;
             case MINECART_HOPPER:
             case MINECART_MOB_SPAWNER:
             case MINECART_TNT:
-            case BOAT:
                 return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.VEHICLE_CAP);
-            case POLAR_BEAR:
-            case RABBIT:
-            case SHEEP:
-            case MUSHROOM_COW:
-            case OCELOT:
-            case PIG:
-            case SQUID:
-            case VILLAGER:
-            case IRON_GOLEM:
-            case WOLF:
-            case CHICKEN:
-            case COW:
-            case SNOWMAN:
             case BAT:
-            case HORSE:
+            case CHICKEN:
+            case COD:
+            case COW:
+            case DOLPHIN:
             case DONKEY:
+            case HORSE:
+            case IRON_GOLEM:
             case LLAMA:
             case MULE:
-            case ZOMBIE_HORSE:
-            case SKELETON_HORSE:
+            case MUSHROOM_COW:
+            case OCELOT:
             case PARROT:
-            case TURTLE:
-            case COD:
-            case SALMON:
-            case DOLPHIN:
+            case PIG:
+            case POLAR_BEAR:
             case PUFFERFISH:
+            case RABBIT:
+            case SALMON:
+            case SHEEP:
+            case SKELETON_HORSE:
+            case SNOWMAN:
+            case SQUID:
             case TROPICAL_FISH:
+            case TURTLE:
+            case VILLAGER:
+            case WOLF:
+            case ZOMBIE_HORSE:
                 // animal
                 return EntityUtil
                     .checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.ANIMAL_CAP);
             case BLAZE:
             case CAVE_SPIDER:
             case CREEPER:
+            case DROWNED:
+            case ELDER_GUARDIAN:
             case ENDERMAN:
             case ENDERMITE:
             case ENDER_DRAGON:
+            case EVOKER:
             case GHAST:
             case GIANT:
             case GUARDIAN:
+            case HUSK:
+            case ILLUSIONER:
             case MAGMA_CUBE:
             case PIG_ZOMBIE:
+            case SHULKER:
             case SILVERFISH:
             case SKELETON:
             case SLIME:
             case SPIDER:
+            case STRAY:
+            case VEX:
+            case VINDICATOR:
             case WITCH:
             case WITHER:
-            case ZOMBIE:
-            case SHULKER:
-            case HUSK:
-            case STRAY:
-            case ELDER_GUARDIAN:
             case WITHER_SKELETON:
-            case VINDICATOR:
-            case EVOKER:
-            case VEX:
+            case ZOMBIE:
             case ZOMBIE_VILLAGER:
-            case DROWNED:
-            case ILLUSIONER:
                 // monster
                 return EntityUtil
                     .checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.HOSTILE_CAP);
@@ -353,10 +353,13 @@ import java.util.regex.Pattern;
                 }
                 return;
             }
-            case DRAGON_EGG:
             case ANVIL:
+            case DRAGON_EGG:
+            case GRAVEL:
             case SAND:
-            case GRAVEL: {
+            case TURTLE_EGG:
+            case TURTLE_HELMET:
+            case TURTLE_SPAWN_EGG: {
                 Block block = event.getBlock();
                 Location loc = BukkitUtil.getLocation(block.getLocation());
                 PlotArea area = loc.getPlotArea();
@@ -690,15 +693,15 @@ import java.util.regex.Pattern;
                 }
                 if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
                     switch (vehicle.getType()) {
+                        case BOAT:
+                        case ENDER_CRYSTAL:
                         case MINECART:
                         case MINECART_CHEST:
                         case MINECART_COMMAND:
                         case MINECART_FURNACE:
                         case MINECART_HOPPER:
                         case MINECART_MOB_SPAWNER:
-                        case ENDER_CRYSTAL:
-                        case MINECART_TNT:
-                        case BOAT: {
+                        case MINECART_TNT: {
                             List<MetadataValue> meta = vehicle.getMetadata("plot");
                             Plot toPlot = BukkitUtil.getLocation(to).getPlot();
                             if (!meta.isEmpty()) {
@@ -1726,44 +1729,41 @@ import java.util.regex.Pattern;
                 location = BukkitUtil.getLocation(block.getLocation());
                 Material blockType = block.getType();
                 switch (blockType) {
-                    case ANVIL:
                     case ACACIA_DOOR:
                     case BIRCH_DOOR:
                     case DARK_OAK_DOOR:
                     case IRON_DOOR:
                     case JUNGLE_DOOR:
-                    case SPRUCE_DOOR:
                     case OAK_DOOR:
+                    case SPRUCE_DOOR:
+
                     case ACACIA_TRAPDOOR:
                     case BIRCH_TRAPDOOR:
                     case DARK_OAK_TRAPDOOR:
+                    case IRON_TRAPDOOR:
                     case JUNGLE_TRAPDOOR:
                     case OAK_TRAPDOOR:
                     case SPRUCE_TRAPDOOR:
-                    case IRON_TRAPDOOR:
-                    case TRAPPED_CHEST:
-                    case ENDER_CHEST:
+
                     case CHEST:
+                    case ENDER_CHEST:
+                    case TRAPPED_CHEST:
+
                     case ACACIA_FENCE_GATE:
                     case BIRCH_FENCE_GATE:
                     case DARK_OAK_FENCE_GATE:
                     case OAK_FENCE_GATE:
                     case JUNGLE_FENCE_GATE:
                     case SPRUCE_FENCE_GATE:
-                    case LEVER:
-                    case REDSTONE_TORCH:
-                    case REDSTONE_WALL_TORCH:
-                    case COMMAND_BLOCK:
-                    case COMPARATOR:
-                    case REDSTONE_ORE:
+
+                    case ACACIA_BUTTON:
                     case BIRCH_BUTTON:
                     case DARK_OAK_BUTTON:
                     case JUNGLE_BUTTON:
-                    case ACACIA_BUTTON:
                     case OAK_BUTTON:
                     case SPRUCE_BUTTON:
                     case STONE_BUTTON:
-                    case BEACON:
+
                     case BLACK_BED:
                     case BLUE_BED:
                     case BROWN_BED:
@@ -1780,10 +1780,7 @@ import java.util.regex.Pattern;
                     case RED_BED:
                     case WHITE_BED:
                     case YELLOW_BED:
-                    case SIGN:
-                    case WALL_SIGN:
-                    case ENCHANTING_TABLE:
-                    case BREWING_STAND:
+
                     case BLACK_BANNER:
                     case BLACK_WALL_BANNER:
                     case BLUE_BANNER:
@@ -1816,33 +1813,53 @@ import java.util.regex.Pattern;
                     case WHITE_WALL_BANNER:
                     case YELLOW_BANNER:
                     case YELLOW_WALL_BANNER:
-                    case FURNACE:
-                    case CAKE:
-                    case DISPENSER:
-                    case DROPPER:
-                    case HOPPER:
-                    case NOTE_BLOCK:
-                    case JUKEBOX:
-                    case CRAFTING_TABLE:
-                    case LIGHT_GRAY_SHULKER_BOX:
+
                     case BLACK_SHULKER_BOX:
                     case BLUE_SHULKER_BOX:
-                    case RED_SHULKER_BOX:
-                    case PINK_SHULKER_BOX:
-                    case ORANGE_SHULKER_BOX:
-                    case WHITE_SHULKER_BOX:
-                    case YELLOW_SHULKER_BOX:
                     case BROWN_SHULKER_BOX:
                     case CYAN_SHULKER_BOX:
-                    case GREEN_SHULKER_BOX:
-                    case PURPLE_SHULKER_BOX:
                     case GRAY_SHULKER_BOX:
-                    case LIME_SHULKER_BOX:
+                    case GREEN_SHULKER_BOX:
                     case LIGHT_BLUE_SHULKER_BOX:
+                    case LIGHT_GRAY_SHULKER_BOX:
+                    case LIME_SHULKER_BOX:
                     case MAGENTA_SHULKER_BOX:
+                    case ORANGE_SHULKER_BOX:
+                    case PINK_SHULKER_BOX:
+                    case PURPLE_SHULKER_BOX:
+                    case RED_SHULKER_BOX:
+                    case WHITE_SHULKER_BOX:
+                    case YELLOW_SHULKER_BOX:
+
                     case CHAIN_COMMAND_BLOCK:
                     case REPEATING_COMMAND_BLOCK:
 
+                    case SIGN:
+                    case WALL_SIGN:
+
+                    case REDSTONE_TORCH:
+                    case REDSTONE_WALL_TORCH:
+
+                    case TURTLE_EGG:
+                    case TURTLE_HELMET:
+                    case TURTLE_SPAWN_EGG:
+
+                    case ANVIL:
+                    case BEACON:
+                    case BREWING_STAND:
+                    case CAKE:
+                    case COMMAND_BLOCK:
+                    case COMPARATOR:
+                    case CRAFTING_TABLE:
+                    case DISPENSER:
+                    case DROPPER:
+                    case ENCHANTING_TABLE:
+                    case FURNACE:
+                    case HOPPER:
+                    case JUKEBOX:
+                    case LEVER:
+                    case NOTE_BLOCK:
+                    case REDSTONE_ORE:
                         eventType = PlayerBlockEventType.INTERACT_BLOCK;
                         break;
                     case DRAGON_EGG:
@@ -1888,60 +1905,60 @@ import java.util.regex.Pattern;
                                 .getLocation(block.getRelative(event.getBlockFace()).getLocation());
                             eventType = PlayerBlockEventType.PLACE_MISC;
                             break;
-                        case WRITTEN_BOOK:
-                        case WRITABLE_BOOK:
+                        case BOOK:
                         case ENCHANTED_BOOK:
                         case KNOWLEDGE_BOOK:
-                        case BOOK:
+                        case WRITABLE_BOOK:
+                        case WRITTEN_BOOK:
                             eventType = PlayerBlockEventType.READ;
                             break;
                         case APPLE:
                         case BAKED_POTATO:
-                        case MUSHROOM_STEW:
+                        case BEEF:
                         case BREAD:
                         case CARROT:
-                        case GOLDEN_CARROT:
-                        case COOKIE:
-                        case PORKCHOP:
-                        case POISONOUS_POTATO:
-                        case MUTTON:
+                        case CHICKEN:
+                        case COD:
+                        case COOKED_BEEF:
+                        case COOKED_CHICKEN:
+                        case COOKED_COD:
+                        case COOKED_MUTTON:
                         case COOKED_PORKCHOP:
+                        case COOKED_RABBIT:
+                        case COOKED_SALMON:
+                        case COOKIE:
+                        case GOLDEN_CARROT:
+                        case MUSHROOM_STEW:
+                        case MUTTON:
+                        case POISONOUS_POTATO:
+                        case PORKCHOP:
                         case POTATO:
                         case POTION:
+                        case PUFFERFISH:
                         case PUMPKIN_PIE:
                         case RABBIT:
                         case RABBIT_FOOT:
                         case RABBIT_STEW:
-                        case BEEF:
-                        case COOKED_BEEF:
-                        case TROPICAL_FISH:
-                        case PUFFERFISH:
-                        case CHICKEN:
-                        case COOKED_CHICKEN:
-                        case COOKED_MUTTON:
-                        case COOKED_RABBIT:
-                        case COOKED_SALMON:
                         case SALMON:
-                        case COD:
-                        case COOKED_COD:
+                        case TROPICAL_FISH:
                             eventType = PlayerBlockEventType.EAT;
                             break;
-                        case MINECART:
+                        case ACACIA_BOAT:
+                        case BIRCH_BOAT:
                         case CHEST_MINECART:
+                        case COMMAND_BLOCK_MINECART:
+                        case DARK_OAK_BOAT:
                         case FURNACE_MINECART:
                         case HOPPER_MINECART:
-                        case TNT_MINECART:
-                        case COMMAND_BLOCK_MINECART:
-                        case BIRCH_BOAT:
-                        case ACACIA_BOAT:
-                        case DARK_OAK_BOAT:
                         case JUNGLE_BOAT:
+                        case MINECART:
                         case OAK_BOAT:
                         case SPRUCE_BOAT:
+                        case TNT_MINECART:
                             eventType = PlayerBlockEventType.PLACE_VEHICLE;
                             break;
-                        case PAINTING:
                         case ITEM_FRAME:
+                        case PAINTING:
                             location = BukkitUtil
                                 .getLocation(block.getRelative(event.getBlockFace()).getLocation());
                             eventType = PlayerBlockEventType.PLACE_HANGING;
@@ -1985,15 +2002,22 @@ import java.util.regex.Pattern;
         //TODO needs an overhaul for the increased number of spawn reasons added to this event.
         //I can't believe they waited so damn long to expand this API set.
         switch (reason) {
-            case SPAWNER_EGG:
             case DISPENSE_EGG:
-            case OCELOT_BABY:
             case EGG:
+            case OCELOT_BABY:
+            case SPAWNER_EGG:
                 if (!area.SPAWN_EGGS) {
                     event.setCancelled(true);
                     return;
                 }
                 break;
+            case REINFORCEMENTS:
+            case NATURAL:
+            case CHUNK_GEN:
+                if (!area.MOB_SPAWNING) {
+                    event.setCancelled(true);
+                    return;
+                }
             case BREEDING:
                 if (!area.SPAWN_BREEDING) {
                     event.setCancelled(true);
@@ -2001,8 +2025,8 @@ import java.util.regex.Pattern;
                 }
                 break;
             case BUILD_IRONGOLEM:
-            case BUILD_WITHER:
             case BUILD_SNOWMAN:
+            case BUILD_WITHER:
             case CUSTOM:
                 if (!area.SPAWN_CUSTOM && entity.getType() != EntityType.ARMOR_STAND) {
                     event.setCancelled(true);
