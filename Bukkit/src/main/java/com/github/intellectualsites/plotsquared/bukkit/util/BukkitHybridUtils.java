@@ -12,6 +12,7 @@ import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
+import com.sk89q.worldedit.world.block.BaseBlock;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -72,6 +73,49 @@ public class BukkitHybridUtils extends HybridUtils {
 
             HybridPlotWorld hpw = (HybridPlotWorld) area;
             final BlockBucket[][] result = hpw.getBlockBucketChunk();
+
+            if (hpw.PLOT_SCHEMATIC) {
+                short[] rx = new short[16];
+                short[] rz = new short[16];
+                short rbx;
+                short rbz;
+                if (bx < 0) {
+                    rbx = (short) (hpw.SIZE + (bx % hpw.SIZE));
+                } else {
+                    rbx = (short) (bx % hpw.SIZE);
+                }
+                if (bz < 0) {
+                    rbz = (short) (hpw.SIZE + (bz % hpw.SIZE));
+                } else {
+                    rbz = (short) (bz % hpw.SIZE);
+                }
+                for (short i = 0; i < 16; i++) {
+                    short v = (short) (rbx + i);
+                    if (v >= hpw.SIZE) {
+                        v -= hpw.SIZE;
+                    }
+                    rx[i] = v;
+                }
+                for (short i = 0; i < 16; i++) {
+                    short v = (short) (rbz + i);
+                    if (v >= hpw.SIZE) {
+                        v -= hpw.SIZE;
+                    }
+                    rz[i] = v;
+                }
+                int minY = Math.min(hpw.PLOT_HEIGHT, hpw.ROAD_HEIGHT);
+                for (short x = 0; x < 16; x++) {
+                    for (short z = 0; z < 16; z++) {
+                        BaseBlock[] blocks = hpw.G_SCH.get(MathMan.pair(rx[x], rz[z]));
+                        for (int y = 0; y < blocks.length; y++) {
+                            if (blocks[y] != null) {
+                                result[(minY + y) >> 4][(((minY + y) & 0xF) << 8) | (z << 4) | x] =
+                                    BlockBucket.withSingle(PlotBlock.get(blocks[y]));
+                            }
+                        }
+                    }
+                }
+            }
 
             final Runnable run = () -> ChunkManager.chunkTask(bot, top, new RunnableVal<int[]>() {
                 @Override public void run(int[] value) {
