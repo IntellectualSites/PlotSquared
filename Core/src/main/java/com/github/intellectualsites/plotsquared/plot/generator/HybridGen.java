@@ -42,9 +42,17 @@ public class HybridGen extends IndependentPlotGenerator {
         for (short x = 0; x < 16; x++) {
             for (short z = 0; z < 16; z++) {
                 for (int y = 1; y < hpw.PLOT_HEIGHT; y++) {
-                    blockBuckets[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = hpw.MAIN_BLOCK;
+                    int layer = y >> 4;
+                    if (blockBuckets[layer] == null) {
+                        blockBuckets[layer] = new BlockBucket[4096];
+                    }
+                    blockBuckets[layer][((y & 0xF) << 8) | (z << 4) | x] = hpw.MAIN_BLOCK;
                 }
-                blockBuckets[hpw.PLOT_HEIGHT >> 4][((hpw.PLOT_HEIGHT & 0xF) << 8) | (z << 4) | x] =
+                int layer = hpw.PLOT_HEIGHT >> 4;
+                if (blockBuckets[layer] == null) {
+                    blockBuckets[layer] = new BlockBucket[4096];
+                }
+                blockBuckets[layer][((hpw.PLOT_HEIGHT & 0xF) << 8) | (z << 4) | x] =
                     hpw.MAIN_BLOCK;
             }
         }

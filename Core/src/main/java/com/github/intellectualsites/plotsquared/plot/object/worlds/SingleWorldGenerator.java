@@ -26,7 +26,11 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
         for (int x = bedrock1.getX(); x <= bedrock2.getX(); x++) {
             for (int z = bedrock1.getZ(); z <= bedrock2.getZ(); z++) {
                 for (int y = bedrock1.getY(); y <= bedrock2.getY(); y++) {
-                    blockBuckets[y >> 4][((y & 0xF) << 8) | (z << 4) | x] =
+                    int layer = y >> 4;
+                    if (blockBuckets[layer] == null) {
+                        blockBuckets[layer] = new BlockBucket[4096];
+                    }
+                    blockBuckets[layer][((y & 0xF) << 8) | (z << 4) | x] =
                         BlockBucket.withSingle(PlotBlock.get("bedrock"));
                 }
             }
@@ -34,7 +38,11 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
         for (int x = dirt1.getX(); x <= dirt2.getX(); x++) {
             for (int z = dirt1.getZ(); z <= dirt2.getZ(); z++) {
                 for (int y = dirt1.getY(); y <= dirt2.getY(); y++) {
-                    blockBuckets[y >> 4][((y & 0xF) << 8) | (z << 4) | x] =
+                    int layer = y >> 4;
+                    if (blockBuckets[layer] == null) {
+                        blockBuckets[layer] = new BlockBucket[4096];
+                    }
+                    blockBuckets[layer][((y & 0xF) << 8) | (z << 4) | x] =
                         BlockBucket.withSingle(PlotBlock.get("dirt"));
                 }
             }
@@ -42,7 +50,11 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
         for (int x = grass1.getX(); x <= grass2.getX(); x++) {
             for (int z = grass1.getZ(); z <= grass2.getZ(); z++) {
                 for (int y = grass1.getY(); y <= grass2.getY(); y++) {
-                    blockBuckets[y >> 4][((y & 0xF) << 8) | (z << 4) | x] =
+                    int layer = y >> 4;
+                    if (blockBuckets[layer] == null) {
+                        blockBuckets[layer] = new BlockBucket[4096];
+                    }
+                    blockBuckets[layer][((y & 0xF) << 8) | (z << 4) | x] =
                         BlockBucket.withSingle(PlotBlock.get("grass_block"));
                 }
             }
