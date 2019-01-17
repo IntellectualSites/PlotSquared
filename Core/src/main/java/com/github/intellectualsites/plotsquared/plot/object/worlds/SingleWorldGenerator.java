@@ -17,6 +17,39 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
         return "PlotSquared:single";
     }
 
+    @Override public BlockBucket[][] generateBlockBucketChunk(PlotArea settings) {
+        BlockBucket[][] blockBuckets = new BlockBucket[16][];
+        SinglePlotArea area = (SinglePlotArea) settings;
+        if (area.VOID) {
+            return blockBuckets;
+        }
+        for (int x = bedrock1.getX(); x <= bedrock2.getX(); x++) {
+            for (int z = bedrock1.getZ(); z <= bedrock2.getZ(); z++) {
+                for (int y = bedrock1.getY(); y <= bedrock2.getY(); y++) {
+                    blockBuckets[y >> 4][((y & 0xF) << 8) | (z << 4) | x] =
+                        BlockBucket.withSingle(PlotBlock.get("bedrock"));
+                }
+            }
+        }
+        for (int x = dirt1.getX(); x <= dirt2.getX(); x++) {
+            for (int z = dirt1.getZ(); z <= dirt2.getZ(); z++) {
+                for (int y = dirt1.getY(); y <= dirt2.getY(); y++) {
+                    blockBuckets[y >> 4][((y & 0xF) << 8) | (z << 4) | x] =
+                        BlockBucket.withSingle(PlotBlock.get("dirt"));
+                }
+            }
+        }
+        for (int x = grass1.getX(); x <= grass2.getX(); x++) {
+            for (int z = grass1.getZ(); z <= grass2.getZ(); z++) {
+                for (int y = grass1.getY(); y <= grass2.getY(); y++) {
+                    blockBuckets[y >> 4][((y & 0xF) << 8) | (z << 4) | x] =
+                        BlockBucket.withSingle(PlotBlock.get("grass_block"));
+                }
+            }
+        }
+        return blockBuckets;
+    }
+
     @Override public void generateChunk(ScopedLocalBlockQueue result, PlotArea settings) {
         SinglePlotArea area = (SinglePlotArea) settings;
         if (area.VOID) {
@@ -25,9 +58,9 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
                 result.setBlock(0, 0, 0, PlotBlock.get("bedrock"));
             }
         } else {
-            result.setCuboid(bedrock1, bedrock2, PlotBlock.get(7, 0));
-            result.setCuboid(dirt1, dirt2, PlotBlock.get(3, 0));
-            result.setCuboid(grass1, grass2, PlotBlock.get(2, 0));
+            result.setCuboid(bedrock1, bedrock2, PlotBlock.get("bedrock"));
+            result.setCuboid(dirt1, dirt2, PlotBlock.get("dirt"));
+            result.setCuboid(grass1, grass2, PlotBlock.get("grass_block"));
         }
         result.fillBiome("PLAINS");
     }

@@ -14,6 +14,7 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.area.QuadMap;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
+import lombok.Getter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,6 +35,7 @@ public abstract class PlotArea {
     private final PlotId min;
     private final PlotId max;
     private final IndependentPlotGenerator generator;
+    @Getter private final BlockBucket[][] blockBucketChunk;
     public int MAX_PLOT_MEMBERS = 128;
     public boolean AUTO_MERGE = false;
     public boolean ALLOW_SIGNS = true;
@@ -66,8 +68,9 @@ public abstract class PlotArea {
     private ConcurrentHashMap<String, Object> meta;
     private QuadMap<PlotCluster> clusters;
 
-    public PlotArea(@Nonnull final String worldName, @Nullable final String id, @Nullable IndependentPlotGenerator generator,
-        @Nullable final PlotId min, @Nullable final PlotId max) {
+    public PlotArea(@Nonnull final String worldName, @Nullable final String id,
+        @Nullable IndependentPlotGenerator generator, @Nullable final PlotId min,
+        @Nullable final PlotId max) {
         this.worldname = worldName;
         this.id = id;
         this.manager = generator != null ? generator.getNewPlotManager() : null;
@@ -84,6 +87,11 @@ public abstract class PlotArea {
             this.max = max;
         }
         this.worldhash = worldName.hashCode();
+        if (Settings.Enabled_Components.PLOT_EXPIRY) {
+            blockBucketChunk = generator.generateBlockBucketChunk(this);
+        } else {
+            blockBucketChunk = null;
+        }
     }
 
     /**
@@ -395,7 +403,7 @@ public abstract class PlotArea {
      *
      * @return ConfigurationNode[]
      */
-     public abstract ConfigurationNode[] getSettingNodes();
+    public abstract ConfigurationNode[] getSettingNodes();
 
     /**
      * Gets the {@code Plot} at a location.
@@ -591,7 +599,8 @@ public abstract class PlotArea {
         return this.clusters != null ? this.clusters.get(plot.getId().x, plot.getId().y) : null;
     }
 
-    @Nullable public PlotCluster getFirstIntersectingCluster(@Nonnull final PlotId pos1, @Nonnull final PlotId pos2) {
+    @Nullable public PlotCluster getFirstIntersectingCluster(@Nonnull final PlotId pos1,
+        @Nonnull final PlotId pos2) {
         if (this.clusters == null) {
             return null;
         }
@@ -615,6 +624,7 @@ public abstract class PlotArea {
      * Session only plot metadata (session is until the server stops).
      * <br>
      * For persistent metadata use the flag system
+     *
      * @see FlagManager
      */
     public void setMeta(@Nonnull final String key, @Nullable final Object value) {

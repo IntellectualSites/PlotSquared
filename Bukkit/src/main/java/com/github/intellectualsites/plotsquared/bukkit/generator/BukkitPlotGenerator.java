@@ -4,6 +4,7 @@ import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.bukkit.util.block.GenChunk;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
+import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SingleWorldGenerator;
@@ -28,7 +29,6 @@ public class BukkitPlotGenerator extends ChunkGenerator
     private final IndependentPlotGenerator plotGenerator;
     private final ChunkGenerator platformGenerator;
     private final boolean full;
-    private final HashMap<ChunkLoc, byte[][]> dataMap = new HashMap<>();
     private List<BlockPopulator> populators;
     private boolean loaded = false;
 
@@ -87,6 +87,30 @@ public class BukkitPlotGenerator extends ChunkGenerator
             public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
                 return PlotSquared.get().IMP.getDefaultGenerator()
                     .getNewPlotArea(world, id, min, max);
+            }
+
+            @Override public BlockBucket[][] generateBlockBucketChunk(PlotArea settings) {
+                BlockBucket[][] blockBuckets = new BlockBucket[16][];
+                HybridPlotWorld hpw = (HybridPlotWorld) settings;
+                // Bedrock
+                if (hpw.PLOT_BEDROCK) {
+                    for (short x = 0; x < 16; x++) {
+                        for (short z = 0; z < 16; z++) {
+                            blockBuckets[0][(z << 4) | x] =
+                                BlockBucket.withSingle(PlotBlock.get("bedrock"));
+                        }
+                    }
+                }
+                for (short x = 0; x < 16; x++) {
+                    for (short z = 0; z < 16; z++) {
+                        for (int y = 1; y < hpw.PLOT_HEIGHT; y++) {
+                            blockBuckets[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = hpw.MAIN_BLOCK;
+                        }
+                        blockBuckets[hpw.PLOT_HEIGHT >> 4][((hpw.PLOT_HEIGHT & 0xF) << 8) | (z << 4)
+                            | x] = hpw.MAIN_BLOCK;
+                    }
+                }
+                return blockBuckets;
             }
 
             @Override
