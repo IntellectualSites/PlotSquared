@@ -20,7 +20,10 @@ import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 public class BukkitPlotGenerator extends ChunkGenerator
     implements GeneratorWrapper<ChunkGenerator> {
@@ -249,7 +252,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
         // Set the result data
         result.setCd(createChunkData(world));
         result.grid = grid;
-        result.result = generateExtBlockSections(world, random, cx, cz, grid);
+        result.result = null;
 
         // Catch any exceptions (as exceptions usually thrown)
         try {
@@ -286,44 +289,6 @@ public class BukkitPlotGenerator extends ChunkGenerator
         }
         ChunkManager.postProcessChunk(result);
     }
-
-
-    public PlotBlock[][] generateExtBlockSections(World world, Random r, int cx, int cz,
-        BiomeGrid grid) {
-        GenChunk result = this.chunkSetter;
-        // Set the chunk location
-        result.setChunk(new ChunkWrapper(world.getName(), cx, cz));
-        // Set the result data
-        result.result = new PlotBlock[16][];
-        result.grid = grid;
-        // Catch any exceptions (as exceptions usually thrown)
-        try {
-            if (this.platformGenerator != this) {
-                final ChunkData chunkData =
-                    this.platformGenerator.generateChunkData(world, r, cx, cz, grid);
-                final PlotBlock[][] blocks = new PlotBlock[world.getMaxHeight() / 16][];
-                // section ID = Y >> 4
-                for (int x = 0; x < 16; x++) {
-                    for (int z = 0; z < 16; z++) {
-                        for (int y = 0; y < world.getMaxHeight(); y++) {
-                            if (blocks[y >> 4] == null) {
-                                blocks[y >> 4] = new PlotBlock[4096];
-                            }
-                            blocks[y >> 4][((y & 0xF) << 8) | (z << 4) | x] =
-                                PlotBlock.get(chunkData.getType(x, y, z));
-                        }
-                    }
-                }
-            } else {
-                generate(world, result);
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        // Return the result data
-        return result.result;
-    }
-
 
     /**
      * Allow spawning everywhere.
