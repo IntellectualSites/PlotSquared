@@ -106,8 +106,8 @@ public class Merge extends SubCommand {
                         ? Boolean.valueOf(args[1])
                         : true;
 
-                if(!terrain && !Permissions.hasPermission(player, C.PERMISSION_MERGE_TERRAIN)) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_MERGE_TERRAIN.s());
+                if(!terrain && !Permissions.hasPermission(player, C.PERMISSION_MERGE_KEEPROAD)) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_MERGE_KEEPROAD.s());
                     return true;
                 }
 
@@ -140,8 +140,8 @@ public class Merge extends SubCommand {
                 ? Boolean.valueOf(args[1])
                 : true;
 
-        if(!terrain && !Permissions.hasPermission(player, C.PERMISSION_MERGE_TERRAIN)) {
-            MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_MERGE_TERRAIN.s());
+        if(!terrain && !Permissions.hasPermission(player, C.PERMISSION_MERGE_KEEPROAD)) {
+            MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_MERGE_KEEPROAD.s());
             return true;
         }
 
