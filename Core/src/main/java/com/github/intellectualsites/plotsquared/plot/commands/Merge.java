@@ -96,6 +96,10 @@ public class Merge extends SubCommand {
                 if (args.length == 2) {
                     terrain = "true".equalsIgnoreCase(args[1]);
                 }
+                if(!terrain && !Permissions.hasPermission(player, C.PERMISSION_MERGE_KEEPROAD)) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_MERGE_KEEPROAD.s());
+                    return true;
+                }
                 if (plot.autoMerge(-1, maxSize, uuid, terrain)) {
                     if (EconHandler.manager != null && plotArea.USE_ECONOMY && price > 0d) {
                         EconHandler.manager.withdrawMoney(player, price);
@@ -127,6 +131,10 @@ public class Merge extends SubCommand {
             terrain = "true".equalsIgnoreCase(args[1]);
         } else {
             terrain = true;
+        }
+        if(!terrain && !Permissions.hasPermission(player, C.PERMISSION_MERGE_KEEPROAD)) {
+            MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_MERGE_KEEPROAD.s());
+            return true;
         }
         if (plot.autoMerge(direction, maxSize - size, uuid, terrain)) {
             if (EconHandler.manager != null && plotArea.USE_ECONOMY && price > 0d) {

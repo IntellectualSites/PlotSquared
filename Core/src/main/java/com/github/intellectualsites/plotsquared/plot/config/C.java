@@ -46,7 +46,8 @@ public enum C {
         "plots.admin.entry.denied", "static.permissions"), PERMISSION_ADMIN_ENTRY_FORCEFIELD(
         "plots.admin.entry.forcefield", "static.permissions"), PERMISSION_COMMANDS_CHAT(
         "plots.admin.command.chat", "static.permissions"), PERMISSION_MERGE_OTHER(
-        "plots.merge.other", "static.permissions"), PERMISSION_ADMIN_DESTROY_UNOWNED(
+        "plots.merge.other", "static.permissions"), PERMISSION_MERGE_KEEPROAD(
+        "plots.merge.keeproad", "static.permissions"), PERMISSION_ADMIN_DESTROY_UNOWNED(
         "plots.admin.destroy.unowned", "static.permissions"), PERMISSION_ADMIN_DESTROY_GROUNDLEVEL(
         "plots.admin.destroy.groundlevel", "static.permissions"), PERMISSION_ADMIN_DESTROY_OTHER(
         "plots.admin.destroy.other", "static.permissions"), PERMISSION_ADMIN_DESTROY_ROAD(
@@ -141,8 +142,9 @@ public enum C {
     PERMISSION_SET_COMPONENT("plots.set.%s0", "static.permissions"), PERMISSION_ADMIN_COMMAND(
         "plots.admin.command.%s0", "static.permissions"),
 
-    PERMISSION_ADMIN_COMMAND_UNLINK("plots.admin.command.unlink", "static.permissions"), PERMISSION_VISIT_UNOWNED(
-        "plots.visit.unowned", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_UNLINK("plots.admin.command.unlink",
+        "static.permissions"), PERMISSION_VISIT_UNOWNED("plots.visit.unowned",
+        "static.permissions"),
 
     PERMISSION_VISIT_OWNED("plots.visit.owned", "static.permissions"), PERMISSION_SHARED(
         "plots.visit.shared", "static.permissions"),
