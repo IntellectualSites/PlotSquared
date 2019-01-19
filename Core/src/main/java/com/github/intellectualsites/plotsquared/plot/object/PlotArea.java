@@ -14,7 +14,6 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.area.QuadMap;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
-import lombok.Getter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,7 +34,7 @@ public abstract class PlotArea {
     private final PlotId min;
     private final PlotId max;
     private final IndependentPlotGenerator generator;
-    @Getter private final BlockBucket[][] blockBucketChunk;
+    private final BlockBucket[][] blockBucketChunk;
     public int MAX_PLOT_MEMBERS = 128;
     public boolean AUTO_MERGE = false;
     public boolean ALLOW_SIGNS = true;
@@ -87,7 +86,7 @@ public abstract class PlotArea {
             this.max = max;
         }
         this.worldhash = worldName.hashCode();
-        if (Settings.Enabled_Components.PLOT_EXPIRY) {
+        if (Settings.Enabled_Components.PLOT_EXPIRY && generator != null) {
             blockBucketChunk = generator.generateBlockBucketChunk(this);
         } else {
             blockBucketChunk = null;
@@ -111,6 +110,21 @@ public abstract class PlotArea {
 
     public LocalBlockQueue getQueue(final boolean autoQueue) {
         return GlobalBlockQueue.IMP.getNewQueue(worldname, autoQueue);
+    }
+
+    /**
+     * Get an array of BlockBuckets corresponding to a chunk of a plot
+     *
+     * @return BlockBucket[][]
+     */
+    public BlockBucket[][] getBlockBucketChunk() {
+        if (blockBucketChunk != null) {
+            return blockBucketChunk;
+        }
+        if (generator != null) {
+            return generator.generateBlockBucketChunk(this);
+        }
+        return null;
     }
 
     /**

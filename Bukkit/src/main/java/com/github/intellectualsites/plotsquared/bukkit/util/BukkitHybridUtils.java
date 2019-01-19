@@ -74,6 +74,10 @@ public class BukkitHybridUtils extends HybridUtils {
             HybridPlotWorld hpw = (HybridPlotWorld) area;
             final BlockBucket[][] result = hpw.getBlockBucketChunk();
 
+            if (result == null) {
+                return;
+            }
+
             if (hpw.PLOT_SCHEMATIC) {
                 short[] rx = new short[16];
                 short[] rz = new short[16];
@@ -218,7 +222,7 @@ public class BukkitHybridUtils extends HybridUtils {
                                     types.add(now);
                                 }
                             } catch (NullPointerException e) {
-                                PlotSquared.log(old.toString());
+                                PlotSquared.log(old != null ? old.toString() : "old null");
                                 PlotSquared.log(x);
                                 PlotSquared.log(y);
                                 PlotSquared.log(z);
