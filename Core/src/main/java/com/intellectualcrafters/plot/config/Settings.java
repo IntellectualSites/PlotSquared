@@ -200,6 +200,10 @@ public class Settings extends Config {
         @Ignore
         public static boolean NATIVE_UUID_PROVIDER = false;
     }
+    
+    @Comment("General settings") public static final class General {
+        @Comment("Display scientific numbers (4.2E8)") public static boolean SCIENTIFIC = false;
+    }
 
     @Comment("Configure the paths that will be used")
     public static final class Paths {
