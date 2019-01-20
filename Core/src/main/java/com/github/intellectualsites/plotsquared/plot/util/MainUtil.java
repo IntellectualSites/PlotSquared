@@ -4,6 +4,7 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
+import com.github.intellectualsites.plotsquared.plot.flag.DoubleFlag;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
@@ -18,6 +19,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -749,8 +751,13 @@ public class MainUtil {
         } else {
             String prefix = "";
             for (Entry<Flag<?>, Object> entry : flagMap.entrySet()) {
-                flags.append(prefix)
-                    .append(C.PLOT_FLAG_LIST.f(entry.getKey().getName(), entry.getValue()));
+                Object value = entry.getValue();
+                if (entry.getKey() instanceof DoubleFlag && !Settings.General.SCIENTIFIC) {
+                    DecimalFormat df = new DecimalFormat("0");
+                    df.setMaximumFractionDigits(340);
+                    value = df.format(value);
+                }
+                flags.append(prefix).append(C.PLOT_FLAG_LIST.f(entry.getKey().getName(), value));
                 prefix = ", ";
             }
         }
