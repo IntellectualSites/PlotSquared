@@ -8,6 +8,7 @@ import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flag.*;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 
@@ -30,13 +31,37 @@ import java.util.*;
                     int checkRange = PlotSquared.get().getPlatform().equalsIgnoreCase("bukkit") ?
                         numeric :
                         Settings.Limit.MAX_PLOTS;
-                    return player.hasPermissionRange(perm, checkRange) >= numeric;
+                    final boolean result = player.hasPermissionRange(perm, checkRange) >= numeric;
+                    if (!result) {
+                        MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SET_FLAG_KEY_VALUE
+                            .f(key.toLowerCase(), value.toLowerCase()));
+                    }
+                    return result;
                 }
 
             } catch (NumberFormatException ignore) {
             }
+        } else if (flag instanceof PlotBlockListFlag) {
+            final PlotBlockListFlag blockListFlag = (PlotBlockListFlag) flag;
+            final HashSet<PlotBlock> parsedBlocks = blockListFlag.parseValue(value);
+            for (final PlotBlock block : parsedBlocks) {
+                final String permission = C.PERMISSION_SET_FLAG_KEY_VALUE.f(key.toLowerCase(),
+                    block.getRawId().toString().toLowerCase());
+                final boolean result = Permissions.hasPermission(player, permission);
+                if (!result) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SET_FLAG_KEY_VALUE
+                        .f(key.toLowerCase(), value.toLowerCase()));
+                    return false;
+                }
+            }
+            return true;
         }
-        return Permissions.hasPermission(player, perm);
+        final boolean result = Permissions.hasPermission(player, perm);
+        if (!result) {
+            MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SET_FLAG_KEY_VALUE
+                .f(key.toLowerCase(), value.toLowerCase()));
+        }
+        return result;
     }
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
@@ -116,8 +141,6 @@ import java.util.*;
                 }
                 String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
                 if (!checkPermValue(player, flag, args[1], value)) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SET_FLAG_KEY_VALUE
-                        .f(args[1].toLowerCase(), value.toLowerCase()));
                     return false;
                 }
                 Object parsed = flag.parseValue(value);
@@ -152,8 +175,6 @@ import java.util.*;
                     }
                     for (String entry : args[2].split(",")) {
                         if (!checkPermValue(player, flag, args[1], entry)) {
-                            MainUtil.sendMessage(player, C.NO_PERMISSION,
-                                C.PERMISSION_SET_FLAG_KEY_VALUE.f(args[1].toLowerCase(), entry));
                             return false;
                         }
                     }
@@ -200,8 +221,6 @@ import java.util.*;
                 }
                 for (String entry : args[2].split(",")) {
                     if (!checkPermValue(player, flag, args[1], entry)) {
-                        MainUtil.sendMessage(player, C.NO_PERMISSION,
-                            C.PERMISSION_SET_FLAG_KEY_VALUE.f(args[1].toLowerCase(), entry));
                         return false;
                     }
                 }
@@ -246,7 +265,7 @@ import java.util.*;
                 for (Flag<?> flag1 : Flags.getFlags()) {
                     String type = flag1.getClass().getSimpleName();
                     if (!flags.containsKey(type)) {
-                        flags.put(type, new ArrayList<String>());
+                        flags.put(type, new ArrayList<>());
                     }
                     flags.get(type).add(flag1.getName());
                 }
