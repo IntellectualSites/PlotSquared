@@ -156,13 +156,13 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             if (w3 > PLOT_WIDTH || h3 > PLOT_WIDTH) {
                 this.ROAD_SCHEMATIC_ENABLED = true;
             }
-            int centerShiftZ = 0;
+            int centerShiftZ;
             if (l3 < this.PLOT_WIDTH) {
                 centerShiftZ = (this.PLOT_WIDTH - l3) / 2;
             } else {
                 centerShiftZ = (PLOT_WIDTH - l3) / 2;
             }
-            int centerShiftX = 0;
+            int centerShiftX;
             if (w3 < this.PLOT_WIDTH) {
                 centerShiftX = (this.PLOT_WIDTH - w3) / 2;
             } else {

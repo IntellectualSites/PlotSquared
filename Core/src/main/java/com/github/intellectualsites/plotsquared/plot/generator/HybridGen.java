@@ -1,6 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
@@ -16,7 +17,12 @@ public class HybridGen extends IndependentPlotGenerator {
 
     private void placeSchem(HybridPlotWorld world, ScopedLocalBlockQueue result, short relativeX,
         short relativeZ, int x, int z) {
-        int minY = Math.min(world.PLOT_HEIGHT, world.ROAD_HEIGHT);
+        int minY; // Math.min(world.PLOT_HEIGHT, world.ROAD_HEIGHT);
+        if (Settings.Schematics.PASTE_ON_TOP) {
+            minY = Math.min(world.PLOT_HEIGHT, world.ROAD_HEIGHT);
+        } else {
+            minY = 1;
+        }
         BaseBlock[] blocks = world.G_SCH.get(MathMan.pair(relativeX, relativeZ));
         if (blocks != null) {
             for (int y = 0; y < blocks.length; y++) {
