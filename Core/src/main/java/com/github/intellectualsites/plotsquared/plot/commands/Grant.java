@@ -14,6 +14,7 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "grant", category = CommandCategory.CLAIMING,
     usage = "/plot grant <check|add> [player]", permission = "plots.grant",
@@ -23,7 +24,7 @@ import java.util.UUID;
         super(MainCommand.getInstance(), true);
     }
 
-    @Override public void execute(final PlotPlayer player, String[] args,
+    @Override public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         checkTrue(args.length >= 1 && args.length <= 2, C.COMMAND_SYNTAX, getUsage());
@@ -33,7 +34,7 @@ import java.util.UUID;
             case "check":
                 if (!Permissions.hasPermission(player, C.PERMISSION_GRANT.f(arg0))) {
                     C.NO_PERMISSION.send(player, C.PERMISSION_GRANT.f(arg0));
-                    return;
+                    return CompletableFuture.completedFuture(false);
                 }
                 if (args.length > 2) {
                     break;
@@ -42,7 +43,7 @@ import java.util.UUID;
                     args.length == 2 ? UUIDHandler.getUUIDFromString(args[1]) : player.getUUID();
                 if (uuid == null) {
                     C.INVALID_PLAYER.send(player, args[1]);
-                    return;
+                    return CompletableFuture.completedFuture(false);
                 }
                 MainUtil.getPersistentMeta(uuid, "grantedPlots", new RunnableVal<byte[]>() {
                     @Override public void run(byte[] array) {
@@ -65,7 +66,9 @@ import java.util.UUID;
                         }
                     }
                 });
+                return CompletableFuture.completedFuture(true);
         }
         C.COMMAND_SYNTAX.send(player, getUsage());
+        return CompletableFuture.completedFuture(true);
     }
 }

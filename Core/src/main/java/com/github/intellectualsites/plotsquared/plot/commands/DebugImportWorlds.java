@@ -16,6 +16,7 @@ import com.google.common.base.Charsets;
 
 import java.io.File;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "debugimportworlds", permission = "plots.admin",
     description = "Import worlds by player name", requiredType = RequiredType.CONSOLE,
@@ -24,14 +25,14 @@ import java.util.UUID;
         super(MainCommand.getInstance(), true);
     }
 
-    @Override public void execute(PlotPlayer player, String[] args,
+    @Override public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         // UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8))
         PlotAreaManager pam = PlotSquared.get().getPlotAreaManager();
         if (!(pam instanceof SinglePlotAreaManager)) {
             player.sendMessage("Must be a single plot area!");
-            return;
+            return CompletableFuture.completedFuture(false);
         }
         SinglePlotArea area = ((SinglePlotAreaManager) pam).getArea();
         PlotId id = new PlotId(0, 0);
@@ -54,5 +55,6 @@ import java.util.UUID;
             }
         }
         player.sendMessage("Done!");
+        return CompletableFuture.completedFuture(true);
     }
 }

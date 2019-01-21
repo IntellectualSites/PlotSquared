@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "debugexec", permission = "plots.admin",
     description = "Mutli-purpose debug command", aliases = {"exec", "$"},
@@ -265,7 +266,7 @@ import java.util.*;
                             System.getProperty("line.separator"));
                         new Command(MainCommand.getInstance(), true, args[1].split("\\.")[0], null,
                             RequiredType.NONE, CommandCategory.DEBUG) {
-                            @Override public void execute(PlotPlayer player, String[] args,
+                            @Override public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
                                 RunnableVal3<Command, Runnable, Runnable> confirm,
                                 RunnableVal2<Command, CommandResult> whenDone) {
                                 try {
@@ -276,6 +277,7 @@ import java.util.*;
                                     e.printStackTrace();
                                     MainUtil.sendMessage(player, C.COMMAND_WENT_WRONG);
                                 }
+                                return CompletableFuture.completedFuture(true);
                             }
                         };
                         return true;

@@ -3,6 +3,10 @@ repositories {
     maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
     maven { url "http://nexus.hc.to/content/repositories/pub_releases" }
     maven { url = "https://repo.codemc.org/repository/maven-public" }
+    maven {
+        name 'papermc'
+        url 'https://papermc.io/repo/repository/maven-public/'
+    }
     mavenLocal()
 }
 
@@ -12,6 +16,7 @@ dependencies {
     compile 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
     compile(group: 'com.sk89q.worldedit', name: 'worldedit-bukkit', version: '7.0.0-SNAPSHOT')
     compile(group: 'org.bstats', name: 'bstats-bukkit', version: '1.4')
+    compile "io.papermc:paperlib:1.0.1"
     compile("net.milkbowl.vault:VaultAPI:1.7") {
         exclude module: 'bukkit'
     }
@@ -37,7 +42,9 @@ shadowJar {
     dependencies {
         include(dependency(':Core'))
         include(dependency('org.bstats:bstats-bukkit:1.4'))
+        include(dependency("io.papermc:paperlib:1.0.1"))
     }
+    relocate 'io.papermc.lib', 'com.github.intellectualsites.plotsquared.bukkit.paperlib'
     // relocate('org.mcstats', 'com.plotsquared.stats')
     archiveName = "${parent.name}-${project.name}-${parent.version}.jar"
     destinationDir = file '../target'

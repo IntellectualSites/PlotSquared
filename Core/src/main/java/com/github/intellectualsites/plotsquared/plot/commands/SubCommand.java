@@ -7,6 +7,8 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
  * SubCommand class
  *
@@ -23,12 +25,11 @@ public abstract class SubCommand extends Command {
         setRequiredArguments(arguments);
     }
 
-    @Override public void execute(PlotPlayer player, String[] args,
+    @Override public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
-        onCommand(player, args);
+        return CompletableFuture.completedFuture(onCommand(player, args));
     }
-
 
     public abstract boolean onCommand(PlotPlayer player, String[] args);
 

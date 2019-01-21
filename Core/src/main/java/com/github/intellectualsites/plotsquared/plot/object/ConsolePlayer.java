@@ -6,6 +6,7 @@ import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
 import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public class ConsolePlayer extends PlotPlayer {
@@ -33,7 +34,7 @@ public class ConsolePlayer extends PlotPlayer {
         return instance;
     }
 
-    @Override public boolean canTeleport(Location loc) {
+    @Override public boolean canTeleport(@Nonnull Location loc) {
         return true;
     }
 
@@ -95,14 +96,14 @@ public class ConsolePlayer extends PlotPlayer {
         return RequiredType.CONSOLE;
     }
 
-    @Override public void setWeather(PlotWeather weather) {
+    @Override public void setWeather(@Nonnull PlotWeather weather) {
     }
 
-    @Override public PlotGameMode getGameMode() {
+    @Nonnull @Override public PlotGameMode getGameMode() {
         return PlotGameMode.NOT_SET;
     }
 
-    @Override public void setGameMode(PlotGameMode gameMode) {
+    @Override public void setGameMode(@Nonnull PlotGameMode gameMode) {
     }
 
     @Override public void setTime(long time) {
@@ -115,7 +116,7 @@ public class ConsolePlayer extends PlotPlayer {
     @Override public void setFlight(boolean fly) {
     }
 
-    @Override public void playMusic(Location location, PlotBlock id) {
+    @Override public void playMusic(@Nonnull Location location, @Nonnull PlotBlock id) {
     }
 
     @Override public void kick(String message) {

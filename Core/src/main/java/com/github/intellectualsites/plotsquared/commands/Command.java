@@ -13,10 +13,10 @@ import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class Command {
 
@@ -56,10 +56,9 @@ public abstract class Command {
     public Command(Command parent, boolean isStatic) {
         this.parent = parent;
         this.isStatic = isStatic;
-        Annotation cdAnnotation = getClass().getAnnotation(CommandDeclaration.class);
+        CommandDeclaration cdAnnotation = getClass().getAnnotation(CommandDeclaration.class);
         if (cdAnnotation != null) {
-            CommandDeclaration declaration = (CommandDeclaration) cdAnnotation;
-            init(declaration);
+            init(cdAnnotation);
         }
         for (final Method method : getClass().getDeclaredMethods()) {
             if (method.isAnnotationPresent(CommandDeclaration.class)) {
@@ -70,14 +69,16 @@ public abstract class Command {
                     && types[2] == String[].class && types[3] == RunnableVal3.class
                     && types[4] == RunnableVal2.class) {
                     Command tmp = new Command(this, true) {
-                        @Override public void execute(PlotPlayer player, String[] args,
+                        @Override public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
                             RunnableVal3<Command, Runnable, Runnable> confirm,
                             RunnableVal2<Command, CommandResult> whenDone) {
                             try {
                                 method.invoke(Command.this, this, player, args, confirm, whenDone);
+                                return CompletableFuture.completedFuture(true);
                             } catch (IllegalAccessException | InvocationTargetException e) {
                                 e.printStackTrace();
                             }
+                            return CompletableFuture.completedFuture(false);
                         }
                     };
                     tmp.init(method.getAnnotation(CommandDeclaration.class));
@@ -263,9 +264,10 @@ public abstract class Command {
      * @param player  Caller
      * @param args    Arguments
      * @param confirm Instance, Success, Failure
-     * @return
+     * @return CompletableFuture true if the command executed fully, false in
+     * any other case
      */
-    public void execute(PlotPlayer player, String[] args,
+    public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         if (args.length == 0 || args[0] == null) {
@@ -274,28 +276,28 @@ public abstract class Command {
             } else {
                 C.COMMAND_SYNTAX.send(player, getUsage());
             }
-            return;
+            return CompletableFuture.completedFuture(false);
         }
-        if (this.allCommands == null || this.allCommands.isEmpty()) {
+        if (this.allCommands.isEmpty()) {
             player.sendMessage(
                 "Not Implemented: https://github.com/IntellectualSites/PlotSquared/issues/new");
-            return;
+            return CompletableFuture.completedFuture(false);
         }
         Command cmd = getCommand(args[0]);
         if (cmd == null) {
             if (this.parent != null) {
                 C.COMMAND_SYNTAX.send(player, getUsage());
-                return;
+                return CompletableFuture.completedFuture(false);
             }
             // Help command
             try {
-                if (args.length == 0 || MathMan.isInteger(args[0])
-                    || CommandCategory.valueOf(args[0].toUpperCase()) != null) {
-                    // This will default certain syntax to the help command
-                    // e.g. /plot, /plot 1, /plot claiming
-                    MainCommand.getInstance().help.execute(player, args, null, null);
-                    return;
+                if (!MathMan.isInteger(args[0])) {
+                    CommandCategory.valueOf(args[0].toUpperCase());
                 }
+                // This will default certain syntax to the help command
+                // e.g. /plot, /plot 1, /plot claiming
+                MainCommand.getInstance().help.execute(player, args, null, null);
+                return CompletableFuture.completedFuture(false);
             } catch (IllegalArgumentException ignored) {
             }
             // Command recommendation
@@ -304,16 +306,16 @@ public abstract class Command {
             if (commands.isEmpty()) {
                 MainUtil
                     .sendMessage(player, C.DID_YOU_MEAN, MainCommand.getInstance().help.getUsage());
-                return;
+                return CompletableFuture.completedFuture(false);
             }
-            HashSet<String> setargs = new HashSet<>(args.length);
+            HashSet<String> setArgs = new HashSet<>(args.length);
             for (String arg : args) {
-                setargs.add(arg.toLowerCase());
+                setArgs.add(arg.toLowerCase());
             }
-            String[] allargs = setargs.toArray(new String[setargs.size()]);
+            String[] allArgs = setArgs.toArray(new String[0]);
             int best = 0;
             for (Command current : commands) {
-                int match = getMatch(allargs, current);
+                int match = getMatch(allArgs, current);
                 if (match > best) {
                     cmd = current;
                 }
@@ -322,17 +324,18 @@ public abstract class Command {
                 cmd = new StringComparison<>(args[0], this.allCommands).getMatchObject();
             }
             MainUtil.sendMessage(player, C.DID_YOU_MEAN, cmd.getUsage());
-            return;
+            return CompletableFuture.completedFuture(false);
         }
         String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
         if (!cmd.checkArgs(player, newArgs) || !cmd.canExecute(player, true)) {
-            return;
+            return CompletableFuture.completedFuture(false);
         }
         try {
             cmd.execute(player, newArgs, confirm, whenDone);
         } catch (CommandException e) {
             e.perform(player);
         }
+        return CompletableFuture.completedFuture(true);
     }
 
     public boolean checkArgs(PlotPlayer player, String[] args) {

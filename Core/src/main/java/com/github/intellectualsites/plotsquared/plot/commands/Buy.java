@@ -14,6 +14,7 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "buy", description = "Buy the plot you are standing on",
     usage = "/plot buy", permission = "plots.buy", category = CommandCategory.CLAIMING,
@@ -23,7 +24,7 @@ import java.util.Set;
         super(MainCommand.getInstance(), true);
     }
 
-    @Override public void execute(final PlotPlayer player, String[] args,
+    @Override public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) {
         check(EconHandler.manager, C.ECON_DISABLED);
@@ -46,27 +47,24 @@ import java.util.Set;
         final double price = flag.get();
         checkTrue(player.getMoney() >= price, C.CANNOT_AFFORD_PLOT);
         player.withdraw(price);
-        confirm.run(this, new Runnable() {
-            @Override // Success
-            public void run() {
-                C.REMOVED_BALANCE.send(player, price);
-                EconHandler.manager
-                    .depositMoney(UUIDHandler.getUUIDWrapper().getOfflinePlayer(plot.owner), price);
-                PlotPlayer owner = UUIDHandler.getPlayer(plot.owner);
-                if (owner != null) {
-                    C.PLOT_SOLD.send(owner, plot.getId(), player.getName(), price);
-                }
-                plot.removeFlag(Flags.PRICE);
-                plot.setOwner(player.getUUID());
-                C.CLAIMED.send(player);
-                whenDone.run(Buy.this, CommandResult.SUCCESS);
+        // Failure
+        // Success
+        confirm.run(this, () -> {
+            C.REMOVED_BALANCE.send(player, price);
+            EconHandler.manager
+                .depositMoney(UUIDHandler.getUUIDWrapper().getOfflinePlayer(plot.owner), price);
+            PlotPlayer owner = UUIDHandler.getPlayer(plot.owner);
+            if (owner != null) {
+                C.PLOT_SOLD.send(owner, plot.getId(), player.getName(), price);
             }
-        }, new Runnable() {
-            @Override // Failure
-            public void run() {
-                player.deposit(price);
-                whenDone.run(Buy.this, CommandResult.FAILURE);
-            }
+            plot.removeFlag(Flags.PRICE);
+            plot.setOwner(player.getUUID());
+            C.CLAIMED.send(player);
+            whenDone.run(Buy.this, CommandResult.SUCCESS);
+        }, () -> {
+            player.deposit(price);
+            whenDone.run(Buy.this, CommandResult.FAILURE);
         });
+        return CompletableFuture.completedFuture(true);
     }
 }

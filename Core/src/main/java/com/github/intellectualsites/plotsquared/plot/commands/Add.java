@@ -15,6 +15,7 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "add",
     description = "Allow a user to build in a plot while you are online",
@@ -25,7 +26,7 @@ import java.util.UUID;
         super(MainCommand.getInstance(), true);
     }
 
-    @Override public void execute(final PlotPlayer player, String[] args,
+    @Override public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         final Plot plot = check(player.getCurrentPlot(), C.NOT_IN_PLOT);
@@ -61,22 +62,22 @@ import java.util.UUID;
         checkTrue(!uuids.isEmpty(), null);
         checkTrue(size <= plot.getArea().MAX_PLOT_MEMBERS || Permissions
             .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_TRUST), C.PLOT_MAX_MEMBERS);
-        confirm.run(this, new Runnable() {
-            @Override // Success
-            public void run() {
-                for (UUID uuid : uuids) {
-                    if (uuid != DBFunc.EVERYONE) {
-                        if (!plot.removeTrusted(uuid)) {
-                            if (plot.getDenied().contains(uuid)) {
-                                plot.removeDenied(uuid);
-                            }
+        // Success
+        confirm.run(this, () -> {
+            for (UUID uuid : uuids) {
+                if (uuid != DBFunc.EVERYONE) {
+                    if (!plot.removeTrusted(uuid)) {
+                        if (plot.getDenied().contains(uuid)) {
+                            plot.removeDenied(uuid);
                         }
                     }
-                    plot.addMember(uuid);
-                    EventUtil.manager.callMember(player, plot, uuid, true);
-                    MainUtil.sendMessage(player, C.MEMBER_ADDED);
                 }
+                plot.addMember(uuid);
+                EventUtil.manager.callMember(player, plot, uuid, true);
+                MainUtil.sendMessage(player, C.MEMBER_ADDED);
             }
         }, null);
+
+        return CompletableFuture.completedFuture(true);
     }
 }
