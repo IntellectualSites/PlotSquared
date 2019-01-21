@@ -39,6 +39,7 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
+import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.*;
@@ -114,23 +115,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Override public void onEnable() {
         this.pluginName = getDescription().getName();
         PlotPlayer.registerConverter(Player.class, BukkitUtil::getPlayer);
-
-        if (Bukkit.getVersion().contains("git-Spigot")) {
-            // Uses System.out.println because the logger isn't initialized yet
-            System.out
-                .println("[P2] ========================== USE PAPER ==========================");
-            System.out.println("[P2] Paper offers a more complete API for us to work with");
-            System.out.println("[P2] and we may come to rely on it in the future.");
-            System.out.println("[P2] It is also recommended out of a performance standpoint as");
-            System.out
-                .println("[P2] it contains many improvements missing from Spigot and Bukkit.");
-            System.out.println("[P2] DOWNLOAD: https://papermc.io/downloads");
-            System.out.println("[P2] GUIDE: https://www.spigotmc.org/threads/21726/");
-            System.out.println("[P2] NOTE: This is only a recommendation");
-            System.out.println("[P2]       Spigot is still supported.");
-            System.out
-                .println("[P2] ===============================================================");
-        }
+        PaperLib.suggestPaper(this);
 
         new PlotSquared(this, "Bukkit");
 

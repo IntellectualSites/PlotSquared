@@ -6,12 +6,9 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
-import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
-import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
-import com.github.intellectualsites.plotsquared.plot.util.StringMan;
-import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.google.common.base.Preconditions;
+import io.papermc.lib.PaperLib;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -20,11 +17,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.RegisteredListener;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
@@ -42,21 +39,23 @@ public class BukkitPlayer extends PlotPlayer {
      * <p>Please do not use this method. Instead use
      * BukkitUtil.getPlayer(Player), as it caches player objects.</p>
      *
-     * @param player
+     * @param player Bukkit player instance
      */
-    public BukkitPlayer(Player player) {
+    public BukkitPlayer(@Nonnull final Player player) {
+        Preconditions.checkNotNull(player, "Bukkit player instance cannot be null");
         this.player = player;
         super.populatePersistentMetaMap();
     }
 
-    public BukkitPlayer(Player player, boolean offline) {
+    public BukkitPlayer(@Nonnull final Player player, final boolean offline) {
+        Preconditions.checkNotNull(player, "Bukkit player instance cannot be null");
         this.player = player;
         this.offline = offline;
         super.populatePersistentMetaMap();
     }
 
     @Override public Location getLocation() {
-        Location location = super.getLocation();
+        final Location location = super.getLocation();
         return location == null ? BukkitUtil.getLocation(this.player) : location;
     }
 
@@ -71,9 +70,10 @@ public class BukkitPlayer extends PlotPlayer {
         return this.player.getLastPlayed();
     }
 
-    @Override public boolean canTeleport(Location loc) {
-        org.bukkit.Location to = BukkitUtil.getLocation(loc);
-        org.bukkit.Location from = player.getLocation();
+    @Override public boolean canTeleport(@Nonnull final Location loc) {
+        Preconditions.checkNotNull(loc, "Bukkit location cannot be null");
+        final org.bukkit.Location to = BukkitUtil.getLocation(loc);
+        final org.bukkit.Location from = player.getLocation();
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to);
         callEvent(event);
         if (event.isCancelled() || !event.getTo().equals(to)) {
@@ -90,32 +90,34 @@ public class BukkitPlayer extends PlotPlayer {
     }
 
     private void callEvent(final Event event) {
-        RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
-        for (RegisteredListener listener : listeners) {
+        Preconditions.checkNotNull(event, "Event cannot be null");
+
+        final RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
+        for (final RegisteredListener listener : listeners) {
             if (listener.getPlugin().getName().equals(PlotSquared.imp().getPluginName())) {
                 continue;
             }
             try {
                 listener.callEvent(event);
-            } catch (EventException e) {
+            } catch (final EventException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    @Override public boolean hasPermission(String permission) {
+    @Override public boolean hasPermission(final String permission) {
         if (this.offline && EconHandler.manager != null) {
             return EconHandler.manager.hasPermission(getName(), permission);
         }
         return this.player.hasPermission(permission);
     }
 
-    @Override public int hasPermissionRange(String stub, int range) {
+    @Override public int hasPermissionRange(final String stub, final int range) {
         if (hasPermission(Captions.PERMISSION_ADMIN.s())) {
             return Integer.MAX_VALUE;
         }
-        String[] nodes = stub.split("\\.");
-        StringBuilder n = new StringBuilder();
+        final String[] nodes = stub.split("\\.");
+        final StringBuilder n = new StringBuilder();
         for (int i = 0; i < (nodes.length - 1); i++) {
             n.append(nodes[i]).append(".");
             if (!stub.equals(n + Captions.PERMISSION_STAR.s())) {
@@ -131,7 +133,7 @@ public class BukkitPlayer extends PlotPlayer {
         if (CHECK_EFFECTIVE) {
             boolean hasAny = false;
             String stubPlus = stub + ".";
-            Set<PermissionAttachmentInfo> effective = player.getEffectivePermissions();
+        final Set<PermissionAttachmentInfo> effective = player.getEffectivePermissions();
             if (!effective.isEmpty()) {
                 for (PermissionAttachmentInfo attach : effective) {
                     String permStr = attach.getPermission();
@@ -170,11 +172,11 @@ public class BukkitPlayer extends PlotPlayer {
         return max;
     }
 
-    @Override public boolean isPermissionSet(String permission) {
+    @Override public boolean isPermissionSet(final String permission) {
         return this.player.isPermissionSet(permission);
     }
 
-    @Override public void sendMessage(String message) {
+    @Override public void sendMessage(final String message) {
         if (!StringMan.isEqual(this.getMeta("lastMessage"), message) || (
             System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
             setMeta("lastMessage", message);
@@ -183,14 +185,13 @@ public class BukkitPlayer extends PlotPlayer {
         }
     }
 
-    @Override public void teleport(Location location) {
+    @Override public void teleport(@Nonnull final Location location) {
         if (Math.abs(location.getX()) >= 30000000 || Math.abs(location.getZ()) >= 30000000) {
             return;
         }
-        this.player.teleport(
-            new org.bukkit.Location(BukkitUtil.getWorld(location.getWorld()), location.getX() + 0.5,
-                location.getY(), location.getZ() + 0.5, location.getYaw(), location.getPitch()),
-            TeleportCause.COMMAND);
+        final org.bukkit.Location bukkitLocation = new org.bukkit.Location(BukkitUtil.getWorld(location.getWorld()), location.getX() + 0.5,
+            location.getY(), location.getZ() + 0.5, location.getYaw(), location.getPitch());
+        PaperLib.teleportAsync(player, bukkitLocation);
     }
 
     @Override public String getName() {
@@ -208,14 +209,14 @@ public class BukkitPlayer extends PlotPlayer {
         this.player.setCompassTarget(
             new org.bukkit.Location(BukkitUtil.getWorld(location.getWorld()), location.getX(),
                 location.getY(), location.getZ()));
-
     }
 
     @Override public Location getLocationFull() {
         return BukkitUtil.getLocationFull(this.player);
     }
 
-    @Override public void setWeather(PlotWeather weather) {
+    @Override public void setWeather(@Nonnull final PlotWeather weather) {
+        Preconditions.checkNotNull(weather, "Specified weather cannot be null");
         switch (weather) {
             case CLEAR:
                 this.player.setPlayerWeather(WeatherType.CLEAR);
@@ -230,7 +231,7 @@ public class BukkitPlayer extends PlotPlayer {
         }
     }
 
-    @Override public PlotGameMode getGameMode() {
+    @Nonnull @Override public PlotGameMode getGameMode() {
         switch (this.player.getGameMode()) {
             case ADVENTURE:
                 return PlotGameMode.ADVENTURE;
@@ -245,7 +246,8 @@ public class BukkitPlayer extends PlotPlayer {
         }
     }
 
-    @Override public void setGameMode(PlotGameMode gameMode) {
+    @Override public void setGameMode(@Nonnull final PlotGameMode gameMode) {
+        Preconditions.checkNotNull(gameMode, "Specified gamemode cannot be null");
         switch (gameMode) {
             case ADVENTURE:
                 this.player.setGameMode(GameMode.ADVENTURE);
@@ -263,7 +265,7 @@ public class BukkitPlayer extends PlotPlayer {
         }
     }
 
-    @Override public void setTime(long time) {
+    @Override public void setTime(final long time) {
         if (time != Long.MAX_VALUE) {
             this.player.setPlayerTime(time, false);
         } else {
@@ -279,7 +281,9 @@ public class BukkitPlayer extends PlotPlayer {
         this.player.setAllowFlight(fly);
     }
 
-    @Override public void playMusic(Location location, PlotBlock id) {
+    @Override public void playMusic(@Nonnull final Location location, @Nonnull final PlotBlock id) {
+        Preconditions.checkNotNull(location, "Specified location cannot be null");
+        Preconditions.checkNotNull(id, "Specified block cannot be null");
         if (PlotBlock.isEverything(id) || id.isAir()) {
             // Let's just stop all the discs because why not?
             for (final Sound sound : Arrays.stream(Sound.values())
@@ -294,7 +298,7 @@ public class BukkitPlayer extends PlotPlayer {
         }
     }
 
-    @Override public void kick(String message) {
+    @Override public void kick(final String message) {
         this.player.kickPlayer(message);
     }
 

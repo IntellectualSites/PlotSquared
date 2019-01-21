@@ -12,6 +12,8 @@ import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.helpmenu.HelpMenu;
 
+import java.util.concurrent.CompletableFuture;
+
 @CommandDeclaration(command = "help", description = "Get this help menu", aliases = {"he", "?"},
     category = CommandCategory.INFO, usage = "help [category|#]", permission = "plots.use")
 public class Help extends Command {
@@ -23,72 +25,73 @@ public class Help extends Command {
         return true;
     }
 
-    @Override public void execute(PlotPlayer player, String[] args,
+    @Override public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         switch (args.length) {
             case 0:
-                displayHelp(player, null, 0);
-                return;
+                return displayHelp(player, null, 0);
             case 1:
                 if (MathMan.isInteger(args[0])) {
                     try {
-                        displayHelp(player, null, Integer.parseInt(args[0]));
+                        return displayHelp(player, null, Integer.parseInt(args[0]));
                     } catch (NumberFormatException ignored) {
-                        displayHelp(player, null, 1);
+                        return displayHelp(player, null, 1);
                     }
                 } else {
-                    displayHelp(player, args[0], 1);
+                    return displayHelp(player, args[0], 1);
                 }
-                return;
             case 2:
                 if (MathMan.isInteger(args[1])) {
                     try {
-                        displayHelp(player, args[0], Integer.parseInt(args[1]));
+                        return displayHelp(player, args[0], Integer.parseInt(args[1]));
                     } catch (NumberFormatException ignored) {
-                        displayHelp(player, args[0], 1);
+                        return displayHelp(player, args[0], 1);
                     }
                 }
-                return;
+                return CompletableFuture.completedFuture(false);
             default:
                 Captions.COMMAND_SYNTAX.send(player, getUsage());
         }
+        return CompletableFuture.completedFuture(true);
     }
 
-    public void displayHelp(CommandCaller player, String cat, int page) {
-        CommandCategory catEnum = null;
-        if (cat != null) {
-            if (StringMan.isEqualIgnoreCase(cat, "all")) {
-                catEnum = null;
-            } else {
-                for (CommandCategory c : CommandCategory.values()) {
-                    if (StringMan.isEqualIgnoreCaseToAny(cat, c.name(), c.toString())) {
-                        catEnum = c;
-                        cat = c.name();
-                        break;
+    public CompletableFuture<Boolean> displayHelp(final CommandCaller player, final String catRaw, final int page) {
+        return CompletableFuture.supplyAsync(() -> {
+            String cat = catRaw;
+
+            CommandCategory catEnum = null;
+            if (cat != null) {
+                if (!StringMan.isEqualIgnoreCase(cat, "all")) {
+                    for (CommandCategory c : CommandCategory.values()) {
+                        if (StringMan.isEqualIgnoreCaseToAny(cat, c.name(), c.toString())) {
+                            catEnum = c;
+                            cat = c.name();
+                            break;
+                        }
+                    }
+                    if (catEnum == null) {
+                        cat = null;
                     }
                 }
-                if (catEnum == null) {
-                    cat = null;
-                }
             }
-        }
-        if (cat == null && page == 0) {
-            StringBuilder builder = new StringBuilder();
+            if (cat == null && page == 0) {
+                StringBuilder builder = new StringBuilder();
             builder.append(Captions.HELP_HEADER.s());
-            for (CommandCategory c : CommandCategory.values()) {
-                builder.append("\n" + StringMan
-                    .replaceAll(Captions.HELP_INFO_ITEM.s(), "%category%",
-                        c.toString().toLowerCase(), "%category_desc%", c.toString()));
-            }
+                for (CommandCategory c : CommandCategory.values()) {
+                    builder.append("\n").append(StringMan
+                        .replaceAll(Captions.HELP_INFO_ITEM.s(), "%category%", c.toString().toLowerCase(),
+                            "%category_desc%", c.toString()));
+                }
             builder.append("\n").append(Captions.HELP_INFO_ITEM.s().replaceAll("%category%", "all")
                 .replaceAll("%category_desc%", Captions.HELP_DISPLAY_ALL_COMMANDS.s()));
             builder.append("\n" + Captions.HELP_FOOTER.s());
-            MainUtil.sendMessage(player, builder.toString(), false);
-            return;
-        }
-        page--;
-        new HelpMenu(player).setCategory(catEnum).getCommands().generateMaxPages()
-            .generatePage(page, getParent().toString()).render();
+                MainUtil.sendMessage(player, builder.toString(), false);
+                return true;
+            }
+            new HelpMenu(player).setCategory(catEnum).getCommands().generateMaxPages()
+                .generatePage(page - 1, getParent().toString()).render();
+            return true;
+        });
     }
 }

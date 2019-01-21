@@ -15,6 +15,7 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "add",
     description = "Allow a user to build in a plot while you are online",
@@ -25,7 +26,7 @@ import java.util.UUID;
         super(MainCommand.getInstance(), true);
     }
 
-    @Override public void execute(final PlotPlayer player, String[] args,
+    @Override public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         final Plot plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);
@@ -78,5 +79,7 @@ import java.util.UUID;
                 MainUtil.sendMessage(player, Captions.MEMBER_ADDED);
             }
         }, null);
+
+        return CompletableFuture.completedFuture(true);
     }
 }

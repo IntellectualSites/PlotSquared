@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "debugexec", permission = "plots.admin",
     description = "Mutli-purpose debug command", aliases = {"exec", "$"},
@@ -284,7 +285,7 @@ import java.util.UUID;
                             System.getProperty("line.separator"));
                         new Command(MainCommand.getInstance(), true, args[1].split("\\.")[0], null,
                             RequiredType.NONE, CommandCategory.DEBUG) {
-                            @Override public void execute(PlotPlayer player, String[] args,
+                            @Override public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
                                 RunnableVal3<Command, Runnable, Runnable> confirm,
                                 RunnableVal2<Command, CommandResult> whenDone) {
                                 try {
@@ -295,6 +296,7 @@ import java.util.UUID;
                                     e.printStackTrace();
                                     MainUtil.sendMessage(player, Captions.COMMAND_WENT_WRONG);
                                 }
+                                return CompletableFuture.completedFuture(true);
                             }
                         };
                         return true;

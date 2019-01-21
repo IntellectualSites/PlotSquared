@@ -14,6 +14,8 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 
+import java.util.concurrent.CompletableFuture;
+
 @CommandDeclaration(command = "clear", description = "Clear the plot you stand on",
     permission = "plots.clear", category = CommandCategory.APPEARANCE, usage = "/plot clear",
     aliases = "reset", confirmation = true) public class Clear extends Command {
@@ -25,7 +27,7 @@ import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue
         super(MainCommand.getInstance(), true);
     }
 
-    @Override public void execute(final PlotPlayer player, String[] args,
+    @Override public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         checkTrue(args.length == 0, Captions.COMMAND_SYNTAX, getUsage());
@@ -59,5 +61,6 @@ import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue
                 plot.addRunning();
             }
         }, null);
+        return CompletableFuture.completedFuture(true);
     }
 }

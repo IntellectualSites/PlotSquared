@@ -12,6 +12,7 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "visit", permission = "plots.visit",
     description = "Visit someones plot", usage = "/plot visit [<player>|<alias>|<world>|<id>] [#]",
@@ -26,7 +27,7 @@ import java.util.*;
         return tabOf(player, args, space, getUsage());
     }
 
-    @Override public void execute(final PlotPlayer player, String[] args,
+    @Override public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         if (args.length == 1 && args[0].contains(":")) {
@@ -41,7 +42,7 @@ import java.util.*;
                 if (!MathMan.isInteger(args[1])) {
                     Captions.NOT_VALID_NUMBER.send(player, "(1, ∞)");
                     Captions.COMMAND_SYNTAX.send(player, getUsage());
-                    return;
+                    return CompletableFuture.completedFuture(false);
                 }
                 page = Integer.parseInt(args[2]);
             case 2:
@@ -50,12 +51,12 @@ import java.util.*;
                     if (sortByArea == null) {
                         Captions.NOT_VALID_NUMBER.send(player, "(1, ∞)");
                         Captions.COMMAND_SYNTAX.send(player, getUsage());
-                        return;
+                        return CompletableFuture.completedFuture(false);
                     }
                     UUID user = UUIDHandler.getUUIDFromString(args[0]);
                     if (user == null) {
                         Captions.COMMAND_SYNTAX.send(player, getUsage());
-                        return;
+                        return CompletableFuture.completedFuture(false);
                     }
                     unsorted = PlotSquared.get().getBasePlots(user);
                     shouldSortByArea = true;
@@ -93,7 +94,7 @@ import java.util.*;
         }
         if (unsorted == null || unsorted.isEmpty()) {
             Captions.FOUND_NO_PLOTS.send(player);
-            return;
+            return CompletableFuture.completedFuture(false);
         }
         unsorted = new ArrayList<>(unsorted);
         if (unsorted.size() > 1) {
@@ -101,7 +102,7 @@ import java.util.*;
         }
         if (page < 1 || page > unsorted.size()) {
             Captions.NOT_VALID_NUMBER.send(player, "(1, " + unsorted.size() + ")");
-            return;
+            return CompletableFuture.completedFuture(false);
         }
         List<Plot> plots;
         if (shouldSortByArea) {
@@ -114,23 +115,23 @@ import java.util.*;
         if (!plot.hasOwner()) {
             if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_UNOWNED)) {
                 Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_UNOWNED);
-                return;
+                return CompletableFuture.completedFuture(false);
             }
         } else if (plot.isOwner(player.getUUID())) {
             if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OWNED) && !Permissions
                 .hasPermission(player, Captions.PERMISSION_HOME)) {
                 Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OWNED);
-                return;
+                return CompletableFuture.completedFuture(false);
             }
         } else if (plot.isAdded(player.getUUID())) {
             if (!Permissions.hasPermission(player, Captions.PERMISSION_SHARED)) {
                 Captions.NO_PERMISSION.send(player, Captions.PERMISSION_SHARED);
-                return;
+                return CompletableFuture.completedFuture(false);
             }
         } else {
             if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OTHER)) {
                 Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OTHER);
-                return;
+                return CompletableFuture.completedFuture(false);
             }
         }
         confirm.run(this, () -> {
@@ -140,6 +141,8 @@ import java.util.*;
                 whenDone.run(Visit.this, CommandResult.FAILURE);
             }
         }, () -> whenDone.run(Visit.this, CommandResult.FAILURE));
+
+        return CompletableFuture.completedFuture(true);
     }
 
 }

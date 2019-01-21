@@ -12,6 +12,7 @@ import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAre
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
+import com.google.common.base.Preconditions;
 import lombok.NonNull;
 
 import javax.annotation.Nonnull;
@@ -333,8 +334,9 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      */
     @Override @Nonnull public abstract UUID getUUID();
 
-    public boolean canTeleport(Location loc) {
-        Location current = getLocationFull();
+    public boolean canTeleport(@Nonnull final Location loc) {
+        Preconditions.checkNotNull(loc, "Specified location cannot be null");
+        final Location current = getLocationFull();
         teleport(loc);
         boolean result = true;
         if (!getLocation().equals(loc)) {
@@ -416,21 +418,21 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      *
      * @param weather the weather visible to the player
      */
-    public abstract void setWeather(PlotWeather weather);
+    public abstract void setWeather(@Nonnull PlotWeather weather);
 
     /**
      * Get this player's gamemode.
      *
      * @return the gamemode of the player.
      */
-    public abstract PlotGameMode getGameMode();
+    @Nonnull public abstract PlotGameMode getGameMode();
 
     /**
      * Set this player's gameMode.
      *
      * @param gameMode the gamemode to set
      */
-    public abstract void setGameMode(PlotGameMode gameMode);
+    public abstract void setGameMode(@Nonnull PlotGameMode gameMode);
 
     /**
      * Set this player's local time (ticks).
@@ -459,7 +461,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      * @param location where to play the music
      * @param id       the record item id
      */
-    public abstract void playMusic(Location location, PlotBlock id);
+    public abstract void playMusic(@Nonnull Location location, @Nonnull PlotBlock id);
 
     /**
      * Check if this player is banned.
