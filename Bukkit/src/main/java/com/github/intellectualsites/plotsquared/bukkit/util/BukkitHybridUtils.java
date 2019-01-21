@@ -2,6 +2,7 @@ package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.object.*;
@@ -107,7 +108,12 @@ public class BukkitHybridUtils extends HybridUtils {
                     }
                     rz[i] = v;
                 }
-                int minY = Math.min(hpw.PLOT_HEIGHT, hpw.ROAD_HEIGHT);
+                int minY;
+                if ( Settings.Schematics.PASTE_ON_TOP) {
+                    minY = Math.min(hpw.PLOT_HEIGHT, hpw.ROAD_HEIGHT);
+                } else {
+                    minY = 1;
+                }
                 for (short x = 0; x < 16; x++) {
                     for (short z = 0; z < 16; z++) {
                         BaseBlock[] blocks = hpw.G_SCH.get(MathMan.pair(rx[x], rz[z]));

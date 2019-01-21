@@ -16,7 +16,6 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
     // The syntax also works with any command: /plot <plot> <command>
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
-
         Location loc = player.getLocation();
         final Plot plot = loc.getPlotAbs();
         if (plot == null) {
