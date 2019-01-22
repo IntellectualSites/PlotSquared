@@ -186,7 +186,17 @@ import java.util.*;
                     if (flag1.isPresent()) {
                         boolean o = flag1.get().removeAll((Collection) flag.parseValue(value));
                         if (o) {
-                            MainUtil.sendMessage(player, C.FLAG_REMOVED);
+                            if (flag1.get().isEmpty()) {
+                                final boolean result = plot.removeFlag(flag);
+                                if (result) {
+                                    MainUtil.sendMessage(player, C.FLAG_REMOVED);
+                                } else {
+                                    MainUtil.sendMessage(player, C.FLAG_NOT_REMOVED);
+                                }
+                                return true;
+                            } else {
+                                MainUtil.sendMessage(player, C.FLAG_REMOVED);
+                            }
                         } else {
                             MainUtil.sendMessage(player, C.FLAG_NOT_REMOVED);
                             return false;
