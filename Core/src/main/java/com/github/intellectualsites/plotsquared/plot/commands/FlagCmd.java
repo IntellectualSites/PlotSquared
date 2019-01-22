@@ -279,16 +279,17 @@ import java.util.*;
                     }
                     flags.get(type).add(flag1.getName());
                 }
-                String message = "";
+                StringBuilder message = new StringBuilder();
                 String prefix = "";
                 for (Map.Entry<String, ArrayList<String>> entry : flags.entrySet()) {
                     String category = entry.getKey();
                     List<String> flagNames = entry.getValue();
                     Collections.sort(flagNames);
-                    message += prefix + "&6" + category + ": &7" + StringMan.join(flagNames, ", ");
+                    message.append(prefix).append("&6").append(category).append(": &7")
+                        .append(StringMan.join(flagNames, ", "));
                     prefix = "\n";
                 }
-                MainUtil.sendMessage(player, message);
+                MainUtil.sendMessage(player, message.toString());
                 return true;
         }
         MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag <set|remove|add|list|info>");
