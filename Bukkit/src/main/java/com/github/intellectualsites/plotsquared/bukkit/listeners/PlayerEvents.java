@@ -619,8 +619,8 @@ import java.util.regex.Pattern;
     public void onTeleport(PlayerTeleportEvent event) {
         if (event.getTo() == null || event.getFrom() == null || !event.getFrom().getWorld()
             .equals(event.getTo().getWorld())) {
-            BukkitUtil.getPlayer(event.getPlayer()).deleteMeta(PlotPlayer.META_LOCATION);
-            BukkitUtil.getPlayer(event.getPlayer()).deleteMeta(PlotPlayer.META_LAST_PLOT);
+            final Object lastLoc = BukkitUtil.getPlayer(event.getPlayer()).deleteMeta(PlotPlayer.META_LOCATION);
+            final Object lastPlot = BukkitUtil.getPlayer(event.getPlayer()).deleteMeta(PlotPlayer.META_LAST_PLOT);
             org.bukkit.Location to = event.getTo();
             if (to != null) {
                 Player player = event.getPlayer();
@@ -632,7 +632,19 @@ import java.util.regex.Pattern;
                 }
                 Plot plot = area.getPlot(loc);
                 if (plot != null) {
-                    plotEntry(pp, plot);
+                    final boolean result = Flags.DENY_TELEPORT.allowsTeleport(pp, plot);
+                    if (!result) {
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
+                        event.setCancelled(true);
+                        if (lastLoc != null) {
+                            pp.setMeta(PlotPlayer.META_LOCATION, lastLoc);
+                        }
+                        if (lastPlot != null) {
+                            pp.setMeta(PlotPlayer.META_LAST_PLOT, lastPlot);
+                        }
+                    } else {
+                        plotEntry(pp, plot);
+                    }
                 }
             }
             return;
