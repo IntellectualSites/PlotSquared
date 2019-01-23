@@ -392,7 +392,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                     case FIREBALL:
                                     case DRAGON_FIREBALL:
                                     case DROPPED_ITEM:
-                                        if (Settings.Enabled_Components.KILL_ROAD_ITEMS && plotArea.getOwnedPlotAbs(BukkitUtil.getLocation(entity.getLocation())) != null) {
+                                        if (Settings.Enabled_Components.KILL_ROAD_ITEMS && plotArea.getOwnedPlotAbs(BukkitUtil.getLocation(entity.getLocation())) == null) {
                                             entity.remove();
                                         }
                                         // dropped item
