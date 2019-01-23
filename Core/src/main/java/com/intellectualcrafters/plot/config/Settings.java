@@ -205,6 +205,12 @@ public class Settings extends Config {
         @Comment("Display scientific numbers (4.2E8)") public static boolean SCIENTIFIC = false;
     }
 
+    @Comment("Schematic Settings") public static final class Schematics {
+        @Comment("Whether schematic based generation should paste schematic on top of plots, or from Y=1")
+        public static boolean PASTE_ON_TOP = true;
+    }
+
+
     @Comment("Configure the paths that will be used")
     public static final class Paths {
         public static String SCHEMATICS = "schematics";

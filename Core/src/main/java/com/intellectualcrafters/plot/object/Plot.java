@@ -1403,7 +1403,7 @@ public class Plot {
                     sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
                 }
             }
-            SchematicHandler.manager.paste(sch, this, 0, 0, 0, true, new RunnableVal<Boolean>() {
+            SchematicHandler.manager.paste(sch, this, 0, 0, 0, Settings.Schematics.PASTE_ON_TOP, new RunnableVal<Boolean>() {
                 @Override
                 public void run(Boolean value) {
                     if (value) {
