@@ -79,12 +79,7 @@ public class HybridPlotManager extends ClassicPlotManager {
     private void createSchemAbs(HybridPlotWorld hpw, LocalBlockQueue queue, Location pos1,
         Location pos2, boolean clear) {
         int size = hpw.SIZE;
-        int minY;
-        if (Settings.Schematics.PASTE_ON_TOP) {
-            minY = Math.min(hpw.PLOT_HEIGHT, hpw.ROAD_HEIGHT);
-        } else {
-            minY = 1;
-        }
+        int minY = Math.min(hpw.PLOT_HEIGHT, hpw.ROAD_HEIGHT);
         for (int x = pos1.getX(); x <= pos2.getX(); x++) {
             short absX = (short) ((x - hpw.ROAD_OFFSET_X) % size);
             if (absX < 0) {
