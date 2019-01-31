@@ -83,7 +83,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
         }
         // int id = item.getTypeId();
         Material id = item.getType();
-        short data = item.getDurability();
+        //short data = item.getDurability();
         int amount = item.getAmount();
         String name = null;
         String[] lore = null;
@@ -94,7 +94,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
             }
             if (meta.hasLore()) {
                 List<String> itemLore = meta.getLore();
-                lore = itemLore.toArray(new String[itemLore.size()]);
+                lore = itemLore.toArray(new String[0]);
             }
         }
         return new PlotItemStack(id.name(), amount, name, lore);

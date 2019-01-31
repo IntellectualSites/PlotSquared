@@ -65,6 +65,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
                     sizes.add(size - 1);
                 }
                 // Sort plots by size (buckets?)]
+                //noinspection unchecked
                 ArrayList<Plot>[] buckets = new ArrayList[maxSize];
                 for (int i = 0; i < plots.size(); i++) {
                     Plot plot = plots.get(i);
@@ -126,13 +127,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
                             }
                             i++;
                             final AtomicBoolean result = new AtomicBoolean(false);
-                            result.set(origin.move(possible, new Runnable() {
-                                @Override public void run() {
-                                    if (result.get()) {
-                                        MainUtil.sendMessage(player,
-                                            "Moving: " + origin + " -> " + possible);
-                                        TaskManager.runTaskLater(task, 1);
-                                    }
+                            result.set(origin.move(possible, () -> {
+                                if (result.get()) {
+                                    MainUtil.sendMessage(player,
+                                        "Moving: " + origin + " -> " + possible);
+                                    TaskManager.runTaskLater(task, 1);
                                 }
                             }, false));
                             if (result.get()) {

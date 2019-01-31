@@ -20,34 +20,32 @@ public class CommentManager {
         if (!Settings.Enabled_Components.COMMENT_NOTIFIER || !plot.isOwner(player.getUUID())) {
             return;
         }
-        TaskManager.runTaskLaterAsync(new Runnable() {
-            @Override public void run() {
-                Collection<CommentInbox> boxes = CommentManager.inboxes.values();
-                final AtomicInteger count = new AtomicInteger(0);
-                final AtomicInteger size = new AtomicInteger(boxes.size());
-                for (final CommentInbox inbox : inboxes.values()) {
-                    inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
-                        @Override public void run(List<PlotComment> value) {
-                            int total;
-                            if (value != null) {
-                                int num = 0;
-                                for (PlotComment comment : value) {
-                                    if (comment.timestamp > getTimestamp(player,
-                                        inbox.toString())) {
-                                        num++;
-                                    }
+        TaskManager.runTaskLaterAsync(() -> {
+            Collection<CommentInbox> boxes = CommentManager.inboxes.values();
+            final AtomicInteger count = new AtomicInteger(0);
+            final AtomicInteger size = new AtomicInteger(boxes.size());
+            for (final CommentInbox inbox : inboxes.values()) {
+                inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
+                    @Override public void run(List<PlotComment> value) {
+                        int total;
+                        if (value != null) {
+                            int num = 0;
+                            for (PlotComment comment : value) {
+                                if (comment.timestamp > getTimestamp(player,
+                                    inbox.toString())) {
+                                    num++;
                                 }
-                                total = count.addAndGet(num);
-                            } else {
-                                total = count.get();
                             }
-                            if ((size.decrementAndGet() == 0) && (total > 0)) {
-                                AbstractTitle.sendTitle(player, "",
-                                    C.INBOX_NOTIFICATION.s().replaceAll("%s", "" + total));
-                            }
+                            total = count.addAndGet(num);
+                        } else {
+                            total = count.get();
                         }
-                    });
-                }
+                        if ((size.decrementAndGet() == 0) && (total > 0)) {
+                            AbstractTitle.sendTitle(player, "",
+                                C.INBOX_NOTIFICATION.s().replaceAll("%s", "" + total));
+                        }
+                    }
+                });
             }
         }, 20);
     }

@@ -11,9 +11,9 @@ import java.sql.Statement;
  * @author -_Husky_-
  * @author tips48
  */
-public abstract class Database {
+public interface Database {
 
-    public abstract Connection forceConnection() throws SQLException, ClassNotFoundException;
+    Connection forceConnection() throws SQLException, ClassNotFoundException;
 
     /**
      * Opens a connection with the database.
@@ -22,7 +22,7 @@ public abstract class Database {
      * @throws SQLException           if the connection can not be opened
      * @throws ClassNotFoundException if the driver cannot be found
      */
-    public abstract Connection openConnection() throws SQLException, ClassNotFoundException;
+    Connection openConnection() throws SQLException, ClassNotFoundException;
 
     /**
      * Checks if a connection is open with the database.
@@ -30,14 +30,14 @@ public abstract class Database {
      * @return true if the connection is open
      * @throws SQLException if the connection cannot be checked
      */
-    public abstract boolean checkConnection() throws SQLException;
+    boolean checkConnection() throws SQLException;
 
     /**
      * Gets the connection with the database.
      *
      * @return Connection with the database, null if none
      */
-    public abstract Connection getConnection();
+    Connection getConnection();
 
     /**
      * Closes the connection with the database.
@@ -45,7 +45,7 @@ public abstract class Database {
      * @return true if successful
      * @throws SQLException if the connection cannot be closed
      */
-    public abstract boolean closeConnection() throws SQLException;
+    boolean closeConnection() throws SQLException;
 
     /**
      * Executes a SQL Query.
@@ -56,7 +56,7 @@ public abstract class Database {
      * @throws SQLException           If the query cannot be executed
      * @throws ClassNotFoundException If the driver cannot be found; see {@link #openConnection()}
      */
-    public abstract ResultSet querySQL(String query) throws SQLException, ClassNotFoundException;
+    ResultSet querySQL(String query) throws SQLException, ClassNotFoundException;
 
     /**
      * Executes an Update SQL Query.
@@ -68,5 +68,5 @@ public abstract class Database {
      * @throws SQLException           If the query cannot be executed
      * @throws ClassNotFoundException If the driver cannot be found; see {@link #openConnection()}
      */
-    public abstract int updateSQL(String query) throws SQLException, ClassNotFoundException;
+    int updateSQL(String query) throws SQLException, ClassNotFoundException;
 }

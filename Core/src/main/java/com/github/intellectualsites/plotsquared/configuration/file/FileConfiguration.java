@@ -6,6 +6,7 @@ import com.github.intellectualsites.plotsquared.configuration.MemoryConfiguratio
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import javax.annotation.Nonnull;
 
 /**
  * This is a base class for all File based implementations of {@link
@@ -82,7 +83,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      *                                       a valid Configuration.
      * @throws IllegalArgumentException      Thrown when file is null.
      */
-    public void load(File file) throws IOException, InvalidConfigurationException {
+    public void load(@Nonnull File file) throws IOException, InvalidConfigurationException {
 
         FileInputStream stream = new FileInputStream(file);
 

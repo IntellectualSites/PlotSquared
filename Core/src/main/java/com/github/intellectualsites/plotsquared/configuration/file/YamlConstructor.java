@@ -9,7 +9,7 @@ import org.yaml.snakeyaml.nodes.Tag;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class YamlConstructor extends SafeConstructor {
+class YamlConstructor extends SafeConstructor {
 
     YamlConstructor() {
         yamlConstructors.put(Tag.MAP, new ConstructCustomObject());

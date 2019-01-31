@@ -9,6 +9,7 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.google.common.base.Charsets;
 import com.google.common.collect.BiMap;
+import java.util.Arrays;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
@@ -19,7 +20,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.UUID;
 
-public class OfflineUUIDWrapper extends UUIDWrapper {
+public class OfflineUUIDWrapper implements UUIDWrapper {
 
     private final Object[] arg = new Object[0];
     private Method getOnline = null;
@@ -59,18 +60,15 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
                 return new BukkitOfflinePlayer(op);
             }
         }
-        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-            if (getUUID(player).equals(uuid)) {
-                return new BukkitOfflinePlayer(player);
-            }
-        }
-        return null;
+        return Arrays.stream(Bukkit.getOfflinePlayers())
+            .filter(player -> getUUID(player).equals(uuid)).findFirst()
+            .map(BukkitOfflinePlayer::new).orElse(null);
     }
 
     public Player[] getOnlinePlayers() {
         if (this.getOnline == null) {
             Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
-            return onlinePlayers.toArray(new Player[onlinePlayers.size()]);
+            return onlinePlayers.toArray(new Player[0]);
         }
         try {
             Object players = this.getOnline.invoke(Bukkit.getServer(), this.arg);
@@ -79,13 +77,13 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
             } else {
                 @SuppressWarnings("unchecked") Collection<? extends Player> p =
                     (Collection<? extends Player>) players;
-                return p.toArray(new Player[p.size()]);
+                return p.toArray(new Player[0]);
             }
         } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException ignored) {
             PlotSquared.debug("Failed to resolve online players");
             this.getOnline = null;
             Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
-            return onlinePlayers.toArray(new Player[onlinePlayers.size()]);
+            return onlinePlayers.toArray(new Player[0]);
         }
     }
 
@@ -95,11 +93,8 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
 
     @Override public OfflinePlotPlayer[] getOfflinePlayers() {
         OfflinePlayer[] ops = Bukkit.getOfflinePlayers();
-        BukkitOfflinePlayer[] toReturn = new BukkitOfflinePlayer[ops.length];
-        for (int i = 0; i < ops.length; i++) {
-            toReturn[i] = new BukkitOfflinePlayer(ops[i]);
-        }
-        return toReturn;
+        return Arrays.stream(ops).map(BukkitOfflinePlayer::new)
+            .toArray(BukkitOfflinePlayer[]::new);
     }
 
     @Override public OfflinePlotPlayer getOfflinePlayer(String name) {

@@ -43,8 +43,6 @@ public abstract class EventUtil {
 
     public abstract boolean callFlagRemove(Flag<?> flag, Plot plot, Object value);
 
-    public abstract boolean callFlagRemove(Flag<?> flag, Object value, PlotCluster cluster);
-
     public abstract boolean callMerge(Plot plot, int dir, int max);
 
     public abstract boolean callAutoMerge(Plot plot, List<PlotId> plots);
@@ -78,11 +76,7 @@ public abstract class EventUtil {
         }
         final Plot plot = player.getCurrentPlot();
         if (Settings.Teleport.ON_LOGIN && plot != null) {
-            TaskManager.runTask(new Runnable() {
-                @Override public void run() {
-                    plot.teleportPlayer(player);
-                }
-            });
+            TaskManager.runTask(() -> plot.teleportPlayer(player));
             MainUtil.sendMessage(player,
                 C.TELEPORTED_TO_ROAD.f() + " (on-login) " + "(" + plot.getId().x + ";" + plot
                     .getId().y + ")");

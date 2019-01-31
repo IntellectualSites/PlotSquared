@@ -321,34 +321,6 @@ public class FancyMessage
     }
 
     /**
-     * Set the behavior of the current editing component to display information about an achievement when the client hovers over the text.
-     * <p>Tooltips do not inherit display characteristics, such as color and styles, from the message component on which they are applied.</p>
-     *
-     * @param which The achievement to display.
-     * @return This builder instance.
-     */
-    public FancyMessage achievementTooltip(final Achievement which) {
-        try {
-            Object achievement = Reflection
-                .getMethod(Reflection.getOBCClass("CraftStatistic"), "getNMSAchievement",
-                    Achievement.class).invoke(null, which);
-            return achievementTooltip(
-                (String) Reflection.getField(Reflection.getNMSClass("Achievement"), "name")
-                    .get(achievement));
-        } catch (IllegalAccessException e) {
-            Bukkit.getLogger().log(Level.WARNING, "Could not access method.", e);
-            return this;
-        } catch (IllegalArgumentException e) {
-            Bukkit.getLogger().log(Level.WARNING, "Argument could not be passed.", e);
-            return this;
-        } catch (InvocationTargetException e) {
-            Bukkit.getLogger()
-                .log(Level.WARNING, "A error has occurred during invoking of method.", e);
-            return this;
-        }
-    }
-
-    /**
      * Set the behavior of the current editing component to display information about a parameterless statistic when the client hovers over the text.
      * <p>Tooltips do not inherit display characteristics, such as color and styles, from the message component on which they are applied.</p>
      *

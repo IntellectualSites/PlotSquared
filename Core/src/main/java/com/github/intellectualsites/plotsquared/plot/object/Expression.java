@@ -4,9 +4,12 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.DebugExec;
 import com.github.intellectualsites.plotsquared.plot.commands.MainCommand;
 
+import javax.annotation.Nonnull;
 import javax.script.ScriptException;
 
 public abstract class Expression<T> {
+
+    @Nonnull
     public static <U> Expression<U> constant(final U value) {
         return new Expression<U>() {
             @Override public U evaluate(U arg) {

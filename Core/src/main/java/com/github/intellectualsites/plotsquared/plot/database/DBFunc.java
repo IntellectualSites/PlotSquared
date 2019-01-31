@@ -13,6 +13,7 @@ import java.util.*;
  * Database Functions
  * - These functions do not update the local plot objects and only make changes to the DB
  */
+@SuppressWarnings("deprecation")
 public class DBFunc {
     /**
      * The "global" uuid.
@@ -298,17 +299,6 @@ public class DBFunc {
         DBFunc.dbManager.setFlags(plot, flags);
     }
 
-    public static void setFlags(PlotCluster cluster, HashMap<Flag<?>, Object> flags) {
-        if (dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.setFlags(cluster, flags);
-    }
-
-    /**
-     * @param plot
-     * @param alias
-     */
     public static void setAlias(Plot plot, String alias) {
         if (plot.temp == -1 || dbManager == null) {
             return;
@@ -330,10 +320,6 @@ public class DBFunc {
         DBFunc.dbManager.purge(area, plotIds);
     }
 
-    /**
-     * @param plot
-     * @param position
-     */
     public static void setPosition(Plot plot, String position) {
         if (plot.temp == -1 || dbManager == null) {
             return;
@@ -341,10 +327,6 @@ public class DBFunc {
         DBFunc.dbManager.setPosition(plot, position);
     }
 
-    /**
-     * @param plot
-     * @param comment
-     */
     public static void removeComment(Plot plot, PlotComment comment) {
         if (plot.temp == -1 || dbManager == null) {
             return;
@@ -359,10 +341,6 @@ public class DBFunc {
         DBFunc.dbManager.clearInbox(plot, inbox);
     }
 
-    /**
-     * @param plot
-     * @param comment
-     */
     public static void setComment(Plot plot, PlotComment comment) {
         if (plot != null && plot.temp == -1 || dbManager == null) {
             return;
@@ -370,9 +348,6 @@ public class DBFunc {
         DBFunc.dbManager.setComment(plot, comment);
     }
 
-    /**
-     * @param plot
-     */
     public static void getComments(Plot plot, String inbox,
         RunnableVal<List<PlotComment>> whenDone) {
         if (plot != null && plot.temp == -1 || dbManager == null) {
@@ -381,10 +356,6 @@ public class DBFunc {
         DBFunc.dbManager.getComments(plot, inbox, whenDone);
     }
 
-    /**
-     * @param plot
-     * @param uuid
-     */
     public static void removeTrusted(Plot plot, UUID uuid) {
         if (plot.temp == -1 || dbManager == null) {
             return;
@@ -392,10 +363,6 @@ public class DBFunc {
         DBFunc.dbManager.removeTrusted(plot, uuid);
     }
 
-    /**
-     * @param cluster
-     * @param uuid
-     */
     public static void removeHelper(PlotCluster cluster, UUID uuid) {
         if (dbManager == null) {
             return;
@@ -403,9 +370,6 @@ public class DBFunc {
         DBFunc.dbManager.removeHelper(cluster, uuid);
     }
 
-    /**
-     * @param cluster
-     */
     public static void createCluster(PlotCluster cluster) {
         if (dbManager == null) {
             return;
@@ -413,11 +377,6 @@ public class DBFunc {
         DBFunc.dbManager.createCluster(cluster);
     }
 
-    /**
-     * @param current
-     * @param min
-     * @param max
-     */
     public static void resizeCluster(PlotCluster current, PlotId min, PlotId max) {
         if (dbManager == null) {
             return;
@@ -425,10 +384,6 @@ public class DBFunc {
         DBFunc.dbManager.resizeCluster(current, min, max);
     }
 
-    /**
-     * @param plot
-     * @param uuid
-     */
     public static void removeMember(Plot plot, UUID uuid) {
         if (plot.temp == -1 || dbManager == null) {
             return;
@@ -436,10 +391,6 @@ public class DBFunc {
         DBFunc.dbManager.removeMember(plot, uuid);
     }
 
-    /**
-     * @param cluster
-     * @param uuid
-     */
     public static void removeInvited(PlotCluster cluster, UUID uuid) {
         if (dbManager == null) {
             return;
@@ -447,10 +398,6 @@ public class DBFunc {
         DBFunc.dbManager.removeInvited(cluster, uuid);
     }
 
-    /**
-     * @param plot
-     * @param uuid
-     */
     public static void setTrusted(Plot plot, UUID uuid) {
         if (plot.temp == -1 || dbManager == null) {
             return;
@@ -465,10 +412,6 @@ public class DBFunc {
         DBFunc.dbManager.setHelper(cluster, uuid);
     }
 
-    /**
-     * @param plot
-     * @param uuid
-     */
     public static void setMember(Plot plot, UUID uuid) {
         if (plot.temp == -1 || dbManager == null) {
             return;
@@ -483,10 +426,6 @@ public class DBFunc {
         DBFunc.dbManager.setInvited(cluster, uuid);
     }
 
-    /**
-     * @param plot
-     * @param uuid
-     */
     public static void removeDenied(Plot plot, UUID uuid) {
         if (plot.temp == -1 || dbManager == null) {
             return;
@@ -494,10 +433,6 @@ public class DBFunc {
         DBFunc.dbManager.removeDenied(plot, uuid);
     }
 
-    /**
-     * @param plot
-     * @param uuid
-     */
     public static void setDenied(Plot plot, UUID uuid) {
         if (plot.temp == -1 || dbManager == null) {
             return;

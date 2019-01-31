@@ -42,7 +42,7 @@ public class YamlConfigurationOptions extends FileConfigurationOptions {
      *
      * @return How much to indent by
      */
-    public int indent() {
+    int indent() {
         return indent;
     }
 

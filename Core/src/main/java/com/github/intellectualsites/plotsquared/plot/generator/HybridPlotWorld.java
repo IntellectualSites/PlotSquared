@@ -277,11 +277,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             id = rotate(id);
         }
         int pair = MathMan.pair(x, z);
-        BaseBlock[] existing = this.G_SCH.get(pair);
-        if (existing == null) {
-            existing = new BaseBlock[height];
-            this.G_SCH.put(pair, existing);
-        }
+        BaseBlock[] existing = this.G_SCH.computeIfAbsent(pair, k -> new BaseBlock[height]);
         existing[y] = id;
     }
 }

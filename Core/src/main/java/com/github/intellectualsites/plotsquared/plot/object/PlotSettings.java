@@ -42,7 +42,7 @@ public class PlotSettings {
     /**
      * Flags.
      *
-     * @deprecated Raw access
+     * @deprecated Raw access. Not compatible with PlotClusters.
      */
     @Deprecated public HashMap<Flag<?>, Object> flags = new HashMap<>();
     /**
@@ -85,7 +85,7 @@ public class PlotSettings {
         return this.ratings;
     }
 
-    public boolean setMerged(int direction, boolean merged) {
+    boolean setMerged(int direction, boolean merged) {
         if (this.merged[direction] != merged) {
             this.merged[direction] = merged;
             return true;
@@ -142,6 +142,7 @@ public class PlotSettings {
         }
     }
 
+    //todo need a plot method
     public Optional<ArrayList<PlotComment>> getComments(String inbox) {
         ArrayList<PlotComment> c = new ArrayList<>();
         if (this.comments == null) {
@@ -155,22 +156,26 @@ public class PlotSettings {
         return Optional.of(c);
     }
 
+    //todo need a plot method
     public void setComments(List<PlotComment> comments) {
         this.comments = comments;
     }
 
+    //todo need a plot method
     public void removeComment(PlotComment comment) {
         if (this.comments.contains(comment)) {
             this.comments.remove(comment);
         }
     }
 
+    //todo need a plot method
     public void removeComments(List<PlotComment> comments) {
         for (PlotComment comment : comments) {
             removeComment(comment);
         }
     }
 
+    //todo need a plot method
     public void addComment(PlotComment comment) {
         if (this.comments == null) {
             this.comments = new ArrayList<>();

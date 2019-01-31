@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.bukkit.inventory.meta.Damageable;
 
 public class StateWrapper {
 
@@ -241,7 +242,7 @@ public class StateWrapper {
     public Map<String, Tag> serializeItem(ItemStack item) {
         Map<String, Tag> data = new HashMap<>();
         data.put("id", new StringTag(item.getType().name()));
-        data.put("Damage", new ShortTag(item.getDurability()));
+        data.put("Damage", new ShortTag((short) ((Damageable)item.getItemMeta()).getDamage()));
         data.put("Count", new ByteTag((byte) item.getAmount()));
         if (!item.getEnchantments().isEmpty()) {
             List<CompoundTag> enchantmentList = new ArrayList<>();

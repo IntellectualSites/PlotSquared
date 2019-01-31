@@ -1,6 +1,7 @@
 package com.github.intellectualsites.plotsquared.configuration;
 
 import java.util.Map;
+import javax.annotation.Nonnull;
 
 /**
  * Represents a source of configurable options and settings.
@@ -20,7 +21,7 @@ public interface Configuration extends ConfigurationSection {
      * @param value Value to set the default to.
      * @throws IllegalArgumentException Thrown if path is null.
      */
-    @Override void addDefault(String path, Object value);
+    @Override void addDefault(@Nonnull String path, Object value);
 
     /**
      * Sets the default values of the given paths as provided.

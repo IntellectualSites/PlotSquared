@@ -40,11 +40,7 @@ public class EventUtilTest extends EventUtil {
         return true;
     }
 
-    @Override public boolean callFlagRemove(Flag<?> flag, Object value, PlotCluster cluster) {
-        return true;
-    }
-
-    @Override public boolean callMerge(Plot plot, int dir, int max){
+  @Override public boolean callMerge(Plot plot, int dir, int max){
         return false;
     }
 

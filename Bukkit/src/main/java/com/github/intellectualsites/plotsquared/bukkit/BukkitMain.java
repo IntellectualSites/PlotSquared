@@ -134,7 +134,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     private final BlockRegistry<Material> blockRegistry =
         new BukkitBlockRegistry(Material.values());
     private int[] version;
-    @Getter private String pluginName;
+    private String pluginName;
     @Getter private SingleWorldListener singleWorldListener;
     private Method methodUnloadChunk0;
     private boolean methodUnloadSetup = false;
@@ -165,9 +165,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return Bukkit.getVersion();
     }
 
+
     @Override public void onEnable() {
         this.pluginName = getDescription().getName();
-        getServer().getName();
 
         PlotPlayer.registerConverter(Player.class, BukkitUtil::getPlayer);
 
@@ -317,6 +317,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override public String getPluginVersionString() {
         return getDescription().getVersion();
+    }
+
+    @Override
+    public String getPluginName() {
+        return pluginName;
     }
 
     @Override public void registerCommands() {
@@ -586,6 +591,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override @Nullable
     public final ChunkGenerator getDefaultWorldGenerator(final String world, final String id) {
+        PlotSquared.log("DEFAULT WORLD GENERATOR RUN");
         final IndependentPlotGenerator result;
         if (id != null && id.equalsIgnoreCase("single")) {
             result = new SingleWorldGenerator();
@@ -802,7 +808,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
         ChunkGenerator gen = world.getGenerator();
         if (gen instanceof BukkitPlotGenerator) {
-            PlotSquared.get().loadWorld(worldName, (BukkitPlotGenerator) gen);
+            PlotSquared.get().loadWorld(worldName, (GeneratorWrapper<?>) gen);
         } else if (gen != null) {
             PlotSquared.get().loadWorld(worldName, new BukkitPlotGenerator(worldName, gen));
         } else if (PlotSquared.get().worlds.contains("worlds." + worldName)) {

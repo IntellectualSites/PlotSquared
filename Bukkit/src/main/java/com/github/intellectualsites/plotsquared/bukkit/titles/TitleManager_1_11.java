@@ -335,7 +335,7 @@ public class TitleManager_1_11 {
     }
 
     private Class<?> getPrimitiveType(Class<?> clazz) {
-        return CORRESPONDING_TYPES.containsKey(clazz) ? CORRESPONDING_TYPES.get(clazz) : clazz;
+        return CORRESPONDING_TYPES.getOrDefault(clazz, clazz);
     }
 
     private Class<?>[] toPrimitiveTypeArray(Class<?>[] classes) {

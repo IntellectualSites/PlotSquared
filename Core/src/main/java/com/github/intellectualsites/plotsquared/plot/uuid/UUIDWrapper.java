@@ -5,17 +5,17 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 
 import java.util.UUID;
 
-public abstract class UUIDWrapper {
+public interface UUIDWrapper {
 
-    public abstract UUID getUUID(PlotPlayer player);
+    UUID getUUID(PlotPlayer player);
 
-    public abstract UUID getUUID(OfflinePlotPlayer player);
+    UUID getUUID(OfflinePlotPlayer player);
 
-    public abstract UUID getUUID(String name);
+    UUID getUUID(String name);
 
-    public abstract OfflinePlotPlayer getOfflinePlayer(UUID uuid);
+    OfflinePlotPlayer getOfflinePlayer(UUID uuid);
 
-    public abstract OfflinePlotPlayer getOfflinePlayer(String name);
+    OfflinePlotPlayer getOfflinePlayer(String name);
 
-    public abstract OfflinePlotPlayer[] getOfflinePlayers();
+    OfflinePlotPlayer[] getOfflinePlayers();
 }

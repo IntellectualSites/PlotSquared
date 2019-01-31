@@ -5,7 +5,6 @@ import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotFilter;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

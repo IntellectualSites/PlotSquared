@@ -118,16 +118,14 @@ public class PlotAnalysis {
 
                 final AtomicInteger mi = new AtomicInteger(0);
 
-                Thread ratingAnalysis = new Thread(new Runnable() {
-                    @Override public void run() {
-                        for (; mi.intValue() < plots.size(); mi.incrementAndGet()) {
-                            int i = mi.intValue();
-                            Plot plot = plots.get(i);
-                            ratings[i] = (int) (
-                                (plot.getAverageRating() + plot.getSettings().getRatings().size())
-                                    * 100);
-                            PlotSquared.debug(" | " + plot + " (rating) " + ratings[i]);
-                        }
+                Thread ratingAnalysis = new Thread(() -> {
+                    for (; mi.intValue() < plots.size(); mi.incrementAndGet()) {
+                        int i = mi.intValue();
+                        Plot plot = plots.get(i);
+                        ratings[i] = (int) (
+                            (plot.getAverageRating() + plot.getSettings().getRatings().size())
+                                * 100);
+                        PlotSquared.debug(" | " + plot + " (rating) " + ratings[i]);
                     }
                 });
                 ratingAnalysis.start();
@@ -424,9 +422,6 @@ public class PlotAnalysis {
     /**
      * A simple array squaring algorithm.
      * - Used for calculating the variance
-     *
-     * @param array
-     * @return
      */
     public static int[] square(int[] array) {
         array = array.clone();
@@ -439,8 +434,6 @@ public class PlotAnalysis {
     /**
      * An optimized lossy standard deviation algorithm.
      *
-     * @param ranks
-     * @return
      */
     public static int[] getSD(int[]... ranks) {
         if (ranks.length == 0) {
@@ -468,19 +461,13 @@ public class PlotAnalysis {
      * - Input is an array of int with a max size of 102400<br>
      * - A reduced sample space allows for sorting (and ranking in this case) in linear time
      *
-     * @param input
-     * @param input
-     * @return
      */
     public static int[] rank(int[] input) {
         return rank(input, 102400);
     }
 
     /**
-     * An optimized algorithm for ranking a very specific set of inputs
-     *
-     * @param input
-     * @return
+     * An optimized algorithm for ranking a very specific set of inputs.
      */
     public static int[] rank(int[] input, int size) {
         int[] cache = new int[size];

@@ -7,6 +7,7 @@ import com.github.intellectualsites.plotsquared.plot.object.*;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
+import javax.annotation.Nonnull;
 
 public class SinglePlot extends Plot {
     private HashSet<RegionWrapper> regions;
@@ -40,6 +41,7 @@ public class SinglePlot extends Plot {
         return getId().toCommaSeparatedString();
     }
 
+    @Nonnull
     @Override public SinglePlotArea getArea() {
         return (SinglePlotArea) super.getArea();
     }
