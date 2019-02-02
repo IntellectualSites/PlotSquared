@@ -66,6 +66,7 @@ public class BukkitHybridUtils extends HybridUtils {
             System.gc();
             final BlockBucket[][][] oldBlocks = new BlockBucket[256][width][length];
             final PlotBlock[][][] newBlocks = new PlotBlock[256][width][length];
+            final BlockBucket airBucket = BlockBucket.withSingle(StringPlotBlock.EVERYTHING);
 
             PlotArea area = PlotSquared.get().getPlotArea(world, null);
 
@@ -146,8 +147,8 @@ public class BukkitHybridUtils extends HybridUtils {
                                     continue;
                                 }
                                 int y = MainUtil.y_loc[i][j];
-                                oldBlocks[y][x][z] =
-                                    BlockBucket.withSingle(StringPlotBlock.EVERYTHING);
+                                oldBlocks[y][x][z] = airBucket;
+
                             }
                             continue;
                         }
@@ -163,7 +164,7 @@ public class BukkitHybridUtils extends HybridUtils {
                             int y = MainUtil.y_loc[i][j];
                             oldBlocks[y][x][z] = result[i][j] != null ?
                                 result[i][j] :
-                                BlockBucket.withSingle(StringPlotBlock.EVERYTHING);
+                                airBucket;
                         }
                     }
 
@@ -183,7 +184,7 @@ public class BukkitHybridUtils extends HybridUtils {
                             BlockBucket old = oldBlocks[y][x][z];
                             try {
                                 if (old == null) {
-                                    old = BlockBucket.withSingle(StringPlotBlock.EVERYTHING);
+                                    old = airBucket;
                                 }
                                 PlotBlock now = newBlocks[y][x][z];
                                 if (!old.getBlocks().contains(now)) {
@@ -228,10 +229,6 @@ public class BukkitHybridUtils extends HybridUtils {
                                     types.add(now);
                                 }
                             } catch (NullPointerException e) {
-                                PlotSquared.log(old != null ? old.toString() : "old null");
-                                PlotSquared.log(x);
-                                PlotSquared.log(y);
-                                PlotSquared.log(z);
                                 e.printStackTrace();
                             }
                         }
