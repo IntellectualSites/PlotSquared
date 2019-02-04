@@ -8,6 +8,7 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Flag Manager Utility.
@@ -234,13 +235,9 @@ public class FlagManager {
      * @return a list of flags the specified player can use
      */
     public static List<Flag> getFlags(PlotPlayer player) {
-        List<Flag> returnFlags = new ArrayList<>();
-        for (Flag flag : Flags.getFlags()) {
-            if (Permissions
-                .hasPermission(player, "plots.set.flag." + flag.getName().toLowerCase())) {
-                returnFlags.add(flag);
-            }
-        }
+        List<Flag> returnFlags = Flags.getFlags().stream().filter(flag -> Permissions
+            .hasPermission(player, "plots.set.flag." + flag.getName().toLowerCase()))
+            .collect(Collectors.toList());
         return returnFlags;
     }
 
