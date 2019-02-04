@@ -7,7 +7,10 @@ import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.*;
-import org.bukkit.*;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.WeatherType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
@@ -255,14 +258,15 @@ public class BukkitPlayer extends PlotPlayer {
     @Override public void playMusic(Location location, PlotBlock id) {
         if (PlotBlock.isEverything(id) || id.isAir()) {
             // Let's just stop all the discs because why not?
-            for (final Sound sound : Arrays.stream(Sound.values()).filter(sound -> sound.name().contains("DISC")).collect(
-                Collectors.toList())) {
+            for (final Sound sound : Arrays.stream(Sound.values())
+                .filter(sound -> sound.name().contains("DISC")).collect(Collectors.toList())) {
                 player.stopSound(sound);
             }
             // this.player.playEffect(BukkitUtil.getLocation(location), Effect.RECORD_PLAY, Material.AIR);
         } else {
             // this.player.playEffect(BukkitUtil.getLocation(location), Effect.RECORD_PLAY, id.to(Material.class));
-            this.player.playSound(BukkitUtil.getLocation(location), Sound.valueOf(id.to(Material.class).name()), Float.MAX_VALUE, 1f);
+            this.player.playSound(BukkitUtil.getLocation(location),
+                Sound.valueOf(id.to(Material.class).name()), Float.MAX_VALUE, 1f);
         }
     }
 

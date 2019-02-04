@@ -73,14 +73,12 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
         }
         TaskManager.runTaskAsync(() -> {
             try {
-                HashBiMap<StringWrapper, UUID> toAdd =
-                    HashBiMap.create(new HashMap<>());
+                HashBiMap<StringWrapper, UUID> toAdd = HashBiMap.create(new HashMap<>());
                 try (PreparedStatement statement = getConnection()
                     .prepareStatement("SELECT `uuid`, `username` FROM `usercache`");
                     ResultSet resultSet = statement.executeQuery()) {
                     while (resultSet.next()) {
-                        StringWrapper username =
-                            new StringWrapper(resultSet.getString("username"));
+                        StringWrapper username = new StringWrapper(resultSet.getString("username"));
                         UUID uuid = UUID.fromString(resultSet.getString("uuid"));
                         toAdd.put(new StringWrapper(username.value), uuid);
                     }
@@ -99,8 +97,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                     }
                     return;
                 }
-                FileUUIDHandler fileHandler =
-                    new FileUUIDHandler(SQLUUIDHandler.this.uuidWrapper);
+                FileUUIDHandler fileHandler = new FileUUIDHandler(SQLUUIDHandler.this.uuidWrapper);
                 fileHandler.startCaching(() -> {
                     // If the file based UUID handler didn't cache it, then we can't cache offline mode
                     // Also, trying to cache based on files again, is useless as that's what the file based uuid cacher does
@@ -114,18 +111,13 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                     TaskManager.runTaskAsync(() -> {
                         while (!toFetch.isEmpty()) {
                             try {
-                                for (int i = 0;
-                                    i < Math.min(500, toFetch.size()); i++) {
+                                for (int i = 0; i < Math.min(500, toFetch.size()); i++) {
                                     UUID uuid = toFetch.pop();
-                                    HttpURLConnection connection =
-                                        (HttpURLConnection) new URL(
-                                            SQLUUIDHandler.this.PROFILE_URL + uuid
-                                                .toString().replace("-", ""))
-                                            .openConnection();
-                                    try (InputStream con = connection
-                                        .getInputStream()) {
-                                        InputStreamReader reader =
-                                            new InputStreamReader(con);
+                                    HttpURLConnection connection = (HttpURLConnection) new URL(
+                                        SQLUUIDHandler.this.PROFILE_URL + uuid.toString()
+                                            .replace("-", "")).openConnection();
+                                    try (InputStream con = connection.getInputStream()) {
+                                        InputStreamReader reader = new InputStreamReader(con);
                                         JSONObject response =
                                             (JSONObject) SQLUUIDHandler.this.jsonParser
                                                 .parse(reader);
@@ -208,13 +200,12 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
         // Ignoring duplicates
         if (super.add(name, uuid)) {
             TaskManager.runTaskAsync(() -> {
-                try (PreparedStatement statement = getConnection().prepareStatement(
-                    "REPLACE INTO usercache (`uuid`, `username`) VALUES(?, ?)")) {
+                try (PreparedStatement statement = getConnection()
+                    .prepareStatement("REPLACE INTO usercache (`uuid`, `username`) VALUES(?, ?)")) {
                     statement.setString(1, uuid.toString());
                     statement.setString(2, name.toString());
                     statement.execute();
-                    PlotSquared
-                        .debug(C.PREFIX + "&cAdded '&6" + uuid + "&c' - '&6" + name + "&c'");
+                    PlotSquared.debug(C.PREFIX + "&cAdded '&6" + uuid + "&c' - '&6" + name + "&c'");
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -235,8 +226,8 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                 statement.setString(1, name.value);
                 statement.setString(2, uuid.toString());
                 statement.execute();
-                PlotSquared.debug(
-                    C.PREFIX + "Name change for '" + uuid + "' to '" + name.value + '\'');
+                PlotSquared
+                    .debug(C.PREFIX + "Name change for '" + uuid + "' to '" + name.value + '\'');
             } catch (SQLException e) {
                 e.printStackTrace();
             }

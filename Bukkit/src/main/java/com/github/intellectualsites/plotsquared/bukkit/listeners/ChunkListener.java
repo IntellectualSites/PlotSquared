@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
-import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getRefClass;
-
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
@@ -11,8 +9,6 @@ import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.RefCla
 import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.RefField;
 import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.RefMethod;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
-import java.lang.reflect.Method;
-import java.util.HashSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -31,8 +27,12 @@ import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
-@SuppressWarnings("unused")
-public class ChunkListener implements Listener {
+import java.lang.reflect.Method;
+import java.util.HashSet;
+
+import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getRefClass;
+
+@SuppressWarnings("unused") public class ChunkListener implements Listener {
 
     private RefMethod methodGetHandleChunk;
     private RefField mustSave;
@@ -48,7 +48,7 @@ public class ChunkListener implements Listener {
                 this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
             } catch (Throwable ignored) {
                 PlotSquared.debug(PlotSquared.get().IMP.getPluginName()
-                        + "/Server not compatible for chunk processor trim/gc");
+                    + "/Server not compatible for chunk processor trim/gc");
 
                 Settings.Chunk_Processor.AUTO_TRIM = false;
             }
@@ -68,10 +68,9 @@ public class ChunkListener implements Listener {
                         continue;
                     }
                     Object w = world.getClass().getDeclaredMethod("getHandle").invoke(world);
-                    Object chunkMap =
-                        w.getClass().getDeclaredMethod("getPlayerChunkMap").invoke(w);
-                    Method methodIsChunkInUse = chunkMap.getClass()
-                        .getDeclaredMethod("isChunkInUse", int.class, int.class);
+                    Object chunkMap = w.getClass().getDeclaredMethod("getPlayerChunkMap").invoke(w);
+                    Method methodIsChunkInUse =
+                        chunkMap.getClass().getDeclaredMethod("isChunkInUse", int.class, int.class);
                     Chunk[] chunks = world.getLoadedChunks();
                     for (Chunk chunk : chunks) {
                         if ((boolean) methodIsChunkInUse
@@ -145,8 +144,7 @@ public class ChunkListener implements Listener {
         return plot != null && plot.hasOwner();
     }
 
-    @EventHandler
-    public void onChunkUnload(ChunkUnloadEvent event) {
+    @EventHandler public void onChunkUnload(ChunkUnloadEvent event) {
         if (ignoreUnload) {
             return;
         }
@@ -164,13 +162,11 @@ public class ChunkListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onChunkLoad(ChunkLoadEvent event) {
+    @EventHandler public void onChunkLoad(ChunkLoadEvent event) {
         processChunk(event.getChunk(), false);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onItemSpawn(ItemSpawnEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST) public void onItemSpawn(ItemSpawnEvent event) {
         Item entity = event.getEntity();
         Chunk chunk = entity.getLocation().getChunk();
         if (chunk == this.lastChunk) {
@@ -227,8 +223,7 @@ public class ChunkListener implements Listener {
             if (!chunk.isLoaded()) {
                 Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                 TaskManager.tasks.remove(currentIndex);
-                PlotSquared
-                        .debug(C.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
+                PlotSquared.debug(C.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
                 chunk.unload(true, true);
                 return;
             }
@@ -236,8 +231,7 @@ public class ChunkListener implements Listener {
             if (tiles.length == 0) {
                 Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                 TaskManager.tasks.remove(currentIndex);
-                PlotSquared
-                    .debug(C.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
+                PlotSquared.debug(C.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
                 chunk.unload(true, true);
                 return;
             }
@@ -272,14 +266,14 @@ public class ChunkListener implements Listener {
                 }
             }
             PlotSquared.debug(
-                    C.PREFIX.s() + "&a detected unsafe chunk and processed: " + (chunk.getX() << 4)
-                            + "," + (chunk.getX() << 4));
+                C.PREFIX.s() + "&a detected unsafe chunk and processed: " + (chunk.getX() << 4)
+                    + "," + (chunk.getX() << 4));
         }
         if (tiles.length > Settings.Chunk_Processor.MAX_TILES) {
             if (unload) {
                 PlotSquared.debug(
-                        C.PREFIX.s() + "&c detected unsafe chunk: " + (chunk.getX() << 4) + "," + (
-                                chunk.getX() << 4));
+                    C.PREFIX.s() + "&c detected unsafe chunk: " + (chunk.getX() << 4) + "," + (
+                        chunk.getX() << 4));
                 cleanChunk(chunk);
                 return true;
             }

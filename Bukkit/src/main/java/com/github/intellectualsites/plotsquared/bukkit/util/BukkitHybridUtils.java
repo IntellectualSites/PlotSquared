@@ -110,7 +110,7 @@ public class BukkitHybridUtils extends HybridUtils {
                     rz[i] = v;
                 }
                 int minY;
-                if ( Settings.Schematics.PASTE_ON_TOP) {
+                if (Settings.Schematics.PASTE_ON_TOP) {
                     minY = Math.min(hpw.PLOT_HEIGHT, hpw.ROAD_HEIGHT);
                 } else {
                     minY = 1;
@@ -162,9 +162,7 @@ public class BukkitHybridUtils extends HybridUtils {
                                 continue;
                             }
                             int y = MainUtil.y_loc[i][j];
-                            oldBlocks[y][x][z] = result[i][j] != null ?
-                                result[i][j] :
-                                airBucket;
+                            oldBlocks[y][x][z] = result[i][j] != null ? result[i][j] : airBucket;
                         }
                     }
 

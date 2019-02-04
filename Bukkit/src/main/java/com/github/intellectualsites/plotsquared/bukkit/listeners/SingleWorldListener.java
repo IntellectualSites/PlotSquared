@@ -1,13 +1,9 @@
 package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
-import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getRefClass;
-
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.PlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -17,6 +13,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.plugin.Plugin;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getRefClass;
 
 @SuppressWarnings("unused") public class SingleWorldListener implements Listener {
 

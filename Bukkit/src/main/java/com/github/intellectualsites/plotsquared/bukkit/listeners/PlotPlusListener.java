@@ -31,8 +31,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 
-@SuppressWarnings("unused")
-public class PlotPlusListener extends PlotListener implements Listener {
+@SuppressWarnings("unused") public class PlotPlusListener extends PlotListener implements Listener {
 
     private static final HashMap<UUID, Interval> feedRunnable = new HashMap<>();
     private static final HashMap<UUID, Interval> healRunnable = new HashMap<>();
@@ -82,8 +81,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }, 0L, 20L);
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onInteract(BlockDamageEvent event) {
+    @EventHandler(priority = EventPriority.HIGH) public void onInteract(BlockDamageEvent event) {
         Player player = event.getPlayer();
         if (player.getGameMode() != GameMode.SURVIVAL) {
             return;
@@ -102,8 +100,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onDamage(EntityDamageEvent event) {
+    @EventHandler(priority = EventPriority.HIGH) public void onDamage(EntityDamageEvent event) {
         if (event.getEntityType() != EntityType.PLAYER) {
             return;
         }
@@ -117,8 +114,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onItemDrop(PlayerDropItemEvent event) {
+    @EventHandler public void onItemDrop(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
         Plot plot = BukkitUtil.getLocation(player).getOwnedPlot();
@@ -133,27 +129,24 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onPlotEnter(PlayerEnterPlotEvent event) {
+    @EventHandler public void onPlotEnter(PlayerEnterPlotEvent event) {
         Player player = event.getPlayer();
         Plot plot = event.getPlot();
         Optional<Integer[]> feed = plot.getFlag(Flags.FEED);
-        feed.ifPresent( value -> feedRunnable.put(player.getUniqueId(), new Interval(value[0], value[1], 20))
-        );
+        feed.ifPresent(
+            value -> feedRunnable.put(player.getUniqueId(), new Interval(value[0], value[1], 20)));
         Optional<Integer[]> heal = plot.getFlag(Flags.HEAL);
-        heal.ifPresent( value -> healRunnable.put(player.getUniqueId(), new Interval(value[0], value[1], 20))
-        );
+        heal.ifPresent(
+            value -> healRunnable.put(player.getUniqueId(), new Interval(value[0], value[1], 20)));
     }
 
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
+    @EventHandler public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         feedRunnable.remove(player.getUniqueId());
         healRunnable.remove(player.getUniqueId());
     }
 
-    @EventHandler
-    public void onPlotLeave(PlayerLeavePlotEvent event) {
+    @EventHandler public void onPlotLeave(PlayerLeavePlotEvent event) {
         Player leaver = event.getPlayer();
         Plot plot = event.getPlot();
         if (!plot.hasOwner()) {
@@ -164,8 +157,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         healRunnable.remove(leaver.getUniqueId());
     }
 
-    @EventHandler
-    public void onItemPickup(EntityPickupItemEvent event) {
+    @EventHandler public void onItemPickup(EntityPickupItemEvent event) {
         LivingEntity ent = event.getEntity();
         if (ent instanceof Player) {
             Player player = (Player) ent;

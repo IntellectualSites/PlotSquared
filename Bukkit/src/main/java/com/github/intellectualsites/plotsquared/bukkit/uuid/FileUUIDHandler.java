@@ -80,13 +80,11 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                     e.printStackTrace();
                 }
             }
-            HashBiMap<StringWrapper, UUID> toAdd =
-                HashBiMap.create(new HashMap<>());
+            HashBiMap<StringWrapper, UUID> toAdd = HashBiMap.create(new HashMap<>());
             if (Settings.UUID.NATIVE_UUID_PROVIDER) {
                 HashSet<UUID> all = UUIDHandler.getAllUUIDS();
                 PlotSquared.debug("&aFast mode UUID caching enabled!");
-                File playerDataFolder =
-                    new File(container, world + File.separator + "playerdata");
+                File playerDataFolder = new File(container, world + File.separator + "playerdata");
                 String[] dat = playerDataFolder.list(new DatFileFilter());
                 boolean check = all.isEmpty();
                 if (dat != null) {
@@ -128,8 +126,8 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                     }
                     return;
                 } else {
-                    PlotSquared.debug("Failed to cache: " + all.size()
-                        + " uuids - slowly processing all files");
+                    PlotSquared.debug(
+                        "Failed to cache: " + all.size() + " uuids - slowly processing all files");
                 }
             }
             HashSet<String> worlds1 = Sets.newHashSet(world, "world");
@@ -138,8 +136,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
             File playerDataFolder = null;
             for (String worldName : worlds1) {
                 // Getting UUIDs
-                playerDataFolder =
-                    new File(container, worldName + File.separator + "playerdata");
+                playerDataFolder = new File(container, worldName + File.separator + "playerdata");
                 String[] dat = playerDataFolder.list(new DatFileFilter());
                 if ((dat != null) && (dat.length != 0)) {
                     for (String current : dat) {
@@ -213,8 +210,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
             }
 
             if (getUUIDMap().isEmpty()) {
-                for (OfflinePlotPlayer op : FileUUIDHandler.this.uuidWrapper
-                    .getOfflinePlayers()) {
+                for (OfflinePlotPlayer op : FileUUIDHandler.this.uuidWrapper.getOfflinePlayers()) {
                     long last = op.getLastPlayed();
                     if (last != 0) {
                         String name = op.getName();

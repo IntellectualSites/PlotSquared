@@ -5,10 +5,10 @@ import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
-import java.util.Arrays;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 public class DefaultUUIDWrapper implements UUIDWrapper {
@@ -31,8 +31,7 @@ public class DefaultUUIDWrapper implements UUIDWrapper {
 
     @Override public OfflinePlotPlayer[] getOfflinePlayers() {
         OfflinePlayer[] ops = Bukkit.getOfflinePlayers();
-        return Arrays.stream(ops).map(BukkitOfflinePlayer::new)
-            .toArray(BukkitOfflinePlayer[]::new);
+        return Arrays.stream(ops).map(BukkitOfflinePlayer::new).toArray(BukkitOfflinePlayer[]::new);
     }
 
     @Override public OfflinePlotPlayer getOfflinePlayer(String name) {

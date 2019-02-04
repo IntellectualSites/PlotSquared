@@ -61,11 +61,13 @@ public final class BukkitEventUtil extends EventUtil {
     }
 
     @Override public boolean callMerge(Plot plot, int dir, int max) {
-        return callEvent(new PlotMergeEvent(BukkitUtil.getWorld(plot.getWorldName()), plot, dir, max));
+        return callEvent(
+            new PlotMergeEvent(BukkitUtil.getWorld(plot.getWorldName()), plot, dir, max));
     }
 
     @Override public boolean callAutoMerge(Plot plot, List<PlotId> plots) {
-        return callEvent(new PlotAutoMergeEvent(BukkitUtil.getWorld(plot.getWorldName()), plot, plots));
+        return callEvent(
+            new PlotAutoMergeEvent(BukkitUtil.getWorld(plot.getWorldName()), plot, plots));
     }
 
     @Override public boolean callUnlink(PlotArea area, List<PlotId> plots) {
