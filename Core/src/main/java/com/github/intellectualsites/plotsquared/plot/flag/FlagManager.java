@@ -141,13 +141,6 @@ public class FlagManager {
         return true;
     }
 
-    public static <V> boolean addClusterFlag(PlotCluster cluster, Flag<V> flag, V value) {
-        getSettingFlag(cluster.area, cluster.settings, flag);
-        cluster.settings.flags.put(flag, value);
-        DBFunc.setFlags(cluster, cluster.settings.flags);
-        return true;
-    }
-
     /**
      * Returns a map of the {@link Flag}s and their values for the specified plot.
      *
@@ -217,20 +210,6 @@ public class FlagManager {
         return true;
     }
 
-    public static boolean removeClusterFlag(PlotCluster cluster, Flag id) {
-        Object object = cluster.settings.flags.remove(id);
-        if (object == null) {
-            return false;
-        }
-        boolean result = EventUtil.manager.callFlagRemove(id, object, cluster);
-        if (!result) {
-            cluster.settings.flags.put(id, object);
-            return false;
-        }
-        DBFunc.setFlags(cluster, cluster.settings.flags);
-        return true;
-    }
-
     public static void setPlotFlags(Plot origin, HashMap<Flag<?>, Object> flags) {
         for (Plot plot : origin.getConnectedPlots()) {
             if (flags != null && !flags.isEmpty()) {
@@ -246,20 +225,6 @@ public class FlagManager {
             plot.reEnter();
             DBFunc.setFlags(plot, plot.getFlags());
         }
-    }
-
-    public static void setClusterFlags(PlotCluster cluster, Set<Flag> flags) {
-        if (flags != null && !flags.isEmpty()) {
-            cluster.settings.flags.clear();
-            for (Flag flag : flags) {
-                cluster.settings.flags.put(flag, flag);
-            }
-        } else if (cluster.settings.flags.isEmpty()) {
-            return;
-        } else {
-            cluster.settings.flags.clear();
-        }
-        DBFunc.setFlags(cluster, cluster.settings.flags);
     }
 
     /**

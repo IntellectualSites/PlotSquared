@@ -2666,41 +2666,6 @@ import java.util.concurrent.atomic.AtomicInteger;
                             merged[3 - i] = (m & 1 << i) != 0;
                         }
                         cluster.settings.setMerged(merged);
-                        String[] flags_string;
-                        String myflags = resultSet.getString("flags");
-                        if (myflags == null || myflags.isEmpty()) {
-                            flags_string = new String[] {};
-                        } else {
-                            flags_string = myflags.split(",");
-                        }
-                        HashMap<Flag<?>, Object> flags = new HashMap<>();
-                        for (String element : flags_string) {
-                            if (element.contains(":")) {
-                                String[] split = element.split(":");
-                                String flag_str =
-                                    split[1].replaceAll("\u00AF", ":").replaceAll("´", ",");
-                                Flag flag = FlagManager.getOrCreateFlag(split[0]);
-                                if (flag == null) {
-                                    flag = new StringFlag(split[0]) {
-                                        @Override public String getValueDescription() {
-                                            return "Generic Filler Flag";
-                                        }
-                                    };
-                                }
-                                flags.put(flag, flag.parseValue(flag_str));
-                            } else {
-                                Flag flag = FlagManager.getOrCreateFlag(element);
-                                if (flag == null) {
-                                    flag = new StringFlag(element) {
-                                        @Override public String getValueDescription() {
-                                            return "Generic Filler Flag";
-                                        }
-                                    };
-                                }
-                                flags.put(flag, flag.parseValue(""));
-                            }
-                        }
-                        cluster.settings.flags = flags;
                     } else {
                         PlotSquared.debug("&cCluster #" + id + "(" + cluster
                             + ") in cluster_settings does not exist. Please create the cluster or remove this entry.");
@@ -2724,32 +2689,6 @@ import java.util.concurrent.atomic.AtomicInteger;
             e.printStackTrace();
         }
         return newClusters;
-    }
-
-    @Override public void setFlags(final PlotCluster cluster, HashMap<Flag<?>, Object> flags) {
-        final StringBuilder flag_string = new StringBuilder();
-        int i = 0;
-        for (Entry<Flag<?>, Object> flag : flags.entrySet()) {
-            if (i != 0) {
-                flag_string.append(',');
-            }
-            flag_string.append(flag.getKey().getName()).append(':').append(
-                flag.getKey().valueToString(flag.getValue()).replaceAll(":", "\u00AF")
-                    .replaceAll(",", "´"));
-            i++;
-        }
-        addClusterTask(cluster, new UniqueStatement("setFlags") {
-            @Override public void set(PreparedStatement stmt) throws SQLException {
-                stmt.setString(1, flag_string.toString());
-                stmt.setInt(2, getClusterId(cluster));
-            }
-
-            @Override public PreparedStatement get() throws SQLException {
-                return SQLManager.this.connection.prepareStatement(
-                    "UPDATE `" + SQLManager.this.prefix
-                        + "cluster_settings` SET `flags` = ? WHERE `cluster_id` = ?");
-            }
-        });
     }
 
     @Override public void setClusterName(final PlotCluster cluster, final String name) {

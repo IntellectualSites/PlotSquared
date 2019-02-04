@@ -43,8 +43,6 @@ public abstract class EventUtil {
 
     public abstract boolean callFlagRemove(Flag<?> flag, Plot plot, Object value);
 
-    public abstract boolean callFlagRemove(Flag<?> flag, Object value, PlotCluster cluster);
-
     public abstract boolean callMerge(Plot plot, int dir, int max);
 
     public abstract boolean callAutoMerge(Plot plot, List<PlotId> plots);

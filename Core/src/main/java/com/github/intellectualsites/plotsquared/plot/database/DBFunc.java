@@ -298,13 +298,6 @@ public class DBFunc {
         DBFunc.dbManager.setFlags(plot, flags);
     }
 
-    public static void setFlags(PlotCluster cluster, HashMap<Flag<?>, Object> flags) {
-        if (dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.setFlags(cluster, flags);
-    }
-
     /**
      * @param plot
      * @param alias
