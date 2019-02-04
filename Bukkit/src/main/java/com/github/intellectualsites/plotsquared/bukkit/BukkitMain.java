@@ -754,7 +754,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
         ChunkGenerator gen = world.getGenerator();
         if (gen instanceof BukkitPlotGenerator) {
-            PlotSquared.get().loadWorld(worldName, (GeneratorWrapper<?>) gen);
+            PlotSquared.get().loadWorld(worldName, (BukkitPlotGenerator) gen);
         } else if (gen != null) {
             PlotSquared.get().loadWorld(worldName, new BukkitPlotGenerator(worldName, gen));
         } else if (PlotSquared.get().worlds.contains("worlds." + worldName)) {
