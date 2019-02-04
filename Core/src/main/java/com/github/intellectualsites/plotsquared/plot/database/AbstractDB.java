@@ -144,6 +144,14 @@ public interface AbstractDB {
     void setFlags(Plot plot, HashMap<Flag<?>, Object> flags);
 
     /**
+     * Set cluster flags.
+     *
+     * @param cluster PlotCluster Object
+     * @param flags   flags to set (flag[])
+     */
+    void setFlags(PlotCluster cluster, HashMap<Flag<?>, Object> flags);
+
+    /**
      * Rename a cluster to the given name.
      *
      * @param cluster the cluster to rename

@@ -57,7 +57,9 @@ public class Help extends Command {
     public void displayHelp(PlotPlayer player, String cat, int page) {
         CommandCategory catEnum = null;
         if (cat != null) {
-            if (!StringMan.isEqualIgnoreCase(cat, "all")) {
+            if (StringMan.isEqualIgnoreCase(cat, "all")) {
+                catEnum = null;
+            } else {
                 for (CommandCategory c : CommandCategory.values()) {
                     if (StringMan.isEqualIgnoreCaseToAny(cat, c.name(), c.toString())) {
                         catEnum = c;

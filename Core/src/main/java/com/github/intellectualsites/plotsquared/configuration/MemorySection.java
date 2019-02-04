@@ -1,6 +1,5 @@
 package com.github.intellectualsites.plotsquared.configuration;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 
 /**
@@ -15,12 +14,14 @@ public class MemorySection implements ConfigurationSection {
     private final String fullPath;
 
     /**
-     * Creates an empty MemorySection for use as a root {@link Configuration} section.
+     * Creates an empty MemorySection for use as a root {@link Configuration}
+     * section.
      *
      * <p>Note that calling this without being yourself a {@link Configuration}
      * will throw an exception!
      *
-     * @throws IllegalStateException Thrown if this is not a {@link Configuration} root.
+     * @throws IllegalStateException Thrown if this is not a {@link
+     *                               Configuration} root.
      */
     protected MemorySection() {
         if (!(this instanceof Configuration)) {
@@ -38,9 +39,10 @@ public class MemorySection implements ConfigurationSection {
      * Creates an empty MemorySection with the specified parent and path.
      *
      * @param parent Parent section that contains this own section.
-     * @param path   Path that you may access this section from via the root {@link Configuration}.
-     * @throws IllegalArgumentException Thrown is parent or path is null, or if parent contains no
-     *                                  root Configuration.
+     * @param path   Path that you may access this section from via the root
+     *               {@link Configuration}.
+     * @throws IllegalArgumentException Thrown is parent or path is null, or
+     *                                  if parent contains no root Configuration.
      */
     protected MemorySection(ConfigurationSection parent, String path) {
         this.path = path;
@@ -109,8 +111,8 @@ public class MemorySection implements ConfigurationSection {
     }
 
     /**
-     * Creates a full path to the given {@link ConfigurationSection} from its root {@link
-     * Configuration}.
+     * Creates a full path to the given {@link ConfigurationSection} from its
+     * root {@link Configuration}.
      *
      * <p>You may use this method for any given {@link ConfigurationSection}, not
      * only {@link MemorySection}.
@@ -124,8 +126,8 @@ public class MemorySection implements ConfigurationSection {
     }
 
     /**
-     * Creates a relative path to the given {@link ConfigurationSection} from the given relative
-     * section.
+     * Creates a relative path to the given {@link ConfigurationSection} from
+     * the given relative section.
      *
      * <p>You may use this method for any given {@link ConfigurationSection}, not
      * only {@link MemorySection}.
@@ -198,11 +200,11 @@ public class MemorySection implements ConfigurationSection {
         return result;
     }
 
-    @Override public boolean contains(@Nonnull String path) {
+    @Override public boolean contains(String path) {
         return get(path) != null;
     }
 
-    @Override public boolean isSet(@Nonnull String path) {
+    @Override public boolean isSet(String path) {
         Configuration root = getRoot();
         if (root == null) {
             return false;
@@ -210,7 +212,7 @@ public class MemorySection implements ConfigurationSection {
         if (root.options().copyDefaults()) {
             return contains(path);
         }
-        return getOrDefault(path, null) != null;
+        return get(path, null) != null;
     }
 
     @Override public String getCurrentPath() {
@@ -229,7 +231,7 @@ public class MemorySection implements ConfigurationSection {
         return this.parent;
     }
 
-    @Override public void addDefault(@Nonnull String path, Object value) {
+    @Override public void addDefault(String path, Object value) {
         Configuration root = getRoot();
         if (root == null) {
             throw new IllegalStateException("Cannot add default without root");
@@ -289,10 +291,14 @@ public class MemorySection implements ConfigurationSection {
     }
 
     @Override public Object get(String path) {
-        return getOrDefault(path, getDefault(path));
+        return get(path, getDefault(path));
     }
 
-    @Override public Object getOrDefault(@Nonnull String path, Object defaultValue) {
+    @Override public Object get(String path, Object defaultValue) {
+        if (path == null) {
+            throw new NullPointerException("Path cannot be null");
+        }
+
         if (path.isEmpty()) {
             return this;
         }
@@ -324,7 +330,7 @@ public class MemorySection implements ConfigurationSection {
                 return result;
             }
         }
-        return section.getOrDefault(key, defaultValue);
+        return section.get(key, defaultValue);
     }
 
     @Override public ConfigurationSection createSection(String path) {
@@ -379,7 +385,7 @@ public class MemorySection implements ConfigurationSection {
     }
 
     @Override public String getString(String path, String def) {
-        Object val = getOrDefault(path, def);
+        Object val = get(path, def);
         if (val != null) {
             return val.toString();
         } else {
@@ -398,7 +404,7 @@ public class MemorySection implements ConfigurationSection {
     }
 
     @Override public int getInt(String path, int def) {
-        Object val = getOrDefault(path, def);
+        Object val = get(path, def);
         return toInt(val, def);
     }
 
@@ -417,7 +423,7 @@ public class MemorySection implements ConfigurationSection {
     }
 
     @Override public boolean getBoolean(String path, boolean defaultValue) {
-        Object val = getOrDefault(path, defaultValue);
+        Object val = get(path, defaultValue);
         if (val instanceof Boolean) {
             return (Boolean) val;
         } else {
@@ -436,7 +442,7 @@ public class MemorySection implements ConfigurationSection {
     }
 
     @Override public double getDouble(String path, double defaultValue) {
-        Object val = getOrDefault(path, defaultValue);
+        Object val = get(path, defaultValue);
         return toDouble(val, defaultValue);
     }
 
@@ -451,7 +457,7 @@ public class MemorySection implements ConfigurationSection {
     }
 
     @Override public long getLong(String path, long def) {
-        Object val = getOrDefault(path, def);
+        Object val = get(path, def);
         return toLong(val, def);
     }
 
@@ -467,7 +473,7 @@ public class MemorySection implements ConfigurationSection {
     }
 
     @Override public List<?> getList(String path, List<?> def) {
-        Object val = getOrDefault(path, def);
+        Object val = get(path, def);
         return (List<?>) ((val instanceof List) ? val : def);
     }
 
@@ -688,12 +694,12 @@ public class MemorySection implements ConfigurationSection {
     }
 
     @Override public ConfigurationSection getConfigurationSection(String path) {
-        Object val = getOrDefault(path, null);
+        Object val = get(path, null);
         if (val != null) {
             return (val instanceof ConfigurationSection) ? (ConfigurationSection) val : null;
         }
 
-        val = getOrDefault(path, getDefault(path));
+        val = get(path, getDefault(path));
         return (val instanceof ConfigurationSection) ? createSection(path) : null;
     }
 

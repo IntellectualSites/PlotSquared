@@ -9,7 +9,7 @@ import java.sql.*;
 /**
  * Connects to and uses a SQLite database.
  */
-public class SQLite implements Database {
+public class SQLite extends Database {
 
     private final String dbLocation;
     private Connection connection;

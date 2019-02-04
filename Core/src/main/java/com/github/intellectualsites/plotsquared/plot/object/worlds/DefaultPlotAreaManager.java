@@ -88,8 +88,9 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         HashSet<PlotArea> globalAreas = new HashSet<>(Arrays.asList(plotAreas));
         localAreas.add(plotArea);
         globalAreas.add(plotArea);
-        this.plotAreas = globalAreas.toArray(new PlotArea[0]);
-        this.plotAreaMap.put(plotArea.worldname, localAreas.toArray(new PlotArea[0]));
+        this.plotAreas = globalAreas.toArray(new PlotArea[globalAreas.size()]);
+        this.plotAreaMap
+            .put(plotArea.worldname, localAreas.toArray(new PlotArea[localAreas.size()]));
         QuadMap<PlotArea> map = this.plotAreaGrid.get(plotArea.worldname);
         if (map == null) {
             map = new QuadMap<PlotArea>(Integer.MAX_VALUE, 0, 0) {
@@ -103,14 +104,15 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
     }
 
     @Override public void removePlotArea(PlotArea area) {
-        ArrayList<PlotArea> globalAreas = new ArrayList<>(Arrays.asList(plotAreas));
+        ArrayList<PlotArea> globalAreas = new ArrayList<PlotArea>(Arrays.asList(plotAreas));
         globalAreas.remove(area);
-        this.plotAreas = globalAreas.toArray(new PlotArea[0]);
+        this.plotAreas = globalAreas.toArray(new PlotArea[globalAreas.size()]);
         if (globalAreas.isEmpty()) {
             this.plotAreaMap.remove(area.worldname);
             this.plotAreaGrid.remove(area.worldname);
         } else {
-            this.plotAreaMap.put(area.worldname, globalAreas.toArray(new PlotArea[0]));
+            this.plotAreaMap
+                .put(area.worldname, globalAreas.toArray(new PlotArea[globalAreas.size()]));
             this.plotAreaGrid.get(area.worldname).remove(area);
         }
     }
@@ -204,7 +206,7 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
             return noPlotAreas;
         } else {
             Set<PlotArea> found = areas.get(region);
-            return found.toArray(new PlotArea[0]);
+            return found.toArray(new PlotArea[found.size()]);
         }
     }
 
@@ -215,14 +217,14 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         Set<String> tmp = new LinkedHashSet<>();
         Collections.addAll(tmp, worlds);
         tmp.add(worldName);
-        worlds = tmp.toArray(new String[0]);
+        worlds = tmp.toArray(new String[tmp.size()]);
     }
 
     @Override public void removeWorld(String worldName) {
         Set<String> tmp = new LinkedHashSet<>();
         Collections.addAll(tmp, worlds);
         tmp.remove(worldName);
-        worlds = tmp.toArray(new String[0]);
+        worlds = tmp.toArray(new String[tmp.size()]);
     }
 
     @Override public String[] getAllWorlds() {

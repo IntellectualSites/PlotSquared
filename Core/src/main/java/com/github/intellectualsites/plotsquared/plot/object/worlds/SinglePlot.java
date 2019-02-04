@@ -4,7 +4,6 @@ import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
@@ -41,7 +40,7 @@ public class SinglePlot extends Plot {
         return getId().toCommaSeparatedString();
     }
 
-    @Nonnull @Override public SinglePlotArea getArea() {
+    @Override public SinglePlotArea getArea() {
         return (SinglePlotArea) super.getArea();
     }
 

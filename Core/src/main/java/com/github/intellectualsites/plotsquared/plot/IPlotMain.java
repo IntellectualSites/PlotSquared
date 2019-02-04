@@ -76,9 +76,7 @@ public interface IPlotMain extends ILogger {
      *
      * @return
      */
-    default String getPluginName() {
-        return "PlotSquared";
-    }
+    String getPluginName();
 
     /**
      * Get the version of Minecraft that is running.

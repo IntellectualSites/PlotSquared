@@ -135,11 +135,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 Horse horse = (Horse) entity;
                 this.horse = new HorseStats();
                 this.horse.jump = horse.getJumpStrength();
-                if (horse instanceof ChestedHorse) {
-                    this.horse.chest = ((ChestedHorse) horse).isCarryingChest();
-                } else {
-                    this.horse.chest = false;
-                }
+                this.horse.chest = horse.isCarryingChest();
                 this.horse.variant = horse.getVariant();
                 this.horse.style = horse.getStyle();
                 this.horse.color = horse.getColor();
@@ -179,12 +175,10 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 return;
             // END AGEABLE //
             case GUARDIAN:
-                //todo no longer works (possible exception thrown)
                 this.dataByte = (byte) (((Guardian) entity).isElder() ? 1 : 0);
                 storeLiving((LivingEntity) entity);
                 return;
             case SKELETON:
-                //todo no longer works (possible exception thrown)
                 this.dataByte = getOrdinal(Skeleton.SkeletonType.values(),
                     ((Skeleton) entity).getSkeletonType());
                 storeLiving((LivingEntity) entity);
@@ -430,7 +424,10 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             return entity;
         }
         if (this.base.passenger != null) {
-            entity.addPassenger(this.base.passenger.spawn(world, xOffset, zOffset));
+            try {
+                entity.setPassenger(this.base.passenger.spawn(world, xOffset, zOffset));
+            } catch (Exception ignored) {
+            }
         }
         if (this.base.fall != 0) {
             entity.setFallDistance(this.base.fall);
@@ -515,10 +512,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             case HORSE:
                 Horse horse = (Horse) entity;
                 horse.setJumpStrength(this.horse.jump);
-                if (horse instanceof ChestedHorse && this.horse.chest) {
-                    ((ChestedHorse) horse).setCarryingChest(true);
-                }
-                //todo broken in 1.13 possible exception thrown
+                horse.setCarryingChest(this.horse.chest);
                 horse.setVariant(this.horse.variant);
                 horse.setStyle(this.horse.style);
                 horse.setColor(this.horse.color);
@@ -565,15 +559,12 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 return entity;
             case GUARDIAN:
                 if (this.dataByte != 0) {
-                    //todo broken in 1.13 possible exception thrown
-
                     ((Guardian) entity).setElder(true);
                 }
                 restoreLiving((LivingEntity) entity);
                 return entity;
             case SKELETON:
                 if (this.dataByte != 0) {
-                    //todo broken in 1.13 possible exception thrown
                     ((Skeleton) entity)
                         .setSkeletonType(Skeleton.SkeletonType.values()[this.dataByte]);
                 }

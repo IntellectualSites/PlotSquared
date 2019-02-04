@@ -48,17 +48,25 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     /**
-     * Efficiently wrap a Player, or OfflinePlayer object to get a PlotPlayer (or fetch if it's
-     * already cached)<br> - Accepts sponge/bukkit Player (online) - Accepts player name (online) -
-     * Accepts UUID - Accepts bukkit OfflinePlayer (offline)
+     * Efficiently wrap a Player, or OfflinePlayer object to get a PlotPlayer (or fetch if it's already cached)<br>
+     * - Accepts sponge/bukkit Player (online)
+     * - Accepts player name (online)
+     * - Accepts UUID
+     * - Accepts bukkit OfflinePlayer (offline)
+     *
+     * @param player
+     * @return
      */
     public static PlotPlayer wrap(Object player) {
         return PlotSquared.get().IMP.wrapPlayer(player);
     }
 
     /**
-     * Get the cached PlotPlayer from a username<br> - This will return null if the player has not
-     * finished logging in or is not online
+     * Get the cached PlotPlayer from a username<br>
+     * - This will return null if the player has not finished logging in or is not online
+     *
+     * @param name
+     * @return
      */
     public static PlotPlayer get(String name) {
         return UUIDHandler.getPlayer(name);
@@ -66,6 +74,9 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
 
     /**
      * Set some session only metadata for this player.
+     *
+     * @param key
+     * @param value
      */
     public void setMeta(String key, Object value) {
         if (value == null) {
@@ -101,8 +112,11 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     /**
-     * Delete the metadata for a key. - metadata is session only - deleting other plugin's metadata
-     * may cause issues
+     * Delete the metadata for a key.
+     * - metadata is session only
+     * - deleting other plugin's metadata may cause issues
+     *
+     * @param key
      */
     public Object deleteMeta(String key) {
         return this.meta == null ? null : this.meta.remove(key);
@@ -120,8 +134,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     /**
      * Get this player's current plot.
      *
-     * @return the plot the player is standing on or null if standing on a road or not in a {@link
-     * PlotArea}
+     * @return the plot the player is standing on or null if standing on a road or not in a {@link PlotArea}
      */
     public Plot getCurrentPlot() {
         Plot value = getMeta(PlotPlayer.META_LAST_PLOT);
@@ -132,11 +145,10 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     /**
-     * Get the total number of allowed plots Possibly relevant: (To increment the player's allowed
-     * plots, see the example script on the wiki)
+     * Get the total number of allowed plots
+     * Possibly relevant: (To increment the player's allowed plots, see the example script on the wiki)
      *
-     * @return number of allowed plots within the scope (globally, or in the player's current world as
-     * defined in the settings.yml)
+     * @return number of allowed plots within the scope (globally, or in the player's current world as defined in the settings.yml)
      */
     public int getAllowedPlots() {
         return Permissions.hasPermissionRange(this, "plots.plot", Settings.Limit.MAX_PLOTS);
@@ -145,8 +157,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     /**
      * Get the total number of allowed clusters
      *
-     * @return number of allowed clusters within the scope (globally, or in the player's current world
-     * as defined in the settings.yml)
+     * @return number of allowed clusters within the scope (globally, or in the player's current world as defined in the settings.yml)
      */
     public int getAllowedClusters() {
         return Permissions.hasPermissionRange(this, "plots.cluster", Settings.Limit.MAX_PLOTS);
@@ -180,8 +191,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     /**
      * Get the number of plots this player owns.
      *
-     * @return number of plots within the scope (globally, or in the player's current world as defined
-     * in the settings.yml)
+     * @return number of plots within the scope (globally, or in the player's current world as defined in the settings.yml)
      * @see #getPlotCount(String);
      * @see #getPlots()
      */
@@ -229,6 +239,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      * Get the number of plots this player owns in the world.
      *
      * @param world the name of the plotworld to check.
+     * @return
      */
     public int getPlotCount(String world) {
         UUID uuid = getUUID();
@@ -273,6 +284,8 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
 
     /**
      * Return the PlotArea this player is currently in, or null.
+     *
+     * @return
      */
     public PlotArea getPlotAreaAbs() {
         return PlotSquared.get().getPlotAreaAbs(getLocation());
@@ -305,15 +318,18 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
 
     /**
      * Get this player's full location (including yaw/pitch)
+     *
+     * @return
      */
     public abstract Location getLocationFull();
 
     ////////////////////////////////////////////////
 
     /**
-     * Get this player's UUID. === !IMPORTANT ===<br> The UUID is dependent on the mode chosen in the
-     * settings.yml and may not be the same as Bukkit has (especially if using an old version of
-     * Bukkit that does not support UUIDs)
+     * Get this player's UUID.
+     * === !IMPORTANT ===<br>
+     * The UUID is dependent on the mode chosen in the settings.yml and may not be the same as Bukkit has
+     * (especially if using an old version of Bukkit that does not support UUIDs)
      *
      * @return UUID
      */
@@ -356,8 +372,11 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     public abstract void setCompassTarget(Location location);
 
     /**
-     * Set player data that will persist restarts. - Please note that this is not intended to store
-     * large values - For session only data use meta
+     * Set player data that will persist restarts.
+     * - Please note that this is not intended to store large values
+     * - For session only data use meta
+     *
+     * @param key
      */
     public void setAttribute(String key) {
         setPersistentMeta("attrib_" + key, new byte[] {(byte) 1});
@@ -366,6 +385,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     /**
      * Retrieves the attribute of this player.
      *
+     * @param key
      * @return the attribute will be either true or false
      */
     public boolean getAttribute(String key) {
@@ -377,6 +397,8 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
 
     /**
      * Remove an attribute from a player.
+     *
+     * @param key
      */
     public void removeAttribute(String key) {
         removePersistentMeta("attrib_" + key);
@@ -470,7 +492,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                 owned.deletePlot(null);
                 PlotSquared.debug(String
                     .format("&cPlot &6%s &cwas deleted + cleared due to &6%s&c getting banned",
-                        owned.getId(), getName()));
+                        plot.getId(), getName()));
             }
         }
         String name = getName();
@@ -483,6 +505,9 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
 
     /**
      * Get the amount of clusters this player owns in the specific world.
+     *
+     * @param world
+     * @return
      */
     public int getPlayerClusterCount(String world) {
         UUID uuid = getUUID();
@@ -555,27 +580,31 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                                                 final Location loc =
                                                     new Location(plot.getWorldName(), x, y, z);
                                                 if (plot.isLoaded()) {
-                                                    TaskManager.runTask(() -> {
-                                                        if (getMeta("teleportOnLogin", true)) {
-                                                            teleport(loc);
-                                                            sendMessage(C.TELEPORTED_TO_PLOT.f()
-                                                                + " (quitLoc) (" + plotX + ","
-                                                                + plotZ + ")");
+                                                    TaskManager.runTask(new Runnable() {
+                                                        @Override public void run() {
+                                                            if (getMeta("teleportOnLogin", true)) {
+                                                                teleport(loc);
+                                                                sendMessage(C.TELEPORTED_TO_PLOT.f()
+                                                                    + " (quitLoc) (" + plotX + ","
+                                                                    + plotZ + ")");
+                                                            }
                                                         }
                                                     });
                                                 } else if (!PlotSquared.get()
                                                     .isMainThread(Thread.currentThread())) {
                                                     if (getMeta("teleportOnLogin", true)) {
                                                         if (plot.teleportPlayer(PlotPlayer.this)) {
-                                                            TaskManager.runTask(() -> {
-                                                                if (getMeta("teleportOnLogin",
-                                                                    true)) {
-                                                                    teleport(loc);
-                                                                    sendMessage(
-                                                                        C.TELEPORTED_TO_PLOT.f()
-                                                                            + " (quitLoc-unloaded) ("
-                                                                            + plotX + "," + plotZ
-                                                                            + ")");
+                                                            TaskManager.runTask(new Runnable() {
+                                                                @Override public void run() {
+                                                                    if (getMeta("teleportOnLogin",
+                                                                        true)) {
+                                                                        teleport(loc);
+                                                                        sendMessage(
+                                                                            C.TELEPORTED_TO_PLOT.f()
+                                                                                + " (quitLoc-unloaded) ("
+                                                                                + plotX + ","
+                                                                                + plotZ + ")");
+                                                                    }
                                                                 }
                                                             });
                                                         }
@@ -624,6 +653,8 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
 
     /**
      * The amount of money this Player has.
+     *
+     * @return
      */
     public double getMoney() {
         return EconHandler.manager == null ? 0 : EconHandler.manager.getMoney(this);
@@ -642,7 +673,6 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     public interface PlotPlayerConverter<BaseObject> {
-
         PlotPlayer convert(BaseObject object);
     }
 }

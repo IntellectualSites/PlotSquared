@@ -82,14 +82,22 @@ public class Claim extends SubCommand {
         if (plot.canClaim(player)) {
             plot.owner = player.getUUID();
             final String finalSchematic = schematic;
-            DBFunc.createPlotSafe(plot, () -> TaskManager.IMP.sync(new RunnableVal<Object>() {
-                @Override public void run(Object value) {
-                    plot.claim(player, true, finalSchematic, false);
-                    if (area.AUTO_MERGE) {
-                        plot.autoMerge(-1, Integer.MAX_VALUE, player.getUUID(), true);
-                    }
+            DBFunc.createPlotSafe(plot, new Runnable() {
+                @Override public void run() {
+                    TaskManager.IMP.sync(new RunnableVal<Object>() {
+                        @Override public void run(Object value) {
+                            plot.claim(player, true, finalSchematic, false);
+                            if (area.AUTO_MERGE) {
+                                plot.autoMerge(-1, Integer.MAX_VALUE, player.getUUID(), true);
+                            }
+                        }
+                    });
                 }
-            }), () -> sendMessage(player, C.PLOT_NOT_CLAIMED));
+            }, new Runnable() {
+                @Override public void run() {
+                    sendMessage(player, C.PLOT_NOT_CLAIMED);
+                }
+            });
             return true;
         } else {
             sendMessage(player, C.PLOT_NOT_CLAIMED);

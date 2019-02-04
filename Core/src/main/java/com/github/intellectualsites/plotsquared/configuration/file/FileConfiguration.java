@@ -4,7 +4,6 @@ import com.github.intellectualsites.plotsquared.configuration.Configuration;
 import com.github.intellectualsites.plotsquared.configuration.InvalidConfigurationException;
 import com.github.intellectualsites.plotsquared.configuration.MemoryConfiguration;
 
-import javax.annotation.Nonnull;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
@@ -83,7 +82,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      *                                       a valid Configuration.
      * @throws IllegalArgumentException      Thrown when file is null.
      */
-    public void load(@Nonnull File file) throws IOException, InvalidConfigurationException {
+    public void load(File file) throws IOException, InvalidConfigurationException {
 
         FileInputStream stream = new FileInputStream(file);
 

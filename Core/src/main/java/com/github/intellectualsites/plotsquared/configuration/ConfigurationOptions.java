@@ -31,7 +31,7 @@ class ConfigurationOptions {
      *
      * @return Path separator
      */
-    char pathSeparator() {
+    public char pathSeparator() {
         return pathSeparator;
     }
 
@@ -64,7 +64,7 @@ class ConfigurationOptions {
      *
      * @return Whether or not defaults are directly copied
      */
-    boolean copyDefaults() {
+    public boolean copyDefaults() {
         return copyDefaults;
     }
 

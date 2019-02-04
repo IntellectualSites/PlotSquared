@@ -721,9 +721,6 @@ public abstract class PlotArea {
             } else {
                 start = start.getNextId(1);
             }
-            if (start == null) {
-                PlotSquared.debug("NPE possible in getNextFreePlot");
-            }
             currentId = new PlotId(center.x + start.x, center.y + start.y);
             Plot plot = getPlotAbs(currentId);
             if (plot != null && plot.canClaim(player)) {

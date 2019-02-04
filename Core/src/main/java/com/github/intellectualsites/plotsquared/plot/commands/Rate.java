@@ -10,10 +10,8 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.UUID;
 
 @CommandDeclaration(command = "rate", permission = "plots.rate", description = "Rate the plot",
     usage = "/plot rate [#|next|purge]", aliases = "rt", category = CommandCategory.INFO,
@@ -24,23 +22,25 @@ import java.util.UUID;
             switch (args[0].toLowerCase()) {
                 case "next": {
                     ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getBasePlots());
-                    plots.sort((p1, p2) -> {
-                        double v1 = 0;
-                        if (!p1.getRatings().isEmpty()) {
-                            for (Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
-                                v1 -= 11 - entry.getValue().getAverageRating();
+                    Collections.sort(plots, new Comparator<Plot>() {
+                        @Override public int compare(Plot p1, Plot p2) {
+                            double v1 = 0;
+                            if (!p1.getRatings().isEmpty()) {
+                                for (Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
+                                    v1 -= 11 - entry.getValue().getAverageRating();
+                                }
                             }
-                        }
-                        double v2 = 0;
-                        if (!p2.getRatings().isEmpty()) {
-                            for (Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
-                                v2 -= 11 - entry.getValue().getAverageRating();
+                            double v2 = 0;
+                            if (!p2.getRatings().isEmpty()) {
+                                for (Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
+                                    v2 -= 11 - entry.getValue().getAverageRating();
+                                }
                             }
+                            if (v1 == v2) {
+                                return -0;
+                            }
+                            return v2 > v1 ? 1 : -1;
                         }
-                        if (v1 == v2) {
-                            return -0;
-                        }
-                        return v2 > v1 ? 1 : -1;
                     });
                     UUID uuid = player.getUUID();
                     for (Plot p : plots) {
@@ -123,7 +123,7 @@ import java.util.UUID;
                             return true;
                         }
                     };
-                    inventory.setItem(0, new PlotItemStack("minecraft:brown_wool", 0, "0/8"));
+                    inventory.setItem(0, new PlotItemStack(35, (short) 12, 0, "0/8"));
                     inventory.setItem(1, new PlotItemStack(35, (short) 14, 1, "1/8"));
                     inventory.setItem(2, new PlotItemStack(35, (short) 1, 2, "2/8"));
                     inventory.setItem(3, new PlotItemStack(35, (short) 4, 3, "3/8"));
@@ -137,9 +137,11 @@ import java.util.UUID;
             };
             if (plot.getSettings().ratings == null) {
                 if (!Settings.Enabled_Components.RATING_CACHE) {
-                    TaskManager.runTaskAsync(() -> {
-                        plot.getSettings().ratings = DBFunc.getRatings(plot);
-                        run.run();
+                    TaskManager.runTaskAsync(new Runnable() {
+                        @Override public void run() {
+                            plot.getSettings().ratings = DBFunc.getRatings(plot);
+                            run.run();
+                        }
                     });
                     return true;
                 }
@@ -165,22 +167,26 @@ import java.util.UUID;
             return false;
         }
         final UUID uuid = player.getUUID();
-        final Runnable run = () -> {
-            if (plot.getRatings().containsKey(uuid)) {
-                sendMessage(player, C.RATING_ALREADY_EXISTS, plot.getId().toString());
-                return;
-            }
-            Rating result = EventUtil.manager.callRating(player, plot, new Rating(rating));
-            if (result != null) {
-                plot.addRating(uuid, result);
-                sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
+        final Runnable run = new Runnable() {
+            @Override public void run() {
+                if (plot.getRatings().containsKey(uuid)) {
+                    sendMessage(player, C.RATING_ALREADY_EXISTS, plot.getId().toString());
+                    return;
+                }
+                Rating result = EventUtil.manager.callRating(player, plot, new Rating(rating));
+                if (result != null) {
+                    plot.addRating(uuid, result);
+                    sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
+                }
             }
         };
         if (plot.getSettings().ratings == null) {
             if (!Settings.Enabled_Components.RATING_CACHE) {
-                TaskManager.runTaskAsync(() -> {
-                    plot.getSettings().ratings = DBFunc.getRatings(plot);
-                    run.run();
+                TaskManager.runTaskAsync(new Runnable() {
+                    @Override public void run() {
+                        plot.getSettings().ratings = DBFunc.getRatings(plot);
+                        run.run();
+                    }
                 });
                 return true;
             }

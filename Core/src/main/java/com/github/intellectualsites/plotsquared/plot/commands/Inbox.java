@@ -165,8 +165,9 @@ import java.util.Optional;
                     inbox.clearInbox(plot);
                     Optional<ArrayList<PlotComment>> comments =
                         plot.getSettings().getComments(inbox.toString());
-                    comments
-                        .ifPresent(plotComments -> plot.getSettings().removeComments(plotComments));
+                    if (comments.isPresent()) {
+                        plot.getSettings().removeComments(comments.get());
+                    }
                     MainUtil.sendMessage(player, C.COMMENT_REMOVED, "*");
                     return true;
                 default:

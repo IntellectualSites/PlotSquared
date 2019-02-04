@@ -30,10 +30,12 @@ public class SinglePlotManager extends PlotManager {
         SetupUtils.manager.unload(plot.getWorldName(), false);
         final File worldFolder =
             new File(PlotSquared.get().IMP.getWorldContainer(), plot.getWorldName());
-        TaskManager.IMP.taskAsync(() -> {
-            MainUtil.deleteDirectory(worldFolder);
-            if (whenDone != null)
-                whenDone.run();
+        TaskManager.IMP.taskAsync(new Runnable() {
+            @Override public void run() {
+                MainUtil.deleteDirectory(worldFolder);
+                if (whenDone != null)
+                    whenDone.run();
+            }
         });
         return true;
     }

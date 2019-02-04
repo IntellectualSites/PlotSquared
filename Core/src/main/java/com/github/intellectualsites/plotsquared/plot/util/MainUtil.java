@@ -411,7 +411,7 @@ public class MainUtil {
 
         ArrayList<ArrayList<Plot>> plotList = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            plotList.add(new ArrayList<>());
+            plotList.add(new ArrayList<Plot>());
         }
 
         for (Plot plot : PlotSquared.get().getPlots()) {
@@ -430,7 +430,7 @@ public class MainUtil {
                     count++;
                 }
             }
-            if (plot.getArea().equals(area)) {
+            if (area != null && plot.getArea().equals(area)) {
                 count++;
             }
             if (alias != null && alias.equals(plot.getAlias())) {
@@ -622,12 +622,14 @@ public class MainUtil {
         if (caption.s().isEmpty()) {
             return true;
         }
-        TaskManager.runTaskAsync(() -> {
-            String m = C.format(caption, args);
-            if (player == null) {
-                PlotSquared.log(m);
-            } else {
-                player.sendMessage(m);
+        TaskManager.runTaskAsync(new Runnable() {
+            @Override public void run() {
+                String m = C.format(caption, args);
+                if (player == null) {
+                    PlotSquared.log(m);
+                } else {
+                    player.sendMessage(m);
+                }
             }
         });
         return true;
@@ -778,28 +780,31 @@ public class MainUtil {
         info = info.replace("%desc%", "No description set.");
         if (info.contains("%rating%")) {
             final String newInfo = info;
-            TaskManager.runTaskAsync(() -> {
-                int max = 10;
-                if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES.isEmpty()) {
-                    max = 8;
-                }
-                String info1;
-                if (full && Settings.Ratings.CATEGORIES != null
-                    && Settings.Ratings.CATEGORIES.size() > 1) {
-                    double[] ratings = MainUtil.getAverageRatings(plot);
-                    String rating = "";
-                    String prefix = "";
-                    for (int i = 0; i < ratings.length; i++) {
-                        rating += prefix + Settings.Ratings.CATEGORIES.get(i) + '=' + String
-                            .format("%.1f", ratings[i]);
-                        prefix = ",";
+            TaskManager.runTaskAsync(new Runnable() {
+                @Override public void run() {
+                    int max = 10;
+                    if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES
+                        .isEmpty()) {
+                        max = 8;
                     }
-                    info1 = newInfo.replaceAll("%rating%", rating);
-                } else {
-                    info1 = newInfo.replaceAll("%rating%",
-                        String.format("%.1f", plot.getAverageRating()) + '/' + max);
+                    String info;
+                    if (full && Settings.Ratings.CATEGORIES != null
+                        && Settings.Ratings.CATEGORIES.size() > 1) {
+                        double[] ratings = MainUtil.getAverageRatings(plot);
+                        String rating = "";
+                        String prefix = "";
+                        for (int i = 0; i < ratings.length; i++) {
+                            rating += prefix + Settings.Ratings.CATEGORIES.get(i) + '=' + String
+                                .format("%.1f", ratings[i]);
+                            prefix = ",";
+                        }
+                        info = newInfo.replaceAll("%rating%", rating);
+                    } else {
+                        info = newInfo.replaceAll("%rating%",
+                            String.format("%.1f", plot.getAverageRating()) + '/' + max);
+                    }
+                    whenDone.run(info);
                 }
-                whenDone.run(info1);
             });
             return;
         }
@@ -810,9 +815,10 @@ public class MainUtil {
         if (directory.exists()) {
             File[] files = directory.listFiles();
             if (null != files) {
-                for (File file : files) {
+                for (int i = 0; i < files.length; i++) {
+                    File file = files[i];
                     if (file.isDirectory()) {
-                        deleteDirectory(file);
+                        deleteDirectory(files[i]);
                     } else {
                         PlotSquared.debug("Deleting file: " + file + " | " + file.delete());
                     }

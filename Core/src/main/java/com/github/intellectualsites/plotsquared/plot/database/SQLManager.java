@@ -14,7 +14,6 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.google.common.base.Charsets;
 
-import javax.annotation.Nonnull;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,7 +48,13 @@ import java.util.concurrent.atomic.AtomicInteger;
      */
     public volatile Queue<Runnable> notifyTasks;
     /**
-     * plot plot_denied plot_helpers plot_trusted plot_comments plot_settings plot_rating
+     * plot
+     * plot_denied
+     * plot_helpers
+     * plot_trusted
+     * plot_comments
+     * plot_settings
+     * plot_rating
      */
     public volatile ConcurrentHashMap<Plot, Queue<UniqueStatement>> plotTasks;
     /**
@@ -57,7 +62,10 @@ import java.util.concurrent.atomic.AtomicInteger;
      */
     public volatile ConcurrentHashMap<UUID, Queue<UniqueStatement>> playerTasks;
     /**
-     * cluster cluster_helpers cluster_invited cluster_settings
+     * cluster
+     * cluster_helpers
+     * cluster_invited
+     * cluster_settings
      */
     public volatile ConcurrentHashMap<PlotCluster, Queue<UniqueStatement>> clusterTasks;
     // Private
@@ -67,7 +75,10 @@ import java.util.concurrent.atomic.AtomicInteger;
     /**
      * Constructor
      *
-     * @param p prefix
+     * @param database
+     * @param p        prefix
+     * @throws SQLException
+     * @throws ClassNotFoundException
      */
     public SQLManager(final Database database, String p, boolean debug)
         throws SQLException, ClassNotFoundException {
@@ -110,39 +121,41 @@ import java.util.concurrent.atomic.AtomicInteger;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        TaskManager.runTaskAsync(() -> {
-            long last = System.currentTimeMillis();
-            while (true) {
-                if (SQLManager.this.closed) {
-                    break;
-                }
-                boolean hasTask =
-                    !globalTasks.isEmpty() || !playerTasks.isEmpty() || !plotTasks.isEmpty()
-                        || !clusterTasks.isEmpty();
-                if (hasTask) {
-                    if (SQLManager.this.mySQL && System.currentTimeMillis() - last > 550000
-                        || !isValid()) {
-                        last = System.currentTimeMillis();
-                        reconnect();
+        TaskManager.runTaskAsync(new Runnable() {
+            @Override public void run() {
+                long last = System.currentTimeMillis();
+                while (true) {
+                    if (SQLManager.this.closed) {
+                        break;
                     }
-                    if (!sendBatch()) {
-                        try {
-                            if (!getNotifyTasks().isEmpty()) {
-                                for (Runnable task : getNotifyTasks()) {
-                                    TaskManager.runTask(task);
+                    boolean hasTask =
+                        !globalTasks.isEmpty() || !playerTasks.isEmpty() || !plotTasks.isEmpty()
+                            || !clusterTasks.isEmpty();
+                    if (hasTask) {
+                        if (SQLManager.this.mySQL && System.currentTimeMillis() - last > 550000
+                            || !isValid()) {
+                            last = System.currentTimeMillis();
+                            reconnect();
+                        }
+                        if (!sendBatch()) {
+                            try {
+                                if (!getNotifyTasks().isEmpty()) {
+                                    for (Runnable task : getNotifyTasks()) {
+                                        TaskManager.runTask(task);
+                                    }
+                                    getNotifyTasks().clear();
                                 }
-                                getNotifyTasks().clear();
+                                Thread.sleep(50);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
                             }
-                            Thread.sleep(50);
+                        }
+                    } else {
+                        try {
+                            Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                    }
-                } else {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
                 }
             }
@@ -183,9 +196,15 @@ import java.util.concurrent.atomic.AtomicInteger;
         return this.notifyTasks;
     }
 
-    public synchronized void addPlotTask(@Nonnull Plot plot, UniqueStatement task) {
-        Queue<UniqueStatement> tasks =
-            this.plotTasks.computeIfAbsent(plot, plot1 -> new ConcurrentLinkedQueue<>());
+    public synchronized void addPlotTask(Plot plot, UniqueStatement task) {
+        if (plot == null) {
+            plot = new Plot(null, new PlotId(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        }
+        Queue<UniqueStatement> tasks = this.plotTasks.get(plot);
+        if (tasks == null) {
+            tasks = new ConcurrentLinkedQueue<>();
+            this.plotTasks.put(plot, tasks);
+        }
         if (task == null) {
             task = new UniqueStatement(String.valueOf(plot.hashCode())) {
 
@@ -211,8 +230,11 @@ import java.util.concurrent.atomic.AtomicInteger;
         if (uuid == null) {
             return;
         }
-        Queue<UniqueStatement> tasks =
-            this.playerTasks.computeIfAbsent(uuid, uuid1 -> new ConcurrentLinkedQueue<>());
+        Queue<UniqueStatement> tasks = this.playerTasks.get(uuid);
+        if (tasks == null) {
+            tasks = new ConcurrentLinkedQueue<>();
+            this.playerTasks.put(uuid, tasks);
+        }
         if (task == null) {
             task = new UniqueStatement(String.valueOf(uuid.hashCode())) {
 
@@ -235,8 +257,11 @@ import java.util.concurrent.atomic.AtomicInteger;
     }
 
     public synchronized void addClusterTask(PlotCluster cluster, UniqueStatement task) {
-        Queue<UniqueStatement> tasks = this.clusterTasks
-            .computeIfAbsent(cluster, plotCluster -> new ConcurrentLinkedQueue<>());
+        Queue<UniqueStatement> tasks = this.clusterTasks.get(cluster);
+        if (tasks == null) {
+            tasks = new ConcurrentLinkedQueue<>();
+            this.clusterTasks.put(cluster, tasks);
+        }
         if (task == null) {
             task = new UniqueStatement(String.valueOf(cluster.hashCode())) {
 
@@ -490,74 +515,92 @@ import java.util.concurrent.atomic.AtomicInteger;
     }
 
     @Override public void createPlotsAndData(final List<Plot> myList, final Runnable whenDone) {
-        addGlobalTask(() -> {
-            try {
-                // Create the plots
-                createPlots(myList, () -> {
-                    try {
-                        // Creating datastructures
-                        HashMap<PlotId, Plot> plotMap = new HashMap<>();
-                        for (Plot plot : myList) {
-                            plotMap.put(plot.getId(), plot);
-                        }
-                        ArrayList<SettingsPair> settings = new ArrayList<>();
-                        final ArrayList<UUIDPair> helpers = new ArrayList<>();
-                        final ArrayList<UUIDPair> trusted = new ArrayList<>();
-                        final ArrayList<UUIDPair> denied = new ArrayList<>();
+        addGlobalTask(new Runnable() {
+            @Override public void run() {
+                try {
+                    // Create the plots
+                    createPlots(myList, new Runnable() {
+                        @Override public void run() {
+                            try {
+                                // Creating datastructures
+                                HashMap<PlotId, Plot> plotMap = new HashMap<>();
+                                for (Plot plot : myList) {
+                                    plotMap.put(plot.getId(), plot);
+                                }
+                                ArrayList<SettingsPair> settings = new ArrayList<>();
+                                final ArrayList<UUIDPair> helpers = new ArrayList<>();
+                                final ArrayList<UUIDPair> trusted = new ArrayList<>();
+                                final ArrayList<UUIDPair> denied = new ArrayList<>();
 
-                        // Populating structures
-                        try (PreparedStatement stmt = SQLManager.this.connection
-                            .prepareStatement(SQLManager.this.GET_ALL_PLOTS);
-                            ResultSet result = stmt.executeQuery()) {
-                            while (result.next()) {
-                                int id = result.getInt("id");
-                                int x = result.getInt("plot_id_x");
-                                int y = result.getInt("plot_id_z");
-                                PlotId plotId = new PlotId(x, y);
-                                Plot plot = plotMap.get(plotId);
-                                if (plot != null) {
-                                    settings.add(new SettingsPair(id, plot.getSettings()));
-                                    for (UUID uuid : plot.getDenied()) {
-                                        denied.add(new UUIDPair(id, uuid));
+                                // Populating structures
+                                try (PreparedStatement stmt = SQLManager.this.connection
+                                    .prepareStatement(SQLManager.this.GET_ALL_PLOTS);
+                                    ResultSet result = stmt.executeQuery()) {
+                                    while (result.next()) {
+                                        int id = result.getInt("id");
+                                        int x = result.getInt("plot_id_x");
+                                        int y = result.getInt("plot_id_z");
+                                        PlotId plotId = new PlotId(x, y);
+                                        Plot plot = plotMap.get(plotId);
+                                        if (plot != null) {
+                                            settings.add(new SettingsPair(id, plot.getSettings()));
+                                            for (UUID uuid : plot.getDenied()) {
+                                                denied.add(new UUIDPair(id, uuid));
+                                            }
+                                            for (UUID uuid : plot.getMembers()) {
+                                                trusted.add(new UUIDPair(id, uuid));
+                                            }
+                                            for (UUID uuid : plot.getTrusted()) {
+                                                helpers.add(new UUIDPair(id, uuid));
+                                            }
+                                        }
                                     }
-                                    for (UUID uuid : plot.getMembers()) {
-                                        trusted.add(new UUIDPair(id, uuid));
+                                }
+                                createSettings(settings, new Runnable() {
+                                    @Override public void run() {
+                                        createTiers(helpers, "helpers", new Runnable() {
+                                            @Override public void run() {
+                                                createTiers(trusted, "trusted", new Runnable() {
+                                                    @Override public void run() {
+                                                        createTiers(denied, "denied",
+                                                            new Runnable() {
+                                                                @Override public void run() {
+                                                                    try {
+                                                                        SQLManager.this.connection
+                                                                            .commit();
+                                                                    } catch (SQLException e) {
+                                                                        e.printStackTrace();
+                                                                    }
+                                                                    if (whenDone != null) {
+                                                                        whenDone.run();
+                                                                    }
+                                                                }
+                                                            });
+                                                    }
+                                                });
+                                            }
+                                        });
                                     }
-                                    for (UUID uuid : plot.getTrusted()) {
-                                        helpers.add(new UUIDPair(id, uuid));
-                                    }
+                                });
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                                PlotSquared.debug("&7[WARN] Failed to set all helpers for plots");
+                                try {
+                                    SQLManager.this.connection.commit();
+                                } catch (SQLException e1) {
+                                    e1.printStackTrace();
                                 }
                             }
                         }
-                        createSettings(settings, () -> createTiers(helpers, "helpers",
-                            () -> createTiers(trusted, "trusted",
-                                () -> createTiers(denied, "denied", () -> {
-                                    try {
-                                        SQLManager.this.connection.commit();
-                                    } catch (SQLException e) {
-                                        e.printStackTrace();
-                                    }
-                                    if (whenDone != null) {
-                                        whenDone.run();
-                                    }
-                                }))));
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        PlotSquared.debug("&7[WARN] Failed to set all helpers for plots");
-                        try {
-                            SQLManager.this.connection.commit();
-                        } catch (SQLException e1) {
-                            e1.printStackTrace();
-                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    PlotSquared.debug("&7[WARN] Failed to set all helpers for plots");
+                    try {
+                        SQLManager.this.connection.commit();
+                    } catch (SQLException e1) {
+                        e1.printStackTrace();
                     }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-                PlotSquared.debug("&7[WARN] Failed to set all helpers for plots");
-                try {
-                    SQLManager.this.connection.commit();
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
                 }
             }
         });
@@ -886,7 +929,11 @@ import java.util.concurrent.atomic.AtomicInteger;
                 stmt.setInt(1, pair.id);
             }
         };
-        addGlobalTask(() -> setBulk(myList, mod, whenDone));
+        addGlobalTask(new Runnable() {
+            @Override public void run() {
+                setBulk(myList, mod, whenDone);
+            }
+        });
     }
 
     public void createEmptySettings(final ArrayList<Integer> myList, final Runnable whenDone) {
@@ -930,7 +977,11 @@ import java.util.concurrent.atomic.AtomicInteger;
                 stmt.setInt(1, id);
             }
         };
-        addGlobalTask(() -> setBulk(myList, mod, whenDone));
+        addGlobalTask(new Runnable() {
+            @Override public void run() {
+                setBulk(myList, mod, whenDone);
+            }
+        });
     }
 
     public void createPlotSafe(final Plot plot, final Runnable success, final Runnable failure) {
@@ -975,16 +1026,14 @@ import java.util.concurrent.atomic.AtomicInteger;
                                             + "plot_settings`(`plot_plot_id`) VALUES(?)");
                                 }
                             });
-                            if (success != null) {
+                            if (success != null)
                                 addNotifyTask(success);
-                            }
                             return;
                         }
                     }
                 }
-                if (failure != null) {
+                if (failure != null)
                     failure.run();
-                }
             }
         });
     }
@@ -1046,6 +1095,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
     /**
      * Create tables.
+     *
+     * @throws SQLException
      */
     @Override public void createTables() throws SQLException {
         String[] tables =
@@ -1294,6 +1345,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
     /**
      * Delete a plot.
+     *
+     * @param plot
      */
     @Override public void delete(final Plot plot) {
         PlotSquared.debug(
@@ -1319,6 +1372,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
     /**
      * Create plot settings
+     *
+     * @param id
+     * @param plot
      */
     @Override public void createPlotSettings(final int id, Plot plot) {
         PlotSquared.debug(
@@ -1554,12 +1610,12 @@ import java.util.concurrent.atomic.AtomicInteger;
                         ConfigurationSection areaSection =
                             worldSection.getConfigurationSection(worldKey + ".areas");
                         if (areaSection != null) {
-                            areaSection.getKeys(false).forEach(s -> {
-                                String[] split = s.split("(?<![;])-");
+                            for (String areaKey : areaSection.getKeys(false)) {
+                                String[] split = areaKey.split("(?<![;])-");
                                 if (split.length == 3) {
                                     areas.add(worldKey + ';' + split[0]);
                                 }
-                            });
+                            }
                         }
                     }
                 }
@@ -1572,7 +1628,7 @@ import java.util.concurrent.atomic.AtomicInteger;
              */
             try (Statement statement = this.connection.createStatement()) {
                 int id;
-                String owner;
+                String o;
                 UUID user;
                 try (ResultSet resultSet = statement.executeQuery(
                     "SELECT `id`, `plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp` FROM `"
@@ -1596,21 +1652,23 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 }
                             }
                         }
-                        owner = resultSet.getString("owner");
-                        user = uuids.computeIfAbsent(owner, s -> {
+                        o = resultSet.getString("owner");
+                        user = uuids.get(o);
+                        if (user == null) {
                             try {
-                                return UUID.fromString(s);
-                            } catch (IllegalArgumentException ignored) {
+                                user = UUID.fromString(o);
+                            } catch (IllegalArgumentException e) {
                                 if (Settings.UUID.FORCE_LOWERCASE) {
-                                    return UUID.nameUUIDFromBytes(
-                                        ("OfflinePlayer:" + s.toLowerCase())
+                                    user = UUID.nameUUIDFromBytes(
+                                        ("OfflinePlayer:" + o.toLowerCase())
                                             .getBytes(Charsets.UTF_8));
                                 } else {
-                                    return UUID.nameUUIDFromBytes(
-                                        ("OfflinePlayer:" + s).getBytes(Charsets.UTF_8));
+                                    user = UUID.nameUUIDFromBytes(
+                                        ("OfflinePlayer:" + o).getBytes(Charsets.UTF_8));
                                 }
                             }
-                        });
+                            uuids.put(o, user);
+                        }
                         long time;
                         try {
                             Timestamp timestamp = resultSet.getTimestamp("timestamp");
@@ -1627,12 +1685,12 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 time = System.currentTimeMillis() + id;
                             }
                         }
-                        Plot plot = new Plot(plot_id, user, new HashSet<>(), new HashSet<>(),
-                            new HashSet<>(), "", null, null, null,
+                        Plot p = new Plot(plot_id, user, new HashSet<UUID>(), new HashSet<UUID>(),
+                            new HashSet<UUID>(), "", null, null, null,
                             new boolean[] {false, false, false, false}, time, id);
                         HashMap<PlotId, Plot> map = newPlots.get(areaid);
                         if (map != null) {
-                            Plot last = map.put(plot.getId(), plot);
+                            Plot last = map.put(p.getId(), p);
                             if (last != null) {
                                 if (Settings.Enabled_Components.DATABASE_PURGER) {
                                     toDelete.add(last.temp);
@@ -1645,9 +1703,9 @@ import java.util.concurrent.atomic.AtomicInteger;
                         } else {
                             map = new HashMap<>();
                             newPlots.put(areaid, map);
-                            map.put(plot.getId(), plot);
+                            map.put(p.getId(), p);
                         }
-                        plots.put(id, plot);
+                        plots.put(id, p);
                     }
                     deleteRows(toDelete, this.prefix + "plot", "id");
                 }
@@ -1658,8 +1716,12 @@ import java.util.concurrent.atomic.AtomicInteger;
                         ArrayList<Integer> toDelete = new ArrayList<>();
                         while (r.next()) {
                             id = r.getInt("plot_plot_id");
-                            owner = r.getString("player");
-                            user = uuids.computeIfAbsent(owner, UUID::fromString);
+                            o = r.getString("player");
+                            user = uuids.get(o);
+                            if (user == null) {
+                                user = UUID.fromString(o);
+                                uuids.put(o, user);
+                            }
                             Plot plot = plots.get(id);
                             if (plot != null) {
                                 plot.getSettings().getRatings().put(user, r.getInt("rating"));
@@ -1683,8 +1745,12 @@ import java.util.concurrent.atomic.AtomicInteger;
                     ArrayList<Integer> toDelete = new ArrayList<>();
                     while (r.next()) {
                         id = r.getInt("plot_plot_id");
-                        owner = r.getString("user_uuid");
-                        user = uuids.computeIfAbsent(owner, UUID::fromString);
+                        o = r.getString("user_uuid");
+                        user = uuids.get(o);
+                        if (user == null) {
+                            user = UUID.fromString(o);
+                            uuids.put(o, user);
+                        }
                         Plot plot = plots.get(id);
                         if (plot != null) {
                             plot.getTrusted().add(user);
@@ -1707,8 +1773,12 @@ import java.util.concurrent.atomic.AtomicInteger;
                     ArrayList<Integer> toDelete = new ArrayList<>();
                     while (r.next()) {
                         id = r.getInt("plot_plot_id");
-                        owner = r.getString("user_uuid");
-                        user = uuids.computeIfAbsent(owner, UUID::fromString);
+                        o = r.getString("user_uuid");
+                        user = uuids.get(o);
+                        if (user == null) {
+                            user = UUID.fromString(o);
+                            uuids.put(o, user);
+                        }
                         Plot plot = plots.get(id);
                         if (plot != null) {
                             plot.getMembers().add(user);
@@ -1731,8 +1801,12 @@ import java.util.concurrent.atomic.AtomicInteger;
                     ArrayList<Integer> toDelete = new ArrayList<>();
                     while (r.next()) {
                         id = r.getInt("plot_plot_id");
-                        owner = r.getString("user_uuid");
-                        user = uuids.computeIfAbsent(owner, UUID::fromString);
+                        o = r.getString("user_uuid");
+                        user = uuids.get(o);
+                        if (user == null) {
+                            user = UUID.fromString(o);
+                            uuids.put(o, user);
+                        }
                         Plot plot = plots.get(id);
                         if (plot != null) {
                             plot.getDenied().add(user);
@@ -1771,7 +1845,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                                     } catch (Exception ignored) {
                                     }
                             }
-                            int m = resultSet.getInt("merged");
+                            Integer m = resultSet.getInt("merged");
                             boolean[] merged = new boolean[4];
                             for (int i = 0; i < 4; i++) {
                                 merged[3 - i] = (m & 1 << i) != 0;
@@ -1962,98 +2036,103 @@ import java.util.concurrent.atomic.AtomicInteger;
      * Purge all plots with the following database IDs
      */
     @Override public void purgeIds(final Set<Integer> uniqueIds) {
-        addGlobalTask(() -> {
-            if (!uniqueIds.isEmpty()) {
-                try {
-                    ArrayList<Integer> uniqueIdsList = new ArrayList<>(uniqueIds);
-                    String stmt_prefix = "";
-                    int size = uniqueIdsList.size();
-                    int packet = 990;
-                    int amount = size / packet;
-                    int count = 0;
-                    int last = -1;
-                    for (int j = 0; j <= amount; j++) {
-                        PlotSquared.debug("Purging " + (j * packet) + " / " + size);
-                        List<Integer> subList =
-                            uniqueIdsList.subList(j * packet, Math.min(size, (j + 1) * packet));
-                        if (subList.isEmpty()) {
-                            break;
+        addGlobalTask(new Runnable() {
+            @Override public void run() {
+                if (!uniqueIds.isEmpty()) {
+                    try {
+                        ArrayList<Integer> uniqueIdsList = new ArrayList<Integer>(uniqueIds);
+                        String stmt_prefix = "";
+                        int size = uniqueIdsList.size();
+                        int packet = 990;
+                        int amount = size / packet;
+                        int count = 0;
+                        int last = -1;
+                        for (int j = 0; j <= amount; j++) {
+                            PlotSquared.debug("Purging " + (j * packet) + " / " + size);
+                            List<Integer> subList =
+                                uniqueIdsList.subList(j * packet, Math.min(size, (j + 1) * packet));
+                            if (subList.isEmpty()) {
+                                break;
+                            }
+                            StringBuilder idstr2 = new StringBuilder("");
+                            stmt_prefix = "";
+                            for (Integer id : subList) {
+                                idstr2.append(stmt_prefix).append(id);
+                                stmt_prefix = " OR `id` = ";
+                            }
+                            stmt_prefix = "";
+                            StringBuilder idstr = new StringBuilder();
+                            for (Integer id : subList) {
+                                idstr.append(stmt_prefix).append(id);
+                                stmt_prefix = " OR `plot_plot_id` = ";
+                            }
+                            PreparedStatement stmt = SQLManager.this.connection.prepareStatement(
+                                "DELETE FROM `" + SQLManager.this.prefix
+                                    + "plot_helpers` WHERE `plot_plot_id` = " + idstr);
+                            stmt.executeUpdate();
+                            stmt.close();
+                            stmt = SQLManager.this.connection.prepareStatement(
+                                "DELETE FROM `" + SQLManager.this.prefix
+                                    + "plot_denied` WHERE `plot_plot_id` = " + idstr);
+                            stmt.executeUpdate();
+                            stmt.close();
+                            stmt = SQLManager.this.connection.prepareStatement(
+                                "DELETE FROM `" + SQLManager.this.prefix
+                                    + "plot_settings` WHERE `plot_plot_id` = " + idstr);
+                            stmt.executeUpdate();
+                            stmt.close();
+                            stmt = SQLManager.this.connection.prepareStatement(
+                                "DELETE FROM `" + SQLManager.this.prefix
+                                    + "plot_trusted` WHERE `plot_plot_id` = " + idstr);
+                            stmt.executeUpdate();
+                            stmt.close();
+                            stmt = SQLManager.this.connection.prepareStatement(
+                                "DELETE FROM `" + SQLManager.this.prefix + "plot` WHERE `id` = "
+                                    + idstr2);
+                            stmt.executeUpdate();
+                            stmt.close();
+                            commit();
                         }
-                        StringBuilder idstr2 = new StringBuilder();
-                        stmt_prefix = "";
-                        for (Integer id : subList) {
-                            idstr2.append(stmt_prefix).append(id);
-                            stmt_prefix = " OR `id` = ";
-                        }
-                        stmt_prefix = "";
-                        StringBuilder idstr = new StringBuilder();
-                        for (Integer id : subList) {
-                            idstr.append(stmt_prefix).append(id);
-                            stmt_prefix = " OR `plot_plot_id` = ";
-                        }
-                        PreparedStatement stmt = SQLManager.this.connection.prepareStatement(
-                            "DELETE FROM `" + SQLManager.this.prefix
-                                + "plot_helpers` WHERE `plot_plot_id` = " + idstr);
-                        stmt.executeUpdate();
-                        stmt.close();
-                        stmt = SQLManager.this.connection.prepareStatement(
-                            "DELETE FROM `" + SQLManager.this.prefix
-                                + "plot_denied` WHERE `plot_plot_id` = " + idstr);
-                        stmt.executeUpdate();
-                        stmt.close();
-                        stmt = SQLManager.this.connection.prepareStatement(
-                            "DELETE FROM `" + SQLManager.this.prefix
-                                + "plot_settings` WHERE `plot_plot_id` = " + idstr);
-                        stmt.executeUpdate();
-                        stmt.close();
-                        stmt = SQLManager.this.connection.prepareStatement(
-                            "DELETE FROM `" + SQLManager.this.prefix
-                                + "plot_trusted` WHERE `plot_plot_id` = " + idstr);
-                        stmt.executeUpdate();
-                        stmt.close();
-                        stmt = SQLManager.this.connection.prepareStatement(
-                            "DELETE FROM `" + SQLManager.this.prefix + "plot` WHERE `id` = "
-                                + idstr2);
-                        stmt.executeUpdate();
-                        stmt.close();
-                        commit();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        PlotSquared.debug("&c[ERROR] FAILED TO PURGE PLOTS!");
+                        return;
                     }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    PlotSquared.debug("&c[ERROR] FAILED TO PURGE PLOTS!");
-                    return;
                 }
+                PlotSquared.debug("&6[INFO] SUCCESSFULLY PURGED " + uniqueIds.size() + " PLOTS!");
             }
-            PlotSquared.debug("&6[INFO] SUCCESSFULLY PURGED " + uniqueIds.size() + " PLOTS!");
         });
     }
 
     @Override public void purge(final PlotArea area, final Set<PlotId> plots) {
-        addGlobalTask(() -> {
-            try (PreparedStatement stmt = SQLManager.this.connection.prepareStatement(
-                "SELECT `id`, `plot_id_x`, `plot_id_z` FROM `" + SQLManager.this.prefix
-                    + "plot` WHERE `world` = ?")) {
-                stmt.setString(1, area.toString());
-                Set<Integer> ids;
-                try (ResultSet r = stmt.executeQuery()) {
-                    ids = new HashSet<>();
-                    while (r.next()) {
-                        PlotId plot_id = new PlotId(r.getInt("plot_id_x"), r.getInt("plot_id_z"));
-                        if (plots.contains(plot_id)) {
-                            ids.add(r.getInt("id"));
+        addGlobalTask(new Runnable() {
+            @Override public void run() {
+                try (PreparedStatement stmt = SQLManager.this.connection.prepareStatement(
+                    "SELECT `id`, `plot_id_x`, `plot_id_z` FROM `" + SQLManager.this.prefix
+                        + "plot` WHERE `world` = ?")) {
+                    stmt.setString(1, area.toString());
+                    Set<Integer> ids;
+                    try (ResultSet r = stmt.executeQuery()) {
+                        ids = new HashSet<>();
+                        while (r.next()) {
+                            PlotId plot_id =
+                                new PlotId(r.getInt("plot_id_x"), r.getInt("plot_id_z"));
+                            if (plots.contains(plot_id)) {
+                                ids.add(r.getInt("id"));
+                            }
                         }
                     }
+                    purgeIds(ids);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    PlotSquared.debug("&c[ERROR] FAILED TO PURGE AREA '" + area + "'!");
                 }
-                purgeIds(ids);
-            } catch (SQLException e) {
-                e.printStackTrace();
-                PlotSquared.debug("&c[ERROR] FAILED TO PURGE AREA '" + area + "'!");
-            }
-            for (Iterator<PlotId> iterator = plots.iterator(); iterator.hasNext(); ) {
-                PlotId plotId = iterator.next();
-                iterator.remove();
-                PlotId id = new PlotId(plotId.x, plotId.y);
-                area.removePlot(id);
+                for (Iterator<PlotId> iterator = plots.iterator(); iterator.hasNext(); ) {
+                    PlotId plotId = iterator.next();
+                    iterator.remove();
+                    PlotId id = new PlotId(plotId.x, plotId.y);
+                    area.removePlot(id);
+                }
             }
         });
     }
@@ -2444,7 +2523,11 @@ import java.util.concurrent.atomic.AtomicInteger;
                 }
 
                 resultSet.close();
-                TaskManager.runTaskAsync(() -> result.run(metaMap));
+                TaskManager.runTaskAsync(new Runnable() {
+                    @Override public void run() {
+                        result.run(metaMap);
+                    }
+                });
             }
 
         });
@@ -2501,11 +2584,18 @@ import java.util.concurrent.atomic.AtomicInteger;
                         }
                     }
                     owner = resultSet.getString("owner");
-                    user = uuids.computeIfAbsent(owner, UUID::fromString);
+                    user = uuids.get(owner);
+                    if (user == null) {
+                        user = UUID.fromString(owner);
+                        uuids.put(owner, user);
+                    }
                     cluster = new PlotCluster(null, pos1, pos2, user, id);
                     clusters.put(id, cluster);
-                    Set<PlotCluster> set =
-                        newClusters.computeIfAbsent(areaid, k -> new HashSet<>());
+                    Set<PlotCluster> set = newClusters.get(areaid);
+                    if (set == null) {
+                        set = new HashSet<>();
+                        newClusters.put(areaid, set);
+                    }
                     set.add(cluster);
                 }
                 //Getting helpers
@@ -2514,7 +2604,11 @@ import java.util.concurrent.atomic.AtomicInteger;
                 while (resultSet.next()) {
                     id = resultSet.getInt("cluster_id");
                     owner = resultSet.getString("user_uuid");
-                    user = uuids.computeIfAbsent(owner, UUID::fromString);
+                    user = uuids.get(owner);
+                    if (user == null) {
+                        user = UUID.fromString(owner);
+                        uuids.put(owner, user);
+                    }
                     cluster = clusters.get(id);
                     if (cluster != null) {
                         cluster.helpers.add(user);
@@ -2529,7 +2623,11 @@ import java.util.concurrent.atomic.AtomicInteger;
                 while (resultSet.next()) {
                     id = resultSet.getInt("cluster_id");
                     owner = resultSet.getString("user_uuid");
-                    user = uuids.computeIfAbsent(owner, UUID::fromString);
+                    user = uuids.get(owner);
+                    if (user == null) {
+                        user = UUID.fromString(owner);
+                        uuids.put(owner, user);
+                    }
                     cluster = clusters.get(id);
                     if (cluster != null) {
                         cluster.invited.add(user);
@@ -2562,7 +2660,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 } catch (Exception ignored) {
                                 }
                         }
-                        int m = resultSet.getInt("merged");
+                        Integer m = resultSet.getInt("merged");
                         boolean[] merged = new boolean[4];
                         for (int i = 0; i < 4; i++) {
                             merged[3 - i] = (m & 1 << i) != 0;
@@ -2626,6 +2724,32 @@ import java.util.concurrent.atomic.AtomicInteger;
             e.printStackTrace();
         }
         return newClusters;
+    }
+
+    @Override public void setFlags(final PlotCluster cluster, HashMap<Flag<?>, Object> flags) {
+        final StringBuilder flag_string = new StringBuilder();
+        int i = 0;
+        for (Entry<Flag<?>, Object> flag : flags.entrySet()) {
+            if (i != 0) {
+                flag_string.append(',');
+            }
+            flag_string.append(flag.getKey().getName()).append(':').append(
+                flag.getKey().valueToString(flag.getValue()).replaceAll(":", "\u00AF")
+                    .replaceAll(",", "´"));
+            i++;
+        }
+        addClusterTask(cluster, new UniqueStatement("setFlags") {
+            @Override public void set(PreparedStatement stmt) throws SQLException {
+                stmt.setString(1, flag_string.toString());
+                stmt.setInt(2, getClusterId(cluster));
+            }
+
+            @Override public PreparedStatement get() throws SQLException {
+                return SQLManager.this.connection.prepareStatement(
+                    "UPDATE `" + SQLManager.this.prefix
+                        + "cluster_settings` SET `flags` = ? WHERE `cluster_id` = ?");
+            }
+        });
     }
 
     @Override public void setClusterName(final PlotCluster cluster, final String name) {
@@ -2706,7 +2830,7 @@ import java.util.concurrent.atomic.AtomicInteger;
             new UniqueStatement("createCluster_settings_" + cluster.hashCode()) {
                 @Override public void set(PreparedStatement stmt) throws SQLException {
                     stmt.setInt(1, getClusterId(cluster));
-                    stmt.setString(2, cluster.getAlias());
+                    stmt.setString(2, cluster.settings.getAlias());
                 }
 
                 @Override public PreparedStatement get() throws SQLException {
@@ -2945,83 +3069,87 @@ import java.util.concurrent.atomic.AtomicInteger;
     @Override
     public void replaceWorld(final String oldWorld, final String newWorld, final PlotId min,
         final PlotId max) {
-        addGlobalTask(() -> {
-            if (min == null) {
-                try (PreparedStatement stmt = SQLManager.this.connection.prepareStatement(
-                    "UPDATE `" + SQLManager.this.prefix
-                        + "plot` SET `world` = ? WHERE `world` = ?")) {
-                    stmt.setString(1, newWorld);
-                    stmt.setString(2, oldWorld);
-                    stmt.executeUpdate();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                try (PreparedStatement stmt = SQLManager.this.connection.prepareStatement(
-                    "UPDATE `" + SQLManager.this.prefix
-                        + "cluster` SET `world` = ? WHERE `world` = ?")) {
-                    stmt.setString(1, newWorld);
-                    stmt.setString(2, oldWorld);
-                    stmt.executeUpdate();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                try (PreparedStatement stmt = SQLManager.this.connection.prepareStatement(
-                    "UPDATE `" + SQLManager.this.prefix
-                        + "plot` SET `world` = ? WHERE `world` = ? AND `plot_id_x` BETWEEN ? AND ? AND `plot_id_z` BETWEEN ? AND ?")) {
-                    stmt.setString(1, newWorld);
-                    stmt.setString(2, oldWorld);
-                    stmt.setInt(3, min.x);
-                    stmt.setInt(4, max.x);
-                    stmt.setInt(5, min.y);
-                    stmt.setInt(6, max.y);
-                    stmt.executeUpdate();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                try (PreparedStatement stmt = SQLManager.this.connection.prepareStatement(
-                    "UPDATE `" + SQLManager.this.prefix
-                        + "cluster` SET `world` = ? WHERE `world` = ? AND `pos1_x` <= ? AND `pos1_z` <= ? AND `pos2_x` >= ? AND `pos2_z` >= ?")) {
-                    stmt.setString(1, newWorld);
-                    stmt.setString(2, oldWorld);
-                    stmt.setInt(3, max.x);
-                    stmt.setInt(4, max.y);
-                    stmt.setInt(5, min.x);
-                    stmt.setInt(6, min.y);
-                    stmt.executeUpdate();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+        addGlobalTask(new Runnable() {
+            @Override public void run() {
+                if (min == null) {
+                    try (PreparedStatement stmt = SQLManager.this.connection.prepareStatement(
+                        "UPDATE `" + SQLManager.this.prefix
+                            + "plot` SET `world` = ? WHERE `world` = ?")) {
+                        stmt.setString(1, newWorld);
+                        stmt.setString(2, oldWorld);
+                        stmt.executeUpdate();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    try (PreparedStatement stmt = SQLManager.this.connection.prepareStatement(
+                        "UPDATE `" + SQLManager.this.prefix
+                            + "cluster` SET `world` = ? WHERE `world` = ?")) {
+                        stmt.setString(1, newWorld);
+                        stmt.setString(2, oldWorld);
+                        stmt.executeUpdate();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try (PreparedStatement stmt = SQLManager.this.connection.prepareStatement(
+                        "UPDATE `" + SQLManager.this.prefix
+                            + "plot` SET `world` = ? WHERE `world` = ? AND `plot_id_x` BETWEEN ? AND ? AND `plot_id_z` BETWEEN ? AND ?")) {
+                        stmt.setString(1, newWorld);
+                        stmt.setString(2, oldWorld);
+                        stmt.setInt(3, min.x);
+                        stmt.setInt(4, max.x);
+                        stmt.setInt(5, min.y);
+                        stmt.setInt(6, max.y);
+                        stmt.executeUpdate();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    try (PreparedStatement stmt = SQLManager.this.connection.prepareStatement(
+                        "UPDATE `" + SQLManager.this.prefix
+                            + "cluster` SET `world` = ? WHERE `world` = ? AND `pos1_x` <= ? AND `pos1_z` <= ? AND `pos2_x` >= ? AND `pos2_z` >= ?")) {
+                        stmt.setString(1, newWorld);
+                        stmt.setString(2, oldWorld);
+                        stmt.setInt(3, max.x);
+                        stmt.setInt(4, max.y);
+                        stmt.setInt(5, min.x);
+                        stmt.setInt(6, min.y);
+                        stmt.executeUpdate();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
     }
 
     @Override public void replaceUUID(final UUID old, final UUID now) {
-        addGlobalTask(() -> {
-            try (Statement stmt = SQLManager.this.connection.createStatement()) {
-                stmt.executeUpdate(
-                    "UPDATE `" + SQLManager.this.prefix + "cluster` SET `owner` = '" + now
-                        .toString() + "' WHERE `owner` = '" + old.toString() + '\'');
-                stmt.executeUpdate(
-                    "UPDATE `" + SQLManager.this.prefix + "cluster_helpers` SET `user_uuid` = '"
-                        + now.toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
-                stmt.executeUpdate(
-                    "UPDATE `" + SQLManager.this.prefix + "cluster_invited` SET `user_uuid` = '"
-                        + now.toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
-                stmt.executeUpdate(
-                    "UPDATE `" + SQLManager.this.prefix + "plot` SET `owner` = '" + now.toString()
-                        + "' WHERE `owner` = '" + old.toString() + '\'');
-                stmt.executeUpdate(
-                    "UPDATE `" + SQLManager.this.prefix + "plot_denied` SET `user_uuid` = '" + now
-                        .toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
-                stmt.executeUpdate(
-                    "UPDATE `" + SQLManager.this.prefix + "plot_helpers` SET `user_uuid` = '" + now
-                        .toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
-                stmt.executeUpdate(
-                    "UPDATE `" + SQLManager.this.prefix + "plot_trusted` SET `user_uuid` = '" + now
-                        .toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
-            } catch (SQLException e) {
-                e.printStackTrace();
+        addGlobalTask(new Runnable() {
+            @Override public void run() {
+                try (Statement stmt = SQLManager.this.connection.createStatement()) {
+                    stmt.executeUpdate(
+                        "UPDATE `" + SQLManager.this.prefix + "cluster` SET `owner` = '" + now
+                            .toString() + "' WHERE `owner` = '" + old.toString() + '\'');
+                    stmt.executeUpdate(
+                        "UPDATE `" + SQLManager.this.prefix + "cluster_helpers` SET `user_uuid` = '"
+                            + now.toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
+                    stmt.executeUpdate(
+                        "UPDATE `" + SQLManager.this.prefix + "cluster_invited` SET `user_uuid` = '"
+                            + now.toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
+                    stmt.executeUpdate(
+                        "UPDATE `" + SQLManager.this.prefix + "plot` SET `owner` = '" + now
+                            .toString() + "' WHERE `owner` = '" + old.toString() + '\'');
+                    stmt.executeUpdate(
+                        "UPDATE `" + SQLManager.this.prefix + "plot_denied` SET `user_uuid` = '"
+                            + now.toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
+                    stmt.executeUpdate(
+                        "UPDATE `" + SQLManager.this.prefix + "plot_helpers` SET `user_uuid` = '"
+                            + now.toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
+                    stmt.executeUpdate(
+                        "UPDATE `" + SQLManager.this.prefix + "plot_trusted` SET `user_uuid` = '"
+                            + now.toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

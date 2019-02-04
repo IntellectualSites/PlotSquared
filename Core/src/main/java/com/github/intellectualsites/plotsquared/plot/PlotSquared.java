@@ -48,8 +48,8 @@ import java.util.zip.ZipInputStream;
  * An implementation of the core, with a static getter for easy access.
  */
 @SuppressWarnings({"unused", "WeakerAccess"}) public class PlotSquared {
-
-    private static final Set<Plot> EMPTY_SET = Collections.unmodifiableSet(Collections.emptySet());
+    private static final Set<Plot> EMPTY_SET =
+        Collections.unmodifiableSet(Collections.<Plot>emptySet());
     private static PlotSquared instance;
     // Implementation
     public final IPlotMain IMP;
@@ -214,8 +214,11 @@ import java.util.zip.ZipInputStream;
             }
             // Economy
             if (Settings.Enabled_Components.ECONOMY) {
-                TaskManager
-                    .runTask(() -> EconHandler.manager = PlotSquared.this.IMP.getEconomyHandler());
+                TaskManager.runTask(new Runnable() {
+                    @Override public void run() {
+                        EconHandler.manager = PlotSquared.this.IMP.getEconomyHandler();
+                    }
+                });
             }
 
 /*            // Check for updates
@@ -244,20 +247,21 @@ import java.util.zip.ZipInputStream;
                         this.IMP.setGenerator(world);
                     }
                 }
-                TaskManager.runTaskLater(() -> {
-                    for (String world : section.getKeys(false)) {
-                        if (world.equals("CheckingPlotSquaredGenerator")) {
-                            continue;
-                        }
-                        if (!WorldUtil.IMP.isWorld(world) && !world.equals("*")) {
-                            debug(
-                                "&c`" + world + "` was not properly loaded - " + IMP.getPluginName()
-                                    + " will now try to load it properly: ");
-                            debug(
-                                "&8 - &7Are you trying to delete this world? Remember to remove it from the settings.yml, bukkit.yml and multiverse worlds.yml");
-                            debug(
-                                "&8 - &7Your world management plugin may be faulty (or non existent)");
-                            PlotSquared.this.IMP.setGenerator(world);
+                TaskManager.runTaskLater(new Runnable() {
+                    @Override public void run() {
+                        for (String world : section.getKeys(false)) {
+                            if (world.equals("CheckingPlotSquaredGenerator")) {
+                                continue;
+                            }
+                            if (!WorldUtil.IMP.isWorld(world) && !world.equals("*")) {
+                                debug("&c`" + world + "` was not properly loaded - " + IMP
+                                    .getPluginName() + " will now try to load it properly: ");
+                                debug(
+                                    "&8 - &7Are you trying to delete this world? Remember to remove it from the settings.yml, bukkit.yml and multiverse worlds.yml");
+                                debug(
+                                    "&8 - &7Your world management plugin may be faulty (or non existent)");
+                                PlotSquared.this.IMP.setGenerator(world);
+                            }
                         }
                     }
                 }, 1);
@@ -338,21 +342,25 @@ import java.util.zip.ZipInputStream;
     }
 
     private void startUuidCatching() {
-        TaskManager.runTaskLater(() -> {
-            debug("Starting UUID caching");
-            UUIDHandler.startCaching(() -> {
-                UUIDHandler.add(new StringWrapper("*"), DBFunc.EVERYONE);
-                foreachPlotRaw(new RunnableVal<Plot>() {
-                    @Override public void run(Plot plot) {
-                        if (plot.hasOwner() && plot.temp != -1) {
-                            if (UUIDHandler.getName(plot.owner) == null) {
-                                UUIDHandler.implementation.unknown.add(plot.owner);
+        TaskManager.runTaskLater(new Runnable() {
+            @Override public void run() {
+                debug("Starting UUID caching");
+                UUIDHandler.startCaching(new Runnable() {
+                    @Override public void run() {
+                        UUIDHandler.add(new StringWrapper("*"), DBFunc.EVERYONE);
+                        foreachPlotRaw(new RunnableVal<Plot>() {
+                            @Override public void run(Plot plot) {
+                                if (plot.hasOwner() && plot.temp != -1) {
+                                    if (UUIDHandler.getName(plot.owner) == null) {
+                                        UUIDHandler.implementation.unknown.add(plot.owner);
+                                    }
+                                }
                             }
-                        }
+                        });
+                        startExpiryTasks();
                     }
                 });
-                startExpiryTasks();
-            });
+            }
         }, 20);
     }
 
@@ -487,8 +495,11 @@ import java.util.zip.ZipInputStream;
         if (this.plots_tmp == null) {
             this.plots_tmp = new HashMap<>();
         }
-        HashMap<PlotId, Plot> map =
-            this.plots_tmp.computeIfAbsent(area.toString(), k -> new HashMap<>());
+        HashMap<PlotId, Plot> map = this.plots_tmp.get(area.toString());
+        if (map == null) {
+            map = new HashMap<>();
+            this.plots_tmp.put(area.toString(), map);
+        }
         for (Plot plot : area.getPlots()) {
             map.put(plot.getId(), plot);
         }
@@ -508,7 +519,8 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get all the base plots in a single set (for merged plots it just returns the bottom plot).
+     * Get all the base plots in a single set (for merged plots it just returns
+     * the bottom plot).
      *
      * @return Set of base Plots
      */
@@ -555,7 +567,11 @@ import java.util.zip.ZipInputStream;
                 result.add(plot);
             }
         }
-        overflow.sort(Comparator.comparingInt(Plot::hashCode));
+        Collections.sort(overflow, new Comparator<Plot>() {
+            @Override public int compare(Plot a, Plot b) {
+                return a.hashCode() - b.hashCode();
+            }
+        });
         result.addAll(overflow);
         return result;
     }
@@ -564,11 +580,13 @@ import java.util.zip.ZipInputStream;
      * Sort plots by hashcode.
      *
      * @param plots the collection of plots to sort
-     * @return the sorted collection {@link #sortPlots(Collection, SortType, PlotArea)} which has
+     * @return the sorted collection
+     * @deprecated Unchecked, please use
+     * {@link #sortPlots(Collection, SortType, PlotArea)} which has
      * additional checks before calling this
      */
-    // TODO: Re-evaluate this (previously public and deprecated), as it's being used internally
-    private ArrayList<Plot> sortPlotsByHash(Collection<Plot> plots) {
+    // TODO: Re-evaluate deprecation of this, as it's being used internally
+    @Deprecated public ArrayList<Plot> sortPlotsByHash(Collection<Plot> plots) {
         int hardmax = 256000;
         int max = 0;
         int overflowSize = 0;
@@ -609,11 +627,19 @@ import java.util.zip.ZipInputStream;
             }
         }
         Collections.addAll(result, overflowArray);
-        result.addAll(extra);
+        for (Plot plot : extra) {
+            result.add(plot);
+        }
         return result;
     }
 
-    private void sortPlotsByHash(Plot[] input) {
+    /**
+     * Unchecked, use {@link #sortPlots(Collection, SortType, PlotArea)} instead which will in turn call this.
+     *
+     * @param input an array of plots to sort
+     */
+    // TODO: Re-evaluate deprecation of this, as it's being used internally
+    @Deprecated public void sortPlotsByHash(Plot[] input) {
         List<Plot>[] bucket = new ArrayList[32];
         for (int i = 0; i < bucket.length; i++) {
             bucket[i] = new ArrayList<>();
@@ -640,7 +666,8 @@ import java.util.zip.ZipInputStream;
         }
     }
 
-    private ArrayList<Plot> sortPlotsByTimestamp(Collection<Plot> plots) {
+    // TODO: Re-evaluate deprecation of this, as it's being used internally
+    @Deprecated public ArrayList<Plot> sortPlotsByTimestamp(Collection<Plot> plots) {
         int hardMax = 256000;
         int max = 0;
         int overflowSize = 0;
@@ -681,31 +708,48 @@ import java.util.zip.ZipInputStream;
             }
         }
         Collections.addAll(result, overflowArray);
-        result.addAll(extra);
+        for (Plot plot : extra) {
+            result.add(plot);
+        }
         return result;
     }
 
     /**
      * Sort plots by creation timestamp.
+     *
+     * @param input
+     * @return
+     * @deprecated Unchecked, use {@link #sortPlots(Collection, SortType, PlotArea)} instead which will call this after checks
      */
-
-    private List<Plot> sortPlotsByModified(Collection<Plot> input) {
+    // TODO: Re-evaluate deprecation of this, as it's being used internally
+    @Deprecated public List<Plot> sortPlotsByModified(Collection<Plot> input) {
         List<Plot> list;
         if (input instanceof List) {
             list = (List<Plot>) input;
         } else {
             list = new ArrayList<>(input);
         }
-        list.sort(Comparator.comparingLong(a -> ExpireManager.IMP.getTimestamp(a.owner)));
+        Collections.sort(list, new Comparator<Plot>() {
+            @Override public int compare(Plot a, Plot b) {
+                return Long.compare(ExpireManager.IMP.getTimestamp(a.owner),
+                    ExpireManager.IMP.getTimestamp(b.owner));
+            }
+        });
         return list;
     }
 
+    public ArrayList<Plot> sortPlots(Collection<Plot> plots) {
+        return sortPlots(plots, SortType.DISTANCE_FROM_ORIGIN, null);
+    }
+
     /**
-     * Sort a collection of plots by world (with a priority world), then by hashcode.
+     * Sort a collection of plots by world (with a priority world), then
+     * by hashcode.
      *
      * @param plots        the plots to sort
      * @param type         The sorting method to use for each world (timestamp, or hash)
-     * @param priorityArea Use null, "world", or "gibberish" if you want default world order
+     * @param priorityArea Use null, "world", or "gibberish" if you
+     *                     want default world order
      * @return ArrayList of plot
      */
     public ArrayList<Plot> sortPlots(Collection<Plot> plots, SortType type,
@@ -720,7 +764,7 @@ import java.util.zip.ZipInputStream;
             }
         } else {
             for (PlotArea area : plotAreaManager.getAllPlotAreas()) {
-                map.put(area, new ArrayList<>(0));
+                map.put(area, new ArrayList<Plot>(0));
             }
             Collection<Plot> lastList = null;
             PlotArea lastWorld = null;
@@ -735,15 +779,17 @@ import java.util.zip.ZipInputStream;
             }
         }
         List<PlotArea> areas = Arrays.asList(plotAreaManager.getAllPlotAreas());
-        areas.sort((a, b) -> {
-            if (priorityArea != null) {
-                if (a.equals(priorityArea)) {
-                    return -1;
-                } else if (b.equals(priorityArea)) {
-                    return 1;
+        Collections.sort(areas, new Comparator<PlotArea>() {
+            @Override public int compare(PlotArea a, PlotArea b) {
+                if (priorityArea != null) {
+                    if (a.equals(priorityArea)) {
+                        return -1;
+                    } else if (b.equals(priorityArea)) {
+                        return 1;
+                    }
                 }
+                return a.hashCode() - b.hashCode();
             }
-            return a.hashCode() - b.hashCode();
         });
         ArrayList<Plot> toReturn = new ArrayList<>(plots.size());
         for (PlotArea area : areas) {
@@ -768,7 +814,8 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * A more generic way to filter plots - make your own method if you need complex filters.
+     * A more generic way to filter plots - make your own method
+     * if you need complex filters.
      *
      * @param filters the filter
      * @return a filtered set of plots
@@ -813,29 +860,28 @@ import java.util.zip.ZipInputStream;
         return result;
     }
 
-    //TODO look at uncommenting or deleting tis. Is it useful and will it work?
-    //If it is readded make sure there is proper javadoc documentation for it.
-/*
-  public void setPlots(HashMap<String, HashMap<PlotId, Plot>> plots) {
-    if (this.plots_tmp == null) {
-      this.plots_tmp = new HashMap<>();
-    }
-    for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
-      String world = entry.getKey();
-      PlotArea area = getPlotArea(world, null);
-      if (area == null) {
-        HashMap<PlotId, Plot> map = this.plots_tmp
-            .computeIfAbsent(world, k -> new HashMap<>());
-        map.putAll(entry.getValue());
-      } else {
-        for (Plot plot : entry.getValue().values()) {
-          plot.setArea(area);
-          area.addPlot(plot);
+    public void setPlots(HashMap<String, HashMap<PlotId, Plot>> plots) {
+        if (this.plots_tmp == null) {
+            this.plots_tmp = new HashMap<>();
         }
-      }
+        for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
+            String world = entry.getKey();
+            PlotArea area = getPlotArea(world, null);
+            if (area == null) {
+                HashMap<PlotId, Plot> map = this.plots_tmp.get(world);
+                if (map == null) {
+                    map = new HashMap<>();
+                    this.plots_tmp.put(world, map);
+                }
+                map.putAll(entry.getValue());
+            } else {
+                for (Plot plot : entry.getValue().values()) {
+                    plot.setArea(area);
+                    area.addPlot(plot);
+                }
+            }
+        }
     }
-  }
-*/
 
     /**
      * Get all the plots owned by a player name.
@@ -980,9 +1026,8 @@ import java.util.zip.ZipInputStream;
 
     public boolean hasPlot(final UUID uuid) {
         for (final PlotArea area : plotAreaManager.getAllPlotAreas()) {
-            if (area.hasPlot(uuid)) {
+            if (area.hasPlot(uuid))
                 return true;
-            }
         }
         return false;
     }
@@ -1142,8 +1187,9 @@ import java.util.zip.ZipInputStream;
                 PlotSquared.log(C.PREFIX + "&aDetected world load for '" + world + "'");
                 String gen_string = worldSection.getString("generator.plugin", IMP.getPluginName());
                 if (type == 2) {
-                    Set<PlotCluster> clusters =
-                        this.clusters_tmp != null ? this.clusters_tmp.get(world) : new HashSet<>();
+                    Set<PlotCluster> clusters = this.clusters_tmp != null ?
+                        this.clusters_tmp.get(world) :
+                        new HashSet<PlotCluster>();
                     if (clusters == null) {
                         throw new IllegalArgumentException("No cluster exists for world: " + world);
                     }
@@ -1552,8 +1598,8 @@ import java.util.zip.ZipInputStream;
             // Close the connection
             DBFunc.close();
             UUIDHandler.handleShutdown();
-        } catch (NullPointerException exception) {
-            exception.printStackTrace();
+        } catch (NullPointerException ignored) {
+            ignored.printStackTrace();
             PlotSquared.log("&cCould not close database connection!");
         }
     }
@@ -1579,11 +1625,6 @@ import java.util.zip.ZipInputStream;
                 return;
             }
             DBFunc.dbManager = new SQLManager(database, Storage.PREFIX, false);
-            PlotSquared.log("GETTING PLOTS NOW AND STORING TO PLOTS_TMP");
-            for (PlotArea allPlotArea : plotAreaManager.getAllPlotAreas()) {
-                PlotSquared.log(allPlotArea.toString());
-            }
-
             this.plots_tmp = DBFunc.getPlots();
             if (plotAreaManager instanceof SinglePlotAreaManager) {
                 SinglePlotArea area = ((SinglePlotAreaManager) plotAreaManager).getArea();
@@ -1656,16 +1697,18 @@ import java.util.zip.ZipInputStream;
             Settings.COMMIT = "https://github.com/IntellectualSites/PlotSquared/commit/" + Integer
                 .toHexString(version.hash);
             System.out.println("Version is " + this.version);
-        } catch (IOException exception) {
-            exception.printStackTrace();
+        } catch (Throwable ignore) {
+            ignore.printStackTrace();
         }
         Settings.save(configFile);
         config = YamlConfiguration.loadConfiguration(configFile);
     }
 
     /**
-     * Setup all configuration files<br> - Config: settings.yml<br> - Storage: storage.yml<br> -
-     * Translation: PlotSquared.use_THIS.yml, style.yml<br>
+     * Setup all configuration files<br>
+     * - Config: settings.yml<br>
+     * - Storage: storage.yml<br>
+     * - Translation: PlotSquared.use_THIS.yml, style.yml<br>
      */
     public boolean setupConfigs() {
         File folder = new File(this.IMP.getDirectory(), "config");
@@ -1916,6 +1959,7 @@ import java.util.zip.ZipInputStream;
      * Note: An applicable plot area may not include the location i.e. clusters
      *
      * @param location the location
+     * @return
      */
     public PlotArea getApplicablePlotArea(@NonNull final Location location) {
         return plotAreaManager.getApplicablePlotArea(location);
@@ -1972,72 +2016,7 @@ import java.util.zip.ZipInputStream;
      *
      * @param alias     to search plots
      * @param worldname to filter alias to a specific world [optional] null means all worlds
-     * @return Set<{
-                       *       @       link
-                       *       <   p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * Plot
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * <p>
-     * }> empty if nothing found
+     * @return Set<{                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               link                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Plot                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               }> empty if nothing found
      */
     public Set<Plot> getPlotsByAlias(@Nullable final String alias,
         @NonNull final String worldname) {

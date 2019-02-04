@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class AbstractDelegateOutputStream extends OutputStream {
-
     private final OutputStream parent;
 
     public AbstractDelegateOutputStream(OutputStream os) {
@@ -17,6 +16,10 @@ public class AbstractDelegateOutputStream extends OutputStream {
 
     @Override public void write(byte[] b) throws IOException {
         parent.write(b);
+    }
+
+    @Override public void write(byte[] b, int off, int len) throws IOException {
+        parent.write(b, off, len);
     }
 
     @Override public void flush() throws IOException {

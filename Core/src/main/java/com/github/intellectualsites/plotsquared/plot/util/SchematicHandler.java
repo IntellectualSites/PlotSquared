@@ -87,7 +87,7 @@ public abstract class SchematicHandler {
                                 } else {
                                     MainUtil.sendMessage(null, "&7 - &a  success: " + plot.getId());
                                 }
-                                TaskManager.runTask(THIS);
+                                TaskManager.runTask(() -> THIS.run());
                             });
                         }
                     }

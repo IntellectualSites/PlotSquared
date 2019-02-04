@@ -84,6 +84,9 @@ public class AbstractDBTest implements AbstractDB {
     @Override public void setFlags(Plot plot, HashMap<Flag<?>, Object> flags) {
     }
 
+    @Override public void setFlags(PlotCluster cluster, HashMap<Flag<?>, Object> flags) {
+    }
+
     @Override public void setClusterName(PlotCluster cluster, String name) {
     }
 

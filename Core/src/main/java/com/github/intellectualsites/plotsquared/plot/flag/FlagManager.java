@@ -2,10 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.flag;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.PlotSettings;
+import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.google.common.collect.ImmutableSet;
@@ -117,7 +114,7 @@ public class FlagManager {
      * @param flag
      * @return
      */
-    @SuppressWarnings("deprecation") public static <V> V getPlotFlagRaw(Plot plot, Flag<V> flag) {
+    public static <V> V getPlotFlagRaw(Plot plot, Flag<V> flag) {
         if (plot.owner == null) {
             return null;
         }
@@ -141,6 +138,13 @@ public class FlagManager {
             plot.reEnter(); //TODO fix this so FlagTest will run during compile
             DBFunc.setFlags(plot, plot.getFlags());
         }
+        return true;
+    }
+
+    public static <V> boolean addClusterFlag(PlotCluster cluster, Flag<V> flag, V value) {
+        getSettingFlag(cluster.area, cluster.settings, flag);
+        cluster.settings.flags.put(flag, value);
+        DBFunc.setFlags(cluster, cluster.settings.flags);
         return true;
     }
 
@@ -213,6 +217,20 @@ public class FlagManager {
         return true;
     }
 
+    public static boolean removeClusterFlag(PlotCluster cluster, Flag id) {
+        Object object = cluster.settings.flags.remove(id);
+        if (object == null) {
+            return false;
+        }
+        boolean result = EventUtil.manager.callFlagRemove(id, object, cluster);
+        if (!result) {
+            cluster.settings.flags.put(id, object);
+            return false;
+        }
+        DBFunc.setFlags(cluster, cluster.settings.flags);
+        return true;
+    }
+
     public static void setPlotFlags(Plot origin, HashMap<Flag<?>, Object> flags) {
         for (Plot plot : origin.getConnectedPlots()) {
             if (flags != null && !flags.isEmpty()) {
@@ -228,6 +246,20 @@ public class FlagManager {
             plot.reEnter();
             DBFunc.setFlags(plot, plot.getFlags());
         }
+    }
+
+    public static void setClusterFlags(PlotCluster cluster, Set<Flag> flags) {
+        if (flags != null && !flags.isEmpty()) {
+            cluster.settings.flags.clear();
+            for (Flag flag : flags) {
+                cluster.settings.flags.put(flag, flag);
+            }
+        } else if (cluster.settings.flags.isEmpty()) {
+            return;
+        } else {
+            cluster.settings.flags.clear();
+        }
+        DBFunc.setFlags(cluster, cluster.settings.flags);
     }
 
     /**

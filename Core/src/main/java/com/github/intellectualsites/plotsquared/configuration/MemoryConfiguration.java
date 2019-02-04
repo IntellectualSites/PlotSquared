@@ -1,6 +1,5 @@
 package com.github.intellectualsites.plotsquared.configuration;
 
-import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
@@ -29,7 +28,7 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
         this.defaults = defaults;
     }
 
-    @Override public void addDefault(@Nonnull String path, Object value) {
+    @Override public void addDefault(String path, Object value) {
         if (this.defaults == null) {
             this.defaults = new MemoryConfiguration();
         }

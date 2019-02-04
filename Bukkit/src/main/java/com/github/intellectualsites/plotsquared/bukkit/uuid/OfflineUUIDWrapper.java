@@ -16,11 +16,10 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 
-public class OfflineUUIDWrapper implements UUIDWrapper {
+public class OfflineUUIDWrapper extends UUIDWrapper {
 
     private final Object[] arg = new Object[0];
     private Method getOnline = null;
@@ -60,15 +59,18 @@ public class OfflineUUIDWrapper implements UUIDWrapper {
                 return new BukkitOfflinePlayer(op);
             }
         }
-        return Arrays.stream(Bukkit.getOfflinePlayers())
-            .filter(player -> getUUID(player).equals(uuid)).findFirst()
-            .map(BukkitOfflinePlayer::new).orElse(null);
+        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+            if (getUUID(player).equals(uuid)) {
+                return new BukkitOfflinePlayer(player);
+            }
+        }
+        return null;
     }
 
     public Player[] getOnlinePlayers() {
         if (this.getOnline == null) {
             Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
-            return onlinePlayers.toArray(new Player[0]);
+            return onlinePlayers.toArray(new Player[onlinePlayers.size()]);
         }
         try {
             Object players = this.getOnline.invoke(Bukkit.getServer(), this.arg);
@@ -77,13 +79,13 @@ public class OfflineUUIDWrapper implements UUIDWrapper {
             } else {
                 @SuppressWarnings("unchecked") Collection<? extends Player> p =
                     (Collection<? extends Player>) players;
-                return p.toArray(new Player[0]);
+                return p.toArray(new Player[p.size()]);
             }
         } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException ignored) {
             PlotSquared.debug("Failed to resolve online players");
             this.getOnline = null;
             Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
-            return onlinePlayers.toArray(new Player[0]);
+            return onlinePlayers.toArray(new Player[onlinePlayers.size()]);
         }
     }
 
@@ -93,7 +95,11 @@ public class OfflineUUIDWrapper implements UUIDWrapper {
 
     @Override public OfflinePlotPlayer[] getOfflinePlayers() {
         OfflinePlayer[] ops = Bukkit.getOfflinePlayers();
-        return Arrays.stream(ops).map(BukkitOfflinePlayer::new).toArray(BukkitOfflinePlayer[]::new);
+        BukkitOfflinePlayer[] toReturn = new BukkitOfflinePlayer[ops.length];
+        for (int i = 0; i < ops.length; i++) {
+            toReturn[i] = new BukkitOfflinePlayer(ops[i]);
+        }
+        return toReturn;
     }
 
     @Override public OfflinePlotPlayer getOfflinePlayer(String name) {

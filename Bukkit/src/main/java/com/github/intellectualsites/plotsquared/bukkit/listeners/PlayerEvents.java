@@ -42,7 +42,6 @@ import org.bukkit.help.HelpTopic;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.Directional;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
@@ -673,9 +672,8 @@ import java.util.regex.Pattern;
                 if (passenger instanceof Player) {
                     final Player player = (Player) passenger;
                     // reset
-                    if (moveTmp == null) {
+                    if (moveTmp == null)
                         moveTmp = new PlayerMoveEvent(null, from, to);
-                    }
                     moveTmp.setFrom(from);
                     moveTmp.setTo(to);
                     moveTmp.setCancelled(false);
@@ -703,7 +701,7 @@ import java.util.regex.Pattern;
                             vehicle.eject();
                             vehicle.setVelocity(new Vector(0d, 0d, 0d));
                             vehicle.teleport(dest);
-                            vehicle.addPassenger(player);
+                            vehicle.setPassenger(player);
                         }
                         return;
                     }
@@ -785,7 +783,7 @@ import java.util.regex.Pattern;
                 this.tmpTeleport = true;
                 return;
             }
-            int border = area.getBorder();
+            Integer border = area.getBorder();
             if (x2 > border && this.tmpTeleport) {
                 to.setX(x2 - 1);
                 this.tmpTeleport = false;
@@ -848,7 +846,7 @@ import java.util.regex.Pattern;
                 this.tmpTeleport = true;
                 return;
             }
-            int border = area.getBorder();
+            Integer border = area.getBorder();
             if (z2 > border && this.tmpTeleport) {
                 to.setZ(z2 - 1);
                 this.tmpTeleport = false;
@@ -866,9 +864,8 @@ import java.util.regex.Pattern;
     }
 
     @EventHandler(priority = EventPriority.LOW) public void onChat(AsyncPlayerChatEvent event) {
-        if (event.isCancelled()) {
+        if (event.isCancelled())
             return;
-        }
 
         PlotPlayer plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
         Location location = plotPlayer.getLocation();
@@ -1085,9 +1082,8 @@ import java.util.regex.Pattern;
             PlotArea area = location.getPlotArea();
             if (area != null) {
                 Plot plot = area.getOwnedPlot(location);
-                if (plot != null && Flags.MOB_BREAK.isTrue(plot)) {
+                if (plot != null && Flags.MOB_BREAK.isTrue(plot))
                     return;
-                }
                 event.setCancelled(true);
             }
         }
@@ -1454,11 +1450,11 @@ import java.util.regex.Pattern;
         switch (type) {
             case WATER_BUCKET:
             case LAVA_BUCKET: {
-                if (event.getBlock().getType() == Material.DROPPER) {
+                if (event.getBlock().getType() == Material.DROPPER)
                     return;
-                }
                 BlockFace targetFace =
-                    ((Directional) event.getBlock().getState().getData()).getFacing();
+                    ((org.bukkit.material.Dispenser) event.getBlock().getState().getData())
+                        .getFacing();
                 Location location =
                     BukkitUtil.getLocation(event.getBlock().getRelative(targetFace).getLocation());
                 if (location.isPlotRoad()) {
@@ -1579,9 +1575,8 @@ import java.util.regex.Pattern;
             switch (newItem.getType()) {
                 case LEGACY_BANNER:
                 case PLAYER_HEAD:
-                    if (newMeta != null) {
+                    if (newMeta != null)
                         break;
-                    }
                 default:
                     return;
             }
@@ -1597,13 +1592,11 @@ import java.util.regex.Pattern;
             switch (stateType) {
                 case LEGACY_STANDING_BANNER:
                 case LEGACY_WALL_BANNER:
-                    if (itemType == Material.LEGACY_BANNER) {
+                    if (itemType == Material.LEGACY_BANNER)
                         break;
-                    }
                 case LEGACY_SKULL:
-                    if (itemType == Material.LEGACY_SKULL_ITEM) {
+                    if (itemType == Material.LEGACY_SKULL_ITEM)
                         break;
-                    }
                 default:
                     return;
             }
@@ -2571,11 +2564,11 @@ import java.util.regex.Pattern;
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @SuppressWarnings("deprecation") @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityCombustByEntity(EntityCombustByEntityEvent event) {
-        EntityDamageByEntityEvent eventChange =
-            new EntityDamageByEntityEvent(event.getCombuster(), event.getEntity(),
-                EntityDamageEvent.DamageCause.FIRE_TICK, (double) event.getDuration());
+        EntityDamageByEntityEvent eventChange = null;
+        eventChange = new EntityDamageByEntityEvent(event.getCombuster(), event.getEntity(),
+            EntityDamageEvent.DamageCause.FIRE_TICK, (double) event.getDuration());
         onEntityDamageByEntityEvent(eventChange);
         if (eventChange.isCancelled()) {
             event.setCancelled(true);

@@ -2,24 +2,22 @@ package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import lombok.Getter;
 
-import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.UUID;
 
 public class PlotCluster {
     public PlotArea area;
-    @Nonnull @Getter public PlotSettings settings;
+    public PlotSettings settings;
     public UUID owner;
     public HashSet<UUID> helpers = new HashSet<>();
     public HashSet<UUID> invited = new HashSet<>();
     public int temp;
-    @Nonnull private PlotId pos1;
-    @Nonnull private PlotId pos2;
+    private PlotId pos1;
+    private PlotId pos2;
     private RegionWrapper region;
 
-    public PlotCluster(PlotArea area, @Nonnull PlotId pos1, @Nonnull PlotId pos2, UUID owner) {
+    public PlotCluster(PlotArea area, PlotId pos1, PlotId pos2, UUID owner) {
         this.area = area;
         this.pos1 = pos1;
         this.pos2 = pos2;
@@ -29,7 +27,7 @@ public class PlotCluster {
         setRegion();
     }
 
-    public PlotCluster(PlotArea area, @Nonnull PlotId pos1, PlotId pos2, UUID owner, int temp) {
+    public PlotCluster(PlotArea area, PlotId pos1, PlotId pos2, UUID owner, int temp) {
         this.area = area;
         this.pos1 = pos1;
         this.pos2 = pos2;
@@ -81,14 +79,6 @@ public class PlotCluster {
     }
 
     public String getName() {
-        return this.settings.getAlias();
-    }
-
-    public void setName(String name) {
-        this.settings.setAlias(name);
-    }
-
-    public String getAlias() {
         return this.settings.getAlias();
     }
 

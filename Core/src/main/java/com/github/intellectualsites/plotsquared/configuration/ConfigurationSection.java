@@ -1,6 +1,5 @@
 package com.github.intellectualsites.plotsquared.configuration;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,7 +52,7 @@ public interface ConfigurationSection {
      * default or being set.
      * @throws IllegalArgumentException Thrown when path is {@code null}.
      */
-    boolean contains(@Nonnull String path);
+    boolean contains(String path);
 
     /**
      * Checks if this {@link ConfigurationSection} has a value set for the
@@ -67,7 +66,7 @@ public interface ConfigurationSection {
      * having a default.
      * @throws IllegalArgumentException Thrown when path is {@code null}.
      */
-    boolean isSet(@Nonnull String path);
+    boolean isSet(String path);
 
     /**
      * Gets the path of this {@link ConfigurationSection} from its root {@link
@@ -152,7 +151,7 @@ public interface ConfigurationSection {
      * @param defaultValue The default value to return if the path is not found.
      * @return Requested Object.
      */
-    Object getOrDefault(@Nonnull String path, Object defaultValue);
+    Object get(String path, Object defaultValue);
 
     /**
      * Sets the specified path to the given value.
@@ -645,5 +644,5 @@ public interface ConfigurationSection {
      * @param value Value to set the default to
      * @throws IllegalArgumentException Thrown if path is {@code null}
      */
-    void addDefault(@Nonnull String path, Object value);
+    void addDefault(String path, Object value);
 }

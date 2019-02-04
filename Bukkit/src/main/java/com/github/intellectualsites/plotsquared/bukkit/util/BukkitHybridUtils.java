@@ -148,7 +148,6 @@ public class BukkitHybridUtils extends HybridUtils {
                                 }
                                 int y = MainUtil.y_loc[i][j];
                                 oldBlocks[y][x][z] = airBucket;
-
                             }
                             continue;
                         }

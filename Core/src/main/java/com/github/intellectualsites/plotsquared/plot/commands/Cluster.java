@@ -301,7 +301,6 @@ import java.util.UUID;
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
                     C.NOT_IN_PLOT_WORLD.send(player);
-                    return false;
                 }
                 PlotCluster cluster = area.getCluster(player.getLocation());
                 if (cluster == null) {
@@ -347,7 +346,6 @@ import java.util.UUID;
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
                     C.NOT_IN_PLOT_WORLD.send(player);
-                    return false;
                 }
                 PlotCluster cluster = area.getCluster(player.getLocation());
                 if (cluster == null) {
@@ -406,7 +404,6 @@ import java.util.UUID;
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
                     C.NOT_IN_PLOT_WORLD.send(player);
-                    return false;
                 }
                 PlotCluster cluster;
                 if (args.length == 2) {
@@ -442,6 +439,7 @@ import java.util.UUID;
                     PlotSquared.get().getPlots(player.getLocation().getWorld(), uuid))) {
                     PlotCluster current = plot.getCluster();
                     if (current != null && current.equals(cluster)) {
+                        player.getLocation().getWorld();
                         plot.unclaim();
                     }
                 }
@@ -463,7 +461,6 @@ import java.util.UUID;
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
                     C.NOT_IN_PLOT_WORLD.send(player);
-                    return false;
                 }
                 PlotCluster cluster = area.getCluster(player.getLocation());
                 if (cluster == null) {
@@ -536,7 +533,6 @@ import java.util.UUID;
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
                     C.NOT_IN_PLOT_WORLD.send(player);
-                    return false;
                 }
                 PlotCluster cluster;
                 if (args.length == 2) {
@@ -584,7 +580,6 @@ import java.util.UUID;
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
                     C.NOT_IN_PLOT_WORLD.send(player);
-                    return false;
                 }
                 PlotCluster cluster = area.getCluster(player.getLocation());
                 if (cluster == null) {

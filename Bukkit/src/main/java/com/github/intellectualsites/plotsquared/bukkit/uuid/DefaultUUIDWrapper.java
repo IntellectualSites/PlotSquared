@@ -8,10 +8,9 @@ import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
-import java.util.Arrays;
 import java.util.UUID;
 
-public class DefaultUUIDWrapper implements UUIDWrapper {
+public class DefaultUUIDWrapper extends UUIDWrapper {
 
     @Override public UUID getUUID(PlotPlayer player) {
         return ((BukkitPlayer) player).player.getUniqueId();
@@ -31,7 +30,11 @@ public class DefaultUUIDWrapper implements UUIDWrapper {
 
     @Override public OfflinePlotPlayer[] getOfflinePlayers() {
         OfflinePlayer[] ops = Bukkit.getOfflinePlayers();
-        return Arrays.stream(ops).map(BukkitOfflinePlayer::new).toArray(BukkitOfflinePlayer[]::new);
+        BukkitOfflinePlayer[] toReturn = new BukkitOfflinePlayer[ops.length];
+        for (int i = 0; i < ops.length; i++) {
+            toReturn[i] = new BukkitOfflinePlayer(ops[i]);
+        }
+        return toReturn;
     }
 
     @Override public OfflinePlotPlayer getOfflinePlayer(String name) {

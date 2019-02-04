@@ -11,7 +11,7 @@ import java.sql.*;
  * @author -_Husky_-
  * @author tips48
  */
-public class MySQL implements Database {
+public class MySQL extends Database {
 
     private final String user;
     private final String database;

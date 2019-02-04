@@ -5,24 +5,24 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
 
 public interface PlotAreaManager {
-    PlotArea getApplicablePlotArea(Location location);
+    public PlotArea getApplicablePlotArea(Location location);
 
-    PlotArea getPlotArea(Location location);
+    public PlotArea getPlotArea(Location location);
 
-    PlotArea getPlotArea(String world, String id);
+    public PlotArea getPlotArea(String world, String id);
 
-    PlotArea[] getPlotAreas(String world, RegionWrapper region);
+    public PlotArea[] getPlotAreas(String world, RegionWrapper region);
 
-    PlotArea[] getAllPlotAreas();
+    public PlotArea[] getAllPlotAreas();
 
-    String[] getAllWorlds();
+    public String[] getAllWorlds();
 
-    void addPlotArea(PlotArea area);
+    public void addPlotArea(PlotArea area);
 
-    void removePlotArea(PlotArea area);
+    public void removePlotArea(PlotArea area);
 
-    void addWorld(String worldName);
+    public void addWorld(String worldName);
 
-    void removeWorld(String worldName);
+    public void removeWorld(String worldName);
 
 }

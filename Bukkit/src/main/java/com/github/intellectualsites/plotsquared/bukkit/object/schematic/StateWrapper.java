@@ -14,7 +14,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -242,7 +241,7 @@ public class StateWrapper {
     public Map<String, Tag> serializeItem(ItemStack item) {
         Map<String, Tag> data = new HashMap<>();
         data.put("id", new StringTag(item.getType().name()));
-        data.put("Damage", new ShortTag((short) ((Damageable) item.getItemMeta()).getDamage()));
+        data.put("Damage", new ShortTag(item.getDurability()));
         data.put("Count", new ByteTag((byte) item.getAmount()));
         if (!item.getEnchantments().isEmpty()) {
             List<CompoundTag> enchantmentList = new ArrayList<>();

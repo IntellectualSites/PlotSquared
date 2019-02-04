@@ -101,6 +101,10 @@ public final class BukkitEventUtil extends EventUtil {
             new PlotChangeOwnerEvent(getPlayer(initiator), plot, oldOwner, newOwner, hasOldOwner));
     }
 
+    @Override public boolean callFlagRemove(Flag flag, Object object, PlotCluster cluster) {
+        return callEvent(new ClusterFlagRemoveEvent(flag, cluster));
+    }
+
     @Override @Nullable public Rating callRating(PlotPlayer player, Plot plot, Rating rating) {
         PlotRateEvent event = new PlotRateEvent(player, rating, plot);
         Bukkit.getServer().getPluginManager().callEvent(event);

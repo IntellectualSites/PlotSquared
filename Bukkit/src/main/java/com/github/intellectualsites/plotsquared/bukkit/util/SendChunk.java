@@ -26,8 +26,8 @@ import java.util.Map.Entry;
 import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getRefClass;
 
 /**
- * An utility that can be used to send chunks, rather than using bukkit code to do so (uses heavy
- * NMS).
+ * An utility that can be used to send chunks, rather than using bukkit code
+ * to do so (uses heavy NMS).
  */
 public class SendChunk {
 
@@ -118,17 +118,20 @@ public class SendChunk {
             }
         }
         for (final Chunk chunk : chunks) {
-            TaskManager.runTask(() -> {
-                try {
-                    chunk.unload(true, false);
-                } catch (Throwable ignored) {
-                    String worldName = chunk.getWorld().getName();
-                    PlotSquared.debug(
-                        "$4Could not save chunk: " + worldName + ';' + chunk.getX() + ";" + chunk
-                            .getZ());
-                    PlotSquared.debug("$3 - $4File may be open in another process (e.g. MCEdit)");
-                    PlotSquared.debug("$3 - $4" + worldName + "/level.dat or " + worldName
-                        + "/level_old.dat may be corrupt (try repairing or removing these)");
+            TaskManager.runTask(new Runnable() {
+                @Override public void run() {
+                    try {
+                        chunk.unload(true, false);
+                    } catch (Throwable ignored) {
+                        String worldName = chunk.getWorld().getName();
+                        PlotSquared.debug(
+                            "$4Could not save chunk: " + worldName + ';' + chunk.getX() + ";"
+                                + chunk.getZ());
+                        PlotSquared
+                            .debug("$3 - $4File may be open in another process (e.g. MCEdit)");
+                        PlotSquared.debug("$3 - $4" + worldName + "/level.dat or " + worldName
+                            + "/level_old.dat may be corrupt (try repairing or removing these)");
+                    }
                 }
             });
         }
