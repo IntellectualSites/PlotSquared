@@ -650,7 +650,6 @@ import java.util.regex.Pattern;
                     }
                 }
             }
-            return;
         }
         playerMove(event);
     }
@@ -772,7 +771,6 @@ import java.util.regex.Pattern;
                 }
             } else if (now.equals(lastPlot)) {
                 ForceFieldListener.handleForcefield(player, pp, now);
-                return;
             } else if (!plotEntry(pp, now) && this.tmpTeleport) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
                 this.tmpTeleport = false;
@@ -785,22 +783,19 @@ import java.util.regex.Pattern;
             }
             Integer border = area.getBorder();
             if (x2 > border && this.tmpTeleport) {
-                to.setX(x2 - 1);
+                to.setX(border - 1);
                 this.tmpTeleport = false;
                 player.teleport(event.getTo());
                 this.tmpTeleport = true;
                 MainUtil.sendMessage(pp, C.BORDER);
-                return;
             }
             if (x2 < -border && this.tmpTeleport) {
-                to.setX(x2 + 1);
+                to.setX(-border + 1);
                 this.tmpTeleport = false;
                 player.teleport(event.getTo());
                 this.tmpTeleport = true;
                 MainUtil.sendMessage(pp, C.BORDER);
-                return;
             }
-            return;
         }
         int z2;
         if (MathMan.roundInt(from.getZ()) != (z2 = MathMan.roundInt(to.getZ()))) {
@@ -834,7 +829,6 @@ import java.util.regex.Pattern;
                 }
             } else if (now.equals(lastPlot)) {
                 ForceFieldListener.handleForcefield(player, pp, now);
-                return;
             } else if (!plotEntry(pp, now) && this.tmpTeleport) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
                 this.tmpTeleport = false;
@@ -848,13 +842,13 @@ import java.util.regex.Pattern;
             }
             Integer border = area.getBorder();
             if (z2 > border && this.tmpTeleport) {
-                to.setZ(z2 - 1);
+                to.setZ(border - 1);
                 this.tmpTeleport = false;
                 player.teleport(event.getTo());
                 this.tmpTeleport = true;
                 MainUtil.sendMessage(pp, C.BORDER);
             } else if (z2 < -border && this.tmpTeleport) {
-                to.setZ(z2 + 1);
+                to.setZ(-border + 1);
                 this.tmpTeleport = false;
                 player.teleport(event.getTo());
                 this.tmpTeleport = true;
