@@ -365,8 +365,12 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                         if (meta.isEmpty()) {
                                             continue;
                                         }
-                                        Plot origin = (Plot) meta.get(0).value();
-                                        if (!plot.equals(origin.getBasePlot(false))) {
+                                        PlotId originPlotId = (PlotId) meta.get(0).value();
+                                        if (originPlotId == null) {
+                                            iterator.remove();
+                                            entity.remove();
+                                        }
+                                        if (!plot.getId().equals(originPlotId)) {
                                             if (entity.hasMetadata("ps-tmp-teleport")) {
                                                 continue;
                                             }
