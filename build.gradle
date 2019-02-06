@@ -64,7 +64,8 @@ subprojects {
             exclude(module: 'mockito-core')
             exclude(module: 'dummypermscompat')
         }
-        compile 'com.google.guava:guava:27.0.1-jre'
+        //Minecraft uses Guava 21 as of 1.13.
+        compile 'com.google.guava:guava:21.0'
         compileOnly 'org.projectlombok:lombok:1.18.4'
         testImplementation "junit:junit:4.12"
     }
