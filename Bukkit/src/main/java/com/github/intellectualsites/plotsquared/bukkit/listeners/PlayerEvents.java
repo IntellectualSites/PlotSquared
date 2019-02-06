@@ -20,7 +20,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.type.Piston;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.*;
 import org.bukkit.event.Event;
@@ -42,6 +41,7 @@ import org.bukkit.help.HelpTopic;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.Directional;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
@@ -381,7 +381,8 @@ import java.util.regex.Pattern;
                     switch (block.getType()) {
                         case PISTON:
                         case STICKY_PISTON:
-                            Piston piston = (Piston) block.getBlockData();
+                            org.bukkit.block.data.Directional piston =
+                                (org.bukkit.block.data.Directional) block.getBlockData();
                             Location loc = BukkitUtil.getLocation(block.getLocation());
                             PlotArea area = loc.getPlotArea();
                             if (area == null) {
@@ -425,12 +426,12 @@ import java.util.regex.Pattern;
         if (!(shooter instanceof Player)) {
             return;
         }
-        Location l = BukkitUtil.getLocation(entity);
-        if (!PlotSquared.get().hasPlotArea(l.getWorld())) {
+        Location location = BukkitUtil.getLocation(entity);
+        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
             return;
         }
         PlotPlayer pp = BukkitUtil.getPlayer((Player) shooter);
-        Plot plot = l.getOwnedPlot();
+        Plot plot = location.getOwnedPlot();
         if (plot != null && !plot.isAdded(pp.getUUID())) {
             entity.remove();
             event.setCancelled(true);
@@ -520,15 +521,15 @@ import java.util.regex.Pattern;
         if (flag.isPresent() && !Permissions
             .hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS)) {
             List<String> blocked_cmds = flag.get();
-            String c = parts[0];
+            String part = parts[0];
             if (parts[0].contains(":")) {
-                c = parts[0].split(":")[1];
+                part = parts[0].split(":")[1];
                 msg = msg.replace(parts[0].split(":")[0] + ':', "");
             }
-            String l = c;
+            String s1 = part;
             List<String> aliases = new ArrayList<>();
             for (HelpTopic cmdLabel : Bukkit.getServer().getHelpMap().getHelpTopics()) {
-                if (c.equals(cmdLabel.getName())) {
+                if (part.equals(cmdLabel.getName())) {
                     break;
                 }
                 String label = cmdLabel.getName().replaceFirst("/", "");
@@ -543,15 +544,15 @@ import java.util.regex.Pattern;
                         }
                         aliases.add(a);
                         a = a.replaceFirst("/", "");
-                        if (!a.equals(label) && a.equals(c)) {
-                            c = label;
+                        if (!a.equals(label) && a.equals(part)) {
+                            part = label;
                             break;
                         }
                     }
                 }
             }
-            if (!l.equals(c)) {
-                msg = msg.replace(l, c);
+            if (!s1.equals(part)) {
+                msg = msg.replace(s1, part);
             }
             for (String s : blocked_cmds) {
                 Pattern pattern;
@@ -700,7 +701,7 @@ import java.util.regex.Pattern;
                             vehicle.eject();
                             vehicle.setVelocity(new Vector(0d, 0d, 0d));
                             vehicle.teleport(dest);
-                            vehicle.setPassenger(player);
+                            vehicle.addPassenger(player);
                         }
                         return;
                     }
@@ -781,7 +782,7 @@ import java.util.regex.Pattern;
                 this.tmpTeleport = true;
                 return;
             }
-            Integer border = area.getBorder();
+            int border = area.getBorder();
             if (x2 > border && this.tmpTeleport) {
                 to.setX(border - 1);
                 this.tmpTeleport = false;
@@ -840,7 +841,7 @@ import java.util.regex.Pattern;
                 this.tmpTeleport = true;
                 return;
             }
-            Integer border = area.getBorder();
+            int border = area.getBorder();
             if (z2 > border && this.tmpTeleport) {
                 to.setZ(border - 1);
                 this.tmpTeleport = false;
@@ -1249,8 +1250,8 @@ import java.util.regex.Pattern;
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onFade(BlockFadeEvent event) {
-        Block b = event.getBlock();
-        Location location = BukkitUtil.getLocation(b.getLocation());
+        Block block = event.getBlock();
+        Location location = BukkitUtil.getLocation(block.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
@@ -1260,7 +1261,7 @@ import java.util.regex.Pattern;
             event.setCancelled(true);
             return;
         }
-        switch (b.getType()) {
+        switch (block.getType()) {
             case ICE:
                 if (Flags.ICE_MELT.isFalse(plot)) {
                     event.setCancelled(true);
@@ -1314,8 +1315,8 @@ import java.util.regex.Pattern;
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onGrow(BlockGrowEvent event) {
-        Block b = event.getBlock();
-        Location location = BukkitUtil.getLocation(b.getLocation());
+        Block block = event.getBlock();
+        Location location = BukkitUtil.getLocation(block.getLocation());
         if (location.isUnownedPlotArea()) {
             event.setCancelled(true);
         }
@@ -1332,8 +1333,9 @@ import java.util.regex.Pattern;
             if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
                 return;
             }
-            for (Block b : event.getBlocks()) {
-                if (BukkitUtil.getLocation(b.getLocation().add(relative)).getPlotArea() != null) {
+            for (Block block1 : event.getBlocks()) {
+                if (BukkitUtil.getLocation(block1.getLocation().add(relative)).getPlotArea()
+                    != null) {
                     event.setCancelled(true);
                     return;
                 }
@@ -1346,8 +1348,8 @@ import java.util.regex.Pattern;
             return;
         }
         List<Block> blocks = event.getBlocks();
-        for (Block b : blocks) {
-            Location bloc = BukkitUtil.getLocation(b.getLocation());
+        for (Block block1 : blocks) {
+            Location bloc = BukkitUtil.getLocation(block1.getLocation());
             if (!area.contains(bloc.getX(), bloc.getZ()) || !area
                 .contains(bloc.getX() + relative.getBlockX(), bloc.getZ() + relative.getBlockZ())) {
                 event.setCancelled(true);
@@ -1447,8 +1449,7 @@ import java.util.regex.Pattern;
                 if (event.getBlock().getType() == Material.DROPPER)
                     return;
                 BlockFace targetFace =
-                    ((org.bukkit.material.Dispenser) event.getBlock().getState().getData())
-                        .getFacing();
+                    ((Directional) event.getBlock().getState().getData()).getFacing();
                 Location location =
                     BukkitUtil.getLocation(event.getBlock().getRelative(targetFace).getLocation());
                 if (location.isPlotRoad()) {
@@ -1595,12 +1596,12 @@ import java.util.regex.Pattern;
                     return;
             }
         }
-        Location l = BukkitUtil.getLocation(state.getLocation());
-        PlotArea area = l.getPlotArea();
+        Location location = BukkitUtil.getLocation(state.getLocation());
+        PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
         }
-        Plot plot = area.getPlotAbs(l);
+        Plot plot = area.getPlotAbs(location);
         boolean cancelled = false;
         if (plot == null) {
             if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
@@ -1637,8 +1638,8 @@ import java.util.regex.Pattern;
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPotionSplash(LingeringPotionSplashEvent event) {
         LingeringPotion entity = event.getEntity();
-        Location l = BukkitUtil.getLocation(entity);
-        if (!PlotSquared.get().hasPlotArea(l.getWorld())) {
+        Location location = BukkitUtil.getLocation(entity);
+        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
             return;
         }
         if (!this.onProjectileHit(event)) {
@@ -1652,15 +1653,15 @@ import java.util.regex.Pattern;
         if (!(entity instanceof ArmorStand)) {
             return;
         }
-        Location l = BukkitUtil.getLocation(e.getRightClicked().getLocation());
-        PlotArea area = l.getPlotArea();
+        Location location = BukkitUtil.getLocation(e.getRightClicked().getLocation());
+        PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
         }
 
         EntitySpawnListener.test(entity);
 
-        Plot plot = area.getPlotAbs(l);
+        Plot plot = area.getPlotAbs(location);
         PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
         if (plot == null) {
             if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
@@ -1710,7 +1711,7 @@ import java.util.regex.Pattern;
             event.setCancelled(true);
         }
         event.blockList().removeIf(
-            b -> !plot.equals(area.getOwnedPlot(BukkitUtil.getLocation(b.getLocation()))));
+            blox -> !plot.equals(area.getOwnedPlot(BukkitUtil.getLocation(blox.getLocation()))));
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -2105,8 +2106,8 @@ import java.util.regex.Pattern;
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBurn(BlockBurnEvent event) {
-        Block b = event.getBlock();
-        Location location = BukkitUtil.getLocation(b.getLocation());
+        Block block = event.getBlock();
+        Location location = BukkitUtil.getLocation(block.getLocation());
 
         PlotArea area = location.getPlotArea();
         if (area == null) {
@@ -2215,10 +2216,10 @@ import java.util.regex.Pattern;
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketEmpty(PlayerBucketEmptyEvent event) {
         BlockFace bf = event.getBlockFace();
-        Block b =
+        Block block =
             event.getBlockClicked().getLocation().add(bf.getModX(), bf.getModY(), bf.getModZ())
                 .getBlock();
-        Location location = BukkitUtil.getLocation(b.getLocation());
+        Location location = BukkitUtil.getLocation(block.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
@@ -2272,8 +2273,8 @@ import java.util.regex.Pattern;
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketFill(PlayerBucketFillEvent event) {
-        Block b = event.getBlockClicked();
-        Location location = BukkitUtil.getLocation(b.getLocation());
+        Block blockClicked = event.getBlockClicked();
+        Location location = BukkitUtil.getLocation(blockClicked.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
@@ -2335,8 +2336,8 @@ import java.util.regex.Pattern;
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onHangingPlace(HangingPlaceEvent event) {
-        Block b = event.getBlock().getRelative(event.getBlockFace());
-        Location location = BukkitUtil.getLocation(b.getLocation());
+        Block block = event.getBlock().getRelative(event.getBlockFace());
+        Location location = BukkitUtil.getLocation(block.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
@@ -2499,16 +2500,16 @@ import java.util.regex.Pattern;
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVehicleDestroy(VehicleDestroyEvent event) {
-        Location l = BukkitUtil.getLocation(event.getVehicle());
-        PlotArea area = l.getPlotArea();
+        Location location = BukkitUtil.getLocation(event.getVehicle());
+        PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
         }
-        Entity d = event.getAttacker();
-        if (d instanceof Player) {
-            Player p = (Player) d;
+        Entity attacker = event.getAttacker();
+        if (attacker instanceof Player) {
+            Player p = (Player) attacker;
             PlotPlayer pp = BukkitUtil.getPlayer(p);
-            Plot plot = area.getPlot(l);
+            Plot plot = area.getPlot(location);
             if (plot == null) {
                 if (!Permissions.hasPermission(pp, "plots.admin.vehicle.break.road")) {
                     MainUtil
@@ -2542,8 +2543,8 @@ import java.util.regex.Pattern;
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPotionSplash(PotionSplashEvent event) {
         ThrownPotion damager = event.getPotion();
-        Location l = BukkitUtil.getLocation(damager);
-        if (!PlotSquared.get().hasPlotArea(l.getWorld())) {
+        Location location = BukkitUtil.getLocation(damager);
+        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
             return;
         }
         int count = 0;
@@ -2560,9 +2561,9 @@ import java.util.regex.Pattern;
 
     @SuppressWarnings("deprecation") @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityCombustByEntity(EntityCombustByEntityEvent event) {
-        EntityDamageByEntityEvent eventChange = null;
-        eventChange = new EntityDamageByEntityEvent(event.getCombuster(), event.getEntity(),
-            EntityDamageEvent.DamageCause.FIRE_TICK, (double) event.getDuration());
+        EntityDamageByEntityEvent eventChange =
+            new EntityDamageByEntityEvent(event.getCombuster(), event.getEntity(),
+                EntityDamageEvent.DamageCause.FIRE_TICK, (double) event.getDuration());
         onEntityDamageByEntityEvent(eventChange);
         if (eventChange.isCancelled()) {
             event.setCancelled(true);
@@ -2572,8 +2573,8 @@ import java.util.regex.Pattern;
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         Entity damager = event.getDamager();
-        Location l = BukkitUtil.getLocation(damager);
-        if (!PlotSquared.get().hasPlotArea(l.getWorld())) {
+        Location location = BukkitUtil.getLocation(damager);
+        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
             return;
         }
         Entity victim = event.getEntity();
@@ -2754,14 +2755,14 @@ import java.util.regex.Pattern;
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerEggThrow(PlayerEggThrowEvent event) {
-        Location l = BukkitUtil.getLocation(event.getEgg().getLocation());
-        PlotArea area = l.getPlotArea();
+        Location location = BukkitUtil.getLocation(event.getEgg().getLocation());
+        PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
         }
         Player player = event.getPlayer();
         PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
-        Plot plot = area.getPlot(l);
+        Plot plot = area.getPlot(location);
         if (plot == null) {
             if (!Permissions.hasPermission(plotPlayer, "plots.admin.projectile.road")) {
                 MainUtil
