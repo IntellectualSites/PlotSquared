@@ -39,8 +39,8 @@ import java.util.Map.Entry;
                     manager.close();
                 });
             } catch (Exception e) {
-                MainUtil.sendMessage(player,
-                    "Failed to insert plot objects, see stacktrace for info");
+                MainUtil
+                    .sendMessage(player, "Failed to insert plot objects, see stacktrace for info");
                 e.printStackTrace();
             }
         });

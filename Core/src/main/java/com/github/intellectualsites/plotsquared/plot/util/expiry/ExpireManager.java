@@ -101,19 +101,19 @@ public class ExpireManager {
                         pp.setMeta("ignoreExpireTask", true);
                         pp.teleport(current.getCenter());
                         pp.deleteMeta("ignoreExpireTask");
-                        PlotMessage msg = new PlotMessage().text(
-                            num + " " + (num > 1 ? "plots are" : "plot is") + " expired: ")
+                        PlotMessage msg = new PlotMessage()
+                            .text(num + " " + (num > 1 ? "plots are" : "plot is") + " expired: ")
                             .color("$1").text(current.toString()).color("$2")
                             .suggest("/plot list expired").tooltip("/plot list expired")
                             //.text("\n - ").color("$3").text("Delete all (/plot delete expired)").color("$2").command("/plot delete expired")
                             .text("\n - ").color("$3").text("Delete this (/plot delete)")
                             .color("$2").suggest("/plot delete").tooltip("/plot delete")
                             .text("\n - ").color("$3").text("Remind later (/plot set keep 1d)")
-                            .color("$2").suggest("/plot set keep 1d")
-                            .tooltip("/plot set keep 1d").text("\n - ").color("$3")
-                            .text("Keep this (/plot set keep true)").color("$2")
-                            .suggest("/plot set keep true").tooltip("/plot set keep true")
-                            .text("\n - ").color("$3").text("Don't show me this").color("$2")
+                            .color("$2").suggest("/plot set keep 1d").tooltip("/plot set keep 1d")
+                            .text("\n - ").color("$3").text("Keep this (/plot set keep true)")
+                            .color("$2").suggest("/plot set keep true")
+                            .tooltip("/plot set keep true").text("\n - ").color("$3")
+                            .text("Don't show me this").color("$2")
                             .suggest("/plot toggle clear-confirmation")
                             .tooltip("/plot toggle clear-confirmation");
                         msg.send(pp);
@@ -271,7 +271,8 @@ public class ExpireManager {
                     }
                     for (ExpiryTask expiryTask : expired) {
                         if (!expiryTask.needsAnalysis()) {
-                            expiredTask.run(newPlot, () -> TaskManager.IMP.taskLaterAsync(task, 1), expiryTask.requiresConfirmation());
+                            expiredTask.run(newPlot, () -> TaskManager.IMP.taskLaterAsync(task, 1),
+                                expiryTask.requiresConfirmation());
                             return;
                         }
                     }
@@ -281,7 +282,8 @@ public class ExpireManager {
                                 passesComplexity(changed, expired, new RunnableVal<Boolean>() {
                                     @Override public void run(Boolean confirmation) {
                                         expiredTask.run(newPlot,
-                                            () -> TaskManager.IMP.taskLaterAsync(task, 1), confirmation);
+                                            () -> TaskManager.IMP.taskLaterAsync(task, 1),
+                                            confirmation);
                                     }
                                 }, () -> {
                                     FlagManager

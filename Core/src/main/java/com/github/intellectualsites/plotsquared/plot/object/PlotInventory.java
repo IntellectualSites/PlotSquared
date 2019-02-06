@@ -12,12 +12,14 @@ public class PlotInventory {
     private final PlotItemStack[] items;
     private String title;
     private boolean open = false;
+
     public PlotInventory(PlotPlayer player) {
         this.size = 4;
         this.title = null;
         this.player = player;
         this.items = InventoryUtil.manager.getItems(player);
     }
+
     public PlotInventory(PlotPlayer player, int size, String name) {
         this.size = size;
         this.title = name == null ? "" : name;

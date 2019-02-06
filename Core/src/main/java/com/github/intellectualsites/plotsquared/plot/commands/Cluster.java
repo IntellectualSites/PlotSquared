@@ -87,7 +87,7 @@ import java.util.UUID;
                 PlotId pos1;
                 PlotId pos2;
                 // check pos1 / pos2
-                try{
+                try {
                     pos1 = PlotId.fromString(args[2]);
                     pos2 = PlotId.fromString(args[3]);
                 } catch (IllegalArgumentException ignored) {
@@ -215,7 +215,7 @@ import java.util.UUID;
                 PlotId pos1;
                 PlotId pos2;
                 // check pos1 / pos2
-                try{
+                try {
                     pos1 = PlotId.fromString(args[2]);
                     pos2 = PlotId.fromString(args[3]);
                 } catch (IllegalArgumentException ignored) {

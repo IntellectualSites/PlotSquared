@@ -1523,9 +1523,9 @@ public class Plot {
     }
 
     //TODO Better documentation needed.
+
     /**
      * Return the bottom location for the plot.
-     *
      */
     public Location getBottomAbs() {
         Location loc = this.area.getPlotManager().getPlotBottomLocAbs(this.area, this.id);

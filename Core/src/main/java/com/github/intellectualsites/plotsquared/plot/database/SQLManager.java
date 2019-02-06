@@ -557,20 +557,18 @@ import java.util.concurrent.atomic.AtomicInteger;
                                     @Override public void run() {
                                         createTiers(trusted, "trusted", new Runnable() {
                                             @Override public void run() {
-                                                createTiers(denied, "denied",
-                                                    new Runnable() {
-                                                        @Override public void run() {
-                                                            try {
-                                                                SQLManager.this.connection
-                                                                    .commit();
-                                                            } catch (SQLException e) {
-                                                                e.printStackTrace();
-                                                            }
-                                                            if (whenDone != null) {
-                                                                whenDone.run();
-                                                            }
+                                                createTiers(denied, "denied", new Runnable() {
+                                                    @Override public void run() {
+                                                        try {
+                                                            SQLManager.this.connection.commit();
+                                                        } catch (SQLException e) {
+                                                            e.printStackTrace();
                                                         }
-                                                    });
+                                                        if (whenDone != null) {
+                                                            whenDone.run();
+                                                        }
+                                                    }
+                                                });
                                             }
                                         });
                                     }
@@ -2091,8 +2089,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 try (ResultSet r = stmt.executeQuery()) {
                     ids = new HashSet<>();
                     while (r.next()) {
-                        PlotId plot_id =
-                            new PlotId(r.getInt("plot_id_x"), r.getInt("plot_id_z"));
+                        PlotId plot_id = new PlotId(r.getInt("plot_id_x"), r.getInt("plot_id_z"));
                         if (plots.contains(plot_id)) {
                             ids.add(r.getInt("id"));
                         }
@@ -2562,7 +2559,8 @@ import java.util.concurrent.atomic.AtomicInteger;
                     }
                     cluster = new PlotCluster(null, pos1, pos2, user, id);
                     clusters.put(id, cluster);
-                    Set<PlotCluster> set = newClusters.computeIfAbsent(areaid, k -> new HashSet<>());
+                    Set<PlotCluster> set =
+                        newClusters.computeIfAbsent(areaid, k -> new HashSet<>());
                     set.add(cluster);
                 }
                 //Getting helpers
@@ -3039,17 +3037,17 @@ import java.util.concurrent.atomic.AtomicInteger;
                     "UPDATE `" + SQLManager.this.prefix + "cluster_invited` SET `user_uuid` = '"
                         + now.toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
                 stmt.executeUpdate(
-                    "UPDATE `" + SQLManager.this.prefix + "plot` SET `owner` = '" + now
-                        .toString() + "' WHERE `owner` = '" + old.toString() + '\'');
+                    "UPDATE `" + SQLManager.this.prefix + "plot` SET `owner` = '" + now.toString()
+                        + "' WHERE `owner` = '" + old.toString() + '\'');
                 stmt.executeUpdate(
-                    "UPDATE `" + SQLManager.this.prefix + "plot_denied` SET `user_uuid` = '"
-                        + now.toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
+                    "UPDATE `" + SQLManager.this.prefix + "plot_denied` SET `user_uuid` = '" + now
+                        .toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
                 stmt.executeUpdate(
-                    "UPDATE `" + SQLManager.this.prefix + "plot_helpers` SET `user_uuid` = '"
-                        + now.toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
+                    "UPDATE `" + SQLManager.this.prefix + "plot_helpers` SET `user_uuid` = '" + now
+                        .toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
                 stmt.executeUpdate(
-                    "UPDATE `" + SQLManager.this.prefix + "plot_trusted` SET `user_uuid` = '"
-                        + now.toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
+                    "UPDATE `" + SQLManager.this.prefix + "plot_trusted` SET `user_uuid` = '" + now
+                        .toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
             } catch (SQLException e) {
                 e.printStackTrace();
             }
