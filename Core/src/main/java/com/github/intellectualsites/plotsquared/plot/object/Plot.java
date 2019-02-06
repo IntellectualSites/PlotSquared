@@ -41,14 +41,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Plot {
 
+    private static final int MAX_HEIGHT = 256;
     /**
      * @deprecated raw access is deprecated
      */
     @Deprecated private static HashSet<Plot> connected_cache;
     private static HashSet<RegionWrapper> regions_cache;
-    /**
-     * The {@link PlotId}.
-     */
+
     private final PlotId id;
     /**
      * plot owner
@@ -91,9 +90,7 @@ public class Plot {
      * - The methods are more likely to be left unchanged from version changes<br>
      */
     private PlotSettings settings;
-    /**
-     * The {@link PlotArea}.
-     */
+
     private PlotArea area;
     /**
      * Session only plot metadata (session is until the server stops)<br>
@@ -188,7 +185,7 @@ public class Plot {
     }
 
     /**
-     * Get a plot from a string e.g. [area];[id]
+     * Gets a plot from a string e.g. [area];[id]
      *
      * @param defaultArea If no area is specified
      * @param string      plot id/area + id
@@ -199,7 +196,7 @@ public class Plot {
         if (split.length == 2) {
             if (defaultArea != null) {
                 PlotId id = PlotId.fromString(split[0] + ';' + split[1]);
-                return id != null ? defaultArea.getPlotAbs(id) : null;
+                return defaultArea.getPlotAbs(id);
             }
         } else if (split.length == 3) {
             PlotArea pa = PlotSquared.get().getPlotArea(split[0], null);
@@ -253,7 +250,7 @@ public class Plot {
     }
 
     /**
-     * Get the metadata for a key<br>
+     * Gets the metadata for a key<br>
      * <br>
      * For persistent metadata use the flag system
      *
@@ -281,7 +278,7 @@ public class Plot {
     }
 
     /**
-     * Get the cluster this plot is associated with
+     * Gets the cluster this plot is associated with
      *
      * @return the PlotCluster object, or null
      */
@@ -299,9 +296,9 @@ public class Plot {
     public List<PlotPlayer> getPlayersInPlot() {
         ArrayList<PlotPlayer> players = new ArrayList<>();
         for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
-            PlotPlayer pp = entry.getValue();
-            if (this.equals(pp.getCurrentPlot())) {
-                players.add(pp);
+            PlotPlayer plotPlayer = entry.getValue();
+            if (this.equals(plotPlayer.getCurrentPlot())) {
+                players.add(plotPlayer);
             }
         }
         return players;
@@ -330,12 +327,7 @@ public class Plot {
             return false;
         }
         Set<Plot> connected = getConnectedPlots();
-        for (Plot current : connected) {
-            if (uuid.equals(current.owner)) {
-                return true;
-            }
-        }
-        return false;
+        return connected.stream().anyMatch(current -> uuid.equals(current.owner));
     }
 
     public boolean isOwnerAbs(UUID uuid) {
@@ -343,7 +335,7 @@ public class Plot {
     }
 
     /**
-     * Get a immutable set of owner UUIDs for a plot (supports multi-owner mega-plots).
+     * Gets a immutable set of owner UUIDs for a plot (supports multi-owner mega-plots).
      *
      * @return the plot owners
      */
@@ -406,14 +398,16 @@ public class Plot {
     }
 
     /**
-     * Get the {@link PlotId}.
+     * Gets the {@link PlotId} of this plot.
+     *
+     * @return the PlotId for this plot
      */
     public PlotId getId() {
         return this.id;
     }
 
     /**
-     * Get the plot world object for this plot<br>
+     * Gets the plot world object for this plot<br>
      * - The generic PlotArea object can be casted to its respective class for more control (e.g. HybridPlotWorld)
      *
      * @return PlotArea
@@ -441,7 +435,7 @@ public class Plot {
     }
 
     /**
-     * Get the plot manager object for this plot<br>
+     * Gets the plot manager object for this plot<br>
      * - The generic PlotManager object can be casted to its respective class for more control (e.g. HybridPlotManager)
      *
      * @return PlotManager
@@ -451,7 +445,7 @@ public class Plot {
     }
 
     /**
-     * Get or create plot settings.
+     * Gets or create plot settings.
      *
      * @return PlotSettings
      * @deprecated use equivalent plot method;
@@ -518,7 +512,7 @@ public class Plot {
     }
 
     /**
-     * Get the timestamp of when the plot was created (unreliable)<br>
+     * Gets the timestamp of when the plot was created (unreliable)<br>
      * - not accurate if the plot was created before this was implemented<br>
      * - Milliseconds since the epoch<br>
      *
@@ -532,7 +526,7 @@ public class Plot {
     }
 
     /**
-     * Get if the plot is merged in a direction<br>
+     * Gets if the plot is merged in a direction<br>
      * ------- Actual -------<br>
      * 0 = north<br>
      * 1 = east<br>
@@ -586,7 +580,7 @@ public class Plot {
     }
 
     /**
-     * Get the denied users.
+     * Gets the denied users.
      *
      * @return a set of denied users
      */
@@ -598,7 +592,7 @@ public class Plot {
     }
 
     /**
-     * Set the denied users for this plot.
+     * Sets the denied users for this plot.
      *
      * @param uuids uuids to deny
      */
@@ -618,7 +612,7 @@ public class Plot {
     }
 
     /**
-     * Get the trusted users.
+     * Gets the trusted users.
      *
      * @return a set of trusted users
      */
@@ -630,7 +624,7 @@ public class Plot {
     }
 
     /**
-     * Set the trusted users for this plot.
+     * Sets the trusted users for this plot.
      *
      * @param uuids uuids to trust
      */
@@ -650,7 +644,7 @@ public class Plot {
     }
 
     /**
-     * Get the members
+     * Gets the members
      *
      * @return a set of members
      */
@@ -662,7 +656,7 @@ public class Plot {
     }
 
     /**
-     * Set the members for this plot
+     * Sets the members for this plot.
      *
      * @param uuids uuids to set member status for
      */
@@ -721,7 +715,7 @@ public class Plot {
     }
 
     /**
-     * Set the plot owner (and update the database)
+     * Sets the plot owner (and update the database)
      *
      * @param owner uuid to set as owner
      */
@@ -747,7 +741,7 @@ public class Plot {
     }
 
     /**
-     * Set the plot owner (and update the database)
+     * Sets the plot owner (and update the database)
      *
      * @param owner     uuid to set as owner
      * @param initiator player initiating set owner
@@ -845,7 +839,7 @@ public class Plot {
     }
 
     /**
-     * Set the biome for a plot asynchronously
+     * Sets the biome for a plot asynchronously.
      *
      * @param biome    The biome e.g. "forest"
      * @param whenDone The task to run when finished, or null
@@ -947,7 +941,7 @@ public class Plot {
     }
 
     /**
-     * Set the sign for a plot to a specific name
+     * Sets the sign for a plot to a specific name
      *
      * @param name name
      */
@@ -992,7 +986,7 @@ public class Plot {
     }
 
     /**
-     * Set a flag for this plot
+     * Sets a flag for this plot
      *
      * @param flag  Flag to set
      * @param value Flag value
@@ -1015,7 +1009,7 @@ public class Plot {
     }
 
     /**
-     * Get the flag for a given key
+     * Gets the flag for a given key
      *
      * @param key Flag to get value for
      */
@@ -1024,7 +1018,7 @@ public class Plot {
     }
 
     /**
-     * Get the flag for a given key
+     * Gets the flag for a given key
      *
      * @param key          the flag
      * @param defaultValue if the key is null, the value to return
@@ -1118,7 +1112,7 @@ public class Plot {
     }
 
     /**
-     * Get the number of tracked running tasks for this plot<br>
+     * Gets the number of tracked running tasks for this plot<br>
      * - Used to track/limit the number of things a player can do on the plot at once
      *
      * @return number of tasks (int)
@@ -1217,7 +1211,7 @@ public class Plot {
     }
 
     /**
-     * Set the home location
+     * Sets the home location
      *
      * @param location location to set as home
      */
@@ -1235,7 +1229,7 @@ public class Plot {
     }
 
     /**
-     * Get the default home location for a plot<br>
+     * Gets the default home location for a plot<br>
      * - Ignores any home location set for that specific plot
      *
      * @return Location
@@ -1276,27 +1270,24 @@ public class Plot {
         for (RegionWrapper region : getRegions()) {
             count +=
                 (region.maxX - (double) region.minX + 1) * (region.maxZ - (double) region.minZ + 1)
-                    * 256;
+                    * MAX_HEIGHT;
         }
         return count;
     }
 
     /**
-     * Get the average rating of the plot. This is the value displayed in /plot info
+     * Gets the average rating of the plot. This is the value displayed in /plot info
      *
      * @return average rating as double
      */
     public double getAverageRating() {
-        double sum = 0;
         Collection<Rating> ratings = this.getRatings().values();
-        for (Rating rating : ratings) {
-            sum += rating.getAverageRating();
-        }
+        double sum = ratings.stream().mapToDouble(Rating::getAverageRating).sum();
         return sum / ratings.size();
     }
 
     /**
-     * Set a rating for a user<br>
+     * Sets a rating for a user<br>
      * - If the user has already rated, the following will return false
      *
      * @param uuid   uuid of rater
@@ -1328,7 +1319,7 @@ public class Plot {
     }
 
     /**
-     * Get the ratings associated with a plot<br>
+     * Gets the ratings associated with a plot<br>
      * - The rating object may contain multiple categories
      *
      * @return Map of user who rated to the rating
@@ -1383,7 +1374,7 @@ public class Plot {
     }
 
     /**
-     * Set the plot sign if plot signs are enabled.
+     * Sets the plot sign if plot signs are enabled.
      */
     public void setSign() {
         if (this.owner == null) {
@@ -1502,7 +1493,7 @@ public class Plot {
     }
 
     /**
-     * Set components such as border, wall, floor.
+     * Sets components such as border, wall, floor.
      * (components are generator specific)
      */
     public boolean setComponent(String component, String blocks) {
@@ -1531,10 +1522,10 @@ public class Plot {
         return top;
     }
 
+    //TODO Better documentation needed.
     /**
      * Return the bottom location for the plot.
      *
-     * @return
      */
     public Location getBottomAbs() {
         Location loc = this.area.getPlotManager().getPlotBottomLocAbs(this.area, this.id);
@@ -1543,7 +1534,7 @@ public class Plot {
     }
 
     /**
-     * Swap the settings for two plots.
+     * Swaps the settings for two plots.
      *
      * @param plot     the plot to swap data with
      * @param whenDone the task to run at the end of this method.
@@ -1676,7 +1667,7 @@ public class Plot {
             Location bot = other.getBottomAbs();
             Location top = this.getTopAbs();
             Location pos1 = new Location(this.getWorldName(), top.getX(), 0, bot.getZ());
-            Location pos2 = new Location(this.getWorldName(), bot.getX(), 256, top.getZ());
+            Location pos2 = new Location(this.getWorldName(), bot.getX(), MAX_HEIGHT, top.getZ());
             ChunkManager.manager.regenerateRegion(pos1, pos2, true, null);
         } else {
             this.area.getPlotManager().removeRoadEast(this.area, this);
@@ -1729,7 +1720,7 @@ public class Plot {
     }
 
     /**
-     * Get plot display name.
+     * Gets plot display name.
      *
      * @return alias if set, else id
      */
@@ -1898,7 +1889,7 @@ public class Plot {
     }
 
     /**
-     * Get the plot hashcode<br>
+     * Gets the plot hashcode<br>
      * Note: The hashcode is unique if:<br>
      * - Plots are in the same world<br>
      * - The x,z coordinates are between Short.MIN_VALUE and Short.MAX_VALUE<br>
@@ -1910,7 +1901,7 @@ public class Plot {
     }
 
     /**
-     * Get the flags specific to this plot<br>
+     * Gets the flags specific to this plot<br>
      * - Does not take default flags into account<br>
      *
      * @return
@@ -1920,7 +1911,7 @@ public class Plot {
     }
 
     /**
-     * Set a flag for this plot.
+     * Sets a flag for this plot.
      *
      * @param flags
      */
@@ -1929,7 +1920,7 @@ public class Plot {
     }
 
     /**
-     * Get the plot alias.
+     * Gets the plot alias.
      * - Returns an empty string if no alias is set
      *
      * @return The plot alias
@@ -1942,7 +1933,7 @@ public class Plot {
     }
 
     /**
-     * Set the plot alias.
+     * Sets the plot alias.
      *
      * @param alias The alias
      */
@@ -1961,7 +1952,7 @@ public class Plot {
     }
 
     /**
-     * Set the raw merge data<br>
+     * Sets the raw merge data<br>
      * - Updates DB<br>
      * - Does not modify terrain<br>
      * ----------<br>
@@ -1999,7 +1990,7 @@ public class Plot {
     }
 
     /**
-     * Get the merged array.
+     * Gets the merged array.
      *
      * @return boolean [ north, east, south, west ]
      */
@@ -2008,10 +1999,10 @@ public class Plot {
     }
 
     /**
-     * Set the raw merge data<br>
+     * Sets the raw merge data<br>
      * - Updates DB<br>
      * - Does not modify terrain<br>
-     * Get if the plot is merged in a direction<br>
+     * Gets if the plot is merged in a direction<br>
      * ----------<br>
      * 0 = north<br>
      * 1 = east<br>
@@ -2038,7 +2029,7 @@ public class Plot {
     }
 
     /**
-     * Get the set home location or 0,0,0 if no location is set<br>
+     * Gets the set home location or 0,0,0 if no location is set<br>
      * - Does not take the default home location into account
      *
      * @return
@@ -2145,7 +2136,7 @@ public class Plot {
             Location bot = other.getBottomAbs();
             Location top = this.getTopAbs();
             Location pos1 = new Location(this.getWorldName(), bot.getX(), 0, top.getZ());
-            Location pos2 = new Location(this.getWorldName(), top.getX(), 256, bot.getZ());
+            Location pos2 = new Location(this.getWorldName(), top.getX(), MAX_HEIGHT, bot.getZ());
             ChunkManager.manager.regenerateRegion(pos1, pos2, true, null);
         } else {
             this.getManager().removeRoadSouth(this.area, this);
@@ -2248,11 +2239,11 @@ public class Plot {
      * Merge the plot settings<br>
      * - Used when a plot is merged<br>
      *
-     * @param b
+     * @param plot
      */
-    public void mergeData(Plot b) {
+    public void mergeData(Plot plot) {
         HashMap<Flag<?>, Object> flags1 = this.getFlags();
-        HashMap<Flag<?>, Object> flags2 = b.getFlags();
+        HashMap<Flag<?>, Object> flags2 = plot.getFlags();
         if ((!flags1.isEmpty() || !flags2.isEmpty()) && !flags1.equals(flags2)) {
             boolean greater = flags1.size() > flags2.size();
             if (greater) {
@@ -2262,30 +2253,30 @@ public class Plot {
             }
             HashMap<Flag<?>, Object> net = (greater ? flags1 : flags2);
             this.setFlags(net);
-            b.setFlags(net);
+            plot.setFlags(net);
         }
         if (!this.getAlias().isEmpty()) {
-            b.setAlias(this.getAlias());
-        } else if (!b.getAlias().isEmpty()) {
-            this.setAlias(b.getAlias());
+            plot.setAlias(this.getAlias());
+        } else if (!plot.getAlias().isEmpty()) {
+            this.setAlias(plot.getAlias());
         }
         for (UUID uuid : this.getTrusted()) {
-            b.addTrusted(uuid);
+            plot.addTrusted(uuid);
         }
-        for (UUID uuid : b.getTrusted()) {
+        for (UUID uuid : plot.getTrusted()) {
             this.addTrusted(uuid);
         }
         for (UUID uuid : this.getMembers()) {
-            b.addMember(uuid);
+            plot.addMember(uuid);
         }
-        for (UUID uuid : b.getMembers()) {
+        for (UUID uuid : plot.getMembers()) {
             this.addMember(uuid);
         }
 
         for (UUID uuid : this.getDenied()) {
-            b.addDenied(uuid);
+            plot.addDenied(uuid);
         }
-        for (UUID uuid : b.getDenied()) {
+        for (UUID uuid : plot.getDenied()) {
             this.addDenied(uuid);
         }
     }
@@ -2302,7 +2293,7 @@ public class Plot {
             Location pos1 = this.getTopAbs().add(1, 0, 1);
             Location pos2 = other.getBottomAbs().subtract(1, 0, 1);
             pos1.setY(0);
-            pos2.setY(256);
+            pos2.setY(MAX_HEIGHT);
             ChunkManager.manager.regenerateRegion(pos1, pos2, true, null);
         } else {
             this.area.getPlotManager().removeRoadSouthEast(this.area, this);
@@ -2310,7 +2301,7 @@ public class Plot {
     }
 
     /**
-     * Get the plot in a relative location<br>
+     * Gets the plot in a relative location<br>
      * Note: May be null if the partial plot area does not include the relative location
      *
      * @param x
@@ -2326,7 +2317,7 @@ public class Plot {
     }
 
     /**
-     * Get the plot in a relative direction<br>
+     * Gets the plot in a relative direction<br>
      * 0 = north<br>
      * 1 = east<br>
      * 2 = south<br>
@@ -2341,7 +2332,7 @@ public class Plot {
     }
 
     /**
-     * Get a set of plots connected (and including) this plot<br>
+     * Gets a set of plots connected (and including) this plot<br>
      * - This result is cached globally
      *
      * @return
@@ -2640,7 +2631,7 @@ public class Plot {
     }
 
     /**
-     * Get all the corners of the plot (supports non-rectangular shapes).
+     * Gets all the corners of the plot (supports non-rectangular shapes).
      *
      * @return A list of the plot corners
      */
@@ -2722,7 +2713,7 @@ public class Plot {
     }
 
     /**
-     * Set a component for a plot to the provided blocks<br>
+     * Sets a component for a plot to the provided blocks<br>
      * - E.g. floor, wall, border etc.<br>
      * - The available components depend on the generator being used<br>
      *

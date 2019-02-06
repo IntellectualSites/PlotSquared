@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class PlotId {
@@ -30,22 +31,13 @@ public class PlotId {
      * @param string to create id from
      * @return null if the string is invalid
      */
-    public static PlotId fromString(String string) {
-        if (string == null) {
-            return null;
-        }
+    public static PlotId fromString(@Nonnull String string) {
         String[] parts = string.split("[;|,]");
         if (parts.length < 2) {
-            return null;
+            throw new IllegalArgumentException("Cannot create PlotID. String invalid.");
         }
-        int x;
-        int y;
-        try {
-            x = Integer.parseInt(parts[0]);
-            y = Integer.parseInt(parts[1]);
-        } catch (NumberFormatException ignored) {
-            return null;
-        }
+        int x = Integer.parseInt(parts[0]);
+        int y = Integer.parseInt(parts[1]);
         return new PlotId(x, y);
     }
 
@@ -54,7 +46,7 @@ public class PlotId {
     }
 
     /**
-     * Get the PlotId from the HashCode<br>
+     * Gets the PlotId from the HashCode<br>
      * Note: Only accurate for small x,z values (short)
      *
      * @param hash

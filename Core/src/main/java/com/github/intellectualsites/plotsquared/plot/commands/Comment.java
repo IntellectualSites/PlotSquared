@@ -33,7 +33,13 @@ public class Comment extends SubCommand {
             return false;
         }
         Location loc = player.getLocation();
-        PlotId id = PlotId.fromString(args[1]);
+        PlotId id;
+        try {
+            id = PlotId.fromString(args[1]);
+        } catch (IllegalArgumentException ignored) {
+            MainUtil.sendMessage(player, C.NOT_VALID_PLOT_ID);
+            return false;
+        }
         Plot plot = MainUtil.getPlotFromString(player, args[1], false);
         int index;
         if (plot == null) {

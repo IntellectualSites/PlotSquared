@@ -180,46 +180,49 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                     continue;
                 }
 
-                final PlotId id = PlotId.fromString(name);
-                if (id != null) {
-                    final Plot plot = area.getOwnedPlot(id);
-                    if (plot != null) {
-                        if (PlotPlayer.wrap(plot.owner) == null) {
-                            if (world.getKeepSpawnInMemory()) {
-                                world.setKeepSpawnInMemory(false);
-                                return;
+                PlotId id;
+                try {
+                    id = PlotId.fromString(name);
+                } catch (IllegalArgumentException ignored) {
+                    continue;
+                }
+                final Plot plot = area.getOwnedPlot(id);
+                if (plot != null) {
+                    if (PlotPlayer.wrap(plot.owner) == null) {
+                        if (world.getKeepSpawnInMemory()) {
+                            world.setKeepSpawnInMemory(false);
+                            return;
+                        }
+                        final Chunk[] chunks = world.getLoadedChunks();
+                        if (chunks.length == 0) {
+                            if (!Bukkit.unloadWorld(world, true)) {
+                                PlotSquared.debug("Failed to unload " + world.getName());
                             }
-                            final Chunk[] chunks = world.getLoadedChunks();
-                            if (chunks.length == 0) {
-                                if (!Bukkit.unloadWorld(world, true)) {
-                                    PlotSquared.debug("Failed to unload " + world.getName());
-                                }
-                                return;
-                            } else {
-                                int index = 0;
-                                do {
-                                    final Chunk chunkI = chunks[index++];
-                                    boolean result;
-                                    if (methodUnloadChunk0 != null) {
-                                        try {
-                                            result = (boolean) methodUnloadChunk0
-                                                .invoke(world, chunkI.getX(), chunkI.getZ(), true);
-                                        } catch (Throwable e) {
-                                            methodUnloadChunk0 = null;
-                                            e.printStackTrace();
-                                            continue outer;
-                                        }
-                                    } else {
-                                        result = world
-                                            .unloadChunk(chunkI.getX(), chunkI.getZ(), true, false);
-                                    }
-                                    if (!result) {
+                            return;
+                        } else {
+                            int index = 0;
+                            do {
+                                final Chunk chunkI = chunks[index++];
+                                boolean result;
+                                if (methodUnloadChunk0 != null) {
+                                    try {
+                                        result = (boolean) methodUnloadChunk0
+                                            .invoke(world, chunkI.getX(), chunkI.getZ(), true);
+                                    } catch (Throwable e) {
+                                        methodUnloadChunk0 = null;
+                                        e.printStackTrace();
                                         continue outer;
                                     }
-                                } while (index < chunks.length
-                                    && System.currentTimeMillis() - start < 5);
-                                return;
-                            }
+                                } else {
+                                    result = world
+                                        .unloadChunk(chunkI.getX(), chunkI.getZ(), true, false);
+                                }
+                                if (!result) {
+                                    continue outer;
+                                }
+                            } while (index < chunks.length
+                                && System.currentTimeMillis() - start < 5);
+                            return;
                         }
                     }
                 }
@@ -532,17 +535,17 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     @Override @Nullable
-    public final ChunkGenerator getDefaultWorldGenerator(final String world, final String id) {
+    public final ChunkGenerator getDefaultWorldGenerator(final String worldName, final String id) {
         final IndependentPlotGenerator result;
         if (id != null && id.equalsIgnoreCase("single")) {
             result = new SingleWorldGenerator();
         } else {
             result = PlotSquared.get().IMP.getDefaultGenerator();
-            if (!PlotSquared.get().setupPlotWorld(world, id, result)) {
+            if (!PlotSquared.get().setupPlotWorld(worldName, id, result)) {
                 return null;
             }
         }
-        return (ChunkGenerator) result.specify(world);
+        return (ChunkGenerator) result.specify(worldName);
     }
 
     @Override public void registerPlayerEvents() {

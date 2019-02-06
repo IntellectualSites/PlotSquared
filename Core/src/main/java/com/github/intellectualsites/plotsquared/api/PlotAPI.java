@@ -37,7 +37,7 @@ import java.util.UUID;
 @SuppressWarnings({"unused", "WeakerAccess"}) @NoArgsConstructor public class PlotAPI {
 
     /**
-     * Get all plots.
+     * Gets all plots.
      *
      * @return all plots
      * @see PlotSquared#getPlots()
@@ -77,7 +77,7 @@ import java.util.UUID;
     }
 
     /**
-     * Get the PlotSquared storage file.
+     * Gets the PlotSquared storage file.
      *
      * @return storage configuration
      * @see PlotSquared#storage
@@ -87,7 +87,7 @@ import java.util.UUID;
     }
 
     /**
-     * Get the main class for this plugin. Only use this if you really need it.
+     * Gets the main class for this plugin. Only use this if you really need it.
      *
      * @return PlotSquared PlotSquared Main Class
      * @see PlotSquared
@@ -114,7 +114,7 @@ import java.util.UUID;
     }
 
     /**
-     * Get the block/biome set queue
+     * Gets the block/biome set queue
      *
      * @return GlobalBlockQueue.IMP
      */
@@ -145,7 +145,7 @@ import java.util.UUID;
     }
 
     /**
-     * Get a list of PlotAreas in the world.
+     * Gets a list of PlotAreas in the world.
      *
      * @param world The world to check for plot areas
      * @return A set of PlotAreas
@@ -198,7 +198,7 @@ import java.util.UUID;
     }
 
     /**
-     * Get the PlotPlayer for a UUID.
+     * Gets the PlotPlayer for a UUID.
      *
      * <p><i>Please note that PlotSquared can be configured to provide
      * different UUIDs than bukkit</i>
@@ -212,7 +212,7 @@ import java.util.UUID;
     }
 
     /**
-     * Get the PlotPlayer for a username.
+     * Gets the PlotPlayer for a username.
      *
      * @param player the player to wrap
      * @return a {@code PlotPlayer}

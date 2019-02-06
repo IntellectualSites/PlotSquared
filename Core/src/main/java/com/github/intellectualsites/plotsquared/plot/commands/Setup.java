@@ -182,8 +182,9 @@ import java.util.Map.Entry;
                 MainUtil.sendMessage(player, "&6What should be the minimum Plot Id?");
                 break;
             case 3:  // min
-                object.min = PlotId.fromString(args[0]);
-                if (object.min == null) {
+                try {
+                    object.min = PlotId.fromString(args[0]);
+                } catch (IllegalArgumentException ignored) {
                     MainUtil.sendMessage(player, "&cYou must choose a valid minimum PlotId!");
                     return false;
                 }
@@ -192,8 +193,10 @@ import java.util.Map.Entry;
                 break;
             case 4:
                 // max
-                PlotId id = PlotId.fromString(args[0]);
-                if (id == null) {
+                PlotId id;
+                try {
+                    id = PlotId.fromString(args[0]);
+                } catch (IllegalArgumentException ignored) {
                     MainUtil.sendMessage(player, "&cYou must choose a valid maximum PlotId!");
                     return false;
                 }

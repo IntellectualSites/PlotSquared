@@ -56,8 +56,9 @@ import java.util.UUID;
                     break;
                 case "plotid":
                 case "id":
-                    id = PlotId.fromString(split[1]);
-                    if (id == null) {
+                    try {
+                        id = PlotId.fromString(split[1]);
+                    } catch (IllegalArgumentException ignored) {
                         C.NOT_VALID_PLOT_ID.send(player, split[1]);
                         return false;
                     }

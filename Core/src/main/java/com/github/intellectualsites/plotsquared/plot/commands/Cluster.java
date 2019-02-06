@@ -84,10 +84,13 @@ import java.util.UUID;
                 if (currentClusters >= player.getAllowedPlots()) {
                     return sendMessage(player, C.CANT_CLAIM_MORE_CLUSTERS);
                 }
+                PlotId pos1;
+                PlotId pos2;
                 // check pos1 / pos2
-                PlotId pos1 = PlotId.fromString(args[2]);
-                PlotId pos2 = PlotId.fromString(args[3]);
-                if (pos1 == null || pos2 == null) {
+                try{
+                    pos1 = PlotId.fromString(args[2]);
+                    pos2 = PlotId.fromString(args[3]);
+                } catch (IllegalArgumentException ignored) {
                     MainUtil.sendMessage(player, C.NOT_VALID_PLOT_ID);
                     return false;
                 }
@@ -209,10 +212,13 @@ import java.util.UUID;
                         "/plot cluster resize <pos1> <pos2>");
                     return false;
                 }
+                PlotId pos1;
+                PlotId pos2;
                 // check pos1 / pos2
-                PlotId pos1 = PlotId.fromString(args[1]);
-                PlotId pos2 = PlotId.fromString(args[2]);
-                if (pos1 == null || pos2 == null) {
+                try{
+                    pos1 = PlotId.fromString(args[2]);
+                    pos2 = PlotId.fromString(args[3]);
+                } catch (IllegalArgumentException ignored) {
                     MainUtil.sendMessage(player, C.NOT_VALID_PLOT_ID);
                     return false;
                 }

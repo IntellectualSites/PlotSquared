@@ -288,7 +288,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get an instance of PlotSquared.
+     * Gets an instance of PlotSquared.
      *
      * @return instance of PlotSquared
      */
@@ -383,7 +383,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get the current PlotSquared version.
+     * Gets the current PlotSquared version.
      *
      * @return current version in config or null
      */
@@ -392,7 +392,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get the server platform this plugin is running on this is running on.
+     * Gets the server platform this plugin is running on this is running on.
      * <p>
      * <p>This will be either <b>Bukkit</b> or <b>Sponge</b></p>
      *
@@ -507,7 +507,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get all the base plots in a single set (for merged plots it just returns
+     * Gets all the base plots in a single set (for merged plots it just returns
      * the bottom plot).
      *
      * @return Set of base Plots
@@ -806,7 +806,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get all the plots in a single set.
+     * Gets all the plots in a single set.
      *
      * @return Set of Plots
      */
@@ -842,7 +842,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get all the plots owned by a player name.
+     * Gets all the plots owned by a player name.
      *
      * @param world  the world
      * @param player the plot owner
@@ -854,7 +854,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get all the plots owned by a player name.
+     * Gets all the plots owned by a player name.
      *
      * @param area   the PlotArea
      * @param player the plot owner
@@ -866,7 +866,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get all plots by a PlotPlayer.
+     * Gets all plots by a PlotPlayer.
      *
      * @param world  the world
      * @param player the plot owner
@@ -877,7 +877,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get all plots by a PlotPlayer.
+     * Gets all plots by a PlotPlayer.
      *
      * @param area   the PlotArea
      * @param player the plot owner
@@ -888,7 +888,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get all plots by a UUID in a world.
+     * Gets all plots by a UUID in a world.
      *
      * @param world the world
      * @param uuid  the plot owner
@@ -905,7 +905,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get all plots by a UUID in an area.
+     * Gets all plots by a UUID in an area.
      *
      * @param area the {@code PlotArea}
      * @param uuid the plot owner
@@ -943,7 +943,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get the plots for a PlotPlayer.
+     * Gets the plots for a PlotPlayer.
      *
      * @param player the player to retrieve the plots for
      * @return Set of Plot
@@ -965,7 +965,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get the plots for a UUID.
+     * Gets the plots for a UUID.
      *
      * @param uuid the plot owner
      * @return Set of Plot's owned by the player
@@ -1000,7 +1000,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get the plots for a UUID.
+     * Gets the plots for a UUID.
      *
      * @param uuid the UUID of the owner
      * @return Set of Plot
@@ -1220,7 +1220,7 @@ import java.util.zip.ZipInputStream;
                 String name = split[0];
                 PlotId pos1 = PlotId.fromString(split[1]);
                 PlotId pos2 = PlotId.fromString(split[2]);
-                if (pos1 == null || pos2 == null || name.isEmpty()) {
+                if (name.isEmpty()) {
                     throw new IllegalArgumentException("Invalid Area identifier: " + areaId
                         + ". Expected form `<name>-<x1;z1>-<x2;z2>`");
                 }
@@ -1652,8 +1652,8 @@ import java.util.zip.ZipInputStream;
             Settings.COMMIT = "https://github.com/IntellectualSites/PlotSquared/commit/" + Integer
                 .toHexString(version.hash);
             System.out.println("Version is " + this.version);
-        } catch (Throwable ignore) {
-            ignore.printStackTrace();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
         }
         Settings.save(configFile);
         config = YamlConfiguration.loadConfiguration(configFile);
@@ -1815,7 +1815,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get the Java version.
+     * Gets the Java version.
      *
      * @return the java version
      */
@@ -1889,7 +1889,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get a list of PlotArea objects.
+     * Gets a list of PlotArea objects.
      *
      * @param world the world
      * @return Collection of PlotArea objects
@@ -1901,7 +1901,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get the relevant plot area for a specified location.
+     * Gets the relevant plot area for a specified location.
      * <ul>
      * <li>If there is only one plot area globally that will be returned.
      * <li>If there is only one plot area in the world, it will return that.
@@ -1922,7 +1922,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get the {@code PlotArea} which contains a location.
+     * Gets the {@code PlotArea} which contains a location.
      * <ul>
      * <li>If the plot area does not contain a location, null
      * will be returned.
@@ -1964,7 +1964,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get Plots based on alias
+     * Gets Plots based on alias
      *
      * @param alias     to search plots
      * @param worldname to filter alias to a specific world [optional] null means all worlds
