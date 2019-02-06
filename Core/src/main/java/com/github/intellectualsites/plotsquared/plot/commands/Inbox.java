@@ -11,14 +11,10 @@ import com.github.intellectualsites.plotsquared.plot.util.CommentManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-@CommandDeclaration(command = "inbox", description = "Review the comments for a plot",
-    usage = "/plot inbox [inbox] [delete <index>|clear|page]", permission = "plots.inbox",
-    category = CommandCategory.CHAT, requiredType = RequiredType.NONE) public class Inbox
-    extends SubCommand {
+@CommandDeclaration(command = "inbox", description = "Review the comments for a plot", usage = "/plot inbox [inbox] [delete <index>|clear|page]", permission = "plots.inbox", category = CommandCategory.CHAT, requiredType = RequiredType.NONE)
+public class Inbox extends SubCommand {
 
     public void displayComments(PlotPlayer player, List<PlotComment> oldComments, int page) {
         if (oldComments == null || oldComments.isEmpty()) {
@@ -150,7 +146,7 @@ import java.util.Optional;
                             }
                             PlotComment comment = value.get(index - 1);
                             inbox.removeComment(plot, comment);
-                            plot.getSettings().removeComment(comment);
+                            plot.removeComment(comment);
                             MainUtil.sendMessage(player, C.COMMENT_REMOVED, comment.comment);
                         }
                     })) {
@@ -163,10 +159,9 @@ import java.util.Optional;
                         sendMessage(player, C.NO_PERM_INBOX_MODIFY);
                     }
                     inbox.clearInbox(plot);
-                    Optional<ArrayList<PlotComment>> comments =
-                        plot.getSettings().getComments(inbox.toString());
-                    if (comments.isPresent()) {
-                        plot.getSettings().removeComments(comments.get());
+                    List<PlotComment> comments = plot.getComments(inbox.toString());
+                    if (!comments.isEmpty()) {
+                        plot.removeComments(comments);
                     }
                     MainUtil.sendMessage(player, C.COMMENT_REMOVED, "*");
                     return true;

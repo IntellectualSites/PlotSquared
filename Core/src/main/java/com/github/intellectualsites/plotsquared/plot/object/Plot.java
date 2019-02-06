@@ -10,6 +10,7 @@ import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.generator.SquarePlotWorld;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
+import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
@@ -2990,5 +2991,25 @@ public class Plot {
 
     public boolean hasFlag(Flag<?> flag) {
         return getFlags().containsKey(flag);
+    }
+
+    @SuppressWarnings("deprecation") public boolean removeComment(PlotComment comment) {
+        return getSettings().removeComment(comment);
+    }
+
+    @SuppressWarnings("deprecation") public void removeComments(List<PlotComment> comments) {
+        getSettings().removeComments(comments);
+    }
+
+    @SuppressWarnings("deprecation") public List<PlotComment> getComments(String inbox) {
+        return getSettings().getComments(inbox);
+    }
+
+    @SuppressWarnings("deprecation") public void addComment(PlotComment comment) {
+        getSettings().addComment(comment);
+    }
+
+    @SuppressWarnings("deprecation") public void setComments(List<PlotComment> list) {
+        getSettings().setComments(list);
     }
 }

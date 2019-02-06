@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.object;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
+import com.google.common.collect.ImmutableList;
 
 import java.util.*;
 
@@ -25,12 +26,8 @@ public class PlotSettings {
      * @deprecated Raw access
      */
     @Deprecated public String alias = "";
-    /**
-     * Comments.
-     *
-     * @deprecated Raw access
-     */
-    @Deprecated public List<PlotComment> comments = null;
+
+    private List<PlotComment> comments = null;
 
     /**
      * The ratings for a plot.
@@ -142,36 +139,31 @@ public class PlotSettings {
         }
     }
 
-    public Optional<ArrayList<PlotComment>> getComments(String inbox) {
-        ArrayList<PlotComment> c = new ArrayList<>();
+    @SuppressWarnings({"UnstableApiUsage"}) public List<PlotComment> getComments(String inbox) {
         if (this.comments == null) {
-            return Optional.empty();
+            return Collections.emptyList();
         }
-        for (PlotComment comment : this.comments) {
-            if (comment.inbox.equals(inbox)) {
-                c.add(comment);
-            }
-        }
-        return Optional.of(c);
+
+        return this.comments.stream().filter(comment -> comment.inbox.equals(inbox))
+            .collect(ImmutableList.toImmutableList());
     }
 
-    public void setComments(List<PlotComment> comments) {
+    void setComments(List<PlotComment> comments) {
         this.comments = comments;
     }
 
-    public void removeComment(PlotComment comment) {
-        if (this.comments.contains(comment)) {
-            this.comments.remove(comment);
+    boolean removeComment(PlotComment comment) {
+        if (this.comments == null) {
+            return false;
         }
+        return this.comments.remove(comment);
     }
 
-    public void removeComments(List<PlotComment> comments) {
-        for (PlotComment comment : comments) {
-            removeComment(comment);
-        }
+    void removeComments(List<PlotComment> comments) {
+        comments.forEach(this::removeComment);
     }
 
-    public void addComment(PlotComment comment) {
+    void addComment(PlotComment comment) {
         if (this.comments == null) {
             this.comments = new ArrayList<>();
         }
