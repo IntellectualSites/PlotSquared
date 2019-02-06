@@ -11,9 +11,7 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
 import javax.annotation.Nullable;
 import java.util.Set;
 
-@CommandDeclaration(command = "auto", permission = "plots.auto",
-    category = CommandCategory.CLAIMING, requiredType = RequiredType.NONE,
-    description = "Claim the nearest plot", aliases = "a", usage = "/plot auto [length,width]")
+@CommandDeclaration(command = "auto", permission = "plots.auto", category = CommandCategory.CLAIMING, requiredType = RequiredType.NONE, description = "Claim the nearest plot", aliases = "a", usage = "/plot auto [length,width]")
 public class Auto extends SubCommand {
 
     @Deprecated public static PlotId getNextPlotId(PlotId id, int step) {
