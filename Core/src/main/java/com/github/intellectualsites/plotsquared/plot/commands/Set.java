@@ -15,6 +15,8 @@ import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @CommandDeclaration(command = "set", description = "Set a plot value", aliases = {"s"},
     usage = "/plot set <biome|alias|home|flag> <value...>", permission = "plots.set",
@@ -100,11 +102,7 @@ import java.util.HashSet;
                             current.setComponent(component, bucket);
                         }
                         MainUtil.sendMessage(player, C.GENERATING_COMPONENT);
-                        GlobalBlockQueue.IMP.addTask(new Runnable() {
-                            @Override public void run() {
-                                plot.removeRunning();
-                            }
-                        });
+                        GlobalBlockQueue.IMP.addTask(plot::removeRunning);
                         return true;
                     }
                 }
@@ -114,8 +112,8 @@ import java.util.HashSet;
     }
 
     public boolean noArgs(PlotPlayer player) {
-        ArrayList<String> newValues = new ArrayList<>();
-        newValues.addAll(Arrays.asList("biome", "alias", "home", "flag"));
+        ArrayList<String> newValues =
+            new ArrayList<>(Arrays.asList("biome", "alias", "home", "flag"));
         Plot plot = player.getCurrentPlot();
         if (plot != null) {
             newValues.addAll(
@@ -153,13 +151,12 @@ import java.util.HashSet;
         // flag
         Flag<?> flag = FlagManager.getFlag(args[0].toLowerCase());
         if (Flags.getFlags().contains(flag)) {
-            StringBuilder a = new StringBuilder();
+            String a = "";
             if (args.length > 1) {
-                for (int x = 1; x < args.length; x++) {
-                    a.append(" ").append(args[x]);
-                }
+                a = IntStream.range(1, args.length).mapToObj(x -> " " + args[x])
+                    .collect(Collectors.joining());
             }
-            MainCommand.onCommand(player, ("flag set " + args[0] + a.toString()).split(" "));
+            MainCommand.onCommand(player, ("flag set " + args[0] + a).split(" "));
             return true;
         }
         return noArgs(player);

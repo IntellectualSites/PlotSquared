@@ -214,11 +214,8 @@ import java.util.zip.ZipInputStream;
             }
             // Economy
             if (Settings.Enabled_Components.ECONOMY) {
-                TaskManager.runTask(new Runnable() {
-                    @Override public void run() {
-                        EconHandler.manager = PlotSquared.this.IMP.getEconomyHandler();
-                    }
-                });
+                TaskManager.runTask(
+                    () -> EconHandler.manager = PlotSquared.this.IMP.getEconomyHandler());
             }
 
 /*            // Check for updates
@@ -247,21 +244,19 @@ import java.util.zip.ZipInputStream;
                         this.IMP.setGenerator(world);
                     }
                 }
-                TaskManager.runTaskLater(new Runnable() {
-                    @Override public void run() {
-                        for (String world : section.getKeys(false)) {
-                            if (world.equals("CheckingPlotSquaredGenerator")) {
-                                continue;
-                            }
-                            if (!WorldUtil.IMP.isWorld(world) && !world.equals("*")) {
-                                debug("&c`" + world + "` was not properly loaded - " + IMP
-                                    .getPluginName() + " will now try to load it properly: ");
-                                debug(
-                                    "&8 - &7Are you trying to delete this world? Remember to remove it from the settings.yml, bukkit.yml and multiverse worlds.yml");
-                                debug(
-                                    "&8 - &7Your world management plugin may be faulty (or non existent)");
-                                PlotSquared.this.IMP.setGenerator(world);
-                            }
+                TaskManager.runTaskLater(() -> {
+                    for (String world : section.getKeys(false)) {
+                        if (world.equals("CheckingPlotSquaredGenerator")) {
+                            continue;
+                        }
+                        if (!WorldUtil.IMP.isWorld(world) && !world.equals("*")) {
+                            debug("&c`" + world + "` was not properly loaded - " + IMP
+                                .getPluginName() + " will now try to load it properly: ");
+                            debug(
+                                "&8 - &7Are you trying to delete this world? Remember to remove it from the settings.yml, bukkit.yml and multiverse worlds.yml");
+                            debug(
+                                "&8 - &7Your world management plugin may be faulty (or non existent)");
+                            PlotSquared.this.IMP.setGenerator(world);
                         }
                     }
                 }, 1);
@@ -342,25 +337,21 @@ import java.util.zip.ZipInputStream;
     }
 
     private void startUuidCatching() {
-        TaskManager.runTaskLater(new Runnable() {
-            @Override public void run() {
-                debug("Starting UUID caching");
-                UUIDHandler.startCaching(new Runnable() {
-                    @Override public void run() {
-                        UUIDHandler.add(new StringWrapper("*"), DBFunc.EVERYONE);
-                        foreachPlotRaw(new RunnableVal<Plot>() {
-                            @Override public void run(Plot plot) {
-                                if (plot.hasOwner() && plot.temp != -1) {
-                                    if (UUIDHandler.getName(plot.owner) == null) {
-                                        UUIDHandler.implementation.unknown.add(plot.owner);
-                                    }
-                                }
+        TaskManager.runTaskLater(() -> {
+            debug("Starting UUID caching");
+            UUIDHandler.startCaching(() -> {
+                UUIDHandler.add(new StringWrapper("*"), DBFunc.EVERYONE);
+                foreachPlotRaw(new RunnableVal<Plot>() {
+                    @Override public void run(Plot plot) {
+                        if (plot.hasOwner() && plot.temp != -1) {
+                            if (UUIDHandler.getName(plot.owner) == null) {
+                                UUIDHandler.implementation.unknown.add(plot.owner);
                             }
-                        });
-                        startExpiryTasks();
+                        }
                     }
                 });
-            }
+                startExpiryTasks();
+            });
         }, 20);
     }
 
@@ -495,11 +486,8 @@ import java.util.zip.ZipInputStream;
         if (this.plots_tmp == null) {
             this.plots_tmp = new HashMap<>();
         }
-        HashMap<PlotId, Plot> map = this.plots_tmp.get(area.toString());
-        if (map == null) {
-            map = new HashMap<>();
-            this.plots_tmp.put(area.toString(), map);
-        }
+        HashMap<PlotId, Plot> map =
+            this.plots_tmp.computeIfAbsent(area.toString(), k -> new HashMap<>());
         for (Plot plot : area.getPlots()) {
             map.put(plot.getId(), plot);
         }
@@ -567,11 +555,7 @@ import java.util.zip.ZipInputStream;
                 result.add(plot);
             }
         }
-        Collections.sort(overflow, new Comparator<Plot>() {
-            @Override public int compare(Plot a, Plot b) {
-                return a.hashCode() - b.hashCode();
-            }
-        });
+        overflow.sort(Comparator.comparingInt(Plot::hashCode));
         result.addAll(overflow);
         return result;
     }
@@ -581,12 +565,8 @@ import java.util.zip.ZipInputStream;
      *
      * @param plots the collection of plots to sort
      * @return the sorted collection
-     * @deprecated Unchecked, please use
-     * {@link #sortPlots(Collection, SortType, PlotArea)} which has
-     * additional checks before calling this
      */
-    // TODO: Re-evaluate deprecation of this, as it's being used internally
-    @Deprecated public ArrayList<Plot> sortPlotsByHash(Collection<Plot> plots) {
+    private ArrayList<Plot> sortPlotsByHash(Collection<Plot> plots) {
         int hardmax = 256000;
         int max = 0;
         int overflowSize = 0;
@@ -618,7 +598,7 @@ import java.util.zip.ZipInputStream;
                 overflow.add(plot);
             }
         }
-        Plot[] overflowArray = overflow.toArray(new Plot[overflow.size()]);
+        Plot[] overflowArray = overflow.toArray(new Plot[0]);
         sortPlotsByHash(overflowArray);
         ArrayList<Plot> result = new ArrayList<>(cache.length + overflowArray.length);
         for (Plot plot : cache) {
@@ -627,9 +607,7 @@ import java.util.zip.ZipInputStream;
             }
         }
         Collections.addAll(result, overflowArray);
-        for (Plot plot : extra) {
-            result.add(plot);
-        }
+        result.addAll(extra);
         return result;
     }
 
@@ -638,8 +616,7 @@ import java.util.zip.ZipInputStream;
      *
      * @param input an array of plots to sort
      */
-    // TODO: Re-evaluate deprecation of this, as it's being used internally
-    @Deprecated public void sortPlotsByHash(Plot[] input) {
+    private void sortPlotsByHash(Plot[] input) {
         List<Plot>[] bucket = new ArrayList[32];
         for (int i = 0; i < bucket.length; i++) {
             bucket[i] = new ArrayList<>();
@@ -648,26 +625,25 @@ import java.util.zip.ZipInputStream;
         int placement = 1;
         while (!maxLength) {
             maxLength = true;
-            for (Plot i : input) {
-                int tmp = MathMan.getPositiveId(i.hashCode()) / placement;
-                bucket[tmp & 31].add(i);
+            for (Plot plot : input) {
+                int tmp = MathMan.getPositiveId(plot.hashCode()) / placement;
+                bucket[tmp & 31].add(plot);
                 if (maxLength && tmp > 0) {
                     maxLength = false;
                 }
             }
             int a = 0;
-            for (int b = 0; b < 32; b++) {
-                for (Plot i : bucket[b]) {
-                    input[a++] = i;
+            for (int i = 0; i < 32; i++) {
+                for (Plot plot : bucket[i]) {
+                    input[a++] = plot;
                 }
-                bucket[b].clear();
+                bucket[i].clear();
             }
             placement *= 32;
         }
     }
 
-    // TODO: Re-evaluate deprecation of this, as it's being used internally
-    @Deprecated public ArrayList<Plot> sortPlotsByTimestamp(Collection<Plot> plots) {
+    private ArrayList<Plot> sortPlotsByTimestamp(Collection<Plot> plots) {
         int hardMax = 256000;
         int max = 0;
         int overflowSize = 0;
@@ -699,7 +675,7 @@ import java.util.zip.ZipInputStream;
                 overflow.add(plot);
             }
         }
-        Plot[] overflowArray = overflow.toArray(new Plot[overflow.size()]);
+        Plot[] overflowArray = overflow.toArray(new Plot[0]);
         sortPlotsByHash(overflowArray);
         ArrayList<Plot> result = new ArrayList<>(cache.length + overflowArray.length);
         for (Plot plot : cache) {
@@ -708,9 +684,7 @@ import java.util.zip.ZipInputStream;
             }
         }
         Collections.addAll(result, overflowArray);
-        for (Plot plot : extra) {
-            result.add(plot);
-        }
+        result.addAll(extra);
         return result;
     }
 
@@ -719,27 +693,16 @@ import java.util.zip.ZipInputStream;
      *
      * @param input
      * @return
-     * @deprecated Unchecked, use {@link #sortPlots(Collection, SortType, PlotArea)} instead which will call this after checks
      */
-    // TODO: Re-evaluate deprecation of this, as it's being used internally
-    @Deprecated public List<Plot> sortPlotsByModified(Collection<Plot> input) {
+    private List<Plot> sortPlotsByModified(Collection<Plot> input) {
         List<Plot> list;
         if (input instanceof List) {
             list = (List<Plot>) input;
         } else {
             list = new ArrayList<>(input);
         }
-        Collections.sort(list, new Comparator<Plot>() {
-            @Override public int compare(Plot a, Plot b) {
-                return Long.compare(ExpireManager.IMP.getTimestamp(a.owner),
-                    ExpireManager.IMP.getTimestamp(b.owner));
-            }
-        });
+        list.sort(Comparator.comparingLong(a -> ExpireManager.IMP.getTimestamp(a.owner)));
         return list;
-    }
-
-    public ArrayList<Plot> sortPlots(Collection<Plot> plots) {
-        return sortPlots(plots, SortType.DISTANCE_FROM_ORIGIN, null);
     }
 
     /**
@@ -764,7 +727,7 @@ import java.util.zip.ZipInputStream;
             }
         } else {
             for (PlotArea area : plotAreaManager.getAllPlotAreas()) {
-                map.put(area, new ArrayList<Plot>(0));
+                map.put(area, new ArrayList<>(0));
             }
             Collection<Plot> lastList = null;
             PlotArea lastWorld = null;
@@ -779,17 +742,15 @@ import java.util.zip.ZipInputStream;
             }
         }
         List<PlotArea> areas = Arrays.asList(plotAreaManager.getAllPlotAreas());
-        Collections.sort(areas, new Comparator<PlotArea>() {
-            @Override public int compare(PlotArea a, PlotArea b) {
-                if (priorityArea != null) {
-                    if (a.equals(priorityArea)) {
-                        return -1;
-                    } else if (b.equals(priorityArea)) {
-                        return 1;
-                    }
+        areas.sort((a, b) -> {
+            if (priorityArea != null) {
+                if (a.equals(priorityArea)) {
+                    return -1;
+                } else if (b.equals(priorityArea)) {
+                    return 1;
                 }
-                return a.hashCode() - b.hashCode();
             }
+            return a.hashCode() - b.hashCode();
         });
         ArrayList<Plot> toReturn = new ArrayList<>(plots.size());
         for (PlotArea area : areas) {
@@ -868,11 +829,8 @@ import java.util.zip.ZipInputStream;
             String world = entry.getKey();
             PlotArea area = getPlotArea(world, null);
             if (area == null) {
-                HashMap<PlotId, Plot> map = this.plots_tmp.get(world);
-                if (map == null) {
-                    map = new HashMap<>();
-                    this.plots_tmp.put(world, map);
-                }
+                HashMap<PlotId, Plot> map =
+                    this.plots_tmp.computeIfAbsent(world, k -> new HashMap<>());
                 map.putAll(entry.getValue());
             } else {
                 for (Plot plot : entry.getValue().values()) {
@@ -1025,11 +983,8 @@ import java.util.zip.ZipInputStream;
     }
 
     public boolean hasPlot(final UUID uuid) {
-        for (final PlotArea area : plotAreaManager.getAllPlotAreas()) {
-            if (area.hasPlot(uuid))
-                return true;
-        }
-        return false;
+        return Arrays.stream(plotAreaManager.getAllPlotAreas())
+            .anyMatch(area -> area.hasPlot(uuid));
     }
 
     public Set<Plot> getBasePlots(final UUID uuid) {
@@ -1918,11 +1873,8 @@ import java.util.zip.ZipInputStream;
     }
 
     public int getPlotCount() {
-        int count = 0;
-        for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-            count += area.getPlotCount();
-        }
-        return count;
+        return Arrays.stream(this.plotAreaManager.getAllPlotAreas()).mapToInt(PlotArea::getPlotCount)
+            .sum();
     }
 
     public Set<PlotArea> getPlotAreas() {
