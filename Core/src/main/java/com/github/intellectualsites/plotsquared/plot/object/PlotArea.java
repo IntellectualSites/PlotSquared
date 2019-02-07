@@ -14,6 +14,8 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.area.QuadMap;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -525,17 +527,8 @@ public abstract class PlotArea {
     }
 
     @Nonnull public Set<Plot> getPlots(@Nonnull final UUID uuid) {
-        final Set<Plot> myplots = new HashSet<>();
-        for (final Plot plot : getPlots()) {
-            if (plot.isBasePlot() && plot.isOwner(uuid)) {
-                myplots.add(plot);
-            }
-        }
-        return myplots;
-    }
-
-    public Set<Plot> getPlots(@Nonnull final PlotPlayer player) {
-        return getPlots(player.getUUID());
+        return getPlots().stream().filter(plot -> plot.isBasePlot() && plot.isOwner(uuid))
+            .collect(ImmutableSet.toImmutableSet());
     }
 
     /**
@@ -558,6 +551,15 @@ public abstract class PlotArea {
             return count;
         }
         return getPlotsAbs(uuid).size();
+    }
+
+    /**
+     * Retrieves the plots for the player in this PlotArea.
+     *
+     * @deprecated Use {@link #getPlots(UUID)}
+     */
+    @Deprecated public Set<Plot> getPlots(@Nonnull final PlotPlayer player) {
+        return getPlots(player.getUUID());
     }
 
     public boolean hasPlot(@Nonnull final UUID uuid) {
@@ -685,8 +687,20 @@ public abstract class PlotArea {
         }
     }
 
-    @Nonnull public Map<PlotId, Plot> getPlotsRaw() {
-        return this.plots;
+    /**
+     * Returns an ImmutableMap of PlotId's and Plots in this PlotArea.
+     */
+    public Map<PlotId, Plot> getPlotsMap() {
+        return ImmutableMap.copyOf(plots);
+    }
+
+    /**
+     * Returns an ImmutableMap of PlotId's and Plots in this PlotArea.
+     * @deprecated Use {@link #getPlotsMap()}
+     */
+    //todo eventually remove
+    @Deprecated @Nonnull public Map<PlotId, Plot> getPlotsRaw() {
+        return ImmutableMap.copyOf(plots);
     }
 
     @Nonnull public Set<Entry<PlotId, Plot>> getPlotEntries() {
@@ -714,14 +728,13 @@ public abstract class PlotArea {
             center = new PlotId(0, 0);
             plots = Integer.MAX_VALUE;
         }
-        PlotId currentId;
         for (int i = 0; i < plots; i++) {
             if (start == null) {
                 start = getMeta("lastPlot", new PlotId(0, 0));
             } else {
                 start = start.getNextId(1);
             }
-            currentId = new PlotId(center.x + start.x, center.y + start.y);
+            PlotId currentId = new PlotId(center.x + start.x, center.y + start.y);
             Plot plot = getPlotAbs(currentId);
             if (plot != null && plot.canClaim(player)) {
                 setMeta("lastPlot", currentId);

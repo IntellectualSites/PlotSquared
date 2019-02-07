@@ -34,10 +34,12 @@ import java.util.concurrent.atomic.AtomicInteger;
     public final String CREATE_PLOT;
     public final String CREATE_PLOT_SAFE;
     public final String CREATE_CLUSTER;
-    private final String prefix;
+
     // Private Final
+    private final String prefix;
     private final Database database;
     private final boolean mySQL;
+
     /**
      * important tasks
      */
@@ -67,6 +69,7 @@ import java.util.concurrent.atomic.AtomicInteger;
      * cluster_settings
      */
     public volatile ConcurrentHashMap<PlotCluster, Queue<UniqueStatement>> clusterTasks;
+
     // Private
     private Connection connection;
     private boolean closed = false;
@@ -75,11 +78,11 @@ import java.util.concurrent.atomic.AtomicInteger;
      * Constructor
      *
      * @param database
-     * @param p        prefix
+     * @param prefix   prefix
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public SQLManager(final Database database, String p, boolean debug)
+    public SQLManager(final Database database, String prefix, boolean debug)
         throws SQLException, ClassNotFoundException {
         // Private final
         this.database = database;
@@ -90,7 +93,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         this.plotTasks = new ConcurrentHashMap<>();
         this.playerTasks = new ConcurrentHashMap<>();
         this.clusterTasks = new ConcurrentHashMap<>();
-        this.prefix = p;
+        this.prefix = prefix;
         this.SET_OWNER = "UPDATE `" + this.prefix
             + "plot` SET `owner` = ? WHERE `plot_id_x` = ? AND `plot_id_z` = ? AND `world` = ?";
         this.GET_ALL_PLOTS =
@@ -551,30 +554,18 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 }
                             }
                         }
-                        createSettings(settings, new Runnable() {
-                            @Override public void run() {
-                                createTiers(helpers, "helpers", new Runnable() {
-                                    @Override public void run() {
-                                        createTiers(trusted, "trusted", new Runnable() {
-                                            @Override public void run() {
-                                                createTiers(denied, "denied", new Runnable() {
-                                                    @Override public void run() {
-                                                        try {
-                                                            SQLManager.this.connection.commit();
-                                                        } catch (SQLException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                        if (whenDone != null) {
-                                                            whenDone.run();
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                        });
+                        createSettings(settings, () -> createTiers(helpers, "helpers",
+                            () -> createTiers(trusted, "trusted",
+                                () -> createTiers(denied, "denied", () -> {
+                                    try {
+                                        SQLManager.this.connection.commit();
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
                                     }
-                                });
-                            }
-                        });
+                                    if (whenDone != null) {
+                                        whenDone.run();
+                                    }
+                                }))));
                     } catch (SQLException e) {
                         e.printStackTrace();
                         PlotSquared.debug("&7[WARN] Failed to set all helpers for plots");
@@ -1354,7 +1345,7 @@ import java.util.concurrent.atomic.AtomicInteger;
     }
 
     /**
-     * Create plot settings
+     * Creates plot settings
      *
      * @param id
      * @param plot
