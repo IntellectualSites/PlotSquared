@@ -696,6 +696,7 @@ public abstract class PlotArea {
 
     /**
      * Returns an ImmutableMap of PlotId's and Plots in this PlotArea.
+     *
      * @deprecated Use {@link #getPlotsMap()}
      */
     //todo eventually remove

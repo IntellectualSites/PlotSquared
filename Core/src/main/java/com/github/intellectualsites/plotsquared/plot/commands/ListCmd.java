@@ -165,18 +165,16 @@ public class ListCmd extends SubCommand {
                         plots.add(plot);
                     }
                 }
-                Collections.sort(plots, new Comparator<Plot>() {
-                    @Override public int compare(Plot a, Plot b) {
-                        String va = "" + a.getFlags().get(Flags.DONE);
-                        String vb = "" + b.getFlags().get(Flags.DONE);
-                        if (MathMan.isInteger(va)) {
-                            if (MathMan.isInteger(vb)) {
-                                return Integer.parseInt(vb) - Integer.parseInt(va);
-                            }
-                            return -1;
+                plots.sort((a, b) -> {
+                    String va = "" + a.getFlags().get(Flags.DONE);
+                    String vb = "" + b.getFlags().get(Flags.DONE);
+                    if (MathMan.isInteger(va)) {
+                        if (MathMan.isInteger(vb)) {
+                            return Integer.parseInt(vb) - Integer.parseInt(va);
                         }
-                        return 1;
+                        return -1;
                     }
+                    return 1;
                 });
                 sort = false;
                 break;
@@ -186,33 +184,30 @@ public class ListCmd extends SubCommand {
                     return false;
                 }
                 plots = new ArrayList<>(PlotSquared.get().getPlots());
-                Collections.sort(plots, new Comparator<Plot>() {
-                    @Override public int compare(Plot p1, Plot p2) {
-                        double v1 = 0;
-                        int p1s = p1.getSettings().getRatings().size();
-                        int p2s = p2.getRatings().size();
-                        if (!p1.getSettings().getRatings().isEmpty()) {
-                            for (Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
-                                double av = entry.getValue().getAverageRating();
-                                v1 += av * av;
-                            }
-                            v1 /= p1s;
-                            v1 += p1s;
-                        }
-                        double v2 = 0;
-                        if (!p2.getSettings().getRatings().isEmpty()) {
-                            for (Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
-                                double av = entry.getValue().getAverageRating();
-                                v2 += av * av;
-                            }
-                            v2 /= p2s;
-                            v2 += p2s;
-                        }
-                        if (v2 == v1 && v2 != 0) {
-                            return p2s - p1s;
-                        }
-                        return (int) Math.signum(v2 - v1);
+                plots.sort((p1, p2) -> {
+                    double v1 = 0;
+                    int p1s = p1.getSettings().getRatings().size();
+                    int p2s = p2.getRatings().size();
+                    if (!p1.getSettings().getRatings().isEmpty()) {
+                        v1 = p1.getRatings().entrySet().stream()
+                            .mapToDouble(entry -> entry.getValue().getAverageRating())
+                            .map(av -> av * av).sum();
+                        v1 /= p1s;
+                        v1 += p1s;
                     }
+                    double v2 = 0;
+                    if (!p2.getSettings().getRatings().isEmpty()) {
+                        for (Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
+                            double av = entry.getValue().getAverageRating();
+                            v2 += av * av;
+                        }
+                        v2 /= p2s;
+                        v2 += p2s;
+                    }
+                    if (v2 == v1 && v2 != 0) {
+                        return p2s - p1s;
+                    }
+                    return (int) Math.signum(v2 - v1);
                 });
                 sort = false;
                 break;

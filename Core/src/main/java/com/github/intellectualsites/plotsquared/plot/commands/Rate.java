@@ -22,25 +22,23 @@ import java.util.Map.Entry;
             switch (args[0].toLowerCase()) {
                 case "next": {
                     ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getBasePlots());
-                    Collections.sort(plots, new Comparator<Plot>() {
-                        @Override public int compare(Plot p1, Plot p2) {
-                            double v1 = 0;
-                            if (!p1.getRatings().isEmpty()) {
-                                for (Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
-                                    v1 -= 11 - entry.getValue().getAverageRating();
-                                }
+                    plots.sort((p1, p2) -> {
+                        double v1 = 0;
+                        if (!p1.getRatings().isEmpty()) {
+                            for (Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
+                                v1 -= 11 - entry.getValue().getAverageRating();
                             }
-                            double v2 = 0;
-                            if (!p2.getRatings().isEmpty()) {
-                                for (Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
-                                    v2 -= 11 - entry.getValue().getAverageRating();
-                                }
-                            }
-                            if (v1 == v2) {
-                                return -0;
-                            }
-                            return v2 > v1 ? 1 : -1;
                         }
+                        double v2 = 0;
+                        if (!p2.getRatings().isEmpty()) {
+                            for (Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
+                                v2 -= 11 - entry.getValue().getAverageRating();
+                            }
+                        }
+                        if (v1 == v2) {
+                            return -0;
+                        }
+                        return v2 > v1 ? 1 : -1;
                     });
                     UUID uuid = player.getUUID();
                     for (Plot p : plots) {
@@ -137,11 +135,9 @@ import java.util.Map.Entry;
             };
             if (plot.getSettings().ratings == null) {
                 if (!Settings.Enabled_Components.RATING_CACHE) {
-                    TaskManager.runTaskAsync(new Runnable() {
-                        @Override public void run() {
-                            plot.getSettings().ratings = DBFunc.getRatings(plot);
-                            run.run();
-                        }
+                    TaskManager.runTaskAsync(() -> {
+                        plot.getSettings().ratings = DBFunc.getRatings(plot);
+                        run.run();
                     });
                     return true;
                 }
@@ -167,26 +163,22 @@ import java.util.Map.Entry;
             return false;
         }
         final UUID uuid = player.getUUID();
-        final Runnable run = new Runnable() {
-            @Override public void run() {
-                if (plot.getRatings().containsKey(uuid)) {
-                    sendMessage(player, C.RATING_ALREADY_EXISTS, plot.getId().toString());
-                    return;
-                }
-                Rating result = EventUtil.manager.callRating(player, plot, new Rating(rating));
-                if (result != null) {
-                    plot.addRating(uuid, result);
-                    sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
-                }
+        final Runnable run = () -> {
+            if (plot.getRatings().containsKey(uuid)) {
+                sendMessage(player, C.RATING_ALREADY_EXISTS, plot.getId().toString());
+                return;
+            }
+            Rating result = EventUtil.manager.callRating(player, plot, new Rating(rating));
+            if (result != null) {
+                plot.addRating(uuid, result);
+                sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
             }
         };
         if (plot.getSettings().ratings == null) {
             if (!Settings.Enabled_Components.RATING_CACHE) {
-                TaskManager.runTaskAsync(new Runnable() {
-                    @Override public void run() {
-                        plot.getSettings().ratings = DBFunc.getRatings(plot);
-                        run.run();
-                    }
+                TaskManager.runTaskAsync(() -> {
+                    plot.getSettings().ratings = DBFunc.getRatings(plot);
+                    run.run();
                 });
                 return true;
             }

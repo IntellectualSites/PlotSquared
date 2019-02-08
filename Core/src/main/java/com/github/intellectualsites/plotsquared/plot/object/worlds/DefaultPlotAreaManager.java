@@ -10,7 +10,7 @@ import java.util.*;
 
 public class DefaultPlotAreaManager implements PlotAreaManager {
 
-    protected final PlotArea[] noPlotAreas = new PlotArea[0];
+    final PlotArea[] noPlotAreas = new PlotArea[0];
     // All plot areas mapped by world
     private final HashMap<String, PlotArea[]> plotAreaMap = new HashMap<>();
     // All plot areas mapped by position

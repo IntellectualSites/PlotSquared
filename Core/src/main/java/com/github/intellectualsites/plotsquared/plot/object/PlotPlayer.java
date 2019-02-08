@@ -168,11 +168,11 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
             return Integer.MAX_VALUE;
         }
         String[] nodes = stub.split("\\.");
-        StringBuilder n = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         for (int i = 0; i < (nodes.length - 1); i++) {
-            n.append(nodes[i]).append(".");
-            if (!stub.equals(n + C.PERMISSION_STAR.s())) {
-                if (hasPermission(n + C.PERMISSION_STAR.s())) {
+            builder.append(nodes[i]).append(".");
+            if (!stub.equals(builder + C.PERMISSION_STAR.s())) {
+                if (hasPermission(builder + C.PERMISSION_STAR.s())) {
                     return Integer.MAX_VALUE;
                 }
             }
@@ -222,7 +222,6 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
             return getClusterCount(getLocation().getWorld());
         }
         final AtomicInteger count = new AtomicInteger(0);
-        final UUID uuid = getUUID();
         PlotSquared.get().foreachPlotArea(new RunnableVal<PlotArea>() {
             @Override public void run(PlotArea value) {
                 for (PlotCluster cluster : value.getClusters()) {
@@ -510,14 +509,9 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      * @return
      */
     public int getPlayerClusterCount(String world) {
-        UUID uuid = getUUID();
-        int count = 0;
-        for (PlotCluster cluster : PlotSquared.get().getClusters(world)) {
-            if (uuid.equals(cluster.owner)) {
-                count += cluster.getArea();
-            }
-        }
-        return count;
+        return PlotSquared.get().getClusters(world).stream()
+            .filter(cluster -> getUUID().equals(cluster.owner)).mapToInt(PlotCluster::getArea)
+            .sum();
     }
 
     /**
@@ -580,31 +574,27 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                                                 final Location loc =
                                                     new Location(plot.getWorldName(), x, y, z);
                                                 if (plot.isLoaded()) {
-                                                    TaskManager.runTask(new Runnable() {
-                                                        @Override public void run() {
-                                                            if (getMeta("teleportOnLogin", true)) {
-                                                                teleport(loc);
-                                                                sendMessage(C.TELEPORTED_TO_PLOT.f()
-                                                                    + " (quitLoc) (" + plotX + ","
-                                                                    + plotZ + ")");
-                                                            }
+                                                    TaskManager.runTask(() -> {
+                                                        if (getMeta("teleportOnLogin", true)) {
+                                                            teleport(loc);
+                                                            sendMessage(C.TELEPORTED_TO_PLOT.f()
+                                                                + " (quitLoc) (" + plotX + ","
+                                                                + plotZ + ")");
                                                         }
                                                     });
                                                 } else if (!PlotSquared.get()
                                                     .isMainThread(Thread.currentThread())) {
                                                     if (getMeta("teleportOnLogin", true)) {
                                                         if (plot.teleportPlayer(PlotPlayer.this)) {
-                                                            TaskManager.runTask(new Runnable() {
-                                                                @Override public void run() {
-                                                                    if (getMeta("teleportOnLogin",
-                                                                        true)) {
-                                                                        teleport(loc);
-                                                                        sendMessage(
-                                                                            C.TELEPORTED_TO_PLOT.f()
-                                                                                + " (quitLoc-unloaded) ("
-                                                                                + plotX + ","
-                                                                                + plotZ + ")");
-                                                                    }
+                                                            TaskManager.runTask(() -> {
+                                                                if (getMeta("teleportOnLogin",
+                                                                    true)) {
+                                                                    teleport(loc);
+                                                                    sendMessage(
+                                                                        C.TELEPORTED_TO_PLOT.f()
+                                                                            + " (quitLoc-unloaded) ("
+                                                                            + plotX + "," + plotZ
+                                                                            + ")");
                                                                 }
                                                             });
                                                         }

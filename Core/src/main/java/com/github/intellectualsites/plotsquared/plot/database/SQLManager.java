@@ -2616,7 +2616,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 } catch (Exception ignored) {
                                 }
                         }
-                        Integer m = resultSet.getInt("merged");
+                        int m = resultSet.getInt("merged");
                         boolean[] merged = new boolean[4];
                         for (int i = 0; i < 4; i++) {
                             merged[3 - i] = (m & 1 << i) != 0;

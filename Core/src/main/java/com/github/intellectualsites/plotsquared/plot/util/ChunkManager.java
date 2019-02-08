@@ -239,20 +239,18 @@ public abstract class ChunkManager {
 
     public void deleteRegionFiles(final String world, final Collection<ChunkLoc> chunks,
         final Runnable whenDone) {
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override public void run() {
-                for (ChunkLoc loc : chunks) {
-                    String directory =
-                        world + File.separator + "region" + File.separator + "r." + loc.x + "."
-                            + loc.z + ".mca";
-                    File file = new File(PlotSquared.get().IMP.getWorldContainer(), directory);
-                    PlotSquared.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
-                    if (file.exists()) {
-                        file.delete();
-                    }
+        TaskManager.runTaskAsync(() -> {
+            for (ChunkLoc loc : chunks) {
+                String directory =
+                    world + File.separator + "region" + File.separator + "r." + loc.x + "."
+                        + loc.z + ".mca";
+                File file = new File(PlotSquared.get().IMP.getWorldContainer(), directory);
+                PlotSquared.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
+                if (file.exists()) {
+                    file.delete();
                 }
-                TaskManager.runTask(whenDone);
             }
+            TaskManager.runTask(whenDone);
         });
     }
 
