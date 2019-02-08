@@ -15,28 +15,28 @@ import java.util.List;
 public interface IPlotMain extends ILogger {
 
     /**
-     * Log a message to console.
+     * Logs a message to console.
      *
-     * @param message The message to log
+     * @param message the message to log
      */
     void log(String message);
 
     /**
-     * Get the `PlotSquared` directory.
+     * Gets the directory which contains PlotSquared files. The directory may not exist.
      *
-     * @return The plugin directory
+     * @return the PlotSquared directory
      */
     File getDirectory();
 
     /**
-     * Get the directory containing all the worlds.
+     * Gets the folder where all world data is stored.
      *
-     * @return The directory containing the worlds
+     * @return the world folder
      */
     File getWorldContainer();
 
     /**
-     * Wrap a player into a PlotPlayer object.
+     * Wraps a player into a PlotPlayer object.
      *
      * @param player The player to convert to a PlotPlayer
      * @return A PlotPlayer
@@ -44,70 +44,56 @@ public interface IPlotMain extends ILogger {
     PlotPlayer wrapPlayer(Object player);
 
     /**
-     * Disable the implementation.
-     *
-     * <ul>
-     * <li>If a full disable isn't feasibly, just disable what it can.
-     * </ul>
-     */
-    void disable();
-
-    /**
-     * Completely shut down the plugin
+     * Completely shuts down the plugin.
      */
     void shutdown();
 
     /**
-     * Get the version of the PlotSquared being used.
+     * Gets the version of the PlotSquared being used.
      *
      * @return the plugin version
      */
     int[] getPluginVersion();
 
     /**
-     * Get the version of the PlotSquared being used as a string.
+     * Gets the version of the PlotSquared being used as a string.
      *
      * @return the plugin version as a string
      */
     String getPluginVersionString();
 
-    /**
-     * Usually PlotSquared
-     *
-     * @return
-     */
     String getPluginName();
 
     /**
-     * Get the version of Minecraft that is running.
+     * Gets the version of Minecraft that is running.
      *
      * @return
      */
     int[] getServerVersion();
 
     /**
-     * Get the server implementation name and version
+     * Gets the server implementation name and version
      */
     String getServerImplementation();
 
     /**
-     * Get the NMS package prefix.
+     * Gets the NMS package prefix.
      *
      * @return The NMS package prefix
      */
     String getNMSPackage();
 
     /**
-     * Get the schematic handler.
+     * Gets the schematic handler.
      *
      * @return The {@link SchematicHandler}
      */
     SchematicHandler initSchematicHandler();
 
     /**
-     * Get the Chat Manager.
+     * Starts the {@link ChatManager}.
      *
-     * @return The {@link ChatManager}
+     * @return the ChatManager
      */
     ChatManager initChatManager();
 
@@ -124,7 +110,7 @@ public interface IPlotMain extends ILogger {
     void runEntityTask();
 
     /**
-     * Register the implementation specific commands.
+     * Registerss the implementation specific commands.
      */
     void registerCommands();
 
@@ -132,11 +118,6 @@ public interface IPlotMain extends ILogger {
      * Register the protection system.
      */
     void registerPlayerEvents();
-
-    /**
-     * Register inventory related events.
-     */
-    void registerInventoryEvents();
 
     /**
      * Register plot plus related events.
@@ -149,54 +130,54 @@ public interface IPlotMain extends ILogger {
     void registerForceFieldEvents();
 
     /**
-     * Register the WorldEdit hook.
+     * Registers the WorldEdit hook.
      */
     boolean initWorldEdit();
 
     /**
-     * Get the economy provider.
+     * Gets the economy provider.
      *
      * @return
      */
     EconHandler getEconomyHandler();
 
     /**
-     * Get the {@link QueueProvider} class.
+     * Gets the {@link QueueProvider} class.
      *
      * @return
      */
     QueueProvider initBlockQueue();
 
     /**
-     * Get the {@link WorldUtil} class.
+     * Gets the {@link WorldUtil} class.
      *
      * @return
      */
     WorldUtil initWorldUtil();
 
     /**
-     * Get the EventUtil class.
+     * Gets the EventUtil class.
      *
      * @return
      */
     EventUtil initEventUtil();
 
     /**
-     * Get the chunk manager.
+     * Gets the chunk manager.
      *
      * @return
      */
     ChunkManager initChunkManager();
 
     /**
-     * Get the {@link SetupUtils} class.
+     * Gets the {@link SetupUtils} class.
      *
      * @return
      */
     SetupUtils initSetupUtils();
 
     /**
-     * Get {@link HybridUtils} class.
+     * Gets {@link HybridUtils} class.
      *
      * @return
      */
@@ -215,7 +196,7 @@ public interface IPlotMain extends ILogger {
     void setGenerator(String world);
 
     /**
-     * Get the {@link UUIDHandlerImplementation} which will cache and
+     * Gets the {@link UUIDHandlerImplementation} which will cache and
      * provide UUIDs.
      *
      * @return
@@ -223,7 +204,7 @@ public interface IPlotMain extends ILogger {
     UUIDHandlerImplementation initUUIDHandler();
 
     /**
-     * Get the {@link InventoryUtil} class (used for implementation specific
+     * Gets the {@link InventoryUtil} class (used for implementation specific
      * inventory guis).
      *
      * @return
@@ -231,14 +212,14 @@ public interface IPlotMain extends ILogger {
     InventoryUtil initInventoryUtil();
 
     /**
-     * Unregister a PlotPlayer from cache e.g. if they have logged off.
+     * Unregisters a {@link PlotPlayer} from cache e.g. if they have logged off.
      *
      * @param player
      */
     void unregister(PlotPlayer player);
 
     /**
-     * Get the generator wrapper for a world (world) and generator (name).
+     * Gets the generator wrapper for a world (world) and generator (name).
      *
      * @param world
      * @param name
@@ -268,7 +249,7 @@ public interface IPlotMain extends ILogger {
     IndependentPlotGenerator getDefaultGenerator();
 
     /**
-     * Get the class that will manage player titles.
+     * Gets the class that will manage player titles.
      *
      * @return
      */

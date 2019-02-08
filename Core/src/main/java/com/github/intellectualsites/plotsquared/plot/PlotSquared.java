@@ -30,6 +30,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
 import java.net.MalformedURLException;
@@ -150,7 +151,6 @@ import java.util.zip.ZipInputStream;
             }
             if (Settings.Enabled_Components.EVENTS) {
                 this.IMP.registerPlayerEvents();
-                this.IMP.registerInventoryEvents();
                 this.IMP.registerPlotPlusEvents();
             }
             // Required
@@ -1145,7 +1145,7 @@ import java.util.zip.ZipInputStream;
                 if (type == 2) {
                     Set<PlotCluster> clusters = this.clusters_tmp != null ?
                         this.clusters_tmp.get(world) :
-                        new HashSet<PlotCluster>();
+                        new HashSet<>();
                     if (clusters == null) {
                         throw new IllegalArgumentException("No cluster exists for world: " + world);
                     }
@@ -1577,7 +1577,7 @@ import java.util.zip.ZipInputStream;
                 database = new SQLite(file);
             } else {
                 PlotSquared.log(C.PREFIX + "&cNo storage type is set!");
-                this.IMP.disable();
+                this.IMP.shutdown(); //shutdown used instead of disable because no database is set
                 return;
             }
             DBFunc.dbManager = new SQLManager(database, Storage.PREFIX, false);
@@ -1607,7 +1607,7 @@ import java.util.zip.ZipInputStream;
             PlotSquared.log("&d==== End of stacktrace ====");
             PlotSquared.log("&6Please go to the " + IMP.getPluginName()
                 + " 'storage.yml' and configure the database correctly.");
-            this.IMP.disable();
+            this.IMP.shutdown(); //shutdown used instead of disable because of database error
         }
     }
 
@@ -1822,7 +1822,7 @@ import java.util.zip.ZipInputStream;
         return Double.parseDouble(System.getProperty("java.specification.version"));
     }
 
-    public void foreachPlotArea(@NonNull final RunnableVal<PlotArea> runnable) {
+    public void foreachPlotArea(@Nonnull final RunnableVal<PlotArea> runnable) {
         for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
             runnable.run(area);
         }

@@ -29,9 +29,10 @@ public class PlotId {
      * Get a Plot Id based on a string
      *
      * @param string to create id from
-     * @return null if the string is invalid
+     * @return the PlotId representation of the arguement
+     * @throws IllegalArgumentException if the string does not contain a valid PlotId
      */
-    public static PlotId fromString(@Nonnull String string) {
+    @Nonnull public static PlotId fromString(@Nonnull String string) {
         String[] parts = string.split("[;|,]");
         if (parts.length < 2) {
             throw new IllegalArgumentException("Cannot create PlotID. String invalid.");

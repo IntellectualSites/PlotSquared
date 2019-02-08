@@ -251,10 +251,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         this.getServer().getPluginManager().disablePlugin(this);
     }
 
-    @Override public void disable() {
-        onDisable();
-    }
-
     @Override public int[] getPluginVersion() {
         String ver = getDescription().getVersion();
         if (ver.contains("-")) {
@@ -555,17 +551,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Override public void registerPlayerEvents() {
         final PlayerEvents main = new PlayerEvents();
         getServer().getPluginManager().registerEvents(main, this);
-        try {
-            getServer().getClass().getMethod("spigot");
-            Class.forName("org.bukkit.event.entity.EntitySpawnEvent");
-            getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
-        } catch (final NoSuchMethodException | ClassNotFoundException ignored) {
-            PlotSquared.debug("Not running Spigot. Skipping EntitySpawnListener event.");
-        }
-    }
-
-    @Override public void registerInventoryEvents() {
-        // Part of PlayerEvents - can be moved if necessary
+        getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
     }
 
     @Override public void registerPlotPlusEvents() {

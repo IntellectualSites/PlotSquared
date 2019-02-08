@@ -18,8 +18,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "debugpaste", aliases = "dp", usage = "/plot debugpaste",
     description = "Upload settings.yml, worlds.yml, PlotSquared.use_THIS.yml and your latest.log to https://incendo.org",
@@ -28,12 +28,9 @@ import java.util.List;
 
     private static String readFile(@NonNull final File file) throws IOException {
         final StringBuilder content = new StringBuilder();
-        final List<String> lines = new ArrayList<>();
+        final List<String> lines;
         try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                lines.add(line);
-            }
+            lines = reader.lines().collect(Collectors.toList());
         }
         for (int i = Math.max(0, lines.size() - 1000); i < lines.size(); i++) {
             content.append(lines.get(i)).append("\n");

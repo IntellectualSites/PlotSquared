@@ -71,41 +71,39 @@ public abstract class ChunkManager {
 
     public static void largeRegionTask(final String world, final RegionWrapper region,
         final RunnableVal<ChunkLoc> task, final Runnable whenDone) {
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override public void run() {
-                HashSet<ChunkLoc> chunks = new HashSet<>();
-                Set<ChunkLoc> mcrs = manager.getChunkChunks(world);
-                for (ChunkLoc mcr : mcrs) {
-                    int bx = mcr.x << 9;
-                    int bz = mcr.z << 9;
-                    int tx = bx + 511;
-                    int tz = bz + 511;
-                    if (bx <= region.maxX && tx >= region.minX && bz <= region.maxZ
-                        && tz >= region.minZ) {
-                        for (int x = bx >> 4; x <= (tx >> 4); x++) {
-                            int cbx = x << 4;
-                            int ctx = cbx + 15;
-                            if (cbx <= region.maxX && ctx >= region.minX) {
-                                for (int z = bz >> 4; z <= (tz >> 4); z++) {
-                                    int cbz = z << 4;
-                                    int ctz = cbz + 15;
-                                    if (cbz <= region.maxZ && ctz >= region.minZ) {
-                                        chunks.add(new ChunkLoc(x, z));
-                                    }
+        TaskManager.runTaskAsync(() -> {
+            HashSet<ChunkLoc> chunks = new HashSet<>();
+            Set<ChunkLoc> mcrs = manager.getChunkChunks(world);
+            for (ChunkLoc mcr : mcrs) {
+                int bx = mcr.x << 9;
+                int bz = mcr.z << 9;
+                int tx = bx + 511;
+                int tz = bz + 511;
+                if (bx <= region.maxX && tx >= region.minX && bz <= region.maxZ
+                    && tz >= region.minZ) {
+                    for (int x = bx >> 4; x <= (tx >> 4); x++) {
+                        int cbx = x << 4;
+                        int ctx = cbx + 15;
+                        if (cbx <= region.maxX && ctx >= region.minX) {
+                            for (int z = bz >> 4; z <= (tz >> 4); z++) {
+                                int cbz = z << 4;
+                                int ctz = cbz + 15;
+                                if (cbz <= region.maxZ && ctz >= region.minZ) {
+                                    chunks.add(new ChunkLoc(x, z));
                                 }
                             }
                         }
                     }
                 }
-                TaskManager.objectTask(chunks, new RunnableVal<ChunkLoc>() {
-
-                    @Override public void run(ChunkLoc value) {
-                        if (manager.loadChunk(world, value, false)) {
-                            task.run(value);
-                        }
-                    }
-                }, whenDone);
             }
+            TaskManager.objectTask(chunks, new RunnableVal<ChunkLoc>() {
+
+                @Override public void run(ChunkLoc value) {
+                    if (manager.loadChunk(world, value, false)) {
+                        task.run(value);
+                    }
+                }
+            }, whenDone);
         });
     }
 

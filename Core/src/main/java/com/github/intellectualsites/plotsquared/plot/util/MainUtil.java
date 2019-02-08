@@ -12,6 +12,7 @@ import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.stream.AbstractDelegateOutputStream;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -22,6 +23,8 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * plot functions
@@ -324,7 +327,7 @@ public class MainUtil {
      * @param owner
      * @return The player's name, None, Everyone or Unknown
      */
-    public static String getName(UUID owner) {
+    @Nonnull public static String getName(UUID owner) {
         if (owner == null) {
             return C.NONE.s();
         }
@@ -346,7 +349,7 @@ public class MainUtil {
      * @return
      * @see Plot#getCorners()
      */
-    public static Location[] getCorners(String world, Collection<RegionWrapper> regions) {
+    @Nonnull public static Location[] getCorners(String world, Collection<RegionWrapper> regions) {
         Location min = null;
         Location max = null;
         for (RegionWrapper region : regions) {
@@ -399,20 +402,12 @@ public class MainUtil {
                 uuids.add(uuid);
             } catch (Exception ignored) {
                 id = PlotId.fromString(term);
-                if (id != null) {
-                    continue;
-                }
-                area = PlotSquared.get().getPlotAreaByString(term);
-                if (area == null) {
-                    alias = term;
-                }
             }
         }
 
-        ArrayList<ArrayList<Plot>> plotList = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            plotList.add(new ArrayList<Plot>());
-        }
+        ArrayList<ArrayList<Plot>> plotList =
+            IntStream.range(0, size).mapToObj(i -> new ArrayList<Plot>())
+                .collect(Collectors.toCollection(() -> new ArrayList<>(size)));
 
         for (Plot plot : PlotSquared.get().getPlots()) {
             int count = 0;
@@ -500,12 +495,6 @@ public class MainUtil {
                     return p;
                 }
             }
-            if (message) {
-                MainUtil.sendMessage(player, C.NOT_VALID_PLOT_ID);
-            }
-            return null;
-        }
-        if (id == null) {
             if (message) {
                 MainUtil.sendMessage(player, C.NOT_VALID_PLOT_ID);
             }
@@ -780,31 +769,28 @@ public class MainUtil {
         info = info.replace("%desc%", "No description set.");
         if (info.contains("%rating%")) {
             final String newInfo = info;
-            TaskManager.runTaskAsync(new Runnable() {
-                @Override public void run() {
-                    int max = 10;
-                    if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES
-                        .isEmpty()) {
-                        max = 8;
-                    }
-                    String info;
-                    if (full && Settings.Ratings.CATEGORIES != null
-                        && Settings.Ratings.CATEGORIES.size() > 1) {
-                        double[] ratings = MainUtil.getAverageRatings(plot);
-                        String rating = "";
-                        String prefix = "";
-                        for (int i = 0; i < ratings.length; i++) {
-                            rating += prefix + Settings.Ratings.CATEGORIES.get(i) + '=' + String
-                                .format("%.1f", ratings[i]);
-                            prefix = ",";
-                        }
-                        info = newInfo.replaceAll("%rating%", rating);
-                    } else {
-                        info = newInfo.replaceAll("%rating%",
-                            String.format("%.1f", plot.getAverageRating()) + '/' + max);
-                    }
-                    whenDone.run(info);
+            TaskManager.runTaskAsync(() -> {
+                int max = 10;
+                if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES.isEmpty()) {
+                    max = 8;
                 }
+                String info1;
+                if (full && Settings.Ratings.CATEGORIES != null
+                    && Settings.Ratings.CATEGORIES.size() > 1) {
+                    double[] ratings = MainUtil.getAverageRatings(plot);
+                    String rating = "";
+                    String prefix = "";
+                    for (int i = 0; i < ratings.length; i++) {
+                        rating += prefix + Settings.Ratings.CATEGORIES.get(i) + '=' + String
+                            .format("%.1f", ratings[i]);
+                        prefix = ",";
+                    }
+                    info1 = newInfo.replaceAll("%rating%", rating);
+                } else {
+                    info1 = newInfo.replaceAll("%rating%",
+                        String.format("%.1f", plot.getAverageRating()) + '/' + max);
+                }
+                whenDone.run(info1);
             });
             return;
         }
@@ -815,10 +801,9 @@ public class MainUtil {
         if (directory.exists()) {
             File[] files = directory.listFiles();
             if (null != files) {
-                for (int i = 0; i < files.length; i++) {
-                    File file = files[i];
+                for (File file : files) {
                     if (file.isDirectory()) {
-                        deleteDirectory(files[i]);
+                        deleteDirectory(file);
                     } else {
                         PlotSquared.debug("Deleting file: " + file + " | " + file.delete());
                     }
