@@ -361,22 +361,16 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                         if (meta.isEmpty()) {
                                             continue;
                                         }
-                                        PlotId originPlotId = (PlotId) meta.get(0).value();
-                                        if (originPlotId == null) {
-                                            iterator.remove();
-                                            entity.remove();
-                                        }
-                                        if (!plot.getId().equals(originPlotId)) {
+                                        Plot origin = (Plot) meta.get(0).value();
+                                        if (!plot.equals(origin.getBasePlot(false))) {
                                             if (entity.hasMetadata("ps-tmp-teleport")) {
                                                 continue;
                                             }
                                             iterator.remove();
                                             entity.remove();
                                         }
-                                        continue;
-                                    } else {
-                                        continue;
                                     }
+                                    continue;
                                 case SMALL_FIREBALL:
                                 case FIREBALL:
                                 case DRAGON_FIREBALL:
@@ -392,6 +386,57 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                 case FALLING_BLOCK:
                                     // managed elsewhere
                                     continue;
+                                case SHULKER: {
+                                    if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
+                                        LivingEntity livingEntity = (LivingEntity) entity;
+                                        List<MetadataValue> meta = entity.getMetadata("plot");
+                                        if (meta != null && !meta.isEmpty()) {
+                                            if (livingEntity.isLeashed())
+                                                continue;
+                                            List<MetadataValue> keep = entity.getMetadata("keep");
+                                            if (keep != null && !keep.isEmpty())
+                                                continue;
+
+                                            PlotId originalPlotId = (PlotId) meta.get(0).value();
+                                            if (originalPlotId != null) {
+                                                com.github.intellectualsites.plotsquared.plot.object.Location
+                                                    pLoc =
+                                                    BukkitUtil.getLocation(entity.getLocation());
+                                                PlotArea area = pLoc.getPlotArea();
+                                                if (area != null) {
+                                                    PlotId currentPlotId =
+                                                        PlotId.of(area.getPlotAbs(pLoc));
+                                                    if (!originalPlotId.equals(currentPlotId) && (
+                                                        currentPlotId == null || !area
+                                                            .getPlot(originalPlotId)
+                                                            .equals(area.getPlot(currentPlotId)))) {
+                                                        if (entity.hasMetadata("ps-tmp-teleport")) {
+                                                            continue;
+                                                        }
+                                                        iterator.remove();
+                                                        entity.remove();
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            //This is to apply the metadata to already spawned shulkers (see EntitySpawnListener.java)
+                                            com.github.intellectualsites.plotsquared.plot.object.Location
+                                                pLoc = BukkitUtil.getLocation(entity.getLocation());
+                                            PlotArea area = pLoc.getPlotArea();
+                                            if (area != null) {
+                                                PlotId currentPlotId =
+                                                    PlotId.of(area.getPlotAbs(pLoc));
+                                                if (currentPlotId != null) {
+                                                    entity.setMetadata("plot",
+                                                        new FixedMetadataValue(
+                                                            (Plugin) PlotSquared.get().IMP,
+                                                            currentPlotId));
+                                                }
+                                            }
+                                        }
+                                    }
+                                    continue;
+                                }
                                 case LLAMA:
                                 case DONKEY:
                                 case MULE:
@@ -473,57 +518,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                         }
                                     }
                                     continue;
-                                }
-                                case SHULKER: {
-                                    if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
-                                        LivingEntity livingEntity = (LivingEntity) entity;
-                                        List<MetadataValue> meta = entity.getMetadata("plot");
-                                        if (meta != null && !meta.isEmpty()) {
-                                            if (livingEntity.isLeashed())
-                                                continue;
-
-                                            List<MetadataValue> keep = entity.getMetadata("keep");
-                                            if (keep != null && !keep.isEmpty())
-                                                continue;
-
-                                            PlotId originalPlotId = (PlotId) meta.get(0).value();
-                                            if (originalPlotId != null) {
-                                                com.github.intellectualsites.plotsquared.plot.object.Location
-                                                    pLoc =
-                                                    BukkitUtil.getLocation(entity.getLocation());
-                                                PlotArea area = pLoc.getPlotArea();
-                                                if (area != null) {
-                                                    PlotId currentPlotId =
-                                                        PlotId.of(area.getPlotAbs(pLoc));
-                                                    if (!originalPlotId.equals(currentPlotId) && (
-                                                        currentPlotId == null || !area
-                                                            .getPlot(originalPlotId)
-                                                            .equals(area.getPlot(currentPlotId)))) {
-                                                        if (entity.hasMetadata("ps-tmp-teleport")) {
-                                                            continue;
-                                                        }
-                                                        iterator.remove();
-                                                        entity.remove();
-                                                    }
-                                                }
-                                            }
-                                        } else {
-                                            //This is to apply the metadata to already spawned shulkers (see EntitySpawnListener.java)
-                                            com.github.intellectualsites.plotsquared.plot.object.Location
-                                                pLoc = BukkitUtil.getLocation(entity.getLocation());
-                                            PlotArea area = pLoc.getPlotArea();
-                                            if (area != null) {
-                                                PlotId currentPlotId =
-                                                    PlotId.of(area.getPlotAbs(pLoc));
-                                                if (currentPlotId != null) {
-                                                    entity.setMetadata("plot",
-                                                        new FixedMetadataValue(
-                                                            (Plugin) PlotSquared.get().IMP,
-                                                            currentPlotId));
-                                                }
-                                            }
-                                        }
-                                    }
                                 }
                             }
                         }
