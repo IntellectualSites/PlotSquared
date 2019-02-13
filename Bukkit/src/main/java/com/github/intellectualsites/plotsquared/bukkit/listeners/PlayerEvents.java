@@ -1876,10 +1876,14 @@ import java.util.regex.Pattern;
                         eventType = PlayerBlockEventType.TELEPORT_OBJECT;
                         break;
                     default:
-                        int blockId = ((LegacyPlotBlock) PlotSquared.get().IMP.getLegacyMappings()
-                            .fromStringToLegacy(blockType.name())).id;
-                        if (blockId > 197) {
-                            eventType = PlayerBlockEventType.INTERACT_BLOCK;
+                        LegacyPlotBlock legacyPlotBlock =
+                            (LegacyPlotBlock) PlotSquared.get().IMP.getLegacyMappings()
+                                .fromStringToLegacy(blockType.name());
+                        if (legacyPlotBlock != null) {
+                            int blockId = legacyPlotBlock.id;
+                            if (blockId > 197) {
+                                eventType = PlayerBlockEventType.INTERACT_BLOCK;
+                            }
                         }
                         break;
                 }
