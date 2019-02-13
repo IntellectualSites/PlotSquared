@@ -135,9 +135,8 @@ public class EntitySpawnListener implements Listener {
     }
 
     @EventHandler public void spawn(CreatureSpawnEvent event) {
-        switch (event.getEntityType()) {
-            case ARMOR_STAND:
-                test(event.getEntity());
+        if (event.getEntityType() == EntityType.ARMOR_STAND) {
+            test(event.getEntity());
         }
     }
 }

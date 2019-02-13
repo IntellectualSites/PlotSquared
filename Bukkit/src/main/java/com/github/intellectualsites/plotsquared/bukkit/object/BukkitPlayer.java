@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class BukkitPlayer extends PlotPlayer {
 
     public final Player player;
-    public boolean offline;
+    private boolean offline;
     private UUID uuid;
     private String name;
 
@@ -147,7 +147,7 @@ public class BukkitPlayer extends PlotPlayer {
     }
 
     @Override public void sendMessage(String message) {
-        if (!StringMan.isEqual(this.<String>getMeta("lastMessage"), message) || (
+        if (!StringMan.isEqual(this.getMeta("lastMessage"), message) || (
             System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
             setMeta("lastMessage", message);
             setMeta("lastMessageTime", System.currentTimeMillis());

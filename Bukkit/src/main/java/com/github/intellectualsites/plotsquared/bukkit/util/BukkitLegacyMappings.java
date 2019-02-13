@@ -669,7 +669,7 @@ public final class BukkitLegacyMappings extends LegacyMappings {
     private static final Map<String, PlotBlock> NEW_STRING_TO_LEGACY_PLOT_BLOCK = new HashMap<>();
     private static final Map<String, PlotBlock> OLD_STRING_TO_STRING_PLOT_BLOCK = new HashMap<>();
 
-    public BukkitLegacyMappings() {
+    @SuppressWarnings("deprecation") public BukkitLegacyMappings() {
         this.addAll(Arrays.asList(BLOCKS));
         // Make sure to add new blocks as well
         final List<LegacyBlock> missing = new ArrayList<>();

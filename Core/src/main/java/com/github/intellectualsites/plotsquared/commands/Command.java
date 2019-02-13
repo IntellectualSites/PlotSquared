@@ -114,12 +114,7 @@ public abstract class Command {
     public List<Command> getCommands(CommandCategory cat, PlotPlayer player) {
         List<Command> commands = getCommands(player);
         if (cat != null) {
-            Iterator<Command> iterator = commands.iterator();
-            while (iterator.hasNext()) {
-                if (iterator.next().category != cat) {
-                    iterator.remove();
-                }
-            }
+            commands.removeIf(command -> command.category != cat);
         }
         return commands;
     }
@@ -306,11 +301,8 @@ public abstract class Command {
                     .sendMessage(player, C.DID_YOU_MEAN, MainCommand.getInstance().help.getUsage());
                 return;
             }
-            HashSet<String> setargs = new HashSet<>(args.length);
-            for (String arg : args) {
-                setargs.add(arg.toLowerCase());
-            }
-            String[] allargs = setargs.toArray(new String[setargs.size()]);
+            String[] allargs =
+                Arrays.stream(args).map(String::toLowerCase).distinct().toArray(String[]::new);
             int best = 0;
             for (Command current : commands) {
                 int match = getMatch(allargs, current);
@@ -360,14 +352,10 @@ public abstract class Command {
     }
 
     public int getMatch(String[] args, Command cmd) {
-        int count = 0;
         String perm = cmd.getPermission();
         HashSet<String> desc = new HashSet<>();
-        for (String alias : cmd.getAliases()) {
-            if (alias.startsWith(args[0])) {
-                count += 5;
-            }
-        }
+        int count = cmd.getAliases().stream().filter(alias -> alias.startsWith(args[0]))
+            .mapToInt(alias -> 5).sum();
         Collections.addAll(desc, cmd.getDescription().split(" "));
         for (String arg : args) {
             if (perm.startsWith(arg)) {

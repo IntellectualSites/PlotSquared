@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.stream.IntStream;
 
 public class Rating {
     /**
@@ -43,10 +44,7 @@ public class Rating {
     }
 
     public double getAverageRating() {
-        double total = 0;
-        for (Entry<String, Integer> entry : this.ratingMap.entrySet()) {
-            total += entry.getValue();
-        }
+        double total = this.ratingMap.entrySet().stream().mapToDouble(Entry::getValue).sum();
         return total / this.ratingMap.size();
     }
 
@@ -67,12 +65,9 @@ public class Rating {
             return this.initial;
         }
         if (Settings.Ratings.CATEGORIES != null && Settings.Ratings.CATEGORIES.size() > 1) {
-            int val = 0;
-            for (int i = 0; i < Settings.Ratings.CATEGORIES.size(); i++) {
-                val +=
-                    (i + 1) * Math.pow(10, this.ratingMap.get(Settings.Ratings.CATEGORIES.get(i)));
-            }
-            return val;
+            return IntStream.range(0, Settings.Ratings.CATEGORIES.size()).map(
+                i -> (int) ((i + 1) * Math
+                    .pow(10, this.ratingMap.get(Settings.Ratings.CATEGORIES.get(i))))).sum();
         } else {
             return this.ratingMap.get(null);
         }

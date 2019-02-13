@@ -171,126 +171,114 @@ import java.util.Map.Entry;
         }
 
         MainUtil.sendMessage(player, "&7 - Replacing cache");
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override public void run() {
-                for (Entry<UUID, UUID> entry : uCMap.entrySet()) {
-                    String name = UUIDHandler.getName(entry.getKey());
-                    if (name != null) {
-                        UUIDHandler.add(new StringWrapper(name), entry.getValue());
-                    }
+        TaskManager.runTaskAsync(() -> {
+            for (Entry<UUID, UUID> entry : uCMap.entrySet()) {
+                String name = UUIDHandler.getName(entry.getKey());
+                if (name != null) {
+                    UUIDHandler.add(new StringWrapper(name), entry.getValue());
                 }
+            }
 
-                MainUtil.sendMessage(player, "&7 - Scanning for applicable files (uuids.txt)");
+            MainUtil.sendMessage(player, "&7 - Scanning for applicable files (uuids.txt)");
 
-                File file = new File(PlotSquared.get().IMP.getDirectory(), "uuids.txt");
-                if (file.exists()) {
-                    try {
-                        List<String> lines =
-                            Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
-                        for (String line : lines) {
-                            try {
-                                line = line.trim();
-                                if (line.isEmpty()) {
-                                    continue;
-                                }
-                                line = line.replaceAll("[\\|][0-9]+[\\|][0-9]+[\\|]", "");
-                                String[] split = line.split("\\|");
-                                String name = split[0];
-                                if (name.isEmpty() || name.length() > 16 || !StringMan
-                                    .isAlphanumericUnd(name)) {
-                                    continue;
-                                }
-                                UUID old = currentUUIDWrapper.getUUID(name);
-                                if (old == null) {
-                                    continue;
-                                }
-                                UUID now = newWrapper.getUUID(name);
-                                UUIDHandler.add(new StringWrapper(name), now);
-                                uCMap.put(old, now);
-                                uCReverse.put(now, old);
-                            } catch (Exception e2) {
-                                e2.printStackTrace();
-                            }
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                MainUtil.sendMessage(player, "&7 - Replacing wrapper");
-                UUIDHandler.setUUIDWrapper(newWrapper);
-
-                MainUtil.sendMessage(player, "&7 - Updating plot objects");
-
-                for (Plot plot : PlotSquared.get().getPlots()) {
-                    UUID value = uCMap.get(plot.owner);
-                    if (value != null) {
-                        plot.owner = value;
-                    }
-                    plot.getTrusted().clear();
-                    plot.getMembers().clear();
-                    plot.getDenied().clear();
-                }
-
-                MainUtil.sendMessage(player, "&7 - Deleting database");
-                boolean result = DBFunc.deleteTables();
-
-                MainUtil.sendMessage(player, "&7 - Creating tables");
-
+            File file = new File(PlotSquared.get().IMP.getDirectory(), "uuids.txt");
+            if (file.exists()) {
                 try {
-                    DBFunc.createTables();
-                    if (!result) {
-                        MainUtil.sendMessage(player, "&cConversion failed! Attempting recovery");
-                        for (Plot plot : PlotSquared.get().getPlots()) {
-                            UUID value = uCReverse.get(plot.owner);
-                            if (value != null) {
-                                plot.owner = value;
+                    List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
+                    for (String line : lines) {
+                        try {
+                            line = line.trim();
+                            if (line.isEmpty()) {
+                                continue;
                             }
+                            line = line.replaceAll("[\\|][0-9]+[\\|][0-9]+[\\|]", "");
+                            String[] split = line.split("\\|");
+                            String name = split[0];
+                            if (name.isEmpty() || name.length() > 16 || !StringMan
+                                .isAlphanumericUnd(name)) {
+                                continue;
+                            }
+                            UUID old = currentUUIDWrapper.getUUID(name);
+                            if (old == null) {
+                                continue;
+                            }
+                            UUID now = newWrapper.getUUID(name);
+                            UUIDHandler.add(new StringWrapper(name), now);
+                            uCMap.put(old, now);
+                            uCReverse.put(now, old);
+                        } catch (Exception e2) {
+                            e2.printStackTrace();
                         }
-                        DBFunc.createPlotsAndData(new ArrayList<>(PlotSquared.get().getPlots()),
-                            new Runnable() {
-                                @Override public void run() {
-                                    MainUtil.sendMessage(player, "&6Recovery was successful!");
-                                }
-                            });
-                        return;
                     }
-                } catch (Exception e) {
+                } catch (IOException e) {
                     e.printStackTrace();
+                }
+            }
+
+            MainUtil.sendMessage(player, "&7 - Replacing wrapper");
+            UUIDHandler.setUUIDWrapper(newWrapper);
+
+            MainUtil.sendMessage(player, "&7 - Updating plot objects");
+
+            for (Plot plot : PlotSquared.get().getPlots()) {
+                UUID value = uCMap.get(plot.owner);
+                if (value != null) {
+                    plot.owner = value;
+                }
+                plot.getTrusted().clear();
+                plot.getMembers().clear();
+                plot.getDenied().clear();
+            }
+
+            MainUtil.sendMessage(player, "&7 - Deleting database");
+            boolean result = DBFunc.deleteTables();
+
+            MainUtil.sendMessage(player, "&7 - Creating tables");
+
+            try {
+                DBFunc.createTables();
+                if (!result) {
+                    MainUtil.sendMessage(player, "&cConversion failed! Attempting recovery");
+                    for (Plot plot : PlotSquared.get().getPlots()) {
+                        UUID value = uCReverse.get(plot.owner);
+                        if (value != null) {
+                            plot.owner = value;
+                        }
+                    }
+                    DBFunc.createPlotsAndData(new ArrayList<>(PlotSquared.get().getPlots()),
+                        () -> MainUtil.sendMessage(player, "&6Recovery was successful!"));
                     return;
                 }
-
-                if (newWrapper instanceof OfflineUUIDWrapper) {
-                    PlotSquared.get().worlds.set("UUID.force-lowercase", false);
-                    PlotSquared.get().worlds.set("UUID.offline", true);
-                } else if (newWrapper instanceof DefaultUUIDWrapper) {
-                    PlotSquared.get().worlds.set("UUID.force-lowercase", false);
-                    PlotSquared.get().worlds.set("UUID.offline", false);
-                }
-                try {
-                    PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
-                } catch (IOException ignored) {
-                    MainUtil.sendMessage(player,
-                        "Could not save configuration. It will need to be manual set!");
-                }
-
-                MainUtil.sendMessage(player, "&7 - Populating tables");
-
-                TaskManager.runTaskAsync(new Runnable() {
-                    @Override public void run() {
-                        ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getPlots());
-                        DBFunc.createPlotsAndData(plots, new Runnable() {
-                            @Override public void run() {
-                                MainUtil.sendMessage(player, "&aConversion complete!");
-                            }
-                        });
-                    }
-                });
-
-                MainUtil.sendMessage(player, "&aIt is now safe for players to join");
-                MainUtil.sendMessage(player,
-                    "&cConversion is still in progress, you will be notified when it is complete");
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
             }
+
+            if (newWrapper instanceof OfflineUUIDWrapper) {
+                PlotSquared.get().worlds.set("UUID.force-lowercase", false);
+                PlotSquared.get().worlds.set("UUID.offline", true);
+            } else if (newWrapper instanceof DefaultUUIDWrapper) {
+                PlotSquared.get().worlds.set("UUID.force-lowercase", false);
+                PlotSquared.get().worlds.set("UUID.offline", false);
+            }
+            try {
+                PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
+            } catch (IOException ignored) {
+                MainUtil.sendMessage(player,
+                    "Could not save configuration. It will need to be manual set!");
+            }
+
+            MainUtil.sendMessage(player, "&7 - Populating tables");
+
+            TaskManager.runTaskAsync(() -> {
+                ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getPlots());
+                DBFunc.createPlotsAndData(plots,
+                    () -> MainUtil.sendMessage(player, "&aConversion complete!"));
+            });
+
+            MainUtil.sendMessage(player, "&aIt is now safe for players to join");
+            MainUtil.sendMessage(player,
+                "&cConversion is still in progress, you will be notified when it is complete");
         });
         return true;
     }

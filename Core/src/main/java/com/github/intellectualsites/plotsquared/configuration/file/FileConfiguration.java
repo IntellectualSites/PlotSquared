@@ -6,6 +6,7 @@ import com.github.intellectualsites.plotsquared.configuration.MemoryConfiguratio
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 
 /**
  * This is a base class for all File based implementations of {@link
@@ -103,20 +104,16 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      */
     public void load(Reader reader) throws IOException, InvalidConfigurationException {
 
-        StringBuilder builder = new StringBuilder();
+        String builder;
 
         try (BufferedReader input = reader instanceof BufferedReader ?
             (BufferedReader) reader :
             new BufferedReader(reader)) {
-            String line;
 
-            while ((line = input.readLine()) != null) {
-                builder.append(line);
-                builder.append('\n');
-            }
+            builder = input.lines().map(line -> line + '\n').collect(Collectors.joining());
         }
 
-        loadFromString(builder.toString());
+        loadFromString(builder);
     }
 
     /**

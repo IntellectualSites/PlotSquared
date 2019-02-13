@@ -10,8 +10,9 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.ChatManager;
 import org.bukkit.ChatColor;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BukkitChatManager extends ChatManager<FancyMessage> {
 
@@ -24,10 +25,8 @@ public class BukkitChatManager extends ChatManager<FancyMessage> {
     }
 
     @Override public void tooltip(PlotMessage message, PlotMessage... tooltips) {
-        List<FancyMessage> lines = new ArrayList<>();
-        for (PlotMessage tooltip : tooltips) {
-            lines.add(tooltip.$(this));
-        }
+        List<FancyMessage> lines =
+            Arrays.stream(tooltips).map(tooltip -> tooltip.$(this)).collect(Collectors.toList());
         message.$(this).formattedTooltip(lines);
     }
 

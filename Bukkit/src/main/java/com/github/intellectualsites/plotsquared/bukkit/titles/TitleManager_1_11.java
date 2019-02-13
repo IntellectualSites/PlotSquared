@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 /**
  * Minecraft 1.8 Title
@@ -17,8 +18,7 @@ import java.util.Map;
  * @version 1.1.0
  */
 public class TitleManager_1_11 {
-    private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES =
-        new HashMap<Class<?>, Class<?>>();
+    private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES = new HashMap<>();
     /* Title packet */
     private static Class<?> packetTitle;
     /* Title packet actions ENUM */
@@ -111,10 +111,8 @@ public class TitleManager_1_11 {
     private static boolean equalsTypeArray(Class<?>[] a, Class<?>[] o) {
         if (a.length != o.length)
             return false;
-        for (int i = 0; i < a.length; i++)
-            if (!a[i].equals(o[i]) && !a[i].isAssignableFrom(o[i]))
-                return false;
-        return true;
+        return IntStream.range(0, a.length)
+            .noneMatch(i -> !a[i].equals(o[i]) && !a[i].isAssignableFrom(o[i]));
     }
 
     /**

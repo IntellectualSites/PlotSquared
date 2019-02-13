@@ -97,13 +97,8 @@ public abstract class HybridUtils {
             for (int x = x1; x <= x2; x++) {
                 for (int z = z1; z <= z2; z++) {
                     PlotBlock block = queue.getBlock(x, y, z);
-                    boolean same = false;
-                    for (PlotBlock p : blocks) {
-                        if (WorldUtil.IMP.isBlockSame(block, p)) {
-                            same = true;
-                            break;
-                        }
-                    }
+                    boolean same =
+                        Arrays.stream(blocks).anyMatch(p -> WorldUtil.IMP.isBlockSame(block, p));
                     if (!same) {
                         count++;
                     }

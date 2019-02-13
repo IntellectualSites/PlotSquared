@@ -542,13 +542,8 @@ public abstract class PlotArea {
 
     public int getPlotCount(@Nonnull final UUID uuid) {
         if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
-            int count = 0;
-            for (Plot plot : getPlotsAbs(uuid)) {
-                if (!plot.hasFlag(Flags.DONE)) {
-                    count++;
-                }
-            }
-            return count;
+            return (int) getPlotsAbs(uuid).stream().filter(plot -> !plot.hasFlag(Flags.DONE))
+                .count();
         }
         return getPlotsAbs(uuid).size();
     }
@@ -563,11 +558,7 @@ public abstract class PlotArea {
     }
 
     public boolean hasPlot(@Nonnull final UUID uuid) {
-        for (Entry<PlotId, Plot> entry : this.plots.entrySet()) {
-            if (entry.getValue().isOwner(uuid))
-                return true;
-        }
-        return false;
+        return this.plots.entrySet().stream().anyMatch(entry -> entry.getValue().isOwner(uuid));
     }
 
     public int getPlotCount(@Nullable final PlotPlayer player) {

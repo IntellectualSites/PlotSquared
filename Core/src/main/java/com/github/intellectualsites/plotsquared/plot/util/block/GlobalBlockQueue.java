@@ -106,7 +106,7 @@ public class GlobalBlockQueue {
                     if (PARALLEL_THREADS <= 1) {
                         SET_TASK.run();
                     } else {
-                        ArrayList<Thread> threads = new ArrayList<Thread>();
+                        ArrayList<Thread> threads = new ArrayList<>();
                         for (int i = 0; i < PARALLEL_THREADS; i++) {
                             threads.add(new Thread(SET_TASK));
                         }
@@ -168,7 +168,7 @@ public class GlobalBlockQueue {
 
     public List<LocalBlockQueue> getAllQueues() {
         ArrayList<LocalBlockQueue> list =
-            new ArrayList<LocalBlockQueue>(activeQueues.size() + inactiveQueues.size());
+            new ArrayList<>(activeQueues.size() + inactiveQueues.size());
         list.addAll(inactiveQueues);
         list.addAll(activeQueues);
         return list;
@@ -197,7 +197,7 @@ public class GlobalBlockQueue {
             if (PARALLEL_THREADS <= 1) {
                 SET_TASK.run();
             } else {
-                ArrayList<Thread> threads = new ArrayList<Thread>();
+                ArrayList<Thread> threads = new ArrayList<>();
                 for (int i = 0; i < PARALLEL_THREADS; i++) {
                     threads.add(new Thread(SET_TASK));
                 }

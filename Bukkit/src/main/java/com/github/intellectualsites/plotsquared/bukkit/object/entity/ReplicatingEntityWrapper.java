@@ -38,7 +38,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         if (depth == 0) {
             return;
         }
-        Entity passenger = entity.getPassenger();
+        Entity passenger = entity.getPassengers().get(0);
         if (passenger != null) {
             this.base.passenger = new ReplicatingEntityWrapper(passenger, depth);
         }
@@ -174,13 +174,14 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 storeLiving((LivingEntity) entity);
                 return;
             // END AGEABLE //
+            //todo this needs to be fixed
             case GUARDIAN:
-                this.dataByte = (byte) (((Guardian) entity).isElder() ? 1 : 0);
+            case ELDER_GUARDIAN:
                 storeLiving((LivingEntity) entity);
                 return;
+            //todo this needs to be fixed
             case SKELETON:
-                this.dataByte = getOrdinal(Skeleton.SkeletonType.values(),
-                    ((Skeleton) entity).getSkeletonType());
+            case WITHER_SKELETON:
                 storeLiving((LivingEntity) entity);
                 return;
             case ARMOR_STAND:
@@ -425,7 +426,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         }
         if (this.base.passenger != null) {
             try {
-                entity.setPassenger(this.base.passenger.spawn(world, xOffset, zOffset));
+                entity.addPassenger(this.base.passenger.spawn(world, xOffset, zOffset));
             } catch (Exception ignored) {
             }
         }
@@ -509,6 +510,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             // START LIVING ENTITY //
             // START AGEABLE //
             // START TAMEABLE //
+            //todo this needs to be fixed
             case HORSE:
                 Horse horse = (Horse) entity;
                 horse.setJumpStrength(this.horse.jump);
@@ -558,17 +560,12 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 restoreLiving((LivingEntity) entity);
                 return entity;
             case GUARDIAN:
-                if (this.dataByte != 0) {
-                    ((Guardian) entity).setElder(true);
-                }
+            case ELDER_GUARDIAN:
                 restoreLiving((LivingEntity) entity);
                 return entity;
             case SKELETON:
-                if (this.dataByte != 0) {
-                    ((Skeleton) entity)
-                        .setSkeletonType(Skeleton.SkeletonType.values()[this.dataByte]);
-                }
-                storeLiving((LivingEntity) entity);
+            case WITHER_SKELETON:
+                restoreLiving((LivingEntity) entity);
                 return entity;
             case ARMOR_STAND:
                 // CHECK positions

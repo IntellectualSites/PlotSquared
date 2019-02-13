@@ -1305,12 +1305,9 @@ import java.util.zip.ZipInputStream;
                     "w=", "wall=", "b=", "border=");
 
             // Calculate the number of expected arguments
-            int expected = 0;
-            for (final String validArgument : validArguments) {
-                if (args.toLowerCase(Locale.ENGLISH).contains(validArgument)) {
-                    expected += 1;
-                }
-            }
+            int expected = (int) validArguments.stream()
+                .filter(validArgument -> args.toLowerCase(Locale.ENGLISH).contains(validArgument))
+                .count();
 
             String[] split = args.toLowerCase(Locale.ENGLISH).split(",");
 

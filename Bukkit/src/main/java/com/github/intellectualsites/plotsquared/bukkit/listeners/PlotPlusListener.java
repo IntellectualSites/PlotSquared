@@ -105,8 +105,7 @@ import java.util.UUID;
         if (event.getEntityType() != EntityType.PLAYER) {
             return;
         }
-        Player player = (Player) event.getEntity();
-        Plot plot = BukkitUtil.getLocation(player).getOwnedPlot();
+        Plot plot = BukkitUtil.getLocation(event.getEntity()).getOwnedPlot();
         if (plot == null) {
             return;
         }

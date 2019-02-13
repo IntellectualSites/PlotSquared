@@ -114,7 +114,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                     TaskManager.runTaskAsync(() -> {
                         while (!toFetch.isEmpty()) {
                             try {
-                                for (int i = 0; i < Math.min(500, toFetch.size()); i++) {
+                                for (int i = 0; i < Math.min(MAX_REQUESTS, toFetch.size()); i++) {
                                     UUID uuid = toFetch.pop();
                                     HttpURLConnection connection = (HttpURLConnection) new URL(
                                         SQLUUIDHandler.this.PROFILE_URL + uuid.toString()

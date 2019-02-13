@@ -825,11 +825,8 @@ public class MainUtil {
         if (l.size() < 1) {
             return C.NONE.s();
         }
-        List<String> users = new ArrayList<>();
-        for (UUID u : l) {
-            users.add(getName(u));
-        }
-        Collections.sort(users);
+        List<String> users =
+            l.stream().map(MainUtil::getName).sorted().collect(Collectors.toList());
         String c = C.PLOT_USER_LIST.s();
         StringBuilder list = new StringBuilder();
         for (int x = 0; x < users.size(); x++) {

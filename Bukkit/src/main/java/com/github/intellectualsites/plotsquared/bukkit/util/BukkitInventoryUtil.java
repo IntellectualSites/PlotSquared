@@ -17,6 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class BukkitInventoryUtil extends InventoryUtil {
 
@@ -94,7 +95,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
             }
             if (meta.hasLore()) {
                 List<String> itemLore = meta.getLore();
-                lore = itemLore.toArray(new String[itemLore.size()]);
+                lore = itemLore.toArray(new String[0]);
             }
         }
         return new PlotItemStack(id.name(), amount, name, lore);
@@ -103,20 +104,17 @@ public class BukkitInventoryUtil extends InventoryUtil {
     @Override public PlotItemStack[] getItems(PlotPlayer player) {
         BukkitPlayer bp = (BukkitPlayer) player;
         PlayerInventory inv = bp.player.getInventory();
-        PlotItemStack[] items = new PlotItemStack[36];
-        for (int i = 0; i < 36; i++) {
-            items[i] = getItem(inv.getItem(i));
-        }
-        return items;
+        return IntStream.range(0, 36).mapToObj(i -> getItem(inv.getItem(i)))
+            .toArray(PlotItemStack[]::new);
     }
 
-    @Override public boolean isOpen(PlotInventory inv) {
-        if (!inv.isOpen()) {
+    @Override public boolean isOpen(PlotInventory plotInventory) {
+        if (!plotInventory.isOpen()) {
             return false;
         }
-        BukkitPlayer bp = (BukkitPlayer) inv.player;
+        BukkitPlayer bp = (BukkitPlayer) plotInventory.player;
         InventoryView opened = bp.player.getOpenInventory();
-        return inv.isOpen() && opened.getType() == InventoryType.CRAFTING
+        return plotInventory.isOpen() && opened.getType() == InventoryType.CRAFTING
             && opened.getTitle() == null;
     }
 }

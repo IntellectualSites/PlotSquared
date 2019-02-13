@@ -46,12 +46,12 @@ public class BukkitPlotGenerator extends ChunkGenerator
 
             private LocalBlockQueue queue;
 
-            @Override public void populate(World world, Random r, Chunk c) {
+            @Override public void populate(World world, Random random, Chunk source) {
                 if (queue == null) {
                     queue = GlobalBlockQueue.IMP.getNewQueue(world.getName(), false);
                 }
                 PlotArea area = PlotSquared.get().getPlotArea(world.getName(), null);
-                ChunkWrapper wrap = new ChunkWrapper(area.worldname, c.getX(), c.getZ());
+                ChunkWrapper wrap = new ChunkWrapper(area.worldname, source.getX(), source.getZ());
                 ScopedLocalBlockQueue chunk = queue.getForChunk(wrap.x, wrap.z);
                 if (BukkitPlotGenerator.this.plotGenerator.populateChunk(chunk, area)) {
                     queue.flush();

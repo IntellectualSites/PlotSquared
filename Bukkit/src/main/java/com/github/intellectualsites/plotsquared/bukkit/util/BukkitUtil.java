@@ -343,10 +343,8 @@ import java.util.*;
                         return y;
                     air = 0;
                 } else {
-                    switch (type) {
-                        case WATER:
-                        case LAVA:
-                            return y;
+                    if (block.isLiquid()) {
+                        return y;
                     }
                     air++;
                 }
@@ -366,11 +364,7 @@ import java.util.*;
 
     @Override public String[] getBiomeList() {
         final Biome[] biomes = Biome.values();
-        final String[] list = new String[biomes.length];
-        for (int i = 0; i < biomes.length; i++) {
-            list[i] = biomes[i].name();
-        }
-        return list;
+        return Arrays.stream(biomes).map(Enum::name).toArray(String[]::new);
     }
 
     @Override

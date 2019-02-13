@@ -76,11 +76,8 @@ import java.util.Map;
     }
 
     private PlotBlock[] splitBlockList(@NonNull final List<String> list) {
-        final PlotBlock[] entries = new PlotBlock[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            entries[i] = WorldUtil.IMP.getClosestBlock(list.get(i)).best;
-        }
-        return entries;
+        return list.stream().map(s -> WorldUtil.IMP.getClosestBlock(s).best)
+            .toArray(PlotBlock[]::new);
     }
 
     private void convertBlock(@NonNull final ConfigurationSection section,

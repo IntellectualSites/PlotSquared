@@ -127,11 +127,8 @@ public class Auto extends SubCommand {
         }
         whenDone.value = plot;
         plot.owner = player.getUUID();
-        DBFunc.createPlotSafe(plot, whenDone, new Runnable() {
-            @Override public void run() {
-                autoClaimFromDatabase(player, area, plot.getId(), whenDone);
-            }
-        });
+        DBFunc.createPlotSafe(plot, whenDone,
+            () -> autoClaimFromDatabase(player, area, plot.getId(), whenDone));
     }
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {

@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.IntStream;
 
 /**
  * A JSONObject is an unordered collection of name/value pairs. Its external form is a string wrapped in curly braces
@@ -296,11 +297,7 @@ public class JSONObject {
         if (length == 0) {
             return null;
         }
-        String[] names = new String[length];
-        for (int i = 0; i < length; i += 1) {
-            names[i] = fields[i].getName();
-        }
-        return names;
+        return IntStream.range(0, length).mapToObj(i -> fields[i].getName()).toArray(String[]::new);
     }
 
     /**

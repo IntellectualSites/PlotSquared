@@ -18,6 +18,7 @@ import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * The abstract class supporting {@code BukkitPlayer} and {@code SpongePlayer}.
@@ -245,11 +246,8 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         int count = 0;
         for (PlotArea area : PlotSquared.get().getPlotAreas(world)) {
             if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
-                for (Plot plot : area.getPlotsAbs(uuid)) {
-                    if (!plot.getFlag(Flags.DONE).isPresent()) {
-                        count++;
-                    }
-                }
+                count += area.getPlotsAbs(uuid).stream()
+                    .filter(plot -> !plot.getFlag(Flags.DONE).isPresent()).count();
             } else {
                 count += area.getPlotsAbs(uuid).size();
             }
@@ -537,13 +535,8 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      */
     public Set<Plot> getPlots(String world) {
         UUID uuid = getUUID();
-        HashSet<Plot> plots = new HashSet<>();
-        for (Plot plot : PlotSquared.get().getPlots(world)) {
-            if (plot.isOwner(uuid)) {
-                plots.add(plot);
-            }
-        }
-        return plots;
+        return PlotSquared.get().getPlots(world).stream().filter(plot -> plot.isOwner(uuid))
+            .collect(Collectors.toCollection(HashSet::new));
     }
 
     public void populatePersistentMetaMap() {

@@ -106,9 +106,7 @@ public class BukkitChunkManager extends ChunkManager {
         Set<ChunkLoc> chunks = super.getChunkChunks(world);
         for (Chunk chunk : Bukkit.getWorld(world).getLoadedChunks()) {
             ChunkLoc loc = new ChunkLoc(chunk.getX() >> 5, chunk.getZ() >> 5);
-            if (!chunks.contains(loc)) {
-                chunks.add(loc);
-            }
+            chunks.add(loc);
         }
         return chunks;
     }

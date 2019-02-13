@@ -31,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * The plot class<br>
@@ -2166,11 +2167,9 @@ public class Plot {
             return false;
         }
         HashSet<Plot> visited = new HashSet<>();
-        HashSet<PlotId> merged = new HashSet<>();
+        HashSet<PlotId> merged;
         Set<Plot> connected = this.getConnectedPlots();
-        for (Plot current : connected) {
-            merged.add(current.getId());
-        }
+        merged = connected.stream().map(Plot::getId).collect(Collectors.toCollection(HashSet::new));
         ArrayDeque<Plot> frontier = new ArrayDeque<>(connected);
         Plot current;
         boolean toReturn = false;
@@ -2554,9 +2553,7 @@ public class Plot {
             }
             Location gtopabs = this.area.getPlotAbs(top).getTopAbs();
             Location gbotabs = this.area.getPlotAbs(bot).getBottomAbs();
-            for (PlotId id : MainUtil.getPlotSelectionIds(bot, top)) {
-                visited.add(id);
-            }
+            visited.addAll(MainUtil.getPlotSelectionIds(bot, top));
             for (int x = bot.x; x <= top.x; x++) {
                 Plot plot = this.area.getPlotAbs(new PlotId(x, top.y));
                 if (plot.getMerged(2)) {

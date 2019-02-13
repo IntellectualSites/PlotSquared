@@ -80,8 +80,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                     e.printStackTrace();
                 }
             }
-            HashBiMap<StringWrapper, UUID> toAdd =
-                HashBiMap.create(new HashMap<StringWrapper, UUID>());
+            HashBiMap<StringWrapper, UUID> toAdd = HashBiMap.create(new HashMap<>());
             if (Settings.UUID.NATIVE_UUID_PROVIDER) {
                 HashSet<UUID> all = UUIDHandler.getAllUUIDS();
                 PlotSquared.debug("&aFast mode UUID caching enabled!");
