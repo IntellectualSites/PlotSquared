@@ -360,7 +360,7 @@ public class SQLManager implements AbstractDB {
                             task.set(statement);
                             task.addBatch(statement);
                             try {
-                                if (statement.isClosed()) {
+                                if (statement != null && statement.isClosed()) {
                                     statement = null;
                                 }
                             } catch (AbstractMethodError ignore) {}
