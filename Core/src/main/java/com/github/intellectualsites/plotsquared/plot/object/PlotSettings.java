@@ -27,22 +27,19 @@ public class PlotSettings {
      * @deprecated Raw access
      */
     @Deprecated public String alias = "";
-
-    private List<PlotComment> comments = null;
-
     /**
      * The ratings for a plot.
      *
      * @deprecated Raw access
      */
     @Deprecated public HashMap<UUID, Integer> ratings;
-
     /**
      * Flags.
      *
      * @deprecated Raw access
      */
     @Deprecated public HashMap<Flag<?>, Object> flags = new HashMap<>();
+    private List<PlotComment> comments = null;
     /**
      * Home Position.
      *

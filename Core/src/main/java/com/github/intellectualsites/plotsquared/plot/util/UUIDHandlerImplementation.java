@@ -15,12 +15,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class UUIDHandlerImplementation {
 
-    private final ConcurrentHashMap<String, PlotPlayer> players;
     public final HashSet<UUID> unknown = new HashSet<>();
+    private final ConcurrentHashMap<String, PlotPlayer> players;
     protected UUIDWrapper uuidWrapper;
     private boolean cached = false;
-    private BiMap<StringWrapper, UUID> uuidMap =
-        HashBiMap.create(new HashMap<>());
+    private BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<>());
     //    private BiMap<UUID, StringWrapper> nameMap = uuidMap.inverse();
 
     public UUIDHandlerImplementation(UUIDWrapper wrapper) {
@@ -138,8 +137,8 @@ public abstract class UUIDHandlerImplementation {
             TaskManager.runTaskAsync(() -> {
                 UUID offlineUpper = UUID.nameUUIDFromBytes(
                     ("OfflinePlayer:" + name.value).getBytes(Charsets.UTF_8));
-                if (UUIDHandlerImplementation.this.unknown.contains(offlineUpper)
-                    && !offlineUpper.equals(uuid)) {
+                if (UUIDHandlerImplementation.this.unknown.contains(offlineUpper) && !offlineUpper
+                    .equals(uuid)) {
                     UUIDHandlerImplementation.this.unknown.remove(offlineUpper);
                     Set<Plot> plots = PlotSquared.get().getPlotsAbs(offlineUpper);
                     if (!plots.isEmpty()) {

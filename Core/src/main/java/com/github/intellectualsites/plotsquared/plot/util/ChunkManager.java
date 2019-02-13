@@ -240,8 +240,8 @@ public abstract class ChunkManager {
         TaskManager.runTaskAsync(() -> {
             for (ChunkLoc loc : chunks) {
                 String directory =
-                    world + File.separator + "region" + File.separator + "r." + loc.x + "."
-                        + loc.z + ".mca";
+                    world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z
+                        + ".mca";
                 File file = new File(PlotSquared.get().IMP.getWorldContainer(), directory);
                 PlotSquared.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
                 if (file.exists()) {

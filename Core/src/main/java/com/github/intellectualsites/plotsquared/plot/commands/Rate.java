@@ -10,8 +10,10 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 @CommandDeclaration(command = "rate", permission = "plots.rate", description = "Rate the plot",
     usage = "/plot rate [#|next|purge]", aliases = "rt", category = CommandCategory.INFO,
