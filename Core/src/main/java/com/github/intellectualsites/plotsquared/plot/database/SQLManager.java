@@ -351,7 +351,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                             task.set(statement);
                             task.addBatch(statement);
                             try {
-                                if (statement.isClosed()) {
+                                if (statement != null && statement.isClosed()) {
                                     statement = null;
                                 }
                             } catch (AbstractMethodError ignore) {
