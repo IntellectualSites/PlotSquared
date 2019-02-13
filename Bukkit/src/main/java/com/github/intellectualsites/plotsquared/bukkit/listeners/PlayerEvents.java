@@ -1876,23 +1876,16 @@ import java.util.regex.Pattern;
                         eventType = PlayerBlockEventType.TELEPORT_OBJECT;
                         break;
                     default:
-                        LegacyPlotBlock legacyPlotBlock =
-                            (LegacyPlotBlock) PlotSquared.get().IMP.getLegacyMappings()
-                                .fromStringToLegacy(blockType.name());
-                        if (legacyPlotBlock != null) {
-                            int blockId = legacyPlotBlock.id;
-                            if (blockId > 197) {
-                                eventType = PlayerBlockEventType.INTERACT_BLOCK;
-                            }
+                        if (blockType.isInteractable()) {
+                            eventType = PlayerBlockEventType.INTERACT_BLOCK;
                         }
-                        break;
                 }
                 lb = new BukkitLazyBlock(PlotBlock.get(block.getType().toString()));
-                ItemStack hand = player.getInventory().getItemInMainHand();
                 if (eventType != null && (eventType != PlayerBlockEventType.INTERACT_BLOCK
                     || !player.isSneaking())) {
                     break;
                 }
+                ItemStack hand = player.getInventory().getItemInMainHand();
                 Material type = (hand == null) ? null : hand.getType();
                 if (type == Material.AIR) {
                     eventType = PlayerBlockEventType.INTERACT_BLOCK;
