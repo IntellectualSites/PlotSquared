@@ -375,7 +375,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                 case FIREBALL:
                                 case DRAGON_FIREBALL:
                                 case DROPPED_ITEM:
-                                    if (Settings.Enabled_Components.KILL_ROAD_ITEMS || plotArea
+                                    if (Settings.Enabled_Components.KILL_ROAD_ITEMS && plotArea
                                         .getOwnedPlotAbs(
                                             BukkitUtil.getLocation(entity.getLocation())) == null) {
                                         entity.remove();
@@ -386,7 +386,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                 case FALLING_BLOCK:
                                     // managed elsewhere
                                     continue;
-                                case SHULKER: {
+                                case SHULKER:
                                     if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
                                         LivingEntity livingEntity = (LivingEntity) entity;
                                         List<MetadataValue> meta = entity.getMetadata("plot");
@@ -436,7 +436,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                         }
                                     }
                                     continue;
-                                }
                                 case LLAMA:
                                 case DONKEY:
                                 case MULE:
