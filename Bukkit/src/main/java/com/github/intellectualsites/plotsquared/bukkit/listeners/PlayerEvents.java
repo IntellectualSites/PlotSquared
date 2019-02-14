@@ -1886,10 +1886,17 @@ import java.util.regex.Pattern;
                     break;
                 }
                 ItemStack hand = player.getInventory().getItemInMainHand();
+                ItemStack offHand = player.getInventory().getItemInOffHand();
                 Material type = (hand == null) ? null : hand.getType();
-                if (type == Material.AIR) {
+                Material offType = (offHand == null) ? null : offHand.getType();
+                if ((type == Material.AIR && offType != Material.AIR && !player.isSneaking()
+                    && blockType.isInteractable()) || (type == Material.AIR
+                    && offType == Material.AIR)) {
                     eventType = PlayerBlockEventType.INTERACT_BLOCK;
                     break;
+                }
+                if (!(type != null && type.equals(offType))) {
+                    type = offType;
                 }
                 if (type == null || type.isBlock()) {
                     location = BukkitUtil
@@ -1897,12 +1904,11 @@ import java.util.regex.Pattern;
                     eventType = PlayerBlockEventType.PLACE_BLOCK;
                     break;
                 }
-                Material handType = hand.getType();
-                lb = new BukkitLazyBlock(PlotBlock.get(handType.toString()));
-                if (handType.toString().endsWith("egg")) {
+                lb = new BukkitLazyBlock(PlotBlock.get(type.toString()));
+                if (type.toString().endsWith("egg")) {
                     eventType = PlayerBlockEventType.SPAWN_MOB;
                 } else {
-                    switch (handType) {
+                    switch (type) {
                         case FIREWORK_ROCKET:
                         case FIREWORK_STAR:
                             eventType = PlayerBlockEventType.SPAWN_MOB;
