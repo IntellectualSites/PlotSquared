@@ -78,13 +78,14 @@ public abstract class WorldUtil {
                             map.put("SpawnX", new IntTag(home.getX()));
                             map.put("SpawnY", new IntTag(home.getY()));
                             map.put("SpawnZ", new IntTag(home.getZ()));
-                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            try (NBTOutputStream out = new NBTOutputStream(
-                                new GZIPOutputStream(baos, true))) {
-                                //TODO Find what this should be called
-                                out.writeNamedTag("Schematic????", tag);
+                            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                                try (NBTOutputStream out = new NBTOutputStream(
+                                    new GZIPOutputStream(baos, true))) {
+                                    //TODO Find what this should be called
+                                    out.writeNamedTag("Schematic????", tag);
+                                }
+                                zos.write(baos.toByteArray());
                             }
-                            zos.write(baos.toByteArray());
                         }
                     }
                     setSpawn(spawn);

@@ -15,13 +15,13 @@ import java.util.stream.Collectors;
 public abstract class FileConfiguration extends MemoryConfiguration {
 
     /**
-     * Creates an empty {@link FileConfiguration} with no default values.
+     * Creates an empty FileConfiguration with no default values.
      */
     FileConfiguration() {
     }
 
     /**
-     * Creates an empty {@link FileConfiguration} using the specified {@link
+     * Creates an empty FileConfiguration using the specified {@link
      * Configuration} as a source for all default values.
      *
      * @param defaults Default value provider
@@ -31,7 +31,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
     }
 
     /**
-     * Saves this {@link FileConfiguration} to the specified location.
+     * Saves this FileConfiguration to the specified location.
      *
      * <p>If the file does not exist, it will be created. If already exists, it
      * will be overwritten. If it cannot be overwritten or created, an
@@ -59,14 +59,14 @@ public abstract class FileConfiguration extends MemoryConfiguration {
     }
 
     /**
-     * Saves this {@link FileConfiguration} to a string, and returns it.
+     * Saves this FileConfiguration to a string, and returns it.
      *
      * @return String containing this configuration.
      */
     public abstract String saveToString();
 
     /**
-     * Loads this {@link FileConfiguration} from the specified location.
+     * Loads this FileConfiguration from the specified location.
      *
      * <p>All the values contained within this configuration will be removed,
      * leaving only settings and defaults, and the new values will be loaded
@@ -85,13 +85,13 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      */
     public void load(File file) throws IOException, InvalidConfigurationException {
 
-        FileInputStream stream = new FileInputStream(file);
-
-        load(new InputStreamReader(stream, StandardCharsets.UTF_8));
+        try (FileInputStream stream = new FileInputStream(file)) {
+            load(new InputStreamReader(stream, StandardCharsets.UTF_8));
+        }
     }
 
     /**
-     * Loads this {@link FileConfiguration} from the specified reader.
+     * Loads this FileConfiguration from the specified reader.
      *
      * <p>All the values contained within this configuration will be removed,
      * leaving only settings and defaults, and the new values will be loaded
@@ -117,7 +117,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
     }
 
     /**
-     * Loads this {@link FileConfiguration} from the specified string, as
+     * Loads this FileConfiguration from the specified string, as
      * opposed to from file.
      *
      * <p>All the values contained within this configuration will be removed,
@@ -133,7 +133,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
     public abstract void loadFromString(String contents) throws InvalidConfigurationException;
 
     /**
-     * Compiles the header for this {@link FileConfiguration} and returns the
+     * Compiles the header for this FileConfiguration and returns the
      * result.
      *
      * <p>This will use the header from {@link #options()} -> {@link

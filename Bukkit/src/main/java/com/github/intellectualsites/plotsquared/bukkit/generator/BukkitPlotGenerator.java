@@ -128,7 +128,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
                         result.setBiome(x, z, biome.name());
                     }
 
-                    @Override public Biome getBiome(int arg0, int arg1) {
+                    @Override public Biome getBiome(int x, int z) {
                         return Biome.FOREST;
                     }
                 };
@@ -142,7 +142,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
                 }
                 /* TODO: Redo this
                 // Populator spillage
-                short[][] tmp = cg.generateExtBlockSections(w, r, cx, cz, grid);
+                short[][] tmp = cg.generateExtBlockSections(w, r, cx, cz, biomeGrid);
                 if (tmp != null) {
                     for (int i = 0; i < tmp.length; i++) {
                         short[] section = tmp[i];
@@ -235,30 +235,30 @@ public class BukkitPlotGenerator extends ChunkGenerator
     }
 
     @Override
-    public ChunkData generateChunkData(World world, Random random, int cx, int cz, BiomeGrid grid) {
+    public ChunkData generateChunkData(World world, Random random, int x, int z, BiomeGrid biome) {
         GenChunk result = this.chunkSetter;
         if (this.getPlotGenerator() instanceof SingleWorldGenerator) {
             if (result.getCd() != null) {
-                for (int x = 0; x < 16; x++) {
-                    for (int z = 0; z < 16; z++) {
-                        grid.setBiome(x, z, Biome.PLAINS);
+                for (int cx = 0; cx < 16; cx++) {
+                    for (int cz = 0; cz < 16; cz++) {
+                        biome.setBiome(cx, cz, Biome.PLAINS);
                     }
                 }
                 return result.getCd();
             }
         }
         // Set the chunk location
-        result.setChunk(new ChunkWrapper(world.getName(), cx, cz));
+        result.setChunk(new ChunkWrapper(world.getName(), x, z));
         // Set the result data
         result.setCd(createChunkData(world));
-        result.grid = grid;
+        result.biomeGrid = biome;
         result.result = null;
 
         // Catch any exceptions (as exceptions usually thrown)
         try {
             // Fill the result data if necessary
             if (this.platformGenerator != this) {
-                return this.platformGenerator.generateChunkData(world, random, cx, cz, grid);
+                return this.platformGenerator.generateChunkData(world, random, x, z, biome);
             } else {
                 generate(world, result);
             }

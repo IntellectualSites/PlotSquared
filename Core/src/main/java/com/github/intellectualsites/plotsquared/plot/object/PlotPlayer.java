@@ -655,7 +655,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         }
     }
 
-    public interface PlotPlayerConverter<BaseObject> {
+    @FunctionalInterface public interface PlotPlayerConverter<BaseObject> {
         PlotPlayer convert(BaseObject object);
     }
 }

@@ -23,7 +23,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
 
     public final Biome[] biomes;
     public PlotBlock[][] result;
-    public BiomeGrid grid;
+    public BiomeGrid biomeGrid;
     public Chunk chunk;
     public String world;
     public int cx;
@@ -57,13 +57,13 @@ public class GenChunk extends ScopedLocalBlockQueue {
     }
 
     @Override public void fillBiome(String biomeName) {
-        if (grid == null) {
+        if (biomeGrid == null) {
             return;
         }
         Biome biome = Biome.valueOf(biomeName.toUpperCase());
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                this.grid.setBiome(x, z, biome);
+                this.biomeGrid.setBiome(x, z, biome);
             }
         }
     }
@@ -96,8 +96,8 @@ public class GenChunk extends ScopedLocalBlockQueue {
     }
 
     public boolean setBiome(int x, int z, Biome biome) {
-        if (this.grid != null) {
-            this.grid.setBiome(x, z, biome);
+        if (this.biomeGrid != null) {
+            this.biomeGrid.setBiome(x, z, biome);
             return true;
         }
         return false;

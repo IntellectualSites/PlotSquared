@@ -1513,6 +1513,7 @@ public class Plot {
         return WorldUtil.IMP.getBiome(loc.getWorld(), loc.getX(), loc.getZ());
     }
 
+    //TODO Better documentation needed.
     /**
      * Return the top location for the plot.
      *
@@ -1525,7 +1526,6 @@ public class Plot {
     }
 
     //TODO Better documentation needed.
-
     /**
      * Return the bottom location for the plot.
      */
@@ -1573,7 +1573,7 @@ public class Plot {
     }
 
     /**
-     * Move the settings for a plot.
+     * Moves the settings for a plot.
      *
      * @param plot     the plot to move
      * @param whenDone
@@ -1710,7 +1710,7 @@ public class Plot {
     }
 
     /**
-     * Move the plot to an empty location<br>
+     * Moves the plot to an empty location<br>
      * - The location must be empty
      *
      * @param destination Where to move the plot
@@ -2616,6 +2616,7 @@ public class Plot {
     }
 
     /**
+     *
      * Do the plot entry tasks for each player in the plot<br>
      * - Usually called when the plot state changes (unclaimed/claimed/flag change etc)
      */
@@ -2735,12 +2736,9 @@ public class Plot {
     }
 
     /**
-     * Expand the world border to include the provided plot (if applicable).
+     * Expands the world border to include this plot if it is beyond the current border.
      */
     public void updateWorldBorder() {
-        if (this.owner == null) {
-            return;
-        }
         int border = this.area.getBorder();
         if (border == Integer.MAX_VALUE) {
             return;
@@ -2811,7 +2809,7 @@ public class Plot {
     }
 
     /**
-     * Move a plot physically, as well as the corresponding settings.
+     * Moves a plot physically, as well as the corresponding settings.
      *
      * @param destination Plot moved to
      * @param whenDone    task when done

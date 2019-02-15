@@ -39,9 +39,9 @@ public class Schematic {
     }
 
     public void save(File file) throws IOException {
-        SpongeSchematicWriter ssw =
-            new SpongeSchematicWriter(new NBTOutputStream(new FileOutputStream(file)));
-        ssw.write(clipboard);
-        ssw.close();
+        try (SpongeSchematicWriter ssw = new SpongeSchematicWriter(
+            new NBTOutputStream(new FileOutputStream(file)))) {
+            ssw.write(clipboard);
+        }
     }
 }

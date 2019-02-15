@@ -41,6 +41,7 @@ import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -1815,6 +1816,12 @@ import java.util.zip.ZipInputStream;
      */
     public double getJavaVersion() {
         return Double.parseDouble(System.getProperty("java.specification.version"));
+    }
+
+    public void forEachPlotArea(Consumer<? super PlotArea> action) {
+        for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
+            action.accept(area);
+        }
     }
 
     public void foreachPlotArea(@Nonnull final RunnableVal<PlotArea> runnable) {

@@ -87,7 +87,7 @@ public abstract class SchematicHandler {
                                 } else {
                                     MainUtil.sendMessage(null, "&7 - &a  success: " + plot.getId());
                                 }
-                                TaskManager.runTask(THIS::run);
+                                TaskManager.runTask(THIS);
                             });
                         }
                     }
@@ -104,7 +104,6 @@ public abstract class SchematicHandler {
      * @param plot      plot to paste in
      * @param xOffset   offset x to paste it from plot origin
      * @param zOffset   offset z to paste it from plot origin
-     * @return boolean true if succeeded
      */
     public void paste(final Schematic schematic, final Plot plot, final int xOffset,
         final int yOffset, final int zOffset, final boolean autoHeight,
@@ -126,7 +125,7 @@ public abstract class SchematicHandler {
                     if (!flags.isEmpty()) {
                         for (Map.Entry<String, Tag> entry : flags.entrySet()) {
                             plot.setFlag(Flags.getFlag(entry.getKey()),
-                                StringTag.class.cast(entry.getValue()).getValue());
+                                ((StringTag) entry.getValue()).getValue());
                         }
 
                     }
@@ -341,20 +340,17 @@ public abstract class SchematicHandler {
     }
 
     public List<String> getSaves(UUID uuid) {
-        StringBuilder rawJSON = new StringBuilder();
+        String rawJSON = "";
         try {
             String website = Settings.Web.URL + "list.php?" + uuid.toString();
             URL url = new URL(website);
             URLConnection connection = new URL(url.toString()).openConnection();
             connection.setRequestProperty("User-Agent", "Mozilla/5.0");
-            BufferedReader reader =
-                new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                rawJSON.append(line);
+            try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(connection.getInputStream()))) {
+                rawJSON = reader.lines().collect(Collectors.joining());
             }
-            reader.close();
-            JSONArray array = new JSONArray(rawJSON.toString());
+            JSONArray array = new JSONArray(rawJSON);
             List<String> schematics = new ArrayList<>();
             for (int i = 0; i < array.length(); i++) {
                 String schematic = array.getString(i);

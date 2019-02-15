@@ -16,7 +16,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
     private final int hash;
     private final EntityBaseStats base = new EntityBaseStats();
 
-    public ItemStack[] inventory;
+    private ItemStack[] inventory;
     // Extended
     private ItemStack stack;
     private byte dataByte;
@@ -94,6 +94,8 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             case DRAGON_FIREBALL:
             case LINGERING_POTION:
             case AREA_EFFECT_CLOUD:
+            case TRIDENT:
+            case LLAMA_SPIT:
                 // Do this stuff later
                 return;
             // MISC //
@@ -132,13 +134,21 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             // START AGEABLE //
             // START TAMEABLE //
             case HORSE:
-                Horse horse = (Horse) entity;
+            case DONKEY:
+            case LLAMA:
+            case MULE:
+            case SKELETON_HORSE:
+                AbstractHorse horse = (AbstractHorse) entity;
                 this.horse = new HorseStats();
                 this.horse.jump = horse.getJumpStrength();
-                this.horse.chest = horse.isCarryingChest();
-                this.horse.variant = horse.getVariant();
-                this.horse.style = horse.getStyle();
-                this.horse.color = horse.getColor();
+                if (horse instanceof ChestedHorse) {
+                    ChestedHorse horse1 = (ChestedHorse) horse;
+                    this.horse.chest = horse1.isCarryingChest();
+                }
+                //todo these horse feeatures need fixing
+                //this.horse.variant = horse.getVariant();
+                //this.horse.style = horse.getStyle();
+                //this.horse.color = horse.getColor();
                 storeTameable(horse);
                 storeAgeable(horse);
                 storeLiving(horse);
@@ -164,6 +174,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             case COW:
             case MUSHROOM_COW:
             case PIG:
+            case TURTLE:
             case POLAR_BEAR:
                 storeAgeable((Ageable) entity);
                 storeLiving((LivingEntity) entity);
@@ -174,16 +185,6 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 storeLiving((LivingEntity) entity);
                 return;
             // END AGEABLE //
-            //todo this needs to be fixed
-            case GUARDIAN:
-            case ELDER_GUARDIAN:
-                storeLiving((LivingEntity) entity);
-                return;
-            //todo this needs to be fixed
-            case SKELETON:
-            case WITHER_SKELETON:
-                storeLiving((LivingEntity) entity);
-                return;
             case ARMOR_STAND:
                 ArmorStand stand = (ArmorStand) entity;
                 this.inventory =
@@ -249,6 +250,10 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 EnderDragon entity1 = (EnderDragon) entity;
                 this.dataByte = (byte) entity1.getPhase().ordinal();
                 return;
+            case SKELETON:
+            case WITHER_SKELETON:
+            case GUARDIAN:
+            case ELDER_GUARDIAN:
             case GHAST:
             case MAGMA_CUBE:
             case SQUID:
@@ -487,6 +492,8 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             case DRAGON_FIREBALL:
             case WITHER_SKULL:
             case MINECART_FURNACE:
+            case LLAMA_SPIT:
+            case TRIDENT:
             case UNKNOWN:
                 // Do this stuff later
                 return entity;
@@ -510,14 +517,20 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             // START LIVING ENTITY //
             // START AGEABLE //
             // START TAMEABLE //
-            //todo this needs to be fixed
             case HORSE:
-                Horse horse = (Horse) entity;
+            case LLAMA:
+            case SKELETON_HORSE:
+            case DONKEY:
+            case MULE:
+                AbstractHorse horse = (AbstractHorse) entity;
                 horse.setJumpStrength(this.horse.jump);
-                horse.setCarryingChest(this.horse.chest);
-                horse.setVariant(this.horse.variant);
-                horse.setStyle(this.horse.style);
-                horse.setColor(this.horse.color);
+                if (horse instanceof ChestedHorse) {
+                    ((ChestedHorse) horse).setCarryingChest(this.horse.chest);
+                }
+                //todo broken as of 1.13
+                //horse.setVariant(this.horse.variant);
+                //horse.setStyle(this.horse.style);
+                //horse.setColor(this.horse.color);
                 restoreTameable(horse);
                 restoreAgeable(horse);
                 restoreLiving(horse);
@@ -545,6 +558,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             case VILLAGER:
             case CHICKEN:
             case COW:
+            case TURTLE:
             case POLAR_BEAR:
             case MUSHROOM_COW:
             case PIG:

@@ -154,7 +154,7 @@ public class NbtFactory {
      * @return The decoded NBT compound.
      * @throws IOException If anything went wrong.
      */
-    public static NbtCompound fromStream(InputStream input, StreamOptions option)
+    @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "resource"}) public static NbtCompound fromStream(InputStream input, StreamOptions option)
         throws IOException {
         DataInputStream data = null;
         boolean suppress = true;
@@ -189,24 +189,11 @@ public class NbtFactory {
      */
     public static void saveStream(NbtCompound source, ByteSink stream, StreamOptions option)
         throws IOException {
-        OutputStream output = null;
-        DataOutputStream data = null;
-        boolean suppress = true;
 
-        try {
-            output = stream.openStream();
-            data = new DataOutputStream(
-                option == StreamOptions.GZIP_COMPRESSION ? new GZIPOutputStream(output) : output);
-
+        try (OutputStream output = stream.openStream();
+            DataOutputStream data = new DataOutputStream(
+                option == StreamOptions.GZIP_COMPRESSION ? new GZIPOutputStream(output) : output)) {
             invokeMethod(get().SAVE_COMPOUND, null, source.getHandle(), data);
-            suppress = false;
-
-        } finally {
-            if (data != null) {
-                Closeables.close(data, suppress);
-            } else if (output != null) {
-                Closeables.close(output, suppress);
-            }
         }
     }
 
@@ -540,9 +527,7 @@ public class NbtFactory {
      *
      * @author Kristian
      */
-    public enum StreamOptions {
-        NO_COMPRESSION, GZIP_COMPRESSION,
-    }
+    public enum StreamOptions {NO_COMPRESSION, GZIP_COMPRESSION,}
 
 
     private enum NbtType {
