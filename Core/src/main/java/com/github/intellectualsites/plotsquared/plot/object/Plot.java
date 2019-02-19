@@ -32,6 +32,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * The plot class<br>
@@ -509,8 +510,7 @@ public class Plot {
      * @return is the plot merged or not
      */
     public boolean isMerged() {
-        return getSettings().getMerged(0) || getSettings().getMerged(2) || getSettings()
-            .getMerged(1) || getSettings().getMerged(3);
+        return IntStream.of(0, 2, 1, 3).anyMatch(i -> getSettings().getMerged(i));
     }
 
     /**
