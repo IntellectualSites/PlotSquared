@@ -14,6 +14,7 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import lombok.NonNull;
 
+import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -326,7 +327,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      *
      * @return UUID
      */
-    @Override public abstract UUID getUUID();
+    @Override @Nonnull public abstract UUID getUUID();
 
     public boolean canTeleport(Location loc) {
         Location current = getLocationFull();

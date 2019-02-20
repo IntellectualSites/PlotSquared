@@ -21,6 +21,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableSet;
 import com.sk89q.jnbt.CompoundTag;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
@@ -322,7 +323,7 @@ public class Plot {
      * @param uuid the player uuid
      * @return if the provided uuid is the owner of the plot
      */
-    public boolean isOwner(UUID uuid) {
+    public boolean isOwner(@Nonnull UUID uuid) {
         if (uuid.equals(this.owner)) {
             return true;
         }
@@ -339,6 +340,9 @@ public class Plot {
 
     /**
      * Gets a immutable set of owner UUIDs for a plot (supports multi-owner mega-plots).
+     * <p>
+     * This method cannot be used to add or remove owners from a plot.
+     * </p>
      *
      * @return the plot owners
      */
@@ -752,8 +756,9 @@ public class Plot {
     public boolean setOwner(UUID owner, PlotPlayer initiator) {
         boolean result = EventUtil.manager
             .callOwnerChange(initiator, this, owner, hasOwner() ? this.owner : null, hasOwner());
-        if (!result)
+        if (!result) {
             return false;
+        }
         if (!hasOwner()) {
             this.owner = owner;
             create();
@@ -948,8 +953,9 @@ public class Plot {
      * @param name name
      */
     public void setSign(final String name) {
-        if (!isLoaded())
+        if (!isLoaded()) {
             return;
+        }
         if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
             TaskManager.runTask(() -> Plot.this.setSign(name));
             return;
@@ -1165,8 +1171,9 @@ public class Plot {
         Location bot = corners[1];
         Location loc = new Location(this.getWorldName(), MathMan.average(bot.getX(), top.getX()),
             MathMan.average(bot.getY(), top.getY()), MathMan.average(bot.getZ(), top.getZ()));
-        if (!isLoaded())
+        if (!isLoaded()) {
             return loc;
+        }
         int y =
             isLoaded() ? WorldUtil.IMP.getHighestBlock(getWorldName(), loc.getX(), loc.getZ()) : 62;
         if (area.ALLOW_SIGNS) {
@@ -1201,8 +1208,9 @@ public class Plot {
             Location bot = this.getBottomAbs();
             Location loc = new Location(bot.getWorld(), bot.getX() + home.x, bot.getY() + home.y,
                 bot.getZ() + home.z, home.yaw, home.pitch);
-            if (!isLoaded())
+            if (!isLoaded()) {
                 return loc;
+            }
             if (!WorldUtil.IMP.getBlock(loc).isAir()) {
                 loc.setY(Math.max(
                     1 + WorldUtil.IMP.getHighestBlock(this.getWorldName(), loc.getX(), loc.getZ()),
@@ -1514,6 +1522,7 @@ public class Plot {
     }
 
     //TODO Better documentation needed.
+
     /**
      * Return the top location for the plot.
      *
@@ -1526,6 +1535,7 @@ public class Plot {
     }
 
     //TODO Better documentation needed.
+
     /**
      * Return the bottom location for the plot.
      */
@@ -2616,7 +2626,6 @@ public class Plot {
     }
 
     /**
-     *
      * Do the plot entry tasks for each player in the plot<br>
      * - Usually called when the plot state changes (unclaimed/claimed/flag change etc)
      */

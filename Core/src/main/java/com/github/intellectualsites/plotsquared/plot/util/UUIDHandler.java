@@ -8,6 +8,7 @@ import com.github.intellectualsites.plotsquared.plot.object.StringWrapper;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.google.common.collect.BiMap;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -82,10 +83,7 @@ public class UUIDHandler {
         implementation.add(toAdd);
     }
 
-    public static UUID getUUID(PlotPlayer player) {
-        if (implementation == null) {
-            return null;
-        }
+    @Nonnull public static UUID getUUID(PlotPlayer player) {
         return implementation.getUUID(player);
     }
 
