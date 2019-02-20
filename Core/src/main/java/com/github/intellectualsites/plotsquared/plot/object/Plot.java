@@ -21,6 +21,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableSet;
 import com.sk89q.jnbt.CompoundTag;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
@@ -32,6 +33,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * The plot class<br>
@@ -307,7 +309,7 @@ public class Plot {
     }
 
     /**
-     * Check if the plot has an owner.
+     * Checks if the plot has an owner.
      *
      * @return false if there is no owner
      */
@@ -316,12 +318,12 @@ public class Plot {
     }
 
     /**
-     * Check if a UUID is a plot owner (merged plots may have multiple owners)
+     * Checks if a UUID is a plot owner (merged plots may have multiple owners)
      *
      * @param uuid the player uuid
      * @return if the provided uuid is the owner of the plot
      */
-    public boolean isOwner(UUID uuid) {
+    public boolean isOwner(@Nonnull UUID uuid) {
         if (uuid.equals(this.owner)) {
             return true;
         }
@@ -338,6 +340,9 @@ public class Plot {
 
     /**
      * Gets a immutable set of owner UUIDs for a plot (supports multi-owner mega-plots).
+     * <p>
+     * This method cannot be used to add or remove owners from a plot.
+     * </p>
      *
      * @return the plot owners
      */
@@ -364,7 +369,7 @@ public class Plot {
     }
 
     /**
-     * Check if the player is either the owner or on the trusted/added list.
+     * Checks if the player is either the owner or on the trusted/added list.
      *
      * @param uuid uuid to check
      * @return true if the player is added/trusted or is the owner
@@ -389,7 +394,7 @@ public class Plot {
     }
 
     /**
-     * Should the player be denied from entering.
+     * Checks if the player is not permitted on this plot.
      *
      * @param uuid uuid to check
      * @return boolean false if the player is allowed to enter
@@ -419,9 +424,11 @@ public class Plot {
     }
 
     /**
-     * Assign this plot to a plot area.<br>
+     * Assigns this plot to a plot area.<br>
      * (Mostly used during startup when worlds are being created)<br>
-     * Note: Using this when it doesn't make sense will result in strange behavior
+     * <p>
+     * Do not use this unless you absolutely know what you are doing.
+     * </p>
      *
      * @param area area to assign to
      */
@@ -504,13 +511,12 @@ public class Plot {
     }
 
     /**
-     * Check if the plot is merged in any direction.
+     * Checks if this plot is merged in any direction.
      *
-     * @return is the plot merged or not
+     * @return true if this plot is merged, otherwise false
      */
     public boolean isMerged() {
-        return getSettings().getMerged(0) || getSettings().getMerged(2) || getSettings()
-            .getMerged(1) || getSettings().getMerged(3);
+        return IntStream.of(0, 2, 1, 3).anyMatch(i -> getSettings().getMerged(i));
     }
 
     /**
@@ -540,23 +546,24 @@ public class Plot {
      * 6 = south-west<br>
      * 7 = north-west<br>
      * ----------<br>
+     * //todo these artificial values are way too confusing.
      * Note: A plot that is merged north and east will not be merged northeast if the northeast plot is not part of the same group<br>
      *
-     * @param direction direction to check for merged plot
+     * @param dir direction to check for merged plot
      * @return true if merged in that direction
      */
-    public boolean getMerged(int direction) {
+    public boolean getMerged(int dir) {
         if (this.settings == null) {
             return false;
         }
-        switch (direction) {
+        switch (dir) {
             case 0:
             case 1:
             case 2:
             case 3:
-                return this.getSettings().getMerged(direction);
+                return this.getSettings().getMerged(dir);
             case 7:
-                int i = direction - 4;
+                int i = dir - 4;
                 int i2 = 0;
                 if (this.getSettings().getMerged(i2)) {
                     if (this.getSettings().getMerged(i)) {
@@ -571,8 +578,8 @@ public class Plot {
             case 4:
             case 5:
             case 6:
-                i = direction - 4;
-                i2 = direction - 3;
+                i = dir - 4;
+                i2 = dir - 3;
                 return this.getSettings().getMerged(i2) && this.getSettings().getMerged(i)
                     && this.area.getPlotAbs(this.id.getRelative(i)).getMerged(i2) && this.area
                     .getPlotAbs(this.id.getRelative(i2)).getMerged(i);
@@ -678,7 +685,7 @@ public class Plot {
     }
 
     /**
-     * Deny someone (updates database as well)
+     * Denies a player from this plot. (updates database as well)
      *
      * @param uuid the uuid of the player to deny.
      */
@@ -752,8 +759,9 @@ public class Plot {
     public boolean setOwner(UUID owner, PlotPlayer initiator) {
         boolean result = EventUtil.manager
             .callOwnerChange(initiator, this, owner, hasOwner() ? this.owner : null, hasOwner());
-        if (!result)
+        if (!result) {
             return false;
+        }
         if (!hasOwner()) {
             this.owner = owner;
             create();
@@ -947,15 +955,12 @@ public class Plot {
      *
      * @param name name
      */
-    public void setSign(final String name) {
-        if (!isLoaded())
-            return;
-        if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
-            TaskManager.runTask(() -> Plot.this.setSign(name));
+    public void setSign(@Nonnull String name) {
+        if (!isLoaded()) {
             return;
         }
-        if (name == null) {
-            PlotSquared.log("Attempted to add null name to sign at plot: " + getId());
+        if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
+            TaskManager.runTask(() -> Plot.this.setSign(name));
             return;
         }
         PlotManager manager = this.area.getPlotManager();
@@ -1165,8 +1170,9 @@ public class Plot {
         Location bot = corners[1];
         Location loc = new Location(this.getWorldName(), MathMan.average(bot.getX(), top.getX()),
             MathMan.average(bot.getY(), top.getY()), MathMan.average(bot.getZ(), top.getZ()));
-        if (!isLoaded())
+        if (!isLoaded()) {
             return loc;
+        }
         int y =
             isLoaded() ? WorldUtil.IMP.getHighestBlock(getWorldName(), loc.getX(), loc.getZ()) : 62;
         if (area.ALLOW_SIGNS) {
@@ -1201,8 +1207,9 @@ public class Plot {
             Location bot = this.getBottomAbs();
             Location loc = new Location(bot.getWorld(), bot.getX() + home.x, bot.getY() + home.y,
                 bot.getZ() + home.z, home.yaw, home.pitch);
-            if (!isLoaded())
+            if (!isLoaded()) {
                 return loc;
+            }
             if (!WorldUtil.IMP.getBlock(loc).isAir()) {
                 loc.setY(Math.max(
                     1 + WorldUtil.IMP.getHighestBlock(this.getWorldName(), loc.getX(), loc.getZ()),
@@ -1383,7 +1390,12 @@ public class Plot {
             this.setSign("unknown");
             return;
         }
-        this.setSign(UUIDHandler.getName(this.owner));
+        String name = UUIDHandler.getName(this.owner);
+        if (name == null) {
+            this.setSign("unknown");
+        } else {
+            this.setSign(name);
+        }
     }
 
     /**
@@ -1461,10 +1473,7 @@ public class Plot {
      * @param notify notify
      * @return true if plot was created successfully
      */
-    public boolean create(final UUID uuid, final boolean notify) {
-        if (uuid == null) {
-            throw new IllegalArgumentException("UUID cannot be null");
-        }
+    public boolean create(@Nonnull UUID uuid, final boolean notify) {
         this.owner = uuid;
         Plot existing = this.area.getOwnedPlotAbs(this.id);
         if (existing != null) {
@@ -1514,10 +1523,9 @@ public class Plot {
     }
 
     //TODO Better documentation needed.
+
     /**
-     * Return the top location for the plot.
-     *
-     * @return
+     * Returns the top location for the plot.
      */
     public Location getTopAbs() {
         Location top = this.area.getPlotManager().getPlotTopLocAbs(this.area, this.id);
@@ -1526,8 +1534,9 @@ public class Plot {
     }
 
     //TODO Better documentation needed.
+
     /**
-     * Return the bottom location for the plot.
+     * Returns the bottom location for the plot.
      */
     public Location getBottomAbs() {
         Location loc = this.area.getPlotManager().getPlotBottomLocAbs(this.area, this.id);
@@ -1611,11 +1620,11 @@ public class Plot {
         if (!this.isMerged()) {
             return top;
         }
-        if (this.getMerged(2)) {
-            top.setZ(this.getRelative(2).getBottomAbs().getZ() - 1);
+        if (this.getMerged(Direction.SOUTH.getIndex())) {
+            top.setZ(this.getRelative(Direction.SOUTH.getIndex()).getBottomAbs().getZ() - 1);
         }
-        if (this.getMerged(1)) {
-            top.setX(this.getRelative(1).getBottomAbs().getX() - 1);
+        if (this.getMerged(Direction.EAST.getIndex())) {
+            top.setX(this.getRelative(Direction.SOUTH.getIndex()).getBottomAbs().getX() - 1);
         }
         return top;
     }
@@ -1632,11 +1641,11 @@ public class Plot {
         if (!this.isMerged()) {
             return bot;
         }
-        if (this.getMerged(0)) {
-            bot.setZ(this.getRelative(0).getTopAbs().getZ() + 1);
+        if (this.getMerged(Direction.NORTH.getIndex())) {
+            bot.setZ(this.getRelative(Direction.NORTH.getIndex()).getTopAbs().getZ() + 1);
         }
-        if (this.getMerged(3)) {
-            bot.setX(this.getRelative(3).getTopAbs().getX() + 1);
+        if (this.getMerged(Direction.WEST.getIndex())) {
+            bot.setX(this.getRelative(Direction.WEST.getIndex()).getTopAbs().getX() + 1);
         }
         return bot;
     }
@@ -1665,7 +1674,7 @@ public class Plot {
             if (this.area.TERRAIN == 3) {
                 return;
             }
-            Plot other = this.getRelative(1);
+            Plot other = this.getRelative(Direction.EAST.getIndex());
             Location bot = other.getBottomAbs();
             Location top = this.getTopAbs();
             Location pos1 = new Location(this.getWorldName(), top.getX(), 0, bot.getZ());
@@ -2616,7 +2625,6 @@ public class Plot {
     }
 
     /**
-     *
      * Do the plot entry tasks for each player in the plot<br>
      * - Usually called when the plot state changes (unclaimed/claimed/flag change etc)
      */

@@ -30,7 +30,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
 import java.net.MalformedURLException;
@@ -342,12 +341,10 @@ import java.util.zip.ZipInputStream;
             debug("Starting UUID caching");
             UUIDHandler.startCaching(() -> {
                 UUIDHandler.add(new StringWrapper("*"), DBFunc.EVERYONE);
-                foreachPlotRaw(new RunnableVal<Plot>() {
-                    @Override public void run(Plot plot) {
-                        if (plot.hasOwner() && plot.temp != -1) {
-                            if (UUIDHandler.getName(plot.owner) == null) {
-                                UUIDHandler.implementation.unknown.add(plot.owner);
-                            }
+                forEachPlotRaw(plot -> {
+                    if (plot.hasOwner() && plot.temp != -1) {
+                        if (UUIDHandler.getName(plot.owner) == null) {
+                            UUIDHandler.implementation.unknown.add(plot.owner);
                         }
                     }
                 });
@@ -516,14 +513,12 @@ import java.util.zip.ZipInputStream;
     public Set<Plot> getBasePlots() {
         int size = getPlotCount();
         final Set<Plot> result = new HashSet<>(size);
-        foreachPlotArea(new RunnableVal<PlotArea>() {
-            @Override public void run(PlotArea value) {
-                for (Plot plot : value.getPlots()) {
-                    if (!plot.isBasePlot()) {
-                        continue;
-                    }
-                    result.add(plot);
+        forEachPlotArea(value -> {
+            for (Plot plot : value.getPlots()) {
+                if (!plot.isBasePlot()) {
+                    continue;
                 }
+                result.add(plot);
             }
         });
         return Collections.unmodifiableSet(result);
@@ -784,23 +779,21 @@ import java.util.zip.ZipInputStream;
      */
     public Set<Plot> getPlots(final PlotFilter... filters) {
         final HashSet<Plot> set = new HashSet<>();
-        foreachPlotArea(new RunnableVal<PlotArea>() {
-            @Override public void run(PlotArea value) {
+        forEachPlotArea(value -> {
+            for (PlotFilter filter : filters) {
+                if (!filter.allowsArea(value)) {
+                    return;
+                }
+            }
+            loop:
+            for (Entry<PlotId, Plot> entry2 : value.getPlotEntries()) {
+                Plot plot = entry2.getValue();
                 for (PlotFilter filter : filters) {
-                    if (!filter.allowsArea(value)) {
-                        return;
+                    if (!filter.allowsPlot(plot)) {
+                        continue loop;
                     }
                 }
-                loop:
-                for (Entry<PlotId, Plot> entry2 : value.getPlotEntries()) {
-                    Plot plot = entry2.getValue();
-                    for (PlotFilter filter : filters) {
-                        if (!filter.allowsPlot(plot)) {
-                            continue loop;
-                        }
-                    }
-                    set.add(plot);
-                }
+                set.add(plot);
             }
         });
         return set;
@@ -814,11 +807,7 @@ import java.util.zip.ZipInputStream;
     public Set<Plot> getPlots() {
         int size = getPlotCount();
         final Set<Plot> result = new HashSet<>(size);
-        foreachPlotArea(new RunnableVal<PlotArea>() {
-            @Override public void run(PlotArea value) {
-                result.addAll(value.getPlots());
-            }
-        });
+        forEachPlotArea(value -> result.addAll(value.getPlots()));
         return result;
     }
 
@@ -935,11 +924,7 @@ import java.util.zip.ZipInputStream;
 
     public Collection<Plot> getPlots(String world) {
         final Set<Plot> set = new HashSet<>();
-        foreachPlotArea(world, new RunnableVal<PlotArea>() {
-            @Override public void run(PlotArea value) {
-                set.addAll(value.getPlots());
-            }
-        });
+        forEachPlotArea(world, value -> set.addAll(value.getPlots()));
         return set;
     }
 
@@ -973,11 +958,9 @@ import java.util.zip.ZipInputStream;
      */
     public Set<Plot> getPlots(final UUID uuid) {
         final Set<Plot> plots = new HashSet<>();
-        foreachPlot(new RunnableVal<Plot>() {
-            @Override public void run(Plot value) {
-                if (value.isOwnerAbs(uuid)) {
-                    plots.add(value);
-                }
+        forEachPlot(value -> {
+            if (value.isOwnerAbs(uuid)) {
+                plots.add(value);
             }
         });
         return Collections.unmodifiableSet(plots);
@@ -990,11 +973,9 @@ import java.util.zip.ZipInputStream;
 
     public Set<Plot> getBasePlots(final UUID uuid) {
         final Set<Plot> plots = new HashSet<>();
-        foreachBasePlot(new RunnableVal<Plot>() {
-            @Override public void run(Plot value) {
-                if (value.isOwner(uuid)) {
-                    plots.add(value);
-                }
+        forEachBasePlot(value -> {
+            if (value.isOwner(uuid)) {
+                plots.add(value);
             }
         });
         return Collections.unmodifiableSet(plots);
@@ -1008,11 +989,9 @@ import java.util.zip.ZipInputStream;
      */
     public Set<Plot> getPlotsAbs(final UUID uuid) {
         final Set<Plot> plots = new HashSet<>();
-        foreachPlot(new RunnableVal<Plot>() {
-            @Override public void run(Plot value) {
-                if (value.isOwnerAbs(uuid)) {
-                    plots.add(value);
-                }
+        forEachPlot(value -> {
+            if (value.isOwnerAbs(uuid)) {
+                plots.add(value);
             }
         });
         return Collections.unmodifiableSet(plots);
@@ -1538,11 +1517,7 @@ import java.util.zip.ZipInputStream;
             // Validate that all data in the db is correct
             final HashSet<Plot> plots = new HashSet<>();
             try {
-                foreachPlotRaw(new RunnableVal<Plot>() {
-                    @Override public void run(Plot value) {
-                        plots.add(value);
-                    }
-                });
+                forEachPlotRaw(plots::add);
             } catch (final Exception ignored) {
             }
             DBFunc.validatePlots(plots);
@@ -1824,43 +1799,36 @@ import java.util.zip.ZipInputStream;
         }
     }
 
-    public void foreachPlotArea(@Nonnull final RunnableVal<PlotArea> runnable) {
-        for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-            runnable.run(area);
-        }
-    }
-
-    public void foreachPlotArea(@NonNull final String world,
-        @NonNull final RunnableVal<PlotArea> runnable) {
+    public void forEachPlotArea(@NonNull final String world, Consumer<PlotArea> runnable) {
         final PlotArea[] array = this.plotAreaManager.getPlotAreas(world, null);
         if (array == null) {
             return;
         }
         for (final PlotArea area : array) {
-            runnable.run(area);
+            runnable.accept(area);
         }
     }
 
-    public void foreachPlot(@NonNull final RunnableVal<Plot> runnable) {
+    public void forEachPlot(Consumer<Plot> runnable) {
         for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-            area.getPlots().forEach(runnable::run);
+            area.getPlots().forEach(runnable);
         }
     }
 
-    public void foreachPlotRaw(@NonNull final RunnableVal<Plot> runnable) {
+    public void forEachPlotRaw(Consumer<Plot> runnable) {
         for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-            area.getPlots().forEach(runnable::run);
+            area.getPlots().forEach(runnable);
         }
         if (this.plots_tmp != null) {
             for (final HashMap<PlotId, Plot> entry : this.plots_tmp.values()) {
-                entry.values().forEach(runnable::run);
+                entry.values().forEach(runnable);
             }
         }
     }
 
-    public void foreachBasePlot(@NonNull final RunnableVal<Plot> run) {
+    public void forEachBasePlot(Consumer<Plot> run) {
         for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-            area.foreachBasePlot(run);
+            area.forEachBasePlot(run);
         }
     }
 

@@ -14,6 +14,7 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import lombok.NonNull;
 
+import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -202,17 +203,15 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         }
         final AtomicInteger count = new AtomicInteger(0);
         final UUID uuid = getUUID();
-        PlotSquared.get().foreachPlotArea(new RunnableVal<PlotArea>() {
-            @Override public void run(PlotArea value) {
-                if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
-                    for (Plot plot : value.getPlotsAbs(uuid)) {
-                        if (!plot.hasFlag(Flags.DONE)) {
-                            count.incrementAndGet();
-                        }
+        PlotSquared.get().forEachPlotArea(value -> {
+            if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
+                for (Plot plot : value.getPlotsAbs(uuid)) {
+                    if (!plot.hasFlag(Flags.DONE)) {
+                        count.incrementAndGet();
                     }
-                } else {
-                    count.addAndGet(value.getPlotsAbs(uuid).size());
                 }
+            } else {
+                count.addAndGet(value.getPlotsAbs(uuid).size());
             }
         });
         return count.get();
@@ -223,12 +222,10 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
             return getClusterCount(getLocation().getWorld());
         }
         final AtomicInteger count = new AtomicInteger(0);
-        PlotSquared.get().foreachPlotArea(new RunnableVal<PlotArea>() {
-            @Override public void run(PlotArea value) {
-                for (PlotCluster cluster : value.getClusters()) {
-                    if (cluster.isOwner(getUUID())) {
-                        count.incrementAndGet();
-                    }
+        PlotSquared.get().forEachPlotArea(value -> {
+            for (PlotCluster cluster : value.getClusters()) {
+                if (cluster.isOwner(getUUID())) {
+                    count.incrementAndGet();
                 }
             }
         });
@@ -330,7 +327,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      *
      * @return UUID
      */
-    @Override public abstract UUID getUUID();
+    @Override @Nonnull public abstract UUID getUUID();
 
     public boolean canTeleport(Location loc) {
         Location current = getLocationFull();
@@ -519,11 +516,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      */
     public int getPlayerClusterCount() {
         final AtomicInteger count = new AtomicInteger();
-        PlotSquared.get().foreachPlotArea(new RunnableVal<PlotArea>() {
-            @Override public void run(PlotArea value) {
-                count.addAndGet(value.getClusters().size());
-            }
-        });
+        PlotSquared.get().forEachPlotArea(value -> count.addAndGet(value.getClusters().size()));
         return count.get();
     }
 
