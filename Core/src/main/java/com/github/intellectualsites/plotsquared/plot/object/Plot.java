@@ -307,7 +307,7 @@ public class Plot {
     }
 
     /**
-     * Check if the plot has an owner.
+     * Checks if the plot has an owner.
      *
      * @return false if there is no owner
      */
@@ -316,7 +316,7 @@ public class Plot {
     }
 
     /**
-     * Check if a UUID is a plot owner (merged plots may have multiple owners)
+     * Checks if a UUID is a plot owner (merged plots may have multiple owners)
      *
      * @param uuid the player uuid
      * @return if the provided uuid is the owner of the plot
@@ -364,7 +364,7 @@ public class Plot {
     }
 
     /**
-     * Check if the player is either the owner or on the trusted/added list.
+     * Checks if the player is either the owner or on the trusted/added list.
      *
      * @param uuid uuid to check
      * @return true if the player is added/trusted or is the owner
@@ -389,7 +389,7 @@ public class Plot {
     }
 
     /**
-     * Should the player be denied from entering.
+     * Checks if the player is not permitted on this plot.
      *
      * @param uuid uuid to check
      * @return boolean false if the player is allowed to enter
@@ -419,9 +419,11 @@ public class Plot {
     }
 
     /**
-     * Assign this plot to a plot area.<br>
+     * Assigns this plot to a plot area.<br>
      * (Mostly used during startup when worlds are being created)<br>
-     * Note: Using this when it doesn't make sense will result in strange behavior
+     * <p>
+     * Do not use this unless you absolutely know what you are doing.
+     * </p>
      *
      * @param area area to assign to
      */
@@ -504,9 +506,9 @@ public class Plot {
     }
 
     /**
-     * Check if the plot is merged in any direction.
+     * Checks if this plot is merged in any direction.
      *
-     * @return is the plot merged or not
+     * @return true if this plot is merged, otherwise false
      */
     public boolean isMerged() {
         return getSettings().getMerged(0) || getSettings().getMerged(2) || getSettings()
@@ -678,7 +680,7 @@ public class Plot {
     }
 
     /**
-     * Deny someone (updates database as well)
+     * Denies a player from this plot. (updates database as well)
      *
      * @param uuid the uuid of the player to deny.
      */
