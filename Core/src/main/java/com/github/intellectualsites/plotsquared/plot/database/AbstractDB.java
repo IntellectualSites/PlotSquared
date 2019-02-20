@@ -4,6 +4,7 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public interface AbstractDB {
@@ -300,7 +301,7 @@ public interface AbstractDB {
      *
      * @param plot The Plot to get comments from
      */
-    void getComments(Plot plot, String inbox, RunnableVal<List<PlotComment>> whenDone);
+    void getComments(@Nonnull Plot plot, String inbox, RunnableVal<List<PlotComment>> whenDone);
 
     void createPlotAndSettings(Plot plot, Runnable whenDone);
 

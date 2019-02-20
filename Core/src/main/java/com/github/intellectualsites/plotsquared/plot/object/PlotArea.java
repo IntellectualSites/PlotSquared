@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 /**
  * @author Jesse Boyd, Alexander Söderberg
@@ -516,11 +517,9 @@ public abstract class PlotArea {
             return Collections.emptySet();
         }
         final HashSet<Plot> myPlots = new HashSet<>();
-        foreachPlotAbs(new RunnableVal<Plot>() {
-            @Override public void run(Plot value) {
-                if (uuid.equals(value.owner)) {
-                    myPlots.add(value);
-                }
+        forEachPlotAbs(value -> {
+            if (uuid.equals(value.owner)) {
+                myPlots.add(value);
             }
         });
         return myPlots;
@@ -664,16 +663,16 @@ public abstract class PlotArea {
         return myPlots;
     }
 
-    private void foreachPlotAbs(@Nonnull final RunnableVal<Plot> run) {
+    private void forEachPlotAbs(Consumer<Plot> run) {
         for (final Entry<PlotId, Plot> entry : this.plots.entrySet()) {
-            run.run(entry.getValue());
+            run.accept(entry.getValue());
         }
     }
 
-    public void foreachBasePlot(@Nonnull final RunnableVal<Plot> run) {
+    public void forEachBasePlot(Consumer<Plot> run) {
         for (final Plot plot : getPlots()) {
             if (plot.isBasePlot()) {
-                run.run(plot);
+                run.accept(plot);
             }
         }
     }

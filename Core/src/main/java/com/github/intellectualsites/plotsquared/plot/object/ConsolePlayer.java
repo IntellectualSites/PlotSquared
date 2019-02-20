@@ -6,6 +6,7 @@ import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
 import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public class ConsolePlayer extends PlotPlayer {
@@ -45,7 +46,7 @@ public class ConsolePlayer extends PlotPlayer {
         return getLocation();
     }
 
-    @Override public UUID getUUID() {
+    @Nonnull @Override public UUID getUUID() {
         return DBFunc.EVERYONE;
     }
 
