@@ -546,23 +546,24 @@ public class Plot {
      * 6 = south-west<br>
      * 7 = north-west<br>
      * ----------<br>
+     * //todo these artificial values are way too confusing.
      * Note: A plot that is merged north and east will not be merged northeast if the northeast plot is not part of the same group<br>
      *
-     * @param direction direction to check for merged plot
+     * @param dir direction to check for merged plot
      * @return true if merged in that direction
      */
-    public boolean getMerged(int direction) {
+    public boolean getMerged(int dir) {
         if (this.settings == null) {
             return false;
         }
-        switch (direction) {
+        switch (dir) {
             case 0:
             case 1:
             case 2:
             case 3:
-                return this.getSettings().getMerged(direction);
+                return this.getSettings().getMerged(dir);
             case 7:
-                int i = direction - 4;
+                int i = dir - 4;
                 int i2 = 0;
                 if (this.getSettings().getMerged(i2)) {
                     if (this.getSettings().getMerged(i)) {
@@ -577,8 +578,8 @@ public class Plot {
             case 4:
             case 5:
             case 6:
-                i = direction - 4;
-                i2 = direction - 3;
+                i = dir - 4;
+                i2 = dir - 3;
                 return this.getSettings().getMerged(i2) && this.getSettings().getMerged(i)
                     && this.area.getPlotAbs(this.id.getRelative(i)).getMerged(i2) && this.area
                     .getPlotAbs(this.id.getRelative(i2)).getMerged(i);
@@ -954,16 +955,12 @@ public class Plot {
      *
      * @param name name
      */
-    public void setSign(final String name) {
+    public void setSign(@Nonnull String name) {
         if (!isLoaded()) {
             return;
         }
         if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
             TaskManager.runTask(() -> Plot.this.setSign(name));
-            return;
-        }
-        if (name == null) {
-            PlotSquared.log("Attempted to add null name to sign at plot: " + getId());
             return;
         }
         PlotManager manager = this.area.getPlotManager();
@@ -1393,7 +1390,12 @@ public class Plot {
             this.setSign("unknown");
             return;
         }
-        this.setSign(UUIDHandler.getName(this.owner));
+        String name = UUIDHandler.getName(this.owner);
+        if (name == null) {
+            this.setSign("unknown");
+        } else {
+            this.setSign(name);
+        }
     }
 
     /**
@@ -1471,10 +1473,7 @@ public class Plot {
      * @param notify notify
      * @return true if plot was created successfully
      */
-    public boolean create(final UUID uuid, final boolean notify) {
-        if (uuid == null) {
-            throw new IllegalArgumentException("UUID cannot be null");
-        }
+    public boolean create(@Nonnull UUID uuid, final boolean notify) {
         this.owner = uuid;
         Plot existing = this.area.getOwnedPlotAbs(this.id);
         if (existing != null) {
@@ -1526,9 +1525,7 @@ public class Plot {
     //TODO Better documentation needed.
 
     /**
-     * Return the top location for the plot.
-     *
-     * @return
+     * Returns the top location for the plot.
      */
     public Location getTopAbs() {
         Location top = this.area.getPlotManager().getPlotTopLocAbs(this.area, this.id);
@@ -1539,7 +1536,7 @@ public class Plot {
     //TODO Better documentation needed.
 
     /**
-     * Return the bottom location for the plot.
+     * Returns the bottom location for the plot.
      */
     public Location getBottomAbs() {
         Location loc = this.area.getPlotManager().getPlotBottomLocAbs(this.area, this.id);
@@ -1623,11 +1620,11 @@ public class Plot {
         if (!this.isMerged()) {
             return top;
         }
-        if (this.getMerged(2)) {
-            top.setZ(this.getRelative(2).getBottomAbs().getZ() - 1);
+        if (this.getMerged(Direction.SOUTH.getIndex())) {
+            top.setZ(this.getRelative(Direction.SOUTH.getIndex()).getBottomAbs().getZ() - 1);
         }
-        if (this.getMerged(1)) {
-            top.setX(this.getRelative(1).getBottomAbs().getX() - 1);
+        if (this.getMerged(Direction.EAST.getIndex())) {
+            top.setX(this.getRelative(Direction.SOUTH.getIndex()).getBottomAbs().getX() - 1);
         }
         return top;
     }
@@ -1644,11 +1641,11 @@ public class Plot {
         if (!this.isMerged()) {
             return bot;
         }
-        if (this.getMerged(0)) {
-            bot.setZ(this.getRelative(0).getTopAbs().getZ() + 1);
+        if (this.getMerged(Direction.NORTH.getIndex())) {
+            bot.setZ(this.getRelative(Direction.NORTH.getIndex()).getTopAbs().getZ() + 1);
         }
-        if (this.getMerged(3)) {
-            bot.setX(this.getRelative(3).getTopAbs().getX() + 1);
+        if (this.getMerged(Direction.WEST.getIndex())) {
+            bot.setX(this.getRelative(Direction.WEST.getIndex()).getTopAbs().getX() + 1);
         }
         return bot;
     }
@@ -1677,7 +1674,7 @@ public class Plot {
             if (this.area.TERRAIN == 3) {
                 return;
             }
-            Plot other = this.getRelative(1);
+            Plot other = this.getRelative(Direction.EAST.getIndex());
             Location bot = other.getBottomAbs();
             Location top = this.getTopAbs();
             Location pos1 = new Location(this.getWorldName(), top.getX(), 0, bot.getZ());
