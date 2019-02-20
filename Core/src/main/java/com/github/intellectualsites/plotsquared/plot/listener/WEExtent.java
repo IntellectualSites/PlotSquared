@@ -9,7 +9,7 @@ import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.util.Location;
-import com.sk89q.worldedit.world.biome.BaseBiome;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
@@ -42,7 +42,7 @@ public class WEExtent extends AbstractDelegateExtent {
         return null;
     }
 
-    @Override public boolean setBiome(BlockVector2 position, BaseBiome biome) {
+    @Override public boolean setBiome(BlockVector2 position, BiomeType biome) {
         return WEManager.maskContains(this.mask, position.getX(), position.getZ()) && super
             .setBiome(position, biome);
     }
