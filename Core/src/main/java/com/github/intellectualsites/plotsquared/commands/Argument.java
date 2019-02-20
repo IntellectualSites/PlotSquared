@@ -2,8 +2,6 @@ package com.github.intellectualsites.plotsquared.commands;
 
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 
-import java.util.stream.Stream;
-
 public abstract class Argument<T> {
 
     public static final Argument<Integer> Integer = new Argument<Integer>("int", 16) {
@@ -19,9 +17,11 @@ public abstract class Argument<T> {
     public static final Argument<Boolean> Boolean = new Argument<Boolean>("boolean", true) {
         @Override public Boolean parse(String in) {
             Boolean value = null;
-            if (Stream.of("true", "Yes", "1").anyMatch(in::equalsIgnoreCase)) {
+            if (in.equalsIgnoreCase("true") || in.equalsIgnoreCase("Yes") || in
+                .equalsIgnoreCase("1")) {
                 value = true;
-            } else if (Stream.of("false", "No", "0").anyMatch(in::equalsIgnoreCase)) {
+            } else if (in.equalsIgnoreCase("false") || in.equalsIgnoreCase("No") || in
+                .equalsIgnoreCase("0")) {
                 value = false;
             }
             return value;

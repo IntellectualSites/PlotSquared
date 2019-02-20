@@ -154,7 +154,8 @@ public class NbtFactory {
      * @return The decoded NBT compound.
      * @throws IOException If anything went wrong.
      */
-    @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "resource"}) public static NbtCompound fromStream(InputStream input, StreamOptions option)
+    @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "resource"})
+    public static NbtCompound fromStream(InputStream input, StreamOptions option)
         throws IOException {
         DataInputStream data = null;
         boolean suppress = true;
@@ -527,7 +528,9 @@ public class NbtFactory {
      *
      * @author Kristian
      */
-    public enum StreamOptions {NO_COMPRESSION, GZIP_COMPRESSION,}
+    public enum StreamOptions {
+        NO_COMPRESSION, GZIP_COMPRESSION,
+    }
 
 
     private enum NbtType {

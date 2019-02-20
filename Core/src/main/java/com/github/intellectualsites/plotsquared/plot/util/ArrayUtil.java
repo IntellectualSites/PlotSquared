@@ -5,7 +5,9 @@ import java.util.Arrays;
 public class ArrayUtil {
     public static final <T> T[] concatAll(T[] first, T[]... rest) {
         int totalLength = first.length;
-        totalLength += Arrays.stream(rest).mapToInt(array -> array.length).sum();
+        for (T[] array : rest) {
+            totalLength += array.length;
+        }
         T[] result = Arrays.copyOf(first, totalLength);
         int offset = first.length;
         for (T[] array : rest) {
