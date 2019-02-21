@@ -351,7 +351,8 @@ public class Settings extends Config {
         public static boolean DATABASE_PURGER = false;
         @Comment("Delete plots when a player is banned")
         public static boolean BAN_DELETER = false;
-        @Comment("Disable FAWE optimizations for P2")
-        public static boolean DISABLE_FAWE_OPTIMIZATION;
+        @Comment({"Disable FAWE optimizations for P2",
+            "  !!Do not set to true if using P2 worlds and instructed to do so"})
+        public static boolean DISABLE_FAWE_OPTIMIZATION = false;
     }
 }
