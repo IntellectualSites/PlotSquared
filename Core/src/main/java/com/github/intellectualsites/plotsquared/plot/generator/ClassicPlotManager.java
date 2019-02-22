@@ -432,7 +432,9 @@ public class ClassicPlotManager extends SquarePlotManager {
      */
     @Override public boolean finishPlotMerge(PlotArea plotArea, List<PlotId> plotIds) {
         final BlockBucket block = ((ClassicPlotWorld) plotArea).CLAIMED_WALL_BLOCK;
+        final BlockBucket wallBlock = ((ClassicPlotWorld) plotArea).WALL_FILLING;
         plotIds.forEach(id -> setWall(plotArea, id, block));
+        plotIds.forEach(id -> setWallFilling(plotArea, id, wallBlock));
         return true;
     }
 
