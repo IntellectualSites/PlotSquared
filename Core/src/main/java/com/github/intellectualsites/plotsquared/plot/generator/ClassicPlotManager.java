@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
+import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
@@ -432,9 +433,11 @@ public class ClassicPlotManager extends SquarePlotManager {
      */
     @Override public boolean finishPlotMerge(PlotArea plotArea, List<PlotId> plotIds) {
         final BlockBucket block = ((ClassicPlotWorld) plotArea).CLAIMED_WALL_BLOCK;
-        final BlockBucket wallBlock = ((ClassicPlotWorld) plotArea).WALL_FILLING;
         plotIds.forEach(id -> setWall(plotArea, id, block));
-        plotIds.forEach(id -> setWallFilling(plotArea, id, wallBlock));
+        if (Settings.General.MERGE_REPLACE_WALL) {
+            final BlockBucket wallBlock = ((ClassicPlotWorld) plotArea).WALL_FILLING;
+            plotIds.forEach(id -> setWallFilling(plotArea, id, wallBlock));
+        }
         return true;
     }
 
