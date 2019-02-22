@@ -47,7 +47,7 @@ import java.util.UUID;
     }
 
     /**
-     * Return all plots for a player.
+     * Gets all plots for a player.
      *
      * @param player Player, whose plots to search for
      * @return all plots that a player owns
@@ -84,16 +84,6 @@ import java.util.UUID;
      */
     public YamlConfiguration getStorage() {
         return PlotSquared.get().storage;
-    }
-
-    /**
-     * Gets the main class for this plugin. Only use this if you really need it.
-     *
-     * @return PlotSquared PlotSquared Main Class
-     * @see PlotSquared
-     */
-    public PlotSquared getMain() {
-        return PlotSquared.get();
     }
 
     /**
