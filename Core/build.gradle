@@ -19,34 +19,34 @@ processResources {
     }
 }
 
-jar.archiveName = "Plotsquared-Api-${project.parent.version}.jar"
-jar.destinationDir = file '../mvn/com/github/intellectualsites/plotsquared/Plotsquared-Api/' + project.parent.version
+jar.archiveName = "PlotSquared-API-${project.parent.version}.jar"
+jar.destinationDir = file '../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/' + project.parent.version
 task createPom {
     doLast {
         pom {
             project {
                 groupId 'com.github.intellectualsites.plotsquared'
-                artifactId 'Plotsquared-Api'
+                artifactId 'PlotSquared-API'
                 version project.parent.version
             }
-        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/Plotsquared-Api/${project.parent.version}/Plotsquared-Api-${project.parent.version}.pom")
+        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/${project.parent.version}/PlotSquared-API-${project.parent.version}.pom")
         pom {
             project {
                 groupId 'com.github.intellectualsites.plotsquared'
-                artifactId 'Plotsquared-Api'
+                artifactId 'PlotSquared-API'
                 version 'latest'
             }
-        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/Plotsquared-Api/latest/Plotsquared-Api-latest.pom")
+        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/latest/PlotSquared-API-latest.pom")
     }
 }
 
 task copyFiles {
     doLast {
         copy {
-            from "../mvn/com/github/intellectualsites/plotsquared/Plotsquared-Api/${project.parent.version}/"
-            into '../mvn/com/github/intellectualsites/plotsquared/Plotsquared-Api/latest/'
+            from "../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/${project.parent.version}/"
+            into '../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/latest/'
             include('*.jar')
-            rename("Plotsquared-Api-${project.parent.version}.jar", 'Plotsquared-Api-latest.jar')
+            rename("PlotSquared-API-${project.parent.version}.jar", 'PlotSquared-API-latest.jar')
         }
     }
 }
