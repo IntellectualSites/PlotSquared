@@ -9,7 +9,6 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
 
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @CommandDeclaration(command = "setowner", permission = "plots.set.owner",
     description = "Set the plot owner", usage = "/plot setowner <player>",
@@ -32,7 +31,8 @@ import java.util.stream.Stream;
             name = name == null ? value : name;
         }
         if (uuid == null || value.equalsIgnoreCase("-")) {
-            if (Stream.of("none", "null", "-").anyMatch(value::equalsIgnoreCase)) {
+            if (value.equalsIgnoreCase("none") || value.equalsIgnoreCase("null") || value
+                .equalsIgnoreCase("-")) {
                 if (!Permissions
                     .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SETOWNER.s(), true)) {
                     return false;

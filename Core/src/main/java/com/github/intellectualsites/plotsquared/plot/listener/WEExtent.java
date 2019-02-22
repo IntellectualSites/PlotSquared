@@ -42,22 +42,22 @@ public class WEExtent extends AbstractDelegateExtent {
         return null;
     }
 
-    @Override public BlockState getBlock(BlockVector3 position) {
-        if (WEManager.maskContains(this.mask, position.getX(), position.getY(), position.getZ())) {
-            return super.getBlock(position);
+    @Override public boolean setBiome(BlockVector2 position, BiomeType biome) {
+        return WEManager.maskContains(this.mask, position.getX(), position.getZ()) && super
+            .setBiome(position, biome);
+    }
+
+    @Override public BlockState getBlock(BlockVector3 location) {
+        if (WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
+            return super.getBlock(location);
         }
         return AIRSTATE;
     }
 
-    @Override public BaseBlock getFullBlock(BlockVector3 position) {
-        if (WEManager.maskContains(this.mask, position.getX(), position.getY(), position.getZ())) {
-            return super.getFullBlock(position);
+    @Override public BaseBlock getFullBlock(BlockVector3 location) {
+        if (WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
+            return super.getFullBlock(location);
         }
         return AIRBASE;
-    }
-
-    @Override public boolean setBiome(BlockVector2 position, BiomeType biome) {
-        return WEManager.maskContains(this.mask, position.getX(), position.getZ()) && super
-            .setBiome(position, biome);
     }
 }
