@@ -26,14 +26,14 @@ task createPom {
         pom {
             project {
                 groupId 'com.github.intellectualsites.plotsquared'
-                artifactId 'Plotsquared'
+                artifactId 'Plotsquared-Api'
                 version project.parent.version
             }
         }.writeTo("../mvn/com/github/intellectualsites/plotsquared/Plotsquared-Api/${project.parent.version}/Plotsquared-Api-${project.parent.version}.pom")
         pom {
             project {
                 groupId 'com.github.intellectualsites.plotsquared'
-                artifactId 'Plotsquared'
+                artifactId 'Plotsquared-Api'
                 version 'latest'
             }
         }.writeTo("../mvn/com/github/intellectualsites/plotsquared/Plotsquared-Api/latest/Plotsquared-Api-latest.pom")
