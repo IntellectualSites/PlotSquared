@@ -432,10 +432,14 @@ public class ClassicPlotManager extends SquarePlotManager {
     public boolean finishPlotMerge(PlotArea plotArea, ArrayList<PlotId> plotIds) {
         PlotBlock block = ((ClassicPlotWorld) plotArea).CLAIMED_WALL_BLOCK;
         PlotBlock unclaim = ((ClassicPlotWorld) plotArea).WALL_BLOCK;
+        PlotBlock wall = ((ClassicPlotWorld) plotArea).WALL_FILLING;
         if (block.id != 0 || !block.equals(unclaim)) {
             for (PlotId id : plotIds) {
                 setWall(plotArea, id, new PlotBlock[]{block});
             }
+        }
+        for (PlotId id : plotIds) {
+            setWallFilling(plotArea, id, new PlotBlock[]{wall});
         }
         return true;
     }
