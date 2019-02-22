@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.util;
 
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import lombok.NonNull;
@@ -84,7 +84,7 @@ import java.util.Map;
         @NonNull final String key, @NonNull final String block) {
         final BlockBucket bucket = this.blockToBucket(block);
         this.setString(section, key, bucket);
-        PlotSquared.log(C.LEGACY_CONFIG_REPLACED.f(block, bucket.toString()));
+        PlotSquared.log(Captions.LEGACY_CONFIG_REPLACED.f(block, bucket.toString()));
     }
 
     private void convertBlockList(@NonNull final ConfigurationSection section,
@@ -92,8 +92,8 @@ import java.util.Map;
         final PlotBlock[] blocks = this.splitBlockList(blockList);
         final BlockBucket bucket = this.blockListToBucket(blocks);
         this.setString(section, key, bucket);
-        PlotSquared
-            .log(C.LEGACY_CONFIG_REPLACED.f(plotBlockArrayString(blocks), bucket.toString()));
+        PlotSquared.log(
+            Captions.LEGACY_CONFIG_REPLACED.f(plotBlockArrayString(blocks), bucket.toString()));
     }
 
     private String plotBlockArrayString(@NonNull final PlotBlock[] blocks) {

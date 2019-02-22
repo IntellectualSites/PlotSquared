@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.CmdInstance;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 
@@ -18,7 +18,7 @@ public class CmdConfirm {
         final Runnable runnable) {
         removePending(player);
         if (commandStr != null) {
-            MainUtil.sendMessage(player, C.REQUIRES_CONFIRM, commandStr);
+            MainUtil.sendMessage(player, Captions.REQUIRES_CONFIRM, commandStr);
         }
         TaskManager.runTaskLater(new Runnable() {
             @Override public void run() {

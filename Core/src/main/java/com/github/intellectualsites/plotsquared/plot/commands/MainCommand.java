@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.CmdConfirm;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
@@ -200,7 +200,8 @@ public class MainCommand extends Command {
             PlotArea area = player.getApplicablePlotArea();
             Plot newPlot = Plot.fromString(area, args[0]);
             if (newPlot != null && (player instanceof ConsolePlayer || newPlot.getArea()
-                .equals(area) || Permissions.hasPermission(player, C.PERMISSION_ADMIN)) && !newPlot
+                .equals(area) || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN))
+                && !newPlot
                 .isDenied(player.getUUID())) {
                 Location newLoc = newPlot.getCenter();
                 if (player.canTeleport(newLoc)) {
@@ -212,7 +213,7 @@ public class MainCommand extends Command {
                     player.setMeta(PlotPlayer.META_LOCATION, newLoc);
                     player.setMeta(PlotPlayer.META_LAST_PLOT, newPlot);
                 } else {
-                    C.BORDER.send(player);
+                    Captions.BORDER.send(player);
                 }
                 // Trim command
                 args = Arrays.copyOfRange(args, 1, args.length);
@@ -247,7 +248,7 @@ public class MainCommand extends Command {
                         args = Arrays.copyOfRange(args, 1, args.length);
                         break;
                     default:
-                        C.INVALID_COMMAND_FLAG.send(player);
+                        Captions.INVALID_COMMAND_FLAG.send(player);
                         return;
                 }
             }
@@ -260,9 +261,9 @@ public class MainCommand extends Command {
             e.printStackTrace();
             String message = e.getLocalizedMessage();
             if (message != null) {
-                C.ERROR.send(player, message);
+                Captions.ERROR.send(player, message);
             } else {
-                C.ERROR.send(player);
+                Captions.ERROR.send(player);
             }
         }
         // Reset command scope //

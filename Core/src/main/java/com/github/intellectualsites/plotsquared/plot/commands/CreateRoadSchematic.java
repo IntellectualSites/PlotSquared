@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
@@ -19,10 +19,10 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
         Location loc = player.getLocation();
         Plot plot = loc.getPlotAbs();
         if (plot == null) {
-            return sendMessage(player, C.NOT_IN_PLOT);
+            return sendMessage(player, Captions.NOT_IN_PLOT);
         }
         if (!(loc.getPlotArea() instanceof HybridPlotWorld)) {
-            return sendMessage(player, C.NOT_IN_PLOT_WORLD);
+            return sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
         }
         HybridUtils.manager.setupRoadSchematic(plot);
         MainUtil.sendMessage(player,

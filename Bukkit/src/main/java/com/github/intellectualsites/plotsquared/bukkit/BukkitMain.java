@@ -9,7 +9,7 @@ import com.github.intellectualsites.plotsquared.bukkit.uuid.*;
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.plot.IPlotMain;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
@@ -140,7 +140,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         if (Settings.Enabled_Components.METRICS) {
             this.startMetrics();
         } else {
-            PlotSquared.log(C.CONSOLE_PLEASE_ENABLE_METRICS.f(getPluginName()));
+            PlotSquared.log(Captions.CONSOLE_PLEASE_ENABLE_METRICS.f(getPluginName()));
         }
         if (Settings.Enabled_Components.WORLDS) {
             TaskManager.IMP.taskRepeat(this::unload, 20);
@@ -238,7 +238,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override public void log(@NonNull String message) {
         try {
-            message = C.color(message);
+            message = Captions.color(message);
             if (!Settings.Chat.CONSOLE_COLOR) {
                 message = ChatColor.stripColor(message);
             }
@@ -287,7 +287,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     @Override @SuppressWarnings("deprecation") public void runEntityTask() {
-        PlotSquared.log(C.PREFIX + "KillAllEntities started.");
+        PlotSquared.log(Captions.PREFIX + "KillAllEntities started.");
         TaskManager.runTaskRepeat(() -> PlotSquared.get().forEachPlotArea(plotArea -> {
             final World world = Bukkit.getWorld(plotArea.worldname);
             try {
@@ -621,55 +621,15 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return new BukkitSetupUtils();
     }
 
-    @Override public UUIDHandlerImplementation initUUIDHandler() {
-        boolean checkVersion = false;
-        try {
-            OfflinePlayer.class.getDeclaredMethod("getUniqueId");
-            checkVersion = true;
-        } catch (Throwable ignore) {
+    @Override public void startMetrics() {
+        if (this.metricsStarted) {
+            return;
         }
-        final UUIDWrapper wrapper;
-        if (Settings.UUID.OFFLINE) {
-            if (Settings.UUID.FORCE_LOWERCASE) {
-                wrapper = new LowerOfflineUUIDWrapper();
-            } else {
-                wrapper = new OfflineUUIDWrapper();
-            }
-            Settings.UUID.OFFLINE = true;
-        } else if (checkVersion) {
-            wrapper = new DefaultUUIDWrapper();
-            Settings.UUID.OFFLINE = false;
-        } else {
-            if (Settings.UUID.FORCE_LOWERCASE) {
-                wrapper = new LowerOfflineUUIDWrapper();
-            } else {
-                wrapper = new OfflineUUIDWrapper();
-            }
-            Settings.UUID.OFFLINE = true;
-        }
-        if (!checkVersion) {
-            PlotSquared.log(C.PREFIX
-                + " &c[WARN] Titles are disabled - please update your version of Bukkit to support this feature.");
-            Settings.TITLES = false;
-        } else {
-            AbstractTitle.TITLE_CLASS = new DefaultTitle_111();
-            if (wrapper instanceof DefaultUUIDWrapper
-                || wrapper.getClass() == OfflineUUIDWrapper.class && !Bukkit.getOnlineMode()) {
-                Settings.UUID.NATIVE_UUID_PROVIDER = true;
-            }
-        }
-        if (Settings.UUID.OFFLINE) {
-            PlotSquared.log(C.PREFIX + " &6" + getPluginName()
-                + " is using Offline Mode UUIDs either because of user preference, or because you are using an old version of "
-                + "Bukkit");
-        } else {
-            PlotSquared.log(C.PREFIX + " &6" + getPluginName() + " is using online UUIDs");
-        }
-        if (Settings.UUID.USE_SQLUUIDHANDLER) {
-            return new SQLUUIDHandler(wrapper);
-        } else {
-            return new FileUUIDHandler(wrapper);
-        }
+        System.setProperty("bstats.relocatecheck",
+            "false"); // We do not want to relocate the package...
+        Metrics metrics = new Metrics(this);// bstats
+        PlotSquared.log(Captions.PREFIX + "&6Metrics enabled.");
+        this.metricsStarted = true;
     }
 
     @Override public ChunkManager initChunkManager() {
@@ -700,15 +660,55 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return new BukkitInventoryUtil();
     }
 
-    @Override public void startMetrics() {
-        if (this.metricsStarted) {
-            return;
+    @Override public UUIDHandlerImplementation initUUIDHandler() {
+        boolean checkVersion = false;
+        try {
+            OfflinePlayer.class.getDeclaredMethod("getUniqueId");
+            checkVersion = true;
+        } catch (Throwable ignore) {
         }
-        System.setProperty("bstats.relocatecheck",
-            "false"); // We do not want to relocate the package...
-        Metrics metrics = new Metrics(this);// bstats
-        PlotSquared.log(C.PREFIX + "&6Metrics enabled.");
-        this.metricsStarted = true;
+        final UUIDWrapper wrapper;
+        if (Settings.UUID.OFFLINE) {
+            if (Settings.UUID.FORCE_LOWERCASE) {
+                wrapper = new LowerOfflineUUIDWrapper();
+            } else {
+                wrapper = new OfflineUUIDWrapper();
+            }
+            Settings.UUID.OFFLINE = true;
+        } else if (checkVersion) {
+            wrapper = new DefaultUUIDWrapper();
+            Settings.UUID.OFFLINE = false;
+        } else {
+            if (Settings.UUID.FORCE_LOWERCASE) {
+                wrapper = new LowerOfflineUUIDWrapper();
+            } else {
+                wrapper = new OfflineUUIDWrapper();
+            }
+            Settings.UUID.OFFLINE = true;
+        }
+        if (!checkVersion) {
+            PlotSquared.log(Captions.PREFIX
+                + " &c[WARN] Titles are disabled - please update your version of Bukkit to support this feature.");
+            Settings.TITLES = false;
+        } else {
+            AbstractTitle.TITLE_CLASS = new DefaultTitle_111();
+            if (wrapper instanceof DefaultUUIDWrapper
+                || wrapper.getClass() == OfflineUUIDWrapper.class && !Bukkit.getOnlineMode()) {
+                Settings.UUID.NATIVE_UUID_PROVIDER = true;
+            }
+        }
+        if (Settings.UUID.OFFLINE) {
+            PlotSquared.log(Captions.PREFIX + " &6" + getPluginName()
+                + " is using Offline Mode UUIDs either because of user preference, or because you are using an old version of "
+                + "Bukkit");
+        } else {
+            PlotSquared.log(Captions.PREFIX + " &6" + getPluginName() + " is using online UUIDs");
+        }
+        if (Settings.UUID.USE_SQLUUIDHANDLER) {
+            return new SQLUUIDHandler(wrapper);
+        } else {
+            return new FileUUIDHandler(wrapper);
+        }
     }
 
     @Override public void setGenerator(@NonNull final String worldName) {

@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
 import com.github.intellectualsites.plotsquared.plot.util.*;
@@ -174,9 +174,9 @@ import java.util.*;
      *
      * @param player  the recipient of the message
      * @param caption the message
-     * @see MainUtil#sendMessage(PlotPlayer, C, String...)
+     * @see MainUtil#sendMessage(PlotPlayer, Captions, String...)
      */
-    public static void sendMessage(Player player, C caption) {
+    public static void sendMessage(Player player, Captions caption) {
         MainUtil.sendMessage(BukkitUtil.getPlayer(player), caption);
     }
 

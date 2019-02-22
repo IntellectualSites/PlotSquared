@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration.UnknownBlockException;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
@@ -47,17 +47,17 @@ import java.util.stream.IntStream;
 
                 for (String component : components) {
                     if (component.equalsIgnoreCase(args[0])) {
-                        if (!Permissions
-                            .hasPermission(player, C.PERMISSION_SET_COMPONENT.f(component))) {
-                            MainUtil.sendMessage(player, C.NO_PERMISSION,
-                                C.PERMISSION_SET_COMPONENT.f(component));
+                        if (!Permissions.hasPermission(player,
+                            Captions.PERMISSION_SET_COMPONENT.f(component))) {
+                            MainUtil.sendMessage(player, Captions.NO_PERMISSION,
+                                Captions.PERMISSION_SET_COMPONENT.f(component));
                             return false;
                         }
                         // PlotBlock[] blocks;
                         BlockBucket bucket;
                         try {
                             if (args.length < 2) {
-                                MainUtil.sendMessage(player, C.NEED_BLOCK);
+                                MainUtil.sendMessage(player, Captions.NEED_BLOCK);
                                 return true;
                             }
                             String[] split = material.split(",");
@@ -67,14 +67,14 @@ import java.util.stream.IntStream;
                                 bucket = Configuration.BLOCK_BUCKET.parseString(material);
                             } catch (final UnknownBlockException unknownBlockException) {
                                 final String unknownBlock = unknownBlockException.getUnknownValue();
-                                C.NOT_VALID_BLOCK.send(player, unknownBlock);
+                                Captions.NOT_VALID_BLOCK.send(player, unknownBlock);
                                 StringComparison<PlotBlock>.ComparisonResult match =
                                     WorldUtil.IMP.getClosestBlock(unknownBlock);
                                 if (match != null) {
                                     final String found =
                                         WorldUtil.IMP.getClosestMatchingName(match.best);
                                     if (found != null) {
-                                        MainUtil.sendMessage(player, C.DID_YOU_MEAN,
+                                        MainUtil.sendMessage(player, Captions.DID_YOU_MEAN,
                                             found.toLowerCase());
                                     }
                                 }
@@ -84,24 +84,24 @@ import java.util.stream.IntStream;
                             if (!allowUnsafe) {
                                 for (final PlotBlock block : bucket.getBlocks()) {
                                     if (!block.isAir() && !WorldUtil.IMP.isBlockSolid(block)) {
-                                        C.NOT_ALLOWED_BLOCK.send(player, block.toString());
+                                        Captions.NOT_ALLOWED_BLOCK.send(player, block.toString());
                                         return false;
                                     }
                                 }
                             }
                         } catch (Exception ignored) {
-                            MainUtil.sendMessage(player, C.NOT_VALID_BLOCK, material);
+                            MainUtil.sendMessage(player, Captions.NOT_VALID_BLOCK, material);
                             return false;
                         }
                         if (plot.getRunning() > 0) {
-                            MainUtil.sendMessage(player, C.WAIT_FOR_TIMER);
+                            MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
                             return false;
                         }
                         plot.addRunning();
                         for (Plot current : plot.getConnectedPlots()) {
                             current.setComponent(component, bucket);
                         }
-                        MainUtil.sendMessage(player, C.GENERATING_COMPONENT);
+                        MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
                         GlobalBlockQueue.IMP.addTask(plot::removeRunning);
                         return true;
                     }
@@ -119,8 +119,8 @@ import java.util.stream.IntStream;
             newValues.addAll(
                 Arrays.asList(plot.getManager().getPlotComponents(plot.getArea(), plot.getId())));
         }
-        MainUtil.sendMessage(player, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringMan
-            .join(newValues, C.BLOCK_LIST_SEPARATER.formatted()));
+        MainUtil.sendMessage(player, Captions.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringMan
+            .join(newValues, Captions.BLOCK_LIST_SEPARATER.formatted()));
         return false;
     }
 
@@ -139,7 +139,7 @@ import java.util.stream.IntStream;
         // Additional checks
         Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            MainUtil.sendMessage(player, C.NOT_IN_PLOT);
+            MainUtil.sendMessage(player, Captions.NOT_IN_PLOT);
             return false;
         }
         // components

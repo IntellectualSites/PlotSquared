@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.uuid;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.SQLite;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
@@ -153,7 +153,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
     }
 
     @Override public void fetchUUID(final String name, final RunnableVal<UUID> ifFetch) {
-        PlotSquared.debug(C.PREFIX + "UUID for '" + name
+        PlotSquared.debug(Captions.PREFIX + "UUID for '" + name
             + "' was null. We'll cache this from the Mojang servers!");
         if (ifFetch == null) {
             return;
@@ -196,25 +196,6 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
         }
     }
 
-    @Override public boolean add(final StringWrapper name, final UUID uuid) {
-        // Ignoring duplicates
-        if (super.add(name, uuid)) {
-            TaskManager.runTaskAsync(() -> {
-                try (PreparedStatement statement = getConnection()
-                    .prepareStatement("REPLACE INTO usercache (`uuid`, `username`) VALUES(?, ?)")) {
-                    statement.setString(1, uuid.toString());
-                    statement.setString(2, name.toString());
-                    statement.execute();
-                    PlotSquared.debug(C.PREFIX + "&cAdded '&6" + uuid + "&c' - '&6" + name + "&c'");
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            });
-            return true;
-        }
-        return false;
-    }
-
     /**
      * This is useful for name changes
      */
@@ -226,12 +207,32 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                 statement.setString(1, name.value);
                 statement.setString(2, uuid.toString());
                 statement.execute();
-                PlotSquared
-                    .debug(C.PREFIX + "Name change for '" + uuid + "' to '" + name.value + '\'');
+                PlotSquared.debug(
+                    Captions.PREFIX + "Name change for '" + uuid + "' to '" + name.value + '\'');
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         });
+    }
+
+    @Override public boolean add(final StringWrapper name, final UUID uuid) {
+        // Ignoring duplicates
+        if (super.add(name, uuid)) {
+            TaskManager.runTaskAsync(() -> {
+                try (PreparedStatement statement = getConnection()
+                    .prepareStatement("REPLACE INTO usercache (`uuid`, `username`) VALUES(?, ?)")) {
+                    statement.setString(1, uuid.toString());
+                    statement.setString(2, name.toString());
+                    statement.execute();
+                    PlotSquared
+                        .debug(Captions.PREFIX + "&cAdded '&6" + uuid + "&c' - '&6" + name + "&c'");
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            });
+            return true;
+        }
+        return false;
     }
 
     private class SQLUUIDHandlerException extends RuntimeException {

@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotManager;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
@@ -20,13 +20,13 @@ public class DebugRoadRegen extends SubCommand {
         Location loc = player.getLocation();
         PlotArea plotArea = loc.getPlotArea();
         if (!(plotArea instanceof HybridPlotWorld)) {
-            return sendMessage(player, C.NOT_IN_PLOT_WORLD);
+            return sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
         }
         Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            C.NOT_IN_PLOT.send(player);
+            Captions.NOT_IN_PLOT.send(player);
         } else if (plot.isMerged()) {
-            C.REQUIRES_UNMERGED.send(player);
+            Captions.REQUIRES_UNMERGED.send(player);
         } else {
             HybridPlotManager manager = (HybridPlotManager) plotArea.getPlotManager();
             manager.createRoadEast(plotArea, plot);

@@ -5,7 +5,7 @@ import com.github.intellectualsites.plotsquared.configuration.MemorySection;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
 import com.github.intellectualsites.plotsquared.configuration.serialization.ConfigurationSerialization;
 import com.github.intellectualsites.plotsquared.plot.commands.WE_Anywhere;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.config.Storage;
@@ -42,6 +42,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -64,13 +65,13 @@ import java.util.zip.ZipInputStream;
     public File commandsFile;
     public File translationFile;
     public YamlConfiguration style;
-    public YamlConfiguration config;
     public YamlConfiguration worlds;
     public YamlConfiguration storage;
     public YamlConfiguration commands;
     // Temporary hold the plots/clusters before the worlds load
     public HashMap<String, Set<PlotCluster>> clusters_tmp;
     public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
+    private YamlConfiguration config;
     // Implementation logger
     @Setter @Getter private ILogger logger;
     // Platform / Version / Update URL
@@ -129,7 +130,7 @@ import java.util.zip.ZipInputStream;
             this.translationFile = MainUtil.getFile(this.IMP.getDirectory(),
                 Settings.Paths.TRANSLATIONS + File.separator + IMP.getPluginName()
                     + ".use_THIS.yml");
-            C.load(this.translationFile);
+            Captions.load(this.translationFile);
 
             // Setup plotAreaManager
             if (Settings.Enabled_Components.WORLDS) {
@@ -158,7 +159,7 @@ import java.util.zip.ZipInputStream;
             if (Settings.Enabled_Components.METRICS) {
                 this.IMP.startMetrics();
             } else {
-                PlotSquared.log(C.CONSOLE_PLEASE_ENABLE_METRICS.f(IMP.getPluginName()));
+                PlotSquared.log(Captions.CONSOLE_PLEASE_ENABLE_METRICS.f(IMP.getPluginName()));
             }
             if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
                 this.IMP.registerChunkProcessor();
@@ -285,7 +286,7 @@ import java.util.zip.ZipInputStream;
             e.printStackTrace();
         }
 
-        PlotSquared.log(C.ENABLED.f(IMP.getPluginName()));
+        PlotSquared.log(Captions.ENABLED.f(IMP.getPluginName()));
     }
 
     /**
@@ -801,9 +802,9 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Gets all the plots in a single set.
+     * Gets all the plots across all plotworlds in one {@code Set}.
      *
-     * @return Set of Plots
+     * @return all the plots on the server loaded by this plugin
      */
     public Set<Plot> getPlots() {
         int size = getPlotCount();
@@ -886,12 +887,9 @@ import java.util.zip.ZipInputStream;
      * @return Set of plot
      */
     public Set<Plot> getPlots(String world, UUID uuid) {
-        final Set<Plot> plots = new HashSet<>();
-        for (final Plot plot : getPlots(world)) {
-            if (plot.hasOwner() && plot.isOwnerAbs(uuid)) {
-                plots.add(plot);
-            }
-        }
+        final Set<Plot> plots =
+            getPlots(world).stream().filter(plot -> plot.hasOwner() && plot.isOwnerAbs(uuid))
+                .collect(Collectors.toSet());
         return Collections.unmodifiableSet(plots);
     }
 
@@ -999,7 +997,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Unregister a plot from local memory (does not call DB).
+     * Unregisters a plot from local memory without calling the database.
      *
      * @param plot      the plot to remove
      * @param callEvent If to call an event about the plot being removed
@@ -1091,11 +1089,12 @@ import java.util.zip.ZipInputStream;
             // Conventional plot generator
             PlotArea plotArea = plotGenerator.getNewPlotArea(world, null, null, null);
             PlotManager plotManager = plotGenerator.getNewPlotManager();
-            PlotSquared.log(C.PREFIX + "&aDetected world load for '" + world + "'");
-            PlotSquared.log(C.PREFIX + "&3 - generator: &7" + baseGenerator + ">" + plotGenerator);
-            PlotSquared.log(C.PREFIX + "&3 - plotworld: &7" + plotArea.getClass().getName());
+            PlotSquared.log(Captions.PREFIX + "&aDetected world load for '" + world + "'");
             PlotSquared
-                .log(C.PREFIX + "&3 - plotAreaManager: &7" + plotManager.getClass().getName());
+                .log(Captions.PREFIX + "&3 - generator: &7" + baseGenerator + ">" + plotGenerator);
+            PlotSquared.log(Captions.PREFIX + "&3 - plotworld: &7" + plotArea.getClass().getName());
+            PlotSquared.log(
+                Captions.PREFIX + "&3 - plotAreaManager: &7" + plotManager.getClass().getName());
             if (!this.worlds.contains(path)) {
                 this.worlds.createSection(path);
                 worldSection = this.worlds.getConfigurationSection(path);
@@ -1120,7 +1119,7 @@ import java.util.zip.ZipInputStream;
                     debug("World possibly already loaded: " + world);
                     return;
                 }
-                PlotSquared.log(C.PREFIX + "&aDetected world load for '" + world + "'");
+                PlotSquared.log(Captions.PREFIX + "&aDetected world load for '" + world + "'");
                 String gen_string = worldSection.getString("generator.plugin", IMP.getPluginName());
                 if (type == 2) {
                     Set<PlotCluster> clusters =
@@ -1137,7 +1136,7 @@ import java.util.zip.ZipInputStream;
                         worldSection.createSection("areas." + fullId);
                         DBFunc.replaceWorld(world, world + ";" + name, pos1, pos2); // NPE
 
-                        PlotSquared.log(C.PREFIX + "&3 - " + name + "-" + pos1 + "-" + pos2);
+                        PlotSquared.log(Captions.PREFIX + "&3 - " + name + "-" + pos1 + "-" + pos2);
                         GeneratorWrapper<?> areaGen = this.IMP.getGenerator(world, gen_string);
                         if (areaGen == null) {
                             throw new IllegalArgumentException("Invalid Generator: " + gen_string);
@@ -1151,11 +1150,13 @@ import java.util.zip.ZipInputStream;
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        PlotSquared.log(
+                            Captions.PREFIX + "&c | &9generator: &7" + baseGenerator + ">"
+                                + areaGen);
+                        PlotSquared.log(Captions.PREFIX + "&c | &9plotworld: &7" + pa);
+                        PlotSquared.log(Captions.PREFIX + "&c | &9manager: &7" + pa);
                         PlotSquared
-                            .log(C.PREFIX + "&c | &9generator: &7" + baseGenerator + ">" + areaGen);
-                        PlotSquared.log(C.PREFIX + "&c | &9plotworld: &7" + pa);
-                        PlotSquared.log(C.PREFIX + "&c | &9manager: &7" + pa);
-                        PlotSquared.log(C.PREFIX + "&cNote: &7Area created for cluster:" + name
+                            .log(Captions.PREFIX + "&cNote: &7Area created for cluster:" + name
                             + " (invalid or old configuration?)");
                         areaGen.getPlotGenerator().initialize(pa);
                         areaGen.augment(pa);
@@ -1178,9 +1179,10 @@ import java.util.zip.ZipInputStream;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                PlotSquared.log(C.PREFIX + "&3 - generator: &7" + baseGenerator + ">" + areaGen);
-                PlotSquared.log(C.PREFIX + "&3 - plotworld: &7" + pa);
-                PlotSquared.log(C.PREFIX + "&3 - plotAreaManager: &7" + pa.getPlotManager());
+                PlotSquared
+                    .log(Captions.PREFIX + "&3 - generator: &7" + baseGenerator + ">" + areaGen);
+                PlotSquared.log(Captions.PREFIX + "&3 - plotworld: &7" + pa);
+                PlotSquared.log(Captions.PREFIX + "&3 - plotAreaManager: &7" + pa.getPlotManager());
                 areaGen.getPlotGenerator().initialize(pa);
                 areaGen.augment(pa);
                 addPlotArea(pa);
@@ -1191,7 +1193,7 @@ import java.util.zip.ZipInputStream;
                     "Invalid type for multi-area world. Expected `2`, got `" + 1 + "`");
             }
             for (String areaId : areasSection.getKeys(false)) {
-                PlotSquared.log(C.PREFIX + "&3 - " + areaId);
+                PlotSquared.log(Captions.PREFIX + "&3 - " + areaId);
                 String[] split = areaId.split("(?<=[^;-])-");
                 if (split.length != 3) {
                     throw new IllegalArgumentException("Invalid Area identifier: " + areaId
@@ -1253,10 +1255,11 @@ import java.util.zip.ZipInputStream;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                PlotSquared.log(C.PREFIX + "&aDetected area load for '" + world + "'");
-                PlotSquared.log(C.PREFIX + "&c | &9generator: &7" + baseGenerator + ">" + areaGen);
-                PlotSquared.log(C.PREFIX + "&c | &9plotworld: &7" + pa);
-                PlotSquared.log(C.PREFIX + "&c | &9manager: &7" + pa.getPlotManager());
+                PlotSquared.log(Captions.PREFIX + "&aDetected area load for '" + world + "'");
+                PlotSquared
+                    .log(Captions.PREFIX + "&c | &9generator: &7" + baseGenerator + ">" + areaGen);
+                PlotSquared.log(Captions.PREFIX + "&c | &9plotworld: &7" + pa);
+                PlotSquared.log(Captions.PREFIX + "&c | &9manager: &7" + pa.getPlotManager());
                 areaGen.getPlotGenerator().initialize(pa);
                 areaGen.augment(pa);
                 addPlotArea(pa);
@@ -1403,20 +1406,16 @@ import java.util.zip.ZipInputStream;
 
     public String normalisedVersion(@NonNull final String version) {
         final String[] split = Pattern.compile(".", Pattern.LITERAL).split(version);
-        final StringBuilder sb = new StringBuilder();
-        for (final String s : split) {
-            sb.append(String.format("%" + 4 + 's', s));
-        }
-        return sb.toString();
+        return Arrays.stream(split).map(s -> String.format("%4s", s)).collect(Collectors.joining());
     }
 
-    public boolean update(PlotPlayer sender, URL url) {
+    private boolean update(PlotPlayer sender, URL url) {
         try {
             String name = this.jarFile.getName();
-            File newJar = new File("plugins/update/" + name);
             MainUtil.sendMessage(sender, "$1Downloading from provided URL: &7" + url);
             URLConnection con = url.openConnection();
             try (InputStream stream = con.getInputStream()) {
+                File newJar = new File("plugins/update/" + name);
                 File parent = newJar.getParentFile();
                 if (!parent.exists()) {
                     parent.mkdirs();
@@ -1443,7 +1442,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Copy a file from inside the jar to a location
+     * Copies a file from inside the jar to a location
      *
      * @param file   Name of the file inside PlotSquared.jar
      * @param folder The output location relative to /plugins/PlotSquared/
@@ -1511,7 +1510,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Close the database connection.
+     * Safely closes the database connection.
      */
     public void disable() {
         try {
@@ -1548,7 +1547,7 @@ import java.util.zip.ZipInputStream;
                 File file = MainUtil.getFile(IMP.getDirectory(), Storage.SQLite.DB + ".db");
                 database = new SQLite(file);
             } else {
-                PlotSquared.log(C.PREFIX + "&cNo storage type is set!");
+                PlotSquared.log(Captions.PREFIX + "&cNo storage type is set!");
                 this.IMP.shutdown(); //shutdown used instead of disable because no database is set
                 return;
             }
@@ -1566,8 +1565,8 @@ import java.util.zip.ZipInputStream;
             }
             this.clusters_tmp = DBFunc.getClusters();
         } catch (ClassNotFoundException | SQLException e) {
-            PlotSquared.log(
-                C.PREFIX + "&cFailed to open DATABASE connection. The plugin will disable itself.");
+            PlotSquared.log(Captions.PREFIX
+                + "&cFailed to open DATABASE connection. The plugin will disable itself.");
             if (Storage.MySQL.USE) {
                 PlotSquared.log("$4MYSQL");
             } else if (Storage.SQLite.USE) {
@@ -1589,15 +1588,16 @@ import java.util.zip.ZipInputStream;
      * @throws IOException if the config failed to save
      */
     public void setupConfig() throws IOException {
-        String lastVersionString = this.config.getString("version");
+        String lastVersionString = this.getConfig().getString("version");
         if (lastVersionString != null) {
             String[] split = lastVersionString.split("\\.");
             int[] lastVersion = new int[] {Integer.parseInt(split[0]), Integer.parseInt(split[1]),
                 Integer.parseInt(split[2])};
             if (checkVersion(new int[] {3, 4, 0}, lastVersion)) {
                 Settings.convertLegacy(configFile);
-                if (config.contains("worlds")) {
-                    ConfigurationSection worldSection = config.getConfigurationSection("worlds");
+                if (getConfig().contains("worlds")) {
+                    ConfigurationSection worldSection =
+                        getConfig().getConfigurationSection("worlds");
                     worlds.set("worlds", worldSection);
                     try {
                         worlds.save(worldsFile);
@@ -1639,7 +1639,7 @@ import java.util.zip.ZipInputStream;
     public boolean setupConfigs() {
         File folder = new File(this.IMP.getDirectory(), "config");
         if (!folder.exists() && !folder.mkdirs()) {
-            PlotSquared.log(C.PREFIX
+            PlotSquared.log(Captions.PREFIX
                 + "&cFailed to create the /plugins/config folder. Please create it manually.");
         }
         try {
@@ -1655,11 +1655,11 @@ import java.util.zip.ZipInputStream;
                     .getString("configuration_version")
                     .equalsIgnoreCase(LegacyConverter.CONFIGURATION_VERSION)) {
                     // Conversion needed
-                    log(C.LEGACY_CONFIG_FOUND.s());
+                    log(Captions.LEGACY_CONFIG_FOUND.s());
                     try {
                         com.google.common.io.Files
                             .copy(this.worldsFile, new File(folder, "worlds.yml.old"));
-                        log(C.LEGACY_CONFIG_BACKUP.s());
+                        log(Captions.LEGACY_CONFIG_BACKUP.s());
                         final ConfigurationSection worlds =
                             this.worlds.getConfigurationSection("worlds");
                         final LegacyConverter converter = new LegacyConverter(worlds);
@@ -1668,9 +1668,9 @@ import java.util.zip.ZipInputStream;
                             .set("configuration_version", LegacyConverter.CONFIGURATION_VERSION);
                         this.worlds.set("worlds", worlds); // Redundant, but hey... ¯\_(ツ)_/¯
                         this.worlds.save(this.worldsFile);
-                        log(C.LEGACY_CONFIG_DONE.s());
+                        log(Captions.LEGACY_CONFIG_DONE.s());
                     } catch (final Exception e) {
-                        log(C.LEGACY_CONFIG_CONVERSION_FAILED.s());
+                        log(Captions.LEGACY_CONFIG_CONVERSION_FAILED.s());
                         e.printStackTrace();
                     }
                     // Disable plugin
@@ -1759,7 +1759,7 @@ import java.util.zip.ZipInputStream;
         if (Settings.DEBUG) {
             Map<String, Object> components = Settings.getFields(Settings.Enabled_Components.class);
             for (Entry<String, Object> component : components.entrySet()) {
-                PlotSquared.log(C.PREFIX + String
+                PlotSquared.log(Captions.PREFIX + String
                     .format("&cKey: &6%s&c, Value: &6%s", component.getKey(),
                         component.getValue()));
             }
@@ -1790,7 +1790,7 @@ import java.util.zip.ZipInputStream;
      *
      * @return the java version
      */
-    public double getJavaVersion() {
+    private double getJavaVersion() {
         return Double.parseDouble(System.getProperty("java.specification.version"));
     }
 
@@ -1800,36 +1800,36 @@ import java.util.zip.ZipInputStream;
         }
     }
 
-    public void forEachPlotArea(@NonNull final String world, Consumer<PlotArea> runnable) {
+    public void forEachPlotArea(@NonNull final String world, Consumer<PlotArea> consumer) {
         final PlotArea[] array = this.plotAreaManager.getPlotAreas(world, null);
         if (array == null) {
             return;
         }
         for (final PlotArea area : array) {
-            runnable.accept(area);
+            consumer.accept(area);
         }
     }
 
-    public void forEachPlot(Consumer<Plot> runnable) {
+    public void forEachPlot(Consumer<Plot> consumer) {
         for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-            area.getPlots().forEach(runnable);
+            area.getPlots().forEach(consumer);
         }
     }
 
-    public void forEachPlotRaw(Consumer<Plot> runnable) {
+    public void forEachPlotRaw(Consumer<Plot> consumer) {
         for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-            area.getPlots().forEach(runnable);
+            area.getPlots().forEach(consumer);
         }
         if (this.plots_tmp != null) {
             for (final HashMap<PlotId, Plot> entry : this.plots_tmp.values()) {
-                entry.values().forEach(runnable);
+                entry.values().forEach(consumer);
             }
         }
     }
 
-    public void forEachBasePlot(Consumer<Plot> run) {
+    public void forEachBasePlot(Consumer<Plot> consumer) {
         for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-            area.forEachBasePlot(run);
+            area.forEachBasePlot(consumer);
         }
     }
 
@@ -1959,6 +1959,10 @@ import java.util.zip.ZipInputStream;
         final Set<PlotArea> set = new HashSet<>();
         Collections.addAll(set, areas);
         return Collections.unmodifiableSet(set);
+    }
+
+    public YamlConfiguration getConfig() {
+        return config;
     }
 
     public enum SortType {

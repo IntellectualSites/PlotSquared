@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.object;
 import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.RequiredType;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
@@ -166,15 +166,15 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     public int hasPermissionRange(String stub, int range) {
-        if (hasPermission(C.PERMISSION_ADMIN.s())) {
+        if (hasPermission(Captions.PERMISSION_ADMIN.s())) {
             return Integer.MAX_VALUE;
         }
         String[] nodes = stub.split("\\.");
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < (nodes.length - 1); i++) {
             builder.append(nodes[i]).append(".");
-            if (!stub.equals(builder + C.PERMISSION_STAR.s())) {
-                if (hasPermission(builder + C.PERMISSION_STAR.s())) {
+            if (!stub.equals(builder + Captions.PERMISSION_STAR.s())) {
+                if (hasPermission(builder + Captions.PERMISSION_STAR.s())) {
                     return Integer.MAX_VALUE;
                 }
             }
@@ -563,7 +563,8 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                                                     TaskManager.runTask(() -> {
                                                         if (getMeta("teleportOnLogin", true)) {
                                                             teleport(loc);
-                                                            sendMessage(C.TELEPORTED_TO_PLOT.f()
+                                                            sendMessage(
+                                                                Captions.TELEPORTED_TO_PLOT.f()
                                                                 + " (quitLoc) (" + plotX + ","
                                                                 + plotZ + ")");
                                                         }
@@ -577,7 +578,8 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                                                                     true)) {
                                                                     teleport(loc);
                                                                     sendMessage(
-                                                                        C.TELEPORTED_TO_PLOT.f()
+                                                                        Captions.TELEPORTED_TO_PLOT
+                                                                            .f()
                                                                             + " (quitLoc-unloaded) ("
                                                                             + plotX + "," + plotZ
                                                                             + ")");

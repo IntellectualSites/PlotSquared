@@ -10,7 +10,7 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.CommandCategory;
 import com.github.intellectualsites.plotsquared.plot.commands.RequiredType;
 import com.github.intellectualsites.plotsquared.plot.commands.SubCommand;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -55,14 +55,15 @@ import java.util.Map.Entry;
                     Class<?> clazz = Class.forName(args[0]);
                     newWrapper = (UUIDWrapper) clazz.newInstance();
                 } catch (ClassNotFoundException | IllegalAccessException | InstantiationException ignored) {
-                    MainUtil.sendMessage(player, C.COMMAND_SYNTAX,
+                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
                         "/plot uuidconvert <lower|offline|online>");
                     return false;
                 }
         }
 
         if (args.length != 2 || !"-o".equals(args[1])) {
-            MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot uuidconvert " + args[0] + " - o");
+            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
+                "/plot uuidconvert " + args[0] + " - o");
             MainUtil.sendMessage(player, "&cBe aware of the following!");
             MainUtil.sendMessage(player,
                 "&8 - &cUse the database command or another method to backup your plots beforehand");
@@ -109,7 +110,8 @@ import java.util.Map.Entry;
                         UUID uuid = UUID.fromString(s);
                         uuids.add(uuid);
                     } catch (Exception ignored) {
-                        MainUtil.sendMessage(player, C.PREFIX + "Invalid playerdata: " + current);
+                        MainUtil.sendMessage(player,
+                            Captions.PREFIX + "Invalid playerdata: " + current);
                     }
                 }
             }
@@ -137,7 +139,7 @@ import java.util.Map.Entry;
                 }
             } catch (Throwable ignored) {
                 MainUtil.sendMessage(player,
-                    C.PREFIX + "&6Invalid playerdata: " + uuid.toString() + ".dat");
+                    Captions.PREFIX + "&6Invalid playerdata: " + uuid.toString() + ".dat");
             }
         }
         for (String name : names) {

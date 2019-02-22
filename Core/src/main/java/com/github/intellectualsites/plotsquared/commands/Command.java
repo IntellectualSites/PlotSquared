@@ -5,7 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.CommandCategory;
 import com.github.intellectualsites.plotsquared.plot.commands.MainCommand;
 import com.github.intellectualsites.plotsquared.plot.commands.RequiredType;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
@@ -239,18 +239,19 @@ public abstract class Command {
         if (page < totalPages && page > 0) { // Back | Next
             new PlotMessage().text("<-").color("$1").command(baseCommand + " " + page).text(" | ")
                 .color("$3").text("->").color("$1").command(baseCommand + " " + (page + 2))
-                .text(C.CLICKABLE.s()).color("$2").send(player);
+                .text(Captions.CLICKABLE.s()).color("$2").send(player);
             return;
         }
         if (page == 0 && totalPages != 0) { // Next
             new PlotMessage().text("<-").color("$3").text(" | ").color("$3").text("->").color("$1")
-                .command(baseCommand + " " + (0 + 2)).text(C.CLICKABLE.s()).color("$2")
+                .command(baseCommand + " " + (0 + 2)).text(Captions.CLICKABLE.s()).color("$2")
                 .send(player);
             return;
         }
         if (page == totalPages && totalPages != 0) { // Back
             new PlotMessage().text("<-").color("$1").command(baseCommand + " " + page).text(" | ")
-                .color("$3").text("->").color("$3").text(C.CLICKABLE.s()).color("$2").send(player);
+                .color("$3").text("->").color("$3").text(Captions.CLICKABLE.s()).color("$2")
+                .send(player);
         }
     }
 
@@ -267,7 +268,7 @@ public abstract class Command {
             if (this.parent == null) {
                 MainCommand.getInstance().help.displayHelp(player, null, 0);
             } else {
-                C.COMMAND_SYNTAX.send(player, getUsage());
+                Captions.COMMAND_SYNTAX.send(player, getUsage());
             }
             return;
         }
@@ -279,7 +280,7 @@ public abstract class Command {
         Command cmd = getCommand(args[0]);
         if (cmd == null) {
             if (this.parent != null) {
-                C.COMMAND_SYNTAX.send(player, getUsage());
+                Captions.COMMAND_SYNTAX.send(player, getUsage());
                 return;
             }
             // Help command
@@ -294,11 +295,11 @@ public abstract class Command {
             } catch (IllegalArgumentException ignored) {
             }
             // Command recommendation
-            MainUtil.sendMessage(player, C.NOT_VALID_SUBCOMMAND);
+            MainUtil.sendMessage(player, Captions.NOT_VALID_SUBCOMMAND);
             List<Command> commands = getCommands(player);
             if (commands.isEmpty()) {
-                MainUtil
-                    .sendMessage(player, C.DID_YOU_MEAN, MainCommand.getInstance().help.getUsage());
+                MainUtil.sendMessage(player, Captions.DID_YOU_MEAN,
+                    MainCommand.getInstance().help.getUsage());
                 return;
             }
             String[] allargs =
@@ -313,7 +314,7 @@ public abstract class Command {
             if (cmd == null) {
                 cmd = new StringComparison<>(args[0], this.allCommands).getMatchObject();
             }
-            MainUtil.sendMessage(player, C.DID_YOU_MEAN, cmd.getUsage());
+            MainUtil.sendMessage(player, Captions.DID_YOU_MEAN, cmd.getUsage());
             return;
         }
         String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
@@ -344,7 +345,7 @@ public abstract class Command {
                 failed = failed || reqArgs[i].parse(args[i]) == null;
             }
             if (failed) {
-                C.COMMAND_SYNTAX.send(player, StringMan.join(fullSplit, " "));
+                Captions.COMMAND_SYNTAX.send(player, StringMan.join(fullSplit, " "));
                 return false;
             }
         }
@@ -426,12 +427,13 @@ public abstract class Command {
         }
         if (!this.required.allows(player)) {
             if (message) {
-                MainUtil.sendMessage(player,
-                    this.required == RequiredType.PLAYER ? C.IS_CONSOLE : C.NOT_CONSOLE);
+                MainUtil.sendMessage(player, this.required == RequiredType.PLAYER ?
+                    Captions.IS_CONSOLE :
+                    Captions.NOT_CONSOLE);
             }
         } else if (!Permissions.hasPermission(player, getPermission())) {
             if (message) {
-                C.NO_PERMISSION.send(player, getPermission());
+                Captions.NO_PERMISSION.send(player, getPermission());
             }
         } else {
             return true;
@@ -548,13 +550,13 @@ public abstract class Command {
         return this.getFullId().hashCode();
     }
 
-    public void checkTrue(boolean mustBeTrue, C message, Object... args) {
+    public void checkTrue(boolean mustBeTrue, Captions message, Object... args) {
         if (!mustBeTrue) {
             throw new CommandException(message, args);
         }
     }
 
-    public <T extends Object> T check(T object, C message, Object... args) {
+    public <T extends Object> T check(T object, Captions message, Object... args) {
         if (object == null) {
             throw new CommandException(message, args);
         }
@@ -568,9 +570,9 @@ public abstract class Command {
 
     public static class CommandException extends RuntimeException {
         private final Object[] args;
-        private final C message;
+        private final Captions message;
 
-        public CommandException(C message, Object... args) {
+        public CommandException(Captions message, Object... args) {
             this.message = message;
             this.args = args;
         }

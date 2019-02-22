@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.BlockLoc;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -21,7 +21,7 @@ public class SetHome extends SetCommand {
             case "none": {
                 Plot base = plot.getBasePlot(false);
                 base.setHome(null);
-                return MainUtil.sendMessage(player, C.POSITION_UNSET);
+                return MainUtil.sendMessage(player, Captions.POSITION_UNSET);
             }
             case "":
                 Plot base = plot.getBasePlot(false);
@@ -31,9 +31,9 @@ public class SetHome extends SetCommand {
                     new BlockLoc(loc.getX() - bot.getX(), loc.getY(), loc.getZ() - bot.getZ(),
                         loc.getYaw(), loc.getPitch());
                 base.setHome(rel);
-                return MainUtil.sendMessage(player, C.POSITION_SET);
+                return MainUtil.sendMessage(player, Captions.POSITION_SET);
             default:
-                MainUtil.sendMessage(player, C.HOME_ARGUMENT);
+                MainUtil.sendMessage(player, Captions.HOME_ARGUMENT);
                 return false;
         }
     }

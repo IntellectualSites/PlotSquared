@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
@@ -29,7 +29,7 @@ public class DebugClaimTest extends SubCommand {
         }
         PlotArea area = PlotSquared.get().getPlotAreaByString(args[0]);
         if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
-            C.NOT_VALID_PLOT_WORLD.send(player, args[0]);
+            Captions.NOT_VALID_PLOT_WORLD.send(player, args[0]);
             return false;
         }
         PlotId min, max;

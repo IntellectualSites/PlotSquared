@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.listener;
 
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
@@ -52,7 +52,7 @@ public class PlotListener {
                 Optional<String> greetingFlag = plot.getFlag(Flags.GREETING);
                 if (greetingFlag.isPresent()) {
                     greeting = greetingFlag.get();
-                    MainUtil.format(C.PREFIX_GREETING.s() + greeting, plot, player, false,
+                    MainUtil.format(Captions.PREFIX_GREETING.s() + greeting, plot, player, false,
                         new RunnableVal<String>() {
                             @Override public void run(String value) {
                                 MainUtil.sendMessage(player, value);
@@ -68,7 +68,7 @@ public class PlotListener {
                             PlotPlayer owner = UUIDHandler.getPlayer(uuid);
                             if (owner != null && !owner.getUUID().equals(player.getUUID())) {
                                 MainUtil.sendMessage(owner,
-                                    C.NOTIFY_ENTER.s().replace("%player", player.getName())
+                                    Captions.NOTIFY_ENTER.s().replace("%player", player.getName())
                                         .replace("%plot", plot.getId().toString()));
                             }
                         }
@@ -94,7 +94,8 @@ public class PlotListener {
                             player.setGameMode(gamemodeFlag.get());
                         } else {
                             MainUtil.sendMessage(player, StringMan
-                                .replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.getId(),
+                                .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.s(), "{plot}",
+                                    plot.getId(),
                                     "{gamemode}", gamemodeFlag.get()));
                         }
                     }
@@ -107,7 +108,8 @@ public class PlotListener {
                             player.setGameMode(guestGamemodeFlag.get());
                         } else {
                             MainUtil.sendMessage(player, StringMan
-                                .replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.getId(),
+                                .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.s(), "{plot}",
+                                    plot.getId(),
                                     "{gamemode}", guestGamemodeFlag.get()));
                         }
                     }
@@ -155,7 +157,8 @@ public class PlotListener {
                 CommentManager.sendTitle(player, plot);
             }
             if (titles) {
-                if (!C.TITLE_ENTERED_PLOT.s().isEmpty() || !C.TITLE_ENTERED_PLOT_SUB.s()
+                if (!Captions.TITLE_ENTERED_PLOT.s().isEmpty() || !Captions.TITLE_ENTERED_PLOT_SUB
+                    .s()
                     .isEmpty()) {
                     TaskManager.runTaskLaterAsync(() -> {
                         Plot lastPlot = player.getMeta(PlotPlayer.META_LAST_PLOT);
@@ -167,10 +170,10 @@ public class PlotListener {
                             replacements.put("%greeting%", greeting);
                             replacements.put("%alias", plot.toString());
                             replacements.put("%s", MainUtil.getName(plot.owner));
-                            String main =
-                                StringMan.replaceFromMap(C.TITLE_ENTERED_PLOT.s(), replacements);
+                            String main = StringMan
+                                .replaceFromMap(Captions.TITLE_ENTERED_PLOT.s(), replacements);
                             String sub = StringMan
-                                .replaceFromMap(C.TITLE_ENTERED_PLOT_SUB.s(), replacements);
+                                .replaceFromMap(Captions.TITLE_ENTERED_PLOT_SUB.s(), replacements);
                             AbstractTitle.sendTitle(player, main, sub);
                         }
                     }, 20);
@@ -202,14 +205,16 @@ public class PlotListener {
                         player.setGameMode(pw.GAMEMODE);
                     } else {
                         MainUtil.sendMessage(player, StringMan
-                            .replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.toString(),
+                            .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.s(), "{plot}",
+                                plot.toString(),
                                 "{gamemode}", pw.GAMEMODE.name().toLowerCase()));
                     }
                 }
             }
             Optional<String> farewell = plot.getFlag(Flags.FAREWELL);
             farewell.ifPresent(s -> MainUtil
-                .format(C.PREFIX_FAREWELL.s() + s, plot, player, false, new RunnableVal<String>() {
+                .format(Captions.PREFIX_FAREWELL.s() + s, plot, player, false,
+                    new RunnableVal<String>() {
                     @Override public void run(String value) {
                         MainUtil.sendMessage(player, value);
                     }
@@ -221,7 +226,7 @@ public class PlotListener {
                         PlotPlayer owner = UUIDHandler.getPlayer(uuid);
                         if ((owner != null) && !owner.getUUID().equals(player.getUUID())) {
                             MainUtil.sendMessage(owner,
-                                C.NOTIFY_LEAVE.s().replace("%player", player.getName())
+                                Captions.NOTIFY_LEAVE.s().replace("%player", player.getName())
                                     .replace("%plot", plot.getId().toString()));
                         }
                     }

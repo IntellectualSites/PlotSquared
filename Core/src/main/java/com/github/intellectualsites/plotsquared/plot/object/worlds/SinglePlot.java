@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.object.worlds;
 
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 
@@ -48,7 +48,7 @@ public class SinglePlot extends Plot {
         if (isLoaded()) {
             return super.teleportPlayer(player);
         } else {
-            C.NOT_LOADED.send(player);
+            Captions.NOT_LOADED.send(player);
             return false;
         }
     }

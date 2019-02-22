@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -34,7 +34,7 @@ import java.util.UUID;
             if (value.equalsIgnoreCase("none") || value.equalsIgnoreCase("null") || value
                 .equalsIgnoreCase("-")) {
                 if (!Permissions
-                    .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SETOWNER.s(), true)) {
+                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SETOWNER.s(), true)) {
                     return false;
                 }
                 Set<Plot> connected = plot.getConnectedPlots();
@@ -43,20 +43,20 @@ import java.util.UUID;
                     current.unclaim();
                     current.removeSign();
                 }
-                MainUtil.sendMessage(player, C.SET_OWNER);
+                MainUtil.sendMessage(player, Captions.SET_OWNER);
                 return true;
             }
-            C.INVALID_PLAYER.send(player, value);
+            Captions.INVALID_PLAYER.send(player, value);
             return false;
         }
         final PlotPlayer other = UUIDHandler.getPlayer(uuid);
         if (plot.isOwner(uuid)) {
-            C.ALREADY_OWNER.send(player, MainUtil.getName(uuid));
+            Captions.ALREADY_OWNER.send(player, MainUtil.getName(uuid));
             return false;
         }
-        if (!Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SETOWNER)) {
+        if (!Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SETOWNER)) {
             if (other == null) {
-                C.INVALID_PLAYER_OFFLINE.send(player, value);
+                Captions.INVALID_PLAYER_OFFLINE.send(player, value);
                 return false;
             }
             int size = plots.size();
@@ -64,7 +64,7 @@ import java.util.UUID;
                 other.getPlotCount() :
                 other.getPlotCount(plot.getWorldName())) + size;
             if (currentPlots > other.getAllowedPlots()) {
-                sendMessage(player, C.CANT_TRANSFER_MORE_PLOTS);
+                sendMessage(player, Captions.CANT_TRANSFER_MORE_PLOTS);
                 return false;
             }
         }
@@ -77,13 +77,14 @@ import java.util.UUID;
                     if (removeDenied)
                         plot.removeDenied(finalUUID);
                     plot.setSign(finalName);
-                    MainUtil.sendMessage(player, C.SET_OWNER);
+                    MainUtil.sendMessage(player, Captions.SET_OWNER);
                     if (other != null) {
-                        MainUtil
-                            .sendMessage(other, C.NOW_OWNER, plot.getArea() + ";" + plot.getId());
+                        MainUtil.sendMessage(other, Captions.NOW_OWNER,
+                            plot.getArea() + ";" + plot.getId());
                     }
-                } else
-                    MainUtil.sendMessage(player, C.SET_OWNER_CANCELLED);
+                } else {
+                    MainUtil.sendMessage(player, Captions.SET_OWNER_CANCELLED);
+                }
             }
         };
         if (hasConfirmation(player)) {

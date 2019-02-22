@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -41,7 +41,7 @@ public class CommentManager {
                         }
                         if ((size.decrementAndGet() == 0) && (total > 0)) {
                             AbstractTitle.sendTitle(player, "",
-                                C.INBOX_NOTIFICATION.s().replaceAll("%s", "" + total));
+                                Captions.INBOX_NOTIFICATION.s().replaceAll("%s", "" + total));
                         }
                     }
                 });

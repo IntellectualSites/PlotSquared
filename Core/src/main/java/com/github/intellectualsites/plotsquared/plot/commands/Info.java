@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
@@ -50,7 +50,7 @@ import java.util.UUID;
             plot = player.getCurrentPlot();
         }
         if (plot == null) {
-            MainUtil.sendMessage(player, C.NOT_IN_PLOT.s());
+            MainUtil.sendMessage(player, Captions.NOT_IN_PLOT.s());
             return false;
         }
         if (arg != null) {
@@ -97,11 +97,11 @@ import java.util.UUID;
         boolean trustedEveryone = plot.getMembers().contains(DBFunc.EVERYONE);
         // Unclaimed?
         if (!hasOwner && !containsEveryone && !trustedEveryone) {
-            MainUtil
-                .sendMessage(player, C.PLOT_INFO_UNCLAIMED, plot.getId().x + ";" + plot.getId().y);
+            MainUtil.sendMessage(player, Captions.PLOT_INFO_UNCLAIMED,
+                plot.getId().x + ";" + plot.getId().y);
             return true;
         }
-        String info = C.PLOT_INFO.s();
+        String info = Captions.PLOT_INFO.s();
         boolean full;
         if (arg != null) {
             info = getCaption(arg);
@@ -118,7 +118,8 @@ import java.util.UUID;
         MainUtil.format(info, plot, player, full, new RunnableVal<String>() {
             @Override public void run(String value) {
                 MainUtil.sendMessage(player,
-                    C.PLOT_INFO_HEADER.s() + '\n' + value + '\n' + C.PLOT_INFO_FOOTER.s(), false);
+                    Captions.PLOT_INFO_HEADER.s() + '\n' + value + '\n' + Captions.PLOT_INFO_FOOTER
+                        .s(), false);
             }
         });
         return true;
@@ -127,27 +128,27 @@ import java.util.UUID;
     private String getCaption(String string) {
         switch (string) {
             case "trusted":
-                return C.PLOT_INFO_TRUSTED.s();
+                return Captions.PLOT_INFO_TRUSTED.s();
             case "alias":
-                return C.PLOT_INFO_ALIAS.s();
+                return Captions.PLOT_INFO_ALIAS.s();
             case "biome":
-                return C.PLOT_INFO_BIOME.s();
+                return Captions.PLOT_INFO_BIOME.s();
             case "denied":
-                return C.PLOT_INFO_DENIED.s();
+                return Captions.PLOT_INFO_DENIED.s();
             case "flags":
-                return C.PLOT_INFO_FLAGS.s();
+                return Captions.PLOT_INFO_FLAGS.s();
             case "id":
-                return C.PLOT_INFO_ID.s();
+                return Captions.PLOT_INFO_ID.s();
             case "size":
-                return C.PLOT_INFO_SIZE.s();
+                return Captions.PLOT_INFO_SIZE.s();
             case "members":
-                return C.PLOT_INFO_MEMBERS.s();
+                return Captions.PLOT_INFO_MEMBERS.s();
             case "owner":
-                return C.PLOT_INFO_OWNER.s();
+                return Captions.PLOT_INFO_OWNER.s();
             case "rating":
-                return C.PLOT_INFO_RATING.s();
+                return Captions.PLOT_INFO_RATING.s();
             case "seen":
-                return C.PLOT_INFO_SEEN.s();
+                return Captions.PLOT_INFO_SEEN.s();
             default:
                 return null;
         }

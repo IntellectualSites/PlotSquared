@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.bukkit.object;
 
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -100,15 +100,15 @@ public class BukkitPlayer extends PlotPlayer {
     }
 
     @Override public int hasPermissionRange(String stub, int range) {
-        if (hasPermission(C.PERMISSION_ADMIN.s())) {
+        if (hasPermission(Captions.PERMISSION_ADMIN.s())) {
             return Integer.MAX_VALUE;
         }
         String[] nodes = stub.split("\\.");
         StringBuilder n = new StringBuilder();
         for (int i = 0; i < (nodes.length - 1); i++) {
             n.append(nodes[i]).append(".");
-            if (!stub.equals(n + C.PERMISSION_STAR.s())) {
-                if (hasPermission(n + C.PERMISSION_STAR.s())) {
+            if (!stub.equals(n + Captions.PERMISSION_STAR.s())) {
+                if (hasPermission(n + Captions.PERMISSION_STAR.s())) {
                     return Integer.MAX_VALUE;
                 }
             }

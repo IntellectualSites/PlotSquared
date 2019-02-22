@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.bukkit.uuid;
 
 import com.github.intellectualsites.plotsquared.bukkit.util.NbtFactory;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
@@ -48,7 +48,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
             world = worlds.get(0).getName();
         }
         TaskManager.runTaskAsync(() -> {
-            PlotSquared.debug(C.PREFIX + "&6Starting player data caching for: " + world);
+            PlotSquared.debug(Captions.PREFIX + "&6Starting player data caching for: " + world);
             File uuidFile = new File(PlotSquared.get().IMP.getDirectory(), "uuids.txt");
             if (uuidFile.exists()) {
                 try {
@@ -115,7 +115,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            PlotSquared.debug(C.PREFIX + "Invalid playerdata: " + current);
+                            PlotSquared.debug(Captions.PREFIX + "Invalid playerdata: " + current);
                         }
                     }
                 }
@@ -145,7 +145,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                             UUID uuid = UUID.fromString(s);
                             uuids.add(uuid);
                         } catch (Exception ignored) {
-                            PlotSquared.debug(C.PREFIX + "Invalid PlayerData: " + current);
+                            PlotSquared.debug(Captions.PREFIX + "Invalid PlayerData: " + current);
                         }
                     }
                     break;
@@ -199,8 +199,8 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                         }
                     }
                 } catch (Exception ignored) {
-                    PlotSquared
-                        .debug(C.PREFIX + "&6Invalid PlayerData: " + uuid.toString() + ".dat");
+                    PlotSquared.debug(
+                        Captions.PREFIX + "&6Invalid PlayerData: " + uuid.toString() + ".dat");
                 }
             }
             for (String name : names) {

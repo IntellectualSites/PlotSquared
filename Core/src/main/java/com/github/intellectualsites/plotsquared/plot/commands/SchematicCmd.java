@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
@@ -22,32 +22,33 @@ public class SchematicCmd extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length < 1) {
-            sendMessage(player, C.SCHEMATIC_MISSING_ARG);
+            sendMessage(player, Captions.SCHEMATIC_MISSING_ARG);
             return true;
         }
         String arg = args[0].toLowerCase();
         switch (arg) {
             case "paste": {
-                if (!Permissions.hasPermission(player, C.PERMISSION_SCHEMATIC_PASTE)) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SCHEMATIC_PASTE);
+                if (!Permissions.hasPermission(player, Captions.PERMISSION_SCHEMATIC_PASTE)) {
+                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
+                        Captions.PERMISSION_SCHEMATIC_PASTE);
                     return false;
                 }
                 if (args.length < 2) {
-                    sendMessage(player, C.SCHEMATIC_MISSING_ARG);
+                    sendMessage(player, Captions.SCHEMATIC_MISSING_ARG);
                     break;
                 }
                 Location loc = player.getLocation();
                 final Plot plot = loc.getPlotAbs();
                 if (plot == null) {
-                    return !sendMessage(player, C.NOT_IN_PLOT);
+                    return !sendMessage(player, Captions.NOT_IN_PLOT);
                 }
                 if (!plot.hasOwner()) {
-                    MainUtil.sendMessage(player, C.PLOT_UNOWNED);
+                    MainUtil.sendMessage(player, Captions.PLOT_UNOWNED);
                     return false;
                 }
                 if (!plot.isOwner(player.getUUID()) && !Permissions
-                    .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SCHEMATIC_PASTE)) {
-                    MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
+                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC_PASTE)) {
+                    MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
                     return false;
                 }
                 if (this.running) {
@@ -66,7 +67,7 @@ public class SchematicCmd extends SubCommand {
                             schematic = SchematicHandler.manager.getSchematic(url);
                         } catch (Exception e) {
                             e.printStackTrace();
-                            sendMessage(player, C.SCHEMATIC_INVALID,
+                            sendMessage(player, Captions.SCHEMATIC_INVALID,
                                 "non-existent url: " + location);
                             SchematicCmd.this.running = false;
                             return;
@@ -80,7 +81,7 @@ public class SchematicCmd extends SubCommand {
                     }
                     if (schematic == null) {
                         SchematicCmd.this.running = false;
-                        sendMessage(player, C.SCHEMATIC_INVALID,
+                        sendMessage(player, Captions.SCHEMATIC_INVALID,
                             "non-existent or not in gzip format");
                         return;
                     }
@@ -89,9 +90,9 @@ public class SchematicCmd extends SubCommand {
                             @Override public void run(Boolean value) {
                                 SchematicCmd.this.running = false;
                                 if (value) {
-                                    sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);
+                                    sendMessage(player, Captions.SCHEMATIC_PASTE_SUCCESS);
                                 } else {
-                                    sendMessage(player, C.SCHEMATIC_PASTE_FAILED);
+                                    sendMessage(player, Captions.SCHEMATIC_PASTE_FAILED);
                                 }
                             }
                         });
@@ -101,39 +102,39 @@ public class SchematicCmd extends SubCommand {
             //            TODO test
             //            case "test": {
             //                if (!Permissions.hasPermission(plr, "plots.schematic.test")) {
-            //                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.test");
+            //                    MainUtil.sendMessage(plr, Captions.NO_PERMISSION, "plots.schematic.test");
             //                    return false;
             //                }
             //                if (args.length < 2) {
-            //                    sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
+            //                    sendMessage(plr, Captions.SCHEMATIC_MISSING_ARG);
             //                    return false;
             //                }
             //                final Location loc = plr.getLocation();
             //                final Plot plot = MainUtil.getPlot(loc);
             //                if (plot == null) {
-            //                    sendMessage(plr, C.NOT_IN_PLOT);
+            //                    sendMessage(plr, Captions.NOT_IN_PLOT);
             //                    return false;
             //                }
             //                file = args[1];
             //                schematic = SchematicHandler.manager.getSchematic(file);
             //                if (schematic == null) {
-            //                    sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent");
+            //                    sendMessage(plr, Captions.SCHEMATIC_INVALID, "non-existent");
             //                    return false;
             //                }
             //                final int l1 = schematic.getSchematicDimension().getX();
             //                final int l2 = schematic.getSchematicDimension().getZ();
             //                final int length = MainUtil.getPlotWidth(loc.getWorld(), plot.id);
             //                if ((l1 < length) || (l2 < length)) {
-            //                    sendMessage(plr, C.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", l1, l2, length));
+            //                    sendMessage(plr, Captions.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", l1, l2, length));
             //                    break;
             //                }
-            //                sendMessage(plr, C.SCHEMATIC_VALID);
+            //                sendMessage(plr, Captions.SCHEMATIC_VALID);
             //                break;
             //            }
             case "saveall":
             case "exportall": {
                 if (!(player instanceof ConsolePlayer)) {
-                    MainUtil.sendMessage(player, C.NOT_CONSOLE);
+                    MainUtil.sendMessage(player, Captions.NOT_CONSOLE);
                     return false;
                 }
                 if (args.length != 2) {
@@ -143,7 +144,7 @@ public class SchematicCmd extends SubCommand {
                 }
                 PlotArea area = PlotSquared.get().getPlotAreaByString(args[1]);
                 if (area == null) {
-                    C.NOT_VALID_PLOT_WORLD.send(player, args[1]);
+                    Captions.NOT_VALID_PLOT_WORLD.send(player, args[1]);
                     return false;
                 }
                 Collection<Plot> plots = area.getPlots();
@@ -167,8 +168,9 @@ public class SchematicCmd extends SubCommand {
             }
             case "export":
             case "save":
-                if (!Permissions.hasPermission(player, C.PERMISSION_SCHEMATIC_SAVE)) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SCHEMATIC_SAVE);
+                if (!Permissions.hasPermission(player, Captions.PERMISSION_SCHEMATIC_SAVE)) {
+                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
+                        Captions.PERMISSION_SCHEMATIC_SAVE);
                     return false;
                 }
                 if (this.running) {
@@ -178,15 +180,15 @@ public class SchematicCmd extends SubCommand {
                 Location location = player.getLocation();
                 Plot plot = location.getPlotAbs();
                 if (plot == null) {
-                    return !sendMessage(player, C.NOT_IN_PLOT);
+                    return !sendMessage(player, Captions.NOT_IN_PLOT);
                 }
                 if (!plot.hasOwner()) {
-                    MainUtil.sendMessage(player, C.PLOT_UNOWNED);
+                    MainUtil.sendMessage(player, Captions.PLOT_UNOWNED);
                     return false;
                 }
                 if (!plot.isOwner(player.getUUID()) && !Permissions
-                    .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_SCHEMATIC_SAVE)) {
-                    MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
+                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC_SAVE)) {
+                    MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
                     return false;
                 }
                 location.getWorld();
@@ -204,17 +206,18 @@ public class SchematicCmd extends SubCommand {
                 }
                 break;
             case "list": {
-                if (!Permissions.hasPermission(player, C.PERMISSION_SCHEMATIC_LIST)) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_SCHEMATIC_LIST);
+                if (!Permissions.hasPermission(player, Captions.PERMISSION_SCHEMATIC_LIST)) {
+                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
+                        Captions.PERMISSION_SCHEMATIC_LIST);
                     return false;
                 }
                 final String string =
                     StringMan.join(SchematicHandler.manager.getShematicNames(), "$2, $1");
-                C.SCHEMATIC_LIST.send(player, string);
+                Captions.SCHEMATIC_LIST.send(player, string);
             }
             break;
             default:
-                sendMessage(player, C.SCHEMATIC_MISSING_ARG);
+                sendMessage(player, Captions.SCHEMATIC_MISSING_ARG);
                 break;
         }
         return true;

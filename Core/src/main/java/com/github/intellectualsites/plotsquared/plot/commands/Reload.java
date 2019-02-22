@@ -5,7 +5,7 @@ import com.github.intellectualsites.plotsquared.configuration.ConfigurationSecti
 import com.github.intellectualsites.plotsquared.configuration.MemorySection;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 
@@ -21,7 +21,7 @@ import java.util.Objects;
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.
             PlotSquared.get().setupConfigs();
-            C.load(PlotSquared.get().translationFile);
+            Captions.load(PlotSquared.get().translationFile);
             PlotSquared.get().forEachPlotArea(area -> {
                 ConfigurationSection worldSection =
                     PlotSquared.get().worlds.getConfigurationSection("worlds." + area.worldname);
@@ -70,10 +70,10 @@ import java.util.Objects;
                 }
             });
             PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
-            MainUtil.sendMessage(player, C.RELOADED_CONFIGS);
+            MainUtil.sendMessage(player, Captions.RELOADED_CONFIGS);
         } catch (IOException e) {
             e.printStackTrace();
-            MainUtil.sendMessage(player, C.RELOAD_FAILED);
+            MainUtil.sendMessage(player, Captions.RELOAD_FAILED);
         }
         return true;
     }

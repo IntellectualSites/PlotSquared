@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
@@ -43,7 +43,7 @@ import java.util.Map.Entry;
             object = new SetupObject();
             player.setMeta("setup", object);
             SetupUtils.manager.updateGenerators();
-            sendMessage(player, C.SETUP_INIT);
+            sendMessage(player, Captions.SETUP_INIT);
             displayGenerators(player);
             return false;
         }
@@ -57,7 +57,8 @@ import java.util.Map.Entry;
                 if (object.setup_index > 0) {
                     object.setup_index--;
                     ConfigurationNode node = object.step[object.setup_index];
-                    sendMessage(player, C.SETUP_STEP, object.setup_index + 1, node.getDescription(),
+                    sendMessage(player, Captions.SETUP_STEP, object.setup_index + 1,
+                        node.getDescription(),
                         node.getType().getType(), String.valueOf(node.getDefaultValue()));
                     return false;
                 } else if (object.current > 0) {
@@ -75,7 +76,7 @@ import java.util.Map.Entry;
                             .join(SetupUtils.generators.keySet(), prefix)
                             .replaceAll(PlotSquared.imp().getPluginName(),
                                 "&2" + PlotSquared.imp().getPluginName()));
-                    sendMessage(player, C.SETUP_INIT);
+                    sendMessage(player, Captions.SETUP_INIT);
                     return false;
                 }
                 object.setupGenerator = args[0];
@@ -129,7 +130,8 @@ import java.util.Map.Entry;
                         return true;
                     }
                     ConfigurationNode step = object.step[object.setup_index];
-                    sendMessage(player, C.SETUP_STEP, object.setup_index + 1, step.getDescription(),
+                    sendMessage(player, Captions.SETUP_STEP, object.setup_index + 1,
+                        step.getDescription(),
                         step.getType().getType(), String.valueOf(step.getDefaultValue()));
                 } else {
                     if (gen.isFull()) {
@@ -231,7 +233,8 @@ import java.util.Map.Entry;
                         .getSettingNodes();
                 }
                 ConfigurationNode step = object.step[object.setup_index];
-                sendMessage(player, C.SETUP_STEP, object.setup_index + 1, step.getDescription(),
+                sendMessage(player, Captions.SETUP_STEP, object.setup_index + 1,
+                    step.getDescription(),
                     step.getType().getType(), String.valueOf(step.getDefaultValue()));
                 break;
             }
@@ -244,7 +247,8 @@ import java.util.Map.Entry;
                 }
                 ConfigurationNode step = object.step[object.setup_index];
                 if (args.length < 1) {
-                    sendMessage(player, C.SETUP_STEP, object.setup_index + 1, step.getDescription(),
+                    sendMessage(player, Captions.SETUP_STEP, object.setup_index + 1,
+                        step.getDescription(),
                         step.getType().getType(), String.valueOf(step.getDefaultValue()));
                     return false;
                 }
@@ -253,10 +257,10 @@ import java.util.Map.Entry;
                 try {
                     valid = step.isValid(args[0]);
                 } catch (final Configuration.UnsafeBlockException e) {
-                    C.NOT_ALLOWED_BLOCK.send(player, e.getUnsafeBlock().toString());
+                    Captions.NOT_ALLOWED_BLOCK.send(player, e.getUnsafeBlock().toString());
                 }
                 if (valid) {
-                    sendMessage(player, C.SETUP_VALID_ARG, step.getConstant(), args[0]);
+                    sendMessage(player, Captions.SETUP_VALID_ARG, step.getConstant(), args[0]);
                     step.setValue(args[0]);
                     object.setup_index++;
                     if (object.setup_index == object.step.length) {
@@ -264,12 +268,14 @@ import java.util.Map.Entry;
                         return false;
                     }
                     step = object.step[object.setup_index];
-                    sendMessage(player, C.SETUP_STEP, object.setup_index + 1, step.getDescription(),
+                    sendMessage(player, Captions.SETUP_STEP, object.setup_index + 1,
+                        step.getDescription(),
                         step.getType().getType(), String.valueOf(step.getDefaultValue()));
                     return false;
                 } else {
-                    sendMessage(player, C.SETUP_INVALID_ARG, args[0], step.getConstant());
-                    sendMessage(player, C.SETUP_STEP, object.setup_index + 1, step.getDescription(),
+                    sendMessage(player, Captions.SETUP_INVALID_ARG, args[0], step.getConstant());
+                    sendMessage(player, Captions.SETUP_STEP, object.setup_index + 1,
+                        step.getDescription(),
                         step.getType().getType(), String.valueOf(step.getDefaultValue()));
                     return false;
                 }
@@ -302,7 +308,7 @@ import java.util.Map.Entry;
                     player.sendMessage("&cAn error occurred. See console for more information");
                     e.printStackTrace();
                 }
-                sendMessage(player, C.SETUP_FINISHED, object.world);
+                sendMessage(player, Captions.SETUP_FINISHED, object.world);
         }
         return false;
     }

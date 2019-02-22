@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.listener.WEExtent;
@@ -153,7 +153,7 @@ public abstract class HybridUtils {
                 }
                 if (regions.isEmpty() && chunks.isEmpty()) {
                     HybridUtils.UPDATE = false;
-                    PlotSquared.debug(C.PREFIX.s() + "Finished road conversion");
+                    PlotSquared.debug(Captions.PREFIX.s() + "Finished road conversion");
                     // CANCEL TASK
                 } else {
                     final Runnable task = this;

@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.util.helpmenu;
 
 import com.github.intellectualsites.plotsquared.commands.Argument;
 import com.github.intellectualsites.plotsquared.commands.Command;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 public class HelpObject {
@@ -10,7 +10,7 @@ public class HelpObject {
     private final String _rendered;
 
     public HelpObject(final Command command, final String label) {
-        _rendered = StringMan.replaceAll(C.HELP_ITEM.s(), "%usage%",
+        _rendered = StringMan.replaceAll(Captions.HELP_ITEM.s(), "%usage%",
             command.getUsage().replaceAll("\\{label\\}", label), "[%alias%]",
             !command.getAliases().isEmpty() ?
                 "(" + StringMan.join(command.getAliases(), "|") + ")" :

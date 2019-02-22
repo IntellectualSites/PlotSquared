@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.listener;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
 import com.sk89q.worldedit.WorldEditException;
@@ -107,7 +107,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                 if (this.BScount > Settings.Chunk_Processor.MAX_TILES) {
                     this.BSblocked = true;
                     PlotSquared.debug(
-                        C.PREFIX + "&cdetected unsafe WorldEdit: " + location.getX() + ","
+                        Captions.PREFIX + "&cdetected unsafe WorldEdit: " + location.getX() + ","
                             + location.getZ());
                 }
                 if (WEManager
@@ -162,7 +162,8 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         if (this.Ecount > Settings.Chunk_Processor.MAX_ENTITIES) {
             this.Eblocked = true;
             PlotSquared.debug(
-                C.PREFIX + "&cdetected unsafe WorldEdit: " + location.getBlockX() + "," + location
+                Captions.PREFIX + "&cdetected unsafe WorldEdit: " + location.getBlockX() + ","
+                    + location
                     .getBlockZ());
         }
         if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),

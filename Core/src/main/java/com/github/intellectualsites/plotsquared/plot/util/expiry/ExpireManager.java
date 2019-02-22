@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.util.expiry;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
@@ -351,13 +351,13 @@ public class ExpireManager {
         for (UUID helper : plot.getTrusted()) {
             PlotPlayer player = UUIDHandler.getPlayer(helper);
             if (player != null) {
-                MainUtil.sendMessage(player, C.PLOT_REMOVED_USER, plot.toString());
+                MainUtil.sendMessage(player, Captions.PLOT_REMOVED_USER, plot.toString());
             }
         }
         for (UUID helper : plot.getMembers()) {
             PlotPlayer player = UUIDHandler.getPlayer(helper);
             if (player != null) {
-                MainUtil.sendMessage(player, C.PLOT_REMOVED_USER, plot.toString());
+                MainUtil.sendMessage(player, Captions.PLOT_REMOVED_USER, plot.toString());
             }
         }
         Set<Plot> plots = plot.getConnectedPlots();

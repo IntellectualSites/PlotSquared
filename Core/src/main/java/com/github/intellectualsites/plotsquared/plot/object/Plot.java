@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
@@ -967,10 +967,14 @@ public class Plot {
         if (this.area.ALLOW_SIGNS) {
             Location loc = manager.getSignLoc(this.area, this);
             String id = this.id.x + ";" + this.id.y;
-            String[] lines = new String[] {C.OWNER_SIGN_LINE_1.formatted().replaceAll("%id%", id),
-                C.OWNER_SIGN_LINE_2.formatted().replaceAll("%id%", id).replaceAll("%plr%", name),
-                C.OWNER_SIGN_LINE_3.formatted().replaceAll("%id%", id).replaceAll("%plr%", name),
-                C.OWNER_SIGN_LINE_4.formatted().replaceAll("%id%", id).replaceAll("%plr%", name)};
+            String[] lines =
+                new String[] {Captions.OWNER_SIGN_LINE_1.formatted().replaceAll("%id%", id),
+                    Captions.OWNER_SIGN_LINE_2.formatted().replaceAll("%id%", id).replaceAll(
+                        "%plr%", name),
+                    Captions.OWNER_SIGN_LINE_3.formatted().replaceAll("%id%", id).replaceAll(
+                        "%plr%", name),
+                    Captions.OWNER_SIGN_LINE_4.formatted().replaceAll("%id%", id).replaceAll(
+                        "%plr%", name)};
             WorldUtil.IMP.setSign(this.getWorldName(), loc.getX(), loc.getY(), loc.getZ(), lines);
         }
     }
@@ -1428,7 +1432,7 @@ public class Plot {
             area.addPlot(this);
         }
         setSign(player.getName());
-        MainUtil.sendMessage(player, C.CLAIMED);
+        MainUtil.sendMessage(player, Captions.CLAIMED);
         if (teleport) {
             teleportPlayer(player);
         }
@@ -1452,9 +1456,9 @@ public class Plot {
                 new RunnableVal<Boolean>() {
                     @Override public void run(Boolean value) {
                         if (value) {
-                            MainUtil.sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);
+                            MainUtil.sendMessage(player, Captions.SCHEMATIC_PASTE_SUCCESS);
                         } else {
-                            MainUtil.sendMessage(player, C.SCHEMATIC_PASTE_FAILED);
+                            MainUtil.sendMessage(player, Captions.SCHEMATIC_PASTE_FAILED);
                         }
                     }
                 });
@@ -2093,7 +2097,7 @@ public class Plot {
             }
             loop:
             for (int i = 4; i > 0; i--) {
-                String caption = C.valueOf("OWNER_SIGN_LINE_" + i).s();
+                String caption = Captions.valueOf("OWNER_SIGN_LINE_" + i).s();
                 int index = caption.indexOf("%plr%");
                 if (index < 0) {
                     continue;
@@ -2681,21 +2685,22 @@ public class Plot {
             }
             if (Settings.Teleport.DELAY == 0 || Permissions
                 .hasPermission(player, "plots.teleport.delay.bypass")) {
-                MainUtil.sendMessage(player, C.TELEPORTED_TO_PLOT);
+                MainUtil.sendMessage(player, Captions.TELEPORTED_TO_PLOT);
                 player.teleport(location);
                 return true;
             }
-            MainUtil.sendMessage(player, C.TELEPORT_IN_SECONDS, Settings.Teleport.DELAY + "");
+            MainUtil
+                .sendMessage(player, Captions.TELEPORT_IN_SECONDS, Settings.Teleport.DELAY + "");
             final String name = player.getName();
             TaskManager.TELEPORT_QUEUE.add(name);
             TaskManager.runTaskLater(() -> {
                 if (!TaskManager.TELEPORT_QUEUE.contains(name)) {
-                    MainUtil.sendMessage(player, C.TELEPORT_FAILED);
+                    MainUtil.sendMessage(player, Captions.TELEPORT_FAILED);
                     return;
                 }
                 TaskManager.TELEPORT_QUEUE.remove(name);
                 if (player.isOnline()) {
-                    MainUtil.sendMessage(player, C.TELEPORTED_TO_PLOT);
+                    MainUtil.sendMessage(player, Captions.TELEPORTED_TO_PLOT);
                     player.teleport(location);
                 }
             }, Settings.Teleport.DELAY * 20);

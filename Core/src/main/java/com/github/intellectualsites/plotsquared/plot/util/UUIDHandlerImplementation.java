@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.object.*;
@@ -81,7 +81,8 @@ public abstract class UUIDHandlerImplementation {
             }
             this.uuidMap.put(name, uuid);
         }
-        PlotSquared.debug(C.PREFIX + "&6Cached a total of: " + this.uuidMap.size() + " UUIDs");
+        PlotSquared
+            .debug(Captions.PREFIX + "&6Cached a total of: " + this.uuidMap.size() + " UUIDs");
     }
 
     public boolean add(final StringWrapper name, final UUID uuid) {

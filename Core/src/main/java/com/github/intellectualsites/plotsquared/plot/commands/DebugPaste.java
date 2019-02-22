@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.IncendoPaster;
@@ -123,7 +123,8 @@ import java.util.stream.Collectors;
                         final String pasteId = jsonObject.get("paste_id").getAsString();
                         final String link =
                             String.format("https://incendo.org/paste/view/%s", pasteId);
-                        player.sendMessage(C.DEBUG_REPORT_CREATED.s().replace("%url%", link));
+                        player
+                            .sendMessage(Captions.DEBUG_REPORT_CREATED.s().replace("%url%", link));
                     } else {
                         final String responseMessage = jsonObject.get("response").getAsString();
                         MainUtil.sendMessage(player, String

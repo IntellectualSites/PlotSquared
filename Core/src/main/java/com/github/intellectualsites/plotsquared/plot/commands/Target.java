@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.Argument;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -22,7 +22,7 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
         Location location = player.getLocation();
         if (!location.isPlotArea()) {
-            MainUtil.sendMessage(player, C.NOT_IN_PLOT_WORLD);
+            MainUtil.sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
             return false;
         }
         Plot target = null;
@@ -36,14 +36,14 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
                 }
             }
             if (target == null) {
-                MainUtil.sendMessage(player, C.FOUND_NO_PLOTS);
+                MainUtil.sendMessage(player, Captions.FOUND_NO_PLOTS);
                 return false;
             }
         } else if ((target = MainUtil.getPlotFromString(player, args[0], true)) == null) {
             return false;
         }
         player.setCompassTarget(target.getCenter());
-        MainUtil.sendMessage(player, C.COMPASS_TARGET);
+        MainUtil.sendMessage(player, Captions.COMPASS_TARGET);
         return true;
     }
 }

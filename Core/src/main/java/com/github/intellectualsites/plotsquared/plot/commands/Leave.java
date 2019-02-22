@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
@@ -23,12 +23,12 @@ import java.util.UUID;
     @Override public void execute(PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
-        final Plot plot = check(player.getCurrentPlot(), C.NOT_IN_PLOT);
-        checkTrue(plot.hasOwner(), C.PLOT_UNOWNED);
-        checkTrue(plot.isAdded(player.getUUID()), C.NO_PLOT_PERMS);
-        checkTrue(args.length == 0, C.COMMAND_SYNTAX, getUsage());
+        final Plot plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);
+        checkTrue(plot.hasOwner(), Captions.PLOT_UNOWNED);
+        checkTrue(plot.isAdded(player.getUUID()), Captions.NO_PLOT_PERMS);
+        checkTrue(args.length == 0, Captions.COMMAND_SYNTAX, getUsage());
         if (plot.isOwner(player.getUUID())) {
-            checkTrue(plot.hasOwner(), C.ALREADY_OWNER);
+            checkTrue(plot.hasOwner(), Captions.ALREADY_OWNER);
             // TODO setowner, other
         } else {
             UUID uuid = player.getUUID();
@@ -39,9 +39,9 @@ import java.util.UUID;
                 if (plot.removeMember(uuid)) {
                     EventUtil.manager.callMember(player, plot, uuid, false);
                 }
-                MainUtil.sendMessage(player, C.INVALID_PLAYER, args[0]);
+                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
             } else {
-                MainUtil.sendMessage(player, C.REMOVED_PLAYERS, 1);
+                MainUtil.sendMessage(player, Captions.REMOVED_PLAYERS, 1);
             }
         }
     }

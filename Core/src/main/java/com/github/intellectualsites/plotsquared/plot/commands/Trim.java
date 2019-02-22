@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
@@ -128,16 +128,16 @@ import java.util.Set;
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length == 0) {
-            C.COMMAND_SYNTAX.send(player, getUsage());
+            Captions.COMMAND_SYNTAX.send(player, getUsage());
             return false;
         }
         final String world = args[0];
         if (!WorldUtil.IMP.isWorld(world) || !PlotSquared.get().hasPlotArea(world)) {
-            MainUtil.sendMessage(player, C.NOT_VALID_WORLD);
+            MainUtil.sendMessage(player, Captions.NOT_VALID_WORLD);
             return false;
         }
         if (Trim.TASK) {
-            C.TRIM_IN_PROGRESS.send(player);
+            Captions.TRIM_IN_PROGRESS.send(player);
             return false;
         }
         Trim.TASK = true;

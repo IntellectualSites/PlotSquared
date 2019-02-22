@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -14,21 +14,23 @@ public abstract class SetCommand extends SubCommand {
         Location loc = player.getLocation();
         Plot plot = loc.getPlotAbs();
         if (plot == null) {
-            return !sendMessage(player, C.NOT_IN_PLOT);
+            return !sendMessage(player, Captions.NOT_IN_PLOT);
         }
         if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND.f(getFullId()))) {
-                MainUtil.sendMessage(player, C.NO_PERMISSION,
-                    C.PERMISSION_ADMIN_COMMAND.f(getFullId()));
-                MainUtil.sendMessage(player, C.PLOT_NOT_CLAIMED);
+            if (!Permissions
+                .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND.f(getFullId()))) {
+                MainUtil.sendMessage(player, Captions.NO_PERMISSION,
+                    Captions.PERMISSION_ADMIN_COMMAND.f(getFullId()));
+                MainUtil.sendMessage(player, Captions.PLOT_NOT_CLAIMED);
                 return false;
             }
         }
         if (!plot.isOwner(player.getUUID())) {
-            if (!Permissions.hasPermission(player, C.PERMISSION_ADMIN_COMMAND.f(getFullId()))) {
-                MainUtil.sendMessage(player, C.NO_PERMISSION,
-                    C.PERMISSION_ADMIN_COMMAND.f(getFullId()));
-                MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
+            if (!Permissions
+                .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND.f(getFullId()))) {
+                MainUtil.sendMessage(player, Captions.NO_PERMISSION,
+                    Captions.PERMISSION_ADMIN_COMMAND.f(getFullId()));
+                MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
                 return false;
             }
         }

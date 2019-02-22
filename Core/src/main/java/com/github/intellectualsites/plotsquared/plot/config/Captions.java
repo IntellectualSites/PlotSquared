@@ -13,7 +13,7 @@ import java.util.*;
 /**
  * Captions class.
  */
-public enum C {
+public enum Captions {
 
     /*
      * Static flags
@@ -896,7 +896,7 @@ public enum C {
      * @param def    default
      * @param prefix use prefix
      */
-    C(String def, boolean prefix, String category) {
+    Captions(String def, boolean prefix, String category) {
         this.def = def;
         this.s = def;
         this.prefix = prefix;
@@ -908,7 +908,7 @@ public enum C {
      *
      * @param def default
      */
-    C(String def, String category) {
+    Captions(String def, String category) {
         this(def, true, category.toLowerCase());
     }
 
@@ -923,7 +923,7 @@ public enum C {
                 if (arg == null || arg.isEmpty()) {
                     map.put("%s" + i, "");
                 } else {
-                    arg = C.color(arg);
+                    arg = Captions.color(arg);
                     map.put("%s" + i, arg);
                 }
                 if (i == 0) {
@@ -935,9 +935,9 @@ public enum C {
         return m;
     }
 
-    public static String format(C caption, Object... args) {
+    public static String format(Captions caption, Object... args) {
         if (caption.usePrefix() && caption.s.length() > 0) {
-            return C.PREFIX.s() + format(caption.s, args);
+            return Captions.PREFIX.s() + format(caption.s, args);
         } else {
             return format(caption.s, args);
         }
@@ -955,15 +955,15 @@ public enum C {
             }
             YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
             Set<String> keys = yml.getKeys(true);
-            EnumSet<C> allEnums = EnumSet.allOf(C.class);
+            EnumSet<Captions> allEnums = EnumSet.allOf(Captions.class);
             HashSet<String> allNames = new HashSet<>();
             HashSet<String> categories = new HashSet<>();
             HashSet<String> toRemove = new HashSet<>();
-            for (C caption : allEnums) {
+            for (Captions caption : allEnums) {
                 allNames.add(caption.name());
                 categories.add(caption.category.toLowerCase());
             }
-            HashSet<C> captions = new HashSet<>();
+            HashSet<Captions> captions = new HashSet<>();
             boolean changed = false;
             for (String key : keys) {
                 if (!yml.isString(key)) {
@@ -974,7 +974,7 @@ public enum C {
                 }
                 String[] split = key.split("\\.");
                 String node = split[split.length - 1].toUpperCase();
-                C caption;
+                Captions caption;
                 if (allNames.contains(node)) {
                     caption = valueOf(node);
                 } else {
@@ -1013,7 +1013,7 @@ public enum C {
             replacements.put("\\\\n", "\n");
             replacements.put("\\n", "\n");
             replacements.put("&-", "\n");
-            for (C caption : allEnums) {
+            for (Captions caption : allEnums) {
                 if (!captions.contains(caption)) {
                     if (caption.getCategory().startsWith("static")) {
                         continue;

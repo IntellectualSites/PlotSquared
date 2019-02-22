@@ -5,7 +5,7 @@ import com.github.intellectualsites.plotsquared.configuration.ConfigurationSecti
 import com.github.intellectualsites.plotsquared.configuration.InvalidConfigurationException;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.*;
@@ -107,15 +107,16 @@ import java.util.zip.ZipOutputStream;
         if (args.length != 2 && args.length != 3) {
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("export")) {
-                    MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot template export <world>");
+                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
+                        "/plot template export <world>");
                     return true;
                 } else if (args[0].equalsIgnoreCase("import")) {
-                    MainUtil.sendMessage(player, C.COMMAND_SYNTAX,
+                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
                         "/plot template import <world> <template>");
                     return true;
                 }
             }
-            MainUtil.sendMessage(player, C.COMMAND_SYNTAX,
+            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
                 "/plot template <import|export> <world> [template]");
             return true;
         }
@@ -123,12 +124,12 @@ import java.util.zip.ZipOutputStream;
         switch (args[0].toLowerCase()) {
             case "import": {
                 if (args.length != 3) {
-                    MainUtil.sendMessage(player, C.COMMAND_SYNTAX,
+                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
                         "/plot template import <world> <template>");
                     return false;
                 }
                 if (PlotSquared.get().hasPlotArea(world)) {
-                    MainUtil.sendMessage(player, C.SETUP_WORLD_TAKEN, world);
+                    MainUtil.sendMessage(player, Captions.SETUP_WORLD_TAKEN, world);
                     return false;
                 }
                 boolean result = extractAllFiles(world, args[2]);
@@ -171,12 +172,13 @@ import java.util.zip.ZipOutputStream;
             }
             case "export":
                 if (args.length != 2) {
-                    MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot template export <world>");
+                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
+                        "/plot template export <world>");
                     return false;
                 }
                 final PlotArea area = PlotSquared.get().getPlotAreaByString(world);
                 if (area == null) {
-                    MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
+                    MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_WORLD);
                     return false;
                 }
                 final PlotManager manager = area.getPlotManager();
@@ -194,7 +196,7 @@ import java.util.zip.ZipOutputStream;
                 });
                 return true;
             default:
-                C.COMMAND_SYNTAX.send(player, getUsage());
+                Captions.COMMAND_SYNTAX.send(player, getUsage());
         }
         return false;
     }

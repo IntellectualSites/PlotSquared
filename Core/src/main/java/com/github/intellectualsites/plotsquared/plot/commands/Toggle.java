@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
@@ -22,9 +22,9 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         if (toggle(player, "chatspy")) {
-            MainUtil.sendMessage(player, C.TOGGLE_DISABLED, command.toString());
+            MainUtil.sendMessage(player, Captions.TOGGLE_DISABLED, command.toString());
         } else {
-            MainUtil.sendMessage(player, C.TOGGLE_ENABLED, command.toString());
+            MainUtil.sendMessage(player, Captions.TOGGLE_ENABLED, command.toString());
         }
     }
 
@@ -34,9 +34,9 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         if (toggle(player, "worldedit")) {
-            MainUtil.sendMessage(player, C.TOGGLE_DISABLED, command.toString());
+            MainUtil.sendMessage(player, Captions.TOGGLE_DISABLED, command.toString());
         } else {
-            MainUtil.sendMessage(player, C.TOGGLE_ENABLED, command.toString());
+            MainUtil.sendMessage(player, Captions.TOGGLE_ENABLED, command.toString());
         }
     }
 
@@ -46,9 +46,9 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         if (toggle(player, "chat")) {
-            MainUtil.sendMessage(player, C.TOGGLE_DISABLED, command.toString());
+            MainUtil.sendMessage(player, Captions.TOGGLE_DISABLED, command.toString());
         } else {
-            MainUtil.sendMessage(player, C.TOGGLE_ENABLED, command.toString());
+            MainUtil.sendMessage(player, Captions.TOGGLE_ENABLED, command.toString());
         }
     }
 
@@ -58,9 +58,9 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         if (toggle(player, "ignoreExpireTask")) {
-            MainUtil.sendMessage(player, C.TOGGLE_DISABLED, command.toString());
+            MainUtil.sendMessage(player, Captions.TOGGLE_DISABLED, command.toString());
         } else {
-            MainUtil.sendMessage(player, C.TOGGLE_ENABLED, command.toString());
+            MainUtil.sendMessage(player, Captions.TOGGLE_ENABLED, command.toString());
         }
     }
 
@@ -72,9 +72,9 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
         PlotArea area = player.getApplicablePlotArea();
         boolean chat = area != null && area.PLOT_CHAT;
         if (toggle(player, "disabletitles") != chat) {
-            MainUtil.sendMessage(player, C.TOGGLE_ENABLED, command.toString());
+            MainUtil.sendMessage(player, Captions.TOGGLE_ENABLED, command.toString());
         } else {
-            MainUtil.sendMessage(player, C.TOGGLE_DISABLED, command.toString());
+            MainUtil.sendMessage(player, Captions.TOGGLE_DISABLED, command.toString());
         }
     }
 

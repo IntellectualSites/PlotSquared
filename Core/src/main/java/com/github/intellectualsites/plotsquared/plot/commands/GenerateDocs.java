@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 import java.io.File;
@@ -142,7 +142,7 @@ public class GenerateDocs {
 
             Matcher m2 = p2.matcher(line);
             while (m2.find()) {
-                perms.add(C.valueOf("PERMISSION_" + m2.group(1)).s());
+                perms.add(Captions.valueOf("PERMISSION_" + m2.group(1)).s());
             }
             if (line.contains("Permissions.hasPermission(")) {
                 String[] split = line.split("Permissions.hasPermission");
@@ -151,7 +151,7 @@ public class GenerateDocs {
                     String perm = method.split("[,|)]")[1].trim();
                     if (!perm.equalsIgnoreCase(perm)) {
                         if (perm.startsWith("C.")) {
-                            perm = C.valueOf(perm.split("\\.")[1]).s();
+                            perm = Captions.valueOf(perm.split("\\.")[1]).s();
                         } else {
                             continue;
                         }
@@ -181,7 +181,7 @@ public class GenerateDocs {
                     String perm = method.split("[,|)]")[1].trim();
                     if (!perm.equalsIgnoreCase(perm)) {
                         if (perm.startsWith("C.")) {
-                            perm = C.valueOf(perm.split("\\.")[1]).s();
+                            perm = Captions.valueOf(perm.split("\\.")[1]).s();
                         } else {
                             continue;
                         }

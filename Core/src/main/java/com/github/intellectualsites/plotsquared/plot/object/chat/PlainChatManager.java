@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.object.chat;
 
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.ChatManager;
@@ -26,7 +26,7 @@ public class PlainChatManager extends ChatManager<List<StringBuilder>> {
     }
 
     @Override public void text(PlotMessage message, String text) {
-        message.$(this).add(new StringBuilder(C.color(text)));
+        message.$(this).add(new StringBuilder(Captions.color(text)));
     }
 
     @Override public void send(PlotMessage plotMessage, PlotPlayer player) {

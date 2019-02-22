@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flag.DoubleFlag;
@@ -86,8 +86,8 @@ public class MainUtil {
 
     public static void sendAdmin(final String s) {
         for (final PlotPlayer player : UUIDHandler.getPlayers().values()) {
-            if (player.hasPermission(C.PERMISSION_ADMIN.s())) {
-                player.sendMessage(C.color(s));
+            if (player.hasPermission(Captions.PERMISSION_ADMIN.s())) {
+                player.sendMessage(Captions.color(s));
             }
         }
         PlotSquared.debug(s);
@@ -329,14 +329,14 @@ public class MainUtil {
      */
     @Nonnull public static String getName(UUID owner) {
         if (owner == null) {
-            return C.NONE.s();
+            return Captions.NONE.s();
         }
         if (owner.equals(DBFunc.EVERYONE)) {
-            return C.EVERYONE.s();
+            return Captions.EVERYONE.s();
         }
         String name = UUIDHandler.getName(owner);
         if (name == null) {
-            return C.UNKNOWN.s();
+            return Captions.UNKNOWN.s();
         }
         return name;
     }
@@ -457,7 +457,7 @@ public class MainUtil {
         if (arg == null) {
             if (player == null) {
                 if (message) {
-                    PlotSquared.log(C.NOT_VALID_PLOT_WORLD);
+                    PlotSquared.log(Captions.NOT_VALID_PLOT_WORLD);
                 }
                 return null;
             }
@@ -496,13 +496,13 @@ public class MainUtil {
                 }
             }
             if (message) {
-                MainUtil.sendMessage(player, C.NOT_VALID_PLOT_ID);
+                MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_ID);
             }
             return null;
         }
         if (area == null) {
             if (message) {
-                MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
+                MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_WORLD);
             }
             return null;
         }
@@ -564,7 +564,7 @@ public class MainUtil {
      * @param caption
      * @param args
      */
-    public static void sendConsoleMessage(C caption, String... args) {
+    public static void sendConsoleMessage(Captions caption, String... args) {
         sendMessage(null, caption, args);
     }
 
@@ -579,10 +579,10 @@ public class MainUtil {
     public static boolean sendMessage(PlotPlayer player, String msg, boolean prefix) {
         if (!msg.isEmpty()) {
             if (player == null) {
-                String message = (prefix ? C.PREFIX.s() : "") + msg;
+                String message = (prefix ? Captions.PREFIX.s() : "") + msg;
                 PlotSquared.log(message);
             } else {
-                player.sendMessage((prefix ? C.PREFIX.s() : "") + C.color(msg));
+                player.sendMessage((prefix ? Captions.PREFIX.s() : "") + Captions.color(msg));
             }
         }
         return true;
@@ -595,7 +595,7 @@ public class MainUtil {
      * @param caption the message to send
      * @return boolean success
      */
-    public static boolean sendMessage(PlotPlayer player, C caption, String... args) {
+    public static boolean sendMessage(PlotPlayer player, Captions caption, String... args) {
         return sendMessage(player, caption, (Object[]) args);
     }
 
@@ -606,14 +606,14 @@ public class MainUtil {
      * @param caption the message to send
      * @return boolean success
      */
-    public static boolean sendMessage(final PlotPlayer player, final C caption,
+    public static boolean sendMessage(final PlotPlayer player, final Captions caption,
         final Object... args) {
         if (caption.s().isEmpty()) {
             return true;
         }
         TaskManager.runTaskAsync(new Runnable() {
             @Override public void run() {
-                String m = C.format(caption, args);
+                String m = Captions.format(caption, args);
                 if (player == null) {
                     PlotSquared.log(m);
                 } else {
@@ -706,7 +706,7 @@ public class MainUtil {
     public static void format(String info, final Plot plot, PlotPlayer player, final boolean full,
         final RunnableVal<String> whenDone) {
         int num = plot.getConnectedPlots().size();
-        String alias = !plot.getAlias().isEmpty() ? plot.getAlias() : C.NONE.s();
+        String alias = !plot.getAlias().isEmpty() ? plot.getAlias() : Captions.NONE.s();
         Location bot = plot.getCorners()[0];
         String biome = WorldUtil.IMP.getBiome(plot.getWorldName(), bot.getX(), bot.getZ());
         String trusted = getPlayerList(plot.getTrusted());
@@ -715,28 +715,27 @@ public class MainUtil {
         String seen;
         if (Settings.Enabled_Components.PLOT_EXPIRY && ExpireManager.IMP != null) {
             if (plot.isOnline()) {
-                seen = C.NOW.s();
+                seen = Captions.NOW.s();
             } else {
                 int time = (int) (ExpireManager.IMP.getAge(plot) / 1000);
                 if (time != 0) {
                     seen = MainUtil.secToTime(time);
                 } else {
-                    seen = C.UNKNOWN.s();
+                    seen = Captions.UNKNOWN.s();
                 }
             }
         } else {
-            seen = C.NEVER.s();
+            seen = Captions.NEVER.s();
         }
         Optional<String> descriptionFlag = plot.getFlag(Flags.DESCRIPTION);
-        String description = !descriptionFlag.isPresent() ?
-            C.NONE.s() :
+        String description = !descriptionFlag.isPresent() ? Captions.NONE.s() :
             Flags.DESCRIPTION.valueToString(descriptionFlag.get());
 
         StringBuilder flags = new StringBuilder();
         HashMap<Flag<?>, Object> flagMap =
             FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true);
         if (flagMap.isEmpty()) {
-            flags.append(C.NONE.s());
+            flags.append(Captions.NONE.s());
         } else {
             String prefix = "";
             for (Entry<Flag<?>, Object> entry : flagMap.entrySet()) {
@@ -746,7 +745,8 @@ public class MainUtil {
                     df.setMaximumFractionDigits(340);
                     value = df.format(value);
                 }
-                flags.append(prefix).append(C.PLOT_FLAG_LIST.f(entry.getKey().getName(), value));
+                flags.append(prefix)
+                    .append(Captions.PLOT_FLAG_LIST.f(entry.getKey().getName(), value));
                 prefix = ", ";
             }
         }
@@ -815,7 +815,7 @@ public class MainUtil {
 
     /**
      * Get a list of names given a list of uuids.<br>
-     * - Uses the format {@link C#PLOT_USER_LIST} for the returned string
+     * - Uses the format {@link Captions#PLOT_USER_LIST} for the returned string
      *
      * @param uuids
      * @return
@@ -823,11 +823,11 @@ public class MainUtil {
     public static String getPlayerList(Collection<UUID> uuids) {
         ArrayList<UUID> l = new ArrayList<>(uuids);
         if (l.size() < 1) {
-            return C.NONE.s();
+            return Captions.NONE.s();
         }
         List<String> users =
             l.stream().map(MainUtil::getName).sorted().collect(Collectors.toList());
-        String c = C.PLOT_USER_LIST.s();
+        String c = Captions.PLOT_USER_LIST.s();
         StringBuilder list = new StringBuilder();
         for (int x = 0; x < users.size(); x++) {
             if (x + 1 == l.size()) {

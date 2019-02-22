@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
@@ -20,7 +20,7 @@ import java.util.HashSet;
         RunnableVal2<Command, CommandResult> whenDone) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            C.NOT_IN_PLOT.send(player);
+            Captions.NOT_IN_PLOT.send(player);
             return;
         }
         HashSet<RegionWrapper> regions = plot.getRegions();
@@ -32,7 +32,7 @@ import java.util.HashSet;
         }, new Runnable() {
             @Override public void run() {
                 plot.refreshChunks();
-                C.SET_BLOCK_ACTION_FINISHED.send(player);
+                Captions.SET_BLOCK_ACTION_FINISHED.send(player);
             }
         }, 5);
     }

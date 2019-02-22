@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.configuration.serialization.ConfigurationSerializable;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.google.common.collect.ImmutableMap;
 import lombok.EqualsAndHashCode;
@@ -159,7 +159,7 @@ import java.util.Map.Entry;
                 }
             }
         } else if (!unassigned.isEmpty()) {
-            C.BUCKET_ENTRIES_IGNORED.send(ConsolePlayer.getConsole());
+            Captions.BUCKET_ENTRIES_IGNORED.send(ConsolePlayer.getConsole());
         }
         //
         // If the sum adds up to more than 100, divide all values

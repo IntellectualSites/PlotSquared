@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.generator;
 
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -214,7 +214,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             }*/
         }
         if (schematic1 == null || schematic2 == null || this.ROAD_WIDTH == 0) {
-            PlotSquared.debug(C.PREFIX + "&3 - schematic: &7false");
+            PlotSquared.debug(Captions.PREFIX + "&3 - schematic: &7false");
             return;
         }
         this.ROAD_SCHEMATIC_ENABLED = true;

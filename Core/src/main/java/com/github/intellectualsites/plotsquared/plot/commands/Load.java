@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
@@ -22,23 +22,23 @@ import java.util.List;
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         String world = player.getLocation().getWorld();
         if (!PlotSquared.get().hasPlotArea(world)) {
-            return !sendMessage(player, C.NOT_IN_PLOT_WORLD);
+            return !sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
         }
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            return !sendMessage(player, C.NOT_IN_PLOT);
+            return !sendMessage(player, Captions.NOT_IN_PLOT);
         }
         if (!plot.hasOwner()) {
-            MainUtil.sendMessage(player, C.PLOT_UNOWNED);
+            MainUtil.sendMessage(player, Captions.PLOT_UNOWNED);
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_LOAD)) {
-            MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
+            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_LOAD)) {
+            MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
             return false;
         }
         if (plot.getRunning() > 0) {
-            MainUtil.sendMessage(player, C.WAIT_FOR_TIMER);
+            MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
             return false;
         }
 
@@ -47,7 +47,7 @@ import java.util.List;
                 List<String> schematics = player.getMeta("plot_schematics");
                 if (schematics == null) {
                     // No schematics found:
-                    MainUtil.sendMessage(player, C.LOAD_NULL);
+                    MainUtil.sendMessage(player, Captions.LOAD_NULL);
                     return false;
                 }
                 String schem;
@@ -55,8 +55,8 @@ import java.util.List;
                     schem = schematics.get(Integer.parseInt(args[0]) - 1);
                 } catch (Exception ignored) {
                     // use /plot load <index>
-                    MainUtil
-                        .sendMessage(player, C.NOT_VALID_NUMBER, "(1, " + schematics.size() + ')');
+                    MainUtil.sendMessage(player, Captions.NOT_VALID_NUMBER,
+                        "(1, " + schematics.size() + ')');
                     return false;
                 }
                 final URL url;
@@ -64,16 +64,16 @@ import java.util.List;
                     url = new URL(Settings.Web.URL + "saves/" + player.getUUID() + '/' + schem);
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
-                    MainUtil.sendMessage(player, C.LOAD_FAILED);
+                    MainUtil.sendMessage(player, Captions.LOAD_FAILED);
                     return false;
                 }
                 plot.addRunning();
-                MainUtil.sendMessage(player, C.GENERATING_COMPONENT);
+                MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
                 TaskManager.runTaskAsync(() -> {
                     Schematic schematic = SchematicHandler.manager.getSchematic(url);
                     if (schematic == null) {
                         plot.removeRunning();
-                        sendMessage(player, C.SCHEMATIC_INVALID,
+                        sendMessage(player, Captions.SCHEMATIC_INVALID,
                             "non-existent or not in gzip format");
                         return;
                     }
@@ -84,9 +84,9 @@ import java.util.List;
                                 @Override public void run(Boolean value) {
                                     plot.removeRunning();
                                     if (value) {
-                                        sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);
+                                        sendMessage(player, Captions.SCHEMATIC_PASTE_SUCCESS);
                                     } else {
-                                        sendMessage(player, C.SCHEMATIC_PASTE_FAILED);
+                                        sendMessage(player, Captions.SCHEMATIC_PASTE_FAILED);
                                     }
                                 }
                             });
@@ -94,7 +94,7 @@ import java.util.List;
                 return true;
             }
             plot.removeRunning();
-            MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot load <index>");
+            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot load <index>");
             return false;
         }
 
@@ -107,7 +107,7 @@ import java.util.List;
                 List<String> schematics1 = SchematicHandler.manager.getSaves(player.getUUID());
                 plot.removeRunning();
                 if ((schematics1 == null) || schematics1.isEmpty()) {
-                    MainUtil.sendMessage(player, C.LOAD_FAILED);
+                    MainUtil.sendMessage(player, Captions.LOAD_FAILED);
                     return;
                 }
                 player.setMeta("plot_schematics", schematics1);
@@ -141,7 +141,7 @@ import java.util.List;
                 e.printStackTrace();
             }
         }
-        MainUtil.sendMessage(player, C.LOAD_LIST);
+        MainUtil.sendMessage(player, Captions.LOAD_LIST);
     }
 
     public String secToTime(long time) {

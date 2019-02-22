@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.chat.PlainChatManager;
 import com.github.intellectualsites.plotsquared.plot.util.ChatManager;
 
@@ -59,7 +59,7 @@ public class PlotMessage {
     }
 
     public PlotMessage color(String color) {
-        ChatManager.manager.color(this, C.color(color));
+        ChatManager.manager.color(this, Captions.color(color));
         return this;
     }
 

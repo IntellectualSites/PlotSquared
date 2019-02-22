@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 
@@ -23,10 +23,10 @@ import java.util.Locale;
         Location loc = player.getLocation();
         final Plot plot = loc.getPlotAbs();
         if (plot == null) {
-            return !sendMessage(player, C.NOT_IN_PLOT);
+            return !sendMessage(player, Captions.NOT_IN_PLOT);
         }
         if (!plot.isAdded(player.getUUID())) {
-            sendMessage(player, C.NO_PLOT_PERMS);
+            sendMessage(player, Captions.NO_PLOT_PERMS);
             return true;
         }
         PlotInventory inv = new PlotInventory(player, 2, "Plot Jukebox") {
@@ -37,12 +37,12 @@ import java.util.Locale;
                 }
                 if (item.getPlotBlock().equalsAny(7, "bedrock")) {
                     plot.removeFlag(Flags.MUSIC);
-                    C.FLAG_REMOVED.send(player);
+                    Captions.FLAG_REMOVED.send(player);
                 } else if (item.name.toLowerCase(Locale.ENGLISH).contains("disc")) {
                     plot.setFlag(Flags.MUSIC, item.getPlotBlock().getRawId());
-                    C.FLAG_ADDED.send(player);
+                    Captions.FLAG_ADDED.send(player);
                 } else {
-                    C.FLAG_NOT_ADDED.send(player);
+                    Captions.FLAG_NOT_ADDED.send(player);
                 }
                 return false;
             }
