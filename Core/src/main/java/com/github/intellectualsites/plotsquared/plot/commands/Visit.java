@@ -64,8 +64,9 @@ import java.util.*;
                 page = Integer.parseInt(args[1]);
             case 1:
                 UUID user = args[0].length() >= 2 ? UUIDHandler.getUUIDFromString(args[0]) : null;
-                if (user != null && !PlotSquared.get().hasPlot(user))
+                if (user != null && !PlotSquared.get().hasPlot(user)) {
                     user = null;
+                }
                 if (page == Integer.MIN_VALUE && user == null && MathMan.isInteger(args[0])) {
                     page = Integer.parseInt(args[0]);
                     unsorted = PlotSquared.get().getBasePlots(player);

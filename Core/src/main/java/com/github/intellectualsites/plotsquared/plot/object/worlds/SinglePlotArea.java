@@ -30,8 +30,9 @@ public class SinglePlotArea extends GridPlotWorld {
         TaskManager.IMP.sync(new RunnableVal<Object>() {
             @Override public void run(Object value) {
                 String worldName = id.toCommaSeparatedString();
-                if (WorldUtil.IMP.isWorld(worldName))
+                if (WorldUtil.IMP.isWorld(worldName)) {
                     return;
+                }
                 SetupObject setup = new SetupObject();
                 setup.plotManager = "PlotSquared:single";
                 setup.setupGenerator = "PlotSquared:single";

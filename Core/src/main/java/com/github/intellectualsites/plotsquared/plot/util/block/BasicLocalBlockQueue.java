@@ -171,8 +171,9 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
         GlobalBlockQueue.IMP.dequeue(this);
         TaskManager.IMP.sync(new RunnableVal<Object>() {
             @Override public void run(Object value) {
-                while (next())
+                while (next()) {
                     ;
+                }
             }
         });
     }

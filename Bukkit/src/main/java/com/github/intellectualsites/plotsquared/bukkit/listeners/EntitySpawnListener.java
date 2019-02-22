@@ -125,8 +125,9 @@ public class EntitySpawnListener implements Listener {
 
     @EventHandler public void onTeleport(EntityTeleportEvent event) {
         Entity ent = event.getEntity();
-        if (ent instanceof Vehicle || ent instanceof ArmorStand)
+        if (ent instanceof Vehicle || ent instanceof ArmorStand) {
             test(event.getEntity());
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

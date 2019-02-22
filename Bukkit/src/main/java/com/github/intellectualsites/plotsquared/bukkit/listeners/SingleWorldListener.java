@@ -42,14 +42,18 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
     public void markChunkAsClean(Chunk chunk) {
         try {
             Object nmsChunk = methodGetHandleChunk.invoke(chunk);
-            if (done != null)
+            if (done != null) {
                 this.done.set(nmsChunk, true);
-            if (mustSave != null)
+            }
+            if (mustSave != null) {
                 this.mustSave.set(nmsChunk, false);
-            if (lit != null)
+            }
+            if (lit != null) {
                 this.lit.set(nmsChunk, false);
-            if (s != null)
+            }
+            if (s != null) {
                 this.s.set(nmsChunk, false);
+            }
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -59,10 +63,12 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
         World world = event.getWorld();
         String name = world.getName();
         PlotAreaManager man = PlotSquared.get().getPlotAreaManager();
-        if (!(man instanceof SinglePlotAreaManager))
+        if (!(man instanceof SinglePlotAreaManager)) {
             return;
-        if (!isPlotId(name))
+        }
+        if (!isPlotId(name)) {
             return;
+        }
 
         markChunkAsClean(event.getChunk());
     }

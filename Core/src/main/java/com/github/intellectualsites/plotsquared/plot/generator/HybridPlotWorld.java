@@ -95,9 +95,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             return bot.add(-1, 0, -2);
         } else {
             bot.setY(0);
-            Location loc =
-                bot.add(SIGN_LOCATION.getX(), SIGN_LOCATION.getY(), SIGN_LOCATION.getZ());
-            return loc;
+            return bot.add(SIGN_LOCATION.getX(), SIGN_LOCATION.getY(), SIGN_LOCATION.getZ());
         }
     }
 
@@ -277,11 +275,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             id = rotate(id);
         }
         int pair = MathMan.pair(x, z);
-        BaseBlock[] existing = this.G_SCH.get(pair);
-        if (existing == null) {
-            existing = new BaseBlock[height];
-            this.G_SCH.put(pair, existing);
-        }
+        BaseBlock[] existing = this.G_SCH.computeIfAbsent(pair, k -> new BaseBlock[height]);
         existing[y] = id;
     }
 }

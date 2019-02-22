@@ -45,7 +45,7 @@ public interface AbstractDB {
     void createTables() throws Exception;
 
     /**
-     * Deletess a plot.
+     * Deletes a plot.
      *
      * @param plot the plot to delete
      */

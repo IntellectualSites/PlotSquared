@@ -713,8 +713,9 @@ public abstract class PlotArea {
         if (TYPE == 2) {
             center = new PlotId(MathMan.average(min.x, max.x), MathMan.average(min.y, max.y));
             plots = Math.max(max.x - min.x, max.y - min.y) + 1;
-            if (start != null)
+            if (start != null) {
                 start = new PlotId(start.x - center.x, start.y - center.y);
+            }
         } else {
             center = new PlotId(0, 0);
             plots = Integer.MAX_VALUE;

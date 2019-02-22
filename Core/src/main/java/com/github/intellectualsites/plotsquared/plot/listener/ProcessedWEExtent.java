@@ -13,7 +13,7 @@ import com.sk89q.worldedit.extent.NullExtent;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.util.Location;
-import com.sk89q.worldedit.world.biome.BaseBiome;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
@@ -46,21 +46,22 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         this.parent = parent;
     }
 
-    @Override public BlockState getBlock(BlockVector3 location) {
-        if (WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
-            return super.getBlock(location);
+    @Override public BlockState getBlock(BlockVector3 position) {
+        if (WEManager.maskContains(this.mask, position.getX(), position.getY(), position.getZ())) {
+            return super.getBlock(position);
         }
         return WEExtent.AIRSTATE;
     }
 
-    @Override public BaseBlock getFullBlock(BlockVector3 location) {
-        if (WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
-            return super.getFullBlock(location);
+    @Override public BaseBlock getFullBlock(BlockVector3 position) {
+        if (WEManager.maskContains(this.mask, position.getX(), position.getY(), position.getZ())) {
+            return super.getFullBlock(position);
         }
         return WEExtent.AIRBASE;
     }
 
-    @Override public boolean setBlock(BlockVector3 location, BlockStateHolder block)
+    @Override
+    public <T extends BlockStateHolder<T>> boolean setBlock(BlockVector3 location, T block)
         throws WorldEditException {
         String id = block.getBlockType().getId();
         switch (id) {
@@ -171,7 +172,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         return null;
     }
 
-    @Override public boolean setBiome(BlockVector2 position, BaseBiome biome) {
+    @Override public boolean setBiome(BlockVector2 position, BiomeType biome) {
         return WEManager.maskContains(this.mask, position.getX(), position.getZ()) && super
             .setBiome(position, biome);
     }

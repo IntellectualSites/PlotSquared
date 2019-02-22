@@ -22,8 +22,9 @@ public class Auto extends SubCommand {
 
     private static boolean checkAllowedPlots(PlotPlayer player, PlotArea plotarea,
         @Nullable Integer allowed_plots, int size_x, int size_z) {
-        if (allowed_plots == null)
+        if (allowed_plots == null) {
             allowed_plots = player.getAllowedPlots();
+        }
         int currentPlots =
             Settings.Limit.GLOBAL ? player.getPlotCount() : player.getPlotCount(plotarea.worldname);
         int diff = currentPlots - allowed_plots;
@@ -189,8 +190,9 @@ public class Auto extends SubCommand {
         }
         final int allowed_plots = player.getAllowedPlots();
         if (player.getMeta(Auto.class.getName(), false) || !checkAllowedPlots(player, plotarea,
-            allowed_plots, size_x, size_z))
+            allowed_plots, size_x, size_z)) {
             return false;
+        }
 
         if (schematic != null && !schematic.isEmpty()) {
             if (!plotarea.SCHEMATICS.contains(schematic.toLowerCase())) {

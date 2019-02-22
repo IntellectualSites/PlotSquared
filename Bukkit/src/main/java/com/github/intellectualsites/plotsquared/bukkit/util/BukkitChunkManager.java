@@ -476,6 +476,7 @@ public class BukkitChunkManager extends ChunkManager {
             case SNOWBALL:
             case ENDER_PEARL:
             case ARROW:
+            case TRIDENT:
             case TIPPED_ARROW:
             case SHULKER_BULLET:
             case SPECTRAL_ARROW:
@@ -537,6 +538,13 @@ public class BukkitChunkManager extends ChunkManager {
             case SKELETON_HORSE:
             case ZOMBIE_HORSE:
             case MULE:
+            case DOLPHIN:
+            case TURTLE:
+            case COD:
+            case PARROT:
+            case SALMON:
+            case PUFFERFISH:
+            case TROPICAL_FISH:
                 // animal
                 count[3]++;
                 count[1]++;

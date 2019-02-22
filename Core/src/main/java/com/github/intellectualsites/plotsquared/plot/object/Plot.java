@@ -3015,4 +3015,8 @@ public class Plot {
     @SuppressWarnings("deprecation") public void setComments(List<PlotComment> list) {
         getSettings().setComments(list);
     }
+
+    public boolean getMerged(Direction direction) {
+        return getMerged(direction.getIndex());
+    }
 }

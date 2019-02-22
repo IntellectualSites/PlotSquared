@@ -109,8 +109,9 @@ public class TitleManager_1_11 {
     }
 
     private static boolean equalsTypeArray(Class<?>[] a, Class<?>[] o) {
-        if (a.length != o.length)
+        if (a.length != o.length) {
             return false;
+        }
         return IntStream.range(0, a.length)
             .noneMatch(i -> !a[i].equals(o[i]) && !a[i].isAssignableFrom(o[i]));
     }
@@ -202,8 +203,9 @@ public class TitleManager_1_11 {
                         Integer.TYPE).newInstance(actions[3], null, fadeInTime * (ticks ? 1 : 20),
                         stayTime * (ticks ? 1 : 20), fadeOutTime * (ticks ? 1 : 20));
                 // Send if set
-                if (fadeInTime != -1 && fadeOutTime != -1 && stayTime != -1)
+                if (fadeInTime != -1 && fadeOutTime != -1 && stayTime != -1) {
                     sendPacket.invoke(connection, packet);
+                }
 
                 Object serialized;
                 if (!subtitle.equals("")) {
@@ -339,8 +341,9 @@ public class TitleManager_1_11 {
     private Class<?>[] toPrimitiveTypeArray(Class<?>[] classes) {
         int a = classes != null ? classes.length : 0;
         Class<?>[] types = new Class<?>[a];
-        for (int i = 0; i < a; i++)
+        for (int i = 0; i < a; i++) {
             types[i] = getPrimitiveType(classes[i]);
+        }
         return types;
     }
 
@@ -357,8 +360,9 @@ public class TitleManager_1_11 {
         Class<?>[] t = toPrimitiveTypeArray(paramTypes);
         for (Method m : clazz.getMethods()) {
             Class<?>[] types = toPrimitiveTypeArray(m.getParameterTypes());
-            if (m.getName().equals(name) && equalsTypeArray(types, t))
+            if (m.getName().equals(name) && equalsTypeArray(types, t)) {
                 return m;
+            }
         }
         return null;
     }
@@ -403,24 +407,26 @@ public class TitleManager_1_11 {
     }
 
     private Method getMethod(Class<?> clazz, String name, Class<?>... args) {
-        for (Method m : clazz.getMethods())
-            if (m.getName().equals(name) && (args.length == 0 || ClassListEqual(args,
-                m.getParameterTypes()))) {
+        for (Method m : clazz.getMethods()) {
+            if (m.getName().equals(name) && (args.length == 0 || ClassListEqual(args, m.getParameterTypes()))) {
                 m.setAccessible(true);
                 return m;
             }
+        }
         return null;
     }
 
     private boolean ClassListEqual(Class<?>[] l1, Class<?>[] l2) {
         boolean equal = true;
-        if (l1.length != l2.length)
+        if (l1.length != l2.length) {
             return false;
-        for (int i = 0; i < l1.length; i++)
+        }
+        for (int i = 0; i < l1.length; i++) {
             if (l1[i] != l2[i]) {
                 equal = false;
                 break;
             }
+        }
         return equal;
     }
 

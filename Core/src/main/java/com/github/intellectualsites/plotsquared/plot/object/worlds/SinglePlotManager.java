@@ -33,8 +33,9 @@ public class SinglePlotManager extends PlotManager {
         TaskManager.IMP.taskAsync(new Runnable() {
             @Override public void run() {
                 MainUtil.deleteDirectory(worldFolder);
-                if (whenDone != null)
+                if (whenDone != null) {
                     whenDone.run();
+                }
             }
         });
         return true;
@@ -46,8 +47,9 @@ public class SinglePlotManager extends PlotManager {
     }
 
     @Override public boolean unclaimPlot(PlotArea plotArea, Plot plot, Runnable whenDone) {
-        if (whenDone != null)
+        if (whenDone != null) {
             whenDone.run();
+        }
         return true;
     }
 

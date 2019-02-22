@@ -264,34 +264,28 @@ import java.util.*;
         return getWorld(world).getBiome(x, z).name();
     }
 
-    @Override @SuppressWarnings("deprecation")
-    public void setSign(@NonNull final String worldName, final int x, final int y, final int z,
-        @NonNull final String[] lines) {
-        final World world = getWorld(worldName);
-        final Block block = world.getBlockAt(x, y, z);
-        //        block.setType(Material.AIR);
-        final Material type = block.getType();
-        if (type != Material.SIGN && type != Material.WALL_SIGN) {
-            BlockFace facing = BlockFace.EAST;
-            if (world.getBlockAt(x, y, z + 1).getType().isSolid())
-                facing = BlockFace.NORTH;
-            else if (world.getBlockAt(x + 1, y, z).getType().isSolid())
-                facing = BlockFace.WEST;
-            else if (world.getBlockAt(x, y, z - 1).getType().isSolid())
-                facing = BlockFace.SOUTH;
-            block.setType(Material.WALL_SIGN, false);
-            final WallSign sign = (WallSign) block.getBlockData();
-            sign.setFacing(facing);
-            block.setBlockData(sign, false);
-        }
-        final BlockState blockstate = block.getState();
-        if (blockstate instanceof Sign) {
-            final Sign sign = (Sign) blockstate;
-            for (int i = 0; i < lines.length; i++) {
-                sign.setLine(i, lines[i]);
+    @Override public int getHighestBlock(@NonNull final String world, final int x, final int z) {
+        final World bukkitWorld = getWorld(world);
+        // Skip top and bottom block
+        int air = 1;
+        for (int y = bukkitWorld.getMaxHeight() - 1; y >= 0; y--) {
+            Block block = bukkitWorld.getBlockAt(x, y, z);
+            if (block != null) {
+                Material type = block.getType();
+                if (type.isSolid()) {
+                    if (air > 1) {
+                        return y;
+                    }
+                    air = 0;
+                } else {
+                    if (block.isLiquid()) {
+                        return y;
+                    }
+                    air++;
+                }
             }
-            sign.update(true);
         }
+        return bukkitWorld.getMaxHeight() - 1;
     }
 
     @Override @Nullable public String[] getSign(@NonNull final Location location) {
@@ -330,27 +324,35 @@ import java.util.*;
         }
     }
 
-    @Override public int getHighestBlock(@NonNull final String world, final int x, final int z) {
-        final World bukkitWorld = getWorld(world);
-        // Skip top and bottom block
-        int air = 1;
-        for (int y = bukkitWorld.getMaxHeight() - 1; y >= 0; y--) {
-            Block block = bukkitWorld.getBlockAt(x, y, z);
-            if (block != null) {
-                Material type = block.getType();
-                if (type.isSolid()) {
-                    if (air > 1)
-                        return y;
-                    air = 0;
-                } else {
-                    if (block.isLiquid()) {
-                        return y;
-                    }
-                    air++;
-                }
+    @Override @SuppressWarnings("deprecation")
+    public void setSign(@NonNull final String worldName, final int x, final int y, final int z,
+        @NonNull final String[] lines) {
+        final World world = getWorld(worldName);
+        final Block block = world.getBlockAt(x, y, z);
+        //        block.setType(Material.AIR);
+        final Material type = block.getType();
+        if (type != Material.SIGN && type != Material.WALL_SIGN) {
+            BlockFace facing = BlockFace.EAST;
+            if (world.getBlockAt(x, y, z + 1).getType().isSolid()) {
+                facing = BlockFace.NORTH;
+            } else if (world.getBlockAt(x + 1, y, z).getType().isSolid()) {
+                facing = BlockFace.WEST;
+            } else if (world.getBlockAt(x, y, z - 1).getType().isSolid()) {
+                facing = BlockFace.SOUTH;
             }
+            block.setType(Material.WALL_SIGN, false);
+            final WallSign sign = (WallSign) block.getBlockData();
+            sign.setFacing(facing);
+            block.setBlockData(sign, false);
         }
-        return bukkitWorld.getMaxHeight() - 1;
+        final BlockState blockstate = block.getState();
+        if (blockstate instanceof Sign) {
+            final Sign sign = (Sign) blockstate;
+            for (int i = 0; i < lines.length; i++) {
+                sign.setLine(i, lines[i]);
+            }
+            sign.update(true);
+        }
     }
 
     @Override public int getBiomeFromString(@NonNull final String biomeString) {

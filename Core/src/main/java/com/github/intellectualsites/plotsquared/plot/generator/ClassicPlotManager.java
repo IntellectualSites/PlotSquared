@@ -145,7 +145,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         Location top = plot.getExtendedTopAbs();
         LocalBlockQueue queue = plotArea.getQueue(false);
         int maxY = plotArea.getPlotManager().getWorldHeight();
-        if (!plot.getMerged(0)) {
+        if (!plot.getMerged(Direction.NORTH)) {
             int z = bottom.getZ();
             for (int x = bottom.getX(); x <= top.getX(); x++) {
                 for (int y = dpw.PLOT_HEIGHT; y <= maxY; y++) {
@@ -153,7 +153,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                 }
             }
         }
-        if (!plot.getMerged(3)) {
+        if (!plot.getMerged(Direction.WEST)) {
             int x = bottom.getX();
             for (int z = bottom.getZ(); z <= top.getZ(); z++) {
                 for (int y = dpw.PLOT_HEIGHT; y <= maxY; y++) {
@@ -162,7 +162,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             }
         }
 
-        if (!plot.getMerged(2)) {
+        if (!plot.getMerged(Direction.SOUTH)) {
             int z = top.getZ();
             for (int x = bottom.getX(); x <= top.getX(); x++) {
                 for (int y = dpw.PLOT_HEIGHT; y <= maxY; y++) {
@@ -170,7 +170,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                 }
             }
         }
-        if (!plot.getMerged(1)) {
+        if (!plot.getMerged(Direction.EAST)) {
             int x = top.getX();
             for (int z = bottom.getZ(); z <= top.getZ(); z++) {
                 for (int y = dpw.PLOT_HEIGHT; y <= maxY; y++) {
@@ -196,10 +196,11 @@ public class ClassicPlotManager extends SquarePlotManager {
         }
         Plot plot = plotArea.getPlotAbs(plotId);
         Location bot = plot.getExtendedBottomAbs()
-            .subtract(plot.getMerged(3) ? 0 : 1, 0, plot.getMerged(0) ? 0 : 1);
+            .subtract(plot.getMerged(Direction.WEST) ? 0 : 1, 0,
+                plot.getMerged(Direction.NORTH) ? 0 : 1);
         Location top = plot.getExtendedTopAbs().add(1, 0, 1);
         LocalBlockQueue queue = plotArea.getQueue(false);
-        if (!plot.getMerged(0)) {
+        if (!plot.getMerged(Direction.NORTH)) {
             int z = bot.getZ();
             for (int x = bot.getX(); x < top.getX(); x++) {
                 for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
@@ -207,7 +208,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                 }
             }
         }
-        if (!plot.getMerged(3)) {
+        if (!plot.getMerged(Direction.WEST)) {
             int x = bot.getX();
             for (int z = bot.getZ(); z < top.getZ(); z++) {
                 for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
@@ -215,17 +216,19 @@ public class ClassicPlotManager extends SquarePlotManager {
                 }
             }
         }
-        if (!plot.getMerged(2)) {
+        if (!plot.getMerged(Direction.SOUTH)) {
             int z = top.getZ();
-            for (int x = bot.getX(); x < top.getX() + (plot.getMerged(1) ? 0 : 1); x++) {
+            for (int x = bot.getX();
+                 x < top.getX() + (plot.getMerged(Direction.EAST) ? 0 : 1); x++) {
                 for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
                     queue.setBlock(x, y, z, blocks.getBlock());
                 }
             }
         }
-        if (!plot.getMerged(1)) {
+        if (!plot.getMerged(Direction.EAST)) {
             int x = top.getX();
-            for (int z = bot.getZ(); z < top.getZ() + (plot.getMerged(2) ? 0 : 1); z++) {
+            for (int z = bot.getZ();
+                 z < top.getZ() + (plot.getMerged(Direction.SOUTH) ? 0 : 1); z++) {
                 for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
                     queue.setBlock(x, y, z, blocks.getBlock());
                 }
@@ -242,32 +245,35 @@ public class ClassicPlotManager extends SquarePlotManager {
         }
         Plot plot = plotArea.getPlotAbs(plotId);
         Location bot = plot.getExtendedBottomAbs()
-            .subtract(plot.getMerged(3) ? 0 : 1, 0, plot.getMerged(0) ? 0 : 1);
+            .subtract(plot.getMerged(Direction.WEST) ? 0 : 1, 0,
+                plot.getMerged(Direction.NORTH) ? 0 : 1);
         Location top = plot.getExtendedTopAbs().add(1, 0, 1);
         PseudoRandom random = new PseudoRandom();
         LocalBlockQueue queue = plotArea.getQueue(false);
         int y = dpw.WALL_HEIGHT + 1;
-        if (!plot.getMerged(0)) {
+        if (!plot.getMerged(Direction.NORTH)) {
             int z = bot.getZ();
             for (int x = bot.getX(); x < top.getX(); x++) {
                 queue.setBlock(x, y, z, blocks.getBlock());
             }
         }
-        if (!plot.getMerged(3)) {
+        if (!plot.getMerged(Direction.WEST)) {
             int x = bot.getX();
             for (int z = bot.getZ(); z < top.getZ(); z++) {
                 queue.setBlock(x, y, z, blocks.getBlock());
             }
         }
-        if (!plot.getMerged(2)) {
+        if (!plot.getMerged(Direction.SOUTH)) {
             int z = top.getZ();
-            for (int x = bot.getX(); x < top.getX() + (plot.getMerged(1) ? 0 : 1); x++) {
+            for (int x = bot.getX();
+                 x < top.getX() + (plot.getMerged(Direction.EAST) ? 0 : 1); x++) {
                 queue.setBlock(x, y, z, blocks.getBlock());
             }
         }
-        if (!plot.getMerged(1)) {
+        if (!plot.getMerged(Direction.EAST)) {
             int x = top.getX();
-            for (int z = bot.getZ(); z < top.getZ() + (plot.getMerged(2) ? 0 : 1); z++) {
+            for (int z = bot.getZ();
+                 z < top.getZ() + (plot.getMerged(Direction.SOUTH) ? 0 : 1); z++) {
                 queue.setBlock(x, y, z, blocks.getBlock());
             }
         }

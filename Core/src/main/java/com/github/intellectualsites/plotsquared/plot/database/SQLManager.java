@@ -1001,14 +1001,16 @@ import java.util.concurrent.atomic.AtomicInteger;
                                             + "plot_settings`(`plot_plot_id`) VALUES(?)");
                                 }
                             });
-                            if (success != null)
+                            if (success != null) {
                                 addNotifyTask(success);
+                            }
                             return;
                         }
                     }
                 }
-                if (failure != null)
+                if (failure != null) {
                     failure.run();
+                }
             }
         });
     }

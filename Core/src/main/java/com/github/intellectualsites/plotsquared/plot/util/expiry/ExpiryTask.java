@@ -106,8 +106,9 @@ public class ExpiryTask {
     }
 
     public boolean appliesAccountAge(long accountAge) {
-        if (settings.SKIP_ACCOUNT_AGE_DAYS != -1)
+        if (settings.SKIP_ACCOUNT_AGE_DAYS != -1) {
             return accountAge <= TimeUnit.DAYS.toMillis(settings.SKIP_ACCOUNT_AGE_DAYS);
+        }
         return false;
     }
 

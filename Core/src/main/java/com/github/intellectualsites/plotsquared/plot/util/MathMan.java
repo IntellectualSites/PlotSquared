@@ -181,8 +181,9 @@ public class MathMan {
 
     public static int floorMod(int x, int y) {
         int i = x % y;
-        if (i < 0)
+        if (i < 0) {
             i += y;
+        }
         return i;
     }
 

@@ -70,8 +70,9 @@ public class BukkitHybridUtils extends HybridUtils {
 
             PlotArea area = PlotSquared.get().getPlotArea(world, null);
 
-            if (!(area instanceof HybridPlotWorld))
+            if (!(area instanceof HybridPlotWorld)) {
                 return;
+            }
 
             HybridPlotWorld hpw = (HybridPlotWorld) area;
             final BlockBucket[][] result = hpw.getBlockBucketChunk();

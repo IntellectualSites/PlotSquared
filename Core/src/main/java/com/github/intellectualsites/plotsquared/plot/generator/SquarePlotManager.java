@@ -173,28 +173,28 @@ public abstract class SquarePlotManager extends GridPlotManager {
             switch (hash) {
                 case 8:
                     // north
-                    return plot.getMerged(0) ? id : null;
+                    return plot.getMerged(Direction.NORTH) ? id : null;
                 case 4:
                     // east
-                    return plot.getMerged(1) ? id : null;
+                    return plot.getMerged(Direction.EAST) ? id : null;
                 case 2:
                     // south
-                    return plot.getMerged(2) ? id : null;
+                    return plot.getMerged(Direction.SOUTH) ? id : null;
                 case 1:
                     // west
-                    return plot.getMerged(3) ? id : null;
+                    return plot.getMerged(Direction.WEST) ? id : null;
                 case 12:
-                    // northest
-                    return plot.getMerged(4) ? id : null;
+                    // northeast
+                    return plot.getMerged(Direction.NORTHEAST) ? id : null;
                 case 6:
                     // southeast
-                    return plot.getMerged(5) ? id : null;
+                    return plot.getMerged(Direction.SOUTHEAST) ? id : null;
                 case 3:
                     // southwest
-                    return plot.getMerged(6) ? id : null;
+                    return plot.getMerged(Direction.SOUTHWEST) ? id : null;
                 case 9:
                     // northwest
-                    return plot.getMerged(7) ? id : null;
+                    return plot.getMerged(Direction.NORTHWEST) ? id : null;
             }
             PlotSquared.debug("invalid location: " + Arrays.toString(merged));
         } catch (Exception ignored) {

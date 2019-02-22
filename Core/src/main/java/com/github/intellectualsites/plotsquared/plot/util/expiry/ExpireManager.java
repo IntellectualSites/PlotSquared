@@ -329,8 +329,9 @@ public class ExpireManager {
             long diff = time - existing;
             if (diff > 0) {
                 Long account_age = this.account_age_cache.get(uuid);
-                if (account_age != null)
+                if (account_age != null) {
                     this.account_age_cache.put(uuid, account_age + diff);
+                }
             }
         }
     }

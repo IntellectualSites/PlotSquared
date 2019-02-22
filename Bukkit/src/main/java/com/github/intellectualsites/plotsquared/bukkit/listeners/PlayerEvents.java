@@ -672,8 +672,9 @@ import java.util.regex.Pattern;
                 if (passenger instanceof Player) {
                     final Player player = (Player) passenger;
                     // reset
-                    if (moveTmp == null)
+                    if (moveTmp == null) {
                         moveTmp = new PlayerMoveEvent(null, from, to);
+                    }
                     moveTmp.setFrom(from);
                     moveTmp.setTo(to);
                     moveTmp.setCancelled(false);
@@ -859,8 +860,9 @@ import java.util.regex.Pattern;
     }
 
     @EventHandler(priority = EventPriority.LOW) public void onChat(AsyncPlayerChatEvent event) {
-        if (event.isCancelled())
+        if (event.isCancelled()) {
             return;
+        }
 
         PlotPlayer plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
         Location location = plotPlayer.getLocation();
@@ -1077,8 +1079,9 @@ import java.util.regex.Pattern;
             PlotArea area = location.getPlotArea();
             if (area != null) {
                 Plot plot = area.getOwnedPlot(location);
-                if (plot != null && Flags.MOB_BREAK.isTrue(plot))
+                if (plot != null && Flags.MOB_BREAK.isTrue(plot)) {
                     return;
+                }
                 event.setCancelled(true);
             }
         }
@@ -1446,8 +1449,9 @@ import java.util.regex.Pattern;
         switch (type) {
             case WATER_BUCKET:
             case LAVA_BUCKET: {
-                if (event.getBlock().getType() == Material.DROPPER)
+                if (event.getBlock().getType() == Material.DROPPER) {
                     return;
+                }
                 BlockFace targetFace =
                     ((Directional) event.getBlock().getState().getData()).getFacing();
                 Location location =
@@ -1570,8 +1574,9 @@ import java.util.regex.Pattern;
             switch (newItem.getType()) {
                 case LEGACY_BANNER:
                 case PLAYER_HEAD:
-                    if (newMeta != null)
+                    if (newMeta != null) {
                         break;
+                    }
                 default:
                     return;
             }
@@ -1587,11 +1592,13 @@ import java.util.regex.Pattern;
             switch (stateType) {
                 case LEGACY_STANDING_BANNER:
                 case LEGACY_WALL_BANNER:
-                    if (itemType == Material.LEGACY_BANNER)
+                    if (itemType == Material.LEGACY_BANNER) {
                         break;
+                    }
                 case LEGACY_SKULL:
-                    if (itemType == Material.LEGACY_SKULL_ITEM)
+                    if (itemType == Material.LEGACY_SKULL_ITEM) {
                         break;
+                    }
                 default:
                     return;
             }

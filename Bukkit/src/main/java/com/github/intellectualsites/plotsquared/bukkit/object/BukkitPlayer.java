@@ -126,10 +126,12 @@ public class BukkitPlayer extends PlotPlayer {
                     String end = perm.substring(stubPlus.length());
                     if (MathMan.isInteger(end)) {
                         int val = Integer.parseInt(end);
-                        if (val > range)
+                        if (val > range) {
                             return val;
-                        if (val > max)
+                        }
+                        if (val > max) {
                             max = val;
+                        }
                     }
                 }
             }

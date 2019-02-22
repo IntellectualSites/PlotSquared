@@ -264,10 +264,7 @@ public abstract class ChunkManager {
         }
         Location top = new Location(world, x2, 0, z2);
         plot = top.getOwnedPlotAbs();
-        if (plot != null) {
-            return plot;
-        }
-        return null;
+        return plot;
     }
 
     /**

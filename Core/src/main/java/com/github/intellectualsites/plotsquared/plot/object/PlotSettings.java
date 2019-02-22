@@ -6,7 +6,6 @@ import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 import com.google.common.collect.ImmutableList;
 
 import java.util.*;
-import java.util.stream.IntStream;
 
 /**
  * Generic settings class.
@@ -55,13 +54,6 @@ public class PlotSettings {
      */
     public boolean getMerged(int direction) {
         return this.merged[direction];
-    }
-
-    /**
-     * Returns true if the plot is merged (i.e. if it's a mega plot)
-     */
-    public boolean isMerged() {
-        return IntStream.of(0, 1, 2, 3).anyMatch(i -> this.merged[i]);
     }
 
     public boolean[] getMerged() {

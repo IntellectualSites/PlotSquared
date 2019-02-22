@@ -145,7 +145,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                     ChestedHorse horse1 = (ChestedHorse) horse;
                     this.horse.chest = horse1.isCarryingChest();
                 }
-                //todo these horse feeatures need fixing
+                //todo these horse features need fixing
                 //this.horse.variant = horse.getVariant();
                 //this.horse.style = horse.getStyle();
                 //this.horse.color = horse.getColor();
