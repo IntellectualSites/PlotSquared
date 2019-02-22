@@ -203,6 +203,7 @@ public class Settings extends Config {
     
     @Comment("General settings") public static final class General {
         @Comment("Display scientific numbers (4.2E8)") public static boolean SCIENTIFIC = false;
+        @Comment("Replace wall when merging") public static boolean MERGE_REPLACE_WALL = true;
     }
 
     @Comment("Schematic Settings") public static final class Schematics {
