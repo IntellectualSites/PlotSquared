@@ -102,10 +102,15 @@ public class Merge extends SubCommand {
             }
         } else {
             if ("all".equalsIgnoreCase(args[0]) || "auto".equalsIgnoreCase(args[0])) {
-                boolean terrain = true;
-                if (args.length == 2) {
-                    terrain = "true".equalsIgnoreCase(args[1]);
+                boolean terrain = args.length == 2
+                        ? Boolean.valueOf(args[1])
+                        : true;
+
+                if(!terrain && !Permissions.hasPermission(player, C.PERMISSION_MERGE_KEEPROAD)) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_MERGE_KEEPROAD.s());
+                    return true;
                 }
+
                 if (plot.autoMerge(-1, maxSize, uuid, terrain)) {
                     if (EconHandler.manager != null && plotArea.USE_ECONOMY && price > 0d) {
                         EconHandler.manager.withdrawMoney(player, price);
@@ -130,12 +135,16 @@ public class Merge extends SubCommand {
             MainUtil.sendMessage(player, C.DIRECTION.s().replaceAll("%dir%", direction(loc.getYaw())));
             return false;
         }
-        final boolean terrain;
-        if (args.length == 2) {
-            terrain = "true".equalsIgnoreCase(args[1]);
-        } else {
-            terrain = true;
+
+        final boolean terrain = args.length == 2
+                ? Boolean.valueOf(args[1])
+                : true;
+
+        if(!terrain && !Permissions.hasPermission(player, C.PERMISSION_MERGE_KEEPROAD)) {
+            MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_MERGE_KEEPROAD.s());
+            return true;
         }
+
         if (plot.autoMerge(direction, maxSize - size, uuid, terrain)) {
             if (EconHandler.manager != null && plotArea.USE_ECONOMY && price > 0d) {
                 EconHandler.manager.withdrawMoney(player, price);

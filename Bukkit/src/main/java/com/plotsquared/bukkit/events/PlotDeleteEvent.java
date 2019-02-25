@@ -2,15 +2,17 @@ package com.plotsquared.bukkit.events;
 
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
 /**
  * Called when a plot is deleted
  *
  */
-public class PlotDeleteEvent extends PlotEvent {
+public class PlotDeleteEvent extends PlotEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
+    private boolean cancelled;
 
     public PlotDeleteEvent(Plot plot) {
         super(plot);
@@ -41,5 +43,13 @@ public class PlotDeleteEvent extends PlotEvent {
     @Override
     public HandlerList getHandlers() {
         return handlers;
+    }
+
+    @Override public boolean isCancelled() {
+        return this.cancelled;
+    }
+
+    @Override public void setCancelled(boolean b) {
+        this.cancelled = b;
     }
 }

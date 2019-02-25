@@ -788,8 +788,17 @@ public class Plot {
     }
 
     public boolean clear(boolean checkRunning, final boolean isDelete, final Runnable whenDone) {
-        if (checkRunning && this.getRunning() != 0 || !EventUtil.manager.callClear(this)) {
+        if (checkRunning && this.getRunning() != 0) {
             return false;
+        }
+        if (isDelete) {
+            if(!EventUtil.manager.callDelete(this)) {
+                return false;
+            }
+        } else {
+            if(!EventUtil.manager.callClear(this)) {
+                return false;
+            }
         }
         final HashSet<RegionWrapper> regions = this.getRegions();
         final Set<Plot> plots = this.getConnectedPlots();
@@ -1394,7 +1403,7 @@ public class Plot {
                     sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
                 }
             }
-            SchematicHandler.manager.paste(sch, this, 0, 0, 0, true, new RunnableVal<Boolean>() {
+            SchematicHandler.manager.paste(sch, this, 0, 0, 0, Settings.Schematics.PASTE_ON_TOP, new RunnableVal<Boolean>() {
                 @Override
                 public void run(Boolean value) {
                     if (value) {
@@ -2155,6 +2164,9 @@ public class Plot {
      */
     public boolean autoMerge(int dir, int max, UUID uuid, boolean removeRoads) {
         if (this.owner == null) {
+            return false;
+        }
+        if(!EventUtil.manager.callMerge(this, dir, max)) {
             return false;
         }
         HashSet<Plot> visited = new HashSet<>();

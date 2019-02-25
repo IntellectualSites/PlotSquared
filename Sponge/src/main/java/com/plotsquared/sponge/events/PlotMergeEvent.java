@@ -11,29 +11,32 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 
 public class PlotMergeEvent extends AbstractEvent implements Cancellable {
-    private final ArrayList<PlotId> plots;
     private boolean cancelled;
     private Plot plot;
+    private final int dir;
+    private final int max;
     private World world;
     
     /**
      * PlotMergeEvent: Called when plots are merged
      *
      * @param world World in which the event occurred
-     * @param plot  Plot that was merged
-     * @param plots A list of plots involved in the event
+     * @param dir   The direction of the merge
+     * @param max   Max merge size
      */
-    public PlotMergeEvent(final World world, final Plot plot, final ArrayList<PlotId> plots) {
-        this.plots = plots;
+    public PlotMergeEvent(World world, Plot plot, final int dir, final int max) {
+        this.world = world;
+        this.dir = dir;
+        this.max = max;
+        this.plot = plot;
     }
-    
-    /**
-     * Get the plots being added;
-     *
-     * @return Plot
-     */
-    public ArrayList<PlotId> getPlots() {
-        return plots;
+
+    public int getDir() {
+        return this.dir;
+    }
+
+    public int getMax() {
+        return this.max;
     }
     
     /**

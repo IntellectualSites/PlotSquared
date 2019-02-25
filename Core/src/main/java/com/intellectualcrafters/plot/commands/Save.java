@@ -74,7 +74,7 @@ public class Save extends SubCommand {
                                 MainUtil.sendMessage(player, C.SAVE_SUCCESS);
                                 List<String> schematics = player.getMeta("plot_schematics");
                                 if (schematics != null) {
-                                    schematics.add(file);
+                                    schematics.add(file + ".schematic");
                                 }
                             }
                         });

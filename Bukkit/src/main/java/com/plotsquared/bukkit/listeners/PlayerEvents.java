@@ -537,7 +537,6 @@ public class PlayerEvents extends PlotListener implements Listener {
                     plotEntry(pp, plot);
                 }
             }
-            return;
         }
         playerMove(event);
     }
@@ -653,7 +652,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             Plot now = area.getPlot(loc);
             Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
-                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
+                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !pp.getMeta("kick", false)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                     this.tmpTeleport = false;
                     if (lastPlot.equals(BukkitUtil.getLocation(from).getPlot())) {
@@ -667,7 +666,6 @@ public class PlayerEvents extends PlotListener implements Listener {
                 }
             } else if (now.equals(lastPlot)) {
                 ForceFieldListener.handleForcefield(player, pp, now);
-                return;
             } else if (!plotEntry(pp, now) && this.tmpTeleport) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
                 this.tmpTeleport = false;
@@ -680,22 +678,19 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
             Integer border = area.getBorder();
             if (x2 > border && this.tmpTeleport) {
-                to.setX(x2 - 1);
+                to.setX(border - 1);
                 this.tmpTeleport = false;
                 player.teleport(event.getTo());
                 this.tmpTeleport = true;
                 MainUtil.sendMessage(pp, C.BORDER);
-                return;
             }
             if (x2 < -border && this.tmpTeleport) {
-                to.setX(x2 + 1);
+                to.setX(-border + 1);
                 this.tmpTeleport = false;
                 player.teleport(event.getTo());
                 this.tmpTeleport = true;
                 MainUtil.sendMessage(pp, C.BORDER);
-                return;
             }
-            return;
         }
         int z2;
         if (MathMan.roundInt(from.getZ()) != (z2 = MathMan.roundInt(to.getZ()))) {
@@ -714,7 +709,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             Plot now = area.getPlot(loc);
             Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
-                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
+                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !pp.getMeta("kick", false)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                     this.tmpTeleport = false;
                     if (lastPlot.equals(BukkitUtil.getLocation(from).getPlot())) {
@@ -728,7 +723,6 @@ public class PlayerEvents extends PlotListener implements Listener {
                 }
             } else if (now.equals(lastPlot)) {
                 ForceFieldListener.handleForcefield(player, pp, now);
-                return;
             } else if (!plotEntry(pp, now) && this.tmpTeleport) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
                 this.tmpTeleport = false;
@@ -742,13 +736,13 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
             Integer border = area.getBorder();
             if (z2 > border && this.tmpTeleport) {
-                to.setZ(z2 - 1);
+                to.setZ(border - 1);
                 this.tmpTeleport = false;
                 player.teleport(event.getTo());
                 this.tmpTeleport = true;
                 MainUtil.sendMessage(pp, C.BORDER);
             } else if (z2 < -border && this.tmpTeleport) {
-                to.setZ(z2 + 1);
+                to.setZ(-border + 1);
                 this.tmpTeleport = false;
                 player.teleport(event.getTo());
                 this.tmpTeleport = true;

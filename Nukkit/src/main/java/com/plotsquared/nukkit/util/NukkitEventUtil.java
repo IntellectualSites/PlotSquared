@@ -61,8 +61,8 @@ public class NukkitEventUtil extends EventUtil {
     }
 
     @Override
-    public void callDelete(Plot plot) {
-        callEvent(new PlotDeleteEvent(plot));
+    public boolean callDelete(Plot plot) {
+        return callEvent(new PlotDeleteEvent(plot));
     }
 
     @Override
@@ -76,8 +76,13 @@ public class NukkitEventUtil extends EventUtil {
     }
 
     @Override
-    public boolean callMerge(Plot plot, ArrayList<PlotId> plots) {
-        return callEvent(new PlotMergeEvent(NukkitUtil.getWorld(plot.getWorldName()), plot, plots));
+    public boolean callMerge(Plot plot, int dir, int max) {
+        return callEvent(new PlotMergeEvent(NukkitUtil.getWorld(plot.getWorldName()), plot, dir, max));
+    }
+
+    @Override
+    public boolean callAutoMerge(Plot plot, ArrayList<PlotId> plots) {
+        return callEvent(new PlotAutoMergeEvent(NukkitUtil.getWorld(plot.getWorldName()), plot, plots));
     }
 
     @Override

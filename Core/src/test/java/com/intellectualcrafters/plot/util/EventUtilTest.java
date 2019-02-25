@@ -32,7 +32,9 @@ public class EventUtilTest extends EventUtil {
         return false;
     }
 
-    @Override public void callDelete(Plot plot) {}
+    @Override public boolean callDelete(Plot plot) {
+        return false;
+    }
 
     @Override public boolean callFlagAdd(Flag flag, Plot plot) {
         return true;
@@ -46,7 +48,11 @@ public class EventUtilTest extends EventUtil {
         return true;
     }
 
-    @Override public boolean callMerge(Plot plot, ArrayList<PlotId> plots) {
+    @Override public boolean callMerge(Plot plot, int dir, int max) {
+        return false;
+    }
+
+    @Override public boolean callAutoMerge(Plot plot, ArrayList<PlotId> plots) {
         return false;
     }
 

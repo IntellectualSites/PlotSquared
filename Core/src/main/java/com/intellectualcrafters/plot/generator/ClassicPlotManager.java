@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.generator;
 
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -435,6 +436,12 @@ public class ClassicPlotManager extends SquarePlotManager {
         if (block.id != 0 || !block.equals(unclaim)) {
             for (PlotId id : plotIds) {
                 setWall(plotArea, id, new PlotBlock[]{block});
+            }
+        }
+        if(Settings.General.MERGE_REPLACE_WALL) {
+            PlotBlock wall = ((ClassicPlotWorld) plotArea).WALL_FILLING;
+            for (PlotId id : plotIds) {
+                setWallFilling(plotArea, id, new PlotBlock[] {wall});
             }
         }
         return true;

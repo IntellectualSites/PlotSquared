@@ -8,11 +8,10 @@ import org.bukkit.event.HandlerList;
 
 import java.util.ArrayList;
 
-public class PlotMergeEvent extends PlotEvent implements Cancellable {
+public class PlotAutoMergeEvent extends PlotEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-    private final int dir;
-    private final int max;
+    private final ArrayList<PlotId> plots;
     private final World world;
     private boolean cancelled;
 
@@ -21,26 +20,25 @@ public class PlotMergeEvent extends PlotEvent implements Cancellable {
      *
      * @param world World in which the event occurred
      * @param plot  Plot that was merged
-     * @param dir   The direction of the merge
-     * @param max   Max merge size
+     * @param plots A list of plots involved in the event
      */
-    public PlotMergeEvent(World world, Plot plot, final int dir, final int max) {
+    public PlotAutoMergeEvent(World world, Plot plot, ArrayList<PlotId> plots) {
         super(plot);
         this.world = world;
-        this.dir = dir;
-        this.max = max;
+        this.plots = plots;
     }
 
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
-    public int getDir() {
-        return this.dir;
-    }
-
-    public int getMax() {
-        return this.max;
+    /**
+     * Get the plots being added.
+     *
+     * @return Plot
+     */
+    public ArrayList<PlotId> getPlots() {
+        return this.plots;
     }
 
     public World getWorld() {

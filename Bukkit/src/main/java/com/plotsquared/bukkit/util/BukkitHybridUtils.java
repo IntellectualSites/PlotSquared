@@ -199,11 +199,11 @@ public class BukkitHybridUtils extends HybridUtils {
                                         analysis.air = (int) (MathMan.getMean(air) * 100);
                                         analysis.variety = (int) (MathMan.getMean(variety) * 100);
 
-                                        analysis.changes_sd = (int) MathMan.getSD(changes, analysis.changes);
-                                        analysis.faces_sd = (int) MathMan.getSD(faces, analysis.faces);
-                                        analysis.data_sd = (int) MathMan.getSD(data, analysis.data);
-                                        analysis.air_sd = (int) MathMan.getSD(air, analysis.air);
-                                        analysis.variety_sd = (int) MathMan.getSD(variety, analysis.variety);
+                                        analysis.changes_sd = (int) (MathMan.getSD(changes, analysis.changes) * 100);
+                                        analysis.faces_sd = (int) (MathMan.getSD(faces, analysis.faces) * 100);
+                                        analysis.data_sd = (int) (MathMan.getSD(data, analysis.data) * 100);
+                                        analysis.air_sd = (int) (MathMan.getSD(air, analysis.air) * 100);
+                                        analysis.variety_sd = (int) (MathMan.getSD(variety, analysis.variety) * 100);
                                         System.gc();
                                         System.gc();
                                         whenDone.value = analysis;

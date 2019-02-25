@@ -200,6 +200,17 @@ public class Settings extends Config {
         @Ignore
         public static boolean NATIVE_UUID_PROVIDER = false;
     }
+    
+    @Comment("General settings") public static final class General {
+        @Comment("Display scientific numbers (4.2E8)") public static boolean SCIENTIFIC = false;
+        @Comment("Replace wall when merging") public static boolean MERGE_REPLACE_WALL = true;
+    }
+
+    @Comment("Schematic Settings") public static final class Schematics {
+        @Comment("Whether schematic based generation should paste schematic on top of plots, or from Y=1")
+        public static boolean PASTE_ON_TOP = true;
+    }
+
 
     @Comment("Configure the paths that will be used")
     public static final class Paths {
@@ -341,5 +352,8 @@ public class Settings extends Config {
         public static boolean DATABASE_PURGER = false;
         @Comment("Delete plots when a player is banned")
         public static boolean BAN_DELETER = false;
+        @Comment({"Disable FAWE optimizations for P2",
+            "  !!Do not set to true if using P2 worlds and instructed to do so"})
+        public static boolean DISABLE_FAWE_OPTIMIZATION = false;
     }
 }

@@ -49,11 +49,11 @@ public class RegenAllRoads extends SubCommand {
             MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
             return false;
         }
-        Set<ChunkLoc> chunks = ChunkManager.manager.getChunkChunks(name);
+        //Set<ChunkLoc> chunks = ChunkManager.manager.getChunkChunks(name);
         MainUtil.sendMessage(player, "&cIf no schematic is set, the following will not do anything");
         MainUtil.sendMessage(player, "&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
-        MainUtil.sendMessage(player, "&6Potential chunks to update: &7" + (chunks.size() * 1024));
-        MainUtil.sendMessage(player, "&6Estimated time: &7" + chunks.size() + " seconds");
+        //MainUtil.sendMessage(player, "&6Potential chunks to update: &7" + (chunks.size() * 1024));
+        //MainUtil.sendMessage(player, "&6Estimated time: &7" + chunks.size() + " seconds");
         boolean result = HybridUtils.manager.scheduleRoadUpdate(area, height);
         if (!result) {
             MainUtil.sendMessage(player, "&cCannot schedule mass schematic update! (Is one already in progress?)");

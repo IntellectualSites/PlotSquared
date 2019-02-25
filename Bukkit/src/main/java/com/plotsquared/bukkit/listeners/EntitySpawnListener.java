@@ -32,6 +32,7 @@ public class EntitySpawnListener implements Listener {
                 switch (type) {
                     case DROPPED_ITEM:
                         if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
+                            event.setCancelled(true);
                             break;
                         }
                     case PLAYER:

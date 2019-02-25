@@ -87,28 +87,31 @@ public class PlotListener {
                         player.setFlight(flyFlag.get());
                     }
                 }
-                Optional<PlotGameMode> gamemodeFlag = plot.getFlag(Flags.GAMEMODE);
-                if (gamemodeFlag.isPresent()) {
-                    if (player.getGameMode() != gamemodeFlag.get()) {
-                        if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
-                            player.setGameMode(gamemodeFlag.get());
-                        } else {
-                            MainUtil.sendMessage(player,
-                                    StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.getId(), "{gamemode}", gamemodeFlag.get()));
-                        }
-                    }
-                }
+
                 Optional<PlotGameMode> guestGamemodeFlag = plot.getFlag(Flags.GUEST_GAMEMODE);
-                if (gamemodeFlag.isPresent()) {
-                    if (player.getGameMode() != gamemodeFlag.get() && !plot.isAdded(player.getUUID())) {
+                if (guestGamemodeFlag.isPresent() && !plot.isAdded(player.getUUID())) {
+                    if (player.getGameMode() != guestGamemodeFlag.get()) {
                         if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
-                            player.setGameMode(gamemodeFlag.get());
+                            player.setGameMode(guestGamemodeFlag.get());
                         } else {
                             MainUtil.sendMessage(player,
-                                    StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.getId(), "{gamemode}", gamemodeFlag.get()));
+                                    StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.getId(), "{gamemode}", guestGamemodeFlag.get()));
+                        }
+                    }
+                } else {
+                    Optional<PlotGameMode> gamemodeFlag = plot.getFlag(Flags.GAMEMODE);
+                    if (gamemodeFlag.isPresent()) {
+                        if (player.getGameMode() != gamemodeFlag.get()) {
+                            if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
+                                player.setGameMode(gamemodeFlag.get());
+                            } else {
+                                MainUtil.sendMessage(player,
+                                        StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.getId(), "{gamemode}", gamemodeFlag.get()));
+                            }
                         }
                     }
                 }
+
                 Optional<Long> timeFlag = plot.getFlag(Flags.TIME);
                 if (timeFlag.isPresent()) {
                     try {
@@ -186,7 +189,7 @@ public class PlotListener {
             if (pw == null) {
                 return true;
             }
-            if (Flags.DENY_EXIT.isTrue(plot)) {
+            if (Flags.DENY_EXIT.isTrue(plot) && !player.getMeta("kick", false)) {
                 if (previous != null) {
                     player.setMeta("lastplot", previous);
                 }

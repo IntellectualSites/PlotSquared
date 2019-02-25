@@ -817,7 +817,7 @@ public abstract class PlotArea {
         PlotId pos2 = plotIds.get(plotIds.size() - 1);
         PlotManager manager = getPlotManager();
 
-        boolean result = EventUtil.manager.callMerge(getPlotAbs(pos1), plotIds);
+        boolean result = EventUtil.manager.callAutoMerge(getPlotAbs(pos1), plotIds);
         if (!result) {
             return false;
         }

@@ -12,7 +12,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 import java.util.UUID;
 
 @CommandDeclaration(command = "leave",
-        description = "Leave a plot",
+        description = "Removes self from being trusted or a member of the plot",
         permission = "plots.leave",
         category = CommandCategory.CLAIMING,
         requiredType = RequiredType.NONE)
