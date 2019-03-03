@@ -44,6 +44,7 @@ public final class Flags {
         }
     };
     public static final BooleanFlag EXPLOSION = new BooleanFlag("explosion");
+    public static final BooleanFlag LEAF_DECAY = new BooleanFlag("leaf-decay");
     public static final BooleanFlag GRASS_GROW = new BooleanFlag("grass-grow");
     public static final BooleanFlag VINE_GROW = new BooleanFlag("vine-grow");
     public static final BooleanFlag MYCEL_GROW = new BooleanFlag("mycel-grow");

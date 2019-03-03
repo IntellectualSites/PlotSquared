@@ -59,23 +59,7 @@ import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.block.BlockDispenseEvent;
-import org.bukkit.event.block.BlockFadeEvent;
-import org.bukkit.event.block.BlockFormEvent;
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockGrowEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.bukkit.event.block.BlockPistonRetractEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.BlockRedstoneEvent;
-import org.bukkit.event.block.BlockSpreadEvent;
-import org.bukkit.event.block.EntityBlockFormEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
@@ -1001,6 +985,28 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         if (!Flags.ICE_FORM.isTrue(plot)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onLeafDecay(LeavesDecayEvent event){
+        Block block = event.getBlock();
+        Location location = BukkitUtil.getLocation(block.getLocation());
+        if (location.isPlotRoad()) {
+            event.setCancelled(true);
+            return;
+        }
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = area.getOwnedPlot(location);
+        if (plot == null) {
+            return;
+        }
+
+        if(Flags.LEAF_DECAY.isFalse(plot)){
             event.setCancelled(true);
         }
     }
