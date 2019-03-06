@@ -5,17 +5,13 @@ import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.ReflectionUtils;
 import com.intellectualcrafters.plot.util.block.BasicLocalBlockQueue;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.*;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
@@ -234,8 +230,7 @@ public class BukkitLocalQueue_1_9 extends BukkitLocalQueue<char[]> {
         }
     }
 
-    @Override
-    public void setBlocks(LocalChunk lc) {
+    @Override public void setBlocks(LocalChunk<char[]> lc) {
         CharLocalChunk_1_8_3 fs = (CharLocalChunk_1_8_3) lc;
         Chunk chunk = getChunk(lc.getX(), lc.getZ());
         chunk.load(true);
@@ -254,7 +249,7 @@ public class BukkitLocalQueue_1_9 extends BukkitLocalQueue<char[]> {
             Field entitySlices = clazz.getDeclaredField("entitySlices");
             Object[] sections = (Object[]) sf.get(c);
             Map<?, ?> tiles = (Map<?, ?>) tf.get(c);
-            Collection<?>[] entities = (Collection<?>[]) entitySlices.get(c);
+            AbstractSet<?>[] entities = (AbstractSet<?>[]) entitySlices.get(c);
 
             Method xm = null;
             Method ym = null;

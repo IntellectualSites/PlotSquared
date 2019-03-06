@@ -29,6 +29,7 @@ import com.plotsquared.bukkit.util.*;
 import com.plotsquared.bukkit.util.block.*;
 import com.plotsquared.bukkit.uuid.*;
 import com.sk89q.worldedit.WorldEdit;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Location;
 import org.bukkit.*;
 import org.bukkit.command.PluginCommand;
@@ -106,6 +107,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     private int[] version;
     private String name;
     private SingleWorldListener singleWorldListener;
+    private boolean metricsStarted;
 
     @Override
     public int[] getServerVersion() {
@@ -139,11 +141,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             pluginMap.put("PlotMe-DefaultGenerator", this);
         }
         this.name = getDescription().getName();
-        getServer().getName();
         new PS(this, "Bukkit");
         if (Settings.Enabled_Components.METRICS) {
-            new Metrics(this).start();
-            PS.log(C.PREFIX + "&6Metrics enabled.");
+            startMetrics();
         } else {
             PS.log(C.CONSOLE_PLEASE_ENABLE_METRICS.f(getPluginName()));
         }
@@ -774,8 +774,13 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override
     public void startMetrics() {
-        new Metrics(this).start();
+        if (this.metricsStarted) {
+            return;
+        }
+        System.setProperty("bstats.relocatecheck", "false");
+        Metrics metrics = new Metrics(this);// bstats
         PS.log(C.PREFIX + "&6Metrics enabled.");
+        this.metricsStarted = true;
     }
 
     @Override

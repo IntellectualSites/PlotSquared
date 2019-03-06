@@ -2,12 +2,14 @@ repositories {
     maven {url "https://hub.spigotmc.org/nexus/content/groups/public/"}
     maven { url = "https://oss.sonatype.org/content/repositories/snapshots/"}
     maven {url "http://nexus.hc.to/content/repositories/pub_releases"}
+    maven { url = "https://repo.codemc.org/repository/maven-public" }
     mavenLocal()
 }
 
 dependencies {
     compile project(':Core')
     compile 'org.spigotmc:spigot-api:1.12.1-R0.1-SNAPSHOT'
+    compile(group: 'org.bstats', name: 'bstats-bukkit', version: '1.4')
     compile("net.milkbowl.vault:VaultAPI:1.6") {
         exclude module: 'bukkit'
     }
@@ -31,6 +33,7 @@ jar.enabled = false
 shadowJar {
     dependencies {
         include(dependency(':Core'))
+        include(dependency('org.bstats:bstats-bukkit:1.4'))
     }
     archiveName = "${parent.name}-${project.name}-${parent.version}.jar"
     destinationDir = file '../target'
