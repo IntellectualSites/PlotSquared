@@ -1,8 +1,8 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
+import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.CmdConfirm;
@@ -126,27 +126,23 @@ public class MainCommand extends Command {
                 @Override
                 public void run(final Command cmd, final Runnable success, final Runnable failure) {
                     if (cmd.hasConfirmation(player)) {
-                        CmdConfirm.addPending(player, cmd.getUsage(), new Runnable() {
-                            @Override public void run() {
-                                if (EconHandler.manager != null) {
-                                    PlotArea area = player.getApplicablePlotArea();
-                                    if (area != null) {
-                                        Expression<Double> priceEval =
-                                            area.PRICES.get(cmd.getFullId());
-                                        Double price =
-                                            priceEval != null ? priceEval.evaluate(0d) : 0d;
-                                        if (price != null
-                                            && EconHandler.manager.getMoney(player) < price) {
-                                            if (failure != null) {
-                                                failure.run();
-                                            }
-                                            return;
+                        CmdConfirm.addPending(player, cmd.getUsage(), () -> {
+                            if (EconHandler.manager != null) {
+                                PlotArea area = player.getApplicablePlotArea();
+                                if (area != null) {
+                                    Expression<Double> priceEval = area.PRICES.get(cmd.getFullId());
+                                    Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
+                                    if (price != null
+                                        && EconHandler.manager.getMoney(player) < price) {
+                                        if (failure != null) {
+                                            failure.run();
                                         }
+                                        return;
                                     }
                                 }
-                                if (success != null) {
-                                    success.run();
-                                }
+                            }
+                            if (success != null) {
+                                success.run();
                             }
                         });
                         return;
@@ -178,13 +174,6 @@ public class MainCommand extends Command {
         }
         // Always true
         return true;
-    }
-
-    @Deprecated
-    /**
-     * @Deprecated legacy
-     */ public void addCommand(SubCommand command) {
-        PlotSquared.debug("Command registration is now done during instantiation");
     }
 
     @Override public void execute(final PlotPlayer player, String[] args,
@@ -281,7 +270,7 @@ public class MainCommand extends Command {
         }
     }
 
-    @Override public boolean canExecute(PlotPlayer player, boolean message) {
+    @Override public boolean canExecute(CommandCaller player, boolean message) {
         return true;
     }
 }

@@ -560,6 +560,7 @@ public abstract class PlotArea {
         return this.plots.entrySet().stream().anyMatch(entry -> entry.getValue().isOwner(uuid));
     }
 
+    //todo check if this method is needed in this class
     public int getPlotCount(@Nullable final PlotPlayer player) {
         return player != null ? getPlotCount(player.getUUID()) : 0;
     }
@@ -876,19 +877,19 @@ public abstract class PlotArea {
                 Plot plot2;
                 if (lx) {
                     if (ly) {
-                        if (!plot.getMerged(1) || !plot.getMerged(2)) {
+                        if (!plot.getMerged(Direction.EAST) || !plot.getMerged(Direction.SOUTH)) {
                             if (removeRoads) {
                                 plot.removeRoadSouthEast();
                             }
                         }
                     }
-                    if (!plot.getMerged(1)) {
+                    if (!plot.getMerged(Direction.EAST)) {
                         plot2 = plot.getRelative(1, 0);
                         plot.mergePlot(plot2, removeRoads);
                     }
                 }
                 if (ly) {
-                    if (!plot.getMerged(2)) {
+                    if (!plot.getMerged(Direction.SOUTH)) {
                         plot2 = plot.getRelative(0, 1);
                         plot.mergePlot(plot2, removeRoads);
                     }

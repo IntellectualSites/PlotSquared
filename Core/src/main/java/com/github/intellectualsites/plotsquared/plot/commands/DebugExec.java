@@ -31,6 +31,8 @@ import java.util.*;
     private Bindings scope;
 
     public DebugExec() {
+        init();
+/*
         try {
             if (PlotSquared.get() != null) {
                 File file = new File(PlotSquared.get().IMP.getDirectory(),
@@ -49,6 +51,7 @@ import java.util.*;
         } catch (IOException | ScriptException ignored) {
             ignored.printStackTrace();
         }
+*/
     }
 
     public ScriptEngine getEngine() {

@@ -26,6 +26,7 @@ import java.util.Set;
     @Override public void execute(final PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) {
+
         check(EconHandler.manager, Captions.ECON_DISABLED);
         final Plot plot;
         if (args.length != 0) {

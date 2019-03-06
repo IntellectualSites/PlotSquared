@@ -1,8 +1,8 @@
 package com.github.intellectualsites.plotsquared.plot.util.helpmenu;
 
+import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.plot.commands.CommandCategory;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
@@ -21,7 +21,7 @@ public class HelpPage {
             .replace("%current%", (currentPage + 1) + "").replace("%max%", (maxPages + 1) + "");
     }
 
-    public void render(PlotPlayer player) {
+    public void render(CommandCaller player) {
         if (this.helpObjects.size() < 1) {
             MainUtil.sendMessage(player, Captions.NOT_VALID_NUMBER, "(0)");
         } else {

@@ -86,6 +86,9 @@ public class PlotId {
         }
     }
 
+    public PlotId getRelative(Direction direction) {
+        return getRelative(direction.getIndex());
+    }
     /**
      * Get the PlotId in a relative direction
      * 0 = north<br>

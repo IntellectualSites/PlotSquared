@@ -174,7 +174,7 @@ import java.util.*;
      *
      * @param player  the recipient of the message
      * @param caption the message
-     * @see MainUtil#sendMessage(PlotPlayer, Captions, String...)
+     * @see MainUtil#sendMessage(com.github.intellectualsites.plotsquared.commands.CommandCaller, Captions, String...)
      */
     public static void sendMessage(Player player, Captions caption) {
         MainUtil.sendMessage(BukkitUtil.getPlayer(player), caption);

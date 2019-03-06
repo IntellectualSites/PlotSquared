@@ -13,7 +13,6 @@ import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -56,10 +55,9 @@ public abstract class Command {
     public Command(Command parent, boolean isStatic) {
         this.parent = parent;
         this.isStatic = isStatic;
-        Annotation cdAnnotation = getClass().getAnnotation(CommandDeclaration.class);
+        CommandDeclaration cdAnnotation = getClass().getAnnotation(CommandDeclaration.class);
         if (cdAnnotation != null) {
-            CommandDeclaration declaration = (CommandDeclaration) cdAnnotation;
-            init(declaration);
+            init(cdAnnotation);
         }
         for (final Method method : getClass().getDeclaredMethods()) {
             if (method.isAnnotationPresent(CommandDeclaration.class)) {
@@ -101,7 +99,7 @@ public abstract class Command {
         return this.id;
     }
 
-    public List<Command> getCommands(PlotPlayer player) {
+    public List<Command> getCommands(CommandCaller player) {
         List<Command> commands = new ArrayList<>();
         for (Command cmd : this.allCommands) {
             if (cmd.canExecute(player, false)) {
@@ -111,10 +109,10 @@ public abstract class Command {
         return commands;
     }
 
-    public List<Command> getCommands(CommandCategory cat, PlotPlayer player) {
+    public List<Command> getCommands(CommandCategory category, CommandCaller player) {
         List<Command> commands = getCommands(player);
-        if (cat != null) {
-            commands.removeIf(command -> command.category != cat);
+        if (category != null) {
+            commands.removeIf(command -> command.category != category);
         }
         return commands;
     }
@@ -123,7 +121,7 @@ public abstract class Command {
         return this.allCommands;
     }
 
-    public boolean hasConfirmation(PlotPlayer player) {
+    public boolean hasConfirmation(CommandCaller player) {
         return this.confirmation && !player.hasPermission(getPermission() + ".confirm.bypass");
     }
 
@@ -272,7 +270,7 @@ public abstract class Command {
             }
             return;
         }
-        if (this.allCommands == null || this.allCommands.isEmpty()) {
+        if (this.allCommands.isEmpty()) {
             player.sendMessage(
                 "Not Implemented: https://github.com/IntellectualSites/PlotSquared/issues/new");
             return;
@@ -285,13 +283,13 @@ public abstract class Command {
             }
             // Help command
             try {
-                if (args.length == 0 || MathMan.isInteger(args[0])
-                    || CommandCategory.valueOf(args[0].toUpperCase()) != null) {
-                    // This will default certain syntax to the help command
-                    // e.g. /plot, /plot 1, /plot claiming
-                    MainCommand.getInstance().help.execute(player, args, null, null);
-                    return;
+                if (!MathMan.isInteger(args[0])) {
+                    CommandCategory.valueOf(args[0].toUpperCase());
                 }
+                // This will default certain syntax to the help command
+                // e.g. /plot, /plot 1, /plot claiming
+                MainCommand.getInstance().help.execute(player, args, null, null);
+                return;
             } catch (IllegalArgumentException ignored) {
             }
             // Command recommendation
@@ -328,7 +326,7 @@ public abstract class Command {
         }
     }
 
-    public boolean checkArgs(PlotPlayer player, String[] args) {
+    public boolean checkArgs(CommandCaller player, String[] args) {
         Argument<?>[] reqArgs = getRequiredArguments();
         if (reqArgs != null && reqArgs.length > 0) {
             boolean failed = args.length < reqArgs.length;
@@ -421,7 +419,7 @@ public abstract class Command {
         return null;
     }
 
-    public boolean canExecute(PlotPlayer player, boolean message) {
+    public boolean canExecute(CommandCaller player, boolean message) {
         if (player == null) {
             return true;
         }
@@ -447,7 +445,6 @@ public abstract class Command {
     }
 
     public String getCommandString() {
-        String base;
         if (this.parent == null) {
             return "/" + toString();
         } else {
@@ -577,7 +574,7 @@ public abstract class Command {
             this.args = args;
         }
 
-        public void perform(PlotPlayer player) {
+        public void perform(CommandCaller player) {
             if (player != null && message != null) {
                 message.send(player, args);
             }

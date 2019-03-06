@@ -920,15 +920,15 @@ public class Plot {
         }
         if (this.area.TERRAIN != 3 && createRoad) {
             for (Plot current : plots) {
-                if (current.getMerged(1)) {
+                if (current.getMerged(Direction.EAST)) {
                     manager.createRoadEast(current.area, current);
-                    if (current.getMerged(2)) {
+                    if (getMerged(Direction.SOUTH)) {
                         manager.createRoadSouth(current.area, current);
-                        if (current.getMerged(5)) {
+                        if (getMerged(Direction.SOUTHEAST)) {
                             manager.createRoadSouthEast(current.area, current);
                         }
                     }
-                } else if (current.getMerged(2)) {
+                } else if (getMerged(Direction.SOUTH)) {
                     manager.createRoadSouth(current.area, current);
                 }
             }
@@ -1624,11 +1624,11 @@ public class Plot {
         if (!this.isMerged()) {
             return top;
         }
-        if (this.getMerged(Direction.SOUTH.getIndex())) {
-            top.setZ(this.getRelative(Direction.SOUTH.getIndex()).getBottomAbs().getZ() - 1);
+        if (this.getMerged(Direction.SOUTH)) {
+            top.setZ(this.getRelative(Direction.SOUTH).getBottomAbs().getZ() - 1);
         }
-        if (this.getMerged(Direction.EAST.getIndex())) {
-            top.setX(this.getRelative(Direction.SOUTH.getIndex()).getBottomAbs().getX() - 1);
+        if (this.getMerged(Direction.EAST)) {
+            top.setX(this.getRelative(Direction.SOUTH).getBottomAbs().getX() - 1);
         }
         return top;
     }
@@ -1645,11 +1645,11 @@ public class Plot {
         if (!this.isMerged()) {
             return bot;
         }
-        if (this.getMerged(Direction.NORTH.getIndex())) {
-            bot.setZ(this.getRelative(Direction.NORTH.getIndex()).getTopAbs().getZ() + 1);
+        if (this.getMerged(Direction.NORTH)) {
+            bot.setZ(this.getRelative(Direction.NORTH).getTopAbs().getZ() + 1);
         }
-        if (this.getMerged(Direction.WEST.getIndex())) {
-            bot.setX(this.getRelative(Direction.WEST.getIndex()).getTopAbs().getX() + 1);
+        if (this.getMerged(Direction.WEST)) {
+            bot.setX(this.getRelative(Direction.WEST).getTopAbs().getX() + 1);
         }
         return bot;
     }
@@ -1678,7 +1678,7 @@ public class Plot {
             if (this.area.TERRAIN == 3) {
                 return;
             }
-            Plot other = this.getRelative(Direction.EAST.getIndex());
+            Plot other = this.getRelative(Direction.EAST);
             Location bot = other.getBottomAbs();
             Location top = this.getTopAbs();
             Location pos1 = new Location(this.getWorldName(), top.getX(), 0, bot.getZ());
@@ -2147,7 +2147,7 @@ public class Plot {
             if (this.area.TERRAIN == 3) {
                 return;
             }
-            Plot other = this.getRelative(2);
+            Plot other = this.getRelative(Direction.SOUTH);
             Location bot = other.getBottomAbs();
             Location top = this.getTopAbs();
             Location pos1 = new Location(this.getWorldName(), bot.getX(), 0, top.getZ());
@@ -2192,8 +2192,8 @@ public class Plot {
             }
             visited.add(current);
             Set<Plot> plots;
-            if ((dir == -1 || dir == 0) && !current.getMerged(0)) {
-                Plot other = current.getRelative(0);
+            if ((dir == -1 || dir == 0) && !getMerged(Direction.NORTH)) {
+                Plot other = current.getRelative(Direction.NORTH);
                 if (other != null && other.isOwner(uuid) && (
                     other.getBasePlot(false).equals(current.getBasePlot(false))
                         || (plots = other.getConnectedPlots()).size() <= max && frontier
@@ -2204,8 +2204,8 @@ public class Plot {
                     toReturn = true;
                 }
             }
-            if (max >= 0 && (dir == -1 || dir == 1) && !current.getMerged(1)) {
-                Plot other = current.getRelative(1);
+            if (max >= 0 && (dir == -1 || dir == 1) && !current.getMerged(Direction.EAST)) {
+                Plot other = current.getRelative(Direction.EAST);
                 if (other != null && other.isOwner(uuid) && (
                     other.getBasePlot(false).equals(current.getBasePlot(false))
                         || (plots = other.getConnectedPlots()).size() <= max && frontier
@@ -2216,8 +2216,8 @@ public class Plot {
                     toReturn = true;
                 }
             }
-            if (max >= 0 && (dir == -1 || dir == 2) && !current.getMerged(2)) {
-                Plot other = current.getRelative(2);
+            if (max >= 0 && (dir == -1 || dir == 2) && !getMerged(Direction.SOUTH)) {
+                Plot other = current.getRelative(Direction.SOUTH);
                 if (other != null && other.isOwner(uuid) && (
                     other.getBasePlot(false).equals(current.getBasePlot(false))
                         || (plots = other.getConnectedPlots()).size() <= max && frontier
@@ -2228,8 +2228,8 @@ public class Plot {
                     toReturn = true;
                 }
             }
-            if (max >= 0 && (dir == -1 || dir == 3) && !current.getMerged(3)) {
-                Plot other = current.getRelative(3);
+            if (max >= 0 && (dir == -1 || dir == 3) && !getMerged(Direction.WEST)) {
+                Plot other = current.getRelative(Direction.WEST);
                 if (other != null && other.isOwner(uuid) && (
                     other.getBasePlot(false).equals(current.getBasePlot(false))
                         || (plots = other.getConnectedPlots()).size() <= max && frontier
@@ -2345,6 +2345,21 @@ public class Plot {
     }
 
     /**
+     * Gets the plot in a relative direction<br>
+     * 0 = north<br>
+     * 1 = east<br>
+     * 2 = south<br>
+     * 3 = west<br>
+     * Note: May be null if the partial plot area does not include the relative location
+     *
+     * @param direction
+     * @return
+     */
+    public Plot getRelative(Direction direction) {
+        return this.area.getPlotAbs(this.id.getRelative(direction));
+    }
+
+    /**
      * Gets a set of plots connected (and including) this plot<br>
      * - This result is cached globally
      *
@@ -2370,8 +2385,8 @@ public class Plot {
         tmpSet.add(this);
         Plot tmp;
         if (merged[0]) {
-            tmp = this.area.getPlotAbs(this.id.getRelative(0));
-            if (!tmp.getMerged(2)) {
+            tmp = this.area.getPlotAbs(this.id.getRelative(Direction.NORTH));
+            if (!tmp.getMerged(Direction.SOUTH)) {
                 // invalid merge
                 PlotSquared.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(this.owner)) {
@@ -2386,8 +2401,8 @@ public class Plot {
             frontier.add(tmp);
         }
         if (merged[1]) {
-            tmp = this.area.getPlotAbs(this.id.getRelative(1));
-            if (!tmp.getMerged(3)) {
+            tmp = this.area.getPlotAbs(this.id.getRelative(Direction.EAST));
+            if (!tmp.getMerged(Direction.WEST)) {
                 // invalid merge
                 PlotSquared.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(this.owner)) {
@@ -2402,8 +2417,8 @@ public class Plot {
             frontier.add(tmp);
         }
         if (merged[2]) {
-            tmp = this.area.getPlotAbs(this.id.getRelative(2));
-            if (!tmp.getMerged(0)) {
+            tmp = this.area.getPlotAbs(this.id.getRelative(Direction.SOUTH));
+            if (!tmp.getMerged(Direction.NORTH)) {
                 // invalid merge
                 PlotSquared.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(this.owner)) {
@@ -2418,8 +2433,8 @@ public class Plot {
             frontier.add(tmp);
         }
         if (merged[3]) {
-            tmp = this.area.getPlotAbs(this.id.getRelative(3));
-            if (!tmp.getMerged(1)) {
+            tmp = this.area.getPlotAbs(this.id.getRelative(Direction.WEST));
+            if (!tmp.getMerged(Direction.EAST)) {
                 // invalid merge
                 PlotSquared.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(this.owner)) {
@@ -2446,28 +2461,28 @@ public class Plot {
             queuecache.remove(current);
             merged = current.getMerged();
             if (merged[0]) {
-                tmp = current.area.getPlotAbs(current.id.getRelative(0));
+                tmp = current.area.getPlotAbs(current.id.getRelative(Direction.NORTH));
                 if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
                     queuecache.add(tmp);
                     frontier.add(tmp);
                 }
             }
             if (merged[1]) {
-                tmp = current.area.getPlotAbs(current.id.getRelative(1));
+                tmp = current.area.getPlotAbs(current.id.getRelative(Direction.EAST));
                 if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
                     queuecache.add(tmp);
                     frontier.add(tmp);
                 }
             }
             if (merged[2]) {
-                tmp = current.area.getPlotAbs(current.id.getRelative(2));
+                tmp = current.area.getPlotAbs(current.id.getRelative(Direction.SOUTH));
                 if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
                     queuecache.add(tmp);
                     frontier.add(tmp);
                 }
             }
             if (merged[3]) {
-                tmp = current.area.getPlotAbs(current.id.getRelative(3));
+                tmp = current.area.getPlotAbs(current.id.getRelative(Direction.WEST));
                 if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
                     queuecache.add(tmp);
                     frontier.add(tmp);
@@ -2516,7 +2531,8 @@ public class Plot {
                 boolean tmp = true;
                 for (PlotId id : ids) {
                     Plot plot = this.area.getPlotAbs(id);
-                    if (plot == null || !plot.getMerged(2) || visited.contains(plot.getId())) {
+                    if (plot == null || !plot.getMerged(Direction.SOUTH) || visited
+                        .contains(plot.getId())) {
                         tmp = false;
                     }
                 }
@@ -2529,7 +2545,8 @@ public class Plot {
                 tmp = true;
                 for (PlotId id : ids) {
                     Plot plot = this.area.getPlotAbs(id);
-                    if (plot == null || !plot.getMerged(3) || visited.contains(plot.getId())) {
+                    if (plot == null || !plot.getMerged(Direction.WEST) || visited
+                        .contains(plot.getId())) {
                         tmp = false;
                     }
                 }
@@ -2542,7 +2559,8 @@ public class Plot {
                 tmp = true;
                 for (PlotId id : ids) {
                     Plot plot = this.area.getPlotAbs(id);
-                    if (plot == null || !plot.getMerged(0) || visited.contains(plot.getId())) {
+                    if (plot == null || !plot.getMerged(Direction.NORTH) || visited
+                        .contains(plot.getId())) {
                         tmp = false;
                     }
                 }
@@ -2555,7 +2573,8 @@ public class Plot {
                 tmp = true;
                 for (PlotId id : ids) {
                     Plot plot = this.area.getPlotAbs(id);
-                    if (plot == null || !plot.getMerged(1) || visited.contains(plot.getId())) {
+                    if (plot == null || !plot.getMerged(Direction.EAST) || visited
+                        .contains(plot.getId())) {
                         tmp = false;
                     }
                 }
@@ -2569,14 +2588,14 @@ public class Plot {
             visited.addAll(MainUtil.getPlotSelectionIds(bot, top));
             for (int x = bot.x; x <= top.x; x++) {
                 Plot plot = this.area.getPlotAbs(new PlotId(x, top.y));
-                if (plot.getMerged(2)) {
+                if (plot.getMerged(Direction.SOUTH)) {
                     // south wedge
                     Location toploc = plot.getExtendedTopAbs();
                     Location botabs = plot.getBottomAbs();
                     Location topabs = plot.getTopAbs();
                     regions.add(new RegionWrapper(botabs.getX(), topabs.getX(), topabs.getZ() + 1,
                         toploc.getZ()));
-                    if (plot.getMerged(5)) {
+                    if (plot.getMerged(Direction.SOUTHEAST)) {
                         regions.add(
                             new RegionWrapper(topabs.getX() + 1, toploc.getX(), topabs.getZ() + 1,
                                 toploc.getZ()));
@@ -2587,14 +2606,14 @@ public class Plot {
 
             for (int y = bot.y; y <= top.y; y++) {
                 Plot plot = this.area.getPlotAbs(new PlotId(top.x, y));
-                if (plot.getMerged(1)) {
+                if (plot.getMerged(Direction.EAST)) {
                     // east wedge
                     Location toploc = plot.getExtendedTopAbs();
                     Location botabs = plot.getBottomAbs();
                     Location topabs = plot.getTopAbs();
                     regions.add(new RegionWrapper(topabs.getX() + 1, toploc.getX(), botabs.getZ(),
                         topabs.getZ()));
-                    if (plot.getMerged(5)) {
+                    if (plot.getMerged(Direction.SOUTHEAST)) {
                         regions.add(
                             new RegionWrapper(topabs.getX() + 1, toploc.getX(), topabs.getZ() + 1,
                                 toploc.getZ()));
@@ -2776,7 +2795,7 @@ public class Plot {
                 lesserPlot = greaterPlot;
                 greaterPlot = tmp;
             }
-            if (!lesserPlot.getMerged(2)) {
+            if (!lesserPlot.getMerged(Direction.SOUTH)) {
                 lesserPlot.clearRatings();
                 greaterPlot.clearRatings();
                 lesserPlot.setMerged(2, true);
@@ -2784,13 +2803,13 @@ public class Plot {
                 lesserPlot.mergeData(greaterPlot);
                 if (removeRoads) {
                     lesserPlot.removeRoadSouth();
-                    Plot diagonal = greaterPlot.getRelative(1);
-                    if (diagonal.getMerged(7)) {
+                    Plot diagonal = greaterPlot.getRelative(Direction.EAST);
+                    if (diagonal.getMerged(Direction.NORTHWEST)) {
                         lesserPlot.removeRoadSouthEast();
                     }
-                    Plot below = greaterPlot.getRelative(3);
-                    if (below.getMerged(4)) {
-                        below.getRelative(0).removeRoadSouthEast();
+                    Plot below = greaterPlot.getRelative(Direction.WEST);
+                    if (below.getMerged(Direction.NORTHEAST)) {
+                        below.getRelative(Direction.NORTH).removeRoadSouthEast();
                     }
                 }
             }
@@ -2800,22 +2819,22 @@ public class Plot {
                 lesserPlot = greaterPlot;
                 greaterPlot = tmp;
             }
-            if (!lesserPlot.getMerged(1)) {
+            if (!lesserPlot.getMerged(Direction.EAST)) {
                 lesserPlot.clearRatings();
                 greaterPlot.clearRatings();
                 lesserPlot.setMerged(1, true);
                 greaterPlot.setMerged(3, true);
                 lesserPlot.mergeData(greaterPlot);
                 if (removeRoads) {
-                    Plot diagonal = greaterPlot.getRelative(2);
-                    if (diagonal.getMerged(7)) {
+                    Plot diagonal = greaterPlot.getRelative(Direction.SOUTH);
+                    if (diagonal.getMerged(Direction.NORTHWEST)) {
                         lesserPlot.removeRoadSouthEast();
                     }
                     lesserPlot.removeRoadEast();
                 }
-                Plot below = greaterPlot.getRelative(0);
-                if (below.getMerged(6)) {
-                    below.getRelative(3).removeRoadSouthEast();
+                Plot below = greaterPlot.getRelative(Direction.NORTH);
+                if (below.getMerged(Direction.SOUTHWEST)) {
+                    below.getRelative(Direction.WEST).removeRoadSouthEast();
                 }
             }
         }

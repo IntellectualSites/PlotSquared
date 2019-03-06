@@ -1,6 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
+import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -18,7 +19,7 @@ public class Help extends Command {
         super(parent, true);
     }
 
-    @Override public boolean canExecute(PlotPlayer player, boolean message) {
+    @Override public boolean canExecute(CommandCaller player, boolean message) {
         return true;
     }
 
@@ -54,7 +55,7 @@ public class Help extends Command {
         }
     }
 
-    public void displayHelp(PlotPlayer player, String cat, int page) {
+    public void displayHelp(CommandCaller player, String cat, int page) {
         CommandCategory catEnum = null;
         if (cat != null) {
             if (StringMan.isEqualIgnoreCase(cat, "all")) {

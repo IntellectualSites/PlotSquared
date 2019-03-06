@@ -1,24 +1,24 @@
 package com.github.intellectualsites.plotsquared.plot.util.helpmenu;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
+import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.plot.commands.CommandCategory;
 import com.github.intellectualsites.plotsquared.plot.commands.MainCommand;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 
 import java.util.List;
 
 public class HelpMenu {
 
-    public static final int PER_PAGE = 5;
+    private static final int PER_PAGE = 5;
 
-    private final PlotPlayer player;
+    private final CommandCaller commandCaller;
     private HelpPage page = new HelpPage(CommandCategory.INFO, 0, 0);
     private int maxPage;
     private CommandCategory commandCategory;
     private List<Command> commands;
 
-    public HelpMenu(PlotPlayer player) {
-        this.player = player;
+    public HelpMenu(CommandCaller commandCaller) {
+        this.commandCaller = commandCaller;
     }
 
     public HelpMenu setCategory(CommandCategory commandCategory) {
@@ -27,7 +27,8 @@ public class HelpMenu {
     }
 
     public HelpMenu getCommands() {
-        this.commands = MainCommand.getInstance().getCommands(this.commandCategory, this.player);
+        this.commands =
+            MainCommand.getInstance().getCommands(this.commandCategory, this.commandCaller);
         return this;
     }
 
@@ -52,7 +53,7 @@ public class HelpMenu {
     }
 
     public void render() {
-        this.page.render(this.player);
+        this.page.render(this.commandCaller);
     }
 
 }

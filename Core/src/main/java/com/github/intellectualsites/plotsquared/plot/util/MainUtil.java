@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
+import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
@@ -576,7 +577,7 @@ public class MainUtil {
      * @param prefix If the message should be prefixed with the configured prefix
      * @return
      */
-    public static boolean sendMessage(PlotPlayer player, String msg, boolean prefix) {
+    public static boolean sendMessage(CommandCaller player, String msg, boolean prefix) {
         if (!msg.isEmpty()) {
             if (player == null) {
                 String message = (prefix ? Captions.PREFIX.s() : "") + msg;
@@ -595,7 +596,7 @@ public class MainUtil {
      * @param caption the message to send
      * @return boolean success
      */
-    public static boolean sendMessage(PlotPlayer player, Captions caption, String... args) {
+    public static boolean sendMessage(CommandCaller player, Captions caption, String... args) {
         return sendMessage(player, caption, (Object[]) args);
     }
 
@@ -606,19 +607,17 @@ public class MainUtil {
      * @param caption the message to send
      * @return boolean success
      */
-    public static boolean sendMessage(final PlotPlayer player, final Captions caption,
+    public static boolean sendMessage(final CommandCaller player, final Captions caption,
         final Object... args) {
         if (caption.s().isEmpty()) {
             return true;
         }
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override public void run() {
-                String m = Captions.format(caption, args);
-                if (player == null) {
-                    PlotSquared.log(m);
-                } else {
-                    player.sendMessage(m);
-                }
+        TaskManager.runTaskAsync(() -> {
+            String m = Captions.format(caption, args);
+            if (player == null) {
+                PlotSquared.log(m);
+            } else {
+                player.sendMessage(m);
             }
         });
         return true;
