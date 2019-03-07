@@ -5,7 +5,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.0.0'
         classpath 'org.ajoberstar:grgit:1.7.0'
     }
     configurations.all {
@@ -65,7 +65,6 @@ subprojects {
     repositories {
         mavenCentral()
         maven {url "http://empcraft.com/maven2"}
-        maven {url "http://repo.mcstats.org/content/repositories/public"}
         maven {url "http://maven.sk89q.com/repo/"}
         maven {url "http://repo.maven.apache.org/maven2"}
     }
