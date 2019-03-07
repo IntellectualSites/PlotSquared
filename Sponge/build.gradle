@@ -13,7 +13,7 @@ buildscript {
     }
 }
 
-// apply plugin: 'net.minecrell.vanillagradle.server'
+apply plugin: 'net.minecrell.vanillagradle.server'
 
 dependencies {
     compile project(':Core')
