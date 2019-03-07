@@ -1,6 +1,30 @@
-plugins {
-    id "net.minecrell.vanillagradle.client" version "2.2-6"
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            url = uri("https://plugins.gradle.org/m2/")
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'gradle.plugin.net.minecrell:vanillagradle:2.2-6'
+    }
 }
+
+apply plugin: 'net.minecrell.vanillagradle.server'
+
+dependencies {
+    compile project(':Core')
+    compile 'org.spongepowered:spongeapi:7.1.0-SNAPSHOT'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -17,15 +41,6 @@ repositories {
         url = 'http://repo.minecrell.net/releases'
     }
 }
-
-dependencies {
-    compile project(':Core')
-    compile 'org.spongepowered:spongeapi:7.1.0-SNAPSHOT'
-}
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 minecraft {
     version = "1.12.2"
     mappings = "snapshot_20180808"
