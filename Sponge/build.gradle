@@ -26,16 +26,16 @@ targetCompatibility = 1.8
 
 repositories {
     maven {
-        name = 'minecrell'
-        url = 'http://repo.minecrell.net/releases'
-    }
-    maven {
         name = 'forge'
         url = 'http://files.minecraftforge.net/maven'
     }
     maven {
         name = "Sponge"
         url = "https://repo.spongepowered.org/maven"
+    }
+    maven {
+        name = 'minecrell'
+        url = 'http://repo.minecrell.net/releases'
     }
 }
 minecraft {
