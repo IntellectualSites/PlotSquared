@@ -35,6 +35,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
+import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.help.HelpTopic;
@@ -232,6 +233,33 @@ import java.util.regex.Pattern;
                     return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MISC_CAP);
                 }
                 return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP);
+        }
+    }
+
+    @EventHandler public void onVehicleEntityCollision(VehicleEntityCollisionEvent e) {
+        if (e.getVehicle().getType() == EntityType.BOAT) {
+            Location location = BukkitUtil.getLocation(e.getEntity());
+            if (location.getPlotArea() == null) {
+                //we don't care about events that happen outside of a plot area.
+                return;
+            }
+            if (e.getEntity() instanceof Player) {
+                PlotPlayer player = BukkitUtil.getPlayer((Player) e.getEntity());
+                Plot plot = player.getCurrentPlot();
+                if (plot != null) {
+                    if (!plot.isAdded(player.getUUID())) {
+                        //Here the event is only canceled if the player is not the owner
+                        //of the property on which he is located.
+                        e.setCancelled(true);
+                    }
+                } else {
+                    e.setCancelled(true);
+                }
+            } else {
+                //Here the event is cancelled too, otherwise you can move the
+                //boat with EchoPets or other mobs running around on the plot.
+                e.setCancelled(true);
+            }
         }
     }
 
