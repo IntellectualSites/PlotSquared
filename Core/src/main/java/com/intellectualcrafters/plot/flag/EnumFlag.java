@@ -1,8 +1,7 @@
 package com.intellectualcrafters.plot.flag;
 
-import com.google.common.collect.Sets;
 import com.intellectualcrafters.plot.util.StringMan;
-
+import java.util.Arrays;
 import java.util.HashSet;
 
 public class EnumFlag extends Flag<String> {
@@ -10,7 +9,7 @@ public class EnumFlag extends Flag<String> {
 
     public EnumFlag(String name, String... values) {
         super(name);
-        this.values = Sets.newHashSet(values);
+        this.values = new HashSet<>(Arrays.asList(values));
     }
 
     @Override

@@ -12,6 +12,9 @@ import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.world.biome.Biome;
@@ -36,10 +39,6 @@ import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
 import org.spongepowered.api.world.extent.Extent;
-
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.*;
 
 public class SpongeUtil extends WorldUtil {
 
@@ -67,9 +66,11 @@ public class SpongeUtil extends WorldUtil {
 
     public static <T> T getCause(Cause cause, Class<T> clazz) {
         Optional<?> root = Optional.of(cause.root());
-        Object source = root.get();
-        if (clazz.isInstance(source)) {
-            return (T) source;
+        if (root.isPresent()) {
+            Object source = root.get();
+            if (clazz.isInstance(source)) {
+                return (T) source;
+            }
         }
         return null;
     }
@@ -212,8 +213,7 @@ public class SpongeUtil extends WorldUtil {
 
     public static org.spongepowered.api.world.Location<World> getLocation(Location location) {
         Collection<World> worlds = Sponge.getServer().getWorlds();
-        World world = Sponge.getServer().getWorld(location.getWorld())
-            .orElseGet(() -> worlds.toArray(new World[0])[0]);
+        World world = Sponge.getServer().getWorld(location.getWorld()).orElse(worlds.toArray(new World[worlds.size()])[0]);
         return new org.spongepowered.api.world.Location<>(world, location.getX(), location.getY(), location.getZ());
     }
 
@@ -236,18 +236,6 @@ public class SpongeUtil extends WorldUtil {
         }
     }
 
-    @Override public String[] getBiomeList() {
-        if (biomes == null) {
-            initBiomeCache();
-        }
-        return biomeMap.keySet().toArray(new String[0]);
-    }
-
-    @Override public String getClosestMatchingName(PlotBlock block) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     @Override
     public StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name) {
         try {
@@ -268,7 +256,7 @@ public class SpongeUtil extends WorldUtil {
             } else {
                 List<BlockType> types = ReflectionUtils.getStaticFields(BlockTypes.class);
                 StringComparison<BlockType>.ComparisonResult comparison =
-                    new StringComparison<BlockType>(name, types.toArray(new BlockType[0])) {
+                        new StringComparison<BlockType>(name, types.toArray(new BlockType[types.size()])) {
                             @Override
                             public String getString(BlockType type) {
                                 return type.getId();
@@ -284,6 +272,20 @@ public class SpongeUtil extends WorldUtil {
         } catch (NumberFormatException ignored) {
         }
         return null;
+    }
+
+    @Override
+    public String getClosestMatchingName(PlotBlock block) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String[] getBiomeList() {
+        if (biomes == null) {
+            initBiomeCache();
+        }
+        return biomeMap.keySet().toArray(new String[biomeMap.size()]);
     }
 
     @Override

@@ -9,14 +9,20 @@ import com.intellectualcrafters.plot.util.ReflectionUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.block.BasicLocalBlockQueue;
 import com.plotsquared.bukkit.util.SendChunk;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.*;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
@@ -247,7 +253,8 @@ public class BukkitLocalQueue_1_8_3 extends BukkitLocalQueue<char[]> {
         }
     }
 
-    @Override public void setBlocks(LocalChunk<char[]> lc) {
+    @Override
+    public void setBlocks(LocalChunk lc) {
         CharLocalChunk_1_8_3 fs = (CharLocalChunk_1_8_3) lc;
         Chunk chunk = getChunk(lc.getX(), lc.getZ());
         chunk.load(true);

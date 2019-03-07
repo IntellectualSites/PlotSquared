@@ -4,14 +4,13 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.block.BasicLocalBlockQueue;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
 
@@ -116,7 +115,8 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
             for (int x = 0; x < lc.biomes.length; x++) {
                 String[] biomes2 = lc.biomes[x];
                 if (biomes2 != null) {
-                    for (String biomeStr : biomes2) {
+                    for (int y = 0; y < biomes2.length; y++) {
+                        String biomeStr = biomes2[y];
                         if (biomeStr != null) {
                             if (last == null || !StringMan.isEqual(last, biomeStr)) {
                                 biome = Biome.valueOf(biomeStr.toUpperCase());

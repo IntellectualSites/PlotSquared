@@ -6,11 +6,16 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.ReflectionUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.SendChunk;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 
-import java.util.*;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
@@ -125,6 +130,6 @@ public class BukkitLocalQueue_1_7 extends BukkitLocalQueue<PlotBlock[]> {
 
     @Override
     public void refreshChunk(int x, int z) {
-        update(Collections.singletonList(Bukkit.getWorld(getWorld()).getChunkAt(x, z)));
+        update(Arrays.asList(Bukkit.getWorld(getWorld()).getChunkAt(x, z)));
     }
 }

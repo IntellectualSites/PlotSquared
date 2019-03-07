@@ -3,7 +3,7 @@ repositories {
     mavenLocal()
     maven {
         name = 'minecrell'
-        url = 'https://repo.minecrell.net/releases'
+        url = 'http://repo.minecrell.net/releases'
     }
     maven {
         name = 'forge'
@@ -18,7 +18,7 @@ repositories {
 dependencies {
     compile project(':Core')
     compile 'org.spongepowered:spongeapi:7.1.0-SNAPSHOT'
-    compile 'net.minecrell.mcstats:statslite-sponge:0.2.3'
+    compile 'net.minecrell.mcstats:statslite-sponge:0.2.2'
 
 }
 

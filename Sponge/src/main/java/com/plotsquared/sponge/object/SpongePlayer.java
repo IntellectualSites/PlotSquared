@@ -2,6 +2,7 @@ package com.plotsquared.sponge.object;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.PlotGameMode;
@@ -34,6 +35,11 @@ public class SpongePlayer extends PlotPlayer {
     public SpongePlayer(Player player) {
         this.player = player;
         super.populatePersistentMetaMap();
+    }
+    
+    @Override
+    public RequiredType getSuperCaller() {
+        return RequiredType.PLAYER;
     }
 
     @Override
@@ -94,10 +100,7 @@ public class SpongePlayer extends PlotPlayer {
         } else {
             org.spongepowered.api.world.Location<World> current = this.player.getLocation();
             current = current.setPosition(new Vector3d(location.getX(), location.getY(), location.getZ()));
-            boolean b = this.player.setLocation(current);
-            if (!b) {
-                PS.log("Some plugin (NOT PLOTSQUARED) canceled the teleport for an unknown reason");
-            }
+            this.player.setLocation(current);
         }
     }
     
@@ -126,7 +129,8 @@ public class SpongePlayer extends PlotPlayer {
 
     @Override
     public void setWeather(PlotWeather weather) {
-        throw new UnsupportedOperationException("Not supported by sponge");
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
     
     @Override
@@ -167,7 +171,7 @@ public class SpongePlayer extends PlotPlayer {
     
     @Override
     public void setTime(long time) {
-        throw new UnsupportedOperationException("Not Supported By Sponge");
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
     
     @Override

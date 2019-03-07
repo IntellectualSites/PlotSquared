@@ -3,7 +3,6 @@ package com.intellectualcrafters.plot.object;
 import com.google.common.base.Optional;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -31,7 +30,6 @@ import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.util.expiry.PlotAnalysis;
 import com.plotsquared.listener.PlotListener;
 
-import javax.annotation.Nonnull;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
@@ -2469,17 +2467,16 @@ public class Plot {
      *  - Useful for handling non rectangular shapes
      * @return
      */
-    @Nonnull public HashSet<RegionWrapper> getRegions() {
+    public HashSet<RegionWrapper> getRegions() {
         if (regions_cache != null && connected_cache != null && connected_cache.contains(this)) {
             return regions_cache;
         }
         if (!this.isMerged()) {
             Location pos1 = this.getBottomAbs();
             Location pos2 = this.getTopAbs();
-            connected_cache = Sets.newHashSet(this);
-            regions_cache = Sets.newHashSet(
-                new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getY(), pos2.getY(), pos1.getZ(),
-                    pos2.getZ()));
+            connected_cache = new HashSet<>(Collections.singletonList(this));
+            regions_cache = new HashSet<>(1);
+            regions_cache.add(new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getY(), pos2.getY(), pos1.getZ(), pos2.getZ()));
             return regions_cache;
         }
         Set<Plot> plots = this.getConnectedPlots();
@@ -2545,7 +2542,9 @@ public class Plot {
             }
             Location gtopabs = this.area.getPlotAbs(top).getTopAbs();
             Location gbotabs = this.area.getPlotAbs(bot).getBottomAbs();
-            visited.addAll(MainUtil.getPlotSelectionIds(bot, top));
+            for (PlotId id : MainUtil.getPlotSelectionIds(bot, top)) {
+                visited.add(id);
+            }
             for (int x = bot.x; x <= top.x; x++) {
                 Plot plot = this.area.getPlotAbs(new PlotId(x, top.y));
                 if (plot.getMerged(2)) {
