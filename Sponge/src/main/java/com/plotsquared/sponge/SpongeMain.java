@@ -31,7 +31,6 @@ import com.plotsquared.sponge.util.block.SpongeLocalQueue;
 import com.plotsquared.sponge.uuid.SpongeLowerOfflineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeOnlineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeUUIDHandler;
-import net.minecrell.mcstats.SpongeStatsLite;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
@@ -75,8 +74,6 @@ public class SpongeMain implements IPlotMain {
     @Inject
     private Game game;
 
-    @Inject
-    public SpongeStatsLite stats;
 
     private Server server;
 
@@ -111,8 +108,6 @@ public class SpongeMain implements IPlotMain {
 
     @Listener
     public void onPreInitialize(GamePreInitializationEvent event) {
-        getLogger().info("The metrics section in PlotSquared is ignored in favor of the actual metrics reporter configurations.");
-        this.stats.start();
     }
 
     @Listener
@@ -123,12 +118,7 @@ public class SpongeMain implements IPlotMain {
         this.game.getRegistry().register(WorldGeneratorModifier.class, (WorldGeneratorModifier) PS.get().IMP.getDefaultGenerator().specify(null));
         this.game.getRegistry().register(WorldGeneratorModifier.class, (WorldGeneratorModifier) new SingleWorldGenerator().specify(null));
         if (Settings.Enabled_Components.WORLDS) {
-            TaskManager.IMP.taskRepeat(new Runnable() {
-                @Override
-                public void run() {
-                    unload();
-                }
-            }, 20);
+            TaskManager.IMP.taskRepeat(this::unload, 20);
         }
     }
 
@@ -339,6 +329,7 @@ public class SpongeMain implements IPlotMain {
 
     @Override
     public void startMetrics() {
+        //TODO Create Metrics
     }
 
     @Override
