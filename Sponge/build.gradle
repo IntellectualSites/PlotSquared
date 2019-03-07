@@ -5,15 +5,15 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
-        maven {url = "http://repo.minecrell.net/releases"}
+//        maven {url = "http://repo.minecrell.net/releases"}
     }
     dependencies {
-        classpath 'gradle.plugin.net.minecrell:vanillagradle:2.2-6'
+//        classpath 'gradle.plugin.net.minecrell:vanillagradle:2.2-6'
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 
-apply plugin: 'net.minecrell.vanillagradle.server'
+// apply plugin: 'net.minecrell.vanillagradle.server'
 
 dependencies {
     compile project(':Core')
@@ -25,10 +25,10 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-    maven {
-        name = 'minecrell'
-        url = 'http://repo.minecrell.net/releases'
-    }
+//    maven {
+//        name = 'minecrell'
+//        url = 'http://repo.minecrell.net/releases'
+//    }
     maven {
         name = 'forge'
         url = 'http://files.minecraftforge.net/maven'
