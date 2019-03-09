@@ -1741,7 +1741,13 @@ import java.util.regex.Pattern;
             if (area == null) {
                 return;
             }
-            Material type = player.getInventory().getItemInMainHand().getType();
+            ItemStack hand = player.getInventory().getItemInMainHand();
+            ItemStack offHand = player.getInventory().getItemInOffHand();
+            Material type = (hand == null) ? Material.AIR : hand.getType();
+            Material offType = (offHand == null) ? Material.AIR : offHand.getType();
+            if (type == Material.AIR) {
+                type = offType;
+            }
             if (type.toString().toLowerCase().endsWith("egg")) {
                 Block block = player.getTargetBlockExact(5, FluidCollisionMode.SOURCE_ONLY);
                 if (block != null && block.getType() != Material.AIR) {
