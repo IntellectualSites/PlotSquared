@@ -10,12 +10,10 @@ import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.*;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -937,7 +935,7 @@ import java.util.regex.Pattern;
         if (!spies.isEmpty()) {
             String spyMessage =
                 Captions.PLOT_CHAT_SPY_FORMAT.s().replace("%plot_id%", id.x + ";" + id.y)
-                .replace("%sender%", sender).replace("%msg%", message);
+                    .replace("%sender%", sender).replace("%msg%", message);
             for (Player player : spies) {
                 player.sendMessage(spyMessage);
             }
@@ -1762,7 +1760,32 @@ import java.util.regex.Pattern;
             blox -> !plot.equals(area.getOwnedPlot(BukkitUtil.getLocation(blox.getLocation()))));
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW)
+    public void onCancelledInteract(PlayerInteractEvent event) {
+        if (event.isCancelled() && event.getAction() == Action.RIGHT_CLICK_AIR) {
+            Player player = event.getPlayer();
+            PlotPlayer pp = BukkitUtil.getPlayer(player);
+            PlotArea area = pp.getPlotAreaAbs();
+            if (area == null) {
+                return;
+            }
+            Material type = player.getInventory().getItemInMainHand().getType();
+            if (type.toString().toLowerCase().endsWith("egg")) {
+                Block block = player.getTargetBlockExact(5, FluidCollisionMode.SOURCE_ONLY);
+                if (block != null && block.getType() != Material.AIR) {
+                    Location location = BukkitUtil.getLocation(block.getLocation());
+                    if (!EventUtil.manager
+                        .checkPlayerBlockEvent(pp, PlayerBlockEventType.SPAWN_MOB, location,
+                            new BukkitLazyBlock(PlotBlock.get(type.toString())), true)) {
+                        event.setCancelled(true);
+                        event.setUseItemInHand(Event.Result.DENY);
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
@@ -1935,25 +1958,25 @@ import java.util.regex.Pattern;
                 }
                 ItemStack hand = player.getInventory().getItemInMainHand();
                 ItemStack offHand = player.getInventory().getItemInOffHand();
-                Material type = (hand == null) ? null : hand.getType();
-                Material offType = (offHand == null) ? null : offHand.getType();
+                Material type = (hand == null) ? Material.AIR : hand.getType();
+                Material offType = (offHand == null) ? Material.AIR : offHand.getType();
                 if ((type == Material.AIR && offType != Material.AIR && !player.isSneaking()
                     && blockType.isInteractable()) || (type == Material.AIR
                     && offType == Material.AIR)) {
                     eventType = PlayerBlockEventType.INTERACT_BLOCK;
                     break;
                 }
-                if (!(type != null && type.equals(offType))) {
+                if (type == Material.AIR) {
                     type = offType;
                 }
-                if (type == null || type.isBlock()) {
+                if (type.isBlock()) {
                     location = BukkitUtil
                         .getLocation(block.getRelative(event.getBlockFace()).getLocation());
                     eventType = PlayerBlockEventType.PLACE_BLOCK;
                     break;
                 }
                 lb = new BukkitLazyBlock(PlotBlock.get(type.toString()));
-                if (type.toString().endsWith("egg")) {
+                if (type.toString().toLowerCase().endsWith("egg")) {
                     eventType = PlayerBlockEventType.SPAWN_MOB;
                 } else {
                     switch (type) {
