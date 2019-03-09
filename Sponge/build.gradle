@@ -24,6 +24,7 @@ dependencies {
     compile project(':Core')
     compile 'org.spongepowered:spongeapi:7.1.0-SNAPSHOT'
 
+    implementation project (':Core')
 }
 
 sourceCompatibility = 1.8

@@ -7,6 +7,7 @@ repositories {
 }
 
 dependencies {
+    implementation project (':Core')
     compile project(':Core')
     compile 'org.spigotmc:spigot-api:1.12.1-R0.1-SNAPSHOT'
     compile(group: 'org.bstats', name: 'bstats-bukkit', version: '1.4')

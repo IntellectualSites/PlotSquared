@@ -59,9 +59,6 @@ subprojects {
         }
         compile 'com.google.guava:guava:10.0'
     }
-    clean{
-        delete file("../target")
-    }
     repositories {
         mavenCentral()
         maven {url "http://empcraft.com/maven2"}
