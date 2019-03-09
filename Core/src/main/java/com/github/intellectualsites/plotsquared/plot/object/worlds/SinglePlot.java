@@ -3,19 +3,17 @@ package com.github.intellectualsites.plotsquared.plot.object.worlds;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.google.common.collect.Sets;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 
 public class SinglePlot extends Plot {
-    private HashSet<RegionWrapper> regions;
-
-    {
-        regions = new HashSet<>();
-        regions.add(new RegionWrapper(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
+    private HashSet<RegionWrapper> regions = Sets.newHashSet(
+        new RegionWrapper(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
             Integer.MAX_VALUE));
-    }
 
     public SinglePlot(PlotArea area, PlotId id, UUID owner) {
         super(area, id, owner);
@@ -62,7 +60,7 @@ public class SinglePlot extends Plot {
         return super.isLoaded();
     }
 
-    @Override public HashSet<RegionWrapper> getRegions() {
+    @Nonnull @Override public HashSet<RegionWrapper> getRegions() {
         return regions;
     }
 

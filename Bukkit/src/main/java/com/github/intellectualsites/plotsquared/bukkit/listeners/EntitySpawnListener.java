@@ -131,7 +131,7 @@ public class EntitySpawnListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void vehicleMove(VehicleMoveEvent event) throws IllegalAccessException {
+    public void vehicleMove(VehicleMoveEvent event) {
         test(event.getVehicle());
     }
 

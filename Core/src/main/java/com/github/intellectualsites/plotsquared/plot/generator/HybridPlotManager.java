@@ -9,12 +9,12 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
+import com.google.common.collect.Sets;
 import com.sk89q.worldedit.world.block.BaseBlock;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Collections;
 import java.util.HashSet;
 
 public class HybridPlotManager extends ClassicPlotManager {
@@ -22,9 +22,8 @@ public class HybridPlotManager extends ClassicPlotManager {
     public static boolean REGENERATIVE_CLEAR = true;
 
     @Override public void exportTemplate(PlotArea plotArea) throws IOException {
-        HashSet<FileBytes> files = new HashSet<>(Collections.singletonList(
-            new FileBytes(Settings.Paths.TEMPLATES + "/tmp-data.yml",
-                Template.getBytes(plotArea))));
+        HashSet<FileBytes> files = Sets.newHashSet(
+            new FileBytes(Settings.Paths.TEMPLATES + "/tmp-data.yml", Template.getBytes(plotArea)));
         String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator
             + plotArea.worldname + File.separator;
         String newDir =

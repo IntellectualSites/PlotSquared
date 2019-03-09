@@ -111,7 +111,7 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
         }
         Object c = this.methodGetHandleChunk.of(chunk).call();
         RefField.RefExecutor field = this.mustSave.of(c);
-        if ((Boolean) field.get() == true) {
+        if ((Boolean) field.get()) {
             field.set(false);
             if (chunk.isLoaded()) {
                 ignoreUnload = true;
@@ -122,9 +122,9 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
         return true;
     }
 
-    public boolean shouldSave(String world, int X, int Z) {
-        int x = X << 4;
-        int z = Z << 4;
+    public boolean shouldSave(String world, int chunkX, int chunkZ) {
+        int x = chunkX << 4;
+        int z = chunkZ << 4;
         int x2 = x + 15;
         int z2 = z + 15;
         Plot plot = new Location(world, x, 1, z).getOwnedPlotAbs();

@@ -19,6 +19,7 @@ import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.sk89q.jnbt.CompoundTag;
 
 import javax.annotation.Nonnull;
@@ -607,8 +608,17 @@ public class Plot {
      */
     public void setDenied(Set<UUID> uuids) {
         boolean larger = uuids.size() > getDenied().size();
-        HashSet<UUID> intersection = new HashSet<>(larger ? getDenied() : uuids);
-        intersection.retainAll(larger ? uuids : getDenied());
+        HashSet<UUID> intersection;
+        if (larger) {
+            intersection = new HashSet<>(getDenied());
+        } else {
+            intersection = new HashSet<>(uuids);
+        }
+        if (larger) {
+            intersection.retainAll(uuids);
+        } else {
+            intersection.retainAll(getDenied());
+        }
         uuids.removeAll(intersection);
         HashSet<UUID> toRemove = new HashSet<>(getDenied());
         toRemove.removeAll(intersection);
@@ -2500,16 +2510,15 @@ public class Plot {
      *
      * @return
      */
-    public HashSet<RegionWrapper> getRegions() {
+    @Nonnull public HashSet<RegionWrapper> getRegions() {
         if (regions_cache != null && connected_cache != null && connected_cache.contains(this)) {
             return regions_cache;
         }
         if (!this.isMerged()) {
             Location pos1 = this.getBottomAbs();
             Location pos2 = this.getTopAbs();
-            connected_cache = new HashSet<>(Collections.singletonList(this));
-            regions_cache = new HashSet<>(1);
-            regions_cache.add(
+            connected_cache = Sets.newHashSet(this);
+            regions_cache = Sets.newHashSet(
                 new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getY(), pos2.getY(), pos1.getZ(),
                     pos2.getZ()));
             return regions_cache;

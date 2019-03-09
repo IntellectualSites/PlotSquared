@@ -21,26 +21,26 @@ public class Auto extends SubCommand {
     }
 
     private static boolean checkAllowedPlots(PlotPlayer player, PlotArea plotarea,
-        @Nullable Integer allowed_plots, int size_x, int size_z) {
-        if (allowed_plots == null) {
-            allowed_plots = player.getAllowedPlots();
+        @Nullable Integer allowedPlots, int sizeX, int sizeZ) {
+        if (allowedPlots == null) {
+            allowedPlots = player.getAllowedPlots();
         }
         int currentPlots =
             Settings.Limit.GLOBAL ? player.getPlotCount() : player.getPlotCount(plotarea.worldname);
-        int diff = currentPlots - allowed_plots;
-        if (diff + size_x * size_z > 0) {
+        int diff = currentPlots - allowedPlots;
+        if (diff + sizeX * sizeZ > 0) {
             if (diff < 0) {
                 MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS_NUM, -diff + "");
                 return false;
             } else if (player.hasPersistentMeta("grantedPlots")) {
                 int grantedPlots =
                     ByteArrayUtilities.bytesToInteger(player.getPersistentMeta("grantedPlots"));
-                if (grantedPlots - diff < size_x * size_z) {
+                if (grantedPlots - diff < sizeX * sizeZ) {
                     player.removePersistentMeta("grantedPlots");
                     MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
                     return false;
                 } else {
-                    int left = grantedPlots - diff - size_x * size_z;
+                    int left = grantedPlots - diff - sizeX * sizeZ;
                     if (left == 0) {
                         player.removePersistentMeta("grantedPlots");
                     } else {
@@ -98,7 +98,7 @@ public class Auto extends SubCommand {
      * @param schem
      */
     public static void autoClaimSafe(final PlotPlayer player, final PlotArea area, PlotId start,
-        final String schem, @Nullable final Integer allowed_plots) {
+        final String schem, @Nullable final Integer allowedPlots) {
         player.setMeta(Auto.class.getName(), true);
         autoClaimFromDatabase(player, area, start, new RunnableVal<Plot>() {
             @Override public void run(final Plot plot) {
@@ -107,7 +107,7 @@ public class Auto extends SubCommand {
                         player.deleteMeta(Auto.class.getName());
                         if (plot == null) {
                             MainUtil.sendMessage(player, Captions.NO_FREE_PLOTS);
-                        } else if (checkAllowedPlots(player, area, allowed_plots, 1, 1)) {
+                        } else if (checkAllowedPlots(player, area, allowedPlots, 1, 1)) {
                             plot.claim(player, true, schem, false);
                             if (area.AUTO_MERGE) {
                                 plot.autoMerge(-1, Integer.MAX_VALUE, player.getUUID(), true);
