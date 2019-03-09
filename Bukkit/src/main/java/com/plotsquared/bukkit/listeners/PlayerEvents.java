@@ -1350,6 +1350,34 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.LOW)
+    public void onCancelledInteract(PlayerInteractEvent event) {
+        if (event.isCancelled() && event.getAction() == Action.RIGHT_CLICK_AIR) {
+            Player player = event.getPlayer();
+            PlotPlayer pp = BukkitUtil.getPlayer(player);
+            PlotArea area = pp.getPlotAreaAbs();
+            if (area == null) {
+                return;
+            }
+            ItemStack hand = player.getItemInHand();
+            Material type = (hand == null) ? Material.AIR : hand.getType();
+            if (type == Material.MONSTER_EGG || type == Material.MONSTER_EGGS) {
+                Set<Material> transparent = new HashSet<>(
+                    Arrays.asList(Material.WATER, Material.STATIONARY_WATER));
+                Block block = player.getTargetBlock(transparent, 5);
+                if (block != null && block.getType() != Material.AIR) {
+                    Location location = BukkitUtil.getLocation(block.getLocation());
+                    if (!EventUtil.manager
+                        .checkPlayerBlockEvent(pp, PlayerBlockEventType.SPAWN_MOB, location,
+                            new BukkitLazyBlock(PlotBlock.get((short) type.getId(), (byte) 0)), true)) {
+                        event.setCancelled(true);
+                        event.setUseItemInHand(Event.Result.DENY);
+                    }
+                }
+            }
+        }
+    }
+
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
