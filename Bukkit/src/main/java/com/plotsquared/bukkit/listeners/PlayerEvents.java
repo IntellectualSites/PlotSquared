@@ -95,7 +95,6 @@ public class PlayerEvents extends PlotListener implements Listener {
     public static boolean checkEntity(Entity entity, Plot plot) {
         if (plot == null || !plot.hasOwner() || plot.getFlags().isEmpty() && plot
             .getArea().DEFAULT_FLAGS.isEmpty()) {
-            Bukkit.getConsoleSender().sendMessage("flags is empty: " + plot.getFlags().isEmpty());
             return false;
         }
         switch (entity.getType()) {
@@ -1534,20 +1533,6 @@ public class PlayerEvents extends PlotListener implements Listener {
         if (area == null) {
             return;
         }
-        if (event.getItem() != null) {
-            player.sendMessage("Item: " + event.getItem().toString());
-        } else {
-            player.sendMessage("item was null");
-        }
-        player.sendMessage("hand: " + event.getHand().name());
-        if (event.getClickedBlock() != null) {
-            player.sendMessage("clickedblock: " + event.getClickedBlock().getType().toString());
-        } else {
-            player.sendMessage("clickedblock was null");
-        }
-        player.sendMessage("hhasitem: " + event.hasItem());
-        player.sendMessage("useiteminhand: " + event.useItemInHand().name());
-        player.sendMessage("action: " + event.getAction());
         if (event.getAction() == Action.RIGHT_CLICK_AIR) {
             Material item = event.getItem().getType();
             if (item == Material.MONSTER_EGG || item == Material.MONSTER_EGGS) {
@@ -1786,8 +1771,6 @@ public class PlayerEvents extends PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void creatureSpawnEvent(CreatureSpawnEvent event) {
-        Bukkit.getConsoleSender().sendMessage(
-            event.getEntityType().name() + "spawned by " + event.getSpawnReason().name());
         Entity entity = event.getEntity();
         Location location = BukkitUtil.getLocation(entity.getLocation());
         PlotArea area = location.getPlotArea();
@@ -1835,8 +1818,6 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         if (checkEntity(entity, plot)) {
             event.setCancelled(true);
-        } else {
-            Bukkit.getConsoleSender().sendMessage("check entity was false");
         }
     }
 
