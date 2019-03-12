@@ -71,7 +71,7 @@ public class Location implements Cloneable, Comparable<Location> {
     }
 
     public Plot getOwnedPlot() {
-        PlotArea area = PS.get().getPlotAreaAbs(this);
+        PlotArea area = getPlotArea();
         if (area != null) {
             return area.getOwnedPlot(this);
         } else {
@@ -80,7 +80,7 @@ public class Location implements Cloneable, Comparable<Location> {
     }
 
     public Plot getOwnedPlotAbs() {
-        PlotArea area = PS.get().getPlotAreaAbs(this);
+        PlotArea area = getPlotArea();
         if (area != null) {
             return area.getOwnedPlotAbs(this);
         } else {
@@ -89,16 +89,16 @@ public class Location implements Cloneable, Comparable<Location> {
     }
 
     public boolean isPlotArea() {
-        return PS.get().getPlotAreaAbs(this) != null;
+        return getPlotArea() != null;
     }
 
     public boolean isPlotRoad() {
-        PlotArea area = PS.get().getPlotAreaAbs(this);
+        PlotArea area = getPlotArea();
         return area != null && area.getPlotAbs(this) == null;
     }
 
     public boolean isUnownedPlotArea() {
-        PlotArea area = PS.get().getPlotAreaAbs(this);
+        PlotArea area = getPlotArea();
         return area != null && area.getOwnedPlotAbs(this) == null;
     }
 
@@ -112,7 +112,7 @@ public class Location implements Cloneable, Comparable<Location> {
     }
 
     public Plot getPlotAbs() {
-        PlotArea area = PS.get().getPlotAreaAbs(this);
+        PlotArea area = getPlotArea();
         if (area != null) {
             return area.getPlotAbs(this);
         } else {
@@ -121,7 +121,7 @@ public class Location implements Cloneable, Comparable<Location> {
     }
 
     public Plot getPlot() {
-        PlotArea area = PS.get().getPlotAreaAbs(this);
+        PlotArea area = getPlotArea();
         if (area != null) {
             return area.getPlot(this);
         } else {
