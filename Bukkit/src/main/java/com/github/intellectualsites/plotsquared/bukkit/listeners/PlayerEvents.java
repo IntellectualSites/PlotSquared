@@ -1769,6 +1769,13 @@ import java.util.regex.Pattern;
             if (area == null) {
                 return;
             }
+            if (event.getAction() == Action.RIGHT_CLICK_AIR) {
+                Material item = event.getItem().getType();
+                if (item.toString().toLowerCase().endsWith("egg")) {
+                    event.setCancelled(true);
+                    event.setUseItemInHand(Event.Result.DENY);
+                }
+            }
             ItemStack hand = player.getInventory().getItemInMainHand();
             ItemStack offHand = player.getInventory().getItemInOffHand();
             Material type = (hand == null) ? Material.AIR : hand.getType();
