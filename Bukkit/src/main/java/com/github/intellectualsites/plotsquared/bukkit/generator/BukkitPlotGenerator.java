@@ -69,12 +69,10 @@ public class BukkitPlotGenerator extends ChunkGenerator
                 + " is already a BukkitPlotGenerator!");
         }
         this.full = false;
-        PlotSquared.debug("BukkitPlotGenerator does not fully support: " + cg);
+        //todo figure out why this was put here in the first place:
+        //PlotSquared.debug("BukkitPlotGenerator does not fully support: " + cg);
         this.platformGenerator = cg;
         this.plotGenerator = new IndependentPlotGenerator() {
-            @Override public void processSetup(SetupObject setup) {
-            }
-
             @Override public void initialize(PlotArea area) {
             }
 

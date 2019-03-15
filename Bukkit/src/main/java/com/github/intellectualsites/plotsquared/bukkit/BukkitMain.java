@@ -73,7 +73,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             WorldEdit.getInstance().getPlatformManager().queryCapability(Capability.GAME_HOOKS);
         } catch (final Throwable throwable) {
             throw new IllegalStateException(
-                "Failed to force load WorldEdit." + " Road schematics will fail to generate",
+                "Failed to force load WorldEdit. Road schematics will fail to generate",
                 throwable);
         }
     }

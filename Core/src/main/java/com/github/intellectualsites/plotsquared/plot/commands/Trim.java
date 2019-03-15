@@ -107,8 +107,8 @@ import java.util.Set;
         MainUtil.sendMessage(null, " - TIME ESTIMATE: 12 Parsecs");
         TaskManager.objectTask(plots, new RunnableVal<Plot>() {
             @Override public void run(Plot plot) {
-                Location pos1 = plot.getBottom();
-                Location pos2 = plot.getTop();
+                Location pos1 = plot.getCorners()[0];
+                Location pos2 = plot.getCorners()[1];
                 int ccx1 = pos1.getX() >> 9;
                 int ccz1 = pos1.getZ() >> 9;
                 int ccx2 = pos2.getX() >> 9;

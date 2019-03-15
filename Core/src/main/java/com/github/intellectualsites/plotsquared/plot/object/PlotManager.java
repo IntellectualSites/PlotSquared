@@ -31,7 +31,7 @@ public abstract class PlotManager {
 
     public abstract boolean claimPlot(PlotArea plotArea, Plot plot);
 
-    public abstract boolean unclaimPlot(PlotArea plotArea, Plot plot, Runnable whenDone);
+    public abstract boolean unClaimPlot(PlotArea plotArea, Plot plot, Runnable whenDone);
 
     public abstract Location getSignLoc(PlotArea plotArea, Plot plot);
 

@@ -76,11 +76,7 @@ public abstract class EventUtil {
         }
         final Plot plot = player.getCurrentPlot();
         if (Settings.Teleport.ON_LOGIN && plot != null) {
-            TaskManager.runTask(new Runnable() {
-                @Override public void run() {
-                    plot.teleportPlayer(player);
-                }
-            });
+            TaskManager.runTask(() -> plot.teleportPlayer(player));
             MainUtil.sendMessage(player,
                 Captions.TELEPORTED_TO_ROAD.f() + " (on-login) " + "(" + plot.getId().x + ";" + plot
                     .getId().y + ")");
@@ -97,19 +93,13 @@ public abstract class EventUtil {
 
     public boolean checkPlayerBlockEvent(PlotPlayer player, PlayerBlockEventType type,
         Location location, LazyBlock block, boolean notifyPerms) {
-        PlotArea area = PlotSquared.get().getPlotAreaAbs(location);
-        Plot plot;
-        if (area != null) {
-            plot = area.getPlot(location);
-        } else {
-            plot = null;
-        }
-        if (plot == null) {
-            if (area == null) {
+        PlotArea area = location.getPlotArea();
+        assert area != null;
+        Plot plot = area.getPlot(location);
+        if (plot != null) {
+            if (plot.isAdded(player.getUUID())) {
                 return true;
             }
-        } else if (plot.isAdded(player.getUUID())) {
-            return true;
         }
         switch (type) {
             case TELEPORT_OBJECT:
@@ -400,8 +390,6 @@ public abstract class EventUtil {
                 }
                 return true;
             }
-            case PLACE_HANGING: // Handled elsewhere
-                return true;
             case PLACE_MISC: {
                 if (plot == null) {
                     return Permissions

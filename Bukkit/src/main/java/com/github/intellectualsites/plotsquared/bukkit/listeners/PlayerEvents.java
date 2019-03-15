@@ -237,26 +237,24 @@ import java.util.regex.Pattern;
     @EventHandler public void onVehicleEntityCollision(VehicleEntityCollisionEvent e) {
         if (e.getVehicle().getType() == EntityType.BOAT) {
             Location location = BukkitUtil.getLocation(e.getEntity());
-            if (location.getPlotArea() == null) {
-                //we don't care about events that happen outside of a plot area.
-                return;
-            }
-            if (e.getEntity() instanceof Player) {
-                PlotPlayer player = BukkitUtil.getPlayer((Player) e.getEntity());
-                Plot plot = player.getCurrentPlot();
-                if (plot != null) {
-                    if (!plot.isAdded(player.getUUID())) {
-                        //Here the event is only canceled if the player is not the owner
-                        //of the property on which he is located.
+            if (location.isPlotArea()) {
+                if (e.getEntity() instanceof Player) {
+                    PlotPlayer player = BukkitUtil.getPlayer((Player) e.getEntity());
+                    Plot plot = player.getCurrentPlot();
+                    if (plot != null) {
+                        if (!plot.isAdded(player.getUUID())) {
+                            //Here the event is only canceled if the player is not the owner
+                            //of the property on which he is located.
+                            e.setCancelled(true);
+                        }
+                    } else {
                         e.setCancelled(true);
                     }
                 } else {
+                    //Here the event is cancelled too, otherwise you can move the
+                    //boat with EchoPets or other mobs running around on the plot.
                     e.setCancelled(true);
                 }
-            } else {
-                //Here the event is cancelled too, otherwise you can move the
-                //boat with EchoPets or other mobs running around on the plot.
-                e.setCancelled(true);
             }
         }
     }
@@ -315,7 +313,7 @@ import java.util.regex.Pattern;
         if (area == null) {
             return;
         }
-        Plot plot = area.getOwnedPlot(loc);
+        Plot plot = loc.getOwnedPlot();
         if (plot == null) {
             return;
         }
@@ -655,7 +653,7 @@ import java.util.regex.Pattern;
                 Player player = event.getPlayer();
                 PlotPlayer pp = PlotPlayer.wrap(player);
                 Location loc = BukkitUtil.getLocation(to);
-                PlotArea area = PlotSquared.get().getPlotAreaAbs(loc);
+                PlotArea area = loc.getPlotArea();
                 if (area == null) {
                     return;
                 }
@@ -1029,7 +1027,7 @@ import java.util.regex.Pattern;
             Iterator<Block> iterator = event.blockList().iterator();
             while (iterator.hasNext()) {
                 iterator.next();
-                if (location.getPlotArea() != null) {
+                if (location.isPlotArea()) {
                     iterator.remove();
                 }
             }
@@ -1095,13 +1093,12 @@ import java.util.regex.Pattern;
             pp.deleteMeta("perm");
         }
         Location loc = pp.getLocation();
-        PlotArea area = PlotSquared.get().getPlotAreaAbs(loc);
-        if (area == null) {
-            return;
-        }
-        plot = area.getPlot(loc);
-        if (plot != null) {
-            plotEntry(pp, plot);
+        PlotArea area = loc.getPlotArea();
+        if (loc.isPlotArea()) {
+            plot = loc.getPlot();
+            if (plot != null) {
+                plotEntry(pp, plot);
+            }
         }
     }
 
@@ -1372,8 +1369,7 @@ import java.util.regex.Pattern;
                 return;
             }
             for (Block block1 : event.getBlocks()) {
-                if (BukkitUtil.getLocation(block1.getLocation().add(relative)).getPlotArea()
-                    != null) {
+                if (BukkitUtil.getLocation(block1.getLocation().add(relative)).isPlotArea()) {
                     event.setCancelled(true);
                     return;
                 }
@@ -1414,7 +1410,7 @@ import java.util.regex.Pattern;
                 try {
                     for (Block pulled : event.getBlocks()) {
                         location = BukkitUtil.getLocation(pulled.getLocation());
-                        if (location.getPlotArea() != null) {
+                        if (location.isPlotArea()) {
                             event.setCancelled(true);
                             return;
                         }
@@ -1427,7 +1423,7 @@ import java.util.regex.Pattern;
                 BlockFace dir = event.getDirection();
                 location = BukkitUtil.getLocation(block.getLocation()
                     .add(dir.getModX() * 2, dir.getModY() * 2, dir.getModZ() * 2));
-                if (location.getPlotArea() != null) {
+                if (location.isPlotArea()) {
                     event.setCancelled(true);
                     return;
                 }
@@ -1512,7 +1508,7 @@ import java.util.regex.Pattern;
         if (area == null) {
             for (int i = blocks.size() - 1; i >= 0; i--) {
                 location = BukkitUtil.getLocation(blocks.get(i).getLocation());
-                if (location.getPlotArea() != null) {
+                if (location.isPlotArea()) {
                     blocks.remove(i);
                 }
             }
@@ -1746,7 +1742,7 @@ import java.util.regex.Pattern;
             Iterator<Block> iterator = event.blockList().iterator();
             while (iterator.hasNext()) {
                 location = BukkitUtil.getLocation(iterator.next().getLocation());
-                if (location.getPlotArea() != null) {
+                if (location.isPlotArea()) {
                     iterator.remove();
                 }
             }
@@ -2053,12 +2049,6 @@ import java.util.regex.Pattern;
                         case SPRUCE_BOAT:
                         case TNT_MINECART:
                             eventType = PlayerBlockEventType.PLACE_VEHICLE;
-                            break;
-                        case ITEM_FRAME:
-                        case PAINTING:
-                            location = BukkitUtil
-                                .getLocation(block.getRelative(event.getBlockFace()).getLocation());
-                            eventType = PlayerBlockEventType.PLACE_HANGING;
                             break;
                         default:
                             eventType = PlayerBlockEventType.INTERACT_BLOCK;

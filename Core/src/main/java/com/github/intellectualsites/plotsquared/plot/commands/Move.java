@@ -11,8 +11,8 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 
 @CommandDeclaration(usage = "/plot move <X;Z>", command = "move", description = "Move a plot",
-    aliases = {"debugmove"}, permission = "plots.move", category = CommandCategory.CLAIMING,
-    requiredType = RequiredType.NONE) public class Move extends SubCommand {
+    aliases = {"debugmove"}, permission = "plots.move", category = CommandCategory.CLAIMING, requiredType = RequiredType.PLAYER)
+public class Move extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         Location loc = player.getLocation();

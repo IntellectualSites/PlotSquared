@@ -65,10 +65,10 @@ public class EntitySpawnListener implements Listener {
         Entity entity = event.getEntity();
         Location location = BukkitUtil.getLocation(entity.getLocation());
         PlotArea area = location.getPlotArea();
-        if (area == null) {
+        if (!location.isPlotArea()) {
             return;
         }
-        Plot plot = area.getOwnedPlotAbs(location);
+        Plot plot = location.getOwnedPlotAbs();
         if (plot == null) {
             if (!area.MOB_SPAWNING) {
                 EntityType type = entity.getType();

@@ -44,7 +44,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         return false;
     }
 
-    @Override public boolean unclaimPlot(PlotArea plotArea, Plot plot, Runnable whenDone) {
+    @Override public boolean unClaimPlot(PlotArea plotArea, Plot plot, Runnable whenDone) {
         ClassicPlotWorld dpw = (ClassicPlotWorld) plotArea;
         setWallFilling(dpw, plot.getId(), dpw.WALL_FILLING);
         setWall(dpw, plot.getId(), dpw.WALL_BLOCK);

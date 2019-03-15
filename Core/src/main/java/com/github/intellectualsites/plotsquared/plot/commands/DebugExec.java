@@ -69,7 +69,15 @@ import java.util.*;
         if (this.engine != null) {
             return;
         }
-        this.engine = new ScriptEngineManager(null).getEngineByName("nashorn");
+        //create script engine manager
+        ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
+        //create nashorn engine
+        this.engine = scriptEngineManager.getEngineByName("nashorn");
+        try {
+            engine.eval("print('PlotSquared Scripting Test');");
+        } catch (ScriptException e) {
+            e.printStackTrace();
+        }
         if (this.engine == null) {
             this.engine = new ScriptEngineManager(null).getEngineByName("JavaScript");
         }

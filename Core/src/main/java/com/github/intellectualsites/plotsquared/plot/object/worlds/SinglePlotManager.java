@@ -46,7 +46,7 @@ public class SinglePlotManager extends PlotManager {
         return true;
     }
 
-    @Override public boolean unclaimPlot(PlotArea plotArea, Plot plot, Runnable whenDone) {
+    @Override public boolean unClaimPlot(PlotArea plotArea, Plot plot, Runnable whenDone) {
         if (whenDone != null) {
             whenDone.run();
         }

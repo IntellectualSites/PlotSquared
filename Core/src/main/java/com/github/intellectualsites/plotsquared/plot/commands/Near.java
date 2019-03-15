@@ -9,8 +9,8 @@ import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
-@CommandDeclaration(command = "near", aliases = "n", description = "Display nearby players",
-    usage = "/plot near", category = CommandCategory.INFO) public class Near extends Command {
+@CommandDeclaration(command = "near", aliases = "n", description = "Display nearby players", usage = "/plot near", category = CommandCategory.INFO, requiredType = RequiredType.PLAYER)
+public class Near extends Command {
     public Near() {
         super(MainCommand.getInstance(), true);
     }

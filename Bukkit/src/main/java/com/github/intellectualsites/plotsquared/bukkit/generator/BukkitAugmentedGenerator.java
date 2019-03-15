@@ -24,7 +24,7 @@ public class BukkitAugmentedGenerator extends BlockPopulator {
         return generator;
     }
 
-    @Override public void populate(World world, Random r, Chunk chunk) {
-        AugmentedUtils.generate(world.getName(), chunk.getX(), chunk.getZ(), null);
+    @Override public void populate(World world, Random random, Chunk source) {
+        AugmentedUtils.generate(world.getName(), source.getX(), source.getZ(), null);
     }
 }

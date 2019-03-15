@@ -70,8 +70,8 @@ public class DelegateLocalBlockQueue extends LocalBlockQueue {
         return parent.getBlock(x, y, z);
     }
 
-    @Override public boolean setBiome(int x, int y, String biome) {
-        return parent.setBiome(x, y, biome);
+    @Override public boolean setBiome(int x, int z, String biome) {
+        return parent.setBiome(x, z, biome);
     }
 
     @Override public String getWorld() {

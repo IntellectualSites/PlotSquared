@@ -226,7 +226,7 @@ public class Plot {
      * @see PlotPlayer#getCurrentPlot() if a player is expected here.
      */
     public static Plot getPlot(Location location) {
-        PlotArea pa = PlotSquared.get().getPlotAreaAbs(location);
+        PlotArea pa = location.getPlotArea();
         if (pa != null) {
             return pa.getPlot(location);
         }
@@ -457,7 +457,7 @@ public class Plot {
      * Gets or create plot settings.
      *
      * @return PlotSettings
-     * @deprecated use equivalent plot method;
+     * @deprecated use equivalent plot method; please file github issue if one does not exist.
      */
     @Deprecated public PlotSettings getSettings() {
         if (this.settings == null) {
@@ -837,7 +837,7 @@ public class Plot {
                     };
                     for (Plot current : plots) {
                         if (isDelete || current.owner == null) {
-                            manager.unclaimPlot(Plot.this.area, current, null);
+                            manager.unClaimPlot(Plot.this.area, current, null);
                         } else {
                             manager.claimPlot(Plot.this.area, current);
                         }
@@ -1567,13 +1567,19 @@ public class Plot {
      */
     public boolean swapData(Plot plot, Runnable whenDone) {
         if (this.owner == null) {
-            if (plot != null && plot.hasOwner()) {
+            if (plot == null) {
+                return false;
+            }
+            if (plot.hasOwner()) {
                 plot.moveData(this, whenDone);
                 return true;
             }
             return false;
         }
-        if (plot == null || plot.owner == null) {
+        if (plot == null) {
+            this.moveData(plot, whenDone);
+            return true;
+        } else if (plot.owner == null) {
             this.moveData(plot, whenDone);
             return true;
         }
@@ -2900,7 +2906,7 @@ public class Plot {
                         getManager().claimPlot(current.getArea(), current);
                         Plot originPlot = originArea.getPlotAbs(
                             new PlotId(current.id.x - offset.x, current.id.y - offset.y));
-                        originPlot.getManager().unclaimPlot(originArea, originPlot, null);
+                        originPlot.getManager().unClaimPlot(originArea, originPlot, null);
                     }
                     plot.setSign();
                     TaskManager.runTask(whenDone);
