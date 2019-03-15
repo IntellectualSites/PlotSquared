@@ -15,7 +15,7 @@ public class LocationTest {
         Location clone = location1.clone();
         world = "normal";
         logger.info(clone.toString());
-        location1.getBlockVector3()
+        //location1.getBlockVector3();
 
     }
 }

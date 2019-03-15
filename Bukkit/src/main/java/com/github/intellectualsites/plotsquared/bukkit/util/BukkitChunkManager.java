@@ -212,7 +212,7 @@ public class BukkitChunkManager extends ChunkManager {
                 map.saveEntitiesIn(chunk, region);
                 for (int x = bx & 15; x <= (tx & 15); x++) {
                     for (int z = bz & 15; z <= (tz & 15); z++) {
-                        map.saveBlocks(oldBukkitWorld, cxx + x, czz + z, relX, relZ);
+                        map.saveBlocks(oldBukkitWorld, 256, cxx + x, czz + z, relX, relZ);
                     }
                 }
             }
