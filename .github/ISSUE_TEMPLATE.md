@@ -1,3 +1,4 @@
+__*NOTICE: Bukkit/Spigot versions 1.7.10 to 1.12.2 are considered legacy and will receive limited support. Please consider upgrading to 1.13 for future support.*__
 # Bug report template 
 <!--- In order to create a valid issue report you have to follow this template. -->
 <!--- Incomplete reports might be marked as invalid. -->
