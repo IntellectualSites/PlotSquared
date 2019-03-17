@@ -15,13 +15,13 @@ is to provide a lag-free and smooth experience.
 ## Links
 
 * [Download](https://github.com/IntellectualSites/PlotSquared/releases/tag/dev)
-* [[Jenkins (Dev Builds)](https://ci.athion.net/job/PlotSquared-Breaking/)][[Jenkins (Releases)](https://ci.athion.net/job/PlotSquared-Releases/)]
+* [[Jenkins (Dev Builds)](https://ci.athion.net/job/PlotSquared-Breaking/)] [[Jenkins (Releases)](https://ci.athion.net/job/PlotSquared-Releases/)]
 * [Spigot Page](https://www.spigotmc.org/resources/plotsquared.1177/)
 * [Discord](https://discord.gg/ngZCzbU)
 * [Wiki](https://github.com/intellectualcrafters/plotsquared/wiki)
 
 ### Developer Resources
-* [[JavaDoc (Core)](https://incendo.org/javadoc/plotsquared/core/index.html)][[JavaDoc (Bukkit)](https://incendo.org/javadoc/plotsquared/core/index.html)][[[Alternative (Empcraft)](http://empcraft.com/plotsquared/doc/)]
+* [[JavaDoc (Core)](https://incendo.org/javadoc/plotsquared/core/index.html)] [[JavaDoc (Bukkit)](https://incendo.org/javadoc/plotsquared/core/index.html)] [[Alternative (Empcraft)](http://empcraft.com/plotsquared/doc/)]
 * [[Maven Repo (CI)](http://ci.athion.net/job/PlotSquared-Breaking/ws/mvn/)] [[Alternative (Incendo)](https://github.com/IntellectualSites/PlotSquared/wiki/incendo-mvn)]
 * [API Documentation](https://github.com/IntellectualSites/PlotSquared/wiki/Developer-documentation-(WIP))
 
