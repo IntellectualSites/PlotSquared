@@ -21,9 +21,8 @@ is to provide a lag-free and smooth experience.
 * [Wiki](https://github.com/intellectualcrafters/plotsquared/wiki)
 
 ### Developer Resources
-* [[JavaDoc](https://incendo.org/javadoc/plotsquared/core/index.html)][[[Alternative (Empcraft)](http://empcraft.com/plotsquared/doc/)]
-* [[Build Server](http://ci.athion.net/job/PlotSquared/)]
-* [[Maven Repo (CI)](http://ci.athion.net/job/PlotSquared/ws/mvn/)] [[Alternative (Incendo)](https://github.com/IntellectualSites/PlotSquared/wiki/incendo-mvn)]
+* [[JavaDoc (Core)](https://incendo.org/javadoc/plotsquared/core/index.html)][[JavaDoc (Bukkit)](https://incendo.org/javadoc/plotsquared/core/index.html)][[[Alternative (Empcraft)](http://empcraft.com/plotsquared/doc/)]
+* [[Maven Repo (CI)](http://ci.athion.net/job/PlotSquared-Breaking/ws/mvn/)] [[Alternative (Incendo)](https://github.com/IntellectualSites/PlotSquared/wiki/incendo-mvn)]
 * [API Documentation](https://github.com/IntellectualSites/PlotSquared/wiki/Developer-documentation-(WIP))
 
 # Building
