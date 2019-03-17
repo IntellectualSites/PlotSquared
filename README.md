@@ -12,6 +12,8 @@ flags. Such as: weather, time, game modes, pvp status.
 Whilst we provide a whole load of unique features, the biggest focus
 is to provide a lag-free and smooth experience.
 
+***NOTE:** This is the branch for the 1.13+ version of PlotSquared. Switch to the master branch for legacy PlotSquared.*
+
 ## Links
 
 * [Download](https://github.com/IntellectualSites/PlotSquared/releases/tag/dev)
