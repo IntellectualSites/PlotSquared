@@ -25,12 +25,12 @@ is to provide a lag-free and smooth experience.
 
 ### <1.12.2
 * [Download](https://github.com/IntellectualSites/PlotSquared/releases/tag/dev)
-* [Jenkins](https://ci.athion.net/job/PlotSquared/)
+* [Jenkins](https://ci.athion.net/job/PlotSquared-Legacy/)
 
 
 ### Developer Resources
 * [Java Docs](http://empcraft.com/plotsquared/doc/)
-* [Maven Repo](http://ci.athion.net/job/PlotSquared/ws/mvn/)
+* [Maven Repo](http://ci.athion.net/job/PlotSquared-Legacy/ws/mvn/)
 * [API Documentation](https://github.com/IntellectualSites/PlotSquared/wiki/Developer-documentation-(WIP))
 
 # Building
