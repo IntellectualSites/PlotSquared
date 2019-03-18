@@ -12,19 +12,19 @@ flags. Such as: weather, time, game modes, pvp status.
 Whilst we provide a whole load of unique features, the biggest focus
 is to provide a lag-free and smooth experience.
 
+***NOTE:** This is the branch for the 1.13+ version of PlotSquared. Switch to the master branch for legacy PlotSquared.*
+
 ## Links
 
 * [Download](https://github.com/IntellectualSites/PlotSquared/releases/tag/dev)
-* [Jenkins](https://ci.athion.net/job/PlotSquared/)
+* [[Jenkins (Dev Builds)](https://ci.athion.net/job/PlotSquared-Breaking/)] [[Jenkins (Releases)](https://ci.athion.net/job/PlotSquared-Releases/)]
 * [Spigot Page](https://www.spigotmc.org/resources/plotsquared.1177/)
 * [Discord](https://discord.gg/ngZCzbU)
 * [Wiki](https://github.com/intellectualcrafters/plotsquared/wiki)
 
 ### Developer Resources
-* [JavaDocs](http://empcraft.com/plotsquared/doc/)
-* [[Git Mirror](https://incendo.org/git/sauilitired/PlotSquared/)]
-* [[Build Server](http://ci.athion.net/job/PlotSquared/)] [[Alternative](https://incendo.org/ci/job/PlotSquared/)]
-* [[Maven Repo](http://ci.athion.net/job/PlotSquared/ws/mvn/)] [[Alternative](https://incendo.org/ci/job/PlotSquared/ws/mvn/)]
+* [[JavaDoc (Core)](https://incendo.org/javadoc/plotsquared/core/index.html)] [[JavaDoc (Bukkit)](https://incendo.org/javadoc/plotsquared/core/index.html)] [[Alternative (Empcraft)](http://empcraft.com/plotsquared/doc/)]
+* [[Maven Repo (CI)](http://ci.athion.net/job/PlotSquared-Breaking/ws/mvn/)] [[Alternative (Incendo)](https://github.com/IntellectualSites/PlotSquared/wiki/incendo-mvn)]
 * [API Documentation](https://github.com/IntellectualSites/PlotSquared/wiki/Developer-documentation-(WIP))
 
 # Building
