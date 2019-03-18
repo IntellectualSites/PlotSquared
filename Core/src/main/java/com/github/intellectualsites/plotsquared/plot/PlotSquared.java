@@ -76,6 +76,7 @@ import java.util.zip.ZipInputStream;
     @Setter @Getter private ILogger logger;
     // Platform / Version / Update URL
     private PlotVersion version;
+    @Nullable @Getter private UpdateUtility updateUtility;
     // Files and configuration
     @Getter private File jarFile = null; // This file
     private File storageFile;
@@ -1610,6 +1611,24 @@ import java.util.zip.ZipInputStream;
             }
         }
         Settings.load(configFile);
+        try {
+            copyFile("updater.properties", "config");
+            try (BufferedReader bufferedReader =
+                new BufferedReader(new InputStreamReader(new FileInputStream(new File(new File(this.IMP.getDirectory(),
+                    "config"), "updater.properties"))))) {
+                final Properties properties = new Properties();
+                properties.load(bufferedReader);
+                final boolean enabled = Boolean.valueOf(properties.getOrDefault("enabled", true).toString());
+                if (enabled) {
+                    this.updateUtility = new UpdateUtility(properties.getProperty("path"),
+                        properties.getProperty("job"), properties.getProperty("artifact"));
+                }
+            } catch (final IOException throwable) {
+                throwable.printStackTrace();
+            }
+        } catch (final Throwable throwable) {
+            throwable.printStackTrace();
+        }
         try (InputStream stream = getClass().getResourceAsStream("/plugin.properties");
             BufferedReader br = new BufferedReader(new InputStreamReader(stream))) {
             //java.util.Scanner scanner = new java.util.Scanner(stream).useDelimiter("\\A");

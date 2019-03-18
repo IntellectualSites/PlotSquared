@@ -631,6 +631,29 @@ import java.util.regex.Pattern;
             }
             EventUtil.manager.doJoinTask(pp);
         }, 20);
+
+        if (pp.hasPermission(Captions.PERMISSION_ADMIN_UPDATE_NOTIFICATION.s()) &&
+            PlotSquared.get().getUpdateUtility() != null) {
+                final UpdateUtility updateUtility = PlotSquared.get().getUpdateUtility();
+                final BukkitMain bukkitMain = BukkitMain.getPlugin(BukkitMain.class);
+                updateUtility.checkForUpdate(bukkitMain.getPluginVersionString(), ((updateDescription, throwable) -> {
+                    if (throwable != null) {
+                        bukkitMain.getLogger().severe(String.format("Could not check for update. Reason: %s",
+                            throwable.getMessage()));
+                    } else {
+                        if (updateDescription != null) {
+                            new PlotMessage("-------- ").color("$2").text("PlotSquared Update Notification").color("$1").text(" --------").color("$2")
+                                .send(pp);
+                            new PlotMessage("There appears to be a PlotSquared update available!").color("$1").send(pp);
+                            new PlotMessage(String.format("You are running version %s,"
+                                + " the newest available version is %s", bukkitMain.getPluginVersionString(), updateDescription.getVersion())).color("$1").send(pp);
+                            new PlotMessage("Update URL").color("$1").text(": ").color("$2").text(updateDescription.getUrl()).tooltip("Download update").send(pp);
+                            new PlotMessage("-------- ").color("$2").text("PlotSquared Update Notification").color("$1").text(" --------").color("$2")
+                                .send(pp);
+                        }
+                    }
+                }));
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

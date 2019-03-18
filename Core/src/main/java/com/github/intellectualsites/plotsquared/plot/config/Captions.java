@@ -41,7 +41,8 @@ public enum Captions {
         "plots.admin.interact.blockedcommands", "static.permissions"), PERMISSION_WORLDEDIT_BYPASS(
         "plots.worldedit.bypass", "static.permissions"), PERMISSION_PLOT_TOGGLE_TITLES(
         "plots.toggle.titles", "static.permissions"), PERMISSION_PLOT_TOGGLE_CHAT(
-        "plots.toggle.chat", "static.permissions"), PERMISSION_ADMIN_EXIT_DENIED(
+        "plots.toggle.chat", "static.permissions"), PERMISSION_ADMIN_UPDATE_NOTIFICATION(
+        "plots.admin.update.notify", "static.permissions"), PERMISSION_ADMIN_EXIT_DENIED(
         "plots.admin.exit.denied", "static.permissions"), PERMISSION_ADMIN_ENTRY_DENIED(
         "plots.admin.entry.denied", "static.permissions"), PERMISSION_ADMIN_ENTRY_FORCEFIELD(
         "plots.admin.entry.forcefield", "static.permissions"), PERMISSION_COMMANDS_CHAT(
@@ -1066,5 +1067,4 @@ public enum Captions {
         } else {
             caller.sendMessage(msg);
         }
-    }
-}
+    }}
