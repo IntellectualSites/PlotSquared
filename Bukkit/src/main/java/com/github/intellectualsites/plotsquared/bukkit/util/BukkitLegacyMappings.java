@@ -663,7 +663,6 @@ public final class BukkitLegacyMappings extends LegacyMappings {
             new LegacyBlock(2266, "record_11", "music_disc_11"),
             new LegacyBlock(2267, "record_12", "music_disc_wait")};
 
-    // private static final Map<Integer, PlotBlock> LEGACY_ID_TO_STRING_PLOT_BLOCK = new HashMap<>();
     private static final Map<IdDataPair, PlotBlock> LEGACY_ID_AND_DATA_TO_STRING_PLOT_BLOCK =
         new HashMap<>();
     private static final Map<String, PlotBlock> NEW_STRING_TO_LEGACY_PLOT_BLOCK = new HashMap<>();
@@ -686,13 +685,6 @@ public final class BukkitLegacyMappings extends LegacyMappings {
 
     private void addAll(@NonNull final Collection<LegacyBlock> blocks) {
         for (final LegacyBlock legacyBlock : blocks) {
-            // LEGACY_ID_TO_STRING_PLOT_BLOCK
-            //     .put(legacyBlock.getNumericalId(), legacyBlock.toStringPlotBlock());
-            /*if (legacyBlock.getDataValue() != 0) {
-                LEGACY_ID_AND_DATA_TO_STRING_PLOT_BLOCK
-                    .put(new IdDataPair(legacyBlock.getNumericalId(), legacyBlock.getDataValue()),
-                        legacyBlock.toStringPlotBlock());
-            } */
             LEGACY_ID_AND_DATA_TO_STRING_PLOT_BLOCK
                 .put(new IdDataPair(legacyBlock.getNumericalId(), legacyBlock.getDataValue()),
                     legacyBlock.toStringPlotBlock());
@@ -740,19 +732,29 @@ public final class BukkitLegacyMappings extends LegacyMappings {
         }
         String workingString = string;
         String[] parts = null;
+        IdDataPair idDataPair = null;
         if (string.contains(":")) {
             parts = string.split(":");
             if (parts.length > 1) {
                 if (parts[0].equalsIgnoreCase("minecraft")) {
                     workingString = parts[1];
                 } else {
-                    workingString = parts[0];
+                    if (parts[0].matches("^\\d+$")) {
+                        idDataPair =
+                            new IdDataPair(Integer.parseInt(parts[0]), Integer.parseInt(parts[0]));
+                    } else {
+                        workingString = parts[0];
+                    }
                 }
             }
+        } else if (string.matches("^\\d+$")) {
+            idDataPair = new IdDataPair(Integer.parseInt(parts[0]), 0);
         }
         PlotBlock plotBlock;
         if (NEW_STRING_TO_LEGACY_PLOT_BLOCK.keySet().contains(workingString.toLowerCase())) {
             return PlotBlock.get(workingString);
+        } else if ((plotBlock = fromLegacyToString(idDataPair)) != null) {
+            return plotBlock;
         } else if ((plotBlock = fromLegacyToString(workingString)) != null) {
             return plotBlock;
         } else {
@@ -772,6 +774,13 @@ public final class BukkitLegacyMappings extends LegacyMappings {
 
     public PlotBlock fromLegacyToString(final int id, final int data) {
         return LEGACY_ID_AND_DATA_TO_STRING_PLOT_BLOCK.get(new IdDataPair(id, data));
+    }
+
+    public PlotBlock fromLegacyToString(IdDataPair idDataPair) {
+        if (idDataPair == null) {
+            return null;
+        }
+        return LEGACY_ID_AND_DATA_TO_STRING_PLOT_BLOCK.get(idDataPair);
     }
 
     public PlotBlock fromLegacyToString(final String id) {
