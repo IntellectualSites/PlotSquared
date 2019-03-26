@@ -63,6 +63,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             Settings.load(new File("plugins/PlotSquared/config/settings.yml"));
         } catch (Throwable ignored) {
         }
+
         // Force WorldEdit to load
         try {
             System.out.println("[P2] Force loading WorldEdit");

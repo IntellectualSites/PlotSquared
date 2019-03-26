@@ -7,8 +7,6 @@ import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
 import com.sk89q.worldedit.world.block.BaseBlock;
 
-import java.util.HashMap;
-
 public class HybridGen extends IndependentPlotGenerator {
 
     @Override public String getName() {
@@ -121,7 +119,6 @@ public class HybridGen extends IndependentPlotGenerator {
             }
         }
         // generation
-        HashMap<Integer, BaseBlock[]> sch = hpw.G_SCH;
         for (short x = 0; x < 16; x++) {
             if (gx[x]) {
                 for (short z = 0; z < 16; z++) {

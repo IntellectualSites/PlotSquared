@@ -7,16 +7,14 @@ import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class ChunkManager {
 
     public static ChunkManager manager = null;
-    private static RunnableVal<ScopedLocalBlockQueue> CURRENT_FORCE_CHUNK;
-    private static RunnableVal<ScopedLocalBlockQueue> CURRENT_ADD_CHUNK;
+    private static final Map<ChunkLoc, RunnableVal<ScopedLocalBlockQueue>> forceChunks = new ConcurrentHashMap<>();
+    private static final Map<ChunkLoc, RunnableVal<ScopedLocalBlockQueue>> addChunks = new ConcurrentHashMap<>();
 
     public static ChunkLoc getChunkChunk(Location location) {
         int x = location.getX() >> 9;
@@ -43,27 +41,29 @@ public abstract class ChunkManager {
             }
             queue.flush();
         } else {
-            CURRENT_FORCE_CHUNK = force;
-            CURRENT_ADD_CHUNK = add;
+            forceChunks.put(loc, force);
+            addChunks.put(loc, add);
             queue.regenChunk(loc.x, loc.z);
-            CURRENT_FORCE_CHUNK = null;
-            CURRENT_ADD_CHUNK = null;
+            forceChunks.remove(loc);
+            addChunks.remove(loc);
         }
     }
 
-    public static boolean preProcessChunk(ScopedLocalBlockQueue queue) {
-        if (CURRENT_FORCE_CHUNK != null) {
-            CURRENT_FORCE_CHUNK.run(queue);
-            CURRENT_FORCE_CHUNK = null;
+    public static boolean preProcessChunk(ChunkLoc loc, ScopedLocalBlockQueue queue) {
+        final RunnableVal<ScopedLocalBlockQueue> forceChunk = forceChunks.get(loc);
+        if (forceChunk != null) {
+            forceChunk.run(queue);
+            forceChunks.remove(loc);
             return true;
         }
         return false;
     }
 
-    public static boolean postProcessChunk(ScopedLocalBlockQueue queue) {
-        if (CURRENT_ADD_CHUNK != null) {
-            CURRENT_ADD_CHUNK.run(queue);
-            CURRENT_ADD_CHUNK = null;
+    public static boolean postProcessChunk(ChunkLoc loc, ScopedLocalBlockQueue queue) {
+        final RunnableVal<ScopedLocalBlockQueue> addChunk = forceChunks.get(loc);
+        if (addChunk != null) {
+            addChunk.run(queue);
+            addChunks.remove(loc);
             return true;
         }
         return false;

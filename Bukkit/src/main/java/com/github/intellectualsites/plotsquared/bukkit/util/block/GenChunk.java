@@ -30,7 +30,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
     public int cz;
     @Getter @Setter private ChunkData cd = null;
 
-    public GenChunk(Chunk chunk, ChunkWrapper wrap) {
+    public GenChunk() {
         super(null, new Location(null, 0, 0, 0), new Location(null, 15, 255, 15));
         this.biomes = Biome.values();
     }
@@ -167,8 +167,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
     }
 
     public GenChunk clone() {
-        GenChunk toReturn =
-            new GenChunk(chunk, new ChunkWrapper(getWorld(), chunk.getX(), chunk.getZ()));
+        GenChunk toReturn = new GenChunk();
         if (this.result != null) {
             for (int i = 0; i < this.result.length; i++) {
                 PlotBlock[] matrix = this.result[i];

@@ -1,0 +1,34 @@
+package com.github.intellectualsites.plotsquared.bukkit.generator;
+
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
+import com.github.intellectualsites.plotsquared.plot.object.ChunkWrapper;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
+import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
+import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
+import lombok.RequiredArgsConstructor;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.generator.BlockPopulator;
+
+import java.util.Random;
+
+@RequiredArgsConstructor final class PlotBlockPopulator extends BlockPopulator {
+
+    private final IndependentPlotGenerator plotGenerator;
+    private LocalBlockQueue queue;
+
+    @Override public void populate(final World world, final Random random, final Chunk source) {
+        if (this.queue == null) {
+            this.queue = GlobalBlockQueue.IMP.getNewQueue(world.getName(), false);
+        }
+        final PlotArea area = PlotSquared.get().getPlotArea(world.getName(), null);
+        final ChunkWrapper wrap = new ChunkWrapper(area.worldname, source.getX(), source.getZ());
+        final ScopedLocalBlockQueue chunk = this.queue.getForChunk(wrap.x, wrap.z);
+        if (this.plotGenerator.populateChunk(chunk, area)) {
+            this.queue.flush();
+        }
+    }
+
+}
