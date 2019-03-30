@@ -160,9 +160,15 @@ public class ExpireManager {
                 applicable.add(et);
             }
         }
+
         if (applicable.isEmpty()) {
             return new ArrayList<>();
         }
+
+        if (MainUtil.isServerOwned(plot)) {
+            return new ArrayList<>();
+        }
+
         boolean shouldCheckAccountAge = false;
 
         long diff = getAge(plot);
@@ -366,12 +372,12 @@ public class ExpireManager {
         int changes = changed == null ? 0 : changed.changes_sd;
         int modified = changed == null ? 0 : changed.changes;
         PlotSquared.debug(
-            "$2[&5Expire&dManager$2] &cDeleted expired plot: " + plot + " User:" + plot.owner
+            "$2[&5Expire&dManager$2] &cDeleted expired plot: " + plot + " User:" + plot.getOwner()
                 + " Delta:" + changes + "/" + modified + " Connected: " + StringMan
                 .getString(plots));
         PlotSquared.debug("$4 - Area: " + plot.getArea());
         if (plot.hasOwner()) {
-            PlotSquared.debug("$4 - Owner: " + UUIDHandler.getName(plot.owner));
+            PlotSquared.debug("$4 - Owner: " + UUIDHandler.getName(plot.getOwner()));
         } else {
             PlotSquared.debug("$4 - Owner: Unowned");
         }
@@ -406,8 +412,8 @@ public class ExpireManager {
     }
 
     public long getAccountAge(Plot plot) {
-        if (!plot.hasOwner() || Objects.equals(DBFunc.EVERYONE, plot.owner)
-            || UUIDHandler.getPlayer(plot.owner) != null || plot.getRunning() > 0) {
+        if (!plot.hasOwner() || Objects.equals(DBFunc.EVERYONE, plot.getOwner())
+            || UUIDHandler.getPlayer(plot.getOwner()) != null || plot.getRunning() > 0) {
             return Long.MAX_VALUE;
         }
         long max = 0;
@@ -419,8 +425,8 @@ public class ExpireManager {
     }
 
     public long getAge(Plot plot) {
-        if (!plot.hasOwner() || Objects.equals(DBFunc.EVERYONE, plot.owner)
-            || UUIDHandler.getPlayer(plot.owner) != null || plot.getRunning() > 0) {
+        if (!plot.hasOwner() || Objects.equals(DBFunc.EVERYONE, plot.getOwner())
+            || UUIDHandler.getPlayer(plot.getOwner()) != null || plot.getRunning() > 0) {
             return 0;
         }
         Optional<?> keep = plot.getFlag(Flags.KEEP);

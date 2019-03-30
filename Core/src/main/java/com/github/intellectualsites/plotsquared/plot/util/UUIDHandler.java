@@ -1,6 +1,8 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
+import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
@@ -97,6 +99,9 @@ public class UUIDHandler {
     public static String getName(UUID uuid) {
         if (implementation == null) {
             return null;
+        }
+        if (uuid.equals(DBFunc.SERVER)) {
+            return Captions.SERVER.s();
         }
         return implementation.getName(uuid);
     }

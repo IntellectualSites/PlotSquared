@@ -20,7 +20,7 @@ public class InboxReport extends CommentInbox {
     }
 
     @Override public boolean addComment(Plot plot, PlotComment comment) {
-        if (plot.owner == null) {
+        if (plot.getOwner() == null) {
             return false;
         }
         DBFunc.setComment(plot, comment);

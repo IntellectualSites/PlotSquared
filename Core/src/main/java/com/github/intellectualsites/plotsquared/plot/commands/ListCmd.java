@@ -246,7 +246,7 @@ public class ListCmd extends SubCommand {
                 }
                 plots = new ArrayList<>();
                 for (Plot plot : PlotSquared.get().getPlots()) {
-                    if (plot.owner == null) {
+                    if (plot.getOwner() == null) {
                         plots.add(plot);
                     }
                 }
@@ -259,10 +259,10 @@ public class ListCmd extends SubCommand {
                 }
                 plots = new ArrayList<>();
                 for (Plot plot : PlotSquared.get().getPlots()) {
-                    if (plot.owner == null) {
+                    if (plot.getOwner() == null) {
                         continue;
                     }
-                    if (UUIDHandler.getName(plot.owner) == null) {
+                    if (UUIDHandler.getName(plot.getOwner()) == null) {
                         plots.add(plot);
                     }
                 }
@@ -352,7 +352,7 @@ public class ListCmd extends SubCommand {
             new RunnableVal3<Integer, Plot, PlotMessage>() {
                 @Override public void run(Integer i, Plot plot, PlotMessage message) {
                     String color;
-                    if (plot.owner == null) {
+                    if (plot.getOwner() == null) {
                         color = "$3";
                     } else if (plot.isOwner(player.getUUID())) {
                         color = "$1";

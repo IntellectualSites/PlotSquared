@@ -670,6 +670,8 @@ public enum Captions {
 
     NEVER("Never", "Info"), UNKNOWN("Unknown", "Info"),
 
+    SERVER("Server", "Info"),
+
     EVERYONE("Everyone", "Info"), PLOT_UNOWNED(
         "$2The current plot must have an owner to perform this action", "Info"),
 

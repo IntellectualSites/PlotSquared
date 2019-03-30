@@ -91,7 +91,7 @@ import java.util.UUID;
                 }
             };
             UUID uuid = player.getUUID();
-            String name = MainUtil.getName(plot.owner);
+            String name = MainUtil.getName(plot.getOwner());
             inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cPlot Info",
                 "&cID: &6" + plot.getId().toString(), "&cOwner: &6" + name,
                 "&cAlias: &6" + plot.getAlias(),

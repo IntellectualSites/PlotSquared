@@ -53,10 +53,12 @@ public class Plot {
     private static HashSet<RegionWrapper> regions_cache;
 
     private final PlotId id;
+
     /**
      * plot owner
      * (Merged plots can have multiple owners)
      * Direct access is Deprecated: use getOwners()
+     * @deprecated
      */
     @Deprecated public UUID owner;
     /**
@@ -324,18 +326,31 @@ public class Plot {
      * @return if the provided uuid is the owner of the plot
      */
     public boolean isOwner(@Nonnull UUID uuid) {
-        if (uuid.equals(this.owner)) {
+        if (uuid.equals(this.getOwner())) {
             return true;
         }
         if (!isMerged()) {
             return false;
         }
         Set<Plot> connected = getConnectedPlots();
-        return connected.stream().anyMatch(current -> uuid.equals(current.owner));
+        return connected.stream().anyMatch(current -> uuid.equals(current.getOwner()));
     }
 
     public boolean isOwnerAbs(UUID uuid) {
         return uuid.equals(this.owner);
+    }
+
+    /**
+     * plot owner
+     * (Merged plots can have multiple owners)
+     * Direct access is Deprecated: use getOwners()
+     * @deprecated
+     */
+    @Deprecated public UUID getOwner() {
+        if (MainUtil.isServerOwned(this)) {
+            return DBFunc.SERVER;
+        }
+        return this.owner;
     }
 
     /**
@@ -347,25 +362,25 @@ public class Plot {
      * @return the plot owners
      */
     public Set<UUID> getOwners() {
-        if (this.owner == null) {
+        if (this.getOwner() == null) {
             return ImmutableSet.of();
         }
         if (isMerged()) {
             Set<Plot> plots = getConnectedPlots();
             Plot[] array = plots.toArray(new Plot[plots.size()]);
             ImmutableSet.Builder<UUID> owners = ImmutableSet.builder();
-            UUID last = this.owner;
-            owners.add(this.owner);
+            UUID last = this.getOwner();
+            owners.add(this.getOwner());
             for (Plot current : array) {
-                if (last == null || current.owner.getMostSignificantBits() != last
+                if (last == null || current.getOwner().getMostSignificantBits() != last
                     .getMostSignificantBits()) {
-                    owners.add(current.owner);
-                    last = current.owner;
+                    owners.add(current.getOwner());
+                    last = current.getOwner();
                 }
             }
             return owners.build();
         }
-        return ImmutableSet.of(this.owner);
+        return ImmutableSet.of(this.getOwner());
     }
 
     /**
@@ -1443,7 +1458,7 @@ public class Plot {
         }
         setSign(player.getName());
         MainUtil.sendMessage(player, Captions.CLAIMED);
-        if (teleport) {
+        if (teleport && Settings.Teleport.ON_CLAIM) {
             teleportPlayer(player);
         }
         PlotArea plotworld = getArea();
@@ -1579,7 +1594,7 @@ public class Plot {
         if (plot == null) {
             this.moveData(plot, whenDone);
             return true;
-        } else if (plot.owner == null) {
+        } else if (plot.getOwner() == null) {
             this.moveData(plot, whenDone);
             return true;
         }
@@ -2979,7 +2994,7 @@ public class Plot {
         // copy data
         for (Plot plot : plots) {
             Plot other = plot.getRelative(destination.getArea(), offset.x, offset.y);
-            other.create(plot.owner, false);
+            other.create(plot.getOwner(), false);
             if (!plot.getFlags().isEmpty()) {
                 other.getSettings().flags = plot.getFlags();
                 DBFunc.setFlags(other, plot.getFlags());

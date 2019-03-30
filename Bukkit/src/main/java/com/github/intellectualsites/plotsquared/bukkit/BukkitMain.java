@@ -217,7 +217,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 }
                 final Plot plot = area.getOwnedPlot(id);
                 if (plot != null) {
-                    if (PlotPlayer.wrap(plot.owner) == null) {
+                    if (!MainUtil.isServerOwned(plot) || PlotPlayer.wrap(plot.getOwner()) == null) {
                         if (world.getKeepSpawnInMemory()) {
                             world.setKeepSpawnInMemory(false);
                             return;

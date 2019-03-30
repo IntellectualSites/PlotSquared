@@ -169,7 +169,7 @@ public class PlotListener {
                             replacements.put("%world%", plot.getArea().toString());
                             replacements.put("%greeting%", greeting);
                             replacements.put("%alias", plot.toString());
-                            replacements.put("%s", MainUtil.getName(plot.owner));
+                            replacements.put("%s", MainUtil.getName(plot.getOwner()));
                             String main = StringMan
                                 .replaceFromMap(Captions.TITLE_ENTERED_PLOT.s(), replacements);
                             String sub = StringMan

@@ -335,11 +335,18 @@ public class MainUtil {
         if (owner.equals(DBFunc.EVERYONE)) {
             return Captions.EVERYONE.s();
         }
+        if (owner.equals(DBFunc.SERVER)) {
+            return Captions.SERVER.s();
+        }
         String name = UUIDHandler.getName(owner);
         if (name == null) {
             return Captions.UNKNOWN.s();
         }
         return name;
+    }
+
+    public static boolean isServerOwned(Plot plot) {
+        return plot.getFlag(Flags.SERVER_PLOT).orElse(false);
     }
 
     /**

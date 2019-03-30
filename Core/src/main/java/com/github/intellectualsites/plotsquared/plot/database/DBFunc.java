@@ -19,6 +19,7 @@ public class DBFunc {
      */
     // TODO: Use this instead. public static final UUID EVERYONE = UUID.fromString("4aa2aaa4-c06b-485c-bc58-186aa1780d9b");
     public static final UUID EVERYONE = UUID.fromString("1-1-3-3-7");
+    public static final UUID SERVER = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     /**
      * Abstract Database Manager
