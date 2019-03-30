@@ -337,7 +337,7 @@ public class Plot {
     }
 
     public boolean isOwnerAbs(UUID uuid) {
-        return uuid.equals(this.owner);
+        return uuid.equals(this.getOwner());
     }
 
     /**
