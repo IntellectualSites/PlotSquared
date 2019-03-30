@@ -28,6 +28,7 @@ public final class Flags {
     public static final BooleanFlag NOTIFY_LEAVE = new BooleanFlag("notify-leave");
     public static final BooleanFlag TITLES = new BooleanFlag("titles");
     public static final BooleanFlag NOTIFY_ENTER = new BooleanFlag("notify-enter");
+    public static final BooleanFlag HIDE_INFO = new BooleanFlag("hide-info");
     public static final LongFlag TIME = new LongFlag("time");
     public static final PlotWeatherFlag WEATHER = new PlotWeatherFlag("weather");
     public static final DoubleFlag PRICE = new DoubleFlag("price") {

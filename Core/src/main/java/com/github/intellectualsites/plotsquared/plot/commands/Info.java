@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
+import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
@@ -10,7 +11,7 @@ import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import java.util.UUID;
 
 @CommandDeclaration(command = "info", aliases = "i", description = "Display plot info",
-    usage = "/plot info <id>", category = CommandCategory.INFO) public class Info
+    usage = "/plot info <id> [-f, to force info]", category = CommandCategory.INFO) public class Info
     extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
@@ -53,6 +54,7 @@ import java.util.UUID;
             MainUtil.sendMessage(player, Captions.NOT_IN_PLOT.s());
             return false;
         }
+
         if (arg != null) {
             if (args.length == 1) {
                 args = new String[0];
@@ -60,6 +62,26 @@ import java.util.UUID;
                 args = new String[] {args[1]};
             }
         }
+
+        // hide-info flag
+        if (plot.getFlag(Flags.HIDE_INFO).orElse(false)) {
+            boolean allowed = false;
+            for (final String argument : args) {
+                if (argument.equalsIgnoreCase("-f")) {
+                    if (!player.hasPermission(Captions.PERMISSION_AREA_INFO_FORCE.s())) {
+                        Captions.NO_PERMISSION.send(player, Captions.PERMISSION_AREA_INFO_FORCE);
+                        return true;
+                    }
+                    allowed = true;
+                    break;
+                }
+            }
+            if (!allowed) {
+                Captions.PLOT_INFO_HIDDEN.send(player);
+                return true;
+            }
+        }
+
         if (args.length == 1 && args[0].equalsIgnoreCase("inv")) {
             PlotInventory inv = new PlotInventory(player) {
                 @Override public boolean onClick(int index) {

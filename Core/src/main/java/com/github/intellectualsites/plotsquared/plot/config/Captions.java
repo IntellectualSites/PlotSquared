@@ -65,6 +65,7 @@ public enum Captions {
         "plots.admin.command.trust", "static.permissions"), PERMISSION_TRUST_EVERYONE(
         "plots.trust.everyone", "static.permissions"), PERMISSION_AREA_CREATE("plots.area.create",
         "static.permissions"), PERMISSION_AREA_INFO("plots.area.info",
+        "static.permissions"), PERMISSION_AREA_INFO_FORCE("plots.admin.info.force",
         "static.permissions"), PERMISSION_AREA_LIST("plots.area.list",
         "static.permissions"), PERMISSION_AREA_REGEN("plots.area.regen",
         "static.permissions"), PERMISSION_AREA_TP("plots.area.tp",
@@ -675,6 +676,8 @@ public enum Captions {
     PLOT_INFO_UNCLAIMED("$2Plot $1%s$2 is not yet claimed", "Info"), PLOT_INFO_HEADER(
         "$3&m---------&r $1INFO $3&m---------", false, "Info"),
 
+    PLOT_INFO_HIDDEN("$2You cannot view the information about this plot", "Info"),
+
     PLOT_INFO("$1ID: $2%id%$1&-" + "$1Alias: $2%alias%$1&-" + "$1Owner: $2%owner%$1&-"
         + "$1Biome: $2%biome%$1&-" + "$1Can Build: $2%build%$1&-" + "$1Rating: $2%rating%&-"
         + "$1Seen: $2%seen%&-" + "$1Trusted: $2%trusted%$1&-" + "$1Members: $2%members%$1&-"
@@ -1067,4 +1070,5 @@ public enum Captions {
         } else {
             caller.sendMessage(msg);
         }
-    }}
+    }
+}
