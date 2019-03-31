@@ -30,11 +30,11 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
     }
 
     public boolean isWorld(String id) {
-        int mode = 0;
         char[] chars = id.toCharArray();
         if (chars.length == 1 && chars[0] == '*') {
             return true;
         }
+        int mode = 0;
         for (int i = 0; i < chars.length; i++) {
             char c = chars[i];
             switch (mode) {
@@ -65,7 +65,7 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
                     continue;
             }
         }
-        return true;
+        return mode == 3;
     }
 
     @Override public PlotArea getApplicablePlotArea(Location location) {
@@ -74,9 +74,9 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
             return found;
         }
         String world = location.getWorld();
-        return isWorld(world) || world.equals("*") || super.getAllPlotAreas().length == 0 ?
+        return isWorld(world) || world.equals("*") ?
             area :
-            null;
+            super.getApplicablePlotArea(location);
     }
 
     @Override public PlotArea getPlotArea(String world, String id) {
@@ -84,7 +84,7 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
         if (found != null) {
             return found;
         }
-        return isWorld(world) || world.equals("*") ? area : null;
+        return isWorld(world) || world.equals("*") ? area : super.getPlotArea(world, id);
     }
 
     @Override public PlotArea getPlotArea(Location location) {
@@ -100,7 +100,7 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
         if (found != null && found.length != 0) {
             return found;
         }
-        return isWorld(world) || world.equals("*") ? array : noPlotAreas;
+        return isWorld(world) || world.equals("*") ? array : all.length == 0 ? noPlotAreas : super.getPlotAreas(world, region);
     }
 
     @Override public PlotArea[] getAllPlotAreas() {
