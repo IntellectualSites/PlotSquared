@@ -748,7 +748,7 @@ public final class BukkitLegacyMappings extends LegacyMappings {
                 }
             }
         } else if (string.matches("^\\d+$")) {
-            idDataPair = new IdDataPair(Integer.parseInt(parts[0]), 0);
+            idDataPair = new IdDataPair(Integer.parseInt(string), 0);
         }
         PlotBlock plotBlock;
         if (NEW_STRING_TO_LEGACY_PLOT_BLOCK.keySet().contains(workingString.toLowerCase())) {
