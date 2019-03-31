@@ -113,12 +113,14 @@ import java.util.Map;
         for (final String world : worlds) {
             final ConfigurationSection worldSection = configuration.getConfigurationSection(world);
             for (final Map.Entry<String, ConfigurationType> entry : TYPE_MAP.entrySet()) {
-                if (entry.getValue() == ConfigurationType.BLOCK) {
-                    this.convertBlock(worldSection, entry.getKey(),
-                        worldSection.getString(entry.getKey()));
-                } else {
-                    this.convertBlockList(worldSection, entry.getKey(),
-                        worldSection.getStringList(entry.getKey()));
+                if (worldSection.contains(entry.getKey())) {
+                    if (entry.getValue() == ConfigurationType.BLOCK) {
+                        this.convertBlock(worldSection, entry.getKey(),
+                                worldSection.getString(entry.getKey()));
+                    } else {
+                        this.convertBlockList(worldSection, entry.getKey(),
+                                worldSection.getStringList(entry.getKey()));
+                    }
                 }
             }
         }
