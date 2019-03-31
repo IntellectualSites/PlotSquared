@@ -246,7 +246,8 @@ public abstract class PlotArea {
         this.SCHEMATIC_ON_CLAIM = config.getBoolean("schematic.on_claim");
         this.SCHEMATIC_FILE = config.getString("schematic.file");
         this.SCHEMATIC_CLAIM_SPECIFY = config.getBoolean("schematic.specify_on_claim");
-        this.SCHEMATICS = config.getStringList("schematic.schematics");
+        this.SCHEMATICS = new ArrayList<>(config.getStringList("schematic.schematics"));
+        this.SCHEMATICS.replaceAll(String::toLowerCase);
         this.USE_ECONOMY = config.getBoolean("economy.use") && EconHandler.getEconHandler() != null;
         ConfigurationSection priceSection = config.getConfigurationSection("economy.prices");
         if (this.USE_ECONOMY) {
