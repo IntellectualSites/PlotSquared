@@ -88,7 +88,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
         int maxx = Math.max(pos1.getX(), pos2.getX());
         int maxy = Math.max(pos1.getY(), pos2.getY());
         int maxz = Math.max(pos1.getZ(), pos2.getZ());
-        cd.setRegion(minx, miny, minz, maxx, maxy, maxz, block.to(Material.class));
+        cd.setRegion(minx, miny, minz, maxx + 1, maxy + 1, maxz + 1, block.to(Material.class));
     }
 
     @Override public boolean setBiome(int x, int z, String biome) {
