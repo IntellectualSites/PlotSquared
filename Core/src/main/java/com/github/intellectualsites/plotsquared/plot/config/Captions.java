@@ -840,6 +840,8 @@ public enum Captions {
     HELP_INFO_ITEM("$1/plot help %category% $3- $2%category_desc%", "Help"), HELP_ITEM(
         "$1%usage% [%alias%]&- $3- $2%desc%&-", "Help"),
 
+    HELP_DISPLAY_ALL_COMMANDS("Display all commands", "Help"),
+
     BUCKET_ENTRIES_IGNORED(
         "$2Total bucket values add up to 1 or more. Blocks without a spcified chance will be ignored",
         "Generator_Bucket"),

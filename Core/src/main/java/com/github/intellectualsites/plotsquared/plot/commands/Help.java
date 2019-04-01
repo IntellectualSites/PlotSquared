@@ -83,7 +83,7 @@ public class Help extends Command {
                         "%category_desc%", c.toString()));
             }
             builder.append("\n").append(Captions.HELP_INFO_ITEM.s().replaceAll("%category%", "all")
-                .replaceAll("%category_desc%", "Display all commands"));
+                .replaceAll("%category_desc%", Captions.HELP_DISPLAY_ALL_COMMANDS.s()));
             builder.append("\n" + Captions.HELP_FOOTER.s());
             MainUtil.sendMessage(player, builder.toString(), false);
             return;
