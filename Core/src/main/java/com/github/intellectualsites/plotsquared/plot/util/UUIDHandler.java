@@ -100,7 +100,7 @@ public class UUIDHandler {
         if (implementation == null) {
             return null;
         }
-        if (uuid.equals(DBFunc.SERVER)) {
+        if (uuid != null && uuid.equals(DBFunc.SERVER)) {
             return Captions.SERVER.s();
         }
         return implementation.getName(uuid);
