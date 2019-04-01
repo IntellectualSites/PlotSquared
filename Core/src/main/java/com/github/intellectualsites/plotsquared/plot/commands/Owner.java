@@ -27,7 +27,7 @@ import java.util.UUID;
             }
         } else {
             uuid = UUIDHandler.getUUID(value, null);
-            name = UUIDHandler.getName(uuid);
+            name = uuid == null ? value : UUIDHandler.getName(uuid);
             name = name == null ? value : name;
         }
         if (uuid == null || value.equalsIgnoreCase("-")) {

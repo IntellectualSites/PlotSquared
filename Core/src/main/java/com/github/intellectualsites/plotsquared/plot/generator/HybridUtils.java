@@ -238,13 +238,14 @@ public abstract class HybridUtils {
         final String dir =
             "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.getArea()
                 .toString() + File.separator;
+
         SchematicHandler.manager.getCompoundTag(world, sideRoad, new RunnableVal<CompoundTag>() {
             @Override public void run(CompoundTag value) {
-                SchematicHandler.manager.save(value, dir + "sideroad.schematic");
+                SchematicHandler.manager.save(value, dir + "sideroad.schem");
                 SchematicHandler.manager
                     .getCompoundTag(world, intersection, new RunnableVal<CompoundTag>() {
                         @Override public void run(CompoundTag value) {
-                            SchematicHandler.manager.save(value, dir + "intersection.schematic");
+                            SchematicHandler.manager.save(value, dir + "intersection.schem");
                             plotworld.ROAD_SCHEMATIC_ENABLED = true;
                             try {
                                 plotworld.setupSchematics();

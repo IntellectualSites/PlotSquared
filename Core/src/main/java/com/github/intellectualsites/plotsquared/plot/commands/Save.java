@@ -64,7 +64,7 @@ import java.util.UUID;
                             MainUtil.sendMessage(player, Captions.SAVE_SUCCESS);
                             List<String> schematics = player.getMeta("plot_schematics");
                             if (schematics != null) {
-                                schematics.add(file + ".schematic");
+                                schematics.add(file + ".schem");
                             }
                         }
                     });

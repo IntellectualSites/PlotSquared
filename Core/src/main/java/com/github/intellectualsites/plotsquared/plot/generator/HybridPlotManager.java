@@ -31,22 +31,22 @@ public class HybridPlotManager extends ClassicPlotManager {
                 + File.separator;
         try {
             File sideroad =
-                MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), dir + "sideroad.schematic");
+                MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), dir + "sideroad.schem");
             if (sideroad.exists()) {
-                files.add(new FileBytes(newDir + "sideroad.schematic",
+                files.add(new FileBytes(newDir + "sideroad.schem",
                     Files.readAllBytes(sideroad.toPath())));
             }
             File intersection =
-                MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), "intersection.schematic");
+                MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), "intersection.schem");
             if (intersection.exists()) {
-                files.add(new FileBytes(newDir + "intersection.schematic",
+                files.add(new FileBytes(newDir + "intersection.schem",
                     Files.readAllBytes(intersection.toPath())));
             }
             File plot =
-                MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), dir + "plot.schematic");
+                MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), dir + "plot.schem");
             if (plot.exists()) {
                 files.add(
-                    new FileBytes(newDir + "plot.schematic", Files.readAllBytes(plot.toPath())));
+                    new FileBytes(newDir + "plot.schem", Files.readAllBytes(plot.toPath())));
             }
         } catch (IOException e) {
             e.printStackTrace();
