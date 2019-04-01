@@ -249,11 +249,11 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 }
             }
         }
-        min = blockArrayClipboard2.getMinimumPoint();
+        min = blockArrayClipboard1.getMinimumPoint();
         for (short x = 0; x < w2; x++) {
             for (short z = 0; z < l2; z++) {
                 for (short y = 0; y < h2; y++) {
-                    BaseBlock id = blockArrayClipboard2.getFullBlock(BlockVector3.at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
+                    BaseBlock id = blockArrayClipboard1.getFullBlock(BlockVector3.at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
                     if (!id.getBlockType().getMaterial().isAir()) {
                         addOverlayBlock((short) (x - shift), (short) (y + startY),
                             (short) (z - shift), id, false, h2);
