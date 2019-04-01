@@ -1296,7 +1296,6 @@ public class Plot {
             int y = loc.y < 1 ?
                 (isLoaded() ? WorldUtil.IMP.getHighestBlock(plot.getWorldName(), x, z) + 1 : 63) :
                 loc.y;
-            PlotSquared.log("Getting home with Y " + y);
             return new Location(plot.getWorldName(), x, y, z);
         }
         // Side
