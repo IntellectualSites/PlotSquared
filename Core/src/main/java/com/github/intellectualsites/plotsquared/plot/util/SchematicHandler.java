@@ -80,7 +80,7 @@ public abstract class SchematicHandler {
                             TaskManager.runTaskAsync(() -> {
                                 MainUtil.sendMessage(null, "&6ID: " + plot.getId());
                                 boolean result = SchematicHandler.manager
-                                    .save(value, directory + File.separator + name + ".schematic");
+                                    .save(value, directory + File.separator + name + ".schem");
                                 if (!result) {
                                     MainUtil
                                         .sendMessage(null, "&7 - Failed to save &c" + plot.getId());
@@ -250,10 +250,13 @@ public abstract class SchematicHandler {
                 throw new RuntimeException("Could not create schematic parent directory");
             }
         }
-        File file = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
-            Settings.Paths.SCHEMATICS + File.separator + name + (name.endsWith(".schem") ?
-                "" :
-                ".schematic"));
+        if (!name.endsWith(".schem") && !name.endsWith(".schematic")) {
+            name = name + ".schem";
+        }
+        File file = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS + File.separator + name);
+        if (!file.exists()) {
+            file = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS + File.separator + name + "atic");
+        }
         return getSchematic(file);
     }
 
@@ -267,7 +270,7 @@ public abstract class SchematicHandler {
             MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS);
         final List<String> names = new ArrayList<>();
         if (parent.exists()) {
-            final String[] rawNames = parent.list((dir, name) -> name.endsWith(".schematic"));
+            final String[] rawNames = parent.list((dir, name) -> name.endsWith(".schematic") || name.endsWith(".schem"));
             if (rawNames != null) {
                 final List<String> transformed = Arrays.stream(rawNames)
                     .map(rawName -> rawName.substring(0, rawName.length() - 10))

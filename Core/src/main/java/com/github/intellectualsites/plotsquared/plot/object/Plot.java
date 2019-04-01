@@ -1891,7 +1891,7 @@ public class Plot {
                         String name = Plot.this.id + "," + Plot.this.area + ',' + MainUtil
                             .getName(Plot.this.owner);
                         boolean result = SchematicHandler.manager.save(value,
-                            Settings.Paths.SCHEMATICS + File.separator + name + ".schematic");
+                            Settings.Paths.SCHEMATICS + File.separator + name + ".schem");
                         if (whenDone != null) {
                             whenDone.value = result;
                             TaskManager.runTask(whenDone);
