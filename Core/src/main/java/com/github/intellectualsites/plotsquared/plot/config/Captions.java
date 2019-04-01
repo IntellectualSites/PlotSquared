@@ -844,6 +844,17 @@ public enum Captions {
         "$2Total bucket values add up to 1 or more. Blocks without a spcified chance will be ignored",
         "Generator_Bucket"),
 
+
+    /**
+     * Command Categories
+     */
+    COMMAND_CATEGORY_CLAIMING("Claiming", "Category"), COMMAND_CATEGORY_TELEPPORT("Teleport",
+        "Category"), COMMAND_CATEGORY_SETTINGS("Protection", "Category"), COMMAND_CATEGORY_CHAT(
+        "Chat", "Category"), COMMAND_CATEGORY_SCHEMATIC("Web",
+        "Category"), COMMAND_CATEGORY_APPEARANCE("Cosmetic", "Category"), COMMAND_CATEGORY_INFO(
+        "Info", "Category"), COMMAND_CATEGORY_DEBUG("Debug",
+        "Category"), COMMAND_CATEGORY_ADMINISTRATION("Admin", "Category"),
+
     /*
      * Direction
      */
