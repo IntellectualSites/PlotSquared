@@ -96,7 +96,9 @@ import java.util.*;
             return;
         }
         unsorted = new ArrayList<>(unsorted);
-        unsorted.removeIf(plot -> !plot.isBasePlot());
+        if (unsorted.size() > 1) {
+            unsorted.removeIf(plot -> !plot.isBasePlot());
+        }
         if (page < 1 || page > unsorted.size()) {
             Captions.NOT_VALID_NUMBER.send(player, "(1, " + unsorted.size() + ")");
             return;
