@@ -4,6 +4,7 @@ import com.github.intellectualsites.plotsquared.bukkit.events.PlayerEnterPlotEve
 import com.github.intellectualsites.plotsquared.bukkit.events.PlayerLeavePlotEvent;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flag.IntervalFlag;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -130,12 +131,12 @@ import java.util.UUID;
     @EventHandler public void onPlotEnter(PlayerEnterPlotEvent event) {
         Player player = event.getPlayer();
         Plot plot = event.getPlot();
-        Optional<Integer[]> feed = plot.getFlag(Flags.FEED);
+        Optional<IntervalFlag.Interval> feed = plot.getFlag(Flags.FEED);
         feed.ifPresent(
-            value -> feedRunnable.put(player.getUniqueId(), new Interval(value[0], value[1], 20)));
-        Optional<Integer[]> heal = plot.getFlag(Flags.HEAL);
+            value -> feedRunnable.put(player.getUniqueId(), new Interval(value.getVal1(), value.getVal2(), 20)));
+        Optional<IntervalFlag.Interval> heal = plot.getFlag(Flags.HEAL);
         heal.ifPresent(
-            value -> healRunnable.put(player.getUniqueId(), new Interval(value[0], value[1], 20)));
+            value -> healRunnable.put(player.getUniqueId(), new Interval(value.getVal1(), value.getVal2(), 20)));
     }
 
     @EventHandler public void onPlayerQuit(PlayerQuitEvent event) {
