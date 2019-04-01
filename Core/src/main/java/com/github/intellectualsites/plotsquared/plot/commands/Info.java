@@ -2,6 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
+import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.*;
@@ -32,6 +33,7 @@ import java.util.UUID;
                 case "seen":
                 case "owner":
                 case "rating":
+                case "likes":
                     plot = MainUtil.getPlotFromString(player, null, false);
                     break;
                 default:
@@ -130,7 +132,7 @@ import java.util.UUID;
             if (info == null) {
                 MainUtil.sendMessage(player,
                     "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &aseen&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, "
-                        + "&aowner&7, &arating");
+                        + "&aowner&7, " + (Settings.Ratings.USE_LIKES ? " &alikes" : " &arating"));
                 return false;
             }
             full = true;
@@ -169,6 +171,8 @@ import java.util.UUID;
                 return Captions.PLOT_INFO_OWNER.s();
             case "rating":
                 return Captions.PLOT_INFO_RATING.s();
+            case "likes":
+                return Captions.PLOT_INFO_LIKES.s();
             case "seen":
                 return Captions.PLOT_INFO_SEEN.s();
             default:

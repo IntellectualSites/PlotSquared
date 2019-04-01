@@ -2,6 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.util;
 
 import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.commands.Like;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
@@ -776,25 +777,29 @@ public class MainUtil {
         if (info.contains("%rating%")) {
             final String newInfo = info;
             TaskManager.runTaskAsync(() -> {
-                int max = 10;
-                if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES.isEmpty()) {
-                    max = 8;
-                }
                 String info1;
-                if (full && Settings.Ratings.CATEGORIES != null
-                    && Settings.Ratings.CATEGORIES.size() > 1) {
-                    double[] ratings = MainUtil.getAverageRatings(plot);
-                    String rating = "";
-                    String prefix = "";
-                    for (int i = 0; i < ratings.length; i++) {
-                        rating += prefix + Settings.Ratings.CATEGORIES.get(i) + '=' + String
-                            .format("%.1f", ratings[i]);
-                        prefix = ",";
-                    }
-                    info1 = newInfo.replaceAll("%rating%", rating);
+                if (Settings.Ratings.USE_LIKES) {
+                    info1 = newInfo.replaceAll("%rating%", String.format("%.0f%%", Like.getLikesPercentage(plot) * 100D));
                 } else {
-                    info1 = newInfo.replaceAll("%rating%",
-                        String.format("%.1f", plot.getAverageRating()) + '/' + max);
+                    int max = 10;
+                    if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES.isEmpty()) {
+                        max = 8;
+                    }
+                    if (full && Settings.Ratings.CATEGORIES != null
+                        && Settings.Ratings.CATEGORIES.size() > 1) {
+                        double[] ratings = MainUtil.getAverageRatings(plot);
+                        String rating = "";
+                        String prefix = "";
+                        for (int i = 0; i < ratings.length; i++) {
+                            rating += prefix + Settings.Ratings.CATEGORIES.get(i) + '=' + String
+                                .format("%.1f", ratings[i]);
+                            prefix = ",";
+                        }
+                        info1 = newInfo.replaceAll("%rating%", rating);
+                    } else {
+                        info1 = newInfo.replaceAll("%rating%",
+                            String.format("%.1f", plot.getAverageRating()) + '/' + max);
+                    }
                 }
                 whenDone.run(info1);
             });

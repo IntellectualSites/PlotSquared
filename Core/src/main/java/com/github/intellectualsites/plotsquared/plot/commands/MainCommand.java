@@ -4,6 +4,7 @@ import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
+import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.CmdConfirm;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
@@ -68,7 +69,6 @@ public class MainCommand extends Command {
             new DebugPaste();
             new Unlink();
             new Kick();
-            new Rate();
             new DebugClaimTest();
             new Inbox();
             new Comment();
@@ -98,6 +98,14 @@ public class MainCommand extends Command {
             new SetHome();
             new Cluster();
             new DebugImportWorlds();
+
+            if (Settings.Ratings.USE_LIKES) {
+                new Like();
+                new Dislike();
+            } else {
+                new Rate();
+            }
+
             // Referenced commands
             instance.toggle = new Toggle();
             instance.help = new Help(instance);

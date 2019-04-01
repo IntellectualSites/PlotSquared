@@ -315,6 +315,9 @@ public class Settings extends Config {
 
 
     public static final class Ratings {
+        @Comment("Replace the rating system with a like system. Will add /plot like/dislike,"
+            + " and remove the rating command") public static boolean USE_LIKES = false;
+        @Comment("Rating categories")
         public static List<String> CATEGORIES = new ArrayList<>();
     }
 
