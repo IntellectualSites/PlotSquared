@@ -7,8 +7,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.2'
-        classpath 'org.ajoberstar.grgit:grgit-gradle:3.0.0'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.0.0'
     }
     configurations.all {
         resolutionStrategy {
@@ -18,7 +17,8 @@ buildscript {
 }
 
 plugins {
-    id 'io.franzbecker.gradle-lombok' version '1.14'
+    id 'maven-publish'
+    id "org.ajoberstar.grgit" version "3.1.1"
 }
 
 group = 'com.github.intellectualsites.plotsquared'
@@ -32,7 +32,7 @@ ext {
     date = git.head().getDate().format("yy.MM.dd")
     revision = "-${git.head().abbreviatedId}"
     parents = git.head().parentIds;
-    index = -2043;  // Offset to match CI
+    index = -2042;  // Offset to match CI
     for (; parents != null && !parents.isEmpty(); index++) {
         parents = git.getResolve().toCommit(parents.get(0)).getParentIds()
     }
@@ -53,11 +53,6 @@ subprojects {
 
     group = 'com.github.intellectualsites,plotsquared'
 
-    lombok {
-        version = '1.18.4'
-        sha256 = ""
-    }
-
     dependencies {
         compile(group: 'com.sk89q.worldedit', name: 'worldedit-core', version: '7.0.0-SNAPSHOT') {
             exclude(module: 'bukkit-classloader-check')
@@ -66,11 +61,12 @@ subprojects {
         }
         //Minecraft uses Guava 21 as of 1.13.
         compile 'com.google.guava:guava:21.0'
-        compileOnly 'org.projectlombok:lombok:1.18.4'
+        compile("org.projectlombok:lombok:1.18.4")
+        compileOnly("org.projectlombok:lombok:1.18.4")
+        testCompileOnly("org.projectlombok:lombok:1.18.4")
+        annotationProcessor("org.projectlombok:lombok:1.18.4")
+        testAnnotationProcessor("org.projectlombok:lombok:1.18.4")
         testImplementation "junit:junit:4.12"
-    }
-    clean {
-        delete file("../target")
     }
     repositories {
         mavenCentral()
