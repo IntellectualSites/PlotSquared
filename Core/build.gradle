@@ -20,7 +20,7 @@ processResources {
 
 jar.archiveName="plotsquared-api-${project.parent.version}.jar"
 jar.destinationDir = file '../mvn/com/plotsquared/plotsquared-api/' + project.parent.version
-task createPom << {
+task createPom {
     pom {
         project {
             groupId 'com.plotsquared'

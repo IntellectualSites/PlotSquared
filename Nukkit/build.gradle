@@ -6,6 +6,7 @@ repositories {
 }
 
 dependencies {
+    implementation project (':Core')
     compile project(':Core')
     compile 'com.google.guava:guava:17.0'
     compile 'cn.nukkit:nukkit:1.0-SNAPSHOT'

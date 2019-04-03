@@ -1,22 +1,24 @@
+import org.ajoberstar.grgit.Grgit
+
 buildscript {
     repositories {
         mavenCentral()
-        maven { url = "https://oss.sonatype.org/content/repositories/snapshots/"}
+        maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
         jcenter()
     }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
-        classpath 'org.ajoberstar:grgit:1.7.0'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.0.0'
     }
     configurations.all {
         resolutionStrategy {
-            force 'org.ow2.asm:asm:6.0_BETA'
+            force 'org.ow2.asm:asm:7.0'
         }
     }
 }
 
 plugins {
     id 'maven-publish'
+    id "org.ajoberstar.grgit" version "3.1.1"
 }
 
 group = 'com.intellectualcrafters'
@@ -25,8 +27,8 @@ def revision = ""
 def buildNumber = ""
 def date = ""
 ext {
-    git = org.ajoberstar.grgit.Grgit.open(file(".git"))
-    date = git.head().date.format("yy.MM.dd")
+    git = Grgit.open(dir: '.git')
+    date = git.head().getDate().format("yy.MM.dd")
     revision = "-${git.head().abbreviatedId}"
     parents = git.head().parentIds;
     index = -1351;  // Offset to match CI
@@ -59,13 +61,9 @@ subprojects {
         }
         compile 'com.google.guava:guava:10.0'
     }
-    clean{
-        delete file("../target")
-    }
     repositories {
         mavenCentral()
         maven {url "http://empcraft.com/maven2"}
-        maven {url "http://repo.mcstats.org/content/repositories/public"}
         maven {url "http://maven.sk89q.com/repo/"}
         maven {url "http://repo.maven.apache.org/maven2"}
     }
