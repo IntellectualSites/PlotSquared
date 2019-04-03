@@ -21,7 +21,6 @@ import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.nukkit.NukkitMain;
 import com.plotsquared.nukkit.object.NukkitPlayer;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class NukkitUtil extends WorldUtil {
@@ -190,10 +189,8 @@ public class NukkitUtil extends WorldUtil {
     @Override
     public String[] getBiomeList() {
         ArrayList<String> biomes = new ArrayList<>();
-        for (Field field : Biome.class.getDeclaredFields()) {
-            if (field.getName().equals(field.getName().toUpperCase())) {
-                biomes.add(field.getName());
-            }
+        for (Biome biome : Biome.biomes) {
+            biomes.add(biome.getName());
         }
         return biomes.toArray(new String[biomes.size()]);
     }
@@ -260,7 +257,7 @@ public class NukkitUtil extends WorldUtil {
     public void setBiomes(String worldName, RegionWrapper region, String biomeString) {
         Level world = getWorld(worldName);
         try {
-            int biome = (int) Biome.class.getDeclaredField(biomeString.toUpperCase()).get(null);
+            int biome = EnumBiome.getBiome(biomeString).getId();
             for (int x = region.minX; x <= region.maxX; x++) {
                 for (int z = region.minZ; z <= region.maxZ; z++) {
                     world.setBiomeId(x, z, (byte) biome);
