@@ -48,6 +48,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.*;
 
 import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getRefClass;
@@ -57,26 +58,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Getter private static WorldEdit worldEdit;
 
     static {
-        // Disable AWE as otherwise both fail to load
-        PluginManager manager = Bukkit.getPluginManager();
         try {
             Settings.load(new File("plugins/PlotSquared/config/settings.yml"));
-        } catch (Throwable ignored) {
-        }
-
-        // Force WorldEdit to load
-        try {
-            System.out.println("[P2] Force loading WorldEdit");
-            if (!manager.isPluginEnabled("WorldEdit")) {
-                manager.enablePlugin(WorldEditPlugin.getPlugin(WorldEditPlugin.class));
-            }
-            System.out.println("[P2] Testing platform capabilities");
-            WorldEdit.getInstance().getPlatformManager().queryCapability(Capability.GAME_HOOKS);
-        } catch (final Throwable throwable) {
-            throw new IllegalStateException(
-                "Failed to force load WorldEdit. Road schematics will fail to generate",
-                throwable);
-        }
+        } catch (Throwable ignored) {}
     }
 
     private final LegacyMappings legacyMappings = new BukkitLegacyMappings();
@@ -114,7 +98,26 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return Bukkit.getVersion();
     }
 
+    private void init() {
+        try {
+            PluginManager manager = Bukkit.getPluginManager();
+            System.out.println("[P2] Force loading WorldEdit");
+            Plugin plugin = manager.getPlugin("WorldEdit");
+            if (!manager.isPluginEnabled("WorldEdit")) {
+                manager.enablePlugin(WorldEditPlugin.getPlugin(WorldEditPlugin.class));
+            }
+            System.out.println("[P2] Testing platform capabilities");
+            WorldEdit.getInstance().getPlatformManager().queryCapability(Capability.GAME_HOOKS);
+        } catch (final Throwable throwable) {
+            throw new IllegalStateException(
+                    "Failed to force load WorldEdit. Road schematics will fail to generate",
+                    throwable);
+        }
+    }
+
     @Override public void onEnable() {
+
+
         this.pluginName = getDescription().getName();
         getServer().getName();
 
