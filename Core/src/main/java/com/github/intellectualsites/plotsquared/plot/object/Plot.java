@@ -1344,7 +1344,7 @@ public class Plot {
     }
 
     /**
-     * Clear the ratings for this plot
+     * Clear the ratings/likes for this plot
      */
     public void clearRatings() {
         Plot base = this.getBasePlot(false);
@@ -1353,6 +1353,15 @@ public class Plot {
             DBFunc.deleteRatings(base);
             baseSettings.ratings = null;
         }
+    }
+
+    public Map<UUID, Boolean> getLikes() {
+        final Map<UUID, Boolean> map = new HashMap<>();
+        final Map<UUID, Rating> ratings = this.getRatings();
+        ratings.forEach((uuid, rating) -> {
+            map.put(uuid, rating.getLike());
+        });
+        return map;
     }
 
     /**

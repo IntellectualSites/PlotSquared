@@ -378,6 +378,9 @@ public enum Captions {
     RATING_ALREADY_EXISTS("$2You have already rated plot $2%s", "Ratings"), RATING_APPLIED(
         "$4You successfully rated plot $2%s", "Ratings"),
 
+    RATING_DISLIKED("$4You successfully disliked plot $2%s", "Ratings"),
+    RATING_LIKED("$4You successfully liked plot $2%s", "Ratings"),
+
     RATING_NOT_YOUR_OWN("$2You cannot rate your own plot", "Ratings"), RATING_NOT_DONE(
         "$2You can only rate finished plots.", "Ratings"),
 
@@ -692,6 +695,8 @@ public enum Captions {
     PLOT_INFO_DENIED("$1Denied:$2 %denied%", "Info"), PLOT_INFO_FLAGS("$1Flags:$2 %flags%", "Info"),
 
     PLOT_INFO_BIOME("$1Biome:$2 %biome%", "Info"), PLOT_INFO_RATING("$1Rating:$2 %rating%", "Info"),
+
+    PLOT_INFO_LIKES("$1Like Ratio:$2 %likes%%", "Info"),
 
     PLOT_INFO_OWNER("$1Owner:$2 %owner%", "Info"), PLOT_INFO_ID("$1ID:$2 %id%", "Info"),
 

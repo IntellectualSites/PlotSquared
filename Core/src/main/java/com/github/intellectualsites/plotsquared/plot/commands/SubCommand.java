@@ -32,7 +32,7 @@ public abstract class SubCommand extends Command {
 
     public abstract boolean onCommand(PlotPlayer player, String[] args);
 
-    public boolean sendMessage(PlotPlayer player, Captions message, Object... args) {
+    public static boolean sendMessage(PlotPlayer player, Captions message, Object... args) {
         message.send(player, args);
         return true;
     }
