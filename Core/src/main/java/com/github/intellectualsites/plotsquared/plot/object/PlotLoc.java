@@ -1,17 +1,42 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 
-@Getter @RequiredArgsConstructor public class PlotLoc {
+/**
+ * (x,y,z) or (x,z) representation for PlotSquared (hence the "Plot" prefix)
+ */
+@AllArgsConstructor public final class PlotLoc {
 
-    private final int x;
-    private final int y;
-    private final int z;
+    /**
+     * Use the getter
+     *
+     * @see #getX()
+     * @deprecated
+     */
+    @Deprecated public int x;
+    /**
+     * Use the getter
+     *
+     * @see #getY()
+     * @deprecated
+     */
+    @Deprecated public int y;
+    /**
+     * Use the getter
+     *
+     * @see #getZ()
+     * @deprecated
+     */
+    @Deprecated public int z;
 
-    public PlotLoc(int x, int z) {
+    /**
+     * Initialize a new {@link PlotLoc} and set the Y value to {@code -1}
+     * @param x X value
+     * @param z Y value
+     */
+    public PlotLoc(final int x, final int z) {
         this(x, -1, z);
     }
 
@@ -36,6 +61,18 @@ import org.jetbrains.annotations.Nullable;
                 return null;
             }
         }
+    }
+
+    public int getX() {
+        return this.x;
+    }
+
+    public int getY() {
+        return this.y;
+    }
+
+    public int getZ() {
+        return this.z;
     }
 
     @Override public int hashCode() {
