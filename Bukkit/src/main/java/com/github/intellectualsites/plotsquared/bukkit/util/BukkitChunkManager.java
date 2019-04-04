@@ -223,7 +223,7 @@ public class BukkitChunkManager extends ChunkManager {
                 for (int y = 0; y < blocks.length; y++) {
                     if (blocks[y] != null) {
                         BaseBlock block = blocks[y];
-                        queue.setBlock(loc.x, y, loc.z, block);
+                        queue.setBlock(loc.getX(), y, loc.getZ(), block);
                     }
                 }
             }

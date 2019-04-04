@@ -1,27 +1,22 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 
-public class PlotLoc {
+@Getter @RequiredArgsConstructor public class PlotLoc {
 
-    public int x;
-    public int y;
-    public int z;
+    private final int x;
+    private final int y;
+    private final int z;
 
     public PlotLoc(int x, int z) {
-        this.x = x;
-        this.y = -1;
-        this.z = z;
+        this(x, -1, z);
     }
 
-    public PlotLoc(int x, int y, int z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
-
-    public static PlotLoc fromString(String input) {
-        if ("side".equalsIgnoreCase(input)) {
+    @Nullable public static PlotLoc fromString(final String input) {
+        if (input == null || "side".equalsIgnoreCase(input)) {
             return null;
         } else if (StringMan.isEqualIgnoreCaseToAny(input, "center", "middle")) {
             return new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE);
@@ -44,7 +39,7 @@ public class PlotLoc {
     }
 
     @Override public int hashCode() {
-        int prime = 31;
+        final int prime = 31;
         int result = 1;
         result = (prime * result) + this.x;
         result = (prime * result) + this.y;
@@ -59,17 +54,14 @@ public class PlotLoc {
         return String.format("%d,%d,%d", x, y, z);
     }
 
-    @Override public boolean equals(Object obj) {
+    @Override public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        PlotLoc other = (PlotLoc) obj;
+        final PlotLoc other = (PlotLoc) obj;
         return (this.x == other.x) && (this.y == other.y) && (this.z == other.z);
     }
 }

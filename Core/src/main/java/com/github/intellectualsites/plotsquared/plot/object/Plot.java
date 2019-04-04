@@ -1282,7 +1282,7 @@ public class Plot {
         if (loc != null) {
             int x;
             int z;
-            if (loc.x == Integer.MAX_VALUE && loc.z == Integer.MAX_VALUE) {
+            if (loc.getX() == Integer.MAX_VALUE && loc.getZ() == Integer.MAX_VALUE) {
                 // center
                 RegionWrapper largest = plot.getLargestRegion();
                 x = (largest.maxX >> 1) - (largest.minX >> 1) + largest.minX;
@@ -1290,12 +1290,12 @@ public class Plot {
             } else {
                 // specific
                 Location bot = plot.getBottomAbs();
-                x = bot.getX() + loc.x;
-                z = bot.getZ() + loc.z;
+                x = bot.getX() + loc.getX();
+                z = bot.getZ() + loc.getZ();
             }
-            int y = loc.y < 1 ?
+            int y = loc.getY() < 1 ?
                 (isLoaded() ? WorldUtil.IMP.getHighestBlock(plot.getWorldName(), x, z) + 1 : 63) :
-                loc.y;
+                loc.getY();
             return new Location(plot.getWorldName(), x, y, z);
         }
         // Side
