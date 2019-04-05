@@ -95,7 +95,7 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
     public PlotArea[] getPlotAreas(String world, RegionWrapper region) {
         PlotArea[] found = super.getPlotAreas(world, region);
         if (found != null && found.length != 0) return found;
-        return isWorld(world) || world.equals("*") ? array : all.length == 0 ? noPlotAreas : super.getPlotAreas(world, region);;
+        return isWorld(world) || world.equals("*") ? array : all.length == 0 ? noPlotAreas : super.getPlotAreas(world, region);
     }
 
     @Override
