@@ -3,6 +3,7 @@ package com.intellectualcrafters.plot.generator;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -409,7 +410,8 @@ public abstract class HybridUtils {
                         }
                         if (condition) {
                             char[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
-                            int minY = Math.min(plotWorld.PLOT_HEIGHT, plotWorld.ROAD_HEIGHT);
+                            int minY = plotWorld.SCHEM_Y;
+                            if (Settings.Schematics.PASTE_ON_TOP) minY = 1;
                             int maxY = Math.max(extend, blocks.length);
                             if (blocks != null) {
                                 for (int y = 0; y < maxY; y++) {

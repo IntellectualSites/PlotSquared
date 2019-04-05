@@ -30,6 +30,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public HashMap<Integer, char[]> G_SCH;
     public HashMap<Integer, HashMap<Integer, CompoundTag>> G_SCH_STATE;
     private Location SIGN_LOCATION;
+    public int SCHEM_Y;
 
     public HybridPlotWorld(String worldName, String id, IndependentPlotGenerator generator, PlotId min, PlotId max) {
         super(worldName, id, generator, min, max);
@@ -202,7 +203,23 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         Schematic schematic3 = SchematicHandler.manager.getSchematic(schem3File);
         int shift = this.ROAD_WIDTH / 2;
         int oddshift = (this.ROAD_WIDTH & 1) == 0 ? 0 : 1;
-        int minY = Math.min(PLOT_HEIGHT, ROAD_HEIGHT);
+
+        SCHEM_Y = Math.min(PLOT_HEIGHT, ROAD_HEIGHT);
+        int plotY = PLOT_HEIGHT - SCHEM_Y;
+        int roadY = ROAD_HEIGHT - SCHEM_Y;
+
+        if (schematic3.getSchematicDimension().getY() == 256) {
+            SCHEM_Y = 0;
+            plotY = 0;
+            roadY = ROAD_HEIGHT;
+        }
+
+        if (schematic1.getSchematicDimension().getY() == 256) {
+            SCHEM_Y = 0;
+            plotY = Math.min(plotY, PLOT_HEIGHT);
+            roadY = 0;
+        }
+
         if (schematic3 != null) {
             this.PLOT_SCHEMATIC = true;
             short[] ids = schematic3.getIds();
@@ -227,7 +244,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 centerShiftX = (PLOT_WIDTH - w3) / 2;
             }
 
-            int startY = minY - PLOT_HEIGHT;
             for (short x = 0; x < w3; x++) {
                 for (short z = 0; z < l3; z++) {
                     for (short y = 0; y < h3; y++) {
@@ -235,7 +251,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                         short id = ids[index];
                         byte data = datas[index];
                         if (id != 0) {
-                            addOverlayBlock((short) (x + shift + oddshift + centerShiftX), (short) (y + startY),
+                            addOverlayBlock((short) (x + shift + oddshift + centerShiftX), (short) (y + plotY),
                                     (short) (z + shift + oddshift + centerShiftZ), id,
                                     data, false, h3);
                         }
@@ -293,7 +309,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         short w2 = (short) d2.getX();
         short l2 = (short) d2.getZ();
         short h2 = (short) d2.getY();
-        int startY = minY - ROAD_HEIGHT;
         for (short x = 0; x < w1; x++) {
             for (short z = 0; z < l1; z++) {
                 for (short y = 0; y < h1; y++) {
@@ -301,8 +316,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     short id = ids1[index];
                     byte data = datas1[index];
                     if (id != 0) {
-                        addOverlayBlock((short) (x - shift), (short) (y + startY), (short) (z + shift + oddshift), id, data, false, h1);
-                        addOverlayBlock((short) (z + shift + oddshift), (short) (y + startY), (short) (x - shift), id, data, true, h1);
+                        addOverlayBlock((short) (x - shift), (short) (y + roadY), (short) (z + shift + oddshift), id, data, false, h1);
+                        addOverlayBlock((short) (z + shift + oddshift), (short) (y + roadY), (short) (x - shift), id, data, true, h1);
                     }
                 }
             }
@@ -314,7 +329,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     short id = ids2[index];
                     byte data = datas2[index];
                     if (id != 0) {
-                        addOverlayBlock((short) (x - shift), (short) (y + startY), (short) (z - shift), id, data, false, h2);
+                        addOverlayBlock((short) (x - shift), (short) (y + roadY), (short) (z - shift), id, data, false, h2);
                     }
                 }
             }
