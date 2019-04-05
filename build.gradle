@@ -51,7 +51,11 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'com.github.johnrengelman.shadow'
 
-    group = 'com.github.intellectualsites,plotsquared'
+    group = 'com.github.intellectualsites.plotsquared'
+
+    clean.doFirst {
+        delete "../target"
+    }
 
     dependencies {
         compile(group: 'com.sk89q.worldedit', name: 'worldedit-core', version: '7.0.0-SNAPSHOT') {
@@ -68,6 +72,7 @@ subprojects {
         testAnnotationProcessor("org.projectlombok:lombok:1.18.4")
         testImplementation "junit:junit:4.12"
     }
+    
     repositories {
         mavenCentral()
         maven { url "http://maven.sk89q.com/repo/" }
