@@ -2,6 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.generator;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
+import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.listener.WEExtent;
@@ -344,6 +345,7 @@ public abstract class HybridUtils {
                         if (condition) {
                             BaseBlock[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
                             int minY = plotWorld.SCHEM_Y;
+                            if (Settings.Schematics.PASTE_ON_TOP) minY = 1;
                             int maxY = Math.max(extend, blocks.length);
                             if (blocks != null) {
                                 for (int y = 0; y < maxY; y++) {
