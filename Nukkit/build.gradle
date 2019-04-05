@@ -1,39 +1,15 @@
-import org.codehaus.groovy.runtime.IOGroovyMethods
-
 repositories {
     maven { url = "https://oss.sonatype.org/content/repositories/snapshots/"}
     maven {url "http://nexus.hc.to/content/repositories/pub_releases"}
+    maven {url "https://repo.potestas.xyz/main/"}
     flatDir {dirs 'lib'}
 }
 
-def urlFile = { urlStr, name ->
-    File file = new File("$buildDir/download/${name}.jar")
-    file.parentFile.mkdirs()
-    if (!file.exists()) {
-        try {
-            String agent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.29 Safari/537.36";
-            URL url = new URL(urlStr);
-            URLConnection con = url.openConnection();
-            con.setRequestProperty("User-Agent", agent);
-            con.connect();
-            InputStream is = con.getInputStream();
-            file.withOutputStream { fileOut ->
-                fileOut << is
-            }
-        } catch (Throwable e) {
-            e.printStackTrace()
-            throw e;
-        }
-    }
-    files(file.absolutePath)
-}
 dependencies {
     implementation project (':Core')
     compile project(':Core')
     compile 'com.google.guava:guava:17.0'
-    compile urlFile(
-            'https://ci.nukkitx.com/job/NukkitX/job/Nukkit/job/master/lastSuccessfulBuild/artifact/target/nukkit-1.0-SNAPSHOT.jar',
-            'nukkit-1.0-SNAPSHOT')
+    compile 'cn.nukkit:nukkit:1.0-SNAPSHOT'
 }
 
 configurations.all {
