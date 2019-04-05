@@ -17,7 +17,7 @@ public class HybridGen extends IndependentPlotGenerator {
         short relativeZ, int x, int z, boolean isRoad) {
         int minY; // Math.min(world.PLOT_HEIGHT, world.ROAD_HEIGHT);
         if (isRoad || Settings.Schematics.PASTE_ON_TOP) {
-            minY = Math.min(world.PLOT_HEIGHT, world.ROAD_HEIGHT);
+            minY = world.SCHEM_Y;
         } else {
             minY = 1;
         }

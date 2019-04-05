@@ -343,7 +343,7 @@ public abstract class HybridUtils {
                         }
                         if (condition) {
                             BaseBlock[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
-                            int minY = Math.min(plotWorld.PLOT_HEIGHT, plotWorld.ROAD_HEIGHT);
+                            int minY = plotWorld.SCHEM_Y;
                             int maxY = Math.max(extend, blocks.length);
                             if (blocks != null) {
                                 for (int y = 0; y < maxY; y++) {
