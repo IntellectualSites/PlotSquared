@@ -98,7 +98,7 @@ public class SinglePlotArea extends GridPlotWorld {
         return super.addPlotIfAbsent(plot);
     }
 
-    private Plot adapt(Plot p) {
+    protected Plot adapt(Plot p) {
         if (p instanceof SinglePlot) {
             return p;
         }
