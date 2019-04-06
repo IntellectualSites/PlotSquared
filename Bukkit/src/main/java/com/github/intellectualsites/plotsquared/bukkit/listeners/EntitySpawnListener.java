@@ -7,6 +7,7 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -19,9 +20,12 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.vehicle.*;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -29,12 +33,37 @@ public class EntitySpawnListener implements Listener {
 
     private static boolean ignoreTP = false;
 
+    private final static String KEY = "P2";
+
+    public static void testNether(Entity entity) {
+        @NotNull World world = entity.getWorld();
+        if (world.getEnvironment() != World.Environment.NETHER) {
+            return;
+        }
+        test(entity);
+    }
+
+    private static boolean hasPlotArea = false;
+    private static String areaName = null;
+
+    public static void testCreate(Entity entity) {
+        @NotNull World world = entity.getWorld();
+        if (areaName == world.getName()) {
+            if (!hasPlotArea) return;
+        } else {
+            areaName = world.getName();
+            hasPlotArea = PlotSquared.get().hasPlotArea(areaName);
+            if (!hasPlotArea) return;
+        }
+        test(entity);
+    }
+
     public static void test(Entity entity) {
-        List<MetadataValue> meta = entity.getMetadata("plotworld");
-        World world = entity.getLocation().getWorld();
+        @NotNull World world = entity.getWorld();
+        List<MetadataValue> meta = entity.getMetadata(KEY);
         if (meta == null || meta.isEmpty()) {
             if (PlotSquared.get().hasPlotArea(world.getName())) {
-                entity.setMetadata("plotworld",
+                entity.setMetadata(KEY,
                     new FixedMetadataValue((Plugin) PlotSquared.get().IMP, entity.getLocation()));
             }
         } else {
@@ -103,41 +132,40 @@ public class EntitySpawnListener implements Listener {
         }
     }
 
+    @EventHandler public void onChunkLoad(ChunkLoadEvent event) {
+        @NotNull Chunk chunk = event.getChunk();
+        for (Entity entity : chunk.getEntities()) {
+            testCreate(entity);
+        }
+    }
+
     @EventHandler public void onVehicle(VehicleUpdateEvent event) {
-        test(event.getVehicle());
-    }
-
-    @EventHandler public void onVehicle(VehicleDestroyEvent event) {
-        test(event.getVehicle());
-    }
-
-    @EventHandler public void onVehicle(VehicleEntityCollisionEvent event) {
-        test(event.getVehicle());
+        testNether(event.getVehicle());
     }
 
     @EventHandler public void onVehicle(VehicleCreateEvent event) {
-        test(event.getVehicle());
+        testCreate(event.getVehicle());
     }
 
     @EventHandler public void onVehicle(VehicleBlockCollisionEvent event) {
-        test(event.getVehicle());
+        testNether(event.getVehicle());
     }
 
     @EventHandler public void onTeleport(EntityTeleportEvent event) {
         Entity ent = event.getEntity();
         if (ent instanceof Vehicle || ent instanceof ArmorStand) {
-            test(event.getEntity());
+            testNether(event.getEntity());
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void vehicleMove(VehicleMoveEvent event) {
-        test(event.getVehicle());
+        testNether(event.getVehicle());
     }
 
     @EventHandler public void spawn(CreatureSpawnEvent event) {
         if (event.getEntityType() == EntityType.ARMOR_STAND) {
-            test(event.getEntity());
+            testCreate(event.getEntity());
         }
     }
 }

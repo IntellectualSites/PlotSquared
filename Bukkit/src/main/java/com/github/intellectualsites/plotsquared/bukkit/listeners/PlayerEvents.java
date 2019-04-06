@@ -1722,7 +1722,7 @@ import java.util.regex.Pattern;
             return;
         }
 
-        EntitySpawnListener.test(entity);
+        EntitySpawnListener.testNether(entity);
 
         Plot plot = area.getPlotAbs(location);
         PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
