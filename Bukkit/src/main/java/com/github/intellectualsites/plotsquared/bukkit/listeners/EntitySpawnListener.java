@@ -49,12 +49,11 @@ public class EntitySpawnListener implements Listener {
     public static void testCreate(Entity entity) {
         @NotNull World world = entity.getWorld();
         if (areaName == world.getName()) {
-            if (!hasPlotArea) return;
         } else {
             areaName = world.getName();
             hasPlotArea = PlotSquared.get().hasPlotArea(areaName);
-            if (!hasPlotArea) return;
         }
+        if (!hasPlotArea) return;
         test(entity);
     }
 
