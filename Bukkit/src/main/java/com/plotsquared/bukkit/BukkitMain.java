@@ -227,8 +227,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                     if (!result) {
                                         continue outer;
                                     }
-                                } while (index < chunks.length && System.currentTimeMillis() - start < 5);
-                                return;
+                                    if (System.currentTimeMillis() - start > 5) {
+                                        return;
+                                    }
+                                } while (index < chunks.length);
                             }
                         }
                     }
