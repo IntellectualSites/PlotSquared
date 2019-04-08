@@ -150,15 +150,15 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         int plotY = PLOT_HEIGHT - SCHEM_Y;
         int roadY = ROAD_HEIGHT - SCHEM_Y;
 
-        if (schematic3.getClipboard().getDimensions().getY() == 256) {
+        if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() == 256) {
             SCHEM_Y = 0;
             plotY = 0;
             roadY = ROAD_HEIGHT;
         }
 
-        if (schematic1.getClipboard().getDimensions().getY() == 256) {
+        if (schematic1 != null && schematic1.getClipboard().getDimensions().getY() == 256) {
             SCHEM_Y = 0;
-            if (schematic3.getClipboard().getDimensions().getY() != 256) {
+            if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != 256) {
                 plotY = PLOT_HEIGHT;
             }
             roadY = 0;
@@ -242,21 +242,17 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         // TODO: What? this.ROAD_BLOCK = BlockBucket.empty(); // PlotBlock.getEmptyData(this.ROAD_BLOCK); // PlotBlock.get(this.ROAD_BLOCK.id, (byte) 0);
 
         BlockArrayClipboard blockArrayClipboard1 = schematic1.getClipboard();
-        BlockArrayClipboard blockArrayClipboard2 = schematic2.getClipboard();
 
         BlockVector3 d1 = blockArrayClipboard1.getDimensions();
         short w1 = (short) d1.getX();
         short l1 = (short) d1.getZ();
         short h1 = (short) d1.getY();
-        BlockVector3 d2 = blockArrayClipboard2.getDimensions();
-        short w2 = (short) d2.getX();
-        short l2 = (short) d2.getZ();
-        short h2 = (short) d2.getY();
-        BlockVector3 min = blockArrayClipboard2.getMinimumPoint();
-        for (short x = 0; x < w2; x++) {
-            for (short z = 0; z < l2; z++) {
-                for (short y = 0; y < h2; y++) {
-                    BaseBlock id = blockArrayClipboard2.getFullBlock(BlockVector3.at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
+
+        BlockVector3 min = blockArrayClipboard1.getMinimumPoint();
+        for (short x = 0; x < w1; x++) {
+            for (short z = 0; z < l1; z++) {
+                for (short y = 0; y < h1; y++) {
+                    BaseBlock id = blockArrayClipboard1.getFullBlock(BlockVector3.at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
                     if (!id.getBlockType().getMaterial().isAir()) {
                         addOverlayBlock((short) (x - shift), (short) (y + roadY),
                             (short) (z + shift + oddshift), id, false, h1);
@@ -266,11 +262,17 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 }
             }
         }
-        min = blockArrayClipboard1.getMinimumPoint();
+
+        BlockArrayClipboard blockArrayClipboard2 = schematic2.getClipboard();
+        BlockVector3 d2 = blockArrayClipboard2.getDimensions();
+        short w2 = (short) d2.getX();
+        short l2 = (short) d2.getZ();
+        short h2 = (short) d2.getY();
+        min = blockArrayClipboard2.getMinimumPoint();
         for (short x = 0; x < w2; x++) {
             for (short z = 0; z < l2; z++) {
                 for (short y = 0; y < h2; y++) {
-                    BaseBlock id = blockArrayClipboard1.getFullBlock(BlockVector3.at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
+                    BaseBlock id = blockArrayClipboard2.getFullBlock(BlockVector3.at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
                     if (!id.getBlockType().getMaterial().isAir()) {
                         addOverlayBlock((short) (x - shift), (short) (y + roadY),
                             (short) (z - shift), id, false, h2);

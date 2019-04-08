@@ -28,10 +28,10 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
         ReflectionUtils.RefClass classChunk = getRefClass("{nms}.Chunk");
         ReflectionUtils.RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
         this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle").getRealMethod();
-        this.mustSave = classChunk.getField("mustSave").getRealField();
         try {
-        } catch (Exception e) {
-            e.printStackTrace();
+            this.mustSave = classChunk.getField("mustSave").getRealField();
+        } catch (Throwable ignore) {
+            ignore.printStackTrace();
         }
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
