@@ -37,7 +37,7 @@ public class EntitySpawnListener implements Listener {
 
     public static void testNether(Entity entity) {
         @NotNull World world = entity.getWorld();
-        if (world.getEnvironment() != World.Environment.NETHER) {
+        if (world.getEnvironment() != World.Environment.NETHER && world.getEnvironment() != World.Environment.THE_END) {
             return;
         }
         test(entity);
