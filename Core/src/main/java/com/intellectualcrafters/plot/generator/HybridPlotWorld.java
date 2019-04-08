@@ -208,15 +208,15 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         int plotY = PLOT_HEIGHT - SCHEM_Y;
         int roadY = ROAD_HEIGHT - SCHEM_Y;
 
-        if (schematic3.getSchematicDimension().getY() == 256) {
+        if (schematic3 != null && schematic3.getSchematicDimension().getY() == 256) {
             SCHEM_Y = 0;
             plotY = 0;
             roadY = ROAD_HEIGHT;
         }
 
-        if (schematic1.getSchematicDimension().getY() == 256) {
+        if (schematic1 != null && schematic1.getSchematicDimension().getY() == 256) {
             SCHEM_Y = 0;
-            if (schematic3.getSchematicDimension().getY() != 256) {
+            if (schematic3 != null && schematic3.getSchematicDimension().getY() != 256) {
                 plotY = PLOT_HEIGHT;
             }
             roadY = 0;
