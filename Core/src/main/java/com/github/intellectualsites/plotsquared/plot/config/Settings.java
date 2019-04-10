@@ -179,10 +179,10 @@ public class Settings extends Config {
     public static final class Auto_Clear extends ConfigBlock {
         @Create // This value has to be generated since an instance isn't static
         public CALIBRATION CALIBRATION = null;
-        public int THRESHOLD = 1;
+        public int THRESHOLD = -1;
         public int REQUIRED_PLOTS = -1;
         public boolean CONFIRMATION = true;
-        public int DAYS = 7;
+        public int DAYS = 90;
         public int SKIP_ACCOUNT_AGE_DAYS = -1;
         public List<String> WORLDS = new ArrayList<>(Collections.singletonList("*"));
 
