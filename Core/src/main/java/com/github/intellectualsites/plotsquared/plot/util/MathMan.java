@@ -37,6 +37,21 @@ public class MathMan {
         }
     }
 
+    public static final int gcd(int a, int b) {
+        if (b == 0) {
+            return a;
+        }
+        return gcd(b, a % b);
+    }
+
+    public static final int gcd(int[] a) {
+        int result = a[0];
+        for (int i = 1; i < a.length; i++) {
+            result = gcd(result, a[i]);
+        }
+        return result;
+    }
+
     public static long pairInt(int x, int y) {
         return (((long) x) << 32) | (y & 0xffffffffL);
     }
