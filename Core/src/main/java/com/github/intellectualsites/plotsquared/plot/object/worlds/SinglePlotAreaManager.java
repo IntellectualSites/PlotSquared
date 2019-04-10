@@ -70,13 +70,12 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
 
     @Override public PlotArea getApplicablePlotArea(Location location) {
         PlotArea found = super.getApplicablePlotArea(location);
-        if (found != null) {
+        if (found != null)
             return found;
-        }
         String world = location.getWorld();
-        return isWorld(world) || world.equals("*") ?
+        return isWorld(world) || world.equals("*") || super.getAllPlotAreas().length == 0 ?
             area :
-            super.getApplicablePlotArea(location);
+            null;
     }
 
     @Override public PlotArea getPlotArea(String world, String id) {
