@@ -1,7 +1,7 @@
 /*
 This script will fix all signs in the world.
 */
-var plots = PS.sortPlots(PS.getPlots());
+var plots = PS.sortPlotsByTemp(PS.getPlots());
 for (var i = 0; i < plots.size(); i++) {
     var plot = plots.get(i);
     if (!plot.isMerged() || !plot.getMerged(0)) {

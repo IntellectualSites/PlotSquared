@@ -1,7 +1,7 @@
 /*
 This script will reset all biomes in claimed plots
 */
-var plots = PS.sortPlots(PS.getPlots());
+var plots = PS.sortPlotsByTemp(PS.getPlots());
 for (var i = 0; i < plots.size(); i++) {
     var plot = plots.get(i);
     if (!plot.isMerged() || !plot.getMerged(0)) {
