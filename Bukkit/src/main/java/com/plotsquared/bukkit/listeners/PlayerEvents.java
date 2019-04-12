@@ -71,22 +71,20 @@ public class PlayerEvents extends PlotListener implements Listener {
 
     public static void sendBlockChange(final org.bukkit.Location bloc, final Material type,
         final byte data) {
-        TaskManager.runTaskLater(new Runnable() {
-            @Override public void run() {
-                String world = bloc.getWorld().getName();
-                int x = bloc.getBlockX();
-                int z = bloc.getBlockZ();
-                int distance = Bukkit.getViewDistance() * 16;
-                for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
-                    PlotPlayer player = entry.getValue();
-                    Location loc = player.getLocation();
-                    if (loc.getWorld().equals(world)) {
-                        if (16 * Math.abs(loc.getX() - x) / 16 > distance
-                            || 16 * Math.abs(loc.getZ() - z) / 16 > distance) {
-                            continue;
-                        }
-                        ((BukkitPlayer) player).player.sendBlockChange(bloc, type, data);
+        TaskManager.runTaskLater(() -> {
+            String world = bloc.getWorld().getName();
+            int x = bloc.getBlockX();
+            int z = bloc.getBlockZ();
+            int distance = Bukkit.getViewDistance() * 16;
+            for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
+                PlotPlayer player = entry.getValue();
+                Location loc = player.getLocation();
+                if (loc.getWorld().equals(world)) {
+                    if (16 * Math.abs(loc.getX() - x) / 16 > distance
+                        || 16 * Math.abs(loc.getZ() - z) / 16 > distance) {
+                        continue;
                     }
+                    ((BukkitPlayer) player).player.sendBlockChange(bloc, type, data);
                 }
             }
         }, 3);
@@ -168,8 +166,10 @@ public class PlayerEvents extends PlotListener implements Listener {
             case MULE:
             case ZOMBIE_HORSE:
             case SKELETON_HORSE:
+            case PARROT:
                 // animal
                 return checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.ANIMAL_CAP);
+            case ILLUSIONER:
             case BLAZE:
             case CAVE_SPIDER:
             case CREEPER:
@@ -326,6 +326,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             case DRAGON_EGG:
             case ANVIL:
             case SAND:
+            case CONCRETE_POWDER:
             case GRAVEL: {
                 Block block = event.getBlock();
                 Location loc = BukkitUtil.getLocation(block.getLocation());
@@ -591,13 +592,11 @@ public class PlayerEvents extends PlotListener implements Listener {
         // Delayed
 
         // Async
-        TaskManager.runTaskLaterAsync(new Runnable() {
-            @Override public void run() {
-                if (!player.hasPlayedBefore() && player.isOnline()) {
-                    player.saveData();
-                }
-                EventUtil.manager.doJoinTask(pp);
+        TaskManager.runTaskLaterAsync(() -> {
+            if (!player.hasPlayedBefore() && player.isOnline()) {
+                player.saveData();
             }
+            EventUtil.manager.doJoinTask(pp);
         }, 20);
     }
 
@@ -953,6 +952,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             if (!plot.isAdded(plotPlayer.getUUID())) {
                 Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
                 Block block = event.getBlock();
+                //noinspection deprecation
                 if (destroy.isPresent() && destroy.get()
                     .contains(PlotBlock.get((short) block.getTypeId(), block.getData()))) {
                     return;
@@ -978,6 +978,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         if (PS.get().worldedit != null && pp.getAttribute("worldedit")) {
+            //noinspection deprecation
             if (player.getItemInHand().getTypeId() == PS.get().worldedit
                 .getConfiguration().wandItem) {
                 return;
@@ -1269,6 +1270,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             if (!plot.isAdded(plotPlayer.getUUID())) {
                 Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
                 Block block = event.getBlock();
+                //noinspection deprecation
                 if (destroy.isPresent() && destroy.get()
                     .contains(PlotBlock.get((short) block.getTypeId(), block.getData()))
                     || Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
@@ -1541,14 +1543,20 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
         }
         if (event.isCancelled() && event.getAction() == Action.RIGHT_CLICK_AIR) {
-            ItemStack hand = player.getItemInHand();
-            Material type = (hand == null) ? Material.AIR : hand.getType();
+            @SuppressWarnings("deprecation") ItemStack hand = player.getItemInHand();
+            Material type;
+            if (hand == null) {
+                type = Material.AIR;
+            } else {
+                type = hand.getType();
+            }
             if (type == Material.MONSTER_EGG || type == Material.MONSTER_EGGS) {
                 Set<Material> transparent =
                     new HashSet<>(Arrays.asList(Material.WATER, Material.STATIONARY_WATER));
                 Block block = player.getTargetBlock(transparent, 5);
                 if (block != null && block.getType() != Material.AIR) {
                     Location location = BukkitUtil.getLocation(block.getLocation());
+                    //noinspection deprecation
                     if (!EventUtil.manager
                         .checkPlayerBlockEvent(pp, PlayerBlockEventType.SPAWN_MOB, location,
                             new BukkitLazyBlock(PlotBlock.get((short) type.getId(), (byte) 0)),
@@ -1585,7 +1593,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 Block block = event.getClickedBlock();
                 location = BukkitUtil.getLocation(block.getLocation());
                 Material blockType = block.getType();
-                int blockId = blockType.getId();
+                @SuppressWarnings("deprecation") int blockId = blockType.getId();
                 switch (blockType) {
                     case ANVIL:
                     case ACACIA_DOOR:
@@ -1665,13 +1673,23 @@ public class PlayerEvents extends PlotListener implements Listener {
                         break;
                 }
                 lb = new BukkitLazyBlock(blockId, block);
-                ItemStack hand = player.getItemInHand();
+                @SuppressWarnings("deprecation") ItemStack hand = player.getItemInHand();
                 if (eventType != null && (eventType != PlayerBlockEventType.INTERACT_BLOCK
                     || !player.isSneaking())) {
                     break;
                 }
-                Material type = (hand == null) ? null : hand.getType();
-                int id = (type == null) ? 0 : type.getId();
+                Material type;
+                if (hand == null) {
+                    type = null;
+                } else {
+                    type = hand.getType();
+                }
+                int id;
+                if (type == null) {
+                    id = 0;
+                } else {
+                    id = type.getId();
+                }
                 if (type == Material.AIR) {
                     eventType = PlayerBlockEventType.INTERACT_BLOCK;
                     break;
@@ -1758,6 +1776,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return;
         }
         if (PS.get().worldedit != null && pp.getAttribute("worldedit")) {
+            //noinspection deprecation
             if (player.getItemInHand().getTypeId() == PS.get().worldedit
                 .getConfiguration().wandItem) {
                 return;
@@ -1797,6 +1816,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             case BUILD_WITHER:
             case BUILD_SNOWMAN:
             case CUSTOM:
+                //noinspection deprecation
                 if (!area.SPAWN_CUSTOM && entity.getType().getTypeId() != 30) {
                     event.setCancelled(true);
                     return;
@@ -2076,6 +2096,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_UNOWNED);
             event.setCancelled(true);
         } else if (!plot.isAdded(pp.getUUID())) {
+            //noinspection deprecation
             if (Flags.USE.contains(plot, PlotBlock.get(event.getBucket().getId(), 0))) {
                 return;
             }
@@ -2120,9 +2141,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR) public void onLeave(PlayerQuitEvent event) {
-        if (TaskManager.TELEPORT_QUEUE.contains(event.getPlayer().getName())) {
-            TaskManager.TELEPORT_QUEUE.remove(event.getPlayer().getName());
-        }
+        TaskManager.TELEPORT_QUEUE.remove(event.getPlayer().getName());
         PlotPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
         pp.unregister();
     }
@@ -2154,6 +2173,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         } else if (!plot.isAdded(plotPlayer.getUUID())) {
             Optional<HashSet<PlotBlock>> use = plot.getFlag(Flags.USE);
             Block block = event.getBlockClicked();
+            //noinspection deprecation
             if (use.isPresent() && use.get()
                 .contains(PlotBlock.get(block.getTypeId(), block.getData()))) {
                 return;
@@ -2453,7 +2473,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Entity victim = event.getEntity();
-        if (!entityDamage(damager, victim)) {
+        if (!entityDamage(damager, victim, event.getCause())) {
             if (event.isCancelled()) {
                 if (victim instanceof Ageable) {
                     Ageable ageable = (Ageable) victim;
@@ -2468,22 +2488,41 @@ public class PlayerEvents extends PlotListener implements Listener {
     }
 
     public boolean entityDamage(Entity damager, Entity victim) {
-        Location dloc = BukkitUtil.getLocation(damager);
-        Location vloc = BukkitUtil.getLocation(victim);
-        PlotArea dArea = dloc.getPlotArea();
-        PlotArea vArea =
-            dArea != null && dArea.contains(vloc.getX(), vloc.getZ()) ? dArea : vloc.getPlotArea();
-        if (dArea == null && vArea == null) {
+        return entityDamage(damager,victim,null);
+    }
+
+    public boolean entityDamage(Entity damager, Entity victim, EntityDamageEvent.DamageCause cause) {
+        Location damagerLocation = BukkitUtil.getLocation(damager);
+        Location victimLocation = BukkitUtil.getLocation(victim);
+        PlotArea damagerArea = damagerLocation.getPlotArea();
+        PlotArea victimArea;
+        if (damagerArea != null && damagerArea
+            .contains(victimLocation.getX(), victimLocation.getZ())) {
+            victimArea = damagerArea;
+        } else {
+            victimArea = victimLocation.getPlotArea();
+        }
+        if (damagerArea == null && victimArea == null) {
             return true;
         }
 
-        Plot dplot = dArea != null ? dArea.getPlot(dloc) : null;
-        Plot vplot = vArea != null ? vArea.getPlot(vloc) : null;
+        Plot damagerPlot;
+        if (damagerArea != null) {
+            damagerPlot = damagerArea.getPlot(damagerLocation);
+        } else {
+            damagerPlot = null;
+        }
+        Plot victimPlot;
+        if (victimArea != null) {
+            victimPlot = victimArea.getPlot(victimLocation);
+        } else {
+            victimPlot = null;
+        }
 
         Plot plot;
         String stub;
-        if (dplot == null && vplot == null) {
-            if (dArea == null) {
+        if (damagerPlot == null && victimPlot == null) {
+            if (damagerArea == null) {
                 return true;
             }
             plot = null;
@@ -2491,25 +2530,25 @@ public class PlayerEvents extends PlotListener implements Listener {
         } else {
             // Prioritize plots for close to seamless pvp zones
             if (victim.getTicksLived() > damager.getTicksLived()) {
-                if (dplot == null || !(victim instanceof Player)) {
-                    if (vplot == null) {
-                        plot = dplot;
+                if (damagerPlot == null || !(victim instanceof Player)) {
+                    if (victimPlot == null) {
+                        plot = damagerPlot;
                     } else {
-                        plot = vplot;
+                        plot = victimPlot;
                     }
                 } else {
-                    plot = dplot;
+                    plot = damagerPlot;
                 }
-            } else if (dplot == null || !(victim instanceof Player)) {
-                if (vplot == null) {
-                    plot = dplot;
+            } else if (damagerPlot == null || !(victim instanceof Player)) {
+                if (victimPlot == null) {
+                    plot = damagerPlot;
                 } else {
-                    plot = vplot;
+                    plot = victimPlot;
                 }
-            } else if (vplot == null) {
-                plot = dplot;
+            } else if (victimPlot == null) {
+                plot = damagerPlot;
             } else {
-                plot = vplot;
+                plot = victimPlot;
             }
             if (plot.hasOwner()) {
                 stub = "other";
@@ -2530,7 +2569,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 if (shooter instanceof BlockProjectileSource) {
                     Location sLoc = BukkitUtil
                         .getLocation(((BlockProjectileSource) shooter).getBlock().getLocation());
-                    dplot = dArea.getPlot(sLoc);
+                    damagerPlot = damagerArea.getPlot(sLoc);
                 }
                 player = null;
             }
@@ -2620,12 +2659,27 @@ public class PlayerEvents extends PlotListener implements Listener {
                 }
             }
             return true;
-        } else if (dplot != null && (!(dplot.equals(vplot)) || (vplot != null && Objects
-            .equals(dplot.owner, vplot.owner)))) {
-            return vplot != null && Flags.PVE.isTrue(vplot);
         }
-        return ((vplot != null && Flags.PVE.isTrue(vplot)) || !(damager instanceof Arrow
-            && !(victim instanceof Creature)));
+
+        //disable the firework damage. too much of a headache to support on legacy.
+        if (victimPlot != null) {
+            if (EntityDamageEvent.DamageCause.ENTITY_EXPLOSION == cause && damager.getType() == EntityType.FIREWORK) {
+                return false;
+            }
+        }
+        if (damagerPlot != null && (!damagerPlot.equals(victimPlot) || Objects
+            .equals(damagerPlot.owner, victimPlot.owner))) {
+            return victimPlot != null && Flags.PVE.isTrue(victimPlot);
+        }
+        if (victimPlot != null) {
+            if (Flags.PVE.isTrue(victimPlot)) {
+                return true;
+            }
+        }
+        if (!(damager instanceof Arrow && !(victim instanceof Creature))) {
+            return true;
+        }
+        return false;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

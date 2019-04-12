@@ -27,7 +27,7 @@ public class DefaultUUIDWrapper extends UUIDWrapper {
         return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(uuid));
     }
 
-    @Override
+    @SuppressWarnings("deprecation") @Override
     public UUID getUUID(String name) {
         return Bukkit.getOfflinePlayer(name).getUniqueId();
     }
@@ -42,7 +42,7 @@ public class DefaultUUIDWrapper extends UUIDWrapper {
         return toReturn;
     }
 
-    @Override
+    @SuppressWarnings("deprecation") @Override
     public OfflinePlotPlayer getOfflinePlayer(String name) {
         return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(name));
     }

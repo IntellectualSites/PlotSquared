@@ -15,6 +15,9 @@ import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.util.NbtFactory;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,9 +27,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 public class FileUUIDHandler extends UUIDHandlerImplementation {
 
