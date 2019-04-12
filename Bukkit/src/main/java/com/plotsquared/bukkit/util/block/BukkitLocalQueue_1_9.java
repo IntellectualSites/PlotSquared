@@ -249,7 +249,7 @@ public class BukkitLocalQueue_1_9 extends BukkitLocalQueue<char[]> {
             Field entitySlices = clazz.getDeclaredField("entitySlices");
             Object[] sections = (Object[]) sf.get(c);
             Map<?, ?> tiles = (Map<?, ?>) tf.get(c);
-            AbstractSet<?>[] entities = (AbstractSet<?>[]) entitySlices.get(c);
+            Collection<?>[] entities = (Collection<?>[]) entitySlices.get(c);
 
             // We need to update entities to make it mutable
             for (int i = 0; i < entities.length; i++) {
