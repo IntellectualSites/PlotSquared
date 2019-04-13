@@ -120,6 +120,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         try {
             setupSchematics();
         } catch (Exception ignored) {
+            ignored.printStackTrace();
             PlotSquared.debug("&c - road schematics are disabled for this world.");
         }
     }
