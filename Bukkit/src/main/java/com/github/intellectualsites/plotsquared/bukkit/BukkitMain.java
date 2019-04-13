@@ -657,11 +657,15 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         if (this.metricsStarted) {
             return;
         }
-        System.setProperty("bstats.relocatecheck",
-            "false"); // We do not want to relocate the package...
-        Metrics metrics = new Metrics(this);// bstats
-        PlotSquared.log(Captions.PREFIX + "&6Metrics enabled.");
         this.metricsStarted = true;
+        try {
+            System.setProperty("bstats.relocatecheck",
+                "false"); // We do not want to relocate the package...
+            Metrics metrics = new Metrics(this);// bstats
+            PlotSquared.log(Captions.PREFIX + "&6Metrics enabled.");
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     @Override public ChunkManager initChunkManager() {
