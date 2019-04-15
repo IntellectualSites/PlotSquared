@@ -17,7 +17,7 @@ import org.bukkit.material.MaterialData;
 
 public class GenChunk extends ScopedLocalBlockQueue {
 
-    public final Biome[] biomes;
+    private final Biome[] biomes;
     public short[][] result;
     public byte[][] result_data;
     public ChunkData cd;
