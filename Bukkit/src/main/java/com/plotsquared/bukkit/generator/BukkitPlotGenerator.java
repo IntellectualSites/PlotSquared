@@ -58,7 +58,12 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
                 if (queue == null) {
                     queue = GlobalBlockQueue.IMP.getNewQueue(world.getName(), false);
                 }
-                byte[][] resultData = dataMap.isEmpty() ? null : dataMap.remove(new ChunkLoc(c.getX(), c.getZ()));
+                byte[][] resultData;
+                if (dataMap.isEmpty()) {
+                    resultData = null;
+                } else {
+                    resultData = dataMap.remove(new ChunkLoc(c.getX(), c.getZ()));
+                }
                 if (resultData == null) {
                     GenChunk result = BukkitPlotGenerator.this.chunkSetter;
                     // Set the chunk location

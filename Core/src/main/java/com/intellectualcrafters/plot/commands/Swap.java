@@ -13,7 +13,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         description = "Swap two plots",
         aliases = {"switch"},
         category = CommandCategory.CLAIMING,
-        requiredType = RequiredType.NONE)
+        requiredType = RequiredType.PLAYER)
 public class Swap extends SubCommand {
 
     @Override
@@ -44,16 +44,10 @@ public class Swap extends SubCommand {
             C.PLOTWORLD_INCOMPATIBLE.send(player);
             return false;
         }
-        if (plot1.move(plot2, new Runnable() {
-            @Override
-            public void run() {
-                MainUtil.sendMessage(player, C.SWAP_SUCCESS);
-            }
-        }, true)) {
+        if (plot1.move(plot2, () -> MainUtil.sendMessage(player, C.SWAP_SUCCESS), true)) {
             return true;
-        } else {
-            MainUtil.sendMessage(player, C.SWAP_OVERLAP);
-            return false;
         }
+        MainUtil.sendMessage(player, C.SWAP_OVERLAP);
+        return false;
     }
 }

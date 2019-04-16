@@ -71,13 +71,13 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             String name = resultSet.getString("owner");
             String world = LikePlotMeConverter.getWorld(resultSet.getString("world"));
             if (!plots.containsKey(world)) {
-                plots.put(world, new HashMap<PlotId, Plot>());
+                plots.put(world, new HashMap<>());
                 if (merge) {
                     int plot = PS.get().worlds.getInt("worlds." + world + ".plot.size");
                     int path = PS.get().worlds.getInt("worlds." + world + ".road.width");
                     plotWidth.put(world, plot);
                     roadWidth.put(world, path);
-                    merges.put(world, new HashMap<PlotId, boolean[]>());
+                    merges.put(world, new HashMap<>());
                 }
             }
             if (merge) {
