@@ -36,6 +36,10 @@ import java.util.UUID;
         SinglePlotArea area = ((SinglePlotAreaManager) pam).getArea();
         PlotId id = new PlotId(0, 0);
         File container = PlotSquared.imp().getWorldContainer();
+        if (container.equals(new File("."))) {
+            player.sendMessage("World container must be configured to be a separate directory to your base files!");
+            return;
+        }
         for (File folder : container.listFiles()) {
             String name = folder.getName();
             if (!WorldUtil.IMP.isWorld(name) && PlotId.fromString(name) == null) {
