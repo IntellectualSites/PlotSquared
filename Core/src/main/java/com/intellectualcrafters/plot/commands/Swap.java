@@ -13,7 +13,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         description = "Swap two plots",
         aliases = {"switch"},
         category = CommandCategory.CLAIMING,
-        requiredType = RequiredType.PLAYER)
+        requiredType = RequiredType.NONE)
 public class Swap extends SubCommand {
 
     @Override
