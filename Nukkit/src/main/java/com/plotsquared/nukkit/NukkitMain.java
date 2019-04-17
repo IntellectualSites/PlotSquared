@@ -78,20 +78,11 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
             this.name = getDescription().getName();
             getServer().getName();
             new PS(this, "Nukkit");
-            if (Settings.Enabled_Components.METRICS) {
-                new Metrics(this).start();
-                PS.log(C.PREFIX + "&6Metrics enabled.");
-            } else {
-                PS.log(C.CONSOLE_PLEASE_ENABLE_METRICS.f(getPluginName()));
-            }
+            new Metrics(this).start();
+            PS.log(C.PREFIX + "&6Metrics enabled.");
             Generator.addGenerator(NukkitHybridGen.class, getPluginName(), 1);
             if (Settings.Enabled_Components.WORLDS) {
-                TaskManager.IMP.taskRepeat(new Runnable() {
-                    @Override
-                    public void run() {
-                        unload();
-                    }
-                }, 20);
+                TaskManager.IMP.taskRepeat(this::unload, 20);
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -121,7 +112,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
             }
             if (unload != null) {
                 Map<Long, ? extends FullChunk> chunks = unload.getChunks();
-                FullChunk[] toUnload = chunks.values().toArray(new FullChunk[chunks.size()]);
+                FullChunk[] toUnload = chunks.values().toArray(new FullChunk[0]);
                 for (FullChunk chunk : toUnload) {
                     try {
                         chunk.unload(true, false);
@@ -204,47 +195,42 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
     @Override
     public void runEntityTask() {
         PS.log(C.PREFIX + "KillAllEntities started.");
-        TaskManager.runTaskRepeat(new Runnable() {
+        TaskManager.runTaskRepeat(() -> PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
             @Override
-            public void run() {
-                PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
-                    @Override
-                    public void run(PlotArea plotArea) {
-                        Level world = getServer().getLevelByName(plotArea.worldname);
-                        try {
-                            if (world == null) {
-                                return;
-                            }
-                            Entity[] entities = world.getEntities();
-                            for (Entity entity : entities) {
-                                if (entity instanceof Player) {
-                                    continue;
-                                }
-                                com.intellectualcrafters.plot.object.Location location = NukkitUtil.getLocation(entity.getLocation());
-                                Plot plot = location.getPlot();
-                                if (plot == null) {
-                                    if (location.isPlotArea()) {
-                                        entity.kill();
-                                    }
-                                    continue;
-                                }
-                                List<MetadataValue> meta = entity.getMetadata("plot");
-                                if (meta.isEmpty()) {
-                                    continue;
-                                }
-                                Plot origin = (Plot) meta.get(0).value();
-                                if (!plot.equals(origin.getBasePlot(false))) {
-                                    entity.kill();
-                                }
-                                continue;
-                            }
-                        } catch (Throwable e) {
-                            e.printStackTrace();
-                        }
+            public void run(PlotArea plotArea) {
+                Level world = getServer().getLevelByName(plotArea.worldname);
+                try {
+                    if (world == null) {
+                        return;
                     }
-                });
+                    Entity[] entities = world.getEntities();
+                    for (Entity entity : entities) {
+                        if (entity instanceof Player) {
+                            continue;
+                        }
+                        Location location = NukkitUtil.getLocation(entity.getLocation());
+                        Plot plot = location.getPlot();
+                        if (plot == null) {
+                            if (location.isPlotArea()) {
+                                entity.kill();
+                            }
+                            continue;
+                        }
+                        List<MetadataValue> meta = entity.getMetadata("plot");
+                        if (meta.isEmpty()) {
+                            continue;
+                        }
+                        Plot origin = (Plot) meta.get(0).value();
+                        if (!plot.equals(origin.getBasePlot(false))) {
+                            entity.kill();
+                        }
+                        continue;
+                    }
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
             }
-        }, 20);
+        }), 20);
     }
 
     @Override
@@ -301,7 +287,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
         if (name == null) {
             return null;
         }
-        HashMap<String, Object> map = new HashMap<String, Object>();
+        HashMap<String, Object> map = new HashMap<>();
         map.put("world", world);
         Class<? extends Generator> gen = Generator.getGenerator(name);
         if (gen != null) {
