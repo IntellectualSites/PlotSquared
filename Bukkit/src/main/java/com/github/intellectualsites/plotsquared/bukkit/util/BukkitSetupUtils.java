@@ -123,15 +123,16 @@ public class BukkitSetupUtils extends SetupUtils {
                 break;
             }
             case 1: {
-                if (!PlotSquared.get().worlds.contains(worldPath)) {
-                    PlotSquared.get().worlds.createSection(worldPath);
-                }
-                ConfigurationSection worldSection =
-                    PlotSquared.get().worlds.getConfigurationSection(worldPath);
-                for (ConfigurationNode step : steps) {
-                    worldSection.set(step.getConstant(), step.getValue());
-                }
                 if (!object.plotManager.endsWith(":single")) {
+                    if (!PlotSquared.get().worlds.contains(worldPath)) {
+                        PlotSquared.get().worlds.createSection(worldPath);
+                    }
+                    if (steps.length != 0) {
+                        ConfigurationSection worldSection = PlotSquared.get().worlds.getConfigurationSection(worldPath);
+                        for (ConfigurationNode step : steps) {
+                            worldSection.set(step.getConstant(), step.getValue());
+                        }
+                    }
                     PlotSquared.get().worlds.set("worlds." + world + ".generator.type", object.type);
                     PlotSquared.get().worlds.set("worlds." + world + ".generator.terrain", object.terrain);
                     PlotSquared.get().worlds.set("worlds." + world + ".generator.plugin", object.plotManager);
