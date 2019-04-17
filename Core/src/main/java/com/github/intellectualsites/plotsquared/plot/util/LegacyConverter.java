@@ -65,9 +65,8 @@ import java.util.Map;
         }
         final BlockBucket bucket = new BlockBucket();
         if (includeRatios) {
-            final double ratio = 100D / blocks.length;
             for (final Map.Entry<PlotBlock, Integer> count : counts.entrySet()) {
-                bucket.addBlock(count.getKey(), (int) (count.getValue() * ratio));
+                bucket.addBlock(count.getKey(), (int) (count.getValue()));
             }
         } else {
             counts.keySet().forEach(bucket::addBlock);
