@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
@@ -43,7 +44,12 @@ import java.util.UUID;
         for (File folder : container.listFiles()) {
             String name = folder.getName();
             if (!WorldUtil.IMP.isWorld(name) && PlotId.fromStringOrNull(name) == null) {
-                UUID uuid = UUIDHandler.getUUID(name, null);
+                UUID uuid;
+                if (name.length() > 16) {
+                    uuid = UUID.fromString(name);
+                } else {
+                    uuid = UUIDHandler.getUUID(name, null);
+                }
                 if (uuid == null) {
                     uuid =
                         UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
