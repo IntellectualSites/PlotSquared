@@ -1390,7 +1390,7 @@ import java.util.zip.ZipInputStream;
                 ConfigurationSection section =
                     this.worlds.getConfigurationSection("worlds." + world);
                 plotworld.saveConfiguration(section);
-                plotworld.loadConfiguration(section);
+                plotworld.loadDefaultConfiguration(section);
                 this.worlds.save(this.worldsFile);
             } catch (IOException e) {
                 e.printStackTrace();

@@ -36,8 +36,8 @@ public class SinglePlotArea extends GridPlotWorld {
                 SetupObject setup = new SetupObject();
                 setup.plotManager = "PlotSquared:single";
                 setup.setupGenerator = "PlotSquared:single";
-                setup.type = 0;
-                setup.terrain = 0;
+                setup.type = TYPE;
+                setup.terrain = TERRAIN;
                 setup.step = new ConfigurationNode[0];
                 setup.world = worldName;
                 SetupUtils.manager.setupWorld(setup);
