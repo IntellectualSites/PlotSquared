@@ -145,6 +145,7 @@ public class Settings extends Config {
         Chat.CONSOLE_COLOR = config.getBoolean("console.color", Chat.CONSOLE_COLOR);
         Chat.INTERACTIVE = config.getBoolean("chat.fancy", Chat.INTERACTIVE);
 
+        Enabled_Components.METRICS = config.getBoolean("metrics", Enabled_Components.METRICS);
         Enabled_Components.UPDATER = config.getBoolean("update-notifications", Enabled_Components.UPDATER);
         Enabled_Components.DATABASE_PURGER = config.getBoolean("auto-purge", Enabled_Components.DATABASE_PURGER);
         return true;
