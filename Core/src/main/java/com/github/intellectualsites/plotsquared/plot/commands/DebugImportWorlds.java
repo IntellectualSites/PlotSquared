@@ -42,7 +42,7 @@ import java.util.UUID;
         }
         for (File folder : container.listFiles()) {
             String name = folder.getName();
-            if (!WorldUtil.IMP.isWorld(name) && PlotId.fromString(name) == null) {
+            if (!WorldUtil.IMP.isWorld(name) && PlotId.fromStringOrNull(name) == null) {
                 UUID uuid = UUIDHandler.getUUID(name, null);
                 if (uuid == null) {
                     uuid =
