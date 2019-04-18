@@ -122,15 +122,12 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
             // send ents
             for (EntityTrackerEntry entry : entities) {
                 try {
-                    TaskManager.IMP.taskLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            for (EntityPlayerMP player : players) {
-                                if (entry.isVisibleTo(player)) {
-                                    entry.removeFromTrackedPlayers(player);
-                                    if (entry.getTrackedEntity() != player) {
-                                        entry.updatePlayerEntity(player);
-                                    }
+                    TaskManager.IMP.taskLater(() -> {
+                        for (EntityPlayerMP player : players) {
+                            if (entry.isVisibleTo(player)) {
+                                entry.removeFromTrackedPlayers(player);
+                                if (entry.getTrackedEntity() != player) {
+                                    entry.updatePlayerEntity(player);
                                 }
                             }
                         }

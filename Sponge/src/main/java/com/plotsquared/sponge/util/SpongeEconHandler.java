@@ -19,6 +19,7 @@ public class SpongeEconHandler extends EconHandler {
 
     public SpongeEconHandler() {
         if (Sponge.getServiceManager().isRegistered(EconomyService.class)) {
+            //noinspection OptionalGetWithoutIsPresent
             econ = Sponge.getServiceManager().provide(EconomyService.class).get();
         }
     }

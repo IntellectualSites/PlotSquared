@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SpongeTaskManager extends TaskManager {
 
-    private final AtomicInteger i = new AtomicInteger();
+    private final AtomicInteger atomicInteger = new AtomicInteger();
 
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final SpongeMain spongeMain;
@@ -20,7 +20,7 @@ public class SpongeTaskManager extends TaskManager {
 
     @Override
     public int taskRepeat(Runnable runnable, int interval) {
-        int val = this.i.incrementAndGet();
+        int val = this.atomicInteger.incrementAndGet();
         Task.Builder builder = this.spongeMain.getGame().getScheduler().createTaskBuilder();
         Task.Builder built = builder.delayTicks(interval).intervalTicks(interval).execute(runnable);
         Task task = built.submit(this.spongeMain.getPlugin());
@@ -30,9 +30,8 @@ public class SpongeTaskManager extends TaskManager {
 
     @Override
     public int taskRepeatAsync(Runnable runnable, int interval) {
-        int val = this.i.incrementAndGet();
-        Task.Builder builder = this.spongeMain.getGame().getScheduler().createTaskBuilder();
-        Task.Builder built = builder.delayTicks(interval).async().intervalTicks(interval).execute(runnable);
+        int val = this.atomicInteger.incrementAndGet();
+        Task.Builder built = this.spongeMain.getGame().getScheduler().createTaskBuilder().async().intervalTicks(interval).execute(runnable);
         Task task = built.submit(this.spongeMain.getPlugin());
         this.tasks.put(val, task);
         return val;
@@ -63,8 +62,8 @@ public class SpongeTaskManager extends TaskManager {
     }
 
     @Override
-    public void cancelTask(int i) {
-        Task task = this.tasks.remove(i);
+    public void cancelTask(int taskId) {
+        Task task = this.tasks.remove(taskId);
         if (task != null) {
             task.cancel();
         }

@@ -66,11 +66,9 @@ public class SpongeUtil extends WorldUtil {
 
     public static <T> T getCause(Cause cause, Class<T> clazz) {
         Optional<?> root = Optional.of(cause.root());
-        if (root.isPresent()) {
-            Object source = root.get();
-            if (clazz.isInstance(source)) {
-                return (T) source;
-            }
+        Object source = root.get();
+        if (clazz.isInstance(source)) {
+            return (T) source;
         }
         return null;
     }

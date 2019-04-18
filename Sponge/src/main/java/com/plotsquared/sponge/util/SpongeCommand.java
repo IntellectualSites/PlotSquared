@@ -36,7 +36,11 @@ public class SpongeCommand implements CommandCallable {
             } catch (Exception ignored) {
                 plotPlayer = ConsolePlayer.getConsole();
             }
-            MainCommand.onCommand(plotPlayer, arguments.isEmpty() ? new String[]{} : arguments.split(" "));
+            if (arguments.isEmpty()) {
+                MainCommand.onCommand(plotPlayer, new String[] {});
+            } else {
+                MainCommand.onCommand(plotPlayer, arguments.split(" "));
+            }
         });
         return CommandResult.success();
     }
@@ -61,7 +65,12 @@ public class SpongeCommand implements CommandCallable {
             return result;
         }
         List<String> names = new ArrayList<>();
-        String startsWith = arguments.endsWith(" ") ? "" : args[args.length - 1];
+        String startsWith;
+        if (arguments.endsWith(" ")) {
+            startsWith = "";
+        } else {
+            startsWith = args[args.length - 1];
+        }
         for (Map.Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
             String name = entry.getKey();
             if (name.startsWith(startsWith)) {

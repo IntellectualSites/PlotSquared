@@ -53,9 +53,7 @@ public class SpongeSetupUtils extends SetupUtils {
     @Override
     public void unload(String worldName, boolean safe) {
         Optional<World> world = Sponge.getServer().getWorld(worldName);
-        if (world.isPresent()) {
-            Sponge.getServer().unloadWorld(world.get());
-        }
+        world.ifPresent(value -> Sponge.getServer().unloadWorld(value));
     }
 
     @Override
@@ -74,7 +72,12 @@ public class SpongeSetupUtils extends SetupUtils {
     @Override
     public String setupWorld(SetupObject object) {
         SetupUtils.manager.updateGenerators();
-        ConfigurationNode[] steps = object.step == null ? new ConfigurationNode[0] : object.step;
+        ConfigurationNode[] steps;
+        if (object.step == null) {
+            steps = new ConfigurationNode[0];
+        } else {
+            steps = object.step;
+        }
         String world = object.world;
         int type = object.type;
         String worldPath = "worlds." + object.world;

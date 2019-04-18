@@ -20,27 +20,22 @@ public class SpongeUUIDHandler extends UUIDHandlerImplementation {
         if (!super.startCaching(whenDone)) {
             return false;
         }
-        return cache(whenDone);
+        return cache();
     }
 
-    public boolean cache(Runnable whenDone) {
+    public boolean cache() {
         for (GameProfile profile : SpongeMain.THIS.getServer().getGameProfileManager().getCache().getProfiles()) {
-            String name = profile.getName().orElse(null);
-            if (name != null) {
-                add(new StringWrapper(name), profile.getUniqueId());
-            }
+            profile.getName()
+                .ifPresent(name -> add(new StringWrapper(name), profile.getUniqueId()));
         }
         return true;
     }
     
     @Override
     public void fetchUUID(String name, RunnableVal<UUID> ifFetch) {
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
-                ifFetch.value = SpongeUUIDHandler.this.uuidWrapper.getUUID(name);
-                TaskManager.runTask(ifFetch);
-            }
+        TaskManager.runTaskAsync(() -> {
+            ifFetch.value = SpongeUUIDHandler.this.uuidWrapper.getUUID(name);
+            TaskManager.runTask(ifFetch);
         });
     }
     

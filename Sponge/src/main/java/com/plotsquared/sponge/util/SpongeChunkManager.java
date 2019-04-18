@@ -5,16 +5,15 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.TaskManager;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.animal.Animal;
 import org.spongepowered.api.entity.living.monster.Monster;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.World;
+
+import java.util.Optional;
+import java.util.Set;
 
 public class SpongeChunkManager extends ChunkManager {
     
@@ -80,21 +79,18 @@ public class SpongeChunkManager extends ChunkManager {
         int bz = pos1.getZ();
         int tx = pos2.getX();
         int tz = pos2.getZ();
-        world.getEntities(new Predicate<Entity>() {
-            @Override
-            public boolean test(Entity entity) {
-                org.spongepowered.api.world.Location loc = entity.getLocation();
-                int x = loc.getBlockX();
-                if ((x >= bx) && (x <= tx)) {
-                    int z = loc.getBlockZ();
-                    if ((z >= bz) && (z <= tz)) {
-                        if (!(entity instanceof Player)) {
-                            entity.remove();
-                        }
+        world.getEntities(entity -> {
+            org.spongepowered.api.world.Location loc = entity.getLocation();
+            int x = loc.getBlockX();
+            if ((x >= bx) && (x <= tx)) {
+                int z = loc.getBlockZ();
+                if ((z >= bz) && (z <= tz)) {
+                    if (!(entity instanceof Player)) {
+                        entity.remove();
                     }
                 }
-                return false;
             }
+            return false;
         });
     }
     
@@ -108,9 +104,7 @@ public class SpongeChunkManager extends ChunkManager {
     public void unloadChunk(String world, ChunkLoc loc, boolean save, boolean safe) {
         World worldObj = SpongeUtil.getWorld(world);
         Optional<Chunk> chunk = worldObj.getChunk(loc.x << 4, 0, loc.z << 4);
-        if (chunk.isPresent()) {
-            worldObj.unloadChunk(chunk.get());
-        }
+        chunk.ifPresent(worldObj::unloadChunk);
     }
     
     @Override

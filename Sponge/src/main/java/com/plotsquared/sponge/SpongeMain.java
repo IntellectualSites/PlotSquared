@@ -119,12 +119,7 @@ public class SpongeMain implements IPlotMain {
         this.game.getRegistry().register(WorldGeneratorModifier.class, (WorldGeneratorModifier) PS.get().IMP.getDefaultGenerator().specify(null));
         this.game.getRegistry().register(WorldGeneratorModifier.class, (WorldGeneratorModifier) new SingleWorldGenerator().specify(null));
         if (Settings.Enabled_Components.WORLDS) {
-            TaskManager.IMP.taskRepeat(new Runnable() {
-                @Override
-                public void run() {
-                    unload();
-                }
-            }, 20);
+            TaskManager.IMP.taskRepeat(this::unload, 20);
         }
     }
 
@@ -212,7 +207,12 @@ public class SpongeMain implements IPlotMain {
         PS.log("Checking minecraft version: Sponge: ");
         String version = this.game.getPlatform().getMinecraftVersion().getName();
         String[] split = version.split("\\.");
-        return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), split.length == 3 ? Integer.parseInt(split[2]) : 0};
+        if (split.length == 3) {
+            return new int[] {Integer.parseInt(split[0]), Integer.parseInt(split[1]),
+                Integer.parseInt(split[2])};
+        } else {
+            return new int[] {Integer.parseInt(split[0]), Integer.parseInt(split[1]), 0};
+        }
     }
 
     @Override
