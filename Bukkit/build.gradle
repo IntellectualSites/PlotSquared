@@ -10,7 +10,6 @@ dependencies {
     implementation project (':Core')
     compile project(':Core')
     compile 'org.spigotmc:spigot-api:1.12.1-R0.1-SNAPSHOT'
-    compile(group: 'org.bstats', name: 'bstats-bukkit', version: '1.4')
     compile("net.milkbowl.vault:VaultAPI:1.6") {
         exclude module: 'bukkit'
     }
@@ -34,9 +33,7 @@ jar.enabled = false
 shadowJar {
     dependencies {
         include(dependency(':Core'))
-        include(dependency('org.bstats:bstats-bukkit:1.4'))
     }
-    relocate('org.mcstats', 'com.plotsquared.stats')
     archiveName = "${parent.name}-${project.name}-${parent.version}.jar"
     destinationDir = file '../target'
 }
