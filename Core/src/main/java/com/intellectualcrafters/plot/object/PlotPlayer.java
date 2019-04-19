@@ -554,8 +554,10 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                                                                 @Override
                                                                 public void run() {
                                                                     if (getMeta("teleportOnLogin", true)) {
-                                                                        teleport(loc);
-                                                                        sendMessage(C.TELEPORTED_TO_PLOT.f() + " (quitLoc-unloaded) (" + plotX + "," + plotZ + ")");
+                                                                        if (plot.isLoaded()) {
+                                                                            teleport(loc);
+                                                                            sendMessage(C.TELEPORTED_TO_PLOT.f() + " (quitLoc-unloaded) (" + plotX + "," + plotZ + ")");
+                                                                        }
                                                                     }
                                                                 }
                                                             });
