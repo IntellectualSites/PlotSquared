@@ -541,7 +541,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                             return;
                         }
 
-                        if (!Settings.Enabled_Components.PERSISTENT_META) {
+                        if (!Settings.Teleport.ON_LOGIN) {
                             return;
                         }
                         PlotAreaManager manager = PlotSquared.get().getPlotAreaManager();

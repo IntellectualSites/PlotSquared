@@ -7,6 +7,8 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
 import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 
 import javax.annotation.Nullable;
@@ -75,7 +77,7 @@ public abstract class EventUtil {
             }
         }
         final Plot plot = player.getCurrentPlot();
-        if (Settings.Teleport.ON_LOGIN && plot != null) {
+        if (Settings.Teleport.ON_LOGIN && plot != null && !(plot.getArea() instanceof SinglePlotArea)) {
             TaskManager.runTask(() -> plot.teleportPlayer(player));
             MainUtil.sendMessage(player,
                 Captions.TELEPORTED_TO_ROAD.f() + " (on-login) " + "(" + plot.getId().x + ";" + plot
