@@ -15,6 +15,7 @@ import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.Rating;
+import com.intellectualcrafters.plot.object.worlds.SinglePlotArea;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
 import com.plotsquared.listener.PlayerBlockEventType;
 
@@ -87,7 +88,7 @@ import static com.plotsquared.listener.PlayerBlockEventType.*;
             }
         }
         final Plot plot = player.getCurrentPlot();
-        if (Settings.Teleport.ON_LOGIN && plot != null) {
+        if (Settings.Teleport.ON_LOGIN && plot != null && !(plot.getArea() instanceof SinglePlotArea)) {
             TaskManager.runTask(() -> plot.teleportPlayer(player));
             MainUtil.sendMessage(player,
                 C.TELEPORTED_TO_ROAD.f() + " (on-login) " + "(" + plot.getId().x + ";" + plot

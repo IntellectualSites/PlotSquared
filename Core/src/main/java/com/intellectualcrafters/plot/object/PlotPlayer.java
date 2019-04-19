@@ -518,7 +518,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                     try {
                         PlotPlayer.this.metaMap = value;
                         if (!value.isEmpty()) {
-                            if (Settings.Enabled_Components.PERSISTENT_META) {
+                            if (Settings.Teleport.ON_LOGIN) {
                                 PlotAreaManager manager = PS.get().getPlotAreaManager();
                                 if (manager instanceof SinglePlotAreaManager) {
                                     PlotArea area = ((SinglePlotAreaManager) manager).getArea();
