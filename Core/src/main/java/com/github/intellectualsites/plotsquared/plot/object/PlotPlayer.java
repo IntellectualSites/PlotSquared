@@ -462,8 +462,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      */
     public void unregister() {
         Plot plot = getCurrentPlot();
-        if (plot != null && Settings.Enabled_Components.PERSISTENT_META && plot
-            .getArea() instanceof SinglePlotArea) {
+        if (plot != null && Settings.Enabled_Components.PERSISTENT_META && plot.getArea() instanceof SinglePlotArea) {
             PlotId id = plot.getId();
             int x = id.x;
             int z = id.y;
@@ -538,59 +537,60 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                 @Override public void run(Map<String, byte[]> value) {
                     try {
                         PlotPlayer.this.metaMap = value;
-                        if (!value.isEmpty()) {
-                            if (Settings.Enabled_Components.PERSISTENT_META) {
-                                PlotAreaManager manager = PlotSquared.get().getPlotAreaManager();
-                                if (manager instanceof SinglePlotAreaManager) {
-                                    PlotArea area = ((SinglePlotAreaManager) manager).getArea();
-                                    byte[] arr = PlotPlayer.this.getPersistentMeta("quitLoc");
-                                    if (arr != null) {
-                                        removePersistentMeta("quitLoc");
+                        if (value.isEmpty()) {
+                            return;
+                        }
 
-                                        if (getMeta("teleportOnLogin", true)) {
-                                            ByteBuffer quitWorld = ByteBuffer.wrap(arr);
-                                            final int plotX = quitWorld.getShort();
-                                            final int plotZ = quitWorld.getShort();
-                                            PlotId id = new PlotId(plotX, plotZ);
-                                            int x = quitWorld.getInt();
-                                            int y = quitWorld.get() & 0xFF;
-                                            int z = quitWorld.getInt();
-                                            Plot plot = area.getOwnedPlot(id);
-                                            if (plot != null) {
-                                                final Location loc =
-                                                    new Location(plot.getWorldName(), x, y, z);
-                                                if (plot.isLoaded()) {
-                                                    TaskManager.runTask(() -> {
-                                                        if (getMeta("teleportOnLogin", true)) {
-                                                            teleport(loc);
-                                                            sendMessage(
-                                                                Captions.TELEPORTED_TO_PLOT.f()
-                                                                + " (quitLoc) (" + plotX + ","
-                                                                + plotZ + ")");
-                                                        }
-                                                    });
-                                                } else if (!PlotSquared.get()
-                                                    .isMainThread(Thread.currentThread())) {
-                                                    if (getMeta("teleportOnLogin", true)) {
-                                                        if (plot.teleportPlayer(PlotPlayer.this)) {
-                                                            TaskManager.runTask(() -> {
-                                                                if (getMeta("teleportOnLogin",
-                                                                    true)) {
-                                                                    teleport(loc);
-                                                                    sendMessage(
-                                                                        Captions.TELEPORTED_TO_PLOT
-                                                                            .f()
-                                                                            + " (quitLoc-unloaded) ("
-                                                                            + plotX + "," + plotZ
-                                                                            + ")");
-                                                                }
-                                                            });
-                                                        }
-                                                    }
-                                                }
+                        if (!Settings.Enabled_Components.PERSISTENT_META) {
+                            return;
+                        }
+                        PlotAreaManager manager = PlotSquared.get().getPlotAreaManager();
+
+                        if (!(manager instanceof SinglePlotAreaManager)) {
+                            return;
+                        }
+                        PlotArea area = ((SinglePlotAreaManager) manager).getArea();
+                        byte[] arr = PlotPlayer.this.getPersistentMeta("quitLoc");
+                        if (arr == null) {
+                            return;
+                        }
+                        removePersistentMeta("quitLoc");
+
+                        if (!getMeta("teleportOnLogin", true)) {
+                            return;
+                        }
+                        ByteBuffer quitWorld = ByteBuffer.wrap(arr);
+                        final int plotX = quitWorld.getShort();
+                        final int plotZ = quitWorld.getShort();
+                        PlotId id = new PlotId(plotX, plotZ);
+                        int x = quitWorld.getInt();
+                        int y = quitWorld.get() & 0xFF;
+                        int z = quitWorld.getInt();
+                        Plot plot = area.getOwnedPlot(id);
+
+                        if (plot == null) {
+                            return;
+                        }
+
+                        final Location loc = new Location(plot.getWorldName(), x, y, z);
+                        if (plot.isLoaded()) {
+                            TaskManager.runTask(() -> {
+                                if (getMeta("teleportOnLogin", true)) {
+                                    teleport(loc);
+                                    sendMessage(Captions.TELEPORTED_TO_PLOT.f() + " (quitLoc) (" + plotX + "," + plotZ + ")");
+                                }
+                            });
+                        } else if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
+                            if (getMeta("teleportOnLogin", true)) {
+                                if (plot.teleportPlayer(PlotPlayer.this)) {
+                                    TaskManager.runTask(() -> {
+                                        if (getMeta("teleportOnLogin",true)) {
+                                            if (plot.isLoaded()) {
+                                                teleport(loc);
+                                                sendMessage(Captions.TELEPORTED_TO_PLOT.f() + " (quitLoc-unloaded) (" + plotX + "," + plotZ + ")");
                                             }
                                         }
-                                    }
+                                    });
                                 }
                             }
                         }
