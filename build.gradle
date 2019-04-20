@@ -32,11 +32,15 @@ ext {
     date = git.head().getDate().format("yy.MM.dd")
     revision = "-${git.head().abbreviatedId}"
     parents = git.head().parentIds;
-    index = -2039;  // Offset to match CI
-    for (; parents != null && !parents.isEmpty(); index++) {
-        parents = git.getResolve().toCommit(parents.get(0)).getParentIds()
+    if (project.hasProperty('buildnumber')) {
+        buildNumber = "$buildnumber"
+    } else {
+        index = -2042;  // Offset to match CI
+        for (; parents != null && !parents.isEmpty(); index++) {
+            parents = git.getResolve().toCommit(parents.get(0)).getParentIds()
+        }
+        buildNumber = "${index}"
     }
-    buildNumber = "${index}"
 }
 
 // version = String.format("%s.%s%s%s", rootVersion, date, revision, buildNumber)
@@ -72,7 +76,7 @@ subprojects {
         testAnnotationProcessor("org.projectlombok:lombok:1.18.4")
         testImplementation "junit:junit:4.12"
     }
-    
+
     repositories {
         mavenCentral()
         maven { url "http://maven.sk89q.com/repo/" }
