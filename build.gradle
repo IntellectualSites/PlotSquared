@@ -32,13 +32,13 @@ ext {
     revision = "-${git.head().abbreviatedId}"
     parents = git.head().parentIds;
     if (project.hasProperty('buildnumber')) {
-        buildNumber = "$buildnumber"
+        buildNumber = "-$buildnumber"
     } else {
         index = -1352;  // Offset to match CI
         for (; parents != null && !parents.isEmpty(); index++) {
             parents = git.getResolve().toCommit(parents.get(0)).getParentIds()
         }
-        buildNumber = "${index}"
+        buildNumber = "-${index}"
     }
 }
 
