@@ -7,6 +7,7 @@ import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.*;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -16,8 +17,13 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.permissions.Permissible;
+import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.RegisteredListener;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -99,6 +105,8 @@ public class BukkitPlayer extends PlotPlayer {
         return this.player.hasPermission(permission);
     }
 
+    private static boolean CHECK_EFFECTIVE = true;
+
     @Override public int hasPermissionRange(String stub, int range) {
         if (hasPermission(Captions.PERMISSION_ADMIN.s())) {
             return Integer.MAX_VALUE;
@@ -117,29 +125,43 @@ public class BukkitPlayer extends PlotPlayer {
             return Integer.MAX_VALUE;
         }
         int max = 0;
-        String stubPlus = stub + ".";
-        Set<PermissionAttachmentInfo> effective = player.getEffectivePermissions();
-        if (!effective.isEmpty()) {
-            for (PermissionAttachmentInfo attach : effective) {
-                String perm = attach.getPermission();
-                if (perm.startsWith(stubPlus)) {
-                    String end = perm.substring(stubPlus.length());
-                    if (MathMan.isInteger(end)) {
-                        int val = Integer.parseInt(end);
-                        if (val > range) {
-                            return val;
-                        }
-                        if (val > max) {
-                            max = val;
+        if (CHECK_EFFECTIVE) {
+            boolean hasAny = false;
+            String stubPlus = stub + ".";
+            Set<PermissionAttachmentInfo> effective = player.getEffectivePermissions();
+            if (!effective.isEmpty()) {
+                for (PermissionAttachmentInfo attach : effective) {
+                    String permStr = attach.getPermission();
+                    if (permStr.startsWith(stubPlus)) {
+                        hasAny = true;
+                        String end = permStr.substring(stubPlus.length());
+                        if (MathMan.isInteger(end)) {
+                            int val = Integer.parseInt(end);
+                            if (val > range) {
+                                return val;
+                            }
+                            if (val > max) {
+                                max = val;
+                            }
                         }
                     }
                 }
-            }
-        } else {
-            for (int i = range; i > 0; i--) {
-                if (hasPermission(stub + "." + i)) {
-                    return i;
+                if (hasAny) {
+                    return max;
                 }
+                // Workaround
+                for (PermissionAttachmentInfo attach : effective) {
+                    String permStr = attach.getPermission();
+                    Permission perm = Bukkit.getPluginManager().getPermission(permStr);
+                    @NotNull PermissionDefault def = perm.getDefault();
+                    if (!def.getValue(false)) return max;
+                }
+                CHECK_EFFECTIVE = false;
+            }
+        }
+        for (int i = range; i > 0; i--) {
+            if (hasPermission(stub + "." + i)) {
+                return i;
             }
         }
         return max;
