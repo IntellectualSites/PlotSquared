@@ -152,9 +152,9 @@ public class BukkitPlayer extends PlotPlayer {
                 // Workaround
                 for (PermissionAttachmentInfo attach : effective) {
                     String permStr = attach.getPermission();
-                    Permission perm = Bukkit.getPluginManager().getPermission(permStr);
-                    @NotNull PermissionDefault def = perm.getDefault();
-                    if (!def.getValue(false)) return max;
+                    if (permStr.startsWith("plots.") && !permStr.equals("plots.use")) {
+                        return max;
+                    }
                 }
                 CHECK_EFFECTIVE = false;
             }
