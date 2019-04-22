@@ -426,12 +426,16 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      */
     public abstract void setTime(long time);
 
+    /**
+     * Determines whether or not the player can fly.
+     * @return {@code true} if the player is allowed to fly
+     */
     public abstract boolean getFlight();
 
     /**
-     * Set this player's fly mode.
+     * Sets whether or not this player can fly.
      *
-     * @param fly if the player can fly
+     * @param fly {@code true} if the player can fly, otherwise {@code false}
      */
     public abstract void setFlight(boolean fly);
 
