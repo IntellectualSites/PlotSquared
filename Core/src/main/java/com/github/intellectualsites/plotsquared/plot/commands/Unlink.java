@@ -7,8 +7,8 @@ import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 
-@CommandDeclaration(command = "unlink", aliases = {"u", "unmerge"},
-    description = "Unlink a mega-plot", usage = "/plot unlink [createroads]", requiredType = RequiredType.PLAYER, category = CommandCategory.SETTINGS, confirmation = true)
+@CommandDeclaration(command = "unlink", aliases = {"u",
+    "unmerge"}, description = "Unlink a mega-plot", usage = "/plot unlink [createroads]", requiredType = RequiredType.PLAYER, category = CommandCategory.SETTINGS, confirmation = true)
 public class Unlink extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
@@ -38,14 +38,12 @@ public class Unlink extends SubCommand {
         } else {
             createRoad = true;
         }
-        Runnable runnable = new Runnable() {
-            @Override public void run() {
-                if (!plot.unlinkPlot(createRoad, createRoad)) {
-                    MainUtil.sendMessage(player, "&cUnlink has been cancelled");
-                    return;
-                }
-                MainUtil.sendMessage(player, Captions.UNLINK_SUCCESS);
+        Runnable runnable = () -> {
+            if (!plot.unlinkPlot(createRoad, createRoad)) {
+                MainUtil.sendMessage(player, "&cUnlink has been cancelled");
+                return;
             }
+            MainUtil.sendMessage(player, Captions.UNLINK_SUCCESS);
         };
         if (hasConfirmation(player)) {
             CmdConfirm.addPending(player, "/plot unlink " + plot.getId(), runnable);

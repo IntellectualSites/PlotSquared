@@ -19,7 +19,7 @@ import java.util.UUID;
 @CommandDeclaration(command = "add",
     description = "Allow a user to build in a plot while you are online",
     usage = "/plot add <player>", category = CommandCategory.SETTINGS, permission = "plots.add",
-    requiredType = RequiredType.NONE) public class Add extends Command {
+    requiredType = RequiredType.PLAYER) public class Add extends Command {
 
     public Add() {
         super(MainCommand.getInstance(), true);
@@ -63,21 +63,19 @@ import java.util.UUID;
         checkTrue(size <= plot.getArea().MAX_PLOT_MEMBERS || Permissions
                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
             Captions.PLOT_MAX_MEMBERS);
-        confirm.run(this, new Runnable() {
-            @Override // Success
-            public void run() {
-                for (UUID uuid : uuids) {
-                    if (uuid != DBFunc.EVERYONE) {
-                        if (!plot.removeTrusted(uuid)) {
-                            if (plot.getDenied().contains(uuid)) {
-                                plot.removeDenied(uuid);
-                            }
+        // Success
+        confirm.run(this, () -> {
+            for (UUID uuid : uuids) {
+                if (uuid != DBFunc.EVERYONE) {
+                    if (!plot.removeTrusted(uuid)) {
+                        if (plot.getDenied().contains(uuid)) {
+                            plot.removeDenied(uuid);
                         }
                     }
-                    plot.addMember(uuid);
-                    EventUtil.manager.callMember(player, plot, uuid, true);
-                    MainUtil.sendMessage(player, Captions.MEMBER_ADDED);
                 }
+                plot.addMember(uuid);
+                EventUtil.manager.callMember(player, plot, uuid, true);
+                MainUtil.sendMessage(player, Captions.MEMBER_ADDED);
             }
         }, null);
     }

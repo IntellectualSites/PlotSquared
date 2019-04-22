@@ -27,11 +27,9 @@ import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
             return false;
         }
         plot.addRunning();
-        plot.setBiome(value.toUpperCase(), new Runnable() {
-            @Override public void run() {
-                plot.removeRunning();
-                MainUtil.sendMessage(player, Captions.BIOME_SET_TO.s() + value.toLowerCase());
-            }
+        plot.setBiome(value.toUpperCase(), () -> {
+            plot.removeRunning();
+            MainUtil.sendMessage(player, Captions.BIOME_SET_TO.s() + value.toLowerCase());
         });
         return true;
     }

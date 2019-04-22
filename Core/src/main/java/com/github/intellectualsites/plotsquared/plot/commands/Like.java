@@ -96,8 +96,11 @@ public class Like extends SubCommand {
             final Rating result = EventUtil.manager.callRating(player, plot, new Rating(rating));
             if (result != null) {
                 plot.addRating(uuid, result);
-                sendMessage(player, like ? Captions.RATING_LIKED : Captions.RATING_DISLIKED,
-                    plot.getId().toString());
+                if (like) {
+                    sendMessage(player, Captions.RATING_LIKED, plot.getId().toString());
+                } else {
+                    sendMessage(player, Captions.RATING_DISLIKED, plot.getId().toString());
+                }
             }
         };
         if (plot.getSettings().ratings == null) {

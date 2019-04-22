@@ -15,7 +15,7 @@ import java.util.List;
 
 @CommandDeclaration(command = "inbox", description = "Review the comments for a plot",
     usage = "/plot inbox [inbox] [delete <index>|clear|page]", permission = "plots.inbox",
-    category = CommandCategory.CHAT, requiredType = RequiredType.NONE) public class Inbox
+    category = CommandCategory.CHAT, requiredType = RequiredType.PLAYER) public class Inbox
     extends SubCommand {
 
     public void displayComments(PlotPlayer player, List<PlotComment> oldComments, int page) {
@@ -23,7 +23,7 @@ import java.util.List;
             MainUtil.sendMessage(player, Captions.INBOX_EMPTY);
             return;
         }
-        PlotComment[] comments = oldComments.toArray(new PlotComment[oldComments.size()]);
+        PlotComment[] comments = oldComments.toArray(new PlotComment[0]);
         if (page < 0) {
             page = 0;
         }
