@@ -5,13 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.generator.GridPlotWorld;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotId;
-import com.github.intellectualsites.plotsquared.plot.object.PlotLoc;
-import com.github.intellectualsites.plotsquared.plot.object.PlotSettings;
-import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
-import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
+import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
@@ -66,13 +60,15 @@ public class SinglePlotArea extends GridPlotWorld {
                     File levelDat = new File(src, "level.dat");
                     if (levelDat.exists()) {
                         try {
-                            Files.copy(levelDat.toPath(), new File(dest, levelDat.getName()).toPath());
+                            Files.copy(levelDat.toPath(),
+                                new File(dest, levelDat.getName()).toPath());
                             File data = new File(src, "data");
                             if (data.exists()) {
                                 File dataDest = new File(dest, "data");
                                 dataDest.mkdirs();
                                 for (File file : data.listFiles()) {
-                                    Files.copy(file.toPath(), new File(dataDest, file.getName()).toPath());
+                                    Files.copy(file.toPath(),
+                                        new File(dataDest, file.getName()).toPath());
                                 }
                             }
                         } catch (IOException ignore) {

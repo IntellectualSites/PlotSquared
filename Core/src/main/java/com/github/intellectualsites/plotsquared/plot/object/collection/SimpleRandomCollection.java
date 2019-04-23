@@ -18,7 +18,8 @@ public class SimpleRandomCollection<E> extends RandomCollection<E> {
     }
 
     public void add(double weight, E result) {
-        if (weight <= 0) return;
+        if (weight <= 0)
+            return;
         total += weight;
         map.put(total, result);
     }

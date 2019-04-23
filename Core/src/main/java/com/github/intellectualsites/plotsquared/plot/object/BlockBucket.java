@@ -1,7 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.configuration.serialization.ConfigurationSerializable;
-import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.object.collection.RandomCollection;
 import com.google.common.collect.ImmutableMap;
@@ -56,7 +55,8 @@ import java.util.Map.Entry;
     }
 
     private void addBlock(@NonNull final PlotBlock block, double chance) {
-        if (chance == -1) chance = 1;
+        if (chance == -1)
+            chance = 1;
         this.blocks.put(block, chance);
         this.compiled = false;
         if (head == null) {

@@ -735,7 +735,8 @@ public class MainUtil {
             seen = Captions.NEVER.s();
         }
         Optional<String> descriptionFlag = plot.getFlag(Flags.DESCRIPTION);
-        String description = !descriptionFlag.isPresent() ? Captions.NONE.s() :
+        String description = !descriptionFlag.isPresent() ?
+            Captions.NONE.s() :
             Flags.DESCRIPTION.valueToString(descriptionFlag.get());
 
         StringBuilder flags = new StringBuilder();
@@ -779,10 +780,12 @@ public class MainUtil {
             TaskManager.runTaskAsync(() -> {
                 String info1;
                 if (Settings.Ratings.USE_LIKES) {
-                    info1 = newInfo.replaceAll("%rating%", String.format("%.0f%%", Like.getLikesPercentage(plot) * 100D));
+                    info1 = newInfo.replaceAll("%rating%",
+                        String.format("%.0f%%", Like.getLikesPercentage(plot) * 100D));
                 } else {
                     int max = 10;
-                    if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES.isEmpty()) {
+                    if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES
+                        .isEmpty()) {
                         max = 8;
                     }
                     if (full && Settings.Ratings.CATEGORIES != null

@@ -96,7 +96,9 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
         if (found != null && found.length != 0) {
             return found;
         }
-        return isWorld(world) || world.equals("*") ? array : all.length == 0 ? noPlotAreas : super.getPlotAreas(world, region);
+        return isWorld(world) || world.equals("*") ?
+            array :
+            all.length == 0 ? noPlotAreas : super.getPlotAreas(world, region);
     }
 
     @Override public PlotArea[] getAllPlotAreas() {

@@ -42,11 +42,9 @@ public class HybridPlotManager extends ClassicPlotManager {
                 files.add(new FileBytes(newDir + "intersection.schem",
                     Files.readAllBytes(intersection.toPath())));
             }
-            File plot =
-                MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), dir + "plot.schem");
+            File plot = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), dir + "plot.schem");
             if (plot.exists()) {
-                files.add(
-                    new FileBytes(newDir + "plot.schem", Files.readAllBytes(plot.toPath())));
+                files.add(new FileBytes(newDir + "plot.schem", Files.readAllBytes(plot.toPath())));
             }
         } catch (IOException e) {
             e.printStackTrace();

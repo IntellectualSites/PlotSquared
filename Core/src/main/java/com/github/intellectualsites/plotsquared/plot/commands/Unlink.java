@@ -7,8 +7,9 @@ import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 
-@CommandDeclaration(command = "unlink", aliases = {"u",
-    "unmerge"}, description = "Unlink a mega-plot", usage = "/plot unlink [createroads]", requiredType = RequiredType.PLAYER, category = CommandCategory.SETTINGS, confirmation = true)
+@CommandDeclaration(command = "unlink", aliases = {"u", "unmerge"},
+    description = "Unlink a mega-plot", usage = "/plot unlink [createroads]",
+    requiredType = RequiredType.PLAYER, category = CommandCategory.SETTINGS, confirmation = true)
 public class Unlink extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {

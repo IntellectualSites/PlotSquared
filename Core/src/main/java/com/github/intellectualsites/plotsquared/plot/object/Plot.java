@@ -58,6 +58,7 @@ public class Plot {
      * plot owner
      * (Merged plots can have multiple owners)
      * Direct access is Deprecated: use getOwners()
+     *
      * @deprecated
      */
     @Deprecated public UUID owner;
@@ -344,6 +345,7 @@ public class Plot {
      * plot owner
      * (Merged plots can have multiple owners)
      * Direct access is Deprecated: use getOwners()
+     *
      * @deprecated
      */
     @Deprecated public UUID getOwner() {
@@ -351,6 +353,32 @@ public class Plot {
             return DBFunc.SERVER;
         }
         return this.owner;
+    }
+
+    /**
+     * Sets the plot owner (and update the database)
+     *
+     * @param owner uuid to set as owner
+     */
+    public void setOwner(UUID owner) {
+        if (!hasOwner()) {
+            this.owner = owner;
+            create();
+            return;
+        }
+        if (!isMerged()) {
+            if (!this.owner.equals(owner)) {
+                this.owner = owner;
+                DBFunc.setOwner(this, owner);
+            }
+            return;
+        }
+        for (Plot current : getConnectedPlots()) {
+            if (!owner.equals(current.owner)) {
+                current.owner = owner;
+                DBFunc.setOwner(current, owner);
+            }
+        }
     }
 
     /**
@@ -744,32 +772,6 @@ public class Plot {
         for (Plot current : getConnectedPlots()) {
             if (current.getMembers().add(uuid)) {
                 DBFunc.setMember(current, uuid);
-            }
-        }
-    }
-
-    /**
-     * Sets the plot owner (and update the database)
-     *
-     * @param owner uuid to set as owner
-     */
-    public void setOwner(UUID owner) {
-        if (!hasOwner()) {
-            this.owner = owner;
-            create();
-            return;
-        }
-        if (!isMerged()) {
-            if (!this.owner.equals(owner)) {
-                this.owner = owner;
-                DBFunc.setOwner(this, owner);
-            }
-            return;
-        }
-        for (Plot current : getConnectedPlots()) {
-            if (!owner.equals(current.owner)) {
-                current.owner = owner;
-                DBFunc.setOwner(current, owner);
             }
         }
     }

@@ -31,8 +31,8 @@ import com.sk89q.worldedit.extension.platform.Capability;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.*;
 import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -48,7 +48,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.*;
 
 import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getRefClass;
@@ -60,7 +59,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     static {
         try {
             Settings.load(new File("plugins/PlotSquared/config/settings.yml"));
-        } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {
+        }
     }
 
     private final LegacyMappings legacyMappings = new BukkitLegacyMappings();
@@ -110,8 +110,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             WorldEdit.getInstance().getPlatformManager().queryCapability(Capability.GAME_HOOKS);
         } catch (final Throwable throwable) {
             throw new IllegalStateException(
-                    "Failed to force load WorldEdit. Road schematics will fail to generate",
-                    throwable);
+                "Failed to force load WorldEdit. Road schematics will fail to generate", throwable);
         }
     }
 
@@ -145,25 +144,31 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         // Check for updates
         if (PlotSquared.get().getUpdateUtility() != null) {
             final UpdateUtility updateUtility = PlotSquared.get().getUpdateUtility();
-            updateUtility.checkForUpdate(this.getPluginVersionString(), ((updateDescription, throwable) -> {
-                Bukkit.getScheduler().runTask(BukkitMain.this, () -> {
-                    getLogger().info("-------- PlotSquared Update Check --------");
-                    if (throwable != null) {
-                        getLogger().severe(String.format("Could not check for update. Reason: %s",
-                            throwable.getMessage()));
-                    } else {
-                        if (updateDescription == null) {
-                            getLogger().info("You appear to be running the latest version of PlotSquared. Congratulations!");
+            updateUtility
+                .checkForUpdate(this.getPluginVersionString(), ((updateDescription, throwable) -> {
+                    Bukkit.getScheduler().runTask(BukkitMain.this, () -> {
+                        getLogger().info("-------- PlotSquared Update Check --------");
+                        if (throwable != null) {
+                            getLogger().severe(String
+                                .format("Could not check for update. Reason: %s",
+                                    throwable.getMessage()));
                         } else {
-                            getLogger().info("There appears to be a PlotSquared update available!");
-                            getLogger().info(String.format("You are running version %s,"
-                                + " the newest available version is %s", getPluginVersionString(), updateDescription.getVersion()));
-                            getLogger().info(String.format("Update URL: %s", updateDescription.getUrl()));
+                            if (updateDescription == null) {
+                                getLogger().info(
+                                    "You appear to be running the latest version of PlotSquared. Congratulations!");
+                            } else {
+                                getLogger()
+                                    .info("There appears to be a PlotSquared update available!");
+                                getLogger().info(String.format("You are running version %s,"
+                                        + " the newest available version is %s",
+                                    getPluginVersionString(), updateDescription.getVersion()));
+                                getLogger().info(
+                                    String.format("Update URL: %s", updateDescription.getUrl()));
+                            }
                         }
-                    }
-                    getLogger().info("-------- PlotSquared Update Check --------");
-                });
-            }));
+                        getLogger().info("-------- PlotSquared Update Check --------");
+                    });
+                }));
         } else {
             getLogger().warning("Update checking disabled. Skipping.");
         }
@@ -246,8 +251,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                         continue outer;
                                     }
                                 } else {
-                                    result = world
-                                        .unloadChunk(chunkI.getX(), chunkI.getZ(), true);
+                                    result = world.unloadChunk(chunkI.getX(), chunkI.getZ(), true);
                                 }
                                 if (!result) {
                                     continue outer;

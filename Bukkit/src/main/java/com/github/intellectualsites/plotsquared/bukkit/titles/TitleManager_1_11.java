@@ -408,7 +408,8 @@ public class TitleManager_1_11 {
 
     private Method getMethod(Class<?> clazz, String name, Class<?>... args) {
         for (Method m : clazz.getMethods()) {
-            if (m.getName().equals(name) && (args.length == 0 || ClassListEqual(args, m.getParameterTypes()))) {
+            if (m.getName().equals(name) && (args.length == 0 || ClassListEqual(args,
+                m.getParameterTypes()))) {
                 m.setAccessible(true);
                 return m;
             }

@@ -3,7 +3,6 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
@@ -38,7 +37,8 @@ import java.util.UUID;
         PlotId id = new PlotId(0, 0);
         File container = PlotSquared.imp().getWorldContainer();
         if (container.equals(new File("."))) {
-            player.sendMessage("World container must be configured to be a separate directory to your base files!");
+            player.sendMessage(
+                "World container must be configured to be a separate directory to your base files!");
             return;
         }
         for (File folder : container.listFiles()) {

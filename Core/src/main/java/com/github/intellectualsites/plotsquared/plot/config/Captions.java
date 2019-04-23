@@ -378,8 +378,8 @@ public enum Captions {
     RATING_ALREADY_EXISTS("$2You have already rated plot $2%s", "Ratings"), RATING_APPLIED(
         "$4You successfully rated plot $2%s", "Ratings"),
 
-    RATING_DISLIKED("$4You successfully disliked plot $2%s", "Ratings"),
-    RATING_LIKED("$4You successfully liked plot $2%s", "Ratings"),
+    RATING_DISLIKED("$4You successfully disliked plot $2%s", "Ratings"), RATING_LIKED(
+        "$4You successfully liked plot $2%s", "Ratings"),
 
     RATING_NOT_YOUR_OWN("$2You cannot rate your own plot", "Ratings"), RATING_NOT_DONE(
         "$2You can only rate finished plots.", "Ratings"),

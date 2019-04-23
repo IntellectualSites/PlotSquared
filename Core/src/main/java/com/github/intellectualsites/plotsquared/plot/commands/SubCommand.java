@@ -23,17 +23,16 @@ public abstract class SubCommand extends Command {
         setRequiredArguments(arguments);
     }
 
+    public static boolean sendMessage(PlotPlayer player, Captions message, Object... args) {
+        message.send(player, args);
+        return true;
+    }
+
     @Override public void execute(PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         onCommand(player, args);
     }
 
-
     public abstract boolean onCommand(PlotPlayer player, String[] args);
-
-    public static boolean sendMessage(PlotPlayer player, Captions message, Object... args) {
-        message.send(player, args);
-        return true;
-    }
 }

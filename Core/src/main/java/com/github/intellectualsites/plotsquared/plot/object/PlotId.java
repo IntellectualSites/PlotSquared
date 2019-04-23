@@ -34,7 +34,8 @@ public class PlotId {
      */
     @Nonnull public static PlotId fromString(@Nonnull String string) {
         PlotId plot = fromStringOrNull(string);
-        if (plot == null) throw new IllegalArgumentException("Cannot create PlotID. String invalid.");
+        if (plot == null)
+            throw new IllegalArgumentException("Cannot create PlotID. String invalid.");
         return plot;
     }
 
@@ -101,6 +102,7 @@ public class PlotId {
     public PlotId getRelative(Direction direction) {
         return getRelative(direction.getIndex());
     }
+
     /**
      * Get the PlotId in a relative direction
      * 0 = north<br>

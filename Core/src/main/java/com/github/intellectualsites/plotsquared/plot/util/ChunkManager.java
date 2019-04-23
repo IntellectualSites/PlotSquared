@@ -12,9 +12,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class ChunkManager {
 
+    private static final Map<ChunkLoc, RunnableVal<ScopedLocalBlockQueue>> forceChunks =
+        new ConcurrentHashMap<>();
+    private static final Map<ChunkLoc, RunnableVal<ScopedLocalBlockQueue>> addChunks =
+        new ConcurrentHashMap<>();
     public static ChunkManager manager = null;
-    private static final Map<ChunkLoc, RunnableVal<ScopedLocalBlockQueue>> forceChunks = new ConcurrentHashMap<>();
-    private static final Map<ChunkLoc, RunnableVal<ScopedLocalBlockQueue>> addChunks = new ConcurrentHashMap<>();
 
     public static ChunkLoc getChunkChunk(Location location) {
         int x = location.getX() >> 9;

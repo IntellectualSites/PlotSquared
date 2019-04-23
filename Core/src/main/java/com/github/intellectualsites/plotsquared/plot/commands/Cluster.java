@@ -141,9 +141,9 @@ import java.util.UUID;
                 } else {
                     current = player.getPlayerClusterCount(player.getLocation().getWorld());
                 }
-                int allowed =
-                    Permissions.hasPermissionRange(player, Captions.PERMISSION_CLUSTER_SIZE,
-                    Settings.Limit.MAX_PLOTS);
+                int allowed = Permissions
+                    .hasPermissionRange(player, Captions.PERMISSION_CLUSTER_SIZE,
+                        Settings.Limit.MAX_PLOTS);
                 if (current + cluster.getArea() > allowed) {
                     MainUtil.sendMessage(player, Captions.NO_PERMISSION,
                         Captions.PERMISSION_CLUSTER_SIZE + "." + (current + cluster.getArea()));

@@ -19,32 +19,33 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
-import org.bukkit.event.vehicle.*;
+import org.bukkit.event.vehicle.VehicleBlockCollisionEvent;
+import org.bukkit.event.vehicle.VehicleCreateEvent;
+import org.bukkit.event.vehicle.VehicleMoveEvent;
+import org.bukkit.event.vehicle.VehicleUpdateEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class EntitySpawnListener implements Listener {
 
-    private static boolean ignoreTP = false;
-
     private final static String KEY = "P2";
+    private static boolean ignoreTP = false;
+    private static boolean hasPlotArea = false;
+    private static String areaName = null;
 
     public static void testNether(Entity entity) {
         @NotNull World world = entity.getWorld();
-        if (world.getEnvironment() != World.Environment.NETHER && world.getEnvironment() != World.Environment.THE_END) {
+        if (world.getEnvironment() != World.Environment.NETHER
+            && world.getEnvironment() != World.Environment.THE_END) {
             return;
         }
         test(entity);
     }
-
-    private static boolean hasPlotArea = false;
-    private static String areaName = null;
 
     public static void testCreate(Entity entity) {
         @NotNull World world = entity.getWorld();
@@ -53,7 +54,8 @@ public class EntitySpawnListener implements Listener {
             areaName = world.getName();
             hasPlotArea = PlotSquared.get().hasPlotArea(areaName);
         }
-        if (!hasPlotArea) return;
+        if (!hasPlotArea)
+            return;
         test(entity);
     }
 

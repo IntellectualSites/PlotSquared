@@ -115,10 +115,10 @@ import java.util.Map;
                 if (worldSection.contains(entry.getKey())) {
                     if (entry.getValue() == ConfigurationType.BLOCK) {
                         this.convertBlock(worldSection, entry.getKey(),
-                                worldSection.getString(entry.getKey()));
+                            worldSection.getString(entry.getKey()));
                     } else {
                         this.convertBlockList(worldSection, entry.getKey(),
-                                worldSection.getStringList(entry.getKey()));
+                            worldSection.getStringList(entry.getKey()));
                     }
                 }
             }

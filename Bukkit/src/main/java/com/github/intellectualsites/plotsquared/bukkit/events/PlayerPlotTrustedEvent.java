@@ -7,8 +7,7 @@ import org.bukkit.event.HandlerList;
 import java.util.UUID;
 
 /**
-
-
+ *
  */
 public class PlayerPlotTrustedEvent extends PlotEvent {
 

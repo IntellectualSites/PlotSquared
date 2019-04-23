@@ -394,8 +394,7 @@ public class BukkitChunkManager extends ChunkManager {
     public void unloadChunk(final String world, final ChunkLoc loc, final boolean save,
         final boolean safe) {
         if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
-            TaskManager
-                .runTask(() -> BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save));
+            TaskManager.runTask(() -> BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save));
         } else {
             BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save);
         }

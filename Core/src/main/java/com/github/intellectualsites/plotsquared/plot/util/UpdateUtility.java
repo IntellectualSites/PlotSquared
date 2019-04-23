@@ -29,15 +29,14 @@ public class UpdateUtility {
 
     private void fetchLatestBuildInfo(final BiConsumer<BuildInfo, Throwable> whenDone) {
         this.jenkins.getJobInfo(jobName).whenCompleteAsync((jobInfo, exception) -> {
-           if (jobInfo == null && exception != null) {
-               whenDone.accept(null, exception);
-           } else if (jobInfo != null) {
-               jobInfo.getLastSuccessfulBuild().getBuildInfo()
-                   .whenComplete(whenDone);
-           } else {
-               whenDone.accept(null, new IllegalStateException(
-                   String.format("Could not fetch job info for job %s", this.jobName)));
-           }
+            if (jobInfo == null && exception != null) {
+                whenDone.accept(null, exception);
+            } else if (jobInfo != null) {
+                jobInfo.getLastSuccessfulBuild().getBuildInfo().whenComplete(whenDone);
+            } else {
+                whenDone.accept(null, new IllegalStateException(
+                    String.format("Could not fetch job info for job %s", this.jobName)));
+            }
         });
     }
 
@@ -47,17 +46,19 @@ public class UpdateUtility {
                 whenDone.accept(null, throwable);
             } else {
                 final Collection<ArtifactDescription> artifacts = buildInfo.getArtifacts();
-                final Optional<ArtifactDescription> artifact = artifacts.stream().filter(artifactDescription -> {
-                    final String name = artifactDescription.getFileName();
-                    final Matcher matcher = artifactPattern.matcher(name);
-                    return matcher.matches();
-                }).findAny();
+                final Optional<ArtifactDescription> artifact =
+                    artifacts.stream().filter(artifactDescription -> {
+                        final String name = artifactDescription.getFileName();
+                        final Matcher matcher = artifactPattern.matcher(name);
+                        return matcher.matches();
+                    }).findAny();
                 if (artifact.isPresent()) {
                     final ArtifactDescription artifactDescription = artifact.get();
                     whenDone.accept(artifactDescription, null);
                 } else {
-                    whenDone.accept(null,
-                        new NullPointerException(String.format("Could not find any matching artifacts in build %d", buildInfo.getId())));
+                    whenDone.accept(null, new NullPointerException(String
+                        .format("Could not find any matching artifacts in build %d",
+                            buildInfo.getId())));
                 }
             }
         });
@@ -67,30 +68,34 @@ public class UpdateUtility {
         final BiConsumer<UpdateDescription, Throwable> whenDone) {
         this.getMatchingArtifact(((artifactDescription, throwable) -> {
             if (throwable != null) {
-                whenDone.accept(null, new RuntimeException(
-                    String.format("Failed to read artifact description: %s", throwable.getMessage()), throwable));
+                whenDone.accept(null, new RuntimeException(String
+                    .format("Failed to read artifact description: %s", throwable.getMessage()),
+                    throwable));
             } else {
                 try {
                     final String version = this.isNewer(currentVersion, artifactDescription);
                     if (version != null) {
-                        whenDone.accept(new UpdateDescription(version, artifactDescription.getUrl()),
-                            null);
+                        whenDone
+                            .accept(new UpdateDescription(version, artifactDescription.getUrl()),
+                                null);
                     } else {
                         whenDone.accept(null, null);
                     }
                 } catch (final Throwable exception) {
-                    whenDone.accept(null,
-                        new RuntimeException(String.format("Failed to compare versions: %s",
-                            exception.getMessage()), exception));
+                    whenDone.accept(null, new RuntimeException(
+                        String.format("Failed to compare versions: %s", exception.getMessage()),
+                        exception));
                 }
             }
         }));
     }
 
-    private String isNewer(@NonNull final String currentVersion, @NonNull final ArtifactDescription artifact) {
+    private String isNewer(@NonNull final String currentVersion,
+        @NonNull final ArtifactDescription artifact) {
         final Matcher matcher = artifactPattern.matcher(artifact.getFileName());
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("Artifact file name does not match artifact pattern");
+            throw new IllegalArgumentException(
+                "Artifact file name does not match artifact pattern");
         }
         final String version = matcher.group("version");
         if (version == null) {
@@ -101,12 +106,14 @@ public class UpdateUtility {
 
     /**
      * Compare two given versions in the format $major.$minor
+     *
      * @param oldVersion current version
      * @param newVersion other version
      * @return -1 if the current version is older, 1 is the versions are the same,
-     *         and 1 if the current version is newer
+     * and 1 if the current version is newer
      */
-    private int compareVersions(@NonNull final String oldVersion, @NonNull final String newVersion) {
+    private int compareVersions(@NonNull final String oldVersion,
+        @NonNull final String newVersion) {
         // Versions look this this: major.minor :P
         final int[] oldNums = splitVersion(oldVersion);
         final int[] newNums = splitVersion(newVersion);
@@ -131,16 +138,18 @@ public class UpdateUtility {
     private int[] splitVersion(@NonNull final String versionString) {
         final String[] parts = versionString.split("\\.");
         switch (parts.length) {
-            case 0: return new int[] {-1, -1};
-            case 1: return new int[] {-1, Integer.parseInt(parts[0])};
-            case 2: return new int[] {Integer.parseInt(parts[0]), Integer.parseInt(parts[1])};
-            default: return null;
+            case 0:
+                return new int[] {-1, -1};
+            case 1:
+                return new int[] {-1, Integer.parseInt(parts[0])};
+            case 2:
+                return new int[] {Integer.parseInt(parts[0]), Integer.parseInt(parts[1])};
+            default:
+                return null;
         }
     }
 
-    @Getter
-    @RequiredArgsConstructor
-    public static class UpdateDescription {
+    @Getter @RequiredArgsConstructor public static class UpdateDescription {
         private final String version;
         private final String url;
     }

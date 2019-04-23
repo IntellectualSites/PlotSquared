@@ -72,7 +72,7 @@ permissions:
   plots.permpack.basicinbox:
     default: op
     children:
-      comments.notifications.enabled  : true 
+      comments.notifications.enabled: true
       plots.inbox.read.public: true
       plots.inbox.modify.public: true
       plots.inbox.modify.public: true

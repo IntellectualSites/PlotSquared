@@ -428,6 +428,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
 
     /**
      * Determines whether or not the player can fly.
+     *
      * @return {@code true} if the player is allowed to fly
      */
     public abstract boolean getFlight();
@@ -466,7 +467,8 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      */
     public void unregister() {
         Plot plot = getCurrentPlot();
-        if (plot != null && Settings.Enabled_Components.PERSISTENT_META && plot.getArea() instanceof SinglePlotArea) {
+        if (plot != null && Settings.Enabled_Components.PERSISTENT_META && plot
+            .getArea() instanceof SinglePlotArea) {
             PlotId id = plot.getId();
             int x = id.x;
             int z = id.y;
@@ -581,17 +583,21 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                             TaskManager.runTask(() -> {
                                 if (getMeta("teleportOnLogin", true)) {
                                     teleport(loc);
-                                    sendMessage(Captions.TELEPORTED_TO_PLOT.f() + " (quitLoc) (" + plotX + "," + plotZ + ")");
+                                    sendMessage(
+                                        Captions.TELEPORTED_TO_PLOT.f() + " (quitLoc) (" + plotX
+                                            + "," + plotZ + ")");
                                 }
                             });
                         } else if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
                             if (getMeta("teleportOnLogin", true)) {
                                 if (plot.teleportPlayer(PlotPlayer.this)) {
                                     TaskManager.runTask(() -> {
-                                        if (getMeta("teleportOnLogin",true)) {
+                                        if (getMeta("teleportOnLogin", true)) {
                                             if (plot.isLoaded()) {
                                                 teleport(loc);
-                                                sendMessage(Captions.TELEPORTED_TO_PLOT.f() + " (quitLoc-unloaded) (" + plotX + "," + plotZ + ")");
+                                                sendMessage(Captions.TELEPORTED_TO_PLOT.f()
+                                                    + " (quitLoc-unloaded) (" + plotX + "," + plotZ
+                                                    + ")");
                                             }
                                         }
                                     });

@@ -269,15 +269,13 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
             }
             PlotSquared.debug(
                 Captions.PREFIX.s() + "&a detected unsafe chunk and processed: " + (chunk.getX()
-                    << 4)
-                    + "," + (chunk.getX() << 4));
+                    << 4) + "," + (chunk.getX() << 4));
         }
         if (tiles.length > Settings.Chunk_Processor.MAX_TILES) {
             if (unload) {
                 PlotSquared.debug(
                     Captions.PREFIX.s() + "&c detected unsafe chunk: " + (chunk.getX() << 4) + ","
-                        + (
-                        chunk.getX() << 4));
+                        + (chunk.getX() << 4));
                 cleanChunk(chunk);
                 return true;
             }

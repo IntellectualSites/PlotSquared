@@ -58,8 +58,8 @@ import java.util.Map.Entry;
                     object.setup_index--;
                     ConfigurationNode node = object.step[object.setup_index];
                     sendMessage(player, Captions.SETUP_STEP, object.setup_index + 1,
-                        node.getDescription(),
-                        node.getType().getType(), String.valueOf(node.getDefaultValue()));
+                        node.getDescription(), node.getType().getType(),
+                        String.valueOf(node.getDefaultValue()));
                     return false;
                 } else if (object.current > 0) {
                     object.current--;
@@ -131,8 +131,8 @@ import java.util.Map.Entry;
                     }
                     ConfigurationNode step = object.step[object.setup_index];
                     sendMessage(player, Captions.SETUP_STEP, object.setup_index + 1,
-                        step.getDescription(),
-                        step.getType().getType(), String.valueOf(step.getDefaultValue()));
+                        step.getDescription(), step.getType().getType(),
+                        String.valueOf(step.getDefaultValue()));
                 } else {
                     if (gen.isFull()) {
                         object.plotManager = object.setupGenerator;
@@ -234,8 +234,8 @@ import java.util.Map.Entry;
                 }
                 ConfigurationNode step = object.step[object.setup_index];
                 sendMessage(player, Captions.SETUP_STEP, object.setup_index + 1,
-                    step.getDescription(),
-                    step.getType().getType(), String.valueOf(step.getDefaultValue()));
+                    step.getDescription(), step.getType().getType(),
+                    String.valueOf(step.getDefaultValue()));
                 break;
             }
             case 6:  // world setup
@@ -248,8 +248,8 @@ import java.util.Map.Entry;
                 ConfigurationNode step = object.step[object.setup_index];
                 if (args.length < 1) {
                     sendMessage(player, Captions.SETUP_STEP, object.setup_index + 1,
-                        step.getDescription(),
-                        step.getType().getType(), String.valueOf(step.getDefaultValue()));
+                        step.getDescription(), step.getType().getType(),
+                        String.valueOf(step.getDefaultValue()));
                     return false;
                 }
 
@@ -269,14 +269,14 @@ import java.util.Map.Entry;
                     }
                     step = object.step[object.setup_index];
                     sendMessage(player, Captions.SETUP_STEP, object.setup_index + 1,
-                        step.getDescription(),
-                        step.getType().getType(), String.valueOf(step.getDefaultValue()));
+                        step.getDescription(), step.getType().getType(),
+                        String.valueOf(step.getDefaultValue()));
                     return false;
                 } else {
                     sendMessage(player, Captions.SETUP_INVALID_ARG, args[0], step.getConstant());
                     sendMessage(player, Captions.SETUP_STEP, object.setup_index + 1,
-                        step.getDescription(),
-                        step.getType().getType(), String.valueOf(step.getDefaultValue()));
+                        step.getDescription(), step.getType().getType(),
+                        String.valueOf(step.getDefaultValue()));
                     return false;
                 }
             case 7:

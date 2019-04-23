@@ -79,8 +79,7 @@ public class Help extends Command {
             for (CommandCategory c : CommandCategory.values()) {
                 builder.append("\n" + StringMan
                     .replaceAll(Captions.HELP_INFO_ITEM.s(), "%category%",
-                        c.toString().toLowerCase(),
-                        "%category_desc%", c.toString()));
+                        c.toString().toLowerCase(), "%category_desc%", c.toString()));
             }
             builder.append("\n").append(Captions.HELP_INFO_ITEM.s().replaceAll("%category%", "all")
                 .replaceAll("%category_desc%", Captions.HELP_DISPLAY_ALL_COMMANDS.s()));

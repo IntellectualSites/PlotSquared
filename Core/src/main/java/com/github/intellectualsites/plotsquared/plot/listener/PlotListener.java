@@ -95,8 +95,7 @@ public class PlotListener {
                         } else {
                             MainUtil.sendMessage(player, StringMan
                                 .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.s(), "{plot}",
-                                    plot.getId(),
-                                    "{gamemode}", gamemodeFlag.get()));
+                                    plot.getId(), "{gamemode}", gamemodeFlag.get()));
                         }
                     }
                 }
@@ -109,8 +108,7 @@ public class PlotListener {
                         } else {
                             MainUtil.sendMessage(player, StringMan
                                 .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.s(), "{plot}",
-                                    plot.getId(),
-                                    "{gamemode}", guestGamemodeFlag.get()));
+                                    plot.getId(), "{gamemode}", guestGamemodeFlag.get()));
                         }
                     }
                 }
@@ -158,8 +156,7 @@ public class PlotListener {
             }
             if (titles) {
                 if (!Captions.TITLE_ENTERED_PLOT.s().isEmpty() || !Captions.TITLE_ENTERED_PLOT_SUB
-                    .s()
-                    .isEmpty()) {
+                    .s().isEmpty()) {
                     TaskManager.runTaskLaterAsync(() -> {
                         Plot lastPlot = player.getMeta(PlotPlayer.META_LAST_PLOT);
                         if ((lastPlot != null) && plot.getId().equals(lastPlot.getId())) {
@@ -206,8 +203,7 @@ public class PlotListener {
                     } else {
                         MainUtil.sendMessage(player, StringMan
                             .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.s(), "{plot}",
-                                plot.toString(),
-                                "{gamemode}", pw.GAMEMODE.name().toLowerCase()));
+                                plot.toString(), "{gamemode}", pw.GAMEMODE.name().toLowerCase()));
                     }
                 }
             }
@@ -215,10 +211,10 @@ public class PlotListener {
             farewell.ifPresent(s -> MainUtil
                 .format(Captions.PREFIX_FAREWELL.s() + s, plot, player, false,
                     new RunnableVal<String>() {
-                    @Override public void run(String value) {
-                        MainUtil.sendMessage(player, value);
-                    }
-                }));
+                        @Override public void run(String value) {
+                            MainUtil.sendMessage(player, value);
+                        }
+                    }));
             Optional<Boolean> leave = plot.getFlag(Flags.NOTIFY_LEAVE);
             if (leave.isPresent() && leave.get()) {
                 if (!Permissions.hasPermission(player, "plots.flag.notify-enter.bypass")) {

@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
     /**
      * Initialize a new {@link PlotLoc} and set the Y value to {@code -1}
+     *
      * @param x X value
      * @param z Y value
      */

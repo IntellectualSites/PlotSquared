@@ -363,13 +363,13 @@ public class ListCmd extends SubCommand {
                     } else {
                         color = "$1";
                     }
-                    PlotMessage trusted =
-                        new PlotMessage().text(Captions.color(Captions.PLOT_INFO_TRUSTED.s()
-                        .replaceAll("%trusted%", MainUtil.getPlayerList(plot.getTrusted()))))
+                    PlotMessage trusted = new PlotMessage().text(Captions.color(
+                        Captions.PLOT_INFO_TRUSTED.s()
+                            .replaceAll("%trusted%", MainUtil.getPlayerList(plot.getTrusted()))))
                         .color("$1");
-                    PlotMessage members =
-                        new PlotMessage().text(Captions.color(Captions.PLOT_INFO_MEMBERS.s()
-                        .replaceAll("%members%", MainUtil.getPlayerList(plot.getMembers()))))
+                    PlotMessage members = new PlotMessage().text(Captions.color(
+                        Captions.PLOT_INFO_MEMBERS.s()
+                            .replaceAll("%members%", MainUtil.getPlayerList(plot.getMembers()))))
                         .color("$1");
                     String strFlags = StringMan.join(plot.getFlags().values(), ",");
                     if (strFlags.isEmpty()) {

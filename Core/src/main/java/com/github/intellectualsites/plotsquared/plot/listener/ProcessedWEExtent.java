@@ -163,8 +163,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
             this.Eblocked = true;
             PlotSquared.debug(
                 Captions.PREFIX + "&cdetected unsafe WorldEdit: " + location.getBlockX() + ","
-                    + location
-                    .getBlockZ());
+                    + location.getBlockZ());
         }
         if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),
             location.getBlockZ())) {

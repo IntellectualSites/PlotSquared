@@ -253,9 +253,11 @@ public abstract class SchematicHandler {
         if (!name.endsWith(".schem") && !name.endsWith(".schematic")) {
             name = name + ".schem";
         }
-        File file = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS + File.separator + name);
+        File file = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
+            Settings.Paths.SCHEMATICS + File.separator + name);
         if (!file.exists()) {
-            file = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS + File.separator + name + "atic");
+            file = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
+                Settings.Paths.SCHEMATICS + File.separator + name + "atic");
         }
         return getSchematic(file);
     }
@@ -270,7 +272,8 @@ public abstract class SchematicHandler {
             MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS);
         final List<String> names = new ArrayList<>();
         if (parent.exists()) {
-            final String[] rawNames = parent.list((dir, name) -> name.endsWith(".schematic") || name.endsWith(".schem"));
+            final String[] rawNames =
+                parent.list((dir, name) -> name.endsWith(".schematic") || name.endsWith(".schem"));
             if (rawNames != null) {
                 final List<String> transformed = Arrays.stream(rawNames)
                     .map(rawName -> rawName.substring(0, rawName.length() - 10))

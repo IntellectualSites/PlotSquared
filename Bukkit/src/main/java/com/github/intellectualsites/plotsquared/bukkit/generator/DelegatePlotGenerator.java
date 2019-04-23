@@ -32,10 +32,8 @@ import java.util.Random;
         return this.chunkGenerator.getClass().getName();
     }
 
-    @Override
-    public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
-        return PlotSquared.get().IMP.getDefaultGenerator()
-            .getNewPlotArea(world, id, min, max);
+    @Override public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
+        return PlotSquared.get().IMP.getDefaultGenerator().getNewPlotArea(world, id, min, max);
     }
 
     @Override public BlockBucket[][] generateBlockBucketChunk(PlotArea settings) {
@@ -55,15 +53,14 @@ import java.util.Random;
                 for (int y = 1; y < hpw.PLOT_HEIGHT; y++) {
                     blockBuckets[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = hpw.MAIN_BLOCK;
                 }
-                blockBuckets[hpw.PLOT_HEIGHT >> 4][((hpw.PLOT_HEIGHT & 0xF) << 8) | (z << 4)
-                    | x] = hpw.MAIN_BLOCK;
+                blockBuckets[hpw.PLOT_HEIGHT >> 4][((hpw.PLOT_HEIGHT & 0xF) << 8) | (z << 4) | x] =
+                    hpw.MAIN_BLOCK;
             }
         }
         return blockBuckets;
     }
 
-    @Override
-    public void generateChunk(final ScopedLocalBlockQueue result, PlotArea settings) {
+    @Override public void generateChunk(final ScopedLocalBlockQueue result, PlotArea settings) {
         World w = BukkitUtil.getWorld(world);
         Location min = result.getMin();
         int cx = min.getX() >> 4;

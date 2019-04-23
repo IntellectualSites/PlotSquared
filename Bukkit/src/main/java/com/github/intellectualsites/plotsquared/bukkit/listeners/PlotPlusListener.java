@@ -132,11 +132,11 @@ import java.util.UUID;
         Player player = event.getPlayer();
         Plot plot = event.getPlot();
         Optional<IntervalFlag.Interval> feed = plot.getFlag(Flags.FEED);
-        feed.ifPresent(
-            value -> feedRunnable.put(player.getUniqueId(), new Interval(value.getVal1(), value.getVal2(), 20)));
+        feed.ifPresent(value -> feedRunnable
+            .put(player.getUniqueId(), new Interval(value.getVal1(), value.getVal2(), 20)));
         Optional<IntervalFlag.Interval> heal = plot.getFlag(Flags.HEAL);
-        heal.ifPresent(
-            value -> healRunnable.put(player.getUniqueId(), new Interval(value.getVal1(), value.getVal2(), 20)));
+        heal.ifPresent(value -> healRunnable
+            .put(player.getUniqueId(), new Interval(value.getVal1(), value.getVal2(), 20)));
     }
 
     @EventHandler public void onPlayerQuit(PlayerQuitEvent event) {

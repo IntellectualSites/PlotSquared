@@ -34,8 +34,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public short PATH_WIDTH_LOWER;
     public short PATH_WIDTH_UPPER;
     public HashMap<Integer, BaseBlock[]> G_SCH;
-    private Location SIGN_LOCATION;
     public int SCHEM_Y;
+    private Location SIGN_LOCATION;
 
     public HybridPlotWorld(String worldName, String id, IndependentPlotGenerator generator,
         PlotId min, PlotId max) {
@@ -134,13 +134,17 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
     public void setupSchematics() throws SchematicHandler.UnsupportedFormatException {
         this.G_SCH = new HashMap<>();
-        File root = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname);
+        File root = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
+            "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname);
         File schematic1File = new File(root, "sideroad.schem");
-        if (!schematic1File.exists()) schematic1File = new File(root, "sideroad.schematic");
+        if (!schematic1File.exists())
+            schematic1File = new File(root, "sideroad.schematic");
         File schematic2File = new File(root, "intersection.schem");
-        if (!schematic2File.exists()) schematic2File = new File(root, "intersection.schematic");
+        if (!schematic2File.exists())
+            schematic2File = new File(root, "intersection.schematic");
         File schematic3File = new File(root, "plot.schem");
-        if (!schematic3File.exists()) schematic3File = new File(root, "plot.schematic");
+        if (!schematic3File.exists())
+            schematic3File = new File(root, "plot.schematic");
         Schematic schematic1 = SchematicHandler.manager.getSchematic(schematic1File);
         Schematic schematic2 = SchematicHandler.manager.getSchematic(schematic2File);
         Schematic schematic3 = SchematicHandler.manager.getSchematic(schematic3File);
@@ -193,7 +197,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             for (short x = 0; x < w3; x++) {
                 for (short z = 0; z < l3; z++) {
                     for (short y = 0; y < h3; y++) {
-                        BaseBlock id = blockArrayClipboard3.getFullBlock(BlockVector3.at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
+                        BaseBlock id = blockArrayClipboard3.getFullBlock(BlockVector3
+                            .at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
                         if (!id.getBlockType().getMaterial().isAir()) {
                             addOverlayBlock((short) (x + shift + oddshift + centerShiftX),
                                 (short) (y + plotY), (short) (z + shift + oddshift + centerShiftZ),
@@ -253,7 +258,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         for (short x = 0; x < w1; x++) {
             for (short z = 0; z < l1; z++) {
                 for (short y = 0; y < h1; y++) {
-                    BaseBlock id = blockArrayClipboard1.getFullBlock(BlockVector3.at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
+                    BaseBlock id = blockArrayClipboard1.getFullBlock(BlockVector3
+                        .at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
                     if (!id.getBlockType().getMaterial().isAir()) {
                         addOverlayBlock((short) (x - shift), (short) (y + roadY),
                             (short) (z + shift + oddshift), id, false, h1);
@@ -273,7 +279,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         for (short x = 0; x < w2; x++) {
             for (short z = 0; z < l2; z++) {
                 for (short y = 0; y < h2; y++) {
-                    BaseBlock id = blockArrayClipboard2.getFullBlock(BlockVector3.at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
+                    BaseBlock id = blockArrayClipboard2.getFullBlock(BlockVector3
+                        .at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
                     if (!id.getBlockType().getMaterial().isAir()) {
                         addOverlayBlock((short) (x - shift), (short) (y + roadY),
                             (short) (z - shift), id, false, h2);

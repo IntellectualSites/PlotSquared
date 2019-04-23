@@ -17,14 +17,11 @@ import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import java.util.*;
 
 @CommandDeclaration(command = "like", permission = "plots.like", description = "Like the plot",
-    usage = "/plot like [next|purge]", category = CommandCategory.INFO, requiredType = RequiredType.PLAYER)
-public class Like extends SubCommand {
+    usage = "/plot like [next|purge]", category = CommandCategory.INFO,
+    requiredType = RequiredType.PLAYER) public class Like extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
-        return handleLike(player, args, true);
-    }
-
-    protected static boolean handleLike(final PlotPlayer player, String[] args, final boolean like) {
+    protected static boolean handleLike(final PlotPlayer player, String[] args,
+        final boolean like) {
         final UUID uuid = player.getUUID();
         if (args.length == 1) {
             switch (args[0].toLowerCase()) {
@@ -141,6 +138,10 @@ public class Like extends SubCommand {
             return 1.0D;
         }
         return numLikes / (numLikes + numDislikes);
+    }
+
+    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+        return handleLike(player, args, true);
     }
 
 }

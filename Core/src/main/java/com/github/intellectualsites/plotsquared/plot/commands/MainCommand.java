@@ -198,8 +198,7 @@ public class MainCommand extends Command {
             Plot newPlot = Plot.fromString(area, args[0]);
             if (newPlot != null && (player instanceof ConsolePlayer || newPlot.getArea()
                 .equals(area) || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN))
-                && !newPlot
-                .isDenied(player.getUUID())) {
+                && !newPlot.isDenied(player.getUUID())) {
                 Location newLoc = newPlot.getCenter();
                 if (player.canTeleport(newLoc)) {
                     // Save meta

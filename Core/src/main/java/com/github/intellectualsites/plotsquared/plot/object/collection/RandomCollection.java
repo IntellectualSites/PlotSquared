@@ -20,13 +20,13 @@ public abstract class RandomCollection<T> {
         }
     }
 
+    public Random getRandom() {
+        return random;
+    }
+
     public void setRandom(Random random) {
         checkNotNull(random);
         this.random = random;
-    }
-
-    public Random getRandom() {
-        return random;
     }
 
     public abstract T next();

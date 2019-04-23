@@ -7,7 +7,6 @@ import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.*;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -17,13 +16,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.permissions.Permissible;
-import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.RegisteredListener;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -33,6 +27,7 @@ import java.util.stream.Collectors;
 
 public class BukkitPlayer extends PlotPlayer {
 
+    private static boolean CHECK_EFFECTIVE = true;
     public final Player player;
     private boolean offline;
     private UUID uuid;
@@ -104,8 +99,6 @@ public class BukkitPlayer extends PlotPlayer {
         }
         return this.player.hasPermission(permission);
     }
-
-    private static boolean CHECK_EFFECTIVE = true;
 
     @Override public int hasPermissionRange(String stub, int range) {
         if (hasPermission(Captions.PERMISSION_ADMIN.s())) {

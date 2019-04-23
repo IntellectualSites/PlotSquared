@@ -1156,9 +1156,9 @@ import java.util.zip.ZipInputStream;
                                 + areaGen);
                         PlotSquared.log(Captions.PREFIX + "&c | &9plotworld: &7" + pa);
                         PlotSquared.log(Captions.PREFIX + "&c | &9manager: &7" + pa);
-                        PlotSquared
-                            .log(Captions.PREFIX + "&cNote: &7Area created for cluster:" + name
-                            + " (invalid or old configuration?)");
+                        PlotSquared.log(
+                            Captions.PREFIX + "&cNote: &7Area created for cluster:" + name
+                                + " (invalid or old configuration?)");
                         areaGen.getPlotGenerator().initialize(pa);
                         areaGen.augment(pa);
                         toLoad.add(pa);
@@ -1613,12 +1613,13 @@ import java.util.zip.ZipInputStream;
         Settings.load(configFile);
         try {
             copyFile("updater.properties", "config");
-            try (BufferedReader bufferedReader =
-                new BufferedReader(new InputStreamReader(new FileInputStream(new File(new File(this.IMP.getDirectory(),
-                    "config"), "updater.properties"))))) {
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
+                new FileInputStream(new File(new File(this.IMP.getDirectory(), "config"),
+                    "updater.properties"))))) {
                 final Properties properties = new Properties();
                 properties.load(bufferedReader);
-                final boolean enabled = Boolean.valueOf(properties.getOrDefault("enabled", true).toString());
+                final boolean enabled =
+                    Boolean.valueOf(properties.getOrDefault("enabled", true).toString());
                 if (enabled) {
                     this.updateUtility = new UpdateUtility(properties.getProperty("path"),
                         properties.getProperty("job"), properties.getProperty("artifact"));

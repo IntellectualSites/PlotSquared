@@ -128,16 +128,22 @@ public class BukkitSetupUtils extends SetupUtils {
                         PlotSquared.get().worlds.createSection(worldPath);
                     }
                     if (steps.length != 0) {
-                        ConfigurationSection worldSection = PlotSquared.get().worlds.getConfigurationSection(worldPath);
+                        ConfigurationSection worldSection =
+                            PlotSquared.get().worlds.getConfigurationSection(worldPath);
                         for (ConfigurationNode step : steps) {
                             worldSection.set(step.getConstant(), step.getValue());
                         }
                     }
-                    PlotSquared.get().worlds.set("worlds." + world + ".generator.type", object.type);
-                    PlotSquared.get().worlds.set("worlds." + world + ".generator.terrain", object.terrain);
-                    PlotSquared.get().worlds.set("worlds." + world + ".generator.plugin", object.plotManager);
-                    if (object.setupGenerator != null && !object.setupGenerator.equals(object.plotManager)) {
-                        PlotSquared.get().worlds.set("worlds." + world + ".generator.init", object.setupGenerator);
+                    PlotSquared.get().worlds
+                        .set("worlds." + world + ".generator.type", object.type);
+                    PlotSquared.get().worlds
+                        .set("worlds." + world + ".generator.terrain", object.terrain);
+                    PlotSquared.get().worlds
+                        .set("worlds." + world + ".generator.plugin", object.plotManager);
+                    if (object.setupGenerator != null && !object.setupGenerator
+                        .equals(object.plotManager)) {
+                        PlotSquared.get().worlds
+                            .set("worlds." + world + ".generator.init", object.setupGenerator);
                     }
                 }
                 GeneratorWrapper<?> gen = SetupUtils.generators.get(object.setupGenerator);

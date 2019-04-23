@@ -117,10 +117,11 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return toAdd;
     }
 
-    @Override @NotNull public ChunkData generateChunkData(@NotNull World world, @NotNull Random random,
-        int x, int z, @NotNull BiomeGrid biome) {
+    @Override @NotNull
+    public ChunkData generateChunkData(@NotNull World world, @NotNull Random random, int x, int z,
+        @NotNull BiomeGrid biome) {
 
-        GenChunk result =  new GenChunk();
+        GenChunk result = new GenChunk();
         if (this.getPlotGenerator() instanceof SingleWorldGenerator) {
             if (result.getCd() != null) {
                 for (int cx = 0; cx < 16; cx++) {

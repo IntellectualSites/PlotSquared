@@ -35,10 +35,6 @@ public class GenChunk extends ScopedLocalBlockQueue {
         this.biomes = Biome.values();
     }
 
-    public void setChunk(Chunk chunk) {
-        this.chunk = chunk;
-    }
-
     public Chunk getChunk() {
         if (chunk == null) {
             World worldObj = BukkitUtil.getWorld(world);
@@ -47,6 +43,10 @@ public class GenChunk extends ScopedLocalBlockQueue {
             }
         }
         return chunk;
+    }
+
+    public void setChunk(Chunk chunk) {
+        this.chunk = chunk;
     }
 
     public void setChunk(ChunkWrapper wrap) {
