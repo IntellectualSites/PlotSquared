@@ -37,7 +37,6 @@ public class SinglePlotArea extends GridPlotWorld {
     }
 
     @Override public void saveConfiguration(ConfigurationSection config) {
-        new Exception().printStackTrace();
         super.saveConfiguration(config);
     }
 
