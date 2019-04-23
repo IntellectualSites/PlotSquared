@@ -13,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.*;
+import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Entity;
@@ -342,10 +343,9 @@ import java.util.*;
                 facing = BlockFace.SOUTH;
             }
             block.setType(Material.LEGACY_WALL_SIGN, false);
-            Bukkit.getConsoleSender().sendMessage("Please report to MattBDev on Discord: " + block.getBlockData().getClass().getName());
-            //final Rotatable sign = (Rotatable) block.getBlockData();
-            //sign.setRotation(facing);
-            //block.setBlockData(sign, false);
+            final Directional sign = (Directional) block.getBlockData();
+            sign.setFacing(facing);
+            block.setBlockData(sign, false);
         }
         final BlockState blockstate = block.getState();
         if (blockstate instanceof Sign) {
