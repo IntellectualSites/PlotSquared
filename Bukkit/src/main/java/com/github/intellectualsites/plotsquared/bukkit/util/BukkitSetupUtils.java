@@ -61,11 +61,11 @@ public class BukkitSetupUtils extends SetupUtils {
         }
         if (save) {
             for (Chunk chunk : world.getLoadedChunks()) {
-                chunk.unload(true, false);
+                chunk.unload(true);
             }
         } else {
             for (Chunk chunk : world.getLoadedChunks()) {
-                chunk.unload(false, false);
+                chunk.unload(false);
             }
         }
         Bukkit.unloadWorld(world, false);

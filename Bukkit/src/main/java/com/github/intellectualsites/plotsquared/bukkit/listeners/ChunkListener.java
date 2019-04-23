@@ -94,7 +94,7 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
                     if (System.currentTimeMillis() - start > 5) {
                         return;
                     }
-                    chunk.unload(true, false);
+                    chunk.unload(true);
                 }
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -112,7 +112,7 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
             field.set(false);
             if (chunk.isLoaded()) {
                 ignoreUnload = true;
-                chunk.unload(false, false);
+                chunk.unload(false);
                 ignoreUnload = false;
             }
         }
@@ -225,7 +225,7 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
                 TaskManager.tasks.remove(currentIndex);
                 PlotSquared
                     .debug(Captions.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
-                chunk.unload(true, true);
+                chunk.unload(true);
                 return;
             }
             BlockState[] tiles = chunk.getTileEntities();
@@ -234,7 +234,7 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
                 TaskManager.tasks.remove(currentIndex);
                 PlotSquared
                     .debug(Captions.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
-                chunk.unload(true, true);
+                chunk.unload(true);
                 return;
             }
             long start = System.currentTimeMillis();
@@ -245,7 +245,7 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
                     TaskManager.tasks.remove(currentIndex);
                     PlotSquared.debug(
                         Captions.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
-                    chunk.unload(true, true);
+                    chunk.unload(true);
                     return;
                 }
                 tiles[i].getBlock().setType(Material.AIR, false);

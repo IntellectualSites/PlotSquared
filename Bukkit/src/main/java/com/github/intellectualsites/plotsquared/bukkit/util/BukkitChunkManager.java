@@ -395,9 +395,9 @@ public class BukkitChunkManager extends ChunkManager {
         final boolean safe) {
         if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
             TaskManager
-                .runTask(() -> BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save, safe));
+                .runTask(() -> BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save));
         } else {
-            BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save, safe);
+            BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save);
         }
     }
 
@@ -466,7 +466,6 @@ public class BukkitChunkManager extends ChunkManager {
             case ENDER_PEARL:
             case ARROW:
             case TRIDENT:
-            case TIPPED_ARROW:
             case SHULKER_BULLET:
             case SPECTRAL_ARROW:
             case DRAGON_FIREBALL:
@@ -476,18 +475,15 @@ public class BukkitChunkManager extends ChunkManager {
             case FALLING_BLOCK:
                 // Block entities
             case ENDER_CRYSTAL:
-            case COMPLEX_PART:
             case FISHING_HOOK:
             case ENDER_SIGNAL:
             case EXPERIENCE_ORB:
             case LEASH_HITCH:
             case FIREWORK:
-            case WEATHER:
             case LIGHTNING:
             case WITHER_SKULL:
             case UNKNOWN:
             case AREA_EFFECT_CLOUD:
-            case LINGERING_POTION:
             case EVOKER_FANGS:
                 // non moving / unremovable
                 break;
@@ -534,6 +530,9 @@ public class BukkitChunkManager extends ChunkManager {
             case SALMON:
             case PUFFERFISH:
             case TROPICAL_FISH:
+            case CAT:
+            case FOX:
+            case PANDA:
                 // animal
                 count[3]++;
                 count[1]++;

@@ -108,7 +108,6 @@ import java.util.regex.Pattern;
             case EGG:
             case ENDER_PEARL:
             case FIREBALL:
-            case LINGERING_POTION:
             case LLAMA_SPIT:
             case SHULKER_BULLET:
             case SMALL_FIREBALL:
@@ -116,13 +115,11 @@ import java.util.regex.Pattern;
             case SPECTRAL_ARROW:
             case SPLASH_POTION:
             case THROWN_EXP_BOTTLE:
-            case TIPPED_ARROW:
                 // projectile
             case FALLING_BLOCK:
             case PRIMED_TNT:
                 // Block entities
             case AREA_EFFECT_CLOUD:
-            case COMPLEX_PART:
             case ENDER_CRYSTAL:
             case ENDER_SIGNAL:
             case EVOKER_FANGS:
@@ -132,7 +129,6 @@ import java.util.regex.Pattern;
             case LEASH_HITCH:
             case LIGHTNING:
             case UNKNOWN:
-            case WEATHER:
             case WITHER_SKULL:
                 // non moving / unmovable
                 return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP);
@@ -1956,8 +1952,8 @@ import java.util.regex.Pattern;
                     case CHAIN_COMMAND_BLOCK:
                     case REPEATING_COMMAND_BLOCK:
 
-                    case SIGN:
-                    case WALL_SIGN:
+                    case LEGACY_SIGN:
+                    case LEGACY_WALL_SIGN:
 
                     case REDSTONE_TORCH:
                     case REDSTONE_WALL_TORCH:

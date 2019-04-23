@@ -331,7 +331,7 @@ import java.util.*;
         final Block block = world.getBlockAt(x, y, z);
         //        block.setType(Material.AIR);
         final Material type = block.getType();
-        if (type != Material.SIGN && type != Material.WALL_SIGN) {
+        if (type != Material.LEGACY_SIGN && type != Material.LEGACY_WALL_SIGN) {
             BlockFace facing = BlockFace.EAST;
             if (world.getBlockAt(x, y, z + 1).getType().isSolid()) {
                 facing = BlockFace.NORTH;
@@ -340,7 +340,7 @@ import java.util.*;
             } else if (world.getBlockAt(x, y, z - 1).getType().isSolid()) {
                 facing = BlockFace.SOUTH;
             }
-            block.setType(Material.WALL_SIGN, false);
+            block.setType(Material.LEGACY_WALL_SIGN, false);
             final WallSign sign = (WallSign) block.getBlockData();
             sign.setFacing(facing);
             block.setBlockData(sign, false);

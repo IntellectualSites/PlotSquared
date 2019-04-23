@@ -247,7 +247,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                     }
                                 } else {
                                     result = world
-                                        .unloadChunk(chunkI.getX(), chunkI.getZ(), true, false);
+                                        .unloadChunk(chunkI.getX(), chunkI.getZ(), true);
                                 }
                                 if (!result) {
                                     continue outer;
@@ -332,15 +332,12 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                     Entity entity = iterator.next();
                     switch (entity.getType()) {
                         case EGG:
-                        case COMPLEX_PART:
                         case FISHING_HOOK:
                         case ENDER_SIGNAL:
-                        case LINGERING_POTION:
                         case AREA_EFFECT_CLOUD:
                         case EXPERIENCE_ORB:
                         case LEASH_HITCH:
                         case FIREWORK:
-                        case WEATHER:
                         case LIGHTNING:
                         case WITHER_SKULL:
                         case UNKNOWN:
@@ -352,7 +349,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                         case SNOWBALL:
                         case SHULKER_BULLET:
                         case SPECTRAL_ARROW:
-                        case TIPPED_ARROW:
                         case ENDER_PEARL:
                         case ARROW:
                         case LLAMA_SPIT:
@@ -421,12 +417,12 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                             if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
                                 LivingEntity livingEntity = (LivingEntity) entity;
                                 List<MetadataValue> meta = entity.getMetadata("plot");
-                                if (meta != null && !meta.isEmpty()) {
+                                if (!meta.isEmpty()) {
                                     if (livingEntity.isLeashed()) {
                                         continue;
                                     }
                                     List<MetadataValue> keep = entity.getMetadata("keep");
-                                    if (keep != null && !keep.isEmpty()) {
+                                    if (!keep.isEmpty()) {
                                         continue;
                                     }
 
@@ -774,6 +770,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 return;
             }
         }
+        assert world != null;
         ChunkGenerator gen = world.getGenerator();
         if (gen instanceof BukkitPlotGenerator) {
             PlotSquared.get().loadWorld(worldName, (BukkitPlotGenerator) gen);

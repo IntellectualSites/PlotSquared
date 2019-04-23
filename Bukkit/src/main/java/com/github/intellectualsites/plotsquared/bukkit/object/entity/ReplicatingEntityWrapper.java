@@ -63,7 +63,6 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 this.dataByte = getOrdinal(TreeSpecies.values(), boat.getWoodType());
                 return;
             case ARROW:
-            case COMPLEX_PART:
             case EGG:
             case ENDER_CRYSTAL:
             case ENDER_PEARL:
@@ -87,14 +86,11 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             case MINECART_FURNACE:
             case SPLASH_POTION:
             case THROWN_EXP_BOTTLE:
-            case WEATHER:
             case WITHER_SKULL:
             case UNKNOWN:
-            case TIPPED_ARROW:
             case SPECTRAL_ARROW:
             case SHULKER_BULLET:
             case DRAGON_FIREBALL:
-            case LINGERING_POTION:
             case AREA_EFFECT_CLOUD:
             case TRIDENT:
             case LLAMA_SPIT:
@@ -164,9 +160,14 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 storeLiving((LivingEntity) entity);
                 return;
             // END TAMEABLE //
+            //todo fix sheep
             case SHEEP:
                 Sheep sheep = (Sheep) entity;
-                this.dataByte = (byte) (sheep.isSheared() ? 1 : 0);
+                if (sheep.isSheared()) {
+                    this.dataByte = (byte) 1;
+                } else {
+                    this.dataByte = (byte) 0;
+                }
                 this.dataByte2 = sheep.getColor().getDyeData();
                 storeAgeable(sheep);
                 storeLiving(sheep);
@@ -324,12 +325,14 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
 
     void restoreEquipment(LivingEntity entity) {
         EntityEquipment equipment = entity.getEquipment();
-        equipment.setItemInMainHand(this.lived.mainHand);
-        equipment.setItemInOffHand(this.lived.offHand);
-        equipment.setHelmet(this.lived.helmet);
-        equipment.setChestplate(this.lived.chestplate);
-        equipment.setLeggings(this.lived.leggings);
-        equipment.setBoots(this.lived.boots);
+        if (equipment != null) {
+            equipment.setItemInMainHand(this.lived.mainHand);
+            equipment.setItemInOffHand(this.lived.offHand);
+            equipment.setHelmet(this.lived.helmet);
+            equipment.setChestplate(this.lived.chestplate);
+            equipment.setLeggings(this.lived.leggings);
+            equipment.setBoots(this.lived.boots);
+        }
     }
 
     private void restoreInventory(InventoryHolder entity) {
@@ -462,7 +465,6 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 ((Slime) entity).setSize(this.dataByte);
                 return entity;
             case ARROW:
-            case COMPLEX_PART:
             case EGG:
             case ENDER_CRYSTAL:
             case ENDER_PEARL:
@@ -485,11 +487,8 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             case SNOWBALL:
             case SPLASH_POTION:
             case THROWN_EXP_BOTTLE:
-            case WEATHER:
-            case TIPPED_ARROW:
             case SPECTRAL_ARROW:
             case SHULKER_BULLET:
-            case LINGERING_POTION:
             case AREA_EFFECT_CLOUD:
             case DRAGON_FIREBALL:
             case WITHER_SKULL:

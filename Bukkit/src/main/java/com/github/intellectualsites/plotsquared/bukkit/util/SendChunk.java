@@ -116,7 +116,7 @@ public class SendChunk {
         for (final Chunk chunk : chunks) {
             TaskManager.runTask(() -> {
                 try {
-                    chunk.unload(true, false);
+                    chunk.unload(true);
                 } catch (Throwable ignored) {
                     String worldName = chunk.getWorld().getName();
                     PlotSquared.debug(

@@ -304,7 +304,7 @@ public class BukkitHybridUtils extends HybridUtils {
                             }
                         }
                     }
-                    worldObj.unloadChunkRequest(X, Z, true);
+                    worldObj.unloadChunkRequest(X, Z);
                 }
             }, () -> TaskManager.runTaskAsync(run), 5);
         });
