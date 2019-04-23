@@ -342,9 +342,10 @@ import java.util.*;
                 facing = BlockFace.SOUTH;
             }
             block.setType(Material.LEGACY_WALL_SIGN, false);
-            final Rotatable sign = (Rotatable) block.getBlockData();
-            sign.setRotation(facing);
-            block.setBlockData(sign, false);
+            Bukkit.getConsoleSender().sendMessage("Please report to MattBDev on Discord: " + block.getBlockData().getClass().getName());
+            //final Rotatable sign = (Rotatable) block.getBlockData();
+            //sign.setRotation(facing);
+            //block.setBlockData(sign, false);
         }
         final BlockState blockstate = block.getState();
         if (blockstate instanceof Sign) {
