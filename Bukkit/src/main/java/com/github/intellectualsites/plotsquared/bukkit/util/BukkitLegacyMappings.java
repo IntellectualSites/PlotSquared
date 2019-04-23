@@ -6,6 +6,7 @@ import com.github.intellectualsites.plotsquared.plot.object.StringPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.util.LegacyMappings;
 import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
 import lombok.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 import java.util.*;
@@ -675,9 +676,14 @@ public final class BukkitLegacyMappings extends LegacyMappings {
         for (final Material material : Material.values()) {
             final String materialName = material.name().toLowerCase(Locale.ENGLISH);
             if (NEW_STRING_TO_LEGACY_PLOT_BLOCK.get(materialName) == null) {
-                final LegacyBlock missingBlock =
-                    new LegacyBlock(material.getId(), materialName, materialName);
-                missing.add(missingBlock);
+                try {
+                    final LegacyBlock missingBlock =
+                        new LegacyBlock(material.getId(), materialName, materialName);
+                    missing.add(missingBlock);
+                } catch (Exception e) {
+                    Bukkit.getLogger().severe(
+                        "Error creating legacy block: " + materialName + ". Possibly a new block.");
+                }
             }
         }
         addAll(missing);
