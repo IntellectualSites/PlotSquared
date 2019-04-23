@@ -38,8 +38,12 @@ import java.util.UUID;
                 if (args.length > 2) {
                     break;
                 }
-                final UUID uuid =
-                    args.length == 2 ? UUIDHandler.getUUIDFromString(args[1]) : player.getUUID();
+                final UUID uuid;
+                if (args.length == 2) {
+                    uuid = UUIDHandler.getUUIDFromString(args[1]);
+                } else {
+                    uuid = player.getUUID();
+                }
                 if (uuid == null) {
                     Captions.INVALID_PLAYER.send(player, args[1]);
                     return;
@@ -47,12 +51,20 @@ import java.util.UUID;
                 MainUtil.getPersistentMeta(uuid, "grantedPlots", new RunnableVal<byte[]>() {
                     @Override public void run(byte[] array) {
                         if (arg0.equals("check")) { // check
-                            int granted =
-                                array == null ? 0 : ByteArrayUtilities.bytesToInteger(array);
+                            int granted;
+                            if (array == null) {
+                                granted = 0;
+                            } else {
+                                granted = ByteArrayUtilities.bytesToInteger(array);
+                            }
                             Captions.GRANTED_PLOTS.send(player, granted);
                         } else { // add
-                            int amount =
-                                1 + (array == null ? 0 : ByteArrayUtilities.bytesToInteger(array));
+                            int amount;
+                            if (array == null) {
+                                amount = 1;
+                            } else {
+                                amount = 1 + ByteArrayUtilities.bytesToInteger(array);
+                            }
                             boolean replace = array != null;
                             String key = "grantedPlots";
                             byte[] rawData = ByteArrayUtilities.integerToBytes(amount);

@@ -25,8 +25,12 @@ public class Auto extends SubCommand {
         if (allowedPlots == null) {
             allowedPlots = player.getAllowedPlots();
         }
-        int currentPlots =
-            Settings.Limit.GLOBAL ? player.getPlotCount() : player.getPlotCount(plotarea.worldname);
+        int currentPlots;
+        if (Settings.Limit.GLOBAL) {
+            currentPlots = player.getPlotCount();
+        } else {
+            currentPlots = player.getPlotCount(plotarea.worldname);
+        }
         int diff = currentPlots - allowedPlots;
         if (diff + sizeX * sizeZ > 0) {
             if (diff < 0) {
