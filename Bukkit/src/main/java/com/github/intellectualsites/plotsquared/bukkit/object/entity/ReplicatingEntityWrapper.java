@@ -282,6 +282,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                     this.dataByte = (byte) 0;
                 }
                 storeLiving((LivingEntity) entity);
+                return;
                 // END LIVING //
             default:
                 PlotSquared.debug("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
@@ -317,8 +318,9 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         if (this.lived.leashed) {
             // TODO leashes
             //            World world = entity.getWorld();
-            //            Entity leash = world.spawnEntity(new Location(world, Math.floor(x) + lived.leashX, Math.floor(y) + lived.leashY, Math
-            // .floor(z) + lived.leashZ), EntityType.LEASH_HITCH);
+            //            Entity leash = world.spawnEntity(new Location(world, Math.floor(x) +
+            //            lived.leashX, Math.floor(y) + lived.leashY, Math.floor(z) + lived.leashZ),
+            //            EntityType.LEASH_HITCH);
             //            entity.setLeashHolder(leash);
         }
     }
@@ -343,7 +345,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         }
     }
 
-    public void storeLiving(LivingEntity lived) {
+    private void storeLiving(LivingEntity lived) {
         this.lived = new LivingEntityStats();
         this.lived.potions = lived.getActivePotionEffects();
         this.lived.loot = lived.getCanPickupItems();

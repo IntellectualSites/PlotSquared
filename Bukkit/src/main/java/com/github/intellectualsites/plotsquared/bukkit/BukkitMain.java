@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.bukkit;
 
 import com.github.intellectualsites.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.*;
-import com.github.intellectualsites.plotsquared.bukkit.titles.DefaultTitle_111;
+import com.github.intellectualsites.plotsquared.bukkit.titles.DefaultTitle;
 import com.github.intellectualsites.plotsquared.bukkit.util.*;
 import com.github.intellectualsites.plotsquared.bukkit.util.block.BukkitLocalQueue;
 import com.github.intellectualsites.plotsquared.bukkit.uuid.*;
@@ -727,7 +727,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 + " &c[WARN] Titles are disabled - please update your version of Bukkit to support this feature.");
             Settings.TITLES = false;
         } else {
-            AbstractTitle.TITLE_CLASS = new DefaultTitle_111();
+            AbstractTitle.TITLE_CLASS = new DefaultTitle();
             if (wrapper instanceof DefaultUUIDWrapper
                 || wrapper.getClass() == OfflineUUIDWrapper.class && !Bukkit.getOnlineMode()) {
                 Settings.UUID.NATIVE_UUID_PROVIDER = true;
