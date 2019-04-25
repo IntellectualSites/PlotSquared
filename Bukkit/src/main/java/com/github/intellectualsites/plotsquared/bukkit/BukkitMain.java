@@ -420,7 +420,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                         case SHULKER:
                             if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
                                 LivingEntity livingEntity = (LivingEntity) entity;
-                                List<MetadataValue> meta = entity.getMetadata("plot");
+                                List<MetadataValue> meta = entity.getMetadata("shulkerPlot");
                                 if (!meta.isEmpty()) {
                                     if (livingEntity.isLeashed()) {
                                         continue;
@@ -457,7 +457,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                     if (area != null) {
                                         PlotId currentPlotId = PlotId.of(area.getPlotAbs(pLoc));
                                         if (currentPlotId != null) {
-                                            entity.setMetadata("plot", new FixedMetadataValue(
+                                            entity.setMetadata("shulkerPlot", new FixedMetadataValue(
                                                 (Plugin) PlotSquared.get().IMP, currentPlotId));
                                         }
                                     }

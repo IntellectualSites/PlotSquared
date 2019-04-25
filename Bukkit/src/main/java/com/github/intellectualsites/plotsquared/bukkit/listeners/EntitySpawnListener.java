@@ -62,7 +62,7 @@ public class EntitySpawnListener implements Listener {
     public static void test(Entity entity) {
         @NotNull World world = entity.getWorld();
         List<MetadataValue> meta = entity.getMetadata(KEY);
-        if (meta == null || meta.isEmpty()) {
+        if (meta.isEmpty()) {
             if (PlotSquared.get().hasPlotArea(world.getName())) {
                 entity.setMetadata(KEY,
                     new FixedMetadataValue((Plugin) PlotSquared.get().IMP, entity.getLocation()));
@@ -126,8 +126,8 @@ public class EntitySpawnListener implements Listener {
                     event.setCancelled(true);
                 }
             case SHULKER:
-                if (!entity.hasMetadata("plot")) {
-                    entity.setMetadata("plot",
+                if (!entity.hasMetadata("shulkerPlot")) {
+                    entity.setMetadata("shulkerPlot",
                         new FixedMetadataValue((Plugin) PlotSquared.get().IMP, plot.getId()));
                 }
         }

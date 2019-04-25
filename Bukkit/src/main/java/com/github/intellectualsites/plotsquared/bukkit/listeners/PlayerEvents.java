@@ -10,10 +10,13 @@ import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.*;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.FluidCollisionMode;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -1048,16 +1051,10 @@ import java.util.regex.Pattern;
     public void onBigBoom(EntityExplodeEvent event) {
         Location location = BukkitUtil.getLocation(event.getLocation());
         PlotArea area = location.getPlotArea();
-        if (area == null) {
+        boolean plotArea = location.isPlotArea();
+        if (!plotArea) {
             if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
                 return;
-            }
-            Iterator<Block> iterator = event.blockList().iterator();
-            while (iterator.hasNext()) {
-                iterator.next();
-                if (location.isPlotArea()) {
-                    iterator.remove();
-                }
             }
             return;
         }
