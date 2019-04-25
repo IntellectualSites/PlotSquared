@@ -939,8 +939,8 @@ import java.util.regex.Pattern;
         String sender = event.getPlayer().getDisplayName();
         PlotId id = plot.getId();
         Set<Player> recipients = event.getRecipients();
-        Set<Player> spies = new HashSet<>();
         recipients.clear();
+        Set<Player> spies = new HashSet<>();
         for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
             PlotPlayer pp = entry.getValue();
             if (pp.getAttribute("chatspy")) {
@@ -1951,6 +1951,18 @@ import java.util.regex.Pattern;
 
                     case LEGACY_SIGN:
                     case LEGACY_WALL_SIGN:
+                    case OAK_SIGN:
+                    case ACACIA_SIGN:
+                    case ACACIA_WALL_SIGN:
+                    case BIRCH_SIGN:
+                    case BIRCH_WALL_SIGN:
+                    case DARK_OAK_SIGN:
+                    case DARK_OAK_WALL_SIGN:
+                    case JUNGLE_SIGN:
+                    case JUNGLE_WALL_SIGN:
+                    case OAK_WALL_SIGN:
+                    case SPRUCE_SIGN:
+                    case SPRUCE_WALL_SIGN:
 
                     case REDSTONE_TORCH:
                     case REDSTONE_WALL_TORCH:
@@ -1966,10 +1978,17 @@ import java.util.regex.Pattern;
                     case COMMAND_BLOCK:
                     case COMPARATOR:
                     case CRAFTING_TABLE:
+                        //todo re-evaluate adding lectern here
+                    case LECTERN:
+                    case GRINDSTONE:
+                    case LOOM:
+                    case SMOKER:
+                    case STONECUTTER:
                     case DISPENSER:
                     case DROPPER:
                     case ENCHANTING_TABLE:
                     case FURNACE:
+                    case BLAST_FURNACE:
                     case HOPPER:
                     case JUKEBOX:
                     case LEVER:
