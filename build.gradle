@@ -62,13 +62,14 @@ subprojects {
     }
 
     dependencies {
-        compile(group: 'com.sk89q.worldedit', name: 'worldedit-core', version: '7.0.0-SNAPSHOT') {
+        implementation('com.sk89q.worldedit:worldedit-core:7.0.0-SNAPSHOT') {
             exclude(module: 'bukkit-classloader-check')
             exclude(module: 'mockito-core')
             exclude(module: 'dummypermscompat')
         }
         //Minecraft uses Guava 21 as of 1.13.
         compile 'com.google.guava:guava:21.0'
+        compileOnly 'org.jetbrains:annotations:17.0.0'
         compile("org.projectlombok:lombok:1.18.6")
         compileOnly("org.projectlombok:lombok:1.18.6")
         testCompileOnly("org.projectlombok:lombok:1.18.6")

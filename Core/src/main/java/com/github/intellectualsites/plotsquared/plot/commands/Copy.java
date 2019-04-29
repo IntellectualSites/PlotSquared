@@ -40,11 +40,7 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
             Captions.PLOTWORLD_INCOMPATIBLE.send(player);
             return false;
         }
-        if (plot1.copy(plot2, new Runnable() {
-            @Override public void run() {
-                MainUtil.sendMessage(player, Captions.COPY_SUCCESS);
-            }
-        })) {
+        if (plot1.copy(plot2, () -> MainUtil.sendMessage(player, Captions.COPY_SUCCESS))) {
             return true;
         } else {
             MainUtil.sendMessage(player, Captions.REQUIRES_UNOWNED);

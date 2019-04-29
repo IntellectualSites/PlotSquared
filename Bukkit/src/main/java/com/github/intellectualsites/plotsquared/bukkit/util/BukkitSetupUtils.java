@@ -9,6 +9,8 @@ import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
+import com.onarandombox.MultiverseCore.MultiverseCore;
+import com.onarandombox.MultiverseCore.api.MultiverseCoreConfig;
 import org.bukkit.*;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
@@ -171,20 +173,11 @@ public class BukkitSetupUtils extends SetupUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Plugin plugin = Bukkit.getPluginManager().getPlugin("Multiverse-Core");
         if (object.setupGenerator != null) {
-            if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null && Bukkit
-                .getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
+            if (plugin != null && plugin.isEnabled()) {
                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
                     "mv create " + world + " normal -g " + object.setupGenerator);
-                setGenerator(world, object.setupGenerator);
-                if (Bukkit.getWorld(world) != null) {
-                    return world;
-                }
-            }
-            if (Bukkit.getPluginManager().getPlugin("MultiWorld") != null && Bukkit
-                .getPluginManager().getPlugin("MultiWorld").isEnabled()) {
-                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                    "mw create " + world + " plugin:" + object.setupGenerator);
                 setGenerator(world, object.setupGenerator);
                 if (Bukkit.getWorld(world) != null) {
                     return world;
@@ -197,18 +190,9 @@ public class BukkitSetupUtils extends SetupUtils {
             Bukkit.createWorld(wc);
             setGenerator(world, object.setupGenerator);
         } else {
-            if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null && Bukkit
-                .getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
+            if (plugin != null && plugin.isEnabled()) {
                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
                     "mv create " + world + " normal");
-                if (Bukkit.getWorld(world) != null) {
-                    return world;
-                }
-            }
-            if (Bukkit.getPluginManager().getPlugin("MultiWorld") != null && Bukkit
-                .getPluginManager().getPlugin("MultiWorld").isEnabled()) {
-                Bukkit.getServer()
-                    .dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + world);
                 if (Bukkit.getWorld(world) != null) {
                     return world;
                 }

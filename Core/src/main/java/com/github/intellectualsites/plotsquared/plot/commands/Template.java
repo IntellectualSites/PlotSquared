@@ -33,11 +33,11 @@ import java.util.zip.ZipOutputStream;
             if (!folder.exists()) {
                 return false;
             }
-            File input = new File(folder + File.separator + template + ".template");
             File output = PlotSquared.get().IMP.getDirectory();
             if (!output.exists()) {
                 output.mkdirs();
             }
+            File input = new File(folder + File.separator + template + ".template");
             try (ZipInputStream zis = new ZipInputStream(new FileInputStream(input))) {
                 ZipEntry ze = zis.getNextEntry();
                 byte[] buffer = new byte[2048];
@@ -63,9 +63,6 @@ import java.util.zip.ZipOutputStream;
                 zis.closeEntry();
             }
             return true;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return false;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -162,11 +159,9 @@ import java.util.zip.ZipOutputStream;
                 setup.step = new ConfigurationNode[0];
                 setup.world = world;
                 SetupUtils.manager.setupWorld(setup);
-                GlobalBlockQueue.IMP.addTask(new Runnable() {
-                    @Override public void run() {
-                        MainUtil.sendMessage(player, "Done!");
-                        player.teleport(WorldUtil.IMP.getSpawn(world));
-                    }
+                GlobalBlockQueue.IMP.addTask(() -> {
+                    MainUtil.sendMessage(player, "Done!");
+                    player.teleport(WorldUtil.IMP.getSpawn(world));
                 });
                 return true;
             }
@@ -182,17 +177,15 @@ import java.util.zip.ZipOutputStream;
                     return false;
                 }
                 final PlotManager manager = area.getPlotManager();
-                TaskManager.runTaskAsync(new Runnable() {
-                    @Override public void run() {
-                        try {
-                            manager.exportTemplate(area);
-                        } catch (Exception e) { // Must recover from any exception thrown a third party template manager
-                            e.printStackTrace();
-                            MainUtil.sendMessage(player, "Failed: " + e.getMessage());
-                            return;
-                        }
-                        MainUtil.sendMessage(player, "Done!");
+                TaskManager.runTaskAsync(() -> {
+                    try {
+                        manager.exportTemplate(area);
+                    } catch (Exception e) { // Must recover from any exception thrown a third party template manager
+                        e.printStackTrace();
+                        MainUtil.sendMessage(player, "Failed: " + e.getMessage());
+                        return;
                     }
+                    MainUtil.sendMessage(player, "Done!");
                 });
                 return true;
             default:

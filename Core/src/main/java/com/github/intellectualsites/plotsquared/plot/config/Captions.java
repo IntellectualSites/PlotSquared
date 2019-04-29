@@ -5,160 +5,165 @@ import com.github.intellectualsites.plotsquared.configuration.ConfigurationSecti
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Captions class.
  */
 public enum Captions {
 
+    //@formatter:off
     /*
      * Static flags
      */
-    FLAG_USE("use", "static.flags"), FLAG_BREAK("break", "static.flags"), FLAG_PLACE("place",
-        "static.flags"), FLAG_PVP("pvp", "static.flags"), FLAG_HANGING_PLACE("hanging-place",
-        "static.flags"), FLAG_HANGING_BREAK("hanging-break", "static.flags"), FLAG_HANGING_INTERACT(
-        "hanging-interact", "static.flags"), FLAG_MISC_INTERACT("misc-interact",
-        "static.flags"), FLAG_MISC_BREAK("misc-break", "static.flags"), FLAG_MISC_PLACE(
-        "misc-place", "static.flags"), FLAG_VEHICLE_BREAK("vehicle-break",
-        "static.flags"), FLAG_HOSTILE_INTERACT("hostile-interact",
-        "static.flags"), FLAG_DEVICE_INTERACT("device-interact",
-        "static.flags"), FLAG_ANIMAL_INTERACT("animal-interact", "static.flags"), FLAG_VEHICLE_USE(
-        "vehicle-use", "static.flags"), FLAG_VEHICLE_PLACE("vehicle-place",
-        "static.flags"), FLAG_PLAYER_INTERACT("player-interact",
-        "static.flags"), FLAG_TAMED_INTERACT("tamed-interact",
-        "static.flags"), FLAG_DISABLE_PHYSICS("disable-physics", "static.flags"), FLAG_MOB_PLACE(
-        "mob-place", "static.flags"), /*
+    FLAG_USE("use", "static.flags"),
+    FLAG_BREAK("break", "static.flags"),
+    FLAG_PLACE("place", "static.flags"),
+    FLAG_PVP("pvp", "static.flags"),
+    FLAG_HANGING_PLACE("hanging-place", "static.flags"),
+    FLAG_HANGING_BREAK("hanging-break", "static.flags"),
+    FLAG_HANGING_INTERACT("hanging-interact", "static.flags"),
+    FLAG_MISC_INTERACT("misc-interact", "static.flags"),
+    FLAG_MISC_BREAK("misc-break", "static.flags"),
+    FLAG_MISC_PLACE("misc-place", "static.flags"),
+    FLAG_VEHICLE_BREAK("vehicle-break", "static.flags"),
+    FLAG_HOSTILE_INTERACT("hostile-interact", "static.flags"),
+    FLAG_DEVICE_INTERACT("device-interact", "static.flags"),
+    FLAG_ANIMAL_INTERACT("animal-interact", "static.flags"), FLAG_VEHICLE_USE("vehicle-use", "static.flags"),
+    FLAG_VEHICLE_PLACE("vehicle-place", "static.flags"),
+    FLAG_PLAYER_INTERACT("player-interact", "static.flags"),
+    FLAG_TAMED_INTERACT("tamed-interact", "static.flags"),
+    FLAG_DISABLE_PHYSICS("disable-physics", "static.flags"),
+    FLAG_MOB_PLACE("mob-place", "static.flags"),
+    /*
      * Static permission
      */
-    PERMISSION_STAR("*", "static.permissions"), PERMISSION_ADMIN("plots.admin",
-        "static.permissions"), PERMISSION_PROJECTILE_UNOWNED("plots.projectile.unowned",
-        "static.permissions"), PERMISSION_PROJECTILE_OTHER("plots.projectile.other",
-        "static.permissions"), PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS(
-        "plots.admin.interact.blockedcommands", "static.permissions"), PERMISSION_WORLDEDIT_BYPASS(
-        "plots.worldedit.bypass", "static.permissions"), PERMISSION_PLOT_TOGGLE_TITLES(
-        "plots.toggle.titles", "static.permissions"), PERMISSION_PLOT_TOGGLE_CHAT(
-        "plots.toggle.chat", "static.permissions"), PERMISSION_ADMIN_UPDATE_NOTIFICATION(
-        "plots.admin.update.notify", "static.permissions"), PERMISSION_ADMIN_EXIT_DENIED(
-        "plots.admin.exit.denied", "static.permissions"), PERMISSION_ADMIN_ENTRY_DENIED(
-        "plots.admin.entry.denied", "static.permissions"), PERMISSION_ADMIN_ENTRY_FORCEFIELD(
-        "plots.admin.entry.forcefield", "static.permissions"), PERMISSION_COMMANDS_CHAT(
-        "plots.admin.command.chat", "static.permissions"), PERMISSION_MERGE_OTHER(
-        "plots.merge.other", "static.permissions"), PERMISSION_MERGE_KEEPROAD(
-        "plots.merge.keeproad", "static.permissions"), PERMISSION_ADMIN_DESTROY_UNOWNED(
-        "plots.admin.destroy.unowned", "static.permissions"), PERMISSION_ADMIN_DESTROY_GROUNDLEVEL(
-        "plots.admin.destroy.groundlevel", "static.permissions"), PERMISSION_ADMIN_DESTROY_OTHER(
-        "plots.admin.destroy.other", "static.permissions"), PERMISSION_ADMIN_DESTROY_ROAD(
-        "plots.admin.destroy.road", "static.permissions"), PERMISSION_ADMIN_BUILD_ROAD(
-        "plots.admin.build.road", "static.permissions"), PERMISSION_ADMIN_BUILD_UNOWNED(
-        "plots.admin.build.unowned", "static.permissions"), PERMISSION_ADMIN_BUILD_OTHER(
-        "plots.admin.build.other", "static.permissions"), PERMISSION_ADMIN_INTERACT_ROAD(
-        "plots.admin.interact.road", "static.permissions"), PERMISSION_ADMIN_INTERACT_UNOWNED(
-        "plots.admin.interact.unowned", "static.permissions"), PERMISSION_ADMIN_INTERACT_OTHER(
-        "plots.admin.interact.other", "static.permissions"), PERMISSION_ADMIN_BUILD_HEIGHTLIMIT(
-        "plots.admin.build.heightlimit", "static.permissions"), PERMISSION_ADMIN_UPDATE(
-        "plots.admin.command.update", "static.permissions"), PERMISSION_ADMIN_COMMAND_RATE(
-        "plots.admin.command.rate", "static.permissions"), PERMISSION_ADMIN_COMMAND_TRUST(
-        "plots.admin.command.trust", "static.permissions"), PERMISSION_TRUST_EVERYONE(
-        "plots.trust.everyone", "static.permissions"), PERMISSION_AREA_CREATE("plots.area.create",
-        "static.permissions"), PERMISSION_AREA_INFO("plots.area.info",
-        "static.permissions"), PERMISSION_AREA_INFO_FORCE("plots.admin.info.force",
-        "static.permissions"), PERMISSION_AREA_LIST("plots.area.list",
-        "static.permissions"), PERMISSION_AREA_REGEN("plots.area.regen",
-        "static.permissions"), PERMISSION_AREA_TP("plots.area.tp",
-        "static.permissions"), PERMISSION_AUTO_MEGA("plots.auto.mega",
-        "static.permissions"), PERMISSION_CLAIM_SCHEMATIC("plots.claim.%s0",
-        "static.permissions"), PERMISSION_ADMIN_COMMAND_SCHEMATIC("plots.admin.command.schematic",
-        "static.permissions"), PERMISSION_ADMIN_COMMAND_CLEAR("plots.admin.command.clear",
-        "static.permissions"), PERMISSION_CONTINUE("plots.continue",
-        "static.permissions"), PERMISSION_CLUSTER_LIST("plots.cluster.list",
-        "static.permissions"), PERMISSION_CLUSTER_CREATE("plots.cluster.create",
-        "static.permissions"), PERMISSION_CLUSTER_CREATE_OTHER("plots.cluster.create.other",
-        "static.permissions"), PERMISSION_CLUSTER_SIZE("plots.cluster.size",
-        "static.permissions"), PERMISSION_CLUSTER_DELETE("plots.cluster.delete",
-        "static.permissions"), PERMISSION_CLUSTER_DELETE_OTHER("plots.cluster.delete.other",
-        "static.permissions"), PERMISSION_CLUSTER_RESIZE("plots.cluster.resize",
-        "static.permissions"), PERMISSION_CLUSTER_RESIZE_OTHER("plots.cluster.resize.other",
-        "static.permissions"), PERMISSION_CLUSTER_RESIZE_SHRINK("plots.cluster.resize.shrink",
-        "static.permissions"), PERMISSION_CLUSTER_RESIZE_EXPAND("plots.cluster.resize.expand",
-        "static.permissions"), PERMISSION_CLUSTER("plots.cluster",
-        "static.permissions"), PERMISSION_CLUSTER_INVITE("plots.cluster.invite",
-        "static.permissions"), PERMISSION_CLUSTER_INVITE_OTHER("plots.cluster.invite.other",
-        "static.permissions"), PERMISSION_CLUSTER_KICK("plots.cluster.kick",
-        "static.permissions"), PERMISSION_CLUSTER_KICK_OTHER("plots.cluster.kick.other",
-        "static.permissions"), PERMISSION_CLUSTER_LEAVE("plots.cluster.leave",
-        "static.permissions"), PERMISSION_CLUSTER_HELPERS("plots.cluster.helpers",
-        "static.permissions"), PERMISSION_CLUSTER_TP("plots.cluster.tp",
-        "static.permissions"), PERMISSION_CLUSTER_TP_OTHER("plots.cluster.tp.other",
-        "static.permissions"), PERMISSION_CLUSTER_INFO("plots.cluster.info",
-        "static.permissions"), PERMISSION_CLUSTER_SETHOME("plots.cluster.sethome",
-        "static.permissions"), PERMISSION_CLUSTER_SETHOME_OTHER("plots.cluster.sethome.other",
-        "static.permissions"), PERMISSION_ADMIN_COMMAND_CONTINUE("plots.admin.command.continue",
-        "static.permissions"), PERMISSION_ADMIN_COMMAND_DELETE("plots.admin.command.delete",
-        "static.permissions"), PERMISSION_ADMIN_COMMAND_DENY("plots.admin.command.deny",
-        "static.permissions"), PERMISSION_DENY_EVERYONE("plots.deny.everyone",
-        "static.permissions"), PERMISSION_ADMIN_COMMAND_DONE("plots.admin.command.done",
-        "static.permissions"), PERMISSION_ADMIN_COMMAND_DOWNLOAD("plots.admin.command.download",
-        "static.permissions"), PERMISSION_DOWNLOAD_WORLD("plots.download.world",
-        "static.permissions"), PERMISSION_SET_FLAG_OTHER("plots.set.flag.other",
-        "static.permissions"), PERMISSION_SET_FLAG("plots.set.flag",
-        "static.permissions"), PERMISSION_SET_FLAG_KEY("plots.set.flag.%s0",
-        "static.permissions"), PERMISSION_SET_FLAG_KEY_VALUE("plots.set.flag.%s0.%s1",
-        "static.permissions"), PERMISSION_FLAG_REMOVE("plots.flag.remove",
-        "static.permissions"), PERMISSION_FLAG_ADD("plots.flag.add",
-        "static.permissions"), PERMISSION_FLAG_LIST("plots.flag.list",
-        "static.permissions"), PERMISSION_ADMIN_COMMAND_KICK("plots.admin.command.kick",
-        "static.permissions"), PERMISSION_GRANT("plots.grant.%s0",
-        "static.permissions"), PERMISSION_LIST_FORSALE("plots.list.forsale",
-        "static.permissions"), PERMISSION_LIST_MINE("plots.list.mine",
-        "static.permissions"), PERMISSION_LIST_SHARED("plots.list.shared",
-        "static.permissions"), PERMISSION_LIST_WORLD("plots.list.world",
-        "static.permissions"), PERMISSION_LIST_WORLD_NAME("plots.list.world.%s0",
-        "static.permissions"), PERMISSION_LIST_TOP("plots.list.top",
-        "static.permissions"), PERMISSION_LIST_ALL("plots.list.all",
-        "static.permissions"), PERMISSION_LIST_UNOWNED("plots.list.unowned",
-        "static.permissions"), PERMISSION_LIST_UNKNOWN("plots.list.unknown",
-        "static.permissions"), PERMISSION_LIST_PLAYER("plots.list.player",
-        "static.permissions"), PERMISSION_LIST_DONE("plots.list.done",
-        "static.permissions"), PERMISSION_LIST_EXPIRED("plots.list.expired",
-        "static.permissions"), PERMISSION_LIST_FUZZY("plots.list.fuzzy",
-        "static.permissions"), PERMISSION_LIST_AREA("plots.list.area",
-        "static.permissions"), PERMISSION_ADMIN_COMMAND_LOAD("plots.admin.command.load",
-        "static.permissions"), PERMISSION_ADMIN_COMMAND_MERGE("plots.admin.command.merge",
-        "static.permissions"), PERMISSION_ADMIN_COMMAND_SETOWNER("plots.admin.command.setowner",
-        "static.permissions"), PERMISSION_COMMENT("plots.comment",
-        "static.permissions"), PERMISSION_ADMIN_COMMAND_REMOVE("plots.admin.command.remove",
-        "static.permissions"), PERMISSION_ADMIN_COMMAND_SAVE("plots.admin.command.save",
-        "static.permissions"), PERMISSION_ADMIN_COMMAND_SCHEMATIC_PASTE(
-        "plots.admin.command.schematic.paste", "static.permissions"), PERMISSION_SCHEMATIC_PASTE(
-        "plots.schematic.paste", "static.permissions"), PERMISSION_SCHEMATIC_LIST(
-        "plots.schematic.list", "static.permissions"),
+    PERMISSION_STAR("*", "static.permissions"),
+    PERMISSION_ADMIN("plots.admin", "static.permissions"),
+    PERMISSION_PROJECTILE_UNOWNED("plots.projectile.unowned", "static.permissions"),
+    PERMISSION_PROJECTILE_OTHER("plots.projectile.other", "static.permissions"),
+    PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS("plots.admin.interact.blockedcommands", "static.permissions"),
+    PERMISSION_WORLDEDIT_BYPASS("plots.worldedit.bypass", "static.permissions"),
+    PERMISSION_PLOT_TOGGLE_TITLES("plots.toggle.titles", "static.permissions"),
+    PERMISSION_PLOT_TOGGLE_CHAT("plots.toggle.chat", "static.permissions"),
+    PERMISSION_ADMIN_UPDATE_NOTIFICATION("plots.admin.update.notify", "static.permissions"),
+    PERMISSION_ADMIN_EXIT_DENIED("plots.admin.exit.denied", "static.permissions"),
+    PERMISSION_ADMIN_ENTRY_DENIED("plots.admin.entry.denied", "static.permissions"),
+    PERMISSION_ADMIN_ENTRY_FORCEFIELD("plots.admin.entry.forcefield", "static.permissions"),
+    PERMISSION_COMMANDS_CHAT("plots.admin.command.chat", "static.permissions"),
+    PERMISSION_MERGE_OTHER("plots.merge.other", "static.permissions"),
+    PERMISSION_MERGE_KEEPROAD("plots.merge.keeproad", "static.permissions"),
+    PERMISSION_ADMIN_DESTROY_UNOWNED("plots.admin.destroy.unowned", "static.permissions"),
+    PERMISSION_ADMIN_DESTROY_GROUNDLEVEL("plots.admin.destroy.groundlevel", "static.permissions"),
+    PERMISSION_ADMIN_DESTROY_OTHER("plots.admin.destroy.other", "static.permissions"),
+    PERMISSION_ADMIN_DESTROY_ROAD("plots.admin.destroy.road", "static.permissions"),
+    PERMISSION_ADMIN_BUILD_ROAD("plots.admin.build.road", "static.permissions"),
+    PERMISSION_ADMIN_BUILD_UNOWNED("plots.admin.build.unowned", "static.permissions"),
+    PERMISSION_ADMIN_BUILD_OTHER("plots.admin.build.other", "static.permissions"),
+    PERMISSION_ADMIN_INTERACT_ROAD("plots.admin.interact.road", "static.permissions"),
+    PERMISSION_ADMIN_INTERACT_UNOWNED("plots.admin.interact.unowned", "static.permissions"),
+    PERMISSION_ADMIN_INTERACT_OTHER("plots.admin.interact.other", "static.permissions"),
+    PERMISSION_ADMIN_BUILD_HEIGHTLIMIT("plots.admin.build.heightlimit", "static.permissions"),
+    PERMISSION_ADMIN_UPDATE("plots.admin.command.update", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_RATE("plots.admin.command.rate", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_TRUST("plots.admin.command.trust", "static.permissions"),
+    PERMISSION_TRUST_EVERYONE("plots.trust.everyone", "static.permissions"),
+    PERMISSION_AREA_CREATE("plots.area.create", "static.permissions"),
+    PERMISSION_AREA_INFO("plots.area.info","static.permissions"),
+    PERMISSION_AREA_INFO_FORCE("plots.admin.info.force", "static.permissions"),
+    PERMISSION_AREA_LIST("plots.area.list", "static.permissions"),
+    PERMISSION_AREA_REGEN("plots.area.regen", "static.permissions"),
+    PERMISSION_AREA_TP("plots.area.tp", "static.permissions"),
+    PERMISSION_AUTO_MEGA("plots.auto.mega", "static.permissions"),
+    PERMISSION_CLAIM_SCHEMATIC("plots.claim.%s0", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_SCHEMATIC("plots.admin.command.schematic", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_CLEAR("plots.admin.command.clear", "static.permissions"),
+    PERMISSION_CONTINUE("plots.continue", "static.permissions"),
+    PERMISSION_CLUSTER_LIST("plots.cluster.list", "static.permissions"),
+    PERMISSION_CLUSTER_CREATE("plots.cluster.create", "static.permissions"),
+    PERMISSION_CLUSTER_CREATE_OTHER("plots.cluster.create.other", "static.permissions"),
+    PERMISSION_CLUSTER_SIZE("plots.cluster.size", "static.permissions"),
+    PERMISSION_CLUSTER_DELETE("plots.cluster.delete", "static.permissions"),
+    PERMISSION_CLUSTER_DELETE_OTHER("plots.cluster.delete.other", "static.permissions"),
+    PERMISSION_CLUSTER_RESIZE("plots.cluster.resize", "static.permissions"),
+    PERMISSION_CLUSTER_RESIZE_OTHER("plots.cluster.resize.other", "static.permissions"),
+    PERMISSION_CLUSTER_RESIZE_SHRINK("plots.cluster.resize.shrink", "static.permissions"),
+    PERMISSION_CLUSTER_RESIZE_EXPAND("plots.cluster.resize.expand", "static.permissions"),
+    PERMISSION_CLUSTER("plots.cluster", "static.permissions"),
+    PERMISSION_CLUSTER_INVITE("plots.cluster.invite", "static.permissions"),
+    PERMISSION_CLUSTER_INVITE_OTHER("plots.cluster.invite.other", "static.permissions"),
+    PERMISSION_CLUSTER_KICK("plots.cluster.kick", "static.permissions"),
+    PERMISSION_CLUSTER_KICK_OTHER("plots.cluster.kick.other", "static.permissions"),
+    PERMISSION_CLUSTER_LEAVE("plots.cluster.leave", "static.permissions"),
+    PERMISSION_CLUSTER_HELPERS("plots.cluster.helpers", "static.permissions"),
+    PERMISSION_CLUSTER_TP("plots.cluster.tp", "static.permissions"),
+    PERMISSION_CLUSTER_TP_OTHER("plots.cluster.tp.other", "static.permissions"),
+    PERMISSION_CLUSTER_INFO("plots.cluster.info", "static.permissions"),
+    PERMISSION_CLUSTER_SETHOME("plots.cluster.sethome", "static.permissions"),
+    PERMISSION_CLUSTER_SETHOME_OTHER("plots.cluster.sethome.other", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_CONTINUE("plots.admin.command.continue", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_DELETE("plots.admin.command.delete", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_DENY("plots.admin.command.deny", "static.permissions"),
+    PERMISSION_DENY_EVERYONE("plots.deny.everyone", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_DONE("plots.admin.command.done", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_DOWNLOAD("plots.admin.command.download", "static.permissions"),
+    PERMISSION_DOWNLOAD_WORLD("plots.download.world", "static.permissions"),
+    PERMISSION_SET_FLAG_OTHER("plots.set.flag.other", "static.permissions"),
+    PERMISSION_SET_FLAG("plots.set.flag", "static.permissions"),
+    PERMISSION_SET_FLAG_KEY("plots.set.flag.%s0", "static.permissions"),
+    PERMISSION_SET_FLAG_KEY_VALUE("plots.set.flag.%s0.%s1", "static.permissions"),
+    PERMISSION_FLAG_REMOVE("plots.flag.remove", "static.permissions"),
+    PERMISSION_FLAG_ADD("plots.flag.add", "static.permissions"),
+    PERMISSION_FLAG_LIST("plots.flag.list", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_KICK("plots.admin.command.kick", "static.permissions"),
+    PERMISSION_GRANT("plots.grant.%s0", "static.permissions"),
+    PERMISSION_LIST_FORSALE("plots.list.forsale", "static.permissions"),
+    PERMISSION_LIST_MINE("plots.list.mine", "static.permissions"),
+    PERMISSION_LIST_SHARED("plots.list.shared", "static.permissions"),
+    PERMISSION_LIST_WORLD("plots.list.world", "static.permissions"),
+    PERMISSION_LIST_WORLD_NAME("plots.list.world.%s0", "static.permissions"),
+    PERMISSION_LIST_TOP("plots.list.top", "static.permissions"),
+    PERMISSION_LIST_ALL("plots.list.all", "static.permissions"),
+    PERMISSION_LIST_UNOWNED("plots.list.unowned", "static.permissions"),
+    PERMISSION_LIST_UNKNOWN("plots.list.unknown", "static.permissions"),
+    PERMISSION_LIST_PLAYER("plots.list.player", "static.permissions"),
+    PERMISSION_LIST_DONE("plots.list.done", "static.permissions"),
+    PERMISSION_LIST_EXPIRED("plots.list.expired", "static.permissions"),
+    PERMISSION_LIST_FUZZY("plots.list.fuzzy", "static.permissions"),
+    PERMISSION_LIST_AREA("plots.list.area", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_LOAD("plots.admin.command.load", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_MERGE("plots.admin.command.merge", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_SETOWNER("plots.admin.command.setowner", "static.permissions"),
+    PERMISSION_COMMENT("plots.comment", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_REMOVE("plots.admin.command.remove", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_SAVE("plots.admin.command.save", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_SCHEMATIC_PASTE("plots.admin.command.schematic.paste", "static.permissions"),
+    PERMISSION_SCHEMATIC_PASTE("plots.schematic.paste", "static.permissions"),
+    PERMISSION_SCHEMATIC_LIST("plots.schematic.list", "static.permissions"),
 
-    PERMISSION_SCHEMATIC_SAVE("plots.schematic.save",
-        "static.permissions"), PERMISSION_ADMIN_COMMAND_SCHEMATIC_SAVE(
-        "plots.admin.command.schematic.save", "static.permissions"),
+    PERMISSION_SCHEMATIC_SAVE("plots.schematic.save", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_SCHEMATIC_SAVE("plots.admin.command.schematic.save", "static.permissions"),
 
-    PERMISSION_SET_COMPONENT("plots.set.%s0", "static.permissions"), PERMISSION_ADMIN_COMMAND(
+    PERMISSION_SET_COMPONENT("plots.set.%s0", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND(
         "plots.admin.command.%s0", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_UNLINK("plots.ad2min.command.unlink", "static.permissions"),
+    PERMISSION_VISIT_UNOWNED("plots.visit.unowned", "static.permissions"),
+    PERMISSION_VISIT_OWNED("plots.visit.owned", "static.permissions"),
+    PERMISSION_SHARED("plots.visit.shared", "static.permissions"),
+    PERMISSION_VISIT_OTHER("plots.visit.other", "static.permissions"),
+    PERMISSION_HOME("plots.home", "static.permissions"),
 
-    PERMISSION_ADMIN_COMMAND_UNLINK("plots.admin.command.unlink",
-        "static.permissions"), PERMISSION_VISIT_UNOWNED("plots.visit.unowned",
-        "static.permissions"),
-
-    PERMISSION_VISIT_OWNED("plots.visit.owned", "static.permissions"), PERMISSION_SHARED(
-        "plots.visit.shared", "static.permissions"),
-
-    PERMISSION_VISIT_OTHER("plots.visit.other", "static.permissions"), PERMISSION_HOME("plots.home",
-        "static.permissions"),
-
-    PERMISSION_ALIAS_SET_OBSOLETE("plots.set.alias",
-        "static.permissions"), // Note this is for backwards compatibility
-
-    PERMISSION_ALIAS_SET("plots.alias.set", "static.permissions"), PERMISSION_ALIAS_REMOVE(
-        "plots.alias.remove", "static.permissions"),
+    PERMISSION_ALIAS_SET_OBSOLETE("plots.set.alias", "static.permissions"), // Note this is for backwards compatibility
+    PERMISSION_ALIAS_SET("plots.alias.set", "static.permissions"),
+    PERMISSION_ALIAS_REMOVE("plots.alias.remove", "static.permissions"),
 
     /*
      * Static console
@@ -894,6 +899,7 @@ public enum Captions {
         "LegacyConfig"),
 
     CUSTOM_STRING("-", "-");
+    //@formatter:on
 
     public static final HashMap<String, String> replacements = new HashMap<>();
 
@@ -917,7 +923,7 @@ public enum Captions {
     /**
      * Constructor.
      *
-     * @param def    default
+     * @param def default
      * @param prefix use prefix
      */
     Captions(String def, boolean prefix, String category) {
@@ -941,18 +947,16 @@ public enum Captions {
             return m;
         }
         Map<String, String> map = new LinkedHashMap<>();
-        if (args.length > 0) {
-            for (int i = args.length - 1; i >= 0; i--) {
-                String arg = "" + args[i];
-                if (arg == null || arg.isEmpty()) {
-                    map.put("%s" + i, "");
-                } else {
-                    arg = Captions.color(arg);
-                    map.put("%s" + i, arg);
-                }
-                if (i == 0) {
-                    map.put("%s", arg);
-                }
+        for (int i = args.length - 1; i >= 0; i--) {
+            String arg = "" + args[i];
+            if (arg.isEmpty()) {
+                map.put("%s" + i, "");
+            } else {
+                arg = Captions.color(arg);
+                map.put("%s" + i, arg);
+            }
+            if (i == 0) {
+                map.put("%s", arg);
             }
         }
         m = StringMan.replaceFromMap(m, map);
@@ -982,13 +986,13 @@ public enum Captions {
             EnumSet<Captions> allEnums = EnumSet.allOf(Captions.class);
             HashSet<String> allNames = new HashSet<>();
             HashSet<String> categories = new HashSet<>();
-            HashSet<String> toRemove = new HashSet<>();
             for (Captions caption : allEnums) {
                 allNames.add(caption.name());
                 categories.add(caption.category.toLowerCase());
             }
             HashSet<Captions> captions = new HashSet<>();
             boolean changed = false;
+            HashSet<String> toRemove = new HashSet<>();
             for (String key : keys) {
                 if (!yml.isString(key)) {
                     if (!categories.contains(key)) {
