@@ -45,16 +45,12 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
 
     @Override public PlotBlock getBlock(int x, int y, int z) {
         World worldObj = Bukkit.getWorld(getWorld());
-        Block block = worldObj.getBlockAt(x, y, z);
-        if (block == null) {
+        if (worldObj != null) {
+            Block block = worldObj.getBlockAt(x, y, z);
+            return PlotBlock.get(block.getType().toString());
+        } else {
             return PlotBlock.get(0, 0);
         }
-        // int id = block.getTypeId();
-        // if (id == 0) {
-        //     return PlotBlock.get(0, 0);
-        // }
-        // return PlotBlock.get(id, block.getData());
-        return PlotBlock.get(block.getType().toString());
     }
 
     @Override public void refreshChunk(int x, int z) {
@@ -194,9 +190,7 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
                 if (biomes2 != null) {
                     for (String biomeStr : biomes2) {
                         if (biomeStr != null) {
-                            if (last == null || !StringMan.isEqual(last, biomeStr)) {
-                                biome = Biome.valueOf(biomeStr.toUpperCase());
-                            }
+                            biome = Biome.valueOf(biomeStr.toUpperCase());
                             worldObj.setBiome(bx, bz, biome);
                         }
                     }

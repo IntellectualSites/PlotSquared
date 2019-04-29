@@ -3,7 +3,14 @@ package com.github.intellectualsites.plotsquared.plot.generator;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.Template;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
+import com.github.intellectualsites.plotsquared.plot.object.FileBytes;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
@@ -11,7 +18,6 @@ import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.google.common.collect.Sets;
 import com.sk89q.worldedit.world.block.BaseBlock;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -144,10 +150,11 @@ public class HybridPlotManager extends ClassicPlotManager {
     }
 
     /**
-     * <p>Clearing the plot needs to only consider removing the blocks - This implementation has used the setCuboidAsync
-     * function, as it is fast, and uses NMS code - It also makes use of the fact that deleting chunks is a lot faster
-     * than block updates This code is very messy, but you don't need to do something quite as complex unless you happen
-     * to have 512x512 sized plots. </p>
+     * <p>Clearing the plot needs to only consider removing the blocks - This implementation has
+     * used the setCuboidAsync function, as it is fast, and uses NMS code - It also makes use of the
+     * fact that deleting chunks is a lot faster than block updates This code is very messy, but you
+     * don't need to do something quite as complex unless you happen to have 512x512 sized plots.
+     * </p>
      */
     @Override public boolean clearPlot(final PlotArea plotArea, Plot plot,
         final Runnable whenDone) {
@@ -177,9 +184,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                     queue.regenChunk(value[0], value[1]);
                     return;
                 }
-                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                // Otherwise we need to set each component, as we don't want to regenerate the road or other plots that share the same chunk //
-                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                /* Otherwise we need to set each component, as we don't want to regenerate the road or other plots that share the same chunk.*/
                 // Set the biome
                 MainUtil.setBiome(world, value[2], value[3], value[4], value[5], biome);
                 // These two locations are for each component (e.g. bedrock, main block, floor, air)
@@ -199,12 +204,10 @@ public class HybridPlotManager extends ClassicPlotManager {
                 // And finally set the schematic, the y value is unimportant for this function
                 pastePlotSchematic(dpw, queue, bot, top);
             }
-        }, new Runnable() {
-            @Override public void run() {
-                queue.enqueue();
-                // And notify whatever called this when plot clearing is done
-                GlobalBlockQueue.IMP.addTask(whenDone);
-            }
+        }, () -> {
+            queue.enqueue();
+            // And notify whatever called this when plot clearing is done
+            GlobalBlockQueue.IMP.addTask(whenDone);
         }, 10);
         return true;
     }

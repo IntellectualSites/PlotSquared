@@ -116,7 +116,9 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
     }
 
     @Override public boolean setBlock(int x, int y, int z, PlotBlock id) {
-        if ((y > 255) || (y < 0)) {
+        if (y > 255) {
+            return false;
+        } else if (y < 0) {
             return false;
         }
         int cx = x >> 4;
