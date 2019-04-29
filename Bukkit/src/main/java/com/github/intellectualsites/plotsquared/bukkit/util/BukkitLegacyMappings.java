@@ -1,36 +1,44 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.LegacyPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.StringPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.util.LegacyMappings;
 import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
-import lombok.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Borrowed from https://github.com/Phoenix616/IDConverter/blob/master/mappings/src/main/java/de/themoep/idconverter/IdMappings.java
  * Original License:
  * <p>
- * Minecraft ID mappings
- * Copyright (C) 2017  Max Lee (https://github.com/Phoenix616)
+ * Minecraft ID mappings Copyright (C) 2017  Max Lee (https://github.com/Phoenix616)
  * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
  * <p>
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 public final class BukkitLegacyMappings extends LegacyMappings {
 
@@ -702,7 +710,15 @@ public final class BukkitLegacyMappings extends LegacyMappings {
             try {
                 material = Material.valueOf(legacyBlock.getNewName());
             } catch (final Exception e) {
-                material = Material.getMaterial(legacyBlock.getLegacyName(), true);
+                try {
+                    material = Material.getMaterial(legacyBlock.getLegacyName(), true);
+                } catch (NoSuchMethodError error) {
+                    PlotSquared.log(
+                        "You can't use this version of PlotSquared on a server "
+                            + "less than Minecraft 1.13.2");
+                    Bukkit.shutdown();
+                    break;
+                }
             }
             legacyBlock.material = material;
         }
@@ -721,13 +737,10 @@ public final class BukkitLegacyMappings extends LegacyMappings {
     }
 
     /**
-     * Try to find a legacy plot block by any means possible.
-     * Strategy:
-     * - Check if the name contains a namespace, if so, strip it
-     * - Check if there's a (new) material matching the name
-     * - Check if there's a legacy material matching the name
-     * - Check if there's a numerical ID matching the name
-     * - Return null if everything else fails
+     * Try to find a legacy plot block by any means possible. Strategy: - Check if the name contains
+     * a namespace, if so, strip it - Check if there's a (new) material matching the name - Check if
+     * there's a legacy material matching the name - Check if there's a numerical ID matching the
+     * name - Return null if everything else fails
      *
      * @param string String ID
      * @return LegacyBlock if found, else null

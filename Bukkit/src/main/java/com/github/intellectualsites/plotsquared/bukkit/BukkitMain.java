@@ -116,10 +116,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override public void onEnable() {
 
-
         this.pluginName = getDescription().getName();
-        getServer().getName();
-
         PlotPlayer.registerConverter(Player.class, BukkitUtil::getPlayer);
 
         if (Bukkit.getVersion().contains("git-Spigot")) {
