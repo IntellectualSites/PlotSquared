@@ -1611,6 +1611,30 @@ import java.util.zip.ZipInputStream;
             }
         }
         Settings.load(configFile);
+        setupUpdateUtility();
+        //Sets the version information for the settings.yml file
+        try (InputStream stream = getClass().getResourceAsStream("/plugin.properties")) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(stream))) {
+                String versionString = br.readLine();
+                String commitString = br.readLine();
+                String dateString = br.readLine();
+                this.version = PlotVersion.tryParse(versionString, commitString, dateString);
+                Settings.DATE =
+                    new Date(100 + version.year, version.month, version.day).toGMTString();
+                Settings.BUILD = "https://ci.athion.net/job/PlotSquared/" + version.build;
+                Settings.COMMIT =
+                    "https://github.com/IntellectualSites/PlotSquared/commit/" + Integer
+                        .toHexString(version.hash);
+                System.out.println("Version is " + this.version);
+            }
+        } catch (IOException throwable) {
+            throwable.printStackTrace();
+        }
+        Settings.save(configFile);
+        config = YamlConfiguration.loadConfiguration(configFile);
+    }
+
+    private void setupUpdateUtility() {
         try {
             copyFile("updater.properties", "config");
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
@@ -1630,24 +1654,6 @@ import java.util.zip.ZipInputStream;
         } catch (final Throwable throwable) {
             throwable.printStackTrace();
         }
-        try (InputStream stream = getClass().getResourceAsStream("/plugin.properties");
-            BufferedReader br = new BufferedReader(new InputStreamReader(stream))) {
-            //java.util.Scanner scanner = new java.util.Scanner(stream).useDelimiter("\\A");
-            String versionString = br.readLine();
-            String commitString = br.readLine();
-            String dateString = br.readLine();
-            //scanner.close();
-            this.version = PlotVersion.tryParse(versionString, commitString, dateString);
-            Settings.DATE = new Date(100 + version.year, version.month, version.day).toGMTString();
-            Settings.BUILD = "https://ci.athion.net/job/PlotSquared/" + version.build;
-            Settings.COMMIT = "https://github.com/IntellectualSites/PlotSquared/commit/" + Integer
-                .toHexString(version.hash);
-            System.out.println("Version is " + this.version);
-        } catch (IOException throwable) {
-            throwable.printStackTrace();
-        }
-        Settings.save(configFile);
-        config = YamlConfiguration.loadConfiguration(configFile);
     }
 
     /**
