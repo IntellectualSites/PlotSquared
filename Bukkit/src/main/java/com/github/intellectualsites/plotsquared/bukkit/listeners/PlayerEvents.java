@@ -2803,6 +2803,13 @@ import org.bukkit.util.Vector;
             return;
         }
         Entity victim = event.getEntity();
+        if (victim.getType().equals(EntityType.ITEM_FRAME)) {
+            Plot plot = BukkitUtil.getLocation(victim).getPlot();
+            if (plot != null && !plot.isAdded(damager.getUniqueId())) {
+                event.setCancelled(true);
+                return;
+            }
+        }
         if (!entityDamage(damager, victim, event.getCause())) {
             if (event.isCancelled()) {
                 if (victim instanceof Ageable) {
@@ -2918,7 +2925,7 @@ import org.bukkit.util.Vector;
                         "plots.admin.destroy." + stub);
                     return false;
                 }
-            } else if (victim.getEntityId() == 30) {
+            } else if (victim.getType() == EntityType.ARMOR_STAND) {
                 if (plot != null && (plot.getFlag(Flags.MISC_BREAK, false) || plot
                     .isAdded(plotPlayer.getUUID()))) {
                     return true;
