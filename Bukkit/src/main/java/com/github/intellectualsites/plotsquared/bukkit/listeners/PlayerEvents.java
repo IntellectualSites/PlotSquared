@@ -2803,6 +2803,7 @@ import org.bukkit.util.Vector;
             return;
         }
         Entity victim = event.getEntity();
+/*
         if (victim.getType().equals(EntityType.ITEM_FRAME)) {
             Plot plot = BukkitUtil.getLocation(victim).getPlot();
             if (plot != null && !plot.isAdded(damager.getUniqueId())) {
@@ -2810,6 +2811,7 @@ import org.bukkit.util.Vector;
                 return;
             }
         }
+*/
         if (!entityDamage(damager, victim, event.getCause())) {
             if (event.isCancelled()) {
                 if (victim instanceof Ageable) {
@@ -2918,6 +2920,12 @@ import org.bukkit.util.Vector;
             if (victim instanceof Hanging) { // hanging
                 if (plot != null && (plot.getFlag(Flags.HANGING_BREAK, false) || plot
                     .isAdded(plotPlayer.getUUID()))) {
+                    if (Settings.Done.RESTRICT_BUILDING && plot.getFlags().containsKey(Flags.DONE)) {
+                        if (!Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
+                            MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT, Captions.PERMISSION_ADMIN_BUILD_OTHER);
+                            return false;
+                        }
+                    }
                     return true;
                 }
                 if (!Permissions.hasPermission(plotPlayer, "plots.admin.destroy." + stub)) {
