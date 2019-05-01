@@ -180,7 +180,7 @@ public final class Flags {
                 }
             });
             PlotSquared.get().forEachPlotRaw(value -> {
-                if (value.getFlags().containsKey(duplicate)) {
+                if (value.hasFlag(duplicate)) {
                     Object remove = value.getFlags().remove(duplicate);
                     try {
                         if (remove instanceof Collection

@@ -1115,7 +1115,7 @@ import org.bukkit.util.Vector;
                 MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
                     Captions.PERMISSION_ADMIN_DESTROY_OTHER);
                 event.setCancelled(true);
-            } else if (Settings.Done.RESTRICT_BUILDING && plot.getFlags().containsKey(Flags.DONE)) {
+            } else if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
                 if (!Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
                     MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
                         Captions.PERMISSION_ADMIN_BUILD_OTHER);
@@ -2475,7 +2475,7 @@ import org.bukkit.util.Vector;
             MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
                 Captions.PERMISSION_ADMIN_BUILD_OTHER);
             event.setCancelled(true);
-        } else if (Settings.Done.RESTRICT_BUILDING && plot.getFlags().containsKey(Flags.DONE)) {
+        } else if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
             if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
                 MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
                     Captions.PERMISSION_ADMIN_BUILD_OTHER);
@@ -2537,7 +2537,7 @@ import org.bukkit.util.Vector;
             MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
                 Captions.PERMISSION_ADMIN_BUILD_OTHER);
             event.setCancelled(true);
-        } else if (Settings.Done.RESTRICT_BUILDING && plot.getFlags().containsKey(Flags.DONE)) {
+        } else if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
             if (!Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
                 MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
                     Captions.PERMISSION_ADMIN_BUILD_OTHER);
@@ -2929,7 +2929,7 @@ import org.bukkit.util.Vector;
             if (victim instanceof Hanging) { // hanging
                 if (plot != null && (plot.getFlag(Flags.HANGING_BREAK, false) || plot
                     .isAdded(plotPlayer.getUUID()))) {
-                    if (Settings.Done.RESTRICT_BUILDING && plot.getFlags().containsKey(Flags.DONE)) {
+                    if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
                         if (!Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
                             MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT, Captions.PERMISSION_ADMIN_BUILD_OTHER);
                             return false;
@@ -3097,7 +3097,7 @@ import org.bukkit.util.Vector;
                     event.setCancelled(true);
                     return;
                 }
-            } else if (Settings.Done.RESTRICT_BUILDING && plot.getFlags().containsKey(Flags.DONE)) {
+            } else if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
                     MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
                         Captions.PERMISSION_ADMIN_BUILD_OTHER);
