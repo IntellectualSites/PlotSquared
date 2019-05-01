@@ -518,7 +518,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                     try {
                         PlotPlayer.this.metaMap = value;
                         if (!value.isEmpty()) {
-                            if (Settings.Enabled_Components.PERSISTENT_META) {
+                            if (Settings.Teleport.ON_LOGIN) {
                                 PlotAreaManager manager = PS.get().getPlotAreaManager();
                                 if (manager instanceof SinglePlotAreaManager) {
                                     PlotArea area = ((SinglePlotAreaManager) manager).getArea();
@@ -554,8 +554,10 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                                                                 @Override
                                                                 public void run() {
                                                                     if (getMeta("teleportOnLogin", true)) {
-                                                                        teleport(loc);
-                                                                        sendMessage(C.TELEPORTED_TO_PLOT.f() + " (quitLoc-unloaded) (" + plotX + "," + plotZ + ")");
+                                                                        if (plot.isLoaded()) {
+                                                                            teleport(loc);
+                                                                            sendMessage(C.TELEPORTED_TO_PLOT.f() + " (quitLoc-unloaded) (" + plotX + "," + plotZ + ")");
+                                                                        }
                                                                     }
                                                                 }
                                                             });
