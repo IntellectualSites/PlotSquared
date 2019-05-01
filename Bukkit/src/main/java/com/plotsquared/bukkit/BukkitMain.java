@@ -131,6 +131,17 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override
     public void onEnable() {
+        if (getServerVersion()[1] > 12) {
+            Bukkit.getLogger().severe("================================================");
+            Bukkit.getLogger().severe("====== THIS PLOTSQUARED VERSION IS NOT ======");
+            Bukkit.getLogger().severe("======  FOR USE ON MINECRAFT 1.13 OR   ======");
+            Bukkit.getLogger().severe("======     ABOVE. DISABLING PLUGIN.    ======");
+            Bukkit.getLogger().severe("======          DOWNLOAD FROM          ======");
+            Bukkit.getLogger().severe("https://ci.athion.net/job/PlotSquared-Breaking/");
+            Bukkit.getLogger().severe("==============================================");
+            Bukkit.getPluginManager().disablePlugin(this);
+            throw new UnsupportedOperationException("INCORRECT PLOTSQUARED VERSION");
+        }
         if (pluginMap != null) {
             pluginMap.put("PlotMe-DefaultGenerator", this);
         }
