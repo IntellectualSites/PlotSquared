@@ -2271,20 +2271,28 @@ public class PlayerEvents extends PlotListener implements Listener {
                         .sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_ROAD);
                     event.setCancelled(true);
                 }
-            } else if (!plot.hasOwner()) {
-                if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
-                    MainUtil
-                        .sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_UNOWNED);
-                    event.setCancelled(true);
+            } else {
+                if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
+                    if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
+                        event.setCancelled(true);
+                        return;
+                    }
                 }
-            } else if (!plot.isAdded(pp.getUUID())) {
-                if (plot.getFlag(Flags.HANGING_BREAK, false)) {
-                    return;
-                }
-                if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
-                    MainUtil
-                        .sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
-                    event.setCancelled(true);
+
+                if (!plot.hasOwner()) {
+                    if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_UNOWNED);
+                        event.setCancelled(true);
+                    }
+                } else if (!plot.isAdded(pp.getUUID())) {
+                    if (plot.getFlag(Flags.HANGING_BREAK, false)) {
+                        return;
+                    }
+                    if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
+                        event.setCancelled(true);
+                    }
                 }
             }
         } else if (remover instanceof Projectile) {
@@ -2299,6 +2307,14 @@ public class PlayerEvents extends PlotListener implements Listener {
                 PlotPlayer player = BukkitUtil.getPlayer(shooter);
                 Plot plot = area.getPlot(BukkitUtil.getLocation(event.getEntity()));
                 if (plot != null) {
+                    if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
+                        if (!Permissions.hasPermission(player, C.PERMISSION_ADMIN_BUILD_OTHER)) {
+                            MainUtil.sendMessage(player, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
+                            event.setCancelled(true);
+                            return;
+                        }
+                    }
+
                     if (!plot.hasOwner()) {
                         if (!Permissions
                             .hasPermission(player, C.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
@@ -2338,42 +2354,50 @@ public class PlayerEvents extends PlotListener implements Listener {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_INTERACT_ROAD);
                 event.setCancelled(true);
             }
-        } else if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED)) {
-                MainUtil
-                    .sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_INTERACT_UNOWNED);
-                event.setCancelled(true);
+        } else {
+            if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
+                if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
+                    event.setCancelled(true);
+                    return;
+                }
             }
-        } else if (!plot.isAdded(pp.getUUID())) {
-            Entity entity = event.getRightClicked();
-            if (entity instanceof Creature && plot.getFlag(Flags.CREATURE_INTERACT, false)) {
-                return;
-            }
-            if (entity instanceof Monster && plot.getFlag(Flags.HOSTILE_INTERACT, false)) {
-                return;
-            }
-            if (entity instanceof Animals && plot.getFlag(Flags.ANIMAL_INTERACT, false)) {
-                return;
-            }
-            if (entity instanceof Tameable && ((Tameable) entity).isTamed() && plot
-                .getFlag(Flags.TAMED_INTERACT, false)) {
-                return;
-            }
-            if (entity instanceof Vehicle && plot.getFlag(Flags.VEHICLE_USE, false)) {
-                return;
-            }
-            if (entity instanceof Player && plot.getFlag(Flags.PLAYER_INTERACT, false)) {
-                return;
-            }
-            if (entity instanceof Villager && plot.getFlag(Flags.VILLAGER_INTERACT, false)) {
-                return;
-            }
-            if (entity instanceof ItemFrame && plot.getFlag(Flags.MISC_INTERACT, false)) {
-                return;
-            }
-            if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER)) {
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_INTERACT_OTHER);
-                event.setCancelled(true);
+            if (!plot.hasOwner()) {
+                if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_INTERACT_UNOWNED);
+                    event.setCancelled(true);
+                }
+            } else if (!plot.isAdded(pp.getUUID())) {
+                Entity entity = event.getRightClicked();
+                if (entity instanceof Creature && plot.getFlag(Flags.CREATURE_INTERACT, false)) {
+                    return;
+                }
+                if (entity instanceof Monster && plot.getFlag(Flags.HOSTILE_INTERACT, false)) {
+                    return;
+                }
+                if (entity instanceof Animals && plot.getFlag(Flags.ANIMAL_INTERACT, false)) {
+                    return;
+                }
+                if (entity instanceof Tameable && ((Tameable) entity).isTamed() && plot
+                    .getFlag(Flags.TAMED_INTERACT, false)) {
+                    return;
+                }
+                if (entity instanceof Vehicle && plot.getFlag(Flags.VEHICLE_USE, false)) {
+                    return;
+                }
+                if (entity instanceof Player && plot.getFlag(Flags.PLAYER_INTERACT, false)) {
+                    return;
+                }
+                if (entity instanceof Villager && plot.getFlag(Flags.VILLAGER_INTERACT, false)) {
+                    return;
+                }
+                if (entity instanceof ItemFrame && plot.getFlag(Flags.MISC_INTERACT, false)) {
+                    return;
+                }
+                if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_INTERACT_OTHER);
+                    event.setCancelled(true);
+                }
             }
         }
     }

@@ -2,6 +2,7 @@ package com.plotsquared.bukkit.listeners;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -154,20 +155,30 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.road");
                 e.setCancelled(true);
             }
-        } else if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.unowned");
-                e.setCancelled(true);
-            }
         } else {
-            UUID uuid = pp.getUUID();
-            if (!plot.isAdded(uuid)) {
-                if (Flags.MISC_INTERACT.isTrue(plot)) {
+            if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
+                if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
+                    e.setCancelled(true);
                     return;
                 }
-                if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.other");
+            }
+
+            if (!plot.hasOwner()) {
+                if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.unowned");
                     e.setCancelled(true);
+                }
+            } else {
+                UUID uuid = pp.getUUID();
+                if (!plot.isAdded(uuid)) {
+                    if (Flags.MISC_INTERACT.isTrue(plot)) {
+                        return;
+                    }
+                    if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.other");
+                        e.setCancelled(true);
+                    }
                 }
             }
         }
