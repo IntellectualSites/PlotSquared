@@ -22,7 +22,7 @@ import java.util.List;
 
 @CommandDeclaration(command = "debugpaste",
         aliases = "dp", usage = "/plot debugpaste",
-        description = "Upload settings.yml, worlds.yml, PlotSquared.use_THIS.yml and your latest.log to https://incendo.org",
+        description = "Upload settings.yml, worlds.yml, PlotSquared.use_THIS.yml and your latest.log to https://www.athion.net/ISPaster/paste",
         permission = "plots.debugpaste",
         category = CommandCategory.DEBUG)
 public class DebugPaste extends SubCommand {
@@ -109,7 +109,7 @@ public class DebugPaste extends SubCommand {
 
                         if (jsonObject.has("created")) {
                             final String pasteId = jsonObject.get("paste_id").getAsString();
-                            final String link = String.format("https://incendo.org/paste/view/%s", pasteId);
+                            final String link = String.format("https://www.athion.net/ISPaster/paste/view/%s", pasteId);
                             player.sendMessage(
                                 C.DEBUG_REPORT_CREATED.s().replace("%url%", link));
                         } else {

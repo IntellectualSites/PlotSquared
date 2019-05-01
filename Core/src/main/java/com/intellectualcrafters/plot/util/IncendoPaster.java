@@ -20,7 +20,7 @@ public final class IncendoPaster {
     /**
      * Upload service URL
      */
-    public static final String UPLOAD_PATH = "https://incendo.org/paste/upload";
+    public static final String UPLOAD_PATH = "https://www.athion.net/ISPaster/paste/upload";
     /**
      * Valid paste applications
      */
