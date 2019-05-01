@@ -1808,7 +1808,7 @@ import org.bukkit.util.Vector;
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInteract(PlayerInteractAtEntityEvent e) {
         Entity entity = e.getRightClicked();
-        if (!(entity instanceof ArmorStand)) {
+        if (!(entity instanceof ArmorStand) && !(entity instanceof ItemFrame)) {
             return;
         }
         Location location = BukkitUtil.getLocation(e.getRightClicked().getLocation());
@@ -1816,25 +1816,34 @@ import org.bukkit.util.Vector;
         if (area == null) {
             return;
         }
-
         EntitySpawnListener.testNether(entity);
-
-        Plot plot = area.getPlotAbs(location);
+        Plot plot = location.getPlotAbs();
         PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
         if (plot == null) {
             if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
-                MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT, "plots.admin.interact.road");
-                e.setCancelled(true);
-            }
-        } else if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
                 MainUtil
-                    .sendMessage(pp, Captions.NO_PERMISSION_EVENT, "plots.admin.interact.unowned");
+                    .sendMessage(pp, Captions.NO_PERMISSION_EVENT, "plots.admin.interact.road");
                 e.setCancelled(true);
             }
         } else {
-            UUID uuid = pp.getUUID();
-            if (!plot.isAdded(uuid)) {
+            if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
+                if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
+                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT, Captions.PERMISSION_ADMIN_BUILD_OTHER);
+                    e.setCancelled(true);
+                    return;
+                }
+            }
+            if (!plot.hasOwner()) {
+                if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
+                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
+                        "plots.admin.interact.unowned");
+                    e.setCancelled(true);
+                }
+            } else {
+                UUID uuid = pp.getUUID();
+                if (plot.isAdded(uuid)) {
+                    return;
+                }
                 if (Flags.MISC_INTERACT.isTrue(plot)) {
                     return;
                 }
