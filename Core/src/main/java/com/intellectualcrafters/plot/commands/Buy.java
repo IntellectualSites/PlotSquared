@@ -60,6 +60,9 @@ public class Buy extends Command {
                 }
                 plot.removeFlag(Flags.PRICE);
                 plot.setOwner(player.getUUID());
+                plot.getTrusted().clear();
+                plot.getMembers().clear();
+                plot.getDenied().clear();
                 C.CLAIMED.send(player);
                 whenDone.run(Buy.this, CommandResult.SUCCESS);
             }
