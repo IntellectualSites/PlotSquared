@@ -48,8 +48,6 @@ version = String.format("%s.%s", rootVersion, buildNumber)
 
 description = rootProject.name
 
-delete "./docs"
-
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
@@ -94,6 +92,8 @@ task aggregatedJavadocs(type: Javadoc, description: 'Generate javadocs from all 
     options.author true
     options.links 'http://docs.spring.io/spring/docs/4.3.x/javadoc-api/', 'http://docs.oracle.com/javase/8/docs/api/', 'http://docs.spring.io/spring-ws/docs/2.3.0.RELEASE/api/', 'http://docs.spring.io/spring-security/site/docs/4.0.4.RELEASE/apidocs/'
     options.addStringOption('Xdoclint:none', '-quiet')
+
+    delete "./docs"
 
     subprojects.each { proj ->
         proj.tasks.withType(Javadoc).each { javadocTask ->
