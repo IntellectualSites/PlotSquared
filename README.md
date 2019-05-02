@@ -23,7 +23,7 @@ is to provide a lag-free and smooth experience.
 * [Wiki](https://github.com/intellectualcrafters/plotsquared/wiki)
 
 ### Developer Resources
-* [[JavaDoc (Core)](https://incendo.org/javadoc/plotsquared/core/index.html)] [[JavaDoc (Bukkit)](https://incendo.org/javadoc/plotsquared/core/index.html)] [[Alternative (Empcraft)](http://empcraft.com/plotsquared/doc/)]
+* [[JavaDoc](https://ci.athion.net/job/PlotSquared-Breaking/javadoc/)] [[Alternative (Empcraft)](http://empcraft.com/plotsquared/doc/)]
 * [[Maven Repo (CI)](http://ci.athion.net/job/PlotSquared-Breaking/ws/mvn/)] [[Alternative (Incendo)](https://github.com/IntellectualSites/PlotSquared/wiki/incendo-mvn)]
 * [API Documentation](https://github.com/IntellectualSites/PlotSquared/wiki/Developer-documentation-(WIP))
 
