@@ -34,8 +34,7 @@ public class PlotVersion {
         if (hash == 0 && build == 0) {
             return "PlotSquared-" + year + "." + month + "." + day + "-SNAPSHOT";
         } else {
-            return "PlotSquared-" + year + "." + month + "." + day + "-" + Integer.toHexString(hash)
-                + "-" + build;
+            return "PlotSquared-" + build;
         }
     }
 
