@@ -180,7 +180,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override public void run(int[] value) {
                 // If the chunk isn't near the edge and it isn't an augmented world we can just regen the whole chunk
-                if (canRegen && (value[6] == 0)) {
+                if (canRegen && (value[6] == 0) && PlotSquared.imp().getServerVersion()[1] == 13) {
                     queue.regenChunk(value[0], value[1]);
                     return;
                 }
