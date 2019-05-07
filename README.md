@@ -19,18 +19,16 @@ is to provide a lag-free and smooth experience.
 * [Wiki](https://github.com/intellectualcrafters/plotsquared/wiki)
 
 ## Downloads
-### 1.13+ (Pre-Release)
-* [Download](https://github.com/IntellectualSites/PlotSquared/releases/tag/4.0-pre-breaking)
+### 1.13+
+* [Download](https://ci.athion.net/job/PlotSquared-Releases/)
 * [Jenkins](https://ci.athion.net/job/PlotSquared-Breaking/)
+*[JavaDoc](https://ci.athion.net/job/PlotSquared-Breaking/javadoc/)
 
 ### <1.12.2
-* [Download](https://github.com/IntellectualSites/PlotSquared/releases/tag/dev)
+* [Download](https://ci.athion.net/job/PlotSquared-Legacy/)
 * [Jenkins](https://ci.athion.net/job/PlotSquared-Legacy/)
+* [JavaDoc](https://ci.athion.net/job/PlotSquared-Legacy/javadoc/)
 
-
-### Developer Resources
-* [Java Docs](http://empcraft.com/plotsquared/doc/)
-* [Maven Repo](http://ci.athion.net/job/PlotSquared-Legacy/ws/mvn/)
 * [API Documentation](https://github.com/IntellectualSites/PlotSquared/wiki/Developer-documentation-(WIP))
 
 # Building
