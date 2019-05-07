@@ -1,7 +1,7 @@
 repositories {
     maven { url = "https://oss.sonatype.org/content/repositories/snapshots/"}
     maven {url "http://nexus.hc.to/content/repositories/pub_releases"}
-    maven {url "https://repo.potestas.xyz/main/"}
+    maven {url "https://repo.nukkitx.com/main/"}
     flatDir {dirs 'lib'}
 }
 
