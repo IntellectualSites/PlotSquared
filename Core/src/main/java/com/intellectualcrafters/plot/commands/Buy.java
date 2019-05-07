@@ -14,6 +14,7 @@ import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.util.Set;
+import java.util.UUID;
 
 @CommandDeclaration(
         command = "buy",
@@ -60,6 +61,15 @@ public class Buy extends Command {
                 }
                 plot.removeFlag(Flags.PRICE);
                 plot.setOwner(player.getUUID());
+                for (UUID uuid : plot.getTrusted()) {
+                    plot.removeTrusted(uuid);
+                }
+                for (UUID uuid : plot.getMembers()) {
+                    plot.removeMember(uuid);
+                }
+                for (UUID uuid : plot.getDenied()) {
+                    plot.removeDenied(uuid);
+                }
                 C.CLAIMED.send(player);
                 whenDone.run(Buy.this, CommandResult.SUCCESS);
             }
