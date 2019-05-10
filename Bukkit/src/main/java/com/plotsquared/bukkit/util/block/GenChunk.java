@@ -115,7 +115,11 @@ public class GenChunk extends ScopedLocalBlockQueue {
 
     @Override public boolean setBlock(int x, int y, int z, int id, int data) {
         if (this.result == null) {
-            this.cd.setBlock(x, y, z, new MaterialData(Material.getMaterial(id), (byte) data));
+            Material material = Material.getMaterial(id);
+            if (material == null) {
+                return false;
+            }
+            this.cd.setBlock(x, y, z, new MaterialData(material, (byte) data));
             return true;
         }
         int i = MainUtil.CACHE_I[y][x][z];
