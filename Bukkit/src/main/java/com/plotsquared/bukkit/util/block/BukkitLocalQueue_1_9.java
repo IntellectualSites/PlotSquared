@@ -251,14 +251,6 @@ public class BukkitLocalQueue_1_9 extends BukkitLocalQueue<char[]> {
             Map<?, ?> tiles = (Map<?, ?>) tf.get(c);
             Collection<?>[] entities = (Collection<?>[]) entitySlices.get(c);
 
-            // We need to update entities to make it mutable
-            for (int i = 0; i < entities.length; i++) {
-                final Collection<?> list = new ArrayList<>(entities[i]);
-                entities[i] = list;
-            }
-            // Force update the field. This shouldn't be necessary, but weird stuff happened
-            entitySlices.set(c, entities);
-
             Method xm = null;
             Method ym = null;
             Method zm = null;
