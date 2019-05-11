@@ -13,8 +13,8 @@ public class Storage extends Config {
         save(file, Storage.class);
     }
 
-    public static void load(File file) {
-        load(file, Storage.class);
+    public static boolean load(File file) {
+        return load(file, Storage.class);
     }
 
     @Comment("MySQL section")

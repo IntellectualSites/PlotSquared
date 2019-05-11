@@ -147,11 +147,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
         this.name = getDescription().getName();
         new PS(this, "Bukkit");
-        if (Settings.Enabled_Components.METRICS) {
-            startMetrics();
-        } else {
-            PS.log(C.CONSOLE_PLEASE_ENABLE_METRICS.f(getPluginName()));
-        }
         if (Settings.Enabled_Components.WORLDS) {
             TaskManager.IMP.taskRepeat(this::unload, 20);
             try {

@@ -6,6 +6,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.util.StringMan;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,6 +20,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class Config {
 
@@ -56,13 +59,13 @@ public class Config {
      *
      */
     public static void set(String key, Object value, Class root) {
-        String[] split = key.split("\\.");
+        String[] split = key.split(".");
         Object instance = getInstance(split, root);
         if (instance != null) {
             Field field = getField(split, instance);
             if (field != null) {
                 try {
-                    if (field.getAnnotation(Final.class) != null) {
+                    if (field.isAnnotationPresent(Final.class)) {
                         return;
                     }
                     if (field.getType() == String.class && !(value instanceof String)) {
@@ -79,19 +82,26 @@ public class Config {
         PS.debug("Failed to set config option: " + key + ": " + value + " | " + instance);
     }
 
+    /**
+     * Loads a file based on the file name and configuration class.
+     * @param file the file to load
+     * @param root the class to base the configuration information off of.
+     * @return true if the file exists
+     */
     public static boolean load(File file, Class root) {
-        if (!file.exists()) {
-            return false;
-        }
-        YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
-        for (String key : yml.getKeys(true)) {
-            Object value = yml.get(key);
-            if (value instanceof MemorySection) {
-                continue;
+        checkNotNull(root, "Root was null. This shouldn't happen.");
+        if (file.exists()) {
+            YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
+            for (String key : yml.getKeys(true)) {
+                Object value = yml.get(key);
+                if (value instanceof MemorySection) {
+                    continue;
+                }
+                set(key, value, root);
             }
-            set(key, value, root);
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -105,11 +115,11 @@ public class Config {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
             }
-            PrintWriter writer = new PrintWriter(file);
-            Object instance = root.newInstance();
-            save(writer, root, instance, 0);
-            writer.close();
-        } catch (Throwable e) {
+            try (PrintWriter writer = new PrintWriter(file)) {
+                Object instance = root.newInstance();
+                save(writer, root, instance, 0);
+            }
+        } catch (IOException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
@@ -122,7 +132,7 @@ public class Config {
     public static Map<String, Object> getFields(Class clazz) {
         HashMap<String, Object> map = new HashMap<>();
         for (Field field : clazz.getFields()) {
-            if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+            if (Modifier.isStatic(field.getModifiers())) {
                 try {
                     map.put(toNodeName(field.getName()), field.get(null));
                 } catch (IllegalAccessException e) {
@@ -160,7 +170,7 @@ public class Config {
             String lineSeparator = System.lineSeparator();
             String spacing = StringMan.repeat(" ", indent);
             for (Field field : clazz.getFields()) {
-                if (field.getAnnotation(Ignore.class) != null) {
+                if (field.isAnnotationPresent(Ignore.class)) {
                     continue;
                 }
                 Comment comment = field.getAnnotation(Comment.class);
@@ -188,7 +198,7 @@ public class Config {
                 }
             }
             for (Class<?> current : clazz.getClasses()) {
-                if (current.isInterface() || current.getAnnotation(Ignore.class) != null) {
+                if (current.isInterface() || current.isAnnotationPresent(Ignore.class)) {
                     continue;
                 }
                 if (indent == 0) {
@@ -269,7 +279,12 @@ public class Config {
      */
     private static Object getInstance(String[] split, Class root) {
         try {
-            Class<?> clazz = root == null ? MethodHandles.lookup().lookupClass() : root;
+            Class<?> clazz;
+            if (root == null) {
+                clazz = MethodHandles.lookup().lookupClass();
+            } else {
+                clazz = root;
+            }
             Object instance = clazz.newInstance();
             while (split.length > 0) {
                 switch (split.length) {

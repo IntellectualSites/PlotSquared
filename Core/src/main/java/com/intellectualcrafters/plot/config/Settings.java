@@ -42,8 +42,8 @@ public class Settings extends Config {
         save(file, Settings.class);
     }
 
-    public static void load(File file) {
-        load(file, Settings.class);
+    public static boolean load(File file) {
+        return load(file, Settings.class);
     }
 
     public static boolean convertLegacy(File file) {
