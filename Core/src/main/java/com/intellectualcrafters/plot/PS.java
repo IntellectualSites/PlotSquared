@@ -171,7 +171,11 @@ public class PS{
             }
             // Required
             this.IMP.registerWorldEvents();
-            this.IMP.startMetrics();
+            if (Settings.Enabled_Components.METRICS) {
+                this.IMP.startMetrics();
+            } else {
+                PS.log(C.CONSOLE_PLEASE_ENABLE_METRICS.f(IMP.getPluginName()));
+            }
             if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
                 this.IMP.registerChunkProcessor();
             }
