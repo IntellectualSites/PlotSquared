@@ -193,7 +193,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             getLogger().warning("Update checking disabled. Skipping.");
         }
 
-        this.startMetrics();
+        if (Settings.Enabled_Components.METRICS) {
+            this.startMetrics();
+        } else {
+            PlotSquared.log(Captions.CONSOLE_PLEASE_ENABLE_METRICS.f(getPluginName()));
+        }
         if (Settings.Enabled_Components.WORLDS) {
             TaskManager.IMP.taskRepeat(this::unload, 20);
             try {
