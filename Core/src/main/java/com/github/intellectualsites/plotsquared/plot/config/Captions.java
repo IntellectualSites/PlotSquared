@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.configuration.ConfigurationSecti
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.EnumSet;
@@ -36,7 +37,8 @@ public enum Captions {
     FLAG_VEHICLE_BREAK("vehicle-break", "static.flags"),
     FLAG_HOSTILE_INTERACT("hostile-interact", "static.flags"),
     FLAG_DEVICE_INTERACT("device-interact", "static.flags"),
-    FLAG_ANIMAL_INTERACT("animal-interact", "static.flags"), FLAG_VEHICLE_USE("vehicle-use", "static.flags"),
+    FLAG_ANIMAL_INTERACT("animal-interact", "static.flags"),
+    FLAG_VEHICLE_USE("vehicle-use", "static.flags"),
     FLAG_VEHICLE_PLACE("vehicle-place", "static.flags"),
     FLAG_PLAYER_INTERACT("player-interact", "static.flags"),
     FLAG_TAMED_INTERACT("tamed-interact", "static.flags"),
@@ -147,24 +149,19 @@ public enum Captions {
     PERMISSION_ADMIN_COMMAND_SCHEMATIC_PASTE("plots.admin.command.schematic.paste", "static.permissions"),
     PERMISSION_SCHEMATIC_PASTE("plots.schematic.paste", "static.permissions"),
     PERMISSION_SCHEMATIC_LIST("plots.schematic.list", "static.permissions"),
-
     PERMISSION_SCHEMATIC_SAVE("plots.schematic.save", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_SCHEMATIC_SAVE("plots.admin.command.schematic.save", "static.permissions"),
-
     PERMISSION_SET_COMPONENT("plots.set.%s0", "static.permissions"),
-    PERMISSION_ADMIN_COMMAND(
-        "plots.admin.command.%s0", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND("plots.admin.command.%s0", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_UNLINK("plots.ad2min.command.unlink", "static.permissions"),
     PERMISSION_VISIT_UNOWNED("plots.visit.unowned", "static.permissions"),
     PERMISSION_VISIT_OWNED("plots.visit.owned", "static.permissions"),
     PERMISSION_SHARED("plots.visit.shared", "static.permissions"),
     PERMISSION_VISIT_OTHER("plots.visit.other", "static.permissions"),
     PERMISSION_HOME("plots.home", "static.permissions"),
-
     PERMISSION_ALIAS_SET_OBSOLETE("plots.set.alias", "static.permissions"), // Note this is for backwards compatibility
     PERMISSION_ALIAS_SET("plots.alias.set", "static.permissions"),
     PERMISSION_ALIAS_REMOVE("plots.alias.remove", "static.permissions"),
-
     /*
      * Static console
      */
@@ -173,49 +170,44 @@ public enum Captions {
             + "and security. %s0 will require Java 8 in a future update.",
         "static.console"), CONSOLE_PLEASE_ENABLE_METRICS(
         "&dPlease enable metrics for %s0. Using metrics improves plugin stability, performance, and features. "
-            + "Bug fixes and new features are influenced on metrics.", "static.console"), /*
+            + "Bug fixes and new features are influenced on metrics.", "static.console"),
+    /*
      * Confirm
      */
-
-    EXPIRED_CONFIRM("$2Confirmation has expired, please run the command again!",
-        "Confirm"), FAILED_CONFIRM("$2You have no pending actions to confirm!", "Confirm"),
-
+    EXPIRED_CONFIRM("$2Confirmation has expired, please run the command again!", "Confirm"),
+    FAILED_CONFIRM("$2You have no pending actions to confirm!", "Confirm"),
     REQUIRES_CONFIRM(
         "$2Are you sure you wish to execute: $1%s$2?&-$2This cannot be undone! If you are sure: $1/plot confirm",
-        "Confirm"), /*
+        "Confirm"),
+    /*
      * Move
      */
-
     MOVE_SUCCESS("$4Successfully moved plot.", "Move"), COPY_SUCCESS("$4Successfully copied plot.",
         "Move"),
-
-    REQUIRES_UNOWNED("$2The location specified is already occupied.", "Move"), /*
+    REQUIRES_UNOWNED("$2The location specified is already occupied.", "Move"),
+    /*
      * Area Create
      */
-
     REQUIRES_UNMERGED("$2The plot cannot be merged", "debug"),
-
-    SET_ATTRIBUTE("$4Successfully set %s0 set to %s1", "Set"), /*
+    SET_ATTRIBUTE("$4Successfully set %s0 set to %s1", "Set"),
+    /*
      * Web
      */
-
-    GENERATING_LINK("$1Processing plot...", "Web"), GENERATING_LINK_FAILED(
+    GENERATING_LINK("$1Processing plot...", "Web"),
+    GENERATING_LINK_FAILED(
         "$2Failed to generate download link!", "Web"),
-
-    SAVE_FAILED("$2Failed to save", "Web"), LOAD_NULL(
-        "$2Please use $4/plot load $2to get a list of schematics", "Web"),
-
-    LOAD_FAILED("$2Failed to load schematic", "Web"), LOAD_LIST(
-        "$2To load a schematic, use $1/plot load #", "Web"),
-
-    SAVE_SUCCESS("$1Successfully saved!", "Web"), /*
+    SAVE_FAILED("$2Failed to save", "Web"),
+    LOAD_NULL("$2Please use $4/plot load $2to get a list of schematics", "Web"),
+    LOAD_FAILED("$2Failed to load schematic", "Web"),
+    LOAD_LIST("$2To load a schematic, use $1/plot load #", "Web"),
+    SAVE_SUCCESS("$1Successfully saved!", "Web"),
+    /*
      * Compass
      */
-
-    COMPASS_TARGET("$4Successfully targeted plot with compass", "Compass"), /*
+    COMPASS_TARGET("$4Successfully targeted plot with compass", "Compass"),
+    /*
      * Cluster
      */
-
     CLUSTER_AVAILABLE_ARGS(
         "$1The following sub commands are available: $4list$2, $4create$2, $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, "
             + "$4members$2, $4info$2, $4tp$2, $4sethome", "Cluster"), CLUSTER_LIST_HEADING(
@@ -252,23 +244,22 @@ public enum Captions {
 
     CLUSTER_INFO(
         "$1Current cluster: $2%id%&-$1Name: $2%name%&-$1Owner: $2%owner%&-$1Size: $2%size%&-$1Rights: $2%rights%",
-        "Cluster"), /*
+        "Cluster"),
+    /*
      * Border
      */
-
-    BORDER("$2You are outside the current map border", "Border"), /*
-     * Unclaim
+    BORDER("$2You are outside the current map border", "Border"),
+    /*
+     * Un-claim
      */
-
     UNCLAIM_SUCCESS("$4You successfully unclaimed the plot.", "Unclaim"), UNCLAIM_FAILED(
-        "$2Could not unclaim the plot", "Unclaim"), /*
+        "$2Could not unclaim the plot", "Unclaim"),
+    /*
      * WorldEdit masks
      */
-
     WORLDEDIT_DELAYED("$2Please wait while we process your WorldEdit action...",
         "WorldEdit Masks"), WORLDEDIT_RUN("$2Apologies for the delay. Now executing: %s",
         "WorldEdit Masks"),
-
     REQUIRE_SELECTION_IN_MASK(
         "$2%s of your selection is not within your plot mask. You can only make edits within your plot.",
         "WorldEdit Masks"), WORLDEDIT_VOLUME(
@@ -290,26 +281,26 @@ public enum Captions {
 
     GAMEMODE_WAS_BYPASSED("$1You bypassed the GameMode ($2{gamemode}$1) $1set for $2{plot}",
         "GameMode"), HEIGHT_LIMIT("$1This plot area has a height limit of $2{limit}",
-        "Height Limit"), /*
+        "Height Limit"),
+    /*
      * Records
      */
-
     RECORD_PLAY("$2%player $2started playing record $1%name", "Records"), NOTIFY_ENTER(
         "$2%player $2entered your plot ($1%plot$2)", "Records"),
 
-    NOTIFY_LEAVE("$2%player $2left your plot ($1%plot$2)", "Records"), /*
+    NOTIFY_LEAVE("$2%player $2left your plot ($1%plot$2)", "Records"),
+    /*
      * Swap
      */
-
     SWAP_OVERLAP("$2The proposed areas are not allowed to overlap", "Swap"), SWAP_DIMENSIONS(
         "$2The proposed areas must have comparable dimensions", "Swap"),
 
     SWAP_SYNTAX("$2/plot swap <id>", "Swap"), SWAP_SUCCESS("$4Successfully swapped plots", "Swap"),
 
-    STARTED_SWAP("$2Started plot swap task. You will be notified when it finishes", "Swap"), /*
+    STARTED_SWAP("$2Started plot swap task. You will be notified when it finishes", "Swap"),
+    /*
      * Comment
      */
-
     INBOX_NOTIFICATION("%s unread messages. Use /plot inbox", "Comment"), NOT_VALID_INBOX_INDEX(
         "$2No comment at index %s", "Comment"),
 
@@ -326,13 +317,12 @@ public enum Captions {
         "$4A comment has been left", "Comment"),
 
     COMMENT_HEADER("$2&m---------&r $1Comments $2&m---------&r", "Comment"), INBOX_EMPTY(
-        "$2No comments", "Comment"), /*
+        "$2No comments", "Comment"),
+    /*
      * Console
      */
-
     NOT_CONSOLE("$2For safety reasons, this command can only be executed by console.",
         "Console"), IS_CONSOLE("$2This command can only be executed by a player.", "Console"),
-
     /*
     Inventory
      */
@@ -340,7 +330,6 @@ public enum Captions {
         "Inventory"),
 
     INVENTORY_CATEGORY("&cCategory: &6{category}", "Inventory"),
-
     /*
      * Clipboard
      */
@@ -355,17 +344,17 @@ public enum Captions {
 
     CLIPBOARD_INFO(
         "$2Current Selection - Plot ID: $1%id$2, Width: $1%width$2, Total Blocks: $1%total$2",
-        "Clipboard"), /*
+        "Clipboard"),
+    /*
      * Toggle
      */
-
     TOGGLE_ENABLED("$2Enabled setting: %s", "Toggle"), TOGGLE_DISABLED("$2Disabled setting: %s",
         "Toggle"),
 
-    COMMAND_BLOCKED("$2That command is not allowed in this plot", "Blocked Command"), /*
+    COMMAND_BLOCKED("$2That command is not allowed in this plot", "Blocked Command"),
+    /*
      * Done
      */
-
     DONE_ALREADY_DONE("$2This plot is already marked as done", "Done"), DONE_NOT_DONE(
         "$2This plot is not marked as done.", "Done"),
 
@@ -373,7 +362,8 @@ public enum Captions {
         "$2This plot is too simple. Please add more detail before using this command.",
         "Done"), DONE_SUCCESS("$1Successfully marked this plot as done.", "Done"),
 
-    DONE_REMOVED("$1You may now continue building in this plot.", "Done"), /*
+    DONE_REMOVED("$1You may now continue building in this plot.", "Done"),
+    /*
      * Ratings
      */
 
@@ -389,12 +379,14 @@ public enum Captions {
     RATING_NOT_YOUR_OWN("$2You cannot rate your own plot", "Ratings"), RATING_NOT_DONE(
         "$2You can only rate finished plots.", "Ratings"),
 
-    RATING_NOT_OWNED("$2You cannot rate a plot that is not claimed by anyone", "Ratings"), /*
+    RATING_NOT_OWNED("$2You cannot rate a plot that is not claimed by anyone", "Ratings"),
+    /*
      * Tutorial
      */
 
     RATE_THIS("$2Rate this plot!", "Tutorial"), COMMENT_THIS(
-        "$2Leave some feedback on this plot: %s", "Tutorial"), /*
+        "$2Leave some feedback on this plot: %s", "Tutorial"),
+    /*
      * Economy Stuff
      */
 
@@ -411,7 +403,8 @@ public enum Captions {
     ADDED_BALANCE("$1%s $2has been added to your balance", "Economy"), REMOVED_BALANCE(
         "$1%s $2has been taken from your balance", "Economy"),
 
-    REMOVED_GRANTED_PLOT("$2You used %s plot grant(s), you've got $1%s $2left", "Economy"), /*
+    REMOVED_GRANTED_PLOT("$2You used %s plot grant(s), you've got $1%s $2left", "Economy"),
+    /*
      * Setup Stuff
      */
 
@@ -433,7 +426,8 @@ public enum Captions {
         "$2You need to specify a generator ($1/plot setup <world> &l<generator>&r$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - "
             + "$1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),
 
-    SETUP_INVALID_GENERATOR("$2Invalid generator. Possible options: %s", "Setup"), /*
+    SETUP_INVALID_GENERATOR("$2Invalid generator. Possible options: %s", "Setup"),
+    /*
      * Schematic Stuff
      */
 
@@ -456,13 +450,15 @@ public enum Captions {
     TITLE_ENTERED_PLOT("$1Plot: %world%;%x%;%z%", "Titles"), TITLE_ENTERED_PLOT_SUB("$4Owned by %s",
         "Titles"),
 
-    PREFIX_GREETING("$1%id%$2> ", "Titles"), PREFIX_FAREWELL("$1%id%$2> ", "Titles"), /*
+    PREFIX_GREETING("$1%id%$2> ", "Titles"), PREFIX_FAREWELL("$1%id%$2> ", "Titles"),
+    /*
      * Core Stuff
      */
 
     TASK_START("Starting task...", "Core"), PREFIX("$3[$1P2$3] $2", "Core"),
 
-    ENABLED("$1%s0 is now enabled", "Core"), /*
+    ENABLED("$1%s0 is now enabled", "Core"),
+    /*
      * Reload
      */
 
@@ -485,7 +481,8 @@ public enum Captions {
     MISSING_ALIAS("$2You need to specify an alias", "Alias"), ALIAS_TOO_LONG(
         "$2The alias must be < 50 characters in length", "Alias"),
 
-    ALIAS_IS_TAKEN("$2That alias is already taken", "Alias"), /*
+    ALIAS_IS_TAKEN("$2That alias is already taken", "Alias"),
+    /*
      * Position
      */
 
@@ -495,15 +492,18 @@ public enum Captions {
     POSITION_UNSET("$1Home position reset to the default location", "Position"), HOME_ARGUMENT(
         "$2Use /plot set home [none]", "Position"),
 
-    INVALID_POSITION("$2That is not a valid position value", "Position"), /*
+    INVALID_POSITION("$2That is not a valid position value", "Position"),
+    /*
      * Cap
      */
 
-    ENTITY_CAP("$2You are not allowed to spawn more mobs", "cap"), /*
+    ENTITY_CAP("$2You are not allowed to spawn more mobs", "cap"),
+    /*
      * Time
      */
 
-    TIME_FORMAT("$1%hours%, %min%, %sec%", "Time"), /*
+    TIME_FORMAT("$1%hours%, %min%, %sec%", "Time"),
+    /*
      * Permission
      */
 
@@ -539,7 +539,8 @@ public enum Captions {
         "Merge"), UNLINK_REQUIRED("$2An unlink is required to do this.", "Merge"),
 
     UNLINK_IMPOSSIBLE("$2You can only unlink a mega-plot", "Merge"), UNLINK_SUCCESS(
-        "$2Successfully unlinked plots.", "Merge"), /*
+        "$2Successfully unlinked plots.", "Merge"),
+    /*
      * CommandConfig
      */
 
@@ -550,14 +551,16 @@ public enum Captions {
         "$2I'm sorry, but you're not permitted to use any subcommands.", "CommandConfig"),
 
     SUBCOMMAND_SET_OPTIONS_HEADER("$2Possible Values: ", "CommandConfig"), COMMAND_SYNTAX(
-        "$1Usage: $2%s", "CommandConfig"), /*
+        "$1Usage: $2%s", "CommandConfig"),
+    /*
      * Player not found
      */
 
     INVALID_PLAYER_WAIT("$2Player not found: $1%s$2, fetching it. Try again soon.",
         "Errors"), INVALID_PLAYER("$2Player not found: $1%s$2.", "Errors"),
 
-    INVALID_PLAYER_OFFLINE("$2The player must be online: $1%s.", "Errors"), /*
+    INVALID_PLAYER_OFFLINE("$2The player must be online: $1%s.", "Errors"),
+    /*
      * Command flag
      */
 
@@ -569,21 +572,22 @@ public enum Captions {
         "Errors"), // SETTINGS_PASTE_UPLOADED("$2settings.yml was uploaded to: $1%url%", "Paste"),
 
     // LATEST_LOG_UPLOADED("$2latest.log was uploaded to: $1%url%", "Paste"),
-    DEBUG_REPORT_CREATED("$1Uploaded a full debug to: $1%url%", "Paste"), /*
-     *
-     */
+    DEBUG_REPORT_CREATED("$1Uploaded a full debug to: $1%url%", "Paste"),
 
-    COMMAND_WENT_WRONG("$2Something went wrong when executing that command...", "Errors"), /*
+    COMMAND_WENT_WRONG("$2Something went wrong when executing that command...", "Errors"),
+    /*
      * purge
      */
 
-    PURGE_SUCCESS("$4Successfully purged %s plots", "Purge"), /*
+    PURGE_SUCCESS("$4Successfully purged %s plots", "Purge"),
+    /*
      * trim
      */
 
     TRIM_IN_PROGRESS("A world trim task is already in progress!",
         "Trim"), NOT_VALID_HYBRID_PLOT_WORLD(
-        "The hybrid plot manager is required to perform this action", "Trim"), /*
+        "The hybrid plot manager is required to perform this action", "Trim"),
+    /*
      * No <plot>
      */
 
@@ -599,16 +603,19 @@ public enum Captions {
     NOT_VALID_WORLD("$2That is not a valid world (case sensitive)", "Errors"), NOT_VALID_PLOT_WORLD(
         "$2That is not a valid plot area (case sensitive)", "Errors"),
 
-    NO_PLOTS("$2You don't have any plots", "Errors"), /*
+    NO_PLOTS("$2You don't have any plots", "Errors"),
+    /*
      * Block List
      */
 
-    BLOCK_LIST_SEPARATER("$1,$2 ", "Block List"), /*
+    BLOCK_LIST_SEPARATER("$1,$2 ", "Block List"),
+    /*
      * Biome
      */
 
     NEED_BIOME("$2You need to specify a valid biome.", "Biome"), BIOME_SET_TO(
-        "$2Plot biome set to $2", "Biome"), /*
+        "$2Plot biome set to $2", "Biome"),
+    /*
      * Teleport / Entry
      */
 
@@ -616,7 +623,8 @@ public enum Captions {
         "$2You got teleported to the road", "Teleport"),
 
     TELEPORT_IN_SECONDS("$1Teleporting in %s seconds. Do not move...", "Teleport"), TELEPORT_FAILED(
-        "$2Teleportation cancelled due to movement or damage", "Teleport"), /*
+        "$2Teleportation cancelled due to movement or damage", "Teleport"),
+    /*
      * Set Block
      */
 
@@ -626,13 +634,16 @@ public enum Captions {
     AllowUnsafe
      */
     DEBUGALLOWUNSAFE_ON("$2Unsafe actions allowed", "unsafe"), DEBUGALLOWUNSAFE_OFF(
-        "$2Unsafe actions disabled", "unsafe"), /*
+        "$2Unsafe actions disabled", "unsafe"),
+    /*
      * Debug
      */
 
     DEBUG_HEADER("$1Debug Information&-", "Debug"), DEBUG_SECTION("$2>> $1&l%val%", "Debug"),
 
-    DEBUG_LINE("$2>> $1%var%$2:$1 %val%&-", "Debug"), /*
+    DEBUG_LINE("$2>> $1%var%$2:$1 %val%&-", "Debug"),
+
+    /*
      * Invalid
      */
 
@@ -651,29 +662,24 @@ public enum Captions {
     PLAYER_HAS_NOT_BEEN_ON("$2That player hasn't been in the plotworld", "Invalid"), FOUND_NO_PLOTS(
         "$2Found no plots with your search query", "Invalid"),
 
-    FOUND_NO_PLOTS_FOR_PLAYER("$2No plots found for player: %s", "Invalid"), /*
-     * Camera
-     */
-
-    CAMERA_STARTED("$2You have entered camera mode for plot $1%s", "Camera"), CAMERA_STOPPED(
-        "$2You are no longer in camera mode", "Camera"), /*
+    FOUND_NO_PLOTS_FOR_PLAYER("$2No plots found for player: %s", "Invalid"),
+    /*
      * Need
      */
-
     NEED_PLOT_NUMBER("$2You've got to specify a plot number or alias", "Need"), NEED_BLOCK(
         "$2You've got to specify a block", "Need"),
 
     NEED_PLOT_ID("$2You've got to specify a plot id.", "Need"), NEED_PLOT_WORLD(
         "$2You've got to specify a plot area.", "Need"),
 
-    NEED_USER("$2You need to specify a username", "Need"), /*
+    NEED_USER("$2You need to specify a username", "Need"),
+    /*
      * Near
      */
-
-    PLOT_NEAR("$1Players: %s0", "Near"), /*
+    PLOT_NEAR("$1Players: %s0", "Near"),
+    /*
      * Info
      */
-
     NONE("None", "Info"), NOW("Now", "Info"),
 
     NEVER("Never", "Info"), UNKNOWN("Unknown", "Info"),
@@ -709,25 +715,29 @@ public enum Captions {
 
     PLOT_INFO_SEEN("$1Seen:$2 %seen%", "Info"), PLOT_USER_LIST(" $1%user%$2,", "Info"),
 
-    PLOT_FLAG_LIST("$1%s0:%s1$2", "Info"), INFO_SYNTAX_CONSOLE("$2/plot info X;Y", "Info"), /*
+    PLOT_FLAG_LIST("$1%s0:%s1$2", "Info"), INFO_SYNTAX_CONSOLE("$2/plot info X;Y", "Info"),
+    /*
      * Generating
      */
 
-    GENERATING_COMPONENT("$1Started generating component from your settings", "Working"), /*
+    GENERATING_COMPONENT("$1Started generating component from your settings", "Working"),
+    /*
      * Clearing
      */
 
     CLEARING_PLOT("$2Clearing plot async.", "Working"), CLEARING_DONE(
         "$4Clear completed! Took %sms.", "Working"),
 
-    DELETING_DONE("$4Delete completed! Took %sms.", "Working"), /*
+    DELETING_DONE("$4Delete completed! Took %sms.", "Working"),
+    /*
      * Claiming
      */
 
     PLOT_NOT_CLAIMED("$2Plot not claimed", "Working"), PLOT_IS_CLAIMED(
         "$2This plot is already claimed", "Working"),
 
-    CLAIMED("$4You successfully claimed the plot", "Working"), /*
+    CLAIMED("$4You successfully claimed the plot", "Working"),
+    /*
      * List
      */
 
@@ -742,17 +752,20 @@ public enum Captions {
         "$2>> $1%id$2:$1%world $2- $1%owner", "List"),
 
     PLOT_LIST_ITEM_ORDERED("$2[$1%in$2] >> $1%id$2:$1%world $2- $1%owner",
-        "List"), PLOT_LIST_FOOTER("$2>> $1%word% a total of $2%num% $1claimed %plot%.", "List"), /*
+        "List"), PLOT_LIST_FOOTER("$2>> $1%word% a total of $2%num% $1claimed %plot%.", "List"),
+    /*
      * Left
      */
 
-    LEFT_PLOT("$2You left a plot", "Left"), /*
+    LEFT_PLOT("$2You left a plot", "Left"),
+    /*
      * Wait
      */
 
     WAIT_FOR_TIMER(
         "$2A setblock timer is bound to either the current plot or you. Please wait for it to finish",
-        "Errors"), /*
+        "Errors"),
+    /*
      * Chat
      */
 
@@ -762,7 +775,8 @@ public enum Captions {
     PLOT_CHAT_FORCED("$2This world forces everyone to use plot chat.", "Chat"), PLOT_CHAT_ON(
         "$4Plot chat enabled.", "Chat"),
 
-    PLOT_CHAT_OFF("$4Plot chat disabled.", "Chat"), /*
+    PLOT_CHAT_OFF("$4Plot chat disabled.", "Chat"),
+    /*
      * Denied
      */
 
@@ -775,16 +789,19 @@ public enum Captions {
 
     YOU_GOT_DENIED(
         "$4You are denied from the plot you were previously on, and got teleported to spawn",
-        "Deny"), /*
+        "Deny"),
+    /*
      * Kick
      */
 
-    YOU_GOT_KICKED("$4You got kicked!", "Kick"), /*
+    YOU_GOT_KICKED("$4You got kicked!", "Kick"),
+    /*
      * Rain
      */
 
     NEED_ON_OFF("$2You need to specify a value. Possible values: $1on$2, $1off",
-        "Rain"), SETTING_UPDATED("$4You successfully updated the setting", "Rain"), /*
+        "Rain"), SETTING_UPDATED("$4You successfully updated the setting", "Rain"),
+    /*
      * Flag
      */
 
@@ -802,7 +819,8 @@ public enum Captions {
         "$4Successfully removed flag", "Flag"),
 
     FLAG_ADDED("$4Successfully added flag", "Flag"), FLAG_TUTORIAL_USAGE(
-        "$1Have an admin set the flag: $2%s", "CommandConfig"), /*
+        "$1Have an admin set the flag: $2%s", "CommandConfig"),
+    /*
      * Trusted
      */
 
@@ -811,7 +829,8 @@ public enum Captions {
 
     WAS_NOT_ADDED("$2That player was not trusted on this plot", "Trusted"), PLOT_REMOVED_USER(
         "$1Plot %s of which you were added to has been deleted due to owner inactivity",
-        "Trusted"), /*
+        "Trusted"),
+    /*
      * Member
      */
 
@@ -825,20 +844,23 @@ public enum Captions {
         "Member"), MEMBER_WAS_NOT_ADDED("$2That player was not added as a user on this plot",
         "Member"),
 
-    PLOT_MAX_MEMBERS("$2You are not allowed to add any more players to this plot", "Member"), /*
+    PLOT_MAX_MEMBERS("$2You are not allowed to add any more players to this plot", "Member"),
+    /*
      * Set Owner
      */
 
     SET_OWNER("$4You successfully set the plot owner", "Owner"), SET_OWNER_CANCELLED(
         "$2The setowner action was cancelled", "Owner"),
 
-    NOW_OWNER("$4You are now owner of plot %s", "Owner"), /*
+    NOW_OWNER("$4You are now owner of plot %s", "Owner"),
+    /*
      * Signs
      */
 
     OWNER_SIGN_LINE_1("$1ID: $1%id%", "Signs"), OWNER_SIGN_LINE_2("$1Owner:", "Signs"),
 
-    OWNER_SIGN_LINE_3("$2%plr%", "Signs"), OWNER_SIGN_LINE_4("$3Claimed", "Signs"), /*
+    OWNER_SIGN_LINE_3("$2%plr%", "Signs"), OWNER_SIGN_LINE_4("$3Claimed", "Signs"),
+    /*
      * Help
      */
 
@@ -871,14 +893,16 @@ public enum Captions {
      * Direction
      */
 
-    DIRECTION("$1Current direction: %dir%", "Help"), /*
+    DIRECTION("$1Current direction: %dir%", "Help"),
+    /*
      * Grant
      */
 
     GRANTED_PLOTS("$1Result: $2%s $1grants left", "Grants"), GRANTED_PLOT(
         "$1You granted %s0 plot to $2%s1", "Grants"),
 
-    GRANTED_PLOT_FAILED("$1Grant failed: $2%s", "Grants"), /*
+    GRANTED_PLOT_FAILED("$1Grant failed: $2%s", "Grants"),
+    /*
      * Custom
      */
 

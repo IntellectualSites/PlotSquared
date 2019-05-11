@@ -1,11 +1,20 @@
 package com.github.intellectualsites.plotsquared.bukkit;
 
 import com.github.intellectualsites.plotsquared.bukkit.generator.BukkitPlotGenerator;
-import com.github.intellectualsites.plotsquared.bukkit.listeners.*;
+import com.github.intellectualsites.plotsquared.bukkit.listeners.ChunkListener;
+import com.github.intellectualsites.plotsquared.bukkit.listeners.EntitySpawnListener;
+import com.github.intellectualsites.plotsquared.bukkit.listeners.PlayerEvents;
+import com.github.intellectualsites.plotsquared.bukkit.listeners.PlotPlusListener;
+import com.github.intellectualsites.plotsquared.bukkit.listeners.SingleWorldListener;
+import com.github.intellectualsites.plotsquared.bukkit.listeners.WorldEvents;
 import com.github.intellectualsites.plotsquared.bukkit.titles.DefaultTitle;
 import com.github.intellectualsites.plotsquared.bukkit.util.*;
 import com.github.intellectualsites.plotsquared.bukkit.util.block.BukkitLocalQueue;
-import com.github.intellectualsites.plotsquared.bukkit.uuid.*;
+import com.github.intellectualsites.plotsquared.bukkit.uuid.DefaultUUIDWrapper;
+import com.github.intellectualsites.plotsquared.bukkit.uuid.FileUUIDHandler;
+import com.github.intellectualsites.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
+import com.github.intellectualsites.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
+import com.github.intellectualsites.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.plot.IPlotMain;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
@@ -16,7 +25,12 @@ import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridGen;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.BlockRegistry;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
 import com.github.intellectualsites.plotsquared.plot.object.chat.PlainChatManager;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.PlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotArea;
@@ -30,8 +44,6 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extension.platform.Capability;
 import lombok.Getter;
 import lombok.NonNull;
-import org.bstats.bukkit.Metrics;
-import org.bukkit.Location;
 import org.bukkit.*;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
@@ -48,7 +60,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 
 import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getRefClass;
 
@@ -175,11 +191,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             getLogger().warning("Update checking disabled. Skipping.");
         }
 
-        if (Settings.Enabled_Components.METRICS) {
-            this.startMetrics();
-        } else {
-            PlotSquared.log(Captions.CONSOLE_PLEASE_ENABLE_METRICS.f(getPluginName()));
-        }
+        this.startMetrics();
         if (Settings.Enabled_Components.WORLDS) {
             TaskManager.IMP.taskRepeat(this::unload, 20);
             try {
@@ -660,14 +672,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             return;
         }
         this.metricsStarted = true;
-        try {
-            System.setProperty("bstats.relocatecheck",
-                "false"); // We do not want to relocate the package...
-            Metrics metrics = new Metrics(this);// bstats
-            PlotSquared.log(Captions.PREFIX + "&6Metrics enabled.");
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+        Metrics metrics = new Metrics(this);// bstats
+        PlotSquared.log(Captions.PREFIX + "&6Metrics enabled.");
     }
 
     @Override public ChunkManager initChunkManager() {

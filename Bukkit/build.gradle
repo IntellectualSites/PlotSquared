@@ -13,7 +13,6 @@ dependencies {
     implementation 'com.onarandombox.multiversecore:Multiverse-Core:3.0.0-SNAPSHOT'
     implementation 'org.spigotmc:spigot-api:1.14-pre5-SNAPSHOT'
     compile(group: 'com.sk89q.worldedit', name: 'worldedit-bukkit', version: '7.0.0-SNAPSHOT')
-    compile(group: 'org.bstats', name: 'bstats-bukkit', version: '1.4')
     compile("net.milkbowl.vault:VaultAPI:1.7") {
         exclude module: 'bukkit'
     }
@@ -37,7 +36,6 @@ jar.enabled = false
 shadowJar {
     dependencies {
         include(dependency(':Core'))
-        include(dependency('org.bstats:bstats-bukkit:1.4'))
         // update notification stuff
         include(dependency('com.github.Sauilitired:Jenkins4J:2.0-SNAPSHOT'))
         include(dependency('com.squareup.retrofit2:retrofit:2.4.0'))

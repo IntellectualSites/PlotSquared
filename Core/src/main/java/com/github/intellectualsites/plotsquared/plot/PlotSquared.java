@@ -9,7 +9,11 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.config.Storage;
-import com.github.intellectualsites.plotsquared.plot.database.*;
+import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
+import com.github.intellectualsites.plotsquared.plot.database.Database;
+import com.github.intellectualsites.plotsquared.plot.database.MySQL;
+import com.github.intellectualsites.plotsquared.plot.database.SQLManager;
+import com.github.intellectualsites.plotsquared.plot.database.SQLite;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
@@ -157,11 +161,6 @@ import java.util.zip.ZipInputStream;
             }
             // Required
             this.IMP.registerWorldEvents();
-            if (Settings.Enabled_Components.METRICS) {
-                this.IMP.startMetrics();
-            } else {
-                PlotSquared.log(Captions.CONSOLE_PLEASE_ENABLE_METRICS.f(IMP.getPluginName()));
-            }
             if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
                 this.IMP.registerChunkProcessor();
             }
