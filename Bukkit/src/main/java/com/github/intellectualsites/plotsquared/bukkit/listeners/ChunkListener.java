@@ -148,8 +148,8 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
         if (ignoreUnload) {
             return;
         }
+        Chunk chunk = event.getChunk();
         if (Settings.Chunk_Processor.AUTO_TRIM) {
-            Chunk chunk = event.getChunk();
             String world = chunk.getWorld().getName();
             if (PlotSquared.get().hasPlotArea(world)) {
                 if (unloadChunk(world, chunk, true)) {
@@ -158,7 +158,7 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
             }
         }
         if (processChunk(event.getChunk(), true)) {
-            event.setCancelled(true);
+            chunk.setForceLoaded(true);
         }
     }
 
