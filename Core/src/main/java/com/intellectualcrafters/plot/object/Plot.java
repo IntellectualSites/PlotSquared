@@ -2992,52 +2992,52 @@ public class Plot {
             Plot other = plot.getRelative(destination.getArea(), offset.x, offset.y);
             plot.swapData(other, null);
         }
-        // copy terrain
-        Runnable move = new Runnable() {
-            @Override public void run() {
-                if (regions.isEmpty()) {
-                    Plot plot = destination.getRelative(0, 0);
-                    for (Plot current : plot.getConnectedPlots()) {
-                        getManager().claimPlot(current.getArea(), current);
-                        Plot originPlot = originArea.getPlotAbs(
-                            new PlotId(current.id.x - offset.x, current.id.y - offset.y));
-                        originPlot.getManager().unclaimPlot(originArea, originPlot, null);
-                    }
-                    plot.setSign();
-                    TaskManager.runTask(whenDone);
-                    return;
-                }
-                final Runnable task = this;
-                RegionWrapper region = regions.poll();
-                Location[] corners = region.getCorners(getWorldName());
-                final Location pos1 = corners[0];
-                final Location pos2 = corners[1];
-                Location newPos = pos1.clone().add(offsetX, 0, offsetZ);
-                newPos.setWorld(destination.getWorldName());
-                ChunkManager.manager.copyRegion(pos1, pos2, newPos,
-                    () -> ChunkManager.manager.regenerateRegion(pos1, pos2, false, task));
-            }
-        };
-        Runnable swap = new Runnable() {
-            @Override public void run() {
-                if (regions.isEmpty()) {
-                    TaskManager.runTask(whenDone);
-                    return;
-                }
-                RegionWrapper region = regions.poll();
-                Location[] corners = region.getCorners(getWorldName());
-                Location pos1 = corners[0];
-                Location pos2 = corners[1];
-                Location pos3 = pos1.clone().add(offsetX, 0, offsetZ);
-                Location pos4 = pos2.clone().add(offsetX, 0, offsetZ);
-                pos3.setWorld(destination.getWorldName());
-                pos4.setWorld(destination.getWorldName());
-                ChunkManager.manager.swap(pos1, pos2, pos3, pos4, this);
-            }
-        };
         if (occupied) {
+            Runnable swap = new Runnable() {
+                @Override public void run() {
+                    if (regions.isEmpty()) {
+                        TaskManager.runTask(whenDone);
+                        return;
+                    }
+                    RegionWrapper region = regions.poll();
+                    Location[] corners = region.getCorners(getWorldName());
+                    Location pos1 = corners[0];
+                    Location pos2 = corners[1];
+                    Location pos3 = pos1.clone().add(offsetX, 0, offsetZ);
+                    Location pos4 = pos2.clone().add(offsetX, 0, offsetZ);
+                    pos3.setWorld(destination.getWorldName());
+                    pos4.setWorld(destination.getWorldName());
+                    ChunkManager.manager.swap(pos1, pos2, pos3, pos4, this);
+                }
+            };
             swap.run();
         } else {
+            //copy terrain
+            Runnable move = new Runnable() {
+                @Override public void run() {
+                    if (regions.isEmpty()) {
+                        Plot plot = destination.getRelative(0, 0);
+                        for (Plot current : plot.getConnectedPlots()) {
+                            getManager().claimPlot(current.getArea(), current);
+                            Plot originPlot = originArea.getPlotAbs(
+                                new PlotId(current.id.x - offset.x, current.id.y - offset.y));
+                            originPlot.getManager().unclaimPlot(originArea, originPlot, null);
+                        }
+                        plot.setSign();
+                        TaskManager.runTask(whenDone);
+                        return;
+                    }
+                    final Runnable task = this;
+                    RegionWrapper region = regions.poll();
+                    Location[] corners = region.getCorners(getWorldName());
+                    final Location pos1 = corners[0];
+                    final Location pos2 = corners[1];
+                    Location newPos = pos1.clone().add(offsetX, 0, offsetZ);
+                    newPos.setWorld(destination.getWorldName());
+                    ChunkManager.manager.copyRegion(pos1, pos2, newPos,
+                        () -> ChunkManager.manager.regenerateRegion(pos1, pos2, false, task));
+                }
+            };
             move.run();
         }
         return true;

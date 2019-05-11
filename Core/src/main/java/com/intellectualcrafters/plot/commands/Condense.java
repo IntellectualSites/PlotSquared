@@ -91,7 +91,7 @@ public class Condense extends SubCommand {
                     }
                 }
                 int size = allPlots.size();
-                int minimumRadius = (int) Math.ceil(Math.sqrt(size) / 2 + 1);
+                int minimumRadius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
                 if (radius < minimumRadius) {
                     MainUtil.sendMessage(player, "RADIUS TOO SMALL");
                     return false;
@@ -111,15 +111,16 @@ public class Condense extends SubCommand {
                     return false;
                 }
                 MainUtil.sendMessage(player, "TASK STARTED...");
+                Condense.TASK = true;
                 Runnable run = new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         if (!Condense.TASK) {
                             MainUtil.sendMessage(player, "TASK CANCELLED.");
                         }
                         if (allPlots.isEmpty()) {
                             Condense.TASK = false;
-                            MainUtil.sendMessage(player, "TASK COMPLETE. PLEASE VERIFY THAT NO NEW PLOTS HAVE BEEN CLAIMED DURING TASK.");
+                            MainUtil.sendMessage(player,
+                                "TASK COMPLETE. PLEASE VERIFY THAT NO NEW PLOTS HAVE BEEN CLAIMED DURING TASK.");
                             return;
                         }
                         final Runnable task = this;
@@ -133,13 +134,11 @@ public class Condense extends SubCommand {
                             }
                             i++;
                             final AtomicBoolean result = new AtomicBoolean(false);
-                            result.set(origin.move(possible, new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (result.get()) {
-                                        MainUtil.sendMessage(player, "Moving: " + origin + " -> " + possible);
-                                        TaskManager.runTaskLater(task, 1);
-                                    }
+                            result.set(origin.move(possible, () -> {
+                                if (result.get()) {
+                                    MainUtil.sendMessage(player,
+                                        "Moving: " + origin + " -> " + possible);
+                                    TaskManager.runTaskLater(task, 1);
                                 }
                             }, false));
                             if (result.get()) {
@@ -156,7 +155,6 @@ public class Condense extends SubCommand {
                         }
                     }
                 };
-                Condense.TASK = true;
                 TaskManager.runTaskAsync(run);
                 return true;
             }
@@ -180,7 +178,7 @@ public class Condense extends SubCommand {
                 int radius = Integer.parseInt(args[2]);
                 Collection<Plot> plots = area.getPlots();
                 int size = plots.size();
-                int minimumRadius = (int) Math.ceil(Math.sqrt(size) / 2 + 1);
+                int minimumRadius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
                 if (radius < minimumRadius) {
                     MainUtil.sendMessage(player, "RADIUS TOO SMALL");
                     return false;
