@@ -27,9 +27,9 @@ public class Settings extends Config {
     @Final public static String PLATFORM; // These values are set from P2 before loading
 
     @Comment("Show additional information in console") public static boolean DEBUG = true;
-    @Comment({"The big annoying text that appears when you enter a plot",
+    @Comment({"[PAPER ONLY] The big annoying text that appears when you enter a plot",
         "For a single plot: `/plot flag set titles false`", "For just you: `/plot toggle titles`"})
-    public static boolean TITLES = true;
+    public static boolean TITLES = false;
 
     @Create // This value will be generated automatically
     public static ConfigBlock<Auto_Clear> AUTO_CLEAR = null;

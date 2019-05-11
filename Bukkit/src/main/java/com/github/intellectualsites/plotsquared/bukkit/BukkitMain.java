@@ -132,8 +132,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override public void onEnable() {
         if (PlotSquared.get().IMP.getServerVersion()[1] < 13) {
-            PlotSquared.log("You can't use this version of PlotSquared on a server less than Minecraft 1.13.2.");
-            PlotSquared.log("Please check the download page for the link to the legacy versions.");
+            System.out.println(
+                "You can't use this version of PlotSquared on a server less than Minecraft 1.13.2.");
+            System.out
+                .println("Please check the download page for the link to the legacy versions.");
             Bukkit.shutdown();
             return;
         }
@@ -152,7 +154,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             System.out.println("[P2] DOWNLOAD: https://papermc.io/downloads");
             System.out.println("[P2] GUIDE: https://www.spigotmc.org/threads/21726/");
             System.out.println("[P2] NOTE: This is only a recommendation");
-            System.out.println("[P2]       both Spigot and CraftBukkit are still supported.");
+            System.out.println("[P2]       both Spigot and CraftBukkit are still supported (excluding titles).");
             System.out
                 .println("[P2] ===============================================================");
         }
@@ -705,12 +707,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     @Override public UUIDHandlerImplementation initUUIDHandler() {
-        boolean checkVersion = false;
-        try {
-            OfflinePlayer.class.getDeclaredMethod("getUniqueId");
-            checkVersion = true;
-        } catch (Throwable ignore) {
-        }
         final UUIDWrapper wrapper;
         if (Settings.UUID.OFFLINE) {
             if (Settings.UUID.FORCE_LOWERCASE) {
@@ -719,23 +715,15 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 wrapper = new OfflineUUIDWrapper();
             }
             Settings.UUID.OFFLINE = true;
-        } else if (checkVersion) {
+        } else {
             wrapper = new DefaultUUIDWrapper();
             Settings.UUID.OFFLINE = false;
-        } else {
-            if (Settings.UUID.FORCE_LOWERCASE) {
-                wrapper = new LowerOfflineUUIDWrapper();
-            } else {
-                wrapper = new OfflineUUIDWrapper();
-            }
-            Settings.UUID.OFFLINE = true;
         }
-        if (!checkVersion) {
+        if (Bukkit.getVersion().contains("git-Spigot")) {
             PlotSquared.log(Captions.PREFIX
-                + " &c[WARN] Titles are disabled - please update your version of Bukkit to support this feature.");
+                + " &c[WARN] Titles are Paper only feature. Titles will be disabled.");
             Settings.TITLES = false;
         } else {
-            AbstractTitle.TITLE_CLASS = new DefaultTitle();
             if (wrapper instanceof DefaultUUIDWrapper
                 || wrapper.getClass() == OfflineUUIDWrapper.class && !Bukkit.getOnlineMode()) {
                 Settings.UUID.NATIVE_UUID_PROVIDER = true;
@@ -798,8 +786,14 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     @Override public AbstractTitle initTitleManager() {
+        if (Bukkit.getVersion().contains("git-Spigot")) {
+            PlotSquared.log(Captions.PREFIX
+                + " &c[WARN] Titles are Paper only feature. Titles will be disabled.");
+            Settings.TITLES = false;
+            return null;
+        }
         // Already initialized in UUID handler
-        return AbstractTitle.TITLE_CLASS;
+        return new DefaultTitle();
     }
 
     @Override @Nullable public PlotPlayer wrapPlayer(final Object player) {
