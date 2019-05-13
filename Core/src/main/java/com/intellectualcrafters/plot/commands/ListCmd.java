@@ -11,24 +11,12 @@ import com.intellectualcrafters.plot.object.PlotMessage;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.Rating;
 import com.intellectualcrafters.plot.object.RunnableVal3;
-import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.expiry.ExpireManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.StringComparison;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.UUID;
 
 @CommandDeclaration(
         command = "list",
@@ -80,7 +68,7 @@ public class ListCmd extends SubCommand {
         if (Permissions.hasPermission(player, C.PERMISSION_LIST_FUZZY)) {
             args.add("fuzzy <search...>");
         }
-        return args.toArray(new String[args.size()]);
+        return args.toArray(new String[0]);
     }
 
     public void noArgs(PlotPlayer player) {

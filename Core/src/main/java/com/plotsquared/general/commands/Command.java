@@ -20,16 +20,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public abstract class Command {
 
@@ -315,7 +306,7 @@ public abstract class Command {
             for (String arg : args) {
                 setargs.add(arg.toLowerCase());
             }
-            String[] allargs = setargs.toArray(new String[setargs.size()]);
+            String[] allargs = setargs.toArray(new String[0]);
             int best = 0;
             for (Command current : commands) {
                 int match = getMatch(allargs, current);

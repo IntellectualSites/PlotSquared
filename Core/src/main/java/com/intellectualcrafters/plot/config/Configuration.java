@@ -169,7 +169,7 @@ public class Configuration {
                     parsedvalues.add(values[i]);
                 }
             }
-            return parsedvalues.toArray(new PlotBlock[parsedvalues.size()]);
+            return parsedvalues.toArray(new PlotBlock[0]);
         }
     };
 
