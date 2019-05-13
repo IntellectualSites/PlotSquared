@@ -131,14 +131,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     @Override public void onEnable() {
-        if (PlotSquared.get().IMP.getServerVersion()[1] < 13) {
-            System.out.println(
-                "You can't use this version of PlotSquared on a server less than Minecraft 1.13.2.");
-            System.out
-                .println("Please check the download page for the link to the legacy versions.");
-            Bukkit.shutdown();
-            return;
-        }
         this.pluginName = getDescription().getName();
         PlotPlayer.registerConverter(Player.class, BukkitUtil::getPlayer);
 
@@ -160,6 +152,15 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
 
         new PlotSquared(this, "Bukkit");
+
+        if (PlotSquared.get().IMP.getServerVersion()[1] < 13) {
+            System.out.println(
+                "You can't use this version of PlotSquared on a server less than Minecraft 1.13.2.");
+            System.out
+                .println("Please check the download page for the link to the legacy versions.");
+            Bukkit.shutdown();
+            return;
+        }
 
         // Check for updates
         if (PlotSquared.get().getUpdateUtility() != null) {
