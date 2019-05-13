@@ -146,7 +146,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             System.out.println("[P2] DOWNLOAD: https://papermc.io/downloads");
             System.out.println("[P2] GUIDE: https://www.spigotmc.org/threads/21726/");
             System.out.println("[P2] NOTE: This is only a recommendation");
-            System.out.println("[P2]       both Spigot and CraftBukkit are still supported (excluding titles).");
+            System.out.println("[P2]       both Spigot and CraftBukkit are still supported.");
             System.out
                 .println("[P2] ===============================================================");
         }
@@ -720,11 +720,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             wrapper = new DefaultUUIDWrapper();
             Settings.UUID.OFFLINE = false;
         }
-        if (Bukkit.getVersion().contains("git-Spigot")) {
-            PlotSquared.log(Captions.PREFIX
-                + " &c[WARN] Titles are Paper only feature. Titles will be disabled.");
-            Settings.TITLES = false;
-        } else {
+        if (!Bukkit.getVersion().contains("git-Spigot")) {
             if (wrapper instanceof DefaultUUIDWrapper
                 || wrapper.getClass() == OfflineUUIDWrapper.class && !Bukkit.getOnlineMode()) {
                 Settings.UUID.NATIVE_UUID_PROVIDER = true;
@@ -787,13 +783,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     @Override public AbstractTitle initTitleManager() {
-        if (Bukkit.getVersion().contains("git-Spigot")) {
-            PlotSquared.log(Captions.PREFIX
-                + " &c[WARN] Titles are Paper only feature. Titles will be disabled.");
-            Settings.TITLES = false;
-            return null;
-        }
-        // Already initialized in UUID handler
         return new DefaultTitle();
     }
 
