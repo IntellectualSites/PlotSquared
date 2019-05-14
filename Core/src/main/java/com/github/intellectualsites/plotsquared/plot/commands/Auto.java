@@ -5,8 +5,17 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.object.Expression;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
+import com.github.intellectualsites.plotsquared.plot.util.ByteArrayUtilities;
+import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 
 import javax.annotation.Nullable;
 import java.util.Set;
@@ -68,15 +77,15 @@ public class Auto extends SubCommand {
      * @param player
      * @param area
      * @param start
-     * @param schem
+     * @param schematic
      */
     public static void homeOrAuto(final PlotPlayer player, final PlotArea area, PlotId start,
-        final String schem) {
+        final String schematic) {
         Set<Plot> plots = player.getPlots();
         if (!plots.isEmpty()) {
             plots.iterator().next().teleportPlayer(player);
         } else {
-            autoClaimSafe(player, area, start, schem);
+            autoClaimSafe(player, area, start, schematic);
         }
     }
 
@@ -86,11 +95,11 @@ public class Auto extends SubCommand {
      * @param player
      * @param area
      * @param start
-     * @param schem
+     * @param schematic
      */
     public static void autoClaimSafe(final PlotPlayer player, final PlotArea area, PlotId start,
-        final String schem) {
-        autoClaimSafe(player, area, start, schem, null);
+        final String schematic) {
+        autoClaimSafe(player, area, start, schematic, null);
     }
 
     /**
@@ -99,10 +108,10 @@ public class Auto extends SubCommand {
      * @param player
      * @param area
      * @param start
-     * @param schem
+     * @param schematic
      */
     public static void autoClaimSafe(final PlotPlayer player, final PlotArea area, PlotId start,
-        final String schem, @Nullable final Integer allowedPlots) {
+        final String schematic, @Nullable final Integer allowedPlots) {
         player.setMeta(Auto.class.getName(), true);
         autoClaimFromDatabase(player, area, start, new RunnableVal<Plot>() {
             @Override public void run(final Plot plot) {
@@ -112,7 +121,7 @@ public class Auto extends SubCommand {
                         if (plot == null) {
                             MainUtil.sendMessage(player, Captions.NO_FREE_PLOTS);
                         } else if (checkAllowedPlots(player, area, allowedPlots, 1, 1)) {
-                            plot.claim(player, true, schem, false);
+                            plot.claim(player, true, schematic, false);
                             if (area.AUTO_MERGE) {
                                 plot.autoMerge(-1, Integer.MAX_VALUE, player.getUUID(), true);
                             }

@@ -5,12 +5,22 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared.SortType;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.Rating;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.UUID;
 
 @CommandDeclaration(command = "list", aliases = {"l", "find", "search"}, description = "List plots",
     permission = "plots.list", category = CommandCategory.INFO,
@@ -20,7 +30,7 @@ public class ListCmd extends SubCommand {
     private String[] getArgumentList(PlotPlayer player) {
         List<String> args = new ArrayList<>();
         if (EconHandler.manager != null && Permissions
-            .hasPermission(player, Captions.PERMISSION_LIST_FORSALE)) {
+            .hasPermission(player, Captions.PERMISSION_LIST_FOR_SALE)) {
             args.add("forsale");
         }
         if (Permissions.hasPermission(player, Captions.PERMISSION_LIST_MINE)) {
@@ -222,9 +232,9 @@ public class ListCmd extends SubCommand {
                 sort = false;
                 break;
             case "forsale":
-                if (!Permissions.hasPermission(player, Captions.PERMISSION_LIST_FORSALE)) {
+                if (!Permissions.hasPermission(player, Captions.PERMISSION_LIST_FOR_SALE)) {
                     MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_LIST_FORSALE);
+                        Captions.PERMISSION_LIST_FOR_SALE);
                     return false;
                 }
                 if (EconHandler.manager == null) {

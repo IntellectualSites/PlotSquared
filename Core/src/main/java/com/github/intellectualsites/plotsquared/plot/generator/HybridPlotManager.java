@@ -3,14 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.generator;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.Template;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
-import com.github.intellectualsites.plotsquared.plot.object.FileBytes;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
-import com.github.intellectualsites.plotsquared.plot.object.PlotId;
-import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
+import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
@@ -18,6 +11,7 @@ import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.google.common.collect.Sets;
 import com.sk89q.worldedit.world.block.BaseBlock;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,12 +26,11 @@ public class HybridPlotManager extends ClassicPlotManager {
             new FileBytes(Settings.Paths.TEMPLATES + "/tmp-data.yml", Template.getBytes(plotArea)));
         String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator
             + plotArea.worldname + File.separator;
-        String newDir =
-            "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + "__TEMP_DIR__"
-                + File.separator;
         try {
             File sideroad =
                 MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), dir + "sideroad.schem");
+            String newDir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator
+                + "__TEMP_DIR__" + File.separator;
             if (sideroad.exists()) {
                 files.add(new FileBytes(newDir + "sideroad.schem",
                     Files.readAllBytes(sideroad.toPath())));

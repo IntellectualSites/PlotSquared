@@ -2,12 +2,13 @@ package com.github.intellectualsites.plotsquared.plot.uuid;
 
 import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public abstract class UUIDWrapper {
 
-    public abstract UUID getUUID(PlotPlayer player);
+    @NotNull public abstract UUID getUUID(PlotPlayer player);
 
     public abstract UUID getUUID(OfflinePlotPlayer player);
 

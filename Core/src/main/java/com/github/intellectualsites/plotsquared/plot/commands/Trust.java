@@ -39,25 +39,25 @@ import java.util.UUID;
         checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, getUsage());
         final Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
         checkTrue(!uuids.isEmpty(), Captions.INVALID_PLAYER, args[0]);
-        Iterator<UUID> iter = uuids.iterator();
+        Iterator<UUID> iterator = uuids.iterator();
         int size = currentPlot.getTrusted().size() + currentPlot.getMembers().size();
-        while (iter.hasNext()) {
-            UUID uuid = iter.next();
+        while (iterator.hasNext()) {
+            UUID uuid = iterator.next();
             if (uuid == DBFunc.EVERYONE && !(
                 Permissions.hasPermission(player, Captions.PERMISSION_TRUST_EVERYONE) || Permissions
                     .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST))) {
                 MainUtil.sendMessage(player, Captions.INVALID_PLAYER, MainUtil.getName(uuid));
-                iter.remove();
+                iterator.remove();
                 continue;
             }
             if (currentPlot.isOwner(uuid)) {
                 MainUtil.sendMessage(player, Captions.ALREADY_OWNER, MainUtil.getName(uuid));
-                iter.remove();
+                iterator.remove();
                 continue;
             }
             if (currentPlot.getTrusted().contains(uuid)) {
                 MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
-                iter.remove();
+                iterator.remove();
                 continue;
             }
             size += currentPlot.getMembers().contains(uuid) ? 0 : 1;

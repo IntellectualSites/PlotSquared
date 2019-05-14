@@ -27,11 +27,11 @@ import java.util.stream.Collectors;
     extends SubCommand {
 
     private static String readFile(@NonNull final File file) throws IOException {
-        final StringBuilder content = new StringBuilder();
         final List<String> lines;
         try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
             lines = reader.lines().collect(Collectors.toList());
         }
+        final StringBuilder content = new StringBuilder();
         for (int i = Math.max(0, lines.size() - 1000); i < lines.size(); i++) {
             content.append(lines.get(i)).append("\n");
         }
@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         TaskManager.runTaskAsync(() -> {
             try {
-                final IncendoPaster incendoPaster = new IncendoPaster("plotsquared");
 
                 StringBuilder b = new StringBuilder();
                 b.append(
@@ -79,6 +78,7 @@ import java.util.stream.Collectors;
                     "\n# You can do so at https://github.com/IntellectualSites/PlotSquared/issues");
                 b.append("\n# or via our Discord at https://discord.gg/ngZCzbU");
 
+                final IncendoPaster incendoPaster = new IncendoPaster("plotsquared");
                 incendoPaster.addFile(new IncendoPaster.PasteFile("information", b.toString()));
 
                 try {

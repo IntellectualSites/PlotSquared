@@ -399,8 +399,6 @@ public class MainUtil {
 
         List<UUID> uuids = new ArrayList<>();
         PlotId id = null;
-        PlotArea area = null;
-        String alias = null;
 
         for (String term : split) {
             try {
@@ -418,6 +416,8 @@ public class MainUtil {
             IntStream.range(0, size).mapToObj(i -> new ArrayList<Plot>())
                 .collect(Collectors.toCollection(() -> new ArrayList<>(size)));
 
+        PlotArea area = null;
+        String alias = null;
         for (Plot plot : PlotSquared.get().getPlots()) {
             int count = 0;
             if (!uuids.isEmpty()) {

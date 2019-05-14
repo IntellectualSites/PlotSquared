@@ -6,7 +6,12 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
+import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -18,8 +23,8 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.RegisteredListener;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
@@ -55,7 +60,7 @@ public class BukkitPlayer extends PlotPlayer {
         return location == null ? BukkitUtil.getLocation(this.player) : location;
     }
 
-    @Nonnull @Override public UUID getUUID() {
+    @NotNull @Override public UUID getUUID() {
         if (this.uuid == null) {
             this.uuid = UUIDHandler.getUUID(this);
         }

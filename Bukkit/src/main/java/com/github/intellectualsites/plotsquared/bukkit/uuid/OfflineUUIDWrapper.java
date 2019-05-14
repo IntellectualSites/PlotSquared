@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -33,9 +34,8 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
         }
     }
 
-    @Override public UUID getUUID(PlotPlayer player) {
-        return UUID
-            .nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
+    @NotNull @Override public UUID getUUID(PlotPlayer player) {
+        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
 
     @Override public UUID getUUID(OfflinePlotPlayer player) {

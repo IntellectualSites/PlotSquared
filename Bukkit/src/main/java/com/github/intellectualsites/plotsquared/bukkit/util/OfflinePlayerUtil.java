@@ -13,14 +13,6 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
 
 public class OfflinePlayerUtil {
 
-    public static Player loadPlayer(String name) {
-        return loadPlayer(Bukkit.getOfflinePlayer(name));
-    }
-
-    public static Player loadPlayer(UUID id) {
-        return loadPlayer(Bukkit.getOfflinePlayer(id));
-    }
-
     public static Player loadPlayer(OfflinePlayer player) {
         if (player == null) {
             return null;

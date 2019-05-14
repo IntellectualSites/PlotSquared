@@ -466,7 +466,6 @@ import java.util.UUID;
                     PlotSquared.get().getPlots(player.getLocation().getWorld(), uuid))) {
                     PlotCluster current = plot.getCluster();
                     if (current != null && current.equals(cluster)) {
-                        player.getLocation().getWorld();
                         plot.unclaim();
                     }
                 }

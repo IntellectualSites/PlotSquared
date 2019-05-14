@@ -1,7 +1,15 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author DPOH-VAR
@@ -137,21 +145,22 @@ public class ReflectionUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> Constructor<T> makeConstructor(Class<?> clazz, Class<?>... paramaterTypes) {
+    public static <T> Constructor<T> makeConstructor(Class<?> clazz, Class<?>... parameterTypes) {
         try {
-            return (Constructor<T>) clazz.getConstructor(paramaterTypes);
+            return (Constructor<T>) clazz.getConstructor(parameterTypes);
         } catch (NoSuchMethodException ignored) {
+            //todo print a constructor not found method
             return null;
         }
     }
 
-    public static <T> T callConstructor(Constructor<T> constructor, Object... paramaters) {
+    public static <T> T callConstructor(Constructor<T> constructor, Object... parameters) {
         if (constructor == null) {
             throw new RuntimeException("No such constructor");
         }
         constructor.setAccessible(true);
         try {
-            return constructor.newInstance(paramaters);
+            return constructor.newInstance(parameters);
         } catch (InvocationTargetException ex) {
             throw new RuntimeException(ex.getCause());
         } catch (IllegalAccessException | IllegalArgumentException | InstantiationException ex) {

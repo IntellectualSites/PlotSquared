@@ -50,21 +50,21 @@ public class SinglePlotArea extends GridPlotWorld {
         // Duplicate 0;0
         if (setup.type != 0) {
             File container = PlotSquared.imp().getWorldContainer();
-            File dest = new File(container, worldName);
-            if (!dest.exists()) {
+            File destination = new File(container, worldName);
+            if (!destination.exists()) {
                 File src = new File(container, "0,0");
                 if (src.exists()) {
-                    if (!dest.exists()) {
-                        dest.mkdirs();
+                    if (!destination.exists()) {
+                        destination.mkdirs();
                     }
                     File levelDat = new File(src, "level.dat");
                     if (levelDat.exists()) {
                         try {
                             Files.copy(levelDat.toPath(),
-                                new File(dest, levelDat.getName()).toPath());
+                                new File(destination, levelDat.getName()).toPath());
                             File data = new File(src, "data");
                             if (data.exists()) {
-                                File dataDest = new File(dest, "data");
+                                File dataDest = new File(destination, "data");
                                 dataDest.mkdirs();
                                 for (File file : data.listFiles()) {
                                     Files.copy(file.toPath(),

@@ -4,7 +4,11 @@ import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
@@ -50,9 +54,9 @@ import java.util.List;
                     MainUtil.sendMessage(player, Captions.LOAD_NULL);
                     return false;
                 }
-                String schem;
+                String schematic;
                 try {
-                    schem = schematics.get(Integer.parseInt(args[0]) - 1);
+                    schematic = schematics.get(Integer.parseInt(args[0]) - 1);
                 } catch (Exception ignored) {
                     // use /plot load <index>
                     MainUtil.sendMessage(player, Captions.NOT_VALID_NUMBER,
@@ -61,7 +65,7 @@ import java.util.List;
                 }
                 final URL url;
                 try {
-                    url = new URL(Settings.Web.URL + "saves/" + player.getUUID() + '/' + schem);
+                    url = new URL(Settings.Web.URL + "saves/" + player.getUUID() + '/' + schematic);
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                     MainUtil.sendMessage(player, Captions.LOAD_FAILED);
@@ -70,8 +74,8 @@ import java.util.List;
                 plot.addRunning();
                 MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
                 TaskManager.runTaskAsync(() -> {
-                    Schematic schematic = SchematicHandler.manager.getSchematic(url);
-                    if (schematic == null) {
+                    Schematic taskSchematic = SchematicHandler.manager.getSchematic(url);
+                    if (taskSchematic == null) {
                         plot.removeRunning();
                         sendMessage(player, Captions.SCHEMATIC_INVALID,
                             "non-existent or not in gzip format");
@@ -79,7 +83,7 @@ import java.util.List;
                     }
                     PlotArea area = plot.getArea();
                     SchematicHandler.manager
-                        .paste(schematic, plot, 0, area.MIN_BUILD_HEIGHT, 0, false,
+                        .paste(taskSchematic, plot, 0, area.MIN_BUILD_HEIGHT, 0, false,
                             new RunnableVal<Boolean>() {
                                 @Override public void run(Boolean value) {
                                     plot.removeRunning();

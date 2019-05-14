@@ -44,11 +44,11 @@ import java.util.UUID;
         int count = 0;
         switch (args[0]) {
             case "unknown": {
-                ArrayList<UUID> toRemove = new ArrayList<>();
                 HashSet<UUID> all = new HashSet<>();
                 all.addAll(plot.getMembers());
                 all.addAll(plot.getTrusted());
                 all.addAll(plot.getDenied());
+                ArrayList<UUID> toRemove = new ArrayList<>();
                 for (UUID uuid : all) {
                     if (UUIDHandler.getName(uuid) == null) {
                         toRemove.add(uuid);

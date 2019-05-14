@@ -4,9 +4,19 @@ import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.google.common.collect.Lists;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -191,9 +201,7 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
                     return false;
                 }
-                location.getWorld();
-                Collection<Plot> plots = new ArrayList<>();
-                plots.add(plot);
+                ArrayList<Plot> plots = Lists.newArrayList(plot);
                 boolean result = SchematicHandler.manager.exportAll(plots, null, null, () -> {
                     MainUtil.sendMessage(player, "&aFinished export");
                     SchematicCmd.this.running = false;
@@ -212,7 +220,7 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 final String string =
-                    StringMan.join(SchematicHandler.manager.getShematicNames(), "$2, $1");
+                    StringMan.join(SchematicHandler.manager.getSchematicNames(), "$2, $1");
                 Captions.SCHEMATIC_LIST.send(player, string);
             }
             break;

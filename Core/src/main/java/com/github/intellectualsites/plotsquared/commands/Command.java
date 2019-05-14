@@ -10,7 +10,11 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -150,10 +154,10 @@ public abstract class Command {
         this.perm = declaration.permission();
         this.required = declaration.requiredType();
         this.category = declaration.category();
-        HashMap<String, Object> options = new HashMap<>();
         List<String> aliasOptions = new ArrayList<>();
         aliasOptions.add(this.id);
         aliasOptions.addAll(Arrays.asList(declaration.aliases()));
+        HashMap<String, Object> options = new HashMap<>();
         options.put("aliases", aliasOptions);
         options.put("description", declaration.description());
         options.put("usage", declaration.usage());

@@ -6,7 +6,11 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
@@ -345,7 +349,7 @@ import java.util.Map.Entry;
             return messages;
         }
 
-        @Override public boolean parseInut(String input) {
+        @Override public boolean parseInput(String input) {
             this.generator = input.toLowerCase();
             return true;
         }
@@ -385,7 +389,7 @@ import java.util.Map.Entry;
             return messages;
         }
 
-        @Override public boolean parseInut(String input) {
+        @Override public boolean parseInput(String input) {
             if (!WORLD_TYPES.keySet().contains(input.toLowerCase())) {
                 return false;
             }
@@ -416,7 +420,7 @@ import java.util.Map.Entry;
 
         public abstract Collection<PlotMessage> showDescriptionMessage();
 
-        public abstract boolean parseInut(String input);
+        public abstract boolean parseInput(String input);
 
         public final PlotMessage getUsage() {
             return new PlotMessage("Usage: ").color("$1")

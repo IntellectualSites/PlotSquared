@@ -35,8 +35,7 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
             return true;
         }
         int mode = 0;
-        for (int i = 0; i < chars.length; i++) {
-            char c = chars[i];
+        for (char c : chars) {
             switch (mode) {
                 case 0:
                     mode = 1;

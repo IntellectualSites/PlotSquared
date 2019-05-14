@@ -212,10 +212,15 @@ public class ConfigurationSerialization {
                 return result;
             }
         } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException ex) {
-            Logger.getLogger(ConfigurationSerialization.class.getName()).log(Level.SEVERE,
-                "Could not call method '" + method.toString() + "' of " + this.clazz
-                    + " for deserialization",
-                ex instanceof InvocationTargetException ? ex.getCause() : ex);
+            if (ex instanceof InvocationTargetException) {
+                Logger.getLogger(ConfigurationSerialization.class.getName()).log(Level.SEVERE,
+                    "Could not call method '" + method.toString() + "' of " + this.clazz
+                        + " for deserialization", ex.getCause());
+            } else {
+                Logger.getLogger(ConfigurationSerialization.class.getName()).log(Level.SEVERE,
+                    "Could not call method '" + method.toString() + "' of " + this.clazz
+                        + " for deserialization", ex);
+            }
         }
 
         return null;
@@ -226,10 +231,15 @@ public class ConfigurationSerialization {
         try {
             return ctor.newInstance(args);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException ex) {
-            Logger.getLogger(ConfigurationSerialization.class.getName()).log(Level.SEVERE,
-                "Could not call constructor '" + ctor.toString() + "' of " + this.clazz
-                    + " for deserialization",
-                ex instanceof InvocationTargetException ? ex.getCause() : ex);
+            if (ex instanceof InvocationTargetException) {
+                Logger.getLogger(ConfigurationSerialization.class.getName()).log(Level.SEVERE,
+                    "Could not call constructor '" + ctor.toString() + "' of " + this.clazz
+                        + " for deserialization", ex.getCause());
+            } else {
+                Logger.getLogger(ConfigurationSerialization.class.getName()).log(Level.SEVERE,
+                    "Could not call constructor '" + ctor.toString() + "' of " + this.clazz
+                        + " for deserialization", ex);
+            }
         }
 
         return null;

@@ -1,6 +1,11 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -47,7 +52,6 @@ public class HastebinUtility {
     }
 
     public static String upload(final File file) throws IOException {
-        final StringBuilder content = new StringBuilder();
         List<String> lines = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
@@ -56,6 +60,7 @@ public class HastebinUtility {
                 lines.add(line);
             }
         }
+        final StringBuilder content = new StringBuilder();
         for (int i = Math.max(0, lines.size() - 1000); i < lines.size(); i++) {
             content.append(lines.get(i)).append("\n");
         }

@@ -26,8 +26,8 @@ public class GenChunk extends ScopedLocalBlockQueue {
     public BiomeGrid biomeGrid;
     public Chunk chunk;
     public String world;
-    public int cx;
-    public int cz;
+    public int chunkX;
+    public int chunkZ;
     @Getter @Setter private ChunkData cd = null;
 
     public GenChunk() {
@@ -39,7 +39,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
         if (chunk == null) {
             World worldObj = BukkitUtil.getWorld(world);
             if (worldObj != null) {
-                this.chunk = worldObj.getChunkAt(cx, cz);
+                this.chunk = worldObj.getChunkAt(chunkX, chunkZ);
             }
         }
         return chunk;
@@ -52,8 +52,8 @@ public class GenChunk extends ScopedLocalBlockQueue {
     public void setChunk(ChunkWrapper wrap) {
         chunk = null;
         world = wrap.world;
-        cx = wrap.x;
-        cz = wrap.z;
+        chunkX = wrap.x;
+        chunkZ = wrap.z;
     }
 
     @Override public void fillBiome(String biomeName) {
@@ -82,13 +82,13 @@ public class GenChunk extends ScopedLocalBlockQueue {
                 Arrays.fill(data, start, end, block);
             }
         }
-        int minx = Math.min(pos1.getX(), pos2.getX());
-        int miny = Math.min(pos1.getY(), pos2.getY());
-        int minz = Math.min(pos1.getZ(), pos2.getZ());
-        int maxx = Math.max(pos1.getX(), pos2.getX());
-        int maxy = Math.max(pos1.getY(), pos2.getY());
-        int maxz = Math.max(pos1.getZ(), pos2.getZ());
-        cd.setRegion(minx, miny, minz, maxx + 1, maxy + 1, maxz + 1, block.to(Material.class));
+        int minX = Math.min(pos1.getX(), pos2.getX());
+        int minY = Math.min(pos1.getY(), pos2.getY());
+        int minZ = Math.min(pos1.getZ(), pos2.getZ());
+        int maxX = Math.max(pos1.getX(), pos2.getX());
+        int maxY = Math.max(pos1.getY(), pos2.getY());
+        int maxZ = Math.max(pos1.getZ(), pos2.getZ());
+        cd.setRegion(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1, block.to(Material.class));
     }
 
     @Override public boolean setBiome(int x, int z, String biome) {
@@ -147,11 +147,11 @@ public class GenChunk extends ScopedLocalBlockQueue {
     }
 
     public int getX() {
-        return chunk == null ? cx : chunk.getX();
+        return chunk == null ? chunkX : chunk.getX();
     }
 
     public int getZ() {
-        return chunk == null ? cz : chunk.getZ();
+        return chunk == null ? chunkZ : chunk.getZ();
     }
 
     @Override public String getWorld() {

@@ -169,13 +169,12 @@ public class ExpireManager {
             return new ArrayList<>();
         }
 
-        boolean shouldCheckAccountAge = false;
-
         long diff = getAge(plot);
         if (diff == 0) {
             return new ArrayList<>();
         }
         // Filter out non old plots
+        boolean shouldCheckAccountAge = false;
         for (int i = 0; i < applicable.size(); i++) {
             ExpiryTask et = applicable.poll();
             if (et.applies(diff)) {
