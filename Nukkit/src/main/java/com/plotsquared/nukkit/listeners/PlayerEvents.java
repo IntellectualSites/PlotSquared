@@ -21,34 +21,10 @@ import cn.nukkit.event.Event;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
-import cn.nukkit.event.block.BlockBreakEvent;
-import cn.nukkit.event.block.BlockBurnEvent;
-import cn.nukkit.event.block.BlockFormEvent;
-import cn.nukkit.event.block.BlockGrowEvent;
-import cn.nukkit.event.block.BlockPlaceEvent;
-import cn.nukkit.event.block.BlockSpreadEvent;
-import cn.nukkit.event.block.BlockUpdateEvent;
-import cn.nukkit.event.entity.EntityBlockChangeEvent;
-import cn.nukkit.event.entity.EntityCombustByEntityEvent;
-import cn.nukkit.event.entity.EntityCombustEvent;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntityExplodeEvent;
-import cn.nukkit.event.entity.EntitySpawnEvent;
-import cn.nukkit.event.entity.ExplosionPrimeEvent;
-import cn.nukkit.event.entity.ProjectileHitEvent;
-import cn.nukkit.event.entity.ProjectileLaunchEvent;
+import cn.nukkit.event.block.*;
+import cn.nukkit.event.entity.*;
 import cn.nukkit.event.inventory.InventoryCloseEvent;
-import cn.nukkit.event.player.PlayerBucketEmptyEvent;
-import cn.nukkit.event.player.PlayerBucketFillEvent;
-import cn.nukkit.event.player.PlayerChatEvent;
-import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
-import cn.nukkit.event.player.PlayerInteractEvent;
-import cn.nukkit.event.player.PlayerJoinEvent;
-import cn.nukkit.event.player.PlayerMoveEvent;
-import cn.nukkit.event.player.PlayerQuitEvent;
-import cn.nukkit.event.player.PlayerRespawnEvent;
-import cn.nukkit.event.player.PlayerTeleportEvent;
+import cn.nukkit.event.player.*;
 import cn.nukkit.event.potion.PotionCollideEvent;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.metadata.MetadataValue;
@@ -59,23 +35,12 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.flag.IntegerFlag;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.RegExUtil;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.listener.PlotListener;
 import com.plotsquared.nukkit.object.NukkitPlayer;
 import com.plotsquared.nukkit.util.NukkitUtil;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -292,14 +257,11 @@ public class PlayerEvents extends PlotListener implements Listener {
         // Delayed
 
         // Async
-        TaskManager.runTaskLaterAsync(new Runnable() {
-            @Override
-            public void run() {
-                if (!player.hasPlayedBefore() && player.isOnline()) {
-                    player.save();
-                }
-                EventUtil.manager.doJoinTask(pp);
+        TaskManager.runTaskLaterAsync(() -> {
+            if (!player.hasPlayedBefore() && player.isOnline()) {
+                player.save();
             }
+            EventUtil.manager.doJoinTask(pp);
         }, 20);
     }
 
@@ -417,7 +379,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 this.tmpTeleport = true;
                 return;
             }
-            Integer border = area.getBorder();
+            int border = area.getBorder();
             if (z2 > border) {
                 to.setComponents(to.getX(), to.getY(), border - 4);
                 this.tmpTeleport = false;
@@ -536,7 +498,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 this.tmpTeleport = true;
                 return;
             }
-            Integer border = area.getBorder();
+            int border = area.getBorder();
             if (z2 > border) {
                 to.setComponents(to.getX(), to.getY(), border - 4);
                 this.tmpTeleport = false;
@@ -874,7 +836,6 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Block from = event.getFrom();
-        Block to = event.getTo();
         final Plot finalPlot = area.getOwnedPlotAbs(location);
         boolean toBlock = from == null || from.getId() == 0;
         if (toBlock) {

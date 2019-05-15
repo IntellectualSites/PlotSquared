@@ -1,21 +1,14 @@
 repositories {
     maven { url = "https://oss.sonatype.org/content/repositories/snapshots/"}
     maven {url "http://nexus.hc.to/content/repositories/pub_releases"}
-    maven {url "https://repo.nukkitx.com/main/"}
-    flatDir {dirs 'lib'}
+    maven {url "https://repo.nukkitx.com/maven-snapshots"} 
 }
 
 dependencies {
     implementation project (':Core')
     compile project(':Core')
-    compile 'com.google.guava:guava:17.0'
+    compile 'com.google.guava:guava:21.0'
     compile 'cn.nukkit:nukkit:1.0-SNAPSHOT'
-}
-
-configurations.all {
-    resolutionStrategy {
-        force 'com.google.guava:guava:17.0'
-    }
 }
 
 sourceCompatibility = 1.8

@@ -18,6 +18,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.block.ScopedLocalBlockQueue;
 import com.plotsquared.nukkit.util.NukkitUtil;
 import com.plotsquared.nukkit.util.block.NukkitWrappedChunk;
+
 import java.util.Map;
 
 public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<Generator> {
@@ -45,7 +46,6 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
                 throw new IllegalArgumentException("Generator: " + cg.getClass().getName() + " is already a NukkitPlotGenerator!");
             }
             this.full = false;
-            PS.debug("NukkitPlotGenerator does not fully support: " + cg);
             this.platformGenerator = cg;
             this.plotGenerator = new IndependentPlotGenerator() {
                 @Override

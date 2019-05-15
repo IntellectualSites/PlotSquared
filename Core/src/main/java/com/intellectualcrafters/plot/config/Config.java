@@ -326,7 +326,10 @@ public class Config {
                             clazz = found;
                             split = Arrays.copyOfRange(split, 2, split.length);
                             continue;
-                        } catch (NoSuchFieldException ignore) { }
+                        } catch (NoSuchFieldException e) {
+                            PS.debug("This shouldn't happen!");
+                            e.printStackTrace();
+                        }
                         if (found != null) {
                             split = Arrays.copyOfRange(split, 1, split.length);
                             clazz = found;

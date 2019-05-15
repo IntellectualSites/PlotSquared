@@ -34,10 +34,6 @@ public class PlotChangeOwnerEvent extends PlotEvent implements Cancellable {
         this.oldOwner = oldOwner;
     }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
     /**
      * Get the PlotId.
      *
@@ -92,7 +88,7 @@ public class PlotChangeOwnerEvent extends PlotEvent implements Cancellable {
         return this.hasOldOwner;
     }
 
-    public HandlerList getHandlers() {
+    public static HandlerList getHandlers() {
         return handlers;
     }
 

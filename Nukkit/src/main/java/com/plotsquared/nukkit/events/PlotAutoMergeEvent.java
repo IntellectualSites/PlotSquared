@@ -1,9 +1,9 @@
 package com.plotsquared.nukkit.events;
 
 import cn.nukkit.event.Cancellable;
-import com.intellectualcrafters.plot.object.Plot;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Level;
+import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class PlotAutoMergeEvent extends PlotEvent implements Cancellable {
         this.plots = plots;
     }
 
-    public static HandlerList getHandlerList() {
+    public static HandlerList getHandlers() {
         return handlers;
     }
 
@@ -43,10 +43,6 @@ public class PlotAutoMergeEvent extends PlotEvent implements Cancellable {
 
     public Level getWorld() {
         return this.world;
-    }
-
-    public HandlerList getHandlers() {
-        return handlers;
     }
 
     @Override
