@@ -4,7 +4,12 @@ import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
 import lombok.RequiredArgsConstructor;
@@ -61,27 +66,27 @@ import java.util.Random;
     }
 
     @Override public void generateChunk(final ScopedLocalBlockQueue result, PlotArea settings) {
-        World w = BukkitUtil.getWorld(world);
+        World world = BukkitUtil.getWorld(this.world);
         Location min = result.getMin();
-        int cx = min.getX() >> 4;
-        int cz = min.getZ() >> 4;
-        Random r = new Random(MathMan.pair((short) cx, (short) cz));
-        ChunkGenerator.BiomeGrid grid = new ChunkGenerator.BiomeGrid() {
-            @Override public void setBiome(int x, int z, Biome biome) {
-                result.setBiome(x, z, biome.name());
-            }
-
-            @Override @NotNull public Biome getBiome(int x, int z) {
-                return Biome.FOREST;
-            }
-        };
+        int chunkX = min.getX() >> 4;
+        int chunkZ = min.getZ() >> 4;
+        Random random = new Random(MathMan.pair((short) chunkX, (short) chunkZ));
         try {
-            chunkGenerator.generateChunkData(w, r, cx, cz, grid);
+            ChunkGenerator.BiomeGrid grid = new ChunkGenerator.BiomeGrid() {
+                @Override public void setBiome(int x, int z, Biome biome) {
+                    result.setBiome(x, z, biome.name());
+                }
+
+                @Override @NotNull public Biome getBiome(int x, int z) {
+                    return Biome.FOREST;
+                }
+            };
+            chunkGenerator.generateChunkData(world, random, chunkX, chunkZ, grid);
             return;
         } catch (Throwable ignored) {
         }
-        for (BlockPopulator populator : chunkGenerator.getDefaultPopulators(w)) {
-            populator.populate(w, r, w.getChunkAt(cx, cz));
+        for (BlockPopulator populator : chunkGenerator.getDefaultPopulators(world)) {
+            populator.populate(world, random, world.getChunkAt(chunkX, chunkZ));
         }
     }
 

@@ -11,6 +11,7 @@ import com.github.intellectualsites.plotsquared.plot.util.block.DelegateLocalBlo
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
@@ -24,7 +25,7 @@ public class AugmentedUtils {
         enabled = true;
     }
 
-    public static boolean generate(final String world, final int cx, final int cz,
+    public static boolean generate(@NotNull final String world, final int cx, final int cz,
         LocalBlockQueue queue) {
         if (!enabled) {
             return false;

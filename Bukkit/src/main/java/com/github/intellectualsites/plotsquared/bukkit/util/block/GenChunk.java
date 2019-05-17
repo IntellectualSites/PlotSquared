@@ -28,7 +28,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
     public String world;
     public int chunkX;
     public int chunkZ;
-    @Getter @Setter private ChunkData cd = null;
+    @Getter @Setter private ChunkData chunkData = null;
 
     public GenChunk() {
         super(null, new Location(null, 0, 0, 0), new Location(null, 15, 255, 15));
@@ -88,7 +88,8 @@ public class GenChunk extends ScopedLocalBlockQueue {
         int maxX = Math.max(pos1.getX(), pos2.getX());
         int maxY = Math.max(pos1.getY(), pos2.getY());
         int maxZ = Math.max(pos1.getZ(), pos2.getZ());
-        cd.setRegion(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1, block.to(Material.class));
+        chunkData
+            .setRegion(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1, block.to(Material.class));
     }
 
     @Override public boolean setBiome(int x, int z, String biome) {
@@ -105,10 +106,10 @@ public class GenChunk extends ScopedLocalBlockQueue {
 
     @Override public boolean setBlock(int x, int y, int z, PlotBlock id) {
         if (this.result == null) {
-            this.cd.setBlock(x, y, z, id.to(Material.class));
+            this.chunkData.setBlock(x, y, z, id.to(Material.class));
             return true;
         }
-        this.cd.setBlock(x, y, z, id.to(Material.class));
+        this.chunkData.setBlock(x, y, z, id.to(Material.class));
         this.storeCache(x, y, z, id);
         return true;
     }
@@ -125,10 +126,10 @@ public class GenChunk extends ScopedLocalBlockQueue {
 
     @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
         if (this.result == null) {
-            this.cd.setBlock(x, y, z, BukkitAdapter.adapt(id));
+            this.chunkData.setBlock(x, y, z, BukkitAdapter.adapt(id));
             return true;
         }
-        this.cd.setBlock(x, y, z, BukkitAdapter.adapt(id));
+        this.chunkData.setBlock(x, y, z, BukkitAdapter.adapt(id));
         this.storeCache(x, y, z, PlotBlock.get(id.getBlockType().getId()));
         return true;
     }
@@ -136,7 +137,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
     @Override public PlotBlock getBlock(int x, int y, int z) {
         int i = MainUtil.CACHE_I[y][x][z];
         if (result == null) {
-            return PlotBlock.get(cd.getType(x, y, z));
+            return PlotBlock.get(chunkData.getType(x, y, z));
         }
         PlotBlock[] array = result[i];
         if (array == null) {
@@ -177,7 +178,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
                 }
             }
         }
-        toReturn.cd = this.cd;
+        toReturn.chunkData = this.chunkData;
         return toReturn;
     }
 }

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
@@ -19,7 +20,8 @@ import java.util.Random;
     private final IndependentPlotGenerator plotGenerator;
     private LocalBlockQueue queue;
 
-    @Override public void populate(final World world, final Random random, final Chunk source) {
+    @Override public void populate(@NotNull final World world, @NotNull final Random random,
+        @NotNull final Chunk source) {
         if (this.queue == null) {
             this.queue = GlobalBlockQueue.IMP.getNewQueue(world.getName(), false);
         }

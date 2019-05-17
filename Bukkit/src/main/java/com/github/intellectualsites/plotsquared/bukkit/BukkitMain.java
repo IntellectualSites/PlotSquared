@@ -40,8 +40,6 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldedit.extension.platform.Capability;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.*;
@@ -54,7 +52,6 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nullable;
@@ -114,22 +111,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return Bukkit.getVersion();
     }
 
-    private void init() {
-        try {
-            PluginManager manager = Bukkit.getPluginManager();
-            System.out.println("[P2] Force loading WorldEdit");
-            Plugin plugin = manager.getPlugin("WorldEdit");
-            if (!manager.isPluginEnabled("WorldEdit")) {
-                manager.enablePlugin(WorldEditPlugin.getPlugin(WorldEditPlugin.class));
-            }
-            System.out.println("[P2] Testing platform capabilities");
-            WorldEdit.getInstance().getPlatformManager().queryCapability(Capability.GAME_HOOKS);
-        } catch (final Throwable throwable) {
-            throw new IllegalStateException(
-                "Failed to force load WorldEdit. Road schematics will fail to generate", throwable);
-        }
-    }
-
     @Override public void onEnable() {
         this.pluginName = getDescription().getName();
         PlotPlayer.registerConverter(Player.class, BukkitUtil::getPlayer);
@@ -146,7 +127,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             System.out.println("[P2] DOWNLOAD: https://papermc.io/downloads");
             System.out.println("[P2] GUIDE: https://www.spigotmc.org/threads/21726/");
             System.out.println("[P2] NOTE: This is only a recommendation");
-            System.out.println("[P2]       both Spigot and CraftBukkit are still supported.");
+            System.out.println("[P2]       Spigot is still supported.");
             System.out
                 .println("[P2] ===============================================================");
         }
@@ -158,6 +139,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 "You can't use this version of PlotSquared on a server less than Minecraft 1.13.2.");
             System.out
                 .println("Please check the download page for the link to the legacy versions.");
+            System.out.println("The server will now be shutdown to prevent any corruption.");
             Bukkit.shutdown();
             return;
         }

@@ -123,19 +123,19 @@ public class BukkitPlotGenerator extends ChunkGenerator
 
         GenChunk result = new GenChunk();
         if (this.getPlotGenerator() instanceof SingleWorldGenerator) {
-            if (result.getCd() != null) {
+            if (result.getChunkData() != null) {
                 for (int cx = 0; cx < 16; cx++) {
                     for (int cz = 0; cz < 16; cz++) {
                         biome.setBiome(cx, cz, Biome.PLAINS);
                     }
                 }
-                return result.getCd();
+                return result.getChunkData();
             }
         }
         // Set the chunk location
         result.setChunk(new ChunkWrapper(world.getName(), x, z));
         // Set the result data
-        result.setCd(createChunkData(world));
+        result.setChunkData(createChunkData(world));
         result.biomeGrid = biome;
         result.result = null;
 
@@ -151,7 +151,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
             e.printStackTrace();
         }
         // Return the result data
-        return result.getCd();
+        return result.getChunkData();
     }
 
     private void generate(ChunkLoc loc, World world, ScopedLocalBlockQueue result) {
