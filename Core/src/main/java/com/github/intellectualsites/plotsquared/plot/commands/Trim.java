@@ -95,8 +95,7 @@ import java.util.Set;
             return false;
         }
         MainUtil.sendMessage(null, "Collecting region data...");
-        ArrayList<Plot> plots = new ArrayList<>();
-        plots.addAll(PlotSquared.get().getPlots(world));
+        ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getPlots(world));
         if (ExpireManager.IMP != null) {
             plots.removeAll(ExpireManager.IMP.getPendingExpired());
         }

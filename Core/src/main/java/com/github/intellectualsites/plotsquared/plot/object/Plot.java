@@ -2410,9 +2410,7 @@ public class Plot {
         if (this.settings == null) {
             return Collections.singleton(this);
         }
-        boolean[] merged = this.getMerged();
-        int hash = MainUtil.hash(merged);
-        if (hash == 0) {
+        if (!this.isMerged()) {
             return Collections.singleton(this);
         }
         if (connected_cache != null && connected_cache.contains(this)) {
@@ -2425,7 +2423,7 @@ public class Plot {
         Plot tmp;
         HashSet<Object> queuecache = new HashSet<>();
         ArrayDeque<Plot> frontier = new ArrayDeque<>();
-        if (merged[0]) {
+        if (this.getMerged(Direction.NORTH)) {
             tmp = this.area.getPlotAbs(this.id.getRelative(Direction.NORTH));
             if (!tmp.getMerged(Direction.SOUTH)) {
                 // invalid merge
@@ -2441,7 +2439,7 @@ public class Plot {
             queuecache.add(tmp);
             frontier.add(tmp);
         }
-        if (merged[1]) {
+        if (this.getMerged(Direction.EAST)) {
             tmp = this.area.getPlotAbs(this.id.getRelative(Direction.EAST));
             if (!tmp.getMerged(Direction.WEST)) {
                 // invalid merge
@@ -2457,7 +2455,7 @@ public class Plot {
             queuecache.add(tmp);
             frontier.add(tmp);
         }
-        if (merged[2]) {
+        if (this.getMerged(Direction.SOUTH)) {
             tmp = this.area.getPlotAbs(this.id.getRelative(Direction.SOUTH));
             if (!tmp.getMerged(Direction.NORTH)) {
                 // invalid merge
@@ -2473,7 +2471,7 @@ public class Plot {
             queuecache.add(tmp);
             frontier.add(tmp);
         }
-        if (merged[3]) {
+        if (this.getMerged(Direction.WEST)) {
             tmp = this.area.getPlotAbs(this.id.getRelative(Direction.WEST));
             if (!tmp.getMerged(Direction.EAST)) {
                 // invalid merge
@@ -2500,29 +2498,28 @@ public class Plot {
             }
             tmpSet.add(current);
             queuecache.remove(current);
-            merged = current.getMerged();
-            if (merged[0]) {
+            if (current.getMerged(Direction.NORTH)) {
                 tmp = current.area.getPlotAbs(current.id.getRelative(Direction.NORTH));
                 if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
                     queuecache.add(tmp);
                     frontier.add(tmp);
                 }
             }
-            if (merged[1]) {
+            if (current.getMerged(Direction.EAST)) {
                 tmp = current.area.getPlotAbs(current.id.getRelative(Direction.EAST));
                 if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
                     queuecache.add(tmp);
                     frontier.add(tmp);
                 }
             }
-            if (merged[2]) {
+            if (current.getMerged(Direction.SOUTH)) {
                 tmp = current.area.getPlotAbs(current.id.getRelative(Direction.SOUTH));
                 if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
                     queuecache.add(tmp);
                     frontier.add(tmp);
                 }
             }
-            if (merged[3]) {
+            if (current.getMerged(Direction.WEST)) {
                 tmp = current.area.getPlotAbs(current.id.getRelative(Direction.WEST));
                 if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
                     queuecache.add(tmp);

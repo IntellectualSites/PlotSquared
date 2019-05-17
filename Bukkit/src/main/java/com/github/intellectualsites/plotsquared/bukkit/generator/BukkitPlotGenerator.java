@@ -124,9 +124,9 @@ public class BukkitPlotGenerator extends ChunkGenerator
         GenChunk result = new GenChunk();
         if (this.getPlotGenerator() instanceof SingleWorldGenerator) {
             if (result.getChunkData() != null) {
-                for (int cx = 0; cx < 16; cx++) {
-                    for (int cz = 0; cz < 16; cz++) {
-                        biome.setBiome(cx, cz, Biome.PLAINS);
+                for (int chunkX = 0; chunkX < 16; chunkX++) {
+                    for (int chunkZ = 0; chunkZ < 16; chunkZ++) {
+                        biome.setBiome(chunkX, chunkZ, Biome.PLAINS);
                     }
                 }
                 return result.getChunkData();

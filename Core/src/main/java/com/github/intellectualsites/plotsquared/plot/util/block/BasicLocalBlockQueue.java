@@ -92,12 +92,12 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
             return false;
         }
         baseBlocks = true;
-        int cx = x >> 4;
-        int cz = z >> 4;
-        if (cx != lastX || cz != lastZ) {
-            lastX = cx;
-            lastZ = cz;
-            long pair = (long) (cx) << 32 | (cz) & 0xFFFFFFFFL;
+        int chunkX = x >> 4;
+        int chunkZ = z >> 4;
+        if (chunkX != lastX || chunkZ != lastZ) {
+            lastX = chunkX;
+            lastZ = chunkZ;
+            long pair = (long) (chunkX) << 32 | (chunkZ) & 0xFFFFFFFFL;
             lastWrappedChunk = this.blockChunks.get(pair);
             if (lastWrappedChunk == null) {
                 lastWrappedChunk = this.getLocalChunk(x >> 4, z >> 4);
@@ -121,12 +121,12 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
         } else if (y < 0) {
             return false;
         }
-        int cx = x >> 4;
-        int cz = z >> 4;
-        if (cx != lastX || cz != lastZ) {
-            lastX = cx;
-            lastZ = cz;
-            long pair = (long) (cx) << 32 | (cz) & 0xFFFFFFFFL;
+        int chunkX = x >> 4;
+        int chunkZ = z >> 4;
+        if (chunkX != lastX || chunkZ != lastZ) {
+            lastX = chunkX;
+            lastZ = chunkZ;
+            long pair = (long) (chunkX) << 32 | (chunkZ) & 0xFFFFFFFFL;
             lastWrappedChunk = this.blockChunks.get(pair);
             if (lastWrappedChunk == null) {
                 lastWrappedChunk = this.getLocalChunk(x >> 4, z >> 4);

@@ -1,13 +1,21 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.ChunkLoc;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class ChunkManager {
@@ -28,11 +36,11 @@ public abstract class ChunkManager {
         RunnableVal<ScopedLocalBlockQueue> add, String world, ChunkLoc loc) {
         LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
         if (PlotSquared.get().isAugmented(world)) {
-            int bx = loc.x << 4;
-            int bz = loc.z << 4;
+            int blockX = loc.x << 4;
+            int blockZ = loc.z << 4;
             ScopedLocalBlockQueue scoped =
-                new ScopedLocalBlockQueue(queue, new Location(world, bx, 0, bz),
-                    new Location(world, bx + 15, 255, bz + 15));
+                new ScopedLocalBlockQueue(queue, new Location(world, blockX, 0, blockZ),
+                    new Location(world, blockX + 15, 255, blockZ + 15));
             if (force != null) {
                 force.run(scoped);
             } else {
@@ -212,11 +220,11 @@ public abstract class ChunkManager {
         File folder =
             new File(PlotSquared.get().IMP.getWorldContainer(), world + File.separator + "region");
         File[] regionFiles = folder.listFiles();
-        HashSet<ChunkLoc> chunks = new HashSet<>();
         if (regionFiles == null) {
             throw new RuntimeException(
                 "Could not find worlds folder: " + folder + " ? (no read access?)");
         }
+        HashSet<ChunkLoc> chunks = new HashSet<>();
         for (File file : regionFiles) {
             String name = file.getName();
             if (name.endsWith("mca")) {

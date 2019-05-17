@@ -1,6 +1,10 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
+import com.github.intellectualsites.plotsquared.plot.object.ChunkLoc;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
@@ -106,8 +110,6 @@ public abstract class LocalBlockQueue {
         for (int y = pos1.getY(); y <= Math.min(255, pos2.getY()); y++) {
             for (int x = pos1.getX(); x <= pos2.getX(); x++) {
                 for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
-                    // int i = PseudoRandom.random.random(blocks.length);
-                    // PlotBlock block = blocks[i];
                     setBlock(x, y, z, blocks.getBlock());
                 }
             }

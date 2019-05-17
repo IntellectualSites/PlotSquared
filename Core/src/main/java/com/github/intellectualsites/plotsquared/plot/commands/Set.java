@@ -8,8 +8,17 @@ import com.github.intellectualsites.plotsquared.plot.config.Configuration.Unknow
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 
 import java.util.ArrayList;
@@ -60,8 +69,6 @@ import java.util.stream.IntStream;
                                 MainUtil.sendMessage(player, Captions.NEED_BLOCK);
                                 return true;
                             }
-                            String[] split = material.split(",");
-                            // blocks = Configuration.BLOCKLIST.parseString(material);
 
                             try {
                                 bucket = Configuration.BLOCK_BUCKET.parseString(material);
