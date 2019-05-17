@@ -2538,11 +2538,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                     id = resultSet.getInt("id");
                     String areaid = resultSet.getString("world");
                     if (!areas.contains(areaid)) {
-                        if (noExist.containsKey(areaid)) {
-                            noExist.put(areaid, noExist.get(areaid) + 1);
-                        } else {
-                            noExist.put(areaid, 1);
-                        }
+                        noExist.merge(areaid, 1, Integer::sum);
                     }
                     owner = resultSet.getString("owner");
                     user = uuids.get(owner);

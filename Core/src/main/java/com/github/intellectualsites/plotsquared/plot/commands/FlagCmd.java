@@ -5,12 +5,22 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.flag.*;
+import com.github.intellectualsites.plotsquared.plot.flag.Flag;
+import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
+import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flag.IntegerFlag;
+import com.github.intellectualsites.plotsquared.plot.flag.ListFlag;
+import com.github.intellectualsites.plotsquared.plot.flag.PlotBlockListFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
+import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 import java.util.*;
 
@@ -284,9 +294,7 @@ import java.util.*;
                 HashMap<String, ArrayList<String>> flags = new HashMap<>();
                 for (Flag<?> flag1 : Flags.getFlags()) {
                     String type = flag1.getClass().getSimpleName();
-                    if (!flags.containsKey(type)) {
-                        flags.put(type, new ArrayList<>());
-                    }
+                    flags.computeIfAbsent(type, k -> new ArrayList<>());
                     flags.get(type).add(flag1.getName());
                 }
                 StringBuilder message = new StringBuilder();

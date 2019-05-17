@@ -5,7 +5,12 @@ import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 
@@ -171,7 +176,7 @@ public class PlotListener {
                                 .replaceFromMap(Captions.TITLE_ENTERED_PLOT.s(), replacements);
                             String sub = StringMan
                                 .replaceFromMap(Captions.TITLE_ENTERED_PLOT_SUB.s(), replacements);
-                            AbstractTitle.sendTitle(player, main, sub);
+                            player.sendTitle(main, sub);
                         }
                     }, 20);
                 }

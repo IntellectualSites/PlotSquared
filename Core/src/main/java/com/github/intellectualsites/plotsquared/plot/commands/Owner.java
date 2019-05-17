@@ -5,7 +5,11 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.CmdConfirm;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 
 import java.util.Set;
 import java.util.UUID;
@@ -34,7 +38,7 @@ import java.util.UUID;
             if (value.equalsIgnoreCase("none") || value.equalsIgnoreCase("null") || value
                 .equalsIgnoreCase("-")) {
                 if (!Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SETOWNER.s(), true)) {
+                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SET_OWNER.s(), true)) {
                     return false;
                 }
                 Set<Plot> connected = plot.getConnectedPlots();
@@ -54,7 +58,7 @@ import java.util.UUID;
             Captions.ALREADY_OWNER.send(player, MainUtil.getName(uuid));
             return false;
         }
-        if (!Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SETOWNER)) {
+        if (!Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SET_OWNER)) {
             if (other == null) {
                 Captions.INVALID_PLAYER_OFFLINE.send(player, value);
                 return false;

@@ -16,7 +16,11 @@ import lombok.NonNull;
 
 import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -339,6 +343,15 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         teleport(current);
         return result;
     }
+
+    public void sendTitle(String title, String subtitle) {
+        sendTitle(title, subtitle, 1, 2, 1);
+    }
+
+    ;
+
+    public abstract void sendTitle(String title, String subtitle, int fadeIn, int stay,
+        int fadeOut);
 
     /**
      * Teleport this player to a location.

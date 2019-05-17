@@ -60,8 +60,8 @@ public enum Captions {
     PERMISSION_ADMIN_ENTRY_DENIED("plots.admin.entry.denied", "static.permissions"),
     PERMISSION_ADMIN_ENTRY_FORCEFIELD("plots.admin.entry.forcefield", "static.permissions"),
     PERMISSION_COMMANDS_CHAT("plots.admin.command.chat", "static.permissions"),
-    PERMISSION_MERGE_OTHER("plots.merge.other", "static.permissions"),
-    PERMISSION_MERGE_KEEPROAD("plots.merge.keeproad", "static.permissions"),
+    PERMISSION_MERGE_OTHER("plots.merge.other", "static.permissions"), PERMISSION_MERGE_KEEP_ROAD(
+        "plots.merge.keeproad", "static.permissions"),
     PERMISSION_ADMIN_DESTROY_UNOWNED("plots.admin.destroy.unowned", "static.permissions"),
     PERMISSION_ADMIN_DESTROY_GROUNDLEVEL("plots.admin.destroy.groundlevel", "static.permissions"),
     PERMISSION_ADMIN_DESTROY_OTHER("plots.admin.destroy.other", "static.permissions"),
@@ -71,8 +71,8 @@ public enum Captions {
     PERMISSION_ADMIN_BUILD_OTHER("plots.admin.build.other", "static.permissions"),
     PERMISSION_ADMIN_INTERACT_ROAD("plots.admin.interact.road", "static.permissions"),
     PERMISSION_ADMIN_INTERACT_UNOWNED("plots.admin.interact.unowned", "static.permissions"),
-    PERMISSION_ADMIN_INTERACT_OTHER("plots.admin.interact.other", "static.permissions"),
-    PERMISSION_ADMIN_BUILD_HEIGHTLIMIT("plots.admin.build.heightlimit", "static.permissions"),
+    PERMISSION_ADMIN_INTERACT_OTHER("plots.admin.interact.other", "static.permissions"), PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT(
+        "plots.admin.build.heightlimit", "static.permissions"),
     PERMISSION_ADMIN_UPDATE("plots.admin.command.update", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_RATE("plots.admin.command.rate", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_TRUST("plots.admin.command.trust", "static.permissions"),
@@ -141,8 +141,8 @@ public enum Captions {
     PERMISSION_LIST_FUZZY("plots.list.fuzzy", "static.permissions"),
     PERMISSION_LIST_AREA("plots.list.area", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_LOAD("plots.admin.command.load", "static.permissions"),
-    PERMISSION_ADMIN_COMMAND_MERGE("plots.admin.command.merge", "static.permissions"),
-    PERMISSION_ADMIN_COMMAND_SETOWNER("plots.admin.command.setowner", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_MERGE("plots.admin.command.merge", "static.permissions"), PERMISSION_ADMIN_COMMAND_SET_OWNER(
+        "plots.admin.command.setowner", "static.permissions"),
     PERMISSION_COMMENT("plots.comment", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_REMOVE("plots.admin.command.remove", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_SAVE("plots.admin.command.save", "static.permissions"),

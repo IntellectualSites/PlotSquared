@@ -38,6 +38,10 @@ public class ConsolePlayer extends PlotPlayer {
         return true;
     }
 
+    @Override
+    public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+    }
+
     @Override public Location getLocation() {
         return this.getMeta("location");
     }

@@ -17,12 +17,21 @@ import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
 import com.google.common.io.Files;
 
-import javax.script.*;
+import javax.script.Bindings;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.script.SimpleScriptContext;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 @CommandDeclaration(command = "debugexec", permission = "plots.admin",
     description = "Mutli-purpose debug command", aliases = {"exec", "$"},
@@ -107,7 +116,6 @@ import java.util.*;
             this.scope.put("WEManager", new WEManager());
         }
         this.scope.put("TaskManager", TaskManager.IMP);
-        this.scope.put("TitleManager", AbstractTitle.TITLE_CLASS);
         this.scope.put("ConsolePlayer", ConsolePlayer.getConsole());
         this.scope.put("SchematicHandler", SchematicHandler.manager);
         this.scope.put("ChunkManager", ChunkManager.manager);

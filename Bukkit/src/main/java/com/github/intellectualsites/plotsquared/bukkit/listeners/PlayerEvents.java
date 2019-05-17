@@ -999,7 +999,7 @@ import java.util.regex.Pattern;
             } else if (
                 (location.getY() > area.MAX_BUILD_HEIGHT || location.getY() < area.MIN_BUILD_HEIGHT)
                     && !Permissions
-                    .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_HEIGHTLIMIT)) {
+                    .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
                 MainUtil.sendMessage(plotPlayer, Captions.HEIGHT_LIMIT.s()
                     .replace("{limit}", String.valueOf(area.MAX_BUILD_HEIGHT)));
@@ -2984,7 +2984,7 @@ import java.util.regex.Pattern;
         Plot plot = area.getPlot(location);
         if (plot != null) {
             if ((location.getY() > area.MAX_BUILD_HEIGHT || location.getY() < area.MIN_BUILD_HEIGHT)
-                && !Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_HEIGHTLIMIT)) {
+                && !Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
                 MainUtil.sendMessage(pp, Captions.HEIGHT_LIMIT.s()
                     .replace("{limit}", String.valueOf(area.MAX_BUILD_HEIGHT)));

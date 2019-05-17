@@ -51,9 +51,7 @@ import java.util.Map;
     private BlockBucket blockListToBucket(@NonNull final PlotBlock[] blocks) {
         final Map<PlotBlock, Integer> counts = new HashMap<>();
         for (final PlotBlock block : blocks) {
-            if (!counts.containsKey(block)) {
-                counts.put(block, 0);
-            }
+            counts.putIfAbsent(block, 0);
             counts.put(block, counts.get(block) + 1);
         }
         boolean includeRatios = false;
@@ -66,7 +64,7 @@ import java.util.Map;
         final BlockBucket bucket = new BlockBucket();
         if (includeRatios) {
             for (final Map.Entry<PlotBlock, Integer> count : counts.entrySet()) {
-                bucket.addBlock(count.getKey(), (int) (count.getValue()));
+                bucket.addBlock(count.getKey(), count.getValue());
             }
         } else {
             counts.keySet().forEach(bucket::addBlock);

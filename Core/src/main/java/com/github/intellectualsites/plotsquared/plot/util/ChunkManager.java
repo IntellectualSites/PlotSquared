@@ -136,7 +136,7 @@ public abstract class ChunkManager {
     }
 
     /**
-     * The int[] will be in the form: [chunkx, chunkz, pos1x, pos1z, pos2x, pos2z, isedge] and will represent the bottom and top parts of the chunk
+     * The int[] will be in the form: [chunkX, chunkZ, pos1x, pos1z, pos2x, pos2z, isEdge] and will represent the bottom and top parts of the chunk
      *
      * @param pos1
      * @param pos2

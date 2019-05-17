@@ -188,8 +188,6 @@ import java.util.zip.ZipInputStream;
             ChunkManager.manager = this.IMP.initChunkManager();
             // Schematic handler
             SchematicHandler.manager = this.IMP.initSchematicHandler();
-            // Titles
-            AbstractTitle.TITLE_CLASS = this.IMP.initTitleManager();
             // Chat
             ChatManager.manager = this.IMP.initChatManager();
             // Commands

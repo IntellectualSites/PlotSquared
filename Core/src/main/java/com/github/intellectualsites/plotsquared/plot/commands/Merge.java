@@ -3,8 +3,17 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.object.Expression;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.util.CmdConfirm;
+import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 
 import java.util.UUID;
 
@@ -59,8 +68,7 @@ public class Merge extends SubCommand {
             }
         }
         final PlotArea plotArea = plot.getArea();
-        Expression<Double> priceExr =
-            plotArea.PRICES.containsKey("merge") ? plotArea.PRICES.get("merge") : null;
+        Expression<Double> priceExr = plotArea.PRICES.getOrDefault("merge", null);
         final int size = plot.getConnectedPlots().size();
         final double price = priceExr == null ? 0d : priceExr.evaluate((double) size);
         if (EconHandler.manager != null && plotArea.USE_ECONOMY && price > 0d
@@ -97,9 +105,9 @@ public class Merge extends SubCommand {
                     terrain = "true".equalsIgnoreCase(args[1]);
                 }
                 if (!terrain && !Permissions
-                    .hasPermission(player, Captions.PERMISSION_MERGE_KEEPROAD)) {
+                    .hasPermission(player, Captions.PERMISSION_MERGE_KEEP_ROAD)) {
                     MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_MERGE_KEEPROAD.s());
+                        Captions.PERMISSION_MERGE_KEEP_ROAD.s());
                     return true;
                 }
                 if (plot.autoMerge(-1, maxSize, uuid, terrain)) {
@@ -134,9 +142,9 @@ public class Merge extends SubCommand {
         } else {
             terrain = true;
         }
-        if (!terrain && !Permissions.hasPermission(player, Captions.PERMISSION_MERGE_KEEPROAD)) {
+        if (!terrain && !Permissions.hasPermission(player, Captions.PERMISSION_MERGE_KEEP_ROAD)) {
             MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                Captions.PERMISSION_MERGE_KEEPROAD.s());
+                Captions.PERMISSION_MERGE_KEEP_ROAD.s());
             return true;
         }
         if (plot.autoMerge(direction, maxSize - size, uuid, terrain)) {

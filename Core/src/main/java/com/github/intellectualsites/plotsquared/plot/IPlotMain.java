@@ -249,13 +249,6 @@ public interface IPlotMain extends ILogger {
      */
     @NotNull IndependentPlotGenerator getDefaultGenerator();
 
-    /**
-     * Gets the class that will manage player titles.
-     *
-     * @return
-     */
-    AbstractTitle initTitleManager();
-
     List<String> getPluginIds();
 
     BlockRegistry<?> getBlockRegistry();

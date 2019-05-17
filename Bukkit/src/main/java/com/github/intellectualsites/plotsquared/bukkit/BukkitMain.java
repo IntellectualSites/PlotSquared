@@ -7,7 +7,6 @@ import com.github.intellectualsites.plotsquared.bukkit.listeners.PlayerEvents;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.PlotPlusListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.SingleWorldListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.WorldEvents;
-import com.github.intellectualsites.plotsquared.bukkit.titles.DefaultTitle;
 import com.github.intellectualsites.plotsquared.bukkit.util.*;
 import com.github.intellectualsites.plotsquared.bukkit.util.block.BukkitLocalQueue;
 import com.github.intellectualsites.plotsquared.bukkit.uuid.DefaultUUIDWrapper;
@@ -764,10 +763,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override public SchematicHandler initSchematicHandler() {
         return new BukkitSchematicHandler();
-    }
-
-    @Override public AbstractTitle initTitleManager() {
-        return new DefaultTitle();
     }
 
     @Override @Nullable public PlotPlayer wrapPlayer(final Object player) {

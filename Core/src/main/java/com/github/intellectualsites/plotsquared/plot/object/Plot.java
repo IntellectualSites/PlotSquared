@@ -1360,9 +1360,7 @@ public class Plot {
     public Map<UUID, Boolean> getLikes() {
         final Map<UUID, Boolean> map = new HashMap<>();
         final Map<UUID, Rating> ratings = this.getRatings();
-        ratings.forEach((uuid, rating) -> {
-            map.put(uuid, rating.getLike());
-        });
+        ratings.forEach((uuid, rating) -> map.put(uuid, rating.getLike()));
         return map;
     }
 

@@ -1,7 +1,12 @@
 package com.github.intellectualsites.plotsquared.bukkit.object.entity;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import org.bukkit.*;
+import org.bukkit.Art;
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.Rotation;
+import org.bukkit.TreeSpecies;
+import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
@@ -576,14 +581,6 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 restoreAgeable((Ageable) entity);
                 restoreLiving((LivingEntity) entity);
                 return entity;
-            case GUARDIAN:
-            case ELDER_GUARDIAN:
-                restoreLiving((LivingEntity) entity);
-                return entity;
-            case SKELETON:
-            case WITHER_SKELETON:
-                restoreLiving((LivingEntity) entity);
-                return entity;
             case ARMOR_STAND:
                 // CHECK positions
                 ArmorStand stand = (ArmorStand) entity;
@@ -679,6 +676,10 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             case BLAZE:
             case SNOWMAN:
             case SHULKER:
+            case GUARDIAN:
+            case ELDER_GUARDIAN:
+            case SKELETON:
+            case WITHER_SKELETON:
                 restoreLiving((LivingEntity) entity);
                 return entity;
             case IRON_GOLEM:

@@ -84,6 +84,11 @@ public class BukkitPlayer extends PlotPlayer {
         return true;
     }
 
+    @Override
+    public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
+    }
+
     private void callEvent(final Event event) {
         RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
         for (RegisteredListener listener : listeners) {
@@ -219,8 +224,6 @@ public class BukkitPlayer extends PlotPlayer {
                 this.player.setPlayerWeather(WeatherType.DOWNFALL);
                 break;
             case RESET:
-                this.player.resetPlayerWeather();
-                break;
             default:
                 this.player.resetPlayerWeather();
                 break;
@@ -254,8 +257,6 @@ public class BukkitPlayer extends PlotPlayer {
                 this.player.setGameMode(GameMode.SPECTATOR);
                 break;
             case SURVIVAL:
-                this.player.setGameMode(GameMode.SURVIVAL);
-                break;
             default:
                 this.player.setGameMode(GameMode.SURVIVAL);
                 break;

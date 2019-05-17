@@ -209,8 +209,7 @@ public class ListCmd extends SubCommand {
                     int p1s = p1.getSettings().getRatings().size();
                     int p2s = p2.getRatings().size();
                     if (!p1.getSettings().getRatings().isEmpty()) {
-                        v1 = p1.getRatings().entrySet().stream()
-                            .mapToDouble(entry -> entry.getValue().getAverageRating())
+                        v1 = p1.getRatings().values().stream().mapToDouble(Rating::getAverageRating)
                             .map(av -> av * av).sum();
                         v1 /= p1s;
                         v1 += p1s;
