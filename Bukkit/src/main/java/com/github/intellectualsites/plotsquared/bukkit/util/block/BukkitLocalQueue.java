@@ -6,7 +6,6 @@ import com.github.intellectualsites.plotsquared.plot.object.LegacyPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.StringPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.block.BasicLocalBlockQueue;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -20,14 +19,9 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Locale;
 
 public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
-
-    private Field fieldNeighbors;
-    private Method chunkGetHandle;
 
     public BukkitLocalQueue(String world) {
         super(world);
@@ -55,7 +49,11 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
 
     @Override public void refreshChunk(int x, int z) {
         World worldObj = Bukkit.getWorld(getWorld());
-        worldObj.refreshChunk(x, z);
+        if (worldObj != null) {
+            worldObj.refreshChunk(x, z);
+        } else {
+            PlotSquared.debug("Error Refreshing Chunk");
+        }
     }
 
     @Override public void fixChunkLighting(int x, int z) {
@@ -64,7 +62,11 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
 
     @Override public final void regenChunk(int x, int z) {
         World worldObj = Bukkit.getWorld(getWorld());
-        worldObj.regenerateChunk(x, z);
+        if (worldObj != null) {
+            worldObj.regenerateChunk(x, z);
+        } else {
+            PlotSquared.debug("Error Regenerating Chunk");
+        }
     }
 
     @Override public final void setComponents(LocalChunk<T> lc) {
@@ -183,14 +185,12 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
             World worldObj = Bukkit.getWorld(getWorld());
             int bx = lc.getX() << 4;
             int bz = lc.getX() << 4;
-            String last = null;
-            Biome biome = null;
             for (int x = 0; x < lc.biomes.length; x++) {
                 String[] biomes2 = lc.biomes[x];
                 if (biomes2 != null) {
                     for (String biomeStr : biomes2) {
                         if (biomeStr != null) {
-                            biome = Biome.valueOf(biomeStr.toUpperCase());
+                            Biome biome = Biome.valueOf(biomeStr.toUpperCase());
                             worldObj.setBiome(bx, bz, biome);
                         }
                     }
@@ -199,59 +199,4 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
         }
     }
 
-    /**
-     * Exploiting a bug in the vanilla lighting algorithm for faster block placement
-     * - Could have been achieved without reflection by force unloading specific chunks
-     * - Much faster just setting the variable manually though
-     *
-     * @param chunk
-     * @return
-     */
-    protected Object[] disableLighting(Chunk chunk) {
-        try {
-            if (chunkGetHandle == null) {
-                chunkGetHandle = chunk.getClass().getDeclaredMethod("getHandle");
-                chunkGetHandle.setAccessible(true);
-            }
-            Object nmsChunk = chunkGetHandle.invoke(chunk);
-            if (fieldNeighbors == null) {
-                fieldNeighbors = nmsChunk.getClass().getDeclaredField("neighbors");
-                fieldNeighbors.setAccessible(true);
-            }
-            Object value = fieldNeighbors.get(nmsChunk);
-            fieldNeighbors.set(nmsChunk, 0);
-            return new Object[] {nmsChunk, value};
-        } catch (Throwable ignore) {
-        }
-        return null;
-    }
-
-    protected void disableLighting(Object[] disableResult) {
-        if (disableResult != null) {
-            try {
-                fieldNeighbors.set(disableResult[0], 0);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    protected void resetLighting(Object[] disableResult) {
-        if (disableResult != null) {
-            try {
-                fieldNeighbors.set(disableResult[0], disableResult[1]);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    protected void enableLighting(Object[] disableResult) {
-        if (disableResult != null) {
-            try {
-                fieldNeighbors.set(disableResult[0], 0x739C0);
-            } catch (Throwable ignore) {
-            }
-        }
-    }
 }

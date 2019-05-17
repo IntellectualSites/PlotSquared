@@ -143,7 +143,6 @@ import java.util.Set;
                                 return true;
                         }
                     default: // Start creation
-                        final SetupObject object = new SetupObject();
                         String[] split = args[1].split(":");
                         String id;
                         if (split.length == 2) {
@@ -151,6 +150,7 @@ import java.util.Set;
                         } else {
                             id = null;
                         }
+                        final SetupObject object = new SetupObject();
                         object.world = split[0];
                         final HybridPlotWorld pa = new HybridPlotWorld(object.world, id,
                             PlotSquared.get().IMP.getDefaultGenerator(), null, null);

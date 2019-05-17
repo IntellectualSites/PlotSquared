@@ -8,6 +8,7 @@ import com.github.intellectualsites.plotsquared.plot.object.BlockRegistry;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.List;
@@ -246,7 +247,7 @@ public interface IPlotMain extends ILogger {
      *
      * @return Default implementation generator
      */
-    IndependentPlotGenerator getDefaultGenerator();
+    @NotNull IndependentPlotGenerator getDefaultGenerator();
 
     /**
      * Gets the class that will manage player titles.

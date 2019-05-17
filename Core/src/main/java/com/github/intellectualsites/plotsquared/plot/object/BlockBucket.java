@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -135,7 +136,7 @@ import java.util.Map.Entry;
         }
     }
 
-    @Override public Iterator<PlotBlock> iterator() {
+    @NotNull @Override public Iterator<PlotBlock> iterator() {
         return this.bucketIterator;
     }
 

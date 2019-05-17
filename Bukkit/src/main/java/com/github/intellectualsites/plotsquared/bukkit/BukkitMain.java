@@ -53,6 +53,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -564,7 +565,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     @Override @Nullable
-    public final ChunkGenerator getDefaultWorldGenerator(final String worldName, final String id) {
+    public final ChunkGenerator getDefaultWorldGenerator(@NotNull final String worldName,
+        final String id) {
         final IndependentPlotGenerator result;
         if (id != null && id.equalsIgnoreCase("single")) {
             result = new SingleWorldGenerator();
@@ -681,7 +683,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         getServer().getPluginManager().registerEvents(new WorldEvents(), this);
     }
 
-    @Override public IndependentPlotGenerator getDefaultGenerator() {
+    @NotNull @Override public IndependentPlotGenerator getDefaultGenerator() {
         return new HybridGen();
     }
 

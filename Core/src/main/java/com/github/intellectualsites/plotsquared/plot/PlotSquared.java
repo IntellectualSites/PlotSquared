@@ -1333,8 +1333,8 @@ import java.util.zip.ZipInputStream;
                 }
                 String key = pair[0].toLowerCase();
                 String value = pair[1];
-                String base = "worlds." + world + ".";
                 try {
+                    String base = "worlds." + world + ".";
                     switch (key) {
                         case "s":
                         case "size":

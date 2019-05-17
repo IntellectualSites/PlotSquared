@@ -181,16 +181,16 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
     }
 
 
-    public abstract class LocalChunk<T> {
+    public abstract class LocalChunk<B> {
         public final BasicLocalBlockQueue parent;
         public final int z;
         public final int x;
 
-        public T[] blocks;
+        public B[] blocks;
         public BaseBlock[][] baseblocks;
         public String[][] biomes;
 
-        public LocalChunk(BasicLocalBlockQueue<T> parent, int x, int z) {
+        public LocalChunk(BasicLocalBlockQueue<B> parent, int x, int z) {
             this.parent = parent;
             this.x = x;
             this.z = z;

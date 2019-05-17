@@ -18,6 +18,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
 import java.util.Random;
 
@@ -73,7 +74,8 @@ import java.util.Random;
         Random random = new Random(MathMan.pair((short) chunkX, (short) chunkZ));
         try {
             ChunkGenerator.BiomeGrid grid = new ChunkGenerator.BiomeGrid() {
-                @Override public void setBiome(int x, int z, Biome biome) {
+                @Override public void setBiome(@Range(from = 0, to = 15) int x,
+                    @Range(from = 0, to = 15) int z, Biome biome) {
                     result.setBiome(x, z, biome.name());
                 }
 

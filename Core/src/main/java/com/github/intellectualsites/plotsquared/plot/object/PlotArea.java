@@ -21,6 +21,7 @@ import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -76,11 +77,11 @@ public abstract class PlotArea {
     private QuadMap<PlotCluster> clusters;
 
     public PlotArea(@Nonnull final String worldName, @Nullable final String id,
-        @Nullable IndependentPlotGenerator generator, @Nullable final PlotId min,
+        @NotNull IndependentPlotGenerator generator, @Nullable final PlotId min,
         @Nullable final PlotId max) {
         this.worldname = worldName;
         this.id = id;
-        this.manager = generator != null ? generator.getNewPlotManager() : null;
+        this.manager = generator.getNewPlotManager();
         this.generator = generator;
         if (min == null || max == null) {
             if (min != max) {
@@ -94,26 +95,11 @@ public abstract class PlotArea {
             this.max = max;
         }
         this.worldhash = worldName.hashCode();
-        if (Settings.Enabled_Components.PLOT_EXPIRY && generator != null) {
+        if (Settings.Enabled_Components.PLOT_EXPIRY) {
             blockBucketChunk = generator.generateBlockBucketChunk(this);
         } else {
             blockBucketChunk = null;
         }
-    }
-
-    /**
-     * Create a new PlotArea object with no functionality/information.
-     * - Mainly used during startup before worlds are created as a temporary object
-     */
-    public static PlotArea createGeneric(@Nonnull final String world) {
-        return new PlotArea(world, null, null, null, null) {
-            @Override public void loadConfiguration(ConfigurationSection config) {
-            }
-
-            @Override public ConfigurationNode[] getSettingNodes() {
-                return null;
-            }
-        };
     }
 
     public LocalBlockQueue getQueue(final boolean autoQueue) {

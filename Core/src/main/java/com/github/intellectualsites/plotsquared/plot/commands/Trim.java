@@ -197,11 +197,9 @@ import java.util.Set;
                         }
                     };
                 } else {
-                    regenTask = new Runnable() {
-                        @Override public void run() {
-                            Trim.TASK = false;
-                            player.sendMessage("Trim done!");
-                        }
+                    regenTask = () -> {
+                        Trim.TASK = false;
+                        player.sendMessage("Trim done!");
                     };
                 }
                 ChunkManager.manager.deleteRegionFiles(world, viable, regenTask);

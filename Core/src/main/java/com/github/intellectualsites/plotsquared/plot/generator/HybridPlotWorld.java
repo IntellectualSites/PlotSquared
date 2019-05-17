@@ -21,6 +21,7 @@ import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.HashMap;
@@ -37,7 +38,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public int SCHEM_Y;
     private Location SIGN_LOCATION;
 
-    public HybridPlotWorld(String worldName, String id, IndependentPlotGenerator generator,
+    public HybridPlotWorld(String worldName, String id, @NotNull IndependentPlotGenerator generator,
         PlotId min, PlotId max) {
         super(worldName, id, generator, min, max);
     }
@@ -119,8 +120,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         try {
             setupSchematics();
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
+        } catch (Exception event) {
+            event.printStackTrace();
             PlotSquared.debug("&c - road schematics are disabled for this world.");
         }
     }

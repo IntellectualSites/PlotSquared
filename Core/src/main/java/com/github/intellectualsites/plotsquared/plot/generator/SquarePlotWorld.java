@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.generator;
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class SquarePlotWorld extends GridPlotWorld {
 
@@ -11,7 +12,7 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
     public int ROAD_OFFSET_X = 0;
     public int ROAD_OFFSET_Z = 0;
 
-    public SquarePlotWorld(String worldName, String id, IndependentPlotGenerator generator,
+    public SquarePlotWorld(String worldName, String id, @NotNull IndependentPlotGenerator generator,
         PlotId min, PlotId max) {
         super(worldName, id, generator, min, max);
     }
