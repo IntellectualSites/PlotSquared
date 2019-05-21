@@ -67,13 +67,13 @@ public class HybridPlotManager extends ClassicPlotManager {
             return true;
         }
         LocalBlockQueue queue = hpw.getQueue(false);
-        createSchemAbs(hpw, queue, pos1, pos2, true);
+        createSchemAbs(hpw, queue, pos1, pos2);
         queue.enqueue();
         return true;
     }
 
     private void createSchemAbs(HybridPlotWorld hpw, LocalBlockQueue queue, Location pos1,
-        Location pos2, boolean clear) {
+        Location pos2) {
         int size = hpw.SIZE;
         int minY;
         if (Settings.Schematics.PASTE_ON_TOP) {
@@ -119,7 +119,7 @@ public class HybridPlotManager extends ClassicPlotManager {
             return true;
         }
         LocalBlockQueue queue = hpw.getQueue(false);
-        createSchemAbs(hpw, queue, pos1, pos2, true);
+        createSchemAbs(hpw, queue, pos1, pos2);
         queue.enqueue();
         return true;
     }
@@ -134,9 +134,9 @@ public class HybridPlotManager extends ClassicPlotManager {
         pos1.setY(0);
         pos2.setY(Math.min(getWorldHeight(), 255));
         LocalBlockQueue queue = hpw.getQueue(false);
-        createSchemAbs(hpw, queue, pos1, pos2, true);
+        createSchemAbs(hpw, queue, pos1, pos2);
         if (hpw.ROAD_SCHEMATIC_ENABLED) {
-            createSchemAbs(hpw, queue, pos1, pos2, true);
+            createSchemAbs(hpw, queue, pos1, pos2);
         }
         queue.enqueue();
         return true;
@@ -205,12 +205,12 @@ public class HybridPlotManager extends ClassicPlotManager {
         return true;
     }
 
-    public void pastePlotSchematic(HybridPlotWorld plotWorld, LocalBlockQueue queue, Location l1,
-        Location l2) {
+    public void pastePlotSchematic(HybridPlotWorld plotWorld, LocalBlockQueue queue,
+        Location bottom, Location top) {
         if (!plotWorld.PLOT_SCHEMATIC) {
             return;
         }
-        createSchemAbs(plotWorld, queue, l1, l2, false);
+        createSchemAbs(plotWorld, queue, bottom, top);
     }
 
     /**
