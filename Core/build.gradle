@@ -11,7 +11,7 @@ dependencies {
     testCompileOnly("org.projectlombok:lombok:1.18.6")
     annotationProcessor("org.projectlombok:lombok:1.18.6")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.6")
-
+    implementation 'net.kyori:text-adapter-bukkit:3.0.2'
     implementation 'com.github.Sauilitired:Jenkins4J:2.0-SNAPSHOT'
     implementation 'com.squareup.okhttp3:okhttp:3.14.0'
     implementation 'com.squareup.okio:okio:2.2.2'

@@ -67,6 +67,7 @@ subprojects {
             exclude(module: 'mockito-core')
             exclude(module: 'dummypermscompat')
         }
+        implementation 'net.kyori:text-api:3.0.0'
         //Minecraft uses Guava 21 as of 1.13.
         compile 'com.google.guava:guava:21.0'
         compileOnly 'org.jetbrains:annotations:17.0.0'
