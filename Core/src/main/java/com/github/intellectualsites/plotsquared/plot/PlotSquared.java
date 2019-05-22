@@ -255,7 +255,7 @@ import java.util.zip.ZipInputStream;
                                 "&c`" + world + "` was not properly loaded - " + IMP.getPluginName()
                                     + " will now try to load it properly: ");
                             debug(
-                                "&8 - &7Are you trying to delete this world? Remember to remove it from the settings.yml, bukkit.yml and multiverse worlds.yml");
+                                "&8 - &7Are you trying to delete this world? Remember to remove it from the worlds.yml, bukkit.yml and multiverse worlds.yml");
                             debug(
                                 "&8 - &7Your world management plugin may be faulty (or non existent)");
                             PlotSquared.this.IMP.setGenerator(world);
