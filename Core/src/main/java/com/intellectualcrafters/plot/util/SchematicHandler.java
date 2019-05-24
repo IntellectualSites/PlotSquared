@@ -1,50 +1,22 @@
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.jnbt.ByteArrayTag;
-import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.jnbt.IntTag;
-import com.intellectualcrafters.jnbt.ListTag;
-import com.intellectualcrafters.jnbt.NBTInputStream;
-import com.intellectualcrafters.jnbt.NBTOutputStream;
-import com.intellectualcrafters.jnbt.ShortTag;
-import com.intellectualcrafters.jnbt.StringTag;
-import com.intellectualcrafters.jnbt.Tag;
+import com.intellectualcrafters.jnbt.*;
 import com.intellectualcrafters.json.JSONArray;
 import com.intellectualcrafters.json.JSONException;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
-import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -97,23 +69,17 @@ public abstract class SchematicHandler {
                         if (value == null) {
                             MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.getId());
                         } else {
-                            TaskManager.runTaskAsync(new Runnable() {
-                                @Override
-                                public void run() {
-                                    MainUtil.sendMessage(null, "&6ID: " + plot.getId());
-                                    boolean result = SchematicHandler.manager.save(value, directory + File.separator + name + ".schematic");
-                                    if (!result) {
-                                        MainUtil.sendMessage(null, "&7 - Failed to save &c" + plot.getId());
-                                    } else {
-                                        MainUtil.sendMessage(null, "&7 - &a  success: " + plot.getId());
-                                    }
-                                    TaskManager.runTask(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            THIS.run();
-                                        }
-                                    });
+                            TaskManager.runTaskAsync(() -> {
+                                MainUtil.sendMessage(null, "&6ID: " + plot.getId());
+                                boolean result = SchematicHandler.manager
+                                    .save(value, directory + File.separator + name + ".schematic");
+                                if (!result) {
+                                    MainUtil
+                                        .sendMessage(null, "&7 - Failed to save &c" + plot.getId());
+                                } else {
+                                    MainUtil.sendMessage(null, "&7 - &a  success: " + plot.getId());
                                 }
+                                TaskManager.runTask(THIS::run);
                             });
                         }
                     }
@@ -363,14 +329,14 @@ public abstract class SchematicHandler {
             addBlocks = ByteArrayTag.class.cast(tagMap.get("AddBlocks")).getValue();
         }
 
-        short width = ShortTag.class.cast(tagMap.get("Width")).getValue();
-        short length = ShortTag.class.cast(tagMap.get("Length")).getValue();
-        short height = ShortTag.class.cast(tagMap.get("Height")).getValue();
-        byte[] block_sml = ByteArrayTag.class.cast(tagMap.get("Blocks")).getValue();
-        byte[] data = ByteArrayTag.class.cast(tagMap.get("Data")).getValue();
+        short width = ((ShortTag) tagMap.get("Width")).getValue();
+        short length = ((ShortTag) tagMap.get("Length")).getValue();
+        short height = ((ShortTag) tagMap.get("Height")).getValue();
+        byte[] block_sml = ((ByteArrayTag) tagMap.get("Blocks")).getValue();
+        byte[] data = ((ByteArrayTag) tagMap.get("Data")).getValue();
         Map<String, Tag> flags;
         if (tagMap.containsKey("Flags")) {
-            flags = CompoundTag.class.cast(tagMap.get("Flags")).getValue();
+            flags = ((CompoundTag) tagMap.get("Flags")).getValue();
         } else {
             flags = null;
         }
@@ -414,14 +380,14 @@ public abstract class SchematicHandler {
         Schematic schem = new Schematic(block, data, dimensions, flags);
         // Slow
         try {
-            List<Tag> blockStates = ListTag.class.cast(tagMap.get("TileEntities")).getValue();
+            List<Tag> blockStates = ((ListTag) tagMap.get("TileEntities")).getValue();
             for (Tag stateTag : blockStates) {
                 try {
                     CompoundTag ct = (CompoundTag) stateTag;
                     Map<String, Tag> state = ct.getValue();
-                    short x = IntTag.class.cast(state.get("x")).getValue().shortValue();
-                    short y = IntTag.class.cast(state.get("y")).getValue().shortValue();
-                    short z = IntTag.class.cast(state.get("z")).getValue().shortValue();
+                    short x = ((IntTag) state.get("x")).getValue().shortValue();
+                    short y = ((IntTag) state.get("y")).getValue().shortValue();
+                    short z = ((IntTag) state.get("z")).getValue().shortValue();
                     schem.addTile(new BlockLoc(x, y, z), ct);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -484,10 +450,7 @@ public abstract class SchematicHandler {
         return null;
     }
 
-    public Schematic getSchematic(InputStream is) {
-        if (is == null) {
-            return null;
-        }
+    public Schematic getSchematic(@NotNull InputStream is) {
         try {
             NBTInputStream stream = new NBTInputStream(new GZIPInputStream(is));
             CompoundTag tag = (CompoundTag) stream.readTag(1073741824);
@@ -508,12 +471,13 @@ public abstract class SchematicHandler {
             URL url = new URL(website);
             URLConnection connection = new URL(url.toString()).openConnection();
             connection.setRequestProperty("User-Agent", "Mozilla/5.0");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                rawJSON.append(line);
+            try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(connection.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    rawJSON.append(line);
+                }
             }
-            reader.close();
             JSONArray array = new JSONArray(rawJSON.toString());
             List<String> schematics = new ArrayList<>();
             for (int i = 0; i < array.length(); i++) {
@@ -569,8 +533,6 @@ public abstract class SchematicHandler {
             try (OutputStream stream = new FileOutputStream(tmp); NBTOutputStream output = new NBTOutputStream(new GZIPOutputStream(stream))) {
                 output.writeTag(tag);
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
             return false;

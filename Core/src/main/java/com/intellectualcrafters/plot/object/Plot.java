@@ -852,15 +852,6 @@ public class Plot {
         Runnable run = new Runnable() {
             @Override public void run() {
                 if (queue.isEmpty()) {
-                    Runnable run = new Runnable() {
-                        @Override public void run() {
-                            for (RegionWrapper region : regions) {
-                                Location[] corners = region.getCorners(getWorldName());
-                                ChunkManager.manager.clearAllEntities(corners[0], corners[1]);
-                            }
-                            TaskManager.runTask(whenDone);
-                        }
-                    };
                     for (Plot current : plots) {
                         if (isDelete || current.owner == null) {
                             manager.unclaimPlot(Plot.this.area, current, null);
@@ -877,6 +868,7 @@ public class Plot {
                         .regenerateRegion(current.getBottomAbs(), current.getTopAbs(), false, this);
                     return;
                 }
+                PS.debug(manager.getClass().getSimpleName());
                 manager.clearPlot(Plot.this.area, current, this);
             }
         };
