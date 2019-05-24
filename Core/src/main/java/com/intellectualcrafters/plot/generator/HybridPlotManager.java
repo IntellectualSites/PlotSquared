@@ -25,12 +25,11 @@ public class HybridPlotManager extends ClassicPlotManager {
             new FileBytes(Settings.Paths.TEMPLATES + "/tmp-data.yml", Template.getBytes(plotArea)));
         String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator
             + plotArea.worldname + File.separator;
-        String newDir =
-            "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + "__TEMP_DIR__"
-                + File.separator;
         try {
             File sideroad =
                 MainUtil.getFile(PS.get().IMP.getDirectory(), dir + "sideroad.schematic");
+            String newDir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator
+                + "__TEMP_DIR__" + File.separator;
             if (sideroad.exists()) {
                 files.add(new FileBytes(newDir + "sideroad.schematic",
                     Files.readAllBytes(sideroad.toPath())));
@@ -68,7 +67,7 @@ public class HybridPlotManager extends ClassicPlotManager {
             return true;
         }
         LocalBlockQueue queue = hpw.getQueue(false);
-        createSchemAbs(hpw, queue, pos1, pos2, true);
+        createSchemAbs(hpw, queue, pos1, pos2);
         queue.enqueue();
         return true;
     }
@@ -89,7 +88,7 @@ public class HybridPlotManager extends ClassicPlotManager {
             return true;
         }
         LocalBlockQueue queue = hpw.getQueue(false);
-        createSchemAbs(hpw, queue, pos1, pos2, true);
+        createSchemAbs(hpw, queue, pos1, pos2);
         queue.enqueue();
         return true;
     }
@@ -104,9 +103,9 @@ public class HybridPlotManager extends ClassicPlotManager {
         pos1.setY(0);
         pos2.setY(Math.min(getWorldHeight(), 255));
         LocalBlockQueue queue = hpw.getQueue(false);
-        createSchemAbs(hpw, queue, pos1, pos2, true);
+        createSchemAbs(hpw, queue, pos1, pos2);
         if (hpw.ROAD_SCHEMATIC_ENABLED) {
-            createSchemAbs(hpw, queue, pos1, pos2, true);
+            createSchemAbs(hpw, queue, pos1, pos2);
         }
         queue.enqueue();
         return true;
@@ -121,7 +120,7 @@ public class HybridPlotManager extends ClassicPlotManager {
     }
 
     private void createSchemAbs(HybridPlotWorld hpw, LocalBlockQueue queue, Location pos1,
-        Location pos2, boolean clear) {
+        Location pos2) {
         int size = hpw.SIZE;
         int minY;
         if (Settings.Schematics.PASTE_ON_TOP) {
@@ -168,7 +167,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         final boolean canRegen =
             (plotArea.TYPE == 0) && (plotArea.TERRAIN == 0) && REGENERATIVE_CLEAR;
         // The component blocks
-        final PlotBlock[] plotfloor = dpw.TOP_BLOCK;
+        final PlotBlock[] plotFloor = dpw.TOP_BLOCK;
         final PlotBlock[] filling = dpw.MAIN_BLOCK;
         final PlotBlock bedrock;
         if (dpw.PLOT_BEDROCK) {
@@ -201,28 +200,26 @@ public class HybridPlotManager extends ClassicPlotManager {
                 queue.setCuboid(bot, top, filling);
                 bot.setY(dpw.PLOT_HEIGHT);
                 top.setY(dpw.PLOT_HEIGHT + 1);
-                queue.setCuboid(bot, top, plotfloor);
+                queue.setCuboid(bot, top, plotFloor);
                 bot.setY(dpw.PLOT_HEIGHT + 1);
                 top.setY(getWorldHeight());
                 queue.setCuboid(bot, top, air);
                 // And finally set the schematic, the y value is unimportant for this function
                 pastePlotSchematic(dpw, queue, bot, top);
             }
-        }, new Runnable() {
-            @Override public void run() {
-                queue.enqueue();
-                // And notify whatever called this when plot clearing is done
-                GlobalBlockQueue.IMP.addTask(whenDone);
-            }
+        }, () -> {
+            queue.enqueue();
+            // And notify whatever called this when plot clearing is done
+            GlobalBlockQueue.IMP.addTask(whenDone);
         }, 10);
         return true;
     }
 
-    public void pastePlotSchematic(HybridPlotWorld plotWorld, LocalBlockQueue queue, Location l1,
-        Location l2) {
+    public void pastePlotSchematic(HybridPlotWorld plotWorld, LocalBlockQueue queue,
+        Location bottom, Location top) {
         if (!plotWorld.PLOT_SCHEMATIC) {
             return;
         }
-        createSchemAbs(plotWorld, queue, l1, l2, false);
+        createSchemAbs(plotWorld, queue, bottom, top);
     }
 }
