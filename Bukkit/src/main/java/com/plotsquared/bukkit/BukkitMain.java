@@ -10,7 +10,12 @@ import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.object.chat.PlainChatManager;
 import com.intellectualcrafters.plot.object.worlds.PlotAreaManager;
 import com.intellectualcrafters.plot.object.worlds.SinglePlotArea;
@@ -26,11 +31,23 @@ import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.listeners.*;
 import com.plotsquared.bukkit.titles.DefaultTitle_111;
 import com.plotsquared.bukkit.util.*;
-import com.plotsquared.bukkit.util.block.*;
-import com.plotsquared.bukkit.uuid.*;
+import com.plotsquared.bukkit.util.block.BukkitLocalQueue;
+import com.plotsquared.bukkit.util.block.BukkitLocalQueue_1_7;
+import com.plotsquared.bukkit.util.block.BukkitLocalQueue_1_8;
+import com.plotsquared.bukkit.util.block.BukkitLocalQueue_1_8_3;
+import com.plotsquared.bukkit.util.block.BukkitLocalQueue_1_9;
+import com.plotsquared.bukkit.uuid.DefaultUUIDWrapper;
+import com.plotsquared.bukkit.uuid.FileUUIDHandler;
+import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
+import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
+import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.sk89q.worldedit.WorldEdit;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.*;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -47,7 +64,12 @@ import javax.annotation.Nonnull;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
@@ -147,6 +169,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
         this.name = getDescription().getName();
         new PS(this, "Bukkit");
+        if (Settings.Enabled_Components.METRICS) {
+            startMetrics();
+        } else {
+            PS.log(C.CONSOLE_PLEASE_ENABLE_METRICS.f(getPluginName()));
+        }
         if (Settings.Enabled_Components.WORLDS) {
             TaskManager.IMP.taskRepeat(this::unload, 20);
             try {
