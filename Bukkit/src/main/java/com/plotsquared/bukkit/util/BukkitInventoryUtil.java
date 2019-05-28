@@ -97,7 +97,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
             }
             if (meta.hasLore()) {
                 List<String> itemLore = meta.getLore();
-                lore = itemLore.toArray(new String[0]);
+                lore = itemLore.toArray(new String[itemLore.size()]);
             }
         }
         return new PlotItemStack(id, data, amount, name, lore);

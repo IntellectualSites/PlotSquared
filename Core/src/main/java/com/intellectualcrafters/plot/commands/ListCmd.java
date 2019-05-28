@@ -68,7 +68,7 @@ public class ListCmd extends SubCommand {
         if (Permissions.hasPermission(player, C.PERMISSION_LIST_FUZZY)) {
             args.add("fuzzy <search...>");
         }
-        return args.toArray(new String[0]);
+        return args.toArray(new String[args.size()]);
     }
 
     public void noArgs(PlotPlayer player) {

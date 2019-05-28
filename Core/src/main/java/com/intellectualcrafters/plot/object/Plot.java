@@ -358,7 +358,7 @@ public class Plot {
         }
         if (isMerged()) {
             Set<Plot> plots = getConnectedPlots();
-            Plot[] array = plots.toArray(new Plot[0]);
+            Plot[] array = plots.toArray(new Plot[plots.size()]);
             ImmutableSet.Builder<UUID> owners = ImmutableSet.builder();
             UUID last = this.owner;
             owners.add(this.owner);

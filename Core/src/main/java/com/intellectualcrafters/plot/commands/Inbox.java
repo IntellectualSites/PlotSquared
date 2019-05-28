@@ -29,7 +29,7 @@ public class Inbox extends SubCommand {
             MainUtil.sendMessage(player, C.INBOX_EMPTY);
             return;
         }
-        PlotComment[] comments = oldComments.toArray(new PlotComment[0]);
+        PlotComment[] comments = oldComments.toArray(new PlotComment[oldComments.size()]);
         if (page < 0) {
             page = 0;
         }

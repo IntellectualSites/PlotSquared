@@ -200,7 +200,7 @@ public class PlotAPI {
                 perms.add(caption.s());
             }
         }
-        return perms.toArray(new String[0]);
+        return perms.toArray(new String[perms.size()]);
     }
 
     /**
@@ -478,7 +478,7 @@ public class PlotAPI {
                 pPlots.add(plot);
             }
         }
-        return pPlots.toArray(new Plot[0]);
+        return pPlots.toArray(new Plot[pPlots.size()]);
     }
 
     /**
@@ -497,7 +497,7 @@ public class PlotAPI {
             return new Plot[0];
         }
         Collection<Plot> plots = PS.get().getPlots(world.getName());
-        return plots.toArray(new Plot[0]);
+        return plots.toArray(new Plot[plots.size()]);
     }
 
     /**
@@ -510,7 +510,7 @@ public class PlotAPI {
     @Deprecated
     public String[] getPlotWorlds() {
         Set<String> plotWorldStrings = PS.get().getPlotWorldStrings();
-        return plotWorldStrings.toArray(new String[0]);
+        return plotWorldStrings.toArray(new String[plotWorldStrings.size()]);
     }
 
     /**

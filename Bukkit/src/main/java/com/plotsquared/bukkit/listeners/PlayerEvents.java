@@ -1023,10 +1023,16 @@ public class PlayerEvents extends PlotListener implements Listener {
     public void onBigBoom(EntityExplodeEvent event) {
         Location location = BukkitUtil.getLocation(event.getLocation());
         PlotArea area = location.getPlotArea();
-        boolean plotArea = location.isPlotArea();
-        if (!plotArea) {
+        if (area == null) {
             if (!PS.get().hasPlotArea(location.getWorld())) {
                 return;
+            }
+            Iterator<Block> iterator = event.blockList().iterator();
+            while (iterator.hasNext()) {
+                iterator.next();
+                if (location.getPlotArea() != null) {
+                    iterator.remove();
+                }
             }
             return;
         }

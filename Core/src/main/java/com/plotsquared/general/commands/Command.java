@@ -306,7 +306,7 @@ public abstract class Command {
             for (String arg : args) {
                 setargs.add(arg.toLowerCase());
             }
-            String[] allargs = setargs.toArray(new String[0]);
+            String[] allargs = setargs.toArray(new String[setargs.size()]);
             int best = 0;
             for (Command current : commands) {
                 int match = getMatch(allargs, current);
