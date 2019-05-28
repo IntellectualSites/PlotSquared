@@ -59,7 +59,7 @@ public class Config {
      *
      */
     public static void set(String key, Object value, Class root) {
-        String[] split = key.split(".");
+        String[] split = key.split("\\.");
         Object instance = getInstance(split, root);
         if (instance != null) {
             Field field = getField(split, instance);
