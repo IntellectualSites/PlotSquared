@@ -46,6 +46,7 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
                 throw new IllegalArgumentException("Generator: " + cg.getClass().getName() + " is already a NukkitPlotGenerator!");
             }
             this.full = false;
+            PS.debug("NukkitPlotGenerator does not fully support: " + cg);
             this.platformGenerator = cg;
             this.plotGenerator = new IndependentPlotGenerator() {
                 @Override

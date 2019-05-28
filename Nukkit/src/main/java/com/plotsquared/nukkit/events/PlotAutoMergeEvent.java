@@ -28,7 +28,7 @@ public class PlotAutoMergeEvent extends PlotEvent implements Cancellable {
         this.plots = plots;
     }
 
-    public static HandlerList getHandlers() {
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 
@@ -43,6 +43,10 @@ public class PlotAutoMergeEvent extends PlotEvent implements Cancellable {
 
     public Level getWorld() {
         return this.world;
+    }
+
+    public HandlerList getHandlers() {
+        return handlers;
     }
 
     @Override

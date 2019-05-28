@@ -1,6 +1,5 @@
 package com.plotsquared.nukkit.object;
 
-import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.player.PlayerTeleportEvent;
@@ -66,7 +65,7 @@ public class NukkitPlayer extends PlotPlayer {
         cn.nukkit.level.Location to = NukkitUtil.getLocation(loc);
         cn.nukkit.level.Location from = player.getLocation();
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, PlayerTeleportEvent.TeleportCause.PLUGIN);
-        RegisteredListener[] listeners = PlayerTeleportEvent.getHandlers().getRegisteredListeners();
+        RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
         for (RegisteredListener listener : listeners) {
             if (listener.getPlugin().getName().equals(PS.imp().getPluginName())) {
                 continue;
@@ -109,7 +108,7 @@ public class NukkitPlayer extends PlotPlayer {
 
     @Override
     public void sendMessage(String message) {
-        if (!StringMan.isEqual(this.getMeta("lastMessage"), message) || (
+        if (!StringMan.isEqual(this.<String>getMeta("lastMessage"), message) || (
             System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
             setMeta("lastMessage", message);
             setMeta("lastMessageTime", System.currentTimeMillis());
@@ -227,12 +226,12 @@ public class NukkitPlayer extends PlotPlayer {
     
     @Override
     public void setFlight(boolean fly) {
-        this.player.getAdventureSettings().set(AdventureSettings.Type.ALLOW_FLIGHT, true);
+        this.player.setAllowFlight(fly);
     }
 
     @Override
     public boolean getFlight() {
-        return player.getAdventureSettings().get(AdventureSettings.Type.ALLOW_FLIGHT);
+        return player.getAllowFlight();
     }
 
     @Override

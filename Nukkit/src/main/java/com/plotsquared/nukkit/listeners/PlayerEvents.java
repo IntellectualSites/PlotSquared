@@ -257,11 +257,13 @@ public class PlayerEvents extends PlotListener implements Listener {
         // Delayed
 
         // Async
-        TaskManager.runTaskLaterAsync(() -> {
-            if (!player.hasPlayedBefore() && player.isOnline()) {
-                player.save();
+        TaskManager.runTaskLaterAsync(new Runnable() {
+            @Override public void run() {
+                if (!player.hasPlayedBefore() && player.isOnline()) {
+                    player.save();
+                }
+                EventUtil.manager.doJoinTask(pp);
             }
-            EventUtil.manager.doJoinTask(pp);
         }, 20);
     }
 
@@ -379,7 +381,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 this.tmpTeleport = true;
                 return;
             }
-            int border = area.getBorder();
+            Integer border = area.getBorder();
             if (z2 > border) {
                 to.setComponents(to.getX(), to.getY(), border - 4);
                 this.tmpTeleport = false;
@@ -498,7 +500,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 this.tmpTeleport = true;
                 return;
             }
-            int border = area.getBorder();
+            Integer border = area.getBorder();
             if (z2 > border) {
                 to.setComponents(to.getX(), to.getY(), border - 4);
                 this.tmpTeleport = false;
@@ -836,6 +838,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Block from = event.getFrom();
+        Block to = event.getTo();
         final Plot finalPlot = area.getOwnedPlotAbs(location);
         boolean toBlock = from == null || from.getId() == 0;
         if (toBlock) {
