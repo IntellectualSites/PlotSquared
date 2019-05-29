@@ -1669,7 +1669,7 @@ public class Plot {
             top.setZ(this.getRelative(Direction.SOUTH).getBottomAbs().getZ() - 1);
         }
         if (this.getMerged(Direction.EAST)) {
-            top.setX(this.getRelative(Direction.SOUTH).getBottomAbs().getX() - 1);
+            top.setX(this.getRelative(Direction.EAST).getBottomAbs().getX() - 1);
         }
         return top;
     }
@@ -2243,6 +2243,13 @@ public class Plot {
                     merged.add(current.getId());
                     merged.add(other.getId());
                     toReturn = true;
+
+                    if (removeRoads) {
+                        ArrayList<PlotId> ids = new ArrayList<>();
+                        ids.add(current.getId());
+                        ids.add(other.getId());
+                        this.getManager().finishPlotMerge(this.area, ids);
+                    }
                 }
             }
             if (max >= 0 && (dir == -1 || dir == 1) && !current.getMerged(Direction.EAST)) {
@@ -2255,6 +2262,13 @@ public class Plot {
                     merged.add(current.getId());
                     merged.add(other.getId());
                     toReturn = true;
+
+                    if (removeRoads) {
+                        ArrayList<PlotId> ids = new ArrayList<>();
+                        ids.add(current.getId());
+                        ids.add(other.getId());
+                        this.getManager().finishPlotMerge(this.area, ids);
+                    }
                 }
             }
             if (max >= 0 && (dir == -1 || dir == 2) && !getMerged(Direction.SOUTH)) {
@@ -2267,6 +2281,13 @@ public class Plot {
                     merged.add(current.getId());
                     merged.add(other.getId());
                     toReturn = true;
+
+                    if (removeRoads) {
+                        ArrayList<PlotId> ids = new ArrayList<>();
+                        ids.add(current.getId());
+                        ids.add(other.getId());
+                        this.getManager().finishPlotMerge(this.area, ids);
+                    }
                 }
             }
             if (max >= 0 && (dir == -1 || dir == 3) && !getMerged(Direction.WEST)) {
@@ -2279,12 +2300,15 @@ public class Plot {
                     merged.add(current.getId());
                     merged.add(other.getId());
                     toReturn = true;
+
+                    if (removeRoads) {
+                        ArrayList<PlotId> ids = new ArrayList<>();
+                        ids.add(current.getId());
+                        ids.add(other.getId());
+                        this.getManager().finishPlotMerge(this.area, ids);
+                    }
                 }
             }
-        }
-        if (removeRoads && toReturn) {
-            ArrayList<PlotId> ids = new ArrayList<>(merged);
-            this.getManager().finishPlotMerge(this.area, ids);
         }
         return toReturn;
     }
