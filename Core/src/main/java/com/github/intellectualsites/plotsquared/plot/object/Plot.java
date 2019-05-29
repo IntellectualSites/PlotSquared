@@ -949,13 +949,13 @@ public class Plot {
             for (Plot current : plots) {
                 if (current.getMerged(Direction.EAST)) {
                     manager.createRoadEast(current.area, current);
-                    if (getMerged(Direction.SOUTH)) {
+                    if (current.getMerged(Direction.SOUTH)) {
                         manager.createRoadSouth(current.area, current);
-                        if (getMerged(Direction.SOUTHEAST)) {
+                        if (current.getMerged(Direction.SOUTHEAST)) {
                             manager.createRoadSouthEast(current.area, current);
                         }
                     }
-                } else if (getMerged(Direction.SOUTH)) {
+                } else if (current.getMerged(Direction.SOUTH)) {
                     manager.createRoadSouth(current.area, current);
                 }
             }
