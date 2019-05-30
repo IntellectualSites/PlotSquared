@@ -11,7 +11,7 @@ import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.google.common.collect.Sets;
 import com.sk89q.worldedit.world.block.BaseBlock;
-
+import com.sk89q.worldedit.world.block.BlockTypes;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -96,6 +96,9 @@ public class HybridPlotManager extends ClassicPlotManager {
                     for (int y = 0; y < blocks.length; y++) {
                         if (blocks[y] != null) {
                             queue.setBlock(x, minY + y, z, blocks[y]);
+                        } else {
+                            // This is necessary, otherwise any blocks not specified in the schematic will remain after a clear
+                            queue.setBlock(x, minY + y, z, BlockTypes.AIR.getDefaultState().toBaseBlock());
                         }
                     }
                 }
