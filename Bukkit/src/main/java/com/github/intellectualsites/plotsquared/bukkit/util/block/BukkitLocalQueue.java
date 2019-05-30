@@ -70,11 +70,7 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
     }
 
     @Override public final void setComponents(LocalChunk<T> lc) {
-        if (isBaseBlocks()) {
-            setBaseBlocks(lc);
-        } else {
-            setBlocks(lc);
-        }
+        setBaseBlocks(lc);
     }
 
     public World getBukkitWorld() {
@@ -83,30 +79,6 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
 
     public Chunk getChunk(int x, int z) {
         return getBukkitWorld().getChunkAt(x, z);
-    }
-
-    public void setBlocks(LocalChunk<T> lc) {
-        World worldObj = Bukkit.getWorld(getWorld());
-        Chunk chunk = worldObj.getChunkAt(lc.getX(), lc.getZ());
-        chunk.load(true);
-        for (int layer = 0; layer < lc.blocks.length; layer++) {
-            PlotBlock[] blocksLayer = (PlotBlock[]) lc.blocks[layer];
-            if (blocksLayer != null) {
-                for (int j = 0; j < blocksLayer.length; j++) {
-                    if (blocksLayer[j] != null) {
-                        PlotBlock block = blocksLayer[j];
-                        int x = MainUtil.x_loc[layer][j];
-                        int y = MainUtil.y_loc[layer][j];
-                        int z = MainUtil.z_loc[layer][j];
-                        Block existing = chunk.getBlock(x, y, z);
-                        if (equals(block, existing)) {
-                            continue;
-                        }
-                        setMaterial(block, existing);
-                    }
-                }
-            }
-        }
     }
 
     public void setBaseBlocks(LocalChunk<T> lc) {
