@@ -21,14 +21,14 @@ import org.bukkit.block.data.BlockData;
 
 import java.util.Locale;
 
-public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
+public class BukkitLocalQueue extends BasicLocalBlockQueue {
 
     public BukkitLocalQueue(String world) {
         super(world);
     }
 
-    @Override public LocalChunk<T> getLocalChunk(int x, int z) {
-        return (LocalChunk<T>) new BasicLocalChunk(this, x, z) {
+    @Override public LocalChunk getLocalChunk(int x, int z) {
+        return new BasicLocalChunk(this, x, z) {
             // Custom stuff?
         };
     }
@@ -69,7 +69,7 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
         }
     }
 
-    @Override public final void setComponents(LocalChunk<T> lc) {
+    @Override public final void setComponents(LocalChunk lc) {
         setBaseBlocks(lc);
     }
 
@@ -81,7 +81,7 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
         return getBukkitWorld().getChunkAt(x, z);
     }
 
-    public void setBaseBlocks(LocalChunk<T> lc) {
+    public void setBaseBlocks(LocalChunk lc) {
         World worldObj = Bukkit.getWorld(getWorld());
         Chunk chunk = worldObj.getChunkAt(lc.getX(), lc.getZ());
         chunk.load(true);
@@ -152,7 +152,7 @@ public class BukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
             legacyPlotBlock.id == 0 || legacyPlotBlock.data == block.getData());
     }
 
-    public void setBiomes(LocalChunk<T> lc) {
+    public void setBiomes(LocalChunk lc) {
         if (lc.biomes != null) {
             World worldObj = Bukkit.getWorld(getWorld());
             int bx = lc.getX() << 4;

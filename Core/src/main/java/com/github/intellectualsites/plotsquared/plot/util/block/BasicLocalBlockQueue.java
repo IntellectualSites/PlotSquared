@@ -15,7 +15,7 @@ import lombok.Getter;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
+public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
 
     private final String world;
     private final ConcurrentHashMap<Long, LocalChunk> blockChunks = new ConcurrentHashMap<>();
@@ -35,7 +35,7 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
 
     @Override public abstract PlotBlock getBlock(int x, int y, int z);
 
-    public abstract void setComponents(LocalChunk<T> lc);
+    public abstract void setComponents(LocalChunk lc);
 
     @Override public final String getWorld() {
         return world;
@@ -62,7 +62,7 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
         return false;
     }
 
-    public final boolean execute(final LocalChunk<T> lc) {
+    public final boolean execute(final LocalChunk lc) {
         if (lc == null) {
             return false;
         }
@@ -149,7 +149,7 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
         return true;
     }
 
-    public final void setChunk(LocalChunk<T> chunk) {
+    public final void setChunk(LocalChunk chunk) {
         LocalChunk previous = this.blockChunks.put(chunk.longHash(), chunk);
         if (previous != null) {
             chunks.remove(previous);
@@ -169,7 +169,7 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
     }
 
 
-    public abstract class LocalChunk<B> {
+    public abstract class LocalChunk {
         public final BasicLocalBlockQueue parent;
         public final int z;
         public final int x;
@@ -177,7 +177,7 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
         public BaseBlock[][] baseblocks;
         public String[][] biomes;
 
-        public LocalChunk(BasicLocalBlockQueue<B> parent, int x, int z) {
+        public LocalChunk(BasicLocalBlockQueue parent, int x, int z) {
             this.parent = parent;
             this.x = x;
             this.z = z;
@@ -223,7 +223,7 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
     }
 
 
-    public class BasicLocalChunk extends LocalChunk<PlotBlock[]> {
+    public class BasicLocalChunk extends LocalChunk {
         public BasicLocalChunk(BasicLocalBlockQueue parent, int x, int z) {
             super(parent, x, z);
             baseblocks = new BaseBlock[16][];
