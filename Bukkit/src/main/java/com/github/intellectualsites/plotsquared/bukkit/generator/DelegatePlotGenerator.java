@@ -30,10 +30,6 @@ import java.util.Random;
     @Override public void initialize(PlotArea area) {
     }
 
-    @Override public PlotManager getNewPlotManager(PlotArea plotArea) {
-        return PlotSquared.get().IMP.getDefaultGenerator().getNewPlotManager(plotArea);
-    }
-
     @Override public String getName() {
         return this.chunkGenerator.getClass().getName();
     }

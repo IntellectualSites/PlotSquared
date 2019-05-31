@@ -13,7 +13,6 @@ public abstract class PlotManager {
     private final PlotArea plotArea;
 
     public PlotManager(PlotArea plotArea) {
-
         this.plotArea = plotArea;
     }
 
