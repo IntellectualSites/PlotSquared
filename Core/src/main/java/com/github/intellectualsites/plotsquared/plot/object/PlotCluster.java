@@ -132,7 +132,7 @@ public class PlotCluster {
             toReturn = center.getHome();
             if (toReturn.getY() == 0) {
                 PlotManager manager = this.area.getPlotManager();
-                Location loc = manager.getSignLoc(this.area, center);
+                Location loc = manager.getSignLoc(center);
                 toReturn.setY(loc.getY());
             }
         } else {
@@ -157,12 +157,12 @@ public class PlotCluster {
 
     public Location getClusterBottom() {
         PlotManager manager = this.area.getPlotManager();
-        return manager.getPlotBottomLocAbs(this.area, getP1());
+        return manager.getPlotBottomLocAbs(getP1());
     }
 
     public Location getClusterTop() {
         PlotManager manager = this.area.getPlotManager();
-        return manager.getPlotTopLocAbs(this.area, getP2());
+        return manager.getPlotTopLocAbs(getP2());
     }
 
     public boolean intersects(PlotId pos1, PlotId pos2) {

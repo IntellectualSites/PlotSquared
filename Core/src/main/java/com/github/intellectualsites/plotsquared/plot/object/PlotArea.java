@@ -144,8 +144,8 @@ public abstract class PlotArea {
     private RegionWrapper getRegionAbs() {
         if (this.region == null) {
             if (this.min != null) {
-                Location bot = getPlotManager().getPlotBottomLocAbs(this, this.min);
-                Location top = getPlotManager().getPlotTopLocAbs(this, this.max);
+                Location bot = getPlotManager().getPlotBottomLocAbs(this.min);
+                Location top = getPlotManager().getPlotTopLocAbs(this.max);
                 this.region = new RegionWrapper(bot.getX() - 1, top.getX() + 1, bot.getZ() - 1,
                     top.getZ() + 1);
             }
@@ -422,7 +422,7 @@ public abstract class PlotArea {
      */
     @Nullable public Plot getPlotAbs(@Nonnull final Location location) {
         final PlotId pid =
-            this.manager.getPlotId(this, location.getX(), location.getY(), location.getZ());
+            this.manager.getPlotId(location.getX(), location.getY(), location.getZ());
         if (pid == null) {
             return null;
         }
@@ -437,7 +437,7 @@ public abstract class PlotArea {
      */
     @Nullable public Plot getPlot(@Nonnull final Location location) {
         final PlotId pid =
-            this.manager.getPlotId(this, location.getX(), location.getY(), location.getZ());
+            this.manager.getPlotId(location.getX(), location.getY(), location.getZ());
         if (pid == null) {
             return null;
         }
@@ -452,7 +452,7 @@ public abstract class PlotArea {
      */
     @Nullable public Plot getOwnedPlot(@Nonnull final Location location) {
         final PlotId pid =
-            this.manager.getPlotId(this, location.getX(), location.getY(), location.getZ());
+            this.manager.getPlotId(location.getX(), location.getY(), location.getZ());
         if (pid == null) {
             return null;
         }
@@ -468,7 +468,7 @@ public abstract class PlotArea {
      */
     @Nullable public Plot getOwnedPlotAbs(@Nonnull final Location location) {
         final PlotId pid =
-            this.manager.getPlotId(this, location.getX(), location.getY(), location.getZ());
+            this.manager.getPlotId(location.getX(), location.getY(), location.getZ());
         if (pid == null) {
             return null;
         }
@@ -835,7 +835,7 @@ public abstract class PlotArea {
             return false;
         }
 
-        manager.startPlotMerge(this, plotIds);
+        manager.startPlotMerge(plotIds);
         final Set<UUID> trusted = new HashSet<>();
         final Set<UUID> members = new HashSet<>();
         final Set<UUID> denied = new HashSet<>();
@@ -887,7 +887,7 @@ public abstract class PlotArea {
                 }
             }
         }
-        manager.finishPlotMerge(this, plotIds);
+        manager.finishPlotMerge(plotIds);
         return true;
     }
 

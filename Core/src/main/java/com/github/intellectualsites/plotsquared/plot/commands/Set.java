@@ -47,7 +47,7 @@ import java.util.stream.IntStream;
             @Override public boolean set(PlotPlayer player, final Plot plot, String value) {
                 PlotArea plotArea = player.getLocation().getPlotArea();
                 PlotManager manager = player.getLocation().getPlotManager();
-                String[] components = manager.getPlotComponents(plotArea, plot.getId());
+                String[] components = manager.getPlotComponents(plot.getId());
                 boolean allowUnsafe = DebugAllowUnsafe.unsafeAllowed.contains(player.getUUID());
 
                 String[] args = value.split(" ");
@@ -124,7 +124,7 @@ import java.util.stream.IntStream;
         Plot plot = player.getCurrentPlot();
         if (plot != null) {
             newValues.addAll(
-                Arrays.asList(plot.getManager().getPlotComponents(plot.getArea(), plot.getId())));
+                Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
         }
         MainUtil.sendMessage(player, Captions.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringMan
             .join(newValues, Captions.BLOCK_LIST_SEPARATER.formatted()));
@@ -151,7 +151,7 @@ import java.util.stream.IntStream;
         }
         // components
         HashSet<String> components = new HashSet<>(
-            Arrays.asList(plot.getManager().getPlotComponents(plot.getArea(), plot.getId())));
+            Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
         if (components.contains(args[0].toLowerCase())) {
             return this.component.onCommand(player, Arrays.copyOfRange(args, 0, args.length));
         }
