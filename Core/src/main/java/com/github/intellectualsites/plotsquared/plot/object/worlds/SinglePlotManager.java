@@ -10,6 +10,10 @@ import java.io.File;
 import java.util.List;
 
 public class SinglePlotManager extends PlotManager {
+    public SinglePlotManager(PlotArea plotArea) {
+        super(plotArea);
+    }
+
     @Override public PlotId getPlotIdAbs(PlotArea plotArea, int x, int y, int z) {
         return new PlotId(0, 0);
     }

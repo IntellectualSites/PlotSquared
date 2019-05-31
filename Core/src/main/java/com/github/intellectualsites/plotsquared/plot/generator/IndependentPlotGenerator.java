@@ -53,8 +53,9 @@ public abstract class IndependentPlotGenerator {
      * Return a new PlotManager object.
      *
      * @return
+     * @param plotArea
      */
-    public abstract PlotManager getNewPlotManager();
+    public abstract PlotManager getNewPlotManager(PlotArea plotArea);
 
     /**
      * If any additional setup options need to be changed before world creation.
