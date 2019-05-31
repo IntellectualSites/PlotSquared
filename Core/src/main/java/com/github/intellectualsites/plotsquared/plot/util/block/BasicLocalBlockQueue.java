@@ -121,15 +121,7 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
         // Trying to mix PlotBlock and BaseBlock leads to all kinds of issues.
         // Since BaseBlock has more features than PlotBlock, simply convert
         // all PlotBlocks to BaseBlocks
-        if (id instanceof StringPlotBlock) {
-            StringPlotBlock stringPlotBlock = (StringPlotBlock) id;
-            return setBlock(x, y, z, BlockTypes.get(stringPlotBlock.getItemId()).getDefaultState().toBaseBlock());
-        } else if (id instanceof LegacyPlotBlock) {
-            LegacyPlotBlock legacyPlotBlock = (LegacyPlotBlock) id;
-            return setBlock(x, y, z, LegacyMapper.getInstance().getBlockFromLegacy(legacyPlotBlock.getId(), legacyPlotBlock.getData()).toBaseBlock());
-        } else {
-            throw new RuntimeException("Unknown PlotBock class: " + id.getClass().getName());
-        }
+        return setBlock(x, y, z, id.getBaseBlock());
     }
 
     @Override public final boolean setBiome(int x, int z, String biome) {
