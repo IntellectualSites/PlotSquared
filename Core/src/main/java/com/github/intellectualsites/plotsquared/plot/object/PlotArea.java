@@ -81,7 +81,7 @@ public abstract class PlotArea {
         @Nullable final PlotId max) {
         this.worldname = worldName;
         this.id = id;
-        this.manager = generator.getNewPlotManager(this);
+        this.manager = createManager();
         this.generator = generator;
         if (min == null || max == null) {
             if (min != max) {
@@ -101,6 +101,8 @@ public abstract class PlotArea {
             blockBucketChunk = null;
         }
     }
+
+    protected abstract PlotManager createManager();
 
     public LocalBlockQueue getQueue(final boolean autoQueue) {
         return GlobalBlockQueue.IMP.getNewQueue(worldname, autoQueue);

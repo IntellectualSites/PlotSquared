@@ -15,13 +15,9 @@ public class ClassicPlotManager extends SquarePlotManager {
 
     private final ClassicPlotWorld classicPlotWorld;
 
-    public ClassicPlotManager(PlotArea plotArea) {
-        super(plotArea);
-        if (plotArea instanceof ClassicPlotWorld){
-            classicPlotWorld = (ClassicPlotWorld)plotArea;
-        } else {
-            throw new RuntimeException("ClassicPlotManager requires plotArea to be an instance of ClassicPlotWorld");
-        }
+    public ClassicPlotManager(ClassicPlotWorld classicPlotWorld) {
+        super(classicPlotWorld);
+        this.classicPlotWorld = classicPlotWorld;
     }
 
     @Override public boolean setComponent(PlotId plotId, String component,

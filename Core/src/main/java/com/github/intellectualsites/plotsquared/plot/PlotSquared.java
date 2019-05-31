@@ -1086,7 +1086,7 @@ import java.util.zip.ZipInputStream;
             }
             // Conventional plot generator
             PlotArea plotArea = plotGenerator.getNewPlotArea(world, null, null, null);
-            PlotManager plotManager = plotGenerator.getNewPlotManager(plotArea);
+            PlotManager plotManager = plotArea.getPlotManager();
             PlotSquared.log(Captions.PREFIX + "&aDetected world load for '" + world + "'");
             PlotSquared
                 .log(Captions.PREFIX + "&3 - generator: &7" + baseGenerator + ">" + plotGenerator);

@@ -23,13 +23,9 @@ public class HybridPlotManager extends ClassicPlotManager {
 
     private final HybridPlotWorld hybridPlotWorld;
 
-    public HybridPlotManager(PlotArea plotArea) {
-        super(plotArea);
-        if (plotArea instanceof HybridPlotWorld){
-            hybridPlotWorld = (HybridPlotWorld)plotArea;
-        } else {
-            throw new RuntimeException("HybridPlotManager requires plotArea to be an instance of HybridPlotWorld");
-        }
+    public HybridPlotManager(HybridPlotWorld hybridPlotWorld) {
+        super(hybridPlotWorld);
+        this.hybridPlotWorld = hybridPlotWorld;
     }
 
     @Override public void exportTemplate() throws IOException {

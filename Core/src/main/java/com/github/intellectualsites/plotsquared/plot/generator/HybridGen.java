@@ -253,10 +253,6 @@ public class HybridGen extends IndependentPlotGenerator {
         return new HybridPlotWorld(world, id, this, min, max);
     }
 
-    @Override public PlotManager getNewPlotManager(PlotArea plotArea) {
-        return new HybridPlotManager(plotArea);
-    }
-
     @Override public void initialize(PlotArea area) {
         // All initialization is done in the PlotArea class
     }

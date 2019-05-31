@@ -26,6 +26,11 @@ public class SinglePlotArea extends GridPlotWorld {
         this.DEFAULT_HOME = new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE);
     }
 
+    @Override
+    protected PlotManager createManager() {
+        return new SinglePlotManager(this);
+    }
+
     @Override public void loadConfiguration(ConfigurationSection config) {
         VOID = config.getBoolean("void", false);
     }
