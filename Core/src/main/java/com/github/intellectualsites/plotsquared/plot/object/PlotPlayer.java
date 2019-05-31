@@ -345,7 +345,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     public void sendTitle(String title, String subtitle) {
-        sendTitle(title, subtitle, 1, 2, 1);
+        sendTitle(title, subtitle, 10, 50, 10);
     }
 
     ;
