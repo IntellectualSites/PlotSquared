@@ -96,7 +96,7 @@ public class AugmentedUtils {
                     for (int z = bzz; z <= tzz; z++) {
                         int rx = x + blockX;
                         int rz = z + blockZ;
-                        boolean can = manager.getPlotId(area, rx, 0, rz) == null;
+                        boolean can = manager.getPlotId(rx, 0, rz) == null;
                         if (can) {
                             for (int y = 1; y < 128; y++) {
                                 queue.setBlock(rx, y, rz, air);

@@ -179,7 +179,7 @@ import java.util.zip.ZipOutputStream;
                 final PlotManager manager = area.getPlotManager();
                 TaskManager.runTaskAsync(() -> {
                     try {
-                        manager.exportTemplate(area);
+                        manager.exportTemplate();
                     } catch (Exception e) { // Must recover from any exception thrown a third party template manager
                         e.printStackTrace();
                         MainUtil.sendMessage(player, "Failed: " + e.getMessage());

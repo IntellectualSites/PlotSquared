@@ -298,8 +298,8 @@ public abstract class HybridUtils {
             }
         }
         PlotManager manager = area.getPlotManager();
-        PlotId id1 = manager.getPlotId(plotWorld, x, 0, z);
-        PlotId id2 = manager.getPlotId(plotWorld, ex, 0, ez);
+        PlotId id1 = manager.getPlotId(x, 0, z);
+        PlotId id2 = manager.getPlotId(ex, 0, ez);
         x -= plotWorld.ROAD_OFFSET_X;
         z -= plotWorld.ROAD_OFFSET_Z;
         LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(plotWorld.worldname, false);
@@ -332,7 +332,7 @@ public abstract class HybridUtils {
                         boolean condition;
                         if (toCheck) {
                             condition = manager
-                                .getPlotId(plotWorld, x + X + plotWorld.ROAD_OFFSET_X, 1,
+                                .getPlotId(x + X + plotWorld.ROAD_OFFSET_X, 1,
                                     z + Z + plotWorld.ROAD_OFFSET_Z) == null;
                             //                            condition = MainUtil.isPlotRoad(new Location(plotworld.worldname, x + X, 1, z + Z));
                         } else {
