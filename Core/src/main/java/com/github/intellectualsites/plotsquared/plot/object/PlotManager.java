@@ -10,6 +10,13 @@ import java.util.List;
 
 public abstract class PlotManager {
 
+    private final PlotArea plotArea;
+
+    public PlotManager(PlotArea plotArea) {
+
+        this.plotArea = plotArea;
+    }
+
     /*
      * Plot locations (methods with Abs in them will not need to consider mega
      * plots).

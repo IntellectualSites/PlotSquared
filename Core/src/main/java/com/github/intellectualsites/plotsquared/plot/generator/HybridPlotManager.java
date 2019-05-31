@@ -21,6 +21,17 @@ public class HybridPlotManager extends ClassicPlotManager {
 
     public static boolean REGENERATIVE_CLEAR = true;
 
+    private final HybridPlotWorld hybridPlotWorld;
+
+    public HybridPlotManager(PlotArea plotArea) {
+        super(plotArea);
+        if (plotArea instanceof HybridPlotWorld){
+            hybridPlotWorld = (HybridPlotWorld)plotArea;
+        } else {
+            throw new RuntimeException("HybridPlotManager requires plotArea to be an instance of HybridPlotWorld");
+        }
+    }
+
     @Override public void exportTemplate(PlotArea plotArea) throws IOException {
         HashSet<FileBytes> files = Sets.newHashSet(
             new FileBytes(Settings.Paths.TEMPLATES + "/tmp-data.yml", Template.getBytes(plotArea)));

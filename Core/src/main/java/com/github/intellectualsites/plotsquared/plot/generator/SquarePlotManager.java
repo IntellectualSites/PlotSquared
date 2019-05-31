@@ -14,6 +14,17 @@ import java.util.Iterator;
  */
 public abstract class SquarePlotManager extends GridPlotManager {
 
+    private final SquarePlotWorld squarePlotWorld;
+
+    public SquarePlotManager(PlotArea plotArea) {
+        super(plotArea);
+        if (plotArea instanceof SquarePlotWorld){
+            squarePlotWorld = (SquarePlotWorld)plotArea;
+        } else {
+            throw new RuntimeException("SquarePlotManager requires plotArea to be an instance of SquarePlotWorld");
+        }
+    }
+
     @Override
     public boolean clearPlot(PlotArea plotArea, final Plot plot, final Runnable whenDone) {
         final HashSet<RegionWrapper> regions = plot.getRegions();

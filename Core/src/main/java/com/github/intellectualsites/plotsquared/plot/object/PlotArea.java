@@ -81,7 +81,7 @@ public abstract class PlotArea {
         @Nullable final PlotId max) {
         this.worldname = worldName;
         this.id = id;
-        this.manager = generator.getNewPlotManager();
+        this.manager = generator.getNewPlotManager(this);
         this.generator = generator;
         if (min == null || max == null) {
             if (min != max) {
