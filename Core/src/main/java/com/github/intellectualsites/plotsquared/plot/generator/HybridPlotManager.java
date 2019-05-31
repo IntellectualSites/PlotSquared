@@ -81,6 +81,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         } else {
             minY = 1;
         }
+        BaseBlock airBlock = BlockTypes.AIR.getDefaultState().toBaseBlock();
         for (int x = pos1.getX(); x <= pos2.getX(); x++) {
             short absX = (short) ((x - hpw.ROAD_OFFSET_X) % size);
             if (absX < 0) {
@@ -98,7 +99,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                             queue.setBlock(x, minY + y, z, blocks[y]);
                         } else {
                             // This is necessary, otherwise any blocks not specified in the schematic will remain after a clear
-                            queue.setBlock(x, minY + y, z, BlockTypes.AIR.getDefaultState().toBaseBlock());
+                            queue.setBlock(x, minY + y, z, airBlock);
                         }
                     }
                 }
