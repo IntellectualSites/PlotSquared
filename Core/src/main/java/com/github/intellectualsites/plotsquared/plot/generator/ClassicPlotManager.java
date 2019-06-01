@@ -250,17 +250,28 @@ public class ClassicPlotManager extends SquarePlotManager {
         Location top = plot.getExtendedTopAbs().add(1, 0, 1);
         LocalBlockQueue queue = classicPlotWorld.getQueue(false);
         int y = classicPlotWorld.WALL_HEIGHT + 1;
+        StringPlotBlock air = PlotBlock.get("air");
         if (!plot.getMerged(Direction.NORTH)) {
             int z = bot.getZ();
             for (int x = bot.getX(); x < top.getX(); x++) {
                 queue.setBlock(x, y, z, blocks.getBlock());
             }
+            // Replace all blocks above the wall with air
+            queue.setCuboid(
+                    new Location(top.getWorld(), top.getX(), y + 1, bot.getZ()),
+                    new Location(bot.getWorld(), bot.getX(), 255, bot.getZ()),
+                    air);
         }
         if (!plot.getMerged(Direction.WEST)) {
             int x = bot.getX();
             for (int z = bot.getZ(); z < top.getZ(); z++) {
                 queue.setBlock(x, y, z, blocks.getBlock());
             }
+            // Replace all blocks above the wall with air
+            queue.setCuboid(
+                    new Location(top.getWorld(), bot.getX(), y + 1, top.getZ()),
+                    new Location(bot.getWorld(), bot.getX(), 255, bot.getZ()),
+                    air);
         }
         if (!plot.getMerged(Direction.SOUTH)) {
             int z = top.getZ();
@@ -268,6 +279,11 @@ public class ClassicPlotManager extends SquarePlotManager {
                  x < top.getX() + (plot.getMerged(Direction.EAST) ? 0 : 1); x++) {
                 queue.setBlock(x, y, z, blocks.getBlock());
             }
+            // Replace all blocks above the wall with air
+            queue.setCuboid(
+                    new Location(top.getWorld(), top.getX(), y + 1, top.getZ()),
+                    new Location(bot.getWorld(), bot.getX(), 255, top.getZ()),
+                    air);
         }
         if (!plot.getMerged(Direction.EAST)) {
             int x = top.getX();
@@ -275,6 +291,11 @@ public class ClassicPlotManager extends SquarePlotManager {
                  z < top.getZ() + (plot.getMerged(Direction.SOUTH) ? 0 : 1); z++) {
                 queue.setBlock(x, y, z, blocks.getBlock());
             }
+            // Replace all blocks above the wall with air
+            queue.setCuboid(
+                    new Location(top.getWorld(), top.getX(), y + 1, top.getZ()),
+                    new Location(bot.getWorld(), top.getX(), 255, bot.getZ()),
+                    air);
         }
         queue.enqueue();
         return true;
@@ -436,6 +457,17 @@ public class ClassicPlotManager extends SquarePlotManager {
     @Override public boolean finishPlotUnlink(List<PlotId> plotIds) {
         final BlockBucket block = classicPlotWorld.CLAIMED_WALL_BLOCK;
         plotIds.forEach(id -> setWall(id, block));
+        return true;
+    }
+
+    @Override public boolean regenerateAllPlotWalls() {
+        for (Plot plot : classicPlotWorld.getPlots()) {
+            if (plot.hasOwner()) {
+                setWall(plot.getId(), classicPlotWorld.CLAIMED_WALL_BLOCK);
+            } else {
+                setWall(plot.getId(), classicPlotWorld.WALL_BLOCK);
+            }
+        }
         return true;
     }
 

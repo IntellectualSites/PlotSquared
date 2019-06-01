@@ -153,6 +153,9 @@ public abstract class HybridUtils {
                     PlotSquared.debug("PROGRESS: " + 100 * (2048 - chunks.size()) / 2048 + "%");
                 }
                 if (regions.isEmpty() && chunks.isEmpty()) {
+                    PlotSquared.debug("&3Regenerating plot walls");
+                    regeneratePlotWalls(area);
+
                     HybridUtils.UPDATE = false;
                     PlotSquared.debug(Captions.PREFIX.s() + "Finished road conversion");
                     // CANCEL TASK
@@ -376,5 +379,10 @@ public abstract class HybridUtils {
             }
         }
         return false;
+    }
+
+    public boolean regeneratePlotWalls(final PlotArea area) {
+        PlotManager plotManager = area.getPlotManager();
+        return plotManager.regenerateAllPlotWalls();
     }
 }
