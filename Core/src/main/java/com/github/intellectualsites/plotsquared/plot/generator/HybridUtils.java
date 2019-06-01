@@ -130,6 +130,16 @@ public abstract class HybridUtils {
         return scheduleRoadUpdate(area, regions, extend);
     }
 
+    public boolean scheduleSingleRegionRoadUpdate(Plot plot, int extend) {
+        if (HybridUtils.UPDATE) {
+            return false;
+        }
+        HybridUtils.UPDATE = true;
+        Set<ChunkLoc> regions = new HashSet<>();
+        regions.add(ChunkManager.manager.getChunkChunk(plot.getCenter()));
+        return scheduleRoadUpdate(plot.getArea(), regions, extend);
+    }
+
     public boolean scheduleRoadUpdate(final PlotArea area, Set<ChunkLoc> rgs, final int extend) {
         HybridUtils.regions = rgs;
         HybridUtils.area = area;
