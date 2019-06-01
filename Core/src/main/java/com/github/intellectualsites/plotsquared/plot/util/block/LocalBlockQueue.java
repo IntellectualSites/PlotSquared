@@ -97,9 +97,15 @@ public abstract class LocalBlockQueue {
     }
 
     public void setCuboid(Location pos1, Location pos2, PlotBlock block) {
-        for (int y = pos1.getY(); y <= Math.min(255, pos2.getY()); y++) {
-            for (int x = pos1.getX(); x <= pos2.getX(); x++) {
-                for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
+        int yMin = Math.min(pos1.getY(), pos2.getY());
+        int yMax = Math.min(255, Math.max(pos1.getY(), pos2.getY()));
+        int xMin = Math.min(pos1.getX(), pos2.getX());
+        int xMax = Math.max(pos1.getX(), pos2.getX());
+        int zMin = Math.min(pos1.getZ(), pos2.getZ());
+        int zMax = Math.max(pos1.getZ(), pos2.getZ());
+        for (int y = yMin; y <= yMax; y++) {
+            for (int x = xMin; x <= xMax; x++) {
+                for (int z = zMin; z <= zMax; z++) {
                     setBlock(x, y, z, block);
                 }
             }
@@ -107,9 +113,15 @@ public abstract class LocalBlockQueue {
     }
 
     public void setCuboid(Location pos1, Location pos2, BlockBucket blocks) {
-        for (int y = pos1.getY(); y <= Math.min(255, pos2.getY()); y++) {
-            for (int x = pos1.getX(); x <= pos2.getX(); x++) {
-                for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
+        int yMin = Math.min(pos1.getY(), pos2.getY());
+        int yMax = Math.min(255, Math.max(pos1.getY(), pos2.getY()));
+        int xMin = Math.min(pos1.getX(), pos2.getX());
+        int xMax = Math.max(pos1.getX(), pos2.getX());
+        int zMin = Math.min(pos1.getZ(), pos2.getZ());
+        int zMax = Math.max(pos1.getZ(), pos2.getZ());
+        for (int y = yMin; y <= yMax; y++) {
+            for (int x = xMin; x <= xMax; x++) {
+                for (int z = zMin; z <= zMax; z++) {
                     setBlock(x, y, z, blocks.getBlock());
                 }
             }

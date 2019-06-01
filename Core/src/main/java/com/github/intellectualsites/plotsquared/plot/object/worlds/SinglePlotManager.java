@@ -107,4 +107,6 @@ public class SinglePlotManager extends PlotManager {
     @Override public boolean finishPlotUnlink(List<PlotId> plotIds) {
         return false;
     }
+
+    @Override public boolean regenerateAllPlotWalls() { return false; }
 }

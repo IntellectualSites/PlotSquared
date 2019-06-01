@@ -85,4 +85,6 @@ public abstract class PlotManager {
         return 255;
     }
 
+    public abstract boolean regenerateAllPlotWalls();
+
 }
