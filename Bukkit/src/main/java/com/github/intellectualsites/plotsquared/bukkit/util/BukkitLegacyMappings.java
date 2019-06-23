@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
+import com.github.intellectualsites.plotsquared.bukkit.BukkitMain;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.LegacyPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
@@ -688,9 +689,7 @@ public final class BukkitLegacyMappings extends LegacyMappings {
                     final LegacyBlock missingBlock =
                         new LegacyBlock(material.getId(), materialName, materialName);
                     missing.add(missingBlock);
-                } catch (Exception e) {
-                    Bukkit.getLogger().severe(
-                        "Error creating legacy block: " + materialName + ". Possibly a new block.");
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -713,9 +712,8 @@ public final class BukkitLegacyMappings extends LegacyMappings {
                 try {
                     material = Material.getMaterial(legacyBlock.getLegacyName(), true);
                 } catch (NoSuchMethodError error) {
-                    PlotSquared.log(
-                        "You can't use this version of PlotSquared on a server "
-                            + "less than Minecraft 1.13.2");
+                    PlotSquared.log("You can't use this version of PlotSquared on a server "
+                        + "less than Minecraft 1.13.2");
                     Bukkit.shutdown();
                     break;
                 }
@@ -840,7 +838,9 @@ public final class BukkitLegacyMappings extends LegacyMappings {
         LegacyBlock(final int numericalId, @NonNull final String legacyName,
             @NonNull final String newName, @NonNull final String new14Name) {
             this(numericalId, 0, legacyName,
-                PlotSquared.get().IMP.getServerVersion()[1] == 13 ? newName : new14Name);
+                Bukkit.getBukkitVersion().split("-")[0].split("\\.")[1].equals("13") ?
+                    newName :
+                    new14Name);
         }
 
         LegacyBlock(final int numericalId, @NonNull final String legacyName,
