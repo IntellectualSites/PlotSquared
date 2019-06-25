@@ -254,9 +254,6 @@ permissions:
   plotme.limit.10:
     children:
       plots.plot.10: true
-  plotme.admin.home.other:
-    children:
-      plots.plot.: true
   plotme.admin.clear:
     children:
       plots.admin.command.clear: true
