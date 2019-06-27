@@ -62,7 +62,7 @@ subprojects {
     }
 
     dependencies {
-        implementation('com.sk89q.worldedit:worldedit-core:7.0.0-SNAPSHOT') {
+        implementation('com.sk89q.worldedit:worldedit-core:7.0.0') {
             exclude(module: 'bukkit-classloader-check')
             exclude(module: 'mockito-core')
             exclude(module: 'dummypermscompat')

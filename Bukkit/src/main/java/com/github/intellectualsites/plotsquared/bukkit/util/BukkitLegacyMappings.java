@@ -7,6 +7,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.StringPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.util.LegacyMappings;
 import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -769,7 +771,9 @@ public final class BukkitLegacyMappings extends LegacyMappings {
             idDataPair = new IdDataPair(Integer.parseInt(string), 0);
         }
         PlotBlock plotBlock;
-        if (NEW_STRING_TO_LEGACY_PLOT_BLOCK.keySet().contains(workingString.toLowerCase())) {
+        if (Material.matchMaterial(workingString) != null) {
+            return PlotBlock.get(workingString);
+        } else if (NEW_STRING_TO_LEGACY_PLOT_BLOCK.keySet().contains(workingString.toLowerCase())) {
             return PlotBlock.get(workingString);
         } else if ((plotBlock = fromLegacyToString(idDataPair)) != null) {
             return plotBlock;
