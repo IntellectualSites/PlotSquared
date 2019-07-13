@@ -3,6 +3,7 @@ version: "${version}"
 author: Empire92
 api: ["1.0.0"]
 main: com.plotsquared.nukkit.NukkitMain
+depend: [FastAsyncWorldEdit, DbLib]
 load: STARTUP
 permissions:
   plots.use:
