@@ -1223,6 +1223,11 @@ import java.util.regex.Pattern;
                     event.setCancelled(true);
                 }
                 break;
+            case KELP:
+                if (Flags.KELP_GROW.isFalse(plot)) {
+                    event.setCancelled(true);
+                }
+                break;
         }
     }
 
