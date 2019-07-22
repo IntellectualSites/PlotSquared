@@ -2379,7 +2379,7 @@ import java.util.regex.Pattern;
                 Captions.PERMISSION_ADMIN_BUILD_UNOWNED);
             event.setCancelled(true);
         } else if (!plot.isAdded(pp.getUUID())) {
-            if (Flags.USE.contains(plot, PlotBlock.get(event.getBucket().getId(), 0))) {
+            if (Flags.USE.contains(plot, PlotBlock.get(event.getBucket().name()))) {
                 return;
             }
             if (Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
