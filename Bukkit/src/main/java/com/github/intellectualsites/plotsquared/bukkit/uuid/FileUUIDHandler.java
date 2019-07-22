@@ -210,14 +210,15 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
             }
 
             if (getUUIDMap().isEmpty()) {
-                for (OfflinePlotPlayer op : FileUUIDHandler.this.uuidWrapper.getOfflinePlayers()) {
-                    long last = op.getLastPlayed();
+                for (OfflinePlotPlayer offlinePlotPlayer : FileUUIDHandler.this.uuidWrapper
+                    .getOfflinePlayers()) {
+                    long last = offlinePlotPlayer.getLastPlayed();
                     if (last != 0) {
-                        String name = op.getName();
+                        String name = offlinePlotPlayer.getName();
                         StringWrapper wrap = new StringWrapper(name);
                         if (!toAdd.containsKey(wrap)) {
-                            UUID uuid = FileUUIDHandler.this.uuidWrapper.getUUID(op);
-                            toAdd.put(wrap, uuid);
+                            UUID uuid = FileUUIDHandler.this.uuidWrapper.getUUID(offlinePlotPlayer);
+                            toAdd.putIfAbsent(wrap, uuid);
                             if (ExpireManager.IMP != null) {
                                 ExpireManager.IMP.storeDate(uuid, last);
                             }
