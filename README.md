@@ -20,7 +20,7 @@ is to provide a lag-free and smooth experience.
 * [[Jenkins (Dev Builds)](https://ci.athion.net/job/PlotSquared-Breaking/)] [[Jenkins (Releases)](https://ci.athion.net/job/PlotSquared-Releases/)]
 * [Spigot Page](https://www.spigotmc.org/resources/plotsquared.1177/)
 * [Discord](https://discord.gg/ngZCzbU)
-* [Wiki](https://github.com/intellectualcrafters/plotsquared/wiki)
+* [Wiki](https://github.com/IntellectualSites/PlotSquared/wiki)
 
 ### Developer Resources
 * [[JavaDoc](https://ci.athion.net/job/PlotSquared-Breaking/javadoc/)]
