@@ -2603,7 +2603,53 @@ public class Plot {
                     pos2.getZ()));
             return regions_cache;
         }
-        Set<Plot> plots = this.getConnectedPlots();
+        Set<Plot> plotsSet = this.getConnectedPlots();
+        List<Plot> plots = new ArrayList<>(plotsSet);
+        plots.sort(new Comparator<Plot>() {
+            @Override
+            public int compare(Plot o1, Plot o2) {
+                boolean[] merged1 = o1.getMerged();
+                boolean[] merged2 = o2.getMerged();
+                int mergeCount1 = 0;
+                for (boolean b : merged1) {
+                    mergeCount1 += (b ? 1 : 0);
+                }
+                int mergeCount2 = 0;
+                for (boolean b : merged2) {
+                    mergeCount2 += (b ? 1 : 0);
+                }
+
+                if (mergeCount1 == mergeCount2) {
+                    if (mergeCount1 > 1) {
+                        if (merged2[0] == merged2[1] && (merged1[0] == merged1[2] || merged1[1] == merged1[3])) {
+                            return -1;
+                        } else if (merged2[1] == merged2[2] && (merged1[0] == merged1[2] || merged1[1] == merged1[3])){
+                            return -1;
+                        } else if (merged2[2] == merged2[3] && (merged1[0] == merged1[2] || merged1[1] == merged1[3])){
+                            return -1;
+                        } else if (merged2[3] == merged2[0] && (merged1[0] == merged1[2] || merged1[1] == merged1[3])){
+                            return -1;
+                        } else if (merged1[1] == merged1[2] && (merged2[0] == merged2[2] || merged2[1] == merged2[3])){
+                            return 1;
+                        } else if (merged1[2] == merged1[3] && (merged2[0] == merged2[2] || merged2[1] == merged2[3])){
+                            return 1;
+                        } else if (merged1[3] == merged1[0] && (merged2[0] == merged2[2] || merged2[1] == merged2[3])){
+                            return 1;
+                        } else if (merged1[0] == merged1[1] && (merged2[0] == merged2[2] || merged2[1] == merged2[3])){
+                            return 1;
+                        }
+                    }
+                    return 0;
+                }
+
+                if (mergeCount2 < mergeCount1) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+
+            }
+        });
         HashSet<RegionWrapper> regions = regions_cache = new HashSet<>();
         HashSet<PlotId> visited = new HashSet<>();
         for (Plot current : plots) {
