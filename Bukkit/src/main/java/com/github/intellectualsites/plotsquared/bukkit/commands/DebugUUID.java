@@ -63,7 +63,7 @@ import java.util.Map.Entry;
 
         if (args.length != 2 || !"-o".equals(args[1])) {
             MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                "/plot uuidconvert " + args[0] + " - o");
+                "/plot uuidconvert " + args[0] + " -o");
             MainUtil.sendMessage(player, "&cBe aware of the following!");
             MainUtil.sendMessage(player,
                 "&8 - &cUse the database command or another method to backup your plots beforehand");
