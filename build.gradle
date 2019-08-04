@@ -28,7 +28,7 @@ def revision = ""
 def buildNumber = ""
 def date = ""
 ext {
-    git = Grgit.open(dir: '.git')
+    git = Grgit.open(dir: new File(rootDir.toString()+'/.git'))
     date = git.head().getDate().format("yy.MM.dd")
     revision = "-${git.head().abbreviatedId}"
     parents = git.head().parentIds;
@@ -43,7 +43,6 @@ ext {
     }
 }
 
-// version = String.format("%s.%s%s%s", rootVersion, date, revision, buildNumber)
 version = String.format("%s.%s", rootVersion, buildNumber)
 
 description = rootProject.name
