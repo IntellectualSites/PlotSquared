@@ -2,12 +2,16 @@ package com.github.intellectualsites.plotsquared.plot.flag;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.PlotSettings;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Flag Manager Utility.
@@ -141,13 +145,6 @@ public class FlagManager {
         return true;
     }
 
-    public static <V> boolean addClusterFlag(PlotCluster cluster, Flag<V> flag, V value) {
-        getSettingFlag(cluster.area, cluster.settings, flag);
-        cluster.settings.flags.put(flag, value);
-        DBFunc.setFlags(cluster, cluster.settings.flags);
-        return true;
-    }
-
     /**
      * Returns a map of the {@link Flag}s and their values for the specified plot.
      *
@@ -217,20 +214,6 @@ public class FlagManager {
         return true;
     }
 
-    public static boolean removeClusterFlag(PlotCluster cluster, Flag id) {
-        Object object = cluster.settings.flags.remove(id);
-        if (object == null) {
-            return false;
-        }
-        boolean result = EventUtil.manager.callFlagRemove(id, object, cluster);
-        if (!result) {
-            cluster.settings.flags.put(id, object);
-            return false;
-        }
-        DBFunc.setFlags(cluster, cluster.settings.flags);
-        return true;
-    }
-
     public static void setPlotFlags(Plot origin, HashMap<Flag<?>, Object> flags) {
         for (Plot plot : origin.getConnectedPlots()) {
             if (flags != null && !flags.isEmpty()) {
@@ -248,20 +231,6 @@ public class FlagManager {
         }
     }
 
-    public static void setClusterFlags(PlotCluster cluster, Set<Flag> flags) {
-        if (flags != null && !flags.isEmpty()) {
-            cluster.settings.flags.clear();
-            for (Flag flag : flags) {
-                cluster.settings.flags.put(flag, flag);
-            }
-        } else if (cluster.settings.flags.isEmpty()) {
-            return;
-        } else {
-            cluster.settings.flags.clear();
-        }
-        DBFunc.setFlags(cluster, cluster.settings.flags);
-    }
-
     /**
      * Get a list of registered {@link Flag} objects based on player permissions.
      *
@@ -269,13 +238,9 @@ public class FlagManager {
      * @return a list of flags the specified player can use
      */
     public static List<Flag> getFlags(PlotPlayer player) {
-        List<Flag> returnFlags = new ArrayList<>();
-        for (Flag flag : Flags.getFlags()) {
-            if (Permissions
-                .hasPermission(player, "plots.set.flag." + flag.getName().toLowerCase())) {
-                returnFlags.add(flag);
-            }
-        }
+        List<Flag> returnFlags = Flags.getFlags().stream().filter(flag -> Permissions
+            .hasPermission(player, "plots.set.flag." + flag.getName().toLowerCase()))
+            .collect(Collectors.toList());
         return returnFlags;
     }
 

@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 
 import java.util.ArrayList;
@@ -19,10 +19,10 @@ import java.util.UUID;
 
         if (unsafeAllowed.contains(player.getUUID())) {
             unsafeAllowed.remove(player.getUUID());
-            sendMessage(player, C.DEBUGALLOWUNSAFE_OFF);
+            sendMessage(player, Captions.DEBUGALLOWUNSAFE_OFF);
         } else {
             unsafeAllowed.add(player.getUUID());
-            sendMessage(player, C.DEBUGALLOWUNSAFE_ON);
+            sendMessage(player, Captions.DEBUGALLOWUNSAFE_ON);
         }
         return true;
     }

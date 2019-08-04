@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -32,8 +32,7 @@ import java.util.HashSet;
 
 import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getRefClass;
 
-@SuppressWarnings("unused")
-public class ChunkListener implements Listener {
+@SuppressWarnings("unused") public class ChunkListener implements Listener {
 
     private RefMethod methodGetHandleChunk;
     private RefField mustSave;
@@ -49,7 +48,7 @@ public class ChunkListener implements Listener {
                 this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
             } catch (Throwable ignored) {
                 PlotSquared.debug(PlotSquared.get().IMP.getPluginName()
-                        + "/Server not compatible for chunk processor trim/gc");
+                    + "/Server not compatible for chunk processor trim/gc");
 
                 Settings.Chunk_Processor.AUTO_TRIM = false;
             }
@@ -60,48 +59,45 @@ public class ChunkListener implements Listener {
         for (World world : Bukkit.getWorlds()) {
             world.setAutoSave(false);
         }
-        TaskManager.runTaskRepeat(new Runnable() {
-            @Override public void run() {
-                try {
-                    HashSet<Chunk> toUnload = new HashSet<>();
-                    for (World world : Bukkit.getWorlds()) {
-                        String worldName = world.getName();
-                        if (!PlotSquared.get().hasPlotArea(worldName)) {
+        TaskManager.runTaskRepeat(() -> {
+            try {
+                HashSet<Chunk> toUnload = new HashSet<>();
+                for (World world : Bukkit.getWorlds()) {
+                    String worldName = world.getName();
+                    if (!PlotSquared.get().hasPlotArea(worldName)) {
+                        continue;
+                    }
+                    Object w = world.getClass().getDeclaredMethod("getHandle").invoke(world);
+                    Object chunkMap = w.getClass().getDeclaredMethod("getPlayerChunkMap").invoke(w);
+                    Method methodIsChunkInUse =
+                        chunkMap.getClass().getDeclaredMethod("isChunkInUse", int.class, int.class);
+                    Chunk[] chunks = world.getLoadedChunks();
+                    for (Chunk chunk : chunks) {
+                        if ((boolean) methodIsChunkInUse
+                            .invoke(chunkMap, chunk.getX(), chunk.getZ())) {
                             continue;
                         }
-                        Object w = world.getClass().getDeclaredMethod("getHandle").invoke(world);
-                        Object chunkMap =
-                            w.getClass().getDeclaredMethod("getPlayerChunkMap").invoke(w);
-                        Method methodIsChunkInUse = chunkMap.getClass()
-                            .getDeclaredMethod("isChunkInUse", int.class, int.class);
-                        Chunk[] chunks = world.getLoadedChunks();
-                        for (Chunk chunk : chunks) {
-                            if ((boolean) methodIsChunkInUse
-                                .invoke(chunkMap, chunk.getX(), chunk.getZ())) {
-                                continue;
-                            }
-                            int x = chunk.getX();
-                            int z = chunk.getZ();
-                            if (!shouldSave(worldName, x, z)) {
-                                unloadChunk(worldName, chunk, false);
-                                continue;
-                            }
-                            toUnload.add(chunk);
+                        int x = chunk.getX();
+                        int z = chunk.getZ();
+                        if (!shouldSave(worldName, x, z)) {
+                            unloadChunk(worldName, chunk, false);
+                            continue;
                         }
+                        toUnload.add(chunk);
                     }
-                    if (toUnload.isEmpty()) {
+                }
+                if (toUnload.isEmpty()) {
+                    return;
+                }
+                long start = System.currentTimeMillis();
+                for (Chunk chunk : toUnload) {
+                    if (System.currentTimeMillis() - start > 5) {
                         return;
                     }
-                    long start = System.currentTimeMillis();
-                    for (Chunk chunk : toUnload) {
-                        if (System.currentTimeMillis() - start > 5) {
-                            return;
-                        }
-                        chunk.unload(true, false);
-                    }
-                } catch (Throwable e) {
-                    e.printStackTrace();
+                    chunk.unload(true);
                 }
+            } catch (Throwable e) {
+                e.printStackTrace();
             }
         }, 1);
     }
@@ -112,20 +108,20 @@ public class ChunkListener implements Listener {
         }
         Object c = this.methodGetHandleChunk.of(chunk).call();
         RefField.RefExecutor field = this.mustSave.of(c);
-        if ((Boolean) field.get() == true) {
+        if ((Boolean) field.get()) {
             field.set(false);
             if (chunk.isLoaded()) {
                 ignoreUnload = true;
-                chunk.unload(false, false);
+                chunk.unload(false);
                 ignoreUnload = false;
             }
         }
         return true;
     }
 
-    public boolean shouldSave(String world, int X, int Z) {
-        int x = X << 4;
-        int z = Z << 4;
+    public boolean shouldSave(String world, int chunkX, int chunkZ) {
+        int x = chunkX << 4;
+        int z = chunkZ << 4;
         int x2 = x + 15;
         int z2 = z + 15;
         Plot plot = new Location(world, x, 1, z).getOwnedPlotAbs();
@@ -148,13 +144,12 @@ public class ChunkListener implements Listener {
         return plot != null && plot.hasOwner();
     }
 
-    @EventHandler
-    public void onChunkUnload(ChunkUnloadEvent event) {
+    @EventHandler public void onChunkUnload(ChunkUnloadEvent event) {
         if (ignoreUnload) {
             return;
         }
+        Chunk chunk = event.getChunk();
         if (Settings.Chunk_Processor.AUTO_TRIM) {
-            Chunk chunk = event.getChunk();
             String world = chunk.getWorld().getName();
             if (PlotSquared.get().hasPlotArea(world)) {
                 if (unloadChunk(world, chunk, true)) {
@@ -163,17 +158,15 @@ public class ChunkListener implements Listener {
             }
         }
         if (processChunk(event.getChunk(), true)) {
-            event.setCancelled(true);
+            chunk.setForceLoaded(true);
         }
     }
 
-    @EventHandler
-    public void onChunkLoad(ChunkLoadEvent event) {
+    @EventHandler public void onChunkLoad(ChunkLoadEvent event) {
         processChunk(event.getChunk(), false);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onItemSpawn(ItemSpawnEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST) public void onItemSpawn(ItemSpawnEvent event) {
         Item entity = event.getEntity();
         Chunk chunk = entity.getLocation().getChunk();
         if (chunk == this.lastChunk) {
@@ -226,39 +219,37 @@ public class ChunkListener implements Listener {
     private void cleanChunk(final Chunk chunk) {
         TaskManager.index.incrementAndGet();
         final Integer currentIndex = TaskManager.index.get();
-        Integer task = TaskManager.runTaskRepeat(new Runnable() {
-            @Override public void run() {
-                if (!chunk.isLoaded()) {
+        Integer task = TaskManager.runTaskRepeat(() -> {
+            if (!chunk.isLoaded()) {
+                Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
+                TaskManager.tasks.remove(currentIndex);
+                PlotSquared
+                    .debug(Captions.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
+                chunk.unload(true);
+                return;
+            }
+            BlockState[] tiles = chunk.getTileEntities();
+            if (tiles.length == 0) {
+                Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
+                TaskManager.tasks.remove(currentIndex);
+                PlotSquared
+                    .debug(Captions.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
+                chunk.unload(true);
+                return;
+            }
+            long start = System.currentTimeMillis();
+            int i = 0;
+            while (System.currentTimeMillis() - start < 250) {
+                if (i >= tiles.length) {
                     Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                     TaskManager.tasks.remove(currentIndex);
-                    PlotSquared
-                            .debug(C.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
-                    chunk.unload(true, true);
+                    PlotSquared.debug(
+                        Captions.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
+                    chunk.unload(true);
                     return;
                 }
-                BlockState[] tiles = chunk.getTileEntities();
-                if (tiles.length == 0) {
-                    Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
-                    TaskManager.tasks.remove(currentIndex);
-                    PlotSquared
-                        .debug(C.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
-                    chunk.unload(true, true);
-                    return;
-                }
-                long start = System.currentTimeMillis();
-                int i = 0;
-                while (System.currentTimeMillis() - start < 250) {
-                    if (i >= tiles.length) {
-                        Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
-                        TaskManager.tasks.remove(currentIndex);
-                        PlotSquared
-                            .debug(C.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
-                        chunk.unload(true, true);
-                        return;
-                    }
-                    tiles[i].getBlock().setType(Material.AIR, false);
-                    i++;
-                }
+                tiles[i].getBlock().setType(Material.AIR, false);
+                i++;
             }
         }, 5);
         TaskManager.tasks.put(currentIndex, task);
@@ -277,14 +268,14 @@ public class ChunkListener implements Listener {
                 }
             }
             PlotSquared.debug(
-                    C.PREFIX.s() + "&a detected unsafe chunk and processed: " + (chunk.getX() << 4)
-                            + "," + (chunk.getX() << 4));
+                Captions.PREFIX.s() + "&a detected unsafe chunk and processed: " + (chunk.getX()
+                    << 4) + "," + (chunk.getX() << 4));
         }
         if (tiles.length > Settings.Chunk_Processor.MAX_TILES) {
             if (unload) {
                 PlotSquared.debug(
-                        C.PREFIX.s() + "&c detected unsafe chunk: " + (chunk.getX() << 4) + "," + (
-                                chunk.getX() << 4));
+                    Captions.PREFIX.s() + "&c detected unsafe chunk: " + (chunk.getX() << 4) + ","
+                        + (chunk.getX() << 4));
                 cleanChunk(chunk);
                 return true;
             }

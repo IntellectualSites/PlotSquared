@@ -1,6 +1,10 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
+import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockTypes;
+import com.sk89q.worldedit.world.registry.LegacyMapper;
 import lombok.Getter;
+import lombok.Setter;
 
 public class LegacyPlotBlock extends PlotBlock {
 
@@ -15,6 +19,7 @@ public class LegacyPlotBlock extends PlotBlock {
         }
     }
 
+    @Setter private BaseBlock baseBlock = null;
     @Getter public final short id;
     @Getter public final byte data;
 
@@ -25,6 +30,13 @@ public class LegacyPlotBlock extends PlotBlock {
 
     @Override public Object getRawId() {
         return this.id;
+    }
+
+    @Override public BaseBlock getBaseBlock() {
+        if (baseBlock == null) {
+            baseBlock = LegacyMapper.getInstance().getBlockFromLegacy(id, data).toBaseBlock();
+        }
+        return baseBlock;
     }
 
     @Override public boolean isAir() {

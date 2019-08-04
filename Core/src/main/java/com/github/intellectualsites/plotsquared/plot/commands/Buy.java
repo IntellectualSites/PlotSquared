@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -27,39 +27,40 @@ import java.util.concurrent.CompletableFuture;
     @Override public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) {
-        check(EconHandler.manager, C.ECON_DISABLED);
+
+        check(EconHandler.manager, Captions.ECON_DISABLED);
         final Plot plot;
         if (args.length != 0) {
-            checkTrue(args.length == 1, C.COMMAND_SYNTAX, getUsage());
+            checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, getUsage());
             plot = check(MainUtil.getPlotFromString(player, args[0], true), null);
         } else {
-            plot = check(player.getCurrentPlot(), C.NOT_IN_PLOT);
+            plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);
         }
-        checkTrue(plot.hasOwner(), C.PLOT_UNOWNED);
-        checkTrue(!plot.isOwner(player.getUUID()), C.CANNOT_BUY_OWN);
+        checkTrue(plot.hasOwner(), Captions.PLOT_UNOWNED);
+        checkTrue(!plot.isOwner(player.getUUID()), Captions.CANNOT_BUY_OWN);
         Set<Plot> plots = plot.getConnectedPlots();
         checkTrue(player.getPlotCount() + plots.size() <= player.getAllowedPlots(),
-            C.CANT_CLAIM_MORE_PLOTS);
+            Captions.CANT_CLAIM_MORE_PLOTS);
         Optional<Double> flag = plot.getFlag(Flags.PRICE);
         if (!flag.isPresent()) {
-            throw new CommandException(C.NOT_FOR_SALE);
+            throw new CommandException(Captions.NOT_FOR_SALE);
         }
         final double price = flag.get();
-        checkTrue(player.getMoney() >= price, C.CANNOT_AFFORD_PLOT);
+        checkTrue(player.getMoney() >= price, Captions.CANNOT_AFFORD_PLOT);
         player.withdraw(price);
         // Failure
         // Success
         confirm.run(this, () -> {
-            C.REMOVED_BALANCE.send(player, price);
+            Captions.REMOVED_BALANCE.send(player, price);
             EconHandler.manager
                 .depositMoney(UUIDHandler.getUUIDWrapper().getOfflinePlayer(plot.owner), price);
             PlotPlayer owner = UUIDHandler.getPlayer(plot.owner);
             if (owner != null) {
-                C.PLOT_SOLD.send(owner, plot.getId(), player.getName(), price);
+                Captions.PLOT_SOLD.send(owner, plot.getId(), player.getName(), price);
             }
             plot.removeFlag(Flags.PRICE);
             plot.setOwner(player.getUUID());
-            C.CLAIMED.send(player);
+            Captions.CLAIMED.send(player);
             whenDone.run(Buy.this, CommandResult.SUCCESS);
         }, () -> {
             player.deposit(price);

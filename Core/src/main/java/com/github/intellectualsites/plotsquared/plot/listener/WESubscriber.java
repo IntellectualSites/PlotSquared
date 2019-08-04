@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.listener;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -54,7 +54,7 @@ public class WESubscriber {
                 mask = WEManager.getMask(pp);
                 if (mask.isEmpty()) {
                     if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
-                        MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASS);
+                        MainUtil.sendMessage(pp, Captions.WORLDEDIT_BYPASS);
                     }
                     if (PlotSquared.get().hasPlotArea(world)) {
                         event.setExtent(new NullExtent());

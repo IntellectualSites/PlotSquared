@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -85,7 +85,8 @@ import java.util.UUID;
             if (plot.isAdded(uuid)) {
                 Set<PlotPlayer> players = getNearbyPlayers(player, plot);
                 for (PlotPlayer oPlayer : players) {
-                    if (!Permissions.hasPermission(oPlayer, C.PERMISSION_ADMIN_ENTRY_FORCEFIELD)) {
+                    if (!Permissions
+                        .hasPermission(oPlayer, Captions.PERMISSION_ADMIN_ENTRY_FORCEFIELD)) {
                         ((BukkitPlayer) oPlayer).player
                             .setVelocity(calculateVelocity(plotPlayer, oPlayer));
                     }
@@ -95,7 +96,8 @@ import java.util.UUID;
                 if (oPlayer == null) {
                     return;
                 }
-                if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_ENTRY_FORCEFIELD)) {
+                if (!Permissions
+                    .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_ENTRY_FORCEFIELD)) {
                     player.setVelocity(calculateVelocity(oPlayer, plotPlayer));
                 }
             }

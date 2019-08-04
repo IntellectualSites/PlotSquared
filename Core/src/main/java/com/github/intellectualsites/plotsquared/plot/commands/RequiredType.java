@@ -6,11 +6,9 @@ public enum RequiredType {
     CONSOLE, PLAYER, NONE;
 
     public boolean allows(CommandCaller player) {
-        switch (this) {
-            case NONE:
-                return true;
-            default:
-                return this == player.getSuperCaller();
+        if (this == RequiredType.NONE) {
+            return true;
         }
+        return this == player.getSuperCaller();
     }
 }

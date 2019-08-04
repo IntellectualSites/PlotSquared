@@ -1,8 +1,9 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
+import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
@@ -20,7 +21,7 @@ public class Help extends Command {
         super(parent, true);
     }
 
-    @Override public boolean canExecute(PlotPlayer player, boolean message) {
+    @Override public boolean canExecute(CommandCaller player, boolean message) {
         return true;
     }
 
@@ -50,7 +51,7 @@ public class Help extends Command {
                 }
                 return CompletableFuture.completedFuture(false);
             default:
-                C.COMMAND_SYNTAX.send(player, getUsage());
+                Captions.COMMAND_SYNTAX.send(player, getUsage());
         }
         return CompletableFuture.completedFuture(true);
     }
@@ -76,10 +77,10 @@ public class Help extends Command {
             }
             if (cat == null && page == 0) {
                 StringBuilder builder = new StringBuilder();
-                builder.append(C.HELP_HEADER.s());
+            builder.append(Captions.HELP_HEADER.s());
                 for (CommandCategory c : CommandCategory.values()) {
                     builder.append("\n").append(StringMan
-                        .replaceAll(C.HELP_INFO_ITEM.s(), "%category%", c.toString().toLowerCase(),
+                        .replaceAll(Captions.HELP_INFO_ITEM.s(), "%category%", c.toString().toLowerCase(),
                             "%category_desc%", c.toString()));
                 }
                 builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", "all")

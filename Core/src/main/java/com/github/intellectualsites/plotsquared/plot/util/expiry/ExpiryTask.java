@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class ExpiryTask {
     private final Settings.Auto_Clear settings;
@@ -47,10 +48,9 @@ public class ExpiryTask {
                         min = false;
                         diff = settings.REQUIRED_PLOTS - plots.size();
                     }
-                    List<Long> entireList = new ArrayList<>();
-                    for (Plot plot : plots) {
-                        entireList.add(ExpireManager.IMP.getAge(plot));
-                    }
+                    List<Long> entireList =
+                        plots.stream().map(plot -> ExpireManager.IMP.getAge(plot))
+                            .collect(Collectors.toList());
                     List<Long> top = new ArrayList<>(diff + 1);
                     if (diff > 1000) {
                         Collections.sort(entireList);
@@ -106,8 +106,9 @@ public class ExpiryTask {
     }
 
     public boolean appliesAccountAge(long accountAge) {
-        if (settings.SKIP_ACCOUNT_AGE_DAYS != -1)
+        if (settings.SKIP_ACCOUNT_AGE_DAYS != -1) {
             return accountAge <= TimeUnit.DAYS.toMillis(settings.SKIP_ACCOUNT_AGE_DAYS);
+        }
         return false;
     }
 

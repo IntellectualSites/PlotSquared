@@ -2,11 +2,12 @@ package com.github.intellectualsites.plotsquared.plot.generator;
 
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
@@ -21,6 +22,7 @@ import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.HashMap;
@@ -30,14 +32,21 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     private static AffineTransform transform = new AffineTransform().rotateY(90);
     public boolean ROAD_SCHEMATIC_ENABLED;
     public boolean PLOT_SCHEMATIC = false;
+    public int PLOT_SCHEMATIC_HEIGHT = -1;
     public short PATH_WIDTH_LOWER;
     public short PATH_WIDTH_UPPER;
     public HashMap<Integer, BaseBlock[]> G_SCH;
+    public int SCHEM_Y;
     private Location SIGN_LOCATION;
 
-    public HybridPlotWorld(String worldName, String id, IndependentPlotGenerator generator,
-                           PlotId min, PlotId max) {
+    public HybridPlotWorld(String worldName, String id, @NotNull IndependentPlotGenerator generator,
+        PlotId min, PlotId max) {
         super(worldName, id, generator, min, max);
+    }
+
+    @Override
+    protected PlotManager createManager() {
+        return new HybridPlotManager(this);
     }
 
     public static byte wrap(byte data, int start) {
@@ -69,10 +78,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
                 if (direction != null) {
                     Vector3 vector = transform.apply(direction.toVector())
-                            .subtract(transform.apply(Vector3.ZERO)).normalize();
+                        .subtract(transform.apply(Vector3.ZERO)).normalize();
                     Direction newDirection = Direction.findClosest(vector,
-                            Direction.Flag.CARDINAL | Direction.Flag.ORDINAL
-                                    | Direction.Flag.SECONDARY_ORDINAL);
+                        Direction.Flag.CARDINAL | Direction.Flag.ORDINAL
+                            | Direction.Flag.SECONDARY_ORDINAL);
 
                     if (newDirection != null) {
                         CompoundTagBuilder builder = tag.createBuilder();
@@ -95,9 +104,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             return bot.add(-1, 0, -2);
         } else {
             bot.setY(0);
-            Location loc =
-                    bot.add(SIGN_LOCATION.getX(), SIGN_LOCATION.getY(), SIGN_LOCATION.getZ());
-            return loc;
+            return bot.add(SIGN_LOCATION.getX(), SIGN_LOCATION.getY(), SIGN_LOCATION.getZ());
         }
     }
 
@@ -119,7 +126,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         try {
             setupSchematics();
-        } catch (Exception ignored) {
+        } catch (Exception event) {
+            event.printStackTrace();
             PlotSquared.debug("&c - road schematics are disabled for this world.");
         }
     }
@@ -133,18 +141,41 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
     public void setupSchematics() throws SchematicHandler.UnsupportedFormatException {
         this.G_SCH = new HashMap<>();
-        File schematic1File = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
-                "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/sideroad.schematic");
-        File schematic2File = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
-                "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/intersection.schematic");
-        File schem3File = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
-                "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/plot.schematic");
+        File root = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
+            "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname);
+        File schematic1File = new File(root, "sideroad.schem");
+        if (!schematic1File.exists())
+            schematic1File = new File(root, "sideroad.schematic");
+        File schematic2File = new File(root, "intersection.schem");
+        if (!schematic2File.exists())
+            schematic2File = new File(root, "intersection.schematic");
+        File schematic3File = new File(root, "plot.schem");
+        if (!schematic3File.exists())
+            schematic3File = new File(root, "plot.schematic");
         Schematic schematic1 = SchematicHandler.manager.getSchematic(schematic1File);
         Schematic schematic2 = SchematicHandler.manager.getSchematic(schematic2File);
-        Schematic schematic3 = SchematicHandler.manager.getSchematic(schem3File);
+        Schematic schematic3 = SchematicHandler.manager.getSchematic(schematic3File);
         int shift = this.ROAD_WIDTH / 2;
         int oddshift = (this.ROAD_WIDTH & 1) == 0 ? 0 : 1;
-        int minY = Math.min(PLOT_HEIGHT, ROAD_HEIGHT);
+
+        SCHEM_Y = Math.min(PLOT_HEIGHT, ROAD_HEIGHT);
+        int plotY = PLOT_HEIGHT - SCHEM_Y;
+        int roadY = ROAD_HEIGHT - SCHEM_Y;
+
+        if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() == 256) {
+            SCHEM_Y = 0;
+            plotY = 0;
+            roadY = ROAD_HEIGHT;
+        }
+
+        if (schematic1 != null && schematic1.getClipboard().getDimensions().getY() == 256) {
+            SCHEM_Y = 0;
+            if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != 256) {
+                plotY = PLOT_HEIGHT;
+            }
+            roadY = 0;
+        }
+
         if (schematic3 != null) {
             this.PLOT_SCHEMATIC = true;
             BlockArrayClipboard blockArrayClipboard3 = schematic3.getClipboard();
@@ -156,29 +187,29 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             if (w3 > PLOT_WIDTH || h3 > PLOT_WIDTH) {
                 this.ROAD_SCHEMATIC_ENABLED = true;
             }
-            int centerShiftZ = 0;
+            int centerShiftZ;
             if (l3 < this.PLOT_WIDTH) {
                 centerShiftZ = (this.PLOT_WIDTH - l3) / 2;
             } else {
                 centerShiftZ = (PLOT_WIDTH - l3) / 2;
             }
-            int centerShiftX = 0;
+            int centerShiftX;
             if (w3 < this.PLOT_WIDTH) {
                 centerShiftX = (this.PLOT_WIDTH - w3) / 2;
             } else {
                 centerShiftX = (PLOT_WIDTH - w3) / 2;
             }
 
-            int startY = minY - PLOT_HEIGHT;
-
+            BlockVector3 min = blockArrayClipboard3.getMinimumPoint();
             for (short x = 0; x < w3; x++) {
                 for (short z = 0; z < l3; z++) {
                     for (short y = 0; y < h3; y++) {
-                        BaseBlock id = blockArrayClipboard3.getFullBlock(BlockVector3.at(x, y, z));
+                        BaseBlock id = blockArrayClipboard3.getFullBlock(BlockVector3
+                            .at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
                         if (!id.getBlockType().getMaterial().isAir()) {
                             addOverlayBlock((short) (x + shift + oddshift + centerShiftX),
-                                    (short) (y + startY), (short) (z + shift + oddshift + centerShiftZ),
-                                    id, false, h3);
+                                (short) (y + plotY), (short) (z + shift + oddshift + centerShiftZ),
+                                id, false, h3);
                         }
                     }
                 }
@@ -216,7 +247,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             }*/
         }
         if (schematic1 == null || schematic2 == null || this.ROAD_WIDTH == 0) {
-            PlotSquared.debug(C.PREFIX + "&3 - schematic: &7false");
+            PlotSquared.debug(Captions.PREFIX + "&3 - schematic: &7false");
             return;
         }
         this.ROAD_SCHEMATIC_ENABLED = true;
@@ -224,37 +255,42 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         // TODO: What? this.ROAD_BLOCK = BlockBucket.empty(); // PlotBlock.getEmptyData(this.ROAD_BLOCK); // PlotBlock.get(this.ROAD_BLOCK.id, (byte) 0);
 
         BlockArrayClipboard blockArrayClipboard1 = schematic1.getClipboard();
-        BlockArrayClipboard blockArrayClipboard2 = schematic2.getClipboard();
 
         BlockVector3 d1 = blockArrayClipboard1.getDimensions();
         short w1 = (short) d1.getX();
         short l1 = (short) d1.getZ();
         short h1 = (short) d1.getY();
-        BlockVector3 d2 = blockArrayClipboard2.getDimensions();
-        short w2 = (short) d2.getX();
-        short l2 = (short) d2.getZ();
-        short h2 = (short) d2.getY();
-        int startY = minY - ROAD_HEIGHT;
+
+        BlockVector3 min = blockArrayClipboard1.getMinimumPoint();
         for (short x = 0; x < w1; x++) {
             for (short z = 0; z < l1; z++) {
                 for (short y = 0; y < h1; y++) {
-                    BaseBlock id = blockArrayClipboard1.getFullBlock(BlockVector3.at(x, y, z));
+                    BaseBlock id = blockArrayClipboard1.getFullBlock(BlockVector3
+                        .at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
                     if (!id.getBlockType().getMaterial().isAir()) {
-                        addOverlayBlock((short) (x - shift), (short) (y + startY),
-                                (short) (z + shift + oddshift), id, false, h1);
-                        addOverlayBlock((short) (z + shift + oddshift), (short) (y + startY),
-                                (short) (shift - x + (oddshift - 1)), id, true, h1);
+                        addOverlayBlock((short) (x - shift), (short) (y + roadY),
+                            (short) (z + shift + oddshift), id, false, h1);
+                        addOverlayBlock((short) (z + shift + oddshift), (short) (y + roadY),
+                            (short) (shift - x + (oddshift - 1)), id, true, h1);
                     }
                 }
             }
         }
+
+        BlockArrayClipboard blockArrayClipboard2 = schematic2.getClipboard();
+        BlockVector3 d2 = blockArrayClipboard2.getDimensions();
+        short w2 = (short) d2.getX();
+        short l2 = (short) d2.getZ();
+        short h2 = (short) d2.getY();
+        min = blockArrayClipboard2.getMinimumPoint();
         for (short x = 0; x < w2; x++) {
             for (short z = 0; z < l2; z++) {
                 for (short y = 0; y < h2; y++) {
-                    BaseBlock id = blockArrayClipboard2.getFullBlock(BlockVector3.at(x, y, z));
+                    BaseBlock id = blockArrayClipboard2.getFullBlock(BlockVector3
+                        .at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
                     if (!id.getBlockType().getMaterial().isAir()) {
-                        addOverlayBlock((short) (x - shift), (short) (y + startY),
-                                (short) (z - shift), id, false, h2);
+                        addOverlayBlock((short) (x - shift), (short) (y + roadY),
+                            (short) (z - shift), id, false, h2);
                     }
                 }
             }
@@ -262,7 +298,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     }
 
     public void addOverlayBlock(short x, short y, short z, BaseBlock id, boolean rotate,
-                                int height) {
+        int height) {
         if (z < 0) {
             z += this.SIZE;
         } else if (z >= this.SIZE) {
@@ -277,11 +313,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             id = rotate(id);
         }
         int pair = MathMan.pair(x, z);
-        BaseBlock[] existing = this.G_SCH.get(pair);
-        if (existing == null) {
-            existing = new BaseBlock[height];
-            this.G_SCH.put(pair, existing);
-        }
+        BaseBlock[] existing = this.G_SCH.computeIfAbsent(pair, k -> new BaseBlock[height]);
         existing[y] = id;
     }
 }

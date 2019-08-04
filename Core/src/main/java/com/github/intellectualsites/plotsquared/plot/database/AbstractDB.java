@@ -4,6 +4,7 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public interface AbstractDB {
@@ -14,7 +15,7 @@ public interface AbstractDB {
     UUID everyone = UUID.fromString("1-1-3-3-7");
 
     /**
-     * Set Plot owner.
+     * Sets Plot owner.
      *
      * @param plot the plot
      * @param uuid the uuid of the new owner
@@ -22,7 +23,7 @@ public interface AbstractDB {
     void setOwner(Plot plot, UUID uuid);
 
     /**
-     * Create all settings, and create default helpers, trusted + denied lists.
+     * Creates all settings, and create default helpers, trusted + denied lists.
      *
      * @param plots    Plots for which the default table entries should be created
      * @param whenDone the task to run when the method is finished executing
@@ -30,7 +31,7 @@ public interface AbstractDB {
     void createPlotsAndData(List<Plot> plots, Runnable whenDone);
 
     /**
-     * Create a plot.
+     * Creates a plot.
      *
      * @param plot the plot to create
      */
@@ -44,7 +45,7 @@ public interface AbstractDB {
     void createTables() throws Exception;
 
     /**
-     * Delete a plot.
+     * Deletes a plot.
      *
      * @param plot the plot to delete
      */
@@ -57,14 +58,14 @@ public interface AbstractDB {
     void deleteTrusted(Plot plot);
 
     /**
-     * Remove all denied players from the plot.
+     * Removes all denied players from the plot.
      *
      * @param plot the plot
      */
     void deleteDenied(Plot plot);
 
     /**
-     * Delete all comments from the plot.
+     * Deletes all comments from the plot.
      *
      * @param plot the plot
      */
@@ -81,7 +82,7 @@ public interface AbstractDB {
     void getPersistentMeta(UUID uuid, RunnableVal<Map<String, byte[]>> result);
 
     /**
-     * Create the plot settings.
+     * Creates the plot settings.
      *
      * @param id   the plot entry id
      * @param plot the plot
@@ -89,7 +90,7 @@ public interface AbstractDB {
     void createPlotSettings(int id, Plot plot);
 
     /**
-     * Get the table entry ID.
+     * Gets the table entry ID.
      *
      * @param plot the plot
      * @return {@code Integer} = Plot Entry Id
@@ -97,7 +98,7 @@ public interface AbstractDB {
     int getId(Plot plot);
 
     /**
-     * Get the id of a given plot cluster.
+     * Gets the id of a given plot cluster.
      *
      * @param cluster PlotCluster Object
      * @return Integer = Cluster Entry Id
@@ -120,7 +121,7 @@ public interface AbstractDB {
     HashMap<String, Set<PlotCluster>> getClusters();
 
     /**
-     * Set the merged status for a plot.
+     * Sets the merged status for a plot.
      *
      * @param plot   The plot to set the merged status of
      * @param merged boolean[]
@@ -128,7 +129,7 @@ public interface AbstractDB {
     void setMerged(Plot plot, boolean[] merged);
 
     /**
-     * Swap the settings, helpers etc. of two plots.
+     * Swaps the settings, helpers etc. of two plots.
      *
      * @param plot1 Plot1
      * @param plot2 Plot2
@@ -136,7 +137,7 @@ public interface AbstractDB {
     void swapPlots(Plot plot1, Plot plot2);
 
     /**
-     * Set plot flags.
+     * Sets plot flags.
      *
      * @param plot  Plot Object
      * @param flags flags to set
@@ -144,15 +145,7 @@ public interface AbstractDB {
     void setFlags(Plot plot, HashMap<Flag<?>, Object> flags);
 
     /**
-     * Set cluster flags.
-     *
-     * @param cluster PlotCluster Object
-     * @param flags   flags to set (flag[])
-     */
-    void setFlags(PlotCluster cluster, HashMap<Flag<?>, Object> flags);
-
-    /**
-     * Rename a cluster to the given name.
+     * Renames a cluster to the given name.
      *
      * @param cluster the cluster to rename
      * @param name    the new cluster name
@@ -160,7 +153,7 @@ public interface AbstractDB {
     void setClusterName(PlotCluster cluster, String name);
 
     /**
-     * Set the plot alias.
+     * Sets the plot alias.
      *
      * @param plot  Plot for which the alias should be set
      * @param alias Plot Alias
@@ -168,14 +161,14 @@ public interface AbstractDB {
     void setAlias(Plot plot, String alias);
 
     /**
-     * Purge a plot.
+     * Purges a plot.
      *
      * @param uniqueIds list of plot id (db) to be purged
      */
     void purgeIds(Set<Integer> uniqueIds);
 
     /**
-     * Purge a whole world.
+     * Purges a whole world.
      *
      * @param area    World in which the plots should be purged
      * @param plotIds the {@code PlotId}s of {@code Plot}s to purge
@@ -183,7 +176,7 @@ public interface AbstractDB {
     void purge(PlotArea area, Set<PlotId> plotIds);
 
     /**
-     * Set the plot home position.
+     * Sets the plot home position.
      *
      * @param plot     the plot
      * @param position the position of plot home
@@ -247,7 +240,7 @@ public interface AbstractDB {
     void setInvited(PlotCluster cluster, UUID uuid);
 
     /**
-     * Remove the specified player from the denied list of the specified plot.
+     * Removes the specified player from the denied list of the specified plot.
      *
      * @param plot the plot
      * @param uuid the uuid of the player to remove
@@ -255,7 +248,7 @@ public interface AbstractDB {
     void removeDenied(Plot plot, UUID uuid);
 
     /**
-     * Deny the specified player from the given plot.
+     * Denies the specified player from the given plot.
      *
      * @param plot the plot
      * @param uuid the uuid of the player to deny
@@ -263,7 +256,7 @@ public interface AbstractDB {
     void setDenied(Plot plot, UUID uuid);
 
     /**
-     * Get the ratings from the specified plot.
+     * Gets the ratings from the specified plot.
      *
      * @param plot the plot
      * @return the plot ratings (pre-calculated)
@@ -271,7 +264,7 @@ public interface AbstractDB {
     HashMap<UUID, Integer> getRatings(Plot plot);
 
     /**
-     * Set a rating for a plot.
+     * Sets a rating for a plot.
      *
      * @param plot
      * @param rater
@@ -280,7 +273,7 @@ public interface AbstractDB {
     void setRating(Plot plot, UUID rater, int value);
 
     /**
-     * Remove the specified comment from the given plot.
+     * Removes the specified comment from the given plot.
      *
      * @param plot    the plot
      * @param comment the comment to remove
@@ -288,7 +281,7 @@ public interface AbstractDB {
     void removeComment(Plot plot, PlotComment comment);
 
     /**
-     * Clear the specified inbox on the given plot.
+     * Clears the specified inbox on the given plot.
      *
      * @param plot  the plot
      * @param inbox the inbox to clear
@@ -296,7 +289,7 @@ public interface AbstractDB {
     void clearInbox(Plot plot, String inbox);
 
     /**
-     * Add the specified comment to the given plot.
+     * Adds the specified comment to the given plot.
      *
      * @param plot    the plot
      * @param comment the comment to add
@@ -304,11 +297,11 @@ public interface AbstractDB {
     void setComment(Plot plot, PlotComment comment);
 
     /**
-     * Get Plot Comments.
+     * Gets Plot Comments.
      *
      * @param plot The Plot to get comments from
      */
-    void getComments(Plot plot, String inbox, RunnableVal<List<PlotComment>> whenDone);
+    void getComments(@Nonnull Plot plot, String inbox, RunnableVal<List<PlotComment>> whenDone);
 
     void createPlotAndSettings(Plot plot, Runnable whenDone);
 
@@ -319,7 +312,7 @@ public interface AbstractDB {
     void movePlot(Plot originalPlot, Plot newPlot);
 
     /**
-     * Replace a old uuid with a new one in the database.
+     * Replaces a old uuid with a new one in the database.
      *
      * <ul>
      * <li> Useful for replacing a few uuids (not the entire database).</li>
@@ -339,7 +332,7 @@ public interface AbstractDB {
     boolean deleteTables();
 
     /**
-     * Close the database. Generally not recommended to be used by add-ons.
+     * Closes the database. Generally not recommended to be used by add-ons.
      */
     void close();
 

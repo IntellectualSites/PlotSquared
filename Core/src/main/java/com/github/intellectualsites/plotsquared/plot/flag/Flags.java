@@ -1,9 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
@@ -31,6 +28,8 @@ public final class Flags {
     public static final BooleanFlag NOTIFY_LEAVE = new BooleanFlag("notify-leave");
     public static final BooleanFlag TITLES = new BooleanFlag("titles");
     public static final BooleanFlag NOTIFY_ENTER = new BooleanFlag("notify-enter");
+    public static final BooleanFlag HIDE_INFO = new BooleanFlag("hide-info");
+    public static final BooleanFlag SERVER_PLOT = new BooleanFlag("server-plot");
     public static final LongFlag TIME = new LongFlag("time");
     public static final PlotWeatherFlag WEATHER = new PlotWeatherFlag("weather");
     public static final DoubleFlag PRICE = new DoubleFlag("price") {
@@ -163,42 +162,37 @@ public final class Flags {
     public static void registerFlag(final Flag<?> flag) {
         final Flag<?> duplicate = flags.put(flag.getName(), flag);
         if (duplicate != null) {
-            PlotSquared.get().foreachPlotArea(new RunnableVal<PlotArea>() {
-                @Override public void run(PlotArea value) {
-                    Object remove;
-                    if (value.DEFAULT_FLAGS.containsKey(duplicate)) {
-                        remove = value.DEFAULT_FLAGS.remove(duplicate);
-                        try {
-                            if (remove instanceof Collection
-                                && remove.getClass().getMethod("toString").getDeclaringClass()
-                                == Object.class) {
-                                value.DEFAULT_FLAGS.put(flag,
-                                    flag.parseValue(StringMan.join((Collection) remove, ',')));
-                            } else {
-                                value.DEFAULT_FLAGS.put(flag, flag.parseValue("" + remove));
-                            }
-                        } catch (NoSuchMethodException neverHappens) {
-                            neverHappens.printStackTrace();
+            PlotSquared.get().forEachPlotArea(value -> {
+                if (value.DEFAULT_FLAGS.containsKey(duplicate)) {
+                    Object remove = value.DEFAULT_FLAGS.remove(duplicate);
+                    try {
+                        if (remove instanceof Collection
+                            && remove.getClass().getMethod("toString").getDeclaringClass()
+                            == Object.class) {
+                            value.DEFAULT_FLAGS.put(flag,
+                                flag.parseValue(StringMan.join((Collection) remove, ',')));
+                        } else {
+                            value.DEFAULT_FLAGS.put(flag, flag.parseValue("" + remove));
                         }
+                    } catch (NoSuchMethodException neverHappens) {
+                        neverHappens.printStackTrace();
                     }
                 }
             });
-            PlotSquared.get().foreachPlotRaw(new RunnableVal<Plot>() {
-                @Override public void run(Plot value) {
-                    if (value.getFlags().containsKey(duplicate)) {
-                        Object remove = value.getFlags().remove(duplicate);
-                        try {
-                            if (remove instanceof Collection
-                                && remove.getClass().getMethod("toString").getDeclaringClass()
-                                == Object.class) {
-                                value.getFlags().put(flag,
-                                    flag.parseValue(StringMan.join((Collection) remove, ',')));
-                            } else {
-                                value.getFlags().put(flag, flag.parseValue("" + remove));
-                            }
-                        } catch (NoSuchMethodException neverHappens) {
-                            neverHappens.printStackTrace();
+            PlotSquared.get().forEachPlotRaw(value -> {
+                if (value.hasFlag(duplicate)) {
+                    Object remove = value.getFlags().remove(duplicate);
+                    try {
+                        if (remove instanceof Collection
+                            && remove.getClass().getMethod("toString").getDeclaringClass()
+                            == Object.class) {
+                            value.getFlags().put(flag,
+                                flag.parseValue(StringMan.join((Collection) remove, ',')));
+                        } else {
+                            value.getFlags().put(flag, flag.parseValue("" + remove));
                         }
+                    } catch (NoSuchMethodException neverHappens) {
+                        neverHappens.printStackTrace();
                     }
                 }
             });

@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.object;
 import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.RequiredType;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
@@ -17,9 +17,14 @@ import lombok.NonNull;
 
 import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * The abstract class supporting {@code BukkitPlayer} and {@code SpongePlayer}.
@@ -166,15 +171,15 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     public int hasPermissionRange(String stub, int range) {
-        if (hasPermission(C.PERMISSION_ADMIN.s())) {
+        if (hasPermission(Captions.PERMISSION_ADMIN.s())) {
             return Integer.MAX_VALUE;
         }
         String[] nodes = stub.split("\\.");
-        StringBuilder n = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         for (int i = 0; i < (nodes.length - 1); i++) {
-            n.append(nodes[i]).append(".");
-            if (!stub.equals(n + C.PERMISSION_STAR.s())) {
-                if (hasPermission(n + C.PERMISSION_STAR.s())) {
+            builder.append(nodes[i]).append(".");
+            if (!stub.equals(builder + Captions.PERMISSION_STAR.s())) {
+                if (hasPermission(builder + Captions.PERMISSION_STAR.s())) {
                     return Integer.MAX_VALUE;
                 }
             }
@@ -203,17 +208,15 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         }
         final AtomicInteger count = new AtomicInteger(0);
         final UUID uuid = getUUID();
-        PlotSquared.get().foreachPlotArea(new RunnableVal<PlotArea>() {
-            @Override public void run(PlotArea value) {
-                if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
-                    for (Plot plot : value.getPlotsAbs(uuid)) {
-                        if (!plot.hasFlag(Flags.DONE)) {
-                            count.incrementAndGet();
-                        }
+        PlotSquared.get().forEachPlotArea(value -> {
+            if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
+                for (Plot plot : value.getPlotsAbs(uuid)) {
+                    if (!plot.hasFlag(Flags.DONE)) {
+                        count.incrementAndGet();
                     }
-                } else {
-                    count.addAndGet(value.getPlotsAbs(uuid).size());
                 }
+            } else {
+                count.addAndGet(value.getPlotsAbs(uuid).size());
             }
         });
         return count.get();
@@ -224,13 +227,10 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
             return getClusterCount(getLocation().getWorld());
         }
         final AtomicInteger count = new AtomicInteger(0);
-        final UUID uuid = getUUID();
-        PlotSquared.get().foreachPlotArea(new RunnableVal<PlotArea>() {
-            @Override public void run(PlotArea value) {
-                for (PlotCluster cluster : value.getClusters()) {
-                    if (cluster.isOwner(getUUID())) {
-                        count.incrementAndGet();
-                    }
+        PlotSquared.get().forEachPlotArea(value -> {
+            for (PlotCluster cluster : value.getClusters()) {
+                if (cluster.isOwner(getUUID())) {
+                    count.incrementAndGet();
                 }
             }
         });
@@ -248,11 +248,8 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         int count = 0;
         for (PlotArea area : PlotSquared.get().getPlotAreas(world)) {
             if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
-                for (Plot plot : area.getPlotsAbs(uuid)) {
-                    if (!plot.getFlag(Flags.DONE).isPresent()) {
-                        count++;
-                    }
-                }
+                count += area.getPlotsAbs(uuid).stream()
+                    .filter(plot -> !plot.getFlag(Flags.DONE).isPresent()).count();
             } else {
                 count += area.getPlotsAbs(uuid).size();
             }
@@ -335,7 +332,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      *
      * @return UUID
      */
-    @Override public abstract UUID getUUID();
+    @Override @Nonnull public abstract UUID getUUID();
 
     public boolean canTeleport(@Nonnull final Location loc) {
         Preconditions.checkNotNull(loc, "Specified location cannot be null");
@@ -348,6 +345,15 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         teleport(current);
         return result;
     }
+
+    public void sendTitle(String title, String subtitle) {
+        sendTitle(title, subtitle, 10, 50, 10);
+    }
+
+    ;
+
+    public abstract void sendTitle(String title, String subtitle, int fadeIn, int stay,
+        int fadeOut);
 
     /**
      * Teleport this player to a location.
@@ -435,12 +441,17 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      */
     public abstract void setTime(long time);
 
+    /**
+     * Determines whether or not the player can fly.
+     *
+     * @return {@code true} if the player is allowed to fly
+     */
     public abstract boolean getFlight();
 
     /**
-     * Set this player's fly mode.
+     * Sets whether or not this player can fly.
      *
-     * @param fly if the player can fly
+     * @param fly {@code true} if the player can fly, otherwise {@code false}
      */
     public abstract void setFlight(boolean fly);
 
@@ -513,14 +524,9 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      * @return
      */
     public int getPlayerClusterCount(String world) {
-        UUID uuid = getUUID();
-        int count = 0;
-        for (PlotCluster cluster : PlotSquared.get().getClusters(world)) {
-            if (uuid.equals(cluster.owner)) {
-                count += cluster.getArea();
-            }
-        }
-        return count;
+        return PlotSquared.get().getClusters(world).stream()
+            .filter(cluster -> getUUID().equals(cluster.owner)).mapToInt(PlotCluster::getArea)
+            .sum();
     }
 
     /**
@@ -530,11 +536,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      */
     public int getPlayerClusterCount() {
         final AtomicInteger count = new AtomicInteger();
-        PlotSquared.get().foreachPlotArea(new RunnableVal<PlotArea>() {
-            @Override public void run(PlotArea value) {
-                count.addAndGet(value.getClusters().size());
-            }
-        });
+        PlotSquared.get().forEachPlotArea(value -> count.addAndGet(value.getClusters().size()));
         return count.get();
     }
 
@@ -546,13 +548,8 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      */
     public Set<Plot> getPlots(String world) {
         UUID uuid = getUUID();
-        HashSet<Plot> plots = new HashSet<>();
-        for (Plot plot : PlotSquared.get().getPlots(world)) {
-            if (plot.isOwner(uuid)) {
-                plots.add(plot);
-            }
-        }
-        return plots;
+        return PlotSquared.get().getPlots(world).stream().filter(plot -> plot.isOwner(uuid))
+            .collect(Collectors.toCollection(HashSet::new));
     }
 
     public void populatePersistentMetaMap() {
@@ -561,61 +558,64 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                 @Override public void run(Map<String, byte[]> value) {
                     try {
                         PlotPlayer.this.metaMap = value;
-                        if (!value.isEmpty()) {
-                            if (Settings.Enabled_Components.PERSISTENT_META) {
-                                PlotAreaManager manager = PlotSquared.get().getPlotAreaManager();
-                                if (manager instanceof SinglePlotAreaManager) {
-                                    PlotArea area = ((SinglePlotAreaManager) manager).getArea();
-                                    byte[] arr = PlotPlayer.this.getPersistentMeta("quitLoc");
-                                    if (arr != null) {
-                                        removePersistentMeta("quitLoc");
+                        if (value.isEmpty()) {
+                            return;
+                        }
 
+                        if (!Settings.Teleport.ON_LOGIN) {
+                            return;
+                        }
+                        PlotAreaManager manager = PlotSquared.get().getPlotAreaManager();
+
+                        if (!(manager instanceof SinglePlotAreaManager)) {
+                            return;
+                        }
+                        PlotArea area = ((SinglePlotAreaManager) manager).getArea();
+                        byte[] arr = PlotPlayer.this.getPersistentMeta("quitLoc");
+                        if (arr == null) {
+                            return;
+                        }
+                        removePersistentMeta("quitLoc");
+
+                        if (!getMeta("teleportOnLogin", true)) {
+                            return;
+                        }
+                        ByteBuffer quitWorld = ByteBuffer.wrap(arr);
+                        final int plotX = quitWorld.getShort();
+                        final int plotZ = quitWorld.getShort();
+                        PlotId id = new PlotId(plotX, plotZ);
+                        int x = quitWorld.getInt();
+                        int y = quitWorld.get() & 0xFF;
+                        int z = quitWorld.getInt();
+                        Plot plot = area.getOwnedPlot(id);
+
+                        if (plot == null) {
+                            return;
+                        }
+
+                        final Location loc = new Location(plot.getWorldName(), x, y, z);
+                        if (plot.isLoaded()) {
+                            TaskManager.runTask(() -> {
+                                if (getMeta("teleportOnLogin", true)) {
+                                    teleport(loc);
+                                    sendMessage(
+                                        Captions.TELEPORTED_TO_PLOT.f() + " (quitLoc) (" + plotX
+                                            + "," + plotZ + ")");
+                                }
+                            });
+                        } else if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
+                            if (getMeta("teleportOnLogin", true)) {
+                                if (plot.teleportPlayer(PlotPlayer.this)) {
+                                    TaskManager.runTask(() -> {
                                         if (getMeta("teleportOnLogin", true)) {
-                                            ByteBuffer quitWorld = ByteBuffer.wrap(arr);
-                                            final int plotX = quitWorld.getShort();
-                                            final int plotZ = quitWorld.getShort();
-                                            PlotId id = new PlotId(plotX, plotZ);
-                                            int x = quitWorld.getInt();
-                                            int y = quitWorld.get() & 0xFF;
-                                            int z = quitWorld.getInt();
-                                            Plot plot = area.getOwnedPlot(id);
-                                            if (plot != null) {
-                                                final Location loc =
-                                                    new Location(plot.getWorldName(), x, y, z);
-                                                if (plot.isLoaded()) {
-                                                    TaskManager.runTask(new Runnable() {
-                                                        @Override public void run() {
-                                                            if (getMeta("teleportOnLogin", true)) {
-                                                                teleport(loc);
-                                                                sendMessage(C.TELEPORTED_TO_PLOT.f()
-                                                                    + " (quitLoc) (" + plotX + ","
-                                                                    + plotZ + ")");
-                                                            }
-                                                        }
-                                                    });
-                                                } else if (!PlotSquared.get()
-                                                    .isMainThread(Thread.currentThread())) {
-                                                    if (getMeta("teleportOnLogin", true)) {
-                                                        if (plot.teleportPlayer(PlotPlayer.this)) {
-                                                            TaskManager.runTask(new Runnable() {
-                                                                @Override public void run() {
-                                                                    if (getMeta("teleportOnLogin",
-                                                                        true)) {
-                                                                        teleport(loc);
-                                                                        sendMessage(
-                                                                            C.TELEPORTED_TO_PLOT.f()
-                                                                                + " (quitLoc-unloaded) ("
-                                                                                + plotX + ","
-                                                                                + plotZ + ")");
-                                                                    }
-                                                                }
-                                                            });
-                                                        }
-                                                    }
-                                                }
+                                            if (plot.isLoaded()) {
+                                                teleport(loc);
+                                                sendMessage(Captions.TELEPORTED_TO_PLOT.f()
+                                                    + " (quitLoc-unloaded) (" + plotX + "," + plotZ
+                                                    + ")");
                                             }
                                         }
-                                    }
+                                    });
                                 }
                             }
                         }
@@ -675,7 +675,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         }
     }
 
-    public interface PlotPlayerConverter<BaseObject> {
+    @FunctionalInterface public interface PlotPlayerConverter<BaseObject> {
         PlotPlayer convert(BaseObject object);
     }
 }

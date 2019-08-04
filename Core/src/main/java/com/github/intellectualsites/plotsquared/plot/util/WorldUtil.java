@@ -3,9 +3,17 @@ package com.github.intellectualsites.plotsquared.plot.util;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
-import com.sk89q.jnbt.*;
+import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.jnbt.IntTag;
+import com.sk89q.jnbt.NBTInputStream;
+import com.sk89q.jnbt.NBTOutputStream;
+import com.sk89q.jnbt.Tag;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.Map;
 import java.util.Set;
@@ -66,7 +74,6 @@ public abstract class WorldUtil {
                 try (final ZipOutputStream zos = new ZipOutputStream(output)) {
                     File dat = getDat(plot.getWorldName());
                     Location spawn = getSpawn(plot.getWorldName());
-                    byte[] buffer = new byte[1024];
                     if (dat != null) {
                         ZipEntry ze = new ZipEntry("world" + File.separator + dat.getName());
                         zos.putNextEntry(ze);
@@ -78,16 +85,18 @@ public abstract class WorldUtil {
                             map.put("SpawnX", new IntTag(home.getX()));
                             map.put("SpawnY", new IntTag(home.getY()));
                             map.put("SpawnZ", new IntTag(home.getZ()));
-                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            try (NBTOutputStream out = new NBTOutputStream(
-                                new GZIPOutputStream(baos, true))) {
-                                //TODO Find what this should be called
-                                out.writeNamedTag("Schematic????", tag);
+                            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                                try (NBTOutputStream out = new NBTOutputStream(
+                                    new GZIPOutputStream(baos, true))) {
+                                    //TODO Find what this should be called
+                                    out.writeNamedTag("Schematic????", tag);
+                                }
+                                zos.write(baos.toByteArray());
                             }
-                            zos.write(baos.toByteArray());
                         }
                     }
                     setSpawn(spawn);
+                    byte[] buffer = new byte[1024];
                     for (Plot current : plot.getConnectedPlots()) {
                         Location bot = current.getBottomAbs();
                         Location top = current.getTopAbs();
@@ -106,12 +115,12 @@ public abstract class WorldUtil {
                                         "world" + File.separator + "region" + File.separator
                                             + name);
                                     zos.putNextEntry(ze);
-                                    final FileInputStream in = new FileInputStream(file);
-                                    int len;
-                                    while ((len = in.read(buffer)) > 0) {
-                                        zos.write(buffer, 0, len);
+                                    try (FileInputStream in = new FileInputStream(file)) {
+                                        int len;
+                                        while ((len = in.read(buffer)) > 0) {
+                                            zos.write(buffer, 0, len);
+                                        }
                                     }
-                                    in.close();
                                     zos.closeEntry();
                                 }
                             }

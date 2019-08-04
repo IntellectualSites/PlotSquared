@@ -105,10 +105,10 @@ public class Config {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
             }
-            PrintWriter writer = new PrintWriter(file);
-            Object instance = root.newInstance();
-            save(writer, root, instance, 0);
-            writer.close();
+            try (PrintWriter writer = new PrintWriter(file)) {
+                Object instance = root.newInstance();
+                save(writer, root, instance, 0);
+            }
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -183,7 +183,6 @@ public class Config {
                             }
                         }
                     }
-                    continue;
                 } else {
                     writer.write(spacing + toNodeName(field.getName() + ": ") + toYamlString(
                         field.get(instance), spacing) + lineSeparator);
@@ -281,55 +280,53 @@ public class Config {
             Class<?> clazz = root == null ? MethodHandles.lookup().lookupClass() : root;
             Object instance = clazz.newInstance();
             while (split.length > 0) {
-                switch (split.length) {
-                    case 1:
-                        return instance;
-                    default:
-                        Class found = null;
-                        Class<?>[] classes = clazz.getDeclaredClasses();
-                        for (Class current : classes) {
-                            if (current.getSimpleName().equalsIgnoreCase(toFieldName(split[0]))) {
-                                found = current;
-                                break;
-                            }
-                        }
-                        try {
-                            Field instanceField = clazz.getDeclaredField(toFieldName(split[0]));
-                            setAccessible(instanceField);
-                            if (instanceField.getType() != ConfigBlock.class) {
-                                Object value = instanceField.get(instance);
-                                if (value == null) {
-                                    value = found.newInstance();
-                                    instanceField.set(instance, value);
-                                }
-                                clazz = found;
-                                instance = value;
-                                split = Arrays.copyOfRange(split, 1, split.length);
-                                continue;
-                            }
-                            ConfigBlock value = (ConfigBlock) instanceField.get(instance);
-                            if (value == null) {
-                                value = new ConfigBlock();
-                                instanceField.set(instance, value);
-                            }
-                            instance = value.get(split[1]);
-                            if (instance == null) {
-                                instance = found.newInstance();
-                                value.put(split[1], instance);
-                            }
-                            clazz = found;
-                            split = Arrays.copyOfRange(split, 2, split.length);
-                            continue;
-                        } catch (NoSuchFieldException ignore) {
-                        }
-                        if (found != null) {
-                            split = Arrays.copyOfRange(split, 1, split.length);
-                            clazz = found;
-                            instance = clazz.newInstance();
-                            continue;
-                        }
-                        return null;
+                if (split.length == 1) {
+                    return instance;
                 }
+                Class found = null;
+                Class<?>[] classes = clazz.getDeclaredClasses();
+                for (Class current : classes) {
+                    if (current.getSimpleName().equalsIgnoreCase(toFieldName(split[0]))) {
+                        found = current;
+                        break;
+                    }
+                }
+                try {
+                    Field instanceField = clazz.getDeclaredField(toFieldName(split[0]));
+                    setAccessible(instanceField);
+                    if (instanceField.getType() != ConfigBlock.class) {
+                        Object value = instanceField.get(instance);
+                        if (value == null) {
+                            value = found.newInstance();
+                            instanceField.set(instance, value);
+                        }
+                        clazz = found;
+                        instance = value;
+                        split = Arrays.copyOfRange(split, 1, split.length);
+                        continue;
+                    }
+                    ConfigBlock value = (ConfigBlock) instanceField.get(instance);
+                    if (value == null) {
+                        value = new ConfigBlock();
+                        instanceField.set(instance, value);
+                    }
+                    instance = value.get(split[1]);
+                    if (instance == null) {
+                        instance = found.newInstance();
+                        value.put(split[1], instance);
+                    }
+                    clazz = found;
+                    split = Arrays.copyOfRange(split, 2, split.length);
+                    continue;
+                } catch (NoSuchFieldException ignore) {
+                }
+                if (found != null) {
+                    split = Arrays.copyOfRange(split, 1, split.length);
+                    clazz = found;
+                    instance = clazz.newInstance();
+                    continue;
+                }
+                return null;
             }
         } catch (Throwable e) {
             e.printStackTrace();

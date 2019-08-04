@@ -32,10 +32,9 @@ public class PlotVersion {
 
     @Override public String toString() {
         if (hash == 0 && build == 0) {
-            return "PlotSquared-" + year + "." + month + "." + day + "-SNAPSHOT";
+            return "PlotSquared-NoVer-SNAPSHOT";
         } else {
-            return "PlotSquared-" + year + "." + month + "." + day + "-" + Integer.toHexString(hash)
-                + "-" + build;
+            return "PlotSquared-4." + build;
         }
     }
 

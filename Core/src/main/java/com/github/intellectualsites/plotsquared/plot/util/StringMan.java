@@ -245,10 +245,12 @@ public class StringMan {
     }
 
     public static boolean isEqual(String a, String b) {
-       return (a == b) || ((a != null) && (b != null) && (a.length() == b.length()) && 
-              (a.hashCode() == b.hashCode()) && a.equals(b));
-        // return a.equals(b) || b != null && a.length() == b.length() && a.hashCode() == b.hashCode()
-        //    && a.equals(b);
+        if ((a == null && b != null) || (a != null && b == null)) {
+            return false;
+        } else if (a == null /* implies that b is null */) {
+            return false;
+        }
+        return a.equals(b);
     }
 
     public static boolean isEqualIgnoreCase(String a, String b) {

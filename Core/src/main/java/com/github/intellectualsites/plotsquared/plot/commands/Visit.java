@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "visit", permission = "plots.visit",
     description = "Visit someones plot", usage = "/plot visit [<player>|<alias>|<world>|<id>] [#]",
-    aliases = {"v", "tp", "teleport", "goto", "home", "h"}, requiredType = RequiredType.NONE,
+    aliases = {"v", "tp", "teleport", "goto", "home", "h"}, requiredType = RequiredType.PLAYER,
     category = CommandCategory.TELEPORT) public class Visit extends Command {
 
     public Visit() {
@@ -40,8 +40,8 @@ import java.util.concurrent.CompletableFuture;
         switch (args.length) {
             case 3:
                 if (!MathMan.isInteger(args[1])) {
-                    C.NOT_VALID_NUMBER.send(player, "(1, ∞)");
-                    C.COMMAND_SYNTAX.send(player, getUsage());
+                    Captions.NOT_VALID_NUMBER.send(player, "(1, ∞)");
+                    Captions.COMMAND_SYNTAX.send(player, getUsage());
                     return CompletableFuture.completedFuture(false);
                 }
                 page = Integer.parseInt(args[2]);
@@ -49,13 +49,13 @@ import java.util.concurrent.CompletableFuture;
                 if (page != Integer.MIN_VALUE || !MathMan.isInteger(args[1])) {
                     sortByArea = PlotSquared.get().getPlotAreaByString(args[1]);
                     if (sortByArea == null) {
-                        C.NOT_VALID_NUMBER.send(player, "(1, ∞)");
-                        C.COMMAND_SYNTAX.send(player, getUsage());
+                        Captions.NOT_VALID_NUMBER.send(player, "(1, ∞)");
+                        Captions.COMMAND_SYNTAX.send(player, getUsage());
                         return CompletableFuture.completedFuture(false);
                     }
                     UUID user = UUIDHandler.getUUIDFromString(args[0]);
                     if (user == null) {
-                        C.COMMAND_SYNTAX.send(player, getUsage());
+                        Captions.COMMAND_SYNTAX.send(player, getUsage());
                         return CompletableFuture.completedFuture(false);
                     }
                     unsorted = PlotSquared.get().getBasePlots(user);
@@ -65,8 +65,9 @@ import java.util.concurrent.CompletableFuture;
                 page = Integer.parseInt(args[1]);
             case 1:
                 UUID user = args[0].length() >= 2 ? UUIDHandler.getUUIDFromString(args[0]) : null;
-                if (user != null && !PlotSquared.get().hasPlot(user))
+                if (user != null && !PlotSquared.get().hasPlot(user)) {
                     user = null;
+                }
                 if (page == Integer.MIN_VALUE && user == null && MathMan.isInteger(args[0])) {
                     page = Integer.parseInt(args[0]);
                     unsorted = PlotSquared.get().getBasePlots(player);
@@ -92,13 +93,15 @@ import java.util.concurrent.CompletableFuture;
             page = 1;
         }
         if (unsorted == null || unsorted.isEmpty()) {
-            C.FOUND_NO_PLOTS.send(player);
+            Captions.FOUND_NO_PLOTS.send(player);
             return CompletableFuture.completedFuture(false);
         }
         unsorted = new ArrayList<>(unsorted);
-        unsorted.removeIf(plot -> !plot.isBasePlot());
+        if (unsorted.size() > 1) {
+            unsorted.removeIf(plot -> !plot.isBasePlot());
+        }
         if (page < 1 || page > unsorted.size()) {
-            C.NOT_VALID_NUMBER.send(player, "(1, " + unsorted.size() + ")");
+            Captions.NOT_VALID_NUMBER.send(player, "(1, " + unsorted.size() + ")");
             return CompletableFuture.completedFuture(false);
         }
         List<Plot> plots;
@@ -110,24 +113,24 @@ import java.util.concurrent.CompletableFuture;
         }
         final Plot plot = plots.get(page - 1);
         if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(player, C.PERMISSION_VISIT_UNOWNED)) {
-                C.NO_PERMISSION.send(player, C.PERMISSION_VISIT_UNOWNED);
+            if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_UNOWNED)) {
+                Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_UNOWNED);
                 return CompletableFuture.completedFuture(false);
             }
         } else if (plot.isOwner(player.getUUID())) {
-            if (!Permissions.hasPermission(player, C.PERMISSION_VISIT_OWNED) && !Permissions
-                .hasPermission(player, C.PERMISSION_HOME)) {
-                C.NO_PERMISSION.send(player, C.PERMISSION_VISIT_OWNED);
+            if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OWNED) && !Permissions
+                .hasPermission(player, Captions.PERMISSION_HOME)) {
+                Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OWNED);
                 return CompletableFuture.completedFuture(false);
             }
         } else if (plot.isAdded(player.getUUID())) {
-            if (!Permissions.hasPermission(player, C.PERMISSION_SHARED)) {
-                C.NO_PERMISSION.send(player, C.PERMISSION_SHARED);
+            if (!Permissions.hasPermission(player, Captions.PERMISSION_SHARED)) {
+                Captions.NO_PERMISSION.send(player, Captions.PERMISSION_SHARED);
                 return CompletableFuture.completedFuture(false);
             }
         } else {
-            if (!Permissions.hasPermission(player, C.PERMISSION_VISIT_OTHER)) {
-                C.NO_PERMISSION.send(player, C.PERMISSION_VISIT_OTHER);
+            if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OTHER)) {
+                Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OTHER);
                 return CompletableFuture.completedFuture(false);
             }
         }

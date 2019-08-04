@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
@@ -17,23 +17,29 @@ import java.util.Arrays;
 import java.util.Map.Entry;
 
 @CommandDeclaration(command = "comment", aliases = {"msg"}, description = "Comment on a plot",
-    category = CommandCategory.CHAT, requiredType = RequiredType.NONE, permission = "plots.comment")
+    category = CommandCategory.CHAT, requiredType = RequiredType.PLAYER, permission = "plots.comment")
 public class Comment extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
         if (args.length < 2) {
-            sendMessage(player, C.COMMENT_SYNTAX,
+            sendMessage(player, Captions.COMMENT_SYNTAX,
                 StringMan.join(CommentManager.inboxes.keySet(), "|"));
             return false;
         }
         CommentInbox inbox = CommentManager.inboxes.get(args[0].toLowerCase());
         if (inbox == null) {
-            sendMessage(player, C.COMMENT_SYNTAX,
+            sendMessage(player, Captions.COMMENT_SYNTAX,
                 StringMan.join(CommentManager.inboxes.keySet(), "|"));
             return false;
         }
         Location loc = player.getLocation();
-        PlotId id = PlotId.fromString(args[1]);
+        PlotId id;
+        try {
+            id = PlotId.fromString(args[1]);
+        } catch (IllegalArgumentException ignored) {
+            MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_ID);
+            return false;
+        }
         Plot plot = MainUtil.getPlotFromString(player, args[1], false);
         int index;
         if (plot == null) {
@@ -41,14 +47,14 @@ public class Comment extends SubCommand {
             plot = loc.getPlotAbs();
         } else {
             if (args.length < 4) {
-                sendMessage(player, C.COMMENT_SYNTAX,
+                sendMessage(player, Captions.COMMENT_SYNTAX,
                     StringMan.join(CommentManager.inboxes.keySet(), "|"));
                 return false;
             }
             index = 2;
         }
         if (!inbox.canWrite(plot, player)) {
-            sendMessage(player, C.NO_PERM_INBOX, "");
+            sendMessage(player, Captions.NO_PERM_INBOX, "");
             return false;
         }
         String message = StringMan.join(Arrays.copyOfRange(args, index, args.length), " ");
@@ -57,8 +63,8 @@ public class Comment extends SubCommand {
                 System.currentTimeMillis());
         boolean result = inbox.addComment(plot, comment);
         if (!result) {
-            sendMessage(player, C.NO_PLOT_INBOX, "");
-            sendMessage(player, C.COMMENT_SYNTAX,
+            sendMessage(player, Captions.NO_PLOT_INBOX, "");
+            sendMessage(player, Captions.COMMENT_SYNTAX,
                 StringMan.join(CommentManager.inboxes.keySet(), "|"));
             return false;
         }
@@ -68,7 +74,7 @@ public class Comment extends SubCommand {
                 MainUtil.sendMessage(pp, "/plot comment " + StringMan.join(args, " "));
             }
         }
-        sendMessage(player, C.COMMENT_ADDED);
+        sendMessage(player, Captions.COMMENT_ADDED);
         return true;
     }
 }

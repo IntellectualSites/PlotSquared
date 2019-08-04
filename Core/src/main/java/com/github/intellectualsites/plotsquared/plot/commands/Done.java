@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
@@ -22,23 +22,23 @@ import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
         Location loc = player.getLocation();
         final Plot plot = loc.getPlotAbs();
         if ((plot == null) || !plot.hasOwner()) {
-            return !sendMessage(player, C.NOT_IN_PLOT);
+            return !sendMessage(player, Captions.NOT_IN_PLOT);
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_DONE)) {
-            MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
+            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DONE)) {
+            MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
             return false;
         }
         if (plot.hasFlag(Flags.DONE)) {
-            MainUtil.sendMessage(player, C.DONE_ALREADY_DONE);
+            MainUtil.sendMessage(player, Captions.DONE_ALREADY_DONE);
             return false;
         }
         if (plot.getRunning() > 0) {
-            MainUtil.sendMessage(player, C.WAIT_FOR_TIMER);
+            MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
             return false;
         }
         plot.addRunning();
-        MainUtil.sendMessage(player, C.GENERATING_LINK);
+        MainUtil.sendMessage(player, Captions.GENERATING_LINK);
         final Settings.Auto_Clear doneRequirements = Settings.AUTO_CLEAR.get("done");
         if (ExpireManager.IMP == null || doneRequirements == null) {
             finish(plot, player, true);
@@ -60,9 +60,9 @@ import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
         if (success) {
             long flagValue = System.currentTimeMillis() / 1000;
             plot.setFlag(Flags.DONE, flagValue);
-            MainUtil.sendMessage(pp, C.DONE_SUCCESS);
+            MainUtil.sendMessage(pp, Captions.DONE_SUCCESS);
         } else {
-            MainUtil.sendMessage(pp, C.DONE_INSUFFICIENT_COMPLEXITY);
+            MainUtil.sendMessage(pp, Captions.DONE_INSUFFICIENT_COMPLEXITY);
         }
     }
 }

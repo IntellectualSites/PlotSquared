@@ -80,8 +80,8 @@ public class Configuration {
                         WorldUtil.IMP.getClosestBlock(block);
                     if (value == null) {
                         throw new UnknownBlockException(block);
-                    } else if (Settings.Enabled_Components.PREVENT_UNSAFE && !value.best.isAir() &&
-                        !WorldUtil.IMP.isBlockSolid(value.best)) {
+                    } else if (Settings.Enabled_Components.PREVENT_UNSAFE && !value.best.isAir()
+                        && !WorldUtil.IMP.isBlockSolid(value.best)) {
                         throw new UnsafeBlockException(value.best);
                     }
                     blockBucket.addBlock(value.best, chance);
@@ -114,7 +114,8 @@ public class Configuration {
                             WorldUtil.IMP.getClosestBlock(block);
                         if (value == null || value.match > 1) {
                             return false;
-                        } else if (Settings.Enabled_Components.PREVENT_UNSAFE && !value.best.isAir() && !WorldUtil.IMP.isBlockSolid(value.best)) {
+                        } else if (Settings.Enabled_Components.PREVENT_UNSAFE && !value.best.isAir()
+                            && !WorldUtil.IMP.isBlockSolid(value.best)) {
                             throw new UnsafeBlockException(value.best);
                         }
                     }

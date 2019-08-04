@@ -1,12 +1,11 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
 import com.sk89q.worldedit.world.block.BaseBlock;
-
-import java.util.HashMap;
 
 public class HybridGen extends IndependentPlotGenerator {
 
@@ -15,8 +14,13 @@ public class HybridGen extends IndependentPlotGenerator {
     }
 
     private void placeSchem(HybridPlotWorld world, ScopedLocalBlockQueue result, short relativeX,
-        short relativeZ, int x, int z) {
-        int minY = Math.min(world.PLOT_HEIGHT, world.ROAD_HEIGHT);
+        short relativeZ, int x, int z, boolean isRoad) {
+        int minY; // Math.min(world.PLOT_HEIGHT, world.ROAD_HEIGHT);
+        if (isRoad || Settings.Schematics.PASTE_ON_TOP) {
+            minY = world.SCHEM_Y;
+        } else {
+            minY = 1;
+        }
         BaseBlock[] blocks = world.G_SCH.get(MathMan.pair(relativeX, relativeZ));
         if (blocks != null) {
             for (int y = 0; y < blocks.length; y++) {
@@ -52,8 +56,7 @@ public class HybridGen extends IndependentPlotGenerator {
                 if (blockBuckets[layer] == null) {
                     blockBuckets[layer] = new BlockBucket[4096];
                 }
-                blockBuckets[layer][((hpw.PLOT_HEIGHT & 0xF) << 8) | (z << 4) | x] =
-                    hpw.MAIN_BLOCK;
+                blockBuckets[layer][((hpw.PLOT_HEIGHT & 0xF) << 8) | (z << 4) | x] = hpw.MAIN_BLOCK;
             }
         }
         return blockBuckets;
@@ -116,7 +119,6 @@ public class HybridGen extends IndependentPlotGenerator {
             }
         }
         // generation
-        HashMap<Integer, BaseBlock[]> sch = hpw.G_SCH;
         for (short x = 0; x < 16; x++) {
             if (gx[x]) {
                 for (short z = 0; z < 16; z++) {
@@ -125,7 +127,7 @@ public class HybridGen extends IndependentPlotGenerator {
                         result.setBlock(x, y, z, hpw.ROAD_BLOCK.getBlock());
                     }
                     if (hpw.ROAD_SCHEMATIC_ENABLED) {
-                        placeSchem(hpw, result, rx[x], rz[z], x, z);
+                        placeSchem(hpw, result, rx[x], rz[z], x, z, true);
                     }
                 }
             } else if (wx[x]) {
@@ -136,7 +138,7 @@ public class HybridGen extends IndependentPlotGenerator {
                             result.setBlock(x, y, z, hpw.ROAD_BLOCK.getBlock());
                         }
                         if (hpw.ROAD_SCHEMATIC_ENABLED) {
-                            placeSchem(hpw, result, rx[x], rz[z], x, z);
+                            placeSchem(hpw, result, rx[x], rz[z], x, z, true);
                         }
                     } else {
                         // wall
@@ -146,7 +148,7 @@ public class HybridGen extends IndependentPlotGenerator {
                         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
                             result.setBlock(x, hpw.WALL_HEIGHT + 1, z, hpw.WALL_BLOCK.getBlock());
                         } else {
-                            placeSchem(hpw, result, rx[x], rz[z], x, z);
+                            placeSchem(hpw, result, rx[x], rz[z], x, z, true);
                         }
                     }
                 }
@@ -158,7 +160,7 @@ public class HybridGen extends IndependentPlotGenerator {
                             result.setBlock(x, y, z, hpw.ROAD_BLOCK.getBlock());
                         }
                         if (hpw.ROAD_SCHEMATIC_ENABLED) {
-                            placeSchem(hpw, result, rx[x], rz[z], x, z);
+                            placeSchem(hpw, result, rx[x], rz[z], x, z, true);
                         }
                     } else if (wz[z]) {
                         // wall
@@ -168,7 +170,7 @@ public class HybridGen extends IndependentPlotGenerator {
                         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
                             result.setBlock(x, hpw.WALL_HEIGHT + 1, z, hpw.WALL_BLOCK.getBlock());
                         } else {
-                            placeSchem(hpw, result, rx[x], rz[z], x, z);
+                            placeSchem(hpw, result, rx[x], rz[z], x, z, true);
                         }
                     } else {
                         // plot
@@ -177,7 +179,7 @@ public class HybridGen extends IndependentPlotGenerator {
                         }
                         result.setBlock(x, hpw.PLOT_HEIGHT, z, hpw.TOP_BLOCK.getBlock());
                         if (hpw.PLOT_SCHEMATIC) {
-                            placeSchem(hpw, result, rx[x], rz[z], x, z);
+                            placeSchem(hpw, result, rx[x], rz[z], x, z, false);
                         }
                     }
                 }
@@ -249,10 +251,6 @@ public class HybridGen extends IndependentPlotGenerator {
 
     @Override public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
         return new HybridPlotWorld(world, id, this, min, max);
-    }
-
-    @Override public PlotManager getNewPlotManager() {
-        return new HybridPlotManager();
     }
 
     @Override public void initialize(PlotArea area) {

@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
 import com.github.intellectualsites.plotsquared.plot.util.*;
@@ -13,7 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.*;
-import org.bukkit.block.data.type.WallSign;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -174,9 +174,9 @@ import java.util.*;
      *
      * @param player  the recipient of the message
      * @param caption the message
-     * @see MainUtil#sendMessage(PlotPlayer, C, String...)
+     * @see MainUtil#sendMessage(com.github.intellectualsites.plotsquared.commands.CommandCaller, Captions, String...)
      */
-    public static void sendMessage(Player player, C caption) {
+    public static void sendMessage(Player player, Captions caption) {
         MainUtil.sendMessage(BukkitUtil.getPlayer(player), caption);
     }
 
@@ -264,34 +264,28 @@ import java.util.*;
         return getWorld(world).getBiome(x, z).name();
     }
 
-    @Override @SuppressWarnings("deprecation")
-    public void setSign(@NonNull final String worldName, final int x, final int y, final int z,
-        @NonNull final String[] lines) {
-        final World world = getWorld(worldName);
-        final Block block = world.getBlockAt(x, y, z);
-        //        block.setType(Material.AIR);
-        final Material type = block.getType();
-        if (type != Material.SIGN && type != Material.WALL_SIGN) {
-            BlockFace facing = BlockFace.EAST;
-            if (world.getBlockAt(x, y, z + 1).getType().isSolid())
-                facing = BlockFace.NORTH;
-            else if (world.getBlockAt(x + 1, y, z).getType().isSolid())
-                facing = BlockFace.WEST;
-            else if (world.getBlockAt(x, y, z - 1).getType().isSolid())
-                facing = BlockFace.SOUTH;
-            block.setType(Material.WALL_SIGN, false);
-            final WallSign sign = (WallSign) block.getBlockData();
-            sign.setFacing(facing);
-            block.setBlockData(sign, false);
-        }
-        final BlockState blockstate = block.getState();
-        if (blockstate instanceof Sign) {
-            final Sign sign = (Sign) blockstate;
-            for (int i = 0; i < lines.length; i++) {
-                sign.setLine(i, lines[i]);
+    @Override public int getHighestBlock(@NonNull final String world, final int x, final int z) {
+        final World bukkitWorld = getWorld(world);
+        // Skip top and bottom block
+        int air = 1;
+        for (int y = bukkitWorld.getMaxHeight() - 1; y >= 0; y--) {
+            Block block = bukkitWorld.getBlockAt(x, y, z);
+            if (block != null) {
+                Material type = block.getType();
+                if (type.isSolid()) {
+                    if (air > 1) {
+                        return y;
+                    }
+                    air = 0;
+                } else {
+                    if (block.isLiquid()) {
+                        return y;
+                    }
+                    air++;
+                }
             }
-            sign.update(true);
         }
+        return bukkitWorld.getMaxHeight() - 1;
     }
 
     @Override @Nullable public String[] getSign(@NonNull final Location location) {
@@ -330,29 +324,39 @@ import java.util.*;
         }
     }
 
-    @Override public int getHighestBlock(@NonNull final String world, final int x, final int z) {
-        final World bukkitWorld = getWorld(world);
-        // Skip top and bottom block
-        int air = 1;
-        for (int y = bukkitWorld.getMaxHeight() - 1; y >= 0; y--) {
-            Block block = bukkitWorld.getBlockAt(x, y, z);
-            if (block != null) {
-                Material type = block.getType();
-                if (type.isSolid()) {
-                    if (air > 1)
-                        return y;
-                    air = 0;
-                } else {
-                    switch (type) {
-                        case WATER:
-                        case LAVA:
-                            return y;
-                    }
-                    air++;
-                }
+    @Override @SuppressWarnings("deprecation")
+    public void setSign(@NonNull final String worldName, final int x, final int y, final int z,
+        @NonNull final String[] lines) {
+        final World world = getWorld(worldName);
+        final Block block = world.getBlockAt(x, y, z);
+        //        block.setType(Material.AIR);
+        final Material type = block.getType();
+        if (type != Material.LEGACY_SIGN && type != Material.LEGACY_WALL_SIGN) {
+            BlockFace facing = BlockFace.EAST;
+            if (world.getBlockAt(x, y, z + 1).getType().isSolid()) {
+                facing = BlockFace.NORTH;
+            } else if (world.getBlockAt(x + 1, y, z).getType().isSolid()) {
+                facing = BlockFace.WEST;
+            } else if (world.getBlockAt(x, y, z - 1).getType().isSolid()) {
+                facing = BlockFace.SOUTH;
             }
+            if (PlotSquared.get().IMP.getServerVersion()[1] == 13) {
+                block.setType(Material.valueOf("WALL_SIGN"), false);
+            } else {
+                block.setType(Material.valueOf("OAK_WALL_SIGN"), false);
+            }
+            final Directional sign = (Directional) block.getBlockData();
+            sign.setFacing(facing);
+            block.setBlockData(sign, false);
         }
-        return bukkitWorld.getMaxHeight() - 1;
+        final BlockState blockstate = block.getState();
+        if (blockstate instanceof Sign) {
+            final Sign sign = (Sign) blockstate;
+            for (int i = 0; i < lines.length; i++) {
+                sign.setLine(i, lines[i]);
+            }
+            sign.update(true);
+        }
     }
 
     @Override public int getBiomeFromString(@NonNull final String biomeString) {
@@ -366,11 +370,7 @@ import java.util.*;
 
     @Override public String[] getBiomeList() {
         final Biome[] biomes = Biome.values();
-        final String[] list = new String[biomes.length];
-        for (int i = 0; i < biomes.length; i++) {
-            list[i] = biomes[i].name();
-        }
-        return list;
+        return Arrays.stream(biomes).map(Enum::name).toArray(String[]::new);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.github.intellectualsites.plotsquared.bukkit.events.PlayerEnterPlotEve
 import com.github.intellectualsites.plotsquared.bukkit.events.PlayerLeavePlotEvent;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flag.IntervalFlag;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -30,52 +31,49 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 
-@SuppressWarnings("unused")
-public class PlotPlusListener extends PlotListener implements Listener {
+@SuppressWarnings("unused") public class PlotPlusListener extends PlotListener implements Listener {
 
     private static final HashMap<UUID, Interval> feedRunnable = new HashMap<>();
     private static final HashMap<UUID, Interval> healRunnable = new HashMap<>();
 
     public static void startRunnable(JavaPlugin plugin) {
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-            @Override public void run() {
-                if (!healRunnable.isEmpty()) {
-                    for (Iterator<Entry<UUID, Interval>> iterator =
-                         healRunnable.entrySet().iterator(); iterator.hasNext(); ) {
-                        Entry<UUID, Interval> entry = iterator.next();
-                        Interval value = entry.getValue();
-                        ++value.count;
-                        if (value.count == value.interval) {
-                            value.count = 0;
-                            Player player = Bukkit.getPlayer(entry.getKey());
-                            if (player == null) {
-                                iterator.remove();
-                                continue;
-                            }
-                            double level = player.getHealth();
-                            if (level != value.max) {
-                                player.setHealth(Math.min(level + value.amount, value.max));
-                            }
+        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+            if (!healRunnable.isEmpty()) {
+                for (Iterator<Entry<UUID, Interval>> iterator =
+                     healRunnable.entrySet().iterator(); iterator.hasNext(); ) {
+                    Entry<UUID, Interval> entry = iterator.next();
+                    Interval value = entry.getValue();
+                    ++value.count;
+                    if (value.count == value.interval) {
+                        value.count = 0;
+                        Player player = Bukkit.getPlayer(entry.getKey());
+                        if (player == null) {
+                            iterator.remove();
+                            continue;
+                        }
+                        double level = player.getHealth();
+                        if (level != value.max) {
+                            player.setHealth(Math.min(level + value.amount, value.max));
                         }
                     }
                 }
-                if (!feedRunnable.isEmpty()) {
-                    for (Iterator<Entry<UUID, Interval>> iterator =
-                         feedRunnable.entrySet().iterator(); iterator.hasNext(); ) {
-                        Entry<UUID, Interval> entry = iterator.next();
-                        Interval value = entry.getValue();
-                        ++value.count;
-                        if (value.count == value.interval) {
-                            value.count = 0;
-                            Player player = Bukkit.getPlayer(entry.getKey());
-                            if (player == null) {
-                                iterator.remove();
-                                continue;
-                            }
-                            int level = player.getFoodLevel();
-                            if (level != value.max) {
-                                player.setFoodLevel(Math.min(level + value.amount, value.max));
-                            }
+            }
+            if (!feedRunnable.isEmpty()) {
+                for (Iterator<Entry<UUID, Interval>> iterator =
+                     feedRunnable.entrySet().iterator(); iterator.hasNext(); ) {
+                    Entry<UUID, Interval> entry = iterator.next();
+                    Interval value = entry.getValue();
+                    ++value.count;
+                    if (value.count == value.interval) {
+                        value.count = 0;
+                        Player player = Bukkit.getPlayer(entry.getKey());
+                        if (player == null) {
+                            iterator.remove();
+                            continue;
+                        }
+                        int level = player.getFoodLevel();
+                        if (level != value.max) {
+                            player.setFoodLevel(Math.min(level + value.amount, value.max));
                         }
                     }
                 }
@@ -83,8 +81,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }, 0L, 20L);
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onInteract(BlockDamageEvent event) {
+    @EventHandler(priority = EventPriority.HIGH) public void onInteract(BlockDamageEvent event) {
         Player player = event.getPlayer();
         if (player.getGameMode() != GameMode.SURVIVAL) {
             return;
@@ -103,13 +100,11 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onDamage(EntityDamageEvent event) {
+    @EventHandler(priority = EventPriority.HIGH) public void onDamage(EntityDamageEvent event) {
         if (event.getEntityType() != EntityType.PLAYER) {
             return;
         }
-        Player player = (Player) event.getEntity();
-        Plot plot = BukkitUtil.getLocation(player).getOwnedPlot();
+        Plot plot = BukkitUtil.getLocation(event.getEntity()).getOwnedPlot();
         if (plot == null) {
             return;
         }
@@ -118,8 +113,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onItemDrop(PlayerDropItemEvent event) {
+    @EventHandler public void onItemDrop(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
         Plot plot = BukkitUtil.getLocation(player).getOwnedPlot();
@@ -134,27 +128,24 @@ public class PlotPlusListener extends PlotListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onPlotEnter(PlayerEnterPlotEvent event) {
+    @EventHandler public void onPlotEnter(PlayerEnterPlotEvent event) {
         Player player = event.getPlayer();
         Plot plot = event.getPlot();
-        Optional<Integer[]> feed = plot.getFlag(Flags.FEED);
-        feed.ifPresent( value -> feedRunnable.put(player.getUniqueId(), new Interval(value[0], value[1], 20))
-        );
-        Optional<Integer[]> heal = plot.getFlag(Flags.HEAL);
-        heal.ifPresent( value -> healRunnable.put(player.getUniqueId(), new Interval(value[0], value[1], 20))
-        );
+        Optional<IntervalFlag.Interval> feed = plot.getFlag(Flags.FEED);
+        feed.ifPresent(value -> feedRunnable
+            .put(player.getUniqueId(), new Interval(value.getVal1(), value.getVal2(), 20)));
+        Optional<IntervalFlag.Interval> heal = plot.getFlag(Flags.HEAL);
+        heal.ifPresent(value -> healRunnable
+            .put(player.getUniqueId(), new Interval(value.getVal1(), value.getVal2(), 20)));
     }
 
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
+    @EventHandler public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         feedRunnable.remove(player.getUniqueId());
         healRunnable.remove(player.getUniqueId());
     }
 
-    @EventHandler
-    public void onPlotLeave(PlayerLeavePlotEvent event) {
+    @EventHandler public void onPlotLeave(PlayerLeavePlotEvent event) {
         Player leaver = event.getPlayer();
         Plot plot = event.getPlot();
         if (!plot.hasOwner()) {
@@ -165,8 +156,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         healRunnable.remove(leaver.getUniqueId());
     }
 
-    @EventHandler
-    public void onItemPickup(EntityPickupItemEvent event) {
+    @EventHandler public void onItemPickup(EntityPickupItemEvent event) {
         LivingEntity ent = event.getEntity();
         if (ent instanceof Player) {
             Player player = (Player) ent;

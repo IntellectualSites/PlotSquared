@@ -7,24 +7,6 @@ import lombok.NonNull;
 public class PlotInventory {
 
     private static final String META_KEY = "inventory";
-
-    public static boolean hasPlotInventoryOpen(@NonNull final PlotPlayer plotPlayer) {
-        return getOpenPlotInventory(plotPlayer) != null;
-    }
-
-    public static PlotInventory getOpenPlotInventory(@NonNull final PlotPlayer plotPlayer) {
-        return plotPlayer.getMeta(META_KEY, null);
-    }
-
-    public static void setPlotInventoryOpen(@NonNull final PlotPlayer plotPlayer,
-        @NonNull final PlotInventory plotInventory) {
-        plotPlayer.setMeta(META_KEY, plotInventory);
-    }
-
-    public static void removePlotInventoryOpen(@NonNull final PlotPlayer plotPlayer) {
-        plotPlayer.deleteMeta(META_KEY);
-    }
-
     public final PlotPlayer player;
     public final int size;
     private final PlotItemStack[] items;
@@ -43,6 +25,23 @@ public class PlotInventory {
         this.title = name == null ? "" : name;
         this.player = player;
         this.items = new PlotItemStack[size * 9];
+    }
+
+    public static boolean hasPlotInventoryOpen(@NonNull final PlotPlayer plotPlayer) {
+        return getOpenPlotInventory(plotPlayer) != null;
+    }
+
+    public static PlotInventory getOpenPlotInventory(@NonNull final PlotPlayer plotPlayer) {
+        return plotPlayer.getMeta(META_KEY, null);
+    }
+
+    public static void setPlotInventoryOpen(@NonNull final PlotPlayer plotPlayer,
+        @NonNull final PlotInventory plotInventory) {
+        plotPlayer.setMeta(META_KEY, plotInventory);
+    }
+
+    public static void removePlotInventoryOpen(@NonNull final PlotPlayer plotPlayer) {
+        plotPlayer.deleteMeta(META_KEY);
     }
 
     public boolean onClick(int index) {

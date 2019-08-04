@@ -414,11 +414,7 @@ public class PlotAnalysis {
      * @return
      */
     public static int sum(int[] array) {
-        int sum = 0;
-        for (int value : array) {
-            sum += value;
-        }
-        return sum;
+        return Arrays.stream(array).sum();
     }
 
     /**

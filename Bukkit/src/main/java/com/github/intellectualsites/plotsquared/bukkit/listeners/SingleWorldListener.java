@@ -22,17 +22,14 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
 @SuppressWarnings("unused") public class SingleWorldListener implements Listener {
 
     private Method methodGetHandleChunk;
-    private Field mustSave, done, lit, s;
+    private Field mustSave;
 
     public SingleWorldListener(Plugin plugin) throws Exception {
         ReflectionUtils.RefClass classChunk = getRefClass("{nms}.Chunk");
         ReflectionUtils.RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
         this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle").getRealMethod();
-        this.mustSave = classChunk.getField("mustSave").getRealField();
         try {
-            this.done = classChunk.getField("done").getRealField();
-            this.lit = classChunk.getField("lit").getRealField();
-            this.s = classChunk.getField("s").getRealField();
+            this.mustSave = classChunk.getField("mustSave").getRealField();
         } catch (Throwable ignore) {
             ignore.printStackTrace();
         }
@@ -42,14 +39,9 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
     public void markChunkAsClean(Chunk chunk) {
         try {
             Object nmsChunk = methodGetHandleChunk.invoke(chunk);
-            if (done != null)
-                this.done.set(nmsChunk, true);
-            if (mustSave != null)
+            if (mustSave != null) {
                 this.mustSave.set(nmsChunk, false);
-            if (lit != null)
-                this.lit.set(nmsChunk, false);
-            if (s != null)
-                this.s.set(nmsChunk, false);
+            }
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -59,10 +51,12 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
         World world = event.getWorld();
         String name = world.getName();
         PlotAreaManager man = PlotSquared.get().getPlotAreaManager();
-        if (!(man instanceof SinglePlotAreaManager))
+        if (!(man instanceof SinglePlotAreaManager)) {
             return;
-        if (!isPlotId(name))
+        }
+        if (!isPlotId(name)) {
             return;
+        }
 
         markChunkAsClean(event.getChunk());
     }

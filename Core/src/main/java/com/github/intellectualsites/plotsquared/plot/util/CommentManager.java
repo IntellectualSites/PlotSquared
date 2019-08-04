@@ -1,11 +1,15 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
-import com.github.intellectualsites.plotsquared.plot.object.comment.*;
+import com.github.intellectualsites.plotsquared.plot.object.comment.CommentInbox;
+import com.github.intellectualsites.plotsquared.plot.object.comment.InboxOwner;
+import com.github.intellectualsites.plotsquared.plot.object.comment.InboxPublic;
+import com.github.intellectualsites.plotsquared.plot.object.comment.InboxReport;
+import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,34 +24,31 @@ public class CommentManager {
         if (!Settings.Enabled_Components.COMMENT_NOTIFIER || !plot.isOwner(player.getUUID())) {
             return;
         }
-        TaskManager.runTaskLaterAsync(new Runnable() {
-            @Override public void run() {
-                Collection<CommentInbox> boxes = CommentManager.inboxes.values();
-                final AtomicInteger count = new AtomicInteger(0);
-                final AtomicInteger size = new AtomicInteger(boxes.size());
-                for (final CommentInbox inbox : inboxes.values()) {
-                    inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
-                        @Override public void run(List<PlotComment> value) {
-                            int total;
-                            if (value != null) {
-                                int num = 0;
-                                for (PlotComment comment : value) {
-                                    if (comment.timestamp > getTimestamp(player,
-                                        inbox.toString())) {
-                                        num++;
-                                    }
+        TaskManager.runTaskLaterAsync(() -> {
+            Collection<CommentInbox> boxes = CommentManager.inboxes.values();
+            final AtomicInteger count = new AtomicInteger(0);
+            final AtomicInteger size = new AtomicInteger(boxes.size());
+            for (final CommentInbox inbox : inboxes.values()) {
+                inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
+                    @Override public void run(List<PlotComment> value) {
+                        int total;
+                        if (value != null) {
+                            int num = 0;
+                            for (PlotComment comment : value) {
+                                if (comment.timestamp > getTimestamp(player, inbox.toString())) {
+                                    num++;
                                 }
-                                total = count.addAndGet(num);
-                            } else {
-                                total = count.get();
                             }
-                            if ((size.decrementAndGet() == 0) && (total > 0)) {
-                                AbstractTitle.sendTitle(player, "",
-                                    C.INBOX_NOTIFICATION.s().replaceAll("%s", "" + total));
-                            }
+                            total = count.addAndGet(num);
+                        } else {
+                            total = count.get();
                         }
-                    });
-                }
+                        if ((size.decrementAndGet() == 0) && (total > 0)) {
+                            player.sendTitle("",
+                                Captions.INBOX_NOTIFICATION.s().replaceAll("%s", "" + total));
+                        }
+                    }
+                });
             }
         }, 20);
     }

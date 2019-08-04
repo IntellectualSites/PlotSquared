@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.bukkit.object;
 
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -19,6 +19,7 @@ import org.bukkit.event.EventException;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.RegisteredListener;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 
 public class BukkitPlayer extends PlotPlayer {
 
+    private static boolean CHECK_EFFECTIVE = true;
     public final Player player;
     private boolean offline;
     private UUID uuid;
@@ -57,7 +59,7 @@ public class BukkitPlayer extends PlotPlayer {
         return location == null ? BukkitUtil.getLocation(this.player) : location;
     }
 
-    @Override public UUID getUUID() {
+    @NotNull @Override public UUID getUUID() {
         if (this.uuid == null) {
             this.uuid = UUIDHandler.getUUID(this);
         }
@@ -80,6 +82,11 @@ public class BukkitPlayer extends PlotPlayer {
         event = new PlayerTeleportEvent(player, to, from);
         callEvent(event);
         return true;
+    }
+
+    @Override
+    public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
     }
 
     private void callEvent(final Event event) {
@@ -106,15 +113,15 @@ public class BukkitPlayer extends PlotPlayer {
     }
 
     @Override public int hasPermissionRange(final String stub, final int range) {
-        if (hasPermission(C.PERMISSION_ADMIN.s())) {
+        if (hasPermission(Captions.PERMISSION_ADMIN.s())) {
             return Integer.MAX_VALUE;
         }
         final String[] nodes = stub.split("\\.");
         final StringBuilder n = new StringBuilder();
         for (int i = 0; i < (nodes.length - 1); i++) {
             n.append(nodes[i]).append(".");
-            if (!stub.equals(n + C.PERMISSION_STAR.s())) {
-                if (hasPermission(n + C.PERMISSION_STAR.s())) {
+            if (!stub.equals(n + Captions.PERMISSION_STAR.s())) {
+                if (hasPermission(n + Captions.PERMISSION_STAR.s())) {
                     return Integer.MAX_VALUE;
                 }
             }
@@ -123,27 +130,43 @@ public class BukkitPlayer extends PlotPlayer {
             return Integer.MAX_VALUE;
         }
         int max = 0;
-        String stubPlus = stub + ".";
+        if (CHECK_EFFECTIVE) {
+            boolean hasAny = false;
+            String stubPlus = stub + ".";
         final Set<PermissionAttachmentInfo> effective = player.getEffectivePermissions();
-        if (!effective.isEmpty()) {
-            for (PermissionAttachmentInfo attach : effective) {
-                String perm = attach.getPermission();
-                if (perm.startsWith(stubPlus)) {
-                    String end = perm.substring(stubPlus.length());
-                    if (MathMan.isInteger(end)) {
-                        int val = Integer.parseInt(end);
-                        if (val > range)
-                            return val;
-                        if (val > max)
-                            max = val;
+            if (!effective.isEmpty()) {
+                for (PermissionAttachmentInfo attach : effective) {
+                    String permStr = attach.getPermission();
+                    if (permStr.startsWith(stubPlus)) {
+                        hasAny = true;
+                        String end = permStr.substring(stubPlus.length());
+                        if (MathMan.isInteger(end)) {
+                            int val = Integer.parseInt(end);
+                            if (val > range) {
+                                return val;
+                            }
+                            if (val > max) {
+                                max = val;
+                            }
+                        }
                     }
                 }
-            }
-        } else {
-            for (int i = range; i > 0; i--) {
-                if (hasPermission(stub + "." + i)) {
-                    return i;
+                if (hasAny) {
+                    return max;
                 }
+                // Workaround
+                for (PermissionAttachmentInfo attach : effective) {
+                    String permStr = attach.getPermission();
+                    if (permStr.startsWith("plots.") && !permStr.equals("plots.use")) {
+                        return max;
+                    }
+                }
+                CHECK_EFFECTIVE = false;
+            }
+        }
+        for (int i = range; i > 0; i--) {
+            if (hasPermission(stub + "." + i)) {
+                return i;
             }
         }
         return max;
@@ -202,8 +225,6 @@ public class BukkitPlayer extends PlotPlayer {
                 this.player.setPlayerWeather(WeatherType.DOWNFALL);
                 break;
             case RESET:
-                this.player.resetPlayerWeather();
-                break;
             default:
                 this.player.resetPlayerWeather();
                 break;
@@ -238,8 +259,6 @@ public class BukkitPlayer extends PlotPlayer {
                 this.player.setGameMode(GameMode.SPECTATOR);
                 break;
             case SURVIVAL:
-                this.player.setGameMode(GameMode.SURVIVAL);
-                break;
             default:
                 this.player.setGameMode(GameMode.SURVIVAL);
                 break;
@@ -267,14 +286,15 @@ public class BukkitPlayer extends PlotPlayer {
         Preconditions.checkNotNull(id, "Specified block cannot be null");
         if (PlotBlock.isEverything(id) || id.isAir()) {
             // Let's just stop all the discs because why not?
-            for (final Sound sound : Arrays.stream(Sound.values()).filter(sound -> sound.name().contains("DISC")).collect(
-                Collectors.toList())) {
+            for (final Sound sound : Arrays.stream(Sound.values())
+                .filter(sound -> sound.name().contains("DISC")).collect(Collectors.toList())) {
                 player.stopSound(sound);
             }
             // this.player.playEffect(BukkitUtil.getLocation(location), Effect.RECORD_PLAY, Material.AIR);
         } else {
             // this.player.playEffect(BukkitUtil.getLocation(location), Effect.RECORD_PLAY, id.to(Material.class));
-            this.player.playSound(BukkitUtil.getLocation(location), Sound.valueOf(id.to(Material.class).name()), Float.MAX_VALUE, 1f);
+            this.player.playSound(BukkitUtil.getLocation(location),
+                Sound.valueOf(id.to(Material.class).name()), Float.MAX_VALUE, 1f);
         }
     }
 

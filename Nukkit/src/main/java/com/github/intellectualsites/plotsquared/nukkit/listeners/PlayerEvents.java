@@ -90,7 +90,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return;
             }
             if (Settings.Redstone.DISABLE_OFFLINE) {
-                if (UUIDHandler.getPlayer(plot.owner) == null) {
+                if (UUIDHandler.getPlayer(plot.getOwner()) == null) {
                     boolean disable = true;
                     for (UUID trusted : plot.getTrusted()) {
                         if (UUIDHandler.getPlayer(trusted) != null) {

@@ -3,10 +3,11 @@ package com.github.intellectualsites.plotsquared.plot.listener;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.sk89q.worldedit.world.block.BaseBlock;
-import com.sk89q.worldedit.world.block.BlockState;
-import com.sk89q.worldedit.world.block.BlockType;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
 
 import java.util.HashSet;
 import java.util.UUID;
@@ -71,7 +72,6 @@ public class WEManager {
         }
         boolean allowMember = player.hasPermission("plots.worldedit.member");
         Plot plot = player.getCurrentPlot();
-        HashSet<RegionWrapper> allowed = new HashSet<>();
         if (plot == null) {
             plot = player.getMeta("WorldEditRegionPlot");
         }

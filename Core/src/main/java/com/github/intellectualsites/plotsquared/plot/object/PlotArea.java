@@ -10,16 +10,25 @@ import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.generator.GridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
+import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.area.QuadMap;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 /**
  * @author Jesse Boyd, Alexander Söderberg
@@ -68,11 +77,11 @@ public abstract class PlotArea {
     private QuadMap<PlotCluster> clusters;
 
     public PlotArea(@Nonnull final String worldName, @Nullable final String id,
-        @Nullable IndependentPlotGenerator generator, @Nullable final PlotId min,
+        @NotNull IndependentPlotGenerator generator, @Nullable final PlotId min,
         @Nullable final PlotId max) {
         this.worldname = worldName;
         this.id = id;
-        this.manager = generator != null ? generator.getNewPlotManager() : null;
+        this.manager = createManager();
         this.generator = generator;
         if (min == null || max == null) {
             if (min != max) {
@@ -86,27 +95,14 @@ public abstract class PlotArea {
             this.max = max;
         }
         this.worldhash = worldName.hashCode();
-        if (Settings.Enabled_Components.PLOT_EXPIRY && generator != null) {
+        if (Settings.Enabled_Components.PLOT_EXPIRY) {
             blockBucketChunk = generator.generateBlockBucketChunk(this);
         } else {
             blockBucketChunk = null;
         }
     }
 
-    /**
-     * Create a new PlotArea object with no functionality/information.
-     * - Mainly used during startup before worlds are created as a temporary object
-     */
-    public static PlotArea createGeneric(@Nonnull final String world) {
-        return new PlotArea(world, null, null, null, null) {
-            @Override public void loadConfiguration(ConfigurationSection config) {
-            }
-
-            @Override public ConfigurationNode[] getSettingNodes() {
-                return null;
-            }
-        };
-    }
+    protected abstract PlotManager createManager();
 
     public LocalBlockQueue getQueue(final boolean autoQueue) {
         return GlobalBlockQueue.IMP.getNewQueue(worldname, autoQueue);
@@ -150,8 +146,8 @@ public abstract class PlotArea {
     private RegionWrapper getRegionAbs() {
         if (this.region == null) {
             if (this.min != null) {
-                Location bot = getPlotManager().getPlotBottomLocAbs(this, this.min);
-                Location top = getPlotManager().getPlotTopLocAbs(this, this.max);
+                Location bot = getPlotManager().getPlotBottomLocAbs(this.min);
+                Location top = getPlotManager().getPlotTopLocAbs(this.max);
                 this.region = new RegionWrapper(bot.getX() - 1, top.getX() + 1, bot.getZ() - 1,
                     top.getZ() + 1);
             }
@@ -243,7 +239,8 @@ public abstract class PlotArea {
         this.SCHEMATIC_ON_CLAIM = config.getBoolean("schematic.on_claim");
         this.SCHEMATIC_FILE = config.getString("schematic.file");
         this.SCHEMATIC_CLAIM_SPECIFY = config.getBoolean("schematic.specify_on_claim");
-        this.SCHEMATICS = config.getStringList("schematic.schematics");
+        this.SCHEMATICS = new ArrayList<>(config.getStringList("schematic.schematics"));
+        this.SCHEMATICS.replaceAll(String::toLowerCase);
         this.USE_ECONOMY = config.getBoolean("economy.use") && EconHandler.getEconHandler() != null;
         ConfigurationSection priceSection = config.getConfigurationSection("economy.prices");
         if (this.USE_ECONOMY) {
@@ -427,7 +424,7 @@ public abstract class PlotArea {
      */
     @Nullable public Plot getPlotAbs(@Nonnull final Location location) {
         final PlotId pid =
-            this.manager.getPlotId(this, location.getX(), location.getY(), location.getZ());
+            this.manager.getPlotId(location.getX(), location.getY(), location.getZ());
         if (pid == null) {
             return null;
         }
@@ -442,7 +439,7 @@ public abstract class PlotArea {
      */
     @Nullable public Plot getPlot(@Nonnull final Location location) {
         final PlotId pid =
-            this.manager.getPlotId(this, location.getX(), location.getY(), location.getZ());
+            this.manager.getPlotId(location.getX(), location.getY(), location.getZ());
         if (pid == null) {
             return null;
         }
@@ -457,7 +454,7 @@ public abstract class PlotArea {
      */
     @Nullable public Plot getOwnedPlot(@Nonnull final Location location) {
         final PlotId pid =
-            this.manager.getPlotId(this, location.getX(), location.getY(), location.getZ());
+            this.manager.getPlotId(location.getX(), location.getY(), location.getZ());
         if (pid == null) {
             return null;
         }
@@ -473,7 +470,7 @@ public abstract class PlotArea {
      */
     @Nullable public Plot getOwnedPlotAbs(@Nonnull final Location location) {
         final PlotId pid =
-            this.manager.getPlotId(this, location.getX(), location.getY(), location.getZ());
+            this.manager.getPlotId(location.getX(), location.getY(), location.getZ());
         if (pid == null) {
             return null;
         }
@@ -514,28 +511,17 @@ public abstract class PlotArea {
             return Collections.emptySet();
         }
         final HashSet<Plot> myPlots = new HashSet<>();
-        foreachPlotAbs(new RunnableVal<Plot>() {
-            @Override public void run(Plot value) {
-                if (uuid.equals(value.owner)) {
-                    myPlots.add(value);
-                }
+        forEachPlotAbs(value -> {
+            if (uuid.equals(value.owner)) {
+                myPlots.add(value);
             }
         });
         return myPlots;
     }
 
     @Nonnull public Set<Plot> getPlots(@Nonnull final UUID uuid) {
-        final Set<Plot> myplots = new HashSet<>();
-        for (final Plot plot : getPlots()) {
-            if (plot.isBasePlot() && plot.isOwner(uuid)) {
-                myplots.add(plot);
-            }
-        }
-        return myplots;
-    }
-
-    public Set<Plot> getPlots(@Nonnull final PlotPlayer player) {
-        return getPlots(player.getUUID());
+        return getPlots().stream().filter(plot -> plot.isBasePlot() && plot.isOwner(uuid))
+            .collect(ImmutableSet.toImmutableSet());
     }
 
     /**
@@ -549,25 +535,26 @@ public abstract class PlotArea {
 
     public int getPlotCount(@Nonnull final UUID uuid) {
         if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
-            int count = 0;
-            for (Plot plot : getPlotsAbs(uuid)) {
-                if (!plot.hasFlag(Flags.DONE)) {
-                    count++;
-                }
-            }
-            return count;
+            return (int) getPlotsAbs(uuid).stream().filter(plot -> !plot.hasFlag(Flags.DONE))
+                .count();
         }
         return getPlotsAbs(uuid).size();
     }
 
-    public boolean hasPlot(@Nonnull final UUID uuid) {
-        for (Entry<PlotId, Plot> entry : this.plots.entrySet()) {
-            if (entry.getValue().isOwner(uuid))
-                return true;
-        }
-        return false;
+    /**
+     * Retrieves the plots for the player in this PlotArea.
+     *
+     * @deprecated Use {@link #getPlots(UUID)}
+     */
+    @Deprecated public Set<Plot> getPlots(@Nonnull final PlotPlayer player) {
+        return getPlots(player.getUUID());
     }
 
+    public boolean hasPlot(@Nonnull final UUID uuid) {
+        return this.plots.entrySet().stream().anyMatch(entry -> entry.getValue().isOwner(uuid));
+    }
+
+    //todo check if this method is needed in this class
     public int getPlotCount(@Nullable final PlotPlayer player) {
         return player != null ? getPlotCount(player.getUUID()) : 0;
     }
@@ -671,22 +658,35 @@ public abstract class PlotArea {
         return myPlots;
     }
 
-    private void foreachPlotAbs(@Nonnull final RunnableVal<Plot> run) {
+    private void forEachPlotAbs(Consumer<Plot> run) {
         for (final Entry<PlotId, Plot> entry : this.plots.entrySet()) {
-            run.run(entry.getValue());
+            run.accept(entry.getValue());
         }
     }
 
-    public void foreachBasePlot(@Nonnull final RunnableVal<Plot> run) {
+    public void forEachBasePlot(Consumer<Plot> run) {
         for (final Plot plot : getPlots()) {
             if (plot.isBasePlot()) {
-                run.run(plot);
+                run.accept(plot);
             }
         }
     }
 
-    @Nonnull public Map<PlotId, Plot> getPlotsRaw() {
-        return this.plots;
+    /**
+     * Returns an ImmutableMap of PlotId's and Plots in this PlotArea.
+     */
+    public Map<PlotId, Plot> getPlotsMap() {
+        return ImmutableMap.copyOf(plots);
+    }
+
+    /**
+     * Returns an ImmutableMap of PlotId's and Plots in this PlotArea.
+     *
+     * @deprecated Use {@link #getPlotsMap()}
+     */
+    //todo eventually remove
+    @Deprecated @Nonnull public Map<PlotId, Plot> getPlotsRaw() {
+        return ImmutableMap.copyOf(plots);
     }
 
     @Nonnull public Set<Entry<PlotId, Plot>> getPlotEntries() {
@@ -708,20 +708,20 @@ public abstract class PlotArea {
         if (TYPE == 2) {
             center = new PlotId(MathMan.average(min.x, max.x), MathMan.average(min.y, max.y));
             plots = Math.max(max.x - min.x, max.y - min.y) + 1;
-            if (start != null)
+            if (start != null) {
                 start = new PlotId(start.x - center.x, start.y - center.y);
+            }
         } else {
             center = new PlotId(0, 0);
             plots = Integer.MAX_VALUE;
         }
-        PlotId currentId;
         for (int i = 0; i < plots; i++) {
             if (start == null) {
                 start = getMeta("lastPlot", new PlotId(0, 0));
             } else {
                 start = start.getNextId(1);
             }
-            currentId = new PlotId(center.x + start.x, center.y + start.y);
+            PlotId currentId = new PlotId(center.x + start.x, center.y + start.y);
             Plot plot = getPlotAbs(currentId);
             if (plot != null && plot.canClaim(player)) {
                 setMeta("lastPlot", currentId);
@@ -837,11 +837,10 @@ public abstract class PlotArea {
             return false;
         }
 
+        manager.startPlotMerge(plotIds);
         final Set<UUID> trusted = new HashSet<>();
         final Set<UUID> members = new HashSet<>();
         final Set<UUID> denied = new HashSet<>();
-
-        manager.startPlotMerge(this, plotIds);
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
                 PlotId id = new PlotId(x, y);
@@ -871,26 +870,26 @@ public abstract class PlotArea {
                 Plot plot2;
                 if (lx) {
                     if (ly) {
-                        if (!plot.getMerged(1) || !plot.getMerged(2)) {
+                        if (!plot.getMerged(Direction.EAST) || !plot.getMerged(Direction.SOUTH)) {
                             if (removeRoads) {
                                 plot.removeRoadSouthEast();
                             }
                         }
                     }
-                    if (!plot.getMerged(1)) {
+                    if (!plot.getMerged(Direction.EAST)) {
                         plot2 = plot.getRelative(1, 0);
                         plot.mergePlot(plot2, removeRoads);
                     }
                 }
                 if (ly) {
-                    if (!plot.getMerged(2)) {
+                    if (!plot.getMerged(Direction.SOUTH)) {
                         plot2 = plot.getRelative(0, 1);
                         plot.mergePlot(plot2, removeRoads);
                     }
                 }
             }
         }
-        manager.finishPlotMerge(this, plotIds);
+        manager.finishPlotMerge(plotIds);
         return true;
     }
 

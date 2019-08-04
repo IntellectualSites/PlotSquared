@@ -50,13 +50,6 @@ public abstract class IndependentPlotGenerator {
     public abstract PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max);
 
     /**
-     * Return a new PlotManager object.
-     *
-     * @return
-     */
-    public abstract PlotManager getNewPlotManager();
-
-    /**
      * If any additional setup options need to be changed before world creation.
      * - e.g. If setup doesn't support some standard options
      *

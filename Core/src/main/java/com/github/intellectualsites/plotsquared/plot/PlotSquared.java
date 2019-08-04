@@ -5,11 +5,15 @@ import com.github.intellectualsites.plotsquared.configuration.MemorySection;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
 import com.github.intellectualsites.plotsquared.configuration.serialization.ConfigurationSerialization;
 import com.github.intellectualsites.plotsquared.plot.commands.WE_Anywhere;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.config.Storage;
-import com.github.intellectualsites.plotsquared.plot.database.*;
+import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
+import com.github.intellectualsites.plotsquared.plot.database.Database;
+import com.github.intellectualsites.plotsquared.plot.database.MySQL;
+import com.github.intellectualsites.plotsquared.plot.database.SQLManager;
+import com.github.intellectualsites.plotsquared.plot.database.SQLite;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
@@ -40,7 +44,9 @@ import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -48,8 +54,8 @@ import java.util.zip.ZipInputStream;
  * An implementation of the core, with a static getter for easy access.
  */
 @SuppressWarnings({"unused", "WeakerAccess"}) public class PlotSquared {
-    private static final Set<Plot> EMPTY_SET =
-        Collections.unmodifiableSet(Collections.<Plot>emptySet());
+    private static final Set<Plot> EMPTY_SET = Collections.
+        unmodifiableSet(Collections.emptySet());
     private static PlotSquared instance;
     // Implementation
     public final IPlotMain IMP;
@@ -63,17 +69,18 @@ import java.util.zip.ZipInputStream;
     public File commandsFile;
     public File translationFile;
     public YamlConfiguration style;
-    public YamlConfiguration config;
     public YamlConfiguration worlds;
     public YamlConfiguration storage;
     public YamlConfiguration commands;
     // Temporary hold the plots/clusters before the worlds load
     public HashMap<String, Set<PlotCluster>> clusters_tmp;
     public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
+    private YamlConfiguration config;
     // Implementation logger
     @Setter @Getter private ILogger logger;
     // Platform / Version / Update URL
     private PlotVersion version;
+    @Nullable @Getter private UpdateUtility updateUtility;
     // Files and configuration
     @Getter private File jarFile = null; // This file
     private File storageFile;
@@ -128,7 +135,7 @@ import java.util.zip.ZipInputStream;
             this.translationFile = MainUtil.getFile(this.IMP.getDirectory(),
                 Settings.Paths.TRANSLATIONS + File.separator + IMP.getPluginName()
                     + ".use_THIS.yml");
-            C.load(this.translationFile);
+            Captions.load(this.translationFile);
 
             // Setup plotAreaManager
             if (Settings.Enabled_Components.WORLDS) {
@@ -150,16 +157,10 @@ import java.util.zip.ZipInputStream;
             }
             if (Settings.Enabled_Components.EVENTS) {
                 this.IMP.registerPlayerEvents();
-                this.IMP.registerInventoryEvents();
                 this.IMP.registerPlotPlusEvents();
             }
             // Required
             this.IMP.registerWorldEvents();
-            if (Settings.Enabled_Components.METRICS) {
-                this.IMP.startMetrics();
-            } else {
-                PlotSquared.log(C.CONSOLE_PLEASE_ENABLE_METRICS.f(IMP.getPluginName()));
-            }
             if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
                 this.IMP.registerChunkProcessor();
             }
@@ -187,8 +188,6 @@ import java.util.zip.ZipInputStream;
             ChunkManager.manager = this.IMP.initChunkManager();
             // Schematic handler
             SchematicHandler.manager = this.IMP.initSchematicHandler();
-            // Titles
-            AbstractTitle.TITLE_CLASS = this.IMP.initTitleManager();
             // Chat
             ChatManager.manager = this.IMP.initChatManager();
             // Commands
@@ -214,11 +213,8 @@ import java.util.zip.ZipInputStream;
             }
             // Economy
             if (Settings.Enabled_Components.ECONOMY) {
-                TaskManager.runTask(new Runnable() {
-                    @Override public void run() {
-                        EconHandler.manager = PlotSquared.this.IMP.getEconomyHandler();
-                    }
-                });
+                TaskManager
+                    .runTask(() -> EconHandler.manager = PlotSquared.this.IMP.getEconomyHandler());
             }
 
 /*            // Check for updates
@@ -247,21 +243,20 @@ import java.util.zip.ZipInputStream;
                         this.IMP.setGenerator(world);
                     }
                 }
-                TaskManager.runTaskLater(new Runnable() {
-                    @Override public void run() {
-                        for (String world : section.getKeys(false)) {
-                            if (world.equals("CheckingPlotSquaredGenerator")) {
-                                continue;
-                            }
-                            if (!WorldUtil.IMP.isWorld(world) && !world.equals("*")) {
-                                debug("&c`" + world + "` was not properly loaded - " + IMP
-                                    .getPluginName() + " will now try to load it properly: ");
-                                debug(
-                                    "&8 - &7Are you trying to delete this world? Remember to remove it from the settings.yml, bukkit.yml and multiverse worlds.yml");
-                                debug(
-                                    "&8 - &7Your world management plugin may be faulty (or non existent)");
-                                PlotSquared.this.IMP.setGenerator(world);
-                            }
+                TaskManager.runTaskLater(() -> {
+                    for (String world : section.getKeys(false)) {
+                        if (world.equals("CheckingPlotSquaredGenerator")) {
+                            continue;
+                        }
+                        if (!WorldUtil.IMP.isWorld(world) && !world.equals("*")) {
+                            debug(
+                                "&c`" + world + "` was not properly loaded - " + IMP.getPluginName()
+                                    + " will now try to load it properly: ");
+                            debug(
+                                "&8 - &7Are you trying to delete this world? Remember to remove it from the worlds.yml, bukkit.yml and multiverse worlds.yml");
+                            debug(
+                                "&8 - &7Your world management plugin may be faulty (or non existent)");
+                            PlotSquared.this.IMP.setGenerator(world);
                         }
                     }
                 }, 1);
@@ -289,11 +284,11 @@ import java.util.zip.ZipInputStream;
             e.printStackTrace();
         }
 
-        PlotSquared.log(C.ENABLED.f(IMP.getPluginName()));
+        PlotSquared.log(Captions.ENABLED.f(IMP.getPluginName()));
     }
 
     /**
-     * Get an instance of PlotSquared.
+     * Gets an instance of PlotSquared.
      *
      * @return instance of PlotSquared
      */
@@ -342,25 +337,19 @@ import java.util.zip.ZipInputStream;
     }
 
     private void startUuidCatching() {
-        TaskManager.runTaskLater(new Runnable() {
-            @Override public void run() {
-                debug("Starting UUID caching");
-                UUIDHandler.startCaching(new Runnable() {
-                    @Override public void run() {
-                        UUIDHandler.add(new StringWrapper("*"), DBFunc.EVERYONE);
-                        foreachPlotRaw(new RunnableVal<Plot>() {
-                            @Override public void run(Plot plot) {
-                                if (plot.hasOwner() && plot.temp != -1) {
-                                    if (UUIDHandler.getName(plot.owner) == null) {
-                                        UUIDHandler.implementation.unknown.add(plot.owner);
-                                    }
-                                }
-                            }
-                        });
-                        startExpiryTasks();
+        TaskManager.runTaskLater(() -> {
+            debug("Starting UUID caching");
+            UUIDHandler.startCaching(() -> {
+                UUIDHandler.add(new StringWrapper("*"), DBFunc.EVERYONE);
+                forEachPlotRaw(plot -> {
+                    if (plot.hasOwner() && plot.temp != -1) {
+                        if (UUIDHandler.getName(plot.owner) == null) {
+                            UUIDHandler.implementation.unknown.add(plot.owner);
+                        }
                     }
                 });
-            }
+                startExpiryTasks();
+            });
         }, 20);
     }
 
@@ -392,7 +381,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get the current PlotSquared version.
+     * Gets the current PlotSquared version.
      *
      * @return current version in config or null
      */
@@ -401,8 +390,8 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get the server platform this plugin is running on this is running on.
-     * <p>
+     * Gets the server platform this plugin is running on this is running on.
+     *
      * <p>This will be either <b>Bukkit</b> or <b>Sponge</b></p>
      *
      * @return the server implementation
@@ -495,11 +484,8 @@ import java.util.zip.ZipInputStream;
         if (this.plots_tmp == null) {
             this.plots_tmp = new HashMap<>();
         }
-        HashMap<PlotId, Plot> map = this.plots_tmp.get(area.toString());
-        if (map == null) {
-            map = new HashMap<>();
-            this.plots_tmp.put(area.toString(), map);
-        }
+        HashMap<PlotId, Plot> map =
+            this.plots_tmp.computeIfAbsent(area.toString(), k -> new HashMap<>());
         for (Plot plot : area.getPlots()) {
             map.put(plot.getId(), plot);
         }
@@ -519,7 +505,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get all the base plots in a single set (for merged plots it just returns
+     * Gets all the base plots in a single set (for merged plots it just returns
      * the bottom plot).
      *
      * @return Set of base Plots
@@ -527,14 +513,12 @@ import java.util.zip.ZipInputStream;
     public Set<Plot> getBasePlots() {
         int size = getPlotCount();
         final Set<Plot> result = new HashSet<>(size);
-        foreachPlotArea(new RunnableVal<PlotArea>() {
-            @Override public void run(PlotArea value) {
-                for (Plot plot : value.getPlots()) {
-                    if (!plot.isBasePlot()) {
-                        continue;
-                    }
-                    result.add(plot);
+        forEachPlotArea(value -> {
+            for (Plot plot : value.getPlots()) {
+                if (!plot.isBasePlot()) {
+                    continue;
                 }
+                result.add(plot);
             }
         });
         return Collections.unmodifiableSet(result);
@@ -567,11 +551,7 @@ import java.util.zip.ZipInputStream;
                 result.add(plot);
             }
         }
-        Collections.sort(overflow, new Comparator<Plot>() {
-            @Override public int compare(Plot a, Plot b) {
-                return a.hashCode() - b.hashCode();
-            }
-        });
+        overflow.sort(Comparator.comparingInt(Plot::hashCode));
         result.addAll(overflow);
         return result;
     }
@@ -581,12 +561,8 @@ import java.util.zip.ZipInputStream;
      *
      * @param plots the collection of plots to sort
      * @return the sorted collection
-     * @deprecated Unchecked, please use
-     * {@link #sortPlots(Collection, SortType, PlotArea)} which has
-     * additional checks before calling this
      */
-    // TODO: Re-evaluate deprecation of this, as it's being used internally
-    @Deprecated public ArrayList<Plot> sortPlotsByHash(Collection<Plot> plots) {
+    private ArrayList<Plot> sortPlotsByHash(Collection<Plot> plots) {
         int hardmax = 256000;
         int max = 0;
         int overflowSize = 0;
@@ -618,7 +594,7 @@ import java.util.zip.ZipInputStream;
                 overflow.add(plot);
             }
         }
-        Plot[] overflowArray = overflow.toArray(new Plot[overflow.size()]);
+        Plot[] overflowArray = overflow.toArray(new Plot[0]);
         sortPlotsByHash(overflowArray);
         ArrayList<Plot> result = new ArrayList<>(cache.length + overflowArray.length);
         for (Plot plot : cache) {
@@ -627,9 +603,7 @@ import java.util.zip.ZipInputStream;
             }
         }
         Collections.addAll(result, overflowArray);
-        for (Plot plot : extra) {
-            result.add(plot);
-        }
+        result.addAll(extra);
         return result;
     }
 
@@ -638,8 +612,7 @@ import java.util.zip.ZipInputStream;
      *
      * @param input an array of plots to sort
      */
-    // TODO: Re-evaluate deprecation of this, as it's being used internally
-    @Deprecated public void sortPlotsByHash(Plot[] input) {
+    private void sortPlotsByHash(Plot[] input) {
         List<Plot>[] bucket = new ArrayList[32];
         for (int i = 0; i < bucket.length; i++) {
             bucket[i] = new ArrayList<>();
@@ -648,26 +621,25 @@ import java.util.zip.ZipInputStream;
         int placement = 1;
         while (!maxLength) {
             maxLength = true;
-            for (Plot i : input) {
-                int tmp = MathMan.getPositiveId(i.hashCode()) / placement;
-                bucket[tmp & 31].add(i);
+            for (Plot plot : input) {
+                int tmp = MathMan.getPositiveId(plot.hashCode()) / placement;
+                bucket[tmp & 31].add(plot);
                 if (maxLength && tmp > 0) {
                     maxLength = false;
                 }
             }
             int a = 0;
-            for (int b = 0; b < 32; b++) {
-                for (Plot i : bucket[b]) {
-                    input[a++] = i;
+            for (int i = 0; i < 32; i++) {
+                for (Plot plot : bucket[i]) {
+                    input[a++] = plot;
                 }
-                bucket[b].clear();
+                bucket[i].clear();
             }
             placement *= 32;
         }
     }
 
-    // TODO: Re-evaluate deprecation of this, as it's being used internally
-    @Deprecated public ArrayList<Plot> sortPlotsByTimestamp(Collection<Plot> plots) {
+    private ArrayList<Plot> sortPlotsByTimestamp(Collection<Plot> plots) {
         int hardMax = 256000;
         int max = 0;
         int overflowSize = 0;
@@ -699,7 +671,7 @@ import java.util.zip.ZipInputStream;
                 overflow.add(plot);
             }
         }
-        Plot[] overflowArray = overflow.toArray(new Plot[overflow.size()]);
+        Plot[] overflowArray = overflow.toArray(new Plot[0]);
         sortPlotsByHash(overflowArray);
         ArrayList<Plot> result = new ArrayList<>(cache.length + overflowArray.length);
         for (Plot plot : cache) {
@@ -708,9 +680,7 @@ import java.util.zip.ZipInputStream;
             }
         }
         Collections.addAll(result, overflowArray);
-        for (Plot plot : extra) {
-            result.add(plot);
-        }
+        result.addAll(extra);
         return result;
     }
 
@@ -719,27 +689,16 @@ import java.util.zip.ZipInputStream;
      *
      * @param input
      * @return
-     * @deprecated Unchecked, use {@link #sortPlots(Collection, SortType, PlotArea)} instead which will call this after checks
      */
-    // TODO: Re-evaluate deprecation of this, as it's being used internally
-    @Deprecated public List<Plot> sortPlotsByModified(Collection<Plot> input) {
+    private List<Plot> sortPlotsByModified(Collection<Plot> input) {
         List<Plot> list;
         if (input instanceof List) {
             list = (List<Plot>) input;
         } else {
             list = new ArrayList<>(input);
         }
-        Collections.sort(list, new Comparator<Plot>() {
-            @Override public int compare(Plot a, Plot b) {
-                return Long.compare(ExpireManager.IMP.getTimestamp(a.owner),
-                    ExpireManager.IMP.getTimestamp(b.owner));
-            }
-        });
+        list.sort(Comparator.comparingLong(a -> ExpireManager.IMP.getTimestamp(a.owner)));
         return list;
-    }
-
-    public ArrayList<Plot> sortPlots(Collection<Plot> plots) {
-        return sortPlots(plots, SortType.DISTANCE_FROM_ORIGIN, null);
     }
 
     /**
@@ -764,7 +723,7 @@ import java.util.zip.ZipInputStream;
             }
         } else {
             for (PlotArea area : plotAreaManager.getAllPlotAreas()) {
-                map.put(area, new ArrayList<Plot>(0));
+                map.put(area, new ArrayList<>(0));
             }
             Collection<Plot> lastList = null;
             PlotArea lastWorld = null;
@@ -779,17 +738,15 @@ import java.util.zip.ZipInputStream;
             }
         }
         List<PlotArea> areas = Arrays.asList(plotAreaManager.getAllPlotAreas());
-        Collections.sort(areas, new Comparator<PlotArea>() {
-            @Override public int compare(PlotArea a, PlotArea b) {
-                if (priorityArea != null) {
-                    if (a.equals(priorityArea)) {
-                        return -1;
-                    } else if (b.equals(priorityArea)) {
-                        return 1;
-                    }
+        areas.sort((a, b) -> {
+            if (priorityArea != null) {
+                if (a.equals(priorityArea)) {
+                    return -1;
+                } else if (b.equals(priorityArea)) {
+                    return 1;
                 }
-                return a.hashCode() - b.hashCode();
             }
+            return a.hashCode() - b.hashCode();
         });
         ArrayList<Plot> toReturn = new ArrayList<>(plots.size());
         for (PlotArea area : areas) {
@@ -822,41 +779,35 @@ import java.util.zip.ZipInputStream;
      */
     public Set<Plot> getPlots(final PlotFilter... filters) {
         final HashSet<Plot> set = new HashSet<>();
-        foreachPlotArea(new RunnableVal<PlotArea>() {
-            @Override public void run(PlotArea value) {
+        forEachPlotArea(value -> {
+            for (PlotFilter filter : filters) {
+                if (!filter.allowsArea(value)) {
+                    return;
+                }
+            }
+            loop:
+            for (Entry<PlotId, Plot> entry2 : value.getPlotEntries()) {
+                Plot plot = entry2.getValue();
                 for (PlotFilter filter : filters) {
-                    if (!filter.allowsArea(value)) {
-                        return;
+                    if (!filter.allowsPlot(plot)) {
+                        continue loop;
                     }
                 }
-                loop:
-                for (Entry<PlotId, Plot> entry2 : value.getPlotEntries()) {
-                    Plot plot = entry2.getValue();
-                    for (PlotFilter filter : filters) {
-                        if (!filter.allowsPlot(plot)) {
-                            continue loop;
-                        }
-                    }
-                    set.add(plot);
-                }
+                set.add(plot);
             }
         });
         return set;
     }
 
     /**
-     * Get all the plots in a single set.
+     * Gets all the plots across all plotworlds in one {@code Set}.
      *
-     * @return Set of Plots
+     * @return all the plots on the server loaded by this plugin
      */
     public Set<Plot> getPlots() {
         int size = getPlotCount();
         final Set<Plot> result = new HashSet<>(size);
-        foreachPlotArea(new RunnableVal<PlotArea>() {
-            @Override public void run(PlotArea value) {
-                result.addAll(value.getPlots());
-            }
-        });
+        forEachPlotArea(value -> result.addAll(value.getPlots()));
         return result;
     }
 
@@ -868,11 +819,8 @@ import java.util.zip.ZipInputStream;
             String world = entry.getKey();
             PlotArea area = getPlotArea(world, null);
             if (area == null) {
-                HashMap<PlotId, Plot> map = this.plots_tmp.get(world);
-                if (map == null) {
-                    map = new HashMap<>();
-                    this.plots_tmp.put(world, map);
-                }
+                HashMap<PlotId, Plot> map =
+                    this.plots_tmp.computeIfAbsent(world, k -> new HashMap<>());
                 map.putAll(entry.getValue());
             } else {
                 for (Plot plot : entry.getValue().values()) {
@@ -884,7 +832,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get all the plots owned by a player name.
+     * Gets all the plots owned by a player name.
      *
      * @param world  the world
      * @param player the plot owner
@@ -896,7 +844,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get all the plots owned by a player name.
+     * Gets all the plots owned by a player name.
      *
      * @param area   the PlotArea
      * @param player the plot owner
@@ -908,7 +856,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get all plots by a PlotPlayer.
+     * Gets all plots by a PlotPlayer.
      *
      * @param world  the world
      * @param player the plot owner
@@ -919,7 +867,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get all plots by a PlotPlayer.
+     * Gets all plots by a PlotPlayer.
      *
      * @param area   the PlotArea
      * @param player the plot owner
@@ -930,24 +878,21 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get all plots by a UUID in a world.
+     * Gets all plots by a UUID in a world.
      *
      * @param world the world
      * @param uuid  the plot owner
      * @return Set of plot
      */
     public Set<Plot> getPlots(String world, UUID uuid) {
-        final Set<Plot> plots = new HashSet<>();
-        for (final Plot plot : getPlots(world)) {
-            if (plot.hasOwner() && plot.isOwnerAbs(uuid)) {
-                plots.add(plot);
-            }
-        }
+        final Set<Plot> plots =
+            getPlots(world).stream().filter(plot -> plot.hasOwner() && plot.isOwnerAbs(uuid))
+                .collect(Collectors.toSet());
         return Collections.unmodifiableSet(plots);
     }
 
     /**
-     * Get all plots by a UUID in an area.
+     * Gets all plots by a UUID in an area.
      *
      * @param area the {@code PlotArea}
      * @param uuid the plot owner
@@ -976,16 +921,12 @@ import java.util.zip.ZipInputStream;
 
     public Collection<Plot> getPlots(String world) {
         final Set<Plot> set = new HashSet<>();
-        foreachPlotArea(world, new RunnableVal<PlotArea>() {
-            @Override public void run(PlotArea value) {
-                set.addAll(value.getPlots());
-            }
-        });
+        forEachPlotArea(world, value -> set.addAll(value.getPlots()));
         return set;
     }
 
     /**
-     * Get the plots for a PlotPlayer.
+     * Gets the plots for a PlotPlayer.
      *
      * @param player the player to retrieve the plots for
      * @return Set of Plot
@@ -1007,63 +948,54 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get the plots for a UUID.
+     * Gets the plots for a UUID.
      *
      * @param uuid the plot owner
      * @return Set of Plot's owned by the player
      */
     public Set<Plot> getPlots(final UUID uuid) {
         final Set<Plot> plots = new HashSet<>();
-        foreachPlot(new RunnableVal<Plot>() {
-            @Override public void run(Plot value) {
-                if (value.isOwnerAbs(uuid)) {
-                    plots.add(value);
-                }
+        forEachPlot(value -> {
+            if (value.isOwnerAbs(uuid)) {
+                plots.add(value);
             }
         });
         return Collections.unmodifiableSet(plots);
     }
 
     public boolean hasPlot(final UUID uuid) {
-        for (final PlotArea area : plotAreaManager.getAllPlotAreas()) {
-            if (area.hasPlot(uuid))
-                return true;
-        }
-        return false;
+        return Arrays.stream(plotAreaManager.getAllPlotAreas())
+            .anyMatch(area -> area.hasPlot(uuid));
     }
 
     public Set<Plot> getBasePlots(final UUID uuid) {
         final Set<Plot> plots = new HashSet<>();
-        foreachBasePlot(new RunnableVal<Plot>() {
-            @Override public void run(Plot value) {
-                if (value.isOwner(uuid)) {
-                    plots.add(value);
-                }
+        forEachBasePlot(value -> {
+            if (value.isOwner(uuid)) {
+                plots.add(value);
             }
         });
         return Collections.unmodifiableSet(plots);
     }
 
     /**
-     * Get the plots for a UUID.
+     * Gets the plots for a UUID.
      *
      * @param uuid the UUID of the owner
      * @return Set of Plot
      */
     public Set<Plot> getPlotsAbs(final UUID uuid) {
         final Set<Plot> plots = new HashSet<>();
-        foreachPlot(new RunnableVal<Plot>() {
-            @Override public void run(Plot value) {
-                if (value.isOwnerAbs(uuid)) {
-                    plots.add(value);
-                }
+        forEachPlot(value -> {
+            if (value.isOwnerAbs(uuid)) {
+                plots.add(value);
             }
         });
         return Collections.unmodifiableSet(plots);
     }
 
     /**
-     * Unregister a plot from local memory (does not call DB).
+     * Unregisters a plot from local memory without calling the database.
      *
      * @param plot      the plot to remove
      * @param callEvent If to call an event about the plot being removed
@@ -1154,12 +1086,13 @@ import java.util.zip.ZipInputStream;
             }
             // Conventional plot generator
             PlotArea plotArea = plotGenerator.getNewPlotArea(world, null, null, null);
-            PlotManager plotManager = plotGenerator.getNewPlotManager();
-            PlotSquared.log(C.PREFIX + "&aDetected world load for '" + world + "'");
-            PlotSquared.log(C.PREFIX + "&3 - generator: &7" + baseGenerator + ">" + plotGenerator);
-            PlotSquared.log(C.PREFIX + "&3 - plotworld: &7" + plotArea.getClass().getName());
+            PlotManager plotManager = plotArea.getPlotManager();
+            PlotSquared.log(Captions.PREFIX + "&aDetected world load for '" + world + "'");
             PlotSquared
-                .log(C.PREFIX + "&3 - plotAreaManager: &7" + plotManager.getClass().getName());
+                .log(Captions.PREFIX + "&3 - generator: &7" + baseGenerator + ">" + plotGenerator);
+            PlotSquared.log(Captions.PREFIX + "&3 - plotworld: &7" + plotArea.getClass().getName());
+            PlotSquared.log(
+                Captions.PREFIX + "&3 - plotAreaManager: &7" + plotManager.getClass().getName());
             if (!this.worlds.contains(path)) {
                 this.worlds.createSection(path);
                 worldSection = this.worlds.getConfigurationSection(path);
@@ -1184,12 +1117,11 @@ import java.util.zip.ZipInputStream;
                     debug("World possibly already loaded: " + world);
                     return;
                 }
-                PlotSquared.log(C.PREFIX + "&aDetected world load for '" + world + "'");
+                PlotSquared.log(Captions.PREFIX + "&aDetected world load for '" + world + "'");
                 String gen_string = worldSection.getString("generator.plugin", IMP.getPluginName());
                 if (type == 2) {
-                    Set<PlotCluster> clusters = this.clusters_tmp != null ?
-                        this.clusters_tmp.get(world) :
-                        new HashSet<PlotCluster>();
+                    Set<PlotCluster> clusters =
+                        this.clusters_tmp != null ? this.clusters_tmp.get(world) : new HashSet<>();
                     if (clusters == null) {
                         throw new IllegalArgumentException("No cluster exists for world: " + world);
                     }
@@ -1202,7 +1134,7 @@ import java.util.zip.ZipInputStream;
                         worldSection.createSection("areas." + fullId);
                         DBFunc.replaceWorld(world, world + ";" + name, pos1, pos2); // NPE
 
-                        PlotSquared.log(C.PREFIX + "&3 - " + name + "-" + pos1 + "-" + pos2);
+                        PlotSquared.log(Captions.PREFIX + "&3 - " + name + "-" + pos1 + "-" + pos2);
                         GeneratorWrapper<?> areaGen = this.IMP.getGenerator(world, gen_string);
                         if (areaGen == null) {
                             throw new IllegalArgumentException("Invalid Generator: " + gen_string);
@@ -1216,12 +1148,14 @@ import java.util.zip.ZipInputStream;
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        PlotSquared
-                            .log(C.PREFIX + "&c | &9generator: &7" + baseGenerator + ">" + areaGen);
-                        PlotSquared.log(C.PREFIX + "&c | &9plotworld: &7" + pa);
-                        PlotSquared.log(C.PREFIX + "&c | &9manager: &7" + pa);
-                        PlotSquared.log(C.PREFIX + "&cNote: &7Area created for cluster:" + name
-                            + " (invalid or old configuration?)");
+                        PlotSquared.log(
+                            Captions.PREFIX + "&c | &9generator: &7" + baseGenerator + ">"
+                                + areaGen);
+                        PlotSquared.log(Captions.PREFIX + "&c | &9plotworld: &7" + pa);
+                        PlotSquared.log(Captions.PREFIX + "&c | &9manager: &7" + pa);
+                        PlotSquared.log(
+                            Captions.PREFIX + "&cNote: &7Area created for cluster:" + name
+                                + " (invalid or old configuration?)");
                         areaGen.getPlotGenerator().initialize(pa);
                         areaGen.augment(pa);
                         toLoad.add(pa);
@@ -1243,9 +1177,10 @@ import java.util.zip.ZipInputStream;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                PlotSquared.log(C.PREFIX + "&3 - generator: &7" + baseGenerator + ">" + areaGen);
-                PlotSquared.log(C.PREFIX + "&3 - plotworld: &7" + pa);
-                PlotSquared.log(C.PREFIX + "&3 - plotAreaManager: &7" + pa.getPlotManager());
+                PlotSquared
+                    .log(Captions.PREFIX + "&3 - generator: &7" + baseGenerator + ">" + areaGen);
+                PlotSquared.log(Captions.PREFIX + "&3 - plotworld: &7" + pa);
+                PlotSquared.log(Captions.PREFIX + "&3 - plotAreaManager: &7" + pa.getPlotManager());
                 areaGen.getPlotGenerator().initialize(pa);
                 areaGen.augment(pa);
                 addPlotArea(pa);
@@ -1256,7 +1191,7 @@ import java.util.zip.ZipInputStream;
                     "Invalid type for multi-area world. Expected `2`, got `" + 1 + "`");
             }
             for (String areaId : areasSection.getKeys(false)) {
-                PlotSquared.log(C.PREFIX + "&3 - " + areaId);
+                PlotSquared.log(Captions.PREFIX + "&3 - " + areaId);
                 String[] split = areaId.split("(?<=[^;-])-");
                 if (split.length != 3) {
                     throw new IllegalArgumentException("Invalid Area identifier: " + areaId
@@ -1265,7 +1200,7 @@ import java.util.zip.ZipInputStream;
                 String name = split[0];
                 PlotId pos1 = PlotId.fromString(split[1]);
                 PlotId pos2 = PlotId.fromString(split[2]);
-                if (pos1 == null || pos2 == null || name.isEmpty()) {
+                if (name.isEmpty()) {
                     throw new IllegalArgumentException("Invalid Area identifier: " + areaId
                         + ". Expected form `<name>-<x1;z1>-<x2;z2>`");
                 }
@@ -1318,10 +1253,11 @@ import java.util.zip.ZipInputStream;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                PlotSquared.log(C.PREFIX + "&aDetected area load for '" + world + "'");
-                PlotSquared.log(C.PREFIX + "&c | &9generator: &7" + baseGenerator + ">" + areaGen);
-                PlotSquared.log(C.PREFIX + "&c | &9plotworld: &7" + pa);
-                PlotSquared.log(C.PREFIX + "&c | &9manager: &7" + pa.getPlotManager());
+                PlotSquared.log(Captions.PREFIX + "&aDetected area load for '" + world + "'");
+                PlotSquared
+                    .log(Captions.PREFIX + "&c | &9generator: &7" + baseGenerator + ">" + areaGen);
+                PlotSquared.log(Captions.PREFIX + "&c | &9plotworld: &7" + pa);
+                PlotSquared.log(Captions.PREFIX + "&c | &9manager: &7" + pa.getPlotManager());
                 areaGen.getPlotGenerator().initialize(pa);
                 areaGen.augment(pa);
                 addPlotArea(pa);
@@ -1349,12 +1285,9 @@ import java.util.zip.ZipInputStream;
                     "w=", "wall=", "b=", "border=");
 
             // Calculate the number of expected arguments
-            int expected = 0;
-            for (final String validArgument : validArguments) {
-                if (args.toLowerCase(Locale.ENGLISH).contains(validArgument)) {
-                    expected += 1;
-                }
-            }
+            int expected = (int) validArguments.stream()
+                .filter(validArgument -> args.toLowerCase(Locale.ENGLISH).contains(validArgument))
+                .count();
 
             String[] split = args.toLowerCase(Locale.ENGLISH).split(",");
 
@@ -1398,8 +1331,8 @@ import java.util.zip.ZipInputStream;
                 }
                 String key = pair[0].toLowerCase();
                 String value = pair[1];
-                String base = "worlds." + world + ".";
                 try {
+                    String base = "worlds." + world + ".";
                     switch (key) {
                         case "s":
                         case "size":
@@ -1454,7 +1387,7 @@ import java.util.zip.ZipInputStream;
                 ConfigurationSection section =
                     this.worlds.getConfigurationSection("worlds." + world);
                 plotworld.saveConfiguration(section);
-                plotworld.loadConfiguration(section);
+                plotworld.loadDefaultConfiguration(section);
                 this.worlds.save(this.worldsFile);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -1471,20 +1404,16 @@ import java.util.zip.ZipInputStream;
 
     public String normalisedVersion(@NonNull final String version) {
         final String[] split = Pattern.compile(".", Pattern.LITERAL).split(version);
-        final StringBuilder sb = new StringBuilder();
-        for (final String s : split) {
-            sb.append(String.format("%" + 4 + 's', s));
-        }
-        return sb.toString();
+        return Arrays.stream(split).map(s -> String.format("%4s", s)).collect(Collectors.joining());
     }
 
-    public boolean update(PlotPlayer sender, URL url) {
+    private boolean update(PlotPlayer sender, URL url) {
         try {
             String name = this.jarFile.getName();
-            File newJar = new File("plugins/update/" + name);
             MainUtil.sendMessage(sender, "$1Downloading from provided URL: &7" + url);
             URLConnection con = url.openConnection();
             try (InputStream stream = con.getInputStream()) {
+                File newJar = new File("plugins/update/" + name);
                 File parent = newJar.getParentFile();
                 if (!parent.exists()) {
                     parent.mkdirs();
@@ -1511,7 +1440,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Copy a file from inside the jar to a location
+     * Copies a file from inside the jar to a location
      *
      * @param file   Name of the file inside PlotSquared.jar
      * @param folder The output location relative to /plugins/PlotSquared/
@@ -1570,27 +1499,23 @@ import java.util.zip.ZipInputStream;
         for (PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
             Map<PlotId, Plot> map2 = map.get(area.toString());
             if (map2 == null) {
-                map.put(area.toString(), area.getPlotsRaw());
+                map.put(area.toString(), area.getPlotsMap());
             } else {
-                map2.putAll(area.getPlotsRaw());
+                map2.putAll(area.getPlotsMap());
             }
         }
         return map;
     }
 
     /**
-     * Close the database connection.
+     * Safely closes the database connection.
      */
     public void disable() {
         try {
             // Validate that all data in the db is correct
             final HashSet<Plot> plots = new HashSet<>();
             try {
-                foreachPlotRaw(new RunnableVal<Plot>() {
-                    @Override public void run(Plot value) {
-                        plots.add(value);
-                    }
-                });
+                forEachPlotRaw(plots::add);
             } catch (final Exception ignored) {
             }
             DBFunc.validatePlots(plots);
@@ -1598,8 +1523,8 @@ import java.util.zip.ZipInputStream;
             // Close the connection
             DBFunc.close();
             UUIDHandler.handleShutdown();
-        } catch (NullPointerException ignored) {
-            ignored.printStackTrace();
+        } catch (NullPointerException throwable) {
+            throwable.printStackTrace();
             PlotSquared.log("&cCould not close database connection!");
         }
     }
@@ -1620,8 +1545,8 @@ import java.util.zip.ZipInputStream;
                 File file = MainUtil.getFile(IMP.getDirectory(), Storage.SQLite.DB + ".db");
                 database = new SQLite(file);
             } else {
-                PlotSquared.log(C.PREFIX + "&cNo storage type is set!");
-                this.IMP.disable();
+                PlotSquared.log(Captions.PREFIX + "&cNo storage type is set!");
+                this.IMP.shutdown(); //shutdown used instead of disable because no database is set
                 return;
             }
             DBFunc.dbManager = new SQLManager(database, Storage.PREFIX, false);
@@ -1638,8 +1563,8 @@ import java.util.zip.ZipInputStream;
             }
             this.clusters_tmp = DBFunc.getClusters();
         } catch (ClassNotFoundException | SQLException e) {
-            PlotSquared.log(
-                C.PREFIX + "&cFailed to open DATABASE connection. The plugin will disable itself.");
+            PlotSquared.log(Captions.PREFIX
+                + "&cFailed to open DATABASE connection. The plugin will disable itself.");
             if (Storage.MySQL.USE) {
                 PlotSquared.log("$4MYSQL");
             } else if (Storage.SQLite.USE) {
@@ -1651,7 +1576,7 @@ import java.util.zip.ZipInputStream;
             PlotSquared.log("&d==== End of stacktrace ====");
             PlotSquared.log("&6Please go to the " + IMP.getPluginName()
                 + " 'storage.yml' and configure the database correctly.");
-            this.IMP.disable();
+            this.IMP.shutdown(); //shutdown used instead of disable because of database error
         }
     }
 
@@ -1661,15 +1586,16 @@ import java.util.zip.ZipInputStream;
      * @throws IOException if the config failed to save
      */
     public void setupConfig() throws IOException {
-        String lastVersionString = this.config.getString("version");
+        String lastVersionString = this.getConfig().getString("version");
         if (lastVersionString != null) {
             String[] split = lastVersionString.split("\\.");
             int[] lastVersion = new int[] {Integer.parseInt(split[0]), Integer.parseInt(split[1]),
                 Integer.parseInt(split[2])};
             if (checkVersion(new int[] {3, 4, 0}, lastVersion)) {
                 Settings.convertLegacy(configFile);
-                if (config.contains("worlds")) {
-                    ConfigurationSection worldSection = config.getConfigurationSection("worlds");
+                if (getConfig().contains("worlds")) {
+                    ConfigurationSection worldSection =
+                        getConfig().getConfigurationSection("worlds");
                     worlds.set("worlds", worldSection);
                     try {
                         worlds.save(worldsFile);
@@ -1682,26 +1608,49 @@ import java.util.zip.ZipInputStream;
             }
         }
         Settings.load(configFile);
-        try {
-            InputStream stream = getClass().getResourceAsStream("/plugin.properties");
-            BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-            //java.util.Scanner scanner = new java.util.Scanner(stream).useDelimiter("\\A");
-            String versionString = br.readLine();
-            String commitString = br.readLine();
-            String dateString = br.readLine();
-            //scanner.close();
-            br.close();
-            this.version = PlotVersion.tryParse(versionString, commitString, dateString);
-            Settings.DATE = new Date(100 + version.year, version.month, version.day).toGMTString();
-            Settings.BUILD = "https://ci.athion.net/job/PlotSquared/" + version.build;
-            Settings.COMMIT = "https://github.com/IntellectualSites/PlotSquared/commit/" + Integer
-                .toHexString(version.hash);
-            System.out.println("Version is " + this.version);
-        } catch (Throwable ignore) {
-            ignore.printStackTrace();
+        setupUpdateUtility();
+        //Sets the version information for the settings.yml file
+        try (InputStream stream = getClass().getResourceAsStream("/plugin.properties")) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(stream))) {
+                String versionString = br.readLine();
+                String commitString = br.readLine();
+                String dateString = br.readLine();
+                this.version = PlotVersion.tryParse(versionString, commitString, dateString);
+                Settings.DATE =
+                    new Date(100 + version.year, version.month, version.day).toGMTString();
+                Settings.BUILD = "https://ci.athion.net/job/PlotSquared/" + version.build;
+                Settings.COMMIT =
+                    "https://github.com/IntellectualSites/PlotSquared/commit/" + Integer
+                        .toHexString(version.hash);
+                System.out.println("Version is " + this.version);
+            }
+        } catch (IOException throwable) {
+            throwable.printStackTrace();
         }
         Settings.save(configFile);
         config = YamlConfiguration.loadConfiguration(configFile);
+    }
+
+    private void setupUpdateUtility() {
+        try {
+            copyFile("updater.properties", "config");
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
+                new FileInputStream(new File(new File(this.IMP.getDirectory(), "config"),
+                    "updater.properties"))))) {
+                final Properties properties = new Properties();
+                properties.load(bufferedReader);
+                final boolean enabled =
+                    Boolean.valueOf(properties.getOrDefault("enabled", true).toString());
+                if (enabled) {
+                    this.updateUtility = new UpdateUtility(properties.getProperty("path"),
+                        properties.getProperty("job"), properties.getProperty("artifact"));
+                }
+            } catch (final IOException throwable) {
+                throwable.printStackTrace();
+            }
+        } catch (final Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 
     /**
@@ -1713,7 +1662,7 @@ import java.util.zip.ZipInputStream;
     public boolean setupConfigs() {
         File folder = new File(this.IMP.getDirectory(), "config");
         if (!folder.exists() && !folder.mkdirs()) {
-            PlotSquared.log(C.PREFIX
+            PlotSquared.log(Captions.PREFIX
                 + "&cFailed to create the /plugins/config folder. Please create it manually.");
         }
         try {
@@ -1729,11 +1678,11 @@ import java.util.zip.ZipInputStream;
                     .getString("configuration_version")
                     .equalsIgnoreCase(LegacyConverter.CONFIGURATION_VERSION)) {
                     // Conversion needed
-                    log(C.LEGACY_CONFIG_FOUND.s());
+                    log(Captions.LEGACY_CONFIG_FOUND.s());
                     try {
                         com.google.common.io.Files
                             .copy(this.worldsFile, new File(folder, "worlds.yml.old"));
-                        log(C.LEGACY_CONFIG_BACKUP.s());
+                        log(Captions.LEGACY_CONFIG_BACKUP.s());
                         final ConfigurationSection worlds =
                             this.worlds.getConfigurationSection("worlds");
                         final LegacyConverter converter = new LegacyConverter(worlds);
@@ -1742,9 +1691,9 @@ import java.util.zip.ZipInputStream;
                             .set("configuration_version", LegacyConverter.CONFIGURATION_VERSION);
                         this.worlds.set("worlds", worlds); // Redundant, but hey... ¯\_(ツ)_/¯
                         this.worlds.save(this.worldsFile);
-                        log(C.LEGACY_CONFIG_DONE.s());
+                        log(Captions.LEGACY_CONFIG_DONE.s());
                     } catch (final Exception e) {
-                        log(C.LEGACY_CONFIG_CONVERSION_FAILED.s());
+                        log(Captions.LEGACY_CONFIG_CONVERSION_FAILED.s());
                         e.printStackTrace();
                     }
                     // Disable plugin
@@ -1833,7 +1782,7 @@ import java.util.zip.ZipInputStream;
         if (Settings.DEBUG) {
             Map<String, Object> components = Settings.getFields(Settings.Enabled_Components.class);
             for (Entry<String, Object> component : components.entrySet()) {
-                PlotSquared.log(C.PREFIX + String
+                PlotSquared.log(Captions.PREFIX + String
                     .format("&cKey: &6%s&c, Value: &6%s", component.getKey(),
                         component.getValue()));
             }
@@ -1860,51 +1809,50 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get the Java version.
+     * Gets the Java version.
      *
      * @return the java version
      */
-    public double getJavaVersion() {
+    private double getJavaVersion() {
         return Double.parseDouble(System.getProperty("java.specification.version"));
     }
 
-    public void foreachPlotArea(@NonNull final RunnableVal<PlotArea> runnable) {
+    public void forEachPlotArea(Consumer<? super PlotArea> action) {
         for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-            runnable.run(area);
+            action.accept(area);
         }
     }
 
-    public void foreachPlotArea(@NonNull final String world,
-        @NonNull final RunnableVal<PlotArea> runnable) {
+    public void forEachPlotArea(@NonNull final String world, Consumer<PlotArea> consumer) {
         final PlotArea[] array = this.plotAreaManager.getPlotAreas(world, null);
         if (array == null) {
             return;
         }
         for (final PlotArea area : array) {
-            runnable.run(area);
+            consumer.accept(area);
         }
     }
 
-    public void foreachPlot(@NonNull final RunnableVal<Plot> runnable) {
+    public void forEachPlot(Consumer<Plot> consumer) {
         for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-            area.getPlots().forEach(runnable::run);
+            area.getPlots().forEach(consumer);
         }
     }
 
-    public void foreachPlotRaw(@NonNull final RunnableVal<Plot> runnable) {
+    public void forEachPlotRaw(Consumer<Plot> consumer) {
         for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-            area.getPlots().forEach(runnable::run);
+            area.getPlots().forEach(consumer);
         }
         if (this.plots_tmp != null) {
             for (final HashMap<PlotId, Plot> entry : this.plots_tmp.values()) {
-                entry.values().forEach(runnable::run);
+                entry.values().forEach(consumer);
             }
         }
     }
 
-    public void foreachBasePlot(@NonNull final RunnableVal<Plot> run) {
+    public void forEachBasePlot(Consumer<Plot> consumer) {
         for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-            area.foreachBasePlot(run);
+            area.forEachBasePlot(consumer);
         }
     }
 
@@ -1918,11 +1866,8 @@ import java.util.zip.ZipInputStream;
     }
 
     public int getPlotCount() {
-        int count = 0;
-        for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-            count += area.getPlotCount();
-        }
-        return count;
+        return Arrays.stream(this.plotAreaManager.getAllPlotAreas())
+            .mapToInt(PlotArea::getPlotCount).sum();
     }
 
     public Set<PlotArea> getPlotAreas() {
@@ -1937,7 +1882,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get a list of PlotArea objects.
+     * Gets a list of PlotArea objects.
      *
      * @param world the world
      * @return Collection of PlotArea objects
@@ -1949,7 +1894,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get the relevant plot area for a specified location.
+     * Gets the relevant plot area for a specified location.
      * <ul>
      * <li>If there is only one plot area globally that will be returned.
      * <li>If there is only one plot area in the world, it will return that.
@@ -1970,7 +1915,7 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get the {@code PlotArea} which contains a location.
+     * Gets the {@code PlotArea} which contains a location.
      * <ul>
      * <li>If the plot area does not contain a location, null
      * will be returned.
@@ -2012,11 +1957,11 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Get Plots based on alias
+     * Gets Plots based on alias
      *
      * @param alias     to search plots
      * @param worldname to filter alias to a specific world [optional] null means all worlds
-     * @return Set<{                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               link                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Plot                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               }> empty if nothing found
+     * @return Set<{ @ link Plot }> empty if nothing found
      */
     public Set<Plot> getPlotsByAlias(@Nullable final String alias,
         @NonNull final String worldname) {
@@ -2037,6 +1982,10 @@ import java.util.zip.ZipInputStream;
         final Set<PlotArea> set = new HashSet<>();
         Collections.addAll(set, areas);
         return Collections.unmodifiableSet(set);
+    }
+
+    public YamlConfiguration getConfig() {
+        return config;
     }
 
     public enum SortType {

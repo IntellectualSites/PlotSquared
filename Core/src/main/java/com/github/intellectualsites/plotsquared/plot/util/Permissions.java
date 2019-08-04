@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
 import com.github.intellectualsites.plotsquared.commands.CommandCaller;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 
@@ -14,18 +14,18 @@ import java.util.HashMap;
  */
 public class Permissions {
 
-    public static boolean hasPermission(PlotPlayer player, C caption, boolean notify) {
+    public static boolean hasPermission(PlotPlayer player, Captions caption, boolean notify) {
         return hasPermission(player, caption.s(), notify);
     }
 
     /**
-     * Check if a player has a permission (C class helps keep track of permissions).
+     * Check if a player has a permission (Captions class helps keep track of permissions).
      *
      * @param player
      * @param caption
      * @return
      */
-    public static boolean hasPermission(PlotPlayer player, C caption) {
+    public static boolean hasPermission(PlotPlayer player, Captions caption) {
         return hasPermission(player, caption.s());
     }
 
@@ -68,7 +68,7 @@ public class Permissions {
         } else if (caller.isPermissionSet(permission)) {
             return false;
         }
-        if (caller.hasPermission(C.PERMISSION_ADMIN.s())) {
+        if (caller.hasPermission(Captions.PERMISSION_ADMIN.s())) {
             return true;
         }
         permission = permission.toLowerCase().replaceAll("^[^a-z|0-9|\\.|_|-]", "");
@@ -76,7 +76,7 @@ public class Permissions {
         StringBuilder n = new StringBuilder();
         for (int i = 0; i <= (nodes.length - 1); i++) {
             n.append(nodes[i] + ".");
-            String combined = n + C.PERMISSION_STAR.s();
+            String combined = n + Captions.PERMISSION_STAR.s();
             if (!permission.equals(combined)) {
                 if (caller.hasPermission(combined)) {
                     return true;
@@ -99,14 +99,14 @@ public class Permissions {
     public static boolean hasPermission(PlotPlayer player, String permission, boolean notify) {
         if (!hasPermission(player, permission)) {
             if (notify) {
-                MainUtil.sendMessage(player, C.NO_PERMISSION_EVENT, permission);
+                MainUtil.sendMessage(player, Captions.NO_PERMISSION_EVENT, permission);
             }
             return false;
         }
         return true;
     }
 
-    public static int hasPermissionRange(PlotPlayer player, C perm, int range) {
+    public static int hasPermissionRange(PlotPlayer player, Captions perm, int range) {
         return hasPermissionRange(player, perm.s(), range);
     }
 

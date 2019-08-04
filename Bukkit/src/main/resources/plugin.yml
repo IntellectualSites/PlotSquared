@@ -62,7 +62,6 @@ permissions:
       plots.set.flag.vehicle-use.*: true
       plots.set.flag.vehicle-place.*: true
       plots.set.flag.vehicle-break.*: true
-      plots.set.flag.player-interact.*: true
       plots.set.flag.place.*: true
       plots.set.flag.break.*: true
       plots.set.flag.use.*: true
@@ -72,19 +71,15 @@ permissions:
   plots.permpack.basicinbox:
     default: op
     children:
-      comments.notifications.enabled  : true 
+      comments.notifications.enabled: true
       plots.inbox.read.public: true
-      plots.inbox.modify.public: true
       plots.inbox.modify.public: true
       plots.inbox.write.public: true
-      plots.inbox.read.public: true
       plots.inbox.read.report: true
       plots.inbox.write.report: true
-      plots.inbox.read.report: true
       plots.inbox.read.owner: true
       plots.inbox.modify.owner: true
       plots.inbox.write.owner: true
-      plots.inbox.read.owner: true
       plots.comment: true
       plots.inbox: true
   plots.permpack.wilderness:
@@ -256,9 +251,6 @@ permissions:
   plotme.limit.10:
     children:
       plots.plot.10: true
-  plotme.admin.home.other:
-    children:
-      plots.plot.: true
   plotme.admin.clear:
     children:
       plots.admin.command.clear: true

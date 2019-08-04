@@ -1,7 +1,11 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.ChunkLoc;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
@@ -10,13 +14,17 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class ChunkManager {
 
+    private static final Map<ChunkLoc, RunnableVal<ScopedLocalBlockQueue>> forceChunks =
+        new ConcurrentHashMap<>();
+    private static final Map<ChunkLoc, RunnableVal<ScopedLocalBlockQueue>> addChunks =
+        new ConcurrentHashMap<>();
     public static ChunkManager manager = null;
-    private static RunnableVal<ScopedLocalBlockQueue> CURRENT_FORCE_CHUNK;
-    private static RunnableVal<ScopedLocalBlockQueue> CURRENT_ADD_CHUNK;
 
     public static ChunkLoc getChunkChunk(Location location) {
         int x = location.getX() >> 9;
@@ -28,11 +36,11 @@ public abstract class ChunkManager {
         RunnableVal<ScopedLocalBlockQueue> add, String world, ChunkLoc loc) {
         LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
         if (PlotSquared.get().isAugmented(world)) {
-            int bx = loc.x << 4;
-            int bz = loc.z << 4;
+            int blockX = loc.x << 4;
+            int blockZ = loc.z << 4;
             ScopedLocalBlockQueue scoped =
-                new ScopedLocalBlockQueue(queue, new Location(world, bx, 0, bz),
-                    new Location(world, bx + 15, 255, bz + 15));
+                new ScopedLocalBlockQueue(queue, new Location(world, blockX, 0, blockZ),
+                    new Location(world, blockX + 15, 255, blockZ + 15));
             if (force != null) {
                 force.run(scoped);
             } else {
@@ -43,27 +51,29 @@ public abstract class ChunkManager {
             }
             queue.flush();
         } else {
-            CURRENT_FORCE_CHUNK = force;
-            CURRENT_ADD_CHUNK = add;
+            forceChunks.put(loc, force);
+            addChunks.put(loc, add);
             queue.regenChunk(loc.x, loc.z);
-            CURRENT_FORCE_CHUNK = null;
-            CURRENT_ADD_CHUNK = null;
+            forceChunks.remove(loc);
+            addChunks.remove(loc);
         }
     }
 
-    public static boolean preProcessChunk(ScopedLocalBlockQueue queue) {
-        if (CURRENT_FORCE_CHUNK != null) {
-            CURRENT_FORCE_CHUNK.run(queue);
-            CURRENT_FORCE_CHUNK = null;
+    public static boolean preProcessChunk(ChunkLoc loc, ScopedLocalBlockQueue queue) {
+        final RunnableVal<ScopedLocalBlockQueue> forceChunk = forceChunks.get(loc);
+        if (forceChunk != null) {
+            forceChunk.run(queue);
+            forceChunks.remove(loc);
             return true;
         }
         return false;
     }
 
-    public static boolean postProcessChunk(ScopedLocalBlockQueue queue) {
-        if (CURRENT_ADD_CHUNK != null) {
-            CURRENT_ADD_CHUNK.run(queue);
-            CURRENT_ADD_CHUNK = null;
+    public static boolean postProcessChunk(ChunkLoc loc, ScopedLocalBlockQueue queue) {
+        final RunnableVal<ScopedLocalBlockQueue> addChunk = forceChunks.get(loc);
+        if (addChunk != null) {
+            addChunk.run(queue);
+            addChunks.remove(loc);
             return true;
         }
         return false;
@@ -71,41 +81,39 @@ public abstract class ChunkManager {
 
     public static void largeRegionTask(final String world, final RegionWrapper region,
         final RunnableVal<ChunkLoc> task, final Runnable whenDone) {
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override public void run() {
-                HashSet<ChunkLoc> chunks = new HashSet<>();
-                Set<ChunkLoc> mcrs = manager.getChunkChunks(world);
-                for (ChunkLoc mcr : mcrs) {
-                    int bx = mcr.x << 9;
-                    int bz = mcr.z << 9;
-                    int tx = bx + 511;
-                    int tz = bz + 511;
-                    if (bx <= region.maxX && tx >= region.minX && bz <= region.maxZ
-                        && tz >= region.minZ) {
-                        for (int x = bx >> 4; x <= (tx >> 4); x++) {
-                            int cbx = x << 4;
-                            int ctx = cbx + 15;
-                            if (cbx <= region.maxX && ctx >= region.minX) {
-                                for (int z = bz >> 4; z <= (tz >> 4); z++) {
-                                    int cbz = z << 4;
-                                    int ctz = cbz + 15;
-                                    if (cbz <= region.maxZ && ctz >= region.minZ) {
-                                        chunks.add(new ChunkLoc(x, z));
-                                    }
+        TaskManager.runTaskAsync(() -> {
+            HashSet<ChunkLoc> chunks = new HashSet<>();
+            Set<ChunkLoc> mcrs = manager.getChunkChunks(world);
+            for (ChunkLoc mcr : mcrs) {
+                int bx = mcr.x << 9;
+                int bz = mcr.z << 9;
+                int tx = bx + 511;
+                int tz = bz + 511;
+                if (bx <= region.maxX && tx >= region.minX && bz <= region.maxZ
+                    && tz >= region.minZ) {
+                    for (int x = bx >> 4; x <= (tx >> 4); x++) {
+                        int cbx = x << 4;
+                        int ctx = cbx + 15;
+                        if (cbx <= region.maxX && ctx >= region.minX) {
+                            for (int z = bz >> 4; z <= (tz >> 4); z++) {
+                                int cbz = z << 4;
+                                int ctz = cbz + 15;
+                                if (cbz <= region.maxZ && ctz >= region.minZ) {
+                                    chunks.add(new ChunkLoc(x, z));
                                 }
                             }
                         }
                     }
                 }
-                TaskManager.objectTask(chunks, new RunnableVal<ChunkLoc>() {
-
-                    @Override public void run(ChunkLoc value) {
-                        if (manager.loadChunk(world, value, false)) {
-                            task.run(value);
-                        }
-                    }
-                }, whenDone);
             }
+            TaskManager.objectTask(chunks, new RunnableVal<ChunkLoc>() {
+
+                @Override public void run(ChunkLoc value) {
+                    if (manager.loadChunk(world, value, false)) {
+                        task.run(value);
+                    }
+                }
+            }, whenDone);
         });
     }
 
@@ -128,7 +136,7 @@ public abstract class ChunkManager {
     }
 
     /**
-     * The int[] will be in the form: [chunkx, chunkz, pos1x, pos1z, pos2x, pos2z, isedge] and will represent the bottom and top parts of the chunk
+     * The int[] will be in the form: [chunkX, chunkZ, pos1x, pos1z, pos2x, pos2z, isEdge] and will represent the bottom and top parts of the chunk
      *
      * @param pos1
      * @param pos2
@@ -212,11 +220,11 @@ public abstract class ChunkManager {
         File folder =
             new File(PlotSquared.get().IMP.getWorldContainer(), world + File.separator + "region");
         File[] regionFiles = folder.listFiles();
-        HashSet<ChunkLoc> chunks = new HashSet<>();
         if (regionFiles == null) {
             throw new RuntimeException(
                 "Could not find worlds folder: " + folder + " ? (no read access?)");
         }
+        HashSet<ChunkLoc> chunks = new HashSet<>();
         for (File file : regionFiles) {
             String name = file.getName();
             if (name.endsWith("mca")) {
@@ -239,20 +247,18 @@ public abstract class ChunkManager {
 
     public void deleteRegionFiles(final String world, final Collection<ChunkLoc> chunks,
         final Runnable whenDone) {
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override public void run() {
-                for (ChunkLoc loc : chunks) {
-                    String directory =
-                        world + File.separator + "region" + File.separator + "r." + loc.x + "."
-                            + loc.z + ".mca";
-                    File file = new File(PlotSquared.get().IMP.getWorldContainer(), directory);
-                    PlotSquared.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
-                    if (file.exists()) {
-                        file.delete();
-                    }
+        TaskManager.runTaskAsync(() -> {
+            for (ChunkLoc loc : chunks) {
+                String directory =
+                    world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z
+                        + ".mca";
+                File file = new File(PlotSquared.get().IMP.getWorldContainer(), directory);
+                PlotSquared.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
+                if (file.exists()) {
+                    file.delete();
                 }
-                TaskManager.runTask(whenDone);
             }
+            TaskManager.runTask(whenDone);
         });
     }
 
@@ -268,10 +274,7 @@ public abstract class ChunkManager {
         }
         Location top = new Location(world, x2, 0, z2);
         plot = top.getOwnedPlotAbs();
-        if (plot != null) {
-            return plot;
-        }
-        return null;
+        return plot;
     }
 
     /**

@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
@@ -30,13 +30,14 @@ import java.util.concurrent.CompletableFuture;
     @Override public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
-        checkTrue(args.length == 0, C.COMMAND_SYNTAX, getUsage());
-        final Plot plot = check(player.getCurrentPlot(), C.NOT_IN_PLOT);
+        checkTrue(args.length == 0, Captions.COMMAND_SYNTAX, getUsage());
+        final Plot plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);
         checkTrue(plot.isOwner(player.getUUID()) || Permissions
-            .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_CLEAR), C.NO_PLOT_PERMS);
-        checkTrue(plot.getRunning() == 0, C.WAIT_FOR_TIMER);
+                .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_CLEAR),
+            Captions.NO_PLOT_PERMS);
+        checkTrue(plot.getRunning() == 0, Captions.WAIT_FOR_TIMER);
         checkTrue(!Settings.Done.RESTRICT_BUILDING || !Flags.DONE.isSet(plot) || Permissions
-            .hasPermission(player, C.PERMISSION_CONTINUE), C.DONE_ALREADY_DONE);
+            .hasPermission(player, Captions.PERMISSION_CONTINUE), Captions.DONE_ALREADY_DONE);
         confirm.run(this, () -> {
             final long start = System.currentTimeMillis();
             boolean result = plot.clear(true, false, () -> {
@@ -50,12 +51,12 @@ import java.util.concurrent.CompletableFuture;
                     if (plot.getFlag(Flags.ANALYSIS).isPresent()) {
                         FlagManager.removePlotFlag(plot, Flags.ANALYSIS);
                     }
-                    MainUtil.sendMessage(player, C.CLEARING_DONE,
+                    MainUtil.sendMessage(player, Captions.CLEARING_DONE,
                         "" + (System.currentTimeMillis() - start));
                 });
             });
             if (!result) {
-                MainUtil.sendMessage(player, C.WAIT_FOR_TIMER);
+                MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
             } else {
                 plot.addRunning();
             }

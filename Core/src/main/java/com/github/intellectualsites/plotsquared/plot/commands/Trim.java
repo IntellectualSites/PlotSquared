@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
@@ -95,8 +95,7 @@ import java.util.Set;
             return false;
         }
         MainUtil.sendMessage(null, "Collecting region data...");
-        ArrayList<Plot> plots = new ArrayList<>();
-        plots.addAll(PlotSquared.get().getPlots(world));
+        ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getPlots(world));
         if (ExpireManager.IMP != null) {
             plots.removeAll(ExpireManager.IMP.getPendingExpired());
         }
@@ -107,8 +106,8 @@ import java.util.Set;
         MainUtil.sendMessage(null, " - TIME ESTIMATE: 12 Parsecs");
         TaskManager.objectTask(plots, new RunnableVal<Plot>() {
             @Override public void run(Plot plot) {
-                Location pos1 = plot.getBottom();
-                Location pos2 = plot.getTop();
+                Location pos1 = plot.getCorners()[0];
+                Location pos2 = plot.getCorners()[1];
                 int ccx1 = pos1.getX() >> 9;
                 int ccz1 = pos1.getZ() >> 9;
                 int ccx2 = pos2.getX() >> 9;
@@ -128,16 +127,16 @@ import java.util.Set;
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length == 0) {
-            C.COMMAND_SYNTAX.send(player, getUsage());
+            Captions.COMMAND_SYNTAX.send(player, getUsage());
             return false;
         }
         final String world = args[0];
         if (!WorldUtil.IMP.isWorld(world) || !PlotSquared.get().hasPlotArea(world)) {
-            MainUtil.sendMessage(player, C.NOT_VALID_WORLD);
+            MainUtil.sendMessage(player, Captions.NOT_VALID_WORLD);
             return false;
         }
         if (Trim.TASK) {
-            C.TRIM_IN_PROGRESS.send(player);
+            Captions.TRIM_IN_PROGRESS.send(player);
             return false;
         }
         Trim.TASK = true;
@@ -198,11 +197,9 @@ import java.util.Set;
                         }
                     };
                 } else {
-                    regenTask = new Runnable() {
-                        @Override public void run() {
-                            Trim.TASK = false;
-                            player.sendMessage("Trim done!");
-                        }
+                    regenTask = () -> {
+                        Trim.TASK = false;
+                        player.sendMessage("Trim done!");
                     };
                 }
                 ChunkManager.manager.deleteRegionFiles(world, viable, regenTask);

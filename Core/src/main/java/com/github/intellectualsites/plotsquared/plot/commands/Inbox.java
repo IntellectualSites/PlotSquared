@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
@@ -11,21 +11,19 @@ import com.github.intellectualsites.plotsquared.plot.util.CommentManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @CommandDeclaration(command = "inbox", description = "Review the comments for a plot",
     usage = "/plot inbox [inbox] [delete <index>|clear|page]", permission = "plots.inbox",
-    category = CommandCategory.CHAT, requiredType = RequiredType.NONE) public class Inbox
+    category = CommandCategory.CHAT, requiredType = RequiredType.PLAYER) public class Inbox
     extends SubCommand {
 
     public void displayComments(PlotPlayer player, List<PlotComment> oldComments, int page) {
         if (oldComments == null || oldComments.isEmpty()) {
-            MainUtil.sendMessage(player, C.INBOX_EMPTY);
+            MainUtil.sendMessage(player, Captions.INBOX_EMPTY);
             return;
         }
-        PlotComment[] comments = oldComments.toArray(new PlotComment[oldComments.size()]);
+        PlotComment[] comments = oldComments.toArray(new PlotComment[0]);
         if (page < 0) {
             page = 0;
         }
@@ -42,7 +40,7 @@ import java.util.Optional;
         }
         StringBuilder string = new StringBuilder();
         string.append(StringMan
-            .replaceAll(C.COMMENT_LIST_HEADER_PAGED.s(), "%amount%", comments.length, "%cur",
+            .replaceAll(Captions.COMMENT_LIST_HEADER_PAGED.s(), "%amount%", comments.length, "%cur",
                 page + 1, "%max", totalPages + 1, "%word", "all") + '\n');
 
         // This might work xD
@@ -64,15 +62,15 @@ import java.util.Optional;
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            sendMessage(player, C.NOT_IN_PLOT);
+            sendMessage(player, Captions.NOT_IN_PLOT);
             return false;
         }
         if (!plot.hasOwner()) {
-            sendMessage(player, C.PLOT_UNOWNED);
+            sendMessage(player, Captions.PLOT_UNOWNED);
             return false;
         }
         if (args.length == 0) {
-            sendMessage(player, C.COMMAND_SYNTAX,
+            sendMessage(player, Captions.COMMAND_SYNTAX,
                 "/plot inbox [inbox] [delete <index>|clear|page]");
             for (final CommentInbox inbox : CommentManager.inboxes.values()) {
                 if (inbox.canRead(plot, player)) {
@@ -95,16 +93,16 @@ import java.util.Optional;
                                     } else {
                                         color = "";
                                     }
-                                    sendMessage(player, C.INBOX_ITEM,
+                                    sendMessage(player, Captions.INBOX_ITEM,
                                         color + inbox.toString() + " (" + total + '/' + unread
                                             + ')');
                                     return;
                                 }
                             }
-                            sendMessage(player, C.INBOX_ITEM, inbox.toString());
+                            sendMessage(player, Captions.INBOX_ITEM, inbox.toString());
                         }
                     })) {
-                        sendMessage(player, C.INBOX_ITEM, inbox.toString());
+                        sendMessage(player, Captions.INBOX_ITEM, inbox.toString());
                     }
                 }
             }
@@ -112,7 +110,7 @@ import java.util.Optional;
         }
         final CommentInbox inbox = CommentManager.inboxes.get(args[0].toLowerCase());
         if (inbox == null) {
-            sendMessage(player, C.INVALID_INBOX,
+            sendMessage(player, Captions.INVALID_INBOX,
                 StringMan.join(CommentManager.inboxes.keySet(), ", "));
             return false;
         }
@@ -122,22 +120,22 @@ import java.util.Optional;
             switch (args[1].toLowerCase()) {
                 case "delete":
                     if (!inbox.canModify(plot, player)) {
-                        sendMessage(player, C.NO_PERM_INBOX_MODIFY);
+                        sendMessage(player, Captions.NO_PERM_INBOX_MODIFY);
                         return false;
                     }
                     if (args.length != 3) {
-                        sendMessage(player, C.COMMAND_SYNTAX,
+                        sendMessage(player, Captions.COMMAND_SYNTAX,
                             "/plot inbox " + inbox.toString() + " delete <index>");
                     }
                     final int index;
                     try {
                         index = Integer.parseInt(args[2]);
                         if (index < 1) {
-                            sendMessage(player, C.NOT_VALID_INBOX_INDEX, index + "");
+                            sendMessage(player, Captions.NOT_VALID_INBOX_INDEX, index + "");
                             return false;
                         }
                     } catch (NumberFormatException ignored) {
-                        sendMessage(player, C.COMMAND_SYNTAX,
+                        sendMessage(player, Captions.COMMAND_SYNTAX,
                             "/plot inbox " + inbox.toString() + " delete <index>");
                         return false;
                     }
@@ -145,36 +143,35 @@ import java.util.Optional;
                     if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
                         @Override public void run(List<PlotComment> value) {
                             if (index > value.size()) {
-                                sendMessage(player, C.NOT_VALID_INBOX_INDEX, index + "");
+                                sendMessage(player, Captions.NOT_VALID_INBOX_INDEX, index + "");
                                 return;
                             }
                             PlotComment comment = value.get(index - 1);
                             inbox.removeComment(plot, comment);
-                            plot.getSettings().removeComment(comment);
-                            MainUtil.sendMessage(player, C.COMMENT_REMOVED, comment.comment);
+                            plot.removeComment(comment);
+                            MainUtil.sendMessage(player, Captions.COMMENT_REMOVED, comment.comment);
                         }
                     })) {
-                        sendMessage(player, C.NOT_IN_PLOT);
+                        sendMessage(player, Captions.NOT_IN_PLOT);
                         return false;
                     }
                     return true;
                 case "clear":
                     if (!inbox.canModify(plot, player)) {
-                        sendMessage(player, C.NO_PERM_INBOX_MODIFY);
+                        sendMessage(player, Captions.NO_PERM_INBOX_MODIFY);
                     }
                     inbox.clearInbox(plot);
-                    Optional<ArrayList<PlotComment>> comments =
-                        plot.getSettings().getComments(inbox.toString());
-                    if (comments.isPresent()) {
-                        plot.getSettings().removeComments(comments.get());
+                    List<PlotComment> comments = plot.getComments(inbox.toString());
+                    if (!comments.isEmpty()) {
+                        plot.removeComments(comments);
                     }
-                    MainUtil.sendMessage(player, C.COMMENT_REMOVED, "*");
+                    MainUtil.sendMessage(player, Captions.COMMENT_REMOVED, "*");
                     return true;
                 default:
                     try {
                         page = Integer.parseInt(args[1]);
                     } catch (NumberFormatException ignored) {
-                        sendMessage(player, C.COMMAND_SYNTAX,
+                        sendMessage(player, Captions.COMMAND_SYNTAX,
                             "/plot inbox [inbox] [delete <index>|clear|page]");
                         return false;
                     }
@@ -183,7 +180,7 @@ import java.util.Optional;
             page = 1;
         }
         if (!inbox.canRead(plot, player)) {
-            sendMessage(player, C.NO_PERM_INBOX);
+            sendMessage(player, Captions.NO_PERM_INBOX);
             return false;
         }
         if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
@@ -191,7 +188,7 @@ import java.util.Optional;
                 displayComments(player, value, page);
             }
         })) {
-            sendMessage(player, C.PLOT_UNOWNED);
+            sendMessage(player, Captions.PLOT_UNOWNED);
             return false;
         }
         return true;

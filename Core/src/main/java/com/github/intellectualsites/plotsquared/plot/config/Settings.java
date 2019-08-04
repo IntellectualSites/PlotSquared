@@ -179,10 +179,10 @@ public class Settings extends Config {
     public static final class Auto_Clear extends ConfigBlock {
         @Create // This value has to be generated since an instance isn't static
         public CALIBRATION CALIBRATION = null;
-        public int THRESHOLD = 1;
+        public int THRESHOLD = -1;
         public int REQUIRED_PLOTS = -1;
         public boolean CONFIRMATION = true;
-        public int DAYS = 7;
+        public int DAYS = 90;
         public int SKIP_ACCOUNT_AGE_DAYS = -1;
         public List<String> WORLDS = new ArrayList<>(Collections.singletonList("*"));
 
@@ -221,8 +221,17 @@ public class Settings extends Config {
         @Ignore public static boolean NATIVE_UUID_PROVIDER = false;
     }
 
+
     @Comment("General settings") public static final class General {
         @Comment("Display scientific numbers (4.2E8)") public static boolean SCIENTIFIC = false;
+        @Comment("Replace wall when merging") public static boolean MERGE_REPLACE_WALL = true;
+    }
+
+
+    @Comment("Schematic Settings") public static final class Schematics {
+        @Comment(
+            "Whether schematic based generation should paste schematic on top of plots, or from Y=1")
+        public static boolean PASTE_ON_TOP = true;
     }
 
 
@@ -271,6 +280,7 @@ public class Settings extends Config {
             MAX_PLOTS = 127;
     }
 
+
     public static final class Confirmation {
         @Comment("Teleport to your plot on death") public static int CONFIRMATION_TIMEOUT_SECONDS =
             20;
@@ -280,6 +290,7 @@ public class Settings extends Config {
     public static final class Teleport {
         @Comment("Teleport to your plot on death") public static boolean ON_DEATH = false;
         @Comment("Teleport to your plot on login") public static boolean ON_LOGIN = false;
+        @Comment("Teleport to your plot on claim") public static boolean ON_CLAIM = true;
         @Comment("Add a teleportation delay to all commands") public static int DELAY = 0;
         @Comment("The visit command is ordered by world instead of globally") public static boolean
             PER_WORLD_VISIT = false;
@@ -304,7 +315,9 @@ public class Settings extends Config {
 
 
     public static final class Ratings {
-        public static List<String> CATEGORIES = new ArrayList<>();
+        @Comment("Replace the rating system with a like system. Will add /plot like/dislike,"
+            + " and remove the rating command") public static boolean USE_LIKES = false;
+        @Comment("Rating categories") public static List<String> CATEGORIES = new ArrayList<>();
     }
 
 
@@ -342,7 +355,7 @@ public class Settings extends Config {
         @Comment("Actively purge invalid database entries") public static boolean DATABASE_PURGER =
             false;
         @Comment("Delete plots when a player is banned") public static boolean BAN_DELETER = false;
-        @Comment("Prevent possibly unsafe blocks from being used in plot components") public static
-            boolean PREVENT_UNSAFE = true;
+        @Comment("Prevent possibly unsafe blocks from being used in plot components")
+        public static boolean PREVENT_UNSAFE = true;
     }
 }

@@ -1,6 +1,10 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
+import com.github.intellectualsites.plotsquared.plot.object.ChunkLoc;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
@@ -37,6 +41,14 @@ public abstract class LocalBlockQueue {
 
     public abstract void setModified(long modified);
 
+    /**
+     * Sets the block at the coordinates provided to the given id.
+     *
+     * @param x the x coordinate from from 0 to 15 inclusive
+     * @param y the y coordinate from from 0 (inclusive) - maxHeight(exclusive)
+     * @param z the z coordinate from 0 to 15 inclusive
+     * @param id the id to set the block to
+     */
     public abstract boolean setBlock(final int x, final int y, final int z, final PlotBlock id);
 
     public abstract boolean setBlock(final int x, final int y, final int z, final BaseBlock id);
@@ -85,9 +97,15 @@ public abstract class LocalBlockQueue {
     }
 
     public void setCuboid(Location pos1, Location pos2, PlotBlock block) {
-        for (int y = pos1.getY(); y <= Math.min(255, pos2.getY()); y++) {
-            for (int x = pos1.getX(); x <= pos2.getX(); x++) {
-                for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
+        int yMin = Math.min(pos1.getY(), pos2.getY());
+        int yMax = Math.min(255, Math.max(pos1.getY(), pos2.getY()));
+        int xMin = Math.min(pos1.getX(), pos2.getX());
+        int xMax = Math.max(pos1.getX(), pos2.getX());
+        int zMin = Math.min(pos1.getZ(), pos2.getZ());
+        int zMax = Math.max(pos1.getZ(), pos2.getZ());
+        for (int y = yMin; y <= yMax; y++) {
+            for (int x = xMin; x <= xMax; x++) {
+                for (int z = zMin; z <= zMax; z++) {
                     setBlock(x, y, z, block);
                 }
             }
@@ -95,11 +113,15 @@ public abstract class LocalBlockQueue {
     }
 
     public void setCuboid(Location pos1, Location pos2, BlockBucket blocks) {
-        for (int y = pos1.getY(); y <= Math.min(255, pos2.getY()); y++) {
-            for (int x = pos1.getX(); x <= pos2.getX(); x++) {
-                for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
-                    // int i = PseudoRandom.random.random(blocks.length);
-                    // PlotBlock block = blocks[i];
+        int yMin = Math.min(pos1.getY(), pos2.getY());
+        int yMax = Math.min(255, Math.max(pos1.getY(), pos2.getY()));
+        int xMin = Math.min(pos1.getX(), pos2.getX());
+        int xMax = Math.max(pos1.getX(), pos2.getX());
+        int zMin = Math.min(pos1.getZ(), pos2.getZ());
+        int zMax = Math.max(pos1.getZ(), pos2.getZ());
+        for (int y = yMin; y <= yMax; y++) {
+            for (int x = xMin; x <= xMax; x++) {
+                for (int z = zMin; z <= zMax; z++) {
                     setBlock(x, y, z, blocks.getBlock());
                 }
             }

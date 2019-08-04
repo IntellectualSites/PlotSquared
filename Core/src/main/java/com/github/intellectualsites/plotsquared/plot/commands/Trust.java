@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-@CommandDeclaration(command = "trust", aliases = {"t"}, requiredType = RequiredType.NONE,
+@CommandDeclaration(command = "trust", aliases = {"t"}, requiredType = RequiredType.PLAYER,
     usage = "/plot trust <player>",
     description = "Allow a user to build in a plot while you are offline",
     category = CommandCategory.SETTINGS) public class Trust extends Command {
@@ -29,52 +29,57 @@ import java.util.concurrent.CompletableFuture;
     @Override public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
-        final Plot plot = check(player.getCurrentPlot(), C.NOT_IN_PLOT);
-        checkTrue(plot.hasOwner(), C.PLOT_UNOWNED);
-        checkTrue(plot.isOwner(player.getUUID()) || Permissions
-            .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_TRUST), C.NO_PLOT_PERMS);
-        checkTrue(args.length == 1, C.COMMAND_SYNTAX, getUsage());
+        final Plot currentPlot = player.getCurrentPlot();
+        if (currentPlot == null) {
+            throw new CommandException(Captions.NOT_IN_PLOT);
+        }
+        checkTrue(currentPlot.hasOwner(), Captions.PLOT_UNOWNED);
+        checkTrue(currentPlot.isOwner(player.getUUID()) || Permissions
+                .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
+            Captions.NO_PLOT_PERMS);
+        checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, getUsage());
         final Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
-        checkTrue(!uuids.isEmpty(), C.INVALID_PLAYER, args[0]);
-        Iterator<UUID> iter = uuids.iterator();
-        int size = plot.getTrusted().size() + plot.getMembers().size();
-        while (iter.hasNext()) {
-            UUID uuid = iter.next();
+        checkTrue(!uuids.isEmpty(), Captions.INVALID_PLAYER, args[0]);
+        Iterator<UUID> iterator = uuids.iterator();
+        int size = currentPlot.getTrusted().size() + currentPlot.getMembers().size();
+        while (iterator.hasNext()) {
+            UUID uuid = iterator.next();
             if (uuid == DBFunc.EVERYONE && !(
-                Permissions.hasPermission(player, C.PERMISSION_TRUST_EVERYONE) || Permissions
-                    .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_TRUST))) {
-                MainUtil.sendMessage(player, C.INVALID_PLAYER, MainUtil.getName(uuid));
-                iter.remove();
+                Permissions.hasPermission(player, Captions.PERMISSION_TRUST_EVERYONE) || Permissions
+                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST))) {
+                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, MainUtil.getName(uuid));
+                iterator.remove();
                 continue;
             }
-            if (plot.isOwner(uuid)) {
-                MainUtil.sendMessage(player, C.ALREADY_OWNER, MainUtil.getName(uuid));
-                iter.remove();
+            if (currentPlot.isOwner(uuid)) {
+                MainUtil.sendMessage(player, Captions.ALREADY_OWNER, MainUtil.getName(uuid));
+                iterator.remove();
                 continue;
             }
-            if (plot.getTrusted().contains(uuid)) {
-                MainUtil.sendMessage(player, C.ALREADY_ADDED, MainUtil.getName(uuid));
-                iter.remove();
+            if (currentPlot.getTrusted().contains(uuid)) {
+                MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
+                iterator.remove();
                 continue;
             }
-            size += plot.getMembers().contains(uuid) ? 0 : 1;
+            size += currentPlot.getMembers().contains(uuid) ? 0 : 1;
         }
         checkTrue(!uuids.isEmpty(), null);
-        checkTrue(size <= plot.getArea().MAX_PLOT_MEMBERS || Permissions
-            .hasPermission(player, C.PERMISSION_ADMIN_COMMAND_TRUST), C.PLOT_MAX_MEMBERS);
+        checkTrue(size <= currentPlot.getArea().MAX_PLOT_MEMBERS || Permissions
+                .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
+            Captions.PLOT_MAX_MEMBERS);
         // Success
         confirm.run(this, () -> {
             for (UUID uuid : uuids) {
                 if (uuid != DBFunc.EVERYONE) {
-                    if (!plot.removeMember(uuid)) {
-                        if (plot.getDenied().contains(uuid)) {
-                            plot.removeDenied(uuid);
+                    if (!currentPlot.removeMember(uuid)) {
+                        if (currentPlot.getDenied().contains(uuid)) {
+                            currentPlot.removeDenied(uuid);
                         }
                     }
                 }
-                plot.addTrusted(uuid);
-                EventUtil.manager.callTrusted(player, plot, uuid, true);
-                MainUtil.sendMessage(player, C.TRUSTED_ADDED);
+                currentPlot.addTrusted(uuid);
+                EventUtil.manager.callTrusted(player, currentPlot, uuid, true);
+                MainUtil.sendMessage(player, Captions.TRUSTED_ADDED);
             }
         }, null);
 

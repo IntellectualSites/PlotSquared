@@ -30,25 +30,18 @@ import java.util.Map.Entry;
 
     public static void insertPlots(final SQLManager manager, final List<Plot> plots,
         final PlotPlayer player) {
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override public void run() {
-                try {
-                    ArrayList<Plot> ps = new ArrayList<>();
-                    for (Plot p : plots) {
-                        ps.add(p);
-                    }
-                    MainUtil.sendMessage(player, "&6Starting...");
-                    manager.createPlotsAndData(ps, new Runnable() {
-                        @Override public void run() {
-                            MainUtil.sendMessage(player, "&6Database conversion finished!");
-                            manager.close();
-                        }
-                    });
-                } catch (Exception e) {
-                    MainUtil.sendMessage(player,
-                        "Failed to insert plot objects, see stacktrace for info");
-                    e.printStackTrace();
-                }
+        TaskManager.runTaskAsync(() -> {
+            try {
+                ArrayList<Plot> ps = new ArrayList<>(plots);
+                MainUtil.sendMessage(player, "&6Starting...");
+                manager.createPlotsAndData(ps, () -> {
+                    MainUtil.sendMessage(player, "&6Database conversion finished!");
+                    manager.close();
+                });
+            } catch (Exception e) {
+                MainUtil
+                    .sendMessage(player, "Failed to insert plot objects, see stacktrace for info");
+                e.printStackTrace();
             }
         });
     }
@@ -94,8 +87,8 @@ import java.util.Map.Entry;
                     HashMap<String, HashMap<PlotId, Plot>> map = manager.getPlots();
                     plots = new ArrayList<>();
                     for (Entry<String, HashMap<PlotId, Plot>> entry : map.entrySet()) {
-                        String areaname = entry.getKey();
-                        PlotArea pa = PlotSquared.get().getPlotAreaByString(areaname);
+                        String areaName = entry.getKey();
+                        PlotArea pa = PlotSquared.get().getPlotAreaByString(areaName);
                         if (pa != null) {
                             for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
                                 Plot plot = entry2.getValue();
@@ -130,20 +123,13 @@ import java.util.Map.Entry;
                                 plots.add(plot);
                             }
                         } else {
-                            HashMap<PlotId, Plot> plotmap =
-                                PlotSquared.get().plots_tmp.get(areaname);
-                            if (plotmap == null) {
-                                plotmap = new HashMap<>();
-                                PlotSquared.get().plots_tmp.put(areaname, plotmap);
-                            }
-                            plotmap.putAll(entry.getValue());
+                            HashMap<PlotId, Plot> plotMap = PlotSquared.get().plots_tmp
+                                .computeIfAbsent(areaName, k -> new HashMap<>());
+                            plotMap.putAll(entry.getValue());
                         }
                     }
-                    DBFunc.createPlotsAndData(plots, new Runnable() {
-                        @Override public void run() {
-                            MainUtil.sendMessage(player, "&6Database conversion finished!");
-                        }
-                    });
+                    DBFunc.createPlotsAndData(plots,
+                        () -> MainUtil.sendMessage(player, "&6Database conversion finished!"));
                     return true;
                 case "mysql":
                     if (args.length < 6) {

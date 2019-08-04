@@ -1,10 +1,17 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
+import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
+import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
+import com.github.intellectualsites.plotsquared.plot.object.StringWrapper;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.google.common.collect.BiMap;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -52,14 +59,12 @@ public class UUIDHandler {
 
     public static HashSet<UUID> getAllUUIDS() {
         final HashSet<UUID> uuids = new HashSet<>();
-        PlotSquared.get().foreachPlotRaw(new RunnableVal<Plot>() {
-            @Override public void run(Plot plot) {
-                if (plot.hasOwner()) {
-                    uuids.add(plot.owner);
-                    uuids.addAll(plot.getTrusted());
-                    uuids.addAll(plot.getMembers());
-                    uuids.addAll(plot.getDenied());
-                }
+        PlotSquared.get().forEachPlotRaw(plot -> {
+            if (plot.hasOwner()) {
+                uuids.add(plot.owner);
+                uuids.addAll(plot.getTrusted());
+                uuids.addAll(plot.getMembers());
+                uuids.addAll(plot.getDenied());
             }
         });
         return uuids;
@@ -81,10 +86,7 @@ public class UUIDHandler {
         implementation.add(toAdd);
     }
 
-    public static UUID getUUID(PlotPlayer player) {
-        if (implementation == null) {
-            return null;
-        }
+    @NotNull public static UUID getUUID(PlotPlayer player) {
         return implementation.getUUID(player);
     }
 
@@ -95,9 +97,12 @@ public class UUIDHandler {
         return implementation.getUUID(player);
     }
 
-    public static String getName(UUID uuid) {
+    @Nullable public static String getName(UUID uuid) {
         if (implementation == null) {
             return null;
+        }
+        if (uuid != null && uuid.equals(DBFunc.SERVER)) {
+            return Captions.SERVER.s();
         }
         return implementation.getName(uuid);
     }
@@ -116,13 +121,13 @@ public class UUIDHandler {
         return check(implementation.getPlayer(name));
     }
 
-    private static PlotPlayer check(PlotPlayer plr) {
-        if (plr != null && !plr.isOnline()) {
-            UUIDHandler.getPlayers().remove(plr.getName());
-            PlotSquared.get().IMP.unregister(plr);
-            plr = null;
+    private static PlotPlayer check(@Nullable PlotPlayer player) {
+        if (player != null && !player.isOnline()) {
+            UUIDHandler.getPlayers().remove(player.getName());
+            PlotSquared.get().IMP.unregister(player);
+            player = null;
         }
-        return plr;
+        return player;
     }
 
     public static UUID getUUIDFromString(String nameOrUUIDString) {

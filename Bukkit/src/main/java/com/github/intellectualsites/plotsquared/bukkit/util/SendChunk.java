@@ -65,11 +65,7 @@ public class SendChunk {
         int view = Bukkit.getServer().getViewDistance();
         for (Chunk chunk : chunks) {
             String world = chunk.getWorld().getName();
-            ArrayList<Chunk> list = map.get(world);
-            if (list == null) {
-                list = new ArrayList<>();
-                map.put(world, list);
-            }
+            ArrayList<Chunk> list = map.computeIfAbsent(world, k -> new ArrayList<>());
             list.add(chunk);
             Object c = this.methodGetHandleChunk.of(chunk).call();
             this.methodInitLighting.of(c).call();
@@ -92,14 +88,14 @@ public class SendChunk {
             if (location == null) {
                 location = pp.getLocation();
             }
-            int cx = location.getX() >> 4;
-            int cz = location.getZ() >> 4;
+            int chunkX = location.getX() >> 4;
+            int chunkZ = location.getZ() >> 4;
             Player player = ((BukkitPlayer) pp).player;
             Object entity = this.methodGetHandlePlayer.of(player).call();
 
             for (Chunk chunk : list) {
-                int dx = Math.abs(cx - chunk.getX());
-                int dz = Math.abs(cz - chunk.getZ());
+                int dx = Math.abs(chunkX - chunk.getX());
+                int dz = Math.abs(chunkZ - chunk.getZ());
                 if ((dx > view) || (dz > view)) {
                     continue;
                 }
@@ -118,20 +114,17 @@ public class SendChunk {
             }
         }
         for (final Chunk chunk : chunks) {
-            TaskManager.runTask(new Runnable() {
-                @Override public void run() {
-                    try {
-                        chunk.unload(true, false);
-                    } catch (Throwable ignored) {
-                        String worldName = chunk.getWorld().getName();
-                        PlotSquared.debug(
-                            "$4Could not save chunk: " + worldName + ';' + chunk.getX() + ";"
-                                + chunk.getZ());
-                        PlotSquared
-                            .debug("$3 - $4File may be open in another process (e.g. MCEdit)");
-                        PlotSquared.debug("$3 - $4" + worldName + "/level.dat or " + worldName
-                            + "/level_old.dat may be corrupt (try repairing or removing these)");
-                    }
+            TaskManager.runTask(() -> {
+                try {
+                    chunk.unload(true);
+                } catch (Throwable ignored) {
+                    String worldName = chunk.getWorld().getName();
+                    PlotSquared.debug(
+                        "$4Could not save chunk: " + worldName + ';' + chunk.getX() + ";" + chunk
+                            .getZ());
+                    PlotSquared.debug("$3 - $4File may be open in another process (e.g. MCEdit)");
+                    PlotSquared.debug("$3 - $4" + worldName + "/level.dat or " + worldName
+                        + "/level_old.dat may be corrupt (try repairing or removing these)");
                 }
             });
         }

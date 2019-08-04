@@ -106,287 +106,9 @@ public class BukkitChunkManager extends ChunkManager {
         Set<ChunkLoc> chunks = super.getChunkChunks(world);
         for (Chunk chunk : Bukkit.getWorld(world).getLoadedChunks()) {
             ChunkLoc loc = new ChunkLoc(chunk.getX() >> 5, chunk.getZ() >> 5);
-            if (!chunks.contains(loc)) {
-                chunks.add(loc);
-            }
+            chunks.add(loc);
         }
         return chunks;
-    }
-
-    @Override
-    public boolean copyRegion(com.github.intellectualsites.plotsquared.plot.object.Location pos1,
-        com.github.intellectualsites.plotsquared.plot.object.Location pos2,
-        com.github.intellectualsites.plotsquared.plot.object.Location newPos,
-        final Runnable whenDone) {
-        final int relX = newPos.getX() - pos1.getX();
-        final int relZ = newPos.getZ() - pos1.getZ();
-
-        final RegionWrapper region =
-            new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
-        final World oldWorld = Bukkit.getWorld(pos1.getWorld());
-        final BukkitWorld oldBukkitWorld = new BukkitWorld(oldWorld);
-        final World newWorld = Bukkit.getWorld(newPos.getWorld());
-        final String newWorldName = newWorld.getName();
-        final ContentMap map = new ContentMap();
-        final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(newWorldName, false);
-        ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
-            @Override public void run(int[] value) {
-                int bx = value[2];
-                int bz = value[3];
-                int tx = value[4];
-                int tz = value[5];
-                ChunkLoc loc = new ChunkLoc(value[0], value[1]);
-                int cxx = loc.x << 4;
-                int czz = loc.z << 4;
-                Chunk chunk = oldWorld.getChunkAt(loc.x, loc.z);
-                map.saveEntitiesIn(chunk, region);
-                for (int x = bx & 15; x <= (tx & 15); x++) {
-                    for (int z = bz & 15; z <= (tz & 15); z++) {
-                        map.saveBlocks(oldBukkitWorld, 256, cxx + x, czz + z, relX, relZ);
-                    }
-                }
-            }
-        }, () -> {
-            for (Entry<PlotLoc, BaseBlock[]> entry : map.allBlocks.entrySet()) {
-                PlotLoc loc = entry.getKey();
-                BaseBlock[] blocks = entry.getValue();
-                for (int y = 0; y < blocks.length; y++) {
-                    if (blocks[y] != null) {
-                        BaseBlock block = blocks[y];
-                        queue.setBlock(loc.x, y, loc.z, block);
-                    }
-                }
-            }
-            queue.enqueue();
-            GlobalBlockQueue.IMP.addTask(() -> {
-                //map.restoreBlocks(newWorld, 0, 0);
-                map.restoreEntities(newWorld, relX, relZ);
-                TaskManager.runTask(whenDone);
-            });
-        }, 5);
-        return true;
-    }
-
-    @Override public boolean regenerateRegion(
-        final com.github.intellectualsites.plotsquared.plot.object.Location pos1,
-        final com.github.intellectualsites.plotsquared.plot.object.Location pos2,
-        final boolean ignoreAugment, final Runnable whenDone) {
-        final String world = pos1.getWorld();
-
-        final int p1x = pos1.getX();
-        final int p1z = pos1.getZ();
-        final int p2x = pos2.getX();
-        final int p2z = pos2.getZ();
-        final int bcx = p1x >> 4;
-        final int bcz = p1z >> 4;
-        final int tcx = p2x >> 4;
-        final int tcz = p2z >> 4;
-
-        final List<ChunkLoc> chunks = new ArrayList<>();
-
-        for (int x = bcx; x <= tcx; x++) {
-            for (int z = bcz; z <= tcz; z++) {
-                chunks.add(new ChunkLoc(x, z));
-            }
-        }
-        final World worldObj = Bukkit.getWorld(world);
-        final BukkitWorld bukkitWorldObj = new BukkitWorld(worldObj);
-        TaskManager.runTask(new Runnable() {
-            @Override public void run() {
-                long start = System.currentTimeMillis();
-                while (!chunks.isEmpty() && System.currentTimeMillis() - start < 5) {
-                    final ChunkLoc chunk = chunks.remove(0);
-                    int x = chunk.x;
-                    int z = chunk.z;
-                    int xxb = x << 4;
-                    int zzb = z << 4;
-                    int xxt = xxb + 15;
-                    int zzt = zzb + 15;
-                    Chunk chunkObj = worldObj.getChunkAt(x, z);
-                    if (!chunkObj.load(false)) {
-                        continue;
-                    }
-                    final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
-                    RegionWrapper currentPlotClear =
-                        new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
-                    if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z) {
-                        AugmentedUtils
-                            .bypass(ignoreAugment, () -> queue.regenChunkSafe(chunk.x, chunk.z));
-                        continue;
-                    }
-                    boolean checkX1 = false;
-
-                    int xxb2;
-
-                    if (x == bcx) {
-                        xxb2 = p1x - 1;
-                        checkX1 = true;
-                    } else {
-                        xxb2 = xxb;
-                    }
-                    boolean checkX2 = false;
-                    int xxt2;
-                    if (x == tcx) {
-                        xxt2 = p2x + 1;
-                        checkX2 = true;
-                    } else {
-                        xxt2 = xxt;
-                    }
-                    boolean checkZ1 = false;
-                    int zzb2;
-                    if (z == bcz) {
-                        zzb2 = p1z - 1;
-                        checkZ1 = true;
-                    } else {
-                        zzb2 = zzb;
-                    }
-                    boolean checkZ2 = false;
-                    int zzt2;
-                    if (z == tcz) {
-                        zzt2 = p2z + 1;
-                        checkZ2 = true;
-                    } else {
-                        zzt2 = zzt;
-                    }
-                    final ContentMap map = new ContentMap();
-                    if (checkX1) {
-                        map.saveRegion(bukkitWorldObj, xxb, xxb2, zzb2, zzt2); //
-                    }
-                    if (checkX2) {
-                        map.saveRegion(bukkitWorldObj, xxt2, xxt, zzb2, zzt2); //
-                    }
-                    if (checkZ1) {
-                        map.saveRegion(bukkitWorldObj, xxb2, xxt2, zzb, zzb2); //
-                    }
-                    if (checkZ2) {
-                        map.saveRegion(bukkitWorldObj, xxb2, xxt2, zzt2, zzt); //
-                    }
-                    if (checkX1 && checkZ1) {
-                        map.saveRegion(bukkitWorldObj, xxb, xxb2, zzb, zzb2); //
-                    }
-                    if (checkX2 && checkZ1) {
-                        map.saveRegion(bukkitWorldObj, xxt2, xxt, zzb, zzb2); // ?
-                    }
-                    if (checkX1 && checkZ2) {
-                        map.saveRegion(bukkitWorldObj, xxb, xxb2, zzt2, zzt); // ?
-                    }
-                    if (checkX2 && checkZ2) {
-                        map.saveRegion(bukkitWorldObj, xxt2, xxt, zzt2, zzt); //
-                    }
-                    map.saveEntitiesOut(chunkObj, currentPlotClear);
-                    AugmentedUtils.bypass(ignoreAugment,
-                        () -> setChunkInPlotArea(null, new RunnableVal<ScopedLocalBlockQueue>() {
-                            @Override public void run(ScopedLocalBlockQueue value) {
-                                com.github.intellectualsites.plotsquared.plot.object.Location min =
-                                    value.getMin();
-                                int bx = min.getX();
-                                int bz = min.getZ();
-                                for (int x1 = 0; x1 < 16; x1++) {
-                                    for (int z1 = 0; z1 < 16; z1++) {
-                                        PlotLoc loc = new PlotLoc(bx + x1, bz + z1);
-                                        BaseBlock[] ids = map.allBlocks.get(loc);
-                                        if (ids != null) {
-                                            for (int y = 0; y < Math.min(128, ids.length); y++) {
-                                                BaseBlock id = ids[y];
-                                                if (id != null) {
-                                                    value.setBlock(x1, y, z1, id);
-                                                } else {
-                                                    value.setBlock(x1, y, z1, PlotBlock.get("air"));
-                                                }
-                                            }
-                                            for (int y = Math.min(128, ids.length);
-                                                 y < ids.length; y++) {
-                                                BaseBlock id = ids[y];
-                                                if (id != null) {
-                                                    value.setBlock(x1, y, z1, id);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }, world, chunk));
-                    //map.restoreBlocks(worldObj, 0, 0);
-                    map.restoreEntities(worldObj, 0, 0);
-                }
-                if (!chunks.isEmpty()) {
-                    TaskManager.runTaskLater(this, 1);
-                } else {
-                    TaskManager.runTaskLater(whenDone, 1);
-                }
-            }
-        });
-        return true;
-    }
-
-    @Override
-    public void clearAllEntities(com.github.intellectualsites.plotsquared.plot.object.Location pos1,
-        com.github.intellectualsites.plotsquared.plot.object.Location pos2) {
-        String world = pos1.getWorld();
-        List<Entity> entities = BukkitUtil.getEntities(world);
-        int bx = pos1.getX();
-        int bz = pos1.getZ();
-        int tx = pos2.getX();
-        int tz = pos2.getZ();
-        for (Entity entity : entities) {
-            if (!(entity instanceof Player)) {
-                org.bukkit.Location location = entity.getLocation();
-                if (location.getX() >= bx && location.getX() <= tx && location.getZ() >= bz
-                    && location.getZ() <= tz) {
-                    if (entity.hasMetadata("ps-tmp-teleport")) {
-                        continue;
-                    }
-                    entity.remove();
-                }
-            }
-        }
-    }
-
-    @Override public boolean loadChunk(String world, ChunkLoc loc, boolean force) {
-        return BukkitUtil.getWorld(world).getChunkAt(loc.x, loc.z).load(force);
-    }
-
-    @SuppressWarnings("deprecation") @Override
-    public void unloadChunk(final String world, final ChunkLoc loc, final boolean save,
-        final boolean safe) {
-        if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
-            TaskManager
-                .runTask(() -> BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save, safe));
-        } else {
-            BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save, safe);
-        }
-    }
-
-    @Override public void swap(com.github.intellectualsites.plotsquared.plot.object.Location bot1,
-        com.github.intellectualsites.plotsquared.plot.object.Location top1,
-        com.github.intellectualsites.plotsquared.plot.object.Location bot2,
-        com.github.intellectualsites.plotsquared.plot.object.Location top2,
-        final Runnable whenDone) {
-        RegionWrapper region1 =
-            new RegionWrapper(bot1.getX(), top1.getX(), bot1.getZ(), top1.getZ());
-        RegionWrapper region2 =
-            new RegionWrapper(bot2.getX(), top2.getX(), bot2.getZ(), top2.getZ());
-        final World world1 = Bukkit.getWorld(bot1.getWorld());
-        World world2 = Bukkit.getWorld(bot2.getWorld());
-
-        int relX = bot2.getX() - bot1.getX();
-        int relZ = bot2.getZ() - bot1.getZ();
-
-        final ArrayDeque<ContentMap> maps = new ArrayDeque<>();
-
-        for (int x = bot1.getX() >> 4; x <= top1.getX() >> 4; x++) {
-            for (int z = bot1.getZ() >> 4; z <= top1.getZ() >> 4; z++) {
-                Chunk chunk1 = world1.getChunkAt(x, z);
-                Chunk chunk2 = world2.getChunkAt(x + (relX >> 4), z + (relZ >> 4));
-                maps.add(swapChunk(world1, world2, chunk1, chunk2, region1, region2));
-            }
-        }
-        GlobalBlockQueue.IMP.addTask(() -> {
-            for (ContentMap map : maps) {
-                map.restoreEntities(world1, 0, 0);
-                TaskManager.runTaskLater(whenDone, 1);
-            }
-        });
     }
 
     @Override public int[] countEntities(Plot plot) {
@@ -398,8 +120,8 @@ public class BukkitChunkManager extends ChunkManager {
         PlotArea area = plot.getArea();
         World world = BukkitUtil.getWorld(area.worldname);
 
-        com.github.intellectualsites.plotsquared.plot.object.Location bot = plot.getBottomAbs();
-        com.github.intellectualsites.plotsquared.plot.object.Location top = plot.getTopAbs();
+        Location bot = plot.getBottomAbs();
+        Location top = plot.getTopAbs();
         int bx = bot.getX() >> 4;
         int bz = bot.getZ() >> 4;
 
@@ -464,6 +186,271 @@ public class BukkitChunkManager extends ChunkManager {
         return count;
     }
 
+    @Override public boolean copyRegion(Location pos1, Location pos2, Location newPos,
+        final Runnable whenDone) {
+        final int relX = newPos.getX() - pos1.getX();
+        final int relZ = newPos.getZ() - pos1.getZ();
+
+        final RegionWrapper region =
+            new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
+        final World oldWorld = Bukkit.getWorld(pos1.getWorld());
+        final BukkitWorld oldBukkitWorld = new BukkitWorld(oldWorld);
+        final World newWorld = Bukkit.getWorld(newPos.getWorld());
+        final String newWorldName = newWorld.getName();
+        final ContentMap map = new ContentMap();
+        final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(newWorldName, false);
+        ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
+            @Override public void run(int[] value) {
+                int bx = value[2];
+                int bz = value[3];
+                int tx = value[4];
+                int tz = value[5];
+                ChunkLoc loc = new ChunkLoc(value[0], value[1]);
+                int cxx = loc.x << 4;
+                int czz = loc.z << 4;
+                Chunk chunk = oldWorld.getChunkAt(loc.x, loc.z);
+                map.saveEntitiesIn(chunk, region);
+                for (int x = bx & 15; x <= (tx & 15); x++) {
+                    for (int z = bz & 15; z <= (tz & 15); z++) {
+                        map.saveBlocks(oldBukkitWorld, 256, cxx + x, czz + z, relX, relZ);
+                    }
+                }
+            }
+        }, () -> {
+            for (Entry<PlotLoc, BaseBlock[]> entry : map.allBlocks.entrySet()) {
+                PlotLoc loc = entry.getKey();
+                BaseBlock[] blocks = entry.getValue();
+                for (int y = 0; y < blocks.length; y++) {
+                    if (blocks[y] != null) {
+                        BaseBlock block = blocks[y];
+                        queue.setBlock(loc.getX(), y, loc.getZ(), block);
+                    }
+                }
+            }
+            queue.enqueue();
+            GlobalBlockQueue.IMP.addTask(() -> {
+                //map.restoreBlocks(newWorld, 0, 0);
+                map.restoreEntities(newWorld, relX, relZ);
+                TaskManager.runTask(whenDone);
+            });
+        }, 5);
+        return true;
+    }
+
+    @Override public boolean regenerateRegion(final Location pos1, final Location pos2,
+        final boolean ignoreAugment, final Runnable whenDone) {
+        final String world = pos1.getWorld();
+
+        final int p1x = pos1.getX();
+        final int p1z = pos1.getZ();
+        final int p2x = pos2.getX();
+        final int p2z = pos2.getZ();
+        final int bcx = p1x >> 4;
+        final int bcz = p1z >> 4;
+        final int tcx = p2x >> 4;
+        final int tcz = p2z >> 4;
+
+        final List<ChunkLoc> chunks = new ArrayList<>();
+
+        for (int x = bcx; x <= tcx; x++) {
+            for (int z = bcz; z <= tcz; z++) {
+                chunks.add(new ChunkLoc(x, z));
+            }
+        }
+        final World worldObj = Bukkit.getWorld(world);
+        final BukkitWorld bukkitWorldObj = new BukkitWorld(worldObj);
+        TaskManager.runTask(new Runnable() {
+            @Override public void run() {
+                long start = System.currentTimeMillis();
+                while (!chunks.isEmpty() && System.currentTimeMillis() - start < 5) {
+                    final ChunkLoc chunk = chunks.remove(0);
+                    int x = chunk.x;
+                    int z = chunk.z;
+                    int xxb = x << 4;
+                    int zzb = z << 4;
+                    int xxt = xxb + 15;
+                    int zzt = zzb + 15;
+                    Chunk chunkObj = worldObj.getChunkAt(x, z);
+                    if (!chunkObj.load(false)) {
+                        continue;
+                    }
+                    final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
+                    if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z
+                        && PlotSquared.imp().getServerVersion()[1] == 13) {
+                        AugmentedUtils
+                            .bypass(ignoreAugment, () -> queue.regenChunkSafe(chunk.x, chunk.z));
+                        continue;
+                    }
+                    boolean checkX1 = false;
+
+                    int xxb2;
+
+                    if (x == bcx) {
+                        xxb2 = p1x - 1;
+                        checkX1 = true;
+                    } else {
+                        xxb2 = xxb;
+                    }
+                    boolean checkX2 = false;
+                    int xxt2;
+                    if (x == tcx) {
+                        xxt2 = p2x + 1;
+                        checkX2 = true;
+                    } else {
+                        xxt2 = xxt;
+                    }
+                    boolean checkZ1 = false;
+                    int zzb2;
+                    if (z == bcz) {
+                        zzb2 = p1z - 1;
+                        checkZ1 = true;
+                    } else {
+                        zzb2 = zzb;
+                    }
+                    boolean checkZ2 = false;
+                    int zzt2;
+                    if (z == tcz) {
+                        zzt2 = p2z + 1;
+                        checkZ2 = true;
+                    } else {
+                        zzt2 = zzt;
+                    }
+                    final ContentMap map = new ContentMap();
+                    if (checkX1) {
+                        map.saveRegion(bukkitWorldObj, xxb, xxb2, zzb2, zzt2); //
+                    }
+                    if (checkX2) {
+                        map.saveRegion(bukkitWorldObj, xxt2, xxt, zzb2, zzt2); //
+                    }
+                    if (checkZ1) {
+                        map.saveRegion(bukkitWorldObj, xxb2, xxt2, zzb, zzb2); //
+                    }
+                    if (checkZ2) {
+                        map.saveRegion(bukkitWorldObj, xxb2, xxt2, zzt2, zzt); //
+                    }
+                    if (checkX1 && checkZ1) {
+                        map.saveRegion(bukkitWorldObj, xxb, xxb2, zzb, zzb2); //
+                    }
+                    if (checkX2 && checkZ1) {
+                        map.saveRegion(bukkitWorldObj, xxt2, xxt, zzb, zzb2); // ?
+                    }
+                    if (checkX1 && checkZ2) {
+                        map.saveRegion(bukkitWorldObj, xxb, xxb2, zzt2, zzt); // ?
+                    }
+                    if (checkX2 && checkZ2) {
+                        map.saveRegion(bukkitWorldObj, xxt2, xxt, zzt2, zzt); //
+                    }
+                    RegionWrapper currentPlotClear =
+                        new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
+                    map.saveEntitiesOut(chunkObj, currentPlotClear);
+                    AugmentedUtils.bypass(ignoreAugment,
+                        () -> setChunkInPlotArea(null, new RunnableVal<ScopedLocalBlockQueue>() {
+                            @Override public void run(ScopedLocalBlockQueue value) {
+                                Location min = value.getMin();
+                                int bx = min.getX();
+                                int bz = min.getZ();
+                                for (int x1 = 0; x1 < 16; x1++) {
+                                    for (int z1 = 0; z1 < 16; z1++) {
+                                        PlotLoc loc = new PlotLoc(bx + x1, bz + z1);
+                                        BaseBlock[] ids = map.allBlocks.get(loc);
+                                        if (ids != null) {
+                                            for (int y = 0; y < Math.min(128, ids.length); y++) {
+                                                BaseBlock id = ids[y];
+                                                if (id != null) {
+                                                    value.setBlock(x1, y, z1, id);
+                                                } else {
+                                                    value.setBlock(x1, y, z1, PlotBlock.get("air"));
+                                                }
+                                            }
+                                            for (int y = Math.min(128, ids.length);
+                                                 y < ids.length; y++) {
+                                                BaseBlock id = ids[y];
+                                                if (id != null) {
+                                                    value.setBlock(x1, y, z1, id);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }, world, chunk));
+                    //map.restoreBlocks(worldObj, 0, 0);
+                    map.restoreEntities(worldObj, 0, 0);
+                }
+                if (!chunks.isEmpty()) {
+                    TaskManager.runTaskLater(this, 1);
+                } else {
+                    TaskManager.runTaskLater(whenDone, 1);
+                }
+            }
+        });
+        return true;
+    }
+
+    @Override public boolean loadChunk(String world, ChunkLoc loc, boolean force) {
+        return BukkitUtil.getWorld(world).getChunkAt(loc.x, loc.z).load(force);
+    }
+
+    @SuppressWarnings("deprecation") @Override
+    public void unloadChunk(final String world, final ChunkLoc loc, final boolean save,
+        final boolean safe) {
+        if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
+            TaskManager.runTask(() -> BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save));
+        } else {
+            BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save);
+        }
+    }
+
+    @Override public void clearAllEntities(Location pos1, Location pos2) {
+        String world = pos1.getWorld();
+        List<Entity> entities = BukkitUtil.getEntities(world);
+        int bx = pos1.getX();
+        int bz = pos1.getZ();
+        int tx = pos2.getX();
+        int tz = pos2.getZ();
+        for (Entity entity : entities) {
+            if (!(entity instanceof Player)) {
+                org.bukkit.Location location = entity.getLocation();
+                if (location.getX() >= bx && location.getX() <= tx && location.getZ() >= bz
+                    && location.getZ() <= tz) {
+                    if (entity.hasMetadata("ps-tmp-teleport")) {
+                        continue;
+                    }
+                    entity.remove();
+                }
+            }
+        }
+    }
+
+    @Override public void swap(Location bot1, Location top1, Location bot2, Location top2,
+        final Runnable whenDone) {
+        RegionWrapper region1 =
+            new RegionWrapper(bot1.getX(), top1.getX(), bot1.getZ(), top1.getZ());
+        RegionWrapper region2 =
+            new RegionWrapper(bot2.getX(), top2.getX(), bot2.getZ(), top2.getZ());
+        final World world1 = Bukkit.getWorld(bot1.getWorld());
+        World world2 = Bukkit.getWorld(bot2.getWorld());
+
+        int relX = bot2.getX() - bot1.getX();
+        int relZ = bot2.getZ() - bot1.getZ();
+
+        final ArrayDeque<ContentMap> maps = new ArrayDeque<>();
+
+        for (int x = bot1.getX() >> 4; x <= top1.getX() >> 4; x++) {
+            for (int z = bot1.getZ() >> 4; z <= top1.getZ() >> 4; z++) {
+                Chunk chunk1 = world1.getChunkAt(x, z);
+                Chunk chunk2 = world2.getChunkAt(x + (relX >> 4), z + (relZ >> 4));
+                maps.add(swapChunk(world1, world2, chunk1, chunk2, region1, region2));
+            }
+        }
+        GlobalBlockQueue.IMP.addTask(() -> {
+            for (ContentMap map : maps) {
+                map.restoreEntities(world1, 0, 0);
+                TaskManager.runTaskLater(whenDone, 1);
+            }
+        });
+    }
+
     private void count(int[] count, Entity entity) {
         switch (entity.getType()) {
             case PLAYER:
@@ -478,7 +465,7 @@ public class BukkitChunkManager extends ChunkManager {
             case SNOWBALL:
             case ENDER_PEARL:
             case ARROW:
-            case TIPPED_ARROW:
+            case TRIDENT:
             case SHULKER_BULLET:
             case SPECTRAL_ARROW:
             case DRAGON_FIREBALL:
@@ -488,18 +475,15 @@ public class BukkitChunkManager extends ChunkManager {
             case FALLING_BLOCK:
                 // Block entities
             case ENDER_CRYSTAL:
-            case COMPLEX_PART:
             case FISHING_HOOK:
             case ENDER_SIGNAL:
             case EXPERIENCE_ORB:
             case LEASH_HITCH:
             case FIREWORK:
-            case WEATHER:
             case LIGHTNING:
             case WITHER_SKULL:
             case UNKNOWN:
             case AREA_EFFECT_CLOUD:
-            case LINGERING_POTION:
             case EVOKER_FANGS:
                 // non moving / unremovable
                 break;
@@ -539,6 +523,16 @@ public class BukkitChunkManager extends ChunkManager {
             case SKELETON_HORSE:
             case ZOMBIE_HORSE:
             case MULE:
+            case DOLPHIN:
+            case TURTLE:
+            case COD:
+            case PARROT:
+            case SALMON:
+            case PUFFERFISH:
+            case TROPICAL_FISH:
+            case CAT:
+            case FOX:
+            case PANDA:
                 // animal
                 count[3]++;
                 count[1]++;
@@ -589,6 +583,7 @@ public class BukkitChunkManager extends ChunkManager {
         count[0]++;
     }
 
+
     public static class ContentMap {
 
         final Set<EntityWrapper> entities;
@@ -617,14 +612,9 @@ public class BukkitChunkManager extends ChunkManager {
             }
         }
 
-        public void saveEntitiesIn(Chunk chunk, RegionWrapper region) {
-            saveEntitiesIn(chunk, region, 0, 0, false);
-        }
-
-        public void saveEntitiesOut(Chunk chunk, RegionWrapper region) {
+        void saveEntitiesOut(Chunk chunk, RegionWrapper region) {
             for (Entity entity : chunk.getEntities()) {
-                com.github.intellectualsites.plotsquared.plot.object.Location loc =
-                    BukkitUtil.getLocation(entity);
+                Location loc = BukkitUtil.getLocation(entity);
                 int x = loc.getX();
                 int z = loc.getZ();
                 if (isIn(region, x, z)) {
@@ -639,11 +629,14 @@ public class BukkitChunkManager extends ChunkManager {
             }
         }
 
-        public void saveEntitiesIn(Chunk chunk, RegionWrapper region, int offsetX, int offsetZ,
+        void saveEntitiesIn(Chunk chunk, RegionWrapper region) {
+            saveEntitiesIn(chunk, region, 0, 0, false);
+        }
+
+        void saveEntitiesIn(Chunk chunk, RegionWrapper region, int offsetX, int offsetZ,
             boolean delete) {
             for (Entity entity : chunk.getEntities()) {
-                com.github.intellectualsites.plotsquared.plot.object.Location loc =
-                    BukkitUtil.getLocation(entity);
+                Location loc = BukkitUtil.getLocation(entity);
                 int x = loc.getX();
                 int z = loc.getZ();
                 if (!isIn(region, x, z)) {
@@ -665,7 +658,7 @@ public class BukkitChunkManager extends ChunkManager {
             }
         }
 
-        public void restoreEntities(World world, int xOffset, int zOffset) {
+        void restoreEntities(World world, int xOffset, int zOffset) {
             for (EntityWrapper entity : this.entities) {
                 try {
                     entity.spawn(world, xOffset, zOffset);
@@ -677,8 +670,8 @@ public class BukkitChunkManager extends ChunkManager {
             this.entities.clear();
         }
 
-        public void saveBlocks(BukkitWorld world, int maxY, int x, int z, int offsetX,
-            int offsetZ) {
+        //todo optimize maxY
+        void saveBlocks(BukkitWorld world, int maxY, int x, int z, int offsetX, int offsetZ) {
             maxY = Math.min(255, maxY);
             BaseBlock[] ids;
             ids = new BaseBlock[maxY + 1];

@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.bukkit.object.schematic;
 
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.sk89q.jnbt.*;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -132,7 +132,7 @@ public class StateWrapper {
             .replace("\"underlined\":true,", "&n").replace("\"italic\":true,", "&o")
             .replace("[{\"text\":\"", "&0").replace("{\"text\":\"", "&0").replace("\"},", "")
             .replace("\"}]", "").replace("\"}", "");
-        for (Entry<String, String> entry : C.replacements.entrySet()) {
+        for (Entry<String, String> entry : Captions.replacements.entrySet()) {
             str = str.replace(entry.getKey(), entry.getValue());
         }
         return str;

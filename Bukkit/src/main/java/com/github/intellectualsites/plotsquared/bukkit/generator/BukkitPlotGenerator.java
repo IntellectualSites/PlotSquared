@@ -4,21 +4,19 @@ import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.bukkit.util.block.GenChunk;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
-import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.ChunkLoc;
+import com.github.intellectualsites.plotsquared.plot.object.ChunkWrapper;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SingleWorldGenerator;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
-import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
-import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +26,8 @@ import java.util.Set;
 public class BukkitPlotGenerator extends ChunkGenerator
     implements GeneratorWrapper<ChunkGenerator> {
 
-    private final GenChunk chunkSetter;
+    @SuppressWarnings("unused") public final boolean PAPER_ASYNC_SAFE = true;
+
     private final IndependentPlotGenerator plotGenerator;
     private final ChunkGenerator platformGenerator;
     private final boolean full;
@@ -41,24 +40,8 @@ public class BukkitPlotGenerator extends ChunkGenerator
         }
         this.plotGenerator = generator;
         this.platformGenerator = this;
-        populators = new ArrayList<>();
-        this.populators.add(new BlockPopulator() {
-
-            private LocalBlockQueue queue;
-
-            @Override public void populate(World world, Random r, Chunk c) {
-                if (queue == null) {
-                    queue = GlobalBlockQueue.IMP.getNewQueue(world.getName(), false);
-                }
-                PlotArea area = PlotSquared.get().getPlotArea(world.getName(), null);
-                ChunkWrapper wrap = new ChunkWrapper(area.worldname, c.getX(), c.getZ());
-                ScopedLocalBlockQueue chunk = queue.getForChunk(wrap.x, wrap.z);
-                if (BukkitPlotGenerator.this.plotGenerator.populateChunk(chunk, area)) {
-                    queue.flush();
-                }
-            }
-        });
-        this.chunkSetter = new GenChunk(null, null);
+        this.populators = new ArrayList<>();
+        this.populators.add(new PlotBlockPopulator(this.plotGenerator));
         this.full = true;
         MainUtil.initCache();
     }
@@ -69,110 +52,8 @@ public class BukkitPlotGenerator extends ChunkGenerator
                 + " is already a BukkitPlotGenerator!");
         }
         this.full = false;
-        PlotSquared.debug("BukkitPlotGenerator does not fully support: " + cg);
         this.platformGenerator = cg;
-        this.plotGenerator = new IndependentPlotGenerator() {
-            @Override public void processSetup(SetupObject setup) {
-            }
-
-            @Override public void initialize(PlotArea area) {
-            }
-
-            @Override public PlotManager getNewPlotManager() {
-                return PlotSquared.get().IMP.getDefaultGenerator().getNewPlotManager();
-            }
-
-            @Override public String getName() {
-                return cg.getClass().getName();
-            }
-
-            @Override
-            public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
-                return PlotSquared.get().IMP.getDefaultGenerator()
-                    .getNewPlotArea(world, id, min, max);
-            }
-
-            @Override public BlockBucket[][] generateBlockBucketChunk(PlotArea settings) {
-                BlockBucket[][] blockBuckets = new BlockBucket[16][];
-                HybridPlotWorld hpw = (HybridPlotWorld) settings;
-                // Bedrock
-                if (hpw.PLOT_BEDROCK) {
-                    for (short x = 0; x < 16; x++) {
-                        for (short z = 0; z < 16; z++) {
-                            blockBuckets[0][(z << 4) | x] =
-                                BlockBucket.withSingle(PlotBlock.get("bedrock"));
-                        }
-                    }
-                }
-                for (short x = 0; x < 16; x++) {
-                    for (short z = 0; z < 16; z++) {
-                        for (int y = 1; y < hpw.PLOT_HEIGHT; y++) {
-                            blockBuckets[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = hpw.MAIN_BLOCK;
-                        }
-                        blockBuckets[hpw.PLOT_HEIGHT >> 4][((hpw.PLOT_HEIGHT & 0xF) << 8) | (z << 4)
-                            | x] = hpw.MAIN_BLOCK;
-                    }
-                }
-                return blockBuckets;
-            }
-
-            @Override
-            public void generateChunk(final ScopedLocalBlockQueue result, PlotArea settings) {
-                World w = BukkitUtil.getWorld(world);
-                Location min = result.getMin();
-                int cx = min.getX() >> 4;
-                int cz = min.getZ() >> 4;
-                Random r = new Random(MathMan.pair((short) cx, (short) cz));
-                BiomeGrid grid = new BiomeGrid() {
-                    @Override public void setBiome(int x, int z, Biome biome) {
-                        result.setBiome(x, z, biome.name());
-                    }
-
-                    @Override public Biome getBiome(int arg0, int arg1) {
-                        return Biome.FOREST;
-                    }
-                };
-                try {
-                    // ChunkData will spill a bit
-                    ChunkData data = cg.generateChunkData(w, r, cx, cz, grid);
-                    if (data != null) {
-                        return;
-                    }
-                } catch (Throwable ignored) {
-                }
-                /* TODO: Redo this
-                // Populator spillage
-                short[][] tmp = cg.generateExtBlockSections(w, r, cx, cz, grid);
-                if (tmp != null) {
-                    for (int i = 0; i < tmp.length; i++) {
-                        short[] section = tmp[i];
-                        if (section == null) {
-                            if (i < 7) {
-                                for (int x = 0; x < 16; x++) {
-                                    for (int z = 0; z < 16; z++) {
-                                        for (int y = i << 4; y < (i << 4) + 16; y++) {
-                                            result.setBlock(x, y, z, PlotBlock.get("air"));
-                                        }
-                                    }
-                                }
-                            }
-                            continue;
-                        }
-                        for (int j = 0; j < section.length; j++) {
-                            int x = MainUtil.x_loc[i][j];
-                            int y = MainUtil.y_loc[i][j];
-                            int z = MainUtil.z_loc[i][j];
-                            result.setBlock(x, y, z, section[j], (byte) 0);
-                        }
-                    }
-                }
-                */
-                for (BlockPopulator populator : cg.getDefaultPopulators(w)) {
-                    populator.populate(w, r, w.getChunkAt(cx, cz));
-                }
-            }
-        };
-        this.chunkSetter = new GenChunk(null, new ChunkWrapper(world, 0, 0));
+        this.plotGenerator = new DelegatePlotGenerator(cg, world);
         MainUtil.initCache();
     }
 
@@ -192,7 +73,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return this.platformGenerator;
     }
 
-    @Override public List<BlockPopulator> getDefaultPopulators(World world) {
+    @Override @NotNull public List<BlockPopulator> getDefaultPopulators(@NotNull World world) {
         try {
             if (!this.loaded) {
                 String name = world.getName();
@@ -226,50 +107,54 @@ public class BukkitPlotGenerator extends ChunkGenerator
         if (populators == null && platformGenerator != null) {
             populators = new ArrayList<>(platformGenerator.getDefaultPopulators(world));
         }
-        for (BlockPopulator populator : this.populators) {
-            if (!existing.contains(populator)) {
-                toAdd.add(populator);
+        if (populators != null) {
+            for (BlockPopulator populator : this.populators) {
+                if (!existing.contains(populator)) {
+                    toAdd.add(populator);
+                }
             }
         }
         return toAdd;
     }
 
-    @Override
-    public ChunkData generateChunkData(World world, Random random, int cx, int cz, BiomeGrid grid) {
-        GenChunk result = this.chunkSetter;
+    @Override @NotNull
+    public ChunkData generateChunkData(@NotNull World world, @NotNull Random random, int x, int z,
+        @NotNull BiomeGrid biome) {
+
+        GenChunk result = new GenChunk();
         if (this.getPlotGenerator() instanceof SingleWorldGenerator) {
-            if (result.getCd() != null) {
-                for (int x = 0; x < 16; x++) {
-                    for (int z = 0; z < 16; z++) {
-                        grid.setBiome(x, z, Biome.PLAINS);
+            if (result.getChunkData() != null) {
+                for (int chunkX = 0; chunkX < 16; chunkX++) {
+                    for (int chunkZ = 0; chunkZ < 16; chunkZ++) {
+                        biome.setBiome(chunkX, chunkZ, Biome.PLAINS);
                     }
                 }
-                return result.getCd();
+                return result.getChunkData();
             }
         }
         // Set the chunk location
-        result.setChunk(new ChunkWrapper(world.getName(), cx, cz));
+        result.setChunk(new ChunkWrapper(world.getName(), x, z));
         // Set the result data
-        result.setCd(createChunkData(world));
-        result.grid = grid;
+        result.setChunkData(createChunkData(world));
+        result.biomeGrid = biome;
         result.result = null;
 
         // Catch any exceptions (as exceptions usually thrown)
         try {
             // Fill the result data if necessary
             if (this.platformGenerator != this) {
-                return this.platformGenerator.generateChunkData(world, random, cx, cz, grid);
+                return this.platformGenerator.generateChunkData(world, random, x, z, biome);
             } else {
-                generate(world, result);
+                generate(new ChunkLoc(x, z), world, result);
             }
         } catch (Throwable e) {
             e.printStackTrace();
         }
         // Return the result data
-        return result.getCd();
+        return result.getChunkData();
     }
 
-    private void generate(World world, ScopedLocalBlockQueue result) {
+    private void generate(ChunkLoc loc, World world, ScopedLocalBlockQueue result) {
         // Load if improperly loaded
         if (!this.loaded) {
             String name = world.getName();
@@ -277,17 +162,17 @@ public class BukkitPlotGenerator extends ChunkGenerator
             this.loaded = true;
         }
         // Process the chunk
-        if (ChunkManager.preProcessChunk(result)) {
+        if (ChunkManager.preProcessChunk(loc, result)) {
             return;
         }
         PlotArea area = PlotSquared.get().getPlotArea(world.getName(), null);
         try {
-            this.plotGenerator.generateChunk(this.chunkSetter, area);
+            this.plotGenerator.generateChunk(result, area);
         } catch (Throwable e) {
             // Recover from generator error
             e.printStackTrace();
         }
-        ChunkManager.postProcessChunk(result);
+        ChunkManager.postProcessChunk(loc, result);
     }
 
     /**
@@ -298,7 +183,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
      * @param z     Ignored
      * @return always true
      */
-    @Override public boolean canSpawn(World world, int x, int z) {
+    @Override public boolean canSpawn(@NotNull final World world, final int x, final int z) {
         return true;
     }
 
@@ -313,10 +198,11 @@ public class BukkitPlotGenerator extends ChunkGenerator
         }
     }
 
-    @Override public boolean equals(Object obj) {
+    @Override public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
         return toString().equals(obj.toString()) || toString().equals(obj.getClass().getName());
     }
+
 }

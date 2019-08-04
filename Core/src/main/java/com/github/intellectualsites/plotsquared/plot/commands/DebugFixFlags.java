@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.Argument;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.C;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -28,7 +28,7 @@ public class DebugFixFlags extends SubCommand {
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
         PlotArea area = PlotSquared.get().getPlotAreaByString(args[0]);
         if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
-            MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD, args[0]);
+            MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_WORLD, args[0]);
             return false;
         }
         MainUtil.sendMessage(player, "&8--- &6Starting task &8 ---");

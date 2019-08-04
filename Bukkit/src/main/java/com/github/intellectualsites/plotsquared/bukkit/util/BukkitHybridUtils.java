@@ -2,6 +2,7 @@ package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.object.*;
@@ -65,11 +66,13 @@ public class BukkitHybridUtils extends HybridUtils {
             System.gc();
             final BlockBucket[][][] oldBlocks = new BlockBucket[256][width][length];
             final PlotBlock[][][] newBlocks = new PlotBlock[256][width][length];
+            final BlockBucket airBucket = BlockBucket.withSingle(StringPlotBlock.EVERYTHING);
 
             PlotArea area = PlotSquared.get().getPlotArea(world, null);
 
-            if (!(area instanceof HybridPlotWorld))
+            if (!(area instanceof HybridPlotWorld)) {
                 return;
+            }
 
             HybridPlotWorld hpw = (HybridPlotWorld) area;
             final BlockBucket[][] result = hpw.getBlockBucketChunk();
@@ -107,7 +110,12 @@ public class BukkitHybridUtils extends HybridUtils {
                     }
                     rz[i] = v;
                 }
-                int minY = Math.min(hpw.PLOT_HEIGHT, hpw.ROAD_HEIGHT);
+                int minY;
+                if (Settings.Schematics.PASTE_ON_TOP) {
+                    minY = hpw.SCHEM_Y;
+                } else {
+                    minY = 1;
+                }
                 for (short x = 0; x < 16; x++) {
                     for (short z = 0; z < 16; z++) {
                         BaseBlock[] blocks = hpw.G_SCH.get(MathMan.pair(rx[x], rz[z]));
@@ -140,8 +148,7 @@ public class BukkitHybridUtils extends HybridUtils {
                                     continue;
                                 }
                                 int y = MainUtil.y_loc[i][j];
-                                oldBlocks[y][x][z] =
-                                    BlockBucket.withSingle(StringPlotBlock.EVERYTHING);
+                                oldBlocks[y][x][z] = airBucket;
                             }
                             continue;
                         }
@@ -155,9 +162,7 @@ public class BukkitHybridUtils extends HybridUtils {
                                 continue;
                             }
                             int y = MainUtil.y_loc[i][j];
-                            oldBlocks[y][x][z] = result[i][j] != null ?
-                                result[i][j] :
-                                BlockBucket.withSingle(StringPlotBlock.EVERYTHING);
+                            oldBlocks[y][x][z] = result[i][j] != null ? result[i][j] : airBucket;
                         }
                     }
 
@@ -177,7 +182,7 @@ public class BukkitHybridUtils extends HybridUtils {
                             BlockBucket old = oldBlocks[y][x][z];
                             try {
                                 if (old == null) {
-                                    old = BlockBucket.withSingle(StringPlotBlock.EVERYTHING);
+                                    old = airBucket;
                                 }
                                 PlotBlock now = newBlocks[y][x][z];
                                 if (!old.getBlocks().contains(now)) {
@@ -222,10 +227,6 @@ public class BukkitHybridUtils extends HybridUtils {
                                     types.add(now);
                                 }
                             } catch (NullPointerException e) {
-                                PlotSquared.log(old != null ? old.toString() : "old null");
-                                PlotSquared.log(x);
-                                PlotSquared.log(y);
-                                PlotSquared.log(z);
                                 e.printStackTrace();
                             }
                         }
@@ -303,7 +304,7 @@ public class BukkitHybridUtils extends HybridUtils {
                             }
                         }
                     }
-                    worldObj.unloadChunkRequest(X, Z, true);
+                    worldObj.unloadChunkRequest(X, Z);
                 }
             }, () -> TaskManager.runTaskAsync(run), 5);
         });

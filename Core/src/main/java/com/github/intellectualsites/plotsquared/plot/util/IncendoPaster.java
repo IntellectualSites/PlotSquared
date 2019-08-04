@@ -1,8 +1,11 @@
 package com.github.intellectualsites.plotsquared.plot.util;
+
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.google.common.base.Charsets;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -11,19 +14,17 @@ import java.util.*;
 /**
  * Single class paster for the Incendo paste service
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
-public final class IncendoPaster {
+@SuppressWarnings({"unused", "WeakerAccess"}) public final class IncendoPaster {
 
     /**
      * Upload service URL
      */
-    public static final String UPLOAD_PATH = "https://incendo.org/paste/upload";
-    /**
+    public static final String UPLOAD_PATH = "https://athion.net/ISPaster/paste/upload";
+     /**
      * Valid paste applications
      */
-    public static final Collection<String>
-        VALID_APPLICATIONS = Arrays
-        .asList("plotsquared", "fastasyncworldedit", "incendopermissions", "kvantum");
+    public static final Collection<String> VALID_APPLICATIONS =
+        Arrays.asList("plotsquared", "fastasyncworldedit", "incendopermissions", "kvantum");
 
     private final Collection<PasteFile> files = new ArrayList<>();
     private final String pasteApplication;
@@ -38,7 +39,8 @@ public final class IncendoPaster {
             throw new IllegalArgumentException("paste application cannot be null, nor empty");
         }
         if (!VALID_APPLICATIONS.contains(pasteApplication.toLowerCase(Locale.ENGLISH))) {
-            throw new IllegalArgumentException(String.format("Unknown application name: %s", pasteApplication));
+            throw new IllegalArgumentException(
+                String.format("Unknown application name: %s", pasteApplication));
         }
         this.pasteApplication = pasteApplication;
     }
@@ -64,8 +66,8 @@ public final class IncendoPaster {
         // Check to see that no duplicate files are submitted
         for (final PasteFile pasteFile : this.files) {
             if (pasteFile.fileName.equalsIgnoreCase(file.getFileName())) {
-                throw new IllegalArgumentException(String.format("Found duplicate file with name %s",
-                    file.getFileName()));
+                throw new IllegalArgumentException(
+                    String.format("Found duplicate file with name %s", file.getFileName()));
             }
         }
         this.files.add(file);
@@ -78,7 +80,8 @@ public final class IncendoPaster {
      */
     private String toJsonString() {
         final StringBuilder builder = new StringBuilder("{\n");
-        builder.append("\"paste_application\": \"").append(this.pasteApplication).append("\",\n\"files\": \"");
+        builder.append("\"paste_application\": \"").append(this.pasteApplication)
+            .append("\",\n\"files\": \"");
         Iterator<PasteFile> fileIterator = this.files.iterator();
         while (fileIterator.hasNext()) {
             final PasteFile file = fileIterator.next();
@@ -126,11 +129,13 @@ public final class IncendoPaster {
                 final long size = content.length;
                 PlotSquared.debug(String.format("Paste Too Big > Size: %dMB", size / 1_000_000));
             }
-            throw new IllegalStateException(String.format("Server returned status: %d %s",
-                httpURLConnection.getResponseCode(), httpURLConnection.getResponseMessage()));
+            throw new IllegalStateException(String
+                .format("Server returned status: %d %s", httpURLConnection.getResponseCode(),
+                    httpURLConnection.getResponseMessage()));
         }
         final StringBuilder input = new StringBuilder();
-        try (final BufferedReader inputStream = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()))) {
+        try (final BufferedReader inputStream = new BufferedReader(
+            new InputStreamReader(httpURLConnection.getInputStream()))) {
             String line;
             while ((line = inputStream.readLine()) != null) {
                 input.append(line).append("\n");
@@ -151,7 +156,7 @@ public final class IncendoPaster {
          * Construct a new paste file
          *
          * @param fileName File name, cannot be empty, nor null
-         * @param content File content, cannot be empty, nor null
+         * @param content  File content, cannot be empty, nor null
          */
         public PasteFile(final String fileName, final String content) {
             if (fileName == null || fileName.isEmpty()) {

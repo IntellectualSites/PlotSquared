@@ -16,10 +16,10 @@ public class PlotBlockListFlag extends ListFlag<HashSet<PlotBlock>> {
         return StringMan.join((HashSet<PlotBlock>) value, ",");
     }
 
-    @Override public HashSet<PlotBlock> parseValue(String value) {
-        HashSet<PlotBlock> list = new HashSet<>();
-        for (String item : value.split(",")) {
-            PlotBlock block = PlotSquared.get().IMP.getLegacyMappings().fromAny(item);
+    @Override public HashSet<PlotBlock> parseValue(final String value) {
+        final HashSet<PlotBlock> list = new HashSet<>();
+        for (final String item : value.split(",")) {
+            final PlotBlock block = PlotSquared.get().IMP.getLegacyMappings().fromAny(item);
             if (block != null) {
                 list.add(block);
             }

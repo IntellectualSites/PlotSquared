@@ -7,15 +7,14 @@ import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class InboxOwner extends CommentInbox {
 
     @Override
     public boolean getComments(final Plot plot, final RunnableVal<List<PlotComment>> whenDone) {
-        Optional<ArrayList<PlotComment>> comments = plot.getSettings().getComments(toString());
-        if (comments.isPresent()) {
-            whenDone.value = comments.get();
+        List<PlotComment> comments = plot.getComments(toString());
+        if (!comments.isEmpty()) {
+            whenDone.value = comments;
             TaskManager.runTask(whenDone);
             return true;
         }
@@ -24,10 +23,10 @@ public class InboxOwner extends CommentInbox {
                 whenDone.value = value;
                 if (value != null) {
                     for (PlotComment comment : value) {
-                        plot.getSettings().addComment(comment);
+                        plot.addComment(comment);
                     }
                 } else {
-                    plot.getSettings().setComments(new ArrayList<PlotComment>());
+                    plot.setComments(new ArrayList<>());
                 }
                 TaskManager.runTask(whenDone);
             }
@@ -36,10 +35,10 @@ public class InboxOwner extends CommentInbox {
     }
 
     @Override public boolean addComment(Plot plot, PlotComment comment) {
-        if (plot.owner == null) {
+        if (plot.getOwner() == null) {
             return false;
         }
-        plot.getSettings().addComment(comment);
+        plot.addComment(comment);
         DBFunc.setComment(plot, comment);
         return true;
     }

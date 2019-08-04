@@ -8,13 +8,13 @@ import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.util.Locale;
 
-@SuppressWarnings("WeakerAccess")
-public abstract class ClassicPlotWorld extends SquarePlotWorld {
+@SuppressWarnings("WeakerAccess") public abstract class ClassicPlotWorld extends SquarePlotWorld {
 
     public int ROAD_HEIGHT = 62;
     public int PLOT_HEIGHT = 62;
@@ -33,7 +33,8 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     // PlotBlock.get((short) 155, (byte) 0);
     public boolean PLOT_BEDROCK = true;
 
-    public ClassicPlotWorld(String worldName, String id, IndependentPlotGenerator generator,
+    public ClassicPlotWorld(String worldName, String id,
+        @NotNull IndependentPlotGenerator generator,
         PlotId min, PlotId max) {
         super(worldName, id, generator, min, max);
     }
@@ -94,11 +95,12 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
 
         // Dump world settings
         if (Settings.DEBUG) {
-            PlotSquared.debug(String.format("- Dumping settings for ClassicPlotWorld with name %s", this.worldname));
+            PlotSquared.debug(String
+                .format("- Dumping settings for ClassicPlotWorld with name %s", this.worldname));
             final Field[] fields = this.getClass().getFields();
             for (final Field field : fields) {
                 final String name = field.getName().toLowerCase(Locale.ENGLISH);
-                if(name.equalsIgnoreCase("g_sch")) {
+                if (name.equalsIgnoreCase("g_sch")) {
                     continue;
                 }
                 Object value;

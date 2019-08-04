@@ -4,6 +4,7 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class AbstractDBTest implements AbstractDB {
@@ -84,9 +85,6 @@ public class AbstractDBTest implements AbstractDB {
     @Override public void setFlags(Plot plot, HashMap<Flag<?>, Object> flags) {
     }
 
-    @Override public void setFlags(PlotCluster cluster, HashMap<Flag<?>, Object> flags) {
-    }
-
     @Override public void setClusterName(PlotCluster cluster, String name) {
     }
 
@@ -151,8 +149,8 @@ public class AbstractDBTest implements AbstractDB {
     @Override public void setComment(Plot plot, PlotComment comment) {
     }
 
-    @Override
-    public void getComments(Plot plot, String inbox, RunnableVal<List<PlotComment>> whenDone) {
+    @Override public void getComments(@Nonnull Plot plot, String inbox,
+        RunnableVal<List<PlotComment>> whenDone) {
     }
 
     @Override public void createPlotAndSettings(Plot plot, Runnable whenDone) {

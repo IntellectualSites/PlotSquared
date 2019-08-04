@@ -4,6 +4,8 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public abstract class StmtMod<T> {
 
@@ -19,12 +21,9 @@ public abstract class StmtMod<T> {
     }
 
     public String getCreateSQLite(int size, String query, int params) {
-        StringBuilder statement = new StringBuilder(query);
         String modParams = StringMan.repeat(",?", params).substring(1);
-        for (int i = 0; i < size - 1; i++) {
-            statement.append("UNION SELECT ").append(modParams).append(' ');
-        }
-        return statement.toString();
+        return IntStream.range(0, size - 1).mapToObj(i -> "UNION SELECT " + modParams + ' ')
+            .collect(Collectors.joining("", query, ""));
     }
 
     public abstract String getCreateSQLite(int size);
