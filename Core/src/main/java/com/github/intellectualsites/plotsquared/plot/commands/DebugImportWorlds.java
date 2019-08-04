@@ -40,7 +40,7 @@ import java.util.concurrent.CompletableFuture;
         if (container.equals(new File("."))) {
             player.sendMessage(
                 "World container must be configured to be a separate directory to your base files!");
-            return;
+            return CompletableFuture.completedFuture(false);
         }
         for (File folder : container.listFiles()) {
             String name = folder.getName();
