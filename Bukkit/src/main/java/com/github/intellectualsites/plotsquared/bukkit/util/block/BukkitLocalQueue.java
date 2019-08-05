@@ -10,7 +10,6 @@ import com.github.intellectualsites.plotsquared.plot.util.block.BasicLocalBlockQ
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BaseBlock;
-import io.papermc.lib.PaperLib;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -76,20 +75,12 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
         setBaseBlocks(lc);
     }
 
-    public World getBukkitWorld() {
-        return Bukkit.getWorld(getWorld());
-    }
-
-    public Chunk getChunk(int x, int z) throws ExecutionException, InterruptedException {
-        return PaperLib.getChunkAtAsync(getBukkitWorld(), x, z).get();
-    }
-
     public void setBaseBlocks(LocalChunk lc) throws ExecutionException, InterruptedException {
         World worldObj = Bukkit.getWorld(getWorld());
         if (worldObj == null) {
             throw new NullPointerException("World cannot be null.");
         }
-        PaperLib.getChunkAtAsync(worldObj, lc.getX(), lc.getZ(), true).get();
+        //PaperLib.getChunkAtAsync(worldObj, lc.getX(), lc.getZ(), true).get();
         Chunk chunk = worldObj.getChunkAt(lc.getX(), lc.getZ());
         for (int layer = 0; layer < lc.baseblocks.length; layer++) {
             BaseBlock[] blocksLayer = lc.baseblocks[layer];
