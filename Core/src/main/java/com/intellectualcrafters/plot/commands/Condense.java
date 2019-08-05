@@ -111,7 +111,8 @@ public class Condense extends SubCommand {
                     return false;
                 }
                 MainUtil.sendMessage(player, "TASK STARTED...");
-                Runnable run = new Runnable() {
+                Condense.TASK = true;
+                TaskManager.runTaskAsync(new Runnable() {
                     @Override public void run() {
                         if (!Condense.TASK) {
                             MainUtil.sendMessage(player, "TASK CANCELLED.");
@@ -133,13 +134,11 @@ public class Condense extends SubCommand {
                             }
                             i++;
                             final AtomicBoolean result = new AtomicBoolean(false);
-                            result.set(origin.move(possible, new Runnable() {
-                                @Override public void run() {
-                                    if (result.get()) {
-                                        MainUtil.sendMessage(player,
-                                            "Moving: " + origin + " -> " + possible);
-                                        TaskManager.runTaskLater(task, 1);
-                                    }
+                            result.set(origin.move(possible, () -> {
+                                if (result.get()) {
+                                    MainUtil.sendMessage(player,
+                                        "Moving: " + origin + " -> " + possible);
+                                    TaskManager.runTaskLater(task, 1);
                                 }
                             }, false));
                             if (result.get()) {
@@ -155,9 +154,7 @@ public class Condense extends SubCommand {
                             MainUtil.sendMessage(player, "SKIPPING COMPLEX PLOT: " + origin);
                         }
                     }
-                };
-                Condense.TASK = true;
-                TaskManager.runTaskAsync(run);
+                });
                 return true;
             }
             case "stop":

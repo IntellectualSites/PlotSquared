@@ -14,7 +14,6 @@ import com.plotsquared.general.commands.CommandDeclaration;
         usage = "/plot move <X;Z>",
         command = "move",
         description = "Move a plot",
-        aliases = {"debugmove"},
         permission = "plots.move",
         category = CommandCategory.CLAIMING,
         requiredType = RequiredType.NONE)
@@ -59,12 +58,7 @@ public class Move extends SubCommand {
             C.PLOTWORLD_INCOMPATIBLE.send(player);
             return false;
         }
-        if (plot1.move(plot2, new Runnable() {
-            @Override
-            public void run() {
-                MainUtil.sendMessage(player, C.MOVE_SUCCESS);
-            }
-        }, false)) {
+        if (plot1.move(plot2, () -> MainUtil.sendMessage(player, C.MOVE_SUCCESS), false)) {
             return true;
         } else {
             MainUtil.sendMessage(player, C.REQUIRES_UNOWNED);
