@@ -10,14 +10,16 @@ repositories {
     mavenLocal()
 }
 
+apply plugin: "com.github.johnrengelman.shadow"
+
 dependencies {
     implementation project(':Core')
     compile project(':Core')
-    compile 'com.destroystokyo.paper:paper-api:1.14.3-R0.1-SNAPSHOT'
+    compile 'com.destroystokyo.paper:paper-api:1.14.4-R0.1-SNAPSHOT'
     //implementation 'com.onarandombox.multiversecore:Multiverse-Core:3.0.0-SNAPSHOT'
-    implementation 'org.spigotmc:spigot-api:1.14.3-R0.1-SNAPSHOT'
+    implementation 'org.spigotmc:spigot-api:1.14.4-R0.1-SNAPSHOT'
     compile(group: 'com.sk89q.worldedit', name: 'worldedit-bukkit', version: '7.0.0')
-    compile "io.papermc:paperlib:1.0.1"
+    compile "io.papermc:paperlib:1.0.2"
     compile("net.milkbowl.vault:VaultAPI:1.7") {
         exclude module: 'bukkit'
     }
@@ -47,7 +49,7 @@ shadowJar {
         include(dependency('com.squareup.okhttp3:okhttp:3.14.0'))
         include(dependency('com.squareup.okio:okio:2.2.2'))
         include(dependency('org.jetbrains.kotlin:kotlin-stdlib:1.3.30'))
-        include(dependency("io.papermc:paperlib:1.0.1"))
+        include(dependency("io.papermc:paperlib:1.0.2"))
     }
     relocate 'io.papermc.lib', 'com.github.intellectualsites.plotsquared.bukkit.paperlib'
     // relocate('org.mcstats', 'com.plotsquared.stats')
