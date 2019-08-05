@@ -46,6 +46,7 @@ public final class Flags {
     public static final BooleanFlag GRASS_GROW = new BooleanFlag("grass-grow");
     public static final BooleanFlag VINE_GROW = new BooleanFlag("vine-grow");
     public static final BooleanFlag MYCEL_GROW = new BooleanFlag("mycel-grow");
+    public static final BooleanFlag KELP_GROW = new BooleanFlag("kelp-grow");
     public static final BooleanFlag DISABLE_PHYSICS = new BooleanFlag("disable-physics");
     public static final BooleanFlag LIQUID_FLOW = new BooleanFlag("liquid-flow");
     public static final BooleanFlag SNOW_MELT = new BooleanFlag("snow-melt");
