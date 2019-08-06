@@ -48,7 +48,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
             world = worlds.get(0).getName();
         }
         TaskManager.runTaskAsync(() -> {
-            PlotSquared.debug(Captions.PREFIX + "&6Starting player data caching for: " + world);
+            PlotSquared.debug(Captions.PREFIX + "Starting player data caching for: " + world);
             File uuidFile = new File(PlotSquared.get().IMP.getDirectory(), "uuids.txt");
             if (uuidFile.exists()) {
                 try {
@@ -83,7 +83,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
             HashBiMap<StringWrapper, UUID> toAdd = HashBiMap.create(new HashMap<>());
             if (Settings.UUID.NATIVE_UUID_PROVIDER) {
                 HashSet<UUID> all = UUIDHandler.getAllUUIDS();
-                PlotSquared.debug("&aFast mode UUID caching enabled!");
+                PlotSquared.debug("Fast mode UUID caching enabled!");
                 File playerDataFolder = new File(container, world + File.separator + "playerdata");
                 String[] dat = playerDataFolder.list(new DatFileFilter());
                 boolean check = all.isEmpty();

@@ -6,8 +6,12 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.*;
-import com.google.common.base.Preconditions;
+import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
+import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import io.papermc.lib.PaperLib;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -41,14 +45,12 @@ public class BukkitPlayer extends PlotPlayer {
      *
      * @param player Bukkit player instance
      */
-    public BukkitPlayer(@Nonnull final Player player) {
-        Preconditions.checkNotNull(player, "Bukkit player instance cannot be null");
+    public BukkitPlayer(@NotNull final Player player) {
         this.player = player;
         super.populatePersistentMetaMap();
     }
 
-    public BukkitPlayer(@Nonnull final Player player, final boolean offline) {
-        Preconditions.checkNotNull(player, "Bukkit player instance cannot be null");
+    public BukkitPlayer(@NotNull final Player player, final boolean offline) {
         this.player = player;
         this.offline = offline;
         super.populatePersistentMetaMap();
@@ -70,8 +72,7 @@ public class BukkitPlayer extends PlotPlayer {
         return this.player.getLastPlayed();
     }
 
-    @Override public boolean canTeleport(@Nonnull final Location loc) {
-        Preconditions.checkNotNull(loc, "Bukkit location cannot be null");
+    @Override public boolean canTeleport(@NotNull final Location loc) {
         final org.bukkit.Location to = BukkitUtil.getLocation(loc);
         final org.bukkit.Location from = player.getLocation();
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to);
@@ -89,9 +90,7 @@ public class BukkitPlayer extends PlotPlayer {
         player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
     }
 
-    private void callEvent(final Event event) {
-        Preconditions.checkNotNull(event, "Event cannot be null");
-
+    private void callEvent(@NotNull final Event event) {
         final RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
         for (final RegisteredListener listener : listeners) {
             if (listener.getPlugin().getName().equals(PlotSquared.imp().getPluginName())) {
@@ -215,8 +214,7 @@ public class BukkitPlayer extends PlotPlayer {
         return BukkitUtil.getLocationFull(this.player);
     }
 
-    @Override public void setWeather(@Nonnull final PlotWeather weather) {
-        Preconditions.checkNotNull(weather, "Specified weather cannot be null");
+    @Override public void setWeather(@NotNull final PlotWeather weather) {
         switch (weather) {
             case CLEAR:
                 this.player.setPlayerWeather(WeatherType.CLEAR);
@@ -246,8 +244,7 @@ public class BukkitPlayer extends PlotPlayer {
         }
     }
 
-    @Override public void setGameMode(@Nonnull final PlotGameMode gameMode) {
-        Preconditions.checkNotNull(gameMode, "Specified gamemode cannot be null");
+    @Override public void setGameMode(@NotNull final PlotGameMode gameMode) {
         switch (gameMode) {
             case ADVENTURE:
                 this.player.setGameMode(GameMode.ADVENTURE);
@@ -281,9 +278,7 @@ public class BukkitPlayer extends PlotPlayer {
         this.player.setAllowFlight(fly);
     }
 
-    @Override public void playMusic(@Nonnull final Location location, @Nonnull final PlotBlock id) {
-        Preconditions.checkNotNull(location, "Specified location cannot be null");
-        Preconditions.checkNotNull(id, "Specified block cannot be null");
+    @Override public void playMusic(@NotNull final Location location, @NotNull final PlotBlock id) {
         if (PlotBlock.isEverything(id) || id.isAir()) {
             // Let's just stop all the discs because why not?
             for (final Sound sound : Arrays.stream(Sound.values())

@@ -16,7 +16,6 @@ import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -348,12 +347,7 @@ public class ListCmd extends SubCommand {
     public void displayPlots(final PlotPlayer player, List<Plot> plots, int pageSize, int page,
         PlotArea area, String[] args, boolean sort) {
         // Header
-        Iterator<Plot> iterator = plots.iterator();
-        while (iterator.hasNext()) {
-            if (!iterator.next().isBasePlot()) {
-                iterator.remove();
-            }
-        }
+        plots.removeIf(plot -> !plot.isBasePlot());
         if (sort) {
             plots = PlotSquared.get().sortPlots(plots, SortType.CREATION_DATE, area);
         }

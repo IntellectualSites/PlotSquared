@@ -500,7 +500,7 @@ public class MainUtil {
             }
             for (Plot p : plots) {
                 String name = p.getAlias();
-                if (!name.isEmpty() && StringMan.isEqualIgnoreCase(name, arg)) {
+                if (!name.isEmpty() && name.equalsIgnoreCase(arg)) {
                     return p;
                 }
             }

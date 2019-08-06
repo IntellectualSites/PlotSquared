@@ -249,11 +249,11 @@ public abstract class Command {
         }
         if (page == 0 && totalPages != 0) { // Next
             new PlotMessage().text("<-").color("$3").text(" | ").color("$3").text("->").color("$1")
-                .command(baseCommand + " " + (0 + 2)).text(Captions.CLICKABLE.s()).color("$2")
+                .command(baseCommand + " " + 2).text(Captions.CLICKABLE.s()).color("$2")
                 .send(player);
             return;
         }
-        if (page == totalPages && totalPages != 0) { // Back
+        if (totalPages != 0) { // Back
             new PlotMessage().text("<-").color("$1").command(baseCommand + " " + page).text(" | ")
                 .color("$3").text("->").color("$3").text(Captions.CLICKABLE.s()).color("$2")
                 .send(player);
@@ -387,7 +387,7 @@ public abstract class Command {
             String[] split = usage[i].split("\\|| |\\>|\\<|\\[|\\]|\\{|\\}|\\_|\\/");
             for (String aSplit : split) {
                 for (String arg : args) {
-                    if (StringMan.isEqualIgnoreCase(arg, aSplit)) {
+                    if (arg.equalsIgnoreCase(aSplit)) {
                         count += 5 - i + require;
                     }
                 }

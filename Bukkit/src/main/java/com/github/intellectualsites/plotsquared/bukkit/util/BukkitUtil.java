@@ -5,14 +5,22 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.block.*;
+import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -21,7 +29,12 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 @SuppressWarnings({"unused", "WeakerAccess"}) public class BukkitUtil extends WorldUtil {
 
@@ -215,7 +228,11 @@ import java.util.*;
 
     public static List<Entity> getEntities(@NonNull final String worldName) {
         World world = getWorld(worldName);
-        return world != null ? world.getEntities() : new ArrayList<Entity>();
+        if (world != null) {
+            return world.getEntities();
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public static Location getLocation(@NonNull final Entity entity) {
@@ -270,19 +287,17 @@ import java.util.*;
         int air = 1;
         for (int y = bukkitWorld.getMaxHeight() - 1; y >= 0; y--) {
             Block block = bukkitWorld.getBlockAt(x, y, z);
-            if (block != null) {
-                Material type = block.getType();
-                if (type.isSolid()) {
-                    if (air > 1) {
-                        return y;
-                    }
-                    air = 0;
-                } else {
-                    if (block.isLiquid()) {
-                        return y;
-                    }
-                    air++;
+            Material type = block.getType();
+            if (type.isSolid()) {
+                if (air > 1) {
+                    return y;
                 }
+                air = 0;
+            } else {
+                if (block.isLiquid()) {
+                    return y;
+                }
+                air++;
             }
         }
         return bukkitWorld.getMaxHeight() - 1;
@@ -291,11 +306,9 @@ import java.util.*;
     @Override @Nullable public String[] getSign(@NonNull final Location location) {
         Block block = getWorld(location.getWorld())
             .getBlockAt(location.getX(), location.getY(), location.getZ());
-        if (block != null) {
-            if (block.getState() instanceof Sign) {
-                Sign sign = (Sign) block.getState();
-                return sign.getLines();
-            }
+        if (block.getState() instanceof Sign) {
+            Sign sign = (Sign) block.getState();
+            return sign.getLines();
         }
         return null;
     }
@@ -377,9 +390,6 @@ import java.util.*;
     public boolean addItems(@NonNull final String worldName, @NonNull final PlotItem items) {
         final World world = getWorld(worldName);
         final Block block = world.getBlockAt(items.x, items.y, items.z);
-        if (block == null) {
-            return false;
-        }
         final BlockState state = block.getState();
         if (state instanceof InventoryHolder) {
             InventoryHolder holder = (InventoryHolder) state;
@@ -457,9 +467,6 @@ import java.util.*;
     @Override public PlotBlock getBlock(@NonNull final Location location) {
         final World world = getWorld(location.getWorld());
         final Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
-        if (block == null) {
-            return StringPlotBlock.EVERYTHING;
-        }
         return PlotBlock.get(block.getType().name());
     }
 

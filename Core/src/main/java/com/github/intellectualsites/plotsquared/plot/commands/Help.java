@@ -62,7 +62,7 @@ public class Help extends Command {
 
             CommandCategory catEnum = null;
             if (cat != null) {
-                if (!StringMan.isEqualIgnoreCase(cat, "all")) {
+                if (!"all".equalsIgnoreCase(cat)) {
                     for (CommandCategory c : CommandCategory.values()) {
                         if (StringMan.isEqualIgnoreCaseToAny(cat, c.name(), c.toString())) {
                             catEnum = c;

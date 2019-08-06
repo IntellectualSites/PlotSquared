@@ -673,8 +673,7 @@ public class BukkitChunkManager extends ChunkManager {
         //todo optimize maxY
         void saveBlocks(BukkitWorld world, int maxY, int x, int z, int offsetX, int offsetZ) {
             maxY = Math.min(255, maxY);
-            BaseBlock[] ids;
-            ids = new BaseBlock[maxY + 1];
+            BaseBlock[] ids = new BaseBlock[maxY + 1];
             for (short y = 0; y <= maxY; y++) {
                 BaseBlock block = world.getFullBlock(BlockVector3.at(x, y, z));
                 ids[y] = block;

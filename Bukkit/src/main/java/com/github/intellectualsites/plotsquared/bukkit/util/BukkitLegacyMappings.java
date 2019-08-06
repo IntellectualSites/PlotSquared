@@ -1,22 +1,11 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
-import com.github.intellectualsites.plotsquared.bukkit.BukkitMain;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.LegacyPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.StringPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.util.LegacyMappings;
 import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Borrowed from https://github.com/Phoenix616/IDConverter/blob/master/mappings/src/main/java/de/themoep/idconverter/IdMappings.java
@@ -773,7 +765,7 @@ public final class BukkitLegacyMappings extends LegacyMappings {
         PlotBlock plotBlock;
         if (Material.matchMaterial(workingString) != null) {
             return PlotBlock.get(workingString);
-        } else if (NEW_STRING_TO_LEGACY_PLOT_BLOCK.keySet().contains(workingString.toLowerCase())) {
+        } else if (NEW_STRING_TO_LEGACY_PLOT_BLOCK.containsKey(workingString.toLowerCase())) {
             return PlotBlock.get(workingString);
         } else if ((plotBlock = fromLegacyToString(idDataPair)) != null) {
             return plotBlock;
