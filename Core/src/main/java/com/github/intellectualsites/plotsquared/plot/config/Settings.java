@@ -350,7 +350,7 @@ public class Settings extends Config {
         @Comment("Kill vehicles on roads") public static boolean KILL_ROAD_VEHICLES = false;
         @Comment("Notify a player of any missed comments upon plot entry") public static boolean
             COMMENT_NOTIFIER = false;
-        @Comment("Let player's claim entire worlds with PlotSquared") public static boolean WORLDS =
+        @Comment("Let players claim entire worlds with PlotSquared") public static boolean WORLDS =
             false;
         @Comment("Actively purge invalid database entries") public static boolean DATABASE_PURGER =
             false;
