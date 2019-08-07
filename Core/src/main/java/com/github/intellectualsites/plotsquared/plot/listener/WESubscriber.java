@@ -29,6 +29,9 @@ public class WESubscriber {
             return;
         }
         World worldObj = event.getWorld();
+        if (worldObj == null) {
+            return;
+        }
         String world = worldObj.getName();
         Actor actor = event.getActor();
         if (actor != null && actor.isPlayer()) {
