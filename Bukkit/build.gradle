@@ -1,27 +1,30 @@
+plugins {
+    id "com.github.johnrengelman.shadow"
+}
 repositories {
-    maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-    maven { url "http://nexus.hc.to/content/repositories/pub_releases" }
+    maven { url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
+    maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url = "http://nexus.hc.to/content/repositories/pub_releases" }
     maven { url = "https://repo.codemc.org/repository/maven-public" }
     maven {
-        name "papermc"
-        url "https://papermc.io/repo/repository/maven-public/"
+        name = "papermc"
+        url = "https://papermc.io/repo/repository/maven-public/"
     }
     mavenLocal()
 }
 
-apply plugin: "com.github.johnrengelman.shadow"
 
 dependencies {
-    implementation project(":Core")
-    compile project(":Core")
-    compile "com.destroystokyo.paper:paper-api:1.14.4-R0.1-SNAPSHOT"
+    implementation(project(":Core"))
+    compile(project(":Core"))
+    compile("com.destroystokyo.paper:paper-api:1.14.4-R0.1-SNAPSHOT")
     //implementation 'com.onarandombox.multiversecore:Multiverse-Core:3.0.0-SNAPSHOT'
-    implementation "org.spigotmc:spigot-api:1.14.4-R0.1-SNAPSHOT"
+    implementation("org.spigotmc:spigot-api:1.14.4-R0.1-SNAPSHOT")
     compile(group: "com.sk89q.worldedit", name: "worldedit-bukkit", version: "7.0.0")
-    compile "io.papermc:paperlib:1.0.2"
+    compile("io.papermc:paperlib:1.0.2")
+    implementation ("net.kyori:text-adapter-bukkit:3.0.3")
     compile("net.milkbowl.vault:VaultAPI:1.7") {
-        exclude module: "bukkit"
+        exclude(module: "bukkit")
     }
 }
 
@@ -30,7 +33,7 @@ targetCompatibility = 1.8
 
 processResources {
     from("src/main/resources") {
-        include "plugin.yml"
+        include("plugin.yml")
         expand(
                 name: project.parent.name,
                 version: project.parent.version
@@ -50,8 +53,10 @@ shadowJar {
         include(dependency("com.squareup.okio:okio:2.2.2"))
         include(dependency("org.jetbrains.kotlin:kotlin-stdlib:1.3.30"))
         include(dependency("io.papermc:paperlib:1.0.2"))
+        include(dependency("net.kyori:text-adapter-bukkit:3.0.3"))
     }
-    relocate "io.papermc.lib", "com.github.intellectualsites.plotsquared.bukkit.paperlib"
+    relocate('net.kyori.text', 'com.github.intellectualsites.plotsquared.formatting.text')
+    relocate("io.papermc.lib", "com.github.intellectualsites.plotsquared.bukkit.paperlib")
     // relocate('org.mcstats', 'com.plotsquared.stats')
     archiveName = "${parent.name}-${project.name}-${parent.version}.jar"
     destinationDir = file "../target"
