@@ -88,7 +88,7 @@ public class MainUtil {
 
     public static void sendAdmin(final String s) {
         for (final PlotPlayer player : UUIDHandler.getPlayers().values()) {
-            if (player.hasPermission(Captions.PERMISSION_ADMIN.s())) {
+            if (player.hasPermission(Captions.PERMISSION_ADMIN.getTranslated())) {
                 player.sendMessage(Captions.color(s));
             }
         }
@@ -331,17 +331,17 @@ public class MainUtil {
      */
     @Nonnull public static String getName(UUID owner) {
         if (owner == null) {
-            return Captions.NONE.s();
+            return Captions.NONE.getTranslated();
         }
         if (owner.equals(DBFunc.EVERYONE)) {
-            return Captions.EVERYONE.s();
+            return Captions.EVERYONE.getTranslated();
         }
         if (owner.equals(DBFunc.SERVER)) {
-            return Captions.SERVER.s();
+            return Captions.SERVER.getTranslated();
         }
         String name = UUIDHandler.getName(owner);
         if (name == null) {
-            return Captions.UNKNOWN.s();
+            return Captions.UNKNOWN.getTranslated();
         }
         return name;
     }
@@ -588,10 +588,11 @@ public class MainUtil {
     public static boolean sendMessage(CommandCaller player, String msg, boolean prefix) {
         if (!msg.isEmpty()) {
             if (player == null) {
-                String message = (prefix ? Captions.PREFIX.s() : "") + msg;
+                String message = (prefix ? Captions.PREFIX.getTranslated() : "") + msg;
                 PlotSquared.log(message);
             } else {
-                player.sendMessage((prefix ? Captions.PREFIX.s() : "") + Captions.color(msg));
+                player.sendMessage(
+                    (prefix ? Captions.PREFIX.getTranslated() : "") + Captions.color(msg));
             }
         }
         return true;
@@ -617,7 +618,7 @@ public class MainUtil {
      */
     public static boolean sendMessage(final CommandCaller player, final Captions caption,
         final Object... args) {
-        if (caption.s().isEmpty()) {
+        if (caption.getTranslated().isEmpty()) {
             return true;
         }
         TaskManager.runTaskAsync(() -> {
@@ -713,7 +714,7 @@ public class MainUtil {
     public static void format(String info, final Plot plot, PlotPlayer player, final boolean full,
         final RunnableVal<String> whenDone) {
         int num = plot.getConnectedPlots().size();
-        String alias = !plot.getAlias().isEmpty() ? plot.getAlias() : Captions.NONE.s();
+        String alias = !plot.getAlias().isEmpty() ? plot.getAlias() : Captions.NONE.getTranslated();
         Location bot = plot.getCorners()[0];
         String biome = WorldUtil.IMP.getBiome(plot.getWorldName(), bot.getX(), bot.getZ());
         String trusted = getPlayerList(plot.getTrusted());
@@ -722,28 +723,27 @@ public class MainUtil {
         String seen;
         if (Settings.Enabled_Components.PLOT_EXPIRY && ExpireManager.IMP != null) {
             if (plot.isOnline()) {
-                seen = Captions.NOW.s();
+                seen = Captions.NOW.getTranslated();
             } else {
                 int time = (int) (ExpireManager.IMP.getAge(plot) / 1000);
                 if (time != 0) {
                     seen = MainUtil.secToTime(time);
                 } else {
-                    seen = Captions.UNKNOWN.s();
+                    seen = Captions.UNKNOWN.getTranslated();
                 }
             }
         } else {
-            seen = Captions.NEVER.s();
+            seen = Captions.NEVER.getTranslated();
         }
         Optional<String> descriptionFlag = plot.getFlag(Flags.DESCRIPTION);
-        String description = !descriptionFlag.isPresent() ?
-            Captions.NONE.s() :
+        String description = !descriptionFlag.isPresent() ? Captions.NONE.getTranslated() :
             Flags.DESCRIPTION.valueToString(descriptionFlag.get());
 
         StringBuilder flags = new StringBuilder();
         HashMap<Flag<?>, Object> flagMap =
             FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true);
         if (flagMap.isEmpty()) {
-            flags.append(Captions.NONE.s());
+            flags.append(Captions.NONE.getTranslated());
         } else {
             String prefix = "";
             for (Entry<Flag<?>, Object> entry : flagMap.entrySet()) {
@@ -837,11 +837,11 @@ public class MainUtil {
     public static String getPlayerList(Collection<UUID> uuids) {
         ArrayList<UUID> l = new ArrayList<>(uuids);
         if (l.size() < 1) {
-            return Captions.NONE.s();
+            return Captions.NONE.getTranslated();
         }
         List<String> users =
             l.stream().map(MainUtil::getName).sorted().collect(Collectors.toList());
-        String c = Captions.PLOT_USER_LIST.s();
+        String c = Captions.PLOT_USER_LIST.getTranslated();
         StringBuilder list = new StringBuilder();
         for (int x = 0; x < users.size(); x++) {
             if (x + 1 == l.size()) {

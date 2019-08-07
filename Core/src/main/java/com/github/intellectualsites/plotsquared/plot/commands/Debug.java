@@ -15,15 +15,15 @@ public class Debug extends SubCommand {
         if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {
             StringBuilder msg = new StringBuilder();
             for (Captions caption : Captions.values()) {
-                msg.append(caption.s()).append("\n");
+                msg.append(caption.getTranslated()).append("\n");
             }
             MainUtil.sendMessage(player, msg.toString());
             return true;
         }
         StringBuilder information = new StringBuilder();
-        String header = Captions.DEBUG_HEADER.s();
-        String line = Captions.DEBUG_LINE.s();
-        String section = Captions.DEBUG_SECTION.s();
+        String header = Captions.DEBUG_HEADER.getTranslated();
+        String line = Captions.DEBUG_LINE.getTranslated();
+        String section = Captions.DEBUG_SECTION.getTranslated();
         information.append(header);
         information.append(getSection(section, "PlotArea"));
         information.append(

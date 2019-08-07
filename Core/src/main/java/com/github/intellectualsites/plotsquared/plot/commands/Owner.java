@@ -37,8 +37,8 @@ import java.util.UUID;
         if (uuid == null || value.equalsIgnoreCase("-")) {
             if (value.equalsIgnoreCase("none") || value.equalsIgnoreCase("null") || value
                 .equalsIgnoreCase("-")) {
-                if (!Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SET_OWNER.s(), true)) {
+                if (!Permissions.hasPermission(player,
+                    Captions.PERMISSION_ADMIN_COMMAND_SET_OWNER.getTranslated(), true)) {
                     return false;
                 }
                 Set<Plot> connected = plot.getConnectedPlots();

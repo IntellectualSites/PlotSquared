@@ -10,7 +10,7 @@ public class HelpObject {
     private final String _rendered;
 
     public HelpObject(final Command command, final String label) {
-        _rendered = StringMan.replaceAll(Captions.HELP_ITEM.s(), "%usage%",
+        _rendered = StringMan.replaceAll(Captions.HELP_ITEM.getTranslated(), "%usage%",
             command.getUsage().replaceAll("\\{label\\}", label), "[%alias%]",
             !command.getAliases().isEmpty() ?
                 "(" + StringMan.join(command.getAliases(), "|") + ")" :

@@ -19,7 +19,7 @@ public class Swap extends SubCommand {
             return !MainUtil.sendMessage(player, Captions.NOT_IN_PLOT);
         }
         if (!plot1.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN.s())) {
+            .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated())) {
             MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
             return false;
         }

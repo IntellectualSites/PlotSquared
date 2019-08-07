@@ -637,7 +637,7 @@ import java.util.regex.Pattern;
             EventUtil.manager.doJoinTask(pp);
         }, 20);
 
-        if (pp.hasPermission(Captions.PERMISSION_ADMIN_UPDATE_NOTIFICATION.s())
+        if (pp.hasPermission(Captions.PERMISSION_ADMIN_UPDATE_NOTIFICATION.getTranslated())
             && PlotSquared.get().getUpdateUtility() != null) {
             final UpdateUtility updateUtility = PlotSquared.get().getUpdateUtility();
             final BukkitMain bukkitMain = BukkitMain.getPlugin(BukkitMain.class);
@@ -941,7 +941,7 @@ import java.util.regex.Pattern;
         }
         event.setCancelled(true);
         String message = event.getMessage();
-        String format = Captions.PLOT_CHAT_FORMAT.s();
+        String format = Captions.PLOT_CHAT_FORMAT.getTranslated();
         String sender = event.getPlayer().getDisplayName();
         PlotId id = plot.getId();
         Set<Player> recipients = event.getRecipients();
@@ -968,8 +968,8 @@ import java.util.regex.Pattern;
             receiver.sendMessage(full);
         }
         if (!spies.isEmpty()) {
-            String spyMessage =
-                Captions.PLOT_CHAT_SPY_FORMAT.s().replace("%plot_id%", id.x + ";" + id.y)
+            String spyMessage = Captions.PLOT_CHAT_SPY_FORMAT.getTranslated()
+                .replace("%plot_id%", id.x + ";" + id.y)
                     .replace("%sender%", sender).replace("%msg%", message);
             for (Player player : spies) {
                 player.sendMessage(spyMessage);
@@ -1001,7 +1001,7 @@ import java.util.regex.Pattern;
                     && !Permissions
                     .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
-                MainUtil.sendMessage(plotPlayer, Captions.HEIGHT_LIMIT.s()
+                MainUtil.sendMessage(plotPlayer, Captions.HEIGHT_LIMIT.getTranslated()
                     .replace("{limit}", String.valueOf(area.MAX_BUILD_HEIGHT)));
             }
             if (!plot.hasOwner()) {
@@ -2991,7 +2991,7 @@ import java.util.regex.Pattern;
             if ((location.getY() > area.MAX_BUILD_HEIGHT || location.getY() < area.MIN_BUILD_HEIGHT)
                 && !Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
-                MainUtil.sendMessage(pp, Captions.HEIGHT_LIMIT.s()
+                MainUtil.sendMessage(pp, Captions.HEIGHT_LIMIT.getTranslated()
                     .replace("{limit}", String.valueOf(area.MAX_BUILD_HEIGHT)));
             }
             if (!plot.hasOwner()) {

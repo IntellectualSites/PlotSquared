@@ -40,7 +40,8 @@ import java.util.List;
         }
         StringBuilder string = new StringBuilder();
         string.append(StringMan
-            .replaceAll(Captions.COMMENT_LIST_HEADER_PAGED.s(), "%amount%", comments.length, "%cur",
+            .replaceAll(Captions.COMMENT_LIST_HEADER_PAGED.getTranslated(), "%amount%",
+                comments.length, "%cur",
                 page + 1, "%max", totalPages + 1, "%word", "all") + '\n');
 
         // This might work xD

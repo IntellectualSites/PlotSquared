@@ -77,16 +77,17 @@ public class Help extends Command {
             }
             if (cat == null && page == 0) {
                 StringBuilder builder = new StringBuilder();
-            builder.append(Captions.HELP_HEADER.s());
+                builder.append(Captions.HELP_HEADER.getTranslated());
                 for (CommandCategory c : CommandCategory.values()) {
                     builder.append("\n").append(StringMan
-                        .replaceAll(Captions.HELP_INFO_ITEM.s(), "%category%", c.toString().toLowerCase(),
+                        .replaceAll(Captions.HELP_INFO_ITEM.getTranslated(), "%category%",
+                            c.toString().toLowerCase(),
                             "%category_desc%", c.toString()));
                 }
                 builder.append("\n")
-                    .append(Captions.HELP_INFO_ITEM.s().replaceAll("%category%", "all")
+                    .append(Captions.HELP_INFO_ITEM.getTranslated().replaceAll("%category%", "all")
                     .replaceAll("%category_desc%", "Display all commands"));
-                builder.append("\n").append(Captions.HELP_FOOTER.s());
+                builder.append("\n").append(Captions.HELP_FOOTER.getTranslated());
                 MainUtil.sendMessage(player, builder.toString(), false);
                 return true;
             }

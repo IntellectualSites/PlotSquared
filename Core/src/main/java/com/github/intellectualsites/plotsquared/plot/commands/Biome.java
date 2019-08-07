@@ -16,10 +16,11 @@ import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
     @Override public boolean set(final PlotPlayer player, final Plot plot, final String value) {
         int biome = WorldUtil.IMP.getBiomeFromString(value);
         if (biome == -1) {
-            String biomes =
-                StringMan.join(WorldUtil.IMP.getBiomeList(), Captions.BLOCK_LIST_SEPARATER.s());
+            String biomes = StringMan
+                .join(WorldUtil.IMP.getBiomeList(), Captions.BLOCK_LIST_SEPARATER.getTranslated());
             Captions.NEED_BIOME.send(player);
-            MainUtil.sendMessage(player, Captions.SUBCOMMAND_SET_OPTIONS_HEADER.s() + biomes);
+            MainUtil.sendMessage(player,
+                Captions.SUBCOMMAND_SET_OPTIONS_HEADER.getTranslated() + biomes);
             return false;
         }
         if (plot.getRunning() > 0) {
@@ -29,7 +30,8 @@ import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
         plot.addRunning();
         plot.setBiome(value.toUpperCase(), () -> {
             plot.removeRunning();
-            MainUtil.sendMessage(player, Captions.BIOME_SET_TO.s() + value.toLowerCase());
+            MainUtil
+                .sendMessage(player, Captions.BIOME_SET_TO.getTranslated() + value.toLowerCase());
         });
         return true;
     }

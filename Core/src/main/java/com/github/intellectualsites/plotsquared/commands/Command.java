@@ -38,19 +38,19 @@ public abstract class Command {
     private RequiredType required;
     private String usage;
     private String description;
-    private String perm;
+    private String permission;
     private boolean confirmation;
     private CommandCategory category;
     private Argument[] arguments;
 
-    public Command(Command parent, boolean isStatic, String id, String perm, RequiredType required,
-        CommandCategory cat) {
+    public Command(Command parent, boolean isStatic, String id, String permission,
+        RequiredType required, CommandCategory category) {
         this.parent = parent;
         this.isStatic = isStatic;
         this.id = id;
-        this.perm = perm;
+        this.permission = permission;
         this.required = required;
-        this.category = cat;
+        this.category = category;
         this.aliases = Arrays.asList(id);
         if (this.parent != null) {
             this.parent.register(this);
@@ -154,7 +154,7 @@ public abstract class Command {
 
     public void init(CommandDeclaration declaration) {
         this.id = declaration.command();
-        this.perm = declaration.permission();
+        this.permission = declaration.permission();
         this.required = declaration.requiredType();
         this.category = declaration.category();
         List<String> aliasOptions = new ArrayList<>();
@@ -204,8 +204,8 @@ public abstract class Command {
     }
 
     public String getPermission() {
-        if (this.perm != null && !this.perm.isEmpty()) {
-            return this.perm;
+        if (this.permission != null && !this.permission.isEmpty()) {
+            return this.permission;
         }
         if (this.parent == null) {
             return "plots.use";
@@ -244,18 +244,19 @@ public abstract class Command {
         if (page < totalPages && page > 0) { // Back | Next
             new PlotMessage().text("<-").color("$1").command(baseCommand + " " + page).text(" | ")
                 .color("$3").text("->").color("$1").command(baseCommand + " " + (page + 2))
-                .text(Captions.CLICKABLE.s()).color("$2").send(player);
+                .text(Captions.CLICKABLE.getTranslated()).color("$2").send(player);
             return;
         }
         if (page == 0 && totalPages != 0) { // Next
             new PlotMessage().text("<-").color("$3").text(" | ").color("$3").text("->").color("$1")
-                .command(baseCommand + " " + 2).text(Captions.CLICKABLE.s()).color("$2")
+                .command(baseCommand + " " + 2).text(Captions.CLICKABLE.getTranslated()).color("$2")
                 .send(player);
             return;
         }
         if (totalPages != 0) { // Back
             new PlotMessage().text("<-").color("$1").command(baseCommand + " " + page).text(" | ")
-                .color("$3").text("->").color("$3").text(Captions.CLICKABLE.s()).color("$2")
+                .color("$3").text("->").color("$3").text(Captions.CLICKABLE.getTranslated())
+                .color("$2")
                 .send(player);
         }
     }
@@ -489,7 +490,7 @@ public abstract class Command {
             return null;
         }
         List<Command> result = new ArrayList<>();
-        int index = input.length - (space ? 0 : 1);
+        int index = input.length;
         for (String arg : args) {
             arg = arg.replace(getCommandString() + " ", "");
             String[] split = arg.split(" ");

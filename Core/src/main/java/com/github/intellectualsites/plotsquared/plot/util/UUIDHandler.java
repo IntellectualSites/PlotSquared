@@ -102,7 +102,7 @@ public class UUIDHandler {
             return null;
         }
         if (uuid != null && uuid.equals(DBFunc.SERVER)) {
-            return Captions.SERVER.s();
+            return Captions.SERVER.getTranslated();
         }
         return implementation.getName(uuid);
     }

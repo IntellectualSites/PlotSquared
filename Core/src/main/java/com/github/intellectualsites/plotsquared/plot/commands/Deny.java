@@ -105,7 +105,7 @@ import java.util.UUID;
                 WorldUtil.IMP.getSpawn(PlotSquared.get().getPlotAreaManager().getAllWorlds()[0]);
             if (plot.equals(newSpawn.getPlot())) {
                 // Kick from server if you can't be teleported to spawn
-                player.kick(Captions.YOU_GOT_DENIED.s());
+                player.kick(Captions.YOU_GOT_DENIED.getTranslated());
             } else {
                 player.teleport(newSpawn);
             }

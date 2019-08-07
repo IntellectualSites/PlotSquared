@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
      * Teleportation CommandConfig.
      * Such as: /plot visit
      */
-    TELEPORT(Captions.COMMAND_CATEGORY_TELEPPORT),
+    TELEPORT(Captions.COMMAND_CATEGORY_TELEPORT),
     /**
      * Protection.
      */
@@ -53,6 +53,6 @@ import lombok.RequiredArgsConstructor;
     private final Captions caption;
 
     @Override public String toString() {
-        return this.caption.s();
+        return this.caption.getTranslated();
     }
 }

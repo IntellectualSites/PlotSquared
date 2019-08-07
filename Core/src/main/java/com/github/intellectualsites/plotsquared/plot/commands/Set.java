@@ -126,7 +126,8 @@ import java.util.stream.IntStream;
             newValues.addAll(
                 Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
         }
-        MainUtil.sendMessage(player, Captions.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringMan
+        MainUtil
+            .sendMessage(player, Captions.SUBCOMMAND_SET_OPTIONS_HEADER.getTranslated() + StringMan
             .join(newValues, Captions.BLOCK_LIST_SEPARATER.formatted()));
         return false;
     }

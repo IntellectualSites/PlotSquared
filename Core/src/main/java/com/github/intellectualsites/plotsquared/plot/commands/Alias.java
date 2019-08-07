@@ -101,13 +101,14 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
             return false;
         }
         plot.setAlias(alias);
-        MainUtil.sendMessage(player, Captions.ALIAS_SET_TO.s().replaceAll("%alias%", alias));
+        MainUtil.sendMessage(player,
+            Captions.ALIAS_SET_TO.getTranslated().replaceAll("%alias%", alias));
         return true;
     }
 
     private boolean removeAlias(PlotPlayer player, Plot plot) {
         plot.setAlias(null);
-        MainUtil.sendMessage(player, Captions.ALIAS_REMOVED.s());
+        MainUtil.sendMessage(player, Captions.ALIAS_REMOVED.getTranslated());
         return true;
     }
 

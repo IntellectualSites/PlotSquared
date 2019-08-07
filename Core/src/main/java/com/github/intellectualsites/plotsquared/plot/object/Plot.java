@@ -2136,7 +2136,7 @@ public class Plot {
             }
             loop:
             for (int i = 4; i > 0; i--) {
-                String caption = Captions.valueOf("OWNER_SIGN_LINE_" + i).s();
+                String caption = Captions.valueOf("OWNER_SIGN_LINE_" + i).getTranslated();
                 int index = caption.indexOf("%plr%");
                 if (index < 0) {
                     continue;

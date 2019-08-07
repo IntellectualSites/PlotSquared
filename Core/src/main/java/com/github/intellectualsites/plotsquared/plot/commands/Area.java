@@ -331,8 +331,8 @@ import java.util.Set;
                     + "\n$1Claimed: $2" + claimed + "\n$1Clusters: $2" + clusters + "\n$1Region: $2"
                     + region + "\n$1Generator: $2" + generator;
                 MainUtil.sendMessage(player,
-                    Captions.PLOT_INFO_HEADER.s() + '\n' + value + '\n' + Captions.PLOT_INFO_FOOTER
-                        .s(), false);
+                    Captions.PLOT_INFO_HEADER.getTranslated() + '\n' + value + '\n'
+                        + Captions.PLOT_INFO_FOOTER.getTranslated(), false);
                 return true;
             }
             case "l":
@@ -394,7 +394,7 @@ import java.util.Set;
                                 .color("$1").text(" - ").color("$2")
                                 .text(area.TYPE + ":" + area.TERRAIN).color("$3");
                         }
-                    }, "/plot area list", Captions.AREA_LIST_HEADER_PAGED.s());
+                    }, "/plot area list", Captions.AREA_LIST_HEADER_PAGED.getTranslated());
                 return true;
             case "regen":
             case "clear":

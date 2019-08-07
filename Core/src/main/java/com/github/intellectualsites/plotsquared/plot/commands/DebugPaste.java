@@ -124,8 +124,8 @@ import java.util.stream.Collectors;
                         final String pasteId = jsonObject.get("paste_id").getAsString();
                         final String link =
                             String.format("https://athion.net/ISPaster/paste/view/%s", pasteId);
-                        player
-                            .sendMessage(Captions.DEBUG_REPORT_CREATED.s().replace("%url%", link));
+                        player.sendMessage(
+                            Captions.DEBUG_REPORT_CREATED.getTranslated().replace("%url%", link));
                     } else {
                         final String responseMessage = jsonObject.get("response").getAsString();
                         MainUtil.sendMessage(player, String

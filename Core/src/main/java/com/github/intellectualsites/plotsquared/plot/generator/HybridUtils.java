@@ -7,7 +7,11 @@ import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.listener.WEExtent;
 import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
@@ -167,7 +171,7 @@ public abstract class HybridUtils {
                     regeneratePlotWalls(area);
 
                     HybridUtils.UPDATE = false;
-                    PlotSquared.debug(Captions.PREFIX.s() + "Finished road conversion");
+                    PlotSquared.debug(Captions.PREFIX.getTranslated() + "Finished road conversion");
                     // CANCEL TASK
                 } else {
                     final Runnable task = this;

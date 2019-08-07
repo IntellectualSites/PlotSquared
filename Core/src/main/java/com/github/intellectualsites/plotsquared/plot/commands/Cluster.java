@@ -297,7 +297,8 @@ import java.util.UUID;
                     Settings.Limit.MAX_PLOTS);
                 if (current + cluster.getArea() > allowed) {
                     MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_CLUSTER.s() + "." + (current + cluster.getArea()));
+                        Captions.PERMISSION_CLUSTER.getTranslated() + "." + (current + cluster
+                            .getArea()));
                     return false;
                 }
                 // resize cluster
@@ -588,7 +589,7 @@ import java.util.UUID;
                 String size = (cluster.getP2().x - cluster.getP1().x + 1) + "x" + (
                     cluster.getP2().y - cluster.getP1().y + 1);
                 String rights = cluster.isAdded(player.getUUID()) + "";
-                String message = Captions.CLUSTER_INFO.s();
+                String message = Captions.CLUSTER_INFO.getTranslated();
                 message = message.replaceAll("%id%", id);
                 message = message.replaceAll("%owner%", owner);
                 message = message.replaceAll("%name%", name);

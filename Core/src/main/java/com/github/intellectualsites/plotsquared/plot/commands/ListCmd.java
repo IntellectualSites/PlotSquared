@@ -72,8 +72,8 @@ public class ListCmd extends SubCommand {
     }
 
     public void noArgs(PlotPlayer player) {
-        MainUtil.sendMessage(player,
-            Captions.SUBCOMMAND_SET_OPTIONS_HEADER.s() + Arrays.toString(getArgumentList(player)));
+        MainUtil.sendMessage(player, Captions.SUBCOMMAND_SET_OPTIONS_HEADER.getTranslated() + Arrays
+            .toString(getArgumentList(player)));
     }
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
@@ -367,19 +367,19 @@ public class ListCmd extends SubCommand {
                         color = "$1";
                     }
                     PlotMessage trusted = new PlotMessage().text(Captions.color(
-                        Captions.PLOT_INFO_TRUSTED.s()
+                        Captions.PLOT_INFO_TRUSTED.getTranslated()
                             .replaceAll("%trusted%", MainUtil.getPlayerList(plot.getTrusted()))))
                         .color("$1");
                     PlotMessage members = new PlotMessage().text(Captions.color(
-                        Captions.PLOT_INFO_MEMBERS.s()
+                        Captions.PLOT_INFO_MEMBERS.getTranslated()
                             .replaceAll("%members%", MainUtil.getPlayerList(plot.getMembers()))))
                         .color("$1");
                     String strFlags = StringMan.join(plot.getFlags().values(), ",");
                     if (strFlags.isEmpty()) {
-                        strFlags = Captions.NONE.s();
+                        strFlags = Captions.NONE.getTranslated();
                     }
-                    PlotMessage flags = new PlotMessage().text(Captions
-                        .color(Captions.PLOT_INFO_FLAGS.s().replaceAll("%flags%", strFlags)))
+                    PlotMessage flags = new PlotMessage().text(Captions.color(
+                        Captions.PLOT_INFO_FLAGS.getTranslated().replaceAll("%flags%", strFlags)))
                         .color("$1");
                     message.text("[").color("$3").text(i + "")
                         .command("/plot visit " + plot.getArea() + ";" + plot.getId())
@@ -407,7 +407,7 @@ public class ListCmd extends SubCommand {
                         prefix = ", ";
                     }
                 }
-            }, "/plot list " + args[0], Captions.PLOT_LIST_HEADER_PAGED.s());
+            }, "/plot list " + args[0], Captions.PLOT_LIST_HEADER_PAGED.getTranslated());
     }
 
 }

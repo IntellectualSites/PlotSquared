@@ -112,15 +112,15 @@ public class BukkitPlayer extends PlotPlayer {
     }
 
     @Override public int hasPermissionRange(final String stub, final int range) {
-        if (hasPermission(Captions.PERMISSION_ADMIN.s())) {
+        if (hasPermission(Captions.PERMISSION_ADMIN.getTranslated())) {
             return Integer.MAX_VALUE;
         }
         final String[] nodes = stub.split("\\.");
         final StringBuilder n = new StringBuilder();
         for (int i = 0; i < (nodes.length - 1); i++) {
             n.append(nodes[i]).append(".");
-            if (!stub.equals(n + Captions.PERMISSION_STAR.s())) {
-                if (hasPermission(n + Captions.PERMISSION_STAR.s())) {
+            if (!stub.equals(n + Captions.PERMISSION_STAR.getTranslated())) {
+                if (hasPermission(n + Captions.PERMISSION_STAR.getTranslated())) {
                     return Integer.MAX_VALUE;
                 }
             }

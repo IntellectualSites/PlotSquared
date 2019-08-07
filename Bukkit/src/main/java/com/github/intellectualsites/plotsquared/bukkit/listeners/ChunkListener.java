@@ -223,8 +223,8 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
             if (!chunk.isLoaded()) {
                 Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                 TaskManager.tasks.remove(currentIndex);
-                PlotSquared
-                    .debug(Captions.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
+                PlotSquared.debug(Captions.PREFIX.getTranslated()
+                    + "&aSuccessfully processed and unloaded chunk!");
                 chunk.unload(true);
                 return;
             }
@@ -232,8 +232,8 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
             if (tiles.length == 0) {
                 Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                 TaskManager.tasks.remove(currentIndex);
-                PlotSquared
-                    .debug(Captions.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
+                PlotSquared.debug(Captions.PREFIX.getTranslated()
+                    + "&aSuccessfully processed and unloaded chunk!");
                 chunk.unload(true);
                 return;
             }
@@ -243,8 +243,8 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
                 if (i >= tiles.length) {
                     Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                     TaskManager.tasks.remove(currentIndex);
-                    PlotSquared.debug(
-                        Captions.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
+                    PlotSquared.debug(Captions.PREFIX.getTranslated()
+                        + "&aSuccessfully processed and unloaded chunk!");
                     chunk.unload(true);
                     return;
                 }
@@ -268,13 +268,15 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
                 }
             }
             PlotSquared.debug(
-                Captions.PREFIX.s() + "&a detected unsafe chunk and processed: " + (chunk.getX()
+                Captions.PREFIX.getTranslated() + "&a detected unsafe chunk and processed: " + (
+                    chunk.getX()
                     << 4) + "," + (chunk.getX() << 4));
         }
         if (tiles.length > Settings.Chunk_Processor.MAX_TILES) {
             if (unload) {
                 PlotSquared.debug(
-                    Captions.PREFIX.s() + "&c detected unsafe chunk: " + (chunk.getX() << 4) + ","
+                    Captions.PREFIX.getTranslated() + "&c detected unsafe chunk: " + (chunk.getX()
+                        << 4) + ","
                         + (chunk.getX() << 4));
                 cleanChunk(chunk);
                 return true;

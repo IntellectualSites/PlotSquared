@@ -218,6 +218,13 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                         StringWrapper wrap = new StringWrapper(name);
                         if (!toAdd.containsKey(wrap)) {
                             UUID uuid = FileUUIDHandler.this.uuidWrapper.getUUID(offlinePlotPlayer);
+                            if (toAdd.containsValue(uuid)) {
+                                StringWrapper duplicate = toAdd.inverse().get(uuid);
+                                PlotSquared.debug(
+                                    "The UUID: " + uuid.toString() + " is already mapped to "
+                                        + duplicate
+                                        + "\n It cannot be added to the Map with a key of " + wrap);
+                            }
                             toAdd.putIfAbsent(wrap, uuid);
                             if (ExpireManager.IMP != null) {
                                 ExpireManager.IMP.storeDate(uuid, last);

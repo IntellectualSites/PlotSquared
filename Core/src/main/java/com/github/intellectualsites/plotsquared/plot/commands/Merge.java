@@ -107,7 +107,7 @@ public class Merge extends SubCommand {
                 if (!terrain && !Permissions
                     .hasPermission(player, Captions.PERMISSION_MERGE_KEEP_ROAD)) {
                     MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_MERGE_KEEP_ROAD.s());
+                        Captions.PERMISSION_MERGE_KEEP_ROAD.getTranslated());
                     return true;
                 }
                 if (plot.autoMerge(-1, maxSize, uuid, terrain)) {
@@ -133,7 +133,7 @@ public class Merge extends SubCommand {
             MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
                 "/plot merge <" + StringMan.join(values, "|") + "> [removeroads]");
             MainUtil.sendMessage(player,
-                Captions.DIRECTION.s().replaceAll("%dir%", direction(loc.getYaw())));
+                Captions.DIRECTION.getTranslated().replaceAll("%dir%", direction(loc.getYaw())));
             return false;
         }
         final boolean terrain;
@@ -144,7 +144,7 @@ public class Merge extends SubCommand {
         }
         if (!terrain && !Permissions.hasPermission(player, Captions.PERMISSION_MERGE_KEEP_ROAD)) {
             MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                Captions.PERMISSION_MERGE_KEEP_ROAD.s());
+                Captions.PERMISSION_MERGE_KEEP_ROAD.getTranslated());
             return true;
         }
         if (plot.autoMerge(direction, maxSize - size, uuid, terrain)) {
@@ -193,8 +193,8 @@ public class Merge extends SubCommand {
                 MainUtil.sendMessage(player, Captions.SUCCESS_MERGE);
             };
             if (hasConfirmation(player)) {
-                CmdConfirm.addPending(accepter,
-                    Captions.MERGE_REQUEST_CONFIRM.s().replaceAll("%s", player.getName()), run);
+                CmdConfirm.addPending(accepter, Captions.MERGE_REQUEST_CONFIRM.getTranslated()
+                    .replaceAll("%s", player.getName()), run);
             } else {
                 run.run();
             }

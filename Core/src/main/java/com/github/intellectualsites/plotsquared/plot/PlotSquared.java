@@ -54,8 +54,7 @@ import java.util.zip.ZipInputStream;
  * An implementation of the core, with a static getter for easy access.
  */
 @SuppressWarnings({"unused", "WeakerAccess"}) public class PlotSquared {
-    private static final Set<Plot> EMPTY_SET = Collections.
-        unmodifiableSet(Collections.emptySet());
+    private static final Set<Plot> EMPTY_SET = Collections.unmodifiableSet(Collections.emptySet());
     private static PlotSquared instance;
     // Implementation
     public final IPlotMain IMP;
@@ -217,21 +216,6 @@ import java.util.zip.ZipInputStream;
                     .runTask(() -> EconHandler.manager = PlotSquared.this.IMP.getEconomyHandler());
             }
 
-/*            // Check for updates
-            if (Settings.Enabled_Components.UPDATER) {
-                updater = new Updater();
-                TaskManager.IMP.taskAsync(new Runnable() {
-                    @Override public void run() {
-                        updater.update(getPlatform(), getVersion());
-                    }
-                });
-                TaskManager.IMP.taskRepeatAsync(new Runnable() {
-                    @Override public void run() {
-                        updater.update(getPlatform(), getVersion());
-                    }
-                }, 36000);
-            }*/
-
             // World generators:
             final ConfigurationSection section = this.worlds.getConfigurationSection("worlds");
             if (section != null) {
@@ -249,13 +233,14 @@ import java.util.zip.ZipInputStream;
                             continue;
                         }
                         if (!WorldUtil.IMP.isWorld(world) && !world.equals("*")) {
-                            debug(
-                                "&c`" + world + "` was not properly loaded - " + IMP.getPluginName()
+                            debug("`" + world + "` was not properly loaded - " + IMP.getPluginName()
                                     + " will now try to load it properly: ");
                             debug(
-                                "&8 - &7Are you trying to delete this world? Remember to remove it from the worlds.yml, bukkit.yml and multiverse worlds.yml");
+                                " - Are you trying to delete this world? Remember to remove it from the worlds.yml, bukkit.yml and multiverse worlds.yml");
                             debug(
-                                "&8 - &7Your world management plugin may be faulty (or non existent)");
+                                " - Your world management plugin may be faulty (or non existent)");
+                            debug(
+                                " This message may also be a false positive and could be ignored.");
                             PlotSquared.this.IMP.setGenerator(world);
                         }
                     }
@@ -614,9 +599,7 @@ import java.util.zip.ZipInputStream;
      */
     private void sortPlotsByHash(Plot[] input) {
         List<Plot>[] bucket = new ArrayList[32];
-        for (int i = 0; i < bucket.length; i++) {
-            bucket[i] = new ArrayList<>();
-        }
+        Arrays.fill(bucket, new ArrayList<>());
         boolean maxLength = false;
         int placement = 1;
         while (!maxLength) {
@@ -1191,7 +1174,7 @@ import java.util.zip.ZipInputStream;
                     "Invalid type for multi-area world. Expected `2`, got `" + 1 + "`");
             }
             for (String areaId : areasSection.getKeys(false)) {
-                PlotSquared.log(Captions.PREFIX + "&3 - " + areaId);
+                PlotSquared.log(Captions.PREFIX + " - " + areaId);
                 String[] split = areaId.split("(?<=[^;-])-");
                 if (split.length != 3) {
                     throw new IllegalArgumentException("Invalid Area identifier: " + areaId
@@ -1678,11 +1661,11 @@ import java.util.zip.ZipInputStream;
                     .getString("configuration_version")
                     .equalsIgnoreCase(LegacyConverter.CONFIGURATION_VERSION)) {
                     // Conversion needed
-                    log(Captions.LEGACY_CONFIG_FOUND.s());
+                    log(Captions.LEGACY_CONFIG_FOUND.getTranslated());
                     try {
                         com.google.common.io.Files
                             .copy(this.worldsFile, new File(folder, "worlds.yml.old"));
-                        log(Captions.LEGACY_CONFIG_BACKUP.s());
+                        log(Captions.LEGACY_CONFIG_BACKUP.getTranslated());
                         final ConfigurationSection worlds =
                             this.worlds.getConfigurationSection("worlds");
                         final LegacyConverter converter = new LegacyConverter(worlds);
@@ -1691,9 +1674,9 @@ import java.util.zip.ZipInputStream;
                             .set("configuration_version", LegacyConverter.CONFIGURATION_VERSION);
                         this.worlds.set("worlds", worlds); // Redundant, but hey... ¯\_(ツ)_/¯
                         this.worlds.save(this.worldsFile);
-                        log(Captions.LEGACY_CONFIG_DONE.s());
+                        log(Captions.LEGACY_CONFIG_DONE.getTranslated());
                     } catch (final Exception e) {
-                        log(Captions.LEGACY_CONFIG_CONVERSION_FAILED.s());
+                        log(Captions.LEGACY_CONFIG_CONVERSION_FAILED.getTranslated());
                         e.printStackTrace();
                     }
                     // Disable plugin

@@ -44,8 +44,8 @@ public class CommentManager {
                             total = count.get();
                         }
                         if ((size.decrementAndGet() == 0) && (total > 0)) {
-                            player.sendTitle("",
-                                Captions.INBOX_NOTIFICATION.s().replaceAll("%s", "" + total));
+                            player.sendTitle("", Captions.INBOX_NOTIFICATION.getTranslated()
+                                .replaceAll("%s", "" + total));
                         }
                     }
                 });
