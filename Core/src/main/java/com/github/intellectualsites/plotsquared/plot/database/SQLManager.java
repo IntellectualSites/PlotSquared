@@ -2853,6 +2853,16 @@ import java.util.concurrent.atomic.AtomicInteger;
             if (plot.temp == -1) {
                 continue;
             }
+            if (plot.getArea() == null) {
+                PlotSquared.debug("CRITICAL ERROR IN VALIDATION TASK!");
+                PlotSquared.debug("PLOT AREA CANNOT BE NULL! SKIPPING PLOT!");
+                continue;
+            }
+            if (database == null) {
+                PlotSquared.debug("CRITICAL ERROR IN VALIDATION TASK!");
+                PlotSquared.debug("DATABASE VARIABLE CANNOT BE NULL! NOW ENDING VALIDATION!!");
+                break;
+            }
             HashMap<PlotId, Plot> worldPlots = database.get(plot.getArea().toString());
             if (worldPlots == null) {
                 PlotSquared.debug("&8 - &7Creating plot (1): " + plot);
