@@ -36,28 +36,28 @@ public class WESubscriber {
         Actor actor = event.getActor();
         if (actor != null && actor.isPlayer()) {
             String name = actor.getName();
-            PlotPlayer pp = PlotPlayer.wrap(name);
+            PlotPlayer plotPlayer = PlotPlayer.wrap(name);
             HashSet<RegionWrapper> mask;
-            if (pp == null) {
+            if (plotPlayer == null) {
                 Player player = (Player) actor;
-                Location loc = player.getLocation();
+                Location location = player.getLocation();
                 com.github.intellectualsites.plotsquared.plot.object.Location pLoc =
                     new com.github.intellectualsites.plotsquared.plot.object.Location(
-                        player.getWorld().getName(), loc.getBlockX(), loc.getBlockX(),
-                        loc.getBlockZ());
+                        player.getWorld().getName(), location.getBlockX(), location.getBlockX(),
+                        location.getBlockZ());
                 Plot plot = pLoc.getPlot();
                 if (plot == null) {
                     event.setExtent(new NullExtent());
                     return;
                 }
                 mask = plot.getRegions();
-            } else if (pp.getAttribute("worldedit")) {
+            } else if (plotPlayer.getAttribute("worldedit")) {
                 return;
             } else {
-                mask = WEManager.getMask(pp);
+                mask = WEManager.getMask(plotPlayer);
                 if (mask.isEmpty()) {
-                    if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
-                        MainUtil.sendMessage(pp, Captions.WORLDEDIT_BYPASS);
+                    if (Permissions.hasPermission(plotPlayer, "plots.worldedit.bypass")) {
+                        MainUtil.sendMessage(plotPlayer, Captions.WORLDEDIT_BYPASS);
                     }
                     if (PlotSquared.get().hasPlotArea(world)) {
                         event.setExtent(new NullExtent());
