@@ -163,7 +163,7 @@ public class PlotListener {
                 }
                 CommentManager.sendTitle(player, plot);
             }
-            if (titles) {
+            if (titles && !player.getAttribute("disabletitles")) {
                 if (!Captions.TITLE_ENTERED_PLOT.getTranslated().isEmpty()
                     || !Captions.TITLE_ENTERED_PLOT_SUB.getTranslated().isEmpty()) {
                     TaskManager.runTaskLaterAsync(() -> {
