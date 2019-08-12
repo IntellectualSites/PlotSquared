@@ -3,7 +3,6 @@ package com.plotsquared.sponge.util.block;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.block.BasicLocalBlockQueue;
 import com.plotsquared.sponge.util.SpongeUtil;
@@ -410,7 +409,11 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
     @Override
     public final void regenChunk(int x, int z) {
         World worldObj = getSpongeWorld();
-        throw new UnsupportedOperationException("NOT SUPPORTED");
+        try {
+            worldObj.regenerateChunk(x, 0, z);
+        } catch (Exception e) {
+            throw new UnsupportedOperationException("NOT SUPPORTED");
+        }
     }
 
     @Override
@@ -487,16 +490,13 @@ public class SpongeLocalQueue extends BasicLocalBlockQueue<char[]> {
             int bx = lc.getX() << 4;
             int bz = lc.getX() << 4;
             String last = null;
-            BiomeType biome = null;
+            BiomeType biome;
             for (int x = 0; x < lc.biomes.length; x++) {
                 String[] biomes2 = lc.biomes[x];
                 if (biomes2 != null) {
-                    for (int y = 0; y < biomes2.length; y++) {
-                        String biomeStr = biomes2[y];
+                    for (String biomeStr : biomes2) {
                         if (biomeStr != null) {
-                            if (last == null || !StringMan.isEqual(last, biomeStr)) {
-                                biome = SpongeUtil.getBiome(biomeStr.toUpperCase());
-                            }
+                            biome = SpongeUtil.getBiome(biomeStr.toUpperCase());
                             worldObj.setBiome(bx, 0, bz, biome);
                         }
                     }
