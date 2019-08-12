@@ -118,6 +118,9 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         return meta;
     }
 
+    public ConcurrentHashMap<String, Object> getMeta() {
+        return meta;
+    }
     /**
      * Delete the metadata for a key.
      * - metadata is session only
