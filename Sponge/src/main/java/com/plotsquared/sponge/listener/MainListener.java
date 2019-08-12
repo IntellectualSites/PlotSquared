@@ -28,6 +28,7 @@ import org.spongepowered.api.event.block.NotifyNeighborBlockEvent;
 import org.spongepowered.api.event.entity.BreedEntityEvent;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
+import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.message.MessageEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.world.ExplosionEvent;
@@ -35,13 +36,17 @@ import org.spongepowered.api.event.world.ExplosionEvent.Detonate;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.World;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("Guava")
 public class MainListener {
-    
+
     /*
      * TODO:
      *  - Anything marked with a TODO below
@@ -253,7 +258,7 @@ public class MainListener {
         //        SpongeUtil.printCause("physics", event.getCause());
         //        PlotArea area = plotloc.getPlotArea();
         //        event.filterDirections(new Predicate<Direction>() {
-        //            
+        //
         //            @Override
         //            public boolean test(Direction dir) {
         //                if (cancelled.get()) {
@@ -292,11 +297,12 @@ public class MainListener {
             return;
         }
         BlockSnapshot block = event.getTargetBlock();
-        Optional<org.spongepowered.api.world.Location<World>> bloc = block.getLocation();
-        if (!bloc.isPresent()) {
+        Optional<org.spongepowered.api.world.Location<World>> blockLocation = block.getLocation();
+        if (!blockLocation.isPresent()) {
             return;
         }
-        Location loc = SpongeUtil.getLocation(player.getWorld().getName(), bloc.get());
+        Location loc =
+            SpongeUtil.getLocation(blockLocation.get().getExtent().getName(), blockLocation.get());
         PlotArea area = loc.getPlotArea();
         if (area == null) {
             return;
@@ -375,25 +381,24 @@ public class MainListener {
         List<Transaction<BlockSnapshot>> transactions = event.getTransactions();
         Transaction<BlockSnapshot> first = transactions.get(0);
         BlockSnapshot original = first.getOriginal();
-        Optional<World> world = SpongeMain.THIS.getServer().getWorld(original.getWorldUniqueId());
-        if (!world.isPresent()) {
+        if (!original.getLocation().isPresent()) {
             return;
         }
-        String worldName = world.get().getName();
-        Location loc = SpongeUtil.getLocation(worldName, original.getPosition());
-        PlotArea area = loc.getPlotArea();
+        String worldName = original.getLocation().get().getExtent().getName();
+        Location location = SpongeUtil.getLocation(original.getLocation().get());
+        PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
         }
-        Plot plot = area.getPlot(loc);
+        Plot plot = area.getPlot(location);
         if (plot == null) {
-            if (!loc.isPlotArea()) {
+            if (!location.isPlotArea()) {
                 return;
             }
             event.setCancelled(true);
             return;
         }
-        event.filter(loc1 -> !SpongeUtil.getLocation(worldName, loc1).isPlotRoad());
+        event.filter(worldLocation -> !SpongeUtil.getLocation(worldLocation).isPlotRoad());
     }
 
     @Listener
@@ -411,22 +416,16 @@ public class MainListener {
         onChangeBlock(event);
     }
 
-    @Listener
-    public void onBlockBreak(ChangeBlockEvent.Break event) {
-        Player player = SpongeUtil.getCause(event.getCause(), Player.class);
-        if (player == null) {
-            //SpongeUtil.printCause("break", event.getCause());
-            return;
-        }
+    @Listener public void onBlockBreak(ChangeBlockEvent.Break event, @Root Player player) {
         PlotPlayer pp = SpongeUtil.getPlayer(player);
         List<Transaction<BlockSnapshot>> transactions = event.getTransactions();
         Transaction<BlockSnapshot> first = transactions.get(0);
         BlockSnapshot original = first.getOriginal();
-        Optional<World> world = SpongeMain.THIS.getServer().getWorld(original.getWorldUniqueId());
-        if (!world.isPresent()) {
+        if (!original.getLocation().isPresent()) {
             return;
         }
-        String worldName = world.get().getName();
+        World world = original.getLocation().get().getExtent();
+        String worldName = world.getName();
         Location loc = SpongeUtil.getLocation(worldName, original.getPosition());
         Plot plot = loc.getPlot();
         if (plot == null) {
@@ -488,12 +487,7 @@ public class MainListener {
         });
     }
 
-    @Listener
-    public void onBlockPlace(ChangeBlockEvent.Pre event) {
-        Player player = SpongeUtil.getCause(event.getCause(), Player.class);
-        if (player == null) {
-            return;
-        }
+    @Listener public void onBlockPlace(ChangeBlockEvent.Pre event, @Root Player player) {
         PlotPlayer pp = SpongeUtil.getPlayer(player);
         List<org.spongepowered.api.world.Location<World>> locs = event.getLocations();
         org.spongepowered.api.world.Location<World> first = locs.get(0);
