@@ -122,7 +122,7 @@ public class PlotListener {
                     }
                 }
                 Optional<Long> timeFlag = plot.getFlag(Flags.TIME);
-                if (timeFlag.isPresent()) {
+                if (timeFlag.isPresent() && !player.getAttribute("disabletime")) {
                     try {
                         long time = timeFlag.get();
                         player.setTime(time);

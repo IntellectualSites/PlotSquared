@@ -52,6 +52,7 @@ public enum Captions {
     PERMISSION_WORLDEDIT_BYPASS("plots.worldedit.bypass", "static.permissions"),
     PERMISSION_PLOT_TOGGLE_TITLES("plots.toggle.titles", "static.permissions"),
     PERMISSION_PLOT_TOGGLE_CHAT("plots.toggle.chat", "static.permissions"),
+    PERMISSION_PLOT_TOGGLE_TIME("plots.toggle.time", "static.permissions"),
     PERMISSION_ADMIN_UPDATE_NOTIFICATION("plots.admin.update.notify", "static.permissions"),
     PERMISSION_ADMIN_EXIT_DENIED("plots.admin.exit.denied", "static.permissions"),
     PERMISSION_ADMIN_ENTRY_DENIED("plots.admin.entry.denied", "static.permissions"),
