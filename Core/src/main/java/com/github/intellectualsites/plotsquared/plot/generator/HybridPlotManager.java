@@ -43,7 +43,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                     Files.readAllBytes(sideroad.toPath())));
             }
             File intersection =
-                MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), "intersection.schem");
+                MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), dir + "intersection.schem");
             if (intersection.exists()) {
                 files.add(new FileBytes(newDir + "intersection.schem",
                     Files.readAllBytes(intersection.toPath())));
