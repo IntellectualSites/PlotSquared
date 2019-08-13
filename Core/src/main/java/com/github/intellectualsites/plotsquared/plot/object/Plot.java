@@ -790,7 +790,7 @@ public class Plot {
     /**
      * Sets the plot owner (and update the database)
      *
-     * @param owner     uuid to set as owner
+     * @param owner uuid to set as owner
      * @param initiator player initiating set owner
      * @return boolean
      */
@@ -1003,7 +1003,7 @@ public class Plot {
         }
         PlotManager manager = this.area.getPlotManager();
         if (this.area.ALLOW_SIGNS) {
-            Location loc = manager.getSignLoc(this);
+            Location location = manager.getSignLoc(this);
             String id = this.id.x + ";" + this.id.y;
             String[] lines =
                 new String[] {Captions.OWNER_SIGN_LINE_1.formatted().replaceAll("%id%", id),
@@ -1013,7 +1013,9 @@ public class Plot {
                         "%plr%", name),
                     Captions.OWNER_SIGN_LINE_4.formatted().replaceAll("%id%", id).replaceAll(
                         "%plr%", name)};
-            WorldUtil.IMP.setSign(this.getWorldName(), loc.getX(), loc.getY(), loc.getZ(), lines);
+            WorldUtil.IMP
+                .setSign(this.getWorldName(), location.getX(), location.getY(), location.getZ(),
+                    lines);
         }
     }
 
@@ -2055,6 +2057,44 @@ public class Plot {
     }
 
     /**
+     * Sets the raw merge data<br>
+     * - Updates DB<br>
+     * - Does not modify terrain<br>
+     * ----------<br>
+     * 0 = north<br>
+     * 1 = east<br>
+     * 2 = south<br>
+     * 3 = west<br>
+     * ----------<br>
+     *
+     * @param direction
+     * @param value
+     */
+    public void setMerged(Direction direction, boolean value) {
+        if (this.getSettings().setMerged(direction.getIndex(), value)) {
+            if (value) {
+                Plot other = this.getRelative(direction).getBasePlot(false);
+                if (!other.equals(this.getBasePlot(false))) {
+                    Plot base = other.id.y < this.id.y
+                        || other.id.y == this.id.y && other.id.x < this.id.x ? other : this.origin;
+                    this.origin.origin = base;
+                    other.origin = base;
+                    this.origin = base;
+                    connected_cache = null;
+                }
+            } else {
+                if (this.origin != null) {
+                    this.origin.origin = null;
+                    this.origin = null;
+                }
+                connected_cache = null;
+            }
+            DBFunc.setMerged(this, this.getSettings().getMerged());
+            regions_cache = null;
+        }
+    }
+
+    /**
      * Gets the merged array.
      *
      * @return boolean [ north, east, south, west ]
@@ -2219,7 +2259,7 @@ public class Plot {
      *                    3 = west<br>
      * @param max         The max number of merges to do
      * @param uuid        The UUID it is allowed to merge with
-     * @param removeRoads Whether to remove roads
+     * @param removeRoads whether to remove roads
      * @return true if a merge takes place
      */
     public boolean autoMerge(int dir, int max, UUID uuid, boolean removeRoads) {
@@ -2852,7 +2892,7 @@ public class Plot {
     }
 
     /**
-     * Merges 2 plots Removes the road in-between <br>- Assumes plots are directly next to each other <br> - saves to DB
+     * Merges two plots. <br>- Assumes plots are directly next to each other <br> - saves to DB
      *
      * @param lesserPlot
      * @param removeRoads
@@ -2868,10 +2908,11 @@ public class Plot {
             if (!lesserPlot.getMerged(Direction.SOUTH)) {
                 lesserPlot.clearRatings();
                 greaterPlot.clearRatings();
-                lesserPlot.setMerged(2, true);
-                greaterPlot.setMerged(0, true);
+                lesserPlot.setMerged(Direction.SOUTH, true);
+                greaterPlot.setMerged(Direction.NORTH, true);
                 lesserPlot.mergeData(greaterPlot);
                 if (removeRoads) {
+                    lesserPlot.removeSign();
                     lesserPlot.removeRoadSouth();
                     Plot diagonal = greaterPlot.getRelative(Direction.EAST);
                     if (diagonal.getMerged(Direction.NORTHWEST)) {
@@ -2892,10 +2933,11 @@ public class Plot {
             if (!lesserPlot.getMerged(Direction.EAST)) {
                 lesserPlot.clearRatings();
                 greaterPlot.clearRatings();
-                lesserPlot.setMerged(1, true);
-                greaterPlot.setMerged(3, true);
+                lesserPlot.setMerged(Direction.EAST, true);
+                greaterPlot.setMerged(Direction.WEST, true);
                 lesserPlot.mergeData(greaterPlot);
                 if (removeRoads) {
+                    lesserPlot.removeSign();
                     Plot diagonal = greaterPlot.getRelative(Direction.SOUTH);
                     if (diagonal.getMerged(Direction.NORTHWEST)) {
                         lesserPlot.removeRoadSouthEast();
