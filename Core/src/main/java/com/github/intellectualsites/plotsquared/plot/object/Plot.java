@@ -2899,6 +2899,7 @@ public class Plot {
      */
     public void mergePlot(Plot lesserPlot, boolean removeRoads) {
         Plot greaterPlot = this;
+        lesserPlot.removeSign();
         if (lesserPlot.getId().x == greaterPlot.getId().x) {
             if (lesserPlot.getId().y > greaterPlot.getId().y) {
                 Plot tmp = lesserPlot;
@@ -2912,7 +2913,7 @@ public class Plot {
                 greaterPlot.setMerged(Direction.NORTH, true);
                 lesserPlot.mergeData(greaterPlot);
                 if (removeRoads) {
-                    lesserPlot.removeSign();
+                    //lesserPlot.removeSign();
                     lesserPlot.removeRoadSouth();
                     Plot diagonal = greaterPlot.getRelative(Direction.EAST);
                     if (diagonal.getMerged(Direction.NORTHWEST)) {
@@ -2937,7 +2938,7 @@ public class Plot {
                 greaterPlot.setMerged(Direction.WEST, true);
                 lesserPlot.mergeData(greaterPlot);
                 if (removeRoads) {
-                    lesserPlot.removeSign();
+                    //lesserPlot.removeSign();
                     Plot diagonal = greaterPlot.getRelative(Direction.SOUTH);
                     if (diagonal.getMerged(Direction.NORTHWEST)) {
                         lesserPlot.removeRoadSouthEast();
