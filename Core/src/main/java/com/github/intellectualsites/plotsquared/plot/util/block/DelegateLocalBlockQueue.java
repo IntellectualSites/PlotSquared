@@ -8,7 +8,6 @@ public class DelegateLocalBlockQueue extends LocalBlockQueue {
     private final LocalBlockQueue parent;
 
     public DelegateLocalBlockQueue(LocalBlockQueue parent) {
-        super(parent == null ? null : parent.getWorld());
         this.parent = parent;
     }
 

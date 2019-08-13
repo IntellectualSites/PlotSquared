@@ -16,10 +16,6 @@ import java.util.Map;
 
 public abstract class LocalBlockQueue {
 
-    public LocalBlockQueue(String world) {
-        // Implement this elsewhere
-    }
-
     public ScopedLocalBlockQueue getForChunk(int x, int z) {
         int bx = x << 4;
         int bz = z << 4;
