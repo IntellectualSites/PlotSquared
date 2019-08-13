@@ -21,6 +21,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.sk89q.jnbt.CompoundTag;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,13 +47,14 @@ import java.util.stream.Collectors;
 public class Plot {
 
     private static final int MAX_HEIGHT = 256;
+
     /**
      * @deprecated raw access is deprecated
      */
     @Deprecated private static HashSet<Plot> connected_cache;
     private static HashSet<RegionWrapper> regions_cache;
 
-    private final PlotId id;
+    @NotNull private final PlotId id;
 
     /**
      * plot owner
@@ -62,10 +64,12 @@ public class Plot {
      * @deprecated
      */
     @Deprecated public UUID owner;
+
     /**
      * Has the plot changed since the last save cycle?
      */
     public boolean countsTowardsMax = true;
+
     /**
      * Represents whatever the database manager needs it to: <br>
      * - A value of -1 usually indicates the plot will not be stored in the DB<br>
@@ -74,23 +78,28 @@ public class Plot {
      * @deprecated magical
      */
     @Deprecated public int temp;
+
     /**
      * Plot creation timestamp (not accurate if the plot was created before this was implemented)<br>
      * - Milliseconds since the epoch<br>
      */
     private long timestamp;
+
     /**
      * List of trusted (with plot permissions).
      */
     private HashSet<UUID> trusted;
+
     /**
      * List of members users (with plot permissions).
      */
     private HashSet<UUID> members;
+
     /**
      * List of denied players.
      */
     private HashSet<UUID> denied;
+
     /**
      * External settings class.
      * - Please favor the methods over direct access to this class<br>
@@ -99,6 +108,7 @@ public class Plot {
     private PlotSettings settings;
 
     private PlotArea area;
+
     /**
      * Session only plot metadata (session is until the server stops)<br>
      * <br>
@@ -107,6 +117,7 @@ public class Plot {
      * @see FlagManager
      */
     private ConcurrentHashMap<String, Object> meta;
+
     /**
      * The cached origin plot.
      * - The origin plot is used for plot grouping and relational data
@@ -117,12 +128,12 @@ public class Plot {
      * Constructor for a new plot.
      * (Only changes after plot.create() will be properly set in the database)
      *
-     * @param area  the PlotArea where the plot is located
-     * @param id    the plot id
+     * @param area the PlotArea where the plot is located
+     * @param id the plot id
      * @param owner the plot owner
      * @see Plot#getPlot(Location) for existing plots
      */
-    public Plot(PlotArea area, PlotId id, UUID owner) {
+    public Plot(PlotArea area, @NotNull PlotId id, UUID owner) {
         this.area = area;
         this.id = id;
         this.owner = owner;
@@ -133,10 +144,10 @@ public class Plot {
      * (Only changes after plot.create() will be properly set in the database)
      *
      * @param area the PlotArea where the plot is located
-     * @param id   the plot id
+     * @param id the plot id
      * @see Plot#getPlot(Location) for existing plots
      */
-    public Plot(PlotArea area, PlotId id) {
+    public Plot(PlotArea area, @NotNull PlotId id) {
         this.area = area;
         this.id = id;
     }
@@ -146,13 +157,13 @@ public class Plot {
      * The database will ignore any queries regarding temporary plots.
      * Please note that some bulk plot management functions may still affect temporary plots (TODO: fix this)
      *
-     * @param area  the PlotArea where the plot is located
-     * @param id    the plot id
+     * @param area the PlotArea where the plot is located
+     * @param id the plot id
      * @param owner the owner of the plot
-     * @param temp  Represents whatever the database manager needs it to
+     * @param temp Represents whatever the database manager needs it to
      * @see Plot#getPlot(Location) for existing plots
      */
-    public Plot(PlotArea area, PlotId id, UUID owner, int temp) {
+    public Plot(PlotArea area, @NotNull PlotId id, UUID owner, int temp) {
         this.area = area;
         this.id = id;
         this.owner = owner;
@@ -162,14 +173,14 @@ public class Plot {
     /**
      * Constructor for a saved plots (Used by the database manager when plots are fetched)
      *
-     * @param id      the plot id
-     * @param owner   the plot owner
+     * @param id the plot id
+     * @param owner the plot owner
      * @param trusted the plot trusted players
-     * @param denied  the plot denied players
-     * @param merged  array giving merged plots
+     * @param denied the plot denied players
+     * @param merged an array giving merged plots
      * @see Plot#getPlot(Location) for existing plots
      */
-    public Plot(PlotId id, UUID owner, HashSet<UUID> trusted, HashSet<UUID> members,
+    public Plot(@NotNull PlotId id, UUID owner, HashSet<UUID> trusted, HashSet<UUID> members,
         HashSet<UUID> denied, String alias, BlockLoc position, Collection<Flag> flags,
         PlotArea area, boolean[] merged, long timestamp, int temp) {
         this.id = id;
@@ -194,8 +205,8 @@ public class Plot {
     /**
      * Gets a plot from a string e.g. [area];[id]
      *
-     * @param defaultArea If no area is specified
-     * @param string      plot id/area + id
+     * @param defaultArea if no area is specified
+     * @param string plot id/area + id
      * @return New or existing plot object
      */
     public static Plot fromString(PlotArea defaultArea, String string) {
@@ -452,7 +463,7 @@ public class Plot {
      *
      * @return the PlotId for this plot
      */
-    public PlotId getId() {
+    @NotNull public PlotId getId() {
         return this.id;
     }
 
@@ -1627,7 +1638,7 @@ public class Plot {
     /**
      * Moves the settings for a plot.
      *
-     * @param plot     the plot to move
+     * @param plot the plot to move
      * @param whenDone
      * @return
      */

@@ -635,7 +635,7 @@ public abstract class PlotArea {
         this.meta.put(key, value);
     }
 
-    @Nullable public <T> T getMeta(@Nullable final String key, @Nullable final T def) {
+    @NotNull public <T> T getMeta(@Nullable final String key, @NotNull final T def) {
         final Object v = getMeta(key);
         return v == null ? def : (T) v;
     }

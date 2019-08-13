@@ -6,6 +6,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.StringPlotBlock;
 import com.github.intellectualsites.plotsquared.plot.util.LegacyMappings;
 import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
+import io.papermc.lib.PaperLib;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -829,7 +830,7 @@ public final class BukkitLegacyMappings extends LegacyMappings {
         LegacyBlock(final int numericalId, final int dataValue, @NonNull final String legacyName,
             @NonNull final String newName, @NonNull final String new14Name) {
             this(numericalId, dataValue, legacyName,
-                PlotSquared.get().IMP.getServerVersion()[1] == 13 ? newName : new14Name);
+                PaperLib.getMinecraftVersion() == 13 ? newName : new14Name);
         }
 
         LegacyBlock(final int numericalId, @NonNull final String legacyName,

@@ -253,6 +253,9 @@ public class Auto extends SubCommand {
                         for (int j = start.y; j <= end.y; j++) {
                             Plot plot = plotarea.getPlotAbs(new PlotId(i, j));
                             boolean teleport = i == end.x && j == end.y;
+                            if (plot == null) {
+                                return false;
+                            }
                             plot.claim(player, teleport, null);
                         }
                     }

@@ -11,6 +11,7 @@ import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
+import io.papermc.lib.PaperLib;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -353,7 +354,7 @@ import java.util.Set;
             } else if (world.getBlockAt(x, y, z - 1).getType().isSolid()) {
                 facing = BlockFace.SOUTH;
             }
-            if (PlotSquared.get().IMP.getServerVersion()[1] == 13) {
+            if (PaperLib.getMinecraftVersion() == 13) {
                 block.setType(Material.valueOf("WALL_SIGN"), false);
             } else {
                 block.setType(Material.valueOf("OAK_WALL_SIGN"), false);
