@@ -75,6 +75,18 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
         }
     }
 
+    @CommandDeclaration(command = "time", permission = "plots.toggle.time",
+            description = "Toggle plot time settings")
+    public void time(Command command, PlotPlayer player, String[] args,
+        RunnableVal3<Command, Runnable, Runnable> confirm,
+        RunnableVal2<Command, CommandResult> whenDone) {
+        if (toggle(player, "disabletime")) {
+            MainUtil.sendMessage(player, Captions.TOGGLE_ENABLED, command.toString());
+        } else {
+            MainUtil.sendMessage(player, Captions.TOGGLE_DISABLED, command.toString());
+        }
+    }
+
     public boolean toggle(PlotPlayer player, String key) {
         if (player.getAttribute(key)) {
             player.removeAttribute(key);
