@@ -5,12 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.object.Expression;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotId;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
+import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.ByteArrayUtilities;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
@@ -123,7 +118,8 @@ public class Auto extends SubCommand {
                         } else if (checkAllowedPlots(player, area, allowedPlots, 1, 1)) {
                             plot.claim(player, true, schematic, false);
                             if (area.AUTO_MERGE) {
-                                plot.autoMerge(-1, Integer.MAX_VALUE, player.getUUID(), true);
+                                plot.autoMerge(Direction.ALL, Integer.MAX_VALUE, player.getUUID(),
+                                    true);
                             }
                         } else {
                             DBFunc.delete(plot);

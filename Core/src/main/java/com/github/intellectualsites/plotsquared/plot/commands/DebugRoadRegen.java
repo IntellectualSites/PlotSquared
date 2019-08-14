@@ -3,7 +3,6 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotManager;
-import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -43,8 +42,8 @@ public class DebugRoadRegen extends SubCommand {
     }
 
     public boolean regenPlot(PlotPlayer player) {
-        Location loc = player.getLocation();
-        PlotArea area = loc.getPlotArea();
+        Location location = player.getLocation();
+        PlotArea area = location.getPlotArea();
         if (area == null) {
             return sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
         }
@@ -82,8 +81,8 @@ public class DebugRoadRegen extends SubCommand {
             return false;
         }
 
-        Location loc = player.getLocation();
-        PlotArea area = loc.getPlotArea();
+        Location location = player.getLocation();
+        PlotArea area = location.getPlotArea();
         if (area == null) {
             return sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
         }

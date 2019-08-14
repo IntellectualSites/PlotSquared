@@ -72,8 +72,8 @@ public class BukkitPlayer extends PlotPlayer {
         return this.player.getLastPlayed();
     }
 
-    @Override public boolean canTeleport(@NotNull final Location loc) {
-        final org.bukkit.Location to = BukkitUtil.getLocation(loc);
+    @Override public boolean canTeleport(@NotNull final Location location) {
+        final org.bukkit.Location to = BukkitUtil.getLocation(location);
         final org.bukkit.Location from = player.getLocation();
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to);
         callEvent(event);
