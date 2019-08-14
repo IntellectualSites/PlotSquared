@@ -16,6 +16,15 @@ public enum Direction {
         this.name = name;
     }
 
+    public static Direction getFromIndex(int index) {
+        for (Direction value : values()) {
+            if (value.getIndex() == index) {
+                return value;
+            }
+        }
+        return NORTH;
+    }
+
     public int getIndex() {
         return index;
     }

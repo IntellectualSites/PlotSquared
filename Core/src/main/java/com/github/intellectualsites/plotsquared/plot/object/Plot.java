@@ -1545,7 +1545,7 @@ public class Plot {
             DBFunc.createPlotAndSettings(this, () -> {
                 PlotArea plotworld = Plot.this.area;
                 if (notify && plotworld.AUTO_MERGE) {
-                    Plot.this.autoMerge(-1, Integer.MAX_VALUE, uuid, true);
+                    Plot.this.autoMerge(Direction.ALL, Integer.MAX_VALUE, uuid, true);
                 }
             });
             return true;
@@ -2022,56 +2022,12 @@ public class Plot {
      * Sets the raw merge data<br>
      * - Updates DB<br>
      * - Does not modify terrain<br>
-     * ----------<br>
-     * 0 = north<br>
-     * 1 = east<br>
-     * 2 = south<br>
-     * 3 = west<br>
-     * ----------<br>
-     *
-     * @param direction
-     * @param value
-     */
-    public void setMerged(int direction, boolean value) {
-        if (this.getSettings().setMerged(direction, value)) {
-            if (value) {
-                Plot other = this.getRelative(direction).getBasePlot(false);
-                if (!other.equals(this.getBasePlot(false))) {
-                    Plot base = other.id.y < this.id.y
-                        || other.id.y == this.id.y && other.id.x < this.id.x ? other : this.origin;
-                    this.origin.origin = base;
-                    other.origin = base;
-                    this.origin = base;
-                    connected_cache = null;
-                }
-            } else {
-                if (this.origin != null) {
-                    this.origin.origin = null;
-                    this.origin = null;
-                }
-                connected_cache = null;
-            }
-            DBFunc.setMerged(this, this.getSettings().getMerged());
-            regions_cache = null;
-        }
-    }
-
-    /**
-     * Sets the raw merge data<br>
-     * - Updates DB<br>
-     * - Does not modify terrain<br>
-     * ----------<br>
-     * 0 = north<br>
-     * 1 = east<br>
-     * 2 = south<br>
-     * 3 = west<br>
-     * ----------<br>
      *
      * @param direction
      * @param value
      */
     public void setMerged(Direction direction, boolean value) {
-        if (this.getSettings().setMerged(direction.getIndex(), value)) {
+        if (this.getSettings().setMerged(direction, value)) {
             if (value) {
                 Plot other = this.getRelative(direction).getBasePlot(false);
                 if (!other.equals(this.getBasePlot(false))) {
@@ -2249,24 +2205,21 @@ public class Plot {
     }
 
     /**
-     * Auto merge a plot in a specific direction<br>
+     * Auto merge a plot in a specific direction.
      *
-     * @param dir         The direction to merge<br>
-     *                    -1 = All directions<br>
-     *                    0 = north<br>
-     *                    1 = east<br>
-     *                    2 = south<br>
-     *                    3 = west<br>
-     * @param max         The max number of merges to do
-     * @param uuid        The UUID it is allowed to merge with
+     * @param dir the direction to merge
+     * @param max the max number of merges to do
+     * @param uuid the UUID it is allowed to merge with
      * @param removeRoads whether to remove roads
      * @return true if a merge takes place
      */
-    public boolean autoMerge(int dir, int max, UUID uuid, boolean removeRoads) {
+    public boolean autoMerge(Direction dir, int max, UUID uuid, boolean removeRoads) {
+        //Ignore merging if there is no owner for the plot
         if (this.owner == null) {
             return false;
         }
-        if (!EventUtil.manager.callMerge(this, dir, max)) {
+        //Call the merge event
+        if (!EventUtil.manager.callMerge(this, dir.getIndex(), max)) {
             return false;
         }
         Set<Plot> connected = this.getConnectedPlots();
@@ -2282,7 +2235,7 @@ public class Plot {
             }
             visited.add(current);
             Set<Plot> plots;
-            if ((dir == -1 || dir == 0) && !getMerged(Direction.NORTH)) {
+            if ((dir == Direction.ALL || dir == Direction.NORTH) && !getMerged(Direction.NORTH)) {
                 Plot other = current.getRelative(Direction.NORTH);
                 if (other != null && other.isOwner(uuid) && (
                     other.getBasePlot(false).equals(current.getBasePlot(false))
@@ -2301,7 +2254,8 @@ public class Plot {
                     }
                 }
             }
-            if (max >= 0 && (dir == -1 || dir == 1) && !current.getMerged(Direction.EAST)) {
+            if (max >= 0 && (dir == Direction.ALL || dir == Direction.EAST) && !current
+                .getMerged(Direction.EAST)) {
                 Plot other = current.getRelative(Direction.EAST);
                 if (other != null && other.isOwner(uuid) && (
                     other.getBasePlot(false).equals(current.getBasePlot(false))
@@ -2320,7 +2274,8 @@ public class Plot {
                     }
                 }
             }
-            if (max >= 0 && (dir == -1 || dir == 2) && !getMerged(Direction.SOUTH)) {
+            if (max >= 0 && (dir == Direction.ALL || dir == Direction.SOUTH) && !getMerged(
+                Direction.SOUTH)) {
                 Plot other = current.getRelative(Direction.SOUTH);
                 if (other != null && other.isOwner(uuid) && (
                     other.getBasePlot(false).equals(current.getBasePlot(false))
@@ -2339,7 +2294,8 @@ public class Plot {
                     }
                 }
             }
-            if (max >= 0 && (dir == -1 || dir == 3) && !getMerged(Direction.WEST)) {
+            if (max >= 0 && (dir == Direction.ALL || dir == Direction.WEST) && !getMerged(
+                Direction.WEST)) {
                 Plot other = current.getRelative(Direction.WEST);
                 if (other != null && other.isOwner(uuid) && (
                     other.getBasePlot(false).equals(current.getBasePlot(false))
@@ -2502,10 +2458,10 @@ public class Plot {
                 // invalid merge
                 PlotSquared.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(this.owner)) {
-                    tmp.getSettings().setMerged(2, true);
+                    tmp.getSettings().setMerged(Direction.SOUTH, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
                 } else {
-                    this.getSettings().setMerged(0, false);
+                    this.getSettings().setMerged(Direction.NORTH, false);
                     DBFunc.setMerged(this, this.getSettings().getMerged());
                 }
             }
@@ -2518,10 +2474,10 @@ public class Plot {
                 // invalid merge
                 PlotSquared.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(this.owner)) {
-                    tmp.getSettings().setMerged(3, true);
+                    tmp.getSettings().setMerged(Direction.WEST, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
                 } else {
-                    this.getSettings().setMerged(1, false);
+                    this.getSettings().setMerged(Direction.EAST, false);
                     DBFunc.setMerged(this, this.getSettings().getMerged());
                 }
             }
@@ -2534,10 +2490,10 @@ public class Plot {
                 // invalid merge
                 PlotSquared.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(this.owner)) {
-                    tmp.getSettings().setMerged(0, true);
+                    tmp.getSettings().setMerged(Direction.NORTH, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
                 } else {
-                    this.getSettings().setMerged(2, false);
+                    this.getSettings().setMerged(Direction.SOUTH, false);
                     DBFunc.setMerged(this, this.getSettings().getMerged());
                 }
             }
@@ -2550,10 +2506,10 @@ public class Plot {
                 // invalid merge
                 PlotSquared.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(this.owner)) {
-                    tmp.getSettings().setMerged(1, true);
+                    tmp.getSettings().setMerged(Direction.EAST, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
                 } else {
-                    this.getSettings().setMerged(3, false);
+                    this.getSettings().setMerged(Direction.WEST, false);
                     DBFunc.setMerged(this, this.getSettings().getMerged());
                 }
             }
@@ -2951,6 +2907,7 @@ public class Plot {
                 }
             }
         }
+
     }
 
     /**

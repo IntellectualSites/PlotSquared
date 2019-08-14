@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import com.github.intellectualsites.plotsquared.plot.object.Direction;
 import com.github.intellectualsites.plotsquared.plot.object.Expression;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -16,6 +17,8 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 
 import java.util.UUID;
+
+import static com.github.intellectualsites.plotsquared.plot.object.Direction.getFromIndex;
 
 @CommandDeclaration(command = "merge", aliases = "m",
     description = "Merge the plot you are standing on, with another plot",
@@ -82,20 +85,20 @@ public class Merge extends SubCommand {
             MainUtil.sendMessage(player, Captions.NO_PERMISSION, "plots.merge." + (size + 1));
             return false;
         }
-        int direction = -1;
+        Direction direction = Direction.ALL;
         if (args.length == 0) {
             switch (direction(player.getLocationFull().getYaw())) {
                 case "NORTH":
-                    direction = 0;
+                    direction = Direction.NORTH;
                     break;
                 case "EAST":
-                    direction = 1;
+                    direction = Direction.EAST;
                     break;
                 case "SOUTH":
-                    direction = 2;
+                    direction = Direction.SOUTH;
                     break;
                 case "WEST":
-                    direction = 3;
+                    direction = Direction.WEST;
                     break;
             }
         } else {
@@ -110,7 +113,7 @@ public class Merge extends SubCommand {
                         Captions.PERMISSION_MERGE_KEEP_ROAD.getTranslated());
                     return true;
                 }
-                if (plot.autoMerge(-1, maxSize, uuid, terrain)) {
+                if (plot.autoMerge(Direction.ALL, maxSize, uuid, terrain)) {
                     if (EconHandler.manager != null && plotArea.USE_ECONOMY && price > 0d) {
                         EconHandler.manager.withdrawMoney(player, price);
                         sendMessage(player, Captions.REMOVED_BALANCE, String.valueOf(price));
@@ -124,12 +127,12 @@ public class Merge extends SubCommand {
             }
             for (int i = 0; i < values.length; i++) {
                 if (args[0].equalsIgnoreCase(values[i]) || args[0].equalsIgnoreCase(aliases[i])) {
-                    direction = i;
+                    direction = getFromIndex(i);
                     break;
                 }
             }
         }
-        if (direction == -1) {
+        if (direction == Direction.ALL) {
             MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
                 "/plot merge <" + StringMan.join(values, "|") + "> [removeroads]");
             MainUtil.sendMessage(player,
@@ -156,7 +159,8 @@ public class Merge extends SubCommand {
             return true;
         }
         Plot adjacent = plot.getRelative(direction);
-        if (adjacent == null || !adjacent.hasOwner() || adjacent.getMerged((direction + 2) % 4)
+        if (adjacent == null || !adjacent.hasOwner() || adjacent
+            .getMerged((direction.getIndex() + 2) % 4)
             || adjacent.isOwner(uuid)) {
             MainUtil.sendMessage(player, Captions.NO_AVAILABLE_AUTOMERGE);
             return false;
@@ -173,7 +177,7 @@ public class Merge extends SubCommand {
                 continue;
             }
             isOnline = true;
-            final int dir = direction;
+            final Direction dir = direction;
             Runnable run = () -> {
                 MainUtil.sendMessage(accepter, Captions.MERGE_ACCEPTED);
                 plot.autoMerge(dir, maxSize - size, owner, terrain);
