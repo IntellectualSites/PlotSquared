@@ -14,6 +14,7 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.google.common.base.Preconditions;
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
@@ -335,14 +336,14 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      *
      * @return UUID
      */
-    @Override @Nonnull public abstract UUID getUUID();
+    @Override @NotNull public abstract UUID getUUID();
 
-    public boolean canTeleport(@Nonnull final Location loc) {
-        Preconditions.checkNotNull(loc, "Specified location cannot be null");
+    public boolean canTeleport(@NotNull final Location location) {
+        Preconditions.checkNotNull(location, "Specified location cannot be null");
         final Location current = getLocationFull();
-        teleport(loc);
+        teleport(location);
         boolean result = true;
-        if (!getLocation().equals(loc)) {
+        if (!getLocation().equals(location)) {
             result = false;
         }
         teleport(current);
@@ -493,10 +494,10 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
             ByteBuffer buffer = ByteBuffer.allocate(13);
             buffer.putShort((short) x);
             buffer.putShort((short) z);
-            Location loc = getLocation();
-            buffer.putInt(loc.getX());
-            buffer.put((byte) loc.getY());
-            buffer.putInt(loc.getZ());
+            Location location = getLocation();
+            buffer.putInt(location.getX());
+            buffer.put((byte) location.getY());
+            buffer.putInt(location.getZ());
             setPersistentMeta("quitLoc", buffer.array());
         } else if (hasPersistentMeta("quitLoc")) {
             removePersistentMeta("quitLoc");
@@ -596,11 +597,11 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                             return;
                         }
 
-                        final Location loc = new Location(plot.getWorldName(), x, y, z);
+                        final Location location = new Location(plot.getWorldName(), x, y, z);
                         if (plot.isLoaded()) {
                             TaskManager.runTask(() -> {
                                 if (getMeta("teleportOnLogin", true)) {
-                                    teleport(loc);
+                                    teleport(location);
                                     sendMessage(
                                         Captions.TELEPORTED_TO_PLOT.f() + " (quitLoc) (" + plotX
                                             + "," + plotZ + ")");
@@ -612,7 +613,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                                     TaskManager.runTask(() -> {
                                         if (getMeta("teleportOnLogin", true)) {
                                             if (plot.isLoaded()) {
-                                                teleport(loc);
+                                                teleport(location);
                                                 sendMessage(Captions.TELEPORTED_TO_PLOT.f()
                                                     + " (quitLoc-unloaded) (" + plotX + "," + plotZ
                                                     + ")");

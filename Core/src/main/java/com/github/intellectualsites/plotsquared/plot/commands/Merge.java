@@ -52,8 +52,8 @@ public class Merge extends SubCommand {
     }
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
-        Location loc = player.getLocationFull();
-        final Plot plot = loc.getPlotAbs();
+        Location location = player.getLocationFull();
+        final Plot plot = location.getPlotAbs();
         if (plot == null) {
             return !sendMessage(player, Captions.NOT_IN_PLOT);
         }
@@ -135,8 +135,8 @@ public class Merge extends SubCommand {
         if (direction == Direction.ALL) {
             MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
                 "/plot merge <" + StringMan.join(values, "|") + "> [removeroads]");
-            MainUtil.sendMessage(player,
-                Captions.DIRECTION.getTranslated().replaceAll("%dir%", direction(loc.getYaw())));
+            MainUtil.sendMessage(player, Captions.DIRECTION.getTranslated()
+                .replaceAll("%dir%", direction(location.getYaw())));
             return false;
         }
         final boolean terrain;

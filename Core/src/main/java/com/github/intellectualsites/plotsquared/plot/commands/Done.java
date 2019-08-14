@@ -19,8 +19,8 @@ import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
     requiredType = RequiredType.NONE) public class Done extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
-        Location loc = player.getLocation();
-        final Plot plot = loc.getPlotAbs();
+        Location location = player.getLocation();
+        final Plot plot = location.getPlotAbs();
         if ((plot == null) || !plot.hasOwner()) {
             return !sendMessage(player, Captions.NOT_IN_PLOT);
         }

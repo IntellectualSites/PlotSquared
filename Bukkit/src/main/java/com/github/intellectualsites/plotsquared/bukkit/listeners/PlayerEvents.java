@@ -85,10 +85,10 @@ import java.util.regex.Pattern;
             int distance = Bukkit.getViewDistance() * 16;
             for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
                 PlotPlayer player = entry.getValue();
-                Location loc = player.getLocation();
-                if (loc.getWorld().equals(world)) {
-                    if (16 * Math.abs(loc.getX() - x) / 16 > distance
-                        || 16 * Math.abs(loc.getZ() - z) / 16 > distance) {
+                Location location = player.getLocation();
+                if (location.getWorld().equals(world)) {
+                    if (16 * Math.abs(location.getX() - x) / 16 > distance
+                        || 16 * Math.abs(location.getZ() - z) / 16 > distance) {
                         continue;
                     }
                     ((BukkitPlayer) player).player.sendBlockChange(bloc, data);
@@ -314,12 +314,12 @@ import java.util.regex.Pattern;
             case POWERED_RAIL:
                 return;
             default:*/
-        Location loc = BukkitUtil.getLocation(block.getLocation());
-        PlotArea area = loc.getPlotArea();
+        Location location = BukkitUtil.getLocation(block.getLocation());
+        PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
         }
-        Plot plot = loc.getOwnedPlot();
+        Plot plot = location.getOwnedPlot();
         if (plot == null) {
             return;
         }
@@ -369,12 +369,11 @@ import java.util.regex.Pattern;
         switch (event.getChangedType()) {
             case COMPARATOR: {
                 Block block = event.getBlock();
-                Location loc = BukkitUtil.getLocation(block.getLocation());
-                PlotArea area = loc.getPlotArea();
-                if (area == null) {
+                Location location = BukkitUtil.getLocation(block.getLocation());
+                if (location.isPlotArea()) {
                     return;
                 }
-                Plot plot = area.getOwnedPlotAbs(loc);
+                Plot plot = location.getOwnedPlotAbs();
                 if (plot == null) {
                     return;
                 }
@@ -391,12 +390,12 @@ import java.util.regex.Pattern;
             case TURTLE_HELMET:
             case TURTLE_SPAWN_EGG: {
                 Block block = event.getBlock();
-                Location loc = BukkitUtil.getLocation(block.getLocation());
-                PlotArea area = loc.getPlotArea();
+                Location location = BukkitUtil.getLocation(block.getLocation());
+                PlotArea area = location.getPlotArea();
                 if (area == null) {
                     return;
                 }
-                Plot plot = area.getOwnedPlotAbs(loc);
+                Plot plot = area.getOwnedPlotAbs(location);
                 if (plot == null) {
                     return;
                 }
@@ -413,30 +412,30 @@ import java.util.regex.Pattern;
                         case STICKY_PISTON:
                             org.bukkit.block.data.Directional piston =
                                 (org.bukkit.block.data.Directional) block.getBlockData();
-                            Location loc = BukkitUtil.getLocation(block.getLocation());
-                            PlotArea area = loc.getPlotArea();
+                            Location location = BukkitUtil.getLocation(block.getLocation());
+                            PlotArea area = location.getPlotArea();
                             if (area == null) {
                                 return;
                             }
-                            Plot plot = area.getOwnedPlotAbs(loc);
+                            Plot plot = area.getOwnedPlotAbs(location);
                             if (plot == null) {
                                 return;
                             }
                             switch (piston.getFacing()) {
                                 case EAST:
-                                    loc.setX(loc.getX() + 1);
+                                    location.setX(location.getX() + 1);
                                     break;
                                 case SOUTH:
-                                    loc.setX(loc.getX() - 1);
+                                    location.setX(location.getX() - 1);
                                     break;
                                 case WEST:
-                                    loc.setZ(loc.getZ() + 1);
+                                    location.setZ(location.getZ() + 1);
                                     break;
                                 case NORTH:
-                                    loc.setZ(loc.getZ() - 1);
+                                    location.setZ(location.getZ() - 1);
                                     break;
                             }
-                            Plot newPlot = area.getOwnedPlotAbs(loc);
+                            Plot newPlot = area.getOwnedPlotAbs(location);
                             if (!plot.equals(newPlot)) {
                                 event.setCancelled(true);
                                 return;
@@ -470,15 +469,15 @@ import java.util.regex.Pattern;
 
     @EventHandler public boolean onProjectileHit(ProjectileHitEvent event) {
         Projectile entity = event.getEntity();
-        Location loc = BukkitUtil.getLocation(entity);
-        if (!PlotSquared.get().hasPlotArea(loc.getWorld())) {
+        Location location = BukkitUtil.getLocation(entity);
+        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
             return true;
         }
-        PlotArea area = loc.getPlotArea();
+        PlotArea area = location.getPlotArea();
         if (area == null) {
             return true;
         }
-        Plot plot = area.getPlot(loc);
+        Plot plot = area.getPlot(location);
         ProjectileSource shooter = entity.getShooter();
         if (shooter instanceof Player) {
             PlotPlayer pp = BukkitUtil.getPlayer((Player) shooter);
@@ -523,22 +522,22 @@ import java.util.regex.Pattern;
             return;
         }
         Player player = event.getPlayer();
-        PlotPlayer pp = BukkitUtil.getPlayer(player);
-        Location loc = pp.getLocation();
-        PlotArea area = loc.getPlotArea();
+        PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
+        Location location = plotPlayer.getLocation();
+        PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
         }
         String[] parts = msg.split(" ");
-        Plot plot = pp.getCurrentPlot();
+        Plot plot = plotPlayer.getCurrentPlot();
         // Check WorldEdit
         switch (parts[0].toLowerCase()) {
             case "up":
             case "/up":
             case "worldedit:up":
             case "worldedit:/up":
-                if (plot == null || (!plot.isAdded(pp.getUUID()) && !Permissions
-                    .hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER, true))) {
+                if (plot == null || (!plot.isAdded(plotPlayer.getUUID()) && !Permissions
+                    .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER, true))) {
                     event.setCancelled(true);
                     return;
                 }
@@ -548,7 +547,7 @@ import java.util.regex.Pattern;
         }
         Optional<List<String>> flag = plot.getFlag(Flags.BLOCKED_CMDS);
         if (flag.isPresent() && !Permissions
-            .hasPermission(pp, Captions.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS)) {
+            .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS)) {
             List<String> blocked_cmds = flag.get();
             String part = parts[0];
             if (parts[0].contains(":")) {
@@ -592,13 +591,13 @@ import java.util.regex.Pattern;
                 }
                 if (pattern.matcher(msg).matches()) {
                     String perm;
-                    if (plot.isAdded(pp.getUUID())) {
+                    if (plot.isAdded(plotPlayer.getUUID())) {
                         perm = "plots.admin.command.blocked-cmds.shared";
                     } else {
                         perm = "plots.admin.command.blocked-cmds.other";
                     }
-                    if (!Permissions.hasPermission(pp, perm)) {
-                        MainUtil.sendMessage(pp, Captions.COMMAND_BLOCKED);
+                    if (!Permissions.hasPermission(plotPlayer, perm)) {
+                        MainUtil.sendMessage(plotPlayer, Captions.COMMAND_BLOCKED);
                         event.setCancelled(true);
                     }
                     return;
@@ -619,10 +618,10 @@ import java.util.regex.Pattern;
         UUID uuid = pp.getUUID();
         UUIDHandler.add(sw, uuid);
 
-        Location loc = pp.getLocation();
-        PlotArea area = loc.getPlotArea();
+        Location location = pp.getLocation();
+        PlotArea area = location.getPlotArea();
         if (area != null) {
-            Plot plot = area.getPlot(loc);
+            Plot plot = area.getPlot(location);
             if (plot != null) {
                 plotEntry(pp, plot);
             }
@@ -688,27 +687,27 @@ import java.util.regex.Pattern;
             org.bukkit.Location to = event.getTo();
             if (to != null) {
                 Player player = event.getPlayer();
-                PlotPlayer pp = PlotPlayer.wrap(player);
-                Location loc = BukkitUtil.getLocation(to);
-                PlotArea area = loc.getPlotArea();
+                PlotPlayer plotPlayer = PlotPlayer.wrap(player);
+                Location location = BukkitUtil.getLocation(to);
+                PlotArea area = location.getPlotArea();
                 if (area == null) {
                     return;
                 }
-                Plot plot = area.getPlot(loc);
+                Plot plot = area.getPlot(location);
                 if (plot != null) {
-                    final boolean result = Flags.DENY_TELEPORT.allowsTeleport(pp, plot);
+                    final boolean result = Flags.DENY_TELEPORT.allowsTeleport(plotPlayer, plot);
                     if (!result) {
-                        MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
+                        MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
                             Captions.PERMISSION_ADMIN_ENTRY_DENIED);
                         event.setCancelled(true);
                         if (lastLoc != null) {
-                            pp.setMeta(PlotPlayer.META_LOCATION, lastLoc);
+                            plotPlayer.setMeta(PlotPlayer.META_LOCATION, lastLoc);
                         }
                         if (lastPlot != null) {
-                            pp.setMeta(PlotPlayer.META_LAST_PLOT, lastPlot);
+                            plotPlayer.setMeta(PlotPlayer.META_LAST_PLOT, lastPlot);
                         }
                     } else {
-                        plotEntry(pp, plot);
+                        plotEntry(plotPlayer, plot);
                     }
                 }
             }
@@ -809,14 +808,14 @@ import java.util.regex.Pattern;
             // Cancel teleport
             TaskManager.TELEPORT_QUEUE.remove(pp.getName());
             // Set last location
-            Location loc = BukkitUtil.getLocation(to);
-            pp.setMeta(PlotPlayer.META_LOCATION, loc);
-            PlotArea area = loc.getPlotArea();
+            Location location = BukkitUtil.getLocation(to);
+            pp.setMeta(PlotPlayer.META_LOCATION, location);
+            PlotArea area = location.getPlotArea();
             if (area == null) {
                 pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
                 return;
             }
-            Plot now = area.getPlot(loc);
+            Plot now = area.getPlot(location);
             Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
             if (now == null) {
                 if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !pp
@@ -869,14 +868,14 @@ import java.util.regex.Pattern;
             // Cancel teleport
             TaskManager.TELEPORT_QUEUE.remove(pp.getName());
             // Set last location
-            Location loc = BukkitUtil.getLocation(to);
-            pp.setMeta(PlotPlayer.META_LOCATION, loc);
-            PlotArea area = loc.getPlotArea();
+            Location location = BukkitUtil.getLocation(to);
+            pp.setMeta(PlotPlayer.META_LOCATION, location);
+            PlotArea area = location.getPlotArea();
             if (area == null) {
                 pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
                 return;
             }
-            Plot now = area.getPlot(loc);
+            Plot now = area.getPlot(location);
             Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
             if (now == null) {
                 if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !pp
@@ -1123,10 +1122,10 @@ import java.util.regex.Pattern;
         if (Settings.Enabled_Components.PERMISSION_CACHE) {
             pp.deleteMeta("perm");
         }
-        Location loc = pp.getLocation();
-        PlotArea area = loc.getPlotArea();
-        if (loc.isPlotArea()) {
-            plot = loc.getPlot();
+        Location location = pp.getLocation();
+        PlotArea area = location.getPlotArea();
+        if (location.isPlotArea()) {
+            plot = location.getPlot();
             if (plot != null) {
                 plotEntry(pp, plot);
             }
@@ -2269,17 +2268,17 @@ import java.util.regex.Pattern;
         Entity ignitingEntity = event.getIgnitingEntity();
         Block block = event.getBlock();
         BlockIgniteEvent.IgniteCause igniteCause = event.getCause();
-        Location loc;
+        Location location1;
         if (block != null) {
-            loc = BukkitUtil.getLocation(block.getLocation());
+            location1 = BukkitUtil.getLocation(block.getLocation());
         } else if (ignitingEntity != null) {
-            loc = BukkitUtil.getLocation(ignitingEntity);
+            location1 = BukkitUtil.getLocation(ignitingEntity);
         } else if (player != null) {
-            loc = BukkitUtil.getLocation(player);
+            location1 = BukkitUtil.getLocation(player);
         } else {
             return;
         }
-        PlotArea area = loc.getPlotArea();
+        PlotArea area = location1.getPlotArea();
         if (area == null) {
             return;
         }
@@ -2288,7 +2287,7 @@ import java.util.regex.Pattern;
             return;
         }
 
-        Plot plot = area.getOwnedPlotAbs(loc);
+        Plot plot = area.getOwnedPlotAbs(location1);
         if (player != null) {
             PlotPlayer pp = BukkitUtil.getPlayer(player);
             if (plot == null) {

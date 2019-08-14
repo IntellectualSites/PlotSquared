@@ -369,17 +369,17 @@ import java.util.concurrent.CompletableFuture;
                     Command cmd = MainCommand.getInstance().getCommand(args[3]);
                     String[] params = Arrays.copyOfRange(args, 4, args.length);
                     if ("true".equals(args[1])) {
-                        Location loc = player.getMeta(PlotPlayer.META_LOCATION);
+                        Location location = player.getMeta(PlotPlayer.META_LOCATION);
                         Plot plot = player.getMeta(PlotPlayer.META_LAST_PLOT);
                         for (Plot current : PlotSquared.get().getBasePlots()) {
                             player.setMeta(PlotPlayer.META_LOCATION, current.getBottomAbs());
                             player.setMeta(PlotPlayer.META_LAST_PLOT, current);
                             cmd.execute(player, params, null, null);
                         }
-                        if (loc == null) {
+                        if (location == null) {
                             player.deleteMeta(PlotPlayer.META_LOCATION);
                         } else {
-                            player.setMeta(PlotPlayer.META_LOCATION, loc);
+                            player.setMeta(PlotPlayer.META_LOCATION, location);
                         }
                         if (plot == null) {
                             player.deleteMeta(PlotPlayer.META_LAST_PLOT);

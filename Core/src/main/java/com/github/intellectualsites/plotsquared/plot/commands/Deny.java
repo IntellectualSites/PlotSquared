@@ -97,8 +97,8 @@ import java.util.UUID;
         if (player.getGameMode() == PlotGameMode.SPECTATOR) {
             player.stopSpectating();
         }
-        Location loc = player.getLocation();
-        Location spawn = WorldUtil.IMP.getSpawn(loc.getWorld());
+        Location location = player.getLocation();
+        Location spawn = WorldUtil.IMP.getSpawn(location.getWorld());
         MainUtil.sendMessage(player, Captions.YOU_GOT_DENIED);
         if (plot.equals(spawn.getPlot())) {
             Location newSpawn =

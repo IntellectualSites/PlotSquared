@@ -1212,18 +1212,18 @@ public class Plot {
         Location[] corners = getCorners();
         Location top = corners[0];
         Location bot = corners[1];
-        Location loc = new Location(this.getWorldName(), MathMan.average(bot.getX(), top.getX()),
+        Location location =
+            new Location(this.getWorldName(), MathMan.average(bot.getX(), top.getX()),
             MathMan.average(bot.getY(), top.getY()), MathMan.average(bot.getZ(), top.getZ()));
         if (!isLoaded()) {
-            return loc;
+            return location;
         }
-        int y =
-            isLoaded() ? WorldUtil.IMP.getHighestBlock(getWorldName(), loc.getX(), loc.getZ()) : 62;
+        int y = WorldUtil.IMP.getHighestBlock(getWorldName(), location.getX(), location.getZ());
         if (area.ALLOW_SIGNS) {
             y = Math.max(y, getManager().getSignLoc(this).getY());
         }
-        loc.setY(1 + y);
-        return loc;
+        location.setY(1 + y);
+        return location;
     }
 
     public Location getSide() {
@@ -1248,18 +1248,19 @@ public class Plot {
         if (home == null || home.x == 0 && home.z == 0) {
             return this.getDefaultHome(true);
         } else {
-            Location bot = this.getBottomAbs();
-            Location loc = new Location(bot.getWorld(), bot.getX() + home.x, bot.getY() + home.y,
-                bot.getZ() + home.z, home.yaw, home.pitch);
+            Location bottom = this.getBottomAbs();
+            Location location =
+                new Location(bottom.getWorld(), bottom.getX() + home.x, bottom.getY() + home.y,
+                    bottom.getZ() + home.z, home.yaw, home.pitch);
             if (!isLoaded()) {
-                return loc;
+                return location;
             }
-            if (!WorldUtil.IMP.getBlock(loc).isAir()) {
-                loc.setY(Math.max(
-                    1 + WorldUtil.IMP.getHighestBlock(this.getWorldName(), loc.getX(), loc.getZ()),
-                    bot.getY()));
+            if (!WorldUtil.IMP.getBlock(location).isAir()) {
+                location.setY(Math.max(1 + WorldUtil.IMP
+                        .getHighestBlock(this.getWorldName(), location.getX(), location.getZ()),
+                    bottom.getY()));
             }
-            return loc;
+            return location;
         }
     }
 
@@ -1426,9 +1427,9 @@ public class Plot {
         if (!this.area.ALLOW_SIGNS) {
             return;
         }
-        Location loc = manager.getSignLoc(this);
+        Location location = manager.getSignLoc(this);
         LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(getWorldName(), false);
-        queue.setBlock(loc.getX(), loc.getY(), loc.getZ(), PlotBlock.get("air"));
+        queue.setBlock(location.getX(), location.getY(), location.getZ(), PlotBlock.get("air"));
         queue.flush();
     }
 
@@ -1568,8 +1569,8 @@ public class Plot {
      * @return the name of the biome
      */
     public String getBiome() {
-        Location loc = this.getCenter();
-        return WorldUtil.IMP.getBiome(loc.getWorld(), loc.getX(), loc.getZ());
+        Location location = this.getCenter();
+        return WorldUtil.IMP.getBiome(location.getWorld(), location.getX(), location.getZ());
     }
 
     //TODO Better documentation needed.
@@ -1589,9 +1590,9 @@ public class Plot {
      * Returns the bottom location for the plot.
      */
     public Location getBottomAbs() {
-        Location loc = getManager().getPlotBottomLocAbs(this.id);
-        loc.setWorld(getWorldName());
-        return loc;
+        Location location = getManager().getPlotBottomLocAbs(this.id);
+        location.setWorld(getWorldName());
+        return location;
     }
 
     /**
@@ -2131,11 +2132,12 @@ public class Plot {
             return null;
         }
         try {
-            final Location loc = this.getManager().getSignLoc(this);
+            final Location location = this.getManager().getSignLoc(this);
             String[] lines = TaskManager.IMP.sync(new RunnableVal<String[]>() {
                 @Override public void run(String[] value) {
-                    ChunkManager.manager.loadChunk(loc.getWorld(), loc.getChunkLoc(), false);
-                    this.value = WorldUtil.IMP.getSign(loc);
+                    ChunkManager.manager
+                        .loadChunk(location.getWorld(), location.getChunkLoc(), false);
+                    this.value = WorldUtil.IMP.getSign(location);
                 }
             });
             if (lines == null) {

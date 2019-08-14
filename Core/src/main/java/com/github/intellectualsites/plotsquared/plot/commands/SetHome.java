@@ -25,11 +25,10 @@ public class SetHome extends SetCommand {
             }
             case "":
                 Plot base = plot.getBasePlot(false);
-                Location bot = base.getBottomAbs();
-                Location loc = player.getLocationFull();
-                BlockLoc rel =
-                    new BlockLoc(loc.getX() - bot.getX(), loc.getY(), loc.getZ() - bot.getZ(),
-                        loc.getYaw(), loc.getPitch());
+                Location bottom = base.getBottomAbs();
+                Location location = player.getLocationFull();
+                BlockLoc rel = new BlockLoc(location.getX() - bottom.getX(), location.getY(),
+                    location.getZ() - bottom.getZ(), location.getYaw(), location.getPitch());
                 base.setHome(rel);
                 return MainUtil.sendMessage(player, Captions.POSITION_SET);
             default:

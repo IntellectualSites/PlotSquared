@@ -3,8 +3,16 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.object.Expression;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.util.CmdConfirm;
+import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 
 
 @CommandDeclaration(command = "delete", permission = "plots.delete",
@@ -16,8 +24,8 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
     // The syntax also works with any command: /plot <plot> <command>
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
-        Location loc = player.getLocation();
-        final Plot plot = loc.getPlotAbs();
+        Location location = player.getLocation();
+        final Plot plot = location.getPlotAbs();
         if (plot == null) {
             return !sendMessage(player, Captions.NOT_IN_PLOT);
         }
@@ -30,8 +38,9 @@ import com.github.intellectualsites.plotsquared.plot.util.*;
         }
         final PlotArea plotArea = plot.getArea();
         final java.util.Set<Plot> plots = plot.getConnectedPlots();
-        final int currentPlots =
-            Settings.Limit.GLOBAL ? player.getPlotCount() : player.getPlotCount(loc.getWorld());
+        final int currentPlots = Settings.Limit.GLOBAL ?
+            player.getPlotCount() :
+            player.getPlotCount(location.getWorld());
         Runnable run = new Runnable() {
             @Override public void run() {
                 if (plot.getRunning() > 0) {
