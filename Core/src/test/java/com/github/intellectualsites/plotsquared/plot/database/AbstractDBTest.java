@@ -149,7 +149,7 @@ public class AbstractDBTest implements AbstractDB {
     @Override public void setComment(Plot plot, PlotComment comment) {
     }
 
-    @Override public void getComments(@Nonnull Plot plot, String inbox,
+    @Override public void getComments(@NotNull Plot plot, String inbox,
         RunnableVal<List<PlotComment>> whenDone) {
     }
 

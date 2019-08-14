@@ -2170,7 +2170,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         });
     }
 
-    @Override public void getComments(@Nonnull Plot plot, final String inbox,
+    @Override public void getComments(@NotNull Plot plot, final String inbox,
         final RunnableVal<List<PlotComment>> whenDone) {
         addPlotTask(plot, new UniqueStatement("getComments_" + plot) {
             @Override public void set(PreparedStatement statement) throws SQLException {

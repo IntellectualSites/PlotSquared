@@ -10,7 +10,7 @@ import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotArea;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;

@@ -31,8 +31,8 @@ public final class PlotUnlinkEvent extends Event implements Cancellable {
      * @param world World in which the event occurred
      * @param plots Plots that are involved in the event
      */
-    public PlotUnlinkEvent(@Nonnull final World world, @Nonnull final PlotArea area,
-        @Nonnull final List<PlotId> plots) {
+    public PlotUnlinkEvent(@NotNull final World world, @NotNull final PlotArea area,
+        @NotNull final List<PlotId> plots) {
         this.plots = plots;
         this.world = world;
         this.area = area;

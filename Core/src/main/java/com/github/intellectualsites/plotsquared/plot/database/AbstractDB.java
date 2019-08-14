@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.database;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -301,7 +302,7 @@ public interface AbstractDB {
      *
      * @param plot The Plot to get comments from
      */
-    void getComments(@Nonnull Plot plot, String inbox, RunnableVal<List<PlotComment>> whenDone);
+    void getComments(@NotNull Plot plot, String inbox, RunnableVal<List<PlotComment>> whenDone);
 
     void createPlotAndSettings(Plot plot, Runnable whenDone);
 

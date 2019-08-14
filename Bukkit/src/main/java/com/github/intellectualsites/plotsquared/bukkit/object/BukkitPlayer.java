@@ -184,7 +184,7 @@ public class BukkitPlayer extends PlotPlayer {
         }
     }
 
-    @Override public void teleport(@Nonnull final Location location) {
+    @Override public void teleport(@NotNull final Location location) {
         if (Math.abs(location.getX()) >= 30000000 || Math.abs(location.getZ()) >= 30000000) {
             return;
         }
@@ -229,7 +229,7 @@ public class BukkitPlayer extends PlotPlayer {
         }
     }
 
-    @Nonnull @Override public PlotGameMode getGameMode() {
+    @NotNull @Override public PlotGameMode getGameMode() {
         switch (this.player.getGameMode()) {
             case ADVENTURE:
                 return PlotGameMode.ADVENTURE;

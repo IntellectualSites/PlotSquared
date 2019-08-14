@@ -60,7 +60,7 @@ public class SinglePlot extends Plot {
         return super.isLoaded();
     }
 
-    @Nonnull @Override public HashSet<RegionWrapper> getRegions() {
+    @NotNull @Override public HashSet<RegionWrapper> getRegions() {
         return regions;
     }
 

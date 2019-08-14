@@ -34,7 +34,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;

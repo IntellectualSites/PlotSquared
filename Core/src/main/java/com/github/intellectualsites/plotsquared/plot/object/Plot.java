@@ -24,7 +24,7 @@ import com.sk89q.jnbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
@@ -337,7 +337,7 @@ public class Plot {
      * @param uuid the player uuid
      * @return if the provided uuid is the owner of the plot
      */
-    public boolean isOwner(@Nonnull UUID uuid) {
+    public boolean isOwner(@NotNull UUID uuid) {
         if (uuid.equals(this.getOwner())) {
             return true;
         }
@@ -993,7 +993,7 @@ public class Plot {
      *
      * @param name name
      */
-    public void setSign(@Nonnull String name) {
+    public void setSign(@NotNull String name) {
         if (!isLoaded()) {
             return;
         }
@@ -1524,7 +1524,7 @@ public class Plot {
      * @param notify notify
      * @return true if plot was created successfully
      */
-    public boolean create(@Nonnull UUID uuid, final boolean notify) {
+    public boolean create(@NotNull UUID uuid, final boolean notify) {
         this.owner = uuid;
         Plot existing = this.area.getOwnedPlotAbs(this.id);
         if (existing != null) {
@@ -2569,7 +2569,7 @@ public class Plot {
      *
      * @return
      */
-    @Nonnull public HashSet<RegionWrapper> getRegions() {
+    @NotNull public HashSet<RegionWrapper> getRegions() {
         if (regions_cache != null && connected_cache != null && connected_cache.contains(this)) {
             return regions_cache;
         }

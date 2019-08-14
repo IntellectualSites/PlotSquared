@@ -329,7 +329,7 @@ public class MainUtil {
      * @param owner
      * @return The player's name, None, Everyone or Unknown
      */
-    @Nonnull public static String getName(UUID owner) {
+    @NotNull public static String getName(UUID owner) {
         if (owner == null) {
             return Captions.NONE.getTranslated();
         }
@@ -358,7 +358,7 @@ public class MainUtil {
      * @return
      * @see Plot#getCorners()
      */
-    @Nonnull public static Location[] getCorners(String world, Collection<RegionWrapper> regions) {
+    @NotNull public static Location[] getCorners(String world, Collection<RegionWrapper> regions) {
         Location min = null;
         Location max = null;
         for (RegionWrapper region : regions) {
