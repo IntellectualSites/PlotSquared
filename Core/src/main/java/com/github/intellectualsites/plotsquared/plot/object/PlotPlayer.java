@@ -16,7 +16,6 @@ import com.google.common.base.Preconditions;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -307,7 +306,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      *
      * @return The location
      */
-    public Location getLocation() {
+    @NotNull public Location getLocation() {
         Location location = getMeta("location");
         if (location != null) {
             return location;

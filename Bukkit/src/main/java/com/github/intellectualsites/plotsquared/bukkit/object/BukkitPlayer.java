@@ -25,7 +25,6 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.RegisteredListener;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
@@ -56,7 +55,7 @@ public class BukkitPlayer extends PlotPlayer {
         super.populatePersistentMetaMap();
     }
 
-    @Override public Location getLocation() {
+    @NotNull @Override public Location getLocation() {
         final Location location = super.getLocation();
         return location == null ? BukkitUtil.getLocation(this.player) : location;
     }

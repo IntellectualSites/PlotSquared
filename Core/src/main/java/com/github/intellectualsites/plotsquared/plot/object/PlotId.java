@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PlotId {

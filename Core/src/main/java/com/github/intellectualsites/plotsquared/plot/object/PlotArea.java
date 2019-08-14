@@ -22,9 +22,8 @@ import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,12 +36,12 @@ public abstract class PlotArea {
 
     public final String worldname;
     public final String id;
-    public final PlotManager manager;
+    @NotNull public final PlotManager manager;
     public final int worldhash;
     protected final ConcurrentHashMap<PlotId, Plot> plots = new ConcurrentHashMap<>();
     private final PlotId min;
     private final PlotId max;
-    private final IndependentPlotGenerator generator;
+    @NotNull private final IndependentPlotGenerator generator;
     private final BlockBucket[][] blockBucketChunk;
     public int MAX_PLOT_MEMBERS = 128;
     public boolean AUTO_MERGE = false;
@@ -102,7 +101,7 @@ public abstract class PlotArea {
         }
     }
 
-    protected abstract PlotManager createManager();
+    @NotNull protected abstract PlotManager createManager();
 
     public LocalBlockQueue getQueue(final boolean autoQueue) {
         return GlobalBlockQueue.IMP.getNewQueue(worldname, autoQueue);
@@ -117,10 +116,7 @@ public abstract class PlotArea {
         if (blockBucketChunk != null) {
             return blockBucketChunk;
         }
-        if (generator != null) {
-            return generator.generateBlockBucketChunk(this);
-        }
-        return null;
+        return generator.generateBlockBucketChunk(this);
     }
 
     /**
@@ -178,7 +174,7 @@ public abstract class PlotArea {
      *
      * @return the {@link IndependentPlotGenerator}
      */
-    public IndependentPlotGenerator getGenerator() {
+    @NotNull public IndependentPlotGenerator getGenerator() {
         return this.generator;
     }
 
@@ -617,7 +613,7 @@ public abstract class PlotArea {
         return this.clusters != null ? this.clusters.get(id.x, id.y) : null;
     }
 
-    public PlotManager getPlotManager() {
+    @NotNull public PlotManager getPlotManager() {
         return this.manager;
     }
 

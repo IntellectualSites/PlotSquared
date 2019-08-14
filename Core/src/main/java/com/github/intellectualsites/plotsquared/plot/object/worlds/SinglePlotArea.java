@@ -9,9 +9,9 @@ import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,7 +26,7 @@ public class SinglePlotArea extends GridPlotWorld {
         this.DEFAULT_HOME = new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE);
     }
 
-    @Override
+    @NotNull @Override
     protected PlotManager createManager() {
         return new SinglePlotManager(this);
     }
@@ -76,8 +76,8 @@ public class SinglePlotArea extends GridPlotWorld {
                                         new File(dataDest, file.getName()).toPath());
                                 }
                             }
-                        } catch (IOException ignore) {
-                            ignore.printStackTrace();
+                        } catch (IOException exception) {
+                            exception.printStackTrace();
                         }
                     }
                 }

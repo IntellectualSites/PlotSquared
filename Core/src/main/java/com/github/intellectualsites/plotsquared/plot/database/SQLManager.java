@@ -12,8 +12,8 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.google.common.base.Charsets;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

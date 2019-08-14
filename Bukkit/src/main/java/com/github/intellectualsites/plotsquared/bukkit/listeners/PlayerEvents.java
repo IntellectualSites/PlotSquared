@@ -931,10 +931,10 @@ import java.util.regex.Pattern;
         PlotPlayer plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
         Location location = plotPlayer.getLocation();
         PlotArea area = location.getPlotArea();
-        if (location.isPlotArea() || (area.PLOT_CHAT == plotPlayer.getAttribute("chat"))) {
+        if (area == null || (area.PLOT_CHAT == plotPlayer.getAttribute("chat"))) {
             return;
         }
-        Plot plot = location.getPlot();
+        Plot plot = area.getPlot(location);
         if (plot == null) {
             return;
         }
