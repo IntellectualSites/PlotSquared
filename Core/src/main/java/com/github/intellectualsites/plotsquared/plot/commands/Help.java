@@ -14,7 +14,7 @@ import com.github.intellectualsites.plotsquared.plot.util.helpmenu.HelpMenu;
 
 import java.util.concurrent.CompletableFuture;
 
-@CommandDeclaration(command = "help", description = "Get this help menu", aliases = {"he", "?"},
+@CommandDeclaration(command = "help", description = "Get this help menu", aliases = "?",
     category = CommandCategory.INFO, usage = "help [category|#]", permission = "plots.use")
 public class Help extends Command {
     public Help(Command parent) {
