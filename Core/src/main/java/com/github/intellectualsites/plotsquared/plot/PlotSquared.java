@@ -1601,7 +1601,7 @@ import java.util.zip.ZipInputStream;
                 this.version = PlotVersion.tryParse(versionString, commitString, dateString);
                 Settings.DATE =
                     new Date(100 + version.year, version.month, version.day).toGMTString();
-                Settings.BUILD = "https://ci.athion.net/job/PlotSquared/" + version.build;
+                Settings.BUILD = "https://ci.athion.net/job/PlotSquared-Breaking/" + version.build;
                 Settings.COMMIT =
                     "https://github.com/IntellectualSites/PlotSquared/commit/" + Integer
                         .toHexString(version.hash);
@@ -1777,15 +1777,15 @@ import java.util.zip.ZipInputStream;
      */
     private void setupStyle() {
         if (this.version != null) {
-            this.style.set("version", this.version.toString());
+            this.style.set("Version", this.version.toString());
         }
-        Map<String, Object> o = new HashMap<>(4);
-        o.put("color.1", "6");
-        o.put("color.2", "7");
-        o.put("color.3", "8");
-        o.put("color.4", "3");
+        Map<String, Object> object = new HashMap<>(4);
+        object.put("color.1", "6");
+        object.put("color.2", "7");
+        object.put("color.3", "8");
+        object.put("color.4", "3");
         if (!this.style.contains("color")) {
-            for (Entry<String, Object> node : o.entrySet()) {
+            for (Entry<String, Object> node : object.entrySet()) {
                 this.style.set(node.getKey(), node.getValue());
             }
         }
