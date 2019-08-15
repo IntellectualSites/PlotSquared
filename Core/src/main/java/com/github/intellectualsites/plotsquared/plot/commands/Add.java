@@ -49,7 +49,7 @@ import java.util.concurrent.CompletableFuture;
                 continue;
             }
             if (plot.isOwner(uuid)) {
-                MainUtil.sendMessage(player, Captions.ALREADY_OWNER, MainUtil.getName(uuid));
+                MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
                 iterator.remove();
                 continue;
             }

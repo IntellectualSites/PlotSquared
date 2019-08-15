@@ -647,6 +647,7 @@ public enum Captions {
     DENIED_NEED_ARGUMENT("$2Arguments are missing. $1/plot denied add <name> $2or $1/plot denied remove <name>", "Deny"),
     WAS_NOT_DENIED("$2That player was not denied on this plot", "Deny"),
     YOU_GOT_DENIED("$4You are denied from the plot you were previously on, and got teleported to spawn", "Deny"),
+    CANT_REMOVE_OWNER("$2You can't remove the plot owner", "Deny"),
     //</editor-fold>
     YOU_GOT_KICKED("$4You got kicked!", "Kick"),
     //<editor-fold desc="Flag">

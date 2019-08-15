@@ -56,7 +56,7 @@ import java.util.UUID;
                 continue;
             }
             if (plot.isOwner(uuid)) {
-                MainUtil.sendMessage(player, Captions.ALREADY_OWNER, MainUtil.getName(uuid));
+                MainUtil.sendMessage(player, Captions.CANT_REMOVE_OWNER, MainUtil.getName(uuid));
                 return false;
             }
 
