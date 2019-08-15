@@ -2942,7 +2942,7 @@ import java.util.concurrent.atomic.AtomicInteger;
             boolean[] pm = plot.getMerged();
             boolean[] dm = dataPlot.getMerged();
             if (pm[0] != dm[0] || pm[1] != dm[1]) {
-                PlotSquared.debug("&8 - &7Correcting merge for: " + plot);
+                PlotSquared.debug(" - Correcting merge for: " + plot);
                 setMerged(dataPlot, plot.getMerged());
             }
             HashMap<Flag<?>, Object> pf = plot.getFlags();
@@ -2951,7 +2951,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 if (pf.size() != df.size() || !StringMan
                     .isEqual(StringMan.joinOrdered(pf.values(), ","),
                         StringMan.joinOrdered(df.values(), ","))) {
-                    PlotSquared.debug("&8 - &7Correcting flags for: " + plot);
+                    PlotSquared.debug(" - Correcting flags for: " + plot);
                     setFlags(plot, pf);
                 }
             }

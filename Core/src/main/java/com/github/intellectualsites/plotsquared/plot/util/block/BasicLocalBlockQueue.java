@@ -23,6 +23,7 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
     private int lastZ = Integer.MIN_VALUE;
 
     public BasicLocalBlockQueue(String world) {
+        super(world);
         this.world = world;
         this.modified = System.currentTimeMillis();
     }

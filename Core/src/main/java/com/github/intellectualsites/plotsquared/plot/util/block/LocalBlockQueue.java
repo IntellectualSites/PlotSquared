@@ -16,6 +16,14 @@ import java.util.Map;
 
 public abstract class LocalBlockQueue {
 
+    /**
+     * Needed for compatibility with FAWE.
+     *
+     * @param world unused
+     */
+    @Deprecated public LocalBlockQueue(String world) {
+    }
+
     public ScopedLocalBlockQueue getForChunk(int x, int z) {
         int bx = x << 4;
         int bz = z << 4;
