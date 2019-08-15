@@ -76,7 +76,7 @@ import java.net.URL;
                 Captions.NO_PERMISSION.send(player, Captions.PERMISSION_DOWNLOAD_WORLD);
                 return false;
             }
-            MainUtil.sendMessage(player, "&cNote: The `.mca` files are 512x512");
+            MainUtil.sendMessage(player, Captions.MCA_FILE_SIZE);
             plot.addRunning();
             WorldUtil.IMP.saveWorld(world);
             WorldUtil.IMP.upload(plot, null, null, new RunnableVal<URL>() {

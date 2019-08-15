@@ -400,6 +400,15 @@ public enum Captions {
         "Schematics"), SCHEMATIC_PASTE_SUCCESS("$4The schematic pasted successfully", "Schematics"),
 
     SCHEMATIC_LIST("$4Saved Schematics: $1%s", "Schematics"),
+    SCHEMATIC_ROAD_CREATED("$1Saved new road schematic. To test the schematic, fly to a few other plots and run /plot debugroadregen", "Schematics"),
+    MCA_FILE_SIZE("$1Note: The `.mca` files are 512x512", "Schematics"),
+    SCHEMATIC_EXPORTALL_STARTED("$1Starting export...", "Schematics"),
+    SCHEMATIC_EXPORTALL_WORLD_ARGS("$1Need world argument. Use $3/plot sch exportall <area>", "Schematics"),
+    SCHEMATIC_EXPORTALL_WORLD("$1Invalid world. Use &3/plot sch exportall <area>", "Schematic"),
+    SCHEMATIC_EXPORTALL_MASS_STARTED("$1Schematic mass export has been started. This may take a while", "Schematics"),
+    SCHEMATIC_EXPORTALL_COUNT("$1Found $3%s $1plots...", "Schematics"),
+    SCHEMATIC_EXPORTALL_FINISHED("$1Finished mass export", "Schematics"),
+    SCHEMATIC_EXPORTALL_SINGLE_FINISHED("$1Finished export", "Schematics"),
     //</editor-fold>
     //<editor-fold desc="Titles">
     TITLE_ENTERED_PLOT("$1Plot: %world%;%x%;%z%", "Titles"),
@@ -470,8 +479,9 @@ public enum Captions {
 
     NO_AVAILABLE_AUTOMERGE(
         "$2You do not own any adjacent plots in the specified direction or are not allowed to merge to the required size.",
-        "Merge"), UNLINK_REQUIRED("$2An unlink is required to do this.", "Merge"),
-
+        "Merge"),
+    UNLINK_REQUIRED("$2An unlink is required to do this.", "Merge"),
+    UNMERGE_CANCELLED("$1Unlink has been cancelled", "Merge"),
     UNLINK_IMPOSSIBLE("$2You can only unlink a mega-plot", "Merge"), UNLINK_SUCCESS(
         "$2Successfully unlinked plots.", "Merge"),
     //</editor-fold>
@@ -505,6 +515,7 @@ public enum Captions {
     WAIT_FOR_TIMER(
         "$2A set block timer is bound to either the current plot or you. Please wait for it to finish",
         "Errors"),
+    TASK_IN_PROCESS("$1Task is already running.", "Error"),
     //</editor-fold>
     DEBUG_REPORT_CREATED("$1Uploaded a full debug to: $1%url%", "Paste"),
 

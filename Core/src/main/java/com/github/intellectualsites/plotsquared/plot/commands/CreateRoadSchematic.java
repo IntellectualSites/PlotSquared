@@ -25,8 +25,7 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
             return sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
         }
         HybridUtils.manager.setupRoadSchematic(plot);
-        MainUtil.sendMessage(player,
-            "$1Saved new road schematic. To test the road, fly to a few other plots and use /plot debugroadregen");
+        MainUtil.sendMessage(player, Captions.SCHEMATIC_ROAD_CREATED);
         return true;
     }
 }

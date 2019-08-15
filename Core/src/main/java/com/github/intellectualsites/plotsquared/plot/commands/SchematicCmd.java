@@ -62,7 +62,7 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 if (this.running) {
-                    MainUtil.sendMessage(player, "&cTask is already running.");
+                    MainUtil.sendMessage(player, Captions.TASK_IN_PROCESS);
                     return false;
                 }
                 final String location = args[1];
@@ -148,8 +148,7 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 if (args.length != 2) {
-                    MainUtil.sendMessage(player,
-                        "&cNeed world argument. Use &7/plot sch exportall <area>");
+                    MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_WORLD_ARGS);
                     return false;
                 }
                 PlotArea area = PlotSquared.get().getPlotAreaByString(args[1]);
@@ -160,19 +159,17 @@ public class SchematicCmd extends SubCommand {
                 Collection<Plot> plots = area.getPlots();
                 if (plots.isEmpty()) {
                     MainUtil
-                        .sendMessage(player, "&cInvalid world. Use &7/plot sch exportall <area>");
+                        .sendMessage(player, Captions.SCHEMATIC_EXPORTALL_WORLD);
                     return false;
                 }
                 boolean result = SchematicHandler.manager.exportAll(plots, null, null,
-                    () -> MainUtil.sendMessage(player, "&aFinished mass export"));
+                    () -> MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_FINISHED));
                 if (!result) {
-                    MainUtil.sendMessage(player, "&cTask is already running.");
+                    MainUtil.sendMessage(player, Captions.TASK_IN_PROCESS);
                     return false;
                 } else {
-                    MainUtil.sendMessage(player,
-                        "&3Plot&8->&3Schematic&8: &7Mass export has started. This may take a while.");
-                    MainUtil.sendMessage(player,
-                        "&3Plot&8->&3Schematic&8: &7Found &c" + plots.size() + "&7 plots...");
+                    MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_STARTED);
+                    MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_COUNT, plots.size());
                 }
                 break;
             }
@@ -184,7 +181,7 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 if (this.running) {
-                    MainUtil.sendMessage(player, "&cTask is already running.");
+                    MainUtil.sendMessage(player, Captions.TASK_IN_PROCESS);
                     return false;
                 }
                 Location location = player.getLocation();
@@ -203,14 +200,14 @@ public class SchematicCmd extends SubCommand {
                 }
                 ArrayList<Plot> plots = Lists.newArrayList(plot);
                 boolean result = SchematicHandler.manager.exportAll(plots, null, null, () -> {
-                    MainUtil.sendMessage(player, "&aFinished export");
+                    MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_SINGLE_FINISHED);
                     SchematicCmd.this.running = false;
                 });
                 if (!result) {
-                    MainUtil.sendMessage(player, "&cTask is already running.");
+                    MainUtil.sendMessage(player, Captions.TASK_IN_PROCESS);
                     return false;
                 } else {
-                    MainUtil.sendMessage(player, "&7Starting export...");
+                    MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_STARTED);
                 }
                 break;
             case "list": {

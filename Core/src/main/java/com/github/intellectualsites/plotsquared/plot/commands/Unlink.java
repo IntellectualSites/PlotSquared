@@ -41,7 +41,7 @@ public class Unlink extends SubCommand {
         }
         Runnable runnable = () -> {
             if (!plot.unlinkPlot(createRoad, createRoad)) {
-                MainUtil.sendMessage(player, "&cUnlink has been cancelled");
+                MainUtil.sendMessage(player, Captions.UNMERGE_CANCELLED);
                 return;
             }
             MainUtil.sendMessage(player, Captions.UNLINK_SUCCESS);
