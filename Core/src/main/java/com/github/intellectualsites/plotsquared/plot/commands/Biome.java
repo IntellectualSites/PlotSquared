@@ -17,7 +17,7 @@ import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
         int biome = WorldUtil.IMP.getBiomeFromString(value);
         if (biome == -1) {
             String biomes = StringMan
-                .join(WorldUtil.IMP.getBiomeList(), Captions.BLOCK_LIST_SEPARATER.getTranslated());
+                .join(WorldUtil.IMP.getBiomeList(), Captions.BLOCK_LIST_SEPARATOR.getTranslated());
             Captions.NEED_BIOME.send(player);
             MainUtil.sendMessage(player,
                 Captions.SUBCOMMAND_SET_OPTIONS_HEADER.getTranslated() + biomes);

@@ -128,7 +128,7 @@ import java.util.stream.IntStream;
         }
         MainUtil
             .sendMessage(player, Captions.SUBCOMMAND_SET_OPTIONS_HEADER.getTranslated() + StringMan
-            .join(newValues, Captions.BLOCK_LIST_SEPARATER.formatted()));
+            .join(newValues, Captions.BLOCK_LIST_SEPARATOR.formatted()));
         return false;
     }
 

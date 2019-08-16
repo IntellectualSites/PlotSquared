@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "trust", aliases = {"t"}, requiredType = RequiredType.PLAYER,
     usage = "/plot trust <player>",
-    description = "Allow a user to build in a plot while you are offline",
+    description = "Allow a user to build in a plot and use WorldEdit while you are offline",
     category = CommandCategory.SETTINGS) public class Trust extends Command {
 
     public Trust() {

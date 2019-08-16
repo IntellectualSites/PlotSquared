@@ -18,7 +18,7 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import java.util.UUID;
 
 @CommandDeclaration(command = "merge", aliases = "m",
-    description = "Merge the plot you are standing on, with another plot",
+    description = "Merge the plot you are standing on with another plot",
     permission = "plots.merge", usage = "/plot merge <all|n|e|s|w> [removeroads]",
     category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE, confirmation = true)
 public class Merge extends SubCommand {
