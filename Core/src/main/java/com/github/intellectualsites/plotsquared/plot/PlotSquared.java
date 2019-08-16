@@ -1601,7 +1601,7 @@ import java.util.zip.ZipInputStream;
                 this.version = PlotVersion.tryParse(versionString, commitString, dateString);
                 Settings.DATE =
                     new Date(100 + version.year, version.month, version.day).toGMTString();
-                Settings.BUILD = "https://ci.athion.net/job/PlotSquared-Breaking/" + version.build;
+                Settings.BUILD = "https://ci.athion.net/job/PlotSquared-Releases/" + version.build;
                 Settings.COMMIT =
                     "https://github.com/IntellectualSites/PlotSquared/commit/" + Integer
                         .toHexString(version.hash);
