@@ -223,21 +223,9 @@ public enum Captions {
     //<editor-fold desc="Border">
     BORDER("$2You are outside the current map border", "Border"),
     //</editor-fold>
-    //<editor-fold desc="Unclaim">
-    UNCLAIM_SUCCESS("$4You successfully unclaimed the plot.", "Unclaim"),
-    UNCLAIM_FAILED("$2Could not unclaim the plot", "Unclaim"),
-    //</editor-fold>
     //<editor-fold desc="WorldEdit Masks">
-    WORLDEDIT_DELAYED("$2Please wait while we process your WorldEdit action...", "WorldEdit Masks"),
-    WORLDEDIT_RUN("$2Apologies for the delay. Now executing: %s", "WorldEdit Masks"),
-    REQUIRE_SELECTION_IN_MASK("$2%s of your selection is not within your plot mask. You can only make edits within your plot.", "WorldEdit Masks"),
-    WORLDEDIT_VOLUME("$2You cannot select a volume of %current%. The maximum volume you can modify is %max%.", "WorldEdit Masks"),
-    WORLDEDIT_ITERATIONS("$2You cannot iterate %current% times. The maximum number of iterations allowed is %max%.", "WorldEdit Masks"),
-    WORLDEDIT_UNSAFE("$2Access to that command has been blocked","WorldEdit Masks"),
     WORLDEDIT_BYPASS("$2&oTo bypass your restrictions use $4/plot wea", "WorldEdit Masks"),
     WORLDEDIT_BYPASSED("$2Currently bypassing WorldEdit restriction.", "WorldEdit Masks"),
-    WORLDEDIT_UNMASKED("$1Your WorldEdit is now unrestricted.", "WorldEdit Masks"),
-    WORLDEDIT_RESTRICTED("$1Your WorldEdit is now restricted.", "WorldEdit Masks"),
     //</editor-fold>
     //<editor-fold desc="GameMode">
     GAMEMODE_WAS_BYPASSED("$1You bypassed the gamemode ($2{gamemode}$1) $1set for $2{plot}", "GameMode"),
@@ -254,7 +242,6 @@ public enum Captions {
     SWAP_DIMENSIONS("$2The proposed areas must have comparable dimensions", "Swap"),
     SWAP_SYNTAX("$2/plot swap <id>", "Swap"),
     SWAP_SUCCESS("$4Successfully swapped plots", "Swap"),
-    STARTED_SWAP("$2Started plot swap task. You will be notified when it finishes", "Swap"),
     //</editor-fold>
     //<editor-fold desc="Comment">
     INBOX_NOTIFICATION("%s unread messages. Use /plot inbox", "Comment"),
@@ -274,20 +261,12 @@ public enum Captions {
     NOT_CONSOLE("$2For safety reasons, this command can only be executed by console.", "Console"),
     IS_CONSOLE("$2This command can only be executed by a player.", "Console"),
     //</editor-fold>
-    //<editor-fold desc="Inventory">
-    INVENTORY_USAGE("&cUsage: &6{usage}", "Inventory"), INVENTORY_DESC("&cDescription: &6{desc}", "Inventory"),
-    INVENTORY_CATEGORY("&cCategory: &6{category}", "Inventory"),
-    //</editor-fold>
     //<editor-fold desc="Clipboard">
-    CLIPBOARD_SET("$2The current plot is now copied to your clipboard, use $1/plot paste$2 to paste it", "Clipboard"),
-    PASTED("$4The plot selection was successfully pasted. It has been cleared from your clipboard.", "Clipboard"),
-
     PASTE_FAILED("$2Failed to paste the selection. Reason: $2%s", "Clipboard"),
-    NO_CLIPBOARD("$2You don't have a selection in your clipboard", "Clipboard"),
-    CLIPBOARD_INFO("$2Current Selection - Plot ID: $1%id$2, Width: $1%width$2, Total Blocks: $1%total$2", "Clipboard"),
     //</editor-fold>
     //<editor-fold desc="Toggle">
-    TOGGLE_ENABLED("$2Enabled setting: %s", "Toggle"), TOGGLE_DISABLED("$2Disabled setting: %s", "Toggle"),
+    TOGGLE_ENABLED("$2Enabled setting: %s", "Toggle"),
+    TOGGLE_DISABLED("$2Disabled setting: %s", "Toggle"),
     //</editor-fold>
     //<editor-fold desc="Blocked Command">
     COMMAND_BLOCKED("$2That command is not allowed in this plot", "Blocked Command"),
@@ -366,7 +345,6 @@ public enum Captions {
     PREFIX_FAREWELL("$1%id%$2> ", "Titles"),
     //</editor-fold>
     //<editor-fold desc="Core">
-    TASK_START("Starting task...", "Core"),
     PREFIX("$3[$1P2$3] $2", "Core"),
     ENABLED("$1%s0 is now enabled", "Core"),
     //</editor-fold>
@@ -377,24 +355,17 @@ public enum Captions {
     //<editor-fold desc="Desc">
     DESC_SET("$2Plot description set", "Desc"),
     DESC_UNSET("$2Plot description unset", "Desc"),
-    MISSING_DESC("$2You need to specify a description", "Desc"),
     //</editor-fold>
     //<editor-fold desc="Alias">
     ALIAS_SET_TO("$2Plot alias set to $1%alias%", "Alias"),
     ALIAS_REMOVED("$2Plot alias removed", "Alias"),
-    MISSING_ALIAS("$2You need to specify an alias", "Alias"),
     ALIAS_TOO_LONG("$2The alias must be < 50 characters in length", "Alias"),
     ALIAS_IS_TAKEN("$2That alias is already taken", "Alias"),
     //</editor-fold>
     //<editor-fold desc="Position">
-    MISSING_POSITION("$2You need to specify a position. Possible values: $1none", "Position"),
     POSITION_SET("$1Home position set to your current location", "Position"),
     POSITION_UNSET("$1Home position reset to the default location", "Position"),
     HOME_ARGUMENT("$2Use /plot set home [none]", "Position"),
-    INVALID_POSITION("$2That is not a valid position value", "Position"),
-    //</editor-fold>
-    //<editor-fold desc="Cap">
-    ENTITY_CAP("$2You are not allowed to spawn more mobs", "Cap"),
     //</editor-fold>
     //<editor-fold desc="Permission">
     NO_SCHEMATIC_PERMISSION("$2You don't have the permission required to use schematic $1%s", "Permission"),
@@ -414,7 +385,6 @@ public enum Captions {
     MERGE_REQUEST_CONFIRM("Merge request from %s", "Permission"),
     NO_PERM_MERGE("$2You are not the owner of the plot: $1%plot%", "Merge"),
     NO_AVAILABLE_AUTOMERGE("$2You do not own any adjacent plots in the specified direction or are not allowed to merge to the required size.", "Merge"),
-    UNLINK_REQUIRED("$2An unlink is required to do this.", "Merge"),
     UNMERGE_CANCELLED("$1Unlink has been cancelled", "Merge"),
     UNLINK_IMPOSSIBLE("$2You can only unlink a mega-plot", "Merge"),
     UNLINK_SUCCESS("$2Successfully unlinked plots.", "Merge"),
@@ -422,13 +392,10 @@ public enum Captions {
     //<editor-fold desc="CommandConfig">
     NOT_VALID_SUBCOMMAND("$2That is not a valid subcommand", "CommandConfig"),
     DID_YOU_MEAN("$2Did you mean: $1%s", "CommandConfig"),
-    NAME_LITTLE("$2%s0 name is too short, $1%s1$2<$1%s3", "CommandConfig"),
-    NO_COMMANDS("$2I'm sorry, but you're not permitted to use any subcommands.", "CommandConfig"),
     SUBCOMMAND_SET_OPTIONS_HEADER("$2Possible Values: ", "CommandConfig"),
     COMMAND_SYNTAX("$1Usage: $2%s", "CommandConfig"),
     //</editor-fold>
     //<editor-fold desc="Errors">
-    INVALID_PLAYER_WAIT("$2Player not found: $1%s$2, fetching it. Try again soon.", "Errors"),
     INVALID_PLAYER("$2Player not found: $1%s$2.", "Errors"),
     INVALID_PLAYER_OFFLINE("$2The player must be online: $1%s.", "Errors"),
     INVALID_COMMAND_FLAG("$2Invalid command flag: %s0", "Errors"),
@@ -454,7 +421,6 @@ public enum Captions {
     //</editor-fold>
     //<editor-fold desc="Trim">
     TRIM_IN_PROGRESS("A world trim task is already in progress!", "Trim"),
-    NOT_VALID_HYBRID_PLOT_WORLD("The hybrid plot manager is required to perform this action", "Trim"),
     //</editor-fold>
     //<editor-fold desc="Block List">
     BLOCK_LIST_SEPARATOR("$1,$2 ", "Block List"),
@@ -482,31 +448,23 @@ public enum Captions {
     DEBUG_LINE("$2>> $1%var%$2:$1 %val%&-", "Debug"),
     //</editor-fold>
     //<editor-fold desc="Invalid">
-    NOT_VALID_DATA("$2That's not a valid data id.", "Invalid"),
     NOT_VALID_BLOCK("$2That's not a valid block: %s", "Invalid"),
     NOT_ALLOWED_BLOCK("$2That block is not allowed: %s", "Invalid"),
     NOT_VALID_NUMBER("$2That's not a valid number within the range: %s", "Invalid"),
     NOT_VALID_PLOT_ID("$2That's not a valid plot id.", "Invalid"),
-    PLOT_ID_FORM("$2The plot id must be in the form: $1X;Y $2e.g. $1-5;7", "Invalid"),
-    NOT_YOUR_PLOT("$2That is not your plot.", "Invalid"),
-    NO_SUCH_PLOT("$2There is no such plot", "Invalid"),
-    PLAYER_HAS_NOT_BEEN_ON("$2That player hasn't been in the plotworld", "Invalid"),
     FOUND_NO_PLOTS("$2Found no plots with your search query", "Invalid"),
-    FOUND_NO_PLOTS_FOR_PLAYER("$2No plots found for player: %s", "Invalid"),
     //</editor-fold>
     //<editor-fold desc="Need">
-    NEED_PLOT_NUMBER("$2You've got to specify a plot number or alias", "Need"),
     NEED_BLOCK("$2You've got to specify a block", "Need"),
-    NEED_PLOT_ID("$2You've got to specify a plot id.", "Need"),
-    NEED_PLOT_WORLD("$2You've got to specify a plot area.", "Need"),
-    NEED_USER("$2You need to specify a username", "Need"),
     //</editor-fold>
     //<editor-fold desc="Near">
     PLOT_NEAR("$1Players: %s0", "Near"),
     //</editor-fold>
     //<editor-fold desc="Info">
-    NONE("None", "Info"), NOW("Now", "Info"),
-    NEVER("Never", "Info"), UNKNOWN("Unknown", "Info"),
+    NONE("None", "Info"),
+    NOW("Now", "Info"),
+    NEVER("Never", "Info"),
+    UNKNOWN("Unknown", "Info"),
     SERVER("Server", "Info"),
     EVERYONE("Everyone", "Info"),
     PLOT_UNOWNED("$2The current plot must have an owner to perform this action", "Info"),
@@ -532,11 +490,10 @@ public enum Captions {
     PLOT_INFO_SEEN("$1Seen:$2 %seen%", "Info"),
     PLOT_USER_LIST(" $1%user%$2,", "Info"),
     PLOT_FLAG_LIST("$1%s0:%s1$2", "Info"),
-    INFO_SYNTAX_CONSOLE("$2/plot info X;Y", "Info"),
+    INFO_SYNTAX_CONSOLE("$2/plot info X;Z", "Info"),
     //</editor-fold>
     //<editor-fold desc="Working">
     GENERATING_COMPONENT("$1Started generating component from your settings", "Working"),
-    CLEARING_PLOT("$2Clearing plot async.", "Working"),
     CLEARING_DONE("$4Clear completed! Took %sms.", "Working"),
     DELETING_DONE("$4Delete completed! Took %sms.", "Working"),
     PLOT_NOT_CLAIMED("$2Plot not claimed", "Working"),
@@ -561,7 +518,6 @@ public enum Captions {
     PLOT_CHAT_OFF("$4Plot chat disabled.", "Chat"),
     //</editor-fold>
     //<editor-fold desc="Deny">
-    DENIED_REMOVED("$4You successfully undenied the player from this plot", "Deny"),
     DENIED_ADDED("$4You successfully denied the player from this plot", "Deny"),
     DENIED_NEED_ARGUMENT("$2Arguments are missing. $1/plot denied add <name> $2or $1/plot denied remove <name>", "Deny"),
     WAS_NOT_DENIED("$2That player was not denied on this plot", "Deny"),
@@ -578,7 +534,6 @@ public enum Captions {
     NOT_VALID_FLAG("$2That is not a valid flag", "Flag"),
     NOT_VALID_FLAG_SUGGESTED("$2That is not a valid flag. Did you mean: $1%s", "Flag"),
     NOT_VALID_VALUE("$2Flag values must be alphanumerical", "Flag"),
-    FLAG_NOT_IN_PLOT("$2The plot does not have that flag", "Flag"),
     FLAG_NOT_REMOVED("$2The flag could not be removed", "Flag"),
     FLAG_NOT_ADDED("$2The flag could not be added", "Flag"),
     FLAG_REMOVED("$4Successfully removed flag", "Flag"),
@@ -587,8 +542,6 @@ public enum Captions {
     //</editor-fold>
     //<editor-fold desc="Trusted">
     TRUSTED_ADDED("$4You successfully trusted a user to the plot", "Trusted"),
-    TRUSTED_REMOVED("$4You successfully removed a trusted user from the plot", "Trusted"),
-    WAS_NOT_ADDED("$2That player was not trusted on this plot", "Trusted"),
     PLOT_REMOVED_USER("$1Plot %s of which you were added to has been deleted due to owner inactivity", "Trusted"),
     //</editor-fold>
     //<editor-fold desc="Member">
@@ -596,7 +549,6 @@ public enum Captions {
     ALREADY_OWNER("$2That user is already the plot owner: %s0", "Member"),
     ALREADY_ADDED("$2That user is already added to that category: %s0", "Member"),
     MEMBER_ADDED("$4That user can now build while the plot owner is online", "Member"),
-    MEMBER_REMOVED("$1You successfully removed a user from the plot", "Member"),
     MEMBER_WAS_NOT_ADDED("$2That player was not added as a user on this plot", "Member"),
     PLOT_MAX_MEMBERS("$2You are not allowed to add any more players to this plot", "Member"),
     //</editor-fold>
