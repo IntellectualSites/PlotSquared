@@ -24,8 +24,8 @@ public class PlotVersion {
     public static PlotVersion tryParse(String version, String commit, String date) {
         try {
             return new PlotVersion(version, commit, date);
-        } catch (Exception ignore) {
-            ignore.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
             return new PlotVersion(0, 0, 0, 0, 0);
         }
     }
