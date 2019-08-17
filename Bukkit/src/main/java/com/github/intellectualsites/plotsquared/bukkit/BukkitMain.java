@@ -289,9 +289,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Override public void registerCommands() {
         final BukkitCommand bukkitCommand = new BukkitCommand();
         final PluginCommand plotCommand = getCommand("plots");
-        plotCommand.setExecutor(bukkitCommand);
-        plotCommand.setAliases(Arrays.asList("p", "ps", "plotme", "plot"));
-        plotCommand.setTabCompleter(bukkitCommand);
+        if (plotCommand != null) {
+            plotCommand.setExecutor(bukkitCommand);
+            plotCommand.setAliases(Arrays.asList("p", "ps", "plotme", "plot"));
+            plotCommand.setTabCompleter(bukkitCommand);
+        }
     }
 
     @Override public File getDirectory() {
