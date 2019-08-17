@@ -183,7 +183,7 @@ public abstract class HybridUtils {
                                     ChunkLoc loc = iterator.next();
                                     iterator.remove();
                                     PlotSquared.debug("&3Updating .mcr: " + loc.x + ", " + loc.z
-                                        + " (aprrox 1024 chunks)");
+                                        + " (approx 1024 chunks)");
                                     PlotSquared.debug(" - Remaining: " + regions.size());
                                     chunks.addAll(getChunks(loc));
                                     System.gc();
