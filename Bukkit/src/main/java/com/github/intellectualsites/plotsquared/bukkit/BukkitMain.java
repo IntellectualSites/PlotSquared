@@ -54,8 +54,8 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -598,14 +598,15 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     @Override public QueueProvider initBlockQueue() {
-        try {
-            new SendChunk();
-            MainUtil.canSendChunk = true;
-        } catch (ClassNotFoundException | NoSuchFieldException | NoSuchMethodException e) {
-            PlotSquared.debug(
-                SendChunk.class + " does not support " + StringMan.getString(getServerVersion()));
-            MainUtil.canSendChunk = false;
-        }
+        //TODO Figure out why this code is still here yet isn't being called anywhere.
+        //        try {
+        //            new SendChunk();
+        //            MainUtil.canSendChunk = true;
+        //        } catch (ClassNotFoundException | NoSuchFieldException | NoSuchMethodException e) {
+        //            PlotSquared.debug(
+        //                SendChunk.class + " does not support " + StringMan.getString(getServerVersion()));
+        //            MainUtil.canSendChunk = false;
+        //        }
         return QueueProvider.of(BukkitLocalQueue.class, BukkitLocalQueue.class);
     }
 
