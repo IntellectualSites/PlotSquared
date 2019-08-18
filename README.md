@@ -65,3 +65,9 @@ Suggestions are welcome! We have a separate issue tracker for suggestions, that 
 * [PlotSquaredMG](https://www.spigotmc.org/resources/plotsquaredmg.8025/)
 * [BasicPlots](https://www.spigotmc.org/resources/basicplots.6901/)
 * [HoloPlots](https://www.spigotmc.org/resources/holoplots.4880/)
+
+# Sponsors
+<p align="center"><a href="https://www.jetbrains.com/idea/" title="IntelliJ IDEA"><img height="75" src="https://i.imgur.com/xa2XsRN.png"/></a></p>
+<p align="center"><a href="https://www.athion.net/" title="Athion"><img height="150" src="https://i.imgur.com/Z4E1Hcb.png"/></a></p>
+<p align="center"><a href="https://www.buildersrefuge.com/" title="Builder's Refuge"><img height="150" src="https://i.imgur.com/mjT5Ogz.png"/></a></p>
+<p align="center"><a href="https://ajgaming.net/" title="AJGaming Network"><img height="120" src="https://ajgaming.net/images/AJGaming.png"/></a></p>
