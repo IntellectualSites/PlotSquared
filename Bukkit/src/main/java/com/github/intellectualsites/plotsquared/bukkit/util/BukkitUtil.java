@@ -356,8 +356,8 @@ import java.util.Set;
             }
             if (PlotSquared.get().IMP.getServerVersion()[1] == 13) {
                 block.setType(Material.valueOf("WALL_SIGN"), false);
-            } else if (PaperLib.getMinecraftVersion() == 14) {
-                block.setType(Material.OAK_WALL_SIGN, false);
+            } else {
+                block.setType(Material.valueOf("OAK_WALL_SIGN"), false);
             }
             final Directional sign = (Directional) block.getBlockData();
             sign.setFacing(facing);
