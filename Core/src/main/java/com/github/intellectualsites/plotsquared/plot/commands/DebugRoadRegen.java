@@ -22,21 +22,17 @@ public class DebugRoadRegen extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
         if (args.length < 1) {
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                DebugRoadRegen.USAGE);
+            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, DebugRoadRegen.USAGE);
             return false;
         }
         String kind = args[0].toLowerCase();
         switch (kind) {
             case "plot":
                 return regenPlot(player);
-
             case "region":
                 return regenRegion(player, Arrays.copyOfRange(args, 1, args.length));
-
             default:
-                MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                    DebugRoadRegen.USAGE);
+                MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, DebugRoadRegen.USAGE);
                 return false;
         }
     }

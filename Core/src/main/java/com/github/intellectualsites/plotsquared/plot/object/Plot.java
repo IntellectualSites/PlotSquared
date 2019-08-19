@@ -22,9 +22,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.sk89q.jnbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
 import org.jetbrains.annotations.Nullable;
+
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
@@ -875,8 +874,15 @@ public class Plot {
                 }
                 Plot current = queue.poll();
                 if (Plot.this.area.TERRAIN != 0) {
-                    ChunkManager.manager
-                        .regenerateRegion(current.getBottomAbs(), current.getTopAbs(), false, this);
+                    try {
+                        ChunkManager.manager
+                            .regenerateRegion(current.getBottomAbs(), current.getTopAbs(), false,
+                                this);
+                    } catch (UnsupportedOperationException exception) {
+                        MainUtil.sendMessage(null,
+                            "Please ask md_5 to fix regenerateChunk() because it breaks plugins. We apologize for the inconvenience");
+                        return;
+                    }
                     return;
                 }
                 manager.clearPlot(current, this);
@@ -930,8 +936,8 @@ public class Plot {
     /**
      * Unlink the plot and all connected plots.
      *
-     * @param createSign whether to recreate signs
      * @param createRoad whether to recreate road
+     * @param createSign whether to recreate signs
      * @return success/!cancelled
      */
     public boolean unlinkPlot(boolean createRoad, boolean createSign) {
