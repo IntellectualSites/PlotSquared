@@ -14,7 +14,6 @@ import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlock
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BaseBlock;
-import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -277,7 +276,7 @@ public class BukkitChunkManager extends ChunkManager {
                     }
                     final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
                     if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z
-                        && PaperLib.getMinecraftVersion() == 13) {
+                        && PlotSquared.imp().getServerVersion()[1] == 13) {
                         AugmentedUtils
                             .bypass(ignoreAugment, () -> queue.regenChunkSafe(chunk.x, chunk.z));
                         continue;

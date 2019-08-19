@@ -119,7 +119,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
         new PlotSquared(this, "Bukkit");
 
-        if (PaperLib.getMinecraftVersion() < 13 && PaperLib.getMinecraftPatchVersion() < 2) {
+        if (PlotSquared.get().IMP.getServerVersion()[1] < 13) {
             System.out.println(
                 "You can't use this version of PlotSquared on a server less than Minecraft 1.13.2.");
             System.out
