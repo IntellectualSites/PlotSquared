@@ -46,6 +46,7 @@ public enum Captions {
     //<editor-fold desc="Static Permission">
     PERMISSION_STAR("*", "static.permissions"),
     PERMISSION_ADMIN("plots.admin", "static.permissions"),
+    PERMISSION_ADMIN_SUDO_AREA("plots.admin.area.sudo", "static.permissions"),
     PERMISSION_PROJECTILE_UNOWNED("plots.projectile.unowned", "static.permissions"),
     PERMISSION_PROJECTILE_OTHER("plots.projectile.other", "static.permissions"),
     PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS("plots.admin.interact.blockedcommands", "static.permissions"),
