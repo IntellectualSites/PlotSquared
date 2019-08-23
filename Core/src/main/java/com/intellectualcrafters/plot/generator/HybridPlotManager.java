@@ -143,8 +143,6 @@ public class HybridPlotManager extends ClassicPlotManager {
                     for (int y = 0; y < blocks.length; y++) {
                         PlotBlock block = PlotBlock.get(blocks[y]);
                         if (block != null) {
-                            PS.debug("Schematic: PlotBlock of type = " + block.id + " at {x: " + x
-                                + ", y: " + y + ", z: " + z + "} ");
                             queue.setBlock(x, minY + y, z, block);
                         }
                     }
@@ -207,7 +205,6 @@ public class HybridPlotManager extends ClassicPlotManager {
                 top.setY(getWorldHeight());
                 queue.setCuboid(bot, top, air);
                 // And finally set the schematic, the y value is unimportant for this function
-                PS.log("Pasting PlotSchematic");
                 pastePlotSchematic(dpw, queue, bot, top);
             }
         }, () -> {
@@ -221,7 +218,6 @@ public class HybridPlotManager extends ClassicPlotManager {
     public void pastePlotSchematic(HybridPlotWorld plotWorld, LocalBlockQueue queue,
         Location bottom, Location top) {
         if (!plotWorld.PLOT_SCHEMATIC) {
-            PS.debug("Plot Schematics are disabled");
             return;
         }
         createSchemAbs(plotWorld, queue, bottom, top);
