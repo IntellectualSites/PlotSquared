@@ -2162,8 +2162,16 @@ import java.util.regex.Pattern;
                 }
                 break;
             case REINFORCEMENTS:
+            case VILLAGE_DEFENSE:
+            case VILLAGE_INVASION:
             case NATURAL:
             case CHUNK_GEN:
+            case SILVERFISH_BLOCK:
+            case ENDER_PEARL:
+            case DROWNED:
+            case CURED:
+            case DEFAULT:
+            case LIGHTNING:
                 if (!area.MOB_SPAWNING) {
                     event.setCancelled(true);
                     return;
@@ -2268,16 +2276,7 @@ import java.util.regex.Pattern;
         Entity ignitingEntity = event.getIgnitingEntity();
         Block block = event.getBlock();
         BlockIgniteEvent.IgniteCause igniteCause = event.getCause();
-        Location location1;
-        if (block != null) {
-            location1 = BukkitUtil.getLocation(block.getLocation());
-        } else if (ignitingEntity != null) {
-            location1 = BukkitUtil.getLocation(ignitingEntity);
-        } else if (player != null) {
-            location1 = BukkitUtil.getLocation(player);
-        } else {
-            return;
-        }
+        Location location1 = BukkitUtil.getLocation(block.getLocation());
         PlotArea area = location1.getPlotArea();
         if (area == null) {
             return;
