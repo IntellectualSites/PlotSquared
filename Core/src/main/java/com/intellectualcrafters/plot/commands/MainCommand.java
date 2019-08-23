@@ -207,7 +207,7 @@ public class MainCommand extends Command {
         if (args.length >= 2) {
             PlotArea area = player.getApplicablePlotArea();
             Plot newPlot = Plot.fromString(area, args[0]);
-            if (newPlot != null && (player instanceof ConsolePlayer || newPlot.getArea().equals(area) || Permissions.hasPermission(player, C.PERMISSION_ADMIN)) && !newPlot.isDenied(player.getUUID())) {
+            if (newPlot != null && (player instanceof ConsolePlayer || newPlot.getArea().equals(area) || Permissions.hasPermission(player, C.PERMISSION_ADMIN) || Permissions.hasPermission(player, C.PERMISSION_ADMIN_SUDO_AREA)) && !newPlot.isDenied(player.getUUID())) {
                 Location newLoc = newPlot.getCenter();
                 if (player.canTeleport(newLoc)) {
                     // Save meta
