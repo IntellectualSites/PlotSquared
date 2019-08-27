@@ -127,16 +127,6 @@ public class NukkitSetupUtils extends SetupUtils {
             if (!plugin.getServer().generateLevel(object.world, object.world.hashCode(), NukkitHybridGen.class, map)) {
                 plugin.getServer().loadLevel(object.world);
             }
-            try {
-//                File nukkitFile = new File("nukkit.yml");
-//                YamlConfiguration nukkitYml = YamlConfiguration.loadConfiguration(nukkitFile);
-//                if (!nukkitYml.contains("worlds." + object.world + ".generator")) {
-//                    nukkitYml.set("worlds." + object.world + ".generator", object.setupGenerator);
-//                    nukkitYml.save(nukkitFile);
-//                }
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
         } else {
             if (!plugin.getServer().generateLevel(object.world, object.world.hashCode())) {
                 plugin.getServer().loadLevel(object.world);
@@ -155,7 +145,7 @@ public class NukkitSetupUtils extends SetupUtils {
             return null;
         }
         try {
-            Field field = Level.class.getDeclaredField("generatorInstance");
+            Field field = Level.class.getDeclaredField("generatorClass");
             field.setAccessible(true);
             Generator generator = (Generator) field.get(world);
             if (!(generator instanceof NukkitPlotGenerator)) {

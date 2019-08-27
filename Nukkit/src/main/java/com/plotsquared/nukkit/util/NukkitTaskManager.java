@@ -10,8 +10,8 @@ public class NukkitTaskManager extends TaskManager {
 
     private final NukkitMain plugin;
 
-    public NukkitTaskManager(NukkitMain bukkitMain) {
-        this.plugin = bukkitMain;
+    public NukkitTaskManager(NukkitMain nukkitMain) {
+        this.plugin = nukkitMain;
     }
 
     private AtomicInteger index = new AtomicInteger(0);

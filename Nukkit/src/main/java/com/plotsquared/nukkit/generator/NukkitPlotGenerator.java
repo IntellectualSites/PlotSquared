@@ -178,9 +178,8 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
     public void populateChunk(int x, int z) {
         if (getPlatformGenerator() != this) {
             getPlatformGenerator().populateChunk(x, z);
-        } else {
-            // No populating
-        }
+        }  // No populating
+
     }
 
     @Override
