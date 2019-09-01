@@ -116,7 +116,7 @@ public abstract class Command {
     public List<Command> getCommands(CommandCategory cat, PlotPlayer player) {
         List<Command> commands = getCommands(player);
         if (cat != null) {
-            commands.removeIf(command -> command.category != cat); //A better way
+            commands.removeIf(command -> command.category != cat);
         }
         return commands;
     }
@@ -244,7 +244,7 @@ public abstract class Command {
             return;
         }
         if (page == 0 && totalPages != 0) { // Next
-            new PlotMessage().text("<-").color("$3").text(" | ").color("$3").text("->").color("$1").command(baseCommand + " " + (2)) //Just why?
+            new PlotMessage().text("<-").color("$3").text(" | ").color("$3").text("->").color("$1").command(baseCommand + " " + 2)
                     .text(C.CLICKABLE.s()).color("$2").send(player);
             return;
         }

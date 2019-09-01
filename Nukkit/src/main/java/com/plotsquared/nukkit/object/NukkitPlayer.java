@@ -65,7 +65,7 @@ public class NukkitPlayer extends PlotPlayer {
         cn.nukkit.level.Location to = NukkitUtil.getLocation(loc);
         cn.nukkit.level.Location from = player.getLocation();
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, PlayerTeleportEvent.TeleportCause.PLUGIN);
-        RegisteredListener[] listeners = PlayerTeleportEvent.getHandlers().getRegisteredListeners();
+        RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
         for (RegisteredListener listener : listeners) {
             if (listener.getPlugin().getName().equals(PS.imp().getPluginName())) {
                 continue;

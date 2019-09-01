@@ -33,7 +33,7 @@ public class NukkitUtil extends WorldUtil {
     private static NukkitMain plugin;
 
     public NukkitUtil(NukkitMain plugin) {
-        NukkitUtil.plugin = plugin;
+        this.plugin = plugin;
     }
 
     public static void removePlayer(String player) {
