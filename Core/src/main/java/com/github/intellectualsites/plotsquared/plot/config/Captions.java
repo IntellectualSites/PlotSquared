@@ -883,7 +883,7 @@ public enum Captions {
         }
     }
 
-    public String f(final Object... args) {
+    @Deprecated public String f(final Object... args) {
         return format(getTranslated(), args);
     }
 
