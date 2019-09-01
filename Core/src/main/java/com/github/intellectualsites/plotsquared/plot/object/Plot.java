@@ -2418,20 +2418,16 @@ public class Plot {
      * @param direction
      * @return
      */
-    public Plot getRelative(int direction) {
+    @Deprecated public Plot getRelative(int direction) {
         return this.area.getPlotAbs(this.id.getRelative(direction));
     }
 
     /**
-     * Gets the plot in a relative direction<br>
-     * 0 = north<br>
-     * 1 = east<br>
-     * 2 = south<br>
-     * 3 = west<br>
+     * Gets the plot in a relative direction
      * Note: May be null if the partial plot area does not include the relative location
      *
      * @param direction
-     * @return
+     * @return the plot relative to this one
      */
     public Plot getRelative(Direction direction) {
         return this.area.getPlotAbs(this.id.getRelative(direction));
@@ -2441,7 +2437,7 @@ public class Plot {
      * Gets a set of plots connected (and including) this plot<br>
      * - This result is cached globally
      *
-     * @return
+     * @return a Set of Plots connected to this Plot
      */
     public Set<Plot> getConnectedPlots() {
         if (this.settings == null) {
@@ -2802,6 +2798,11 @@ public class Plot {
         return false;
     }
 
+    /**
+     * Checks if the owner of this Plot is online.
+     *
+     * @return true if the owner of the Plot is online
+     */
     public boolean isOnline() {
         if (this.owner == null) {
             return false;
@@ -3098,23 +3099,23 @@ public class Plot {
         return getFlags().containsKey(flag);
     }
 
-    @SuppressWarnings("deprecation") public boolean removeComment(PlotComment comment) {
+    public boolean removeComment(PlotComment comment) {
         return getSettings().removeComment(comment);
     }
 
-    @SuppressWarnings("deprecation") public void removeComments(List<PlotComment> comments) {
+    public void removeComments(List<PlotComment> comments) {
         getSettings().removeComments(comments);
     }
 
-    @SuppressWarnings("deprecation") public List<PlotComment> getComments(String inbox) {
+    public List<PlotComment> getComments(String inbox) {
         return getSettings().getComments(inbox);
     }
 
-    @SuppressWarnings("deprecation") public void addComment(PlotComment comment) {
+    public void addComment(PlotComment comment) {
         getSettings().addComment(comment);
     }
 
-    @SuppressWarnings("deprecation") public void setComments(List<PlotComment> list) {
+    public void setComments(List<PlotComment> list) {
         getSettings().setComments(list);
     }
 

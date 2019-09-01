@@ -149,8 +149,14 @@ import java.util.List;
                             }
                             PlotComment comment = value.get(index - 1);
                             inbox.removeComment(plot, comment);
-                            plot.removeComment(comment);
-                            MainUtil.sendMessage(player, Captions.COMMENT_REMOVED, comment.comment);
+                            boolean success = plot.removeComment(comment);
+                            //noinspection StatementWithEmptyBody
+                            if (success) {
+                                MainUtil
+                                    .sendMessage(player, Captions.COMMENT_REMOVED, comment.comment);
+                            } else {
+                                //TODO Comment removal failure message
+                            }
                         }
                     })) {
                         sendMessage(player, Captions.NOT_IN_PLOT);

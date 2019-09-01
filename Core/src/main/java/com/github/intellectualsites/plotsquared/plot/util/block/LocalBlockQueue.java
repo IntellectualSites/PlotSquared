@@ -96,8 +96,8 @@ public abstract class LocalBlockQueue {
         }
     }
 
-    public void enqueue() {
-        GlobalBlockQueue.IMP.enqueue(this);
+    public boolean enqueue() {
+        return GlobalBlockQueue.IMP.enqueue(this);
     }
 
     public void setCuboid(Location pos1, Location pos2, PlotBlock block) {

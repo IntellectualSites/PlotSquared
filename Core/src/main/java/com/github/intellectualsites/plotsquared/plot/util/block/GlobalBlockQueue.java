@@ -45,10 +45,10 @@ public class GlobalBlockQueue {
 
     public GlobalBlockQueue(QueueProvider provider, int threads) {
         this.provider = provider;
-        activeQueues = new ConcurrentLinkedDeque<>();
-        inactiveQueues = new ConcurrentLinkedDeque<>();
-        runnables = new ConcurrentLinkedDeque<>();
-        running = new AtomicBoolean();
+        this.activeQueues = new ConcurrentLinkedDeque<>();
+        this.inactiveQueues = new ConcurrentLinkedDeque<>();
+        this.runnables = new ConcurrentLinkedDeque<>();
+        this.running = new AtomicBoolean();
         this.PARALLEL_THREADS = threads;
     }
 
@@ -151,12 +151,20 @@ public class GlobalBlockQueue {
         return false;
     }
 
-    public void enqueue(LocalBlockQueue queue) {
-        inactiveQueues.remove(queue);
+    /**
+     * TODO Documentation needed.
+     *
+     * @param queue todo
+     * @return true if added to queue, false otherwise
+     */
+    public boolean enqueue(LocalBlockQueue queue) {
+        boolean success = false;
+        success = inactiveQueues.remove(queue);
         if (queue.size() > 0 && !activeQueues.contains(queue)) {
             queue.optimize();
-            activeQueues.add(queue);
+            success = activeQueues.add(queue);
         }
+        return success;
     }
 
     public void dequeue(LocalBlockQueue queue) {
