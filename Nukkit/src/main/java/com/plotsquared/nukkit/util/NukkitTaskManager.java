@@ -3,19 +3,18 @@ package com.plotsquared.nukkit.util;
 import cn.nukkit.scheduler.TaskHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.nukkit.NukkitMain;
+
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class NukkitTaskManager extends TaskManager {
 
     private final NukkitMain plugin;
-
+    private AtomicInteger index = new AtomicInteger(0);
+    private HashMap<Integer, Integer> tasks = new HashMap<>();
     public NukkitTaskManager(NukkitMain nukkitMain) {
         this.plugin = nukkitMain;
     }
-
-    private AtomicInteger index = new AtomicInteger(0);
-    private HashMap<Integer, Integer> tasks = new HashMap<>();
 
     @Override
     public int taskRepeat(Runnable r, int interval) {

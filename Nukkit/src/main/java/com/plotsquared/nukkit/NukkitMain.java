@@ -167,7 +167,8 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
         return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])};
     }
 
-    @Override public String getPluginVersionString() {
+    @Override
+    public String getPluginVersionString() {
         return getDescription().getVersion();
     }
 
@@ -178,7 +179,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
 
     @Override
     public void registerCommands() {
-        NukkitCommand nukkitCommand = new NukkitCommand("plot", new String[] {"p","plot","ps","plotsquared","p2","2"});
+        NukkitCommand nukkitCommand = new NukkitCommand("plot", new String[]{"p", "plot", "ps", "plotsquared", "p2", "2"});
         getServer().getCommandMap().register("plot", nukkitCommand);
     }
 
@@ -303,7 +304,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
                 return new NukkitPlotGenerator(map);
             } catch (Throwable e) {
                 this.getServer().getLogger()
-                    .error("Failed to create generator for " + name + " | " + gen);
+                        .error("Failed to create generator for " + name + " | " + gen);
                 while (e.getCause() != null) {
                     e = e.getCause();
                 }

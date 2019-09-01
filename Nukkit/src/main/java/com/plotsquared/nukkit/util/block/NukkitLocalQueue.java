@@ -14,6 +14,7 @@ import com.plotsquared.nukkit.NukkitMain;
 public class NukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
 
     private final Level level;
+    private Vector3 mutable;
 
     public NukkitLocalQueue(String world) {
         super(world);
@@ -70,7 +71,6 @@ public class NukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
         return level.getChunk(x, z);
     }
 
-    private Vector3 mutable;
     private Vector3 getMut(int x, int y, int z) {
         mutable.x = x;
         mutable.y = y;
@@ -90,7 +90,7 @@ public class NukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
                         for (int x = 0; x < 16; x++, j++) {
                             PlotBlock block = blocksLayer[j];
                             if (block != null) {
-                                chunk.setBlock(x, y, z, (int) block.id, (int) block.data);
+                                chunk.setBlock(x, y, z, block.id, block.data);
                             }
                         }
                     }

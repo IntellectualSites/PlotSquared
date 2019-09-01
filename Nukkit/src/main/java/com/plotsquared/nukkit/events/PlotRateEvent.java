@@ -35,11 +35,13 @@ public class PlotRateEvent extends PlotEvent implements Cancellable {
         this.rating = rating;
     }
 
-    @Override public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
+    @Override
+    public boolean isCancelled() {
+        return this.cancelled;
     }
 
-    @Override public boolean isCancelled() {
-        return this.cancelled;
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 }
