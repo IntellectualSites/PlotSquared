@@ -113,8 +113,7 @@ import java.util.zip.ZipOutputStream;
                     return true;
                 }
             }
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                "/plot template <import|export> <world> [template]");
+            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, getUsage());
             return true;
         }
         final String world = args[1];

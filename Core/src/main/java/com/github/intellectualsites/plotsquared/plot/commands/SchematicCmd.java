@@ -25,7 +25,7 @@ import java.util.UUID;
 
 @CommandDeclaration(command = "schematic", permission = "plots.schematic",
     description = "Schematic command", aliases = {"sch", "schem"},
-    category = CommandCategory.SCHEMATIC, usage = "/plot schematic <arg...>")
+    category = CommandCategory.SCHEMATIC, usage = "/plot schematic <test|save|saveall|paste>")
 public class SchematicCmd extends SubCommand {
 
     private boolean running = false;

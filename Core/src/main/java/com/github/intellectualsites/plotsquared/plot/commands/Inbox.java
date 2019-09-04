@@ -71,8 +71,7 @@ import java.util.List;
             return false;
         }
         if (args.length == 0) {
-            sendMessage(player, Captions.COMMAND_SYNTAX,
-                "/plot inbox [inbox] [delete <index>|clear|page]");
+            sendMessage(player, Captions.COMMAND_SYNTAX, getUsage());
             for (final CommentInbox inbox : CommentManager.inboxes.values()) {
                 if (inbox.canRead(plot, player)) {
                     if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
@@ -172,8 +171,7 @@ import java.util.List;
                     try {
                         page = Integer.parseInt(args[1]);
                     } catch (NumberFormatException ignored) {
-                        sendMessage(player, Captions.COMMAND_SYNTAX,
-                            "/plot inbox [inbox] [delete <index>|clear|page]");
+                        sendMessage(player, Captions.COMMAND_SYNTAX, getUsage());
                         return false;
                     }
             }

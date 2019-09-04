@@ -87,8 +87,7 @@ import java.util.*;
          *  plot flag list
          */
         if (args.length == 0) {
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                "/plot flag <set|remove|add|list|info>");
+            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, getUsage());
             return false;
         }
         Location loc = player.getLocation();
@@ -311,7 +310,7 @@ import java.util.*;
                 return true;
         }
         MainUtil
-            .sendMessage(player, Captions.COMMAND_SYNTAX, "/plot flag <set|remove|add|list|info>");
+            .sendMessage(player, Captions.COMMAND_SYNTAX, getUsage());
         return false;
     }
 }

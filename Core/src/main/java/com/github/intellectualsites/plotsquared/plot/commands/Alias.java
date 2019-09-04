@@ -21,7 +21,7 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
 
         if (args.length == 0) {
-            Captions.COMMAND_SYNTAX.send(player, "/plot alias <set|remove> <value>");
+            Captions.COMMAND_SYNTAX.send(player, getUsage());
             return false;
         }
 
@@ -64,7 +64,7 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
                 }
                 break;
             default:
-                Captions.COMMAND_SYNTAX.send(player, "/plot alias <set|remove> <alias>");
+                Captions.COMMAND_SYNTAX.send(player, getUsage());
                 result = false;
         }
 

@@ -12,7 +12,7 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 @CommandDeclaration(command = "continue",
     description = "Continue a plot that was previously marked as done",
     permission = "plots.continue", category = CommandCategory.SETTINGS,
-    requiredType = RequiredType.NONE) public class Continue extends SubCommand {
+    requiredType = RequiredType.PLAYER) public class Continue extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
         Plot plot = player.getCurrentPlot();
