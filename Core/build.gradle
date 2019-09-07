@@ -35,8 +35,9 @@ processResources {
     }
 }
 
-jar.setArchiveName("PlotSquared-API-${project.parent.version}.jar")
-jar.destinationDir = file("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/" + project.parent.version)
+//noinspection GroovyAssignabilityCheck
+jar.archiveFileName = "PlotSquared-API-${project.parent.version}.jar"
+jar.destinationDirectory = file("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/" + project.parent.version)
 task createPom {
     doLast {
         pom {

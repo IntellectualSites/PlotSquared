@@ -58,8 +58,8 @@ shadowJar {
     relocate('net.kyori.text', 'com.github.intellectualsites.plotsquared.formatting.text')
     relocate("io.papermc.lib", "com.github.intellectualsites.plotsquared.bukkit.paperlib")
     // relocate('org.mcstats', 'com.plotsquared.stats')
-    archiveName = "${parent.name}-${project.name}-${parent.version}.jar"
-    destinationDir = file "../target"
+    archiveFileName = "${parent.name}-${project.name}-${parent.version}.jar"
+    destinationDirectory = file "../target"
 }
 
 shadowJar.doLast {
