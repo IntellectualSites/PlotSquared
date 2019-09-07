@@ -10,6 +10,7 @@ import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -44,6 +45,7 @@ import java.util.stream.IntStream;
             }
 
             @Override public boolean set(PlotPlayer player, final Plot plot, String value) {
+                PlotArea plotArea = player.getLocation().getPlotArea();
                 PlotManager manager = player.getLocation().getPlotManager();
                 String[] components = manager.getPlotComponents(plot.getId());
                 boolean allowUnsafe = DebugAllowUnsafe.unsafeAllowed.contains(player.getUUID());
@@ -126,7 +128,7 @@ import java.util.stream.IntStream;
         }
         MainUtil
             .sendMessage(player, Captions.SUBCOMMAND_SET_OPTIONS_HEADER.getTranslated() + StringMan
-            .join(newValues, Captions.BLOCK_LIST_SEPARATER.formatted()));
+            .join(newValues, Captions.BLOCK_LIST_SEPARATOR.formatted()));
         return false;
     }
 

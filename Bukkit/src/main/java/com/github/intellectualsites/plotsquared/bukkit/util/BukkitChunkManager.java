@@ -351,8 +351,8 @@ public class BukkitChunkManager extends ChunkManager {
                                 int bz = min.getZ();
                                 for (int x1 = 0; x1 < 16; x1++) {
                                     for (int z1 = 0; z1 < 16; z1++) {
-                                        PlotLoc plotLoc = new PlotLoc(bx + x1, bz + z1);
-                                        BaseBlock[] ids = map.allBlocks.get(plotLoc);
+                                        PlotLoc loc = new PlotLoc(bx + x1, bz + z1);
+                                        BaseBlock[] ids = map.allBlocks.get(loc);
                                         if (ids != null) {
                                             for (int y = 0; y < Math.min(128, ids.length); y++) {
                                                 BaseBlock id = ids[y];
@@ -387,18 +387,17 @@ public class BukkitChunkManager extends ChunkManager {
         return true;
     }
 
-    @Override public boolean loadChunk(String world, ChunkLoc chunkLoc, boolean force) {
-        return BukkitUtil.getWorld(world).getChunkAt(chunkLoc.x, chunkLoc.z).load(force);
+    @Override public boolean loadChunk(String world, ChunkLoc loc, boolean force) {
+        return BukkitUtil.getWorld(world).getChunkAt(loc.x, loc.z).load(force);
     }
 
-    @Override
-    public void unloadChunk(final String world, final ChunkLoc chunkLoc, final boolean save,
+    @SuppressWarnings("deprecation") @Override
+    public void unloadChunk(final String world, final ChunkLoc loc, final boolean save,
         final boolean safe) {
         if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
-            TaskManager.runTask(
-                () -> BukkitUtil.getWorld(world).unloadChunk(chunkLoc.x, chunkLoc.z, save));
+            TaskManager.runTask(() -> BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save));
         } else {
-            BukkitUtil.getWorld(world).unloadChunk(chunkLoc.x, chunkLoc.z, save);
+            BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save);
         }
     }
 
@@ -615,9 +614,9 @@ public class BukkitChunkManager extends ChunkManager {
 
         void saveEntitiesOut(Chunk chunk, RegionWrapper region) {
             for (Entity entity : chunk.getEntities()) {
-                Location location = BukkitUtil.getLocation(entity);
-                int x = location.getX();
-                int z = location.getZ();
+                Location loc = BukkitUtil.getLocation(entity);
+                int x = loc.getX();
+                int z = loc.getZ();
                 if (isIn(region, x, z)) {
                     continue;
                 }
@@ -637,9 +636,9 @@ public class BukkitChunkManager extends ChunkManager {
         void saveEntitiesIn(Chunk chunk, RegionWrapper region, int offsetX, int offsetZ,
             boolean delete) {
             for (Entity entity : chunk.getEntities()) {
-                Location location = BukkitUtil.getLocation(entity);
-                int x = location.getX();
-                int z = location.getZ();
+                Location loc = BukkitUtil.getLocation(entity);
+                int x = loc.getX();
+                int z = loc.getZ();
                 if (!isIn(region, x, z)) {
                     continue;
                 }

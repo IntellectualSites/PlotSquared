@@ -1,19 +1,11 @@
 package com.github.intellectualsites.plotsquared.plot.database;
 
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotCluster;
-import com.github.intellectualsites.plotsquared.plot.object.PlotId;
-import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
+import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import javax.annotation.Nonnull;
+import java.util.*;
 
 public interface AbstractDB {
 
@@ -231,7 +223,7 @@ public interface AbstractDB {
 
     /**
      * @param cluster PlotCluster Object
-     * @param uuid Player that should be removed
+     * @param uuid    Player that should be removed
      */
     void setHelper(PlotCluster cluster, UUID uuid);
 
@@ -283,7 +275,7 @@ public interface AbstractDB {
     /**
      * Removes the specified comment from the given plot.
      *
-     * @param plot the plot
+     * @param plot    the plot
      * @param comment the comment to remove
      */
     void removeComment(Plot plot, PlotComment comment);
@@ -291,7 +283,7 @@ public interface AbstractDB {
     /**
      * Clears the specified inbox on the given plot.
      *
-     * @param plot the plot
+     * @param plot  the plot
      * @param inbox the inbox to clear
      */
     void clearInbox(Plot plot, String inbox);
@@ -299,17 +291,17 @@ public interface AbstractDB {
     /**
      * Adds the specified comment to the given plot.
      *
-     * @param plot the plot
+     * @param plot    the plot
      * @param comment the comment to add
      */
     void setComment(Plot plot, PlotComment comment);
 
     /**
-     * Gets Plot comments.
+     * Gets Plot Comments.
      *
      * @param plot The Plot to get comments from
      */
-    void getComments(@NotNull Plot plot, String inbox, RunnableVal<List<PlotComment>> whenDone);
+    void getComments(@Nonnull Plot plot, String inbox, RunnableVal<List<PlotComment>> whenDone);
 
     void createPlotAndSettings(Plot plot, Runnable whenDone);
 

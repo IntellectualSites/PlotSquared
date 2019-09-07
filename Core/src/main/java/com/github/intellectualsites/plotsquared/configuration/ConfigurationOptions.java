@@ -6,6 +6,7 @@ package com.github.intellectualsites.plotsquared.configuration;
  */
 class ConfigurationOptions {
     private final Configuration configuration;
+    private char pathSeparator = '.';
     private boolean copyDefaults = false;
 
     protected ConfigurationOptions(Configuration configuration) {
@@ -25,12 +26,28 @@ class ConfigurationOptions {
      * Gets the char that will be used to separate {@link
      * ConfigurationSection}s.
      *
-     * <p> This value is always '.'.
+     * <p>This value does not affect how the {@link Configuration} is stored,
+     * only in how you access the data. The default value is '.'.
      *
      * @return Path separator
      */
-    char pathSeparator() {
-        return '.';
+    public char pathSeparator() {
+        return pathSeparator;
+    }
+
+    /**
+     * Sets the char that will be used to separate {@link
+     * ConfigurationSection}s.
+     *
+     * <p>This value does not affect how the {@link Configuration} is stored,
+     * only in how you access the data. The default value is '.'.
+     *
+     * @param value Path separator
+     * @return This object, for chaining
+     */
+    public ConfigurationOptions pathSeparator(char value) {
+        pathSeparator = value;
+        return this;
     }
 
     /**

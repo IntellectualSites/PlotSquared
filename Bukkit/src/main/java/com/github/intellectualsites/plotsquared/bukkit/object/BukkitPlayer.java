@@ -25,6 +25,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.RegisteredListener;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
@@ -55,7 +56,7 @@ public class BukkitPlayer extends PlotPlayer {
         super.populatePersistentMetaMap();
     }
 
-    @NotNull @Override public Location getLocation() {
+    @Override public Location getLocation() {
         final Location location = super.getLocation();
         return location == null ? BukkitUtil.getLocation(this.player) : location;
     }
@@ -71,8 +72,8 @@ public class BukkitPlayer extends PlotPlayer {
         return this.player.getLastPlayed();
     }
 
-    @Override public boolean canTeleport(@NotNull final Location location) {
-        final org.bukkit.Location to = BukkitUtil.getLocation(location);
+    @Override public boolean canTeleport(@NotNull final Location loc) {
+        final org.bukkit.Location to = BukkitUtil.getLocation(loc);
         final org.bukkit.Location from = player.getLocation();
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to);
         callEvent(event);
@@ -183,7 +184,7 @@ public class BukkitPlayer extends PlotPlayer {
         }
     }
 
-    @Override public void teleport(@NotNull final Location location) {
+    @Override public void teleport(@Nonnull final Location location) {
         if (Math.abs(location.getX()) >= 30000000 || Math.abs(location.getZ()) >= 30000000) {
             return;
         }
@@ -228,7 +229,7 @@ public class BukkitPlayer extends PlotPlayer {
         }
     }
 
-    @NotNull @Override public PlotGameMode getGameMode() {
+    @Nonnull @Override public PlotGameMode getGameMode() {
         switch (this.player.getGameMode()) {
             case ADVENTURE:
                 return PlotGameMode.ADVENTURE;

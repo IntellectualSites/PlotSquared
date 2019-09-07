@@ -9,9 +9,9 @@ import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,7 +26,7 @@ public class SinglePlotArea extends GridPlotWorld {
         this.DEFAULT_HOME = new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE);
     }
 
-    @NotNull @Override
+    @Override
     protected PlotManager createManager() {
         return new SinglePlotManager(this);
     }
@@ -76,8 +76,8 @@ public class SinglePlotArea extends GridPlotWorld {
                                         new File(dataDest, file.getName()).toPath());
                                 }
                             }
-                        } catch (IOException exception) {
-                            exception.printStackTrace();
+                        } catch (IOException ignore) {
+                            ignore.printStackTrace();
                         }
                     }
                 }
@@ -113,38 +113,38 @@ public class SinglePlotArea extends GridPlotWorld {
             new ConfigurationNode("void", this.VOID, "Void world", Configuration.BOOLEAN)};
     }
 
-    @Nullable @Override public Plot getOwnedPlot(@NotNull final Location location) {
+    @Nullable @Override public Plot getOwnedPlot(@Nonnull final Location location) {
         PlotId pid = PlotId.fromStringOrNull(location.getWorld());
         Plot plot = pid == null ? null : this.plots.get(pid);
         return plot == null ? null : plot.getBasePlot(false);
     }
 
-    @Nullable @Override public Plot getOwnedPlotAbs(@NotNull Location location) {
+    @Nullable @Override public Plot getOwnedPlotAbs(@Nonnull Location location) {
         PlotId pid = PlotId.fromStringOrNull(location.getWorld());
         return pid == null ? null : plots.get(pid);
     }
 
-    @Nullable @Override public Plot getPlot(@NotNull final Location location) {
+    @Nullable @Override public Plot getPlot(@Nonnull final Location location) {
         PlotId pid = PlotId.fromStringOrNull(location.getWorld());
         return pid == null ? null : getPlot(pid);
     }
 
-    @Nullable @Override public Plot getPlotAbs(@NotNull final Location location) {
+    @Nullable @Override public Plot getPlotAbs(@Nonnull final Location location) {
         final PlotId pid = PlotId.fromStringOrNull(location.getWorld());
         return pid == null ? null : getPlotAbs(pid);
     }
 
-    public boolean addPlot(@NotNull Plot plot) {
+    public boolean addPlot(@Nonnull Plot plot) {
         plot = adapt(plot);
         return super.addPlot(plot);
     }
 
-    @Override public boolean addPlotAbs(@NotNull Plot plot) {
+    @Override public boolean addPlotAbs(@Nonnull Plot plot) {
         plot = adapt(plot);
         return super.addPlotAbs(plot);
     }
 
-    @Override public boolean addPlotIfAbsent(@NotNull Plot plot) {
+    @Override public boolean addPlotIfAbsent(@Nonnull Plot plot) {
         plot = adapt(plot);
         return super.addPlotIfAbsent(plot);
     }
@@ -160,7 +160,7 @@ public class SinglePlotArea extends GridPlotWorld {
         return p;
     }
 
-    @Nullable public Plot getPlotAbs(@NotNull final PlotId id) {
+    @Nullable public Plot getPlotAbs(@Nonnull final PlotId id) {
         Plot plot = getOwnedPlotAbs(id);
         if (plot == null) {
             return new SinglePlot(this, id);
@@ -168,7 +168,7 @@ public class SinglePlotArea extends GridPlotWorld {
         return plot;
     }
 
-    @Nullable public Plot getPlot(@NotNull PlotId id) {
+    @Nullable public Plot getPlot(@Nonnull PlotId id) {
         // TODO
         Plot plot = getOwnedPlotAbs(id);
         if (plot == null) {

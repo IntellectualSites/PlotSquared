@@ -13,8 +13,8 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 public class Swap extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
-        Location location = player.getLocation();
-        Plot plot1 = location.getPlotAbs();
+        Location loc = player.getLocation();
+        Plot plot1 = loc.getPlotAbs();
         if (plot1 == null) {
             return !MainUtil.sendMessage(player, Captions.NOT_IN_PLOT);
         }

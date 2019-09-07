@@ -3,29 +3,21 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.object.Expression;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.CmdConfirm;
-import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
-import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.Permissions;
-import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.util.*;
 
 
 @CommandDeclaration(command = "delete", permission = "plots.delete",
     description = "Delete the plot you stand on", usage = "/plot delete",
-    aliases = {"dispose", "del"}, category = CommandCategory.CLAIMING,
+    aliases = {"dispose", "del", "unclaim"}, category = CommandCategory.CLAIMING,
     requiredType = RequiredType.NONE, confirmation = true) public class Delete extends SubCommand {
 
     // Note: To delete a specific plot use /plot <plot> delete
     // The syntax also works with any command: /plot <plot> <command>
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
-        Location location = player.getLocation();
-        final Plot plot = location.getPlotAbs();
+        Location loc = player.getLocation();
+        final Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return !sendMessage(player, Captions.NOT_IN_PLOT);
         }
@@ -38,9 +30,8 @@ import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
         }
         final PlotArea plotArea = plot.getArea();
         final java.util.Set<Plot> plots = plot.getConnectedPlots();
-        final int currentPlots = Settings.Limit.GLOBAL ?
-            player.getPlotCount() :
-            player.getPlotCount(location.getWorld());
+        final int currentPlots =
+            Settings.Limit.GLOBAL ? player.getPlotCount() : player.getPlotCount(loc.getWorld());
         Runnable run = new Runnable() {
             @Override public void run() {
                 if (plot.getRunning() > 0) {

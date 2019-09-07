@@ -31,13 +31,13 @@ import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class SQLUUIDHandler extends UUIDHandlerImplementation {
 
     final int MAX_REQUESTS = 500;
     private final String PROFILE_URL =
         "https://sessionserver.mojang.com/session/minecraft/profile/";
+    private final int INTERVAL = 12000;
     private final JSONParser jsonParser = new JSONParser();
     private final SQLite sqlite;
 
@@ -133,10 +133,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                                     "Invalid response from Mojang: Some UUIDs will be cached later. (`unknown` until then or player joins)");
                             }
                             try {
-                                //Mojang allows requests every 10 minutes according to https://wiki.vg/Mojang_API
-                                //15 Minutes is chosen here since system timers are not always precise
-                                //and it should provide enough time where Mojang won't block requests.
-                                TimeUnit.MINUTES.sleep(15);
+                                Thread.sleep(INTERVAL * 50);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                                 break;
@@ -145,6 +142,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                         if (whenDone != null) {
                             whenDone.run();
                         }
+                        return;
                     });
                 });
             } catch (SQLException e) {

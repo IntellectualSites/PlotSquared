@@ -12,7 +12,6 @@ import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.google.common.collect.Sets;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,13 +34,13 @@ public class HybridPlotManager extends ClassicPlotManager {
         String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator
             + hybridPlotWorld.worldname + File.separator;
         try {
-            File sideRoad =
+            File sideroad =
                 MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), dir + "sideroad.schem");
             String newDir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator
                 + "__TEMP_DIR__" + File.separator;
-            if (sideRoad.exists()) {
+            if (sideroad.exists()) {
                 files.add(new FileBytes(newDir + "sideroad.schem",
-                    Files.readAllBytes(sideRoad.toPath())));
+                    Files.readAllBytes(sideroad.toPath())));
             }
             File intersection =
                 MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), dir + "intersection.schem");
@@ -147,7 +146,8 @@ public class HybridPlotManager extends ClassicPlotManager {
         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
             createSchemAbs(queue, pos1, pos2);
         }
-        return queue.enqueue();
+        queue.enqueue();
+        return true;
     }
 
     /**
@@ -221,9 +221,7 @@ public class HybridPlotManager extends ClassicPlotManager {
     }
 
     /**
-     * Retrieves the location of where a sign should be for a plot.
-     * @param plot The plot
-     * @return The location where a sign should be
+     * Remove sign for a plot.
      */
     @Override public Location getSignLoc(Plot plot) {
         return hybridPlotWorld.getSignLocation(plot);

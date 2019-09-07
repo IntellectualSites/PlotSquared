@@ -12,8 +12,8 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.google.common.base.Charsets;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -2170,7 +2170,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         });
     }
 
-    @Override public void getComments(@NotNull Plot plot, final String inbox,
+    @Override public void getComments(@Nonnull Plot plot, final String inbox,
         final RunnableVal<List<PlotComment>> whenDone) {
         addPlotTask(plot, new UniqueStatement("getComments_" + plot) {
             @Override public void set(PreparedStatement statement) throws SQLException {
@@ -2942,7 +2942,7 @@ import java.util.concurrent.atomic.AtomicInteger;
             boolean[] pm = plot.getMerged();
             boolean[] dm = dataPlot.getMerged();
             if (pm[0] != dm[0] || pm[1] != dm[1]) {
-                PlotSquared.debug(" - Correcting merge for: " + plot);
+                PlotSquared.debug("&8 - &7Correcting merge for: " + plot);
                 setMerged(dataPlot, plot.getMerged());
             }
             HashMap<Flag<?>, Object> pf = plot.getFlags();
@@ -2951,7 +2951,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 if (pf.size() != df.size() || !StringMan
                     .isEqual(StringMan.joinOrdered(pf.values(), ","),
                         StringMan.joinOrdered(df.values(), ","))) {
-                    PlotSquared.debug(" - Correcting flags for: " + plot);
+                    PlotSquared.debug("&8 - &7Correcting flags for: " + plot);
                     setFlags(plot, pf);
                 }
             }

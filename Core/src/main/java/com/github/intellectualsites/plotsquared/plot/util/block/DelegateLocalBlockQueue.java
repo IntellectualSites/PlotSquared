@@ -102,10 +102,9 @@ public class DelegateLocalBlockQueue extends LocalBlockQueue {
         }
     }
 
-    @Override public boolean enqueue() {
+    @Override public void enqueue() {
         if (parent != null) {
-            return parent.enqueue();
+            parent.enqueue();
         }
-        return false;
     }
 }

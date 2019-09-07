@@ -7,8 +7,8 @@ import lombok.Setter;
 import org.bukkit.World;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,8 +30,8 @@ public final class PlotAutoMergeEvent extends PlotEvent implements Cancellable {
      * @param plot  Plot that was merged
      * @param plots A list of plots involved in the event
      */
-    public PlotAutoMergeEvent(@NotNull final World world, @NotNull final Plot plot,
-        @NotNull final List<PlotId> plots) {
+    public PlotAutoMergeEvent(@Nonnull final World world, @Nonnull final Plot plot,
+        @Nonnull final List<PlotId> plots) {
         super(plot);
         this.world = world;
         this.plots = plots;

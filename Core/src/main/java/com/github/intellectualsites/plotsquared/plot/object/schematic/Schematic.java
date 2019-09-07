@@ -30,8 +30,8 @@ public class Schematic {
 
     public boolean setBlock(BlockVector3 position, BaseBlock block) throws WorldEditException {
         if (clipboard.getRegion().contains(position)) {
-            BlockVector3 vector3 = position.subtract(clipboard.getRegion().getMinimumPoint());
-            clipboard.setBlock(vector3, block);
+            BlockVector3 v = position.subtract(clipboard.getRegion().getMinimumPoint());
+            clipboard.setBlock(v, block);
             return true;
         } else {
             return false;
@@ -39,9 +39,9 @@ public class Schematic {
     }
 
     public void save(File file) throws IOException {
-        try (SpongeSchematicWriter schematicWriter = new SpongeSchematicWriter(
+        try (SpongeSchematicWriter ssw = new SpongeSchematicWriter(
             new NBTOutputStream(new FileOutputStream(file)))) {
-            schematicWriter.write(clipboard);
+            ssw.write(clipboard);
         }
     }
 }

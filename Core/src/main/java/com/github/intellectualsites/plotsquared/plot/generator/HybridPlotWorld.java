@@ -44,7 +44,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         super(worldName, id, generator, min, max);
     }
 
-    @NotNull @Override
+    @Override
     protected PlotManager createManager() {
         return new HybridPlotManager(this);
     }

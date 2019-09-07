@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @CommandDeclaration(command = "remove", aliases = {"r", "untrust", "ut", "undeny", "unban", "ud"},
     description = "Remove a player from a plot", usage = "/plot remove <player>",
-    category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE,
+    category = CommandCategory.SETTINGS, requiredType = RequiredType.PLAYER,
     permission = "plots.remove") public class Remove extends SubCommand {
 
     public Remove() {

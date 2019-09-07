@@ -13,8 +13,8 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.stream.AbstractDelegateOutputStream;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -329,7 +329,7 @@ public class MainUtil {
      * @param owner
      * @return The player's name, None, Everyone or Unknown
      */
-    @NotNull public static String getName(UUID owner) {
+    @Nonnull public static String getName(UUID owner) {
         if (owner == null) {
             return Captions.NONE.getTranslated();
         }
@@ -358,7 +358,7 @@ public class MainUtil {
      * @return
      * @see Plot#getCorners()
      */
-    @NotNull public static Location[] getCorners(String world, Collection<RegionWrapper> regions) {
+    @Nonnull public static Location[] getCorners(String world, Collection<RegionWrapper> regions) {
         Location min = null;
         Location max = null;
         for (RegionWrapper region : regions) {
@@ -560,11 +560,11 @@ public class MainUtil {
      * Send a message to the player.
      *
      * @param player Player to receive message
-     * @param message    Message to send
+     * @param msg    Message to send
      * @return true Can be used in things such as commands (return PlayerFunctions.sendMessage(...))
      */
-    public static boolean sendMessage(PlotPlayer player, String message) {
-        return sendMessage(player, message, true);
+    public static boolean sendMessage(PlotPlayer player, String msg) {
+        return sendMessage(player, msg, true);
     }
 
     /**
@@ -585,7 +585,7 @@ public class MainUtil {
      * @param prefix If the message should be prefixed with the configured prefix
      * @return
      */
-    public static boolean sendMessage(CommandCaller player, @NotNull String msg, boolean prefix) {
+    public static boolean sendMessage(CommandCaller player, String msg, boolean prefix) {
         if (!msg.isEmpty()) {
             if (player == null) {
                 String message = (prefix ? Captions.PREFIX.getTranslated() : "") + msg;

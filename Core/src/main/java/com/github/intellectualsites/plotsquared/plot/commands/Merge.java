@@ -3,7 +3,6 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.object.Direction;
 import com.github.intellectualsites.plotsquared.plot.object.Expression;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -18,10 +17,8 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 
 import java.util.UUID;
 
-import static com.github.intellectualsites.plotsquared.plot.object.Direction.getFromIndex;
-
 @CommandDeclaration(command = "merge", aliases = "m",
-    description = "Merge the plot you are standing on, with another plot",
+    description = "Merge the plot you are standing on with another plot",
     permission = "plots.merge", usage = "/plot merge <all|n|e|s|w> [removeroads]",
     category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE, confirmation = true)
 public class Merge extends SubCommand {
@@ -52,8 +49,8 @@ public class Merge extends SubCommand {
     }
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
-        Location location = player.getLocationFull();
-        final Plot plot = location.getPlotAbs();
+        Location loc = player.getLocationFull();
+        final Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return !sendMessage(player, Captions.NOT_IN_PLOT);
         }
@@ -85,20 +82,20 @@ public class Merge extends SubCommand {
             MainUtil.sendMessage(player, Captions.NO_PERMISSION, "plots.merge." + (size + 1));
             return false;
         }
-        Direction direction = Direction.ALL;
+        int direction = -1;
         if (args.length == 0) {
             switch (direction(player.getLocationFull().getYaw())) {
                 case "NORTH":
-                    direction = Direction.NORTH;
+                    direction = 0;
                     break;
                 case "EAST":
-                    direction = Direction.EAST;
+                    direction = 1;
                     break;
                 case "SOUTH":
-                    direction = Direction.SOUTH;
+                    direction = 2;
                     break;
                 case "WEST":
-                    direction = Direction.WEST;
+                    direction = 3;
                     break;
             }
         } else {
@@ -113,7 +110,7 @@ public class Merge extends SubCommand {
                         Captions.PERMISSION_MERGE_KEEP_ROAD.getTranslated());
                     return true;
                 }
-                if (plot.autoMerge(Direction.ALL, maxSize, uuid, terrain)) {
+                if (plot.autoMerge(-1, maxSize, uuid, terrain)) {
                     if (EconHandler.manager != null && plotArea.USE_ECONOMY && price > 0d) {
                         EconHandler.manager.withdrawMoney(player, price);
                         sendMessage(player, Captions.REMOVED_BALANCE, String.valueOf(price));
@@ -127,16 +124,16 @@ public class Merge extends SubCommand {
             }
             for (int i = 0; i < values.length; i++) {
                 if (args[0].equalsIgnoreCase(values[i]) || args[0].equalsIgnoreCase(aliases[i])) {
-                    direction = getFromIndex(i);
+                    direction = i;
                     break;
                 }
             }
         }
-        if (direction == Direction.ALL) {
+        if (direction == -1) {
             MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
                 "/plot merge <" + StringMan.join(values, "|") + "> [removeroads]");
-            MainUtil.sendMessage(player, Captions.DIRECTION.getTranslated()
-                .replaceAll("%dir%", direction(location.getYaw())));
+            MainUtil.sendMessage(player,
+                Captions.DIRECTION.getTranslated().replaceAll("%dir%", direction(loc.getYaw())));
             return false;
         }
         final boolean terrain;
@@ -159,8 +156,7 @@ public class Merge extends SubCommand {
             return true;
         }
         Plot adjacent = plot.getRelative(direction);
-        if (adjacent == null || !adjacent.hasOwner() || adjacent
-            .getMerged((direction.getIndex() + 2) % 4)
+        if (adjacent == null || !adjacent.hasOwner() || adjacent.getMerged((direction + 2) % 4)
             || adjacent.isOwner(uuid)) {
             MainUtil.sendMessage(player, Captions.NO_AVAILABLE_AUTOMERGE);
             return false;
@@ -177,7 +173,7 @@ public class Merge extends SubCommand {
                 continue;
             }
             isOnline = true;
-            final Direction dir = direction;
+            final int dir = direction;
             Runnable run = () -> {
                 MainUtil.sendMessage(accepter, Captions.MERGE_ACCEPTED);
                 plot.autoMerge(dir, maxSize - size, owner, terrain);

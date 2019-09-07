@@ -32,7 +32,7 @@ public class Comment extends SubCommand {
                 StringMan.join(CommentManager.inboxes.keySet(), "|"));
             return false;
         }
-        Location location = player.getLocation();
+        Location loc = player.getLocation();
         PlotId id;
         try {
             id = PlotId.fromString(args[1]);
@@ -44,7 +44,7 @@ public class Comment extends SubCommand {
         int index;
         if (plot == null) {
             index = 1;
-            plot = location.getPlotAbs();
+            plot = loc.getPlotAbs();
         } else {
             if (args.length < 4) {
                 sendMessage(player, Captions.COMMENT_SYNTAX,
@@ -59,7 +59,7 @@ public class Comment extends SubCommand {
         }
         String message = StringMan.join(Arrays.copyOfRange(args, index, args.length), " ");
         PlotComment comment =
-            new PlotComment(location.getWorld(), id, message, player.getName(), inbox.toString(),
+            new PlotComment(loc.getWorld(), id, message, player.getName(), inbox.toString(),
                 System.currentTimeMillis());
         boolean result = inbox.addComment(plot, comment);
         if (!result) {

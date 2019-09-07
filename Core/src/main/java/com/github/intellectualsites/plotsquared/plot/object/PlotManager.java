@@ -39,12 +39,6 @@ public abstract class PlotManager {
 
     public abstract boolean unClaimPlot(Plot plot, Runnable whenDone);
 
-    /**
-     * Retrieves the location of where a sign should be for a plot.
-     *
-     * @param plot The plot
-     * @return The location where a sign should be
-     */
     public abstract Location getSignLoc(Plot plot);
 
     /*
@@ -53,7 +47,8 @@ public abstract class PlotManager {
      */
     public abstract String[] getPlotComponents(PlotId plotId);
 
-    public abstract boolean setComponent(PlotId plotId, String component, BlockBucket blocks);
+    public abstract boolean setComponent(PlotId plotId, String component,
+                                         BlockBucket blocks);
 
     /*
      * PLOT MERGING (return false if your generator does not support plot

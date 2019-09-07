@@ -27,6 +27,7 @@ public class GameModeFlag extends Flag<PlotGameMode> {
             case "2":
                 return PlotGameMode.ADVENTURE;
             case "spectator":
+            case "sp":
             case "3":
                 return PlotGameMode.SPECTATOR;
             default:

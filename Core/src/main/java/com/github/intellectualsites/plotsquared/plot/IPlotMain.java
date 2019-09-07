@@ -63,12 +63,12 @@ public interface IPlotMain extends ILogger {
      */
     String getPluginVersionString();
 
-    default String getPluginName() {
-        return "PlotSquared";
-    }
+    String getPluginName();
 
     /**
      * Gets the version of Minecraft that is running.
+     *
+     * @return
      */
     int[] getServerVersion();
 
@@ -101,7 +101,7 @@ public interface IPlotMain extends ILogger {
     /**
      * The task manager will run and manage Minecraft tasks.
      *
-     * @return the PlotSquared task manager
+     * @return
      */
     TaskManager getTaskManager();
 
@@ -138,39 +138,49 @@ public interface IPlotMain extends ILogger {
     /**
      * Gets the economy provider.
      *
-     * @return the PlotSquared economy manager
+     * @return
      */
     EconHandler getEconomyHandler();
 
     /**
      * Gets the {@link QueueProvider} class.
+     *
+     * @return
      */
     QueueProvider initBlockQueue();
 
     /**
      * Gets the {@link WorldUtil} class.
+     *
+     * @return
      */
     WorldUtil initWorldUtil();
 
     /**
      * Gets the EventUtil class.
+     *
+     * @return
      */
     EventUtil initEventUtil();
 
     /**
      * Gets the chunk manager.
      *
-     * @return the PlotSquared chunk manager
+     * @return
      */
     ChunkManager initChunkManager();
 
     /**
      * Gets the {@link SetupUtils} class.
+     *
+     * @return
      */
     SetupUtils initSetupUtils();
 
     /**
      * Gets {@link HybridUtils} class.
+     *
+     * @return
      */
     HybridUtils initHybridUtils();
 
@@ -189,28 +199,32 @@ public interface IPlotMain extends ILogger {
     /**
      * Gets the {@link UUIDHandlerImplementation} which will cache and
      * provide UUIDs.
+     *
+     * @return
      */
     UUIDHandlerImplementation initUUIDHandler();
 
     /**
      * Gets the {@link InventoryUtil} class (used for implementation specific
      * inventory guis).
+     *
+     * @return
      */
     InventoryUtil initInventoryUtil();
 
     /**
      * Unregisters a {@link PlotPlayer} from cache e.g. if they have logged off.
      *
-     * @param player the player to remove
+     * @param player
      */
     void unregister(PlotPlayer player);
 
     /**
      * Gets the generator wrapper for a world (world) and generator (name).
      *
-     * @param world the world to get the generator from
-     * @param name the name of the generator
-     * @return the generator being used for the provided world
+     * @param world
+     * @param name
+     * @return
      */
     GeneratorWrapper<?> getGenerator(String world, String name);
 
@@ -218,7 +232,7 @@ public interface IPlotMain extends ILogger {
 
     /**
      * Register the chunk processor which will clean out chunks that have too
-     * many block states or entities.
+     * many blockstates or entities.
      */
     void registerChunkProcessor();
 

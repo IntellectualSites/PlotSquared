@@ -47,6 +47,9 @@ public class AugmentedUtils {
                 continue;
             }
             IndependentPlotGenerator generator = area.getGenerator();
+            if (generator == null) {
+                continue;
+            }
             // Mask
             if (queue == null) {
                 queue = GlobalBlockQueue.IMP.getNewQueue(world, false);

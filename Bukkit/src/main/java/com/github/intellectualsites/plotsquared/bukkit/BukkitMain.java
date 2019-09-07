@@ -54,8 +54,8 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -132,8 +132,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         // Check for updates
         if (PlotSquared.get().getUpdateUtility() != null) {
             final UpdateUtility updateUtility = PlotSquared.get().getUpdateUtility();
-            updateUtility.checkForUpdate(PlotSquared.get().getVersion().versionString(),
-                ((updateDescription, throwable) -> {
+            updateUtility
+                .checkForUpdate(this.getPluginVersionString(), ((updateDescription, throwable) -> {
                     Bukkit.getScheduler().runTask(BukkitMain.this, () -> {
                         getLogger().info("-------- PlotSquared Update Check --------");
                         if (throwable != null) {
@@ -289,11 +289,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Override public void registerCommands() {
         final BukkitCommand bukkitCommand = new BukkitCommand();
         final PluginCommand plotCommand = getCommand("plots");
-        if (plotCommand != null) {
-            plotCommand.setExecutor(bukkitCommand);
-            plotCommand.setAliases(Arrays.asList("p", "ps", "plotme", "plot"));
-            plotCommand.setTabCompleter(bukkitCommand);
-        }
+        plotCommand.setExecutor(bukkitCommand);
+        plotCommand.setAliases(Arrays.asList("p", "ps", "plotme", "plot"));
+        plotCommand.setTabCompleter(bukkitCommand);
     }
 
     @Override public File getDirectory() {
@@ -600,15 +598,14 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     @Override public QueueProvider initBlockQueue() {
-        //TODO Figure out why this code is still here yet isn't being called anywhere.
-        //        try {
-        //            new SendChunk();
-        //            MainUtil.canSendChunk = true;
-        //        } catch (ClassNotFoundException | NoSuchFieldException | NoSuchMethodException e) {
-        //            PlotSquared.debug(
-        //                SendChunk.class + " does not support " + StringMan.getString(getServerVersion()));
-        //            MainUtil.canSendChunk = false;
-        //        }
+        try {
+            new SendChunk();
+            MainUtil.canSendChunk = true;
+        } catch (ClassNotFoundException | NoSuchFieldException | NoSuchMethodException e) {
+            PlotSquared.debug(
+                SendChunk.class + " does not support " + StringMan.getString(getServerVersion()));
+            MainUtil.canSendChunk = false;
+        }
         return QueueProvider.of(BukkitLocalQueue.class, BukkitLocalQueue.class);
     }
 
@@ -803,5 +800,4 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Override public LegacyMappings getLegacyMappings() {
         return this.legacyMappings;
     }
-
 }

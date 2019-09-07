@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotManager;
+import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -22,24 +23,28 @@ public class DebugRoadRegen extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
         if (args.length < 1) {
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, DebugRoadRegen.USAGE);
+            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
+                DebugRoadRegen.USAGE);
             return false;
         }
         String kind = args[0].toLowerCase();
         switch (kind) {
             case "plot":
                 return regenPlot(player);
+
             case "region":
                 return regenRegion(player, Arrays.copyOfRange(args, 1, args.length));
+
             default:
-                MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, DebugRoadRegen.USAGE);
+                MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
+                    DebugRoadRegen.USAGE);
                 return false;
         }
     }
 
     public boolean regenPlot(PlotPlayer player) {
-        Location location = player.getLocation();
-        PlotArea area = location.getPlotArea();
+        Location loc = player.getLocation();
+        PlotArea area = loc.getPlotArea();
         if (area == null) {
             return sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
         }
@@ -77,8 +82,8 @@ public class DebugRoadRegen extends SubCommand {
             return false;
         }
 
-        Location location = player.getLocation();
-        PlotArea area = location.getPlotArea();
+        Location loc = player.getLocation();
+        PlotArea area = loc.getPlotArea();
         if (area == null) {
             return sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
         }

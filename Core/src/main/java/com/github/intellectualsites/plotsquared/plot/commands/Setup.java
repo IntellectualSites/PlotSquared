@@ -16,8 +16,8 @@ import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import lombok.*;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -288,11 +288,6 @@ import java.util.Map.Entry;
                     MainUtil.sendMessage(player, "&cYou need to choose a world name!");
                     return false;
                 }
-                if (!d(args[0])) {
-                    MainUtil.sendMessage(player,
-                        "Non [a-z0-9_.-] character in the world name: " + args[0]);
-                    return false;
-                }
                 if (WorldUtil.IMP.isWorld(args[0])) {
                     if (PlotSquared.get().hasPlotArea(args[0])) {
                         MainUtil.sendMessage(player, "&cThat world name is already taken!");
@@ -322,11 +317,6 @@ import java.util.Map.Entry;
         return false;
     }
 
-    private static boolean d(String s) {
-        return s.chars().allMatch((i) -> {
-            return i == 95 || i == 45 || i >= 97 && i <= 122 || i >= 48 && i <= 57 || i == 46;
-        });
-    }
     private static final class StepPickGenerator extends SetupStep {
 
         @Getter private String generator;

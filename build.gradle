@@ -32,11 +32,11 @@ ext {
     git = Grgit.open(dir: new File(rootDir.toString() + "/.git"))
     date = git.head().getDate().format("yy.MM.dd")
     revision = "-${git.head().abbreviatedId}"
-    parents = git.head().parentIds;
+    parents = git.head().parentIds
     if (project.hasProperty("buildnumber")) {
         buildNumber = "$buildnumber"
     } else {
-        index = -2042;  // Offset to match CI
+        index = -2042  // Offset to match CI
         for (; parents != null && !parents.isEmpty(); index++) {
             parents = git.getResolve().toCommit(parents.get(0)).getParentIds()
         }
@@ -67,10 +67,10 @@ subprojects {
             exclude(module: "mockito-core")
             exclude(module: "dummypermscompat")
         }
-        implementation ("net.kyori:text-api:3.0.2")
-        implementation ("net.kyori:text-serializer-gson:3.0.2")
-        implementation ("net.kyori:text-serializer-legacy:3.0.2")
-        implementation ("net.kyori:text-serializer-plain:3.0.2")
+        implementation("net.kyori:text-api:3.0.2")
+        implementation("net.kyori:text-serializer-gson:3.0.2")
+        implementation("net.kyori:text-serializer-legacy:3.0.2")
+        implementation("net.kyori:text-serializer-plain:3.0.2")
         implementation("com.google.guava:guava:21.0") {
             because("Minecraft uses Guava 21 as of 1.13")
         }

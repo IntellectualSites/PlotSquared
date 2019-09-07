@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @CommandDeclaration(command = "condense", permission = "plots.admin",
+    usage = "/plot condense <area> <start|stop|info> [radius]",
     description = "Condense a plotworld", category = CommandCategory.ADMINISTRATION,
     requiredType = RequiredType.CONSOLE) public class Condense extends SubCommand {
 
@@ -27,7 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length != 2 && args.length != 3) {
-            MainUtil.sendMessage(player, "/plot condense <area> <start|stop|info> [radius]");
+            MainUtil.sendMessage(player, getUsage());
             return false;
         }
         PlotArea area = PlotSquared.get().getPlotAreaByString(args[0]);

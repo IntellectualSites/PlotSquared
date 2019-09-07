@@ -327,9 +327,9 @@ public abstract class SchematicHandler {
 
     public Schematic getSchematic(@NotNull URL url) {
         try {
-            ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
-            InputStream inputStream = Channels.newInputStream(readableByteChannel);
-            return getSchematic(inputStream);
+            ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+            InputStream is = Channels.newInputStream(rbc);
+            return getSchematic(is);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -338,15 +338,15 @@ public abstract class SchematicHandler {
 
     public Schematic getSchematic(@NotNull InputStream is) {
         try {
-            SpongeSchematicReader schematicReader =
+            SpongeSchematicReader ssr =
                 new SpongeSchematicReader(new NBTInputStream(new GZIPInputStream(is)));
-            BlockArrayClipboard clip = (BlockArrayClipboard) schematicReader.read();
+            BlockArrayClipboard clip = (BlockArrayClipboard) ssr.read();
             return new Schematic(clip);
         } catch (IOException ignored) {
             try {
-                MCEditSchematicReader schematicReader =
+                MCEditSchematicReader msr =
                     new MCEditSchematicReader(new NBTInputStream(new GZIPInputStream(is)));
-                BlockArrayClipboard clip = (BlockArrayClipboard) schematicReader.read();
+                BlockArrayClipboard clip = (BlockArrayClipboard) msr.read();
                 return new Schematic(clip);
             } catch (IOException e) {
                 e.printStackTrace();

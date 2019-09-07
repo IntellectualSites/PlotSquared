@@ -42,6 +42,7 @@ public class SendChunk {
      * Constructor.
      */
     public SendChunk() throws ClassNotFoundException, NoSuchMethodException, NoSuchFieldException {
+        RefConstructor tempMapChunk;
         RefClass classCraftPlayer = getRefClass("{cb}.entity.CraftPlayer");
         this.methodGetHandlePlayer = classCraftPlayer.getMethod("getHandle");
         RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
@@ -49,7 +50,8 @@ public class SendChunk {
         RefClass classChunk = getRefClass("{nms}.Chunk");
         this.methodInitLighting = classChunk.getMethod("initLighting");
         RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
-        this.mapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), int.class);
+        tempMapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), int.class);
+        this.mapChunk = tempMapChunk;
         RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
         this.connection = classEntityPlayer.getField("playerConnection");
         RefClass classPacket = getRefClass("{nms}.Packet");

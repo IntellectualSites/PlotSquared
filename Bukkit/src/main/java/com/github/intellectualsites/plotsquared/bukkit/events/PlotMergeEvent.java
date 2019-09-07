@@ -6,7 +6,8 @@ import lombok.Setter;
 import org.bukkit.World;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * Event called when several plots are merged
@@ -28,8 +29,8 @@ public final class PlotMergeEvent extends PlotEvent implements Cancellable {
      * @param dir   The direction of the merge
      * @param max   Max merge size
      */
-    public PlotMergeEvent(@NotNull final World world, @NotNull final Plot plot,
-        @NotNull final int dir, @NotNull final int max) {
+    public PlotMergeEvent(@Nonnull final World world, @Nonnull final Plot plot,
+        @Nonnull final int dir, @Nonnull final int max) {
         super(plot);
         this.world = world;
         this.dir = dir;

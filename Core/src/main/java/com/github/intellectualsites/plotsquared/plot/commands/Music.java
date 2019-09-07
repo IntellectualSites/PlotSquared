@@ -3,11 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
-import com.github.intellectualsites.plotsquared.plot.object.PlotItemStack;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,8 +20,8 @@ import java.util.Locale;
             "music_disc_strad", "music_disc_ward", "music_disc_11", "music_disc_wait");
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
-        Location location = player.getLocation();
-        final Plot plot = location.getPlotAbs();
+        Location loc = player.getLocation();
+        final Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return !sendMessage(player, Captions.NOT_IN_PLOT);
         }

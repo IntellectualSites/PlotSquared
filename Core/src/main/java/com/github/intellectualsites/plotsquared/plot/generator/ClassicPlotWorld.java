@@ -46,7 +46,7 @@ import java.util.Locale;
      * command - this may be useful if a config value can be changed at a later date, and has no impact on the actual
      * world generation</p>
      */
-    @NotNull @Override public ConfigurationNode[] getSettingNodes() {
+    @Nonnull @Override public ConfigurationNode[] getSettingNodes() {
         return new ConfigurationNode[] {
             new ConfigurationNode("plot.height", this.PLOT_HEIGHT, "Plot height",
                 Configuration.INTEGER),

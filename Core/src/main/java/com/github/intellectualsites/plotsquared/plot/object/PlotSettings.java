@@ -5,12 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 import com.google.common.collect.ImmutableList;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Generic settings class.
@@ -80,17 +75,6 @@ public class PlotSettings {
     public boolean setMerged(int direction, boolean merged) {
         if (this.merged[direction] != merged) {
             this.merged[direction] = merged;
-            return true;
-        }
-        return false;
-    }
-
-    public boolean setMerged(Direction direction, boolean merged) {
-        if (Direction.ALL == direction) {
-            throw new IllegalArgumentException("You cannot use Direction.ALL in this method!");
-        }
-        if (this.merged[direction.getIndex()] != merged) {
-            this.merged[direction.getIndex()] = merged;
             return true;
         }
         return false;

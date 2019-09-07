@@ -1,19 +1,11 @@
 package com.github.intellectualsites.plotsquared.plot.database;
 
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotCluster;
-import com.github.intellectualsites.plotsquared.plot.object.PlotId;
-import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
+import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import javax.annotation.Nonnull;
+import java.util.*;
 
 public class AbstractDBTest implements AbstractDB {
 
@@ -157,7 +149,7 @@ public class AbstractDBTest implements AbstractDB {
     @Override public void setComment(Plot plot, PlotComment comment) {
     }
 
-    @Override public void getComments(@NotNull Plot plot, String inbox,
+    @Override public void getComments(@Nonnull Plot plot, String inbox,
         RunnableVal<List<PlotComment>> whenDone) {
     }
 

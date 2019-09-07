@@ -56,7 +56,7 @@ import java.util.UUID;
                 continue;
             }
             if (plot.isOwner(uuid)) {
-                MainUtil.sendMessage(player, Captions.ALREADY_OWNER, MainUtil.getName(uuid));
+                MainUtil.sendMessage(player, Captions.CANT_REMOVE_OWNER, MainUtil.getName(uuid));
                 return false;
             }
 
@@ -97,8 +97,8 @@ import java.util.UUID;
         if (player.getGameMode() == PlotGameMode.SPECTATOR) {
             player.stopSpectating();
         }
-        Location location = player.getLocation();
-        Location spawn = WorldUtil.IMP.getSpawn(location.getWorld());
+        Location loc = player.getLocation();
+        Location spawn = WorldUtil.IMP.getSpawn(loc.getWorld());
         MainUtil.sendMessage(player, Captions.YOU_GOT_DENIED);
         if (plot.equals(spawn.getPlot())) {
             Location newSpawn =

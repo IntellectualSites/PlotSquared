@@ -11,7 +11,7 @@ import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.google.common.collect.BiMap;
 import org.jetbrains.annotations.NotNull;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

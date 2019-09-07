@@ -27,9 +27,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -243,7 +242,7 @@ import java.util.Set;
             location.getBlockZ());
     }
 
-    @NotNull public static Location getLocationFull(@NonNull final Entity entity) {
+    public static Location getLocationFull(@NonNull final Entity entity) {
         final org.bukkit.Location location = entity.getLocation();
         return new Location(location.getWorld().getName(), MathMan.roundInt(location.getX()),
             MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()), location.getYaw(),

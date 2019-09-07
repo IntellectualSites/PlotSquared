@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@CommandDeclaration(command = "kick", aliases = {"k"}, description = "Kick a player from your plot",
+@CommandDeclaration(command = "kick", aliases = "k", description = "Kick a player from your plot",
     permission = "plots.kick", usage = "/plot kick <player>", category = CommandCategory.TELEPORT,
     requiredType = RequiredType.PLAYER) public class Kick extends SubCommand {
 

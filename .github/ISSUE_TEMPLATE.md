@@ -3,12 +3,14 @@ __*NOTICE: Bukkit/Spigot versions 1.7.10 to 1.12.2 are considered legacy and wil
 <!--- In order to create a valid issue report you have to follow this template. -->
 <!--- Incomplete reports might be marked as invalid. -->
 <!--  Feature requests and enhancements may be suggested at https://github.com/IntellectualSites/PlotSquaredSuggestions. -->
-**Debug paste link:** 
-<!--- Enter /plot debugpaste in game or in your console and copy the output here -->
+**[REQUIRED] PlotSquared Version Number:** <!--- Enter /plot version in game or in your console and copy the output here -->
 
 **[REQUIRED] Spigot/Paper Version Number:** 
 
 **[REQUIRED] Minecraft Version Number:** 
+
+**Links to worlds.yml file and settings.yml file:** 
+<!--- Copy and paste the information to the service of your choosing and provide the link here. -->
 
 **[REQUIRED] Description of the problem:** 
 

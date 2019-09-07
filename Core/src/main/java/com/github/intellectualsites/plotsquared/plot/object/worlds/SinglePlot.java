@@ -4,8 +4,8 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.google.common.collect.Sets;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
@@ -60,7 +60,7 @@ public class SinglePlot extends Plot {
         return super.isLoaded();
     }
 
-    @NotNull @Override public HashSet<RegionWrapper> getRegions() {
+    @Nonnull @Override public HashSet<RegionWrapper> getRegions() {
         return regions;
     }
 

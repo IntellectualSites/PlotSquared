@@ -18,4 +18,8 @@ public class MemoryConfigurationOptions extends ConfigurationOptions {
         return this;
     }
 
+    @Override public MemoryConfigurationOptions pathSeparator(char value) {
+        super.pathSeparator(value);
+        return this;
+    }
 }

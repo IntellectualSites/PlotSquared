@@ -263,7 +263,7 @@ public abstract class Command {
 
     /**
      * @param player  Caller
-     * @param args Arguments
+     * @param args    Arguments
      * @param confirm Instance, Success, Failure
      * @return CompletableFuture true if the command executed fully, false in
      * any other case

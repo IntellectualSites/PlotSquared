@@ -107,7 +107,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                 if (this.BScount > Settings.Chunk_Processor.MAX_TILES) {
                     this.BSblocked = true;
                     PlotSquared.debug(
-                        Captions.PREFIX + "&cdetected unsafe WorldEdit: " + location.getX() + ","
+                        Captions.PREFIX + "&cDetected unsafe WorldEdit: " + location.getX() + ","
                             + location.getZ());
                 }
                 if (WEManager
@@ -162,7 +162,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         if (this.Ecount > Settings.Chunk_Processor.MAX_ENTITIES) {
             this.Eblocked = true;
             PlotSquared.debug(
-                Captions.PREFIX + "&cdetected unsafe WorldEdit: " + location.getBlockX() + ","
+                Captions.PREFIX + "&cDetected unsafe WorldEdit: " + location.getBlockX() + ","
                     + location.getBlockZ());
         }
         if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),

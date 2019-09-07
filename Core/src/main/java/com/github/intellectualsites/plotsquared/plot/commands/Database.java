@@ -48,7 +48,7 @@ import java.util.Map.Entry;
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length < 1) {
-            MainUtil.sendMessage(player, "/plot database [area] <sqlite|mysql|import>");
+            MainUtil.sendMessage(player, getUsage());
             return false;
         }
         List<Plot> plots;
@@ -60,7 +60,7 @@ import java.util.Map.Entry;
             plots = PlotSquared.get().sortPlotsByTemp(PlotSquared.get().getPlots());
         }
         if (args.length < 1) {
-            MainUtil.sendMessage(player, "/plot database [world] <sqlite|mysql|import>");
+            MainUtil.sendMessage(player, getUsage());
             MainUtil.sendMessage(player, "[arg] indicates an optional argument");
             return false;
         }

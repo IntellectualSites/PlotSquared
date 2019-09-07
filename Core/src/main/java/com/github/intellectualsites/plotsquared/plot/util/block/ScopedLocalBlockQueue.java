@@ -80,22 +80,22 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
         int bx = minX;
         int bz = minZ;
         PlotArea area = PlotSquared.get().getPlotArea(getWorld(), null);
-        Location location = new Location(getWorld(), bx, 0, bz);
+        Location loc = new Location(getWorld(), bx, 0, bz);
         if (area != null) {
             PlotManager manager = area.getPlotManager();
             for (int x = 0; x < 16; x++) {
-                location.setX(bx + x);
+                loc.setX(bx + x);
                 for (int z = 0; z < 16; z++) {
-                    location.setZ(bz + z);
-                    task.run(area.getPlotAbs(location), x, z);
+                    loc.setZ(bz + z);
+                    task.run(area.getPlotAbs(loc), x, z);
                 }
             }
         } else {
             for (int x = 0; x < 16; x++) {
-                location.setX(bx + x);
+                loc.setX(bx + x);
                 for (int z = 0; z < 16; z++) {
-                    location.setZ(bz + z);
-                    task.run(location.getPlotAbs(), x, z);
+                    loc.setZ(bz + z);
+                    task.run(loc.getPlotAbs(), x, z);
                 }
             }
         }

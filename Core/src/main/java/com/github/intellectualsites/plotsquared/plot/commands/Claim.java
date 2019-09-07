@@ -20,14 +20,13 @@ public class Claim extends SubCommand {
         if (args.length >= 1) {
             schematic = args[0];
         }
-        Location location = player.getLocation();
-        final Plot plot = location.getPlotAbs();
+        Location loc = player.getLocation();
+        final Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return sendMessage(player, Captions.NOT_IN_PLOT);
         }
-        int currentPlots = Settings.Limit.GLOBAL ?
-            player.getPlotCount() :
-            player.getPlotCount(location.getWorld());
+        int currentPlots =
+            Settings.Limit.GLOBAL ? player.getPlotCount() : player.getPlotCount(loc.getWorld());
         int grants = 0;
         if (currentPlots >= player.getAllowedPlots()) {
             if (player.hasPersistentMeta("grantedPlots")) {
@@ -90,7 +89,7 @@ public class Claim extends SubCommand {
                 @Override public void run(Object value) {
                     plot.claim(player, true, finalSchematic, false);
                     if (area.AUTO_MERGE) {
-                        plot.autoMerge(Direction.ALL, Integer.MAX_VALUE, player.getUUID(), true);
+                        plot.autoMerge(-1, Integer.MAX_VALUE, player.getUUID(), true);
                     }
                 }
             }), () -> sendMessage(player, Captions.PLOT_NOT_CLAIMED));
