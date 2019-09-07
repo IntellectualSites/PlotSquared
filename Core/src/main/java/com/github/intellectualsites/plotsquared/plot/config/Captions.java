@@ -46,12 +46,14 @@ public enum Captions {
     //<editor-fold desc="Static Permission">
     PERMISSION_STAR("*", "static.permissions"),
     PERMISSION_ADMIN("plots.admin", "static.permissions"),
+    PERMISSION_ADMIN_SUDO_AREA("plots.admin.area.sudo", "static.permissions"),
     PERMISSION_PROJECTILE_UNOWNED("plots.projectile.unowned", "static.permissions"),
     PERMISSION_PROJECTILE_OTHER("plots.projectile.other", "static.permissions"),
     PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS("plots.admin.interact.blockedcommands", "static.permissions"),
     PERMISSION_WORLDEDIT_BYPASS("plots.worldedit.bypass", "static.permissions"),
     PERMISSION_PLOT_TOGGLE_TITLES("plots.toggle.titles", "static.permissions"),
     PERMISSION_PLOT_TOGGLE_CHAT("plots.toggle.chat", "static.permissions"),
+    PERMISSION_PLOT_TOGGLE_TIME("plots.toggle.time", "static.permissions"),
     PERMISSION_ADMIN_UPDATE_NOTIFICATION("plots.admin.update.notify", "static.permissions"),
     PERMISSION_ADMIN_EXIT_DENIED("plots.admin.exit.denied", "static.permissions"),
     PERMISSION_ADMIN_ENTRY_DENIED("plots.admin.entry.denied", "static.permissions"),
@@ -242,6 +244,7 @@ public enum Captions {
     SWAP_DIMENSIONS("$2The proposed areas must have comparable dimensions", "Swap"),
     SWAP_SYNTAX("$2/plot swap <id>", "Swap"),
     SWAP_SUCCESS("$4Successfully swapped plots", "Swap"),
+    STARTED_SWAP("$2Started plot swap task. You will be notified when it finishes", "Swap"),
     //</editor-fold>
     //<editor-fold desc="Comment">
     INBOX_NOTIFICATION("%s unread messages. Use /plot inbox", "Comment"),
@@ -250,9 +253,10 @@ public enum Captions {
     COMMENT_SYNTAX("$2Use /plot comment [X;Z] <%s> <comment>", "Comment"),
     INVALID_INBOX("$2That is not a valid inbox.&-$1Accepted values: %s", "Comment"),
     NO_PERM_INBOX("$2You do not have permission for that inbox", "Comment"),
-    NO_PERM_INBOX_MODIFY("$2You do not have permission to modify that inbox","Comment"),
+    NO_PERM_INBOX_MODIFY("$2You do not have permission to modify that inbox", "Comment"),
     NO_PLOT_INBOX("$2You must stand in or supply a plot argument", "Comment"),
-    COMMENT_REMOVED("$4Successfully deleted comment/s:n$2 - '$3%s$2'", "Comment"),
+    COMMENT_REMOVED_SUCCESS("$4Successfully deleted comment/s:n$2 - '$3%s$2'", "Comment"),
+    COMMENT_REMOVED_FAILURE("$4Failed to delete comment!", "Comment"),
     COMMENT_ADDED("$4A comment has been left", "Comment"),
     COMMENT_HEADER("$2&m---------&r $1Comments $2&m---------&r", "Comment"),
     INBOX_EMPTY("$2No comments", "Comment"),
@@ -315,7 +319,8 @@ public enum Captions {
     SETUP_WORLD_TAKEN("$2%s is already a world", "Setup"),
     SETUP_MISSING_WORLD(
         "$2You need to specify a world name ($1/plot setup &l<world>$1 <generator>$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 -"
-            + " $1/plot setup back&-$2 - $1/plot setup cancel", "Setup"), SETUP_MISSING_GENERATOR(
+            + " $1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),
+    SETUP_MISSING_GENERATOR(
         "$2You need to specify a generator ($1/plot setup <world> &l<generator>&r$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - "
             + "$1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),
     SETUP_INVALID_GENERATOR("$2Invalid generator. Possible options: %s", "Setup"),
@@ -748,7 +753,7 @@ public enum Captions {
         }
     }
 
-    public String f(final Object... args) {
+    @Deprecated public String f(final Object... args) {
         return format(getTranslated(), args);
     }
 
