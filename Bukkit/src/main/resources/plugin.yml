@@ -1,7 +1,7 @@
 name: ${name}
 main: com.github.intellectualsites.plotsquared.bukkit.BukkitMain
 api-version: 1.13
-version: ${version}
+version: "${version}"
 load: STARTUP
 description: >
              Easy, yet powerful Plot World generation and management.
