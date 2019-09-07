@@ -132,8 +132,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         // Check for updates
         if (PlotSquared.get().getUpdateUtility() != null) {
             final UpdateUtility updateUtility = PlotSquared.get().getUpdateUtility();
-            updateUtility
-                .checkForUpdate(this.getPluginVersionString(), ((updateDescription, throwable) -> {
+            updateUtility.checkForUpdate(PlotSquared.get().getVersion().versionString(),
+                ((updateDescription, throwable) -> {
                     Bukkit.getScheduler().runTask(BukkitMain.this, () -> {
                         getLogger().info("-------- PlotSquared Update Check --------");
                         if (throwable != null) {
@@ -803,4 +803,5 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Override public LegacyMappings getLegacyMappings() {
         return this.legacyMappings;
     }
+
 }

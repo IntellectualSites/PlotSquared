@@ -147,8 +147,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
             createSchemAbs(queue, pos1, pos2);
         }
-        queue.enqueue();
-        return true;
+        return queue.enqueue();
     }
 
     /**
@@ -222,7 +221,9 @@ public class HybridPlotManager extends ClassicPlotManager {
     }
 
     /**
-     * Remove sign for a plot.
+     * Retrieves the location of where a sign should be for a plot.
+     * @param plot The plot
+     * @return The location where a sign should be
      */
     @Override public Location getSignLoc(Plot plot) {
         return hybridPlotWorld.getSignLocation(plot);

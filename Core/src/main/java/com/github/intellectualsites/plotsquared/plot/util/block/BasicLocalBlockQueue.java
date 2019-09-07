@@ -102,8 +102,7 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
                 lastWrappedChunk.setBlock(x & 15, y, z & 15, id);
                 LocalChunk previous = this.blockChunks.put(pair, lastWrappedChunk);
                 if (previous == null) {
-                    chunks.add(lastWrappedChunk);
-                    return true;
+                    return chunks.add(lastWrappedChunk);
                 }
                 this.blockChunks.put(pair, previous);
                 lastWrappedChunk = previous;

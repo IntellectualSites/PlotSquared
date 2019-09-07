@@ -14,9 +14,8 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import java.util.List;
 
 @CommandDeclaration(command = "inbox", description = "Review the comments for a plot",
-    usage = "/plot inbox [inbox] [delete <index>|clear|page]", permission = "plots.inbox",
-    category = CommandCategory.CHAT, requiredType = RequiredType.PLAYER) public class Inbox
-    extends SubCommand {
+    usage = "/plot inbox [inbox] [delete <index>|clear|page]", permission = "plots.inbox", category = CommandCategory.CHAT, requiredType = RequiredType.PLAYER)
+public class Inbox extends SubCommand {
 
     public void displayComments(PlotPlayer player, List<PlotComment> oldComments, int page) {
         if (oldComments == null || oldComments.isEmpty()) {
@@ -150,12 +149,13 @@ import java.util.List;
                             PlotComment comment = value.get(index - 1);
                             inbox.removeComment(plot, comment);
                             boolean success = plot.removeComment(comment);
-                            //noinspection StatementWithEmptyBody
                             if (success) {
-                                MainUtil
-                                    .sendMessage(player, Captions.COMMENT_REMOVED, comment.comment);
+                                MainUtil.sendMessage(player, Captions.COMMENT_REMOVED_SUCCESS,
+                                    comment.comment);
                             } else {
-                                //TODO Comment removal failure message
+                                MainUtil.sendMessage(player, Captions.COMMENT_REMOVED_FAILURE,
+                                    comment.comment);
+
                             }
                         }
                     })) {
@@ -172,7 +172,7 @@ import java.util.List;
                     if (!comments.isEmpty()) {
                         plot.removeComments(comments);
                     }
-                    MainUtil.sendMessage(player, Captions.COMMENT_REMOVED, "*");
+                    MainUtil.sendMessage(player, Captions.COMMENT_REMOVED_SUCCESS, "*");
                     return true;
                 default:
                     try {

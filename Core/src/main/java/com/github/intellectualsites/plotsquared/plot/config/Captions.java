@@ -280,13 +280,12 @@ public enum Captions {
         "Comment"),
 
     INVALID_INBOX("$2That is not a valid inbox.&-$1Accepted values: %s", "Comment"), NO_PERM_INBOX(
-        "$2You do not have permission for that inbox", "Comment"),
-
-    NO_PERM_INBOX_MODIFY("$2You do not have permission to modify that inbox",
-        "Comment"), NO_PLOT_INBOX("$2You must stand in or supply a plot argument", "Comment"),
-
-    COMMENT_REMOVED("$4Successfully deleted comment/s:n$2 - '$3%s$2'", "Comment"), COMMENT_ADDED(
-        "$4A comment has been left", "Comment"),
+        "$2You do not have permission for that inbox", "Comment"), NO_PERM_INBOX_MODIFY(
+        "$2You do not have permission to modify that inbox", "Comment"), NO_PLOT_INBOX(
+        "$2You must stand in or supply a plot argument", "Comment"), COMMENT_REMOVED_SUCCESS(
+        "$4Successfully deleted comment/s:n$2 - '$3%s$2'", "Comment"), COMMENT_REMOVED_FAILURE(
+        "$4Failed to delete comment!", "Comment"), COMMENT_ADDED("$4A comment has been left",
+        "Comment"),
 
     COMMENT_HEADER("$2&m---------&r $1Comments $2&m---------&r", "Comment"), INBOX_EMPTY(
         "$2No comments", "Comment"),

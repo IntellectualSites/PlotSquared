@@ -33,8 +33,8 @@ import com.sk89q.worldedit.WorldEdit;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -1623,7 +1623,7 @@ import java.util.zip.ZipInputStream;
                 final Properties properties = new Properties();
                 properties.load(bufferedReader);
                 final boolean enabled =
-                    Boolean.valueOf(properties.getOrDefault("enabled", true).toString());
+                    Boolean.parseBoolean(properties.getOrDefault("enabled", true).toString());
                 if (enabled) {
                     this.updateUtility = new UpdateUtility(properties.getProperty("path"),
                         properties.getProperty("job"), properties.getProperty("artifact"));

@@ -642,7 +642,7 @@ import java.util.regex.Pattern;
             && PlotSquared.get().getUpdateUtility() != null) {
             final UpdateUtility updateUtility = PlotSquared.get().getUpdateUtility();
             final BukkitMain bukkitMain = BukkitMain.getPlugin(BukkitMain.class);
-            updateUtility.checkForUpdate(bukkitMain.getPluginVersionString(),
+            updateUtility.checkForUpdate(PlotSquared.get().getVersion().versionString(),
                 ((updateDescription, throwable) -> {
                     if (throwable != null) {
                         bukkitMain.getLogger().severe(String

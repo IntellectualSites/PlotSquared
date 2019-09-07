@@ -399,35 +399,48 @@ public class ClassicPlotManager extends SquarePlotManager {
 
     /**
      * Finishing off plot merging by adding in the walls surrounding the plot (OPTIONAL)(UNFINISHED).
+     *
+     * @return false if part of the merge failed, otherwise true if successful.
      */
     @Override public boolean finishPlotMerge(List<PlotId> plotIds) {
-        //TODO This method shouldn't always return true
         final BlockBucket block = classicPlotWorld.CLAIMED_WALL_BLOCK;
-        plotIds.forEach(id -> setWall(id, block));
+        boolean success = true;
+        for (PlotId plotId : plotIds) {
+            success &= setWall(plotId, block);
+        }
         if (Settings.General.MERGE_REPLACE_WALL) {
             final BlockBucket wallBlock = classicPlotWorld.WALL_FILLING;
-            plotIds.forEach(id -> setWallFilling(id, wallBlock));
+            for (PlotId id : plotIds) {
+                success &= setWallFilling(id, wallBlock);
+            }
         }
-        return true;
+        return success;
     }
 
     @Override public boolean finishPlotUnlink(List<PlotId> plotIds) {
-        //TODO This method shouldn't always return true
         final BlockBucket block = classicPlotWorld.CLAIMED_WALL_BLOCK;
-        plotIds.forEach(id -> setWall(id, block));
-        return true;
+        boolean success = true;
+        for (PlotId id : plotIds) {
+            success &= setWall(id, block);
+        }
+        return success;
     }
 
+    /**
+     * Sets all the blocks along all the plot walls to their correct state (claimed or unclaimed).
+     *
+     * @return true if the wall blocks were successfully set
+     */
     @Override public boolean regenerateAllPlotWalls() {
-        //TODO This method shouldn't always return true
+        boolean success = true;
         for (Plot plot : classicPlotWorld.getPlots()) {
             if (plot.hasOwner()) {
-                setWall(plot.getId(), classicPlotWorld.CLAIMED_WALL_BLOCK);
+                success &= setWall(plot.getId(), classicPlotWorld.CLAIMED_WALL_BLOCK);
             } else {
-                setWall(plot.getId(), classicPlotWorld.WALL_BLOCK);
+                success &= setWall(plot.getId(), classicPlotWorld.WALL_BLOCK);
             }
         }
-        return true;
+        return success;
     }
 
     @Override public boolean startPlotMerge(List<PlotId> plotIds) {
@@ -448,7 +461,9 @@ public class ClassicPlotManager extends SquarePlotManager {
     }
 
     /**
-     * Remove sign for a plot.
+     * Retrieves the location of where a sign should be for a plot.
+     * @param plot The plot
+     * @return The location where a sign should be
      */
     @Override public Location getSignLoc(Plot plot) {
         plot = plot.getBasePlot(false);

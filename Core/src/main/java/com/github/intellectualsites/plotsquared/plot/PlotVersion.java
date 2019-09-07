@@ -30,6 +30,13 @@ public class PlotVersion {
         }
     }
 
+    public String versionString() {
+        if (hash == 0 && build == 0) {
+            return "NoVer-SNAPSHOT";
+        } else {
+            return "4." + build;
+        }
+    }
     @Override public String toString() {
         if (hash == 0 && build == 0) {
             return "PlotSquared-NoVer-SNAPSHOT";
