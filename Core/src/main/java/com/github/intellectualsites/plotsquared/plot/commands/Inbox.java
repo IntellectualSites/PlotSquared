@@ -148,8 +148,15 @@ import java.util.List;
                             }
                             PlotComment comment = value.get(index - 1);
                             inbox.removeComment(plot, comment);
-                            plot.removeComment(comment);
-                            MainUtil.sendMessage(player, Captions.COMMENT_REMOVED, comment.comment);
+                            boolean success = plot.removeComment(comment);
+                            if (success) {
+                                MainUtil.sendMessage(player, Captions.COMMENT_REMOVED_SUCCESS,
+                                    comment.comment);
+                            } else {
+                                MainUtil.sendMessage(player, Captions.COMMENT_REMOVED_FAILURE,
+                                    comment.comment);
+
+                            }
                         }
                     })) {
                         sendMessage(player, Captions.NOT_IN_PLOT);
@@ -165,13 +172,14 @@ import java.util.List;
                     if (!comments.isEmpty()) {
                         plot.removeComments(comments);
                     }
-                    MainUtil.sendMessage(player, Captions.COMMENT_REMOVED, "*");
+                    MainUtil.sendMessage(player, Captions.COMMENT_REMOVED_SUCCESS, "*");
                     return true;
                 default:
                     try {
                         page = Integer.parseInt(args[1]);
                     } catch (NumberFormatException ignored) {
-                        sendMessage(player, Captions.COMMAND_SYNTAX, getUsage());
+                        sendMessage(player, Captions.COMMAND_SYNTAX,
+                            "/plot inbox [inbox] [delete <index>|clear|page]");
                         return false;
                     }
             }
