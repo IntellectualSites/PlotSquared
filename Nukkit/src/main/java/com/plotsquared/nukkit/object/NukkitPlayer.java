@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.UUID;
 
 public class NukkitPlayer extends PlotPlayer {
-    
+
     public final Player player;
     public boolean offline;
     private UUID uuid;
@@ -29,6 +29,7 @@ public class NukkitPlayer extends PlotPlayer {
     /**
      * <p>Please do not use this method. Instead use
      * NukkitUtil.getPlayer(Player), as it caches player objects.</p>
+     *
      * @param player
      */
     public NukkitPlayer(Player player) {
@@ -47,7 +48,7 @@ public class NukkitPlayer extends PlotPlayer {
         Location location = super.getLocation();
         return location == null ? NukkitUtil.getLocation(this.player) : location;
     }
-    
+
     @Override
     public UUID getUUID() {
         if (this.uuid == null) {
@@ -56,7 +57,8 @@ public class NukkitPlayer extends PlotPlayer {
         return this.uuid;
     }
 
-    @Override public long getLastPlayed() {
+    @Override
+    public long getLastPlayed() {
         return this.player.getLastPlayed();
     }
 
@@ -108,14 +110,14 @@ public class NukkitPlayer extends PlotPlayer {
 
     @Override
     public void sendMessage(String message) {
-        if (!StringMan.isEqual(this.<String>getMeta("lastMessage"), message) || (
-            System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
+        if (!StringMan.isEqual(this.getMeta("lastMessage"), message) || (
+                System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
             setMeta("lastMessage", message);
             setMeta("lastMessageTime", System.currentTimeMillis());
             this.player.sendMessage(message);
         }
     }
-    
+
     @Override
     public void teleport(Location to) {
         if (Math.abs(to.getX()) >= 30000000 || Math.abs(to.getZ()) >= 30000000) {
@@ -124,7 +126,7 @@ public class NukkitPlayer extends PlotPlayer {
         cn.nukkit.level.Location loc = new cn.nukkit.level.Location(to.getX() + 0.5, to.getY(), to.getZ() + 0.5, to.getYaw(), to.getPitch(), NukkitUtil.getWorld(to.getWorld()));
         this.player.teleport(loc);
     }
-    
+
     @Override
     public String getName() {
         if (this.name == null) {
@@ -132,17 +134,17 @@ public class NukkitPlayer extends PlotPlayer {
         }
         return this.name;
     }
-    
+
     @Override
     public boolean isOnline() {
         return !this.offline && this.player.isOnline();
     }
-    
+
     @Override
     public void setCompassTarget(Location location) {
         throw new UnsupportedOperationException("Not implemented yet: setCompassTarget");
     }
-    
+
     @Override
     public Location getLocationFull() {
         return NukkitUtil.getLocationFull(this.player);
@@ -181,7 +183,7 @@ public class NukkitPlayer extends PlotPlayer {
                 break;
         }
     }
-    
+
     @Override
     public PlotGameMode getGameMode() {
         switch (this.player.getGamemode()) {
@@ -197,7 +199,7 @@ public class NukkitPlayer extends PlotPlayer {
                 return PlotGameMode.NOT_SET;
         }
     }
-    
+
     @Override
     public void setGameMode(PlotGameMode gameMode) {
         switch (gameMode) {
@@ -218,15 +220,10 @@ public class NukkitPlayer extends PlotPlayer {
                 break;
         }
     }
-    
+
     @Override
     public void setTime(long time) {
         throw new UnsupportedOperationException("Not implemented yet: setTIme");
-    }
-    
-    @Override
-    public void setFlight(boolean fly) {
-        this.player.setAllowFlight(fly);
     }
 
     @Override
@@ -235,16 +232,22 @@ public class NukkitPlayer extends PlotPlayer {
     }
 
     @Override
+    public void setFlight(boolean fly) {
+        this.player.setAllowFlight(fly);
+    }
+
+    @Override
     public void playMusic(Location location, int id) {
         throw new UnsupportedOperationException("Not implemented yet: playMusic");
     }
-    
+
     @Override
     public void kick(String message) {
         player.kick(message);
     }
 
-    @Override public void stopSpectating() {
+    @Override
+    public void stopSpectating() {
         // Do nothing
     }
 

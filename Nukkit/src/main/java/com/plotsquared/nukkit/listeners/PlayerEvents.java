@@ -56,7 +56,6 @@ public class PlayerEvents extends PlotListener implements Listener {
     // To prevent recursion
     private boolean tmpTeleport = true;
 
-    // TODO fix this
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPhysicsEvent(BlockUpdateEvent event) {
         if (event instanceof RedstoneUpdateEvent) {
@@ -257,13 +256,11 @@ public class PlayerEvents extends PlotListener implements Listener {
         // Delayed
 
         // Async
-        TaskManager.runTaskLaterAsync(new Runnable() {
-            @Override public void run() {
-                if (!player.hasPlayedBefore() && player.isOnline()) {
-                    player.save();
-                }
-                EventUtil.manager.doJoinTask(pp);
+        TaskManager.runTaskLaterAsync(() -> {
+            if (!player.hasPlayedBefore() && player.isOnline()) {
+                player.save();
             }
+            EventUtil.manager.doJoinTask(pp);
         }, 20);
     }
 
@@ -983,15 +980,18 @@ public class PlayerEvents extends PlotListener implements Listener {
         Plot plot = location.getOwnedPlot();
         if (plot == null || !plot.getFlag(Flags.BLOCK_BURN, false)) {
             event.setCancelled(true);
-            return;
         }
 
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketEmpty(PlayerBucketEmptyEvent event) {
-        Block block = event.getBlockClicked();
-        Block b = block.getSide(event.getBlockFace());
+        Block b;
+        if (event.getBlockFace() == null) {
+            b = event.getBlockClicked();
+        } else {
+            b = event.getBlockClicked().getSide(event.getBlockFace());
+        }
         Location location = NukkitUtil.getLocation(b.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
@@ -1100,7 +1100,6 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         if (shooter == null) {
             kill(entity, event);
-            return;
         }
     }
 

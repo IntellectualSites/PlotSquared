@@ -4,6 +4,7 @@ import cn.nukkit.Nukkit;
 import cn.nukkit.OfflinePlayer;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.event.Listener;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
@@ -86,12 +87,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
             }
             Generator.addGenerator(NukkitHybridGen.class, getPluginName(), 1);
             if (Settings.Enabled_Components.WORLDS) {
-                TaskManager.IMP.taskRepeat(new Runnable() {
-                    @Override
-                    public void run() {
-                        unload();
-                    }
-                }, 20);
+                TaskManager.IMP.taskRepeat(this::unload, 20);
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -171,7 +167,8 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
         return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])};
     }
 
-    @Override public String getPluginVersionString() {
+    @Override
+    public String getPluginVersionString() {
         return getDescription().getVersion();
     }
 
@@ -182,8 +179,8 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
 
     @Override
     public void registerCommands() {
-        NukkitCommand bukkitCommand = new NukkitCommand("plot", new String[] {"p","plot","ps","plotsquared","p2","2"});
-        getServer().getCommandMap().register("plot", bukkitCommand);
+        NukkitCommand nukkitCommand = new NukkitCommand("plot", new String[]{"p", "plot", "ps", "plotsquared", "p2", "2"});
+        getServer().getCommandMap().register("plot", nukkitCommand);
     }
 
     @Override
@@ -204,47 +201,40 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
     @Override
     public void runEntityTask() {
         PS.log(C.PREFIX + "KillAllEntities started.");
-        TaskManager.runTaskRepeat(new Runnable() {
+        TaskManager.runTaskRepeat(() -> PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
             @Override
-            public void run() {
-                PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
-                    @Override
-                    public void run(PlotArea plotArea) {
-                        Level world = getServer().getLevelByName(plotArea.worldname);
-                        try {
-                            if (world == null) {
-                                return;
+            public void run(PlotArea plotArea) {
+                Level world = getServer().getLevelByName(plotArea.worldname);
+                try {
+                    if (world == null) {
+                        return;
+                    }
+                    for (Entity entity : world.getEntities()) {
+                        if (entity instanceof EntityHuman) {
+                            continue;
+                        }
+                        Location location = NukkitUtil.getLocation(entity.getLocation());
+                        Plot plot = location.getPlot();
+                        if (plot == null) {
+                            if (location.isPlotArea()) {
+                                entity.kill();
                             }
-                            Entity[] entities = world.getEntities();
-                            for (Entity entity : entities) {
-                                if (entity instanceof Player) {
-                                    continue;
-                                }
-                                com.intellectualcrafters.plot.object.Location location = NukkitUtil.getLocation(entity.getLocation());
-                                Plot plot = location.getPlot();
-                                if (plot == null) {
-                                    if (location.isPlotArea()) {
-                                        entity.kill();
-                                    }
-                                    continue;
-                                }
-                                List<MetadataValue> meta = entity.getMetadata("plot");
-                                if (meta.isEmpty()) {
-                                    continue;
-                                }
-                                Plot origin = (Plot) meta.get(0).value();
-                                if (!plot.equals(origin.getBasePlot(false))) {
-                                    entity.kill();
-                                }
-                                continue;
-                            }
-                        } catch (Throwable e) {
-                            e.printStackTrace();
+                            continue;
+                        }
+                        List<MetadataValue> meta = entity.getMetadata("plot");
+                        if (meta.isEmpty()) {
+                            continue;
+                        }
+                        Plot origin = (Plot) meta.get(0).value();
+                        if (!plot.equals(origin.getBasePlot(false))) {
+                            entity.kill();
                         }
                     }
-                });
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
             }
-        }, 20);
+        }), 20);
     }
 
     @Override
@@ -313,7 +303,8 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
                 map.put("generator", instance);
                 return new NukkitPlotGenerator(map);
             } catch (Throwable e) {
-                System.out.println("Failed to create generator for " + name + " | " + gen);
+                this.getServer().getLogger()
+                        .error("Failed to create generator for " + name + " | " + gen);
                 while (e.getCause() != null) {
                     e = e.getCause();
                 }
@@ -419,8 +410,8 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
 
     private void setGenerator(Level level, Generator generator) {
         try {
-            Field fieldClass = Level.class.getDeclaredField("generator");
-            Field fieldInstance = Level.class.getDeclaredField("generatorInstance");
+            Field fieldClass = Level.class.getDeclaredField("generators");
+            Field fieldInstance = Level.class.getDeclaredField("generatorClass");
             fieldClass.setAccessible(true);
             fieldInstance.setAccessible(true);
             fieldClass.set(level, generator.getClass());

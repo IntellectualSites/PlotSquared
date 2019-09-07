@@ -8,10 +8,11 @@ import cn.nukkit.level.format.FullChunk;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.AugmentedUtils;
 import com.plotsquared.nukkit.NukkitMain;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 public class NukkitAugmentedGenerator implements Listener {
-    
+
     private static NukkitAugmentedGenerator generator;
     private static ConcurrentHashMap<String, NukkitAugmentedGenerator> generators = new ConcurrentHashMap<>();
 

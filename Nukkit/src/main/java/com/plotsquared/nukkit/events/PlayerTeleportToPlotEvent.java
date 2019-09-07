@@ -9,9 +9,6 @@ import com.intellectualcrafters.plot.object.Plot;
 
 /**
  * Called when a player teleports to a plot
- *
-
-
  */
 public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellable {
 

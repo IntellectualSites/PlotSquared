@@ -1,11 +1,11 @@
 repositories {
-    maven { url = "https://oss.sonatype.org/content/repositories/snapshots/"}
-    maven {url "http://nexus.hc.to/content/repositories/pub_releases"}
-    maven {url "https://repo.nukkitx.com/maven-snapshots"} 
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url "http://nexus.hc.to/content/repositories/pub_releases" }
+    maven { url "https://repo.nukkitx.com/maven-snapshots" }
 }
 
 dependencies {
-    implementation project (':Core')
+    implementation project(':Core')
     compile project(':Core')
     compile 'com.google.guava:guava:21.0'
     compile 'cn.nukkit:nukkit:1.0-SNAPSHOT'
@@ -39,7 +39,7 @@ shadowJar {
 
 shadowJar.doLast {
     task ->
-    ant.checksum file: task.archivePath
+        ant.checksum file: task.archivePath
 }
 
-build.dependsOn(shadowJar);
+build.dependsOn(shadowJar)

@@ -189,7 +189,7 @@ public class NukkitUtil extends WorldUtil {
     @Override
     public String[] getBiomeList() {
         ArrayList<String> biomes = new ArrayList<>();
-        for (Biome biome : Biome.biomes) {
+        for (Biome biome : Biome.unorderedBiomes) {
             biomes.add(biome.getName());
         }
         return biomes.toArray(new String[biomes.size()]);

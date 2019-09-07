@@ -20,6 +20,7 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import com.plotsquared.nukkit.NukkitMain;
+
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -74,18 +75,15 @@ public class NukkitSchematicHandler extends SchematicHandler {
                     @Override
                     public void run() {
                         if (queue.isEmpty()) {
-                            TaskManager.runTaskAsync(new Runnable() {
-                                @Override
-                                public void run() {
-                                    schematic.put("Blocks", new ByteArrayTag("Blocks", blocks));
-                                    schematic.put("Data", new ByteArrayTag("Data", blockData));
-                                    schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<>()));
-                                    schematic.put("TileEntities", new ListTag("TileEntities", CompoundTag.class, tileEntities));
-                                    whenDone.value = new CompoundTag("Schematic", schematic);
-                                    TaskManager.runTask(whenDone);
-                                    System.gc();
-                                    System.gc();
-                                }
+                            TaskManager.runTaskAsync(() -> {
+                                schematic.put("Blocks", new ByteArrayTag("Blocks", blocks));
+                                schematic.put("Data", new ByteArrayTag("Data", blockData));
+                                schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<>()));
+                                schematic.put("TileEntities", new ListTag("TileEntities", CompoundTag.class, tileEntities));
+                                whenDone.value = new CompoundTag("Schematic", schematic);
+                                TaskManager.runTask(whenDone);
+                                System.gc();
+                                System.gc();
                             });
                             return;
                         }
