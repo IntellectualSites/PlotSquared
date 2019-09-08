@@ -55,13 +55,13 @@ public class DebugClaimTest extends SubCommand {
                 MainUtil.sendMessage(player, " - &cDB Already contains: " + plot.getId());
                 continue;
             }
-            Location loc = manager.getSignLoc(plot);
-            ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
+            Location location = manager.getSignLoc(plot);
+            ChunkLoc chunk = new ChunkLoc(location.getX() >> 4, location.getZ() >> 4);
             boolean result = ChunkManager.manager.loadChunk(area.worldname, chunk, false);
             if (!result) {
                 continue;
             }
-            String[] lines = WorldUtil.IMP.getSign(loc);
+            String[] lines = WorldUtil.IMP.getSign(location);
             if (lines != null) {
                 String line = lines[2];
                 if (line != null && line.length() > 2) {

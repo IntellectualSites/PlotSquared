@@ -16,12 +16,12 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
     usage = "/plot createroadschematic") public class CreateRoadSchematic extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
-        Location loc = player.getLocation();
-        Plot plot = loc.getPlotAbs();
+        Location location = player.getLocation();
+        Plot plot = location.getPlotAbs();
         if (plot == null) {
             return sendMessage(player, Captions.NOT_IN_PLOT);
         }
-        if (!(loc.getPlotArea() instanceof HybridPlotWorld)) {
+        if (!(location.getPlotArea() instanceof HybridPlotWorld)) {
             return sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
         }
         HybridUtils.manager.setupRoadSchematic(plot);

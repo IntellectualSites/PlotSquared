@@ -11,8 +11,8 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 public abstract class SetCommand extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
-        Location loc = player.getLocation();
-        Plot plot = loc.getPlotAbs();
+        Location location = player.getLocation();
+        Plot plot = location.getPlotAbs();
         if (plot == null) {
             return !sendMessage(player, Captions.NOT_IN_PLOT);
         }

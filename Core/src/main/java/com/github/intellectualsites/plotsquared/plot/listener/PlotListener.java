@@ -122,7 +122,7 @@ public class PlotListener {
                     }
                 }
                 Optional<Long> timeFlag = plot.getFlag(Flags.TIME);
-                if (timeFlag.isPresent()) {
+                if (timeFlag.isPresent() && !player.getAttribute("disabletime")) {
                     try {
                         long time = timeFlag.get();
                         player.setTime(time);
@@ -138,18 +138,18 @@ public class PlotListener {
                     final PlotBlock block = PlotBlock.get(id);
                     final String rawId = block.getRawId().toString();
                     if (rawId.contains("disc") || PlotBlock.isEverything(block) || block.isAir()) {
-                        Location loc = player.getLocation();
-                        Location lastLoc = player.getMeta("music");
-                        if (lastLoc != null) {
-                            player.playMusic(lastLoc, PlotBlock.get("air"));
+                        Location location = player.getLocation();
+                        Location lastLocation = player.getMeta("music");
+                        if (lastLocation != null) {
+                            player.playMusic(lastLocation, PlotBlock.get("air"));
                             if (PlotBlock.isEverything(block) || block.isAir()) {
                                 player.deleteMeta("music");
                             }
                         }
                         if (!(PlotBlock.isEverything(block) || block.isAir())) {
                             try {
-                                player.setMeta("music", loc);
-                                player.playMusic(loc, block);
+                                player.setMeta("music", location);
+                                player.playMusic(location, block);
                             } catch (Exception ignored) {
                             }
                         }

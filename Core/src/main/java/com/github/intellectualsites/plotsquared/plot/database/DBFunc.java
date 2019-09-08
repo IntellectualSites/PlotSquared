@@ -1,13 +1,21 @@
 package com.github.intellectualsites.plotsquared.plot.database;
 
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotCluster;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Database Functions
@@ -74,6 +82,8 @@ public class DBFunc {
         DBFunc.dbManager.validateAllPlots(plots);
     }
 
+
+    //TODO Consider Removal
     /**
      * Check if a {@link ResultSet} contains a column.
      *
@@ -81,7 +91,7 @@ public class DBFunc {
      * @param name
      * @return
      */
-    public static boolean hasColumn(ResultSet resultSet, String name) {
+    @Deprecated public static boolean hasColumn(ResultSet resultSet, String name) {
         try {
             ResultSetMetaData meta = resultSet.getMetaData();
             int count = meta.getColumnCount();

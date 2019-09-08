@@ -24,12 +24,19 @@ public class PlotVersion {
     public static PlotVersion tryParse(String version, String commit, String date) {
         try {
             return new PlotVersion(version, commit, date);
-        } catch (Exception ignore) {
-            ignore.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
             return new PlotVersion(0, 0, 0, 0, 0);
         }
     }
 
+    public String versionString() {
+        if (hash == 0 && build == 0) {
+            return "NoVer-SNAPSHOT";
+        } else {
+            return "4." + build;
+        }
+    }
     @Override public String toString() {
         if (hash == 0 && build == 0) {
             return "PlotSquared-NoVer-SNAPSHOT";

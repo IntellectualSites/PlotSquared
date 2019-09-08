@@ -16,8 +16,12 @@ import java.util.Map;
 
 public abstract class LocalBlockQueue {
 
-    public LocalBlockQueue(String world) {
-        // Implement this elsewhere
+    /**
+     * Needed for compatibility with FAWE.
+     *
+     * @param world unused
+     */
+    @Deprecated public LocalBlockQueue(String world) {
     }
 
     public ScopedLocalBlockQueue getForChunk(int x, int z) {
@@ -92,8 +96,8 @@ public abstract class LocalBlockQueue {
         }
     }
 
-    public void enqueue() {
-        GlobalBlockQueue.IMP.enqueue(this);
+    public boolean enqueue() {
+        return GlobalBlockQueue.IMP.enqueue(this);
     }
 
     public void setCuboid(Location pos1, Location pos2, PlotBlock block) {

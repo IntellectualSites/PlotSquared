@@ -158,8 +158,7 @@ public class SchematicCmd extends SubCommand {
                 }
                 Collection<Plot> plots = area.getPlots();
                 if (plots.isEmpty()) {
-                    MainUtil
-                        .sendMessage(player, Captions.SCHEMATIC_EXPORTALL_WORLD);
+                    MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_WORLD);
                     return false;
                 }
                 boolean result = SchematicHandler.manager.exportAll(plots, null, null,
@@ -169,7 +168,7 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 } else {
                     MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_STARTED);
-                    MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_COUNT, plots.size());
+                    MainUtil.sendMessage(player, "&3Plot&8->&3Schematic&8: &7Found &c" + plots.size() + "&7 plots...");
                 }
                 break;
             }

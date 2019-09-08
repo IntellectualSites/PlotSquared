@@ -5,8 +5,8 @@ import com.github.intellectualsites.plotsquared.plot.commands.RequiredType;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
 import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public class ConsolePlayer extends PlotPlayer {
@@ -15,15 +15,15 @@ public class ConsolePlayer extends PlotPlayer {
 
     private ConsolePlayer() {
         PlotArea area = PlotSquared.get().getFirstPlotArea();
-        Location loc;
+        Location location;
         if (area != null) {
             RegionWrapper region = area.getRegion();
-            loc = new Location(area.worldname, region.minX + region.maxX / 2, 0,
+            location = new Location(area.worldname, region.minX + region.maxX / 2, 0,
                 region.minZ + region.maxZ / 2);
         } else {
-            loc = new Location("world", 0, 0, 0);
+            location = new Location("world", 0, 0, 0);
         }
-        setMeta("location", loc);
+        setMeta("location", location);
     }
 
     public static ConsolePlayer getConsole() {
@@ -34,7 +34,7 @@ public class ConsolePlayer extends PlotPlayer {
         return instance;
     }
 
-    @Override public boolean canTeleport(@Nonnull Location loc) {
+    @Override public boolean canTeleport(@NotNull Location location) {
         return true;
     }
 
@@ -42,7 +42,7 @@ public class ConsolePlayer extends PlotPlayer {
     public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
     }
 
-    @Override public Location getLocation() {
+    @NotNull @Override public Location getLocation() {
         return this.getMeta("location");
     }
 
@@ -50,7 +50,7 @@ public class ConsolePlayer extends PlotPlayer {
         return getLocation();
     }
 
-    @Nonnull @Override public UUID getUUID() {
+    @NotNull @Override public UUID getUUID() {
         return DBFunc.EVERYONE;
     }
 
@@ -100,14 +100,14 @@ public class ConsolePlayer extends PlotPlayer {
         return RequiredType.CONSOLE;
     }
 
-    @Override public void setWeather(@Nonnull PlotWeather weather) {
+    @Override public void setWeather(@NotNull PlotWeather weather) {
     }
 
-    @Nonnull @Override public PlotGameMode getGameMode() {
+    @NotNull @Override public PlotGameMode getGameMode() {
         return PlotGameMode.NOT_SET;
     }
 
-    @Override public void setGameMode(@Nonnull PlotGameMode gameMode) {
+    @Override public void setGameMode(@NotNull PlotGameMode gameMode) {
     }
 
     @Override public void setTime(long time) {
@@ -120,7 +120,7 @@ public class ConsolePlayer extends PlotPlayer {
     @Override public void setFlight(boolean fly) {
     }
 
-    @Override public void playMusic(@Nonnull Location location, @Nonnull PlotBlock id) {
+    @Override public void playMusic(@NotNull Location location, @NotNull PlotBlock id) {
     }
 
     @Override public void kick(String message) {

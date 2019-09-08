@@ -24,29 +24,21 @@ public class ClassicPlotManager extends SquarePlotManager {
                                           BlockBucket blocks) {
         switch (component) {
             case "floor":
-                setFloor(plotId, blocks);
-                return true;
+                return setFloor(plotId, blocks);
             case "wall":
-                setWallFilling(plotId, blocks);
-                return true;
+                return setWallFilling(plotId, blocks);
             case "all":
-                setAll(plotId, blocks);
-                return true;
+                return setAll(plotId, blocks);
             case "air":
-                setAir(plotId, blocks);
-                return true;
+                return setAir(plotId, blocks);
             case "main":
-                setMain(plotId, blocks);
-                return true;
+                return setMain(plotId, blocks);
             case "middle":
-                setMiddle(plotId, blocks);
-                return true;
+                return setMiddle(plotId, blocks);
             case "outline":
-                setOutline(plotId, blocks);
-                return true;
+                return setOutline(plotId, blocks);
             case "border":
-                setWall(plotId, blocks);
-                return true;
+                return setWall(plotId, blocks);
         }
         return false;
     }
@@ -54,8 +46,7 @@ public class ClassicPlotManager extends SquarePlotManager {
     @Override public boolean unClaimPlot(Plot plot, Runnable whenDone) {
         setWallFilling(plot.getId(), classicPlotWorld.WALL_FILLING);
         setWall(plot.getId(), classicPlotWorld.WALL_BLOCK);
-        GlobalBlockQueue.IMP.addTask(whenDone);
-        return true;
+        return GlobalBlockQueue.IMP.addTask(whenDone);
     }
 
     public boolean setFloor(PlotId plotId, BlockBucket blocks) {
@@ -70,8 +61,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                 queue.setCuboid(pos1, pos2, blocks);
             }
         }
-        queue.enqueue();
-        return true;
+        return queue.enqueue();
     }
 
     public boolean setAll(PlotId plotId, BlockBucket blocks) {
@@ -86,8 +76,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             Location pos2 = new Location(classicPlotWorld.worldname, region.maxX, maxY, region.maxZ);
             queue.setCuboid(pos1, pos2, blocks);
         }
-        queue.enqueue();
-        return true;
+        return queue.enqueue();
     }
 
     public boolean setAir(PlotId plotId, BlockBucket blocks) {
@@ -103,8 +92,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             Location pos2 = new Location(classicPlotWorld.worldname, region.maxX, maxY, region.maxZ);
             queue.setCuboid(pos1, pos2, blocks);
         }
-        queue.enqueue();
-        return true;
+        return queue.enqueue();
     }
 
     public boolean setMain(PlotId plotId, BlockBucket blocks) {
@@ -119,8 +107,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                 new Location(classicPlotWorld.worldname, region.maxX, classicPlotWorld.PLOT_HEIGHT - 1, region.maxZ);
             queue.setCuboid(pos1, pos2, blocks);
         }
-        queue.enqueue();
-        return true;
+        return queue.enqueue();
     }
 
     public boolean setMiddle(PlotId plotId, BlockBucket blocks) {
@@ -134,8 +121,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         int x = MathMan.average(corners[0].getX(), corners[1].getX());
         int z = MathMan.average(corners[0].getZ(), corners[1].getZ());
         queue.setBlock(x, classicPlotWorld.PLOT_HEIGHT, z, blocks.getBlock());
-        queue.enqueue();
-        return true;
+        return queue.enqueue();
     }
 
     public boolean setOutline(PlotId plotId, BlockBucket blocks) {
@@ -187,8 +173,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                 queue.setCuboid(pos1, pos2, blocks);
             }
         }
-        queue.enqueue();
-        return true;
+        return queue.enqueue();
     }
 
     public boolean setWallFilling(PlotId plotId, BlockBucket blocks) {
@@ -235,8 +220,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                 }
             }
         }
-        queue.enqueue();
-        return true;
+        return queue.enqueue();
     }
 
     public boolean setWall(PlotId plotId, BlockBucket blocks) {
@@ -276,8 +260,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                 queue.setBlock(x, y, z, blocks.getBlock());
             }
         }
-        queue.enqueue();
-        return true;
+        return queue.enqueue();
     }
 
     /**
@@ -308,8 +291,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             new Location(classicPlotWorld.worldname, ex, classicPlotWorld.WALL_HEIGHT + 1, ez - 1), classicPlotWorld.WALL_BLOCK);
         queue.setCuboid(new Location(classicPlotWorld.worldname, sx + 1, 1, sz + 1),
             new Location(classicPlotWorld.worldname, ex - 1, classicPlotWorld.ROAD_HEIGHT, ez - 1), classicPlotWorld.ROAD_BLOCK);
-        queue.enqueue();
-        return true;
+        return queue.enqueue();
     }
 
     @Override public boolean createRoadSouth(Plot plot) {
@@ -337,8 +319,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             new Location(classicPlotWorld.worldname, ex - 1, classicPlotWorld.WALL_HEIGHT + 1, ez), classicPlotWorld.WALL_BLOCK);
         queue.setCuboid(new Location(classicPlotWorld.worldname, sx + 1, 1, sz + 1),
             new Location(classicPlotWorld.worldname, ex - 1, classicPlotWorld.ROAD_HEIGHT, ez - 1), classicPlotWorld.ROAD_BLOCK);
-        queue.enqueue();
-        return true;
+        return queue.enqueue();
     }
 
     @Override public boolean createRoadSouthEast(Plot plot) {
@@ -356,8 +337,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             PlotBlock.get((short) 7, (byte) 0));
         queue.setCuboid(new Location(classicPlotWorld.worldname, sx + 1, 1, sz + 1),
             new Location(classicPlotWorld.worldname, ex - 1, classicPlotWorld.ROAD_HEIGHT, ez - 1), classicPlotWorld.ROAD_BLOCK);
-        queue.enqueue();
-        return true;
+        return queue.enqueue();
     }
 
     @Override public boolean removeRoadEast(Plot plot) {
@@ -377,8 +357,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             new Location(classicPlotWorld.worldname, ex, classicPlotWorld.PLOT_HEIGHT - 1, ez - 1), classicPlotWorld.MAIN_BLOCK);
         queue.setCuboid(new Location(classicPlotWorld.worldname, sx, classicPlotWorld.PLOT_HEIGHT, sz + 1),
             new Location(classicPlotWorld.worldname, ex, classicPlotWorld.PLOT_HEIGHT, ez - 1), classicPlotWorld.TOP_BLOCK);
-        queue.enqueue();
-        return true;
+        return queue.enqueue();
     }
 
     @Override public boolean removeRoadSouth(Plot plot) {
@@ -398,8 +377,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             new Location(classicPlotWorld.worldname, ex - 1, classicPlotWorld.PLOT_HEIGHT - 1, ez), classicPlotWorld.MAIN_BLOCK);
         queue.setCuboid(new Location(classicPlotWorld.worldname, sx + 1, classicPlotWorld.PLOT_HEIGHT, sz),
             new Location(classicPlotWorld.worldname, ex - 1, classicPlotWorld.PLOT_HEIGHT, ez), classicPlotWorld.TOP_BLOCK);
-        queue.enqueue();
-        return true;
+        return queue.enqueue();
     }
 
     @Override public boolean removeRoadSouthEast(Plot plot) {
@@ -416,38 +394,53 @@ public class ClassicPlotManager extends SquarePlotManager {
             new Location(classicPlotWorld.worldname, ex, classicPlotWorld.ROAD_HEIGHT - 1, ez), classicPlotWorld.MAIN_BLOCK);
         queue.setCuboid(new Location(classicPlotWorld.worldname, sx, classicPlotWorld.ROAD_HEIGHT, sz),
             new Location(classicPlotWorld.worldname, ex, classicPlotWorld.ROAD_HEIGHT, ez), classicPlotWorld.TOP_BLOCK);
-        queue.enqueue();
-        return true;
+        return queue.enqueue();
     }
 
     /**
      * Finishing off plot merging by adding in the walls surrounding the plot (OPTIONAL)(UNFINISHED).
+     *
+     * @return false if part of the merge failed, otherwise true if successful.
      */
     @Override public boolean finishPlotMerge(List<PlotId> plotIds) {
         final BlockBucket block = classicPlotWorld.CLAIMED_WALL_BLOCK;
-        plotIds.forEach(id -> setWall(id, block));
+        boolean success = true;
+        for (PlotId plotId : plotIds) {
+            success &= setWall(plotId, block);
+        }
         if (Settings.General.MERGE_REPLACE_WALL) {
             final BlockBucket wallBlock = classicPlotWorld.WALL_FILLING;
-            plotIds.forEach(id -> setWallFilling(id, wallBlock));
+            for (PlotId id : plotIds) {
+                success &= setWallFilling(id, wallBlock);
+            }
         }
-        return true;
+        return success;
     }
 
     @Override public boolean finishPlotUnlink(List<PlotId> plotIds) {
         final BlockBucket block = classicPlotWorld.CLAIMED_WALL_BLOCK;
-        plotIds.forEach(id -> setWall(id, block));
-        return true;
+        boolean success = true;
+        for (PlotId id : plotIds) {
+            success &= setWall(id, block);
+        }
+        return success;
     }
 
+    /**
+     * Sets all the blocks along all the plot walls to their correct state (claimed or unclaimed).
+     *
+     * @return true if the wall blocks were successfully set
+     */
     @Override public boolean regenerateAllPlotWalls() {
+        boolean success = true;
         for (Plot plot : classicPlotWorld.getPlots()) {
             if (plot.hasOwner()) {
-                setWall(plot.getId(), classicPlotWorld.CLAIMED_WALL_BLOCK);
+                success &= setWall(plot.getId(), classicPlotWorld.CLAIMED_WALL_BLOCK);
             } else {
-                setWall(plot.getId(), classicPlotWorld.WALL_BLOCK);
+                success &= setWall(plot.getId(), classicPlotWorld.WALL_BLOCK);
             }
         }
-        return true;
+        return success;
     }
 
     @Override public boolean startPlotMerge(List<PlotId> plotIds) {
@@ -460,8 +453,7 @@ public class ClassicPlotManager extends SquarePlotManager {
 
     @Override public boolean claimPlot(Plot plot) {
         final BlockBucket claim = classicPlotWorld.CLAIMED_WALL_BLOCK;
-        setWall(plot.getId(), claim);
-        return true;
+        return setWall(plot.getId(), claim);
     }
 
     @Override public String[] getPlotComponents(PlotId plotId) {
@@ -469,7 +461,9 @@ public class ClassicPlotManager extends SquarePlotManager {
     }
 
     /**
-     * Remove sign for a plot.
+     * Retrieves the location of where a sign should be for a plot.
+     * @param plot The plot
+     * @return The location where a sign should be
      */
     @Override public Location getSignLoc(Plot plot) {
         plot = plot.getBasePlot(false);

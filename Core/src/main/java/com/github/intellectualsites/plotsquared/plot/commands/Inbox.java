@@ -14,9 +14,8 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import java.util.List;
 
 @CommandDeclaration(command = "inbox", description = "Review the comments for a plot",
-    usage = "/plot inbox [inbox] [delete <index>|clear|page]", permission = "plots.inbox",
-    category = CommandCategory.CHAT, requiredType = RequiredType.PLAYER) public class Inbox
-    extends SubCommand {
+    usage = "/plot inbox [inbox] [delete <index>|clear|page]", permission = "plots.inbox", category = CommandCategory.CHAT, requiredType = RequiredType.PLAYER)
+public class Inbox extends SubCommand {
 
     public void displayComments(PlotPlayer player, List<PlotComment> oldComments, int page) {
         if (oldComments == null || oldComments.isEmpty()) {
@@ -178,8 +177,7 @@ import java.util.List;
                     try {
                         page = Integer.parseInt(args[1]);
                     } catch (NumberFormatException ignored) {
-                        sendMessage(player, Captions.COMMAND_SYNTAX,
-                            "/plot inbox [inbox] [delete <index>|clear|page]");
+                        sendMessage(player, Captions.COMMAND_SYNTAX, getUsage());
                         return false;
                     }
             }

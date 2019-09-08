@@ -193,19 +193,19 @@ public class MainCommand extends Command {
         // Clear perm caching //
         player.deleteMeta("perm");
         // Optional command scope //
-        Location loc = null;
+        Location location = null;
         Plot plot = null;
         boolean tp = false;
         if (args.length >= 2) {
             PlotArea area = player.getApplicablePlotArea();
             Plot newPlot = Plot.fromString(area, args[0]);
             if (newPlot != null && (player instanceof ConsolePlayer || newPlot.getArea()
-                .equals(area) || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN))
+                .equals(area) || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN) || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_SUDO_AREA))
                 && !newPlot.isDenied(player.getUUID())) {
                 Location newLoc = newPlot.getCenter();
                 if (player.canTeleport(newLoc)) {
                     // Save meta
-                    loc = player.getMeta(PlotPlayer.META_LOCATION);
+                    location = player.getMeta(PlotPlayer.META_LOCATION);
                     plot = player.getMeta(PlotPlayer.META_LAST_PLOT);
                     tp = true;
                     // Set loc
@@ -262,10 +262,10 @@ public class MainCommand extends Command {
         }
         // Reset command scope //
         if (tp && !(player instanceof ConsolePlayer)) {
-            if (loc == null) {
+            if (location == null) {
                 player.deleteMeta(PlotPlayer.META_LOCATION);
             } else {
-                player.setMeta(PlotPlayer.META_LOCATION, loc);
+                player.setMeta(PlotPlayer.META_LOCATION, location);
             }
             if (plot == null) {
                 player.deleteMeta(PlotPlayer.META_LAST_PLOT);

@@ -1,6 +1,6 @@
 name: ${name}
 main: com.github.intellectualsites.plotsquared.bukkit.BukkitMain
-api-version: 1.13
+api-version: "1.13"
 version: "${version}"
 load: STARTUP
 description: >
@@ -126,6 +126,7 @@ permissions:
       plots.toggle: true
       plots.toggle.titles: true
       plots.toggle.chat: true
+      plots.toggle.time: true
       plots.set.biome: true
       plots.set.home: true
       plots.set.alias: true

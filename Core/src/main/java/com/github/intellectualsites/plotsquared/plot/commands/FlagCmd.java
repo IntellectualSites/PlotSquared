@@ -24,10 +24,9 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 import java.util.*;
 
-@CommandDeclaration(command = "setflag", aliases = {"f", "flag", "setf", "setflag"},
-    usage = "/plot flag <set|remove|add|list|info> <flag> <value>", description = "Set plot flags",
-    category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE,
-    permission = "plots.flag") public class FlagCmd extends SubCommand {
+@CommandDeclaration(command = "setflag", aliases = {"f", "flag",
+    "setflag"}, usage = "/plot flag <set|remove|add|list|info> <flag> <value>", description = "Set plot flags", category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE, permission = "plots.flag")
+public class FlagCmd extends SubCommand {
 
     private boolean checkPermValue(PlotPlayer player, Flag flag, String key, String value) {
         key = key.toLowerCase();
@@ -90,8 +89,8 @@ import java.util.*;
             MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, getUsage());
             return false;
         }
-        Location loc = player.getLocation();
-        Plot plot = loc.getPlotAbs();
+        Location location = player.getLocation();
+        Plot plot = location.getPlotAbs();
         if (plot == null) {
             MainUtil.sendMessage(player, Captions.NOT_IN_PLOT);
             return false;

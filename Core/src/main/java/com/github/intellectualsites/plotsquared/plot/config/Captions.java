@@ -59,8 +59,8 @@ public enum Captions {
     PERMISSION_ADMIN_ENTRY_DENIED("plots.admin.entry.denied", "static.permissions"),
     PERMISSION_ADMIN_ENTRY_FORCEFIELD("plots.admin.entry.forcefield", "static.permissions"),
     PERMISSION_COMMANDS_CHAT("plots.admin.command.chat", "static.permissions"),
-    PERMISSION_MERGE_OTHER("plots.merge.other", "static.permissions"),
-    PERMISSION_MERGE_KEEP_ROAD("plots.merge.keeproad", "static.permissions"),
+    PERMISSION_MERGE_OTHER("plots.merge.other", "static.permissions"), PERMISSION_MERGE_KEEP_ROAD(
+        "plots.merge.keeproad", "static.permissions"),
     PERMISSION_ADMIN_DESTROY_UNOWNED("plots.admin.destroy.unowned", "static.permissions"),
     PERMISSION_ADMIN_DESTROY_GROUNDLEVEL("plots.admin.destroy.groundlevel", "static.permissions"),
     PERMISSION_ADMIN_DESTROY_OTHER("plots.admin.destroy.other", "static.permissions"),
@@ -70,8 +70,8 @@ public enum Captions {
     PERMISSION_ADMIN_BUILD_OTHER("plots.admin.build.other", "static.permissions"),
     PERMISSION_ADMIN_INTERACT_ROAD("plots.admin.interact.road", "static.permissions"),
     PERMISSION_ADMIN_INTERACT_UNOWNED("plots.admin.interact.unowned", "static.permissions"),
-    PERMISSION_ADMIN_INTERACT_OTHER("plots.admin.interact.other", "static.permissions"),
-    PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT("plots.admin.build.heightlimit", "static.permissions"),
+    PERMISSION_ADMIN_INTERACT_OTHER("plots.admin.interact.other", "static.permissions"), PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT(
+        "plots.admin.build.heightlimit", "static.permissions"),
     PERMISSION_ADMIN_UPDATE("plots.admin.command.update", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_RATE("plots.admin.command.rate", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_TRUST("plots.admin.command.trust", "static.permissions"),
@@ -124,8 +124,8 @@ public enum Captions {
     PERMISSION_FLAG_ADD("plots.flag.add", "static.permissions"),
     PERMISSION_FLAG_LIST("plots.flag.list", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_KICK("plots.admin.command.kick", "static.permissions"),
-    PERMISSION_GRANT("plots.grant.%s0", "static.permissions"),
-    PERMISSION_LIST_FOR_SALE("plots.list.forsale", "static.permissions"),
+    PERMISSION_GRANT("plots.grant.%s0", "static.permissions"), PERMISSION_LIST_FOR_SALE(
+        "plots.list.forsale", "static.permissions"),
     PERMISSION_LIST_MINE("plots.list.mine", "static.permissions"),
     PERMISSION_LIST_SHARED("plots.list.shared", "static.permissions"),
     PERMISSION_LIST_WORLD("plots.list.world", "static.permissions"),
@@ -140,8 +140,8 @@ public enum Captions {
     PERMISSION_LIST_FUZZY("plots.list.fuzzy", "static.permissions"),
     PERMISSION_LIST_AREA("plots.list.area", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_LOAD("plots.admin.command.load", "static.permissions"),
-    PERMISSION_ADMIN_COMMAND_MERGE("plots.admin.command.merge", "static.permissions"),
-    PERMISSION_ADMIN_COMMAND_SET_OWNER("plots.admin.command.setowner", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_MERGE("plots.admin.command.merge", "static.permissions"), PERMISSION_ADMIN_COMMAND_SET_OWNER(
+        "plots.admin.command.setowner", "static.permissions"),
     PERMISSION_COMMENT("plots.comment", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_REMOVE("plots.admin.command.remove", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_SAVE("plots.admin.command.save", "static.permissions"),
@@ -224,15 +224,9 @@ public enum Captions {
     //</editor-fold>
     //<editor-fold desc="Border">
     BORDER("$2You are outside the current map border", "Border"),
-    //</editor-fold>
-    //<editor-fold desc="WorldEdit Masks">
     WORLDEDIT_BYPASS("$2&oTo bypass your restrictions use $4/plot wea", "WorldEdit Masks"),
     WORLDEDIT_BYPASSED("$2Currently bypassing WorldEdit restriction.", "WorldEdit Masks"),
-    //</editor-fold>
-    //<editor-fold desc="GameMode">
-    GAMEMODE_WAS_BYPASSED("$1You bypassed the gamemode ($2{gamemode}$1) $1set for $2{plot}", "GameMode"),
-    //</editor-fold>
-    //<editor-fold desc="Height Limit">
+    GAMEMODE_WAS_BYPASSED("$1You bypassed the GameMode ($2{gamemode}$1) $1set for $2{plot}", "GameMode"),
     HEIGHT_LIMIT("$1This plot area has a height limit of $2{limit}", "Height Limit"),
     //</editor-fold>
     //<editor-fold desc="Records">
@@ -244,9 +238,8 @@ public enum Captions {
     SWAP_DIMENSIONS("$2The proposed areas must have comparable dimensions", "Swap"),
     SWAP_SYNTAX("$2/plot swap <id>", "Swap"),
     SWAP_SUCCESS("$4Successfully swapped plots", "Swap"),
-    STARTED_SWAP("$2Started plot swap task. You will be notified when it finishes", "Swap"),
     //</editor-fold>
-    //<editor-fold desc="Comment">
+    //<editor-fold desc="Comments">
     INBOX_NOTIFICATION("%s unread messages. Use /plot inbox", "Comment"),
     NOT_VALID_INBOX_INDEX("$2No comment at index %s", "Comment"),
     INBOX_ITEM("$2 - $4%s", "Comment"),
@@ -271,8 +264,6 @@ public enum Captions {
     //<editor-fold desc="Toggle">
     TOGGLE_ENABLED("$2Enabled setting: %s", "Toggle"),
     TOGGLE_DISABLED("$2Disabled setting: %s", "Toggle"),
-    //</editor-fold>
-    //<editor-fold desc="Blocked Command">
     COMMAND_BLOCKED("$2That command is not allowed in this plot", "Blocked Command"),
     //</editor-fold>
     //<editor-fold desc="Done">
@@ -303,7 +294,7 @@ public enum Captions {
     NOT_FOR_SALE("$2This plot is not for sale", "Economy"),
     CANNOT_BUY_OWN("$2You cannot buy your own plot", "Economy"),
     PLOT_SOLD("$4Your plot; $1%s0$4, has been sold to $1%s1$4 for $1$%s2", "Economy"),
-    CANNOT_AFFORD_MERGE("$2You cannot afford to merge the plots. It costs $1%s", "Economy"),
+    CANNOT_AFFORD_MERGE("$2You cannot afford to merge the plots. It costs $1%s","Economy"),
     ADDED_BALANCE("$1%s $2has been added to your balance", "Economy"),
     REMOVED_BALANCE("$1%s $2has been taken from your balance", "Economy"),
     REMOVED_GRANTED_PLOT("$2You used %s plot grant(s), you've got $1%s $2left", "Economy"),
@@ -317,17 +308,21 @@ public enum Captions {
         "$4You should have been teleported to the created world. Otherwise you will need to set the generator manually using the bukkit.yml or "
             + "your chosen world management plugin.", "Setup"),
     SETUP_WORLD_TAKEN("$2%s is already a world", "Setup"),
+
     SETUP_MISSING_WORLD(
         "$2You need to specify a world name ($1/plot setup &l<world>$1 <generator>$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 -"
             + " $1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),
     SETUP_MISSING_GENERATOR(
         "$2You need to specify a generator ($1/plot setup <world> &l<generator>&r$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - "
             + "$1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),
+
     SETUP_INVALID_GENERATOR("$2Invalid generator. Possible options: %s", "Setup"),
     //</editor-fold>
-    //<editor-fold desc="Schematics">
-    SCHEMATIC_TOO_LARGE("$2The plot is too large for this action!", "Schematics"),
+    //<editor-fold desc="Schematic">
+    SCHEMATIC_TOO_LARGE("$2The plot is too large for this action!",
+        "Schematics"),
     SCHEMATIC_MISSING_ARG("$2You need to specify an argument. Possible values: $1test <name>$2 , $1save$2 , $1paste $2, $1exportall$2, $1list", "Schematics"),
+
     SCHEMATIC_INVALID("$2That is not a valid schematic. Reason: $2%s", "Schematics"),
     SCHEMATIC_VALID("$2That is a valid schematic", "Schematics"),
     SCHEMATIC_PASTE_FAILED("$2Failed to paste the schematic", "Schematics"),
@@ -336,12 +331,13 @@ public enum Captions {
     SCHEMATIC_ROAD_CREATED("$1Saved new road schematic. To test the schematic, fly to a few other plots and run /plot debugroadregen", "Schematics"),
     MCA_FILE_SIZE("$1Note: The `.mca` files are 512x512", "Schematics"),
     SCHEMATIC_EXPORTALL_STARTED("$1Starting export...", "Schematics"),
-    SCHEMATIC_EXPORTALL_WORLD_ARGS("$1Need world argument. Use $3/plot schem exportall <area>", "Schematics"),
-    SCHEMATIC_EXPORTALL_WORLD("$1Invalid world. Use &3/plot sch exportall <area>", "Schematics"),
-    SCHEMATIC_EXPORTALL_MASS_STARTED("$1Schematic mass export has been started. This may take a while", "Schematicss"),
+    SCHEMATIC_EXPORTALL_WORLD_ARGS("$1Need world argument. Use $3/plot sch exportall <area>", "Schematics"),
+    SCHEMATIC_EXPORTALL_WORLD("$1Invalid world. Use &3/plot sch exportall <area>", "Schematic"),
+    SCHEMATIC_EXPORTALL_MASS_STARTED("$1Schematic mass export has been started. This may take a while", "Schematics"),
     SCHEMATIC_EXPORTALL_COUNT("$1Found $3%s $1plots...", "Schematics"),
     SCHEMATIC_EXPORTALL_FINISHED("$1Finished mass export", "Schematics"),
     SCHEMATIC_EXPORTALL_SINGLE_FINISHED("$1Finished export", "Schematics"),
+    TASK_IN_PROCESS("$1Task is already running.", "Error"),
     //</editor-fold>
     //<editor-fold desc="Titles">
     TITLE_ENTERED_PLOT("$1Plot: %world%;%x%;%z%", "Titles"),
@@ -357,13 +353,14 @@ public enum Captions {
     RELOADED_CONFIGS("$1Translations and world settings have been reloaded", "Reload"),
     RELOAD_FAILED("$2Failed to reload file configurations", "Reload"),
     //</editor-fold>
-    //<editor-fold desc="Desc">
+    //<editor-fold desc="Description">
     DESC_SET("$2Plot description set", "Desc"),
     DESC_UNSET("$2Plot description unset", "Desc"),
     //</editor-fold>
     //<editor-fold desc="Alias">
     ALIAS_SET_TO("$2Plot alias set to $1%alias%", "Alias"),
     ALIAS_REMOVED("$2Plot alias removed", "Alias"),
+
     ALIAS_TOO_LONG("$2The alias must be < 50 characters in length", "Alias"),
     ALIAS_IS_TAKEN("$2That alias is already taken", "Alias"),
     //</editor-fold>
@@ -379,6 +376,7 @@ public enum Captions {
     NO_PLOT_PERMS("$2You must be the plot owner to perform this action", "Permission"),
     CANT_CLAIM_MORE_PLOTS("$2You can't claim more plots.", "Permission"),
     CANT_CLAIM_MORE_CLUSTERS("$2You can't claim more clusters.", "Permission"),
+
     CANT_TRANSFER_MORE_PLOTS("$2You can't send more plots to that user", "Permission"),
     CANT_CLAIM_MORE_PLOTS_NUM("$2You can't claim more than $1%s $2plots at once", "Permission"),
     //</editor-fold>
@@ -390,8 +388,8 @@ public enum Captions {
     MERGE_REQUEST_CONFIRM("Merge request from %s", "Permission"),
     NO_PERM_MERGE("$2You are not the owner of the plot: $1%plot%", "Merge"),
     NO_AVAILABLE_AUTOMERGE("$2You do not own any adjacent plots in the specified direction or are not allowed to merge to the required size.", "Merge"),
-    UNMERGE_CANCELLED("$1Unlink has been cancelled", "Merge"),
     UNLINK_IMPOSSIBLE("$2You can only unlink a mega-plot", "Merge"),
+    UNMERGE_CANCELLED("$1Unlink has been cancelled", "Merge"),
     UNLINK_SUCCESS("$2Successfully unlinked plots.", "Merge"),
     //</editor-fold>
     //<editor-fold desc="CommandConfig">
@@ -416,14 +414,9 @@ public enum Captions {
     NOT_VALID_PLOT_WORLD("$2That is not a valid plot area (case sensitive)", "Errors"),
     NO_PLOTS("$2You don't have any plots", "Errors"),
     WAIT_FOR_TIMER("$2A set block timer is bound to either the current plot or you. Please wait for it to finish", "Errors"),
-    TASK_IN_PROCESS("$1Task is already running.", "Error"),
     //</editor-fold>
-    //<editor-fold desc="Paste">
     DEBUG_REPORT_CREATED("$1Uploaded a full debug to: $1%url%", "Paste"),
-    //</editor-fold>
-    //<editor-fold desc="Purge">
     PURGE_SUCCESS("$4Successfully purged %s plots", "Purge"),
-    //</editor-fold>
     //<editor-fold desc="Trim">
     TRIM_IN_PROGRESS("A world trim task is already in progress!", "Trim"),
     //</editor-fold>
@@ -443,7 +436,7 @@ public enum Captions {
     //<editor-fold desc="Set Block">
     SET_BLOCK_ACTION_FINISHED("$1The last setblock action is now finished.", "Set Block"),
     //</editor-fold>
-    //<editor-fold desc="unsafe">
+    //<editor-fold desc="AllowUnsafe">
     DEBUGALLOWUNSAFE_ON("$2Unsafe actions allowed", "unsafe"),
     DEBUGALLOWUNSAFE_OFF("$2Unsafe actions disabled", "unsafe"),
     //</editor-fold>
@@ -529,9 +522,7 @@ public enum Captions {
     YOU_GOT_DENIED("$4You are denied from the plot you were previously on, and got teleported to spawn", "Deny"),
     CANT_REMOVE_OWNER("$2You can't remove the plot owner", "Deny"),
     //</editor-fold>
-    //<editor-fold desc="Kick">
     YOU_GOT_KICKED("$4You got kicked!", "Kick"),
-    //</editor-fold>
     //<editor-fold desc="Flag">
     FLAG_KEY("$2Key: %s", "Flag"),
     FLAG_TYPE("$2Type: %s", "Flag"),
@@ -547,6 +538,7 @@ public enum Captions {
     //</editor-fold>
     //<editor-fold desc="Trusted">
     TRUSTED_ADDED("$4You successfully trusted a user to the plot", "Trusted"),
+    WAS_NOT_ADDED("$2That player was not trusted on this plot", "Trusted"),
     PLOT_REMOVED_USER("$1Plot %s of which you were added to has been deleted due to owner inactivity", "Trusted"),
     //</editor-fold>
     //<editor-fold desc="Member">
@@ -554,10 +546,9 @@ public enum Captions {
     ALREADY_OWNER("$2That user is already the plot owner: %s0", "Member"),
     ALREADY_ADDED("$2That user is already added to that category: %s0", "Member"),
     MEMBER_ADDED("$4That user can now build while the plot owner is online", "Member"),
-    MEMBER_WAS_NOT_ADDED("$2That player was not added as a user on this plot", "Member"),
     PLOT_MAX_MEMBERS("$2You are not allowed to add any more players to this plot", "Member"),
     //</editor-fold>
-    //<editor-fold desc="Owner">
+    //<editor-fold desc="Set Owner">
     SET_OWNER("$4You successfully set the plot owner", "Owner"),
     SET_OWNER_CANCELLED("$2The set owner action was cancelled", "Owner"),
     NOW_OWNER("$4You are now owner of plot %s", "Owner"),
@@ -577,8 +568,7 @@ public enum Captions {
     HELP_DISPLAY_ALL_COMMANDS("Display all commands", "Help"),
     DIRECTION("$1Current direction: %dir%", "Help"),
     //</editor-fold>
-    //<editor-fold desc="Generator_Bucket">
-    BUCKET_ENTRIES_IGNORED("$2Total bucket values add up to 1 or more. Blocks without a specified chance will be ignored", "Generator_Bucket"),
+    BUCKET_ENTRIES_IGNORED("$2Total bucket values add up to 1 or more. Blocks without a specified chance will be ignored","Generator_Bucket"),
 
     /**
      * Command Categories
@@ -593,6 +583,7 @@ public enum Captions {
     COMMAND_CATEGORY_DEBUG("Debug", "Category"),
     COMMAND_CATEGORY_ADMINISTRATION("Admin", "Category"),
 
+
     //<editor-fold desc="Grants">
     GRANTED_PLOTS("$1Result: $2%s $1grants left", "Grants"),
     GRANTED_PLOT("$1You granted %s0 plot to $2%s1", "Grants"),
@@ -602,16 +593,18 @@ public enum Captions {
     /**
      * Legacy Configuration Conversion
      */
-    LEGACY_CONFIG_FOUND("A legacy configuration file was detected. Conversion will be attempted.", "LegacyConfig"),
-    LEGACY_CONFIG_BACKUP("A copy of worlds.yml $1have been saved in the file worlds.yml.old$1.", "LegacyConfig"),
-    LEGACY_CONFIG_REPLACED("> %s has been replaced with %s", "LegacyConfig"),
-    LEGACY_CONFIG_DONE(
+    LEGACY_CONFIG_FOUND("A legacy configuration file was detected. Conversion will be attempted.",
+        "LegacyConfig"), LEGACY_CONFIG_BACKUP(
+        "A copy of worlds.yml $1have been saved in the file worlds.yml.old$1.",
+        "LegacyConfig"), LEGACY_CONFIG_REPLACED("> %s has been replaced with %s",
+        "LegacyConfig"), LEGACY_CONFIG_DONE(
         "The conversion has finished. PlotSquared will now be disabled and the new configuration file will"
             + " be used at next startup. Please review the new worlds.yml file. "
             + "Please note that schematics will not be converted, as we are now using WorldEdit to handle schematics. "
             + "You need to re-generate the schematics.",
+        "LegacyConfig"), LEGACY_CONFIG_CONVERSION_FAILED(
+        "Failed to convert the legacy configuration file. See stack trace for information.",
         "LegacyConfig"),
-    LEGACY_CONFIG_CONVERSION_FAILED("Failed to convert the legacy configuration file. See stack trace for information.", "LegacyConfig"),
 
     CUSTOM_STRING("-", "-");
     //@formatter:on

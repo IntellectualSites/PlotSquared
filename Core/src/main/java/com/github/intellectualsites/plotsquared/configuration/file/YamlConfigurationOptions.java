@@ -5,7 +5,6 @@ package com.github.intellectualsites.plotsquared.configuration.file;
  * YamlConfiguration}.
  */
 public class YamlConfigurationOptions extends FileConfigurationOptions {
-    private int indent = 2;
 
     YamlConfigurationOptions(YamlConfiguration configuration) {
         super(configuration);
@@ -17,11 +16,6 @@ public class YamlConfigurationOptions extends FileConfigurationOptions {
 
     @Override public YamlConfigurationOptions copyDefaults(boolean value) {
         super.copyDefaults(value);
-        return this;
-    }
-
-    @Override public YamlConfigurationOptions pathSeparator(char value) {
-        super.pathSeparator(value);
         return this;
     }
 
@@ -42,27 +36,8 @@ public class YamlConfigurationOptions extends FileConfigurationOptions {
      *
      * @return How much to indent by
      */
-    public int indent() {
-        return indent;
+    int indent() {
+        return 2;
     }
 
-    /**
-     * Sets how much spaces should be used to indent each line.
-     *
-     * <p>The minimum value this may be is 2, and the maximum is 9.
-     *
-     * @param value New indent
-     * @return This object, for chaining
-     */
-    public YamlConfigurationOptions indent(int value) {
-        if (value < 2) {
-            throw new IllegalArgumentException("Indent must be at least 2 characters");
-        }
-        if (value > 9) {
-            throw new IllegalArgumentException("Indent cannot be greater than 9 characters");
-        }
-
-        indent = value;
-        return this;
-    }
 }

@@ -140,7 +140,7 @@ public abstract class HybridUtils {
         }
         HybridUtils.UPDATE = true;
         Set<ChunkLoc> regions = new HashSet<>();
-        regions.add(ChunkManager.manager.getChunkChunk(plot.getCenter()));
+        regions.add(ChunkManager.getChunkChunk(plot.getCenter()));
         return scheduleRoadUpdate(plot.getArea(), regions, extend);
     }
 
