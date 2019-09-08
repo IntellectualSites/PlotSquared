@@ -22,6 +22,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -358,6 +359,10 @@ import java.util.Set;
                 block.setType(Material.valueOf("WALL_SIGN"), false);
             } else {
                 block.setType(Material.valueOf("OAK_WALL_SIGN"), false);
+            }
+            if (!(block.getBlockData() instanceof WallSign)) {
+                PlotSquared.debug(block.getBlockData().getAsString());
+                throw new RuntimeException("Something went wrong generating a sign");
             }
             final Directional sign = (Directional) block.getBlockData();
             sign.setFacing(facing);
