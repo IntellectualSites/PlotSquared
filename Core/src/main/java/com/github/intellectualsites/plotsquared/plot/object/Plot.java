@@ -869,7 +869,7 @@ public class Plot {
                             manager.claimPlot(current);
                         }
                     }
-                    GlobalBlockQueue.IMP.addTask(run);
+                    GlobalBlockQueue.IMP.addEmptyTask(run);
                     return;
                 }
                 Plot current = queue.poll();
@@ -982,7 +982,7 @@ public class Plot {
             current.setMerged(merged);
         }
         if (createSign) {
-            GlobalBlockQueue.IMP.addTask(() -> {
+            GlobalBlockQueue.IMP.addEmptyTask(() -> {
                 for (Plot current : plots) {
                     current.setSign(MainUtil.getName(current.owner));
                 }

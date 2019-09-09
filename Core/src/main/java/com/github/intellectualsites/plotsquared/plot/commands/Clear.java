@@ -42,7 +42,7 @@ import java.util.concurrent.CompletableFuture;
             final long start = System.currentTimeMillis();
             boolean result = plot.clear(true, false, () -> {
                 plot.unlink();
-                GlobalBlockQueue.IMP.addTask(() -> {
+                GlobalBlockQueue.IMP.addEmptyTask(() -> {
                     plot.removeRunning();
                     // If the state changes, then mark it as no longer done
                     if (plot.getFlag(Flags.DONE).isPresent()) {

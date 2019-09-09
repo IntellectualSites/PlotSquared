@@ -107,7 +107,7 @@ import java.util.stream.IntStream;
                             current.setComponent(component, bucket);
                         }
                         MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
-                        GlobalBlockQueue.IMP.addTask(plot::removeRunning);
+                        GlobalBlockQueue.IMP.addEmptyTask(plot::removeRunning);
                         return true;
                     }
                 }

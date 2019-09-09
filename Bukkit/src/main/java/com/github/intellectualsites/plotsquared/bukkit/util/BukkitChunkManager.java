@@ -228,7 +228,7 @@ public class BukkitChunkManager extends ChunkManager {
                 }
             }
             queue.enqueue();
-            GlobalBlockQueue.IMP.addTask(() -> {
+            GlobalBlockQueue.IMP.addEmptyTask(() -> {
                 //map.restoreBlocks(newWorld, 0, 0);
                 map.restoreEntities(newWorld, relX, relZ);
                 TaskManager.runTask(whenDone);
@@ -444,7 +444,7 @@ public class BukkitChunkManager extends ChunkManager {
                 maps.add(swapChunk(world1, world2, chunk1, chunk2, region1, region2));
             }
         }
-        GlobalBlockQueue.IMP.addTask(() -> {
+        GlobalBlockQueue.IMP.addEmptyTask(() -> {
             for (ContentMap map : maps) {
                 map.restoreEntities(world1, 0, 0);
                 TaskManager.runTaskLater(whenDone, 1);

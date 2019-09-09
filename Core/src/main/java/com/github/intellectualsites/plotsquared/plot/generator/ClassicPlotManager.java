@@ -46,7 +46,7 @@ public class ClassicPlotManager extends SquarePlotManager {
     @Override public boolean unClaimPlot(Plot plot, Runnable whenDone) {
         setWallFilling(plot.getId(), classicPlotWorld.WALL_FILLING);
         setWall(plot.getId(), classicPlotWorld.WALL_BLOCK);
-        return GlobalBlockQueue.IMP.addTask(whenDone);
+        return GlobalBlockQueue.IMP.addEmptyTask(whenDone);
     }
 
     public boolean setFloor(PlotId plotId, BlockBucket blocks) {

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -21,8 +20,10 @@ public class GlobalBlockQueue {
     private final ConcurrentLinkedDeque<Runnable> runnables;
     private final AtomicBoolean running;
     private QueueProvider provider;
+
     /**
-     * Used to calculate elapsed time in milliseconds and ensure block placement doesn't lag the server
+     * Used to calculate elapsed time in milliseconds and ensure block placement doesn't lag the
+     * server
      */
     private long last;
     private long secondLast;
@@ -35,11 +36,12 @@ public class GlobalBlockQueue {
                     if (!more) {
                         lastSuccess = last;
                         if (inactiveQueues.size() == 0 && activeQueues.size() == 0) {
-                            tasks();
+                            runEmptyTasks();
                         }
                         return;
                     }
-                } while (((GlobalBlockQueue.this.secondLast = System.currentTimeMillis())- GlobalBlockQueue.this.last) < free);
+                } while (((GlobalBlockQueue.this.secondLast = System.currentTimeMillis())
+                    - GlobalBlockQueue.this.last) < free);
             }
         };
 
@@ -85,10 +87,12 @@ public class GlobalBlockQueue {
             @Override public void run() {
                 if (inactiveQueues.isEmpty() && activeQueues.isEmpty()) {
                     lastSuccess = System.currentTimeMillis();
-                    GlobalBlockQueue.this.tasks();
+                    GlobalBlockQueue.this.runEmptyTasks();
                     return;
                 }
-                SET_TASK.value1 = 50 + Math.min((50 + GlobalBlockQueue.this.last) - (GlobalBlockQueue.this.last = System.currentTimeMillis()),
+                SET_TASK.value1 = 50 + Math.min(
+                    (50 + GlobalBlockQueue.this.last) - (GlobalBlockQueue.this.last =
+                        System.currentTimeMillis()),
                     GlobalBlockQueue.this.secondLast - System.currentTimeMillis());
                 SET_TASK.value2 = GlobalBlockQueue.this.getNextQueue();
                 if (SET_TASK.value2 == null) {
@@ -231,7 +235,7 @@ public class GlobalBlockQueue {
 
     public LocalBlockQueue getNextQueue() {
         long now = System.currentTimeMillis();
-        while (activeQueues.size() > 0) {
+        while (!activeQueues.isEmpty()) {
             LocalBlockQueue queue = activeQueues.peek();
             if (queue != null && queue.size() > 0) {
                 queue.setModified(now);
@@ -251,7 +255,7 @@ public class GlobalBlockQueue {
                     long age = now - queue.getModified();
                     total += queue.size();
                     if (queue.size() == 0) {
-                        if (age > 1000) {
+                        if (age > 60000) {
                             iter.remove();
                         }
                         continue;
@@ -263,7 +267,7 @@ public class GlobalBlockQueue {
                         firstNonEmpty.setModified(now);
                         return firstNonEmpty;
                     }
-                    if (age > 60000) {
+                    if (age > 1000) {
                         queue.setModified(now);
                         return queue;
                     }
@@ -279,10 +283,10 @@ public class GlobalBlockQueue {
         return activeQueues.size() == 0 && inactiveQueues.size() == 0;
     }
 
-    public boolean addTask(final Runnable whenDone) {
+    public boolean addEmptyTask(final Runnable whenDone) {
         if (this.isDone()) {
             // Run
-            this.tasks();
+            this.runEmptyTasks();
             if (whenDone != null) {
                 whenDone.run();
             }
@@ -294,19 +298,18 @@ public class GlobalBlockQueue {
         return false;
     }
 
-    public synchronized boolean tasks() {
+    private synchronized void runEmptyTasks() {
         if (this.runnables.isEmpty()) {
-            return false;
+            return;
         }
-        final ArrayList<Runnable> tmp = new ArrayList<>(this.runnables);
+        final ConcurrentLinkedDeque<Runnable> tmp = new ConcurrentLinkedDeque<>(this.runnables);
         this.runnables.clear();
         for (final Runnable runnable : tmp) {
             runnable.run();
         }
-        return true;
     }
 
     public enum QueueStage {
-        INACTIVE, ACTIVE, NONE;
+        INACTIVE, ACTIVE, NONE
     }
 }

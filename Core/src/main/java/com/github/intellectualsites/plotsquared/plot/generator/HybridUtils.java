@@ -223,7 +223,7 @@ public abstract class HybridUtils {
                             PlotSquared.debug("&d - Potentially skipping 1024 chunks");
                             PlotSquared.debug("&d - TODO: recommend chunkster if corrupt");
                         }
-                        GlobalBlockQueue.IMP.addTask(() -> TaskManager.runTaskLater(task, 20));
+                        GlobalBlockQueue.IMP.addEmptyTask(() -> TaskManager.runTaskLater(task, 20));
                     });
                 }
             }

@@ -158,7 +158,7 @@ import java.util.zip.ZipOutputStream;
                 setup.step = new ConfigurationNode[0];
                 setup.world = world;
                 SetupUtils.manager.setupWorld(setup);
-                GlobalBlockQueue.IMP.addTask(() -> {
+                GlobalBlockQueue.IMP.addEmptyTask(() -> {
                     MainUtil.sendMessage(player, "Done!");
                     player.teleport(WorldUtil.IMP.getSpawn(world));
                 });

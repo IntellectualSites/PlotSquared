@@ -207,7 +207,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         }, () -> {
             queue.enqueue();
             // And notify whatever called this when plot clearing is done
-            GlobalBlockQueue.IMP.addTask(whenDone);
+            GlobalBlockQueue.IMP.addEmptyTask(whenDone);
         }, 10);
         return true;
     }
