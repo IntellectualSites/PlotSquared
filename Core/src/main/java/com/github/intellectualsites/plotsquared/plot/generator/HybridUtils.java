@@ -1,7 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
@@ -20,6 +19,7 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class HybridUtils {
@@ -144,8 +144,9 @@ public abstract class HybridUtils {
         return scheduleRoadUpdate(plot.getArea(), regions, extend);
     }
 
-    public boolean scheduleRoadUpdate(final PlotArea area, Set<ChunkLoc> rgs, final int extend) {
-        HybridUtils.regions = rgs;
+    public boolean scheduleRoadUpdate(final PlotArea area, Set<ChunkLoc> regions,
+        final int extend) {
+        HybridUtils.regions = regions;
         HybridUtils.area = area;
         chunks = new HashSet<>();
         final AtomicInteger count = new AtomicInteger(0);
@@ -156,35 +157,39 @@ public abstract class HybridUtils {
                     while (iter.hasNext()) {
                         ChunkLoc chunk = iter.next();
                         iter.remove();
-                        regenerateRoad(area, chunk, extend);
-                        ChunkManager.manager.unloadChunk(area.worldname, chunk, true, true);
+                        boolean regenedRoad = regenerateRoad(area, chunk, extend);
+                        if (!regenedRoad) {
+                            PlotSquared.debug("Failed to regenerate roads.");
+                        }
+                        ChunkManager.manager.unloadChunk(area.worldname, chunk, true);
                     }
-                    PlotSquared.debug("&cCancelled road task");
+                    PlotSquared.debug("Cancelled road task");
                     return;
                 }
                 count.incrementAndGet();
                 if (count.intValue() % 20 == 0) {
                     PlotSquared.debug("PROGRESS: " + 100 * (2048 - chunks.size()) / 2048 + "%");
                 }
-                if (regions.isEmpty() && chunks.isEmpty()) {
-                    PlotSquared.debug("&3Regenerating plot walls");
+                if (HybridUtils.regions.isEmpty() && chunks.isEmpty()) {
+                    PlotSquared.debug("Regenerating plot walls");
                     regeneratePlotWalls(area);
 
                     HybridUtils.UPDATE = false;
-                    PlotSquared.debug(Captions.PREFIX.getTranslated() + "Finished road conversion");
+                    PlotSquared.debug("Finished road conversion");
                     // CANCEL TASK
                 } else {
                     final Runnable task = this;
                     TaskManager.runTaskAsync(() -> {
                         try {
                             if (chunks.size() < 1024) {
-                                if (!regions.isEmpty()) {
-                                    Iterator<ChunkLoc> iterator = regions.iterator();
+                                if (!HybridUtils.regions.isEmpty()) {
+                                    Iterator<ChunkLoc> iterator = HybridUtils.regions.iterator();
                                     ChunkLoc loc = iterator.next();
                                     iterator.remove();
-                                    PlotSquared.debug("&3Updating .mcr: " + loc.x + ", " + loc.z
+                                    PlotSquared.debug("Updating .mcr: " + loc.x + ", " + loc.z
                                         + " (approx 1024 chunks)");
-                                    PlotSquared.debug(" - Remaining: " + regions.size());
+                                    PlotSquared
+                                        .debug(" - Remaining: " + HybridUtils.regions.size());
                                     chunks.addAll(getChunks(loc));
                                     System.gc();
                                 }
@@ -198,30 +203,33 @@ public abstract class HybridUtils {
                                             .isEmpty()) {
                                             final ChunkLoc chunk = iterator.next();
                                             iterator.remove();
-                                            regenerateRoad(area, chunk, extend);
+                                            boolean regenedRoads =
+                                                regenerateRoad(area, chunk, extend);
+                                            if (!regenedRoads) {
+                                                PlotSquared.debug("Failed to regenerate road.");
+                                            }
                                         }
                                     }
                                 });
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Iterator<ChunkLoc> iterator = regions.iterator();
+                            Iterator<ChunkLoc> iterator = HybridUtils.regions.iterator();
                             ChunkLoc loc = iterator.next();
                             iterator.remove();
                             PlotSquared.debug(
-                                "&c[ERROR]&7 Could not update '" + area.worldname + "/region/r."
-                                    + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
+                                "[ERROR] Could not update '" + area.worldname + "/region/r." + loc.x
+                                    + "." + loc.z + ".mca' (Corrupt chunk?)");
                             int sx = loc.x << 5;
                             int sz = loc.z << 5;
                             for (int x = sx; x < sx + 32; x++) {
                                 for (int z = sz; z < sz + 32; z++) {
                                     ChunkManager.manager
-                                        .unloadChunk(area.worldname, new ChunkLoc(x, z), true,
-                                            true);
+                                        .unloadChunk(area.worldname, new ChunkLoc(x, z), true);
                                 }
                             }
-                            PlotSquared.debug("&d - Potentially skipping 1024 chunks");
-                            PlotSquared.debug("&d - TODO: recommend chunkster if corrupt");
+                            PlotSquared.debug(" - Potentially skipping 1024 chunks");
+                            PlotSquared.debug(" - TODO: recommend chunkster if corrupt");
                         }
                         GlobalBlockQueue.IMP.addEmptyTask(() -> TaskManager.runTaskLater(task, 20));
                     });
@@ -304,42 +312,43 @@ public abstract class HybridUtils {
         if (!plotWorld.ROAD_SCHEMATIC_ENABLED) {
             return false;
         }
-        boolean toCheck = false;
+        AtomicBoolean toCheck = new AtomicBoolean(false);
         if (plotWorld.TYPE == 2) {
-            boolean c1 = area.contains(x, z);
-            boolean c2 = area.contains(ex, ez);
-            if (!c1 && !c2) {
+            boolean chunk1 = area.contains(x, z);
+            boolean chunk2 = area.contains(ex, ez);
+            if (!chunk1 && !chunk2) {
                 return false;
             } else {
-                toCheck = c1 ^ c2;
+                toCheck.set(chunk1 ^ chunk2);
             }
         }
         PlotManager manager = area.getPlotManager();
         PlotId id1 = manager.getPlotId(x, 0, z);
         PlotId id2 = manager.getPlotId(ex, 0, ez);
-        x -= plotWorld.ROAD_OFFSET_X;
+        x = x - plotWorld.ROAD_OFFSET_X;
         z -= plotWorld.ROAD_OFFSET_Z;
+        final int finalX = x;
+        final int finalZ = z;
         LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(plotWorld.worldname, false);
         if (id1 == null || id2 == null || id1 != id2) {
-            boolean result = ChunkManager.manager.loadChunk(area.worldname, chunk, false);
-            if (result) {
+            ChunkManager.manager.loadChunk(area.worldname, chunk, false).thenRun(() -> {
                 if (id1 != null) {
                     Plot p1 = area.getPlotAbs(id1);
                     if (p1 != null && p1.hasOwner() && p1.isMerged()) {
-                        toCheck = true;
+                        toCheck.set(true);
                     }
                 }
-                if (id2 != null && !toCheck) {
+                if (id2 != null && !toCheck.get()) {
                     Plot p2 = area.getPlotAbs(id2);
                     if (p2 != null && p2.hasOwner() && p2.isMerged()) {
-                        toCheck = true;
+                        toCheck.set(true);
                     }
                 }
                 int size = plotWorld.SIZE;
                 for (int X = 0; X < 16; X++) {
-                    short absX = (short) ((x + X) % size);
+                    short absX = (short) ((finalX + X) % size);
                     for (int Z = 0; Z < 16; Z++) {
-                        short absZ = (short) ((z + Z) % size);
+                        short absZ = (short) ((finalZ + Z) % size);
                         if (absX < 0) {
                             absX += size;
                         }
@@ -347,11 +356,9 @@ public abstract class HybridUtils {
                             absZ += size;
                         }
                         boolean condition;
-                        if (toCheck) {
-                            condition = manager
-                                .getPlotId(x + X + plotWorld.ROAD_OFFSET_X, 1,
-                                    z + Z + plotWorld.ROAD_OFFSET_Z) == null;
-                            //                            condition = MainUtil.isPlotRoad(new Location(plotworld.worldname, x + X, 1, z + Z));
+                        if (toCheck.get()) {
+                            condition = manager.getPlotId(finalX + X + plotWorld.ROAD_OFFSET_X, 1,
+                                finalZ + Z + plotWorld.ROAD_OFFSET_Z) == null;
                         } else {
                             boolean gx = absX > plotWorld.PATH_WIDTH_LOWER;
                             boolean gz = absZ > plotWorld.PATH_WIDTH_LOWER;
@@ -362,26 +369,22 @@ public abstract class HybridUtils {
                         if (condition) {
                             BaseBlock[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
                             int minY = plotWorld.SCHEM_Y;
-                            if (!Settings.Schematics.PASTE_ON_TOP)
+                            if (!Settings.Schematics.PASTE_ON_TOP) {
                                 minY = 1;
+                            }
                             int maxY = Math.max(extend, blocks.length);
-                            if (blocks != null) {
-                                for (int y = 0; y < maxY; y++) {
-                                    if (y > blocks.length - 1) {
-                                        queue.setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y,
-                                            z + Z + plotWorld.ROAD_OFFSET_Z, WEExtent.AIRBASE);
+                            for (int y = 0; y < maxY; y++) {
+                                if (y > blocks.length - 1) {
+                                    queue.setBlock(finalX + X + plotWorld.ROAD_OFFSET_X, minY + y,
+                                        finalZ + Z + plotWorld.ROAD_OFFSET_Z, WEExtent.AIRBASE);
+                                } else {
+                                    BaseBlock block = blocks[y];
+                                    if (block != null) {
+                                        queue.setBlock(finalX + X + plotWorld.ROAD_OFFSET_X, minY + y,
+                                            finalZ + Z + plotWorld.ROAD_OFFSET_Z, block);
                                     } else {
-                                        BaseBlock block = blocks[y];
-                                        if (block != null) {
-                                            queue
-                                                .setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y,
-                                                    z + Z + plotWorld.ROAD_OFFSET_Z, block);
-                                        } else {
-                                            queue
-                                                .setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y,
-                                                    z + Z + plotWorld.ROAD_OFFSET_Z,
-                                                    WEExtent.AIRBASE);
-                                        }
+                                        queue.setBlock(finalX + X + plotWorld.ROAD_OFFSET_X, minY + y,
+                                            finalZ + Z + plotWorld.ROAD_OFFSET_Z, WEExtent.AIRBASE);
                                     }
                                 }
                             }
@@ -389,8 +392,8 @@ public abstract class HybridUtils {
                     }
                 }
                 queue.enqueue();
-                return true;
-            }
+            });
+            return true;
         }
         return false;
     }

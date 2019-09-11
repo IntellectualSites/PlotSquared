@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class ChunkManager {
@@ -109,9 +110,7 @@ public abstract class ChunkManager {
             TaskManager.objectTask(chunks, new RunnableVal<ChunkLoc>() {
 
                 @Override public void run(ChunkLoc value) {
-                    if (manager.loadChunk(world, value, false)) {
-                        task.run(value);
-                    }
+                    manager.loadChunk(world, value, false).thenRun(()-> task.run(value));
                 }
             }, whenDone);
         });
@@ -212,9 +211,9 @@ public abstract class ChunkManager {
      */
     public abstract int[] countEntities(Plot plot);
 
-    public abstract boolean loadChunk(String world, ChunkLoc loc, boolean force);
+    public abstract CompletableFuture loadChunk(String world, ChunkLoc loc, boolean force);
 
-    public abstract void unloadChunk(String world, ChunkLoc loc, boolean save, boolean safe);
+    public abstract void unloadChunk(String world, ChunkLoc loc, boolean save);
 
     public Set<ChunkLoc> getChunkChunks(String world) {
         File folder =

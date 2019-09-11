@@ -924,7 +924,7 @@ public class Plot {
                         ChunkManager.manager.loadChunk(getWorldName(), loc, false);
                         MainUtil.setBiome(getWorldName(), value[2], value[3], value[4], value[5],
                             biome);
-                        ChunkManager.manager.unloadChunk(getWorldName(), loc, true, true);
+                        ChunkManager.manager.unloadChunk(getWorldName(), loc, true);
                     }
                 }, this, 5);
 

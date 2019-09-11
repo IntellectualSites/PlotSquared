@@ -50,8 +50,7 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
                 LocalChunk chunk = chunks.poll();
                 if (chunk != null) {
                     blockChunks.remove(chunk.longHash());
-                    this.execute(chunk);
-                    return true;
+                    return this.execute(chunk);
                 }
             }
         } catch (Throwable e) {

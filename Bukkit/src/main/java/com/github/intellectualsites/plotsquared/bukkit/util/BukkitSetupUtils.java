@@ -9,6 +9,7 @@ import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
+import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -61,7 +62,7 @@ public class BukkitSetupUtils extends SetupUtils {
         }
         World dw = Bukkit.getWorlds().get(0);
         for (Player player : world.getPlayers()) {
-            player.teleport(dw.getSpawnLocation());
+            PaperLib.teleportAsync(player,dw.getSpawnLocation());
         }
         if (save) {
             for (Chunk chunk : world.getLoadedChunks()) {

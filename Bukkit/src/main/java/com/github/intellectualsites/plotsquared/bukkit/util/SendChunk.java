@@ -12,6 +12,7 @@ import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.RefFie
 import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.RefMethod;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -133,7 +134,7 @@ public class SendChunk {
         ArrayList<Chunk> chunks = new ArrayList<>();
         for (ChunkLoc loc : chunkLocations) {
             if (myWorld.isChunkLoaded(loc.x, loc.z)) {
-                chunks.add(myWorld.getChunkAt(loc.x, loc.z));
+                PaperLib.getChunkAtAsync(myWorld, loc.x, loc.z).thenAccept(chunks::add);
             }
         }
         sendChunk(chunks);

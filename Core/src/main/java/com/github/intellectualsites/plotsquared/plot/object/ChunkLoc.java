@@ -10,6 +10,22 @@ public class ChunkLoc {
         this.z = z;
     }
 
+    public static long getChunkLong(int x, int z) {
+        return (long) x & 0xffffffffL | ((long) z & 0xffffffffL) << 32;
+    }
+
+    public long toLong() {
+        return getChunkLong(this.x,this.z);
+    }
+
+    public static int getX(long chunkLong) {
+        return (int)(chunkLong & 0xffffffffL);
+    }
+
+    public static int getZ(long chunkLong) {
+        return (int)(chunkLong >>> 32 & 0xffffffffL);
+    }
+
     @Override public int hashCode() {
         return (x << 16) | (z & 0xFFFF);
     }

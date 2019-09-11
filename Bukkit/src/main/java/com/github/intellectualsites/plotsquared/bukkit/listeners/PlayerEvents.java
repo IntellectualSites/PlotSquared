@@ -12,6 +12,7 @@ import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventTy
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.*;
+import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.FluidCollisionMode;
@@ -756,12 +757,12 @@ import java.util.regex.Pattern;
                         if (passengers != null) {
                             vehicle.eject();
                             vehicle.setVelocity(new Vector(0d, 0d, 0d));
-                            vehicle.teleport(dest);
+                            PaperLib.teleportAsync(vehicle, dest);
                             passengers.forEach(vehicle::addPassenger);
                         } else {
                             vehicle.eject();
                             vehicle.setVelocity(new Vector(0d, 0d, 0d));
-                            vehicle.teleport(dest);
+                            PaperLib.teleportAsync(vehicle, dest);
                             vehicle.addPassenger(player);
                         }
                         return;

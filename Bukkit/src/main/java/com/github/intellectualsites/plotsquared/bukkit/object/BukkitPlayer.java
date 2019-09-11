@@ -189,7 +189,7 @@ public class BukkitPlayer extends PlotPlayer {
         }
         final org.bukkit.Location bukkitLocation = new org.bukkit.Location(BukkitUtil.getWorld(location.getWorld()), location.getX() + 0.5,
             location.getY(), location.getZ() + 0.5, location.getYaw(), location.getPitch());
-        PaperLib.teleportAsync(player, bukkitLocation);
+        PaperLib.teleportAsync(player, bukkitLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
     @Override public String getName() {

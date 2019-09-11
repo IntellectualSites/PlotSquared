@@ -14,6 +14,7 @@ import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlock
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -26,6 +27,7 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.CompletableFuture;
 
 public class BukkitChunkManager extends ChunkManager {
 
@@ -152,19 +154,20 @@ public class BukkitChunkManager extends ChunkManager {
         if (doWhole) {
             for (Entity entity : entities) {
                 org.bukkit.Location location = entity.getLocation();
-                Chunk chunk = location.getChunk();
-                if (chunks.contains(chunk)) {
-                    int X = chunk.getX();
-                    int Z = chunk.getZ();
-                    if (X > bx && X < tx && Z > bz && Z < tz) {
-                        count(count, entity);
-                    } else {
-                        Plot other = area.getPlot(BukkitUtil.getLocation(location));
-                        if (plot.equals(other)) {
+                PaperLib.getChunkAtAsync(location).thenAccept( chunk -> {
+                    if (chunks.contains(chunk)) {
+                        int X = chunk.getX();
+                        int Z = chunk.getZ();
+                        if (X > bx && X < tx && Z > bz && Z < tz) {
                             count(count, entity);
+                        } else {
+                            Plot other = area.getPlot(BukkitUtil.getLocation(location));
+                            if (plot.equals(other)) {
+                                count(count, entity);
+                            }
                         }
                     }
-                }
+                });
             }
         } else {
             for (Chunk chunk : chunks) {
@@ -196,6 +199,8 @@ public class BukkitChunkManager extends ChunkManager {
         final World oldWorld = Bukkit.getWorld(pos1.getWorld());
         final BukkitWorld oldBukkitWorld = new BukkitWorld(oldWorld);
         final World newWorld = Bukkit.getWorld(newPos.getWorld());
+        assert newWorld != null;
+        assert oldWorld != null;
         final String newWorldName = newWorld.getName();
         final ContentMap map = new ContentMap();
         final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(newWorldName, false);
@@ -208,13 +213,14 @@ public class BukkitChunkManager extends ChunkManager {
                 ChunkLoc loc = new ChunkLoc(value[0], value[1]);
                 int cxx = loc.x << 4;
                 int czz = loc.z << 4;
-                Chunk chunk = oldWorld.getChunkAt(loc.x, loc.z);
-                map.saveEntitiesIn(chunk, region);
-                for (int x = bx & 15; x <= (tx & 15); x++) {
-                    for (int z = bz & 15; z <= (tz & 15); z++) {
-                        map.saveBlocks(oldBukkitWorld, 256, cxx + x, czz + z, relX, relZ);
+                PaperLib.getChunkAtAsync(oldWorld, loc.x, loc.z)
+                    .thenAccept(chunk1 -> map.saveEntitiesIn(chunk1, region)).thenRun(() -> {
+                    for (int x = bx & 15; x <= (tx & 15); x++) {
+                        for (int z = bz & 15; z <= (tz & 15); z++) {
+                            map.saveBlocks(oldBukkitWorld, 256, cxx + x, czz + z, relX, relZ);
+                        }
                     }
-                }
+                });
             }
         }, () -> {
             for (Entry<PlotLoc, BaseBlock[]> entry : map.allBlocks.entrySet()) {
@@ -387,13 +393,12 @@ public class BukkitChunkManager extends ChunkManager {
         return true;
     }
 
-    @Override public boolean loadChunk(String world, ChunkLoc chunkLoc, boolean force) {
-        return BukkitUtil.getWorld(world).getChunkAt(chunkLoc.x, chunkLoc.z).load(force);
+    @Override public CompletableFuture loadChunk(String world, ChunkLoc chunkLoc, boolean force) {
+        return PaperLib.getChunkAtAsync(BukkitUtil.getWorld(world),chunkLoc.x, chunkLoc.z, force);
     }
 
     @Override
-    public void unloadChunk(final String world, final ChunkLoc chunkLoc, final boolean save,
-        final boolean safe) {
+    public void unloadChunk(final String world, final ChunkLoc chunkLoc, final boolean save) {
         if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
             TaskManager.runTask(
                 () -> BukkitUtil.getWorld(world).unloadChunk(chunkLoc.x, chunkLoc.z, save));
