@@ -291,7 +291,7 @@ public abstract class SchematicHandler {
                 parent.list((dir, name) -> name.endsWith(".schematic") || name.endsWith(".schem"));
             if (rawNames != null) {
                 final List<String> transformed = Arrays.stream(rawNames)
-                    .map(rawName -> rawName.substring(0, rawName.length() - 10))
+                    //.map(rawName -> rawName.substring(0, rawName.length() - 10))
                     .collect(Collectors.toList());
                 names.addAll(transformed);
             }
