@@ -59,8 +59,8 @@ public enum Captions {
     PERMISSION_ADMIN_ENTRY_DENIED("plots.admin.entry.denied", "static.permissions"),
     PERMISSION_ADMIN_ENTRY_FORCEFIELD("plots.admin.entry.forcefield", "static.permissions"),
     PERMISSION_COMMANDS_CHAT("plots.admin.command.chat", "static.permissions"),
-    PERMISSION_MERGE_OTHER("plots.merge.other", "static.permissions"), PERMISSION_MERGE_KEEP_ROAD(
-        "plots.merge.keeproad", "static.permissions"),
+    PERMISSION_MERGE_OTHER("plots.merge.other", "static.permissions"),
+    PERMISSION_MERGE_KEEP_ROAD("plots.merge.keeproad", "static.permissions"),
     PERMISSION_ADMIN_DESTROY_UNOWNED("plots.admin.destroy.unowned", "static.permissions"),
     PERMISSION_ADMIN_DESTROY_GROUNDLEVEL("plots.admin.destroy.groundlevel", "static.permissions"),
     PERMISSION_ADMIN_DESTROY_OTHER("plots.admin.destroy.other", "static.permissions"),
@@ -70,8 +70,8 @@ public enum Captions {
     PERMISSION_ADMIN_BUILD_OTHER("plots.admin.build.other", "static.permissions"),
     PERMISSION_ADMIN_INTERACT_ROAD("plots.admin.interact.road", "static.permissions"),
     PERMISSION_ADMIN_INTERACT_UNOWNED("plots.admin.interact.unowned", "static.permissions"),
-    PERMISSION_ADMIN_INTERACT_OTHER("plots.admin.interact.other", "static.permissions"), PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT(
-        "plots.admin.build.heightlimit", "static.permissions"),
+    PERMISSION_ADMIN_INTERACT_OTHER("plots.admin.interact.other", "static.permissions"),
+    PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT("plots.admin.build.heightlimit", "static.permissions"),
     PERMISSION_ADMIN_UPDATE("plots.admin.command.update", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_RATE("plots.admin.command.rate", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_TRUST("plots.admin.command.trust", "static.permissions"),
@@ -124,8 +124,8 @@ public enum Captions {
     PERMISSION_FLAG_ADD("plots.flag.add", "static.permissions"),
     PERMISSION_FLAG_LIST("plots.flag.list", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_KICK("plots.admin.command.kick", "static.permissions"),
-    PERMISSION_GRANT("plots.grant.%s0", "static.permissions"), PERMISSION_LIST_FOR_SALE(
-        "plots.list.forsale", "static.permissions"),
+    PERMISSION_GRANT("plots.grant.%s0", "static.permissions"),
+    PERMISSION_LIST_FOR_SALE("plots.list.forsale", "static.permissions"),
     PERMISSION_LIST_MINE("plots.list.mine", "static.permissions"),
     PERMISSION_LIST_SHARED("plots.list.shared", "static.permissions"),
     PERMISSION_LIST_WORLD("plots.list.world", "static.permissions"),
@@ -140,8 +140,8 @@ public enum Captions {
     PERMISSION_LIST_FUZZY("plots.list.fuzzy", "static.permissions"),
     PERMISSION_LIST_AREA("plots.list.area", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_LOAD("plots.admin.command.load", "static.permissions"),
-    PERMISSION_ADMIN_COMMAND_MERGE("plots.admin.command.merge", "static.permissions"), PERMISSION_ADMIN_COMMAND_SET_OWNER(
-        "plots.admin.command.setowner", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_MERGE("plots.admin.command.merge", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_SET_OWNER("plots.admin.command.setowner", "static.permissions"),
     PERMISSION_COMMENT("plots.comment", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_REMOVE("plots.admin.command.remove", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_SAVE("plots.admin.command.save", "static.permissions"),
@@ -308,7 +308,6 @@ public enum Captions {
         "$4You should have been teleported to the created world. Otherwise you will need to set the generator manually using the bukkit.yml or "
             + "your chosen world management plugin.", "Setup"),
     SETUP_WORLD_TAKEN("$2%s is already a world", "Setup"),
-
     SETUP_MISSING_WORLD(
         "$2You need to specify a world name ($1/plot setup &l<world>$1 <generator>$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 -"
             + " $1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),
@@ -319,10 +318,8 @@ public enum Captions {
     SETUP_INVALID_GENERATOR("$2Invalid generator. Possible options: %s", "Setup"),
     //</editor-fold>
     //<editor-fold desc="Schematic">
-    SCHEMATIC_TOO_LARGE("$2The plot is too large for this action!",
-        "Schematics"),
+    SCHEMATIC_TOO_LARGE("$2The plot is too large for this action!", "Schematics"),
     SCHEMATIC_MISSING_ARG("$2You need to specify an argument. Possible values: $1save$2, $1paste $2, $1exportall$2, $1list", "Schematics"),
-
     SCHEMATIC_INVALID("$2That is not a valid schematic. Reason: $2%s", "Schematics"),
     SCHEMATIC_VALID("$2That is a valid schematic", "Schematics"),
     SCHEMATIC_PASTE_FAILED("$2Failed to paste the schematic", "Schematics"),
@@ -582,7 +579,6 @@ public enum Captions {
     COMMAND_CATEGORY_INFO("Info", "Category"),
     COMMAND_CATEGORY_DEBUG("Debug", "Category"),
     COMMAND_CATEGORY_ADMINISTRATION("Admin", "Category"),
-
 
     //<editor-fold desc="Grants">
     GRANTED_PLOTS("$1Result: $2%s $1grants left", "Grants"),

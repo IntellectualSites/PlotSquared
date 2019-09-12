@@ -160,8 +160,7 @@ setup:
   setup_invalid_generator: '$2无效的生成器。可能选项：%s'
 schematics:
   schematic_too_large: $2此地皮过大无法进行此操作！
-  schematic_missing_arg: '$2阁下需要指定参数。可能的值：$1test
-    <名称>$2 , $1save$2 , $1paste $2, $1exportall'
+  schematic_missing_arg: '$2阁下需要指定参数。可能的值：$1save$2, $1paste $2, $1exportall'
   schematic_invalid: '$2布局无效。理由：$2%s'
   schematic_valid: $2布局无效
   schematic_paste_failed: $2粘贴布局失败

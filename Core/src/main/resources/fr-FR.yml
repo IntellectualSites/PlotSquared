@@ -148,7 +148,7 @@ setup:
   setup_invalid_generator: '$2Générateur invalide. Options possibles: %s'
 schematics:
   schematic_too_large: $2Ce plot est trop grand pour cette action!
-  schematic_missing_arg: '$2Vous devez spécifier un argument. Valeurs possibles: $1test <nom>$2 , $1save$2 , $1paste $2, $1exportall'
+  schematic_missing_arg: '$2Vous devez spécifier un argument. Valeurs possibles: $1save$2, $1paste $2, $1exportall'
   schematic_invalid: '$2Ce n''est pas un schématic valide. Raison: $2%s'
   schematic_valid: '$2C''est un schématic valide'
   schematic_paste_failed: $2Impossible de coller le schématic
