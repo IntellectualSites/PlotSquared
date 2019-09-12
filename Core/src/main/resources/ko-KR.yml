@@ -151,8 +151,7 @@ setup:
     cancel
   setup_invalid_generator: '$2올바르지 않은 생성기 입니다. 가능한 옵션: %s'
 schematics:
-  schematic_missing_arg: '$2당신은 인수를 지정해야 합니다. 가능한 값: $1test <name>$2 , $1save$2 ,
-    $1paste $2, $1exportall'
+  schematic_missing_arg: '$2당신은 인수를 지정해야 합니다. 가능한 값: $1save$2, $1paste $2, $1exportall'
   schematic_invalid: '$2이것은 올바르지 않은 schematic파일 입니다. 사유: $2%s'
   schematic_valid: $2이것은 올바른 schematic파일 입니다
   schematic_paste_failed: $2schematic 적용에 실패하엿습니다

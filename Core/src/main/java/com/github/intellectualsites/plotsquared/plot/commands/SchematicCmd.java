@@ -25,7 +25,7 @@ import java.util.UUID;
 
 @CommandDeclaration(command = "schematic", permission = "plots.schematic",
     description = "Schematic command", aliases = {"sch", "schem"},
-    category = CommandCategory.SCHEMATIC, usage = "/plot schematic <test|save|saveall|paste>")
+    category = CommandCategory.SCHEMATIC, usage = "/plot schematic <save|saveall|paste>")
 public class SchematicCmd extends SubCommand {
 
     private boolean running = false;
@@ -109,38 +109,6 @@ public class SchematicCmd extends SubCommand {
                 });
                 break;
             }
-            //            TODO test
-            //            case "test": {
-            //                if (!Permissions.hasPermission(plr, "plots.schematic.test")) {
-            //                    MainUtil.sendMessage(plr, Captions.NO_PERMISSION, "plots.schematic.test");
-            //                    return false;
-            //                }
-            //                if (args.length < 2) {
-            //                    sendMessage(plr, Captions.SCHEMATIC_MISSING_ARG);
-            //                    return false;
-            //                }
-            //                final Location loc = plr.getLocation();
-            //                final Plot plot = MainUtil.getPlot(loc);
-            //                if (plot == null) {
-            //                    sendMessage(plr, Captions.NOT_IN_PLOT);
-            //                    return false;
-            //                }
-            //                file = args[1];
-            //                schematic = SchematicHandler.manager.getSchematic(file);
-            //                if (schematic == null) {
-            //                    sendMessage(plr, Captions.SCHEMATIC_INVALID, "non-existent");
-            //                    return false;
-            //                }
-            //                final int l1 = schematic.getSchematicDimension().getX();
-            //                final int l2 = schematic.getSchematicDimension().getZ();
-            //                final int length = MainUtil.getPlotWidth(loc.getWorld(), plot.id);
-            //                if ((l1 < length) || (l2 < length)) {
-            //                    sendMessage(plr, Captions.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", l1, l2, length));
-            //                    break;
-            //                }
-            //                sendMessage(plr, Captions.SCHEMATIC_VALID);
-            //                break;
-            //            }
             case "saveall":
             case "exportall": {
                 if (!(player instanceof ConsolePlayer)) {

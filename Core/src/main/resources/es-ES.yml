@@ -145,7 +145,7 @@ setup:
   setup_invalid_generator: '$2Generador inválido. Opciones posibles: %s'
 schematics:
   schematic_missing_arg: '$2Necesitas especificar un argumento. Valores posibles:
-    $1test <name>$2 , $1save$2 , $1paste $2, $1exportall'
+    $1save$2, $1paste $2, $1exportall'
   schematic_invalid: '$2Este no es un schematic valido. Razon: $2%s'
   schematic_valid: $2Este es un schematic valido.
   schematic_paste_failed: $2Fallo al pegar el schematic.

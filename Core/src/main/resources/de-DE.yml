@@ -130,8 +130,7 @@ setup:
     setup backn$2 - $1/plot setup cancel
   setup_invalid_generator: '$2Ungültiger Generarator. Mögliche Optionen: %s'
 schematics:
-  schematic_missing_arg: '$2Du musst einen Wert angeben. Gültige Werte: $1test <name>$2
-    , $1save$2 , $1paste $2, $1exportall'
+  schematic_missing_arg: '$2Du musst einen Wert angeben. Gültige Werte: $1save$2, $1paste $2, $1exportall'
   schematic_invalid: '$2Diese Schematic ist ungültig: $2%s'
   schematic_valid: $2Diese Schematic ist gültig.
   schematic_paste_failed: $2Einfügen der Schematic fehlgeschlagen.

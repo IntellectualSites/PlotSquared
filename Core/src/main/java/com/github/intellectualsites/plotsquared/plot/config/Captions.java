@@ -321,7 +321,7 @@ public enum Captions {
     //<editor-fold desc="Schematic">
     SCHEMATIC_TOO_LARGE("$2The plot is too large for this action!",
         "Schematics"),
-    SCHEMATIC_MISSING_ARG("$2You need to specify an argument. Possible values: $1test <name>$2 , $1save$2 , $1paste $2, $1exportall$2, $1list", "Schematics"),
+    SCHEMATIC_MISSING_ARG("$2You need to specify an argument. Possible values: $1save$2, $1paste $2, $1exportall$2, $1list", "Schematics"),
 
     SCHEMATIC_INVALID("$2That is not a valid schematic. Reason: $2%s", "Schematics"),
     SCHEMATIC_VALID("$2That is a valid schematic", "Schematics"),
