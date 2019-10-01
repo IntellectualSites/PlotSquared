@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "debugpaste", aliases = "dp", usage = "/plot debugpaste",
-    description = "Upload settings.yml, worlds.yml, PlotSquared.use_THIS.yml and your latest.log to https://athion.net/ISPaster/paste",
+    description = "Upload settings.yml, worlds.yml, PlotSquared.use_THIS.yml your latest.log and Multiverse's worlds.yml (if being used) to https://athion.net/ISPaster/paste",
     permission = "plots.debugpaste", category = CommandCategory.DEBUG) public class DebugPaste
     extends SubCommand {
 
