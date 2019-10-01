@@ -116,6 +116,15 @@ import java.util.stream.Collectors;
                 }
 
                 try {
+                    final File MultiverseWorlds =
+                            new File(PlotSquared.get().IMP.getDirectory(), "../../plugins/Multiverse-Core/worlds.yml");
+                    incendoPaster
+                            .addFile(new IncendoPaster.PasteFile("MultiverseCore/worlds.yml", readFile(MultiverseWorlds)));
+                } catch (final IOException ignored) {
+                    MainUtil.sendMessage(player, "&cSkipping Multiverse worlds.yml because the plugin is not in use");
+                }
+
+                try {
                     final String rawResponse = incendoPaster.upload();
                     final JsonObject jsonObject =
                         new JsonParser().parse(rawResponse).getAsJsonObject();
