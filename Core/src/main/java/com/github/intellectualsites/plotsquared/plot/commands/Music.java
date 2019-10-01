@@ -8,6 +8,7 @@ import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
 import com.github.intellectualsites.plotsquared.plot.object.PlotItemStack;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,10 +30,14 @@ import java.util.Locale;
         if (plot == null) {
             return !sendMessage(player, Captions.NOT_IN_PLOT);
         }
-        if (!plot.isAdded(player.getUUID())) {
-            sendMessage(player, Captions.NO_PLOT_PERMS);
-            return true;
+        if (!plot.hasOwner()) {
+            return !sendMessage(player, Captions.PLOT_UNOWNED);
         }
+        if ((!plot.isOwner(player.getUUID())) && !Permissions
+            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_MUSIC)) {
+            return sendMessage(player, Captions.NO_PLOT_PERMS);
+        }
+
         PlotInventory inv = new PlotInventory(player, 2, "Plot Jukebox") {
             @Override public boolean onClick(int index) {
                 PlotItemStack item = getItem(index);

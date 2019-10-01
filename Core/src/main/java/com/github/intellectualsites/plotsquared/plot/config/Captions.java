@@ -124,6 +124,7 @@ public enum Captions {
     PERMISSION_FLAG_ADD("plots.flag.add", "static.permissions"),
     PERMISSION_FLAG_LIST("plots.flag.list", "static.permissions"),
     PERMISSION_ADMIN_COMMAND_KICK("plots.admin.command.kick", "static.permissions"),
+    PERMISSION_ADMIN_COMMAND_MUSIC("plots.admin.command.music", "static.permissions"),
     PERMISSION_GRANT("plots.grant.%s0", "static.permissions"),
     PERMISSION_LIST_FOR_SALE("plots.list.forsale", "static.permissions"),
     PERMISSION_LIST_MINE("plots.list.mine", "static.permissions"),
