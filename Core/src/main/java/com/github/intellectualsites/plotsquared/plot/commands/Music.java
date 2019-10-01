@@ -30,6 +30,10 @@ import java.util.Locale;
         if (plot == null) {
             return !sendMessage(player, Captions.NOT_IN_PLOT);
         }
+        if (!plot.isAdded(player.getUUID())) {
+            sendMessage(player, Captions.NO_PLOT_PERMS);
+            return true;
+        }
         if (!plot.hasOwner()) {
             return !sendMessage(player, Captions.PLOT_UNOWNED);
         }
