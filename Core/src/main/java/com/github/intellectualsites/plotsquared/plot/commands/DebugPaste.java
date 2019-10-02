@@ -117,7 +117,7 @@ import java.util.stream.Collectors;
 
                 try {
                     final File MultiverseWorlds =
-                            new File(PlotSquared.get().IMP.getDirectory(), "../../plugins/Multiverse-Core/worlds.yml");
+                            new File(PlotSquared.get().IMP.getDirectory(), "../Multiverse-Core/worlds.yml");
                     incendoPaster
                             .addFile(new IncendoPaster.PasteFile("MultiverseCore/worlds.yml", readFile(MultiverseWorlds)));
                 } catch (final IOException ignored) {
