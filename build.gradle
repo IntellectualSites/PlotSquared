@@ -71,7 +71,7 @@ subprojects {
         implementation("net.kyori:text-serializer-gson:3.0.2")
         implementation("net.kyori:text-serializer-legacy:3.0.2")
         implementation("net.kyori:text-serializer-plain:3.0.2")
-        implementation("com.google.guava:guava:21.0") {
+        implementation("com.google.guava:guava:23.0") {
             because("Minecraft uses Guava 21 as of 1.13")
         }
         compileOnly("org.jetbrains:annotations:17.0.0")
