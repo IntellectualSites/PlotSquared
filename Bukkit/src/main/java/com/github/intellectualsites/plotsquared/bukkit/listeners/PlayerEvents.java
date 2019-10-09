@@ -2046,6 +2046,7 @@ import java.util.regex.Pattern;
                     location = BukkitUtil
                         .getLocation(block.getRelative(event.getBlockFace()).getLocation());
                     eventType = PlayerBlockEventType.PLACE_BLOCK;
+                    lb = new BukkitLazyBlock(new StringPlotBlock(type.toString())); 
                     break;
                 }
                 lb = new BukkitLazyBlock(PlotBlock.get(type.toString()));
