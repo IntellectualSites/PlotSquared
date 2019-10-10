@@ -75,7 +75,7 @@ subprojects {
             because("Minecraft uses Guava 21 as of 1.13")
         }
         compileOnly("org.jetbrains:annotations:17.0.0")
-        compileClasspath("org.projectlombok:lombok:1.18.8")
+        compileClasspath("org.projectlombok:lombok:1.18.10")
         testCompileOnly("org.projectlombok:lombok:1.18.8")
         annotationProcessor("org.projectlombok:lombok:1.18.8")
         testAnnotationProcessor("org.projectlombok:lombok:1.18.8")
