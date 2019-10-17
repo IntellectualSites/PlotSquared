@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "debugpaste", aliases = "dp", usage = "/plot debugpaste",
-    description = "Upload settings.yml, worlds.yml, PlotSquared.use_THIS.yml and your latest.log to https://athion.net/ISPaster/paste",
-    permission = "plots.debugpaste", category = CommandCategory.DEBUG) public class DebugPaste
-    extends SubCommand {
+    description = "Upload settings.yml, worlds.yml, PlotSquared.use_THIS.yml your latest.log and Multiverse's worlds.yml (if being used) to https://athion.net/ISPaster/paste",
+    permission = "plots.debugpaste", category = CommandCategory.DEBUG, confirmation = true, requiredType = RequiredType.NONE)
+public class DebugPaste extends SubCommand {
 
     private static String readFile(@NonNull final File file) throws IOException {
         final List<String> lines;
@@ -113,6 +113,15 @@ import java.util.stream.Collectors;
                 } catch (final IllegalArgumentException ignored) {
                     MainUtil.sendMessage(player,
                         "&cSkipping PlotSquared.use_THIS.yml because it's empty");
+                }
+
+                try {
+                    final File MultiverseWorlds =
+                            new File(PlotSquared.get().IMP.getDirectory(), "../Multiverse-Core/worlds.yml");
+                    incendoPaster
+                            .addFile(new IncendoPaster.PasteFile("MultiverseCore/worlds.yml", readFile(MultiverseWorlds)));
+                } catch (final IOException ignored) {
+                    MainUtil.sendMessage(player, "&cSkipping Multiverse worlds.yml because the plugin is not in use");
                 }
 
                 try {
