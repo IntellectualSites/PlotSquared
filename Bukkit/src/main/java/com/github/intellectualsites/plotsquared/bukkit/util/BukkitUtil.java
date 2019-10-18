@@ -215,6 +215,12 @@ import java.util.Set;
             MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()));
     }
 
+    public static Location getLocationFull(@NonNull final org.bukkit.Location location) {
+      return new Location(location.getWorld().getName(), MathMan.roundInt(location.getX()),
+          MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()),
+          location.getYaw(), location.getPitch());
+    }
+
     public static org.bukkit.Location getLocation(@NonNull final Location location) {
         return new org.bukkit.Location(getWorld(location.getWorld()), location.getX(),
             location.getY(), location.getZ());
