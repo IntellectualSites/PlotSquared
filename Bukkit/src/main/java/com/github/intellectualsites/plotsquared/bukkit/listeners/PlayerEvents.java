@@ -2042,13 +2042,14 @@ import java.util.regex.Pattern;
                 if (type == Material.AIR) {
                     type = offType;
                 }
+                // in the following, lb needs to have the material of the item in hand i.e. type
+                lb = new BukkitLazyBlock(PlotBlock.get(type.toString()));
                 if (type.isBlock()) {
                     location = BukkitUtil
                         .getLocation(block.getRelative(event.getBlockFace()).getLocation());
                     eventType = PlayerBlockEventType.PLACE_BLOCK;
                     break;
                 }
-                lb = new BukkitLazyBlock(PlotBlock.get(type.toString()));
                 if (type.toString().toLowerCase().endsWith("egg")) {
                     eventType = PlayerBlockEventType.SPAWN_MOB;
                 } else {
