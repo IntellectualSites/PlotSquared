@@ -6,10 +6,3 @@ issueOpened: >
   Failure to do so will prevent us from resolving the issue in a timely manner. 
   
   Please note that suggestions are now to be submitted to https://git.io/fN5B4 rather than this issue tracker!
-
-pullRequestOpened: >
-  Thank your for raising your pull request.
-
-  Please make sure you have followed our contributing guidelines and to take an extra look at the code to make sure that it is functional!
-  
-  We will review it as soon as possible!
