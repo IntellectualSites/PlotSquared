@@ -679,41 +679,38 @@ import java.util.regex.Pattern;
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTeleport(PlayerTeleportEvent event) {
-        if (event.getTo() == null || event.getFrom() == null || !event.getFrom().getWorld()
-            .equals(event.getTo().getWorld())) {
-            final Object lastLoc =
-                BukkitUtil.getPlayer(event.getPlayer()).deleteMeta(PlotPlayer.META_LOCATION);
-            final Object lastPlot =
-                BukkitUtil.getPlayer(event.getPlayer()).deleteMeta(PlotPlayer.META_LAST_PLOT);
-            org.bukkit.Location to = event.getTo();
-            if (to != null) {
-                Player player = event.getPlayer();
-                PlotPlayer plotPlayer = PlotPlayer.wrap(player);
-                Location location = BukkitUtil.getLocation(to);
-                PlotArea area = location.getPlotArea();
-                if (area == null) {
-                    return;
-                }
-                Plot plot = area.getPlot(location);
-                if (plot != null) {
-                    final boolean result = Flags.DENY_TELEPORT.allowsTeleport(plotPlayer, plot);
-                    // there is one possibility to still allow teleportation:
-                    // to is identical to the plot's home location, and untrusted-visit is true
-                    // i.e. untrusted-visit can override deny-teleport
-                    // this is acceptable, because otherwise it wouldn't make sense to have both flags set
-                    if (!result && !(Flags.UNTRUSTED_VISIT.isTrue(plot) && plot.getHome().equals(BukkitUtil.getLocationFull(to)))) {
-                        MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                            Captions.PERMISSION_ADMIN_ENTRY_DENIED);
-                        event.setCancelled(true);
-                        if (lastLoc != null) {
-                            plotPlayer.setMeta(PlotPlayer.META_LOCATION, lastLoc);
-                        }
-                        if (lastPlot != null) {
-                            plotPlayer.setMeta(PlotPlayer.META_LAST_PLOT, lastPlot);
-                        }
-                    } else {
-                        plotEntry(plotPlayer, plot);
+        final Object lastLoc =
+            BukkitUtil.getPlayer(event.getPlayer()).deleteMeta(PlotPlayer.META_LOCATION);
+        final Object lastPlot =
+            BukkitUtil.getPlayer(event.getPlayer()).deleteMeta(PlotPlayer.META_LAST_PLOT);
+        org.bukkit.Location to = event.getTo();
+        if (to != null) {
+            Player player = event.getPlayer();
+            PlotPlayer plotPlayer = PlotPlayer.wrap(player);
+            Location location = BukkitUtil.getLocation(to);
+            PlotArea area = location.getPlotArea();
+            if (area == null) {
+                return;
+            }
+            Plot plot = area.getPlot(location);
+            if (plot != null) {
+                final boolean result = Flags.DENY_TELEPORT.allowsTeleport(plotPlayer, plot);
+                // there is one possibility to still allow teleportation:
+                // to is identical to the plot's home location, and untrusted-visit is true
+                // i.e. untrusted-visit can override deny-teleport
+                // this is acceptable, because otherwise it wouldn't make sense to have both flags set
+                if (!result && !(Flags.UNTRUSTED_VISIT.isTrue(plot) && plot.getHome().equals(BukkitUtil.getLocationFull(to)))) {
+                    MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
+                        Captions.PERMISSION_ADMIN_ENTRY_DENIED);
+                    event.setCancelled(true);
+                    if (lastLoc != null) {
+                        plotPlayer.setMeta(PlotPlayer.META_LOCATION, lastLoc);
                     }
+                    if (lastPlot != null) {
+                        plotPlayer.setMeta(PlotPlayer.META_LAST_PLOT, lastPlot);
+                    }
+                } else {
+                    plotEntry(plotPlayer, plot);
                 }
             }
         }
