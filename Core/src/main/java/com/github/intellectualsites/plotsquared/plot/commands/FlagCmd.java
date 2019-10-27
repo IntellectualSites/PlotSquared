@@ -163,6 +163,11 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, "&c" + flag.getValueDescription());
                     return false;
                 }
+                if (flag instanceof ListFlag) {
+                    if (!(parsed instanceof Collection) || ((Collection) parsed).isEmpty()) {
+                        return !MainUtil.sendMessage(player, Captions.FLAG_NOT_ADDED);
+                    }
+                }
                 boolean result = plot.setFlag(flag, parsed);
                 if (!result) {
                     MainUtil.sendMessage(player, Captions.FLAG_NOT_ADDED);
