@@ -53,7 +53,6 @@ public final class Flags {
     public static final BooleanFlag SNOW_MELT = new BooleanFlag("snow-melt");
     public static final BooleanFlag SNOW_FORM = new BooleanFlag("snow-form");
     public static final BooleanFlag ICE_MELT = new BooleanFlag("ice-melt");
-    public static final BooleanFlag FIRE_SPREAD = new BooleanFlag("fire-spread");
     public static final BooleanFlag BLOCK_BURN = new BooleanFlag("block-burn");
     public static final BooleanFlag ICE_FORM = new BooleanFlag("ice-form");
     public static final BooleanFlag BLOCK_IGNITION = new BooleanFlag("block-ignition");
@@ -68,7 +67,6 @@ public final class Flags {
     public static final BooleanFlag VEHICLE_USE = new BooleanFlag("vehicle-use");
     public static final BooleanFlag HANGING_BREAK = new BooleanFlag("hanging-break");
     public static final BooleanFlag HANGING_PLACE = new BooleanFlag("hanging-place");
-    public static final BooleanFlag HANGING_INTERACT = new BooleanFlag("hanging-interact");
     public static final BooleanFlag MISC_PLACE = new BooleanFlag("misc-place");
     public static final BooleanFlag MISC_BREAK = new BooleanFlag("misc-break");
     public static final BooleanFlag MISC_INTERACT = new BooleanFlag("misc-interact");
@@ -119,7 +117,6 @@ public final class Flags {
             return "Flag value must a timestamp or a boolean";
         }
     };
-    public static final BooleanFlag SLEEP = new BooleanFlag("sleep");
     public static final TeleportDenyFlag DENY_TELEPORT = new TeleportDenyFlag("deny-teleport");
     public static final BooleanFlag DENY_EXIT = new BooleanFlag("deny-exit");
 

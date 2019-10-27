@@ -28,7 +28,6 @@ public enum Captions {
     FLAG_PVP("pvp", "static.flags"),
     FLAG_HANGING_PLACE("hanging-place", "static.flags"),
     FLAG_HANGING_BREAK("hanging-break", "static.flags"),
-    FLAG_HANGING_INTERACT("hanging-interact", "static.flags"),
     FLAG_MISC_INTERACT("misc-interact", "static.flags"),
     FLAG_MISC_BREAK("misc-break", "static.flags"),
     FLAG_MISC_PLACE("misc-place", "static.flags"),
