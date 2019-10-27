@@ -114,7 +114,7 @@ public final class Flags {
         }
 
         @Override public String getValueDescription() {
-            return "Flag value must a timestamp or a boolean";
+            return "Flag value must be a timestamp or a boolean";
         }
     };
     public static final TeleportDenyFlag DENY_TELEPORT = new TeleportDenyFlag("deny-teleport");
