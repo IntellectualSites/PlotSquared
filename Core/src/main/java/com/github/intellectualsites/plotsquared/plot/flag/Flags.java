@@ -1,6 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
@@ -95,7 +96,7 @@ public final class Flags {
     public static final IntegerFlag ANIMAL_CAP = new IntegerFlag("animal-cap");
     public static final IntegerFlag HOSTILE_CAP = new IntegerFlag("hostile-cap");
     public static final IntegerFlag VEHICLE_CAP = new IntegerFlag("vehicle-cap");
-    public static final Flag<?> KEEP = new Flag("keep") {
+    public static final Flag<?> KEEP = new Flag(Captions.FLAG_CATEGORY_MIXED, "keep") {
         @Override public String valueToString(Object value) {
             return value.toString();
         }

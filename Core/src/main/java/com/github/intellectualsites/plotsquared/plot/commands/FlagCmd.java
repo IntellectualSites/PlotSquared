@@ -293,11 +293,12 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot flag list");
                     return false;
                 }
-                HashMap<String, ArrayList<String>> flags = new HashMap<>();
+                final Map<String, ArrayList<String>> flags = new HashMap<>();
                 for (Flag<?> flag1 : Flags.getFlags()) {
-                    String type = flag1.getClass().getSimpleName();
-                    flags.computeIfAbsent(type, k -> new ArrayList<>());
-                    flags.get(type).add(flag1.getName());
+                    final String category = flag1.getCategoryCaption();
+                    final Collection<String> flagList =
+                        flags.computeIfAbsent(category, k -> new ArrayList<>());
+                    flagList.add(flag1.getName());
                 }
                 StringBuilder message = new StringBuilder();
                 String prefix = "";

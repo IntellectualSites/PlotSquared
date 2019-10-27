@@ -1,6 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.util.LegacyMappings;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 public class PlotBlockListFlag extends ListFlag<HashSet<PlotBlock>> {
 
     public PlotBlockListFlag(String name) {
-        super(name);
+        super(Captions.FLAG_CATEGORY_BLOCK_LIST, name);
     }
 
     @Override public String valueToString(Object value) {

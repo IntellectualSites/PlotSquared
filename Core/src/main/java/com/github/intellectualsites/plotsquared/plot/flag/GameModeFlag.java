@@ -1,11 +1,12 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
 
 public class GameModeFlag extends Flag<PlotGameMode> {
 
     public GameModeFlag(String name) {
-        super(name);
+        super(Captions.FLAG_CATEGORY_GAMEMODE, name);
     }
 
     @Override public String valueToString(Object value) {

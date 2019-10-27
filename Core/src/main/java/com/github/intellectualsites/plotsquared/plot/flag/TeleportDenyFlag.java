@@ -4,6 +4,7 @@ import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 
 public class TeleportDenyFlag extends EnumFlag {
+
     public TeleportDenyFlag(String name) {
         super(name, "trusted", "members", "nonmembers", "nontrusted", "nonowners");
     }

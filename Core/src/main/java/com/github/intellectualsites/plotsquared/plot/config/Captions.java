@@ -567,9 +567,7 @@ public enum Captions {
     //</editor-fold>
     BUCKET_ENTRIES_IGNORED("$2Total bucket values add up to 1 or more. Blocks without a specified chance will be ignored","Generator_Bucket"),
 
-    /**
-     * Command Categories
-     */
+    //<editor-fold desc="Command Categories">
     COMMAND_CATEGORY_CLAIMING("Claiming", "Category"),
     COMMAND_CATEGORY_TELEPORT("Teleport", "Category"),
     COMMAND_CATEGORY_SETTINGS("Protection", "Category"),
@@ -579,11 +577,28 @@ public enum Captions {
     COMMAND_CATEGORY_INFO("Info", "Category"),
     COMMAND_CATEGORY_DEBUG("Debug", "Category"),
     COMMAND_CATEGORY_ADMINISTRATION("Admin", "Category"),
+    //</editor-fold>
 
     //<editor-fold desc="Grants">
     GRANTED_PLOTS("$1Result: $2%s $1grants left", "Grants"),
     GRANTED_PLOT("$1You granted %s0 plot to $2%s1", "Grants"),
     GRANTED_PLOT_FAILED("$1Grant failed: $2%s", "Grants"),
+    //</editor-fold>
+
+    //<editor-fold desc="Flag category captions">
+    FLAG_CATEGORY_STRING("String Flags", "Flags"),
+    FLAG_CATEGORY_INTEGERS("Integer Flags", "Flags"),
+    FLAG_CATEGORY_TELEPORT_DENY("Teleport Deny Flag", "Flags"),
+    FLAG_CATEGORY_STRING_LIST("String List Flags", "Flags"),
+    FLAG_CATEGORY_WEATHER("Weather Flags", "Flags"),
+    FLAG_CATEGORY_BLOCK_LIST("Material Flags", "Flags"),
+    FLAG_CATEGORY_INTERVALS("Interval Flags", "Flags"),
+    FLAG_CATEGORY_INTEGER_LIST("Integer List Flags", "Flags"),
+    FLAG_CATEGORY_GAMEMODE("Game Mode Flags", "Flags"),
+    FLAG_CATEGORY_ENUM("Generic Enum Flags", "Flags"),
+    FLAG_CATEGORY_DECIMAL("Decimal Flags", "Flags"),
+    FLAG_CATEGORY_BOOLEAN("Boolean Flags", "Flags"),
+    FLAG_CATEGORY_MIXED("Mixed Value Flags", "Flags"),
     //</editor-fold>
 
     /**

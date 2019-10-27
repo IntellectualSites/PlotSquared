@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.List;
 public class StringListFlag extends ListFlag<List<String>> {
 
     public StringListFlag(String name) {
-        super(name);
+        super(Captions.FLAG_CATEGORY_STRING_LIST, name);
     }
 
     @Override public String valueToString(Object value) {

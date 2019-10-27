@@ -1,11 +1,12 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 
 public class BooleanFlag extends Flag<Boolean> {
 
     public BooleanFlag(String name) {
-        super(name);
+        super(Captions.FLAG_CATEGORY_BOOLEAN, name);
     }
 
     @Override public String valueToString(Object value) {
