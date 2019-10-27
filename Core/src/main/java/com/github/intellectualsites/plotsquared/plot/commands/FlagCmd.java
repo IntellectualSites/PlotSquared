@@ -197,25 +197,26 @@ public class FlagCmd extends SubCommand {
                 }
                 if (args.length == 3 && flag instanceof ListFlag) {
                     String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
-                    Optional<? extends Collection> flag1 =
-                        plot.getFlag((Flag<? extends Collection<?>>) flag);
-                    if (flag1.isPresent()) {
-                        boolean o = flag1.get().removeAll((Collection) flag.parseValue(value));
-                        if (o) {
-                            if (flag1.get().isEmpty()) {
-                                final boolean result = plot.removeFlag(flag);
-                                if (result) {
-                                    MainUtil.sendMessage(player, Captions.FLAG_REMOVED);
+                    final ListFlag<? extends Collection> listFlag = (ListFlag<? extends Collection>) flag;
+                    final Optional<? extends Collection> collectionOptional = plot.getFlag(listFlag);
+                    if (collectionOptional.isPresent()) {
+                        final Collection parsedCollection = (Collection) flag.parseValue(value);
+                        if (parsedCollection.isEmpty()) {
+                            return !MainUtil.sendMessage(player, Captions.FLAG_NOT_REMOVED);
+                        }
+                        final Collection flagCollection = collectionOptional.get();
+                        if (flagCollection.removeAll(parsedCollection)) {
+                            if (flagCollection.isEmpty()) {
+                                if (plot.removeFlag(flag)) {
+                                    return MainUtil.sendMessage(player, Captions.FLAG_REMOVED);
                                 } else {
-                                    MainUtil.sendMessage(player, Captions.FLAG_NOT_REMOVED);
+                                    return !MainUtil.sendMessage(player, Captions.FLAG_NOT_REMOVED);
                                 }
-                                return true;
                             } else {
                                 MainUtil.sendMessage(player, Captions.FLAG_REMOVED);
                             }
                         } else {
-                            MainUtil.sendMessage(player, Captions.FLAG_NOT_REMOVED);
-                            return false;
+                            return !MainUtil.sendMessage(player, Captions.FLAG_NOT_REMOVED);
                         }
                     }
                     DBFunc.setFlags(plot, plot.getFlags());
@@ -259,16 +260,19 @@ public class FlagCmd extends SubCommand {
                 }
                 Object val = parsed;
                 if (flag instanceof ListFlag) {
-                    Optional<? extends Collection> flag1 =
-                        plot.getFlag((Flag<? extends Collection<?>>) flag);
-                    if (flag1.isPresent()) {
-                        boolean o = flag1.get().addAll((Collection) parsed);
-                        if (o) {
+                    final Collection parsedCollection = (Collection<?>) parsed;
+                    if (parsedCollection.isEmpty()) {
+                        return !MainUtil.sendMessage(player, Captions.FLAG_NOT_ADDED);
+                    }
+                    final ListFlag<? extends Collection> listFlag = (ListFlag<? extends Collection>) flag;
+                    final Optional<? extends Collection> collectionOptional = plot.getFlag(listFlag);
+                    if (collectionOptional.isPresent()) {
+                        final Collection flagCollection = collectionOptional.get();
+                        if (flagCollection.addAll(parsedCollection)) {
                             MainUtil.sendMessage(player, Captions.FLAG_ADDED);
-                            val = flag1.get();
+                            val = flagCollection;
                         } else {
-                            MainUtil.sendMessage(player, Captions.FLAG_NOT_ADDED);
-                            return false;
+                            return !MainUtil.sendMessage(player, Captions.FLAG_NOT_ADDED);
                         }
                     }
                 }
