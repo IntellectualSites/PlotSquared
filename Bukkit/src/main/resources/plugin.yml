@@ -3,8 +3,7 @@ main: com.github.intellectualsites.plotsquared.bukkit.BukkitMain
 api-version: "1.13"
 version: "${version}"
 load: STARTUP
-description: >
-             Easy, yet powerful Plot World generation and management.
+description: "Easy, yet powerful Plot World generation and management."
 authors: [Citymonstret, Empire92, MattBDev, dordsor21]
 website: https://github.com/IntellectualSites/
 softdepend: [BarAPI, CameraAPI, Vault]
