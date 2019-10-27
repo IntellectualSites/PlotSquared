@@ -200,7 +200,9 @@ public class PlotListener {
             if (pw == null) {
                 return true;
             }
-            if (Flags.DENY_EXIT.isTrue(plot) && !player.getMeta("kick", false)) {
+            if (Flags.DENY_EXIT.isTrue(plot)
+                && !Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_EXIT_DENIED)
+                && !player.getMeta("kick", false)) {
                 if (previous != null) {
                     player.setMeta(PlotPlayer.META_LAST_PLOT, previous);
                 }
