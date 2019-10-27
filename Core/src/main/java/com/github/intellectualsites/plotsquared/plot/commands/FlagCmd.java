@@ -300,15 +300,19 @@ public class FlagCmd extends SubCommand {
                         flags.computeIfAbsent(category, k -> new ArrayList<>());
                     flagList.add(flag1.getName());
                 }
-                StringBuilder message = new StringBuilder();
-                String prefix = "";
-                for (Map.Entry<String, ArrayList<String>> entry : flags.entrySet()) {
-                    String category = entry.getKey();
-                    List<String> flagNames = entry.getValue();
+
+                final StringBuilder message = new StringBuilder();
+                final Iterator<Map.Entry<String, ArrayList<String>>> iterator =
+                    flags.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    final Map.Entry<String, ArrayList<String>> flagsEntry = iterator.next();
+                    final List<String> flagNames = flagsEntry.getValue();
                     Collections.sort(flagNames);
-                    message.append(prefix).append("&6").append(category).append(": &7")
-                        .append(StringMan.join(flagNames, ", "));
-                    prefix = "\n";
+                    message.append(String.format(Captions.FLAG_LIST_ENTRY.formatted(),
+                        flagsEntry.getKey(), StringMan.join(flagNames, ", ")));
+                    if (iterator.hasNext()) {
+                        message.append("\n");
+                    }
                 }
                 MainUtil.sendMessage(player, message.toString());
                 return true;

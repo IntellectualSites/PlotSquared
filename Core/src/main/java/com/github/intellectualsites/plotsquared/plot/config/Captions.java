@@ -532,7 +532,24 @@ public enum Captions {
     FLAG_REMOVED("$4Successfully removed flag", "Flag"),
     FLAG_ADDED("$4Successfully added flag", "Flag"),
     FLAG_TUTORIAL_USAGE("$1Have an admin set the flag: $2%s", "CommandConfig"),
+    FLAG_LIST_ENTRY("$2%s: $1%s", "Flag"),
     //</editor-fold>
+    //<editor-fold desc="Flag category captions">
+    FLAG_CATEGORY_STRING("String Flags", "Flags"),
+    FLAG_CATEGORY_INTEGERS("Integer Flags", "Flags"),
+    FLAG_CATEGORY_TELEPORT_DENY("Teleport Deny Flag", "Flags"),
+    FLAG_CATEGORY_STRING_LIST("String List Flags", "Flags"),
+    FLAG_CATEGORY_WEATHER("Weather Flags", "Flags"),
+    FLAG_CATEGORY_BLOCK_LIST("Material Flags", "Flags"),
+    FLAG_CATEGORY_INTERVALS("Interval Flags", "Flags"),
+    FLAG_CATEGORY_INTEGER_LIST("Integer List Flags", "Flags"),
+    FLAG_CATEGORY_GAMEMODE("Game Mode Flags", "Flags"),
+    FLAG_CATEGORY_ENUM("Generic Enum Flags", "Flags"),
+    FLAG_CATEGORY_DECIMAL("Decimal Flags", "Flags"),
+    FLAG_CATEGORY_BOOLEAN("Boolean Flags", "Flags"),
+    FLAG_CATEGORY_MIXED("Mixed Value Flags", "Flags"),
+    //</editor-fold>
+
     //<editor-fold desc="Trusted">
     TRUSTED_ADDED("$4You successfully trusted a user to the plot", "Trusted"),
     WAS_NOT_ADDED("$2That player was not trusted on this plot", "Trusted"),
@@ -583,22 +600,6 @@ public enum Captions {
     GRANTED_PLOTS("$1Result: $2%s $1grants left", "Grants"),
     GRANTED_PLOT("$1You granted %s0 plot to $2%s1", "Grants"),
     GRANTED_PLOT_FAILED("$1Grant failed: $2%s", "Grants"),
-    //</editor-fold>
-
-    //<editor-fold desc="Flag category captions">
-    FLAG_CATEGORY_STRING("String Flags", "Flags"),
-    FLAG_CATEGORY_INTEGERS("Integer Flags", "Flags"),
-    FLAG_CATEGORY_TELEPORT_DENY("Teleport Deny Flag", "Flags"),
-    FLAG_CATEGORY_STRING_LIST("String List Flags", "Flags"),
-    FLAG_CATEGORY_WEATHER("Weather Flags", "Flags"),
-    FLAG_CATEGORY_BLOCK_LIST("Material Flags", "Flags"),
-    FLAG_CATEGORY_INTERVALS("Interval Flags", "Flags"),
-    FLAG_CATEGORY_INTEGER_LIST("Integer List Flags", "Flags"),
-    FLAG_CATEGORY_GAMEMODE("Game Mode Flags", "Flags"),
-    FLAG_CATEGORY_ENUM("Generic Enum Flags", "Flags"),
-    FLAG_CATEGORY_DECIMAL("Decimal Flags", "Flags"),
-    FLAG_CATEGORY_BOOLEAN("Boolean Flags", "Flags"),
-    FLAG_CATEGORY_MIXED("Mixed Value Flags", "Flags"),
     //</editor-fold>
 
     /**
