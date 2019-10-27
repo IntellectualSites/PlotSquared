@@ -302,8 +302,7 @@ public abstract class EventUtil {
                     }
                     return !(!notifyPerms || MainUtil
                         .sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
-                            Captions.FLAG_USE.getTranslated() + '/' + Captions.FLAG_HANGING_INTERACT
-                                .getTranslated()));
+                            Captions.FLAG_USE.getTranslated()));
                 }
                 return true;
             }

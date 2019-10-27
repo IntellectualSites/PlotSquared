@@ -1,11 +1,12 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 
 public class IntegerFlag extends Flag<Integer> {
 
     public IntegerFlag(String name) {
-        super(name);
+        super(Captions.FLAG_CATEGORY_INTEGERS, name);
     }
 
     @Override public String getValueDescription() {

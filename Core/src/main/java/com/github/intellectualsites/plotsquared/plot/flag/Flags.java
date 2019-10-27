@@ -1,6 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
@@ -52,7 +53,6 @@ public final class Flags {
     public static final BooleanFlag SNOW_MELT = new BooleanFlag("snow-melt");
     public static final BooleanFlag SNOW_FORM = new BooleanFlag("snow-form");
     public static final BooleanFlag ICE_MELT = new BooleanFlag("ice-melt");
-    public static final BooleanFlag FIRE_SPREAD = new BooleanFlag("fire-spread");
     public static final BooleanFlag BLOCK_BURN = new BooleanFlag("block-burn");
     public static final BooleanFlag ICE_FORM = new BooleanFlag("ice-form");
     public static final BooleanFlag BLOCK_IGNITION = new BooleanFlag("block-ignition");
@@ -67,7 +67,6 @@ public final class Flags {
     public static final BooleanFlag VEHICLE_USE = new BooleanFlag("vehicle-use");
     public static final BooleanFlag HANGING_BREAK = new BooleanFlag("hanging-break");
     public static final BooleanFlag HANGING_PLACE = new BooleanFlag("hanging-place");
-    public static final BooleanFlag HANGING_INTERACT = new BooleanFlag("hanging-interact");
     public static final BooleanFlag MISC_PLACE = new BooleanFlag("misc-place");
     public static final BooleanFlag MISC_BREAK = new BooleanFlag("misc-break");
     public static final BooleanFlag MISC_INTERACT = new BooleanFlag("misc-interact");
@@ -95,7 +94,7 @@ public final class Flags {
     public static final IntegerFlag ANIMAL_CAP = new IntegerFlag("animal-cap");
     public static final IntegerFlag HOSTILE_CAP = new IntegerFlag("hostile-cap");
     public static final IntegerFlag VEHICLE_CAP = new IntegerFlag("vehicle-cap");
-    public static final Flag<?> KEEP = new Flag("keep") {
+    public static final Flag<?> KEEP = new Flag(Captions.FLAG_CATEGORY_MIXED, "keep") {
         @Override public String valueToString(Object value) {
             return value.toString();
         }
@@ -115,10 +114,9 @@ public final class Flags {
         }
 
         @Override public String getValueDescription() {
-            return "Flag value must a timestamp or a boolean";
+            return "Flag value must be a timestamp or a boolean";
         }
     };
-    public static final BooleanFlag SLEEP = new BooleanFlag("sleep");
     public static final TeleportDenyFlag DENY_TELEPORT = new TeleportDenyFlag("deny-teleport");
     public static final BooleanFlag DENY_EXIT = new BooleanFlag("deny-exit");
 

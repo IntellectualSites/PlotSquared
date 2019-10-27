@@ -1,12 +1,20 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
+import lombok.Getter;
 
 public abstract class Flag<V> implements StringComparison.StringComparable {
 
+    @Getter private final Captions typeCaption;
     private final String name;
     private boolean reserved = false;
+
+    public Flag(Captions typeCaption, String name) {
+        this.typeCaption = typeCaption;
+        this.name = name;
+    }
 
     /**
      * Flag object used to store basic information for a Plot. Flags are a
@@ -16,7 +24,7 @@ public abstract class Flag<V> implements StringComparison.StringComparable {
      * @param name the flag name
      */
     public Flag(String name) {
-        this.name = name;
+        this(null, name);
     }
 
     public Flag<V> reserve() {
@@ -57,4 +65,11 @@ public abstract class Flag<V> implements StringComparison.StringComparable {
     @Override public String getComparableString() {
         return getName();
     }
+
+    public String getCategoryCaption() {
+        return this.typeCaption == null ?
+               getClass().getSimpleName() :
+               this.typeCaption.getTranslated();
+    }
+
 }

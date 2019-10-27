@@ -163,6 +163,11 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, "&c" + flag.getValueDescription());
                     return false;
                 }
+                if (flag instanceof ListFlag) {
+                    if (!(parsed instanceof Collection) || ((Collection) parsed).isEmpty()) {
+                        return !MainUtil.sendMessage(player, Captions.FLAG_NOT_ADDED);
+                    }
+                }
                 boolean result = plot.setFlag(flag, parsed);
                 if (!result) {
                     MainUtil.sendMessage(player, Captions.FLAG_NOT_ADDED);
@@ -197,25 +202,26 @@ public class FlagCmd extends SubCommand {
                 }
                 if (args.length == 3 && flag instanceof ListFlag) {
                     String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
-                    Optional<? extends Collection> flag1 =
-                        plot.getFlag((Flag<? extends Collection<?>>) flag);
-                    if (flag1.isPresent()) {
-                        boolean o = flag1.get().removeAll((Collection) flag.parseValue(value));
-                        if (o) {
-                            if (flag1.get().isEmpty()) {
-                                final boolean result = plot.removeFlag(flag);
-                                if (result) {
-                                    MainUtil.sendMessage(player, Captions.FLAG_REMOVED);
+                    final ListFlag<? extends Collection> listFlag = (ListFlag<? extends Collection>) flag;
+                    final Optional<? extends Collection> collectionOptional = plot.getFlag(listFlag);
+                    if (collectionOptional.isPresent()) {
+                        final Collection parsedCollection = (Collection) flag.parseValue(value);
+                        if (parsedCollection.isEmpty()) {
+                            return !MainUtil.sendMessage(player, Captions.FLAG_NOT_REMOVED);
+                        }
+                        final Collection flagCollection = collectionOptional.get();
+                        if (flagCollection.removeAll(parsedCollection)) {
+                            if (flagCollection.isEmpty()) {
+                                if (plot.removeFlag(flag)) {
+                                    return MainUtil.sendMessage(player, Captions.FLAG_REMOVED);
                                 } else {
-                                    MainUtil.sendMessage(player, Captions.FLAG_NOT_REMOVED);
+                                    return !MainUtil.sendMessage(player, Captions.FLAG_NOT_REMOVED);
                                 }
-                                return true;
                             } else {
                                 MainUtil.sendMessage(player, Captions.FLAG_REMOVED);
                             }
                         } else {
-                            MainUtil.sendMessage(player, Captions.FLAG_NOT_REMOVED);
-                            return false;
+                            return !MainUtil.sendMessage(player, Captions.FLAG_NOT_REMOVED);
                         }
                     }
                     DBFunc.setFlags(plot, plot.getFlags());
@@ -259,16 +265,19 @@ public class FlagCmd extends SubCommand {
                 }
                 Object val = parsed;
                 if (flag instanceof ListFlag) {
-                    Optional<? extends Collection> flag1 =
-                        plot.getFlag((Flag<? extends Collection<?>>) flag);
-                    if (flag1.isPresent()) {
-                        boolean o = flag1.get().addAll((Collection) parsed);
-                        if (o) {
+                    final Collection parsedCollection = (Collection<?>) parsed;
+                    if (parsedCollection.isEmpty()) {
+                        return !MainUtil.sendMessage(player, Captions.FLAG_NOT_ADDED);
+                    }
+                    final ListFlag<? extends Collection> listFlag = (ListFlag<? extends Collection>) flag;
+                    final Optional<? extends Collection> collectionOptional = plot.getFlag(listFlag);
+                    if (collectionOptional.isPresent()) {
+                        final Collection flagCollection = collectionOptional.get();
+                        if (flagCollection.addAll(parsedCollection)) {
                             MainUtil.sendMessage(player, Captions.FLAG_ADDED);
-                            val = flag1.get();
+                            val = flagCollection;
                         } else {
-                            MainUtil.sendMessage(player, Captions.FLAG_NOT_ADDED);
-                            return false;
+                            return !MainUtil.sendMessage(player, Captions.FLAG_NOT_ADDED);
                         }
                     }
                 }
@@ -289,21 +298,26 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot flag list");
                     return false;
                 }
-                HashMap<String, ArrayList<String>> flags = new HashMap<>();
+                final Map<String, ArrayList<String>> flags = new HashMap<>();
                 for (Flag<?> flag1 : Flags.getFlags()) {
-                    String type = flag1.getClass().getSimpleName();
-                    flags.computeIfAbsent(type, k -> new ArrayList<>());
-                    flags.get(type).add(flag1.getName());
+                    final String category = flag1.getCategoryCaption();
+                    final Collection<String> flagList =
+                        flags.computeIfAbsent(category, k -> new ArrayList<>());
+                    flagList.add(flag1.getName());
                 }
-                StringBuilder message = new StringBuilder();
-                String prefix = "";
-                for (Map.Entry<String, ArrayList<String>> entry : flags.entrySet()) {
-                    String category = entry.getKey();
-                    List<String> flagNames = entry.getValue();
+
+                final StringBuilder message = new StringBuilder();
+                final Iterator<Map.Entry<String, ArrayList<String>>> iterator =
+                    flags.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    final Map.Entry<String, ArrayList<String>> flagsEntry = iterator.next();
+                    final List<String> flagNames = flagsEntry.getValue();
                     Collections.sort(flagNames);
-                    message.append(prefix).append("&6").append(category).append(": &7")
-                        .append(StringMan.join(flagNames, ", "));
-                    prefix = "\n";
+                    message.append(String.format(Captions.FLAG_LIST_ENTRY.formatted(),
+                        flagsEntry.getKey(), StringMan.join(flagNames, ", ")));
+                    if (iterator.hasNext()) {
+                        message.append("\n");
+                    }
                 }
                 MainUtil.sendMessage(player, message.toString());
                 return true;

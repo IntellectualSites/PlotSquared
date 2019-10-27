@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 public class IntervalFlag extends Flag<IntervalFlag.Interval> {
 
     public IntervalFlag(String name) {
-        super(name);
+        super(Captions.FLAG_CATEGORY_INTERVALS, name);
     }
 
     @Override public String valueToString(Object value) {

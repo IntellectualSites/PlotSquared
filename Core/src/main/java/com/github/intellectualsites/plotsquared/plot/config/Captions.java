@@ -28,7 +28,6 @@ public enum Captions {
     FLAG_PVP("pvp", "static.flags"),
     FLAG_HANGING_PLACE("hanging-place", "static.flags"),
     FLAG_HANGING_BREAK("hanging-break", "static.flags"),
-    FLAG_HANGING_INTERACT("hanging-interact", "static.flags"),
     FLAG_MISC_INTERACT("misc-interact", "static.flags"),
     FLAG_MISC_BREAK("misc-break", "static.flags"),
     FLAG_MISC_PLACE("misc-place", "static.flags"),
@@ -532,7 +531,24 @@ public enum Captions {
     FLAG_REMOVED("$4Successfully removed flag", "Flag"),
     FLAG_ADDED("$4Successfully added flag", "Flag"),
     FLAG_TUTORIAL_USAGE("$1Have an admin set the flag: $2%s", "CommandConfig"),
+    FLAG_LIST_ENTRY("$2%s: $1%s", "Flag"),
     //</editor-fold>
+    //<editor-fold desc="Flag category captions">
+    FLAG_CATEGORY_STRING("String Flags", "Flags"),
+    FLAG_CATEGORY_INTEGERS("Integer Flags", "Flags"),
+    FLAG_CATEGORY_TELEPORT_DENY("Teleport Deny Flag", "Flags"),
+    FLAG_CATEGORY_STRING_LIST("String List Flags", "Flags"),
+    FLAG_CATEGORY_WEATHER("Weather Flags", "Flags"),
+    FLAG_CATEGORY_BLOCK_LIST("Material Flags", "Flags"),
+    FLAG_CATEGORY_INTERVALS("Interval Flags", "Flags"),
+    FLAG_CATEGORY_INTEGER_LIST("Integer List Flags", "Flags"),
+    FLAG_CATEGORY_GAMEMODE("Game Mode Flags", "Flags"),
+    FLAG_CATEGORY_ENUM("Generic Enum Flags", "Flags"),
+    FLAG_CATEGORY_DECIMAL("Decimal Flags", "Flags"),
+    FLAG_CATEGORY_BOOLEAN("Boolean Flags", "Flags"),
+    FLAG_CATEGORY_MIXED("Mixed Value Flags", "Flags"),
+    //</editor-fold>
+
     //<editor-fold desc="Trusted">
     TRUSTED_ADDED("$4You successfully trusted a user to the plot", "Trusted"),
     WAS_NOT_ADDED("$2That player was not trusted on this plot", "Trusted"),
@@ -567,9 +583,7 @@ public enum Captions {
     //</editor-fold>
     BUCKET_ENTRIES_IGNORED("$2Total bucket values add up to 1 or more. Blocks without a specified chance will be ignored","Generator_Bucket"),
 
-    /**
-     * Command Categories
-     */
+    //<editor-fold desc="Command Categories">
     COMMAND_CATEGORY_CLAIMING("Claiming", "Category"),
     COMMAND_CATEGORY_TELEPORT("Teleport", "Category"),
     COMMAND_CATEGORY_SETTINGS("Protection", "Category"),
@@ -579,6 +593,7 @@ public enum Captions {
     COMMAND_CATEGORY_INFO("Info", "Category"),
     COMMAND_CATEGORY_DEBUG("Debug", "Category"),
     COMMAND_CATEGORY_ADMINISTRATION("Admin", "Category"),
+    //</editor-fold>
 
     //<editor-fold desc="Grants">
     GRANTED_PLOTS("$1Result: $2%s $1grants left", "Grants"),

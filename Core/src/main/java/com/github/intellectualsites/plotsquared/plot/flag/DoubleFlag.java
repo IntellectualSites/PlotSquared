@@ -1,9 +1,11 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
+
 public class DoubleFlag extends Flag<Double> {
 
     public DoubleFlag(String name) {
-        super(name);
+        super(Captions.FLAG_CATEGORY_DECIMAL, name);
     }
 
     @Override public String valueToString(Object value) {

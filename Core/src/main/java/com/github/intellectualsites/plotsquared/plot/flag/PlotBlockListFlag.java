@@ -1,15 +1,21 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.github.intellectualsites.plotsquared.plot.util.LegacyMappings;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class PlotBlockListFlag extends ListFlag<HashSet<PlotBlock>> {
 
     public PlotBlockListFlag(String name) {
-        super(name);
+        super(Captions.FLAG_CATEGORY_BLOCK_LIST, name);
     }
 
     @Override public String valueToString(Object value) {
@@ -17,14 +23,9 @@ public class PlotBlockListFlag extends ListFlag<HashSet<PlotBlock>> {
     }
 
     @Override public HashSet<PlotBlock> parseValue(final String value) {
-        final HashSet<PlotBlock> list = new HashSet<>();
-        for (final String item : value.split(",")) {
-            final PlotBlock block = PlotSquared.get().IMP.getLegacyMappings().fromAny(item);
-            if (block != null) {
-                list.add(block);
-            }
-        }
-        return list;
+        final LegacyMappings legacyMappings = PlotSquared.get().IMP.getLegacyMappings();
+        return Arrays.stream(value.split(",")).map(legacyMappings::fromAny).filter(Objects::nonNull)
+            .collect(Collectors.toCollection(HashSet::new));
     }
 
     @Override public String getValueDescription() {
