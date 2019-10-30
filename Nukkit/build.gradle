@@ -23,34 +23,34 @@ processResources {
     }
 }
 
-jar.archiveFileName = "plotsquared-nukkitxapi-${project.parent.version}.jar"
-jar.destinationDirectory = file '../mvn/com/plotsquared/plotsquared-nukkitxapi/' + project.parent.version
+jar.archiveFileName = "plotsquared-nukkitapi-${project.parent.version}.jar"
+jar.destinationDirectory = file '../mvn/com/plotsquared/plotsquared-nukkitapi/' + project.parent.version
 task createPom {
     doLast {
         pom {
             project {
                 groupId = "com.plotsquared"
-                artifactId = "plotsquared-nukkitxapi"
+                artifactId = "plotsquared-nukkitapi"
                 version = project.parent.version
             }
-        }.writeTo("../mvn/com/plotsquared/plotsquared-nukkitxapi/${project.parent.version}/plotsquared-nukkitxapi-${project.parent.version}.pom")
+        }.writeTo("../mvn/com/plotsquared/plotsquared-nukkitapi/${project.parent.version}/plotsquared-nukkitapi-${project.parent.version}.pom")
         pom {
             project {
                 groupId = "com.plotsquared"
-                artifactId = "plotsquared-nukkitxapi"
+                artifactId = "plotsquared-nukkitapi"
                 version = "latest"
             }
-        }.writeTo("../mvn/com/plotsquared/plotsquared-nukkitxapi/latest/plotsquared-nukkitxapi-latest.pom")
+        }.writeTo("../mvn/com/plotsquared/plotsquared-nukkitapi/latest/plotsquared-nukkitapi-latest.pom")
     }
 }
 
 task copyFiles {
     doLast {
         copy {
-            from("../mvn/com/plotsquared/plotsquared-nukkitxapi/${project.parent.version}/")
-            into("../mvn/com/plotsquared/plotsquared-nukkitxapi/latest/")
-            include("plotsquared-nukkitxapi*.jar")
-            rename("plotsquared-nukkitxapi-${project.parent.version}.jar", "plotsquared-nukkitxapi-latest.jar")
+            from("../mvn/com/plotsquared/plotsquared-nukkitapi/${project.parent.version}/")
+            into("../mvn/com/plotsquared/plotsquared-nukkitapi/latest/")
+            include("plotsquared-nukkitapi*.jar")
+            rename("plotsquared-nukkitapi-${project.parent.version}.jar", "plotsquared-nukkitapi-latest.jar")
         }
     }
 }
