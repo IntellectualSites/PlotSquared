@@ -41,8 +41,40 @@ processResources {
         )
     }
 }
-// We only want the shadow jar produced
-jar.enabled = false
+
+//noinspection GroovyAssignabilityCheck
+jar.archiveFileName = "PlotSquared-BukkitAPI-${project.parent.version}.jar"
+jar.destinationDirectory = file("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-BukkitAPI/" + project.parent.version)
+task createPom {
+    doLast {
+        pom {
+            project {
+                groupId = "com.github.intellectualsites.plotsquared"
+                artifactId = "PlotSquared-BukkitAPI"
+                version = project.parent.version
+            }
+        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-BukkitAPI/${project.parent.version}/PlotSquared-BukkitAPI-${project.parent.version}.pom")
+        pom {
+            project {
+                groupId = "com.github.intellectualsites.plotsquared"
+                artifactId = "PlotSquared-BukkitAPI"
+                version = "latest"
+            }
+        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-BukkitAPI/latest/PlotSquared-BukkitAPI-latest.pom")
+    }
+}
+
+task copyFiles {
+    doLast {
+        copy {
+            from("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-BukkitAPI/${project.parent.version}/")
+            into("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-BukkitAPI/latest/")
+            include("PlotSquared-BukkitAPI*.jar")
+            rename("PlotSquared-BukkitAPI-${project.parent.version}.jar", "PlotSquared-BukkitAPI-latest.jar")
+        }
+    }
+}
+
 
 shadowJar {
     dependencies {
@@ -69,3 +101,5 @@ shadowJar.doLast {
 }
 
 build.dependsOn(shadowJar)
+build.finalizedBy(copyFiles)
+copyFiles.dependsOn(createPom)
