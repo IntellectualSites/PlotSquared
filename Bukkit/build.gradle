@@ -27,9 +27,38 @@ processResources {
         )
     }
 }
-// We only want the shadow jar produced
-jar.enabled = false
 
+jar.archiveFileName = "plotsquared-bukkitapi-${project.parent.version}.jar"
+jar.destinationDirectory = file '../mvn/com/plotsquared/plotsquared-bukkitapi/' + project.parent.version
+task createPom {
+    doLast {
+        pom {
+            project {
+                groupId = "com.plotsquared"
+                artifactId = "plotsquared-bukkitapi"
+                version = project.parent.version
+            }
+        }.writeTo("../mvn/com/plotsquared/plotsquared-bukkitapi/${project.parent.version}/plotsqzared-bukkitapi-${project.parent.version}.pom")
+        pom {
+            project {
+                groupId = "com.plotsquared"
+                artifactId = "plotsquared-bukkitapi"
+                version = "latest"
+            }
+        }.writeTo("../mvn/com/plotsquared/plotsquared-bukkitapi/latest/plotsquared-bukkitapi-latest.pom")
+    }
+}
+
+task copyFiles {
+    doLast {
+        copy {
+            from("../mvn/com/plotsquared/plotsquared-bukkitapi/${project.parent.version}/")
+            into("../mvn/com/plotsquared/plotsquared-bukkitapi/latest/")
+            include("plotsquared-bukkitapi*.jar")
+            rename("plotsquared-bukkitapi-${project.parent.version}.jar", "plotsquared-bukkitapi-latest.jar")
+        }
+    }
+}
 shadowJar {
     dependencies {
         include(dependency(':Core'))
@@ -44,3 +73,5 @@ shadowJar.doLast {
 }
 
 build.dependsOn(shadowJar);
+build.finalizedBy(copyFiles)
+copyFiles.dependsOn(createPom)
