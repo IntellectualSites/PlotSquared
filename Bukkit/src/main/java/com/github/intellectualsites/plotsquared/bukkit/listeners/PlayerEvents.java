@@ -695,7 +695,11 @@ import java.util.regex.Pattern;
             Plot plot = area.getPlot(location);
             if (plot != null) {
                 final boolean result = Flags.DENY_TELEPORT.allowsTeleport(plotPlayer, plot);
-                if (!result) {
+                // there is one possibility to still allow teleportation:
+                // to is identical to the plot's home location, and untrusted-visit is true
+                // i.e. untrusted-visit can override deny-teleport
+                // this is acceptable, because otherwise it wouldn't make sense to have both flags set
+                if (!result && !(Flags.UNTRUSTED_VISIT.isTrue(plot) && plot.getHome().equals(BukkitUtil.getLocationFull(to)))) {
                     MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
                         Captions.PERMISSION_ADMIN_ENTRY_DENIED);
                     event.setCancelled(true);
