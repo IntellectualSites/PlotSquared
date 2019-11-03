@@ -22,6 +22,6 @@ public class DoubleFlag extends Flag<Double> {
     }
 
     @Override public String getValueDescription() {
-        return "Flag value must be a number.";
+        return Captions.FLAG_ERROR_BOOLEAN.getTranslated();
     }
 }

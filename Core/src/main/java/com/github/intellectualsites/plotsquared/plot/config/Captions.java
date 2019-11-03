@@ -548,7 +548,19 @@ public enum Captions {
     FLAG_CATEGORY_BOOLEAN("Boolean Flags", "Flags"),
     FLAG_CATEGORY_MIXED("Mixed Value Flags", "Flags"),
     //</editor-fold>
-
+    //<editor-fold desc="Flag category errors">
+    FLAG_ERROR_BOOLEAN("Flag value must be a boolean (true|false)", "Flags"),
+    FLAG_ERROR_ENUM("Must be one of: %s", "Flags"),
+    FLAG_ERROR_GAMEMODE("Flag value must be a gamemode: 'survival', 'creative', 'adventure' or 'spectator.", "Flags"),
+    FLAG_ERROR_INTEGER("Flag value must be a whole number", "Flags"),
+    FLAG_ERROR_INTEGER_LIST("Flag value must be an integer list", "Flags"),
+    FLAG_ERROR_INTERVAL("Value(s) must be numeric. /plot set flag <flag> <interval> [amount]", "Flags"),
+    FLAG_ERROR_LONG("Flag value must be a whole number (large numbers allowed)", "Flags"),
+    FLAG_ERROR_PLOTBLOCKLIST("Flag value must be a block list", "Flags"),
+    FLAG_ERROR_WEATHER("Flag must be a weather: 'rain' or 'sun'", "Flags"),
+    FLAG_ERROR_STRING("Flag value must be alphanumeric. Some special characters are allowed.", "Flags"),
+    FLAG_ERROR_STRINGLIST("Flag value must be a string list", "Flags"),
+    //</editor-fold>
     //<editor-fold desc="Trusted">
     TRUSTED_ADDED("$4You successfully trusted a user to the plot", "Trusted"),
     WAS_NOT_ADDED("$2That player was not trusted on this plot", "Trusted"),
