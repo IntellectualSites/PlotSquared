@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.configuration.file;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.configuration.serialization.ConfigurationSerialization;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.YAMLException;

@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.object.stream;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import java.io.IOException;
 import java.io.OutputStream;
 

@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 public abstract class QueueProvider {
     public static QueueProvider of(final Class<? extends LocalBlockQueue> primary,
         final Class<? extends LocalBlockQueue> fallback) {

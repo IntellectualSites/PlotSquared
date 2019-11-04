@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.uuid;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import java.io.File;
 import java.io.FilenameFilter;
 

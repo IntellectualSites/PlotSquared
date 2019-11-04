@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
@@ -15,7 +17,7 @@ import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -124,7 +126,7 @@ import java.util.concurrent.CompletableFuture;
 
         // Classes
         this.scope.put("Location", Location.class);
-        this.scope.put("PlotBlock", PlotBlock.class);
+        this.scope.put("BlockState", BlockState.class);
         this.scope.put("Plot", Plot.class);
         this.scope.put("PlotId", PlotId.class);
         this.scope.put("Runnable", Runnable.class);

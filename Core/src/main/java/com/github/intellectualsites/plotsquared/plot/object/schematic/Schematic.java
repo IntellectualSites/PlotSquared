@@ -1,9 +1,11 @@
 package com.github.intellectualsites.plotsquared.plot.object.schematic;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.sk89q.jnbt.NBTOutputStream;
 import com.sk89q.jnbt.Tag;
 import com.sk89q.worldedit.WorldEditException;
-import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.SpongeSchematicWriter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BaseBlock;
@@ -17,10 +19,10 @@ import java.util.Map;
 
 public class Schematic {
     // Lossy but fast
-    @Getter private final BlockArrayClipboard clipboard;
+    @Getter private final Clipboard clipboard;
     @Getter private Map<String, Tag> flags = new HashMap<>();
 
-    public Schematic(BlockArrayClipboard clip) {
+    public Schematic(Clipboard clip) {
         this.clipboard = clip;
     }
 

@@ -1,9 +1,11 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
@@ -50,15 +52,15 @@ public abstract class WorldUtil {
 
     public abstract void saveWorld(String world);
 
-    public abstract String getClosestMatchingName(PlotBlock plotBlock);
+    public abstract String getClosestMatchingName(BlockState plotBlock);
 
-    public abstract boolean isBlockSolid(PlotBlock block);
+    public abstract boolean isBlockSolid(BlockState block);
 
-    public abstract StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name);
+    public abstract StringComparison<BlockState>.ComparisonResult getClosestBlock(String name);
 
     public abstract String getBiome(String world, int x, int z);
 
-    public abstract PlotBlock getBlock(Location location);
+    public abstract BlockState getBlock(Location location);
 
     public abstract int getHighestBlock(String world, int x, int z);
 
@@ -161,5 +163,5 @@ public abstract class WorldUtil {
         return null;
     }
 
-    public abstract boolean isBlockSame(PlotBlock block1, PlotBlock block2);
+    public abstract boolean isBlockSame(BlockState block1, BlockState block2);
 }

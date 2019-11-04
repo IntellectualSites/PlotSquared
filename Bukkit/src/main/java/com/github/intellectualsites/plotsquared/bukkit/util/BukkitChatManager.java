@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.bukkit.chat.FancyMessage;
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;

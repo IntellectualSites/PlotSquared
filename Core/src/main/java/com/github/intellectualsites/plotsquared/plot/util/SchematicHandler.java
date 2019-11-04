@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.json.JSONArray;
 import com.github.intellectualsites.plotsquared.json.JSONException;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
@@ -19,7 +21,7 @@ import com.sk89q.jnbt.NBTInputStream;
 import com.sk89q.jnbt.NBTOutputStream;
 import com.sk89q.jnbt.StringTag;
 import com.sk89q.jnbt.Tag;
-import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
@@ -180,7 +182,7 @@ public abstract class SchematicHandler {
                     return;
                 }
                 // block type and data arrays
-                final BlockArrayClipboard blockArrayClipboard = schematic.getClipboard();
+                final Clipboard blockArrayClipboard = schematic.getClipboard();
                 // Calculate the optimal height to paste the schematic at
                 final int y_offset_actual;
                 if (autoHeight) {
@@ -330,7 +332,7 @@ public abstract class SchematicHandler {
             ClipboardFormat format = ClipboardFormats.findByFile(file);
             if (format != null) {
                 ClipboardReader reader = format.getReader(new FileInputStream(file));
-                BlockArrayClipboard clip = (BlockArrayClipboard) reader.read();
+                Clipboard clip = reader.read();
                 return new Schematic(clip);
             } else {
                 throw new UnsupportedFormatException(
@@ -357,13 +359,13 @@ public abstract class SchematicHandler {
         try {
             SpongeSchematicReader schematicReader =
                 new SpongeSchematicReader(new NBTInputStream(new GZIPInputStream(is)));
-            BlockArrayClipboard clip = (BlockArrayClipboard) schematicReader.read();
+            Clipboard clip = schematicReader.read();
             return new Schematic(clip);
         } catch (IOException ignored) {
             try {
                 MCEditSchematicReader schematicReader =
                     new MCEditSchematicReader(new NBTInputStream(new GZIPInputStream(is)));
-                BlockArrayClipboard clip = (BlockArrayClipboard) schematicReader.read();
+                Clipboard clip = schematicReader.read();
                 return new Schematic(clip);
             } catch (IOException e) {
                 e.printStackTrace();

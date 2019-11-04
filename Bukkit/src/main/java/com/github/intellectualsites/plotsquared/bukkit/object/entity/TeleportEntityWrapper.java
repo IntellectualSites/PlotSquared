@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.object.entity;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.bukkit.BukkitMain;
 import org.bukkit.Chunk;
 import org.bukkit.Location;

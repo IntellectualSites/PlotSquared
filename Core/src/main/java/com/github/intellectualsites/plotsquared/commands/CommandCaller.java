@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.commands;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.plot.commands.RequiredType;
 
 public interface CommandCaller {

@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.configuration;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 /**
  * Exception thrown when attempting to load an invalid {@link Configuration}.
  */

@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 public enum PlotGameMode {
     NOT_SET(-1, ""), SURVIVAL(0, "survival"), CREATIVE(1, "creative"), ADVENTURE(2,
         "adventure"), SPECTATOR(3, "spectator");

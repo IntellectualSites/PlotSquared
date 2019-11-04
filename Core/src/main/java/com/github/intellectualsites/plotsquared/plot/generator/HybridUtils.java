@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
@@ -8,7 +10,7 @@ import com.github.intellectualsites.plotsquared.plot.listener.WEExtent;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
@@ -111,12 +113,12 @@ public abstract class HybridUtils {
     }
 
     public int checkModified(LocalBlockQueue queue, int x1, int x2, int y1, int y2, int z1, int z2,
-        PlotBlock[] blocks) {
+        BlockState[] blocks) {
         int count = 0;
         for (int y = y1; y <= y2; y++) {
             for (int x = x1; x <= x2; x++) {
                 for (int z = z1; z <= z2; z++) {
-                    PlotBlock block = queue.getBlock(x, y, z);
+                    BlockState block = queue.getBlock(x, y, z);
                     boolean same =
                         Arrays.stream(blocks).anyMatch(p -> WorldUtil.IMP.isBlockSame(block, p));
                     if (!same) {
@@ -307,8 +309,8 @@ public abstract class HybridUtils {
             for (int z = sz; z <= ez; z++) {
                 for (int y = sy; y <= pm.getWorldHeight(); y++) {
                     if (y > ey) {
-                        PlotBlock block = queue.getBlock(x, y, z);
-                        if (!block.isAir()) {
+                        BlockState block = queue.getBlock(x, y, z);
+                        if (!block.getBlockType().getMaterial().isAir()) {
                             ey = y;
                         }
                     }

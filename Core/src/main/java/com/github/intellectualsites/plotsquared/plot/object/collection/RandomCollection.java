@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.object.collection;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import java.util.Map;
 import java.util.Random;
 

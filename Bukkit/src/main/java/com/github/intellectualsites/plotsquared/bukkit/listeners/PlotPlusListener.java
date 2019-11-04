@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.bukkit.events.PlayerEnterPlotEvent;
 import com.github.intellectualsites.plotsquared.bukkit.events.PlayerLeavePlotEvent;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;

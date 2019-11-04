@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 public class MathMan {
 
     private static final int ATAN2_BITS = 7;

@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.json;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;

@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.uuid;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.google.common.base.Charsets;

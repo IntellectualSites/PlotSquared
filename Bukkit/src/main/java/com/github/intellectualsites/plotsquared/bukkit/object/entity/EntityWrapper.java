@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.object.entity;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Location;

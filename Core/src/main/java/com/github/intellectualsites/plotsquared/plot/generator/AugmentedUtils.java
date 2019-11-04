@@ -1,16 +1,19 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
-import com.github.intellectualsites.plotsquared.plot.object.StringPlotBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.util.block.DelegateLocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -64,7 +67,7 @@ public class AugmentedUtils {
                 txx = Math.min(15, area.getRegion().maxX - blockX);
                 tzz = Math.min(15, area.getRegion().maxZ - blockZ);
                 primaryMask = new DelegateLocalBlockQueue(queue) {
-                    @Override public boolean setBlock(int x, int y, int z, PlotBlock id) {
+                    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
                         if (area.contains(x, z)) {
                             return super.setBlock(x, y, z, id);
                         }
@@ -84,7 +87,7 @@ public class AugmentedUtils {
                 primaryMask = queue;
             }
             LocalBlockQueue secondaryMask;
-            PlotBlock air = StringPlotBlock.EVERYTHING;
+            BlockState air = BlockTypes.AIR.getDefaultState();
             if (area.TERRAIN == 2) {
                 PlotManager manager = area.getPlotManager();
                 final boolean[][] canPlace = new boolean[16][16];
@@ -108,7 +111,7 @@ public class AugmentedUtils {
                 }
                 toReturn = true;
                 secondaryMask = new DelegateLocalBlockQueue(primaryMask) {
-                    @Override public boolean setBlock(int x, int y, int z, PlotBlock id) {
+                    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
                         if (canPlace[x - blockX][z - blockZ]) {
                             return super.setBlock(x, y, z, id);
                         }

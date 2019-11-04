@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.listener;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 public enum PlayerBlockEventType {
     // Non interactive
     EAT, READ,

@@ -1,12 +1,14 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,18 +20,18 @@ import java.util.Locale;
     public int ROAD_HEIGHT = 62;
     public int PLOT_HEIGHT = 62;
     public int WALL_HEIGHT = 62;
-    public BlockBucket MAIN_BLOCK = BlockBucket.withSingle(PlotBlock.get("stone"));
-    // new PlotBlock[] {PlotBlock.get("stone")};
-    public BlockBucket TOP_BLOCK = BlockBucket.withSingle(PlotBlock.get("grass_block"));
-    //new PlotBlock[] {PlotBlock.get("grass")};
-    public BlockBucket WALL_BLOCK = BlockBucket.withSingle(PlotBlock.get("stone_slab"));
-    // PlotBlock.get((short) 44, (byte) 0);
-    public BlockBucket CLAIMED_WALL_BLOCK = BlockBucket.withSingle(PlotBlock.get("sandstone_slab"));
-    // PlotBlock.get((short) 44, (byte) 1);
-    public BlockBucket WALL_FILLING = BlockBucket.withSingle(PlotBlock.get("stone"));
-    //PlotBlock.get((short) 1, (byte) 0);
-    public BlockBucket ROAD_BLOCK = BlockBucket.withSingle(PlotBlock.get("quartz_block"));
-    // PlotBlock.get((short) 155, (byte) 0);
+    public BlockBucket MAIN_BLOCK = BlockBucket.withSingle(BlockUtil.get("stone"));
+    // new BlockState[] {BlockUtil.get("stone")};
+    public BlockBucket TOP_BLOCK = BlockBucket.withSingle(BlockUtil.get("grass_block"));
+    //new BlockState[] {BlockUtil.get("grass")};
+    public BlockBucket WALL_BLOCK = BlockBucket.withSingle(BlockUtil.get("stone_slab"));
+    // BlockUtil.get((short) 44, (byte) 0);
+    public BlockBucket CLAIMED_WALL_BLOCK = BlockBucket.withSingle(BlockUtil.get("sandstone_slab"));
+    // BlockUtil.get((short) 44, (byte) 1);
+    public BlockBucket WALL_FILLING = BlockBucket.withSingle(BlockUtil.get("stone"));
+    //BlockUtil.get((short) 1, (byte) 0);
+    public BlockBucket ROAD_BLOCK = BlockBucket.withSingle(BlockUtil.get("quartz_block"));
+    // BlockUtil.get((short) 155, (byte) 0);
     public boolean PLOT_BEDROCK = true;
 
     public ClassicPlotWorld(String worldName, String id,

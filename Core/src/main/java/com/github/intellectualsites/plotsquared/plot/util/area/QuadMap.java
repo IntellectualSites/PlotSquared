@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.util.area;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
 
 import java.util.HashSet;

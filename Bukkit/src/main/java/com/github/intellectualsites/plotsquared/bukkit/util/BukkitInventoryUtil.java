@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
 import com.github.intellectualsites.plotsquared.plot.object.PlotItemStack;
@@ -56,7 +58,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
     if (item == null) {
       return null;
     }
-    ItemStack stack = new ItemStack(BukkitUtil.getMaterial(item.getPlotBlock()), item.amount);
+    ItemStack stack = new ItemStack(BukkitUtil.getMaterial(item.getBlockState()), item.amount);
     ItemMeta meta = null;
     if (item.name != null) {
       meta = stack.getItemMeta();

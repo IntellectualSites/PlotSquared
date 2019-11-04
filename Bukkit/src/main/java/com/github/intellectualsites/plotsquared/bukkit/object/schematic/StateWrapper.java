@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.object.schematic;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
@@ -12,7 +14,6 @@ import com.sk89q.jnbt.Tag;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Container;
 import org.bukkit.block.Sign;
 import org.bukkit.enchantments.Enchantment;
@@ -28,10 +29,10 @@ import java.util.Map.Entry;
 
 public class StateWrapper {
 
-    public BlockState state = null;
+    public org.bukkit.block.BlockState state = null;
     public CompoundTag tag = null;
 
-    public StateWrapper(BlockState state) {
+    public StateWrapper(org.bukkit.block.BlockState state) {
         this.state = state;
     }
 
@@ -156,7 +157,7 @@ public class StateWrapper {
         if (block == null) {
             return false;
         }
-        BlockState state = block.getState();
+        org.bukkit.block.BlockState state = block.getState();
         switch (tileid) {
             case "chest":
             case "beacon":

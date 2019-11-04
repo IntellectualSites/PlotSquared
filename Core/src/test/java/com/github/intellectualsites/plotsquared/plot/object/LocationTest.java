@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import org.junit.Test;
 
 import java.util.logging.Logger;

@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 
 public interface GeneratorWrapper<T> {

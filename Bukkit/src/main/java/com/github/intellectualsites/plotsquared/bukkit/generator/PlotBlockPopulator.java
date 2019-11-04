@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.generator;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
 import com.github.intellectualsites.plotsquared.plot.object.ChunkWrapper;
@@ -15,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-@RequiredArgsConstructor final class PlotBlockPopulator extends BlockPopulator {
+@RequiredArgsConstructor final class BlockStatePopulator extends BlockPopulator {
 
     private final IndependentPlotGenerator plotGenerator;
     private LocalBlockQueue queue;

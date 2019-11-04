@@ -1,7 +1,9 @@
 package com.github.intellectualsites.plotsquared.plot.config;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 import java.util.ArrayList;
@@ -66,7 +68,7 @@ public class ConfigurationNode {
         if (this.value instanceof BlockBucket) {
             return this.value.toString();
         }
-        if (this.value instanceof PlotBlock) {
+        if (this.value instanceof BlockState) {
             return this.value.toString();
         }
         return this.value;

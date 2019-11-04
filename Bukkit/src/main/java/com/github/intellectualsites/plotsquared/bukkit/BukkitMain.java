@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.ChunkListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.EntitySpawnListener;
@@ -7,7 +9,6 @@ import com.github.intellectualsites.plotsquared.bukkit.listeners.PlayerEvents;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.PlotPlusListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.SingleWorldListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.WorldEvents;
-import com.github.intellectualsites.plotsquared.bukkit.util.BukkitBlockRegistry;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitChatManager;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitChunkManager;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitCommand;
@@ -15,7 +16,6 @@ import com.github.intellectualsites.plotsquared.bukkit.util.BukkitEconHandler;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitEventUtil;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitHybridUtils;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitInventoryUtil;
-import com.github.intellectualsites.plotsquared.bukkit.util.BukkitLegacyMappings;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitSchematicHandler;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitSetupUtils;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitTaskManager;
@@ -38,7 +38,6 @@ import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridGen;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
-import com.github.intellectualsites.plotsquared.plot.object.BlockRegistry;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
@@ -55,7 +54,6 @@ import com.github.intellectualsites.plotsquared.plot.util.ConsoleColors;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.InventoryUtil;
-import com.github.intellectualsites.plotsquared.plot.util.LegacyMappings;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
@@ -69,6 +67,7 @@ import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.bukkit.BukkitBlockRegistry;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.NonNull;
@@ -113,9 +112,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
     }
 
-    private final LegacyMappings legacyMappings = new BukkitLegacyMappings();
-    private final BlockRegistry<Material> blockRegistry =
-        new BukkitBlockRegistry(Material.values());
     private int[] version;
     @Getter private String pluginName;
     @Getter private SingleWorldListener singleWorldListener;
@@ -831,13 +827,4 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
         return names;
     }
-
-    @Override public BlockRegistry<Material> getBlockRegistry() {
-        return this.blockRegistry;
-    }
-
-    @Override public LegacyMappings getLegacyMappings() {
-        return this.legacyMappings;
-    }
-
 }

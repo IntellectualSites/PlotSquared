@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.configuration.serialization;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.configuration.Configuration;
 
 import java.lang.reflect.Constructor;

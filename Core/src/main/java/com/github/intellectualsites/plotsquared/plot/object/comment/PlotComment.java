@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.object.comment;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 
 public class PlotComment {

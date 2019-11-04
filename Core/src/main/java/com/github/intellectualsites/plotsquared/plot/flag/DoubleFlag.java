@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 
 public class DoubleFlag extends Flag<Double> {

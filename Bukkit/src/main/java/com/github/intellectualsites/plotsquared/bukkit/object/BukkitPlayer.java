@@ -1,10 +1,13 @@
 package com.github.intellectualsites.plotsquared.bukkit.object;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
@@ -12,6 +15,7 @@ import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
 import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.sk89q.worldedit.world.item.ItemType;
 import io.papermc.lib.PaperLib;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -277,8 +281,8 @@ public class BukkitPlayer extends PlotPlayer {
         this.player.setAllowFlight(fly);
     }
 
-    @Override public void playMusic(@NotNull final Location location, @NotNull final PlotBlock id) {
-        if (PlotBlock.isEverything(id) || id.isAir()) {
+    @Override public void playMusic(@NotNull final Location location, @NotNull final ItemType id) {
+        if (id.getBlockType().getMaterial().isAir()) {
             // Let's just stop all the discs because why not?
             for (final Sound sound : Arrays.stream(Sound.values())
                 .filter(sound -> sound.name().contains("DISC")).collect(Collectors.toList())) {
@@ -288,7 +292,7 @@ public class BukkitPlayer extends PlotPlayer {
         } else {
             // this.player.playEffect(BukkitUtil.getLocation(location), Effect.RECORD_PLAY, id.to(Material.class));
             this.player.playSound(BukkitUtil.getLocation(location),
-                Sound.valueOf(id.to(Material.class).name()), Float.MAX_VALUE, 1f);
+                Sound.valueOf(BukkitAdapter.adapt(id).name()), Float.MAX_VALUE, 1f);
         }
     }
 

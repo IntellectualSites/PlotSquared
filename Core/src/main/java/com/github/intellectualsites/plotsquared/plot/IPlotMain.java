@@ -4,14 +4,12 @@ import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
 import com.github.intellectualsites.plotsquared.plot.logger.ILogger;
-import com.github.intellectualsites.plotsquared.plot.object.BlockRegistry;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.ChatManager;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.InventoryUtil;
-import com.github.intellectualsites.plotsquared.plot.util.LegacyMappings;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
@@ -89,8 +87,12 @@ public interface IPlotMain extends ILogger {
 
     /**
      * Gets the NMS package prefix.
+
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
      *
      * @return The NMS package prefix
+
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
      */
     String getNMSPackage();
 
@@ -246,9 +248,4 @@ public interface IPlotMain extends ILogger {
     @NotNull IndependentPlotGenerator getDefaultGenerator();
 
     List<String> getPluginIds();
-
-    BlockRegistry<?> getBlockRegistry();
-
-    LegacyMappings getLegacyMappings();
-
 }

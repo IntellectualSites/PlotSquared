@@ -1,20 +1,24 @@
 package com.github.intellectualsites.plotsquared.plot;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.plot.database.AbstractDBTest;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtilTest;
+import com.sk89q.worldedit.world.block.BlockType;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -36,13 +40,13 @@ public class FlagTest {
         Optional<? extends Collection> flag = plot.getFlag(use);
         if (flag.isPresent()) {
             System.out.println(Flags.USE.valueToString(flag.get()));
-            testBlock = PlotBlock.get((short) 1, (byte) 0);
+            testBlock = BlockUtil.get((short) 1, (byte) 0);
             flag.get().add(testBlock);
         }
         flag.ifPresent(collection -> System.out.println(Flags.USE.valueToString(collection)));
-        Optional<HashSet<PlotBlock>> flag2 = plot.getFlag(Flags.USE);
+        Optional<Set<BlockType>> flag2 = plot.getFlag(Flags.USE);
         if (flag2.isPresent()) {
-            //   assertThat(flag2.get(), (Matcher<? super HashSet<PlotBlock>>) IsCollectionContaining.hasItem(testBlock));
+            //   assertThat(flag2.get(), (Matcher<? super Set<BlockType>>) IsCollectionContaining.hasItem(testBlock));
         }
         if (flag.isPresent() && flag2.isPresent()) {
             assertEquals(flag.get(), flag2.get());

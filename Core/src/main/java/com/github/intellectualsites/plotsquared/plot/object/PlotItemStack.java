@@ -1,7 +1,13 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+import com.sk89q.worldedit.world.block.BlockState;
+import com.sk89q.worldedit.world.item.ItemType;
+import com.sk89q.worldedit.world.item.ItemTypes;
+import com.sk89q.worldedit.world.registry.LegacyMapper;
 import lombok.Getter;
 
 public class PlotItemStack {
@@ -9,7 +15,7 @@ public class PlotItemStack {
     public final int amount;
     public final String name;
     public final String[] lore;
-    @Getter private final PlotBlock plotBlock;
+    @Getter private final ItemType type;
 
     /**
      * @param id     Legacy numerical item ID
@@ -21,10 +27,11 @@ public class PlotItemStack {
      */
     @Deprecated public PlotItemStack(final int id, final short data, final int amount,
         final String name, final String... lore) {
+
         this.amount = amount;
         this.name = name;
         this.lore = lore;
-        this.plotBlock = PlotBlock.get(id, data);
+        this.type = LegacyMapper.getInstance().getItemFromLegacy(id, data);
     }
 
     /**
@@ -35,10 +42,13 @@ public class PlotItemStack {
      */
     public PlotItemStack(final String id, final int amount, final String name,
         final String... lore) {
-        StringComparison<PlotBlock>.ComparisonResult match = WorldUtil.IMP.getClosestBlock(id);
-        this.plotBlock = match.best;
+        this.type = ItemTypes.get(id);
         this.amount = amount;
         this.name = name;
         this.lore = lore;
+    }
+
+    public BlockState getBlockState() {
+        return type.getBlockType().getDefaultState();
     }
 }

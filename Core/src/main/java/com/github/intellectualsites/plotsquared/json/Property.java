@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.json;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;

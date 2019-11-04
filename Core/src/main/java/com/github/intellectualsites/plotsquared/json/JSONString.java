@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.json;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 /**
  * The <code>JSONString</code> interface allows a <code>toJSONString()</code> method so that a class can change the
  * behavior of <code>JSONObject.toString()</code>, <code>JSONArray.toString()</code>, and

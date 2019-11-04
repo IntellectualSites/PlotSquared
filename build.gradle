@@ -48,6 +48,14 @@ version = String.format("%s.%s", rootVersion, buildNumber)
 
 description = rootProject.name
 
+allprojects {
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xmaxerrs" << "1000"
+        }
+    }
+}
+
 subprojects {
     apply(plugin: "java")
     apply(plugin: "maven")

@@ -1,10 +1,11 @@
 package com.github.intellectualsites.plotsquared.bukkit.util.block;
 
+import com.github.intellectualsites.plotsquared.bukkit.object.BukkitBlockUtil;
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.bukkit.object.schematic.StateWrapper;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.object.LegacyPlotBlock;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
-import com.github.intellectualsites.plotsquared.plot.object.StringPlotBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.BasicLocalBlockQueue;
 import com.sk89q.jnbt.CompoundTag;
@@ -19,7 +20,6 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 
-import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 public class BukkitLocalQueue extends BasicLocalBlockQueue {
@@ -38,13 +38,13 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
 
     }
 
-    @Override public PlotBlock getBlock(int x, int y, int z) {
+    @Override public BlockState getBlock(int x, int y, int z) {
         World worldObj = Bukkit.getWorld(getWorld());
         if (worldObj != null) {
             Block block = worldObj.getBlockAt(x, y, z);
-            return PlotBlock.get(block.getType().toString());
+            return BukkitBlockUtil.get(block);
         } else {
-            return PlotBlock.get(0, 0);
+            return BlockUtil.get(0, 0);
         }
     }
 
@@ -95,7 +95,7 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
                                 BlockData blockData = BukkitAdapter.adapt(block);
 
                                 Block existing = chunk.getBlock(x, y, z);
-                                if (equals(PlotBlock.get(block), existing) && existing
+                                if (BukkitBlockUtil.get(existing).equals(block) && existing
                                     .getBlockData().matches(blockData)) {
                                     continue;
                                 }
@@ -116,38 +116,13 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
             });
     }
 
-    private void setMaterial(@NonNull final PlotBlock plotBlock, @NonNull final Block block) {
-        final Material material;
-        if (plotBlock instanceof StringPlotBlock) {
-            material = Material
-                .getMaterial(((StringPlotBlock) plotBlock).getItemId().toUpperCase(Locale.ENGLISH));
-            if (material == null) {
-                throw new IllegalStateException(String
-                    .format("Could not find material that matches %s",
-                        ((StringPlotBlock) plotBlock).getItemId()));
-            }
-        } else {
-            final LegacyPlotBlock legacyPlotBlock = (LegacyPlotBlock) plotBlock;
-            material = PlotSquared.get().IMP.getLegacyMappings()
-                .fromLegacyToString(legacyPlotBlock.getId(), legacyPlotBlock.getData())
-                .to(Material.class);
-            if (material == null) {
-                throw new IllegalStateException(String
-                    .format("Could not find material that matches %s", legacyPlotBlock.toString()));
-            }
-        }
+    private void setMaterial(@NonNull final BlockState plotBlock, @NonNull final Block block) {
+        Material material = BukkitAdapter.adapt(plotBlock.getBlockType());
         block.setType(material, false);
     }
 
-    private boolean equals(@NonNull final PlotBlock plotBlock, @NonNull final Block block) {
-        if (plotBlock instanceof StringPlotBlock) {
-            return ((StringPlotBlock) plotBlock).idEquals(block.getType().name());
-        }
-        final LegacyPlotBlock legacyPlotBlock = (LegacyPlotBlock) plotBlock;
-        return Material.getMaterial(PlotSquared.get().IMP.getLegacyMappings()
-            .fromLegacyToString(((LegacyPlotBlock) plotBlock).id,
-                ((LegacyPlotBlock) plotBlock).data).toString()) == block.getType() && (
-            legacyPlotBlock.id == 0 || legacyPlotBlock.data == block.getData());
+    private boolean equals(@NonNull final BlockState plotBlock, @NonNull final Block block) {
+        return plotBlock.equals(BukkitBlockUtil.get(block));
     }
 
     public void setBiomes(LocalChunk lc) {

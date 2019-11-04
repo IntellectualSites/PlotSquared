@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.bukkit.object.entity.EntityWrapper;
 import com.github.intellectualsites.plotsquared.bukkit.object.entity.ReplicatingEntityWrapper;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
@@ -8,7 +10,7 @@ import com.github.intellectualsites.plotsquared.plot.listener.WEExtent;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.object.PlotLoc;
 import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
@@ -369,7 +371,7 @@ public class BukkitChunkManager extends ChunkManager {
                                                 if (id != null) {
                                                     value.setBlock(x1, y, z1, id);
                                                 } else {
-                                                    value.setBlock(x1, y, z1, PlotBlock.get("air"));
+                                                    value.setBlock(x1, y, z1, BlockUtil.get("air"));
                                                 }
                                             }
                                             for (int y = Math.min(128, ids.length);

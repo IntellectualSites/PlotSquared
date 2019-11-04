@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.commands;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.bukkit.uuid.DatFileFilter;
 import com.github.intellectualsites.plotsquared.bukkit.uuid.DefaultUUIDWrapper;
 import com.github.intellectualsites.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;

@@ -1,7 +1,9 @@
 package com.github.intellectualsites.plotsquared.plot.config;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import lombok.Getter;
@@ -76,11 +78,11 @@ public class Configuration {
                     } else {
                         block = part;
                     }
-                    final StringComparison<PlotBlock>.ComparisonResult value =
+                    final StringComparison<BlockState>.ComparisonResult value =
                         WorldUtil.IMP.getClosestBlock(block);
                     if (value == null) {
                         throw new UnknownBlockException(block);
-                    } else if (Settings.Enabled_Components.PREVENT_UNSAFE && !value.best.isAir()
+                    } else if (Settings.Enabled_Components.PREVENT_UNSAFE && !value.best.getBlockType().getMaterial().isAir()
                         && !WorldUtil.IMP.isBlockSolid(value.best)) {
                         throw new UnsafeBlockException(value.best);
                     }
@@ -110,11 +112,11 @@ public class Configuration {
                         } else {
                             block = part;
                         }
-                        StringComparison<PlotBlock>.ComparisonResult value =
+                        StringComparison<BlockState>.ComparisonResult value =
                             WorldUtil.IMP.getClosestBlock(block);
                         if (value == null || value.match > 1) {
                             return false;
-                        } else if (Settings.Enabled_Components.PREVENT_UNSAFE && !value.best.isAir()
+                        } else if (Settings.Enabled_Components.PREVENT_UNSAFE && !value.best.getBlockType().getMaterial().isAir()
                             && !WorldUtil.IMP.isBlockSolid(value.best)) {
                             throw new UnsafeBlockException(value.best);
                         }
@@ -162,9 +164,9 @@ public class Configuration {
 
     public static final class UnsafeBlockException extends IllegalArgumentException {
 
-        @Getter private final PlotBlock unsafeBlock;
+        @Getter private final BlockState unsafeBlock;
 
-        UnsafeBlockException(@NonNull final PlotBlock unsafeBlock) {
+        UnsafeBlockException(@NonNull final BlockState unsafeBlock) {
             super(String.format("%s is not a valid block", unsafeBlock));
             this.unsafeBlock = unsafeBlock;
         }

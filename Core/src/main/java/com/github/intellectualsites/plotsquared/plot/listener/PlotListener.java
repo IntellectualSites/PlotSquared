@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.listener;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
@@ -8,7 +10,8 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.github.intellectualsites.plotsquared.plot.util.block.ItemUtil;
+import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.ByteArrayUtilities;
@@ -22,6 +25,8 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
+import com.sk89q.worldedit.world.item.ItemType;
+import com.sk89q.worldedit.world.item.ItemTypes;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -144,21 +149,21 @@ public class PlotListener {
                 Optional<String> musicFlag = plot.getFlag(Flags.MUSIC);
                 if (musicFlag.isPresent()) {
                     final String id = musicFlag.get();
-                    final PlotBlock block = PlotBlock.get(id);
-                    final String rawId = block.getRawId().toString();
-                    if (rawId.contains("disc") || PlotBlock.isEverything(block) || block.isAir()) {
+                    final ItemType item = ItemUtil.get(id);
+                    final String rawId = item.getId();
+                    if (rawId.contains("disc") || item == ItemTypes.AIR) {
                         Location location = player.getLocation();
                         Location lastLocation = player.getMeta("music");
                         if (lastLocation != null) {
-                            player.playMusic(lastLocation, PlotBlock.get("air"));
-                            if (PlotBlock.isEverything(block) || block.isAir()) {
+                            player.playMusic(lastLocation, ItemTypes.AIR);
+                            if (item == ItemTypes.AIR) {
                                 player.deleteMeta("music");
                             }
                         }
-                        if (!(PlotBlock.isEverything(block) || block.isAir())) {
+                        if (!(item == ItemTypes.AIR)) {
                             try {
                                 player.setMeta("music", location);
-                                player.playMusic(location, block);
+                                player.playMusic(location, item);
                             } catch (Exception ignored) {
                             }
                         }
@@ -167,7 +172,7 @@ public class PlotListener {
                     Location lastLoc = player.getMeta("music");
                     if (lastLoc != null) {
                         player.deleteMeta("music");
-                        player.playMusic(lastLoc, PlotBlock.get("air"));
+                        player.playMusic(lastLoc, ItemTypes.AIR);
                     }
                 }
                 CommentManager.sendTitle(player, plot);
@@ -275,7 +280,7 @@ public class PlotListener {
             Location lastLoc = player.getMeta("music");
             if (lastLoc != null) {
                 player.deleteMeta("music");
-                player.playMusic(lastLoc, PlotBlock.get("air"));
+                player.playMusic(lastLoc, ItemTypes.AIR);
             }
         }
         return true;

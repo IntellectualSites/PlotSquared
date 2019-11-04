@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
@@ -1282,7 +1284,7 @@ public class Plot {
             if (!isLoaded()) {
                 return location;
             }
-            if (!WorldUtil.IMP.getBlock(location).isAir()) {
+            if (!WorldUtil.IMP.getBlock(location).getBlockType().getMaterial().isAir()) {
                 location.setY(Math.max(1 + WorldUtil.IMP
                         .getHighestBlock(this.getWorldName(), location.getX(), location.getZ()),
                     bottom.getY()));
@@ -1456,7 +1458,7 @@ public class Plot {
         }
         Location location = manager.getSignLoc(this);
         LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(getWorldName(), false);
-        queue.setBlock(location.getX(), location.getY(), location.getZ(), PlotBlock.get("air"));
+        queue.setBlock(location.getX(), location.getY(), location.getZ(), BlockUtil.get("air"));
         queue.flush();
     }
 

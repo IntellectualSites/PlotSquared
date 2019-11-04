@@ -1,8 +1,10 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
@@ -53,7 +55,7 @@ public abstract class LocalBlockQueue {
      * @param z the z coordinate from 0 to 15 inclusive
      * @param id the id to set the block to
      */
-    public abstract boolean setBlock(final int x, final int y, final int z, final PlotBlock id);
+    public abstract boolean setBlock(final int x, final int y, final int z, final BlockState id);
 
     public abstract boolean setBlock(final int x, final int y, final int z, final BaseBlock id);
 
@@ -62,7 +64,7 @@ public abstract class LocalBlockQueue {
         return true;
     }
 
-    public abstract PlotBlock getBlock(int x, int y, int z);
+    public abstract BlockState getBlock(int x, int y, int z);
 
     public abstract boolean setBiome(int x, int z, String biome);
 
@@ -100,7 +102,7 @@ public abstract class LocalBlockQueue {
         return GlobalBlockQueue.IMP.enqueue(this);
     }
 
-    public void setCuboid(Location pos1, Location pos2, PlotBlock block) {
+    public void setCuboid(Location pos1, Location pos2, BlockState block) {
         int yMin = Math.min(pos1.getY(), pos2.getY());
         int yMax = Math.min(255, Math.max(pos1.getY(), pos2.getY()));
         int xMin = Math.min(pos1.getX(), pos2.getX());

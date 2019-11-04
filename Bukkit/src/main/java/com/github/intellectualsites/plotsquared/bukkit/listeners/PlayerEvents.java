@@ -1,7 +1,9 @@
 package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
+import com.github.intellectualsites.plotsquared.bukkit.object.BukkitBlockUtil;
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+
 import com.github.intellectualsites.plotsquared.bukkit.BukkitMain;
-import com.github.intellectualsites.plotsquared.bukkit.object.BukkitLazyBlock;
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
@@ -13,7 +15,8 @@ import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.object.PlotHandler;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
@@ -29,6 +32,7 @@ import com.github.intellectualsites.plotsquared.plot.util.RegExUtil;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.UpdateUtility;
+import com.sk89q.worldedit.world.block.BlockType;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -37,7 +41,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Ageable;
@@ -142,6 +145,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 /**
@@ -1103,10 +1107,10 @@ import java.util.regex.Pattern;
                 return;
             }
             if (!plot.isAdded(plotPlayer.getUUID())) {
-                Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
+                Optional<Set<BlockType>> destroy = plot.getFlag(Flags.BREAK);
                 Block block = event.getBlock();
                 if (destroy.isPresent() && destroy.get()
-                    .contains(PlotBlock.get(block.getType().name()))) {
+                    .contains(BukkitAdapter.asBlockType(block.getType()))) {
                     return;
                 }
                 if (Permissions
@@ -1388,10 +1392,10 @@ import java.util.regex.Pattern;
             }
             PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
             if (!plot.isAdded(plotPlayer.getUUID())) {
-                Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
+                Optional<Set<BlockType>> destroy = plot.getFlag(Flags.BREAK);
                 Block block = event.getBlock();
                 if (destroy.isPresent() && destroy.get()
-                    .contains(PlotBlock.get(block.getType().name())) || Permissions
+                    .contains(BukkitBlockUtil.get(block)) || Permissions
                     .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }
@@ -1623,7 +1627,7 @@ import java.util.regex.Pattern;
         if (!PlotSquared.get().hasPlotArea(event.getWorld().getName())) {
             return;
         }
-        List<BlockState> blocks = event.getBlocks();
+        List<org.bukkit.block.BlockState> blocks = event.getBlocks();
         if (blocks.isEmpty()) {
             return;
         }
@@ -1737,7 +1741,7 @@ import java.util.regex.Pattern;
             }
         }
         Block block = player.getTargetBlock(null, 7);
-        BlockState state = block.getState();
+        org.bukkit.block.BlockState state = block.getState();
         if (state == null) {
             return;
         }
@@ -1916,9 +1920,10 @@ import java.util.regex.Pattern;
                 Block block = player.getTargetBlockExact(5, FluidCollisionMode.SOURCE_ONLY);
                 if (block != null && block.getType() != Material.AIR) {
                     Location location = BukkitUtil.getLocation(block.getLocation());
+                    Material finalType = type;
                     if (!EventUtil.manager
-                        .checkPlayerBlockEvent(pp, PlayerBlockEventType.SPAWN_MOB, location,
-                            new BukkitLazyBlock(PlotBlock.get(type.toString())), true)) {
+                        .checkPlayerBlockEvent(pp, PlayerBlockEventType.SPAWN_MOB, location, () -> BukkitAdapter.asBlockType(
+                            finalType).getDefaultState(), true)) {
                         event.setCancelled(true);
                         event.setUseItemInHand(Event.Result.DENY);
                     }
@@ -1936,14 +1941,14 @@ import java.util.regex.Pattern;
             return;
         }
         PlayerBlockEventType eventType = null;
-        BukkitLazyBlock lb;
+        Supplier<BlockState> lb;
         Location location;
         Action action = event.getAction();
         switch (action) {
             case PHYSICAL: {
                 eventType = PlayerBlockEventType.TRIGGER_PHYSICAL;
                 Block block = event.getClickedBlock();
-                lb = new BukkitLazyBlock(block);
+                lb = BukkitBlockUtil.supply(block);
                 location = BukkitUtil.getLocation(block.getLocation());
                 break;
             }
@@ -2112,7 +2117,7 @@ import java.util.regex.Pattern;
                             eventType = PlayerBlockEventType.INTERACT_BLOCK;
                         }
                 }
-                lb = new BukkitLazyBlock(PlotBlock.get(block.getType().toString()));
+                lb = BukkitBlockUtil.supply(block);
                 if (eventType != null && (eventType != PlayerBlockEventType.INTERACT_BLOCK
                     || !player.isSneaking())) {
                     break;
@@ -2131,7 +2136,7 @@ import java.util.regex.Pattern;
                     type = offType;
                 }
                 // in the following, lb needs to have the material of the item in hand i.e. type
-                lb = new BukkitLazyBlock(PlotBlock.get(type.toString()));
+                lb =  BukkitBlockUtil.supply(type);
                 if (type.isBlock()) {
                     location = BukkitUtil
                         .getLocation(block.getRelative(event.getBlockFace()).getLocation());
@@ -2214,7 +2219,7 @@ import java.util.regex.Pattern;
                 Block block = event.getClickedBlock();
                 location = BukkitUtil.getLocation(block.getLocation());
                 eventType = PlayerBlockEventType.BREAK_BLOCK;
-                lb = new BukkitLazyBlock(block);
+                lb = BukkitBlockUtil.supply(block);
                 break;
             default:
                 return;
@@ -2473,7 +2478,7 @@ import java.util.regex.Pattern;
                 Captions.PERMISSION_ADMIN_BUILD_UNOWNED);
             event.setCancelled(true);
         } else if (!plot.isAdded(pp.getUUID())) {
-            if (Flags.USE.contains(plot, PlotBlock.get(event.getBucket().name()))) {
+            if (Flags.USE.contains(plot, BukkitBlockUtil.get(block))) {
                 return;
             }
             if (Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
@@ -2533,9 +2538,9 @@ import java.util.regex.Pattern;
                 Captions.PERMISSION_ADMIN_BUILD_UNOWNED);
             event.setCancelled(true);
         } else if (!plot.isAdded(plotPlayer.getUUID())) {
-            Optional<HashSet<PlotBlock>> use = plot.getFlag(Flags.USE);
+            Optional<Set<BlockType>> use = plot.getFlag(Flags.USE);
             Block block = event.getBlockClicked();
-            if (use.isPresent() && use.get().contains(PlotBlock.get(block.getType().name()))) {
+            if (use.isPresent() && use.get().contains(BukkitBlockUtil.get(block))) {
                 return;
             }
             if (Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
@@ -3091,10 +3096,10 @@ import java.util.regex.Pattern;
                     return;
                 }
             } else if (!plot.isAdded(pp.getUUID())) {
-                Set<PlotBlock> place = plot.getFlag(Flags.PLACE, null);
+                Set<BlockType> place = plot.getFlag(Flags.PLACE, null);
                 if (place != null) {
                     Block block = event.getBlock();
-                    if (place.contains(PlotBlock.get(block.getType().name()))) {
+                    if (place.contains(BukkitBlockUtil.get(block))) {
                         return;
                     }
                 }
