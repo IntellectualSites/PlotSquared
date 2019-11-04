@@ -40,7 +40,7 @@ public final class Flags {
         }
 
         @Override public String getValueDescription() {
-            return "Flag value must be a positive number.";
+            return Captions.FLAG_ERROR_PRICE.getTranslated();
         }
     };
     public static final BooleanFlag EXPLOSION = new BooleanFlag("explosion");
@@ -114,7 +114,7 @@ public final class Flags {
         }
 
         @Override public String getValueDescription() {
-            return "Flag value must be a timestamp or a boolean";
+            return Captions.FLAG_ERROR_KEEP.getTranslated();
         }
     };
     public static final TeleportDenyFlag DENY_TELEPORT = new TeleportDenyFlag("deny-teleport");

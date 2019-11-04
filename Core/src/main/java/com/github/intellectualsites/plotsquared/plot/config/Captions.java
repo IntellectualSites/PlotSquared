@@ -555,11 +555,13 @@ public enum Captions {
     FLAG_ERROR_INTEGER("Flag value must be a whole number", "Flags"),
     FLAG_ERROR_INTEGER_LIST("Flag value must be an integer list", "Flags"),
     FLAG_ERROR_INTERVAL("Value(s) must be numeric. /plot set flag <flag> <interval> [amount]", "Flags"),
+    FLAG_ERROR_KEEP("Flag value must be a timestamp or a boolean", "Flags"),
     FLAG_ERROR_LONG("Flag value must be a whole number (large numbers allowed)", "Flags"),
     FLAG_ERROR_PLOTBLOCKLIST("Flag value must be a block list", "Flags"),
-    FLAG_ERROR_WEATHER("Flag must be a weather: 'rain' or 'sun'", "Flags"),
+    FLAG_ERROR_PRICE("Flag value must be a positive number.", "Flags"),
     FLAG_ERROR_STRING("Flag value must be alphanumeric. Some special characters are allowed.", "Flags"),
     FLAG_ERROR_STRINGLIST("Flag value must be a string list", "Flags"),
+    FLAG_ERROR_WEATHER("Flag must be a weather: 'rain' or 'sun'", "Flags"),
     //</editor-fold>
     //<editor-fold desc="Trusted">
     TRUSTED_ADDED("$4You successfully trusted a user to the plot", "Trusted"),
