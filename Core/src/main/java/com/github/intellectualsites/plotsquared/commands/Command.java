@@ -15,11 +15,22 @@ import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import net.kyori.text.TextComponent;
+import net.kyori.text.event.ClickEvent;
+import net.kyori.text.format.TextColor;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class Command {
@@ -242,22 +253,34 @@ public abstract class Command {
         }
         // Send the footer
         if (page < totalPages && page > 0) { // Back | Next
-            new PlotMessage().text("<-").color("$1").command(baseCommand + " " + page).text(" | ")
-                .color("$3").text("->").color("$1").command(baseCommand + " " + (page + 2))
-                .text(Captions.CLICKABLE.getTranslated()).color("$2").send(player);
+            TextComponent.Builder builder = TextComponent.builder();
+            builder.append(TextComponent.of("<-", TextColor.DARK_BLUE)
+                .clickEvent(ClickEvent.runCommand(baseCommand + " " + page)));
+            builder.append(" | ", TextColor.DARK_AQUA);
+            builder.append(TextComponent.of("->", TextColor.DARK_BLUE)
+                .clickEvent(ClickEvent.runCommand(baseCommand + " " + (page + 2))));
+            builder.append(Captions.CLICKABLE.getTranslated(), TextColor.DARK_GREEN);
+            player.sendMessage(builder.build());
             return;
         }
         if (page == 0 && totalPages != 0) { // Next
-            new PlotMessage().text("<-").color("$3").text(" | ").color("$3").text("->").color("$1")
-                .command(baseCommand + " " + 2).text(Captions.CLICKABLE.getTranslated()).color("$2")
-                .send(player);
+            TextComponent.Builder builder = TextComponent.builder();
+            builder.append("<-", TextColor.DARK_AQUA);
+            builder.append(" | ", TextColor.DARK_AQUA);
+            builder.append(TextComponent.of("->", TextColor.DARK_BLUE)
+                .clickEvent(ClickEvent.runCommand(baseCommand + " " + 2)));
+            builder.append(Captions.CLICKABLE.getTranslated(), TextColor.DARK_GREEN);
+            player.sendMessage(builder.build());
             return;
         }
         if (totalPages != 0) { // Back
-            new PlotMessage().text("<-").color("$1").command(baseCommand + " " + page).text(" | ")
-                .color("$3").text("->").color("$3").text(Captions.CLICKABLE.getTranslated())
-                .color("$2")
-                .send(player);
+            TextComponent.Builder builder = TextComponent.builder();
+            builder.append(TextComponent.of("<-", TextColor.DARK_BLUE)
+                .clickEvent(ClickEvent.runCommand(baseCommand + " " + page)));
+            builder.append(" | ", TextColor.DARK_AQUA);
+            builder.append("->", TextColor.DARK_AQUA);
+            builder.append(Captions.CLICKABLE.getTranslated(), TextColor.DARK_GREEN);
+            player.sendMessage(builder.build());
         }
     }
 

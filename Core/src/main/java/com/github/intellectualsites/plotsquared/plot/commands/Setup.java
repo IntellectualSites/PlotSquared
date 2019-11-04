@@ -8,22 +8,41 @@ import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
-import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import net.kyori.text.TextComponent;
+import net.kyori.text.event.ClickEvent;
+import net.kyori.text.event.HoverEvent;
+import net.kyori.text.format.TextColor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
-@CommandDeclaration(command = "setup", permission = "plots.admin.command.setup",
-    description = "Setup wizard for plot worlds", usage = "/plot setup", aliases = {"create"},
-    category = CommandCategory.ADMINISTRATION) public class Setup extends SubCommand {
+import static net.kyori.text.format.TextColor.DARK_BLUE;
+import static net.kyori.text.format.TextColor.DARK_GRAY;
+import static net.kyori.text.format.TextColor.DARK_GREEN;
+import static net.kyori.text.format.TextColor.GOLD;
+import static net.kyori.text.format.TextColor.GRAY;
+
+@CommandDeclaration(command = "setup", permission = "plots.admin.command.setup", description = "Setup wizard for plot worlds", usage = "/plot setup", aliases = {
+    "create"}, category = CommandCategory.ADMINISTRATION) public class Setup extends SubCommand {
 
     public void displayGenerators(PlotPlayer player) {
         StringBuilder message = new StringBuilder();
@@ -285,7 +304,7 @@ import java.util.Map.Entry;
                 }
             case 7:
                 if (args.length != 1) {
-                    MainUtil.sendMessage(player, "&cYou need to choose a world name!");
+                    MainUtil.sendMessage(player, "You need to choose a world name!");
                     return false;
                 }
                 if (!d(args[0])) {
@@ -295,11 +314,11 @@ import java.util.Map.Entry;
                 }
                 if (WorldUtil.IMP.isWorld(args[0])) {
                     if (PlotSquared.get().hasPlotArea(args[0])) {
-                        MainUtil.sendMessage(player, "&cThat world name is already taken!");
+                        MainUtil.sendMessage(player, "That world name is already taken!");
                         return false;
                     }
                     MainUtil.sendMessage(player,
-                        "&cThe world you specified already exists. After restarting, new terrain will use "
+                        "The world you specified already exists. After restarting, new terrain will use "
                             + PlotSquared.imp().getPluginName() + ", however you may need to "
                             + "reset the world for it to generate correctly!");
                 }
@@ -314,7 +333,7 @@ import java.util.Map.Entry;
                 try {
                     player.teleport(WorldUtil.IMP.getSpawn(world));
                 } catch (Exception e) {
-                    player.sendMessage("&cAn error occurred. See console for more information");
+                    player.sendMessage("An error occurred. See console for more information");
                     e.printStackTrace();
                 }
                 sendMessage(player, Captions.SETUP_FINISHED, object.world);
@@ -327,6 +346,7 @@ import java.util.Map.Entry;
             return i == 95 || i == 45 || i >= 97 && i <= 122 || i >= 48 && i <= 57 || i == 46;
         });
     }
+
     private static final class StepPickGenerator extends SetupStep {
 
         @Getter private String generator;
@@ -335,26 +355,36 @@ import java.util.Map.Entry;
             super("generator");
         }
 
-        @Override public Collection<PlotMessage> showDescriptionMessage() {
+        @Override public List<TextComponent> showDescriptionMessage() {
             SetupUtils.manager.updateGenerators();
-            final List<PlotMessage> messages = new ArrayList<>();
-            messages.add(new PlotMessage("What generator do you want?").color("$6"));
+            final List<TextComponent> messages = new ArrayList<>();
+            messages.add(TextComponent.of("What generator do you want?", GOLD));
             for (Entry<String, GeneratorWrapper<?>> entry : SetupUtils.generators.entrySet()) {
-                final PlotMessage plotMessage = new PlotMessage(" - ").color("$8");
+                final TextComponent.Builder
+                    plotMessage = TextComponent.builder(" - ", DARK_GRAY);
                 if (entry.getKey().equals(PlotSquared.imp().getPluginName())) {
-                    plotMessage.text(entry.getKey()).color("$8").tooltip("Select this generator")
-                        .color("$2").command("/plot setup generator " + entry.getKey())
-                        .text(" (Default Generator)").color("$7");
+                    plotMessage.append(TextComponent.of(entry.getKey(), DARK_GRAY).hoverEvent(
+                        HoverEvent.showText(
+                            TextComponent.of("Select this generator", TextColor.DARK_GREEN)))
+                        .clickEvent(
+                            ClickEvent.runCommand("/plot setup generator " + entry.getKey())));
+                    plotMessage.append(" (Default Generator)", GRAY);
                 } else if (entry.getValue().isFull()) {
-                    plotMessage.text(entry.getKey()).color("$8").tooltip("Select this generator")
-                        .color("$7").command("/plot setup generator " + entry.getKey())
-                        .text(" (Plot Generator)").color("$7");
+                    plotMessage.append(TextComponent.of(entry.getKey(), DARK_GRAY).hoverEvent(
+                        HoverEvent.showText(
+                            TextComponent.of("Select this generator", TextColor.DARK_GREEN)))
+                        .clickEvent(
+                            ClickEvent.runCommand("/plot setup generator " + entry.getKey())));
+                    plotMessage.append(" (Plot Generator)", GRAY);
                 } else {
-                    plotMessage.text(entry.getKey()).color("$8").tooltip("Select this generator")
-                        .color("$7").command("/plot setup generator " + entry.getKey())
-                        .text(" (Unknown Structure)").color("$7");
+                    plotMessage.append(TextComponent.of(entry.getKey(), DARK_GRAY).hoverEvent(
+                    HoverEvent.showText(
+                        TextComponent.of("Select this generator", TextColor.DARK_GREEN)))
+                    .clickEvent(
+                        ClickEvent.runCommand("/plot setup generator " + entry.getKey())));
+                    plotMessage.append(" (Unknown Structure)", GRAY);
                 }
-                messages.add(plotMessage);
+                messages.add(plotMessage.build());
             }
             return messages;
         }
@@ -386,15 +416,18 @@ import java.util.Map.Entry;
             super("type");
         }
 
-        @Override public Collection<PlotMessage> showDescriptionMessage() {
-            final List<PlotMessage> messages = new ArrayList<>();
-            messages.add(new PlotMessage("What world type do you want?").color("$6"));
+        @Override public List<TextComponent> showDescriptionMessage() {
+            final List<TextComponent> messages = new ArrayList<>();
+            messages.add(TextComponent.of("What world type do you want?", GOLD));
             for (final Map.Entry<String, String> worldType : WORLD_TYPES.entrySet()) {
-                messages.add(new PlotMessage(" - ").color("$8").text(worldType.getKey())
-                    .color(worldType.getKey().equals(getDefault()) ? "$2" : "$7")
-                    .tooltip("Select this world type")
-                    .command("/plot setup type " + worldType.getKey())
-                    .text(" (" + worldType.getValue() + ")").color("$7"));
+                messages.add(TextComponent.builder(" - ", DARK_GRAY)
+                    .append(worldType.getKey(),
+                        worldType.getKey().equals(getDefault()) ?
+                            TextColor.DARK_GREEN :
+                            GRAY)
+                    .hoverEvent(HoverEvent.showText(TextComponent.of("Select this world type")))
+                    .clickEvent(ClickEvent.runCommand("/plot setup type " + worldType.getKey()))
+                    .append(" (" + worldType.getValue() + ")", GRAY).build());
             }
             return messages;
         }
@@ -428,28 +461,23 @@ import java.util.Map.Entry;
 
         private final String stepName;
 
-        public abstract Collection<PlotMessage> showDescriptionMessage();
+        public abstract List<TextComponent> showDescriptionMessage();
 
         public abstract boolean parseInput(String input);
 
-        public final PlotMessage getUsage() {
-            return new PlotMessage("Usage: ").color("$1")
-                .text("/plot setup " + this.stepName + " <value>").color("$2").suggest(
-                    "/plot setup " + this.stepName + (this.getDefault() != null ?
-                        this.getDefault() :
-                        ""));
+        public final TextComponent getUsage() {
+            return TextComponent.builder("Usage: ", DARK_BLUE).append("/plot setup " + this.stepName + " <value>", DARK_GREEN).clickEvent(ClickEvent.suggestCommand("/plot setup " + this.stepName + (this.getDefault() != null ?
+                this.getDefault() :
+                ""))).build();
         }
 
         @Nullable public abstract String getDefault();
 
-        public void sendToPlayer(@NonNull final PlotPlayer plotPlayer) {
-            new PlotMessage("Setup Step: ").color("$6").text(this.stepName).color("$7")
-                .send(plotPlayer);
-            this.getUsage().send(plotPlayer);
-            this.showDescriptionMessage().forEach(plotMessage -> plotMessage.send(plotPlayer));
-            if (this.getDefault() != null) {
-                new PlotMessage("Default: ").color("$6").text(this.getDefault()).color("$7");
-            }
+        public void sendToPlayer(@NotNull final PlotPlayer plotPlayer) {
+            plotPlayer.sendMessage(TextComponent.builder("Setup Setep: ", GOLD)
+                .append(stepName, GRAY).build());
+            plotPlayer.sendMessage(getUsage());
+            this.showDescriptionMessage().forEach(plotPlayer::sendMessage);
         }
 
     }

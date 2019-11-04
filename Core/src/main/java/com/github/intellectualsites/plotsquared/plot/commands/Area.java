@@ -7,19 +7,32 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.generator.AugmentedUtils;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotWorld;
-import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.object.ChunkLoc;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
+import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
+import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
+import com.github.intellectualsites.plotsquared.plot.util.CmdConfirm;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Set;
 
-@CommandDeclaration(command = "area", permission = "plots.area",
-    category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.NONE,
-    description = "Create a new PlotArea", aliases = "world",
-    usage = "/plot area <create|info|list|tp|regen>", confirmation = true) public class Area
-    extends SubCommand {
+@CommandDeclaration(command = "area", permission = "plots.area", category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.NONE, description = "Create a new PlotArea", aliases = "world", usage = "/plot area <create|info|list|tp|regen>", confirmation = true)
+public class Area extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length == 0) {
@@ -379,20 +392,48 @@ import java.util.Set;
                                     Short.MAX_VALUE * Short.MAX_VALUE / (double) claimed;
                                 region = "N/A";
                             }
-                            PlotMessage tooltip = new PlotMessage().text("Claimed=").color("$1")
-                                .text(String.valueOf(claimed)).color("$2").text("\nUsage=")
-                                .color("$1").text(String.format("%.2f", percent) + '%').color("$2")
-                                .text("\nClusters=").color("$1").text(String.valueOf(clusters))
-                                .color("$2").text("\nRegion=").color("$1").text(region).color("$2")
-                                .text("\nGenerator=").color("$1").text(generator).color("$2");
+                            //TextComponent.Builder builder = TextComponent.builder();
+                            //builder.append("Claimed: ", DARK_GREEN);
+                            //builder.append(String.valueOf(claimed), DARK_BLUE);
+                            //builder.append(TextComponent.newline());
+                            //builder.append("Usage: ", DARK_GREEN);
+                            //builder.append(String.format("%.2f", percent) + '%', DARK_BLUE);
+                            //builder.append(TextComponent.newline());
+                            //builder.append("Clusters: ", DARK_GREEN);
+                            //builder.append(String.valueOf(clusters), DARK_BLUE);
+                            //builder.append(TextComponent.newline());
+                            //builder.append("Region: ", DARK_GREEN);
+                            //builder.append(region, DARK_BLUE);
+                            //builder.append(TextComponent.newline());
+                            //builder.append("Generator: ", DARK_GREEN);
+                            //builder.append(generator, DARK_BLUE);
+                            //builder.build();
+                            PlotMessage tooltip = new PlotMessage();
+                            tooltip.text("Claimed=", "$1");
+                            tooltip.text(String.valueOf(claimed), "$2");
+                            tooltip.text("\nUsage=", "$1");
+                            tooltip.text(String.format("%.2f", percent) + '%', "$2");
+                            tooltip.text("\nClusters=", "$1");
+                            tooltip.text(String.valueOf(clusters), "$2");
+                            tooltip.text("\nRegion=", "$1");
+                            tooltip.text(region, "$2");
+                            tooltip.text("\nGenerator=", "$1");
+                            tooltip.text(generator, "$2");
 
                             // type / terrain
                             String visit = "/plot area tp " + area.toString();
-                            message.text("[").color("$3").text(String.valueOf(i)).command(visit)
-                                .tooltip(visit).color("$1").text("]").color("$3").text(' ' + name)
-                                .tooltip(tooltip).command(getCommandString() + " info " + area)
-                                .color("$1").text(" - ").color("$2")
-                                .text(area.TYPE + ":" + area.TERRAIN).color("$3");
+                            message.text("[", "$3");
+                            message.text(String.valueOf(i));
+                            message.command(visit);
+                            message.tooltip(visit);
+                            message.color("$1");
+                            message.text("]", "$3");
+                            message.text(' ' + name);
+                            message.tooltip(tooltip);
+                            message.command(getCommandString() + " info " + area);
+                            message.color("$1");
+                            message.text(" - ", "$2");
+                            message.text(area.TYPE + ":" + area.TERRAIN, "$3");
                         }
                     }, "/plot area list", Captions.AREA_LIST_HEADER_PAGED.getTranslated());
                 return true;
