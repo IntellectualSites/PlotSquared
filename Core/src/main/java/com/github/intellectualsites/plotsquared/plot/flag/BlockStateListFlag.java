@@ -26,7 +26,7 @@ public class BlockStateListFlag extends ListFlag<Set<BlockType>> {
     }
 
     @Override public String getValueDescription() {
-        return "Flag value must be a block list";
+        return Captions.FLAG_ERROR_PLOTBLOCKLIST.getTranslated();
     }
 
     public boolean contains(Plot plot, BlockState value) {
