@@ -65,6 +65,10 @@ import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.bukkit.BukkitCommandSender;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.extension.platform.Actor;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.NonNull;
@@ -74,6 +78,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -822,5 +827,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 .isEnabled());
         }
         return names;
+    }
+
+    @Override public Actor getConsole() {
+        @NotNull ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+        WorldEditPlugin wePlugin = ((WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit"));
+        return wePlugin.wrapCommandSender(console);
     }
 }

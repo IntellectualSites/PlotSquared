@@ -19,6 +19,7 @@ import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.google.common.base.Preconditions;
+import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.item.ItemType;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -85,6 +86,8 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     public static PlotPlayer get(String name) {
         return UUIDHandler.getPlayer(name);
     }
+
+    public abstract Actor toActor();
 
     /**
      * Set some session only metadata for this player.

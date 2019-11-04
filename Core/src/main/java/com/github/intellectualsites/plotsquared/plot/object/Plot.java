@@ -1116,7 +1116,7 @@ public class Plot {
      * Delete a plot (use null for the runnable if you don't need to be notified on completion)
      *
      * @see PlotSquared#removePlot(Plot, boolean)
-     * @see #clear(Runnable) to simply clear a plot
+     * @see #clear(boolean, boolean, Runnable) to simply clear a plot
      */
     public boolean deletePlot(final Runnable whenDone) {
         if (!this.hasOwner()) {

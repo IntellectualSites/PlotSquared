@@ -3,6 +3,8 @@ package com.github.intellectualsites.plotsquared.bukkit.util;
 import com.github.intellectualsites.plotsquared.bukkit.BukkitMain;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 
 public class BukkitTaskManager extends TaskManager {
 
@@ -24,8 +26,8 @@ public class BukkitTaskManager extends TaskManager {
     }
 
     @Override public void taskAsync(Runnable runnable) {
-        this.bukkitMain.getServer().getScheduler().runTaskAsynchronously(this.bukkitMain, runnable)
-            .getTaskId();
+        @NotNull BukkitTask task = this.bukkitMain.getServer().getScheduler()
+            .runTaskAsynchronously(this.bukkitMain, runnable);
     }
 
     @Override public void task(Runnable runnable) {

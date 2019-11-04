@@ -16,6 +16,7 @@ import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandlerImplementation;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
+import com.sk89q.worldedit.extension.platform.Actor;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -248,4 +249,6 @@ import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
     @NotNull IndependentPlotGenerator getDefaultGenerator();
 
     List<String> getPluginIds();
+
+    Actor getConsole();
 }

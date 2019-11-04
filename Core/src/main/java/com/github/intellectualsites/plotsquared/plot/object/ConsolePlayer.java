@@ -5,6 +5,8 @@ import com.github.intellectualsites.plotsquared.plot.commands.RequiredType;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
 import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.item.ItemType;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +36,10 @@ public class ConsolePlayer extends PlotPlayer {
             instance.teleport(instance.getLocation());
         }
         return instance;
+    }
+
+    @Override public Actor toActor() {
+        return PlotSquared.get().IMP.getConsole();
     }
 
     @Override public boolean canTeleport(@NotNull Location location) {

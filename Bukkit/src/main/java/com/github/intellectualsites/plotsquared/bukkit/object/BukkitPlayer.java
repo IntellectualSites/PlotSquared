@@ -12,6 +12,8 @@ import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.item.ItemType;
 import io.papermc.lib.PaperLib;
 import org.bukkit.GameMode;
@@ -53,6 +55,10 @@ public class BukkitPlayer extends PlotPlayer {
         this.player = player;
         this.offline = offline;
         super.populatePersistentMetaMap();
+    }
+
+    @Override public Actor toActor() {
+        return BukkitAdapter.adapt(player);
     }
 
     @NotNull @Override public Location getLocation() {
