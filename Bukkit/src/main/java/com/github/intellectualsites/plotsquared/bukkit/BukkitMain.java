@@ -698,11 +698,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             }
         }
         if (Settings.UUID.OFFLINE) {
-            PlotSquared.log(Captions.PREFIX + " &6" + getPluginName()
+            PlotSquared.log(Captions.PREFIX + "&6" + getPluginName()
                 + " is using Offline Mode UUIDs either because of user preference, or because you are using an old version of "
                 + "Bukkit");
         } else {
-            PlotSquared.log(Captions.PREFIX + "" + getPluginName() + " is using online UUIDs");
+            PlotSquared.log(Captions.PREFIX + "&6" + getPluginName() + " is using online UUIDs");
         }
         if (Settings.UUID.USE_SQLUUIDHANDLER) {
             return new SQLUUIDHandler(wrapper);

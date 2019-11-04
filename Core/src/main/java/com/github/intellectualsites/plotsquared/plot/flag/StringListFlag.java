@@ -22,6 +22,6 @@ public class StringListFlag extends ListFlag<List<String>> {
     }
 
     @Override public String getValueDescription() {
-        return "Flag value must be a string list";
+        return Captions.FLAG_ERROR_STRINGLIST.getTranslated();
     }
 }
