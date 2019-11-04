@@ -1,13 +1,9 @@
 package com.github.intellectualsites.plotsquared.bukkit.object;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
@@ -15,10 +11,10 @@ import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
 import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.item.ItemType;
 import io.papermc.lib.PaperLib;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.WeatherType;
 import org.bukkit.entity.Player;

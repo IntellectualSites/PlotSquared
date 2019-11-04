@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import org.junit.Test;
 
 public class PlotVersionTest {

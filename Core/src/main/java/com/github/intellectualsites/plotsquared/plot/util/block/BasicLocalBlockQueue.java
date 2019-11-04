@@ -1,13 +1,11 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
-import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ConcurrentHashMap;

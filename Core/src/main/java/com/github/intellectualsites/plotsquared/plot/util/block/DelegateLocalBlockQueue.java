@@ -1,9 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
-import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 
 public class DelegateLocalBlockQueue extends LocalBlockQueue {
 

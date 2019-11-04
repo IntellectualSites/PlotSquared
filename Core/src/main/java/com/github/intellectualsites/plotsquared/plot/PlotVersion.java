@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 public class PlotVersion {
     public final int year, month, day, hash, build;
 

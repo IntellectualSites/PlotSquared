@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import com.github.intellectualsites.plotsquared.json.JSONArray;
 import com.github.intellectualsites.plotsquared.json.JSONException;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;

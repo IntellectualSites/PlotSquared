@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 public class ConsoleColors {
     public static String fromString(String input) {
         input = input.replaceAll("&0", fromChatColor("&0")).replaceAll("&1", fromChatColor("&1"))

@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.configuration.MemorySection;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
@@ -26,7 +24,6 @@ import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.object.PlotCluster;
 import com.github.intellectualsites.plotsquared.plot.object.PlotFilter;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;

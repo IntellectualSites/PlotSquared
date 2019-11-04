@@ -1,10 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
@@ -13,6 +10,7 @@ import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 
 import java.util.Map;
 

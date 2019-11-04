@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;

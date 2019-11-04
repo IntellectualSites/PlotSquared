@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import com.sk89q.worldedit.world.block.BaseBlock;
 
 public class OffsetLocalBlockQueue extends DelegateLocalBlockQueue {

@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.database;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 import java.sql.PreparedStatement;

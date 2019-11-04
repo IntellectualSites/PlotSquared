@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import com.google.common.base.Splitter;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;

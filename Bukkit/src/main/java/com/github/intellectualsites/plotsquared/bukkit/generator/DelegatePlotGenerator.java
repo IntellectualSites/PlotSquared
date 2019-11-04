@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.bukkit.generator;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotWorld;
@@ -9,10 +7,9 @@ import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGe
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.World;

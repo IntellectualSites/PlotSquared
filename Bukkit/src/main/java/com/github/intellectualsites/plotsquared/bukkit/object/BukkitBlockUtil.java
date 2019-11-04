@@ -1,10 +1,6 @@
 package com.github.intellectualsites.plotsquared.bukkit.object;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
-import com.github.intellectualsites.plotsquared.plot.object.LazyBlock;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockState;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

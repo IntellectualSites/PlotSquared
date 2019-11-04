@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 

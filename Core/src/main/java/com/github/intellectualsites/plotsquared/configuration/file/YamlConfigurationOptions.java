@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.configuration.file;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 /**
  * Various settings for controlling the input and output of a {@link
  * YamlConfiguration}.

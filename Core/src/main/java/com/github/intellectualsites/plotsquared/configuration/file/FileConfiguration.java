@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.configuration.file;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import com.github.intellectualsites.plotsquared.configuration.Configuration;
 import com.github.intellectualsites.plotsquared.configuration.InvalidConfigurationException;
 import com.github.intellectualsites.plotsquared.configuration.MemoryConfiguration;

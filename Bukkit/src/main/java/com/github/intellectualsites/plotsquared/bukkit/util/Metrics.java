@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;

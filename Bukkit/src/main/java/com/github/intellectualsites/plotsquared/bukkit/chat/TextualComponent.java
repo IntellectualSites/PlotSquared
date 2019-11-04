@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.bukkit.chat;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.stream.JsonWriter;

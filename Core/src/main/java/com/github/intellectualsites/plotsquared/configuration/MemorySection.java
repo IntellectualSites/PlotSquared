@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.configuration;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;

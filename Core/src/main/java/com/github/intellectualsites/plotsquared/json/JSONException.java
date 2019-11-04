@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.json;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 /**
  * The JSONException is thrown by the JSON.org classes when things are amiss.
  *

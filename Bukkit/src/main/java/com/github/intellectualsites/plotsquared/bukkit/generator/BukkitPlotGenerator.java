@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.bukkit.generator;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.bukkit.util.block.GenChunk;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;

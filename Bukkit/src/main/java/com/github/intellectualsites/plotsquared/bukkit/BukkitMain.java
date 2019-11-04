@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.bukkit;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import com.github.intellectualsites.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.ChunkListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.EntitySpawnListener;
@@ -67,7 +65,6 @@ import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.bukkit.BukkitBlockRegistry;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.NonNull;
@@ -75,7 +72,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.PluginCommand;

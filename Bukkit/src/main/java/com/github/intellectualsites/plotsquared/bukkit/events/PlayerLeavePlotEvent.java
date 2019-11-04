@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.bukkit.events;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;

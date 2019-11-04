@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import java.util.Set;
 import java.util.UUID;
 

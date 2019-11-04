@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.bukkit.object.entity;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 class ArmorStandStats {
 
     final float[] head = new float[3];

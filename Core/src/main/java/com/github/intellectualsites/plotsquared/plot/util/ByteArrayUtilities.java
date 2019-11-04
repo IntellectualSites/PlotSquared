@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 public class ByteArrayUtilities {
 
     public static byte[] integerToBytes(int i) {

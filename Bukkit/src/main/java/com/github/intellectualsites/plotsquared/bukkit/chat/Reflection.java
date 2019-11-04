@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.bukkit.chat;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.Field;

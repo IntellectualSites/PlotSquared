@@ -1,8 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.object.schematic;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
-import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.item.ItemType;
 
 public class PlotItem {

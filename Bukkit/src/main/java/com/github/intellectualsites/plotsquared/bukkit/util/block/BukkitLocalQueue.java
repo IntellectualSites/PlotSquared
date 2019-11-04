@@ -1,16 +1,15 @@
 package com.github.intellectualsites.plotsquared.bukkit.util.block;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitBlockUtil;
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import com.github.intellectualsites.plotsquared.bukkit.object.schematic.StateWrapper;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.sk89q.worldedit.world.block.BlockState;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.BasicLocalBlockQueue;
+import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 import io.papermc.lib.PaperLib;
 import lombok.NonNull;
 import org.bukkit.Bukkit;

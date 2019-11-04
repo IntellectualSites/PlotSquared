@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.config;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;

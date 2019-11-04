@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.configuration.serialization;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import java.util.Map;
 
 /**

@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.uuid;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import org.jetbrains.annotations.NotNull;

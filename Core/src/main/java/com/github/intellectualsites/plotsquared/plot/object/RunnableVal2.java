@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 public abstract class RunnableVal2<T, U> implements Runnable {
     public T value1;
     public U value2;

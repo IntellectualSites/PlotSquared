@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.object.schematic;
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
-
 import com.sk89q.worldedit.entity.BaseEntity;
 import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.extent.Extent;
