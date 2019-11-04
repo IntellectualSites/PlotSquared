@@ -13,6 +13,8 @@ import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import io.papermc.lib.PaperLib;
+import net.kyori.text.Component;
+import net.kyori.text.adapter.bukkit.TextAdapter;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -181,6 +183,10 @@ public class BukkitPlayer extends PlotPlayer {
             setMeta("lastMessageTime", System.currentTimeMillis());
             this.player.sendMessage(message);
         }
+    }
+
+    @Override public void sendMessage(Component message) {
+        TextAdapter.sendComponent(this.player,message);
     }
 
     @Override public void teleport(@NotNull final Location location) {

@@ -39,6 +39,12 @@ public class PlotMessage {
         return this;
     }
 
+    public PlotMessage text(String text, String color) {
+        ChatManager.manager.text(this, text);
+        ChatManager.manager.color(this, Captions.color(color));
+        return this;
+    }
+
     public PlotMessage tooltip(PlotMessage... tooltip) {
         ChatManager.manager.tooltip(this, tooltip);
         return this;

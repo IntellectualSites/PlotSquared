@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.commands.RequiredType;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
 import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
+import net.kyori.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -68,6 +69,10 @@ public class ConsolePlayer extends PlotPlayer {
 
     @Override public void sendMessage(String message) {
         PlotSquared.log(message);
+    }
+
+    @Override public void sendMessage(Component message) {
+        PlotSquared.log(message.toString()); //TODO Support for text components in PlotSquared.java
     }
 
     @Override public void teleport(Location location) {

@@ -13,8 +13,15 @@ import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.*;
 import io.papermc.lib.PaperLib;
+import net.kyori.text.TextComponent;
+import net.kyori.text.adapter.bukkit.TextAdapter;
+import net.kyori.text.event.ClickEvent;
+import net.kyori.text.event.HoverEvent;
+import net.kyori.text.format.TextColor;
+import net.kyori.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -60,8 +67,10 @@ import java.util.regex.Pattern;
 /**
  * Player Events involving plots.
  */
-@SuppressWarnings("unused") public class PlayerEvents extends PlotListener implements Listener {
+@SuppressWarnings("unused")
+public class PlayerEvents extends PlotListener implements Listener {
 
+    Color
     private boolean pistonBlocks = true;
     private float lastRadius;
     // To prevent recursion
@@ -241,7 +250,8 @@ import java.util.regex.Pattern;
         }
     }
 
-    @EventHandler public void onVehicleEntityCollision(VehicleEntityCollisionEvent e) {
+    @EventHandler
+    public void onVehicleEntityCollision(VehicleEntityCollisionEvent e) {
         if (e.getVehicle().getType() == EntityType.BOAT) {
             Location location = BukkitUtil.getLocation(e.getEntity());
             if (location.isPlotArea()) {
@@ -268,53 +278,6 @@ import java.util.regex.Pattern;
 
     @EventHandler public void onRedstoneEvent(BlockRedstoneEvent event) {
         Block block = event.getBlock();
-/*        switch (block.getType()) {
-            case OBSERVER:
-            case REDSTONE:
-            case REDSTONE_ORE:
-            case REDSTONE_BLOCK:
-            case REDSTONE_TORCH:
-            case REDSTONE_WALL_TORCH:
-            case REDSTONE_WIRE:
-            case REDSTONE_LAMP:
-            case PISTON_HEAD:
-            case PISTON:
-            case STICKY_PISTON:
-            case MOVING_PISTON:
-            case LEVER:
-            case ACACIA_BUTTON:
-            case BIRCH_BUTTON:
-            case DARK_OAK_BUTTON:
-            case JUNGLE_BUTTON:
-            case OAK_BUTTON:
-            case SPRUCE_BUTTON:
-            case STONE_BUTTON:
-            case STONE_PRESSURE_PLATE:
-            case ACACIA_PRESSURE_PLATE:
-            case BIRCH_PRESSURE_PLATE:
-            case DARK_OAK_PRESSURE_PLATE:
-            case HEAVY_WEIGHTED_PRESSURE_PLATE:
-            case JUNGLE_PRESSURE_PLATE:
-            case LIGHT_WEIGHTED_PRESSURE_PLATE:
-            case OAK_PRESSURE_PLATE:
-            case SPRUCE_PRESSURE_PLATE:
-            case SPRUCE_DOOR:
-            case BIRCH_DOOR:
-            case JUNGLE_DOOR:
-            case ACACIA_DOOR:
-            case DARK_OAK_DOOR:
-            case IRON_DOOR:
-            case OAK_DOOR:
-            case IRON_TRAPDOOR:
-            case SPRUCE_FENCE_GATE:
-            case BIRCH_FENCE_GATE:
-            case JUNGLE_FENCE_GATE:
-            case ACACIA_FENCE_GATE:
-            case DARK_OAK_FENCE_GATE:
-            case OAK_FENCE_GATE:
-            case POWERED_RAIL:
-                return;
-            default:*/
         Location location = BukkitUtil.getLocation(block.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
@@ -447,24 +410,24 @@ import java.util.regex.Pattern;
         }
     }
 
-    @EventHandler public void onProjectileLaunch(ProjectileLaunchEvent event) {
+    @EventHandler
+    public void onProjectileLaunch(ProjectileLaunchEvent event) {
         Projectile entity = event.getEntity();
-        if (!(entity instanceof ThrownPotion)) {
-            return;
-        }
-        ProjectileSource shooter = entity.getShooter();
-        if (!(shooter instanceof Player)) {
-            return;
-        }
-        Location location = BukkitUtil.getLocation(entity);
-        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
-            return;
-        }
-        PlotPlayer pp = BukkitUtil.getPlayer((Player) shooter);
-        Plot plot = location.getOwnedPlot();
-        if (plot != null && !plot.isAdded(pp.getUUID())) {
-            entity.remove();
-            event.setCancelled(true);
+        if (entity instanceof ThrownPotion) {
+            ProjectileSource shooter = entity.getShooter();
+            if (!(shooter instanceof Player)) {
+                return;
+            }
+            Location location = BukkitUtil.getLocation(entity);
+            if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
+                return;
+            }
+            PlotPlayer pp = BukkitUtil.getPlayer((Player) shooter);
+            Plot plot = location.getOwnedPlot();
+            if (plot != null && !plot.isAdded(pp.getUUID())) {
+                entity.remove();
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -647,24 +610,25 @@ import java.util.regex.Pattern;
                         bukkitMain.getLogger().severe(String
                             .format("Could not check for update. Reason: %s",
                                 throwable.getMessage()));
-                    } else {
-                        if (updateDescription != null) {
-                            new PlotMessage("-------- ").color("$2")
-                                .text("PlotSquared Update Notification").color("$1")
-                                .text(" --------").color("$2").send(pp);
-                            new PlotMessage("There appears to be a PlotSquared update available!")
-                                .color("$1").send(pp);
-                            new PlotMessage(String.format("You are running version %s,"
-                                    + " the newest available version is %s",
-                                bukkitMain.getPluginVersionString(),
-                                updateDescription.getVersion())).color("$1").send(pp);
-                            new PlotMessage("Update URL").color("$1").text(": ").color("$2")
-                                .text(updateDescription.getUrl()).tooltip("Download update")
-                                .send(pp);
-                            new PlotMessage("-------- ").color("$2")
-                                .text("PlotSquared Update Notification").color("$1")
-                                .text(" --------").color("$2").send(pp);
-                        }
+                    } else if (updateDescription != null) {
+                        TextAdapter.sendComponent(player, TextComponent
+                            .of("-------- PlotSquared Update Notification --------",
+                                TextColor.GOLD));
+                        TextAdapter.sendComponent(player, TextComponent
+                            .of("There appears to be a PlotSquared update available!",
+                                TextColor.GOLD));
+                        TextAdapter.sendComponent(player, TextComponent.of(String.format(
+                            "You are running version %s," + " the newest available version is %s",
+                            bukkitMain.getPluginVersionString(), updateDescription.getVersion()),
+                            TextColor.GOLD));
+                        String url = updateDescription.getUrl();
+                        TextAdapter.sendComponent(player,
+                        TextComponent.builder("Update URL: ", TextColor.GOLD).append(
+                            TextComponent.of(url, TextColor.GOLD)
+                                .clickEvent(ClickEvent.openUrl(url)).hoverEvent(
+                                HoverEvent.showText(TextComponent.of("Download update")))).build());
+                        TextAdapter.sendComponent(player, TextComponent
+                            .of("-------- PlotSquared Update Notification --------", TextColor.GOLD));
                     }
                 }));
         }

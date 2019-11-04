@@ -378,7 +378,8 @@ public class ListCmd extends SubCommand {
                     if (strFlags.isEmpty()) {
                         strFlags = Captions.NONE.getTranslated();
                     }
-                    PlotMessage flags = new PlotMessage().text(Captions.color(
+                    PlotMessage flags =
+                        new PlotMessage().text(Captions.color(
                         Captions.PLOT_INFO_FLAGS.getTranslated().replaceAll("%flags%", strFlags)))
                         .color("$1");
                     message.text("[").color("$3").text(i + "")
@@ -397,11 +398,17 @@ public class ListCmd extends SubCommand {
                         } else {
                             PlotPlayer pp = UUIDHandler.getPlayer(uuid);
                             if (pp != null) {
-                                message = message.text(prefix).color("$4").text(name).color("$1")
-                                    .tooltip(new PlotMessage("Online").color("$4"));
+                                message.text(prefix);
+                                message.color("$4");
+                                message.text(name);
+                                message.color("$1");
+                                message.tooltip(new PlotMessage("Online").color("$4"));
                             } else {
-                                message = message.text(prefix).color("$4").text(name).color("$1")
-                                    .tooltip(new PlotMessage("Offline").color("$3"));
+                                message.text(prefix);
+                                message.color("$4");
+                                message.text(name);
+                                message.color("$1");
+                                message.tooltip(new PlotMessage("Offline").color("$3"));
                             }
                         }
                         prefix = ", ";
