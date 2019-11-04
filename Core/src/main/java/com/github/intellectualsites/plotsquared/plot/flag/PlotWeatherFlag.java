@@ -31,6 +31,6 @@ public class PlotWeatherFlag extends Flag<PlotWeather> {
     }
 
     @Override public String getValueDescription() {
-        return "Flag must be a weather: 'rain' or 'sun'";
+        return Captions.FLAG_ERROR_WEATHER.getTranslated();
     }
 }

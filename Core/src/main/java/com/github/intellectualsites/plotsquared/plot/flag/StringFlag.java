@@ -18,6 +18,6 @@ public class StringFlag extends Flag<String> {
     }
 
     @Override public String getValueDescription() {
-        return "Flag value must be alphanumeric. Some special characters are allowed.";
+        return Captions.FLAG_ERROR_STRING.getTranslated();
     }
 }

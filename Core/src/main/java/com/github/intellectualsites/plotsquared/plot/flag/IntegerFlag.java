@@ -10,7 +10,7 @@ public class IntegerFlag extends Flag<Integer> {
     }
 
     @Override public String getValueDescription() {
-        return "Flag value must be a whole number";
+        return Captions.FLAG_ERROR_INTEGER.getTranslated();
     }
 
     @Override public String valueToString(Object value) {

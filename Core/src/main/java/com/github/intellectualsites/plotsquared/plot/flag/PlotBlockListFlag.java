@@ -29,6 +29,6 @@ public class PlotBlockListFlag extends ListFlag<HashSet<PlotBlock>> {
     }
 
     @Override public String getValueDescription() {
-        return "Flag value must be a block list";
+        return Captions.FLAG_ERROR_PLOTBLOCKLIST.getTranslated();
     }
 }

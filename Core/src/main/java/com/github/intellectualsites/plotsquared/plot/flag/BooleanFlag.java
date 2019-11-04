@@ -31,7 +31,7 @@ public class BooleanFlag extends Flag<Boolean> {
     }
 
     @Override public String getValueDescription() {
-        return "Flag value must be a boolean (true|false)";
+        return Captions.FLAG_ERROR_BOOLEAN.getTranslated();
     }
 
     public boolean isTrue(Plot plot) {
