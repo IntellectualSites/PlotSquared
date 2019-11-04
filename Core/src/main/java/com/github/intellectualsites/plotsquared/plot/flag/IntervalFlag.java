@@ -40,7 +40,7 @@ public class IntervalFlag extends Flag<IntervalFlag.Interval> {
     }
 
     @Override public String getValueDescription() {
-        return "Value(s) must be numeric. /plot set flag <flag> <interval> [amount]";
+        return Captions.FLAG_ERROR_INTERVAL.getTranslated();
     }
 
     @EqualsAndHashCode @RequiredArgsConstructor @Getter public static final class Interval {

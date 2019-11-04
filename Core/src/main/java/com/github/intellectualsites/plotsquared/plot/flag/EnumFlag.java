@@ -28,6 +28,6 @@ public class EnumFlag extends Flag<String> {
     }
 
     @Override public String getValueDescription() {
-        return "Must be one of: " + StringMan.getString(values);
+        return Captions.FLAG_ERROR_ENUM.getTranslated() + StringMan.getString(values);
     }
 }

@@ -27,6 +27,6 @@ public class IntegerListFlag extends ListFlag<List<Integer>> {
     }
 
     @Override public String getValueDescription() {
-        return "Flag value must be an integer list";
+        return Captions.FLAG_ERROR_INTEGER_LIST.getTranslated();
     }
 }

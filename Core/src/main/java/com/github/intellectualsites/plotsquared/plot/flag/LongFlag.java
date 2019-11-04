@@ -21,6 +21,6 @@ public class LongFlag extends Flag<Long> {
     }
 
     @Override public String getValueDescription() {
-        return "Flag value must be a whole number (large numbers allowed)";
+        return Captions.FLAG_ERROR_LONG.getTranslated();
     }
 }
