@@ -2,6 +2,8 @@ package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
+import com.sk89q.worldedit.regions.CuboidRegion;
 
 import java.util.HashSet;
 import java.util.UUID;
@@ -15,7 +17,7 @@ public class PlotCluster {
     public int temp;
     private PlotId pos1;
     private PlotId pos2;
-    private RegionWrapper region;
+    private CuboidRegion region;
 
     public PlotCluster(PlotArea area, PlotId pos1, PlotId pos2, UUID owner) {
         this.area = area;
@@ -56,10 +58,10 @@ public class PlotCluster {
     }
 
     private void setRegion() {
-        this.region = new RegionWrapper(this.pos1.x, this.pos2.x, this.pos1.y, this.pos2.y);
+        this.region = RegionUtil.createRegion(this.pos1.x, this.pos2.x, this.pos1.y, this.pos2.y);
     }
 
-    public RegionWrapper getRegion() {
+    public CuboidRegion getRegion() {
         return this.region;
     }
 

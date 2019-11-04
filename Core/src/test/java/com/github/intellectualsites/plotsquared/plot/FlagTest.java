@@ -8,7 +8,7 @@ import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtilTest;
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
 import com.sk89q.worldedit.world.block.BlockType;
 import org.junit.Before;
 import org.junit.Test;

@@ -22,7 +22,7 @@ public final class Reflection {
     /**
      * Stores loaded classes from the {@code org.bukkit.craftbukkit} package (and subpackages).
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
      */
     private static final Map<String, Class<?>> _loadedOBCClasses = new HashMap<>();
     private static final Map<Class<?>, Map<String, Field>> _loadedFields = new HashMap<>();
@@ -40,10 +40,10 @@ import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
     /**
      * Gets the version string from the package name of the CraftBukkit server implementation.
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
      * This is needed to bypass the JAR package name changing on each update.
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
      *
      * @return The version string of the OBC and NMS packages, <em>including the trailing dot</em>.
      */
@@ -86,7 +86,7 @@ import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
      *
      * @param className The name of the class, excluding the package, within OBC. This name may contain a subpackage name, such as {@code inventory.CraftItemStack}.
 
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
      * @return The class instance representing the specified OBC class, or {@code null} if it could not be loaded.
      */
     public synchronized static Class<?> getOBCClass(String className) {

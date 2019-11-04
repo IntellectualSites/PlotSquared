@@ -5,7 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.sk89q.worldedit.WorldEdit;
@@ -19,6 +19,7 @@ import com.sk89q.worldedit.util.eventbus.Subscribe;
 import com.sk89q.worldedit.world.World;
 
 import java.util.HashSet;
+import java.util.Set;
 
 public class WESubscriber {
 
@@ -37,7 +38,7 @@ public class WESubscriber {
         if (actor != null && actor.isPlayer()) {
             String name = actor.getName();
             PlotPlayer plotPlayer = PlotPlayer.wrap(name);
-            HashSet<RegionWrapper> mask;
+            Set<CuboidRegion> mask;
             if (plotPlayer == null) {
                 Player player = (Player) actor;
                 Location location = player.getLocation();

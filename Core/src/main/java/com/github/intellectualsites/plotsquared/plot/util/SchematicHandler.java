@@ -10,7 +10,7 @@ import com.github.intellectualsites.plotsquared.plot.generator.ClassicPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
@@ -168,13 +168,13 @@ public abstract class SchematicHandler {
                 final int LENGTH = dimension.getZ();
                 final int HEIGHT = dimension.getY();
                 // Validate dimensions
-                RegionWrapper region = plot.getLargestRegion();
-                if (((region.maxX - region.minX + xOffset + 1) < WIDTH) || (
-                    (region.maxZ - region.minZ + zOffset + 1) < LENGTH) || (HEIGHT > 256)) {
+                CuboidRegion region = plot.getLargestRegion();
+                if (((region.getMaximumPoint().getX() - region.getMinimumPoint().getX() + xOffset + 1) < WIDTH) || (
+                    (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + zOffset + 1) < LENGTH) || (HEIGHT > 256)) {
                     PlotSquared.debug("Schematic is too large");
                     PlotSquared.debug(
                         "(" + WIDTH + ',' + LENGTH + ',' + HEIGHT + ") is bigger than (" + (
-                            region.maxX - region.minX) + ',' + (region.maxZ - region.minZ)
+                            region.getMaximumPoint().getX() - region.getMinimumPoint().getX()) + ',' + (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ())
                             + ",256)");
                     TaskManager.runTask(whenDone);
                     return;
@@ -192,16 +192,16 @@ public abstract class SchematicHandler {
                             y_offset_actual = yOffset + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
                         } else {
                             y_offset_actual = yOffset + 1 + MainUtil
-                                .getHeighestBlock(plot.getWorldName(), region.minX + 1,
-                                    region.minZ + 1);
+                                .getHeighestBlock(plot.getWorldName(), region.getMinimumPoint().getX() + 1,
+                                    region.getMinimumPoint().getZ() + 1);
                         }
                     }
                 } else {
                     y_offset_actual = yOffset;
                 }
                 Location pos1 =
-                    new Location(plot.getWorldName(), region.minX + xOffset, y_offset_actual,
-                        region.minZ + zOffset);
+                    new Location(plot.getWorldName(), region.getMinimumPoint().getX() + xOffset, y_offset_actual,
+                        region.getMinimumPoint().getZ() + zOffset);
                 Location pos2 = pos1.clone().add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
                 final int p1x = pos1.getX();
                 final int p1z = pos1.getZ();
@@ -445,7 +445,7 @@ public abstract class SchematicHandler {
         return true;
     }
 
-    public abstract void getCompoundTag(String world, Set<RegionWrapper> regions,
+    public abstract void getCompoundTag(String world, Set<CuboidRegion> regions,
         RunnableVal<CompoundTag> whenDone);
 
     public void getCompoundTag(final Plot plot, final RunnableVal<CompoundTag> whenDone) {

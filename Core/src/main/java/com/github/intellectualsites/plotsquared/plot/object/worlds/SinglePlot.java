@@ -8,18 +8,21 @@ import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class SinglePlot extends Plot {
-    private HashSet<RegionWrapper> regions = Sets.newHashSet(
-        new RegionWrapper(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
-            Integer.MAX_VALUE));
+    private Set<CuboidRegion> regions = Collections.singleton(
+        new CuboidRegion(BlockVector3.at(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE),
+            BlockVector3.at(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE)));
 
     public SinglePlot(PlotArea area, PlotId id, UUID owner) {
         super(area, id, owner);
@@ -66,7 +69,7 @@ public class SinglePlot extends Plot {
         return super.isLoaded();
     }
 
-    @NotNull @Override public HashSet<RegionWrapper> getRegions() {
+    @NotNull @Override public Set<CuboidRegion> getRegions() {
         return regions;
     }
 

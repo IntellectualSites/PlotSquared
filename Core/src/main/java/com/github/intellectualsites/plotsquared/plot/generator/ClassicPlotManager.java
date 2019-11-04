@@ -6,9 +6,9 @@ import com.github.intellectualsites.plotsquared.plot.object.Direction;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 
@@ -59,11 +59,11 @@ public class ClassicPlotManager extends SquarePlotManager {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
         LocalBlockQueue queue = classicPlotWorld.getQueue(false);
         if (plot.isBasePlot()) {
-            for (RegionWrapper region : plot.getRegions()) {
+            for (CuboidRegion region : plot.getRegions()) {
                 Location pos1 =
-                    new Location(classicPlotWorld.worldname, region.minX, classicPlotWorld.PLOT_HEIGHT, region.minZ);
+                    new Location(classicPlotWorld.worldname, region.getMinimumPoint().getX(), classicPlotWorld.PLOT_HEIGHT, region.getMinimumPoint().getZ());
                 Location pos2 =
-                    new Location(classicPlotWorld.worldname, region.maxX, classicPlotWorld.PLOT_HEIGHT, region.maxZ);
+                    new Location(classicPlotWorld.worldname, region.getMaximumPoint().getX(), classicPlotWorld.PLOT_HEIGHT, region.getMaximumPoint().getZ());
                 queue.setCuboid(pos1, pos2, blocks);
             }
         }
@@ -77,9 +77,9 @@ public class ClassicPlotManager extends SquarePlotManager {
         }
         LocalBlockQueue queue = classicPlotWorld.getQueue(false);
         int maxY = getWorldHeight();
-        for (RegionWrapper region : plot.getRegions()) {
-            Location pos1 = new Location(classicPlotWorld.worldname, region.minX, 1, region.minZ);
-            Location pos2 = new Location(classicPlotWorld.worldname, region.maxX, maxY, region.maxZ);
+        for (CuboidRegion region : plot.getRegions()) {
+            Location pos1 = new Location(classicPlotWorld.worldname, region.getMinimumPoint().getX(), 1, region.getMinimumPoint().getZ());
+            Location pos2 = new Location(classicPlotWorld.worldname, region.getMaximumPoint().getX(), maxY, region.getMaximumPoint().getZ());
             queue.setCuboid(pos1, pos2, blocks);
         }
         return queue.enqueue();
@@ -92,10 +92,10 @@ public class ClassicPlotManager extends SquarePlotManager {
         }
         LocalBlockQueue queue = classicPlotWorld.getQueue(false);
         int maxY = getWorldHeight();
-        for (RegionWrapper region : plot.getRegions()) {
+        for (CuboidRegion region : plot.getRegions()) {
             Location pos1 =
-                new Location(classicPlotWorld.worldname, region.minX, classicPlotWorld.PLOT_HEIGHT + 1, region.minZ);
-            Location pos2 = new Location(classicPlotWorld.worldname, region.maxX, maxY, region.maxZ);
+                new Location(classicPlotWorld.worldname, region.getMinimumPoint().getX(), classicPlotWorld.PLOT_HEIGHT + 1, region.getMinimumPoint().getZ());
+            Location pos2 = new Location(classicPlotWorld.worldname, region.getMaximumPoint().getX(), maxY, region.getMaximumPoint().getZ());
             queue.setCuboid(pos1, pos2, blocks);
         }
         return queue.enqueue();
@@ -107,10 +107,10 @@ public class ClassicPlotManager extends SquarePlotManager {
             return false;
         }
         LocalBlockQueue queue = classicPlotWorld.getQueue(false);
-        for (RegionWrapper region : plot.getRegions()) {
-            Location pos1 = new Location(classicPlotWorld.worldname, region.minX, 1, region.minZ);
+        for (CuboidRegion region : plot.getRegions()) {
+            Location pos1 = new Location(classicPlotWorld.worldname, region.getMinimumPoint().getX(), 1, region.getMinimumPoint().getZ());
             Location pos2 =
-                new Location(classicPlotWorld.worldname, region.maxX, classicPlotWorld.PLOT_HEIGHT - 1, region.maxZ);
+                new Location(classicPlotWorld.worldname, region.getMaximumPoint().getX(), classicPlotWorld.PLOT_HEIGHT - 1, region.getMaximumPoint().getZ());
             queue.setCuboid(pos1, pos2, blocks);
         }
         return queue.enqueue();
@@ -173,9 +173,9 @@ public class ClassicPlotManager extends SquarePlotManager {
             }
         }
         if (plot.isBasePlot()) {
-            for (RegionWrapper region : plot.getRegions()) {
-                Location pos1 = new Location(classicPlotWorld.worldname, region.minX, maxY, region.minZ);
-                Location pos2 = new Location(classicPlotWorld.worldname, region.maxX, maxY, region.maxZ);
+            for (CuboidRegion region : plot.getRegions()) {
+                Location pos1 = new Location(classicPlotWorld.worldname, region.getMinimumPoint().getX(), maxY, region.getMinimumPoint().getZ());
+                Location pos2 = new Location(classicPlotWorld.worldname, region.getMaximumPoint().getX(), maxY, region.getMaximumPoint().getZ());
                 queue.setCuboid(pos1, pos2, blocks);
             }
         }

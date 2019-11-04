@@ -10,7 +10,8 @@ import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
@@ -45,11 +46,11 @@ public abstract class HybridUtils {
     public static PlotArea area;
     public static boolean UPDATE = false;
 
-    public abstract void analyzeRegion(String world, RegionWrapper region,
+    public abstract void analyzeRegion(String world, CuboidRegion region,
         RunnableVal<PlotAnalysis> whenDone);
 
     public void analyzePlot(final Plot origin, final RunnableVal<PlotAnalysis> whenDone) {
-        final ArrayDeque<RegionWrapper> zones = new ArrayDeque<>(origin.getRegions());
+        final ArrayDeque<CuboidRegion> zones = new ArrayDeque<>(origin.getRegions());
         final ArrayList<PlotAnalysis> analysis = new ArrayList<>();
         Runnable run = new Runnable() {
             @Override public void run() {
@@ -97,7 +98,7 @@ public abstract class HybridUtils {
                     TaskManager.runTask(whenDone);
                     return;
                 }
-                RegionWrapper region = zones.poll();
+                CuboidRegion region = zones.poll();
                 final Runnable task = this;
                 analyzeRegion(origin.getWorldName(), region, new RunnableVal<PlotAnalysis>() {
                     @Override public void run(PlotAnalysis value) {
@@ -271,10 +272,10 @@ public abstract class HybridUtils {
         int tz = sz - 1;
         int ty = get_ey(plotManager, queue, sx, ex, bz, tz, sy);
 
-        Set<RegionWrapper> sideRoad =
-            new HashSet<>(Collections.singletonList(new RegionWrapper(sx, ex, sy, ey, sz, ez)));
-        final Set<RegionWrapper> intersection =
-            new HashSet<>(Collections.singletonList(new RegionWrapper(sx, ex, sy, ty, bz, tz)));
+        Set<CuboidRegion> sideRoad =
+            new HashSet<>(Collections.singletonList(RegionUtil.createRegion(sx, ex, sy, ey, sz, ez)));
+        final Set<CuboidRegion> intersection =
+            new HashSet<>(Collections.singletonList(RegionUtil.createRegion(sx, ex, sy, ty, bz, tz)));
 
         final String dir =
             "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.getArea()

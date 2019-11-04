@@ -1,4 +1,4 @@
-package com.github.intellectualsites.plotsquared.plot.util.block;
+package com.github.intellectualsites.plotsquared.plot.util.world;
 
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.sk89q.worldedit.WorldEdit;

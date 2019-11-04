@@ -8,7 +8,7 @@ import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
@@ -34,7 +34,7 @@ import java.util.Set;
 
 public class BukkitHybridUtils extends HybridUtils {
 
-    @Override public void analyzeRegion(final String world, final RegionWrapper region,
+    @Override public void analyzeRegion(final String world, final CuboidRegion region,
         final RunnableVal<PlotAnalysis> whenDone) {
         // int diff, int variety, int vertices, int rotation, int height_sd
         /*
@@ -56,8 +56,8 @@ public class BukkitHybridUtils extends HybridUtils {
                 return;
             }
 
-            final Location bot = new Location(world, region.minX, region.minY, region.minZ);
-            final Location top = new Location(world, region.maxX, region.maxY, region.maxZ);
+            final Location bot = new Location(world, region.getMinimumPoint().getX(), region.getMinimumPoint().getY(), region.getMinimumPoint().getZ());
+            final Location top = new Location(world, region.getMaximumPoint().getX(), region.getMaximumPoint().getY(), region.getMaximumPoint().getZ());
 
             final int bx = bot.getX();
             final int bz = bot.getZ();

@@ -27,10 +27,6 @@ public class Location implements Cloneable, Comparable<Location> {
         this.blockVector3 = BlockVector3.at(x, y, z);
     }
 
-    public Location() {
-        this.world = "";
-    }
-
     public Location(String world, int x, int y, int z) {
         this(world, x, y, z, 0f, 0f);
     }

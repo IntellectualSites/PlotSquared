@@ -16,7 +16,9 @@ import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.stream.AbstractDelegateOutputStream;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
@@ -372,6 +374,14 @@ public class MainUtil {
         return plot.getFlag(Flags.SERVER_PLOT).orElse(false);
     }
 
+    @NotNull public static Location[] getCorners(String world, CuboidRegion region) {
+        BlockVector3 min = region.getMinimumPoint();
+        BlockVector3 max = region.getMaximumPoint();
+        Location pos1 = new Location(world, min.getX(), min.getY(), min.getZ());
+        Location pos2 = new Location(world, max.getX(), max.getY(), max.getZ());
+        return new Location[] {pos1, pos2};
+    }
+
     /**
      * Get the corner locations for a list of regions.
      *
@@ -380,11 +390,11 @@ public class MainUtil {
      * @return
      * @see Plot#getCorners()
      */
-    @NotNull public static Location[] getCorners(String world, Collection<RegionWrapper> regions) {
+    @NotNull public static Location[] getCorners(String world, Collection<CuboidRegion> regions) {
         Location min = null;
         Location max = null;
-        for (RegionWrapper region : regions) {
-            Location[] corners = region.getCorners(world);
+        for (CuboidRegion region : regions) {
+            Location[] corners = getCorners(world, region);
             if (min == null) {
                 min = corners[0];
                 max = corners[1];
@@ -558,7 +568,9 @@ public class MainUtil {
      * @param biome
      */
     public static void setBiome(String world, int p1x, int p1z, int p2x, int p2z, String biome) {
-        RegionWrapper region = new RegionWrapper(p1x, p2x, p1z, p2z);
+        BlockVector3 pos1 = BlockVector2.at(p1x, p1z).toBlockVector3();
+        BlockVector3 pos2 = BlockVector2.at(p2x, p2z).toBlockVector3(Plot.MAX_HEIGHT - 1);
+        CuboidRegion region = new CuboidRegion(pos1, pos2);
         WorldUtil.IMP.setBiomes(world, region, biome);
     }
 

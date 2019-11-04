@@ -29,7 +29,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotFilter;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.object.StringWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.DefaultPlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.PlotAreaManager;
@@ -2008,7 +2008,7 @@ import java.util.zip.ZipInputStream;
         return Collections.unmodifiableSet(result);
     }
 
-    public Set<PlotArea> getPlotAreas(final String world, final RegionWrapper region) {
+    public Set<PlotArea> getPlotAreas(final String world, final CuboidRegion region) {
         final PlotArea[] areas = plotAreaManager.getPlotAreas(world, region);
         final Set<PlotArea> set = new HashSet<>();
         Collections.addAll(set, areas);

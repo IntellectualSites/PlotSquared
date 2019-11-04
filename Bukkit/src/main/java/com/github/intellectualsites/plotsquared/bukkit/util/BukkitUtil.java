@@ -6,14 +6,14 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
-import com.github.intellectualsites.plotsquared.plot.util.block.BlockUtil;
+import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.world.block.BlockState;
@@ -428,12 +428,12 @@ import java.util.Set;
     }
 
     @Override
-    public void setBiomes(@NonNull final String worldName, @NonNull final RegionWrapper region,
+    public void setBiomes(@NonNull final String worldName, @NonNull final CuboidRegion region,
         @NonNull final String biomeString) {
         final World world = getWorld(worldName);
         final Biome biome = Biome.valueOf(biomeString.toUpperCase());
-        for (int x = region.minX; x <= region.maxX; x++) {
-            for (int z = region.minZ; z <= region.maxZ; z++) {
+        for (int x = region.getMinimumPoint().getX(); x <= region.getMaximumPoint().getX(); x++) {
+            for (int z = region.getMinimumPoint().getZ(); z <= region.getMaximumPoint().getZ(); z++) {
                 world.setBiome(x, z, biome);
             }
         }

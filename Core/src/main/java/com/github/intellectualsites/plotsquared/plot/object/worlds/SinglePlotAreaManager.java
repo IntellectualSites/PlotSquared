@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.object.worlds;
 
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.util.ArrayUtil;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 
@@ -90,7 +90,7 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
         return isWorld(location.getWorld()) || location.getWorld().equals("*") ? area : null;
     }
 
-    @Override public PlotArea[] getPlotAreas(String world, RegionWrapper region) {
+    @Override public PlotArea[] getPlotAreas(String world, CuboidRegion region) {
         PlotArea[] found = super.getPlotAreas(world, region);
         if (found != null && found.length != 0) {
             return found;

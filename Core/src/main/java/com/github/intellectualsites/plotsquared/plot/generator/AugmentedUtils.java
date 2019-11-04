@@ -4,7 +4,8 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.util.block.DelegateLocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
@@ -33,7 +34,7 @@ public class AugmentedUtils {
 
         final int blockX = chunkX << 4;
         final int blockZ = chunkZ << 4;
-        RegionWrapper region = new RegionWrapper(blockX, blockX + 15, blockZ, blockZ + 15);
+        CuboidRegion region = RegionUtil.createRegion(blockX, blockX + 15, blockZ, blockZ + 15);
         Set<PlotArea> areas = PlotSquared.get().getPlotAreas(world, region);
         if (areas.isEmpty()) {
             return false;
@@ -59,10 +60,10 @@ public class AugmentedUtils {
             int tzz;
             // gen
             if (area.TYPE == 2) {
-                bxx = Math.max(0, area.getRegion().minX - blockX);
-                bzz = Math.max(0, area.getRegion().minZ - blockZ);
-                txx = Math.min(15, area.getRegion().maxX - blockX);
-                tzz = Math.min(15, area.getRegion().maxZ - blockZ);
+                bxx = Math.max(0, area.getRegion().getMinimumPoint().getX() - blockX);
+                bzz = Math.max(0, area.getRegion().getMinimumPoint().getZ() - blockZ);
+                txx = Math.min(15, area.getRegion().getMaximumPoint().getX() - blockX);
+                tzz = Math.min(15, area.getRegion().getMaximumPoint().getZ() - blockZ);
                 primaryMask = new DelegateLocalBlockQueue(queue) {
                     @Override public boolean setBlock(int x, int y, int z, BlockState id) {
                         if (area.contains(x, z)) {

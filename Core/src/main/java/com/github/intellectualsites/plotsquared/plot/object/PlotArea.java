@@ -19,8 +19,12 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.area.QuadMap;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
+import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,7 +83,7 @@ public abstract class PlotArea {
     public int MIN_BUILD_HEIGHT = 1;
     public PlotGameMode GAMEMODE = PlotGameMode.CREATIVE;
     private int hash;
-    private RegionWrapper region;
+    private CuboidRegion region;
     private ConcurrentHashMap<String, Object> meta;
     private QuadMap<PlotCluster> clusters;
 
@@ -128,16 +132,16 @@ public abstract class PlotArea {
     }
 
     /**
-     * Returns the region for this PlotArea or a RegionWrapper encompassing
+     * Returns the region for this PlotArea or a CuboidRegion encompassing
      * the whole world if none exists.
      *
-     * @return RegionWrapper
+     * @return CuboidRegion
      */
-    public RegionWrapper getRegion() {
+    public CuboidRegion getRegion() {
         this.region = getRegionAbs();
         if (this.region == null) {
-            return new RegionWrapper(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
-                Integer.MAX_VALUE);
+            return new CuboidRegion(BlockVector3.at(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE),
+                BlockVector3.at(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE));
         }
         return this.region;
     }
@@ -145,15 +149,16 @@ public abstract class PlotArea {
     /**
      * Returns the region for this PlotArea.
      *
-     * @return RegionWrapper or null if no applicable region
+     * @return CuboidRegion or null if no applicable region
      */
-    private RegionWrapper getRegionAbs() {
+    private CuboidRegion getRegionAbs() {
         if (this.region == null) {
             if (this.min != null) {
                 Location bot = getPlotManager().getPlotBottomLocAbs(this.min);
                 Location top = getPlotManager().getPlotTopLocAbs(this.max);
-                this.region = new RegionWrapper(bot.getX() - 1, top.getX() + 1, bot.getZ() - 1,
-                    top.getZ() + 1);
+                BlockVector3 pos1 = bot.getBlockVector3().subtract(BlockVector3.ONE);
+                BlockVector3 pos2 = top.getBlockVector3().add(BlockVector3.ONE);
+                this.region = new CuboidRegion(pos1, pos2);
             }
         }
         return this.region;
@@ -497,7 +502,7 @@ public abstract class PlotArea {
     }
 
     public boolean contains(final int x, final int z) {
-        return this.TYPE != 2 || getRegionAbs().isIn(x, z);
+        return this.TYPE != 2 || RegionUtil.contains(getRegionAbs(), x, z);
     }
 
     public boolean contains(@NotNull final PlotId id) {
@@ -507,7 +512,7 @@ public abstract class PlotArea {
 
     public boolean contains(@NotNull final Location location) {
         return StringMan.isEqual(location.getWorld(), this.worldname) && (getRegionAbs() == null
-            || this.region.isIn(location.getX(), location.getZ()));
+            || this.region.contains(location.getBlockVector3()));
     }
 
     @NotNull Set<Plot> getPlotsAbs(final UUID uuid) {
@@ -940,9 +945,10 @@ public abstract class PlotArea {
     public void addCluster(@Nullable final PlotCluster plotCluster) {
         if (this.clusters == null) {
             this.clusters = new QuadMap<PlotCluster>(Integer.MAX_VALUE, 0, 0, 62) {
-                @Override public RegionWrapper getRegion(PlotCluster value) {
-                    return new RegionWrapper(value.getP1().x, value.getP2().x, value.getP1().y,
-                        value.getP2().y);
+                @Override public CuboidRegion getRegion(PlotCluster value) {
+                    BlockVector2 pos1 = BlockVector2.at(value.getP1().x, value.getP1().y);
+                    BlockVector2 pos2 = BlockVector2.at(value.getP2().x, value.getP2().y);
+                    return new CuboidRegion(pos1.toBlockVector3(), pos2.toBlockVector3(Plot.MAX_HEIGHT - 1));
                 }
             };
         }

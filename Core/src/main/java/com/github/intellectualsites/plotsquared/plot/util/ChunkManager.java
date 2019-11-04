@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.util;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
@@ -80,7 +80,7 @@ public abstract class ChunkManager {
         return false;
     }
 
-    public static void largeRegionTask(final String world, final RegionWrapper region,
+    public static void largeRegionTask(final String world, final CuboidRegion region,
         final RunnableVal<BlockVector2> task, final Runnable whenDone) {
         TaskManager.runTaskAsync(() -> {
             HashSet<BlockVector2> chunks = new HashSet<>();
@@ -90,16 +90,16 @@ public abstract class ChunkManager {
                 int bz = mcr.getZ() << 9;
                 int tx = bx + 511;
                 int tz = bz + 511;
-                if (bx <= region.maxX && tx >= region.minX && bz <= region.maxZ
-                    && tz >= region.minZ) {
+                if (bx <= region.getMaximumPoint().getX() && tx >= region.getMinimumPoint().getX() && bz <= region.getMaximumPoint().getZ()
+                    && tz >= region.getMinimumPoint().getZ()) {
                     for (int x = bx >> 4; x <= (tx >> 4); x++) {
                         int cbx = x << 4;
                         int ctx = cbx + 15;
-                        if (cbx <= region.maxX && ctx >= region.minX) {
+                        if (cbx <= region.getMaximumPoint().getX() && ctx >= region.getMinimumPoint().getX()) {
                             for (int z = bz >> 4; z <= (tz >> 4); z++) {
                                 int cbz = z << 4;
                                 int ctz = cbz + 15;
-                                if (cbz <= region.maxZ && ctz >= region.minZ) {
+                                if (cbz <= region.getMaximumPoint().getZ() && ctz >= region.getMinimumPoint().getZ()) {
                                     chunks.add(BlockVector2.at(x, z));
                                 }
                             }
@@ -118,16 +118,16 @@ public abstract class ChunkManager {
 
     public static void chunkTask(final Plot plot, final RunnableVal<int[]> task,
         final Runnable whenDone, final int allocate) {
-        final ArrayList<RegionWrapper> regions = new ArrayList<>(plot.getRegions());
+        final ArrayList<CuboidRegion> regions = new ArrayList<>(plot.getRegions());
         Runnable smallTask = new Runnable() {
             @Override public void run() {
                 if (regions.isEmpty()) {
                     TaskManager.runTask(whenDone);
                     return;
                 }
-                RegionWrapper value = regions.remove(0);
-                Location pos1 = new Location(plot.getWorldName(), value.minX, 0, value.minZ);
-                Location pos2 = new Location(plot.getWorldName(), value.maxX, 0, value.maxZ);
+                CuboidRegion value = regions.remove(0);
+                Location pos1 = new Location(plot.getWorldName(), value.getMinimumPoint().getX(), 0, value.getMinimumPoint().getZ());
+                Location pos2 = new Location(plot.getWorldName(), value.getMaximumPoint().getX(), 0, value.getMaximumPoint().getZ());
                 chunkTask(pos1, pos2, task, this, allocate);
             }
         };

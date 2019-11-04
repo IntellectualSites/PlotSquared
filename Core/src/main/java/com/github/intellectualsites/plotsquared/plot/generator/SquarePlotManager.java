@@ -6,13 +6,14 @@ import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * A plot manager with a square grid layout, with square shaped plots.
@@ -28,20 +29,20 @@ public abstract class SquarePlotManager extends GridPlotManager {
 
     @Override
     public boolean clearPlot(final Plot plot, final Runnable whenDone) {
-        final HashSet<RegionWrapper> regions = plot.getRegions();
+        final Set<CuboidRegion> regions = plot.getRegions();
         Runnable run = new Runnable() {
             @Override public void run() {
                 if (regions.isEmpty()) {
                     whenDone.run();
                     return;
                 }
-                Iterator<RegionWrapper> iterator = regions.iterator();
-                RegionWrapper region = iterator.next();
+                Iterator<CuboidRegion> iterator = regions.iterator();
+                CuboidRegion region = iterator.next();
                 iterator.remove();
                 Location pos1 =
-                    new Location(plot.getWorldName(), region.minX, region.minY, region.minZ);
+                    new Location(plot.getWorldName(), region.getMinimumPoint().getX(), region.getMinimumPoint().getY(), region.getMinimumPoint().getZ());
                 Location pos2 =
-                    new Location(plot.getWorldName(), region.maxX, region.maxY, region.maxZ);
+                    new Location(plot.getWorldName(), region.getMaximumPoint().getX(), region.getMaximumPoint().getY(), region.getMaximumPoint().getZ());
                 ChunkManager.manager.regenerateRegion(pos1, pos2, false, this);
             }
         };

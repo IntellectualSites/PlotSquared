@@ -12,7 +12,8 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
 import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
@@ -99,7 +100,7 @@ import java.util.Set;
                                     area.ROAD_WIDTH / 2;
                                 final int offsetX = bx - (area.ROAD_WIDTH == 0 ? 0 : lower);
                                 final int offsetZ = bz - (area.ROAD_WIDTH == 0 ? 0 : lower);
-                                final RegionWrapper region = new RegionWrapper(bx, tx, bz, tz);
+                                final CuboidRegion region = RegionUtil.createRegion(bx, tx, bz, tz);
                                 Set<PlotArea> areas =
                                     PlotSquared.get().getPlotAreas(area.worldname, region);
                                 if (!areas.isEmpty()) {
@@ -460,10 +461,10 @@ import java.util.Set;
                 if (area.TYPE != 2) {
                     center = WorldUtil.IMP.getSpawn(area.worldname);
                 } else {
-                    RegionWrapper region = area.getRegion();
+                    CuboidRegion region = area.getRegion();
                     center =
-                        new Location(area.worldname, region.minX + (region.maxX - region.minX) / 2,
-                            0, region.minZ + (region.maxZ - region.minZ) / 2);
+                        new Location(area.worldname, region.getMinimumPoint().getX() + (region.getMaximumPoint().getX() - region.getMinimumPoint().getX()) / 2,
+                            0, region.getMinimumPoint().getZ() + (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ()) / 2);
                     center.setY(1 + WorldUtil.IMP
                         .getHighestBlock(area.worldname, center.getX(), center.getZ()));
                 }

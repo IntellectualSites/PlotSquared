@@ -7,62 +7,65 @@ import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
 
 import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class WEManager {
 
-    public static boolean maskContains(HashSet<RegionWrapper> mask, int x, int y, int z) {
-        for (RegionWrapper region : mask) {
-            if (region.isIn(x, y, z)) {
+    public static boolean maskContains(Set<CuboidRegion> mask, int x, int y, int z) {
+        for (CuboidRegion region : mask) {
+            if (RegionUtil.contains(region, x, y, z)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static boolean maskContains(HashSet<RegionWrapper> mask, int x, int z) {
-        for (RegionWrapper region : mask) {
-            if (region.isIn(x, z)) {
+    public static boolean maskContains(Set<CuboidRegion> mask, int x, int z) {
+        for (CuboidRegion region : mask) {
+            if (RegionUtil.contains(region, x, z)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static boolean maskContains(HashSet<RegionWrapper> mask, double dx, double dy,
+    public static boolean maskContains(Set<CuboidRegion> mask, double dx, double dy,
         double dz) {
         int x = Math.toIntExact(Math.round(dx >= 0 ? dx - 0.5 : dx + 0.5));
         int y = Math.toIntExact(Math.round(dy - 0.5));
         int z = Math.toIntExact(Math.round(dz >= 0 ? dz - 0.5 : dz + 0.5));
-        for (RegionWrapper region : mask) {
-            if (region.isIn(x, y, z)) {
+        for (CuboidRegion region : mask) {
+            if (RegionUtil.contains(region, x, y, z)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static boolean maskContains(HashSet<RegionWrapper> mask, double dx, double dz) {
+    public static boolean maskContains(Set<CuboidRegion> mask, double dx, double dz) {
         int x = Math.toIntExact(Math.round(dx >= 0 ? dx - 0.5 : dx + 0.5));
         int z = Math.toIntExact(Math.round(dz >= 0 ? dz - 0.5 : dz + 0.5));
-        for (RegionWrapper region : mask) {
-            if (region.isIn(x, z)) {
+        for (CuboidRegion region : mask) {
+            if (RegionUtil.contains(region, x, z)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static HashSet<RegionWrapper> getMask(PlotPlayer player) {
-        HashSet<RegionWrapper> regions = new HashSet<>();
+    public static HashSet<CuboidRegion> getMask(PlotPlayer player) {
+        HashSet<CuboidRegion> regions = new HashSet<>();
         UUID uuid = player.getUUID();
         Location location = player.getLocation();
         String world = location.getWorld();
         if (!PlotSquared.get().hasPlotArea(world)) {
-            regions.add(new RegionWrapper(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
+            regions.add(RegionUtil.createRegion(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
                 Integer.MAX_VALUE));
             return regions;
         }
@@ -78,10 +81,10 @@ public class WEManager {
         if (plot != null && (!Settings.Done.RESTRICT_BUILDING || !Flags.DONE.isSet(plot)) && (
             (allowMember && plot.isAdded(uuid)) || (!allowMember && (plot.isOwner(uuid)) || plot
                 .getTrusted().contains(uuid))) && !(Flags.NO_WORLDEDIT.isTrue(plot))) {
-            for (RegionWrapper region : plot.getRegions()) {
-                RegionWrapper copy =
-                    new RegionWrapper(region.minX, region.maxX, area.MIN_BUILD_HEIGHT,
-                        area.MAX_BUILD_HEIGHT, region.minZ, region.maxZ);
+            for (CuboidRegion region : plot.getRegions()) {
+                BlockVector3 pos1 = region.getMinimumPoint().withY(area.MIN_BUILD_HEIGHT);
+                BlockVector3 pos2 = region.getMaximumPoint().withY(area.MAX_BUILD_HEIGHT);
+                CuboidRegion copy = new CuboidRegion(pos1, pos2);
                 regions.add(copy);
             }
             player.setMeta("WorldEditRegionPlot", plot);
@@ -89,12 +92,12 @@ public class WEManager {
         return regions;
     }
 
-    public static boolean intersects(RegionWrapper region1, RegionWrapper region2) {
-        return region1.intersects(region2);
+    public static boolean intersects(CuboidRegion region1, CuboidRegion region2) {
+        return RegionUtil.intersects(region1, region2);
     }
 
-    public static boolean regionContains(RegionWrapper selection, HashSet<RegionWrapper> mask) {
-        for (RegionWrapper region : mask) {
+    public static boolean regionContains(CuboidRegion selection, HashSet<CuboidRegion> mask) {
+        for (CuboidRegion region : mask) {
             if (intersects(region, selection)) {
                 return true;
             }

@@ -6,7 +6,8 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
@@ -176,18 +177,18 @@ import java.util.Set;
                             }
                             int bx = cbx << 4;
                             int bz = cbz << 4;
-                            RegionWrapper region = new RegionWrapper(bx, bx + 511, bz, bz + 511);
+                            CuboidRegion region = RegionUtil.createRegion(bx, bx + 511, bz, bz + 511);
                             for (Plot plot : PlotSquared.get().getPlots(world)) {
                                 Location bot = plot.getBottomAbs();
                                 Location top = plot.getExtendedTopAbs();
-                                RegionWrapper plotReg =
-                                    new RegionWrapper(bot.getX(), top.getX(), bot.getZ(),
+                                CuboidRegion plotReg =
+                                    RegionUtil.createRegion(bot.getX(), top.getX(), bot.getZ(),
                                         top.getZ());
-                                if (!region.intersects(plotReg)) {
+                                if (!RegionUtil.intersects(region, plotReg)) {
                                     continue;
                                 }
-                                for (int x = plotReg.minX >> 4; x <= plotReg.maxX >> 4; x++) {
-                                    for (int z = plotReg.minZ >> 4; z <= plotReg.maxZ >> 4; z++) {
+                                for (int x = plotReg.getMinimumPoint().getX() >> 4; x <= plotReg.getMaximumPoint().getX() >> 4; x++) {
+                                    for (int z = plotReg.getMinimumPoint().getZ() >> 4; z <= plotReg.getMaximumPoint().getZ() >> 4; z++) {
                                         BlockVector2 loc = BlockVector2.at(x, z);
                                         chunks.remove(loc);
                                     }

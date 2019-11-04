@@ -4,7 +4,7 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
 import com.sk89q.jnbt.CompoundTag;
@@ -66,7 +66,7 @@ public abstract class WorldUtil {
 
     public abstract void setSign(String world, int x, int y, int z, String[] lines);
 
-    public abstract void setBiomes(String world, RegionWrapper region, String biome);
+    public abstract void setBiomes(String world, CuboidRegion region, String biome);
 
     public abstract com.sk89q.worldedit.world.World getWeWorld(String world);
 
