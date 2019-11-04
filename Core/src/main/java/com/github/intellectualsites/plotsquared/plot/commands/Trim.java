@@ -3,7 +3,12 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
@@ -11,6 +16,7 @@ import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
+import com.sk89q.worldedit.math.BlockVector2;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +37,7 @@ import java.util.Set;
     public static ArrayList<Plot> expired = null;
     private static volatile boolean TASK = false;
 
-    public static boolean getBulkRegions(final ArrayList<ChunkLoc> empty, final String world,
+    public static boolean getBulkRegions(final ArrayList<BlockVector2> empty, final String world,
         final Runnable whenDone) {
         if (Trim.TASK) {
             return false;
@@ -71,7 +77,7 @@ import java.util.Set;
                     String[] split = name.split("\\.");
                     int x = Integer.parseInt(split[1]);
                     int z = Integer.parseInt(split[2]);
-                    ChunkLoc loc = new ChunkLoc(x, z);
+                    BlockVector2 loc = BlockVector2.at(x, z);
                     empty.add(loc);
                 } catch (NumberFormatException ignored) {
                     PlotSquared.debug("INVALID MCA: " + name);
@@ -90,7 +96,7 @@ import java.util.Set;
      * @return
      */
     public static boolean getTrimRegions(String world,
-        final RunnableVal2<Set<ChunkLoc>, Set<ChunkLoc>> result) {
+        final RunnableVal2<Set<BlockVector2>, Set<BlockVector2>> result) {
         if (result == null) {
             return false;
         }
@@ -114,7 +120,7 @@ import java.util.Set;
                 int ccz2 = pos2.getZ() >> 9;
                 for (int x = ccx1; x <= ccx2; x++) {
                     for (int z = ccz1; z <= ccz2; z++) {
-                        ChunkLoc loc = new ChunkLoc(x, z);
+                        BlockVector2 loc = BlockVector2.at(x, z);
                         if (result.value1.remove(loc)) {
                             result.value2.add(loc);
                         }
@@ -141,8 +147,8 @@ import java.util.Set;
         }
         Trim.TASK = true;
         final boolean regen = args.length == 2 && Boolean.parseBoolean(args[1]);
-        getTrimRegions(world, new RunnableVal2<Set<ChunkLoc>, Set<ChunkLoc>>() {
-            @Override public void run(Set<ChunkLoc> viable, final Set<ChunkLoc> nonViable) {
+        getTrimRegions(world, new RunnableVal2<Set<BlockVector2>, Set<BlockVector2>>() {
+            @Override public void run(Set<BlockVector2> viable, final Set<BlockVector2> nonViable) {
                 Runnable regenTask;
                 if (regen) {
                     PlotSquared.log("Starting regen task:");
@@ -155,16 +161,16 @@ import java.util.Set;
                                 player.sendMessage("Trim done!");
                                 return;
                             }
-                            Iterator<ChunkLoc> iterator = nonViable.iterator();
-                            ChunkLoc mcr = iterator.next();
+                            Iterator<BlockVector2> iterator = nonViable.iterator();
+                            BlockVector2 mcr = iterator.next();
                             iterator.remove();
-                            int cbx = mcr.x << 5;
-                            int cbz = mcr.z << 5;
+                            int cbx = mcr.getX() << 5;
+                            int cbz = mcr.getZ() << 5;
                             // get all 1024 chunks
-                            HashSet<ChunkLoc> chunks = new HashSet<>();
+                            HashSet<BlockVector2> chunks = new HashSet<>();
                             for (int x = cbx; x < cbx + 32; x++) {
                                 for (int z = cbz; z < cbz + 32; z++) {
-                                    ChunkLoc loc = new ChunkLoc(x, z);
+                                    BlockVector2 loc = BlockVector2.at(x, z);
                                     chunks.add(loc);
                                 }
                             }
@@ -182,16 +188,16 @@ import java.util.Set;
                                 }
                                 for (int x = plotReg.minX >> 4; x <= plotReg.maxX >> 4; x++) {
                                     for (int z = plotReg.minZ >> 4; z <= plotReg.maxZ >> 4; z++) {
-                                        ChunkLoc loc = new ChunkLoc(x, z);
+                                        BlockVector2 loc = BlockVector2.at(x, z);
                                         chunks.remove(loc);
                                     }
                                 }
                             }
                             final LocalBlockQueue queue =
                                 GlobalBlockQueue.IMP.getNewQueue(world, false);
-                            TaskManager.objectTask(chunks, new RunnableVal<ChunkLoc>() {
-                                @Override public void run(ChunkLoc value) {
-                                    queue.regenChunk(value.x, value.z);
+                            TaskManager.objectTask(chunks, new RunnableVal<BlockVector2>() {
+                                @Override public void run(BlockVector2 value) {
+                                    queue.regenChunk(value.getX(), value.getZ());
                                 }
                             }, this);
                         }

@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.sponge.util.block;
 
+import com.sk89q.worldedit.math.BlockVector2;
+
 import com.github.intellectualsites.plotsquared.plot.object.ChunkWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;

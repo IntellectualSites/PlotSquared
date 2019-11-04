@@ -5,7 +5,14 @@ import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.listener.WEExtent;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
+import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
@@ -15,18 +22,26 @@ import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
 import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.block.BaseBlock;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class HybridUtils {
 
     public static HybridUtils manager;
-    public static Set<ChunkLoc> regions;
-    public static Set<ChunkLoc> chunks = new HashSet<>();
+    public static Set<BlockVector2> regions;
+    public static Set<BlockVector2> chunks = new HashSet<>();
     public static PlotArea area;
     public static boolean UPDATE = false;
 
@@ -113,13 +128,13 @@ public abstract class HybridUtils {
         return count;
     }
 
-    public final ArrayList<ChunkLoc> getChunks(ChunkLoc region) {
-        ArrayList<ChunkLoc> chunks = new ArrayList<>();
-        int sx = region.x << 5;
-        int sz = region.z << 5;
+    public final ArrayList<BlockVector2> getChunks(BlockVector2 region) {
+        ArrayList<BlockVector2> chunks = new ArrayList<>();
+        int sx = region.getX() << 5;
+        int sz = region.getZ() << 5;
         for (int x = sx; x < sx + 32; x++) {
             for (int z = sz; z < sz + 32; z++) {
-                chunks.add(new ChunkLoc(x, z));
+                chunks.add(BlockVector2.at(x, z));
             }
         }
         return chunks;
@@ -130,7 +145,7 @@ public abstract class HybridUtils {
             return false;
         }
         HybridUtils.UPDATE = true;
-        Set<ChunkLoc> regions = ChunkManager.manager.getChunkChunks(area.worldname);
+        Set<BlockVector2> regions = ChunkManager.manager.getChunkChunks(area.worldname);
         return scheduleRoadUpdate(area, regions, extend);
     }
 
@@ -139,12 +154,12 @@ public abstract class HybridUtils {
             return false;
         }
         HybridUtils.UPDATE = true;
-        Set<ChunkLoc> regions = new HashSet<>();
-        regions.add(ChunkManager.getChunkChunk(plot.getCenter()));
+        Set<BlockVector2> regions = new HashSet<>();
+        regions.add(ChunkManager.getRegion(plot.getCenter()));
         return scheduleRoadUpdate(plot.getArea(), regions, extend);
     }
 
-    public boolean scheduleRoadUpdate(final PlotArea area, Set<ChunkLoc> regions,
+    public boolean scheduleRoadUpdate(final PlotArea area, Set<BlockVector2> regions,
         final int extend) {
         HybridUtils.regions = regions;
         HybridUtils.area = area;
@@ -153,9 +168,9 @@ public abstract class HybridUtils {
         TaskManager.runTask(new Runnable() {
             @Override public void run() {
                 if (!UPDATE) {
-                    Iterator<ChunkLoc> iter = chunks.iterator();
+                    Iterator<BlockVector2> iter = chunks.iterator();
                     while (iter.hasNext()) {
-                        ChunkLoc chunk = iter.next();
+                        BlockVector2 chunk = iter.next();
                         iter.remove();
                         boolean regenedRoad = regenerateRoad(area, chunk, extend);
                         if (!regenedRoad) {
@@ -183,10 +198,10 @@ public abstract class HybridUtils {
                         try {
                             if (chunks.size() < 1024) {
                                 if (!HybridUtils.regions.isEmpty()) {
-                                    Iterator<ChunkLoc> iterator = HybridUtils.regions.iterator();
-                                    ChunkLoc loc = iterator.next();
+                                    Iterator<BlockVector2> iterator = HybridUtils.regions.iterator();
+                                    BlockVector2 loc = iterator.next();
                                     iterator.remove();
-                                    PlotSquared.debug("Updating .mcr: " + loc.x + ", " + loc.z
+                                    PlotSquared.debug("Updating .mcr: " + loc.getX() + ", " + loc.getZ()
                                         + " (approx 1024 chunks)");
                                     PlotSquared
                                         .debug(" - Remaining: " + HybridUtils.regions.size());
@@ -198,10 +213,10 @@ public abstract class HybridUtils {
                                 TaskManager.IMP.sync(new RunnableVal<Object>() {
                                     @Override public void run(Object value) {
                                         long start = System.currentTimeMillis();
-                                        Iterator<ChunkLoc> iterator = chunks.iterator();
+                                        Iterator<BlockVector2> iterator = chunks.iterator();
                                         while (System.currentTimeMillis() - start < 20 && !chunks
                                             .isEmpty()) {
-                                            final ChunkLoc chunk = iterator.next();
+                                            final BlockVector2 chunk = iterator.next();
                                             iterator.remove();
                                             boolean regenedRoads =
                                                 regenerateRoad(area, chunk, extend);
@@ -214,18 +229,18 @@ public abstract class HybridUtils {
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Iterator<ChunkLoc> iterator = HybridUtils.regions.iterator();
-                            ChunkLoc loc = iterator.next();
+                            Iterator<BlockVector2> iterator = HybridUtils.regions.iterator();
+                            BlockVector2 loc = iterator.next();
                             iterator.remove();
                             PlotSquared.debug(
-                                "[ERROR] Could not update '" + area.worldname + "/region/r." + loc.x
-                                    + "." + loc.z + ".mca' (Corrupt chunk?)");
-                            int sx = loc.x << 5;
-                            int sz = loc.z << 5;
+                                "[ERROR] Could not update '" + area.worldname + "/region/r." + loc.getX()
+                                    + "." + loc.getZ() + ".mca' (Corrupt chunk?)");
+                            int sx = loc.getX() << 5;
+                            int sz = loc.getZ() << 5;
                             for (int x = sx; x < sx + 32; x++) {
                                 for (int z = sz; z < sz + 32; z++) {
                                     ChunkManager.manager
-                                        .unloadChunk(area.worldname, new ChunkLoc(x, z), true);
+                                        .unloadChunk(area.worldname, BlockVector2.at(x, z), true);
                                 }
                             }
                             PlotSquared.debug(" - Potentially skipping 1024 chunks");
@@ -303,9 +318,9 @@ public abstract class HybridUtils {
         return ey;
     }
 
-    public boolean regenerateRoad(final PlotArea area, final ChunkLoc chunk, int extend) {
-        int x = chunk.x << 4;
-        int z = chunk.z << 4;
+    public boolean regenerateRoad(final PlotArea area, final BlockVector2 chunk, int extend) {
+        int x = chunk.getX() << 4;
+        int z = chunk.getZ() << 4;
         int ex = x + 15;
         int ez = z + 15;
         HybridPlotWorld plotWorld = (HybridPlotWorld) area;

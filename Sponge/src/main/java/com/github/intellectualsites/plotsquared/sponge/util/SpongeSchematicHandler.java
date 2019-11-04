@@ -1,17 +1,16 @@
 package com.github.intellectualsites.plotsquared.sponge.util;
 
 import com.github.intellectualsites.plotsquared.jnbt.*;
-import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
+import com.sk89q.worldedit.math.BlockVector2;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.item.inventory.Carrier;
 import org.spongepowered.api.item.inventory.type.CarriedInventory;
 import org.spongepowered.api.world.World;
 
-import java.util.*;
 import java.util.Map.Entry;
 
 public class SpongeSchematicHandler extends SchematicHandler {
@@ -92,10 +91,10 @@ public class SpongeSchematicHandler extends SchematicHandler {
                         int sy = pos1.getY();
                         int ey = pos2.getY();
                         // Generate list of chunks
-                        ArrayList<ChunkLoc> chunks = new ArrayList<>();
+                        ArrayList<BlockVector2> chunks = new ArrayList<>();
                         for (int x = bcx; x <= tcx; x++) {
                             for (int z = bcz; z <= tcz; z++) {
-                                chunks.add(new ChunkLoc(x, z));
+                                chunks.add(BlockVector2.at(x, z));
                             }
                         }
                         World worldObj = SpongeUtil.getWorld(world);
@@ -106,7 +105,7 @@ public class SpongeSchematicHandler extends SchematicHandler {
                                 while (!chunks.isEmpty()
                                     && System.currentTimeMillis() - start < 20) {
                                     // save schematics
-                                    ChunkLoc chunk = chunks.remove(0);
+                                    BlockVector2 chunk = chunks.remove(0);
                                     int X = chunk.x;
                                     int Z = chunk.z;
                                     if (!worldObj.getChunk(X, 0, Z).isPresent() && !worldObj

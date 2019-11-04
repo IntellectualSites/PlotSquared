@@ -14,7 +14,11 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 @CommandDeclaration(command = "like", permission = "plots.like", description = "Like the plot",
     usage = "/plot like [next|purge]", category = CommandCategory.INFO,

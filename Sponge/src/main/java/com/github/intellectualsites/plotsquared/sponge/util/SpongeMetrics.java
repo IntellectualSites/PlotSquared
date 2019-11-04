@@ -1,5 +1,24 @@
 package com.github.intellectualsites.plotsquared.sponge.util;
 
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.google.inject.Inject;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
+import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.spongepowered.api.Game;
+import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.scheduler.Task;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.Proxy;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.zip.GZIPOutputStream;
+
 /*
  * Copyright 2011-2013 Tyler Blair. All rights reserved.
  *
@@ -27,24 +46,6 @@ package com.github.intellectualsites.plotsquared.sponge.util;
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-
-import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.google.inject.Inject;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.spongepowered.api.Game;
-import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.scheduler.Task;
-
-import java.io.*;
-import java.net.Proxy;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-import java.util.zip.GZIPOutputStream;
 
 public class SpongeMetrics {
 

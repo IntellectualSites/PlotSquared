@@ -12,7 +12,16 @@ import com.github.intellectualsites.plotsquared.plot.generator.SquarePlotWorld;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
+import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
@@ -21,6 +30,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.worldedit.math.BlockVector2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,8 +40,18 @@ import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -920,7 +940,7 @@ public class Plot {
                     region.maxZ + extendBiome);
                 ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
                     @Override public void run(int[] value) {
-                        ChunkLoc loc = new ChunkLoc(value[0], value[1]);
+                        BlockVector2 loc = BlockVector2.at(value[0], value[1]);
                         ChunkManager.manager.loadChunk(getWorldName(), loc, false);
                         MainUtil.setBiome(getWorldName(), value[2], value[3], value[4], value[5],
                             biome);
@@ -1251,13 +1271,14 @@ public class Plot {
      */
     public Location getHome() {
         BlockLoc home = this.getPosition();
-        if (home == null || home.x == 0 && home.z == 0) {
+        if (home == null || home.getX() == 0 && home.getZ() == 0) {
             return this.getDefaultHome(true);
         } else {
             Location bottom = this.getBottomAbs();
             Location location =
-                new Location(bottom.getWorld(), bottom.getX() + home.x, bottom.getY() + home.y,
-                    bottom.getZ() + home.z, home.yaw, home.pitch);
+                new Location(bottom.getWorld(), bottom.getX() + home.getX(), bottom.getY() + home
+                    .getY(),
+                    bottom.getZ() + home.getZ(), home.getYaw(), home.getPitch());
             if (!isLoaded()) {
                 return location;
             }
@@ -1413,11 +1434,11 @@ public class Plot {
      */
     public void refreshChunks() {
         LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(getWorldName(), false);
-        HashSet<ChunkLoc> chunks = new HashSet<>();
+        HashSet<BlockVector2> chunks = new HashSet<>();
         for (RegionWrapper region : Plot.this.getRegions()) {
             for (int x = region.minX >> 4; x <= region.maxX >> 4; x++) {
                 for (int z = region.minZ >> 4; z <= region.maxZ >> 4; z++) {
-                    if (chunks.add(new ChunkLoc(x, z))) {
+                    if (chunks.add(BlockVector2.at(x, z))) {
                         queue.refreshChunk(x, z);
                     }
                 }
@@ -2142,7 +2163,7 @@ public class Plot {
             String[] lines = TaskManager.IMP.sync(new RunnableVal<String[]>() {
                 @Override public void run(String[] value) {
                     ChunkManager.manager
-                        .loadChunk(location.getWorld(), location.getChunkLoc(), false);
+                        .loadChunk(location.getWorld(), location.getBlockVector2(), false);
                     this.value = WorldUtil.IMP.getSign(location);
                 }
             });

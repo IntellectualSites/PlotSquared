@@ -1,8 +1,7 @@
 package com.github.intellectualsites.plotsquared.nukkit.util;
 
-
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.object.ChunkLoc;
+import com.github.intellectualsites.plotsquared.plot.object.BlockVector2;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
@@ -16,11 +15,11 @@ public class NukkitChunkManager extends ChunkManager {
         return new int[0];
     }
 
-    @Override public boolean loadChunk(String world, ChunkLoc loc, boolean force) {
+    @Override public boolean loadChunk(String world, BlockVector2 loc, boolean force) {
         return true;
     }
 
-    @Override public void unloadChunk(String world, ChunkLoc loc, boolean save, boolean safe) {
+    @Override public void unloadChunk(String world, BlockVector2 loc, boolean save, boolean safe) {
 
     }
 

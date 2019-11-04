@@ -1,7 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
-import com.github.intellectualsites.plotsquared.plot.object.ChunkLoc;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -10,6 +9,7 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.block.BaseBlock;
 
 import java.util.Map;
@@ -83,11 +83,11 @@ public abstract class LocalBlockQueue {
     public final void regenChunkSafe(int x, int z) {
         regenChunk(x, z);
         fixChunkLighting(x, z);
-        ChunkLoc loc = new ChunkLoc(x, z);
+        BlockVector2 loc = BlockVector2.at(x, z);
         for (Map.Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
             PlotPlayer pp = entry.getValue();
             Location pLoc = pp.getLocation();
-            if (!StringMan.isEqual(getWorld(), pLoc.getWorld()) || !pLoc.getChunkLoc()
+            if (!StringMan.isEqual(getWorld(), pLoc.getWorld()) || !pLoc.getBlockVector2()
                 .equals(loc)) {
                 continue;
             }

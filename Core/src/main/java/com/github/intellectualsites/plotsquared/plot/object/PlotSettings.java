@@ -104,7 +104,7 @@ public class PlotSettings {
     }
 
     public void setPosition(BlockLoc position) {
-        if (position != null && position.x == 0 && position.y == 0 && position.z == 0) {
+        if (position != null && position.getX() == 0 && position.getY() == 0 && position.getZ() == 0) {
             position = null;
         }
         this.position = position;

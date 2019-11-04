@@ -2,12 +2,12 @@ package com.github.intellectualsites.plotsquared.plot.object;
 
 public class BlockLoc {
 
-    public final int x;
-    public final int y;
-    public final int z;
+    private final int x;
+    private final int y;
+    private final int z;
 
-    public final float yaw;
-    public final float pitch;
+    private final float yaw;
+    private final float pitch;
 
     public BlockLoc(int x, int y, int z, float yaw, float pitch) {
         this.x = x;
@@ -27,10 +27,6 @@ public class BlockLoc {
 
         float yaw;
         float pitch;
-        if (parts.length == 3) {
-            yaw = 0f;
-            pitch = 0f;
-        }
         if (parts.length == 5) {
             yaw = Float.parseFloat(parts[3]);
             pitch = Float.parseFloat(parts[4]);
@@ -47,9 +43,9 @@ public class BlockLoc {
     @Override public int hashCode() {
         int prime = 31;
         int result = 1;
-        result = prime * result + this.x;
-        result = prime * result + this.y;
-        result = prime * result + this.z;
+        result = prime * result + this.getX();
+        result = prime * result + this.getY();
+        result = prime * result + this.getZ();
         return result;
     }
 
@@ -58,20 +54,42 @@ public class BlockLoc {
             return true;
         }
         if (obj == null) {
-            return this.x == 0 && this.y == 0 && this.z == 0;
+            return this.getX() == 0 && this.getY() == 0 && this.getZ() == 0;
         }
         if (getClass() != obj.getClass()) {
             return false;
         }
         BlockLoc other = (BlockLoc) obj;
-        return this.x == other.x && this.y == other.y && this.z == other.z;
+        return this.getX() == other.getX() && this.getY() == other.getY() && this.getZ() == other
+            .getZ();
     }
 
     @Override public String toString() {
-        if (this.x == 0 && this.y == 0 && this.z == 0) {
+        if (this.getX() == 0 && this.getY() == 0 && this.getZ() == 0) {
             return "";
         }
-        return this.x + "," + this.y + ',' + this.z + ',' + this.yaw + ',' + this.pitch;
+        return this.getX() + "," + this.getY() + ',' + this.getZ() + ',' + this.getYaw()
+            + ',' + this.getPitch();
 
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getZ() {
+        return z;
+    }
+
+    public float getYaw() {
+        return yaw;
+    }
+
+    public float getPitch() {
+        return pitch;
     }
 }

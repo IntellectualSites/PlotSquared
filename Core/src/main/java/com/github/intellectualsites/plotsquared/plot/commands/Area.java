@@ -7,8 +7,24 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.generator.AugmentedUtils;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotWorld;
-import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
+import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
+import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
+import com.github.intellectualsites.plotsquared.plot.util.CmdConfirm;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+import com.sk89q.worldedit.math.BlockVector2;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -120,10 +136,10 @@ import java.util.Set;
                                         player.teleport(WorldUtil.IMP.getSpawn(world));
                                         if (area.TERRAIN != 3) {
                                             ChunkManager.largeRegionTask(world, region,
-                                                new RunnableVal<ChunkLoc>() {
-                                                    @Override public void run(ChunkLoc value) {
+                                                new RunnableVal<BlockVector2>() {
+                                                    @Override public void run(BlockVector2 value) {
                                                         AugmentedUtils
-                                                            .generate(world, value.x, value.z,
+                                                            .generate(world, value.getX(), value.getZ(),
                                                                 null);
                                                     }
                                                 }, null);
@@ -415,9 +431,9 @@ import java.util.Set;
                     return false;
                 }
                 ChunkManager
-                    .largeRegionTask(area.worldname, area.getRegion(), new RunnableVal<ChunkLoc>() {
-                        @Override public void run(ChunkLoc value) {
-                            AugmentedUtils.generate(area.worldname, value.x, value.z, null);
+                    .largeRegionTask(area.worldname, area.getRegion(), new RunnableVal<BlockVector2>() {
+                        @Override public void run(BlockVector2 value) {
+                            AugmentedUtils.generate(area.worldname, value.getX(), value.getZ(), null);
                         }
                     }, () -> player.sendMessage("Regen complete"));
                 return true;

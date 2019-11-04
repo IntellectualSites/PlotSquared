@@ -7,8 +7,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 /**
@@ -554,7 +561,9 @@ public class JSONObject {
                 return new JSONObject((Map<String, Object>) object);
             }
             Package objectPackage = object.getClass().getPackage();
+
             String objectPackageName = objectPackage != null ? objectPackage.getName() : "";
+
             if (objectPackageName.startsWith("java.") || objectPackageName.startsWith("javax.") || (
                 object.getClass().getClassLoader() == null)) {
                 return object.toString();

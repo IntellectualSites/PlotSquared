@@ -126,7 +126,7 @@ public class PlotCluster {
     public Location getHome() {
         BlockLoc home = this.settings.getPosition();
         Location toReturn;
-        if (home.y == 0) {
+        if (home.getY() == 0) {
             // default pos
             Plot center = getCenterPlot();
             toReturn = center.getHome();
@@ -136,7 +136,7 @@ public class PlotCluster {
                 toReturn.setY(location.getY());
             }
         } else {
-            toReturn = getClusterBottom().add(home.x, home.y, home.z);
+            toReturn = getClusterBottom().add(home.getX(), home.getY(), home.getZ());
         }
         int max = MainUtil.getHeighestBlock(this.area.worldname, toReturn.getX(), toReturn.getZ());
         if (max > toReturn.getY()) {

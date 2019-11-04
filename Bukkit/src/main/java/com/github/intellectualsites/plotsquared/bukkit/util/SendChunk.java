@@ -2,7 +2,6 @@ package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.object.ChunkLoc;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -12,6 +11,7 @@ import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.RefFie
 import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.RefMethod;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.sk89q.worldedit.math.BlockVector2;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -129,12 +129,12 @@ public class SendChunk {
         }
     }
 
-    public void sendChunk(String worldName, Collection<ChunkLoc> chunkLocations) {
+    public void sendChunk(String worldName, Collection<BlockVector2> chunkLocations) {
         World myWorld = Bukkit.getWorld(worldName);
         ArrayList<Chunk> chunks = new ArrayList<>();
-        for (ChunkLoc loc : chunkLocations) {
-            if (myWorld.isChunkLoaded(loc.x, loc.z)) {
-                PaperLib.getChunkAtAsync(myWorld, loc.x, loc.z).thenAccept(chunks::add);
+        for (BlockVector2 loc : chunkLocations) {
+            if (myWorld.isChunkLoaded(loc.getX(), loc.getZ())) {
+                PaperLib.getChunkAtAsync(myWorld, loc.getX(), loc.getZ()).thenAccept(chunks::add);
             }
         }
         sendChunk(chunks);

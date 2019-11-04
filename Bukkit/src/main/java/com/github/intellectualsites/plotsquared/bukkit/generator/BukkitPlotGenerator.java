@@ -5,13 +5,13 @@ import com.github.intellectualsites.plotsquared.bukkit.util.block.GenChunk;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
-import com.github.intellectualsites.plotsquared.plot.object.ChunkLoc;
 import com.github.intellectualsites.plotsquared.plot.object.ChunkWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SingleWorldGenerator;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
+import com.sk89q.worldedit.math.BlockVector2;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
@@ -145,7 +145,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
             if (this.platformGenerator != this) {
                 return this.platformGenerator.generateChunkData(world, random, x, z, biome);
             } else {
-                generate(new ChunkLoc(x, z), world, result);
+                generate(BlockVector2.at(x, z), world, result);
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -154,7 +154,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return result.getChunkData();
     }
 
-    private void generate(ChunkLoc loc, World world, ScopedLocalBlockQueue result) {
+    private void generate(BlockVector2 loc, World world, ScopedLocalBlockQueue result) {
         // Load if improperly loaded
         if (!this.loaded) {
             String name = world.getName();

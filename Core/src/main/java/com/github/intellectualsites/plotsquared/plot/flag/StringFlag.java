@@ -1,6 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
-
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 
 public class StringFlag extends Flag<String> {

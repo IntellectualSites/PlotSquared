@@ -4,12 +4,19 @@ import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.StringWrapper;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.google.common.collect.BiMap;
+import com.sk89q.worldedit.math.BlockVector2;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -55,7 +62,7 @@ public class DebugClaimTest extends SubCommand {
                 continue;
             }
             Location location = manager.getSignLoc(plot);
-            ChunkLoc chunk = new ChunkLoc(location.getX() >> 4, location.getZ() >> 4);
+            BlockVector2 chunk = BlockVector2.at(location.getX() >> 4, location.getZ() >> 4);
             ChunkManager.manager.loadChunk(area.worldname, chunk, false).thenRun(() -> {
                 String[] lines = WorldUtil.IMP.getSign(location);
                 if (lines != null) {

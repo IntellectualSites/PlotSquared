@@ -19,7 +19,6 @@ import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.io.IOException;
-import java.util.*;
 import java.util.Map.Entry;
 
 public class SpongeSetupUtils extends SetupUtils {

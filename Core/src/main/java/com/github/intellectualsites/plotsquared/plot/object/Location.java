@@ -2,6 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import lombok.Getter;
 import lombok.Setter;
@@ -127,8 +128,8 @@ public class Location implements Cloneable, Comparable<Location> {
         }
     }
 
-    public ChunkLoc getChunkLoc() {
-        return new ChunkLoc(this.x >> 4, this.z >> 4);
+    public BlockVector2 getBlockVector2() {
+        return BlockVector2.at(this.x >> 4, this.z >> 4);
     }
 
     public Location add(int x, int y, int z) {
