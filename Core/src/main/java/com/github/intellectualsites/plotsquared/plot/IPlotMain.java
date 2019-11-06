@@ -88,12 +88,8 @@ public interface IPlotMain extends ILogger {
 
     /**
      * Gets the NMS package prefix.
-
-import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
      *
      * @return The NMS package prefix
-
-import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
      */
     String getNMSPackage();
 
