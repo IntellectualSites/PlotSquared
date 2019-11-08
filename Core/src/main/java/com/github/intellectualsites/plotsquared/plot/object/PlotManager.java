@@ -90,6 +90,21 @@ public abstract class PlotManager {
         return 255;
     }
 
-    public abstract boolean regenerateAllPlotWalls();
+    /**
+     * Sets all the blocks along all the plot walls to their correct state (claimed or unclaimed).
+     *
+     * @return true if the wall blocks were successfully set
+     */
+    public boolean regenerateAllPlotWalls() {
+        boolean success = true;
+        for (Plot plot : plotArea.getPlots()) {
+            if (plot.hasOwner()) {
+                success &= claimPlot(plot);
+            } else {
+                success &= unClaimPlot(plot, null);
+            }
+        }
+        return success;
+    }
 
 }

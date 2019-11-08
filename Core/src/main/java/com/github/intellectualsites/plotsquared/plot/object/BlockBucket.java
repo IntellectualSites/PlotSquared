@@ -25,7 +25,7 @@ import java.util.Random;
  * A block bucket is a container of block types, where each block
  * has a specified chance of being randomly picked
  */
-@EqualsAndHashCode @SuppressWarnings({"unused", "WeakerAccess"}) public final class BlockBucket
+@EqualsAndHashCode(of={"blocks"}) @SuppressWarnings({"unused", "WeakerAccess"}) public final class BlockBucket
     implements Iterable<BlockState>, ConfigurationSerializable {
 
     private final Random random = new Random();
@@ -194,13 +194,17 @@ import java.util.Random;
         return builder.toString();
     }
 
+    public boolean isAir() {
+        compile();
+        return blocks.isEmpty() || (single != null && single.getBlockType().getMaterial().isAir());
+    }
+
     @Override public Map<String, Object> serialize() {
         if (!isCompiled()) {
             compile();
         }
         return ImmutableMap.of("blocks", this.toString());
     }
-
 
     @Getter @EqualsAndHashCode @RequiredArgsConstructor private final static class Range {
 

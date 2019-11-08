@@ -51,7 +51,9 @@ public class ClassicPlotManager extends SquarePlotManager {
 
     @Override public boolean unClaimPlot(Plot plot, Runnable whenDone) {
         setWallFilling(plot.getId(), classicPlotWorld.WALL_FILLING);
-        setWall(plot.getId(), classicPlotWorld.WALL_BLOCK);
+        if (!classicPlotWorld.WALL_BLOCK.isAir() || !classicPlotWorld.WALL_BLOCK.equals(classicPlotWorld.CLAIMED_WALL_BLOCK)) {
+            setWall(plot.getId(), classicPlotWorld.WALL_BLOCK);
+        }
         return GlobalBlockQueue.IMP.addEmptyTask(whenDone);
     }
 
@@ -409,44 +411,29 @@ public class ClassicPlotManager extends SquarePlotManager {
      * @return false if part of the merge failed, otherwise true if successful.
      */
     @Override public boolean finishPlotMerge(List<PlotId> plotIds) {
-        final BlockBucket block = classicPlotWorld.CLAIMED_WALL_BLOCK;
-        boolean success = true;
-        for (PlotId plotId : plotIds) {
-            success &= setWall(plotId, block);
+        final BlockBucket claim = classicPlotWorld.CLAIMED_WALL_BLOCK;
+        if (!claim.isAir() || !claim.equals(classicPlotWorld.WALL_BLOCK)) {
+            for (PlotId plotId : plotIds) {
+                setWall(plotId, claim);
+            }
         }
         if (Settings.General.MERGE_REPLACE_WALL) {
             final BlockBucket wallBlock = classicPlotWorld.WALL_FILLING;
             for (PlotId id : plotIds) {
-                success &= setWallFilling(id, wallBlock);
+                setWallFilling(id, wallBlock);
             }
         }
-        return success;
+        return true;
     }
 
     @Override public boolean finishPlotUnlink(List<PlotId> plotIds) {
-        final BlockBucket block = classicPlotWorld.CLAIMED_WALL_BLOCK;
-        boolean success = true;
-        for (PlotId id : plotIds) {
-            success &= setWall(id, block);
-        }
-        return success;
-    }
-
-    /**
-     * Sets all the blocks along all the plot walls to their correct state (claimed or unclaimed).
-     *
-     * @return true if the wall blocks were successfully set
-     */
-    @Override public boolean regenerateAllPlotWalls() {
-        boolean success = true;
-        for (Plot plot : classicPlotWorld.getPlots()) {
-            if (plot.hasOwner()) {
-                success &= setWall(plot.getId(), classicPlotWorld.CLAIMED_WALL_BLOCK);
-            } else {
-                success &= setWall(plot.getId(), classicPlotWorld.WALL_BLOCK);
+        final BlockBucket claim = classicPlotWorld.CLAIMED_WALL_BLOCK;
+        if (!claim.isAir() || !claim.equals(classicPlotWorld.WALL_BLOCK)) {
+            for (PlotId id : plotIds) {
+                setWall(id, claim);
             }
         }
-        return success;
+        return true; // return false if unlink has been denied
     }
 
     @Override public boolean startPlotMerge(List<PlotId> plotIds) {
@@ -459,7 +446,10 @@ public class ClassicPlotManager extends SquarePlotManager {
 
     @Override public boolean claimPlot(Plot plot) {
         final BlockBucket claim = classicPlotWorld.CLAIMED_WALL_BLOCK;
-        return setWall(plot.getId(), claim);
+        if (!claim.isAir() || !claim.equals(classicPlotWorld.WALL_BLOCK)) {
+            return setWall(plot.getId(), claim);
+        }
+        return true;
     }
 
     @Override public String[] getPlotComponents(PlotId plotId) {
