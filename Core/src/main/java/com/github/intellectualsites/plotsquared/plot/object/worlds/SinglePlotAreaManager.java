@@ -44,7 +44,7 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
                     }
                 case 1:
                     if ((c <= '/') || (c >= ':')) {
-                        if (c == ';' || c == ',') {
+                        if (c == '.') {
                             mode = 2;
                             continue;
                         }

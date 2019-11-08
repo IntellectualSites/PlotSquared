@@ -47,7 +47,7 @@ public class SinglePlotArea extends GridPlotWorld {
     }
 
     public void loadWorld(final PlotId id) {
-        String worldName = id.toCommaSeparatedString();
+        String worldName = id.getX() + "." + id.getY();
         if (WorldUtil.IMP.isWorld(worldName)) {
             return;
         }
@@ -59,12 +59,19 @@ public class SinglePlotArea extends GridPlotWorld {
         setup.step = new ConfigurationNode[0];
         setup.world = worldName;
 
+        File container = PlotSquared.imp().getWorldContainer();
+        File destination = new File(container, worldName);
+
+        {// convert old
+            File oldFile = new File(container, id.toCommaSeparatedString());
+            if (oldFile.exists()) {
+                oldFile.renameTo(destination);
+            }
+        }
         // Duplicate 0;0
         if (setup.type != 0) {
-            File container = PlotSquared.imp().getWorldContainer();
-            File destination = new File(container, worldName);
             if (!destination.exists()) {
-                File src = new File(container, "0,0");
+                File src = new File(container, "0.0");
                 if (src.exists()) {
                     if (!destination.exists()) {
                         destination.mkdirs();
@@ -93,7 +100,7 @@ public class SinglePlotArea extends GridPlotWorld {
 
         TaskManager.IMP.sync(new RunnableVal<Object>() {
             @Override public void run(Object value) {
-                String worldName = id.toCommaSeparatedString();
+                String worldName = id.getX() + "." + id.getY();
                 if (WorldUtil.IMP.isWorld(worldName)) {
                     return;
                 }

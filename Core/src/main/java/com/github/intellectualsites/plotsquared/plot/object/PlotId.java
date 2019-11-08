@@ -25,6 +25,14 @@ public class PlotId {
         this.y = y;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
     /**
      * Get a Plot Id based on a string
      *
@@ -40,7 +48,7 @@ public class PlotId {
     }
 
     @Nullable public static PlotId fromStringOrNull(@NotNull String string) {
-        String[] parts = string.split("[;|,]");
+        String[] parts = string.split("[;,.]");
         if (parts.length < 2) {
             return null;
         }

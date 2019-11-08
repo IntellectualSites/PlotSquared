@@ -44,7 +44,7 @@ public class SinglePlot extends Plot {
     }
 
     @Override public String getWorldName() {
-        return getId().toCommaSeparatedString();
+        return getId().getX() + "." + getId().getY();
     }
 
     @Override public SinglePlotArea getArea() {
