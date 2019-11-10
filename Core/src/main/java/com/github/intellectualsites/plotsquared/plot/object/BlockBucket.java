@@ -4,6 +4,12 @@ import com.github.intellectualsites.plotsquared.configuration.serialization.Conf
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.object.collection.RandomCollection;
 import com.google.common.collect.ImmutableMap;
+import com.sk89q.worldedit.extent.NullExtent;
+import com.sk89q.worldedit.function.mask.BlockMask;
+import com.sk89q.worldedit.function.pattern.BlockPattern;
+import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.function.pattern.RandomPattern;
+import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import lombok.EqualsAndHashCode;
@@ -17,9 +23,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * A block bucket is a container of block types, where each block
@@ -37,6 +45,8 @@ import java.util.Random;
 
     private RandomCollection<BlockState> randomBlocks;
     private BlockState single;
+    private Pattern pattern;
+    private BlockMask mask;
 
     public BlockBucket() {
         this.blocks = new HashMap<>();
@@ -84,9 +94,7 @@ import java.util.Random;
      * be found in the bucket
      */
     public Collection<BlockState> getBlocks() {
-        if (!isCompiled()) {
-            this.compile();
-        }
+        this.compile();
         return Collections.unmodifiableCollection(this.blocks.keySet());
     }
 
@@ -126,20 +134,31 @@ import java.util.Random;
         if (isCompiled()) {
             return;
         }
-
         this.compiled = true;
         switch (blocks.size()) {
             case 0:
                 single = null;
                 this.randomBlocks = null;
+                this.pattern = null;
+                this.mask = new BlockMask(new NullExtent());
                 break;
             case 1:
                 single = blocks.keySet().iterator().next();
                 this.randomBlocks = null;
+                this.pattern = new BlockPattern(single);
+                this.mask = new BlockMask(new NullExtent(), single.toBaseBlock());
                 break;
             default:
                 single = null;
                 this.randomBlocks = RandomCollection.of(blocks, random);
+                RandomPattern randomPattern = new RandomPattern();
+                for (Entry<BlockState, Double> entry : this.blocks.entrySet()) {
+                    randomPattern.add(new BlockPattern(entry.getKey()), entry.getValue());
+                }
+                this.pattern = randomPattern;
+                List<BaseBlock> baseBlocks = getBlocks().stream().map(BlockState::toBaseBlock)
+                        .collect(Collectors.toList());
+                this.mask = new BlockMask(new NullExtent(), baseBlocks);
                 break;
         }
     }
@@ -168,6 +187,16 @@ import java.util.Random;
             return randomBlocks.next();
         }
         return BlockTypes.AIR.getDefaultState();
+    }
+
+    public Pattern getPattern() {
+        this.compile();
+        return this.pattern;
+    }
+
+    public BlockMask getMask() {
+        this.compile();
+        return this.mask;
     }
 
     @Override public String toString() {

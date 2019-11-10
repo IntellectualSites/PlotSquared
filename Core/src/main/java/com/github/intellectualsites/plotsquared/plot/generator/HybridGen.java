@@ -2,14 +2,13 @@ package com.github.intellectualsites.plotsquared.plot.generator;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockTypes;
 
 public class HybridGen extends IndependentPlotGenerator {
 
@@ -35,37 +34,6 @@ public class HybridGen extends IndependentPlotGenerator {
         }
     }
 
-    @Override public BlockBucket[][] generateBlockBucketChunk(PlotArea settings) {
-        BlockBucket[][] blockBuckets = new BlockBucket[16][];
-        HybridPlotWorld hpw = (HybridPlotWorld) settings;
-        // Bedrock
-        if (hpw.PLOT_BEDROCK) {
-            for (short x = 0; x < 16; x++) {
-                for (short z = 0; z < 16; z++) {
-                    blockBuckets[0][(z << 4) | x] =
-                        BlockBucket.withSingle(BlockUtil.get("bedrock"));
-                }
-            }
-        }
-        for (short x = 0; x < 16; x++) {
-            for (short z = 0; z < 16; z++) {
-                for (int y = 1; y < hpw.PLOT_HEIGHT; y++) {
-                    int layer = y >> 4;
-                    if (blockBuckets[layer] == null) {
-                        blockBuckets[layer] = new BlockBucket[4096];
-                    }
-                    blockBuckets[layer][((y & 0xF) << 8) | (z << 4) | x] = hpw.MAIN_BLOCK;
-                }
-                int layer = hpw.PLOT_HEIGHT >> 4;
-                if (blockBuckets[layer] == null) {
-                    blockBuckets[layer] = new BlockBucket[4096];
-                }
-                blockBuckets[layer][((hpw.PLOT_HEIGHT & 0xF) << 8) | (z << 4) | x] = hpw.MAIN_BLOCK;
-            }
-        }
-        return blockBuckets;
-    }
-
     @Override public void generateChunk(ScopedLocalBlockQueue result, PlotArea settings) {
         HybridPlotWorld hpw = (HybridPlotWorld) settings;
         // Biome
@@ -74,7 +42,7 @@ public class HybridGen extends IndependentPlotGenerator {
         if (hpw.PLOT_BEDROCK) {
             for (short x = 0; x < 16; x++) {
                 for (short z = 0; z < 16; z++) {
-                    result.setBlock(x, 0, z, BlockUtil.get("bedrock"));
+                    result.setBlock(x, 0, z, BlockTypes.BEDROCK.getDefaultState());
                 }
             }
         }
@@ -128,7 +96,7 @@ public class HybridGen extends IndependentPlotGenerator {
                 for (short z = 0; z < 16; z++) {
                     // Road
                     for (int y = 1; y <= hpw.ROAD_HEIGHT; y++) {
-                        result.setBlock(x, y, z, hpw.ROAD_BLOCK.getBlock());
+                        result.setBlock(x, y, z, hpw.ROAD_BLOCK);
                     }
                     if (hpw.ROAD_SCHEMATIC_ENABLED) {
                         placeSchem(hpw, result, rx[x], rz[z], x, z, true);
@@ -139,7 +107,7 @@ public class HybridGen extends IndependentPlotGenerator {
                     if (gz[z]) {
                         // road
                         for (int y = 1; y <= hpw.ROAD_HEIGHT; y++) {
-                            result.setBlock(x, y, z, hpw.ROAD_BLOCK.getBlock());
+                            result.setBlock(x, y, z, hpw.ROAD_BLOCK);
                         }
                         if (hpw.ROAD_SCHEMATIC_ENABLED) {
                             placeSchem(hpw, result, rx[x], rz[z], x, z, true);
@@ -147,10 +115,10 @@ public class HybridGen extends IndependentPlotGenerator {
                     } else {
                         // wall
                         for (int y = 1; y <= hpw.WALL_HEIGHT; y++) {
-                            result.setBlock(x, y, z, hpw.WALL_FILLING.getBlock());
+                            result.setBlock(x, y, z, hpw.WALL_FILLING);
                         }
                         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
-                            result.setBlock(x, hpw.WALL_HEIGHT + 1, z, hpw.WALL_BLOCK.getBlock());
+                            result.setBlock(x, hpw.WALL_HEIGHT + 1, z, hpw.WALL_BLOCK);
                         } else {
                             placeSchem(hpw, result, rx[x], rz[z], x, z, true);
                         }
@@ -161,7 +129,7 @@ public class HybridGen extends IndependentPlotGenerator {
                     if (gz[z]) {
                         // road
                         for (int y = 1; y <= hpw.ROAD_HEIGHT; y++) {
-                            result.setBlock(x, y, z, hpw.ROAD_BLOCK.getBlock());
+                            result.setBlock(x, y, z, hpw.ROAD_BLOCK);
                         }
                         if (hpw.ROAD_SCHEMATIC_ENABLED) {
                             placeSchem(hpw, result, rx[x], rz[z], x, z, true);
@@ -169,19 +137,19 @@ public class HybridGen extends IndependentPlotGenerator {
                     } else if (wz[z]) {
                         // wall
                         for (int y = 1; y <= hpw.WALL_HEIGHT; y++) {
-                            result.setBlock(x, y, z, hpw.WALL_FILLING.getBlock());
+                            result.setBlock(x, y, z, hpw.WALL_FILLING);
                         }
                         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
-                            result.setBlock(x, hpw.WALL_HEIGHT + 1, z, hpw.WALL_BLOCK.getBlock());
+                            result.setBlock(x, hpw.WALL_HEIGHT + 1, z, hpw.WALL_BLOCK);
                         } else {
                             placeSchem(hpw, result, rx[x], rz[z], x, z, true);
                         }
                     } else {
                         // plot
                         for (int y = 1; y < hpw.PLOT_HEIGHT; y++) {
-                            result.setBlock(x, y, z, hpw.MAIN_BLOCK.getBlock());
+                            result.setBlock(x, y, z, hpw.MAIN_BLOCK);
                         }
-                        result.setBlock(x, hpw.PLOT_HEIGHT, z, hpw.TOP_BLOCK.getBlock());
+                        result.setBlock(x, hpw.PLOT_HEIGHT, z, hpw.TOP_BLOCK);
                         if (hpw.PLOT_SCHEMATIC) {
                             placeSchem(hpw, result, rx[x], rz[z], x, z, false);
                         }

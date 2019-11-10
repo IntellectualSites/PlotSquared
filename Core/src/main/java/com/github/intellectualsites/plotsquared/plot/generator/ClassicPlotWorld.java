@@ -5,9 +5,11 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
+import com.sk89q.worldedit.function.pattern.BlockPattern;
+import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
@@ -18,17 +20,17 @@ import java.util.Locale;
     public int ROAD_HEIGHT = 62;
     public int PLOT_HEIGHT = 62;
     public int WALL_HEIGHT = 62;
-    public BlockBucket MAIN_BLOCK = BlockBucket.withSingle(BlockUtil.get("stone"));
+    public Pattern MAIN_BLOCK = new BlockPattern(BlockTypes.STONE.getDefaultState());
     // new BlockState[] {BlockUtil.get("stone")};
-    public BlockBucket TOP_BLOCK = BlockBucket.withSingle(BlockUtil.get("grass_block"));
+    public Pattern TOP_BLOCK = new BlockPattern(BlockTypes.GRASS_BLOCK.getDefaultState());
     //new BlockState[] {BlockUtil.get("grass")};
-    public BlockBucket WALL_BLOCK = BlockBucket.withSingle(BlockUtil.get("stone_slab"));
+    public Pattern WALL_BLOCK = new BlockPattern(BlockTypes.STONE_SLAB.getDefaultState());
     // BlockUtil.get((short) 44, (byte) 0);
-    public BlockBucket CLAIMED_WALL_BLOCK = BlockBucket.withSingle(BlockUtil.get("sandstone_slab"));
+    public Pattern CLAIMED_WALL_BLOCK = new BlockPattern(BlockTypes.SANDSTONE_SLAB.getDefaultState());
     // BlockUtil.get((short) 44, (byte) 1);
-    public BlockBucket WALL_FILLING = BlockBucket.withSingle(BlockUtil.get("stone"));
+    public Pattern WALL_FILLING = new BlockPattern(BlockTypes.STONE.getDefaultState());
     //BlockUtil.get((short) 1, (byte) 0);
-    public BlockBucket ROAD_BLOCK = BlockBucket.withSingle(BlockUtil.get("quartz_block"));
+    public Pattern ROAD_BLOCK = new BlockPattern(BlockTypes.QUARTZ_BLOCK.getDefaultState());
     // BlockUtil.get((short) 155, (byte) 0);
     public boolean PLOT_BEDROCK = true;
 
@@ -81,16 +83,16 @@ import java.util.Locale;
         super.loadConfiguration(config);
         this.PLOT_BEDROCK = config.getBoolean("plot.bedrock");
         this.PLOT_HEIGHT = Math.min(255, config.getInt("plot.height"));
-        this.MAIN_BLOCK = Configuration.BLOCK_BUCKET.parseString(config.getString("plot.filling"));
-        this.TOP_BLOCK = Configuration.BLOCK_BUCKET.parseString(config.getString("plot.floor"));
-        this.WALL_BLOCK = Configuration.BLOCK_BUCKET.parseString(config.getString("wall.block"));
+        this.MAIN_BLOCK = new BlockPattern(BlockUtil.get(config.getString("plot.filling")));
+        this.TOP_BLOCK = new BlockPattern(BlockUtil.get(config.getString("plot.floor")));
+        this.WALL_BLOCK = new BlockPattern(BlockUtil.get(config.getString("wall.block")));
         this.ROAD_HEIGHT = Math.min(255, config.getInt("road.height"));
-        this.ROAD_BLOCK = Configuration.BLOCK_BUCKET.parseString(config.getString("road.block"));
+        this.ROAD_BLOCK = new BlockPattern(BlockUtil.get(config.getString("road.block")));
         this.WALL_FILLING =
-            Configuration.BLOCK_BUCKET.parseString(config.getString("wall.filling"));
+            new BlockPattern(BlockUtil.get(config.getString("wall.filling")));
         this.WALL_HEIGHT = Math.min(254, config.getInt("wall.height"));
         this.CLAIMED_WALL_BLOCK =
-            Configuration.BLOCK_BUCKET.parseString(config.getString("wall.block_claimed"));
+            new BlockPattern(BlockUtil.get(config.getString("wall.block_claimed")));
 
         // Dump world settings
         if (Settings.DEBUG) {

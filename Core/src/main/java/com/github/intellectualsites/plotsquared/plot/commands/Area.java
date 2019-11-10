@@ -12,8 +12,6 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
 import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
@@ -25,7 +23,9 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
 import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.regions.CuboidRegion;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -209,20 +209,20 @@ import java.util.Set;
                                     break;
                                 case "f":
                                 case "floor":
-                                    pa.TOP_BLOCK = Configuration.BLOCK_BUCKET.parseString(pair[1]);
+                                    pa.TOP_BLOCK = Configuration.BLOCK_BUCKET.parseString(pair[1]).getPattern();
                                     break;
                                 case "m":
                                 case "main":
-                                    pa.MAIN_BLOCK = Configuration.BLOCK_BUCKET.parseString(pair[1]);
+                                    pa.MAIN_BLOCK = Configuration.BLOCK_BUCKET.parseString(pair[1]).getPattern();
                                     break;
                                 case "w":
                                 case "wall":
                                     pa.WALL_FILLING =
-                                        Configuration.BLOCK_BUCKET.parseString(pair[1]);
+                                        Configuration.BLOCK_BUCKET.parseString(pair[1]).getPattern();
                                     break;
                                 case "b":
                                 case "border":
-                                    pa.WALL_BLOCK = Configuration.BLOCK_BUCKET.parseString(pair[1]);
+                                    pa.WALL_BLOCK = Configuration.BLOCK_BUCKET.parseString(pair[1]).getPattern();
                                     break;
                                 case "terrain":
                                     pa.TERRAIN = Integer.parseInt(pair[1]);

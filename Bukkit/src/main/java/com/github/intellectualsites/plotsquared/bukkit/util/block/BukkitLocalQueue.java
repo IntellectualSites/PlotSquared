@@ -8,6 +8,7 @@ import com.github.intellectualsites.plotsquared.plot.util.block.BasicLocalBlockQ
 import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import io.papermc.lib.PaperLib;
@@ -130,11 +131,11 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
             int bx = lc.getX() << 4;
             int bz = lc.getX() << 4;
             for (int x = 0; x < lc.biomes.length; x++) {
-                String[] biomes2 = lc.biomes[x];
+                BiomeType[] biomes2 = lc.biomes[x];
                 if (biomes2 != null) {
-                    for (String biomeStr : biomes2) {
+                    for (BiomeType biomeStr : biomes2) {
                         if (biomeStr != null) {
-                            Biome biome = Biome.valueOf(biomeStr.toUpperCase());
+                            Biome biome = BukkitAdapter.adapt(biomeStr);
                             worldObj.setBiome(bx, bz, biome);
                         }
                     }

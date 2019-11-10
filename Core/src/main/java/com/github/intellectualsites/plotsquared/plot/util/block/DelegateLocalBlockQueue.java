@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
+import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 
@@ -58,6 +60,10 @@ public class DelegateLocalBlockQueue extends LocalBlockQueue {
         }
     }
 
+    @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
+        return parent.setBlock(x, y, z, pattern);
+    }
+
     @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
         return parent.setBlock(x, y, z, id);
     }
@@ -70,7 +76,7 @@ public class DelegateLocalBlockQueue extends LocalBlockQueue {
         return parent.getBlock(x, y, z);
     }
 
-    @Override public boolean setBiome(int x, int z, String biome) {
+    @Override public boolean setBiome(int x, int z, BiomeType biome) {
         return parent.setBiome(x, z, biome);
     }
 

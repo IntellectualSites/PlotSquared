@@ -25,6 +25,8 @@ import com.google.common.collect.ImmutableSet;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.biome.BiomeType;
+import com.sk89q.worldedit.world.biome.BiomeTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,14 +56,13 @@ public abstract class PlotArea {
     private final PlotId min;
     private final PlotId max;
     @NotNull private final IndependentPlotGenerator generator;
-    private final BlockBucket[][] blockBucketChunk;
     public int MAX_PLOT_MEMBERS = 128;
     public boolean AUTO_MERGE = false;
     public boolean ALLOW_SIGNS = true;
     public boolean MISC_SPAWN_UNOWNED = false;
     public boolean MOB_SPAWNING = false;
     public boolean MOB_SPAWNER_SPAWNING = false;
-    public String PLOT_BIOME = "FOREST";
+    public BiomeType PLOT_BIOME = BiomeTypes.FOREST;
     public boolean PLOT_CHAT = false;
     public boolean SCHEMATIC_CLAIM_SPECIFY = false;
     public boolean SCHEMATIC_ON_CLAIM = false;
@@ -106,29 +107,12 @@ public abstract class PlotArea {
             this.max = max;
         }
         this.worldhash = worldName.hashCode();
-        if (Settings.Enabled_Components.PLOT_EXPIRY) {
-            blockBucketChunk = generator.generateBlockBucketChunk(this);
-        } else {
-            blockBucketChunk = null;
-        }
     }
 
     @NotNull protected abstract PlotManager createManager();
 
     public LocalBlockQueue getQueue(final boolean autoQueue) {
         return GlobalBlockQueue.IMP.getNewQueue(worldname, autoQueue);
-    }
-
-    /**
-     * Get an array of BlockBuckets corresponding to a chunk of a plot
-     *
-     * @return BlockBucket[][]
-     */
-    public BlockBucket[][] getBlockBucketChunk() {
-        if (blockBucketChunk != null) {
-            return blockBucketChunk;
-        }
-        return generator.generateBlockBucketChunk(this);
     }
 
     /**

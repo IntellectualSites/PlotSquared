@@ -1,7 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.object.worlds;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -10,6 +9,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.sk89q.worldedit.function.pattern.Pattern;
 
 import java.io.File;
 import java.util.List;
@@ -69,7 +69,7 @@ public class SinglePlotManager extends PlotManager {
     }
 
     @Override public boolean setComponent(PlotId plotId, String component,
-                                          BlockBucket blocks) {
+                                          Pattern blocks) {
         return false;
     }
 

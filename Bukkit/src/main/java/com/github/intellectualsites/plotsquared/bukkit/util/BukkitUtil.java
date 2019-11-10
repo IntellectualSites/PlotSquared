@@ -7,7 +7,6 @@ import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
@@ -18,6 +17,8 @@ import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockState;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
@@ -39,7 +40,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -279,8 +279,8 @@ import java.util.Set;
         return getWorld(worldName) != null;
     }
 
-    @Override public String getBiome(String world, int x, int z) {
-        return getWorld(world).getBiome(x, z).name();
+    @Override public BiomeType getBiome(String world, int x, int z) {
+        return BukkitAdapter.adapt(getWorld(world).getBiome(x, z));
     }
 
     @Override public int getHighestBlock(@NonNull final String world, final int x, final int z) {
@@ -380,20 +380,6 @@ import java.util.Set;
         }
     }
 
-    @Override public int getBiomeFromString(@NonNull final String biomeString) {
-        try {
-            final Biome biome = Biome.valueOf(biomeString.toUpperCase());
-            return Arrays.asList(Biome.values()).indexOf(biome);
-        } catch (IllegalArgumentException ignored) {
-            return -1;
-        }
-    }
-
-    @Override public String[] getBiomeList() {
-        final Biome[] biomes = Biome.values();
-        return Arrays.stream(biomes).map(Enum::name).toArray(String[]::new);
-    }
-
     @Override
     public boolean addItems(@NonNull final String worldName, @NonNull final PlotItem items) {
         final World world = getWorld(worldName);
@@ -433,9 +419,9 @@ import java.util.Set;
 
     @Override
     public void setBiomes(@NonNull final String worldName, @NonNull final CuboidRegion region,
-        @NonNull final String biomeString) {
+        @NonNull final BiomeType biomeType) {
         final World world = getWorld(worldName);
-        final Biome biome = Biome.valueOf(biomeString.toUpperCase());
+        final Biome biome = BukkitAdapter.adapt(biomeType);
         for (int x = region.getMinimumPoint().getX(); x <= region.getMaximumPoint().getX(); x++) {
             for (int z = region.getMinimumPoint().getZ(); z <= region.getMaximumPoint().getZ(); z++) {
                 world.setBiome(x, z, biome);
@@ -450,7 +436,7 @@ import java.util.Set;
     @Override public BlockState getBlock(@NonNull final Location location) {
         final World world = getWorld(location.getWorld());
         final Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
-        return BlockUtil.get(block.getType().name());
+        return BukkitAdapter.asBlockType(block.getType()).getDefaultState();
     }
 
     @Override public String getMainWorld() {

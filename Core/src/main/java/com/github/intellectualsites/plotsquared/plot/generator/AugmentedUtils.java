@@ -4,12 +4,13 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
-import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.util.block.DelegateLocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
+import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.jetbrains.annotations.NotNull;
@@ -72,7 +73,7 @@ public class AugmentedUtils {
                         return false;
                     }
 
-                    @Override public boolean setBiome(int x, int z, String biome) {
+                    @Override public boolean setBiome(int x, int z, BiomeType biome) {
                         if (area.contains(x, z)) {
                             return super.setBiome(x, z, biome);
                         }
@@ -116,7 +117,7 @@ public class AugmentedUtils {
                         return false;
                     }
 
-                    @Override public boolean setBiome(int x, int y, String biome) {
+                    @Override public boolean setBiome(int x, int y, BiomeType biome) {
                         return super.setBiome(x, y, biome);
                     }
                 };

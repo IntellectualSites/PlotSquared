@@ -6,6 +6,7 @@ import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 
@@ -38,11 +39,11 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
     }
 
 
-    @Override public boolean setBiome(int x, int z, String biome) {
+    @Override public boolean setBiome(int x, int z, BiomeType biome) {
         return x >= 0 && x <= dx && z >= 0 && z <= dz && super.setBiome(x + minX, z + minZ, biome);
     }
 
-    public void fillBiome(String biome) {
+    public void fillBiome(BiomeType biome) {
         for (int x = 0; x <= dx; x++) {
             for (int z = 0; z < dz; z++) {
                 setBiome(x, z, biome);

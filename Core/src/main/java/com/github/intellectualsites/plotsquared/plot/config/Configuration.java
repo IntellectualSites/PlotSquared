@@ -1,15 +1,14 @@
 package com.github.intellectualsites.plotsquared.plot.config;
 
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
-import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
-import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+import com.sk89q.worldedit.world.biome.BiomeType;
+import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.block.BlockState;
 import lombok.Getter;
 import lombok.NonNull;
 
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,21 +42,20 @@ public class Configuration {
             return Boolean.parseBoolean(string);
         }
     };
-    public static final SettingValue<String> BIOME = new SettingValue<String>("BIOME") {
+    public static final SettingValue<BiomeType> BIOME = new SettingValue<BiomeType>("BIOME") {
         @Override public boolean validateValue(String string) {
             try {
-                int biome = WorldUtil.IMP.getBiomeFromString(string.toUpperCase());
-                return biome != -1;
+                return BiomeTypes.get(string) != null;
             } catch (Exception ignored) {
                 return false;
             }
         }
 
-        @Override public String parseString(String string) {
+        @Override public BiomeType parseString(String string) {
             if (validateValue(string)) {
-                return string.toUpperCase();
+                return BiomeTypes.get(string.toUpperCase());
             }
-            return "FOREST";
+            return BiomeTypes.FOREST;
         }
     };
 

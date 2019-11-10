@@ -16,12 +16,13 @@ import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.sk89q.worldedit.math.BlockVector2;
-import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.stream.AbstractDelegateOutputStream;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
+import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -46,6 +47,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -217,10 +219,9 @@ public class MainUtil {
      * @return true if any changes were made
      */
     public static boolean resetBiome(PlotArea area, Location pos1, Location pos2) {
-        String biome = area.PLOT_BIOME;
-        if (!StringMan.isEqual(WorldUtil.IMP
-            .getBiome(area.worldname, (pos1.getX() + pos2.getX()) / 2,
-                (pos1.getZ() + pos2.getZ()) / 2), biome)) {
+        BiomeType biome = area.PLOT_BIOME;
+        if (!Objects.equals(WorldUtil.IMP.getBiome(area.worldname, (pos1.getX() + pos2.getX()) / 2,
+            (pos1.getZ() + pos2.getZ()) / 2), biome)) {
             MainUtil.setBiome(area.worldname, pos1.getX(), pos1.getZ(), pos2.getX(), pos2.getZ(),
                 biome);
             return true;
@@ -567,7 +568,7 @@ public class MainUtil {
      * @param p2z
      * @param biome
      */
-    public static void setBiome(String world, int p1x, int p1z, int p2x, int p2z, String biome) {
+    public static void setBiome(String world, int p1x, int p1z, int p2x, int p2z, BiomeType biome) {
         BlockVector3 pos1 = BlockVector2.at(p1x, p1z).toBlockVector3();
         BlockVector3 pos2 = BlockVector2.at(p2x, p2z).toBlockVector3(Plot.MAX_HEIGHT - 1);
         CuboidRegion region = new CuboidRegion(pos1, pos2);
@@ -750,7 +751,7 @@ public class MainUtil {
         int num = plot.getConnectedPlots().size();
         String alias = !plot.getAlias().isEmpty() ? plot.getAlias() : Captions.NONE.getTranslated();
         Location bot = plot.getCorners()[0];
-        String biome = WorldUtil.IMP.getBiome(plot.getWorldName(), bot.getX(), bot.getZ());
+        BiomeType biome = WorldUtil.IMP.getBiome(plot.getWorldName(), bot.getX(), bot.getZ());
         String trusted = getPlayerList(plot.getTrusted());
         String members = getPlayerList(plot.getMembers());
         String denied = getPlayerList(plot.getDenied());
@@ -798,7 +799,7 @@ public class MainUtil {
         info = info.replace("%alias%", alias);
         info = info.replace("%num%", String.valueOf(num));
         info = info.replace("%desc%", description);
-        info = info.replace("%biome%", biome);
+        info = info.replace("%biome%", biome.toString().toLowerCase());
         info = info.replace("%owner%", owner);
         info = info.replace("%members%", members);
         info = info.replace("%player%", player.getName());

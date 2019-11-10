@@ -1,11 +1,8 @@
 package com.github.intellectualsites.plotsquared.plot.util.world;
 
 import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalSession;
