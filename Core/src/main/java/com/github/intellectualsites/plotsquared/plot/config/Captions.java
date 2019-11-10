@@ -578,6 +578,7 @@ public enum Captions {
     //<editor-fold desc="Set Owner">
     SET_OWNER("$4You successfully set the plot owner", "Owner"),
     SET_OWNER_CANCELLED("$2The set owner action was cancelled", "Owner"),
+    SET_OWNER_MISSING_PLAYER("$1You need to specify a new owner. Correct usage is: $2/plot setowner <owner>", "Owner"),
     NOW_OWNER("$4You are now owner of plot %s", "Owner"),
     //</editor-fold>
     //<editor-fold desc="Signs">
