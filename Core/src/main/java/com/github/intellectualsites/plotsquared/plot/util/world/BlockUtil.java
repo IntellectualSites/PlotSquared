@@ -62,7 +62,6 @@ public final class BlockUtil {
             BaseBlock block = PARSER.parseFromInput(id, PARSER_CONTEXT);
             return block.toImmutableState();
         } catch (InputParseException e) {
-            e.printStackTrace();
             return null;
         }
     }
