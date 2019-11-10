@@ -2,9 +2,9 @@ package com.github.intellectualsites.plotsquared.plot.object.worlds;
 
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.area.QuadMap;
+import com.sk89q.worldedit.regions.CuboidRegion;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -9,19 +9,19 @@ import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotLoc;
-import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
-import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
+import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -370,7 +370,7 @@ public class BukkitChunkManager extends ChunkManager {
                                                 if (id != null) {
                                                     value.setBlock(x1, y, z1, id);
                                                 } else {
-                                                    value.setBlock(x1, y, z1, BlockUtil.get("air"));
+                                                    value.setBlock(x1, y, z1, BlockTypes.AIR.getDefaultState());
                                                 }
                                             }
                                             for (int y = Math.min(128, ids.length);

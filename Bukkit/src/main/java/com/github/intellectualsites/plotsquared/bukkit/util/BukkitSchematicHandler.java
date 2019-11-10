@@ -2,7 +2,6 @@ package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.schematic.StateWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;

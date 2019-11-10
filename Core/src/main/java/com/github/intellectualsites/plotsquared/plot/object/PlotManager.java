@@ -2,6 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.plot.commands.Template;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import com.sk89q.worldedit.function.pattern.Pattern;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -53,7 +54,7 @@ public abstract class PlotManager {
      */
     public abstract String[] getPlotComponents(PlotId plotId);
 
-    public abstract boolean setComponent(PlotId plotId, String component, BlockBucket blocks);
+    public abstract boolean setComponent(PlotId plotId, String component, Pattern blocks);
 
     /*
      * PLOT MERGING (return false if your generator does not support plot

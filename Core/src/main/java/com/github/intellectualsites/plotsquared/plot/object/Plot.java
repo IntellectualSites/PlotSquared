@@ -22,7 +22,6 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
-import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
@@ -31,9 +30,12 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.biome.BiomeType;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -921,7 +923,7 @@ public class Plot {
      * @param biome    The biome e.g. "forest"
      * @param whenDone The task to run when finished, or null
      */
-    public void setBiome(final String biome, final Runnable whenDone) {
+    public void setBiome(final BiomeType biome, final Runnable whenDone) {
         final ArrayDeque<CuboidRegion> regions = new ArrayDeque<>(this.getRegions());
         final int extendBiome;
         if (area instanceof SquarePlotWorld) {
@@ -1459,7 +1461,7 @@ public class Plot {
         }
         Location location = manager.getSignLoc(this);
         LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(getWorldName(), false);
-        queue.setBlock(location.getX(), location.getY(), location.getZ(), BlockUtil.get("air"));
+        queue.setBlock(location.getX(), location.getY(), location.getZ(), BlockTypes.AIR.getDefaultState());
         queue.flush();
     }
 
@@ -1588,9 +1590,13 @@ public class Plot {
      * Sets components such as border, wall, floor.
      * (components are generator specific)
      */
+    @Deprecated
     public boolean setComponent(String component, String blocks) {
         BlockBucket parsed = Configuration.BLOCK_BUCKET.parseString(blocks);
-        return !(parsed == null || parsed.isEmpty()) && this.setComponent(component, parsed);
+        if (parsed != null && parsed.isEmpty()) {
+            return false;
+        }
+        return this.setComponent(component, parsed.toPattern());
     }
 
     /**
@@ -1598,7 +1604,7 @@ public class Plot {
      *
      * @return the name of the biome
      */
-    public String getBiome() {
+    public BiomeType getBiome() {
         Location location = this.getCenter();
         return WorldUtil.IMP.getBiome(location.getWorld(), location.getX(), location.getZ());
     }
@@ -2718,7 +2724,7 @@ public class Plot {
                     }
                 }
             }
-            BlockVector3 pos1 = BlockVector3.at(gbotabs.getX() + 1, 0, gbotabs.getZ());
+            BlockVector3 pos1 = BlockVector3.at(gbotabs.getX(), 0, gbotabs.getZ());
             BlockVector3 pos2 = BlockVector3.at(gtopabs.getX(), Plot.MAX_HEIGHT - 1, gtopabs.getZ());
             regions.add(
                 new CuboidRegion(pos1, pos2));
@@ -2856,7 +2862,7 @@ public class Plot {
      * @param blocks
      * @return
      */
-    public boolean setComponent(String component, BlockBucket blocks) {
+    public boolean setComponent(String component, Pattern blocks) {
         if (StringMan
             .isEqualToAny(component, getManager().getPlotComponents(this.getId()))) {
             EventUtil.manager.callComponentSet(this, component);

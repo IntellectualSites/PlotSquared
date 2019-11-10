@@ -3,7 +3,6 @@ package com.github.intellectualsites.plotsquared.plot.generator;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.Template;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.FileBytes;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -12,10 +11,12 @@ import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
+import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
 import com.google.common.collect.Sets;
+import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
@@ -173,8 +174,8 @@ public class HybridPlotManager extends ClassicPlotManager {
         final boolean canRegen =
             (hybridPlotWorld.TYPE == 0) && (hybridPlotWorld.TERRAIN == 0) && REGENERATIVE_CLEAR;
         // The component blocks
-        final BlockBucket plotfloor = hybridPlotWorld.TOP_BLOCK;
-        final BlockBucket filling = hybridPlotWorld.MAIN_BLOCK;
+        final Pattern plotfloor = hybridPlotWorld.TOP_BLOCK.toPattern();
+        final Pattern filling = hybridPlotWorld.MAIN_BLOCK.toPattern();
         final BlockState bedrock;
         if (hybridPlotWorld.PLOT_BEDROCK) {
             bedrock = BlockUtil.get((short) 7, (byte) 0);
@@ -182,7 +183,7 @@ public class HybridPlotManager extends ClassicPlotManager {
             bedrock = BlockUtil.get((short) 0, (byte) 0);
         }
         final BlockState air = BlockUtil.get((short) 0, (byte) 0);
-        final String biome = hybridPlotWorld.PLOT_BIOME;
+        final BiomeType biome = hybridPlotWorld.PLOT_BIOME;
         final LocalBlockQueue queue = hybridPlotWorld.getQueue(false);
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override public void run(int[] value) {

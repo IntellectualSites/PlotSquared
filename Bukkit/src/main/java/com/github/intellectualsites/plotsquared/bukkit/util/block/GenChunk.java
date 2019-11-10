@@ -5,11 +5,14 @@ import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.object.ChunkWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
+import com.github.intellectualsites.plotsquared.plot.util.world.PatternUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Chunk;
@@ -57,11 +60,11 @@ public class GenChunk extends ScopedLocalBlockQueue {
         chunkZ = wrap.z;
     }
 
-    @Override public void fillBiome(String biomeName) {
+    @Override public void fillBiome(BiomeType biomeType) {
         if (biomeGrid == null) {
             return;
         }
-        Biome biome = Biome.valueOf(biomeName.toUpperCase());
+        Biome biome = BukkitAdapter.adapt(biomeType);
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 this.biomeGrid.setBiome(x, z, biome);
@@ -92,8 +95,8 @@ public class GenChunk extends ScopedLocalBlockQueue {
         chunkData.setRegion(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1, BukkitAdapter.adapt(block));
     }
 
-    @Override public boolean setBiome(int x, int z, String biome) {
-        return setBiome(x, z, Biome.valueOf(biome.toUpperCase()));
+    @Override public boolean setBiome(int x, int z, BiomeType biomeType) {
+        return setBiome(x, z, BukkitAdapter.adapt(biomeType));
     }
 
     public boolean setBiome(int x, int z, Biome biome) {
@@ -102,6 +105,10 @@ public class GenChunk extends ScopedLocalBlockQueue {
             return true;
         }
         return false;
+    }
+
+    @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
+        return setBlock(x, y, z, PatternUtil.apply(pattern, x, y, z));
     }
 
     @Override public boolean setBlock(int x, int y, int z, BlockState id) {
@@ -130,7 +137,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
             return true;
         }
         this.chunkData.setBlock(x, y, z, BukkitAdapter.adapt(id));
-        this.storeCache(x, y, z, BlockUtil.get(id.getBlockType().getId()));
+        this.storeCache(x, y, z, id.toImmutableState());
         return true;
     }
 
@@ -141,7 +148,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
         }
         BlockState[] array = result[i];
         if (array == null) {
-            return BlockUtil.get("");
+            return BlockTypes.AIR.getDefaultState();
         }
         int j = MainUtil.CACHE_J[y][x][z];
         return array[j];

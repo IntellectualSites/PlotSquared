@@ -4,6 +4,9 @@ import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.plot.util.world.PatternUtil;
+import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -85,6 +88,10 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
         this.modified = modified;
     }
 
+    @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
+        return setBlock(x, y, z, PatternUtil.apply(pattern, x, y, z));
+    }
+
     @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
         if ((y > 255) || (y < 0)) {
             return false;
@@ -118,7 +125,7 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
         return setBlock(x, y, z, id.toBaseBlock());
     }
 
-    @Override public final boolean setBiome(int x, int z, String biome) {
+    @Override public final boolean setBiome(int x, int z, BiomeType biomeType) {
         long pair = (long) (x >> 4) << 32 | (z >> 4) & 0xFFFFFFFFL;
         LocalChunk result = this.blockChunks.get(pair);
         if (result == null) {
@@ -131,7 +138,7 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
                 chunks.add(result);
             }
         }
-        result.setBiome(x & 15, z & 15, biome);
+        result.setBiome(x & 15, z & 15, biomeType);
         return true;
     }
 
@@ -160,7 +167,7 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
         public final int x;
 
         public BaseBlock[][] baseblocks;
-        public String[][] biomes;
+        public BiomeType[][] biomes;
 
         public LocalChunk(BasicLocalBlockQueue parent, int x, int z) {
             this.parent = parent;
@@ -187,15 +194,15 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
 
         public abstract void setBlock(final int x, final int y, final int z, final BaseBlock block);
 
-        public void setBiome(int x, int z, String biome) {
+        public void setBiome(int x, int z, BiomeType biomeType) {
             if (this.biomes == null) {
-                this.biomes = new String[16][];
+                this.biomes = new BiomeType[16][];
             }
-            String[] index = this.biomes[x];
+            BiomeType[] index = this.biomes[x];
             if (index == null) {
-                index = this.biomes[x] = new String[16];
+                index = this.biomes[x] = new BiomeType[16];
             }
-            index[z] = biome;
+            index[z] = biomeType;
         }
 
         public long longHash() {

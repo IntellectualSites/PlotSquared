@@ -6,8 +6,6 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
@@ -17,7 +15,9 @@ import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
+import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
 import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.regions.CuboidRegion;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,7 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
@@ -18,14 +17,6 @@ public abstract class IndependentPlotGenerator {
      * Get the name of this generator.
      */
     public abstract String getName();
-
-    /**
-     * Generates a 16x4096 array of BlockBuckets corresponding to the area settings to allow for plot analysis
-     *
-     * @param settings
-     * @return
-     */
-    public abstract BlockBucket[][] generateBlockBucketChunk(PlotArea settings);
 
     /**
      * Use the setBlock or setBiome method of the PlotChunk result parameter to make changes.

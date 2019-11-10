@@ -4,7 +4,6 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
 import com.sk89q.jnbt.CompoundTag;
@@ -13,6 +12,8 @@ import com.sk89q.jnbt.NBTInputStream;
 import com.sk89q.jnbt.NBTOutputStream;
 import com.sk89q.jnbt.Tag;
 import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockState;
 
 import java.io.ByteArrayOutputStream;
@@ -31,10 +32,6 @@ import java.util.zip.ZipOutputStream;
 
 public abstract class WorldUtil {
     public static WorldUtil IMP;
-
-    public abstract int getBiomeFromString(String value);
-
-    public abstract String[] getBiomeList();
 
     public abstract String getMainWorld();
 
@@ -56,7 +53,7 @@ public abstract class WorldUtil {
 
     public abstract StringComparison<BlockState>.ComparisonResult getClosestBlock(String name);
 
-    public abstract String getBiome(String world, int x, int z);
+    public abstract BiomeType getBiome(String world, int x, int z);
 
     public abstract BlockState getBlock(Location location);
 
@@ -66,7 +63,7 @@ public abstract class WorldUtil {
 
     public abstract void setSign(String world, int x, int y, int z, String[] lines);
 
-    public abstract void setBiomes(String world, CuboidRegion region, String biome);
+    public abstract void setBiomes(String world, CuboidRegion region, BiomeType biome);
 
     public abstract com.sk89q.worldedit.world.World getWeWorld(String world);
 

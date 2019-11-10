@@ -102,7 +102,7 @@ public class Info extends SubCommand {
             inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cPlot Info",
                 "&cID: &6" + plot.getId().toString(), "&cOwner: &6" + name,
                 "&cAlias: &6" + plot.getAlias(),
-                "&cBiome: &6" + plot.getBiome().replaceAll("_", "").toLowerCase(),
+                "&cBiome: &6" + plot.getBiome().toString().replaceAll("_", "").toLowerCase(),
                 "&cCan Build: &6" + plot.isAdded(uuid),
                 "&cSeen: &6" + MainUtil.secToTime((int) (ExpireManager.IMP.getAge(plot) / 1000)),
                 "&cIs Denied: &6" + plot.isDenied(uuid)));

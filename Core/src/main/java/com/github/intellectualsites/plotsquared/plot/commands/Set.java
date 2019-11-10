@@ -3,22 +3,18 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
-import com.github.intellectualsites.plotsquared.plot.config.Configuration;
-import com.github.intellectualsites.plotsquared.plot.config.Configuration.UnknownBlockException;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
-import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
-import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
-import com.sk89q.worldedit.world.block.BlockState;
+import com.github.intellectualsites.plotsquared.plot.util.world.PatternUtil;
+import com.sk89q.worldedit.function.pattern.Pattern;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,51 +56,19 @@ import java.util.stream.IntStream;
                                 Captions.PERMISSION_SET_COMPONENT.f(component));
                             return false;
                         }
-                        // BlockState[] blocks;
-                        BlockBucket bucket;
-                        try {
-                            if (args.length < 2) {
-                                MainUtil.sendMessage(player, Captions.NEED_BLOCK);
-                                return true;
-                            }
-
-                            try {
-                                bucket = Configuration.BLOCK_BUCKET.parseString(material);
-                            } catch (final UnknownBlockException unknownBlockException) {
-                                final String unknownBlock = unknownBlockException.getUnknownValue();
-                                Captions.NOT_VALID_BLOCK.send(player, unknownBlock);
-                                StringComparison<BlockState>.ComparisonResult match =
-                                    WorldUtil.IMP.getClosestBlock(unknownBlock);
-                                if (match != null) {
-                                    final String found =
-                                        WorldUtil.IMP.getClosestMatchingName(match.best);
-                                    if (found != null) {
-                                        MainUtil.sendMessage(player, Captions.DID_YOU_MEAN,
-                                            found.toLowerCase());
-                                    }
-                                }
-                                return false;
-                            }
-
-                            if (!allowUnsafe) {
-                                for (final BlockState block : bucket.getBlocks()) {
-                                    if (!block.getBlockType().getMaterial().isAir() && !WorldUtil.IMP.isBlockSolid(block)) {
-                                        Captions.NOT_ALLOWED_BLOCK.send(player, block.toString());
-                                        return false;
-                                    }
-                                }
-                            }
-                        } catch (Exception ignored) {
-                            MainUtil.sendMessage(player, Captions.NOT_VALID_BLOCK, material);
-                            return false;
+                        if (args.length < 2) {
+                            MainUtil.sendMessage(player, Captions.NEED_BLOCK);
+                            return true;
                         }
+
+                        Pattern pattern = PatternUtil.parse(player, material);
                         if (plot.getRunning() > 0) {
                             MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
                             return false;
                         }
                         plot.addRunning();
                         for (Plot current : plot.getConnectedPlots()) {
-                            current.setComponent(component, bucket);
+                            current.setComponent(component, pattern);
                         }
                         MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
                         GlobalBlockQueue.IMP.addEmptyTask(plot::removeRunning);

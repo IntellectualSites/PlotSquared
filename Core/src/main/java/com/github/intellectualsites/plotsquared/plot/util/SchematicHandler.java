@@ -10,7 +10,6 @@ import com.github.intellectualsites.plotsquared.plot.generator.ClassicPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
@@ -27,6 +26,7 @@ import com.sk89q.worldedit.extent.clipboard.io.MCEditSchematicReader;
 import com.sk89q.worldedit.extent.clipboard.io.SpongeSchematicReader;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import org.jetbrains.annotations.NotNull;
 
