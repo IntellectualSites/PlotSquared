@@ -2724,7 +2724,7 @@ public class Plot {
                     }
                 }
             }
-            BlockVector3 pos1 = BlockVector3.at(gbotabs.getX() + 1, 0, gbotabs.getZ());
+            BlockVector3 pos1 = BlockVector3.at(gbotabs.getX(), 0, gbotabs.getZ());
             BlockVector3 pos2 = BlockVector3.at(gtopabs.getX(), Plot.MAX_HEIGHT - 1, gtopabs.getZ());
             regions.add(
                 new CuboidRegion(pos1, pos2));
