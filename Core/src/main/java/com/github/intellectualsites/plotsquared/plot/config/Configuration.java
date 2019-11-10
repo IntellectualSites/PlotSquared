@@ -74,6 +74,7 @@ public class Configuration {
                 final String[] parts = string.split(",(?![^\\(\\[]*[\\]\\)])");
                 for (final String part : parts) {
                     Matcher matcher = pattern.matcher(part);
+                    matcher.find();
                     String namespace = matcher.group("namespace");
                     String block = matcher.group("block");
                     String chanceStr = matcher.group("chance");
@@ -101,6 +102,7 @@ public class Configuration {
                     final String[] parts = string.split(",(?![^\\(\\[]*[\\]\\)])");
                     for (final String part : parts) {
                         Matcher matcher = pattern.matcher(part);
+                        matcher.find();
                         String namespace = matcher.group("namespace");
                         String block = matcher.group("block");
                         String chanceStr = matcher.group("chance");
