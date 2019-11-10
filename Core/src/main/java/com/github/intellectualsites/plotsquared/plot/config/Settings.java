@@ -16,10 +16,10 @@ public class Settings extends Config {
 
     @Comment("These first 7 aren't configurable") // This is a comment
     @Final // Indicates that this value isn't configurable
-    public static final String ISSUES = "https://github.com/IntellectualSites/PlotSquared/issues";
-    @Final public static final String SUGGESTION =
+    public static String ISSUES = "https://github.com/IntellectualSites/PlotSquared/issues";
+    @Final public static String SUGGESTION =
         "https://github.com/IntellectualSites/PlotSquaredSuggestions";
-    @Final public static final String WIKI =
+    @Final public static String WIKI =
         "https://github.com/IntellectualSites/PlotSquared/wiki";
     @Final public static String DATE; // These values are set from P2 before loading
     @Final public static String BUILD; // These values are set from P2 before loading
