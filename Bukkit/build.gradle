@@ -22,7 +22,7 @@ dependencies {
     implementation("org.spigotmc:spigot-api:1.14.4-R0.1-SNAPSHOT")
     compile(group: "com.sk89q.worldedit", name: "worldedit-bukkit", version: "7.0.0")
     compile("io.papermc:paperlib:1.0.2")
-    compile(group: "com.squareup.retrofit2", name: "retrofit", version: "2.6.2")
+    compile(group: "com.squareup.retrofit2", name: "retrofit", version: "2.4.0")
     implementation("net.kyori:text-adapter-bukkit:3.0.3")
     compile("net.milkbowl.vault:VaultAPI:1.7") {
         exclude(module: "bukkit")
@@ -81,9 +81,9 @@ shadowJar {
         include(dependency(":Core"))
         // update notification stuff
         include(dependency("com.github.Sauilitired:Jenkins4J:2.0-SNAPSHOT"))
-        include(dependency("com.squareup.retrofit2:retrofit:2.6.2"))
-        include(dependency("com.squareup.okhttp3:okhttp:4.2.2"))
-        include(dependency("com.squareup.okio:okio:2.4.1"))
+        include(dependency("com.squareup.retrofit2:retrofit:2.4.0"))
+        include(dependency("com.squareup.okhttp3:okhttp:3.12.0"))
+        include(dependency("com.squareup.okio:okio:2.2.2"))
         include(dependency("org.jetbrains.kotlin:kotlin-stdlib:1.3.50"))
         include(dependency("io.papermc:paperlib:1.0.2"))
         include(dependency("net.kyori:text-adapter-bukkit:3.0.3"))

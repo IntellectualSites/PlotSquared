@@ -11,6 +11,7 @@ import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
@@ -304,13 +305,15 @@ import java.util.Set;
     }
 
     @Override @Nullable public String[] getSign(@NonNull final Location location) {
-        Block block = getWorld(location.getWorld())
-            .getBlockAt(location.getX(), location.getY(), location.getZ());
-        if (block.getState() instanceof Sign) {
-            Sign sign = (Sign) block.getState();
-            return sign.getLines();
-        }
-        return null;
+        Block block = getWorld(location.getWorld()).getBlockAt(location.getX(), location.getY(), location.getZ());
+        return TaskManager.IMP.sync(new RunnableVal<String[]>() {
+            @Override public void run(String[] value) {
+                if (block.getState() instanceof Sign) {
+                    Sign sign = (Sign) block.getState();
+                    this.value = sign.getLines();
+                }
+            }
+        });
     }
 
     @Override public Location getSpawn(@NonNull final PlotPlayer player) {
