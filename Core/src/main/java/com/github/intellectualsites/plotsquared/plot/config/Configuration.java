@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NonNull;
 
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Main Configuration Utility
@@ -61,6 +63,9 @@ public class Configuration {
 
     public static final SettingValue<BlockBucket> BLOCK_BUCKET =
         new SettingValue<BlockBucket>("BLOCK_BUCKET") {
+
+            private Pattern pattern = Pattern.compile("((?<namespace>[A-Za-z_]+):)?(?<block>([A-Za-z_]+(\\[?[\\S\\s]+\\])?))(:(?<chance>[0-9]{1,3}))?");
+
             @Override public BlockBucket parseString(final String string) {
                 if (string == null || string.isEmpty()) {
                     return new BlockBucket();
@@ -68,18 +73,12 @@ public class Configuration {
                 final BlockBucket blockBucket = new BlockBucket();
                 final String[] parts = string.split(",(?![^\\(\\[]*[\\]\\)])");
                 for (final String part : parts) {
-                    String block = part;
-                    int chance = -1;
-                    if (part.contains(":")) {
-                        final String[] innerParts = part.split(":");
-                        String chanceStr = innerParts[innerParts.length - 1];
-                        if (innerParts.length > 1 && MathMan.isInteger(chanceStr)) {
-                            chance = Integer.parseInt(chanceStr);
-                            block = StringMan.join(Arrays.copyOf(innerParts, innerParts.length - 1), ":");
-                        }
-                    } else {
-                        block = part;
-                    }
+                    Matcher matcher = pattern.matcher(part);
+                    String namespace = matcher.group("namespace");
+                    String block = matcher.group("block");
+                    String chanceStr = matcher.group("chance");
+                    if (namespace == null) namespace = "minecraft";
+                    int chance = chanceStr == null ? -1 : Integer.parseInt(chanceStr);
                     final StringComparison<BlockState>.ComparisonResult value =
                         WorldUtil.IMP.getClosestBlock(block);
                     if (value == null) {
@@ -101,19 +100,15 @@ public class Configuration {
                     }
                     final String[] parts = string.split(",(?![^\\(\\[]*[\\]\\)])");
                     for (final String part : parts) {
-                        String block = part;
-                        if (part.contains(":")) {
-                            final String[] innerParts = part.split(":");
-                            String chanceStr = innerParts[innerParts.length - 1];
-                            if (innerParts.length > 1 && MathMan.isInteger(chanceStr)) {
-                                final int chance = Integer.parseInt(chanceStr);
-                                if (chance < 1 || chance > 100) {
-                                    return false;
-                                }
-                                block = StringMan.join(Arrays.copyOf(innerParts, innerParts.length - 1), ":");
-                            }
-                        } else {
-                            block = part;
+                        Matcher matcher = pattern.matcher(part);
+                        String namespace = matcher.group("namespace");
+                        String block = matcher.group("block");
+                        String chanceStr = matcher.group("chance");
+                        if (namespace == null) namespace = "minecraft";
+                        int chance = chanceStr == null ? -1 : Integer.parseInt(chanceStr);
+
+                        if ((chance != -1 && (chance < 1 || chance > 100)) || block == null) {
+                            return false;
                         }
                         StringComparison<BlockState>.ComparisonResult value =
                             WorldUtil.IMP.getClosestBlock(block);
