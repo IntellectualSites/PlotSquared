@@ -768,38 +768,32 @@ import java.util.regex.Pattern;
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTeleport(PlayerTeleportEvent event) {
-        final Object lastLoc =
-            BukkitUtil.getPlayer(event.getPlayer()).deleteMeta(PlotPlayer.META_LOCATION);
-        final Object lastPlot =
-            BukkitUtil.getPlayer(event.getPlayer()).deleteMeta(PlotPlayer.META_LAST_PLOT);
+        Player player = event.getPlayer();
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
         org.bukkit.Location to = event.getTo();
         if (to != null) {
-            Player player = event.getPlayer();
-            PlotPlayer plotPlayer = PlotPlayer.wrap(player);
             Location location = BukkitUtil.getLocation(to);
             PlotArea area = location.getPlotArea();
             if (area == null) {
+                if (lastPlot != null) {
+                    plotExit(pp, lastPlot);
+                    pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
+                }
+                pp.deleteMeta(PlotPlayer.META_LOCATION);
                 return;
             }
             Plot plot = area.getPlot(location);
             if (plot != null) {
-                final boolean result = Flags.DENY_TELEPORT.allowsTeleport(plotPlayer, plot);
+                final boolean result = Flags.DENY_TELEPORT.allowsTeleport(pp, plot);
                 // there is one possibility to still allow teleportation:
                 // to is identical to the plot's home location, and untrusted-visit is true
                 // i.e. untrusted-visit can override deny-teleport
                 // this is acceptable, because otherwise it wouldn't make sense to have both flags set
                 if (!result && !(Flags.UNTRUSTED_VISIT.isTrue(plot) && plot.getHome().equals(BukkitUtil.getLocationFull(to)))) {
-                    MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
+                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
                         Captions.PERMISSION_ADMIN_ENTRY_DENIED);
                     event.setCancelled(true);
-                    if (lastLoc != null) {
-                        plotPlayer.setMeta(PlotPlayer.META_LOCATION, lastLoc);
-                    }
-                    if (lastPlot != null) {
-                        plotPlayer.setMeta(PlotPlayer.META_LAST_PLOT, lastPlot);
-                    }
-                } else {
-                    plotEntry(plotPlayer, plot);
                 }
             }
         }
@@ -1198,8 +1192,8 @@ import java.util.regex.Pattern;
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
         // Delete last location
-        pp.deleteMeta(PlotPlayer.META_LOCATION);
         Plot plot = (Plot) pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
+        pp.deleteMeta(PlotPlayer.META_LOCATION);
         if (plot != null) {
             plotExit(pp, plot);
         }
