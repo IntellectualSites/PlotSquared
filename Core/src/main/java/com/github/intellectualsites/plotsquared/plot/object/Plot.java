@@ -879,10 +879,10 @@ public class Plot {
             @Override public void run() {
                 if (queue.isEmpty()) {
                     Runnable run = () -> {
-//                        for (CuboidRegion region : regions) {
-//                            Location[] corners = MainUtil.getCorners(getWorldName(), region);
-//                            ChunkManager.manager.clearAllEntities(corners[0], corners[1]);
-//                        }
+                        for (CuboidRegion region : regions) {
+                            Location[] corners = MainUtil.getCorners(getWorldName(), region);
+                            ChunkManager.manager.clearAllEntities(corners[0], corners[1]);
+                        }
                         TaskManager.runTask(whenDone);
                     };
                     for (Plot current : plots) {
@@ -2710,7 +2710,7 @@ public class Plot {
                     BlockVector3 pos2 = BlockVector3.at(toploc.getX(), Plot.MAX_HEIGHT - 1, topabs.getZ());
                     regions.add(new CuboidRegion(pos1, pos2));
                     if (plot.getMerged(Direction.SOUTHEAST)) {
-                        pos1 = BlockVector3.at(topabs.getX() + 1, 0, topabs.getZ());
+                        pos1 = BlockVector3.at(topabs.getX() + 1, 0, topabs.getZ() + 1);
                         pos2 = BlockVector3.at(toploc.getX(), Plot.MAX_HEIGHT - 1, toploc.getZ());
                         regions.add(
                             new CuboidRegion(pos1, pos2));
