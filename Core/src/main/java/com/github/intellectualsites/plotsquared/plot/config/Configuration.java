@@ -1,11 +1,15 @@
 package com.github.intellectualsites.plotsquared.plot.config;
 
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.sk89q.worldedit.world.block.BlockState;
 import lombok.Getter;
 import lombok.NonNull;
+
+import java.util.Arrays;
 
 /**
  * Main Configuration Utility
@@ -64,15 +68,15 @@ public class Configuration {
                 final BlockBucket blockBucket = new BlockBucket();
                 final String[] parts = string.split(",");
                 for (final String part : parts) {
-                    String block;
+                    String block = part;
                     int chance = -1;
-
                     if (part.contains(":")) {
                         final String[] innerParts = part.split(":");
-                        if (innerParts.length > 1) {
-                            chance = Integer.parseInt(innerParts[1]);
+                        String chanceStr = innerParts[innerParts.length - 1];
+                        if (innerParts.length > 1 && MathMan.isInteger(chanceStr)) {
+                            chance = Integer.parseInt(chanceStr);
+                            block = StringMan.join(Arrays.copyOf(innerParts, innerParts.length - 1), ":");
                         }
-                        block = innerParts[0];
                     } else {
                         block = part;
                     }
@@ -97,16 +101,17 @@ public class Configuration {
                     }
                     final String[] parts = string.split(",");
                     for (final String part : parts) {
-                        String block;
+                        String block = part;
                         if (part.contains(":")) {
                             final String[] innerParts = part.split(":");
-                            if (innerParts.length > 1) {
-                                final int chance = Integer.parseInt(innerParts[1]);
+                            String chanceStr = innerParts[innerParts.length - 1];
+                            if (innerParts.length > 1 && MathMan.isInteger(chanceStr)) {
+                                final int chance = Integer.parseInt(chanceStr);
                                 if (chance < 1 || chance > 100) {
                                     return false;
                                 }
+                                block = StringMan.join(Arrays.copyOf(innerParts, innerParts.length - 1), ":");
                             }
-                            block = innerParts[0];
                         } else {
                             block = part;
                         }
