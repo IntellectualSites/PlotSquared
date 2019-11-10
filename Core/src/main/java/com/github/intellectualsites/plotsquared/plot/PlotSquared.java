@@ -1320,7 +1320,7 @@ import java.util.zip.ZipInputStream;
                 .filter(validArgument -> args.toLowerCase(Locale.ENGLISH).contains(validArgument))
                 .count();
 
-            String[] split = args.toLowerCase(Locale.ENGLISH).split(",");
+            String[] split = args.toLowerCase(Locale.ENGLISH).split(",(?![^\\(\\[]*[\\]\\)])");
 
             if (split.length > expected) {
                 // This means we have multi-block block buckets

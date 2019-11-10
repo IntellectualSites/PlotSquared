@@ -66,7 +66,7 @@ public class Configuration {
                     return new BlockBucket();
                 }
                 final BlockBucket blockBucket = new BlockBucket();
-                final String[] parts = string.split(",");
+                final String[] parts = string.split(",(?![^\\(\\[]*[\\]\\)])");
                 for (final String part : parts) {
                     String block = part;
                     int chance = -1;
@@ -99,7 +99,7 @@ public class Configuration {
                     if (string == null || string.isEmpty()) {
                         return false;
                     }
-                    final String[] parts = string.split(",");
+                    final String[] parts = string.split(",(?![^\\(\\[]*[\\]\\)])");
                     for (final String part : parts) {
                         String block = part;
                         if (part.contains(":")) {
