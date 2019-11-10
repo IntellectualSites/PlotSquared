@@ -1,13 +1,19 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.IntTag;
 import com.sk89q.jnbt.NBTInputStream;
 import com.sk89q.jnbt.NBTOutputStream;
 import com.sk89q.jnbt.Tag;
+import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.world.block.BlockState;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -44,15 +50,15 @@ public abstract class WorldUtil {
 
     public abstract void saveWorld(String world);
 
-    public abstract String getClosestMatchingName(PlotBlock plotBlock);
+    public abstract String getClosestMatchingName(BlockState plotBlock);
 
-    public abstract boolean isBlockSolid(PlotBlock block);
+    public abstract boolean isBlockSolid(BlockState block);
 
-    public abstract StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name);
+    public abstract StringComparison<BlockState>.ComparisonResult getClosestBlock(String name);
 
     public abstract String getBiome(String world, int x, int z);
 
-    public abstract PlotBlock getBlock(Location location);
+    public abstract BlockState getBlock(Location location);
 
     public abstract int getHighestBlock(String world, int x, int z);
 
@@ -60,7 +66,7 @@ public abstract class WorldUtil {
 
     public abstract void setSign(String world, int x, int y, int z, String[] lines);
 
-    public abstract void setBiomes(String world, RegionWrapper region, String biome);
+    public abstract void setBiomes(String world, CuboidRegion region, String biome);
 
     public abstract com.sk89q.worldedit.world.World getWeWorld(String world);
 
@@ -104,10 +110,10 @@ public abstract class WorldUtil {
                         int brz = bot.getZ() >> 9;
                         int trx = top.getX() >> 9;
                         int trz = top.getZ() >> 9;
-                        Set<ChunkLoc> files = ChunkManager.manager.getChunkChunks(bot.getWorld());
-                        for (ChunkLoc mca : files) {
-                            if (mca.x >= brx && mca.x <= trx && mca.z >= brz && mca.z <= trz) {
-                                final File file = getMcr(plot.getWorldName(), mca.x, mca.z);
+                        Set<BlockVector2> files = ChunkManager.manager.getChunkChunks(bot.getWorld());
+                        for (BlockVector2 mca : files) {
+                            if (mca.getX() >= brx && mca.getX() <= trx && mca.getZ() >= brz && mca.getZ() <= trz) {
+                                final File file = getMcr(plot.getWorldName(), mca.getX(), mca.getZ());
                                 if (file != null) {
                                     //final String name = "r." + (x - cx) + "." + (z - cz) + ".mca";
                                     String name = file.getName();
@@ -155,5 +161,5 @@ public abstract class WorldUtil {
         return null;
     }
 
-    public abstract boolean isBlockSame(PlotBlock block1, PlotBlock block2);
+    public abstract boolean isBlockSame(BlockState block1, BlockState block2);
 }

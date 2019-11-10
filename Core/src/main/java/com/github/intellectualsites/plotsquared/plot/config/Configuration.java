@@ -1,11 +1,17 @@
 package com.github.intellectualsites.plotsquared.plot.config;
 
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+import com.sk89q.worldedit.world.block.BlockState;
 import lombok.Getter;
 import lombok.NonNull;
+
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Main Configuration Utility
@@ -57,30 +63,28 @@ public class Configuration {
 
     public static final SettingValue<BlockBucket> BLOCK_BUCKET =
         new SettingValue<BlockBucket>("BLOCK_BUCKET") {
+
+            private Pattern pattern = Pattern.compile("((?<namespace>[A-Za-z_]+):)?(?<block>([A-Za-z_]+(\\[?[\\S\\s]+\\])?))(:(?<chance>[0-9]{1,3}))?");
+
             @Override public BlockBucket parseString(final String string) {
                 if (string == null || string.isEmpty()) {
                     return new BlockBucket();
                 }
                 final BlockBucket blockBucket = new BlockBucket();
-                final String[] parts = string.split(",");
+                final String[] parts = string.split(",(?![^\\(\\[]*[\\]\\)])");
                 for (final String part : parts) {
-                    String block;
-                    int chance = -1;
-
-                    if (part.contains(":")) {
-                        final String[] innerParts = part.split(":");
-                        if (innerParts.length > 1) {
-                            chance = Integer.parseInt(innerParts[1]);
-                        }
-                        block = innerParts[0];
-                    } else {
-                        block = part;
-                    }
-                    final StringComparison<PlotBlock>.ComparisonResult value =
+                    Matcher matcher = pattern.matcher(part);
+                    matcher.find();
+                    String namespace = matcher.group("namespace");
+                    String block = matcher.group("block");
+                    String chanceStr = matcher.group("chance");
+                    if (namespace == null) namespace = "minecraft";
+                    int chance = chanceStr == null ? -1 : Integer.parseInt(chanceStr);
+                    final StringComparison<BlockState>.ComparisonResult value =
                         WorldUtil.IMP.getClosestBlock(block);
                     if (value == null) {
                         throw new UnknownBlockException(block);
-                    } else if (Settings.Enabled_Components.PREVENT_UNSAFE && !value.best.isAir()
+                    } else if (Settings.Enabled_Components.PREVENT_UNSAFE && !value.best.getBlockType().getMaterial().isAir()
                         && !WorldUtil.IMP.isBlockSolid(value.best)) {
                         throw new UnsafeBlockException(value.best);
                     }
@@ -95,26 +99,24 @@ public class Configuration {
                     if (string == null || string.isEmpty()) {
                         return false;
                     }
-                    final String[] parts = string.split(",");
+                    final String[] parts = string.split(",(?![^\\(\\[]*[\\]\\)])");
                     for (final String part : parts) {
-                        String block;
-                        if (part.contains(":")) {
-                            final String[] innerParts = part.split(":");
-                            if (innerParts.length > 1) {
-                                final int chance = Integer.parseInt(innerParts[1]);
-                                if (chance < 1 || chance > 100) {
-                                    return false;
-                                }
-                            }
-                            block = innerParts[0];
-                        } else {
-                            block = part;
+                        Matcher matcher = pattern.matcher(part);
+                        matcher.find();
+                        String namespace = matcher.group("namespace");
+                        String block = matcher.group("block");
+                        String chanceStr = matcher.group("chance");
+                        if (namespace == null) namespace = "minecraft";
+                        int chance = chanceStr == null ? -1 : Integer.parseInt(chanceStr);
+
+                        if ((chance != -1 && (chance < 1 || chance > 100)) || block == null) {
+                            return false;
                         }
-                        StringComparison<PlotBlock>.ComparisonResult value =
+                        StringComparison<BlockState>.ComparisonResult value =
                             WorldUtil.IMP.getClosestBlock(block);
                         if (value == null || value.match > 1) {
                             return false;
-                        } else if (Settings.Enabled_Components.PREVENT_UNSAFE && !value.best.isAir()
+                        } else if (Settings.Enabled_Components.PREVENT_UNSAFE && !value.best.getBlockType().getMaterial().isAir()
                             && !WorldUtil.IMP.isBlockSolid(value.best)) {
                             throw new UnsafeBlockException(value.best);
                         }
@@ -162,9 +164,9 @@ public class Configuration {
 
     public static final class UnsafeBlockException extends IllegalArgumentException {
 
-        @Getter private final PlotBlock unsafeBlock;
+        @Getter private final BlockState unsafeBlock;
 
-        UnsafeBlockException(@NonNull final PlotBlock unsafeBlock) {
+        UnsafeBlockException(@NonNull final BlockState unsafeBlock) {
             super(String.format("%s is not a valid block", unsafeBlock));
             this.unsafeBlock = unsafeBlock;
         }

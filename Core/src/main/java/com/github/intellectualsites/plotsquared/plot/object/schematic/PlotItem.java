@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.object.schematic;
 
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.sk89q.worldedit.world.item.ItemType;
 
 public class PlotItem {
 
@@ -9,10 +9,10 @@ public class PlotItem {
     public final int z;
     // public final short[] id;
     // public final byte[] data;
-    public final PlotBlock[] types;
+    public final ItemType[] types;
     public final byte[] amount;
 
-    public PlotItem(short x, short y, short z, PlotBlock[] types, byte[] amount) {
+    public PlotItem(short x, short y, short z, ItemType[] types, byte[] amount) {
         this.x = x;
         this.y = y;
         this.z = z;

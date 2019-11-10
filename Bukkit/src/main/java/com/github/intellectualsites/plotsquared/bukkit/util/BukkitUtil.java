@@ -3,7 +3,11 @@ package com.github.intellectualsites.plotsquared.bukkit.util;
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
@@ -11,7 +15,10 @@ import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldedit.world.block.BlockState;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,7 +27,6 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.type.WallSign;
@@ -36,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 @SuppressWarnings({"unused", "WeakerAccess"}) public class BukkitUtil extends WorldUtil {
@@ -258,23 +263,11 @@ import java.util.Set;
             location.getPitch());
     }
 
-    public static BukkitLegacyMappings getBukkitLegacyMappings() {
-        return (BukkitLegacyMappings) PlotSquared.imp().getLegacyMappings();
+    public static Material getMaterial(@NonNull final BlockState plotBlock) {
+        return BukkitAdapter.adapt(plotBlock.getBlockType());
     }
 
-    public static Material getMaterial(@NonNull final PlotBlock plotBlock) {
-        if (plotBlock instanceof StringPlotBlock) {
-            return Material
-                .getMaterial(((StringPlotBlock) plotBlock).getItemId().toUpperCase(Locale.ENGLISH));
-        } else {
-            final LegacyPlotBlock legacyPlotBlock = (LegacyPlotBlock) plotBlock;
-            return getBukkitLegacyMappings()
-                .fromLegacyToString(legacyPlotBlock.getId(), legacyPlotBlock.getData())
-                .to(Material.class);
-        }
-    }
-
-    @Override public boolean isBlockSame(PlotBlock block1, PlotBlock block2) {
+    @Override public boolean isBlockSame(BlockState block1, BlockState block2) {
         if (block1.equals(block2)) {
             return true;
         }
@@ -377,7 +370,7 @@ import java.util.Set;
             sign.setFacing(facing);
             block.setBlockData(sign, false);
         }
-        final BlockState blockstate = block.getState();
+        final org.bukkit.block.BlockState blockstate = block.getState();
         if (blockstate instanceof Sign) {
             final Sign sign = (Sign) blockstate;
             for (int i = 0; i < lines.length; i++) {
@@ -405,13 +398,13 @@ import java.util.Set;
     public boolean addItems(@NonNull final String worldName, @NonNull final PlotItem items) {
         final World world = getWorld(worldName);
         final Block block = world.getBlockAt(items.x, items.y, items.z);
-        final BlockState state = block.getState();
+        final org.bukkit.block.BlockState state = block.getState();
         if (state instanceof InventoryHolder) {
             InventoryHolder holder = (InventoryHolder) state;
             Inventory inv = holder.getInventory();
             for (int i = 0; i < items.types.length; i++) {
                 // ItemStack item = new ItemStack(LegacyMappings.fromLegacyId(items.id[i]).getMaterial(), items.amount[i], items.data[i]);
-                ItemStack item = new ItemStack(items.types[i].to(Material.class), items.amount[i]);
+                ItemStack item = new ItemStack(BukkitAdapter.adapt(items.types[i]), items.amount[i]);
                 inv.addItem(item);
             }
             state.update(true);
@@ -420,33 +413,11 @@ import java.util.Set;
         return false;
     }
 
-    @Override public boolean isBlockSolid(@NonNull final PlotBlock block) {
-        try {
-            Material material = getMaterial(block);
-            if (material.isLegacy()) {
-                material = getBukkitLegacyMappings().fromLegacyToString(material.name())
-                    .to(Material.class);
-            }
-            if (material.isBlock() && material.isSolid() && !material.hasGravity()) {
-                String name = material.name().toLowerCase(Locale.ENGLISH);
-                if (material.isOccluding() || name.contains("stairs") || name.contains("slab")
-                    || name.contains("wool")) {
-                    switch (material) {
-                        case NOTE_BLOCK:
-                        case SPAWNER:
-                            return false;
-                        default:
-                            return true;
-                    }
-                }
-            }
-            return false;
-        } catch (Exception ignored) {
-            return false;
-        }
+    @Override public boolean isBlockSolid(@NonNull final BlockState block) {
+        return block.getBlockType().getMaterial().isSolid();
     }
 
-    @Override public String getClosestMatchingName(@NonNull final PlotBlock block) {
+    @Override public String getClosestMatchingName(@NonNull final BlockState block) {
         try {
             return getMaterial(block).name();
         } catch (Exception ignored) {
@@ -455,21 +426,18 @@ import java.util.Set;
     }
 
     @Override @Nullable
-    public StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name) {
-        final PlotBlock plotBlock = BukkitUtil.getBukkitLegacyMappings().fromAny(name);
-        if (plotBlock != null) {
-            return new StringComparison<PlotBlock>().new ComparisonResult(1, plotBlock);
-        }
-        return BukkitUtil.getBukkitLegacyMappings().getClosestsMatch(name);
+    public StringComparison<BlockState>.ComparisonResult getClosestBlock(String name) {
+        BlockState state = BlockUtil.get(name);
+        return new StringComparison<BlockState>().new ComparisonResult(1, state);
     }
 
     @Override
-    public void setBiomes(@NonNull final String worldName, @NonNull final RegionWrapper region,
+    public void setBiomes(@NonNull final String worldName, @NonNull final CuboidRegion region,
         @NonNull final String biomeString) {
         final World world = getWorld(worldName);
         final Biome biome = Biome.valueOf(biomeString.toUpperCase());
-        for (int x = region.minX; x <= region.maxX; x++) {
-            for (int z = region.minZ; z <= region.maxZ; z++) {
+        for (int x = region.getMinimumPoint().getX(); x <= region.getMaximumPoint().getX(); x++) {
+            for (int z = region.getMinimumPoint().getZ(); z <= region.getMaximumPoint().getZ(); z++) {
                 world.setBiome(x, z, biome);
             }
         }
@@ -479,10 +447,10 @@ import java.util.Set;
         return new BukkitWorld(Bukkit.getWorld(world));
     }
 
-    @Override public PlotBlock getBlock(@NonNull final Location location) {
+    @Override public BlockState getBlock(@NonNull final Location location) {
         final World world = getWorld(location.getWorld());
         final Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
-        return PlotBlock.get(block.getType().name());
+        return BlockUtil.get(block.getType().name());
     }
 
     @Override public String getMainWorld() {

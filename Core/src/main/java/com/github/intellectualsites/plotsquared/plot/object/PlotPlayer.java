@@ -10,9 +10,17 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.PlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAreaManager;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
+import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
+import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.google.common.base.Preconditions;
+import com.sk89q.worldedit.extension.platform.Actor;
+import com.sk89q.worldedit.world.item.ItemType;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
@@ -78,6 +86,8 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     public static PlotPlayer get(String name) {
         return UUIDHandler.getPlayer(name);
     }
+
+    public abstract Actor toActor();
 
     /**
      * Set some session only metadata for this player.
@@ -464,7 +474,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      * @param location where to play the music
      * @param id       the record item id
      */
-    public abstract void playMusic(@NotNull Location location, @NotNull PlotBlock id);
+    public abstract void playMusic(@NotNull Location location, @NotNull ItemType id);
 
     /**
      * Check if this player is banned.

@@ -56,7 +56,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
     if (item == null) {
       return null;
     }
-    ItemStack stack = new ItemStack(BukkitUtil.getMaterial(item.getPlotBlock()), item.amount);
+    ItemStack stack = new ItemStack(BukkitUtil.getMaterial(item.getBlockState()), item.amount);
     ItemMeta meta = null;
     if (item.name != null) {
       meta = stack.getItemMeta();

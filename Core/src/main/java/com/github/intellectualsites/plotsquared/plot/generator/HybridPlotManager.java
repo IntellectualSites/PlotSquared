@@ -3,14 +3,21 @@ package com.github.intellectualsites.plotsquared.plot.generator;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.Template;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
+import com.github.intellectualsites.plotsquared.plot.object.FileBytes;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.google.common.collect.Sets;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
 
 import java.io.File;
@@ -168,13 +175,13 @@ public class HybridPlotManager extends ClassicPlotManager {
         // The component blocks
         final BlockBucket plotfloor = hybridPlotWorld.TOP_BLOCK;
         final BlockBucket filling = hybridPlotWorld.MAIN_BLOCK;
-        final PlotBlock bedrock;
+        final BlockState bedrock;
         if (hybridPlotWorld.PLOT_BEDROCK) {
-            bedrock = PlotBlock.get((short) 7, (byte) 0);
+            bedrock = BlockUtil.get((short) 7, (byte) 0);
         } else {
-            bedrock = PlotBlock.get((short) 0, (byte) 0);
+            bedrock = BlockUtil.get((short) 0, (byte) 0);
         }
-        final PlotBlock air = PlotBlock.get((short) 0, (byte) 0);
+        final BlockState air = BlockUtil.get((short) 0, (byte) 0);
         final String biome = hybridPlotWorld.PLOT_BIOME;
         final LocalBlockQueue queue = hybridPlotWorld.getQueue(false);
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {

@@ -10,7 +10,6 @@ import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
@@ -19,6 +18,7 @@ import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
+import com.sk89q.worldedit.world.block.BlockState;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +60,7 @@ import java.util.stream.IntStream;
                                 Captions.PERMISSION_SET_COMPONENT.f(component));
                             return false;
                         }
-                        // PlotBlock[] blocks;
+                        // BlockState[] blocks;
                         BlockBucket bucket;
                         try {
                             if (args.length < 2) {
@@ -73,7 +73,7 @@ import java.util.stream.IntStream;
                             } catch (final UnknownBlockException unknownBlockException) {
                                 final String unknownBlock = unknownBlockException.getUnknownValue();
                                 Captions.NOT_VALID_BLOCK.send(player, unknownBlock);
-                                StringComparison<PlotBlock>.ComparisonResult match =
+                                StringComparison<BlockState>.ComparisonResult match =
                                     WorldUtil.IMP.getClosestBlock(unknownBlock);
                                 if (match != null) {
                                     final String found =
@@ -87,8 +87,8 @@ import java.util.stream.IntStream;
                             }
 
                             if (!allowUnsafe) {
-                                for (final PlotBlock block : bucket.getBlocks()) {
-                                    if (!block.isAir() && !WorldUtil.IMP.isBlockSolid(block)) {
+                                for (final BlockState block : bucket.getBlocks()) {
+                                    if (!block.getBlockType().getMaterial().isAir() && !WorldUtil.IMP.isBlockSolid(block)) {
                                         Captions.NOT_ALLOWED_BLOCK.send(player, block.toString());
                                         return false;
                                     }

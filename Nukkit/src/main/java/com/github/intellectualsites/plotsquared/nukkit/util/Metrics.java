@@ -6,12 +6,10 @@ import cn.nukkit.utils.LogLevel;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 
-import java.io.*;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.*;
 import java.util.zip.GZIPOutputStream;
 
 public class Metrics {

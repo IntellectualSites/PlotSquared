@@ -1,11 +1,11 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,7 +30,7 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
 
     public abstract LocalChunk getLocalChunk(int x, int z);
 
-    @Override public abstract PlotBlock getBlock(int x, int y, int z);
+    @Override public abstract BlockState getBlock(int x, int y, int z);
 
     public abstract void setComponents(LocalChunk lc)
         throws ExecutionException, InterruptedException;
@@ -111,11 +111,11 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
         return true;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, PlotBlock id) {
-        // Trying to mix PlotBlock and BaseBlock leads to all kinds of issues.
-        // Since BaseBlock has more features than PlotBlock, simply convert
-        // all PlotBlocks to BaseBlocks
-        return setBlock(x, y, z, id.getBaseBlock());
+    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
+        // Trying to mix BlockState and BaseBlock leads to all kinds of issues.
+        // Since BaseBlock has more features than BlockState, simply convert
+        // all BlockStates to BaseBlocks
+        return setBlock(x, y, z, id.toBaseBlock());
     }
 
     @Override public final boolean setBiome(int x, int z, String biome) {

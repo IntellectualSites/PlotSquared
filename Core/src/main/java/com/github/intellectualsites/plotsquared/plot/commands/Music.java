@@ -8,6 +8,7 @@ import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
 import com.github.intellectualsites.plotsquared.plot.object.PlotItemStack;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.sk89q.worldedit.world.item.ItemTypes;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,11 +40,11 @@ import java.util.Locale;
                 if (item == null) {
                     return true;
                 }
-                if (item.getPlotBlock().equalsAny(7, "bedrock")) {
+                if (item.getType() == ItemTypes.BEDROCK) {
                     plot.removeFlag(Flags.MUSIC);
                     Captions.FLAG_REMOVED.send(player);
                 } else if (item.name.toLowerCase(Locale.ENGLISH).contains("disc")) {
-                    plot.setFlag(Flags.MUSIC, item.getPlotBlock().getRawId());
+                    plot.setFlag(Flags.MUSIC, item);
                     Captions.FLAG_ADDED.send(player);
                 } else {
                     Captions.FLAG_NOT_ADDED.send(player);

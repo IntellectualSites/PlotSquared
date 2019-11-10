@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-@RequiredArgsConstructor final class PlotBlockPopulator extends BlockPopulator {
+@RequiredArgsConstructor final class BlockStatePopulator extends BlockPopulator {
 
     private final IndependentPlotGenerator plotGenerator;
     private LocalBlockQueue queue;

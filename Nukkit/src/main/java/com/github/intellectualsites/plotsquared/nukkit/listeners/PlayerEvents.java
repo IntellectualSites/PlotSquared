@@ -28,11 +28,8 @@ import com.github.intellectualsites.plotsquared.plot.config.C;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
-import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.google.common.base.Optional;
 
-import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 

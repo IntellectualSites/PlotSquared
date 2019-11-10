@@ -4,10 +4,10 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 
 public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
     private final int minX;
@@ -55,7 +55,7 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
             .setBlock(x + minX, y + minY, z + minZ, id);
     }
 
-    @Override public boolean setBlock(int x, int y, int z, PlotBlock id) {
+    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
         return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super
             .setBlock(x + minX, y + minY, z + minZ, id);
     }

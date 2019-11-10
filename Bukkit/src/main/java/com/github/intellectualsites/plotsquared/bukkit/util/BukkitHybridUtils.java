@@ -5,7 +5,11 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
@@ -13,7 +17,11 @@ import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockState;
+import com.sk89q.worldedit.world.block.BlockType;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -22,15 +30,16 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.generator.ChunkGenerator;
 
 import java.util.HashSet;
+import java.util.Set;
 
 public class BukkitHybridUtils extends HybridUtils {
 
-    @Override public void analyzeRegion(final String world, final RegionWrapper region,
+    @Override public void analyzeRegion(final String world, final CuboidRegion region,
         final RunnableVal<PlotAnalysis> whenDone) {
         // int diff, int variety, int vertices, int rotation, int height_sd
         /*
          * diff: compare to base by looping through all blocks
-         * variety: add to HashSet for each PlotBlock
+         * variety: add to HashSet for each BlockState
          * height_sd: loop over all blocks and get top block
          *
          * vertices: store air map and compare with neighbours
@@ -47,8 +56,8 @@ public class BukkitHybridUtils extends HybridUtils {
                 return;
             }
 
-            final Location bot = new Location(world, region.minX, region.minY, region.minZ);
-            final Location top = new Location(world, region.maxX, region.maxY, region.maxZ);
+            final Location bot = new Location(world, region.getMinimumPoint().getX(), region.getMinimumPoint().getY(), region.getMinimumPoint().getZ());
+            final Location top = new Location(world, region.getMaximumPoint().getX(), region.getMaximumPoint().getY(), region.getMaximumPoint().getZ());
 
             final int bx = bot.getX();
             final int bz = bot.getZ();
@@ -65,8 +74,8 @@ public class BukkitHybridUtils extends HybridUtils {
             System.gc();
             System.gc();
             final BlockBucket[][][] oldBlocks = new BlockBucket[256][width][length];
-            final PlotBlock[][][] newBlocks = new PlotBlock[256][width][length];
-            final BlockBucket airBucket = BlockBucket.withSingle(StringPlotBlock.EVERYTHING);
+            final BlockState[][][] newBlocks = new BlockState[256][width][length];
+            final BlockBucket airBucket = BlockBucket.withSingle(BlockTypes.AIR.getDefaultState());
 
             PlotArea area = PlotSquared.get().getPlotArea(world, null);
 
@@ -122,7 +131,7 @@ public class BukkitHybridUtils extends HybridUtils {
                         for (int y = 0; y < blocks.length; y++) {
                             if (blocks[y] != null) {
                                 result[(minY + y) >> 4][(((minY + y) & 0xF) << 8) | (z << 4) | x] =
-                                    BlockBucket.withSingle(PlotBlock.get(blocks[y]));
+                                    BlockBucket.withSingle(blocks[y].toImmutableState());
                             }
                         }
                     }
@@ -177,45 +186,45 @@ public class BukkitHybridUtils extends HybridUtils {
                 int i = 0;
                 for (int x = 0; x < width; x++) {
                     for (int z = 0; z < length; z++) {
-                        HashSet<PlotBlock> types = new HashSet<>();
+                        Set<BlockType> types = new HashSet<>();
                         for (int y = 0; y < 256; y++) {
                             BlockBucket old = oldBlocks[y][x][z];
                             try {
                                 if (old == null) {
                                     old = airBucket;
                                 }
-                                PlotBlock now = newBlocks[y][x][z];
+                                BlockState now = newBlocks[y][x][z];
                                 if (!old.getBlocks().contains(now)) {
                                     changes[i]++;
                                 }
-                                if (now.isAir()) {
+                                if (now.getBlockType().getMaterial().isAir()) {
                                     air[i]++;
                                 } else {
                                     // check vertices
                                     // modifications_adjacent
                                     if (x > 0 && z > 0 && y > 0 && x < width - 1 && z < length - 1
                                         && y < 255) {
-                                        if (newBlocks[y - 1][x][z].isAir()) {
+                                        if (newBlocks[y - 1][x][z].getBlockType().getMaterial().isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y][x - 1][z].isAir()) {
+                                        if (newBlocks[y][x - 1][z].getBlockType().getMaterial().isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y][x][z - 1].isAir()) {
+                                        if (newBlocks[y][x][z - 1].getBlockType().getMaterial().isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y + 1][x][z].isAir()) {
+                                        if (newBlocks[y + 1][x][z].getBlockType().getMaterial().isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y][x + 1][z].isAir()) {
+                                        if (newBlocks[y][x + 1][z].getBlockType().getMaterial().isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y][x][z + 1].isAir()) {
+                                        if (newBlocks[y][x][z + 1].getBlockType().getMaterial().isAir()) {
                                             faces[i]++;
                                         }
                                     }
 
-                                    Material material = now.to(Material.class);
+                                    Material material = BukkitAdapter.adapt(now.getBlockType());
                                     if (material != null) {
                                         BlockData blockData = material.createBlockData();
                                         if (blockData instanceof Directional) {
@@ -224,7 +233,7 @@ public class BukkitHybridUtils extends HybridUtils {
                                             data[i]++;
                                         }
                                     }
-                                    types.add(now);
+                                    types.add(now.getBlockType());
                                 }
                             } catch (NullPointerException e) {
                                 e.printStackTrace();
@@ -297,7 +306,7 @@ public class BukkitHybridUtils extends HybridUtils {
                         for (int z = minZ; z <= maxZ; z++) {
                             int zz = cbz + z;
                             for (int y = 0; y < 256; y++) {
-                                PlotBlock block = queue.getBlock(xx, y, zz);
+                                BlockState block = queue.getBlock(xx, y, zz);
                                 int xr = xb + x;
                                 int zr = zb + z;
                                 newBlocks[y][xr][zr] = block;

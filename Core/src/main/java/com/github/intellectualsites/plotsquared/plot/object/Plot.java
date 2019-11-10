@@ -12,7 +12,17 @@ import com.github.intellectualsites.plotsquared.plot.generator.SquarePlotWorld;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
+import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
@@ -21,6 +31,9 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,8 +43,18 @@ import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -45,13 +68,13 @@ import java.util.stream.Collectors;
  */
 public class Plot {
 
-    private static final int MAX_HEIGHT = 256;
+    public static final int MAX_HEIGHT = 256;
 
     /**
      * @deprecated raw access is deprecated
      */
-    @Deprecated private static HashSet<Plot> connected_cache;
-    private static HashSet<RegionWrapper> regions_cache;
+    @Deprecated private static Set<Plot> connected_cache;
+    private static Set<CuboidRegion> regions_cache;
 
     @NotNull private final PlotId id;
 
@@ -844,7 +867,7 @@ public class Plot {
                 return false;
             }
         }
-        final HashSet<RegionWrapper> regions = this.getRegions();
+        final Set<CuboidRegion> regions = this.getRegions();
         final Set<Plot> plots = this.getConnectedPlots();
         final ArrayDeque<Plot> queue = new ArrayDeque<>(plots);
         if (isDelete) {
@@ -856,8 +879,8 @@ public class Plot {
             @Override public void run() {
                 if (queue.isEmpty()) {
                     Runnable run = () -> {
-                        for (RegionWrapper region : regions) {
-                            Location[] corners = region.getCorners(getWorldName());
+                        for (CuboidRegion region : regions) {
+                            Location[] corners = MainUtil.getCorners(getWorldName(), region);
                             ChunkManager.manager.clearAllEntities(corners[0], corners[1]);
                         }
                         TaskManager.runTask(whenDone);
@@ -899,7 +922,7 @@ public class Plot {
      * @param whenDone The task to run when finished, or null
      */
     public void setBiome(final String biome, final Runnable whenDone) {
-        final ArrayDeque<RegionWrapper> regions = new ArrayDeque<>(this.getRegions());
+        final ArrayDeque<CuboidRegion> regions = new ArrayDeque<>(this.getRegions());
         final int extendBiome;
         if (area instanceof SquarePlotWorld) {
             extendBiome = (((SquarePlotWorld) area).ROAD_WIDTH > 0) ? 1 : 0;
@@ -913,14 +936,14 @@ public class Plot {
                     TaskManager.runTask(whenDone);
                     return;
                 }
-                RegionWrapper region = regions.poll();
-                Location pos1 = new Location(getWorldName(), region.minX - extendBiome, region.minY,
-                    region.minZ - extendBiome);
-                Location pos2 = new Location(getWorldName(), region.maxX + extendBiome, region.maxY,
-                    region.maxZ + extendBiome);
+                CuboidRegion region = regions.poll();
+                Location pos1 = new Location(getWorldName(), region.getMinimumPoint().getX() - extendBiome, region.getMinimumPoint().getY(),
+                    region.getMinimumPoint().getZ() - extendBiome);
+                Location pos2 = new Location(getWorldName(), region.getMaximumPoint().getX() + extendBiome, region.getMaximumPoint().getY(),
+                    region.getMaximumPoint().getZ() + extendBiome);
                 ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
                     @Override public void run(int[] value) {
-                        ChunkLoc loc = new ChunkLoc(value[0], value[1]);
+                        BlockVector2 loc = BlockVector2.at(value[0], value[1]);
                         ChunkManager.manager.loadChunk(getWorldName(), loc, false);
                         MainUtil.setBiome(getWorldName(), value[2], value[3], value[4], value[5],
                             biome);
@@ -1093,7 +1116,7 @@ public class Plot {
      * Delete a plot (use null for the runnable if you don't need to be notified on completion)
      *
      * @see PlotSquared#removePlot(Plot, boolean)
-     * @see #clear(Runnable) to simply clear a plot
+     * @see #clear(boolean, boolean, Runnable) to simply clear a plot
      */
     public boolean deletePlot(final Runnable whenDone) {
         if (!this.hasOwner()) {
@@ -1233,9 +1256,9 @@ public class Plot {
     }
 
     public Location getSide() {
-        RegionWrapper largest = getLargestRegion();
-        int x = (largest.maxX >> 1) - (largest.minX >> 1) + largest.minX;
-        int z = largest.minZ - 1;
+        CuboidRegion largest = getLargestRegion();
+        int x = (largest.getMaximumPoint().getX() >> 1) - (largest.getMinimumPoint().getX() >> 1) + largest.getMinimumPoint().getX();
+        int z = largest.getMinimumPoint().getZ() - 1;
         PlotManager manager = getManager();
         int y = isLoaded() ? WorldUtil.IMP.getHighestBlock(getWorldName(), x, z) : 62;
         if (area.ALLOW_SIGNS && (y <= 0 || y >= 255)) {
@@ -1251,17 +1274,18 @@ public class Plot {
      */
     public Location getHome() {
         BlockLoc home = this.getPosition();
-        if (home == null || home.x == 0 && home.z == 0) {
+        if (home == null || home.getX() == 0 && home.getZ() == 0) {
             return this.getDefaultHome(true);
         } else {
             Location bottom = this.getBottomAbs();
             Location location =
-                new Location(bottom.getWorld(), bottom.getX() + home.x, bottom.getY() + home.y,
-                    bottom.getZ() + home.z, home.yaw, home.pitch);
+                new Location(bottom.getWorld(), bottom.getX() + home.getX(), bottom.getY() + home
+                    .getY(),
+                    bottom.getZ() + home.getZ(), home.getYaw(), home.getPitch());
             if (!isLoaded()) {
                 return location;
             }
-            if (!WorldUtil.IMP.getBlock(location).isAir()) {
+            if (!WorldUtil.IMP.getBlock(location).getBlockType().getMaterial().isAir()) {
                 location.setY(Math.max(1 + WorldUtil.IMP
                         .getHighestBlock(this.getWorldName(), location.getX(), location.getZ()),
                     bottom.getY()));
@@ -1306,9 +1330,9 @@ public class Plot {
             int z;
             if (loc.getX() == Integer.MAX_VALUE && loc.getZ() == Integer.MAX_VALUE) {
                 // center
-                RegionWrapper largest = plot.getLargestRegion();
-                x = (largest.maxX >> 1) - (largest.minX >> 1) + largest.minX;
-                z = (largest.maxZ >> 1) - (largest.minZ >> 1) + largest.minZ;
+                CuboidRegion largest = plot.getLargestRegion();
+                x = (largest.getMaximumPoint().getX() >> 1) - (largest.getMinimumPoint().getX() >> 1) + largest.getMinimumPoint().getX();
+                z = (largest.getMaximumPoint().getZ() >> 1) - (largest.getMinimumPoint().getZ() >> 1) + largest.getMinimumPoint().getZ();
             } else {
                 // specific
                 Location bot = plot.getBottomAbs();
@@ -1326,9 +1350,9 @@ public class Plot {
 
     public double getVolume() {
         double count = 0;
-        for (RegionWrapper region : getRegions()) {
+        for (CuboidRegion region : getRegions()) {
             count +=
-                (region.maxX - (double) region.minX + 1) * (region.maxZ - (double) region.minZ + 1)
+                (region.getMaximumPoint().getX() - (double) region.getMinimumPoint().getX() + 1) * (region.getMaximumPoint().getZ() - (double) region.getMinimumPoint().getZ() + 1)
                     * MAX_HEIGHT;
         }
         return count;
@@ -1413,11 +1437,11 @@ public class Plot {
      */
     public void refreshChunks() {
         LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(getWorldName(), false);
-        HashSet<ChunkLoc> chunks = new HashSet<>();
-        for (RegionWrapper region : Plot.this.getRegions()) {
-            for (int x = region.minX >> 4; x <= region.maxX >> 4; x++) {
-                for (int z = region.minZ >> 4; z <= region.maxZ >> 4; z++) {
-                    if (chunks.add(new ChunkLoc(x, z))) {
+        HashSet<BlockVector2> chunks = new HashSet<>();
+        for (CuboidRegion region : Plot.this.getRegions()) {
+            for (int x = region.getMinimumPoint().getX() >> 4; x <= region.getMaximumPoint().getX() >> 4; x++) {
+                for (int z = region.getMinimumPoint().getZ() >> 4; z <= region.getMaximumPoint().getZ() >> 4; z++) {
+                    if (chunks.add(BlockVector2.at(x, z))) {
                         queue.refreshChunk(x, z);
                     }
                 }
@@ -1435,7 +1459,7 @@ public class Plot {
         }
         Location location = manager.getSignLoc(this);
         LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(getWorldName(), false);
-        queue.setBlock(location.getX(), location.getY(), location.getZ(), PlotBlock.get("air"));
+        queue.setBlock(location.getX(), location.getY(), location.getZ(), BlockUtil.get("air"));
         queue.flush();
     }
 
@@ -2142,7 +2166,7 @@ public class Plot {
             String[] lines = TaskManager.IMP.sync(new RunnableVal<String[]>() {
                 @Override public void run(String[] value) {
                     ChunkManager.manager
-                        .loadChunk(location.getWorld(), location.getChunkLoc(), false);
+                        .loadChunk(location.getWorld(), location.getBlockVector2(), false);
                     this.value = WorldUtil.IMP.getSign(location);
                 }
             });
@@ -2571,7 +2595,7 @@ public class Plot {
      *
      * @return
      */
-    @NotNull public HashSet<RegionWrapper> getRegions() {
+    @NotNull public Set<CuboidRegion> getRegions() {
         if (regions_cache != null && connected_cache != null && connected_cache.contains(this)) {
             return regions_cache;
         }
@@ -2579,14 +2603,13 @@ public class Plot {
             Location pos1 = this.getBottomAbs();
             Location pos2 = this.getTopAbs();
             connected_cache = Sets.newHashSet(this);
-            regions_cache = Sets.newHashSet(
-                new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getY(), pos2.getY(), pos1.getZ(),
-                    pos2.getZ()));
+            CuboidRegion rg = new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3());
+            regions_cache = Collections.singleton(rg);
             return regions_cache;
         }
         Set<Plot> plots = this.getConnectedPlots();
-        HashSet<RegionWrapper> regions = regions_cache = new HashSet<>();
-        HashSet<PlotId> visited = new HashSet<>();
+        Set<CuboidRegion> regions = regions_cache = new HashSet<>();
+        Set<PlotId> visited = new HashSet<>();
         for (Plot current : plots) {
             if (visited.contains(current.getId())) {
                 continue;
@@ -2663,12 +2686,14 @@ public class Plot {
                     Location toploc = plot.getExtendedTopAbs();
                     Location botabs = plot.getBottomAbs();
                     Location topabs = plot.getTopAbs();
-                    regions.add(new RegionWrapper(botabs.getX(), topabs.getX(), topabs.getZ() + 1,
-                        toploc.getZ()));
+                    BlockVector3 pos1 = BlockVector3.at(botabs.getX(), 0, topabs.getZ() + 1);
+                    BlockVector3 pos2 = BlockVector3.at(topabs.getX(), Plot.MAX_HEIGHT - 1, toploc.getZ());
+                    regions.add(new CuboidRegion(pos1, pos2));
                     if (plot.getMerged(Direction.SOUTHEAST)) {
+                        pos1 = BlockVector3.at(topabs.getX() + 1, 0, topabs.getZ() + 1);
+                        pos2 = BlockVector3.at(toploc.getX(), Plot.MAX_HEIGHT - 1, toploc.getZ());
                         regions.add(
-                            new RegionWrapper(topabs.getX() + 1, toploc.getX(), topabs.getZ() + 1,
-                                toploc.getZ()));
+                            new CuboidRegion(pos1, pos2));
                         // intersection
                     }
                 }
@@ -2681,18 +2706,22 @@ public class Plot {
                     Location toploc = plot.getExtendedTopAbs();
                     Location botabs = plot.getBottomAbs();
                     Location topabs = plot.getTopAbs();
-                    regions.add(new RegionWrapper(topabs.getX() + 1, toploc.getX(), botabs.getZ(),
-                        topabs.getZ()));
+                    BlockVector3 pos1 = BlockVector3.at(topabs.getX() + 1, 0, botabs.getZ());
+                    BlockVector3 pos2 = BlockVector3.at(toploc.getX(), Plot.MAX_HEIGHT - 1, topabs.getZ());
+                    regions.add(new CuboidRegion(pos1, pos2));
                     if (plot.getMerged(Direction.SOUTHEAST)) {
+                        pos1 = BlockVector3.at(topabs.getX() + 1, 0, topabs.getZ() + 1);
+                        pos2 = BlockVector3.at(toploc.getX(), Plot.MAX_HEIGHT - 1, toploc.getZ());
                         regions.add(
-                            new RegionWrapper(topabs.getX() + 1, toploc.getX(), topabs.getZ() + 1,
-                                toploc.getZ()));
+                            new CuboidRegion(pos1, pos2));
                         // intersection
                     }
                 }
             }
+            BlockVector3 pos1 = BlockVector3.at(gbotabs.getX() + 1, 0, gbotabs.getZ());
+            BlockVector3 pos2 = BlockVector3.at(gtopabs.getX(), Plot.MAX_HEIGHT - 1, gtopabs.getZ());
             regions.add(
-                new RegionWrapper(gbotabs.getX(), gtopabs.getX(), gbotabs.getZ(), gtopabs.getZ()));
+                new CuboidRegion(pos1, pos2));
         }
         return regions;
     }
@@ -2702,13 +2731,13 @@ public class Plot {
      *
      * @return
      */
-    public RegionWrapper getLargestRegion() {
-        HashSet<RegionWrapper> regions = this.getRegions();
-        RegionWrapper max = null;
+    public CuboidRegion getLargestRegion() {
+        Set<CuboidRegion> regions = this.getRegions();
+        CuboidRegion max = null;
         double area = Double.NEGATIVE_INFINITY;
-        for (RegionWrapper region : regions) {
+        for (CuboidRegion region : regions) {
             double current =
-                (region.maxX - (double) region.minX + 1) * (region.maxZ - (double) region.minZ + 1);
+                (region.getMaximumPoint().getX() - (double) region.getMinimumPoint().getX() + 1) * (region.getMaximumPoint().getZ() - (double) region.getMinimumPoint().getZ() + 1);
             if (current > area) {
                 max = region;
                 area = current;
@@ -2737,9 +2766,9 @@ public class Plot {
      */
     public List<Location> getAllCorners() {
         Area area = new Area();
-        for (RegionWrapper region : this.getRegions()) {
-            Rectangle2D rect = new Rectangle2D.Double(region.minX - 0.6, region.minZ - 0.6,
-                region.maxX - region.minX + 1.2, region.maxZ - region.minZ + 1.2);
+        for (CuboidRegion region : this.getRegions()) {
+            Rectangle2D rect = new Rectangle2D.Double(region.getMinimumPoint().getX() - 0.6, region.getMinimumPoint().getZ() - 0.6,
+                region.getMaximumPoint().getX() - region.getMinimumPoint().getX() + 1.2, region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + 1.2);
             Area rectArea = new Area(rect);
             area.add(rectArea);
         }
@@ -2954,7 +2983,7 @@ public class Plot {
         }
         // world border
         destination.updateWorldBorder();
-        final ArrayDeque<RegionWrapper> regions = new ArrayDeque<>(this.getRegions());
+        final ArrayDeque<CuboidRegion> regions = new ArrayDeque<>(this.getRegions());
         // move / swap data
         final PlotArea originArea = getArea();
         for (Plot plot : plots) {
@@ -2969,8 +2998,8 @@ public class Plot {
                         TaskManager.runTask(whenDone);
                         return;
                     }
-                    RegionWrapper region = regions.poll();
-                    Location[] corners = region.getCorners(getWorldName());
+                    CuboidRegion region = regions.poll();
+                    Location[] corners = MainUtil.getCorners(getWorldName(), region);
                     Location pos1 = corners[0];
                     Location pos2 = corners[1];
                     Location pos3 = pos1.clone().add(offsetX, 0, offsetZ);
@@ -2997,8 +3026,8 @@ public class Plot {
                         return;
                     }
                     final Runnable task = this;
-                    RegionWrapper region = regions.poll();
-                    Location[] corners = region.getCorners(getWorldName());
+                    CuboidRegion region = regions.poll();
+                    Location[] corners = MainUtil.getCorners(getWorldName(), region);
                     final Location pos1 = corners[0];
                     final Location pos2 = corners[1];
                     Location newPos = pos1.clone().add(offsetX, 0, offsetZ);
@@ -3071,7 +3100,7 @@ public class Plot {
             }
         }
         // copy terrain
-        final ArrayDeque<RegionWrapper> regions = new ArrayDeque<>(this.getRegions());
+        final ArrayDeque<CuboidRegion> regions = new ArrayDeque<>(this.getRegions());
         Runnable run = new Runnable() {
             @Override public void run() {
                 if (regions.isEmpty()) {
@@ -3082,8 +3111,8 @@ public class Plot {
                     TaskManager.runTask(whenDone);
                     return;
                 }
-                RegionWrapper region = regions.poll();
-                Location[] corners = region.getCorners(getWorldName());
+                CuboidRegion region = regions.poll();
+                Location[] corners = MainUtil.getCorners(getWorldName(), region);
                 Location pos1 = corners[0];
                 Location pos2 = corners[1];
                 Location newPos = pos1.clone().add(offsetX, 0, offsetZ);

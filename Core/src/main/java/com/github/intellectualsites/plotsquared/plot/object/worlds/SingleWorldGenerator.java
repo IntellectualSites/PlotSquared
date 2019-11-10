@@ -2,7 +2,11 @@ package com.github.intellectualsites.plotsquared.plot.object.worlds;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
 
 public class SingleWorldGenerator extends IndependentPlotGenerator {
@@ -31,7 +35,7 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
                         blockBuckets[layer] = new BlockBucket[4096];
                     }
                     blockBuckets[layer][((y & 0xF) << 8) | (z << 4) | x] =
-                        BlockBucket.withSingle(PlotBlock.get("bedrock"));
+                        BlockBucket.withSingle(BlockUtil.get("bedrock"));
                 }
             }
         }
@@ -43,7 +47,7 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
                         blockBuckets[layer] = new BlockBucket[4096];
                     }
                     blockBuckets[layer][((y & 0xF) << 8) | (z << 4) | x] =
-                        BlockBucket.withSingle(PlotBlock.get("dirt"));
+                        BlockBucket.withSingle(BlockUtil.get("dirt"));
                 }
             }
         }
@@ -55,7 +59,7 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
                         blockBuckets[layer] = new BlockBucket[4096];
                     }
                     blockBuckets[layer][((y & 0xF) << 8) | (z << 4) | x] =
-                        BlockBucket.withSingle(PlotBlock.get("grass_block"));
+                        BlockBucket.withSingle(BlockUtil.get("grass_block"));
                 }
             }
         }
@@ -67,12 +71,12 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
         if (area.VOID) {
             Location min = result.getMin();
             if (min.getX() == 0 && min.getZ() == 0) {
-                result.setBlock(0, 0, 0, PlotBlock.get("bedrock"));
+                result.setBlock(0, 0, 0, BlockUtil.get("bedrock"));
             }
         } else {
-            result.setCuboid(bedrock1, bedrock2, PlotBlock.get("bedrock"));
-            result.setCuboid(dirt1, dirt2, PlotBlock.get("dirt"));
-            result.setCuboid(grass1, grass2, PlotBlock.get("grass_block"));
+            result.setCuboid(bedrock1, bedrock2, BlockUtil.get("bedrock"));
+            result.setCuboid(dirt1, dirt2, BlockUtil.get("dirt"));
+            result.setCuboid(grass1, grass2, BlockUtil.get("grass_block"));
         }
         result.fillBiome("PLAINS");
     }

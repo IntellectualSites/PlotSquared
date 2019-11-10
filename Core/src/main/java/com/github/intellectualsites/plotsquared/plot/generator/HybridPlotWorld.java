@@ -14,7 +14,7 @@ import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.CompoundTagBuilder;
-import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.transform.BlockTransformExtent;
 import com.sk89q.worldedit.internal.helper.MCDirections;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -178,7 +178,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
         if (schematic3 != null) {
             this.PLOT_SCHEMATIC = true;
-            BlockArrayClipboard blockArrayClipboard3 = schematic3.getClipboard();
+            Clipboard blockArrayClipboard3 = schematic3.getClipboard();
 
             BlockVector3 d3 = blockArrayClipboard3.getDimensions();
             short w3 = (short) d3.getX();
@@ -252,9 +252,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         this.ROAD_SCHEMATIC_ENABLED = true;
         // Do not populate road if using schematic population
-        // TODO: What? this.ROAD_BLOCK = BlockBucket.empty(); // PlotBlock.getEmptyData(this.ROAD_BLOCK); // PlotBlock.get(this.ROAD_BLOCK.id, (byte) 0);
+        // TODO: What? this.ROAD_BLOCK = BlockBucket.empty(); // BlockState.getEmptyData(this.ROAD_BLOCK); // BlockUtil.get(this.ROAD_BLOCK.id, (byte) 0);
 
-        BlockArrayClipboard blockArrayClipboard1 = schematic1.getClipboard();
+        Clipboard blockArrayClipboard1 = schematic1.getClipboard();
 
         BlockVector3 d1 = blockArrayClipboard1.getDimensions();
         short w1 = (short) d1.getX();
@@ -277,7 +277,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             }
         }
 
-        BlockArrayClipboard blockArrayClipboard2 = schematic2.getClipboard();
+        Clipboard blockArrayClipboard2 = schematic2.getClipboard();
         BlockVector3 d2 = blockArrayClipboard2.getDimensions();
         short w2 = (short) d2.getX();
         short l2 = (short) d2.getZ();

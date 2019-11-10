@@ -7,7 +7,6 @@ import com.github.intellectualsites.plotsquared.nukkit.NukkitMain;
 import com.github.intellectualsites.plotsquared.nukkit.events.*;
 import com.github.intellectualsites.plotsquared.nukkit.object.NukkitPlayer;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
-import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 
 import javax.annotation.Nullable;

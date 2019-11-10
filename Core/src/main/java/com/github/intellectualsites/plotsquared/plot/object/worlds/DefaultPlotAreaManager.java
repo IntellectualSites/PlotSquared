@@ -2,11 +2,17 @@ package com.github.intellectualsites.plotsquared.plot.object.worlds;
 
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.area.QuadMap;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class DefaultPlotAreaManager implements PlotAreaManager {
 
@@ -93,7 +99,7 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         QuadMap<PlotArea> map = this.plotAreaGrid.get(plotArea.worldname);
         if (map == null) {
             map = new QuadMap<PlotArea>(Integer.MAX_VALUE, 0, 0) {
-                @Override public RegionWrapper getRegion(PlotArea value) {
+                @Override public CuboidRegion getRegion(PlotArea value) {
                     return value.getRegion();
                 }
             };
@@ -195,7 +201,7 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         }
     }
 
-    @Override public PlotArea[] getPlotAreas(String world, RegionWrapper region) {
+    @Override public PlotArea[] getPlotAreas(String world, CuboidRegion region) {
         if (region == null) {
             PlotArea[] areas = this.plotAreaMap.get(world);
             if (areas == null) {

@@ -7,10 +7,9 @@ import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGe
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
-import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.World;
@@ -46,7 +45,7 @@ import java.util.Random;
             for (short x = 0; x < 16; x++) {
                 for (short z = 0; z < 16; z++) {
                     blockBuckets[0][(z << 4) | x] =
-                        BlockBucket.withSingle(PlotBlock.get("bedrock"));
+                        BlockBucket.withSingle(BlockUtil.get("bedrock"));
                 }
             }
         }

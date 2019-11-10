@@ -7,7 +7,19 @@ import com.github.intellectualsites.plotsquared.bukkit.listeners.PlayerEvents;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.PlotPlusListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.SingleWorldListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.WorldEvents;
-import com.github.intellectualsites.plotsquared.bukkit.util.*;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitChatManager;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitChunkManager;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitCommand;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitEconHandler;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitEventUtil;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitHybridUtils;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitInventoryUtil;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitSchematicHandler;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitSetupUtils;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitTaskManager;
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
+import com.github.intellectualsites.plotsquared.bukkit.util.Metrics;
+import com.github.intellectualsites.plotsquared.bukkit.util.SetGenCB;
 import com.github.intellectualsites.plotsquared.bukkit.util.block.BukkitLocalQueue;
 import com.github.intellectualsites.plotsquared.bukkit.uuid.DefaultUUIDWrapper;
 import com.github.intellectualsites.plotsquared.bukkit.uuid.FileUUIDHandler;
@@ -24,7 +36,6 @@ import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridGen;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
-import com.github.intellectualsites.plotsquared.plot.object.BlockRegistry;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
@@ -35,14 +46,39 @@ import com.github.intellectualsites.plotsquared.plot.object.worlds.PlotAreaManag
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SingleWorldGenerator;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.ChatManager;
+import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
+import com.github.intellectualsites.plotsquared.plot.util.ConsoleColors;
+import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
+import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
+import com.github.intellectualsites.plotsquared.plot.util.InventoryUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils;
+import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
+import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandlerImplementation;
+import com.github.intellectualsites.plotsquared.plot.util.UpdateUtility;
+import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.bukkit.BukkitCommandSender;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.extension.platform.Actor;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -77,9 +113,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
     }
 
-    private final LegacyMappings legacyMappings = new BukkitLegacyMappings();
-    private final BlockRegistry<Material> blockRegistry =
-        new BukkitBlockRegistry(Material.values());
     private int[] version;
     @Getter private String pluginName;
     @Getter private SingleWorldListener singleWorldListener;
@@ -796,12 +829,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return names;
     }
 
-    @Override public BlockRegistry<Material> getBlockRegistry() {
-        return this.blockRegistry;
+    @Override public Actor getConsole() {
+        @NotNull ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+        WorldEditPlugin wePlugin = ((WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit"));
+        return wePlugin.wrapCommandSender(console);
     }
-
-    @Override public LegacyMappings getLegacyMappings() {
-        return this.legacyMappings;
-    }
-
 }

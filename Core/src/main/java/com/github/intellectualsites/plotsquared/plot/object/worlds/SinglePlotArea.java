@@ -5,7 +5,14 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.generator.GridPlotWorld;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotLoc;
+import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
+import com.github.intellectualsites.plotsquared.plot.object.PlotSettings;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
+import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
@@ -40,7 +47,7 @@ public class SinglePlotArea extends GridPlotWorld {
     }
 
     public void loadWorld(final PlotId id) {
-        String worldName = id.toCommaSeparatedString();
+        String worldName = id.getX() + "." + id.getY();
         if (WorldUtil.IMP.isWorld(worldName)) {
             return;
         }
@@ -52,12 +59,19 @@ public class SinglePlotArea extends GridPlotWorld {
         setup.step = new ConfigurationNode[0];
         setup.world = worldName;
 
+        File container = PlotSquared.imp().getWorldContainer();
+        File destination = new File(container, worldName);
+
+        {// convert old
+            File oldFile = new File(container, id.toCommaSeparatedString());
+            if (oldFile.exists()) {
+                oldFile.renameTo(destination);
+            }
+        }
         // Duplicate 0;0
         if (setup.type != 0) {
-            File container = PlotSquared.imp().getWorldContainer();
-            File destination = new File(container, worldName);
             if (!destination.exists()) {
-                File src = new File(container, "0,0");
+                File src = new File(container, "0.0");
                 if (src.exists()) {
                     if (!destination.exists()) {
                         destination.mkdirs();
@@ -86,7 +100,7 @@ public class SinglePlotArea extends GridPlotWorld {
 
         TaskManager.IMP.sync(new RunnableVal<Object>() {
             @Override public void run(Object value) {
-                String worldName = id.toCommaSeparatedString();
+                String worldName = id.getX() + "." + id.getY();
                 if (WorldUtil.IMP.isWorld(worldName)) {
                     return;
                 }

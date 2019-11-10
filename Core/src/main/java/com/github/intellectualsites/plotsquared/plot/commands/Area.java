@@ -7,8 +7,25 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.generator.AugmentedUtils;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotWorld;
-import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
+import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
+import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
+import com.github.intellectualsites.plotsquared.plot.util.CmdConfirm;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+import com.sk89q.worldedit.math.BlockVector2;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -83,7 +100,7 @@ import java.util.Set;
                                     area.ROAD_WIDTH / 2;
                                 final int offsetX = bx - (area.ROAD_WIDTH == 0 ? 0 : lower);
                                 final int offsetZ = bz - (area.ROAD_WIDTH == 0 ? 0 : lower);
-                                final RegionWrapper region = new RegionWrapper(bx, tx, bz, tz);
+                                final CuboidRegion region = RegionUtil.createRegion(bx, tx, bz, tz);
                                 Set<PlotArea> areas =
                                     PlotSquared.get().getPlotAreas(area.worldname, region);
                                 if (!areas.isEmpty()) {
@@ -120,10 +137,10 @@ import java.util.Set;
                                         player.teleport(WorldUtil.IMP.getSpawn(world));
                                         if (area.TERRAIN != 3) {
                                             ChunkManager.largeRegionTask(world, region,
-                                                new RunnableVal<ChunkLoc>() {
-                                                    @Override public void run(ChunkLoc value) {
+                                                new RunnableVal<BlockVector2>() {
+                                                    @Override public void run(BlockVector2 value) {
                                                         AugmentedUtils
-                                                            .generate(world, value.x, value.z,
+                                                            .generate(world, value.getX(), value.getZ(),
                                                                 null);
                                                     }
                                                 }, null);
@@ -415,9 +432,9 @@ import java.util.Set;
                     return false;
                 }
                 ChunkManager
-                    .largeRegionTask(area.worldname, area.getRegion(), new RunnableVal<ChunkLoc>() {
-                        @Override public void run(ChunkLoc value) {
-                            AugmentedUtils.generate(area.worldname, value.x, value.z, null);
+                    .largeRegionTask(area.worldname, area.getRegion(), new RunnableVal<BlockVector2>() {
+                        @Override public void run(BlockVector2 value) {
+                            AugmentedUtils.generate(area.worldname, value.getX(), value.getZ(), null);
                         }
                     }, () -> player.sendMessage("Regen complete"));
                 return true;
@@ -444,10 +461,10 @@ import java.util.Set;
                 if (area.TYPE != 2) {
                     center = WorldUtil.IMP.getSpawn(area.worldname);
                 } else {
-                    RegionWrapper region = area.getRegion();
+                    CuboidRegion region = area.getRegion();
                     center =
-                        new Location(area.worldname, region.minX + (region.maxX - region.minX) / 2,
-                            0, region.minZ + (region.maxZ - region.minZ) / 2);
+                        new Location(area.worldname, region.getMinimumPoint().getX() + (region.getMaximumPoint().getX() - region.getMinimumPoint().getX()) / 2,
+                            0, region.getMinimumPoint().getZ() + (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ()) / 2);
                     center.setY(1 + WorldUtil.IMP
                         .getHighestBlock(area.worldname, center.getX(), center.getZ()));
                 }

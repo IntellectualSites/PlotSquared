@@ -43,7 +43,7 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
             MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_WORLD);
             return false;
         }
-        //Set<ChunkLoc> chunks = ChunkManager.manager.getChunkChunks(name);
+        //Set<BlockVector2> chunks = ChunkManager.manager.getChunkChunks(name);
         MainUtil
             .sendMessage(player, "&cIf no schematic is set, the following will not do anything");
         MainUtil.sendMessage(player,

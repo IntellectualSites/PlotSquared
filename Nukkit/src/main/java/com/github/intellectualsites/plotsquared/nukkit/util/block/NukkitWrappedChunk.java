@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.nukkit.util.block;
 
+import com.sk89q.worldedit.math.BlockVector2;
+
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.generic.BaseFullChunk;

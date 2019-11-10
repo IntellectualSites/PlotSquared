@@ -4,7 +4,11 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Connects to and uses a SQLite database.

@@ -3,14 +3,15 @@ package com.github.intellectualsites.plotsquared.plot.generator;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
-import com.github.intellectualsites.plotsquared.plot.object.StringPlotBlock;
+import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.github.intellectualsites.plotsquared.plot.util.block.DelegateLocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
+import com.sk89q.worldedit.world.block.BlockState;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -33,7 +34,7 @@ public class AugmentedUtils {
 
         final int blockX = chunkX << 4;
         final int blockZ = chunkZ << 4;
-        RegionWrapper region = new RegionWrapper(blockX, blockX + 15, blockZ, blockZ + 15);
+        CuboidRegion region = RegionUtil.createRegion(blockX, blockX + 15, blockZ, blockZ + 15);
         Set<PlotArea> areas = PlotSquared.get().getPlotAreas(world, region);
         if (areas.isEmpty()) {
             return false;
@@ -59,12 +60,12 @@ public class AugmentedUtils {
             int tzz;
             // gen
             if (area.TYPE == 2) {
-                bxx = Math.max(0, area.getRegion().minX - blockX);
-                bzz = Math.max(0, area.getRegion().minZ - blockZ);
-                txx = Math.min(15, area.getRegion().maxX - blockX);
-                tzz = Math.min(15, area.getRegion().maxZ - blockZ);
+                bxx = Math.max(0, area.getRegion().getMinimumPoint().getX() - blockX);
+                bzz = Math.max(0, area.getRegion().getMinimumPoint().getZ() - blockZ);
+                txx = Math.min(15, area.getRegion().getMaximumPoint().getX() - blockX);
+                tzz = Math.min(15, area.getRegion().getMaximumPoint().getZ() - blockZ);
                 primaryMask = new DelegateLocalBlockQueue(queue) {
-                    @Override public boolean setBlock(int x, int y, int z, PlotBlock id) {
+                    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
                         if (area.contains(x, z)) {
                             return super.setBlock(x, y, z, id);
                         }
@@ -84,7 +85,7 @@ public class AugmentedUtils {
                 primaryMask = queue;
             }
             LocalBlockQueue secondaryMask;
-            PlotBlock air = StringPlotBlock.EVERYTHING;
+            BlockState air = BlockTypes.AIR.getDefaultState();
             if (area.TERRAIN == 2) {
                 PlotManager manager = area.getPlotManager();
                 final boolean[][] canPlace = new boolean[16][16];
@@ -108,7 +109,7 @@ public class AugmentedUtils {
                 }
                 toReturn = true;
                 secondaryMask = new DelegateLocalBlockQueue(primaryMask) {
-                    @Override public boolean setBlock(int x, int y, int z, PlotBlock id) {
+                    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
                         if (canPlace[x - blockX][z - blockZ]) {
                             return super.setBlock(x, y, z, id);
                         }

@@ -3,7 +3,11 @@ package com.github.intellectualsites.plotsquared.plot.database;
 import com.github.intellectualsites.plotsquared.plot.config.Storage;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Connects to and uses a MySQL database

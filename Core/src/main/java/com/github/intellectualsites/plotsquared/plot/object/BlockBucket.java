@@ -4,37 +4,45 @@ import com.github.intellectualsites.plotsquared.configuration.serialization.Conf
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.object.collection.RandomCollection;
 import com.google.common.collect.ImmutableMap;
+import com.sk89q.worldedit.world.block.BlockState;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 /**
  * A block bucket is a container of block types, where each block
  * has a specified chance of being randomly picked
  */
-@EqualsAndHashCode @SuppressWarnings({"unused", "WeakerAccess"}) public final class BlockBucket
-    implements Iterable<PlotBlock>, ConfigurationSerializable {
+@EqualsAndHashCode(of={"blocks"}) @SuppressWarnings({"unused", "WeakerAccess"}) public final class BlockBucket
+    implements Iterable<BlockState>, ConfigurationSerializable {
 
     private final Random random = new Random();
-    private final Map<PlotBlock, Double> blocks;
+    private final Map<BlockState, Double> blocks;
 
     private final BucketIterator bucketIterator = new BucketIterator();
     private boolean compiled, singleItem;
-    private PlotBlock head;
+    private BlockState head;
 
-    private RandomCollection<PlotBlock> randomBlocks;
-    private PlotBlock single;
+    private RandomCollection<BlockState> randomBlocks;
+    private BlockState single;
 
     public BlockBucket() {
         this.blocks = new HashMap<>();
     }
 
-    public static BlockBucket withSingle(@NonNull final PlotBlock block) {
+    public static BlockBucket withSingle(@NonNull final BlockState block) {
         final BlockBucket blockBucket = new BlockBucket();
         blockBucket.addBlock(block, 100);
         return blockBucket;
@@ -47,15 +55,15 @@ import java.util.Map.Entry;
         return Configuration.BLOCK_BUCKET.parseString(map.get("blocks").toString());
     }
 
-    public void addBlock(@NonNull final PlotBlock block) {
+    public void addBlock(@NonNull final BlockState block) {
         this.addBlock(block, -1);
     }
 
-    public void addBlock(@NonNull final PlotBlock block, final int chance) {
+    public void addBlock(@NonNull final BlockState block, final int chance) {
         addBlock(block, (double) chance);
     }
 
-    private void addBlock(@NonNull final PlotBlock block, double chance) {
+    private void addBlock(@NonNull final BlockState block, double chance) {
         if (chance == -1)
             chance = 1;
         this.blocks.put(block, chance);
@@ -75,7 +83,7 @@ import java.util.Map.Entry;
      * @return Immutable collection containing all blocks that can
      * be found in the bucket
      */
-    public Collection<PlotBlock> getBlocks() {
+    public Collection<BlockState> getBlocks() {
         if (!isCompiled()) {
             this.compile();
         }
@@ -88,7 +96,7 @@ import java.util.Map.Entry;
      * @param count Number of blocks
      * @return Immutable collection containing randomly selected blocks
      */
-    public Collection<PlotBlock> getBlocks(final int count) {
+    public Collection<BlockState> getBlocks(final int count) {
         return Arrays.asList(getBlockArray(count));
     }
 
@@ -98,8 +106,8 @@ import java.util.Map.Entry;
      * @param count Number of blocks
      * @return Immutable collection containing randomly selected blocks
      */
-    public PlotBlock[] getBlockArray(final int count) {
-        final PlotBlock[] blocks = new PlotBlock[count];
+    public BlockState[] getBlockArray(final int count) {
+        final BlockState[] blocks = new BlockState[count];
         if (this.singleItem) {
             Arrays.fill(blocks, 0, count, getBlock());
         } else {
@@ -136,7 +144,7 @@ import java.util.Map.Entry;
         }
     }
 
-    @NotNull @Override public Iterator<PlotBlock> iterator() {
+    @NotNull @Override public Iterator<BlockState> iterator() {
         return this.bucketIterator;
     }
 
@@ -149,7 +157,7 @@ import java.util.Map.Entry;
      *
      * @return Randomly picked block (cased on specified rates)
      */
-    public PlotBlock getBlock() {
+    public BlockState getBlock() {
         if (!isCompiled()) {
             this.compile();
         }
@@ -159,19 +167,22 @@ import java.util.Map.Entry;
         if (randomBlocks != null) {
             return randomBlocks.next();
         }
-        return StringPlotBlock.EVERYTHING;
+        return BlockTypes.AIR.getDefaultState();
     }
 
     @Override public String toString() {
         if (!isCompiled()) {
             compile();
         }
+        if (blocks.size() == 1) {
+            return blocks.entrySet().iterator().next().getKey().toString();
+        }
         final StringBuilder builder = new StringBuilder();
-        Iterator<Entry<PlotBlock, Double>> iterator = blocks.entrySet().iterator();
+        Iterator<Entry<BlockState, Double>> iterator = blocks.entrySet().iterator();
         while (iterator.hasNext()) {
-            Entry<PlotBlock, Double> entry = iterator.next();
-            PlotBlock block = entry.getKey();
-            builder.append(block.getRawId());
+            Entry<BlockState, Double> entry = iterator.next();
+            BlockState block = entry.getKey();
+            builder.append(block);
             Double weight = entry.getValue();
             if (weight != 1) {
                 builder.append(":").append(weight.intValue());
@@ -183,13 +194,17 @@ import java.util.Map.Entry;
         return builder.toString();
     }
 
+    public boolean isAir() {
+        compile();
+        return blocks.isEmpty() || (single != null && single.getBlockType().getMaterial().isAir());
+    }
+
     @Override public Map<String, Object> serialize() {
         if (!isCompiled()) {
             compile();
         }
         return ImmutableMap.of("blocks", this.toString());
     }
-
 
     @Getter @EqualsAndHashCode @RequiredArgsConstructor private final static class Range {
 
@@ -207,13 +222,13 @@ import java.util.Map.Entry;
     }
 
 
-    private final class BucketIterator implements Iterator<PlotBlock> {
+    private final class BucketIterator implements Iterator<BlockState> {
 
         @Override public boolean hasNext() {
             return true;
         }
 
-        @Override public PlotBlock next() {
+        @Override public BlockState next() {
             return getBlock();
         }
     }

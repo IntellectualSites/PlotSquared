@@ -14,6 +14,7 @@ import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
+import com.sk89q.worldedit.extension.platform.Actor;
 import lombok.NoArgsConstructor;
 
 import java.util.Collections;
