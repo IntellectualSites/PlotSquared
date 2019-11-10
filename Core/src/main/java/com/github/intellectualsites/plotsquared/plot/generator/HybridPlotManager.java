@@ -174,8 +174,8 @@ public class HybridPlotManager extends ClassicPlotManager {
         final boolean canRegen =
             (hybridPlotWorld.TYPE == 0) && (hybridPlotWorld.TERRAIN == 0) && REGENERATIVE_CLEAR;
         // The component blocks
-        final Pattern plotfloor = hybridPlotWorld.TOP_BLOCK;
-        final Pattern filling = hybridPlotWorld.MAIN_BLOCK;
+        final Pattern plotfloor = hybridPlotWorld.TOP_BLOCK.toPattern();
+        final Pattern filling = hybridPlotWorld.MAIN_BLOCK.toPattern();
         final BlockState bedrock;
         if (hybridPlotWorld.PLOT_BEDROCK) {
             bedrock = BlockUtil.get((short) 7, (byte) 0);

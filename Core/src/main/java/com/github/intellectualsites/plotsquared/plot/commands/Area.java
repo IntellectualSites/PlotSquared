@@ -209,20 +209,20 @@ import java.util.Set;
                                     break;
                                 case "f":
                                 case "floor":
-                                    pa.TOP_BLOCK = Configuration.BLOCK_BUCKET.parseString(pair[1]).getPattern();
+                                    pa.TOP_BLOCK = Configuration.BLOCK_BUCKET.parseString(pair[1]);
                                     break;
                                 case "m":
                                 case "main":
-                                    pa.MAIN_BLOCK = Configuration.BLOCK_BUCKET.parseString(pair[1]).getPattern();
+                                    pa.MAIN_BLOCK = Configuration.BLOCK_BUCKET.parseString(pair[1]);
                                     break;
                                 case "w":
                                 case "wall":
                                     pa.WALL_FILLING =
-                                        Configuration.BLOCK_BUCKET.parseString(pair[1]).getPattern();
+                                        Configuration.BLOCK_BUCKET.parseString(pair[1]);
                                     break;
                                 case "b":
                                 case "border":
-                                    pa.WALL_BLOCK = Configuration.BLOCK_BUCKET.parseString(pair[1]).getPattern();
+                                    pa.WALL_BLOCK = Configuration.BLOCK_BUCKET.parseString(pair[1]);
                                     break;
                                 case "terrain":
                                     pa.TERRAIN = Integer.parseInt(pair[1]);

@@ -29,14 +29,18 @@ public class PatternUtil {
     }
 
     public static Pattern parse(PlotPlayer plotPlayer, String input) {
-        Actor actor = plotPlayer.toActor();
         ParserContext context = new ParserContext();
-        context.setActor(actor);
-        if (actor instanceof Player) {
-            context.setWorld(((Player) actor).getWorld());
+        if (plotPlayer != null) {
+            Actor actor = plotPlayer.toActor();
+            context.setActor(actor);
+            if (actor instanceof Player) {
+                context.setWorld(((Player) actor).getWorld());
+            }
+            context.setSession(WorldEdit.getInstance().getSessionManager().get(actor));
+            context.setRestricted(true);
+        } else {
+            context.setRestricted(false);
         }
-        context.setSession(WorldEdit.getInstance().getSessionManager().get(actor));
-        context.setRestricted(true);
         context.setPreferringWildcard(false);
         context.setTryLegacy(true);
         try {

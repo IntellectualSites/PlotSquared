@@ -26,7 +26,6 @@ import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
-import com.github.intellectualsites.plotsquared.plot.util.world.PatternUtil;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -1597,7 +1596,7 @@ public class Plot {
         if (parsed != null && parsed.isEmpty()) {
             return false;
         }
-        return this.setComponent(component, parsed.getPattern());
+        return this.setComponent(component, parsed.toPattern());
     }
 
     /**

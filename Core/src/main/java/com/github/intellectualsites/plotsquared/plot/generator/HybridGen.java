@@ -96,7 +96,7 @@ public class HybridGen extends IndependentPlotGenerator {
                 for (short z = 0; z < 16; z++) {
                     // Road
                     for (int y = 1; y <= hpw.ROAD_HEIGHT; y++) {
-                        result.setBlock(x, y, z, hpw.ROAD_BLOCK);
+                        result.setBlock(x, y, z, hpw.ROAD_BLOCK.toPattern());
                     }
                     if (hpw.ROAD_SCHEMATIC_ENABLED) {
                         placeSchem(hpw, result, rx[x], rz[z], x, z, true);
@@ -107,7 +107,7 @@ public class HybridGen extends IndependentPlotGenerator {
                     if (gz[z]) {
                         // road
                         for (int y = 1; y <= hpw.ROAD_HEIGHT; y++) {
-                            result.setBlock(x, y, z, hpw.ROAD_BLOCK);
+                            result.setBlock(x, y, z, hpw.ROAD_BLOCK.toPattern());
                         }
                         if (hpw.ROAD_SCHEMATIC_ENABLED) {
                             placeSchem(hpw, result, rx[x], rz[z], x, z, true);
@@ -115,10 +115,10 @@ public class HybridGen extends IndependentPlotGenerator {
                     } else {
                         // wall
                         for (int y = 1; y <= hpw.WALL_HEIGHT; y++) {
-                            result.setBlock(x, y, z, hpw.WALL_FILLING);
+                            result.setBlock(x, y, z, hpw.WALL_FILLING.toPattern());
                         }
                         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
-                            result.setBlock(x, hpw.WALL_HEIGHT + 1, z, hpw.WALL_BLOCK);
+                            result.setBlock(x, hpw.WALL_HEIGHT + 1, z, hpw.WALL_BLOCK.toPattern());
                         } else {
                             placeSchem(hpw, result, rx[x], rz[z], x, z, true);
                         }
@@ -129,7 +129,7 @@ public class HybridGen extends IndependentPlotGenerator {
                     if (gz[z]) {
                         // road
                         for (int y = 1; y <= hpw.ROAD_HEIGHT; y++) {
-                            result.setBlock(x, y, z, hpw.ROAD_BLOCK);
+                            result.setBlock(x, y, z, hpw.ROAD_BLOCK.toPattern());
                         }
                         if (hpw.ROAD_SCHEMATIC_ENABLED) {
                             placeSchem(hpw, result, rx[x], rz[z], x, z, true);
@@ -137,19 +137,19 @@ public class HybridGen extends IndependentPlotGenerator {
                     } else if (wz[z]) {
                         // wall
                         for (int y = 1; y <= hpw.WALL_HEIGHT; y++) {
-                            result.setBlock(x, y, z, hpw.WALL_FILLING);
+                            result.setBlock(x, y, z, hpw.WALL_FILLING.toPattern());
                         }
                         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
-                            result.setBlock(x, hpw.WALL_HEIGHT + 1, z, hpw.WALL_BLOCK);
+                            result.setBlock(x, hpw.WALL_HEIGHT + 1, z, hpw.WALL_BLOCK.toPattern());
                         } else {
                             placeSchem(hpw, result, rx[x], rz[z], x, z, true);
                         }
                     } else {
                         // plot
                         for (int y = 1; y < hpw.PLOT_HEIGHT; y++) {
-                            result.setBlock(x, y, z, hpw.MAIN_BLOCK);
+                            result.setBlock(x, y, z, hpw.MAIN_BLOCK.toPattern());
                         }
-                        result.setBlock(x, hpw.PLOT_HEIGHT, z, hpw.TOP_BLOCK);
+                        result.setBlock(x, hpw.PLOT_HEIGHT, z, hpw.TOP_BLOCK.toPattern());
                         if (hpw.PLOT_SCHEMATIC) {
                             placeSchem(hpw, result, rx[x], rz[z], x, z, false);
                         }

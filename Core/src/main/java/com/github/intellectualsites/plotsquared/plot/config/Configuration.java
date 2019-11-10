@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.config;
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.block.BlockState;
@@ -10,7 +11,6 @@ import lombok.Getter;
 import lombok.NonNull;
 
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Main Configuration Utility
@@ -62,67 +62,19 @@ public class Configuration {
     public static final SettingValue<BlockBucket> BLOCK_BUCKET =
         new SettingValue<BlockBucket>("BLOCK_BUCKET") {
 
-            private Pattern pattern = Pattern.compile("((?<namespace>[A-Za-z_]+):)?(?<block>([A-Za-z_]+(\\[?[\\S\\s]+\\])?))(:(?<chance>[0-9]{1,3}))?");
-
             @Override public BlockBucket parseString(final String string) {
-                if (string == null || string.isEmpty()) {
-                    return new BlockBucket();
-                }
-                final BlockBucket blockBucket = new BlockBucket();
-                final String[] parts = string.split(",(?![^\\(\\[]*[\\]\\)])");
-                for (final String part : parts) {
-                    Matcher matcher = pattern.matcher(part);
-                    matcher.find();
-                    String namespace = matcher.group("namespace");
-                    String block = matcher.group("block");
-                    String chanceStr = matcher.group("chance");
-                    if (namespace == null) namespace = "minecraft";
-                    int chance = chanceStr == null ? -1 : Integer.parseInt(chanceStr);
-                    final StringComparison<BlockState>.ComparisonResult value =
-                        WorldUtil.IMP.getClosestBlock(block);
-                    if (value == null) {
-                        throw new UnknownBlockException(block);
-                    } else if (Settings.Enabled_Components.PREVENT_UNSAFE && !value.best.getBlockType().getMaterial().isAir()
-                        && !WorldUtil.IMP.isBlockSolid(value.best)) {
-                        throw new UnsafeBlockException(value.best);
-                    }
-                    blockBucket.addBlock(value.best, chance);
-                }
-                blockBucket.compile(); // Pre-compile :D
-                return blockBucket;
+                BlockBucket bucket = new BlockBucket(string);
+                bucket.compile();
+                Pattern pattern = bucket.toPattern();
+                return pattern != null ? bucket : null;
             }
 
             @Override public boolean validateValue(final String string) {
                 try {
-                    if (string == null || string.isEmpty()) {
-                        return false;
-                    }
-                    final String[] parts = string.split(",(?![^\\(\\[]*[\\]\\)])");
-                    for (final String part : parts) {
-                        Matcher matcher = pattern.matcher(part);
-                        matcher.find();
-                        String namespace = matcher.group("namespace");
-                        String block = matcher.group("block");
-                        String chanceStr = matcher.group("chance");
-                        if (namespace == null) namespace = "minecraft";
-                        int chance = chanceStr == null ? -1 : Integer.parseInt(chanceStr);
-
-                        if ((chance != -1 && (chance < 1 || chance > 100)) || block == null) {
-                            return false;
-                        }
-                        StringComparison<BlockState>.ComparisonResult value =
-                            WorldUtil.IMP.getClosestBlock(block);
-                        if (value == null || value.match > 1) {
-                            return false;
-                        } else if (Settings.Enabled_Components.PREVENT_UNSAFE && !value.best.getBlockType().getMaterial().isAir()
-                            && !WorldUtil.IMP.isBlockSolid(value.best)) {
-                            throw new UnsafeBlockException(value.best);
-                        }
-                    }
-                } catch (final Throwable exception) {
+                    return parseString(string) != null;
+                } catch (Exception e) {
                     return false;
                 }
-                return true;
             }
         };
 
