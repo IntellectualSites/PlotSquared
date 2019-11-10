@@ -276,8 +276,9 @@ import java.util.UUID;
                     Captions.NOT_ALLOWED_BLOCK.send(player, e.getUnsafeBlock().toString());
                 }
                 if (valid) {
-                    sendMessage(player, Captions.SETUP_VALID_ARG, step.getConstant(), args[0]);
                     step.setValue(args[0]);
+                    Object value = step.getValue();
+                    sendMessage(player, Captions.SETUP_VALID_ARG, step.getConstant(), value);
                     object.setup_index++;
                     if (object.setup_index == object.step.length) {
                         onCommand(player, args);
