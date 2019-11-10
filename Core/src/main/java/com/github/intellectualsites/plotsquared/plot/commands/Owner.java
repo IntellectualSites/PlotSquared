@@ -20,6 +20,10 @@ import java.util.UUID;
     requiredType = RequiredType.NONE, confirmation = true) public class Owner extends SetCommand {
 
     @Override public boolean set(final PlotPlayer player, final Plot plot, String value) {
+        if (value == null || value.isEmpty()) {
+            Captions.SET_OWNER_MISSING_PLAYER.send(player);
+            return false;
+        }
         Set<Plot> plots = plot.getConnectedPlots();
         UUID uuid = null;
         String name = null;
@@ -75,20 +79,18 @@ import java.util.UUID;
         final String finalName = name;
         final UUID finalUUID = uuid;
         final boolean removeDenied = plot.isDenied(finalUUID);
-        Runnable run = new Runnable() {
-            @Override public void run() {
-                if (plot.setOwner(finalUUID, player)) {
-                    if (removeDenied)
-                        plot.removeDenied(finalUUID);
-                    plot.setSign(finalName);
-                    MainUtil.sendMessage(player, Captions.SET_OWNER);
-                    if (other != null) {
-                        MainUtil.sendMessage(other, Captions.NOW_OWNER,
-                            plot.getArea() + ";" + plot.getId());
-                    }
-                } else {
-                    MainUtil.sendMessage(player, Captions.SET_OWNER_CANCELLED);
+        Runnable run = () -> {
+            if (plot.setOwner(finalUUID, player)) {
+                if (removeDenied)
+                    plot.removeDenied(finalUUID);
+                plot.setSign(finalName);
+                MainUtil.sendMessage(player, Captions.SET_OWNER);
+                if (other != null) {
+                    MainUtil.sendMessage(other, Captions.NOW_OWNER,
+                        plot.getArea() + ";" + plot.getId());
                 }
+            } else {
+                MainUtil.sendMessage(player, Captions.SET_OWNER_CANCELLED);
             }
         };
         if (hasConfirmation(player)) {
