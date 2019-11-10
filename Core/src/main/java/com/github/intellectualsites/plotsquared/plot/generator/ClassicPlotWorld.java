@@ -84,16 +84,16 @@ import java.util.Locale;
         super.loadConfiguration(config);
         this.PLOT_BEDROCK = config.getBoolean("plot.bedrock");
         this.PLOT_HEIGHT = Math.min(255, config.getInt("plot.height"));
-        this.MAIN_BLOCK = new BlockBucket(BlockUtil.get(config.getString("plot.filling")));
-        this.TOP_BLOCK = new BlockBucket(BlockUtil.get(config.getString("plot.floor")));
-        this.WALL_BLOCK = new BlockBucket(BlockUtil.get(config.getString("wall.block")));
+        this.MAIN_BLOCK = new BlockBucket(config.getString("plot.filling"));
+        this.TOP_BLOCK = new BlockBucket(config.getString("plot.floor"));
+        this.WALL_BLOCK = new BlockBucket(config.getString("wall.block"));
         this.ROAD_HEIGHT = Math.min(255, config.getInt("road.height"));
-        this.ROAD_BLOCK = new BlockBucket(BlockUtil.get(config.getString("road.block")));
+        this.ROAD_BLOCK = new BlockBucket(config.getString("road.block"));
         this.WALL_FILLING =
-            new BlockBucket(BlockUtil.get(config.getString("wall.filling")));
+            new BlockBucket(config.getString("wall.filling"));
         this.WALL_HEIGHT = Math.min(254, config.getInt("wall.height"));
         this.CLAIMED_WALL_BLOCK =
-            new BlockBucket(BlockUtil.get(config.getString("wall.block_claimed")));
+            new BlockBucket(config.getString("wall.block_claimed"));
 
         // Dump world settings
         if (Settings.DEBUG) {
