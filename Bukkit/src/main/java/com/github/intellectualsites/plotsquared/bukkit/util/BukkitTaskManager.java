@@ -24,8 +24,12 @@ public class BukkitTaskManager extends TaskManager {
     }
 
     @Override public void taskAsync(Runnable runnable) {
-        this.bukkitMain.getServer().getScheduler().runTaskAsynchronously(this.bukkitMain, runnable)
-            .getTaskId();
+        if (this.bukkitMain.isEnabled()) {
+            this.bukkitMain.getServer().getScheduler()
+                .runTaskAsynchronously(this.bukkitMain, runnable).getTaskId();
+        } else {
+            runnable.run();
+        }
     }
 
     @Override public void task(Runnable runnable) {
