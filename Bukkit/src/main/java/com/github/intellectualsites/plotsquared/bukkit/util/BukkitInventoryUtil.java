@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
 import com.github.intellectualsites.plotsquared.plot.object.PlotItemStack;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.InventoryUtil;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -56,7 +57,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
     if (item == null) {
       return null;
     }
-    ItemStack stack = new ItemStack(BukkitUtil.getMaterial(item.getBlockState()), item.amount);
+    ItemStack stack = new ItemStack(BukkitAdapter.adapt(item.getType()), item.amount);
     ItemMeta meta = null;
     if (item.name != null) {
       meta = stack.getItemMeta();
