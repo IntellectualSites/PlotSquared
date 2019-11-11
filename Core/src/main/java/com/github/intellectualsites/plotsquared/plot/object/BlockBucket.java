@@ -104,6 +104,15 @@ public final class BlockBucket implements ConfigurationSerializable {
         String[] blocksStr = string.split(",(?![^\\(\\[]*[\\]\\)])");
         if (blocksStr.length == 1) {
             try {
+                Matcher matcher = regex.matcher(string);
+                if (matcher.find()) {
+                    String chanceStr = matcher.group("chance");
+                    String block = matcher.group("block");
+                    if (chanceStr != null && block != null && !MathMan.isInteger(block) && MathMan.isInteger(chanceStr)) {
+                        String namespace = matcher.group("namespace");
+                        string = (namespace == null ? "" : namespace + ":") + block;
+                    }
+                }
                 this.single = BlockUtil.get(string);
                 this.pattern = new BlockPattern(single);
                 return;
