@@ -23,8 +23,7 @@ import java.util.Set;
 public class WESubscriber {
 
     @Subscribe(priority = Priority.VERY_EARLY) public void onEditSession(EditSessionEvent event) {
-        WorldEdit worldedit = PlotSquared.get().worldedit;
-        if (worldedit == null) {
+        if (!Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
             WorldEdit.getInstance().getEventBus().unregister(this);
             return;
         }
