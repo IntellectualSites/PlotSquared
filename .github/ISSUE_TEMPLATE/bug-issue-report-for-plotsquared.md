@@ -51,7 +51,7 @@ assignees: ''
 - [] Minecraft 1.14.4 ***This is the ONLY actively maintained target for PlotSquared***
 - [] Minecraft 1.13.2
 - [] Minecraft Java Edition *other versions, please specify*:
-- [] Minecraft Bedrock Edition *speicify version*:
+- [] Minecraft Bedrock Edition *specify version*:
 
 ### Server build info: 
 <!--- Run /version in-game or in console & paste the full output here: -->
