@@ -41,17 +41,17 @@ assignees: ''
 ### Server type:
 **select one**
 <!-- Select the type you are reporting the issue for (put an "X" between of brackets): -->
-- [ ] Spigot / Paper *(CraftBukkit should not be used, re-test with Spigot first!)*
-- [ ] Sponge *- NOTE: NOT ACTIVELY MAINTAINED*
-- [ ] NukkitX *- NOTE: NOT ACTIVELY MAINTAINED*
+- [] Spigot / Paper *(CraftBukkit should not be used, re-test with Spigot first!)*
+- [] Sponge *- NOTE: NOT ACTIVELY MAINTAINED*
+- [] NukkitX *- NOTE: NOT ACTIVELY MAINTAINED*
 
 ### Minecraft Version:
 **select one**
 <!-- Select the type you are reporting the issue for (put an "X" between of brackets): -->
-- [ ] Minecraft 1.14.4 ***This is the ONLY actively maintained target for PlotSquared***
-- [ ] Minecraft 1.13.2
-- [ ] Minecraft Java Edition *other versions, please specify*:
-- [ ] Minecraft Bedrock Edition *speicify version*:
+- [] Minecraft 1.14.4 ***This is the ONLY actively maintained target for PlotSquared***
+- [] Minecraft 1.13.2
+- [] Minecraft Java Edition *other versions, please specify*:
+- [] Minecraft Bedrock Edition *specify version*:
 
 ### Server build info: 
 <!--- Run /version in-game or in console & paste the full output here: -->
@@ -59,8 +59,8 @@ assignees: ''
 
 ### WorldEdit/FAWE versions:
 <!--- Specify which plugin you are using, and add its version -->
-- [ ] FAWE *version*:
-- [ ] WorldEdit *version*: 
+- [] FAWE *version*:
+- [] WorldEdit *version*: 
 
 ### Description of the problem:
 <!--- Be as specific as possible.  Don't lie, redact information, or use false names/situations. -->
@@ -83,8 +83,8 @@ assignees: ''
 
 # AFFIRMATION OF COMPLETION:
 <!-- Make sure you have completed the following steps (put an "X" between of brackets): -->
-- [ ] I included all information required in the sections above
-- [ ] I made sure there are no duplicates of this report [(Use Search)](https://github.com/IntellectualSites/PlotSquared/issues?utf8=%E2%9C%93&q=is%3Aissue)
-- [ ] I made sure I am using an up-to-date version of PlotSquared
-- [ ] I made sure the bug/error is not caused by any other plugin
+- [] I included all information required in the sections above
+- [] I made sure there are no duplicates of this report [(Use Search)](https://github.com/IntellectualSites/PlotSquared/issues?utf8=%E2%9C%93&q=is%3Aissue)
+- [] I made sure I am using an up-to-date version of PlotSquared
+- [] I made sure the bug/error is not caused by any other plugin
 - [x] I didn't read but checked everything above.
