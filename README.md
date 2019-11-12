@@ -4,6 +4,10 @@
 
 ---
 
+PlotSquared is a land and world management plugin for Minecraft. 
+It includes several highly configurable world generators. 
+You can create plots of land in existing worlds using plot clusters, or you can have a full world of plots.
+
 For the end user, PlotSquared is packed with a tonne of cool features.
 It allows you to merge plots, and build together with your friends. 
 You can also change a lot of plot specific settings in the form of
