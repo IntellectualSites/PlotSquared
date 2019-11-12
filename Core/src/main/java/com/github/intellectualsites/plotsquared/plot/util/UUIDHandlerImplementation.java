@@ -161,19 +161,19 @@ public abstract class UUIDHandlerImplementation {
             });
         }
         try {
-            UUID offline = this.uuidMap.put(name, uuid);
-            if (offline != null) {
-                if (!offline.equals(uuid)) {
-                    Set<Plot> plots = PlotSquared.get().getPlots(offline);
+            UUID existing = this.uuidMap.put(name, uuid);
+            if (existing != null) {
+                if (!existing.equals(uuid)) {
+                    Set<Plot> plots = PlotSquared.get().getPlots(existing);
                     if (!plots.isEmpty()) {
                         for (Plot plot : plots) {
                             plot.owner = uuid;
                         }
-                        replace(offline, uuid, name.value);
+                        replace(existing, uuid, name.value);
                     }
                     return true;
                 } else {
-                    StringWrapper oName = this.uuidMap.inverse().get(offline);
+                    StringWrapper oName = this.uuidMap.inverse().get(existing);
                     if (!oName.equals(name)) {
                         this.uuidMap.remove(name);
                         this.uuidMap.put(name, uuid);
@@ -191,6 +191,13 @@ public abstract class UUIDHandlerImplementation {
                 PlotPlayer player = getPlayer(uuid);
                 if (player == null || player.getName().equalsIgnoreCase(name.value)) {
                     rename(uuid, name);
+                    return false;
+                }
+                StringWrapper newName = new StringWrapper(player.getName());
+                UUID newUUID = player.getUUID();
+                if (newUUID.equals(uuid) && !newName.equals(oldName)) {
+                    inverse.remove(uuid);
+                    this.uuidMap.put(newName, newUUID);
                 }
                 return false;
             }
