@@ -1387,7 +1387,7 @@ import java.util.regex.Pattern;
                 Optional<Set<BlockType>> destroy = plot.getFlag(Flags.BREAK);
                 Block block = event.getBlock();
                 if (destroy.isPresent() && destroy.get()
-                    .contains(BukkitBlockUtil.get(block)) || Permissions
+                    .contains(BukkitAdapter.asBlockType(block.getType())) || Permissions
                     .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }
@@ -2470,7 +2470,7 @@ import java.util.regex.Pattern;
                 Captions.PERMISSION_ADMIN_BUILD_UNOWNED);
             event.setCancelled(true);
         } else if (!plot.isAdded(pp.getUUID())) {
-            if (Flags.USE.contains(plot, BukkitBlockUtil.get(block))) {
+            if (Flags.USE.contains(plot, BukkitAdapter.asBlockType(block.getType()))) {
                 return;
             }
             if (Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
@@ -2532,7 +2532,7 @@ import java.util.regex.Pattern;
         } else if (!plot.isAdded(plotPlayer.getUUID())) {
             Optional<Set<BlockType>> use = plot.getFlag(Flags.USE);
             Block block = event.getBlockClicked();
-            if (use.isPresent() && use.get().contains(BukkitBlockUtil.get(block))) {
+            if (use.isPresent() && use.get().contains(BukkitAdapter.asBlockType(block.getType()))) {
                 return;
             }
             if (Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
