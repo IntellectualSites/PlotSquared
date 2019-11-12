@@ -8,6 +8,7 @@ import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,7 @@ public class BlockStateListFlag extends ListFlag<Set<BlockType>> {
     }
 
     @Override public Set<BlockType> parseValue(final String value) {
-        return Arrays.stream(BlockUtil.parse(value)).map(BlockState::getBlockType).collect(Collectors.toSet());
+        return Arrays.stream(BlockUtil.parse(value)).filter(Objects::nonNull).map(BlockState::getBlockType).collect(Collectors.toSet());
     }
 
     @Override public String getValueDescription() {
