@@ -1914,8 +1914,8 @@ import java.util.regex.Pattern;
                     Location location = BukkitUtil.getLocation(block.getLocation());
                     Material finalType = type;
                     if (!EventUtil.manager
-                        .checkPlayerBlockEvent(pp, PlayerBlockEventType.SPAWN_MOB, location, () -> BukkitAdapter.asBlockType(
-                            finalType).getDefaultState(), true)) {
+                        .checkPlayerBlockEvent(pp, PlayerBlockEventType.SPAWN_MOB, location, BukkitAdapter.asBlockType(
+                            finalType), true)) {
                         event.setCancelled(true);
                         event.setUseItemInHand(Event.Result.DENY);
                     }
@@ -1933,14 +1933,14 @@ import java.util.regex.Pattern;
             return;
         }
         PlayerBlockEventType eventType = null;
-        Supplier<BlockState> lb;
+        BlockType lb;
         Location location;
         Action action = event.getAction();
         switch (action) {
             case PHYSICAL: {
                 eventType = PlayerBlockEventType.TRIGGER_PHYSICAL;
                 Block block = event.getClickedBlock();
-                lb = BukkitBlockUtil.supply(block);
+                lb = BukkitAdapter.asBlockType(block.getType());
                 location = BukkitUtil.getLocation(block.getLocation());
                 break;
             }
@@ -2109,7 +2109,7 @@ import java.util.regex.Pattern;
                             eventType = PlayerBlockEventType.INTERACT_BLOCK;
                         }
                 }
-                lb = BukkitBlockUtil.supply(block);
+                lb = BukkitAdapter.asBlockType(block.getType());
                 if (eventType != null && (eventType != PlayerBlockEventType.INTERACT_BLOCK
                     || !player.isSneaking())) {
                     break;
@@ -2128,7 +2128,7 @@ import java.util.regex.Pattern;
                     type = offType;
                 }
                 // in the following, lb needs to have the material of the item in hand i.e. type
-                lb =  BukkitBlockUtil.supply(type);
+                lb = BukkitAdapter.asBlockType(type);
                 if (type.isBlock()) {
                     location = BukkitUtil
                         .getLocation(block.getRelative(event.getBlockFace()).getLocation());
@@ -2211,7 +2211,7 @@ import java.util.regex.Pattern;
                 Block block = event.getClickedBlock();
                 location = BukkitUtil.getLocation(block.getLocation());
                 eventType = PlayerBlockEventType.BREAK_BLOCK;
-                lb = BukkitBlockUtil.supply(block);
+                lb = BukkitAdapter.asBlockType(block.getType());
                 break;
             default:
                 return;
@@ -3091,7 +3091,7 @@ import java.util.regex.Pattern;
                 Set<BlockType> place = plot.getFlag(Flags.PLACE, null);
                 if (place != null) {
                     Block block = event.getBlock();
-                    if (place.contains(BukkitBlockUtil.get(block))) {
+                    if (place.contains(BukkitAdapter.asBlockType(block.getType()))) {
                         return;
                     }
                 }

@@ -103,7 +103,7 @@ public abstract class EventUtil {
     }
 
     public boolean checkPlayerBlockEvent(PlotPlayer player, PlayerBlockEventType type,
-        Location location, Supplier<BlockState> block, boolean notifyPerms) {
+        Location location, BlockType blockType, boolean notifyPerms) {
         PlotArea area = location.getPlotArea();
         assert area != null;
         Plot plot = area.getPlot(location);
@@ -133,7 +133,7 @@ public abstract class EventUtil {
                 if (use.isPresent()) {
                     Set<BlockType> value = use.get();
                     if (value.contains(BlockTypes.AIR) || value
-                        .contains(block.get())) {
+                        .contains(blockType)) {
                         return true;
                     }
                 }
@@ -141,7 +141,7 @@ public abstract class EventUtil {
                 if (destroy.isPresent()) {
                     Set<BlockType> value = destroy.get();
                     if (value.contains(BlockTypes.AIR) || value
-                        .contains(block.get())) {
+                        .contains(blockType)) {
                         return true;
                     }
                 }
@@ -226,7 +226,7 @@ public abstract class EventUtil {
                 Optional<Set<BlockType>> flagValue = plot.getFlag(Flags.USE);
                 Set<BlockType> value = flagValue.orElse(null);
                 if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(block.get())) {
+                    .contains(blockType)) {
                     return Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(), false)
                         || !(!notifyPerms || MainUtil
@@ -249,7 +249,7 @@ public abstract class EventUtil {
                 Optional<Set<BlockType>> flagValue = plot.getFlag(Flags.PLACE);
                 Set<BlockType> value = flagValue.orElse(null);
                 if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(block.get())) {
+                    .contains(blockType)) {
                     if (Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_BUILD_OTHER.getTranslated(), false)) {
                         return true;
@@ -276,7 +276,7 @@ public abstract class EventUtil {
                 Optional<Set<BlockType>> flagValue = plot.getFlag(Flags.USE);
                 Set<BlockType> value = flagValue.orElse(null);
                 if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(block.get())) {
+                    .contains(blockType)) {
                     if (Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
                             false)) {
@@ -303,7 +303,7 @@ public abstract class EventUtil {
                 Optional<Set<BlockType>> flagValue = plot.getFlag(Flags.USE);
                 Set<BlockType> value = flagValue.orElse(null);
                 if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(block.get())) {
+                    .contains(blockType)) {
                     if (Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
                             false)) {
@@ -332,7 +332,7 @@ public abstract class EventUtil {
                 Optional<Set<BlockType>> flag = plot.getFlag(Flags.USE);
                 Set<BlockType> value = flag.orElse(null);
                 if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(block.get())) {
+                    .contains(blockType)) {
                     if (Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
                             false)) {
@@ -362,7 +362,7 @@ public abstract class EventUtil {
                 Optional<Set<BlockType>> flag = plot.getFlag(Flags.USE);
                 Set<BlockType> value = flag.orElse(null);
                 if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(block.get())) {
+                    .contains(blockType)) {
                     if (Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
                             false)) {
@@ -392,7 +392,7 @@ public abstract class EventUtil {
                 Optional<Set<BlockType>> flagValue = plot.getFlag(Flags.PLACE);
                 Set<BlockType> value = flagValue.orElse(null);
                 if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(block.get())) {
+                    .contains(blockType)) {
                     if (Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
                             false)) {
@@ -422,7 +422,7 @@ public abstract class EventUtil {
                 Optional<Set<BlockType>> flag = plot.getFlag(Flags.PLACE);
                 Set<BlockType> value = flag.orElse(null);
                 if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(block.get())) {
+                    .contains(blockType)) {
                     if (Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
                             false)) {
@@ -453,7 +453,7 @@ public abstract class EventUtil {
                 Optional<Set<BlockType>> flag = plot.getFlag(Flags.PLACE);
                 Set<BlockType> value = flag.orElse(null);
                 if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(block.get())) {
+                    .contains(blockType)) {
                     if (Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
                             false)) {
