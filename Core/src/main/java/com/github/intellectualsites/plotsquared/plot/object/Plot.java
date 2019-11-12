@@ -997,7 +997,8 @@ public class Plot {
                             manager.createRoadSouthEast(current);
                         }
                     }
-                } else if (current.getMerged(Direction.SOUTH)) {
+                }
+                if (current.getMerged(Direction.SOUTH)) {
                     manager.createRoadSouth(current);
                 }
             }
