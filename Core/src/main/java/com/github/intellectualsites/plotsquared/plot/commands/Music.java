@@ -44,7 +44,7 @@ import java.util.Locale;
                     plot.removeFlag(Flags.MUSIC);
                     Captions.FLAG_REMOVED.send(player);
                 } else if (item.name.toLowerCase(Locale.ENGLISH).contains("disc")) {
-                    plot.setFlag(Flags.MUSIC, item);
+                    plot.setFlag(Flags.MUSIC, item.getType().getId());
                     Captions.FLAG_ADDED.send(player);
                 } else {
                     Captions.FLAG_NOT_ADDED.send(player);

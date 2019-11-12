@@ -10,6 +10,8 @@ import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtilTest;
 import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
 import com.sk89q.worldedit.world.block.BlockType;
+import com.sk89q.worldedit.world.item.ItemType;
+import com.sk89q.worldedit.world.item.ItemTypes;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 
 public class FlagTest {
 
-    private Object testBlock;
+    private ItemType testBlock;
     private Flag<? extends Collection<?>> use = Flags.USE;
 
     @Before public void setUp() throws Exception {
@@ -37,11 +39,11 @@ public class FlagTest {
         Optional<? extends Collection> flag = plot.getFlag(use);
         if (flag.isPresent()) {
             System.out.println(Flags.USE.valueToString(flag.get()));
-            testBlock = BlockUtil.get((short) 1, (byte) 0);
+            testBlock = ItemTypes.BONE_BLOCK;
             flag.get().add(testBlock);
         }
         flag.ifPresent(collection -> System.out.println(Flags.USE.valueToString(collection)));
-        Optional<Set<BlockType>> flag2 = plot.getFlag(Flags.USE);
+        Optional<Set<ItemType>> flag2 = plot.getFlag(Flags.USE);
         if (flag2.isPresent()) {
             //   assertThat(flag2.get(), (Matcher<? super Set<BlockType>>) IsCollectionContaining.hasItem(testBlock));
         }

@@ -14,6 +14,7 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.item.ItemType;
+import com.sk89q.worldedit.world.item.ItemTypes;
 import io.papermc.lib.PaperLib;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
@@ -283,7 +284,7 @@ public class BukkitPlayer extends PlotPlayer {
     }
 
     @Override public void playMusic(@NotNull final Location location, @NotNull final ItemType id) {
-        if (id.getBlockType().getMaterial().isAir()) {
+        if (id == ItemTypes.AIR) {
             // Let's just stop all the discs because why not?
             for (final Sound sound : Arrays.stream(Sound.values())
                 .filter(sound -> sound.name().contains("DISC")).collect(Collectors.toList())) {

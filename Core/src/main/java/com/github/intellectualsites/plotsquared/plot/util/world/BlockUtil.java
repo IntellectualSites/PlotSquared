@@ -42,7 +42,7 @@ public final class BlockUtil {
             return FuzzyBlockState.builder().type(BlockTypes.AIR).build();
         }
         id = id.toLowerCase();
-        BlockType type = BlockType.REGISTRY.get(id);
+        BlockType type = BlockTypes.get(id);
         if (type != null) {
             return type.getDefaultState();
         }

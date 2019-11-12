@@ -1,6 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.util.world;
 
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import com.sk89q.worldedit.world.registry.LegacyMapper;
@@ -26,5 +27,14 @@ public final class ItemUtil {
         }
         if (!input.split("\\[", 2)[0].contains(":")) input = "minecraft:" + input;
         return ItemTypes.get(input);
+    }
+
+    public static final ItemType[] parse(String commaDelimited) {
+        String[] split = commaDelimited.split(",(?![^\\(\\[]*[\\]\\)])");
+        ItemType[] result = new ItemType[split.length];
+        for (int i = 0; i < split.length; i++) {
+            result[i] = get(split[i]);
+        }
+        return result;
     }
 }

@@ -17,6 +17,8 @@ import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import com.sk89q.worldedit.world.item.ItemType;
+import com.sk89q.worldedit.world.item.ItemTypes;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -103,7 +105,7 @@ public abstract class EventUtil {
     }
 
     public boolean checkPlayerBlockEvent(PlotPlayer player, PlayerBlockEventType type,
-        Location location, Supplier<BlockState> block, boolean notifyPerms) {
+        Location location, Supplier<ItemType> item, boolean notifyPerms) {
         PlotArea area = location.getPlotArea();
         assert area != null;
         Plot plot = area.getPlot(location);
@@ -129,19 +131,19 @@ public abstract class EventUtil {
                         Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.getTranslated(),
                             notifyPerms);
                 }
-                Optional<Set<BlockType>> use = plot.getFlag(Flags.USE);
+                Optional<Set<ItemType>> use = plot.getFlag(Flags.USE);
                 if (use.isPresent()) {
-                    Set<BlockType> value = use.get();
-                    if (value.contains(BlockTypes.AIR) || value
-                        .contains(block.get())) {
+                    Set<ItemType> value = use.get();
+                    if (value.contains(ItemTypes.AIR) || value
+                        .contains(item.get())) {
                         return true;
                     }
                 }
-                Optional<Set<BlockType>> destroy = plot.getFlag(Flags.BREAK);
+                Optional<Set<ItemType>> destroy = plot.getFlag(Flags.BREAK);
                 if (destroy.isPresent()) {
-                    Set<BlockType> value = destroy.get();
-                    if (value.contains(BlockTypes.AIR) || value
-                        .contains(block.get())) {
+                    Set<ItemType> value = destroy.get();
+                    if (value.contains(ItemTypes.AIR) || value
+                        .contains(item.get())) {
                         return true;
                     }
                 }
@@ -223,10 +225,10 @@ public abstract class EventUtil {
                         Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.getTranslated(),
                             notifyPerms);
                 }
-                Optional<Set<BlockType>> flagValue = plot.getFlag(Flags.USE);
-                Set<BlockType> value = flagValue.orElse(null);
-                if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(block.get())) {
+                Optional<Set<ItemType>> flagValue = plot.getFlag(Flags.USE);
+                Set<ItemType> value = flagValue.orElse(null);
+                if (value == null || !value.contains(ItemTypes.AIR) && !value
+                    .contains(item.get())) {
                     return Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(), false)
                         || !(!notifyPerms || MainUtil
@@ -246,10 +248,10 @@ public abstract class EventUtil {
                         Captions.PERMISSION_ADMIN_BUILD_UNOWNED.getTranslated(),
                             notifyPerms);
                 }
-                Optional<Set<BlockType>> flagValue = plot.getFlag(Flags.PLACE);
-                Set<BlockType> value = flagValue.orElse(null);
-                if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(block.get())) {
+                Optional<Set<ItemType>> flagValue = plot.getFlag(Flags.PLACE);
+                Set<ItemType> value = flagValue.orElse(null);
+                if (value == null || !value.contains(ItemTypes.AIR) && !value
+                    .contains(item.get())) {
                     if (Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_BUILD_OTHER.getTranslated(), false)) {
                         return true;
@@ -273,10 +275,10 @@ public abstract class EventUtil {
                 if (plot.getFlag(Flags.DEVICE_INTERACT).orElse(false)) {
                     return true;
                 }
-                Optional<Set<BlockType>> flagValue = plot.getFlag(Flags.USE);
-                Set<BlockType> value = flagValue.orElse(null);
-                if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(block.get())) {
+                Optional<Set<ItemType>> flagValue = plot.getFlag(Flags.USE);
+                Set<ItemType> value = flagValue.orElse(null);
+                if (value == null || !value.contains(ItemTypes.AIR) && !value
+                    .contains(item.get())) {
                     if (Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
                             false)) {
@@ -300,10 +302,10 @@ public abstract class EventUtil {
                 if (plot.getFlag(Flags.HOSTILE_INTERACT).orElse(false)) {
                     return true;
                 }
-                Optional<Set<BlockType>> flagValue = plot.getFlag(Flags.USE);
-                Set<BlockType> value = flagValue.orElse(null);
-                if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(block.get())) {
+                Optional<Set<ItemType>> flagValue = plot.getFlag(Flags.USE);
+                Set<ItemType> value = flagValue.orElse(null);
+                if (value == null || !value.contains(ItemTypes.AIR) && !value
+                    .contains(item.get())) {
                     if (Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
                             false)) {
@@ -329,10 +331,10 @@ public abstract class EventUtil {
                 if (plot.getFlag(Flags.MISC_INTERACT).orElse(false)) {
                     return true;
                 }
-                Optional<Set<BlockType>> flag = plot.getFlag(Flags.USE);
-                Set<BlockType> value = flag.orElse(null);
-                if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(block.get())) {
+                Optional<Set<ItemType>> flag = plot.getFlag(Flags.USE);
+                Set<ItemType> value = flag.orElse(null);
+                if (value == null || !value.contains(ItemTypes.AIR) && !value
+                    .contains(item.get())) {
                     if (Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
                             false)) {
@@ -359,10 +361,10 @@ public abstract class EventUtil {
                 if (plot.getFlag(Flags.VEHICLE_USE).orElse(false)) {
                     return true;
                 }
-                Optional<Set<BlockType>> flag = plot.getFlag(Flags.USE);
-                Set<BlockType> value = flag.orElse(null);
-                if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(block.get())) {
+                Optional<Set<ItemType>> flag = plot.getFlag(Flags.USE);
+                Set<ItemType> value = flag.orElse(null);
+                if (value == null || !value.contains(ItemTypes.AIR) && !value
+                    .contains(item.get())) {
                     if (Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
                             false)) {
@@ -389,10 +391,10 @@ public abstract class EventUtil {
                 if (plot.getFlag(Flags.MOB_PLACE).orElse(false)) {
                     return true;
                 }
-                Optional<Set<BlockType>> flagValue = plot.getFlag(Flags.PLACE);
-                Set<BlockType> value = flagValue.orElse(null);
-                if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(block.get())) {
+                Optional<Set<ItemType>> flagValue = plot.getFlag(Flags.PLACE);
+                Set<ItemType> value = flagValue.orElse(null);
+                if (value == null || !value.contains(ItemTypes.AIR) && !value
+                    .contains(item.get())) {
                     if (Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
                             false)) {
@@ -419,10 +421,10 @@ public abstract class EventUtil {
                 if (plot.getFlag(Flags.MISC_PLACE).orElse(false)) {
                     return true;
                 }
-                Optional<Set<BlockType>> flag = plot.getFlag(Flags.PLACE);
-                Set<BlockType> value = flag.orElse(null);
-                if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(block.get())) {
+                Optional<Set<ItemType>> flag = plot.getFlag(Flags.PLACE);
+                Set<ItemType> value = flag.orElse(null);
+                if (value == null || !value.contains(ItemTypes.AIR) && !value
+                    .contains(item.get())) {
                     if (Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
                             false)) {
@@ -450,10 +452,10 @@ public abstract class EventUtil {
                 if (plot.getFlag(Flags.VEHICLE_PLACE).orElse(false)) {
                     return true;
                 }
-                Optional<Set<BlockType>> flag = plot.getFlag(Flags.PLACE);
-                Set<BlockType> value = flag.orElse(null);
-                if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(block.get())) {
+                Optional<Set<ItemType>> flag = plot.getFlag(Flags.PLACE);
+                Set<ItemType> value = flag.orElse(null);
+                if (value == null || !value.contains(ItemTypes.AIR) && !value
+                    .contains(item.get())) {
                     if (Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
                             false)) {

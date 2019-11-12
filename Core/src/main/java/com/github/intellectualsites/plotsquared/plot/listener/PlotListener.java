@@ -152,12 +152,12 @@ public class PlotListener {
                         Location location = player.getLocation();
                         Location lastLocation = player.getMeta("music");
                         if (lastLocation != null) {
-                            player.playMusic(lastLocation, ItemTypes.AIR);
+                            player.playMusic(lastLocation, item);
                             if (item == ItemTypes.AIR) {
                                 player.deleteMeta("music");
                             }
                         }
-                        if (!(item == ItemTypes.AIR)) {
+                        if (item != ItemTypes.AIR) {
                             try {
                                 player.setMeta("music", location);
                                 player.playMusic(location, item);
