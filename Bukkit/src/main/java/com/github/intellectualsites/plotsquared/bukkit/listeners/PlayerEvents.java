@@ -1024,6 +1024,9 @@ import java.util.regex.Pattern;
         if (plot == null) {
             return;
         }
+        if (plot.isDenied(plotPlayer.getUUID())) {
+            return;
+        }
         event.setCancelled(true);
         String message = event.getMessage();
         String format = Captions.PLOT_CHAT_FORMAT.getTranslated();
