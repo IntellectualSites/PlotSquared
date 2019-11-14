@@ -66,3 +66,6 @@ Welcome to the <a href="https://www.buildersrefuge.com/">Builders's Refuge</a>. 
 <p align="center"><a href="https://ajgaming.net/" title="AJGaming Network"><img height="120" src="https://ajgaming.net/images/AJGaming.png"/></a><br>
 The <a href="https://ajgaming.net/">AJGaming Network</a> is a modded and vanilla network.  Either delve into magic on our magic servers, fight your enemies on our hardcore PvP modpacks or have a good time on our vanilla servers. The mods for our modpacks are handpicked by suggestions from our community making sure we can crate packs you love to play.
 </p>
+<p align="center"><a href="https://pixelsquared.studio/" title="PixelSquared"><img height="120" src="https://i.imgur.com/PpUWXkv.png"/></a><br>
+The <a href="https://pixelsquared.studio/">Pixel²</a> is an indie games studio started out of Northern Ireland in 2017 and growing worldwide. We are partnered with Microsoft to provide you with thrilling adventure maps, stunning texture packs, and stylish skins, which can all be found on the official Minecraft Marketplace.
+</p>
