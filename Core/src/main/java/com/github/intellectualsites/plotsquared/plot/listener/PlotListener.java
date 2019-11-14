@@ -68,12 +68,15 @@ public class PlotListener {
                 Optional<String> greetingFlag = plot.getFlag(Flags.GREETING);
                 if (greetingFlag.isPresent()) {
                     greeting = greetingFlag.get();
+
                     MainUtil
                         .format(Captions.PREFIX_GREETING.getTranslated() + greeting, plot, player,
                             false,
                         new RunnableVal<String>() {
                             @Override public void run(String value) {
-                                MainUtil.sendMessage(player, value);
+                                if (!player.sendHotBar(value)) {
+                                    MainUtil.sendMessage(player, value);
+                                }
                             }
                         });
                 } else {
@@ -85,9 +88,12 @@ public class PlotListener {
                         for (UUID uuid : plot.getOwners()) {
                             PlotPlayer owner = UUIDHandler.getPlayer(uuid);
                             if (owner != null && !owner.getUUID().equals(player.getUUID())) {
-                                MainUtil.sendMessage(owner, Captions.NOTIFY_ENTER.getTranslated()
+                                String msg = Captions.NOTIFY_ENTER.getTranslated()
                                     .replace("%player", player.getName())
-                                        .replace("%plot", plot.getId().toString()));
+                                    .replace("%plot", plot.getId().toString());
+                                if (!owner.sendHotBar(msg)) {
+                                    MainUtil.sendMessage(owner, msg);
+                                }
                             }
                         }
                     }
@@ -245,9 +251,12 @@ public class PlotListener {
                     for (UUID uuid : plot.getOwners()) {
                         PlotPlayer owner = UUIDHandler.getPlayer(uuid);
                         if ((owner != null) && !owner.getUUID().equals(player.getUUID())) {
-                            MainUtil.sendMessage(owner, Captions.NOTIFY_LEAVE.getTranslated()
+                            String msg = Captions.NOTIFY_LEAVE.getTranslated()
                                 .replace("%player", player.getName())
-                                    .replace("%plot", plot.getId().toString()));
+                                .replace("%plot", plot.getId().toString());
+                            if (!owner.sendHotBar(msg)) {
+                                MainUtil.sendMessage(owner, msg);
+                            }
                         }
                     }
                 }

@@ -359,11 +359,13 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         return result;
     }
 
+    public boolean sendHotBar(String message) {
+        return false;
+    }
+
     public void sendTitle(String title, String subtitle) {
         sendTitle(title, subtitle, 10, 50, 10);
     }
-
-    ;
 
     public abstract void sendTitle(String title, String subtitle, int fadeIn, int stay,
         int fadeOut);

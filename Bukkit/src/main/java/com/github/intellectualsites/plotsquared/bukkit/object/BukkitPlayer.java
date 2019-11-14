@@ -16,6 +16,7 @@ import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import io.papermc.lib.PaperLib;
+import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.WeatherType;
@@ -186,6 +187,15 @@ public class BukkitPlayer extends PlotPlayer {
             setMeta("lastMessage", message);
             setMeta("lastMessageTime", System.currentTimeMillis());
             this.player.sendMessage(message);
+        }
+    }
+
+    @Override public boolean sendHotBar(String message) {
+        try {
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
+            return true;
+        } catch (Throwable ignore) {
+            return false;
         }
     }
 
