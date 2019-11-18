@@ -13,8 +13,8 @@ public class IntegerListFlag extends ListFlag<List<Integer>> {
         super(Captions.FLAG_CATEGORY_INTEGER_LIST, name);
     }
 
-    @Override public String valueToString(Object value) {
-        return StringMan.join((List<Integer>) value, ",");
+    @Override public String valueToString(List<Integer> value) {
+        return StringMan.join(value, ",");
     }
 
     @Override public List<Integer> parseValue(String value) {

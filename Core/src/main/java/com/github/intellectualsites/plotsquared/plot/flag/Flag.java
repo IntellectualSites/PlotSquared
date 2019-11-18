@@ -44,7 +44,7 @@ public abstract class Flag<V> implements StringComparison.StringComparable {
         Flags.registerFlag(this);
     }
 
-    public abstract String valueToString(Object value);
+    public abstract String valueToString(V value);
 
     @Override public final String toString() {
         return "Flag { name='" + getName() + "'}";

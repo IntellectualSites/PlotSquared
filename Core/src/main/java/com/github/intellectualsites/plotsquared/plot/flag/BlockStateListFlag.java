@@ -18,8 +18,8 @@ public class BlockStateListFlag extends ListFlag<Set<BlockType>> {
         super(Captions.FLAG_CATEGORY_BLOCK_LIST, name);
     }
 
-    @Override public String valueToString(Object value) {
-        return StringMan.join((Set<BlockType>) value, ",");
+    @Override public String valueToString(Set<BlockType> value) {
+        return StringMan.join(value, ",");
     }
 
     @Override public Set<BlockType> parseValue(final String value) {

@@ -8,7 +8,7 @@ public class DoubleFlag extends Flag<Double> {
         super(Captions.FLAG_CATEGORY_DECIMAL, name);
     }
 
-    @Override public String valueToString(Object value) {
+    @Override public String valueToString(Double value) {
         return value.toString();
     }
 

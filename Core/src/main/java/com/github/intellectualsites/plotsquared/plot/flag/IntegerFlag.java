@@ -13,7 +13,7 @@ public class IntegerFlag extends Flag<Integer> {
         return Captions.FLAG_ERROR_INTEGER.getTranslated();
     }
 
-    @Override public String valueToString(Object value) {
+    @Override public String valueToString(Integer value) {
         return value.toString();
     }
 

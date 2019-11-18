@@ -21,8 +21,8 @@ public class ItemTypeListFlag extends ListFlag<Set<ItemType>> {
         super(Captions.FLAG_CATEGORY_BLOCK_LIST, name);
     }
 
-    @Override public String valueToString(Object value) {
-        return StringMan.join((Set<BlockType>) value, ",");
+    @Override public String valueToString(Set<ItemType> value) {
+        return StringMan.join(value, ",");
     }
 
     @Override public Set<ItemType> parseValue(final String value) {
@@ -31,9 +31,5 @@ public class ItemTypeListFlag extends ListFlag<Set<ItemType>> {
 
     @Override public String getValueDescription() {
         return Captions.FLAG_ERROR_PLOTBLOCKLIST.getTranslated();
-    }
-
-    public boolean contains(Plot plot, BlockState value) {
-        return contains(plot, value.getBlockType().getItemType());
     }
 }
