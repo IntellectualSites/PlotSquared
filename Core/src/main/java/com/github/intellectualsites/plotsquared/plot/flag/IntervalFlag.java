@@ -11,7 +11,7 @@ public class IntervalFlag extends Flag<IntervalFlag.Interval> {
         super(Captions.FLAG_CATEGORY_INTERVALS, name);
     }
 
-    @Override public String valueToString(IntervalFlag.Interval value) {
+    @Override public String valueToString(Object value) {
         return value.toString();
     }
 

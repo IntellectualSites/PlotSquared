@@ -15,8 +15,8 @@ public class EnumFlag extends Flag<String> {
         this.values = new HashSet<>(Arrays.asList(values));
     }
 
-    @Override public String valueToString(String value) {
-        return value;
+    @Override public String valueToString(Object value) {
+        return value.toString();
     }
 
     @Override public String parseValue(String value) {

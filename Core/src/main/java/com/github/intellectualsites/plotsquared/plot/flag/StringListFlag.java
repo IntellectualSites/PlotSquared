@@ -13,8 +13,8 @@ public class StringListFlag extends ListFlag<List<String>> {
         super(Captions.FLAG_CATEGORY_STRING_LIST, name);
     }
 
-    @Override public String valueToString(List<String> value) {
-        return StringMan.join(value, ",");
+    @Override public String valueToString(Object value) {
+        return StringMan.join((List<String>) value, ",");
     }
 
     @Override public List<String> parseValue(String value) {

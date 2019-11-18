@@ -9,8 +9,8 @@ public class BooleanFlag extends Flag<Boolean> {
         super(Captions.FLAG_CATEGORY_BOOLEAN, name);
     }
 
-    @Override public String valueToString(Boolean value) {
-        return value.toString();
+    @Override public String valueToString(Object value) {
+        return value + "";
     }
 
     @Override public Boolean parseValue(String value) {

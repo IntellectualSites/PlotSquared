@@ -9,7 +9,7 @@ public class PlotWeatherFlag extends Flag<PlotWeather> {
         super(Captions.FLAG_CATEGORY_WEATHER, name);
     }
 
-    @Override public String valueToString(PlotWeather value) {
+    @Override public String valueToString(Object value) {
         return value.toString();
     }
 

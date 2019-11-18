@@ -8,7 +8,7 @@ public class StringFlag extends Flag<String> {
         super(Captions.FLAG_CATEGORY_STRING, name);
     }
 
-    @Override public String valueToString(String value) {
+    @Override public String valueToString(Object value) {
         return value.toString();
     }
 

@@ -16,7 +16,7 @@ public class LongFlag extends Flag<Long> {
         }
     }
 
-    @Override public String valueToString(Long value) {
+    @Override public String valueToString(Object value) {
         return value.toString();
     }
 
