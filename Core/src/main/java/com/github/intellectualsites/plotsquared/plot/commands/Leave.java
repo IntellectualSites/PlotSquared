@@ -40,7 +40,7 @@ import java.util.concurrent.CompletableFuture;
                 if (plot.removeMember(uuid)) {
                     EventUtil.manager.callMember(player, plot, uuid, false);
                 }
-                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
+                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, player.getName());
             } else {
                 MainUtil.sendMessage(player, Captions.REMOVED_PLAYERS, 1);
             }
