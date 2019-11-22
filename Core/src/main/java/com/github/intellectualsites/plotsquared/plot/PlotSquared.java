@@ -245,7 +245,7 @@ import java.util.zip.ZipInputStream;
             if (Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
                 try {
                     if (this.IMP.initWorldEdit()) {
-                        PlotSquared.debug(IMP.getPluginName() + " hooked into WorldEdit.");
+                        PlotSquared.log(Captions.PREFIX + "&6" + IMP.getPluginName() + " hooked into WorldEdit.");
                         this.worldedit = WorldEdit.getInstance();
                         WorldEdit.getInstance().getEventBus().register(new WESubscriber());
                         if (Settings.Enabled_Components.COMMANDS) {
@@ -317,7 +317,7 @@ import java.util.zip.ZipInputStream;
             e.printStackTrace();
         }
 
-        PlotSquared.log(Captions.ENABLED.f(IMP.getPluginName()));
+        PlotSquared.log(Captions.PREFIX + Captions.ENABLED.f(IMP.getPluginName()));
     }
 
     /**
