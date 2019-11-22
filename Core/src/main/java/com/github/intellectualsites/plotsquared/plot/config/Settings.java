@@ -28,7 +28,7 @@ public class Settings extends Config {
 
     @Comment("Show additional information in console") public static boolean DEBUG = false;
     @Comment({"The big annoying text that appears when you enter a plot",
-        "For a single plot: `/plot flag set titles false`", "For just you: `/plot toggle titles`"})
+        "For a single plot: `/plot flag set titles false`", "For just you: `/plot toggle titles`", "For all plots: Add `titles: false` in the worlds.yml flags block"})
     public static boolean TITLES = true;
 
     @Create // This value will be generated automatically
@@ -331,7 +331,7 @@ public class Settings extends Config {
             true;
         @Comment("The UUID cacher is used to resolve player names") public static boolean
             UUID_CACHE = true;
-        @Comment("The plugin auto updater") public static boolean UPDATER = true;
+        @Comment("The plugin auto updater will notify you if updates are available.") public static boolean UPDATER = true;
         @Comment("Stores user metadata in a database") public static boolean PERSISTENT_META = true;
         @Comment("Optimizes permission checks") public static boolean PERMISSION_CACHE = true;
         @Comment("Optimizes block changing code") public static boolean BLOCK_CACHE = true;
