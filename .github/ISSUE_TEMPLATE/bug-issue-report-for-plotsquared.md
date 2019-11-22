@@ -11,7 +11,7 @@ assignees: ''
 
 <!--- ##### DO NOT REMOVE THIS TEMPLATE!  YOUR ISSUE *WILL* FIT IN IT! ##### -->
 
-# NOTICE: 
+<!--- # NOTICE: 
 ```diff
 ! PlotSquared for Minecraft Java Edition versions between 1.7 through to 1.12.2 are considered
 ! legacy, and will receive limited to no support. Please consider upgrading to 1.13+ for
@@ -27,8 +27,9 @@ assignees: ''
 **Code contributions are to be done through [PRs](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request), tagging the specific issue ticket(s) if applicable.**
 
 **[DISCORD INVITE LINK](https://discord.gg/cSMxtGn)** and please, for the love of the little sanity we have left, use the correct channels!
+-->
 
-# BUG REPORT TEMPLATE:
+# Bug Report Template:
 <!--- Incomplete reports will most likely be marked as invalid, and closed, with few exceptions.-->
 ## Required Information section:
 > ALL FIELDS  IN THIS SECTION ARE REQUIRED, and must contain appropriate information
@@ -55,7 +56,9 @@ assignees: ''
 
 ### Server build info: 
 <!--- Run /version in-game or in console & paste the full output here: -->
-``` paste here, between the tick marks, replacing this text ```
+```
+paste here, between the tick marks, replacing this text
+```
 
 ### WorldEdit/FAWE versions:
 <!--- Specify which plugin you are using, and add its version -->
