@@ -700,7 +700,7 @@ public abstract class PlotArea {
         PlotId max = getMax();
         if (TYPE == 2) {
             center = new PlotId(MathMan.average(min.x, max.x), MathMan.average(min.y, max.y));
-            plots = Math.max(max.x - min.x, max.y - min.y) + 1;
+            plots = Math.max(max.x - min.x + 1, max.y - min.y + 1) + 1;
             if (start != null) {
                 start = new PlotId(start.x - center.x, start.y - center.y);
             }
@@ -717,7 +717,7 @@ public abstract class PlotArea {
             PlotId currentId = new PlotId(center.x + start.x, center.y + start.y);
             Plot plot = getPlotAbs(currentId);
             if (plot != null && plot.canClaim(player)) {
-                setMeta("lastPlot", currentId);
+                setMeta("lastPlot", start);
                 return plot;
             }
         }
