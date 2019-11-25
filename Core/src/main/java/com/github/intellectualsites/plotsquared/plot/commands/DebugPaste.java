@@ -56,11 +56,10 @@ public class DebugPaste extends SubCommand {
                     .append(!Settings.UUID.OFFLINE).append('\n');
                 b.append("Plugins:");
                 for (Map.Entry<Map.Entry<String, String>, Boolean> pluginInfo : PlotSquared.get().IMP.getPluginIds()) {
-                    String[] split = id.split(":");
-                    String[] split2 = split[0].split(";");
-                    String enabled = split.length == 2 ? split[1] : "unknown";
-                    String name = split2[0];
-                    String version = split2.length == 2 ? split2[1] : "unknown";
+                    Map.Entry<String, String> nameVersion = pluginInfo.getKey();
+                    String name = nameVersion.getKey();
+                    String version = nameVersion.getValue();
+                    boolean enabled = pluginInfo.getValue();
                     b.append("\n  ").append(name).append(":\n    ").append("version: '")
                         .append(version).append('\'').append("\n    enabled: ").append(enabled);
                 }
