@@ -79,7 +79,9 @@ paste here, between the tick marks, replacing this text
 <!--- Optional but recommended - issue "/plugins" in-game or in console and copy/paste the list -->
 
 ### Relevant console output, log lines, and/or screenshots:
-<!--- Please use in-line code insertion ( ```like this``` ) for short (20 lines or less) text blobs, or a paste service for large blobs -->
+<!--- Please use in-line code insertion 
+```like this```
+for short (20 lines or less) text blobs, or a paste service for large blobs -->
 
 ### Additional relevant comments/remarks:
 <!--- Use this space to give us any additional information which may be relevant to this issue, such as: if you are using a Minecraft hosting provider; unusual installation environment; etc -->
