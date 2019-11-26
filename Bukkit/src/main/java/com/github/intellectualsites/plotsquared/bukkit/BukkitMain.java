@@ -92,10 +92,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getRefClass;
@@ -818,11 +820,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return new BukkitPlotGenerator(generator);
     }
 
-    @Override public List<String> getPluginIds() {
-        final List<String> names = new ArrayList<>();
+    @Override public List<Map.Entry<Map.Entry<String, String>, Boolean>> getPluginIds() {
+        List<Map.Entry<Map.Entry<String, String>, Boolean>> names = new ArrayList<>();
         for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-            names.add(plugin.getName() + ';' + plugin.getDescription().getVersion() + ':' + plugin
-                .isEnabled());
+            Map.Entry<String, String> id = new AbstractMap.SimpleEntry<>(plugin.getName(), plugin.getDescription().getVersion());
+            names.add(new AbstractMap.SimpleEntry<>(id, plugin.isEnabled()));
         }
         return names;
     }

@@ -21,6 +21,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "debugpaste", aliases = "dp", usage = "/plot debugpaste",
@@ -54,12 +55,11 @@ public class DebugPaste extends SubCommand {
                 b.append("online_mode: ").append(UUIDHandler.getUUIDWrapper()).append(';')
                     .append(!Settings.UUID.OFFLINE).append('\n');
                 b.append("Plugins:");
-                for (String id : PlotSquared.get().IMP.getPluginIds()) {
-                    String[] split = id.split(":");
-                    String[] split2 = split[0].split(";");
-                    String enabled = split.length == 2 ? split[1] : "unknown";
-                    String name = split2[0];
-                    String version = split2.length == 2 ? split2[1] : "unknown";
+                for (Map.Entry<Map.Entry<String, String>, Boolean> pluginInfo : PlotSquared.get().IMP.getPluginIds()) {
+                    Map.Entry<String, String> nameVersion = pluginInfo.getKey();
+                    String name = nameVersion.getKey();
+                    String version = nameVersion.getValue();
+                    boolean enabled = pluginInfo.getValue();
                     b.append("\n  ").append(name).append(":\n    ").append("version: '")
                         .append(version).append('\'').append("\n    enabled: ").append(enabled);
                 }

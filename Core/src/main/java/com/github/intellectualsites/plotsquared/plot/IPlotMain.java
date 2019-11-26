@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 public interface IPlotMain extends ILogger {
 
@@ -244,7 +245,7 @@ public interface IPlotMain extends ILogger {
      */
     @NotNull IndependentPlotGenerator getDefaultGenerator();
 
-    List<String> getPluginIds();
+    List<Map.Entry<Map.Entry<String, String>, Boolean>> getPluginIds();
 
     Actor getConsole();
 }
