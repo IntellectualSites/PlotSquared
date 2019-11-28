@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "leave",
     description = "Removes self from being trusted or a member of the plot",
-    permission = "plots.leave", category = CommandCategory.CLAIMING,
+    permission = "plots.leave", usage = "/plot leave", category = CommandCategory.CLAIMING,
     requiredType = RequiredType.PLAYER) public class Leave extends Command {
     public Leave() {
         super(MainCommand.getInstance(), true);
@@ -26,7 +26,7 @@ import java.util.concurrent.CompletableFuture;
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         final Plot plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);
         checkTrue(plot.hasOwner(), Captions.PLOT_UNOWNED);
-        checkTrue(plot.isAdded(player.getUUID()), Captions.NO_PLOT_PERMS);
+        checkTrue(plot.isAdded(player.getUUID()), Captions.NOT_ADDED_TRUSTED);
         checkTrue(args.length == 0, Captions.COMMAND_SYNTAX, getUsage());
         if (plot.isOwner(player.getUUID())) {
             checkTrue(plot.hasOwner(), Captions.ALREADY_OWNER);
@@ -40,9 +40,9 @@ import java.util.concurrent.CompletableFuture;
                 if (plot.removeMember(uuid)) {
                     EventUtil.manager.callMember(player, plot, uuid, false);
                 }
-                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, player.getName());
+                MainUtil.sendMessage(player, Captions.PLOT_LEFT, player.getName());
             } else {
-                MainUtil.sendMessage(player, Captions.REMOVED_PLAYERS, 1);
+                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, 1);
             }
         }
         return CompletableFuture.completedFuture(true);
