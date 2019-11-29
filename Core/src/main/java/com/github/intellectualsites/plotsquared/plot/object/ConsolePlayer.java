@@ -3,10 +3,11 @@ package com.github.intellectualsites.plotsquared.plot.object;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.RequiredType;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
 import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.gamemode.GameMode;
+import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
 import org.jetbrains.annotations.NotNull;
 
@@ -110,11 +111,11 @@ public class ConsolePlayer extends PlotPlayer {
     @Override public void setWeather(@NotNull PlotWeather weather) {
     }
 
-    @NotNull @Override public PlotGameMode getGameMode() {
-        return PlotGameMode.NOT_SET;
+    @Override public @NotNull GameMode getGameMode() {
+        return GameModes.SPECTATOR;
     }
 
-    @Override public void setGameMode(@NotNull PlotGameMode gameMode) {
+    @Override public void setGameMode(@NotNull GameMode gameMode) {
     }
 
     @Override public void setTime(long time) {

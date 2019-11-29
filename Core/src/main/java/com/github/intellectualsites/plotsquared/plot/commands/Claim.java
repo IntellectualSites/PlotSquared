@@ -15,6 +15,7 @@ import com.github.intellectualsites.plotsquared.plot.util.ByteArrayUtilities;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.google.common.primitives.Ints;
 
 @CommandDeclaration(command = "claim", aliases = "c",
     description = "Claim the current plot you're standing on", category = CommandCategory.CLAIMING,
@@ -38,7 +39,7 @@ public class Claim extends SubCommand {
         if (currentPlots >= player.getAllowedPlots()) {
             if (player.hasPersistentMeta("grantedPlots")) {
                 grants =
-                    ByteArrayUtilities.bytesToInteger(player.getPersistentMeta("grantedPlots"));
+                    Ints.fromByteArray(player.getPersistentMeta("grantedPlots"));
                 if (grants <= 0) {
                     player.removePersistentMeta("grantedPlots");
                     return sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
@@ -85,7 +86,7 @@ public class Claim extends SubCommand {
                 player.removePersistentMeta("grantedPlots");
             } else {
                 player.setPersistentMeta("grantedPlots",
-                    ByteArrayUtilities.integerToBytes(grants - 1));
+                    Ints.toByteArray(grants - 1));
             }
             sendMessage(player, Captions.REMOVED_GRANTED_PLOT, "1", "" + (grants - 1));
         }

@@ -14,7 +14,6 @@ import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.area.QuadMap;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
@@ -27,6 +26,8 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
+import com.sk89q.worldedit.world.gamemode.GameMode;
+import com.sk89q.worldedit.world.gamemode.GameModes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,7 +83,7 @@ public abstract class PlotArea {
     public PlotLoc DEFAULT_HOME;
     public int MAX_BUILD_HEIGHT = 256;
     public int MIN_BUILD_HEIGHT = 1;
-    public PlotGameMode GAMEMODE = PlotGameMode.CREATIVE;
+    public GameMode GAMEMODE = GameModes.CREATIVE;
     private int hash;
     private CuboidRegion region;
     private ConcurrentHashMap<String, Object> meta;
@@ -248,27 +249,25 @@ public abstract class PlotArea {
         this.MIN_BUILD_HEIGHT = config.getInt("world.min_height");
 
         switch (config.getString("world.gamemode").toLowerCase()) {
-            case "survival":
-            case "s":
-            case "0":
-                this.GAMEMODE = PlotGameMode.SURVIVAL;
-                break;
             case "creative":
             case "c":
             case "1":
-                this.GAMEMODE = PlotGameMode.CREATIVE;
+                this.GAMEMODE = GameModes.CREATIVE;
                 break;
             case "adventure":
             case "a":
             case "2":
-                this.GAMEMODE = PlotGameMode.ADVENTURE;
+                this.GAMEMODE = GameModes.ADVENTURE;
                 break;
             case "spectator":
             case "3":
-                this.GAMEMODE = PlotGameMode.SPECTATOR;
+                this.GAMEMODE = GameModes.SPECTATOR;
                 break;
+            case "survival":
+            case "s":
+            case "0":
             default:
-                this.GAMEMODE = PlotGameMode.NOT_SET;
+                this.GAMEMODE = GameModes.SURVIVAL;
                 break;
         }
 
@@ -363,7 +362,7 @@ public abstract class PlotArea {
         options.put("home.nonmembers", position);
         options.put("world.max_height", this.MAX_BUILD_HEIGHT);
         options.put("world.min_height", this.MIN_BUILD_HEIGHT);
-        options.put("world.gamemode", this.GAMEMODE.name().toLowerCase());
+        options.put("world.gamemode", this.GAMEMODE.getName().toLowerCase());
 
         if (this.TYPE != 0) {
             options.put("generator.terrain", this.TERRAIN);

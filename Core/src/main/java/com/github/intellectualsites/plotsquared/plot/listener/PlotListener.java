@@ -15,13 +15,14 @@ import com.github.intellectualsites.plotsquared.plot.util.CommentManager;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
-import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
 import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.github.intellectualsites.plotsquared.plot.util.world.ItemUtil;
+import com.sk89q.worldedit.world.gamemode.GameMode;
+import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 
@@ -95,9 +96,9 @@ public class PlotListener {
                 Optional<Boolean> flyFlag = plot.getFlag(Flags.FLY);
                 if (flyFlag.isPresent()) {
                     boolean flight = player.getFlight();
-                    PlotGameMode gamemode = player.getGameMode();
-                    if (flight != (gamemode == PlotGameMode.CREATIVE
-                        || gamemode == PlotGameMode.SPECTATOR)) {
+                    GameMode gamemode = player.getGameMode();
+                    if (flight != (gamemode == GameModes.CREATIVE
+                        || gamemode == GameModes.SPECTATOR)) {
                         player.setPersistentMeta("flight",
                             ByteArrayUtilities.booleanToBytes(player.getFlight()));
                     }
@@ -105,7 +106,7 @@ public class PlotListener {
                         player.setFlight(flyFlag.get());
                     }
                 }
-                Optional<PlotGameMode> gamemodeFlag = plot.getFlag(Flags.GAMEMODE);
+                Optional<GameMode> gamemodeFlag = plot.getFlag(Flags.GAMEMODE);
                 if (gamemodeFlag.isPresent()) {
                     if (player.getGameMode() != gamemodeFlag.get()) {
                         if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
@@ -118,7 +119,7 @@ public class PlotListener {
                         }
                     }
                 }
-                Optional<PlotGameMode> guestGamemodeFlag = plot.getFlag(Flags.GUEST_GAMEMODE);
+                Optional<GameMode> guestGamemodeFlag = plot.getFlag(Flags.GUEST_GAMEMODE);
                 if (guestGamemodeFlag.isPresent()) {
                     if (player.getGameMode() != guestGamemodeFlag.get() && !plot
                         .isAdded(player.getUUID())) {
@@ -227,7 +228,7 @@ public class PlotListener {
                     } else {
                         MainUtil.sendMessage(player, StringMan
                             .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.getTranslated(), "{plot}",
-                                plot.toString(), "{gamemode}", pw.GAMEMODE.name().toLowerCase()));
+                                plot.toString(), "{gamemode}", pw.GAMEMODE.getName().toLowerCase()));
                     }
                 }
             }
@@ -258,8 +259,8 @@ public class PlotListener {
                         ByteArrayUtilities.bytesToBoolean(player.getPersistentMeta("flight")));
                     player.removePersistentMeta("flight");
                 } else {
-                    PlotGameMode gameMode = player.getGameMode();
-                    if (gameMode == PlotGameMode.SURVIVAL || gameMode == PlotGameMode.ADVENTURE) {
+                    GameMode gameMode = player.getGameMode();
+                    if (gameMode == GameModes.SURVIVAL || gameMode == GameModes.ADVENTURE) {
                         player.setFlight(false);
                     } else if (!player.getFlight()) {
                         player.setFlight(true);

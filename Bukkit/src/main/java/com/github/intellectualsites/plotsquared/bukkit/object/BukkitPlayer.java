@@ -7,7 +7,6 @@ import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
 import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
@@ -31,6 +30,11 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static com.sk89q.worldedit.world.gamemode.GameModes.ADVENTURE;
+import static com.sk89q.worldedit.world.gamemode.GameModes.CREATIVE;
+import static com.sk89q.worldedit.world.gamemode.GameModes.SPECTATOR;
+import static com.sk89q.worldedit.world.gamemode.GameModes.SURVIVAL;
 
 public class BukkitPlayer extends PlotPlayer {
 
@@ -234,36 +238,29 @@ public class BukkitPlayer extends PlotPlayer {
         }
     }
 
-    @NotNull @Override public PlotGameMode getGameMode() {
+    @NotNull @Override public com.sk89q.worldedit.world.gamemode.GameMode getGameMode() {
         switch (this.player.getGameMode()) {
             case ADVENTURE:
-                return PlotGameMode.ADVENTURE;
+                return ADVENTURE;
             case CREATIVE:
-                return PlotGameMode.CREATIVE;
+                return CREATIVE;
             case SPECTATOR:
-                return PlotGameMode.SPECTATOR;
+                return SPECTATOR;
             case SURVIVAL:
-                return PlotGameMode.SURVIVAL;
             default:
-                return PlotGameMode.NOT_SET;
+                return SURVIVAL;
         }
     }
 
-    @Override public void setGameMode(@NotNull final PlotGameMode gameMode) {
-        switch (gameMode) {
-            case ADVENTURE:
-                this.player.setGameMode(GameMode.ADVENTURE);
-                break;
-            case CREATIVE:
-                this.player.setGameMode(GameMode.CREATIVE);
-                break;
-            case SPECTATOR:
-                this.player.setGameMode(GameMode.SPECTATOR);
-                break;
-            case SURVIVAL:
-            default:
-                this.player.setGameMode(GameMode.SURVIVAL);
-                break;
+    @Override public void setGameMode(@NotNull final com.sk89q.worldedit.world.gamemode.GameMode gameMode) {
+        if (ADVENTURE.equals(gameMode)) {
+            this.player.setGameMode(GameMode.ADVENTURE);
+        } else if (CREATIVE.equals(gameMode)) {
+            this.player.setGameMode(GameMode.CREATIVE);
+        } else if (SPECTATOR.equals(gameMode)) {
+            this.player.setGameMode(GameMode.SPECTATOR);
+        } else {
+            this.player.setGameMode(GameMode.SURVIVAL);
         }
     }
 
@@ -303,7 +300,7 @@ public class BukkitPlayer extends PlotPlayer {
     }
 
     @Override public void stopSpectating() {
-        if (getGameMode() == PlotGameMode.SPECTATOR) {
+        if (getGameMode() == SPECTATOR) {
             this.player.setSpectatorTarget(null);
         }
     }

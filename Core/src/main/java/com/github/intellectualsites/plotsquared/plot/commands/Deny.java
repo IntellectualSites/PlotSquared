@@ -11,9 +11,9 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
-import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+import com.sk89q.worldedit.world.gamemode.GameModes;
 
 import java.util.Set;
 import java.util.UUID;
@@ -94,7 +94,7 @@ import java.util.UUID;
         if (player.hasPermission("plots.admin.entry.denied")) {
             return;
         }
-        if (player.getGameMode() == PlotGameMode.SPECTATOR) {
+        if (player.getGameMode() == GameModes.SPECTATOR) {
             player.stopSpectating();
         }
         Location location = player.getLocation();

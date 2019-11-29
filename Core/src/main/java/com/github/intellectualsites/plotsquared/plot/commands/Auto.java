@@ -12,11 +12,11 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
-import com.github.intellectualsites.plotsquared.plot.util.ByteArrayUtilities;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.google.common.primitives.Ints;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
@@ -47,8 +47,7 @@ public class Auto extends SubCommand {
                 MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS_NUM, -diff + "");
                 return false;
             } else if (player.hasPersistentMeta("grantedPlots")) {
-                int grantedPlots =
-                    ByteArrayUtilities.bytesToInteger(player.getPersistentMeta("grantedPlots"));
+                int grantedPlots = Ints.fromByteArray(player.getPersistentMeta("grantedPlots"));
                 if (grantedPlots - diff < sizeX * sizeZ) {
                     player.removePersistentMeta("grantedPlots");
                     MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
@@ -58,8 +57,7 @@ public class Auto extends SubCommand {
                     if (left == 0) {
                         player.removePersistentMeta("grantedPlots");
                     } else {
-                        player.setPersistentMeta("grantedPlots",
-                            ByteArrayUtilities.integerToBytes(left));
+                        player.setPersistentMeta("grantedPlots", Ints.toByteArray(left));
                     }
                     MainUtil.sendMessage(player, Captions.REMOVED_GRANTED_PLOT, "" + left,
                         "" + (grantedPlots - left));

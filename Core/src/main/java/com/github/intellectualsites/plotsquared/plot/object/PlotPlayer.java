@@ -13,13 +13,13 @@ import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAre
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
-import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
 import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.google.common.base.Preconditions;
 import com.sk89q.worldedit.extension.platform.Actor;
+import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.item.ItemType;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -438,14 +438,14 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      *
      * @return the gamemode of the player.
      */
-    @NotNull public abstract PlotGameMode getGameMode();
+    public abstract @NotNull GameMode getGameMode();
 
     /**
      * Set this player's gameMode.
      *
      * @param gameMode the gamemode to set
      */
-    public abstract void setGameMode(@NotNull PlotGameMode gameMode);
+    public abstract void setGameMode(@NotNull GameMode gameMode);
 
     /**
      * Set this player's local time (ticks).

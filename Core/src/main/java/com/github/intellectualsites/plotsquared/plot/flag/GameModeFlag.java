@@ -1,38 +1,38 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
-import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
+import com.sk89q.worldedit.world.gamemode.GameMode;
+import com.sk89q.worldedit.world.gamemode.GameModes;
 
-public class GameModeFlag extends Flag<PlotGameMode> {
+public class GameModeFlag extends Flag<GameMode> {
 
     public GameModeFlag(String name) {
         super(Captions.FLAG_CATEGORY_GAMEMODE, name);
     }
 
     @Override public String valueToString(Object value) {
-        return ((PlotGameMode) value).getName();
+        return ((GameMode) value).getName();
     }
 
-    @Override public PlotGameMode parseValue(String value) {
+    @Override public GameMode parseValue(String value) {
         switch (value.toLowerCase()) {
-            case "survival":
-            case "s":
-            case "0":
-                return PlotGameMode.SURVIVAL;
             case "creative":
             case "c":
             case "1":
-                return PlotGameMode.CREATIVE;
+                return GameModes.CREATIVE;
             case "adventure":
             case "a":
             case "2":
-                return PlotGameMode.ADVENTURE;
+                return GameModes.ADVENTURE;
             case "spectator":
             case "sp":
             case "3":
-                return PlotGameMode.SPECTATOR;
+                return GameModes.SPECTATOR;
+            case "survival":
+            case "s":
+            case "0":
             default:
-                return PlotGameMode.NOT_SET;
+                return GameModes.SURVIVAL;
         }
     }
 
