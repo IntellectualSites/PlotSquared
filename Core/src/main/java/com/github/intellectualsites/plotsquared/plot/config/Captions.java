@@ -570,10 +570,12 @@ public enum Captions {
     //</editor-fold>
     //<editor-fold desc="Member">
     REMOVED_PLAYERS("$2Removed %s players from this plot.", "Member"),
+    PLOT_LEFT("$2%s left the plot.", "Member"),
     ALREADY_OWNER("$2That user is already the plot owner: %s0", "Member"),
     ALREADY_ADDED("$2That user is already added to that category: %s0", "Member"),
     MEMBER_ADDED("$4That user can now build while the plot owner is online", "Member"),
     PLOT_MAX_MEMBERS("$2You are not allowed to add any more players to this plot", "Member"),
+    NOT_ADDED_TRUSTED("$2You must be added or trusted to the plot to run that command", "Member"),
     //</editor-fold>
     //<editor-fold desc="Set Owner">
     SET_OWNER("$4You successfully set the plot owner", "Owner"),
