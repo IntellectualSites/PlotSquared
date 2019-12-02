@@ -174,10 +174,16 @@ public class Auto extends SubCommand {
             if (Permissions.hasPermission(player, Captions.PERMISSION_AUTO_MEGA)) {
                 try {
                     String[] split = args[0].split(",|;");
-                    size_x = Integer.parseInt(split[0]);
-                    size_z = Integer.parseInt(split[1]);
+                    if (split[1] == null) {
+                        MainUtil.sendMessage(player,"Correct use /plot auto [length,width]");
+                        size_x = 1;
+                        size_z = 1;
+                    } else {
+                        size_x = Integer.parseInt(split[0]);
+                        size_z = Integer.parseInt(split[1]);
+                    }
                     if (size_x < 1 || size_z < 1) {
-                        MainUtil.sendMessage(player, "&cError: size<=0");
+                        MainUtil.sendMessage(player, "Error: size<=0");
                     }
                     if (args.length > 1) {
                         schematic = args[1];

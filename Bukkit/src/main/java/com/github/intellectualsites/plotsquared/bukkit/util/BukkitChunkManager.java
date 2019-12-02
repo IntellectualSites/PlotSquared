@@ -40,8 +40,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class BukkitChunkManager extends ChunkManager {
 
@@ -111,7 +114,7 @@ public class BukkitChunkManager extends ChunkManager {
 
     @Override public Set<BlockVector2> getChunkChunks(String world) {
         Set<BlockVector2> chunks = super.getChunkChunks(world);
-        for (Chunk chunk : Bukkit.getWorld(world).getLoadedChunks()) {
+        for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world)).getLoadedChunks()) {
             BlockVector2 loc = BlockVector2.at(chunk.getX() >> 5, chunk.getZ() >> 5);
             chunks.add(loc);
         }
@@ -269,6 +272,7 @@ public class BukkitChunkManager extends ChunkManager {
             }
         }
         final World worldObj = Bukkit.getWorld(world);
+        checkNotNull(worldObj, "Critical error during regeneration.");
         final BukkitWorld bukkitWorldObj = new BukkitWorld(worldObj);
         TaskManager.runTask(new Runnable() {
             @Override public void run() {
@@ -398,7 +402,7 @@ public class BukkitChunkManager extends ChunkManager {
         return true;
     }
 
-    @Override public CompletableFuture loadChunk(String world, BlockVector2 chunkLoc, boolean force) {
+    @Override public CompletableFuture<?> loadChunk(String world, BlockVector2 chunkLoc, boolean force) {
         return PaperLib.getChunkAtAsync(BukkitUtil.getWorld(world),chunkLoc.getX(), chunkLoc.getZ(), force);
     }
 
@@ -440,8 +444,9 @@ public class BukkitChunkManager extends ChunkManager {
         CuboidRegion region2 =
             RegionUtil.createRegion(bot2.getX(), top2.getX(), bot2.getZ(), top2.getZ());
         final World world1 = Bukkit.getWorld(bot1.getWorld());
-        World world2 = Bukkit.getWorld(bot2.getWorld());
-
+        final World world2 = Bukkit.getWorld(bot2.getWorld());
+        checkNotNull(world1,"Critical error during swap.");
+        checkNotNull(world2,"Critical error during swap.");
         int relX = bot2.getX() - bot1.getX();
         int relZ = bot2.getZ() - bot1.getZ();
 

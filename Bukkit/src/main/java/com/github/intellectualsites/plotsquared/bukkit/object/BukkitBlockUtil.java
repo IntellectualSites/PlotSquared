@@ -10,7 +10,11 @@ import java.util.function.Supplier;
 
 public class BukkitBlockUtil {
     public static Supplier<ItemType> supplyItem(Block block) {
-        return () -> BukkitAdapter.asItemType(block.getType());
+        return new Supplier<ItemType>() {
+            @Override public ItemType get() {
+                return BukkitAdapter.asItemType(block.getType());
+            }
+        };
     }
 
     public static Supplier<ItemType> supplyItem(Material type) {

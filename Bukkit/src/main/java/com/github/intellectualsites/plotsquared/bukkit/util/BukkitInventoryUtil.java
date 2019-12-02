@@ -96,6 +96,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
       }
       if (meta.hasLore()) {
         List<String> itemLore = meta.getLore();
+        assert itemLore != null;
         lore = itemLore.toArray(new String[0]);
       }
     }

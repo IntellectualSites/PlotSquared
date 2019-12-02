@@ -2211,12 +2211,12 @@ import java.util.regex.Pattern;
                 }
                 break;
             }
-            case LEFT_CLICK_BLOCK:
-                Block block = event.getClickedBlock();
-                location = BukkitUtil.getLocation(block.getLocation());
-                eventType = PlayerBlockEventType.BREAK_BLOCK;
-                lazyItem = BukkitBlockUtil.supplyItem(block);
-                break;
+//            case LEFT_CLICK_BLOCK:
+//                Block block = event.getClickedBlock();
+//                location = BukkitUtil.getLocation(block.getLocation());
+//                eventType = PlayerBlockEventType.BREAK_BLOCK;
+//                lazyItem = BukkitBlockUtil.supplyItem(block);
+//                break;
             default:
                 return;
         }

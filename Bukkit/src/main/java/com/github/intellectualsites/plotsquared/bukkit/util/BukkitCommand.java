@@ -48,12 +48,12 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         if (args.length == 0) {
             return Collections.singletonList("plots");
         }
-        Collection objects = MainCommand.getInstance().tab(player, args, s.endsWith(" "));
+        Collection<com.github.intellectualsites.plotsquared.commands.Command> objects = MainCommand.getInstance().tab(player, args, s.endsWith(" "));
         if (objects == null) {
             return null;
         }
         List<String> result = new ArrayList<>();
-        for (Object o : objects) {
+        for (com.github.intellectualsites.plotsquared.commands.Command o : objects) {
             result.add(o.toString());
         }
         return result.isEmpty() ? null : result;
