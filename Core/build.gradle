@@ -17,7 +17,7 @@ dependencies {
     implementation("com.github.Sauilitired:Jenkins4J:2.0-SNAPSHOT")
     implementation("com.squareup.okhttp3:okhttp:3.12.0")
     implementation("com.squareup.okio:okio:2.2.2")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.3.50")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.3.61")
 }
 
 sourceCompatibility = 1.8
