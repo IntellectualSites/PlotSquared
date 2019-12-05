@@ -465,7 +465,7 @@ public enum Captions {
     PLOT_INFO_UNCLAIMED("$2Plot $1%s$2 is not yet claimed", "Info"),
     PLOT_INFO_HEADER("$3&m---------&r $1INFO $3&m---------", false, "Info"),
     PLOT_INFO_HIDDEN("$2You cannot view the information about this plot", "Info"),
-    PLOT_INFO("$1ID: $2%id%$1&-" + "$1Alias: $2%alias%$1&-" + "$1Owner: $2%owner%$1&-"
+    PLOT_INFO("$1ID: $2%id%$1&-" + "$1Alias: $2%alias%$1&-" + "$1Owner:$2%owner%$1&-"
         + "$1Biome: $2%biome%$1&-" + "$1Can Build: $2%build%$1&-" + "$1Rating: $2%rating%&-"
         + "$1Seen: $2%seen%&-" + "$1Trusted: $2%trusted%$1&-" + "$1Members: $2%members%$1&-"
         + "$1Denied: $2%denied%$1&-" + "$1Flags: $2%flags%", "Info"),
@@ -477,7 +477,7 @@ public enum Captions {
     PLOT_INFO_BIOME("$1Biome:$2 %biome%", "Info"),
     PLOT_INFO_RATING("$1Rating:$2 %rating%", "Info"),
     PLOT_INFO_LIKES("$1Like Ratio:$2 %likes%%", "Info"),
-    PLOT_INFO_OWNER("$1Owner:$2 %owner%", "Info"),
+    PLOT_INFO_OWNER("$1Owner:$2%owner%", "Info"),
     PLOT_INFO_ID("$1ID:$2 %id%", "Info"),
     PLOT_INFO_ALIAS("$1Alias:$2 %alias%", "Info"),
     PLOT_INFO_SIZE("$1Size:$2 %size%", "Info"),
