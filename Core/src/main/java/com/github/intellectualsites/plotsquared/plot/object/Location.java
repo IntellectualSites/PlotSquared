@@ -9,9 +9,9 @@ import lombok.Setter;
 
 public class Location implements Cloneable, Comparable<Location> {
 
-    @Getter private int x;
-    @Getter private int y;
-    @Getter private int z;
+    private int x;
+    private int y;
+    private int z;
     @Getter @Setter private float yaw;
     @Getter @Setter private float pitch;
     @Getter @Setter private String world;
@@ -31,6 +31,18 @@ public class Location implements Cloneable, Comparable<Location> {
         this(world, x, y, z, 0f, 0f);
     }
 
+    public int getX() {
+        return this.x;
+    }
+    
+    public int getY() {
+        return this.y;
+    }
+    
+    public int getZ() {
+        return this.z;
+    }
+    
     public void setX(int x) {
         this.x = x;
         this.blockVector3 = BlockVector3.at(x, y, z);
@@ -53,7 +65,8 @@ public class Location implements Cloneable, Comparable<Location> {
         this.z = blockVector3.getZ();
     }
 
-    @Override public Location clone() {
+    @Override
+    public Location clone() {
         try {
             return (Location) super.clone();
         } catch (CloneNotSupportedException e) {

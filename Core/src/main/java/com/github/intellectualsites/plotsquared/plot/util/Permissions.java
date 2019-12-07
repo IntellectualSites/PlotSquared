@@ -89,7 +89,7 @@ public class Permissions {
     }
 
     /**
-     * Check if a PlotPlayer has a permission, and optionally send the no permission message if applicable.
+     * Checks if a PlotPlayer has a permission, and optionally send the no permission message if applicable.
      *
      * @param player
      * @param permission
