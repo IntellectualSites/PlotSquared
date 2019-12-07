@@ -789,7 +789,9 @@ public class MainUtil {
                     value = df.format(value);
                 }
                 flags.append(prefix)
-                    .append(Captions.PLOT_FLAG_LIST.f(entry.getKey().getName(), value));
+                    .append(Captions
+                        .format(Captions.PLOT_FLAG_LIST.getTranslated(), entry.getKey().getName(),
+                            value));
                 prefix = ", ";
             }
         }

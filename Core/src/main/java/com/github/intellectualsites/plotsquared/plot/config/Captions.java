@@ -774,10 +774,6 @@ public enum Captions {
         }
     }
 
-    @Deprecated public String f(final Object... args) {
-        return format(getTranslated(), args);
-    }
-
     @Override public String toString() {
         return this.translatedString;
     }

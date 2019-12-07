@@ -81,7 +81,8 @@ import java.util.Map;
         @NonNull final String key, @NonNull final String block) {
         final BlockBucket bucket = this.blockToBucket(block);
         this.setString(section, key, bucket);
-        PlotSquared.log(Captions.LEGACY_CONFIG_REPLACED.f(block, bucket.toString()));
+        PlotSquared.log(Captions
+            .format(Captions.LEGACY_CONFIG_REPLACED.getTranslated(), block, bucket.toString()));
     }
 
     private void convertBlockList(@NonNull final ConfigurationSection section,
@@ -89,8 +90,9 @@ import java.util.Map;
         final BlockState[] blocks = this.splitBlockList(blockList);
         final BlockBucket bucket = this.blockListToBucket(blocks);
         this.setString(section, key, bucket);
-        PlotSquared.log(
-            Captions.LEGACY_CONFIG_REPLACED.f(plotBlockArrayString(blocks), bucket.toString()));
+        PlotSquared.log(Captions
+            .format(Captions.LEGACY_CONFIG_REPLACED.getTranslated(), plotBlockArrayString(blocks),
+                bucket.toString()));
     }
 
     private String plotBlockArrayString(@NonNull final BlockState[] blocks) {

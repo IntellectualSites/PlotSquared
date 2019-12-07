@@ -218,11 +218,12 @@ public class Auto extends SubCommand {
                 sendMessage(player, Captions.SCHEMATIC_INVALID, "non-existent: " + schematic);
                 return true;
             }
-            if (!Permissions.hasPermission(player, Captions.PERMISSION_CLAIM_SCHEMATIC.f(schematic))
+            if (!Permissions.hasPermission(player,
+                Captions.format(Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
                 && !Permissions
                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {
                 MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                    Captions.PERMISSION_CLAIM_SCHEMATIC.f(schematic));
+                    Captions.format(Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic));
                 return true;
             }
         }

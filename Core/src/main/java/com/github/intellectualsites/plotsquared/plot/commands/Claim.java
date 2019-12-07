@@ -11,7 +11,6 @@ import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
-import com.github.intellectualsites.plotsquared.plot.util.ByteArrayUtilities;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
@@ -59,7 +58,8 @@ public class Claim extends SubCommand {
                         "non-existent: " + schematic);
                 }
                 if (!Permissions
-                    .hasPermission(player, Captions.PERMISSION_CLAIM_SCHEMATIC.f(schematic))
+                    .hasPermission(player, Captions
+                        .format(Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
                     && !Permissions
                     .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {
                     return sendMessage(player, Captions.NO_SCHEMATIC_PERMISSION, schematic);

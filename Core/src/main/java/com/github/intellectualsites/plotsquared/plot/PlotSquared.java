@@ -317,7 +317,8 @@ import java.util.zip.ZipInputStream;
             e.printStackTrace();
         }
 
-        PlotSquared.log(Captions.PREFIX + Captions.ENABLED.f(IMP.getPluginName()));
+        PlotSquared.log(Captions.PREFIX + Captions
+            .format(Captions.ENABLED.getTranslated(), IMP.getPluginName()));
     }
 
     /**
