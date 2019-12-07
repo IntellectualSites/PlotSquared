@@ -100,7 +100,7 @@ public class Info extends SubCommand {
             UUID uuid = player.getUUID();
             String name = MainUtil.getName(plot.getOwner());
             inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cPlot Info",
-                "&cID: &6" + plot.getId().toString(), "&cOwner: &6" + name,
+                "&cID: &6" + plot.getId().toString(), "&cOwner:&6" + name,
                 "&cAlias: &6" + plot.getAlias(),
                 "&cBiome: &6" + plot.getBiome().toString().replaceAll("_", "").toLowerCase(),
                 "&cCan Build: &6" + plot.isAdded(uuid),

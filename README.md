@@ -29,7 +29,7 @@ is to provide a lag-free and smooth experience.
 ### Developer Resources
 * [[JavaDoc](https://ci.athion.net/job/PlotSquared-Breaking/javadoc/)]
 * [[Maven Repo (CI)](http://ci.athion.net/job/PlotSquared-Breaking/ws/mvn/)]
-* [API Documentation](https://github.com/IntellectualSites/PlotSquared/wiki/Developer-documentation-(WIP))
+* [API Documentation](https://github.com/IntellectualSites/PlotSquared/wiki/Developer-Documentation)
 
 # Building
 Gradle is the **recommended** way to build the project. Use `./gradlew build` in the main project directory to build the project. Gradle is required if you intend to build or develop the Sponge module.
