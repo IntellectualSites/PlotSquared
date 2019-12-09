@@ -171,7 +171,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                         getLogger().info("-------- PlotSquared Update Check --------");
                         if (throwable != null) {
                             getLogger().severe(String
-                                .format("Could not check for update. Reason: %s",
+                                .format("Could not check for updates. Reason: %s",
                                     throwable.getMessage()));
                         } else {
                             if (updateDescription == null) {
@@ -180,8 +180,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                             } else {
                                 getLogger()
                                     .info("There appears to be a PlotSquared update available!");
-                                getLogger().info(String.format("You are running version %s,"
-                                        + " the newest available version is %s",
+                                getLogger().info(String.format(
+                                    "You are running version %s, the newest available version is %s",
                                     getPluginVersionString(), updateDescription.getVersion()));
                                 getLogger().info(
                                     String.format("Update URL: %s", updateDescription.getUrl()));
@@ -540,6 +540,14 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                         case PUFFERFISH:
                         case PHANTOM:
                         case ILLUSIONER:
+                        case CAT:
+                        case PANDA:
+                        case FOX:
+                        case PILLAGER:
+                        case TRADER_LLAMA:
+                        case WANDERING_TRADER:
+                        case RAVAGER:
+                            //case BEE:
                         default: {
                             if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
                                 Location location = entity.getLocation();

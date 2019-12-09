@@ -73,7 +73,9 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return this.platformGenerator;
     }
 
-    @Override @NotNull public List<BlockPopulator> getDefaultPopulators(@NotNull World world) {
+    @Override
+    @NotNull
+    public List<BlockPopulator> getDefaultPopulators(@NotNull World world) {
         try {
             if (!this.loaded) {
                 String name = world.getName();
@@ -117,7 +119,8 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return toAdd;
     }
 
-    @Override @NotNull
+    @Override
+    @NotNull
     public ChunkData generateChunkData(@NotNull World world, @NotNull Random random, int x, int z,
         @NotNull BiomeGrid biome) {
 

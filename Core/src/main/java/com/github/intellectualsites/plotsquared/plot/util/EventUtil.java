@@ -16,6 +16,7 @@ import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAre
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -100,7 +101,7 @@ public abstract class EventUtil {
         }
     }
 
-    public boolean checkPlayerBlockEvent(PlotPlayer player, PlayerBlockEventType type,
+    public boolean checkPlayerBlockEvent(PlotPlayer player, @NotNull PlayerBlockEventType type,
         Location location, BlockType blockType, boolean notifyPerms) {
         PlotArea area = location.getPlotArea();
         assert area != null;

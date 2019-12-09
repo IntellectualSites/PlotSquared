@@ -24,7 +24,7 @@ import java.util.regex.Matcher;
  * A block bucket is a container of block types, where each block
  * has a specified chance of being randomly picked
  */
-@EqualsAndHashCode(of={"input"}) @SuppressWarnings({"unused", "WeakerAccess"})
+@EqualsAndHashCode(of = {"input"}) @SuppressWarnings({"unused", "WeakerAccess"})
 public final class BlockBucket implements ConfigurationSerializable {
     private boolean compiled;
 
@@ -78,7 +78,7 @@ public final class BlockBucket implements ConfigurationSerializable {
     private void addBlock(@NonNull final BlockState block, double chance) {
         if (chance == -1) chance = 1;
         String prefix = input.length() == 0 ? "" : ",";
-        input.append(prefix).append(chance + "%" + prefix);
+        input.append(prefix).append(chance).append("%").append(prefix);
         this.compiled = false;
     }
 
@@ -116,7 +116,7 @@ public final class BlockBucket implements ConfigurationSerializable {
                 this.single = BlockUtil.get(string);
                 this.pattern = new BlockPattern(single);
                 return;
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) { }
         }
         for (int i = 0; i < blocksStr.length; i++) {
             String entry = blocksStr[i];
@@ -163,7 +163,7 @@ public final class BlockBucket implements ConfigurationSerializable {
         return ImmutableMap.of("blocks", this.toString());
     }
 
-    @Getter @EqualsAndHashCode @RequiredArgsConstructor private final static class Range {
+    @Getter @EqualsAndHashCode @RequiredArgsConstructor private static final class Range {
 
         private final int min;
         private final int max;

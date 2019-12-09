@@ -640,7 +640,7 @@ import java.util.regex.Pattern;
         Optional<List<String>> flag = plot.getFlag(Flags.BLOCKED_CMDS);
         if (flag.isPresent() && !Permissions
             .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS)) {
-            List<String> blocked_cmds = flag.get();
+            List<String> blockedCommands = flag.get();
             String part = parts[0];
             if (parts[0].contains(":")) {
                 part = parts[0].split(":")[1];
@@ -674,7 +674,7 @@ import java.util.regex.Pattern;
             if (!s1.equals(part)) {
                 msg = msg.replace(s1, part);
             }
-            for (String s : blocked_cmds) {
+            for (String s : blockedCommands) {
                 Pattern pattern;
                 if (!RegExUtil.compiledPatterns.containsKey(s)) {
                     RegExUtil.compiledPatterns.put(s, pattern = Pattern.compile(s));
@@ -745,8 +745,8 @@ import java.util.regex.Pattern;
                                 .text(" --------").color("$2").send(pp);
                             new PlotMessage("There appears to be a PlotSquared update available!")
                                 .color("$1").send(pp);
-                            new PlotMessage(String.format("You are running version %s,"
-                                    + " the newest available version is %s",
+                            new PlotMessage(String.format(
+                                "You are running version %s, the newest available version is %s",
                                 bukkitMain.getPluginVersionString(),
                                 updateDescription.getVersion())).color("$1").send(pp);
                             new PlotMessage("Update URL").color("$1").text(": ").color("$2")
@@ -1340,12 +1340,6 @@ import java.util.regex.Pattern;
                 if (Flags.ICE_FORM.isFalse(plot)) {
                     event.setCancelled(true);
                 }
-                return;
-            case STONE:
-            case OBSIDIAN:
-            case COBBLESTONE:
-                // TODO event ?
-                return;
         }
     }
 
@@ -1491,8 +1485,7 @@ import java.util.regex.Pattern;
             event.setCancelled(true);
             return;
         }
-        List<Block> blocks = event.getBlocks();
-        for (Block block1 : blocks) {
+        for (Block block1 : event.getBlocks()) {
             Location bloc = BukkitUtil.getLocation(block1.getLocation());
             if (!area.contains(bloc.getX(), bloc.getZ()) || !area
                 .contains(bloc.getX() + relative.getBlockX(), bloc.getZ() + relative.getBlockZ())) {
@@ -1650,11 +1643,11 @@ import java.util.regex.Pattern;
             location = BukkitUtil.getLocation(blocks.get(i).getLocation());
             Plot plot = area.getOwnedPlot(location);
             /*
-             * plot -> the base plot of the merged area
-             * origin -> the plot where the event gets called
+             * plot → the base plot of the merged area
+             * origin → the plot where the event gets called
              */
 
-            // Are plot and origin not the same AND are both plots merged
+            // Are plot and origin different AND are both plots merged
             if (!Objects.equals(plot, origin) && (!plot.isMerged() && !origin.isMerged())) {
                 event.getBlocks().remove(i);
             }
@@ -2025,6 +2018,18 @@ import java.util.regex.Pattern;
                 return;
             }
         }
+        if (eventType == null) {
+            PlotSquared.log("Please report this to PlotSquared Developers: ");
+            PlotSquared.log("Action: " + event.getAction().toString());
+            PlotSquared.log("HasItem: " + event.hasItem());
+            PlotSquared.log("HasBlock: " + event.hasBlock());
+            PlotSquared.log("getItem: " + (event.hasItem() ? Objects.requireNonNull(event.getItem())
+                .toString() : "null"));
+            PlotSquared.log("getBlockFace: " + (event.getBlockFace() != null ? event.getBlockFace().toString() : "null"));
+            PlotSquared.log("isBlockInHand: " + (event.isBlockInHand()));
+            PlotSquared.log("getClickedBlock: " + (event.getClickedBlock() != null ? event.getClickedBlock().toString() : "null"));
+            return;
+        }
         if (!EventUtil.manager.checkPlayerBlockEvent(pp, eventType, location, blocktype1, true)) {
             event.setCancelled(true);
             event.setUseInteractedBlock(Event.Result.DENY);
@@ -2372,6 +2377,11 @@ import java.util.regex.Pattern;
             return;
         }
         Player p = event.getPlayer();
+        if (p != null) {
+            PlotSquared.debug("PlotSquared does not support HangingPlaceEvent for non-players.");
+            event.setCancelled(true);
+            return;
+        }
         PlotPlayer pp = BukkitUtil.getPlayer(p);
         Plot plot = area.getPlot(location);
         if (plot == null) {

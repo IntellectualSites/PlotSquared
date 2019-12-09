@@ -52,8 +52,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
         }
 
         try (PreparedStatement stmt = getConnection().prepareStatement(
-            "CREATE TABLE IF NOT EXISTS `usercache` (uuid VARCHAR(32) NOT NULL, username VARCHAR(32) NOT NULL, PRIMARY KEY (uuid, username)"
-                + ')')) {
+            "CREATE TABLE IF NOT EXISTS `usercache` (uuid VARCHAR(32) NOT NULL, username VARCHAR(32) NOT NULL, PRIMARY KEY (uuid, username))")) {
             stmt.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -237,7 +236,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
         return false;
     }
 
-    private class SQLUUIDHandlerException extends RuntimeException {
+    private static class SQLUUIDHandlerException extends RuntimeException {
 
         SQLUUIDHandlerException(String s, Throwable c) {
             super("SQLUUIDHandler caused an exception: " + s, c);

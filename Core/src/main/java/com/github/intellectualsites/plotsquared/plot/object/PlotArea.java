@@ -117,7 +117,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Returns the region for this PlotArea or a CuboidRegion encompassing
+     * Returns the region for this PlotArea, or a CuboidRegion encompassing
      * the whole world if none exists.
      *
      * @return CuboidRegion
@@ -627,7 +627,7 @@ public abstract class PlotArea {
         this.meta.put(key, value);
     }
 
-    @NotNull public <T> T getMeta(@Nullable final String key, @NotNull final T def) {
+    @NotNull public <T> T getMeta(@NotNull final String key, @NotNull final T def) {
         final Object v = getMeta(key);
         return v == null ? def : (T) v;
     }
@@ -637,7 +637,8 @@ public abstract class PlotArea {
      * <br>
      * For persistent metadata use the flag system
      */
-    @Nullable public Object getMeta(@NotNull final String key) {
+    @Nullable
+    public Object getMeta(@NotNull final String key) {
         if (this.meta != null) {
             return this.meta.get(key);
         }
