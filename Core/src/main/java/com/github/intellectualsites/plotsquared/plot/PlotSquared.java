@@ -1828,11 +1828,24 @@ import java.util.zip.ZipInputStream;
         if (this.version != null) {
             this.style.set("Version", this.version.toString());
         }
-        Map<String, Object> object = new HashMap<>(4);
+        this.style.set("Information", "Left Row: PlotSquared color codes ($), right row: Minecraft color codes (&)");
+        Map<String, Object> object = new HashMap<>(16);
         object.put("color.1", "6");
         object.put("color.2", "7");
         object.put("color.3", "8");
         object.put("color.4", "3");
+        object.put("color.5", "1");
+        object.put("color.6", "2");
+        object.put("color.7", "4");
+        object.put("color.8", "5");
+        object.put("color.9", "9");
+        object.put("color.10", "0");
+        object.put("color.11", "a");
+        object.put("color.12", "b");
+        object.put("color.13", "c");
+        object.put("color.14", "d");
+        object.put("color.15", "e");
+        object.put("color.16", "f");
         if (!this.style.contains("color")) {
             for (Entry<String, Object> node : object.entrySet()) {
                 this.style.set(node.getKey(), node.getValue());
