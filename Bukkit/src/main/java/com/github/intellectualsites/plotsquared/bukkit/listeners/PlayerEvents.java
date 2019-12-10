@@ -2869,12 +2869,12 @@ import java.util.regex.Pattern;
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void blockCreate(BlockPlaceEvent event) {
-        Player player = event.getPlayer();
         Location location = BukkitUtil.getLocation(event.getBlock().getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
         }
+        Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
         Plot plot = area.getPlot(location);
         if (plot != null) {
@@ -2885,23 +2885,25 @@ import java.util.regex.Pattern;
                     .replace("{limit}", String.valueOf(area.MAX_BUILD_HEIGHT)));
             }
             if (!plot.hasOwner()) {
-                if (!Permissions
-                    .hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_UNOWNED, true)) {
+                if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_UNOWNED)) {
+                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
+                        Captions.PERMISSION_ADMIN_BUILD_UNOWNED);
                     event.setCancelled(true);
                     return;
                 }
             } else if (!plot.isAdded(pp.getUUID())) {
-                Optional<Set<BlockType>> place = plot.getFlag(Flags.PLACE);
+                Set<BlockType> place = plot.getFlag(Flags.PLACE, null);
+                if (place != null) {
                 Block block = event.getBlock();
-                if (place.isPresent() && place.get().contains(BukkitAdapter.asBlockType(block.getType()))) {
+                    if (place.contains(BukkitAdapter.asBlockType(block.getType()))) {
                     return;
+                    }
                 }
-                if (Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
-                    return;
-                } else {
+                if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
                     MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
                         Captions.PERMISSION_ADMIN_BUILD_OTHER);
                     event.setCancelled(true);
+                    return;
                 }
             } else if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
@@ -2917,10 +2919,10 @@ import java.util.regex.Pattern;
                     sendBlockChange(block.getLocation(), block.getBlockData());
                 }
             }
-        }
-        if (Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_ROAD)) {
-            return;
-        }
+        } else if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_ROAD)) {
+            MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
+                Captions.PERMISSION_ADMIN_BUILD_ROAD);
         event.setCancelled(true);
     }
+}
 }
