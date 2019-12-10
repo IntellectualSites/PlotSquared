@@ -51,7 +51,7 @@ public class Visit extends Command {
         boolean shouldSortByArea = Settings.Teleport.PER_WORLD_VISIT;
         switch (args.length) {
             case 3:
-                if (!MathMan.isInteger(args[1])) {
+                if (!MathMan.isInteger(args[2])) {
                     C.NOT_VALID_NUMBER.send(player, "(1, ∞)");
                     C.COMMAND_SYNTAX.send(player, getUsage());
                     return;
