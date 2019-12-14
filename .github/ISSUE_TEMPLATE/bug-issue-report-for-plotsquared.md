@@ -49,7 +49,8 @@ assignees: ''
 ### Minecraft Version:
 **select one**
 <!-- Select the type you are reporting the issue for (put an "X" between of brackets): -->
-- [] Minecraft 1.14.4 ***This is the ONLY actively maintained target for PlotSquared***
+- [] Minecraft 1.15
+- [] Minecraft 1.14.4
 - [] Minecraft 1.13.2
 - [] Minecraft Java Edition *other versions, please specify*:
 - [] Minecraft Bedrock Edition *specify version*:
