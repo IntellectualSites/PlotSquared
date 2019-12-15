@@ -1924,23 +1924,15 @@ import java.util.regex.Pattern;
             //todo rearrange the right click code. it is all over the place.
             case RIGHT_CLICK_BLOCK: {
                 Material blockType = block.getType();
+                eventType = PlayerBlockEventType.INTERACT_BLOCK;
                 if (blockType.isInteractable() && player.isSneaking()) {
                     return; //this returns so the block place event is called
                 }
-                if (blockType.isInteractable()) {
-                    eventType = PlayerBlockEventType.INTERACT_BLOCK;
-                }
                 blocktype1 = BukkitAdapter.asBlockType(block.getType());
-                if (eventType != null && !player.isSneaking()) {
+                if (!player.isSneaking()) {
                     break;
                 }
                 Material type = event.getMaterial();
-                if (type == Material.AIR) {
-                    if (!player.isSneaking() && blockType.isInteractable()) {
-                        eventType = PlayerBlockEventType.INTERACT_BLOCK;
-                        break outer;
-                    }
-                }
 
                 // in the following, lb needs to have the material of the item in hand i.e. type
                 if (type == Material.REDSTONE || type == Material.STRING
@@ -2001,7 +1993,7 @@ import java.util.regex.Pattern;
             }
             case LEFT_CLICK_BLOCK: {
                 location = BukkitUtil.getLocation(block.getLocation());
-                //                eventType = PlayerBlockEventType.BREAK_BLOCK;
+                //eventType = PlayerBlockEventType.BREAK_BLOCK;
                 blocktype1 = BukkitAdapter.asBlockType(block.getType());
                 if (block.getType() == Material.DRAGON_EGG) {
                     eventType = PlayerBlockEventType.TELEPORT_OBJECT;
@@ -2017,18 +2009,6 @@ import java.util.regex.Pattern;
             if (event.getMaterial() == Material.getMaterial(PlotSquared.get().worldedit.getConfiguration().wandItem)) {
                 return;
             }
-        }
-        if (eventType == null) {
-            PlotSquared.log("Please report this to PlotSquared Developers: ");
-            PlotSquared.log("Action: " + event.getAction().toString());
-            PlotSquared.log("HasItem: " + event.hasItem());
-            PlotSquared.log("HasBlock: " + event.hasBlock());
-            PlotSquared.log("getItem: " + (event.hasItem() ? Objects.requireNonNull(event.getItem())
-                .toString() : "null"));
-            PlotSquared.log("getBlockFace: " + (event.getBlockFace() != null ? event.getBlockFace().toString() : "null"));
-            PlotSquared.log("isBlockInHand: " + (event.isBlockInHand()));
-            PlotSquared.log("getClickedBlock: " + (event.getClickedBlock() != null ? event.getClickedBlock().toString() : "null"));
-            return;
         }
         if (!EventUtil.manager.checkPlayerBlockEvent(pp, eventType, location, blocktype1, true)) {
             event.setCancelled(true);
