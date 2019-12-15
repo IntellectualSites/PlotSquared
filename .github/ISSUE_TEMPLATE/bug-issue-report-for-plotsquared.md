@@ -16,10 +16,10 @@ assignees: ''
 ! PlotSquared for Minecraft Java Edition versions between 1.7 through to 1.12.2 are considered
 ! legacy, and will receive limited to no support. Please consider upgrading to 1.13+ for
 ! future support.  Plugins exist for 1.13+ which bring back behaviors found in 1.8.8
-! All versions of PlotSquared for Sponge and Nukkit(X) will recieve limited to no support
+! All versions of PlotSquared for Sponge and Nukkit(X) will receive limited to no support
 ! due to lack of developer interest and time. Additionally, NukkitX has not had feature
 ! updates since the Better Together, which prevents some PlotSquared features from ever
-! functioning.  Contributions are always welcome however!
+! functioning. Contributions are always welcome however!
 ```
 
 **Feature requests & Suggestions are to be submitted at the [PlotSquared Suggestions tracker](https://github.com/IntellectualSites/PlotSquaredSuggestions)**
@@ -33,23 +33,24 @@ assignees: ''
 <!--- Incomplete reports will most likely be marked as invalid, and closed, with few exceptions.-->
 ## Required Information section:
 > ALL FIELDS  IN THIS SECTION ARE REQUIRED, and must contain appropriate information
-### Server config info (Debug/file paste links):
+### Server config info (/plot debugpaste / file paste links):
 <!--- Issue /plot debugpaste in game or in your console and copy the supplied URL here -->
 <!--- If you cannot perform the above, we require logs/latest.log; settings.yml; worlds.yml and possibly PlotSquared.use_THIS.yml -->
 <!--- If you are unwilling to supply the information we need, we reserve the right to not assist you. Redact IP addresses if you need to. -->
 
-
 ### Server type:
-**select one**
+**Select one**
 <!-- Select the type you are reporting the issue for (put an "X" between of brackets): -->
 - [] Spigot / Paper *(CraftBukkit should not be used, re-test with Spigot first!)*
 - [] Sponge *- NOTE: NOT ACTIVELY MAINTAINED*
 - [] NukkitX *- NOTE: NOT ACTIVELY MAINTAINED*
 
 ### Minecraft Version:
-**select one**
-<!-- Select the type you are reporting the issue for (put an "X" between of brackets): -->
-- [] Minecraft 1.14.4 ***This is the ONLY actively maintained target for PlotSquared***
+**Select one**
+<!-- Select the type you are reporting the issue for (put an "X" between of brackets): 
+The maintained versions are 1.14.4 and 1.15.x -->
+- [] Minecraft 1.15
+- [] Minecraft 1.14.4
 - [] Minecraft 1.13.2
 - [] Minecraft Java Edition *other versions, please specify*:
 - [] Minecraft Bedrock Edition *specify version*:
@@ -57,7 +58,7 @@ assignees: ''
 ### Server build info: 
 <!--- Run /version in-game or in console & paste the full output here: -->
 ```
-paste here, between the tick marks, replacing this text
+Paste the output here, between the tick marks, replacing this text
 ```
 
 ### WorldEdit/FAWE versions:
@@ -80,7 +81,9 @@ paste here, between the tick marks, replacing this text
 
 ### Relevant console output, log lines, and/or screenshots:
 <!--- Please use in-line code insertion 
-```like this```
+```
+like this
+```
 for short (20 lines or less) text blobs, or a paste service for large blobs -->
 
 ### Additional relevant comments/remarks:
