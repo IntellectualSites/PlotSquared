@@ -41,8 +41,6 @@ public abstract class WorldUtil {
 
     public abstract Location getSpawn(String world);
 
-    public abstract Location getSpawn(PlotPlayer pp);
-
     public abstract void setSpawn(Location location);
 
     public abstract void saveWorld(String world);

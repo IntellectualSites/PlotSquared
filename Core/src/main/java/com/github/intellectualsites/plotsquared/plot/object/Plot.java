@@ -1,5 +1,8 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
+
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
@@ -36,6 +39,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -946,10 +950,16 @@ public class Plot {
                 ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
                     @Override public void run(int[] value) {
                         BlockVector2 loc = BlockVector2.at(value[0], value[1]);
+                        long start = System.currentTimeMillis();
                         ChunkManager.manager.loadChunk(getWorldName(), loc, false);
+                        long end = System.currentTimeMillis();
+                        PlotSquared.debug("[Biome Operation] Loading chunk took: " + TimeUnit.MILLISECONDS.toSeconds(end - start));
                         MainUtil.setBiome(getWorldName(), value[2], value[3], value[4], value[5],
                             biome);
+                        start = System.currentTimeMillis();
                         ChunkManager.manager.unloadChunk(getWorldName(), loc, true);
+                        end = System.currentTimeMillis();
+                        PlotSquared.debug("[Biome Operation] Unloading chunk took: " + TimeUnit.MILLISECONDS.toSeconds(end - start));
                     }
                 }, this, 5);
 

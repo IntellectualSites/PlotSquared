@@ -317,10 +317,6 @@ import java.util.Set;
         });
     }
 
-    @Override public Location getSpawn(@NonNull final PlotPlayer player) {
-        return getLocation(((BukkitPlayer) player).player.getBedSpawnLocation());
-    }
-
     @Override public Location getSpawn(@NonNull final String world) {
         final org.bukkit.Location temp = getWorld(world).getSpawnLocation();
         return new Location(world, temp.getBlockX(), temp.getBlockY(), temp.getBlockZ(),
