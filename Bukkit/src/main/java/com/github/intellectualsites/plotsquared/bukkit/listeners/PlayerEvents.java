@@ -2357,7 +2357,7 @@ import java.util.regex.Pattern;
             return;
         }
         Player p = event.getPlayer();
-        if (p != null) {
+        if (p == null) {
             PlotSquared.debug("PlotSquared does not support HangingPlaceEvent for non-players.");
             event.setCancelled(true);
             return;
