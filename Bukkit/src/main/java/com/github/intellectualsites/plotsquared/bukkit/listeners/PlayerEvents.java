@@ -1925,13 +1925,21 @@ import java.util.regex.Pattern;
             case RIGHT_CLICK_BLOCK: {
                 Material blockType = block.getType();
                 eventType = PlayerBlockEventType.INTERACT_BLOCK;
-                if (blockType.isInteractable() && player.isSneaking()) {
-                    return; //this returns so the block place event is called
-                }
                 blocktype1 = BukkitAdapter.asBlockType(block.getType());
-                if (!player.isSneaking()) {
-                    break;
+
+                if (blockType.isInteractable()) {
+                    if (!player.isSneaking()) {
+                        break;
+                    }
+                    ItemStack hand = player.getInventory().getItemInMainHand();
+                    ItemStack offHand = player.getInventory().getItemInOffHand();
+
+                    // sneaking players interact with blocks if both hands are empty
+                    if (hand.getType() == Material.AIR && offHand.getType() == Material.AIR) {
+                        break;
+                    }
                 }
+
                 Material type = event.getMaterial();
 
                 // in the following, lb needs to have the material of the item in hand i.e. type
