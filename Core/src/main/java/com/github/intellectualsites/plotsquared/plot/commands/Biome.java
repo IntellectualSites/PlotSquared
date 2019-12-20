@@ -15,20 +15,11 @@ import com.sk89q.worldedit.world.biome.BiomeTypes;
     requiredType = RequiredType.NONE) public class Biome extends SetCommand {
 
     @Override public boolean set(final PlotPlayer player, final Plot plot, final String value) {
+        BiomeType biome = null;
         try {
-            BiomeType biome = BiomeTypes.get(value);
-            if (plot.getRunning() > 0) {
-                MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
-                return false;
-            }
-            plot.addRunning();
-            plot.setBiome(biome, () -> {
-                plot.removeRunning();
-                MainUtil
-                    .sendMessage(player, Captions.BIOME_SET_TO.getTranslated() + value.toLowerCase());
-            });
-            return true;
-        } catch (IllegalStateException ignore) {
+            biome = BiomeTypes.get(value.toLowerCase());
+        } catch (final Exception ignore) {}
+        if (biome == null) {
             String biomes = StringMan
                 .join(BiomeType.REGISTRY.values(), Captions.BLOCK_LIST_SEPARATOR.getTranslated());
             Captions.NEED_BIOME.send(player);
@@ -36,5 +27,16 @@ import com.sk89q.worldedit.world.biome.BiomeTypes;
                 Captions.SUBCOMMAND_SET_OPTIONS_HEADER.getTranslated() + biomes);
             return false;
         }
+        if (plot.getRunning() > 0) {
+            MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+            return false;
+        }
+        plot.addRunning();
+        plot.setBiome(biome, () -> {
+            plot.removeRunning();
+            MainUtil
+                .sendMessage(player, Captions.BIOME_SET_TO.getTranslated() + value.toLowerCase());
+        });
+        return true;
     }
 }

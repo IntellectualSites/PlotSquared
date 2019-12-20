@@ -1,16 +1,12 @@
 package com.github.intellectualsites.plotsquared.plot.config;
 
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
-import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
-import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.block.BlockState;
 import lombok.Getter;
 import lombok.NonNull;
-
-import java.util.regex.Matcher;
 
 /**
  * Main Configuration Utility
@@ -53,7 +49,7 @@ public class Configuration {
 
         @Override public BiomeType parseString(String string) {
             if (validateValue(string)) {
-                return BiomeTypes.get(string.toUpperCase());
+                return BiomeTypes.get(string.toLowerCase());
             }
             return BiomeTypes.FOREST;
         }
