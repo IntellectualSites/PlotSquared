@@ -375,7 +375,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 if (statement.isClosed()) {
                                     statement = null;
                                 }
-                            } catch (AbstractMethodError ignore) {
+                            } catch (NullPointerException | AbstractMethodError ignore) {
                             }
                         }
                         lastTask = task;
