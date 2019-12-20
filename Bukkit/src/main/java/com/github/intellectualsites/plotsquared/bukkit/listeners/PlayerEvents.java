@@ -1943,13 +1943,21 @@ import java.util.regex.Pattern;
                 Material type = event.getMaterial();
 
                 // in the following, lb needs to have the material of the item in hand i.e. type
-                if (type == Material.REDSTONE || type == Material.STRING
-                    || type == Material.PUMPKIN_SEEDS || type == Material.MELON_SEEDS
-                    || type == Material.COCOA_BEANS || type == Material.WHEAT_SEEDS
-                    || type == Material.BEETROOT_SEEDS || type == Material.SWEET_BERRIES || type
-                    .isBlock()) {
-                    //eventType = PlayerBlockEventType.PLACE_BLOCK;
-                    return;
+                switch (type) {
+                    case REDSTONE:
+                    case STRING:
+                    case PUMPKIN_SEEDS:
+                    case MELON_SEEDS:
+                    case COCOA_BEANS:
+                    case WHEAT_SEEDS:
+                    case BEETROOT_SEEDS:
+                    case SWEET_BERRIES:
+                        return;
+                    default:
+                        //eventType = PlayerBlockEventType.PLACE_BLOCK;
+                        if (type.isBlock()) {
+                            return;
+                        }
                 }
                 if (PaperLib.isPaper()) {
                     if (MaterialTags.SPAWN_EGGS.isTagged(type) || Material.EGG.equals(type)) {
