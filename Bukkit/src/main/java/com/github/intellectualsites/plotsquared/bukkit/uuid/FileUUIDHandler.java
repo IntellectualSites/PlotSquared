@@ -18,6 +18,7 @@ import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.NBTInputStream;
 import com.sk89q.jnbt.Tag;
 import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import org.bukkit.Bukkit;
@@ -41,6 +42,16 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
 
     @Override public boolean startCaching(Runnable whenDone) {
         return super.startCaching(whenDone) && cache(whenDone);
+    }
+
+    private Tag readTag(File file) throws IOException {
+        // Don't chain the creation of the GZIP stream and the NBT stream, because their
+        // constructors may throw an IOException.
+        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+            GZIPInputStream gzipInputStream = new GZIPInputStream(inputStream);
+            NBTInputStream nbtInputStream = new NBTInputStream(gzipInputStream)) {
+            return nbtInputStream.readNamedTag().getTag();
+        }
     }
 
     public boolean cache(final Runnable whenDone) {
@@ -99,9 +110,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                             UUID uuid = UUID.fromString(s);
                             if (check || all.remove(uuid)) {
                                 File file = new File(playerDataFolder, current);
-                                CompoundTag compound = (CompoundTag) new NBTInputStream(
-                                    new GZIPInputStream(new BufferedInputStream(
-                                        new FileInputStream(file)))).readNamedTag().getTag();
+                                CompoundTag compound = (CompoundTag) readTag(file);
                                 if (!compound.containsKey("bukkit")) {
                                     PlotSquared.debug("ERROR: Player data (" + uuid.toString()
                                         + ".dat) does not contain the the key \"bukkit\"");
@@ -174,9 +183,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                     if (!file.exists()) {
                         continue;
                     }
-                    CompoundTag compound = (CompoundTag) new NBTInputStream(
-                        new GZIPInputStream(new BufferedInputStream(
-                            new FileInputStream(file)))).readNamedTag().getTag();
+                    CompoundTag compound = (CompoundTag) readTag(file);
                     if (!compound.containsKey("bukkit")) {
                         PlotSquared.debug("ERROR: Player data (" + uuid.toString()
                             + ".dat) does not contain the the key \"bukkit\"");
