@@ -1,6 +1,5 @@
 package com.github.intellectualsites.plotsquared.bukkit.uuid;
 
-import com.github.intellectualsites.plotsquared.bukkit.util.NbtFactory;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
@@ -15,6 +14,13 @@ import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
+import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.jnbt.NBTInputStream;
+import com.sk89q.jnbt.Tag;
+import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
+import java.util.Map;
+import java.util.zip.GZIPInputStream;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
@@ -36,6 +42,16 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
 
     @Override public boolean startCaching(Runnable whenDone) {
         return super.startCaching(whenDone) && cache(whenDone);
+    }
+
+    private Tag readTag(File file) throws IOException {
+        // Don't chain the creation of the GZIP stream and the NBT stream, because their
+        // constructors may throw an IOException.
+        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+            GZIPInputStream gzipInputStream = new GZIPInputStream(inputStream);
+            NBTInputStream nbtInputStream = new NBTInputStream(gzipInputStream)) {
+            return nbtInputStream.readNamedTag().getTag();
+        }
     }
 
     public boolean cache(final Runnable whenDone) {
@@ -94,18 +110,18 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                             UUID uuid = UUID.fromString(s);
                             if (check || all.remove(uuid)) {
                                 File file = new File(playerDataFolder, current);
-                                NbtFactory.NbtCompound compound = NbtFactory
-                                    .fromStream(new FileInputStream(file),
-                                        NbtFactory.StreamOptions.GZIP_COMPRESSION);
+                                CompoundTag compound = (CompoundTag) readTag(file);
                                 if (!compound.containsKey("bukkit")) {
                                     PlotSquared.debug("ERROR: Player data (" + uuid.toString()
                                         + ".dat) does not contain the the key \"bukkit\"");
                                 } else {
-                                    NbtFactory.NbtCompound bukkit =
-                                        (NbtFactory.NbtCompound) compound.get("bukkit");
-                                    String name = (String) bukkit.get("lastKnownName");
-                                    long last = (long) bukkit.get("lastPlayed");
-                                    long first = (long) bukkit.get("firstPlayed");
+                                    Map<String, Tag> compoundMap = compound.getValue();
+                                    CompoundTag bukkit = (CompoundTag) compoundMap.get("bukkit");
+                                    Map<String, Tag> bukkitMap = bukkit.getValue();
+                                    String name =
+                                        (String) bukkitMap.get("lastKnownName").getValue();
+                                    long last = (long) bukkitMap.get("lastPlayed").getValue();
+                                    long first = (long) bukkitMap.get("firstPlayed").getValue();
                                     if (ExpireManager.IMP != null) {
                                         ExpireManager.IMP.storeDate(uuid, last);
                                         ExpireManager.IMP.storeAccountAge(uuid, last - first);
@@ -167,27 +183,26 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                     if (!file.exists()) {
                         continue;
                     }
-                    NbtFactory.NbtCompound compound = NbtFactory
-                        .fromStream(new FileInputStream(file),
-                            NbtFactory.StreamOptions.GZIP_COMPRESSION);
+                    CompoundTag compound = (CompoundTag) readTag(file);
                     if (!compound.containsKey("bukkit")) {
                         PlotSquared.debug("ERROR: Player data (" + uuid.toString()
                             + ".dat) does not contain the the key \"bukkit\"");
                     } else {
-                        NbtFactory.NbtCompound bukkit =
-                            (NbtFactory.NbtCompound) compound.get("bukkit");
-                        String name = (String) bukkit.get("lastKnownName");
+                        Map<String, Tag> compoundMap = compound.getValue();
+                        CompoundTag bukkit = (CompoundTag) compoundMap.get("bukkit");
+                        Map<String, Tag> bukkitMap = bukkit.getValue();
+                        String name = (String) bukkitMap.get("lastKnownName").getValue();
                         StringWrapper wrap = new StringWrapper(name);
                         if (!toAdd.containsKey(wrap)) {
-                            long last = (long) bukkit.get("lastPlayed");
-                            long first = (long) bukkit.get("firstPlayed");
+                            long last = (long) bukkitMap.get("lastPlayed").getValue();
+                            long first = (long) bukkitMap.get("firstPlayed").getValue();
                             if (Settings.UUID.OFFLINE) {
                                 if (Settings.UUID.FORCE_LOWERCASE && !name.toLowerCase()
                                     .equals(name)) {
                                     uuid = FileUUIDHandler.this.uuidWrapper.getUUID(name);
                                 } else {
-                                    long most = (long) compound.get("UUIDMost");
-                                    long least = (long) compound.get("UUIDLeast");
+                                    long most = (long) compoundMap.get("UUIDMost").getValue();
+                                    long least = (long) compoundMap.get("UUIDLeast").getValue();
                                     uuid = new UUID(most, least);
                                 }
                             }
