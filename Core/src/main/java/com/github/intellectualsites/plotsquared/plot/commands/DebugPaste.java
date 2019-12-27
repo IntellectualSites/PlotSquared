@@ -22,6 +22,7 @@ import java.lang.management.RuntimeMXBean;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "debugpaste", aliases = "dp", usage = "/plot debugpaste",
@@ -66,6 +67,8 @@ public class DebugPaste extends SubCommand {
                 b.append("\n\n# YAY! Now, let's see what we can find in your JVM\n");
                 Runtime runtime = Runtime.getRuntime();
                 RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();
+                b.append("Uptime: ").append(TimeUnit.MINUTES.convert(rb.getUptime(), TimeUnit.MILLISECONDS) + " minutes").append('\n');
+                b.append("JVM Flags: ").append(rb.getInputArguments()).append('\n');
                 b.append("Free Memory: ").append(runtime.freeMemory() / 1024 / 1024 + " MB").append('\n');
                 b.append("Max Memory: ").append(runtime.maxMemory() / 1024 / 1024 + " MB").append('\n');
                 b.append("Java Name: ").append(rb.getVmName()).append('\n');
