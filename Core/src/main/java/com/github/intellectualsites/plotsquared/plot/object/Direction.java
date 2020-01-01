@@ -1,9 +1,9 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
 public enum Direction {
-    NORTH(0, "north"), EAST(1, "east"), SOUTH(2, "south"), WEST(3, "west"), NORTHEAST(4,
-        "northeast"), SOUTHEAST(5, "southeast"), SOUTHWEST(6, "southwest"), NORTHWEST(7,
-        "northwest"),
+    ALL(-1, "all"), NORTH(0, "north"), EAST(1, "east"), SOUTH(2, "south"), WEST(3,
+        "west"), NORTHEAST(4, "northeast"), SOUTHEAST(5, "southeast"), SOUTHWEST(6,
+        "southwest"), NORTHWEST(7, "northwest"),
     ;
 
 
@@ -14,6 +14,15 @@ public enum Direction {
 
         this.index = index;
         this.name = name;
+    }
+
+    public static Direction getFromIndex(int index) {
+        for (Direction value : values()) {
+            if (value.getIndex() == index) {
+                return value;
+            }
+        }
+        return NORTH;
     }
 
     public int getIndex() {

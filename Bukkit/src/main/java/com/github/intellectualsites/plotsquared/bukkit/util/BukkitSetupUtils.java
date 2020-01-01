@@ -9,10 +9,13 @@ import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
-import com.onarandombox.MultiverseCore.MultiverseCore;
-import com.onarandombox.MultiverseCore.api.MultiverseCoreConfig;
-import org.bukkit.*;
+import io.papermc.lib.PaperLib;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.WorldCreator;
+import org.bukkit.WorldType;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
@@ -59,7 +62,7 @@ public class BukkitSetupUtils extends SetupUtils {
         }
         World dw = Bukkit.getWorlds().get(0);
         for (Player player : world.getPlayers()) {
-            player.teleport(dw.getSpawnLocation());
+            PaperLib.teleportAsync(player,dw.getSpawnLocation());
         }
         if (save) {
             for (Chunk chunk : world.getLoadedChunks()) {

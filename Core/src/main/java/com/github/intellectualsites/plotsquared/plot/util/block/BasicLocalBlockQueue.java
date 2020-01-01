@@ -1,17 +1,21 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.plot.util.world.PatternUtil;
+import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
-import lombok.Getter;
+import com.sk89q.worldedit.world.block.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ExecutionException;
 
-public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
+public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
 
     private final String world;
     private final ConcurrentHashMap<Long, LocalChunk> blockChunks = new ConcurrentHashMap<>();
@@ -20,7 +24,6 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
     private LocalChunk lastWrappedChunk;
     private int lastX = Integer.MIN_VALUE;
     private int lastZ = Integer.MIN_VALUE;
-    @Getter private boolean baseBlocks = false;
 
     public BasicLocalBlockQueue(String world) {
         super(world);
@@ -30,9 +33,10 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
 
     public abstract LocalChunk getLocalChunk(int x, int z);
 
-    @Override public abstract PlotBlock getBlock(int x, int y, int z);
+    @Override public abstract BlockState getBlock(int x, int y, int z);
 
-    public abstract void setComponents(LocalChunk<T> lc);
+    public abstract void setComponents(LocalChunk lc)
+        throws ExecutionException, InterruptedException;
 
     @Override public final String getWorld() {
         return world;
@@ -49,8 +53,7 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
                 LocalChunk chunk = chunks.poll();
                 if (chunk != null) {
                     blockChunks.remove(chunk.longHash());
-                    this.execute(chunk);
-                    return true;
+                    return this.execute(chunk);
                 }
             }
         } catch (Throwable e) {
@@ -59,10 +62,8 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
         return false;
     }
 
-    public final boolean execute(final LocalChunk<T> lc) {
-        if (lc == null) {
-            return false;
-        }
+    public final boolean execute(@NotNull LocalChunk lc)
+        throws ExecutionException, InterruptedException {
         this.setComponents(lc);
         return true;
     }
@@ -87,11 +88,14 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
         this.modified = modified;
     }
 
+    @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
+        return setBlock(x, y, z, PatternUtil.apply(pattern, x, y, z));
+    }
+
     @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
         if ((y > 255) || (y < 0)) {
             return false;
         }
-        baseBlocks = true;
         int cx = x >> 4;
         int cz = z >> 4;
         if (cx != lastX || cz != lastZ) {
@@ -104,8 +108,7 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
                 lastWrappedChunk.setBlock(x & 15, y, z & 15, id);
                 LocalChunk previous = this.blockChunks.put(pair, lastWrappedChunk);
                 if (previous == null) {
-                    chunks.add(lastWrappedChunk);
-                    return true;
+                    return chunks.add(lastWrappedChunk);
                 }
                 this.blockChunks.put(pair, previous);
                 lastWrappedChunk = previous;
@@ -115,36 +118,14 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
         return true;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, PlotBlock id) {
-        if (y > 255) {
-            return false;
-        } else if (y < 0) {
-            return false;
-        }
-        int cx = x >> 4;
-        int cz = z >> 4;
-        if (cx != lastX || cz != lastZ) {
-            lastX = cx;
-            lastZ = cz;
-            long pair = (long) (cx) << 32 | (cz) & 0xFFFFFFFFL;
-            lastWrappedChunk = this.blockChunks.get(pair);
-            if (lastWrappedChunk == null) {
-                lastWrappedChunk = this.getLocalChunk(x >> 4, z >> 4);
-                lastWrappedChunk.setBlock(x & 15, y, z & 15, id);
-                LocalChunk previous = this.blockChunks.put(pair, lastWrappedChunk);
-                if (previous == null) {
-                    chunks.add(lastWrappedChunk);
-                    return true;
-                }
-                this.blockChunks.put(pair, previous);
-                lastWrappedChunk = previous;
-            }
-        }
-        lastWrappedChunk.setBlock(x & 15, y, z & 15, id);
-        return true;
+    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
+        // Trying to mix BlockState and BaseBlock leads to all kinds of issues.
+        // Since BaseBlock has more features than BlockState, simply convert
+        // all BlockStates to BaseBlocks
+        return setBlock(x, y, z, id.toBaseBlock());
     }
 
-    @Override public final boolean setBiome(int x, int z, String biome) {
+    @Override public final boolean setBiome(int x, int z, BiomeType biomeType) {
         long pair = (long) (x >> 4) << 32 | (z >> 4) & 0xFFFFFFFFL;
         LocalChunk result = this.blockChunks.get(pair);
         if (result == null) {
@@ -157,11 +138,11 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
                 chunks.add(result);
             }
         }
-        result.setBiome(x & 15, z & 15, biome);
+        result.setBiome(x & 15, z & 15, biomeType);
         return true;
     }
 
-    public final void setChunk(LocalChunk<T> chunk) {
+    public final void setChunk(LocalChunk chunk) {
         LocalChunk previous = this.blockChunks.put(chunk.longHash(), chunk);
         if (previous != null) {
             chunks.remove(previous);
@@ -174,23 +155,21 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
         TaskManager.IMP.sync(new RunnableVal<Object>() {
             @Override public void run(Object value) {
                 while (next()) {
-                    ;
                 }
             }
         });
     }
 
 
-    public abstract class LocalChunk<T> {
+    public abstract class LocalChunk {
         public final BasicLocalBlockQueue parent;
         public final int z;
         public final int x;
 
-        public T[] blocks;
         public BaseBlock[][] baseblocks;
-        public String[][] biomes;
+        public BiomeType[][] biomes;
 
-        public LocalChunk(BasicLocalBlockQueue<T> parent, int x, int z) {
+        public LocalChunk(BasicLocalBlockQueue parent, int x, int z) {
             this.parent = parent;
             this.x = x;
             this.z = z;
@@ -213,19 +192,17 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
             return z;
         }
 
-        public abstract void setBlock(final int x, final int y, final int z, final PlotBlock block);
-
         public abstract void setBlock(final int x, final int y, final int z, final BaseBlock block);
 
-        public void setBiome(int x, int z, String biome) {
+        public void setBiome(int x, int z, BiomeType biomeType) {
             if (this.biomes == null) {
-                this.biomes = new String[16][];
+                this.biomes = new BiomeType[16][];
             }
-            String[] index = this.biomes[x];
+            BiomeType[] index = this.biomes[x];
             if (index == null) {
-                index = this.biomes[x] = new String[16];
+                index = this.biomes[x] = new BiomeType[16];
             }
-            index[z] = biome;
+            index[z] = biomeType;
         }
 
         public long longHash() {
@@ -238,25 +215,10 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
     }
 
 
-    public class BasicLocalChunk extends LocalChunk<PlotBlock[]> {
+    public class BasicLocalChunk extends LocalChunk {
         public BasicLocalChunk(BasicLocalBlockQueue parent, int x, int z) {
             super(parent, x, z);
-            blocks = new PlotBlock[16][];
             baseblocks = new BaseBlock[16][];
-        }
-
-        @Override public void setBlock(int x, int y, int z, PlotBlock block) {
-            this.setInternal(x, y, z, block);
-        }
-
-        private void setInternal(final int x, final int y, final int z, final PlotBlock plotBlock) {
-            final int i = MainUtil.CACHE_I[y][x][z];
-            final int j = MainUtil.CACHE_J[y][x][z];
-            PlotBlock[] array = blocks[i];
-            if (array == null) {
-                array = (blocks[i] = new PlotBlock[4096]);
-            }
-            array[j] = plotBlock;
         }
 
         @Override public void setBlock(int x, int y, int z, BaseBlock block) {
@@ -271,11 +233,6 @@ public abstract class BasicLocalBlockQueue<T> extends LocalBlockQueue {
                 array = (baseblocks[i] = new BaseBlock[4096]);
             }
             array[j] = baseBlock;
-        }
-
-        public void setBlock(final int x, final int y, final int z, final int id, final int data) {
-            final PlotBlock block = PlotBlock.get(id, data);
-            this.setInternal(x, y, z, block);
         }
     }
 }

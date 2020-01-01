@@ -1,7 +1,8 @@
 package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
+import com.destroystokyo.paper.MaterialTags;
 import com.github.intellectualsites.plotsquared.bukkit.BukkitMain;
-import com.github.intellectualsites.plotsquared.bukkit.object.BukkitLazyBlock;
+import com.github.intellectualsites.plotsquared.bukkit.object.BukkitBlockUtil;
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
@@ -10,30 +11,113 @@ import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
-import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotHandler;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
+import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.StringWrapper;
+import com.github.intellectualsites.plotsquared.plot.util.EntityUtil;
+import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.RegExUtil;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.github.intellectualsites.plotsquared.plot.util.UpdateUtility;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.world.block.BlockType;
+import com.sk89q.worldedit.world.item.ItemType;
+import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Creature;
+import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Fireball;
+import org.bukkit.entity.Hanging;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Tameable;
+import org.bukkit.entity.ThrownPotion;
+import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.Villager;
+import org.bukkit.entity.WaterMob;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.*;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockDispenseEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockFormEvent;
+import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockGrowEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.block.EntityBlockFormEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityCombustByEntityEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.ExplosionPrimeEvent;
+import org.bukkit.event.entity.LingeringPotionSplashEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerEggThrowEvent;
+import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
@@ -52,8 +136,16 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 /**
@@ -85,10 +177,10 @@ import java.util.regex.Pattern;
             int distance = Bukkit.getViewDistance() * 16;
             for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
                 PlotPlayer player = entry.getValue();
-                Location loc = player.getLocation();
-                if (loc.getWorld().equals(world)) {
-                    if (16 * Math.abs(loc.getX() - x) / 16 > distance
-                        || 16 * Math.abs(loc.getZ() - z) / 16 > distance) {
+                Location location = player.getLocation();
+                if (location.getWorld().equals(world)) {
+                    if (16 * Math.abs(location.getX() - x) / 16 > distance
+                        || 16 * Math.abs(location.getZ() - z) / 16 > distance) {
                         continue;
                     }
                     ((BukkitPlayer) player).player.sendBlockChange(bloc, data);
@@ -314,12 +406,12 @@ import java.util.regex.Pattern;
             case POWERED_RAIL:
                 return;
             default:*/
-        Location loc = BukkitUtil.getLocation(block.getLocation());
-        PlotArea area = loc.getPlotArea();
+        Location location = BukkitUtil.getLocation(block.getLocation());
+        PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
         }
-        Plot plot = loc.getOwnedPlot();
+        Plot plot = location.getOwnedPlot();
         if (plot == null) {
             return;
         }
@@ -369,12 +461,11 @@ import java.util.regex.Pattern;
         switch (event.getChangedType()) {
             case COMPARATOR: {
                 Block block = event.getBlock();
-                Location loc = BukkitUtil.getLocation(block.getLocation());
-                PlotArea area = loc.getPlotArea();
-                if (area == null) {
+                Location location = BukkitUtil.getLocation(block.getLocation());
+                if (location.isPlotArea()) {
                     return;
                 }
-                Plot plot = area.getOwnedPlotAbs(loc);
+                Plot plot = location.getOwnedPlotAbs();
                 if (plot == null) {
                     return;
                 }
@@ -391,12 +482,12 @@ import java.util.regex.Pattern;
             case TURTLE_HELMET:
             case TURTLE_SPAWN_EGG: {
                 Block block = event.getBlock();
-                Location loc = BukkitUtil.getLocation(block.getLocation());
-                PlotArea area = loc.getPlotArea();
+                Location location = BukkitUtil.getLocation(block.getLocation());
+                PlotArea area = location.getPlotArea();
                 if (area == null) {
                     return;
                 }
-                Plot plot = area.getOwnedPlotAbs(loc);
+                Plot plot = area.getOwnedPlotAbs(location);
                 if (plot == null) {
                     return;
                 }
@@ -413,30 +504,30 @@ import java.util.regex.Pattern;
                         case STICKY_PISTON:
                             org.bukkit.block.data.Directional piston =
                                 (org.bukkit.block.data.Directional) block.getBlockData();
-                            Location loc = BukkitUtil.getLocation(block.getLocation());
-                            PlotArea area = loc.getPlotArea();
+                            Location location = BukkitUtil.getLocation(block.getLocation());
+                            PlotArea area = location.getPlotArea();
                             if (area == null) {
                                 return;
                             }
-                            Plot plot = area.getOwnedPlotAbs(loc);
+                            Plot plot = area.getOwnedPlotAbs(location);
                             if (plot == null) {
                                 return;
                             }
                             switch (piston.getFacing()) {
                                 case EAST:
-                                    loc.setX(loc.getX() + 1);
+                                    location.setX(location.getX() + 1);
                                     break;
                                 case SOUTH:
-                                    loc.setX(loc.getX() - 1);
+                                    location.setX(location.getX() - 1);
                                     break;
                                 case WEST:
-                                    loc.setZ(loc.getZ() + 1);
+                                    location.setZ(location.getZ() + 1);
                                     break;
                                 case NORTH:
-                                    loc.setZ(loc.getZ() - 1);
+                                    location.setZ(location.getZ() - 1);
                                     break;
                             }
-                            Plot newPlot = area.getOwnedPlotAbs(loc);
+                            Plot newPlot = area.getOwnedPlotAbs(location);
                             if (!plot.equals(newPlot)) {
                                 event.setCancelled(true);
                                 return;
@@ -470,15 +561,15 @@ import java.util.regex.Pattern;
 
     @EventHandler public boolean onProjectileHit(ProjectileHitEvent event) {
         Projectile entity = event.getEntity();
-        Location loc = BukkitUtil.getLocation(entity);
-        if (!PlotSquared.get().hasPlotArea(loc.getWorld())) {
+        Location location = BukkitUtil.getLocation(entity);
+        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
             return true;
         }
-        PlotArea area = loc.getPlotArea();
+        PlotArea area = location.getPlotArea();
         if (area == null) {
             return true;
         }
-        Plot plot = area.getPlot(loc);
+        Plot plot = area.getPlot(location);
         ProjectileSource shooter = entity.getShooter();
         if (shooter instanceof Player) {
             PlotPlayer pp = BukkitUtil.getPlayer((Player) shooter);
@@ -523,22 +614,22 @@ import java.util.regex.Pattern;
             return;
         }
         Player player = event.getPlayer();
-        PlotPlayer pp = BukkitUtil.getPlayer(player);
-        Location loc = pp.getLocation();
-        PlotArea area = loc.getPlotArea();
+        PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
+        Location location = plotPlayer.getLocation();
+        PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
         }
         String[] parts = msg.split(" ");
-        Plot plot = pp.getCurrentPlot();
+        Plot plot = plotPlayer.getCurrentPlot();
         // Check WorldEdit
         switch (parts[0].toLowerCase()) {
             case "up":
             case "/up":
             case "worldedit:up":
             case "worldedit:/up":
-                if (plot == null || (!plot.isAdded(pp.getUUID()) && !Permissions
-                    .hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER, true))) {
+                if (plot == null || (!plot.isAdded(plotPlayer.getUUID()) && !Permissions
+                    .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER, true))) {
                     event.setCancelled(true);
                     return;
                 }
@@ -548,8 +639,8 @@ import java.util.regex.Pattern;
         }
         Optional<List<String>> flag = plot.getFlag(Flags.BLOCKED_CMDS);
         if (flag.isPresent() && !Permissions
-            .hasPermission(pp, Captions.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS)) {
-            List<String> blocked_cmds = flag.get();
+            .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS)) {
+            List<String> blockedCommands = flag.get();
             String part = parts[0];
             if (parts[0].contains(":")) {
                 part = parts[0].split(":")[1];
@@ -583,7 +674,7 @@ import java.util.regex.Pattern;
             if (!s1.equals(part)) {
                 msg = msg.replace(s1, part);
             }
-            for (String s : blocked_cmds) {
+            for (String s : blockedCommands) {
                 Pattern pattern;
                 if (!RegExUtil.compiledPatterns.containsKey(s)) {
                     RegExUtil.compiledPatterns.put(s, pattern = Pattern.compile(s));
@@ -592,13 +683,13 @@ import java.util.regex.Pattern;
                 }
                 if (pattern.matcher(msg).matches()) {
                     String perm;
-                    if (plot.isAdded(pp.getUUID())) {
+                    if (plot.isAdded(plotPlayer.getUUID())) {
                         perm = "plots.admin.command.blocked-cmds.shared";
                     } else {
                         perm = "plots.admin.command.blocked-cmds.other";
                     }
-                    if (!Permissions.hasPermission(pp, perm)) {
-                        MainUtil.sendMessage(pp, Captions.COMMAND_BLOCKED);
+                    if (!Permissions.hasPermission(plotPlayer, perm)) {
+                        MainUtil.sendMessage(plotPlayer, Captions.COMMAND_BLOCKED);
                         event.setCancelled(true);
                     }
                     return;
@@ -619,10 +710,10 @@ import java.util.regex.Pattern;
         UUID uuid = pp.getUUID();
         UUIDHandler.add(sw, uuid);
 
-        Location loc = pp.getLocation();
-        PlotArea area = loc.getPlotArea();
+        Location location = pp.getLocation();
+        PlotArea area = location.getPlotArea();
         if (area != null) {
-            Plot plot = area.getPlot(loc);
+            Plot plot = area.getPlot(location);
             if (plot != null) {
                 plotEntry(pp, plot);
             }
@@ -637,11 +728,11 @@ import java.util.regex.Pattern;
             EventUtil.manager.doJoinTask(pp);
         }, 20);
 
-        if (pp.hasPermission(Captions.PERMISSION_ADMIN_UPDATE_NOTIFICATION.s())
+        if (pp.hasPermission(Captions.PERMISSION_ADMIN_UPDATE_NOTIFICATION.getTranslated())
             && PlotSquared.get().getUpdateUtility() != null) {
             final UpdateUtility updateUtility = PlotSquared.get().getUpdateUtility();
             final BukkitMain bukkitMain = BukkitMain.getPlugin(BukkitMain.class);
-            updateUtility.checkForUpdate(bukkitMain.getPluginVersionString(),
+            updateUtility.checkForUpdate(PlotSquared.get().getVersion().versionString(),
                 ((updateDescription, throwable) -> {
                     if (throwable != null) {
                         bukkitMain.getLogger().severe(String
@@ -654,8 +745,8 @@ import java.util.regex.Pattern;
                                 .text(" --------").color("$2").send(pp);
                             new PlotMessage("There appears to be a PlotSquared update available!")
                                 .color("$1").send(pp);
-                            new PlotMessage(String.format("You are running version %s,"
-                                    + " the newest available version is %s",
+                            new PlotMessage(String.format(
+                                "You are running version %s, the newest available version is %s",
                                 bukkitMain.getPluginVersionString(),
                                 updateDescription.getVersion())).color("$1").send(pp);
                             new PlotMessage("Update URL").color("$1").text(": ").color("$2")
@@ -679,37 +770,33 @@ import java.util.regex.Pattern;
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTeleport(PlayerTeleportEvent event) {
-        if (event.getTo() == null || event.getFrom() == null || !event.getFrom().getWorld()
-            .equals(event.getTo().getWorld())) {
-            final Object lastLoc =
-                BukkitUtil.getPlayer(event.getPlayer()).deleteMeta(PlotPlayer.META_LOCATION);
-            final Object lastPlot =
-                BukkitUtil.getPlayer(event.getPlayer()).deleteMeta(PlotPlayer.META_LAST_PLOT);
-            org.bukkit.Location to = event.getTo();
-            if (to != null) {
-                Player player = event.getPlayer();
-                PlotPlayer pp = PlotPlayer.wrap(player);
-                Location loc = BukkitUtil.getLocation(to);
-                PlotArea area = loc.getPlotArea();
-                if (area == null) {
-                    return;
+        Player player = event.getPlayer();
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
+        org.bukkit.Location to = event.getTo();
+        //noinspection ConstantConditions
+        if (to != null) {
+            Location location = BukkitUtil.getLocation(to);
+            PlotArea area = location.getPlotArea();
+            if (area == null) {
+                if (lastPlot != null) {
+                    plotExit(pp, lastPlot);
+                    pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
                 }
-                Plot plot = area.getPlot(loc);
-                if (plot != null) {
-                    final boolean result = Flags.DENY_TELEPORT.allowsTeleport(pp, plot);
-                    if (!result) {
-                        MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                            Captions.PERMISSION_ADMIN_ENTRY_DENIED);
-                        event.setCancelled(true);
-                        if (lastLoc != null) {
-                            pp.setMeta(PlotPlayer.META_LOCATION, lastLoc);
-                        }
-                        if (lastPlot != null) {
-                            pp.setMeta(PlotPlayer.META_LAST_PLOT, lastPlot);
-                        }
-                    } else {
-                        plotEntry(pp, plot);
-                    }
+                pp.deleteMeta(PlotPlayer.META_LOCATION);
+                return;
+            }
+            Plot plot = area.getPlot(location);
+            if (plot != null) {
+                final boolean result = Flags.DENY_TELEPORT.allowsTeleport(pp, plot);
+                // there is one possibility to still allow teleportation:
+                // to is identical to the plot's home location, and untrusted-visit is true
+                // i.e. untrusted-visit can override deny-teleport
+                // this is acceptable, because otherwise it wouldn't make sense to have both flags set
+                if (!result && !(Flags.UNTRUSTED_VISIT.isTrue(plot) && plot.getHome().equals(BukkitUtil.getLocationFull(to)))) {
+                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
+                        Captions.PERMISSION_ADMIN_ENTRY_DENIED);
+                    event.setCancelled(true);
                 }
             }
         }
@@ -754,17 +841,10 @@ import java.util.regex.Pattern;
                         dest = null;
                     }
                     if (dest != null) {
-                        if (passengers != null) {
-                            vehicle.eject();
-                            vehicle.setVelocity(new Vector(0d, 0d, 0d));
-                            vehicle.teleport(dest);
-                            passengers.forEach(vehicle::addPassenger);
-                        } else {
-                            vehicle.eject();
-                            vehicle.setVelocity(new Vector(0d, 0d, 0d));
-                            vehicle.teleport(dest);
-                            vehicle.addPassenger(player);
-                        }
+                        vehicle.eject();
+                        vehicle.setVelocity(new Vector(0d, 0d, 0d));
+                        PaperLib.teleportAsync(vehicle, dest);
+                        passengers.forEach(vehicle::addPassenger);
                         return;
                     }
                 }
@@ -809,14 +889,14 @@ import java.util.regex.Pattern;
             // Cancel teleport
             TaskManager.TELEPORT_QUEUE.remove(pp.getName());
             // Set last location
-            Location loc = BukkitUtil.getLocation(to);
-            pp.setMeta(PlotPlayer.META_LOCATION, loc);
-            PlotArea area = loc.getPlotArea();
+            Location location = BukkitUtil.getLocation(to);
+            pp.setMeta(PlotPlayer.META_LOCATION, location);
+            PlotArea area = location.getPlotArea();
             if (area == null) {
                 pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
                 return;
             }
-            Plot now = area.getPlot(loc);
+            Plot now = area.getPlot(location);
             Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
             if (now == null) {
                 if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !pp
@@ -869,14 +949,14 @@ import java.util.regex.Pattern;
             // Cancel teleport
             TaskManager.TELEPORT_QUEUE.remove(pp.getName());
             // Set last location
-            Location loc = BukkitUtil.getLocation(to);
-            pp.setMeta(PlotPlayer.META_LOCATION, loc);
-            PlotArea area = loc.getPlotArea();
+            Location location = BukkitUtil.getLocation(to);
+            pp.setMeta(PlotPlayer.META_LOCATION, location);
+            PlotArea area = location.getPlotArea();
             if (area == null) {
                 pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
                 return;
             }
-            Plot now = area.getPlot(loc);
+            Plot now = area.getPlot(location);
             Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
             if (now == null) {
                 if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !pp
@@ -939,9 +1019,12 @@ import java.util.regex.Pattern;
         if (plot == null) {
             return;
         }
+        if (plot.isDenied(plotPlayer.getUUID())) {
+            return;
+        }
         event.setCancelled(true);
         String message = event.getMessage();
-        String format = Captions.PLOT_CHAT_FORMAT.s();
+        String format = Captions.PLOT_CHAT_FORMAT.getTranslated();
         String sender = event.getPlayer().getDisplayName();
         PlotId id = plot.getId();
         Set<Player> recipients = event.getRecipients();
@@ -968,8 +1051,8 @@ import java.util.regex.Pattern;
             receiver.sendMessage(full);
         }
         if (!spies.isEmpty()) {
-            String spyMessage =
-                Captions.PLOT_CHAT_SPY_FORMAT.s().replace("%plot_id%", id.x + ";" + id.y)
+            String spyMessage = Captions.PLOT_CHAT_SPY_FORMAT.getTranslated()
+                .replace("%plot_id%", id.x + ";" + id.y)
                     .replace("%sender%", sender).replace("%msg%", message);
             for (Player player : spies) {
                 player.sendMessage(spyMessage);
@@ -999,26 +1082,23 @@ import java.util.regex.Pattern;
             } else if (
                 (location.getY() > area.MAX_BUILD_HEIGHT || location.getY() < area.MIN_BUILD_HEIGHT)
                     && !Permissions
-                    .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_HEIGHTLIMIT)) {
+                    .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
-                MainUtil.sendMessage(plotPlayer, Captions.HEIGHT_LIMIT.s()
+                MainUtil.sendMessage(plotPlayer, Captions.HEIGHT_LIMIT.getTranslated()
                     .replace("{limit}", String.valueOf(area.MAX_BUILD_HEIGHT)));
             }
             if (!plot.hasOwner()) {
-                if (Permissions
-                    .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
-                    return;
+                if (!Permissions
+                    .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_DESTROY_UNOWNED, true)) {
+                    event.setCancelled(true);
                 }
-                MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                    Captions.PERMISSION_ADMIN_DESTROY_UNOWNED);
-                event.setCancelled(true);
                 return;
             }
             if (!plot.isAdded(plotPlayer.getUUID())) {
-                Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
+                Optional<Set<BlockType>> destroy = plot.getFlag(Flags.BREAK);
                 Block block = event.getBlock();
                 if (destroy.isPresent() && destroy.get()
-                    .contains(PlotBlock.get(block.getType().name()))) {
+                    .contains(BukkitAdapter.asBlockType(block.getType()))) {
                     return;
                 }
                 if (Permissions
@@ -1108,8 +1188,8 @@ import java.util.regex.Pattern;
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
         // Delete last location
-        pp.deleteMeta(PlotPlayer.META_LOCATION);
         Plot plot = (Plot) pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
+        pp.deleteMeta(PlotPlayer.META_LOCATION);
         if (plot != null) {
             plotExit(pp, plot);
         }
@@ -1123,10 +1203,10 @@ import java.util.regex.Pattern;
         if (Settings.Enabled_Components.PERMISSION_CACHE) {
             pp.deleteMeta("perm");
         }
-        Location loc = pp.getLocation();
-        PlotArea area = loc.getPlotArea();
-        if (loc.isPlotArea()) {
-            plot = loc.getPlot();
+        Location location = pp.getLocation();
+        PlotArea area = location.getPlotArea();
+        if (location.isPlotArea()) {
+            plot = location.getPlot();
             if (plot != null) {
                 plotEntry(pp, plot);
             }
@@ -1223,6 +1303,11 @@ import java.util.regex.Pattern;
                     event.setCancelled(true);
                 }
                 break;
+            case KELP:
+                if (Flags.KELP_GROW.isFalse(plot)) {
+                    event.setCancelled(true);
+                }
+                break;
         }
     }
 
@@ -1255,12 +1340,6 @@ import java.util.regex.Pattern;
                 if (Flags.ICE_FORM.isFalse(plot)) {
                     event.setCancelled(true);
                 }
-                return;
-            case STONE:
-            case OBSIDIAN:
-            case COBBLESTONE:
-                // TODO event ?
-                return;
         }
     }
 
@@ -1268,12 +1347,6 @@ import java.util.regex.Pattern;
     public void onBlockDamage(BlockDamageEvent event) {
         Player player = event.getPlayer();
         Location location = BukkitUtil.getLocation(event.getBlock().getLocation());
-        if (player == null) {
-            if (location.isPlotRoad()) {
-                event.setCancelled(true);
-                return;
-            }
-        }
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
@@ -1295,10 +1368,10 @@ import java.util.regex.Pattern;
             }
             PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
             if (!plot.isAdded(plotPlayer.getUUID())) {
-                Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
+                Optional<Set<BlockType>> destroy = plot.getFlag(Flags.BREAK);
                 Block block = event.getBlock();
                 if (destroy.isPresent() && destroy.get()
-                    .contains(PlotBlock.get(block.getType().name())) || Permissions
+                    .contains(BukkitAdapter.asBlockType(block.getType())) || Permissions
                     .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }
@@ -1412,8 +1485,7 @@ import java.util.regex.Pattern;
             event.setCancelled(true);
             return;
         }
-        List<Block> blocks = event.getBlocks();
-        for (Block block1 : blocks) {
+        for (Block block1 : event.getBlocks()) {
             Location bloc = BukkitUtil.getLocation(block1.getLocation());
             if (!area.contains(bloc.getX(), bloc.getZ()) || !area
                 .contains(bloc.getX() + relative.getBlockX(), bloc.getZ() + relative.getBlockZ())) {
@@ -1530,7 +1602,7 @@ import java.util.regex.Pattern;
         if (!PlotSquared.get().hasPlotArea(event.getWorld().getName())) {
             return;
         }
-        List<BlockState> blocks = event.getBlocks();
+        List<org.bukkit.block.BlockState> blocks = event.getBlocks();
         if (blocks.isEmpty()) {
             return;
         }
@@ -1571,11 +1643,11 @@ import java.util.regex.Pattern;
             location = BukkitUtil.getLocation(blocks.get(i).getLocation());
             Plot plot = area.getOwnedPlot(location);
             /*
-             * plot -> the base plot of the merged area
-             * origin -> the plot where the event gets called
+             * plot → the base plot of the merged area
+             * origin → the plot where the event gets called
              */
 
-            // Are plot and origin not the same AND are both plots merged
+            // Are plot and origin different AND are both plots merged
             if (!Objects.equals(plot, origin) && (!plot.isMerged() && !origin.isMerged())) {
                 event.getBlocks().remove(i);
             }
@@ -1644,10 +1716,7 @@ import java.util.regex.Pattern;
             }
         }
         Block block = player.getTargetBlock(null, 7);
-        BlockState state = block.getState();
-        if (state == null) {
-            return;
-        }
+        org.bukkit.block.BlockState state = block.getState();
         Material stateType = state.getType();
         Material itemType = newItem.getType();
         if (stateType != itemType) {
@@ -1806,7 +1875,7 @@ import java.util.regex.Pattern;
                 return;
             }
             if (event.getAction() == Action.RIGHT_CLICK_AIR) {
-                Material item = event.getItem().getType();
+                Material item = event.getMaterial();
                 if (item.toString().toLowerCase().endsWith("egg")) {
                     event.setCancelled(true);
                     event.setUseItemInHand(Event.Result.DENY);
@@ -1814,8 +1883,8 @@ import java.util.regex.Pattern;
             }
             ItemStack hand = player.getInventory().getItemInMainHand();
             ItemStack offHand = player.getInventory().getItemInOffHand();
-            Material type = (hand == null) ? Material.AIR : hand.getType();
-            Material offType = (offHand == null) ? Material.AIR : offHand.getType();
+            Material type = hand.getType();
+            Material offType = offHand.getType();
             if (type == Material.AIR) {
                 type = offType;
             }
@@ -1824,8 +1893,7 @@ import java.util.regex.Pattern;
                 if (block != null && block.getType() != Material.AIR) {
                     Location location = BukkitUtil.getLocation(block.getLocation());
                     if (!EventUtil.manager
-                        .checkPlayerBlockEvent(pp, PlayerBlockEventType.SPAWN_MOB, location,
-                            new BukkitLazyBlock(PlotBlock.get(type.toString())), true)) {
+                        .checkPlayerBlockEvent(pp, PlayerBlockEventType.SPAWN_MOB, location, null, true)) {
                         event.setCancelled(true);
                         event.setUseItemInHand(Event.Result.DENY);
                     }
@@ -1834,7 +1902,7 @@ import java.util.regex.Pattern;
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
@@ -1843,296 +1911,124 @@ import java.util.regex.Pattern;
             return;
         }
         PlayerBlockEventType eventType = null;
-        BukkitLazyBlock lb;
-        Location location;
+        BlockType blocktype1;
+        Block block = event.getClickedBlock();
+        Location location = BukkitUtil.getLocation(block.getLocation());
         Action action = event.getAction();
-        switch (action) {
+        outer: switch (action) {
             case PHYSICAL: {
                 eventType = PlayerBlockEventType.TRIGGER_PHYSICAL;
-                Block block = event.getClickedBlock();
-                lb = new BukkitLazyBlock(block);
-                location = BukkitUtil.getLocation(block.getLocation());
+                blocktype1 = BukkitAdapter.asBlockType(block.getType());
                 break;
             }
+            //todo rearrange the right click code. it is all over the place.
             case RIGHT_CLICK_BLOCK: {
-                Block block = event.getClickedBlock();
-                location = BukkitUtil.getLocation(block.getLocation());
                 Material blockType = block.getType();
-                switch (blockType) {
-                    case ACACIA_DOOR:
-                    case BIRCH_DOOR:
-                    case DARK_OAK_DOOR:
-                    case IRON_DOOR:
-                    case JUNGLE_DOOR:
-                    case OAK_DOOR:
-                    case SPRUCE_DOOR:
+                eventType = PlayerBlockEventType.INTERACT_BLOCK;
+                blocktype1 = BukkitAdapter.asBlockType(block.getType());
 
-                    case ACACIA_TRAPDOOR:
-                    case BIRCH_TRAPDOOR:
-                    case DARK_OAK_TRAPDOOR:
-                    case IRON_TRAPDOOR:
-                    case JUNGLE_TRAPDOOR:
-                    case OAK_TRAPDOOR:
-                    case SPRUCE_TRAPDOOR:
-
-                    case CHEST:
-                    case ENDER_CHEST:
-                    case TRAPPED_CHEST:
-
-                    case ACACIA_FENCE_GATE:
-                    case BIRCH_FENCE_GATE:
-                    case DARK_OAK_FENCE_GATE:
-                    case OAK_FENCE_GATE:
-                    case JUNGLE_FENCE_GATE:
-                    case SPRUCE_FENCE_GATE:
-
-                    case ACACIA_BUTTON:
-                    case BIRCH_BUTTON:
-                    case DARK_OAK_BUTTON:
-                    case JUNGLE_BUTTON:
-                    case OAK_BUTTON:
-                    case SPRUCE_BUTTON:
-                    case STONE_BUTTON:
-
-                    case BLACK_BED:
-                    case BLUE_BED:
-                    case BROWN_BED:
-                    case CYAN_BED:
-                    case GRAY_BED:
-                    case GREEN_BED:
-                    case LIGHT_BLUE_BED:
-                    case LIGHT_GRAY_BED:
-                    case LIME_BED:
-                    case MAGENTA_BED:
-                    case ORANGE_BED:
-                    case PINK_BED:
-                    case PURPLE_BED:
-                    case RED_BED:
-                    case WHITE_BED:
-                    case YELLOW_BED:
-
-                    case BLACK_BANNER:
-                    case BLACK_WALL_BANNER:
-                    case BLUE_BANNER:
-                    case BLUE_WALL_BANNER:
-                    case BROWN_BANNER:
-                    case BROWN_WALL_BANNER:
-                    case CYAN_BANNER:
-                    case CYAN_WALL_BANNER:
-                    case GRAY_BANNER:
-                    case GRAY_WALL_BANNER:
-                    case GREEN_BANNER:
-                    case GREEN_WALL_BANNER:
-                    case LIGHT_BLUE_BANNER:
-                    case LIGHT_BLUE_WALL_BANNER:
-                    case LIGHT_GRAY_BANNER:
-                    case LIGHT_GRAY_WALL_BANNER:
-                    case LIME_BANNER:
-                    case LIME_WALL_BANNER:
-                    case MAGENTA_BANNER:
-                    case MAGENTA_WALL_BANNER:
-                    case ORANGE_BANNER:
-                    case ORANGE_WALL_BANNER:
-                    case PINK_BANNER:
-                    case PINK_WALL_BANNER:
-                    case PURPLE_BANNER:
-                    case PURPLE_WALL_BANNER:
-                    case RED_BANNER:
-                    case RED_WALL_BANNER:
-                    case WHITE_BANNER:
-                    case WHITE_WALL_BANNER:
-                    case YELLOW_BANNER:
-                    case YELLOW_WALL_BANNER:
-
-                    case BLACK_SHULKER_BOX:
-                    case BLUE_SHULKER_BOX:
-                    case BROWN_SHULKER_BOX:
-                    case CYAN_SHULKER_BOX:
-                    case GRAY_SHULKER_BOX:
-                    case GREEN_SHULKER_BOX:
-                    case LIGHT_BLUE_SHULKER_BOX:
-                    case LIGHT_GRAY_SHULKER_BOX:
-                    case LIME_SHULKER_BOX:
-                    case MAGENTA_SHULKER_BOX:
-                    case ORANGE_SHULKER_BOX:
-                    case PINK_SHULKER_BOX:
-                    case PURPLE_SHULKER_BOX:
-                    case RED_SHULKER_BOX:
-                    case WHITE_SHULKER_BOX:
-                    case YELLOW_SHULKER_BOX:
-
-                    case CHAIN_COMMAND_BLOCK:
-                    case REPEATING_COMMAND_BLOCK:
-
-                    case LEGACY_SIGN:
-                    case LEGACY_WALL_SIGN:
-                    case OAK_SIGN:
-                    case ACACIA_SIGN:
-                    case ACACIA_WALL_SIGN:
-                    case BIRCH_SIGN:
-                    case BIRCH_WALL_SIGN:
-                    case DARK_OAK_SIGN:
-                    case DARK_OAK_WALL_SIGN:
-                    case JUNGLE_SIGN:
-                    case JUNGLE_WALL_SIGN:
-                    case OAK_WALL_SIGN:
-                    case SPRUCE_SIGN:
-                    case SPRUCE_WALL_SIGN:
-
-                    case REDSTONE_TORCH:
-                    case REDSTONE_WALL_TORCH:
-
-                    case TURTLE_EGG:
-                    case TURTLE_HELMET:
-                    case TURTLE_SPAWN_EGG:
-
-                    case ANVIL:
-                    case BEACON:
-                    case BREWING_STAND:
-                    case CAKE:
-                    case COMMAND_BLOCK:
-                    case COMPARATOR:
-                    case CRAFTING_TABLE:
-                        //todo re-evaluate adding lectern here
-                    case LECTERN:
-                    case GRINDSTONE:
-                    case LOOM:
-                    case SMOKER:
-                    case STONECUTTER:
-                    case DISPENSER:
-                    case DROPPER:
-                    case ENCHANTING_TABLE:
-                    case FURNACE:
-                    case BLAST_FURNACE:
-                    case HOPPER:
-                    case JUKEBOX:
-                    case LEVER:
-                    case NOTE_BLOCK:
-                    case REDSTONE_ORE:
-                        eventType = PlayerBlockEventType.INTERACT_BLOCK;
+                if (blockType.isInteractable()) {
+                    if (!player.isSneaking()) {
                         break;
-                    case DRAGON_EGG:
-                        eventType = PlayerBlockEventType.TELEPORT_OBJECT;
+                    }
+                    ItemStack hand = player.getInventory().getItemInMainHand();
+                    ItemStack offHand = player.getInventory().getItemInOffHand();
+
+                    // sneaking players interact with blocks if both hands are empty
+                    if (hand.getType() == Material.AIR && offHand.getType() == Material.AIR) {
                         break;
-                    default:
-                        if (blockType.isInteractable()) {
-                            eventType = PlayerBlockEventType.INTERACT_BLOCK;
-                        }
-                }
-                lb = new BukkitLazyBlock(PlotBlock.get(block.getType().toString()));
-                if (eventType != null && (eventType != PlayerBlockEventType.INTERACT_BLOCK
-                    || !player.isSneaking())) {
-                    break;
-                }
-                ItemStack hand = player.getInventory().getItemInMainHand();
-                ItemStack offHand = player.getInventory().getItemInOffHand();
-                Material type = (hand == null) ? Material.AIR : hand.getType();
-                Material offType = (offHand == null) ? Material.AIR : offHand.getType();
-                if ((type == Material.AIR && offType != Material.AIR && !player.isSneaking()
-                    && blockType.isInteractable()) || (type == Material.AIR
-                    && offType == Material.AIR)) {
-                    eventType = PlayerBlockEventType.INTERACT_BLOCK;
-                    break;
-                }
-                if (type == Material.AIR) {
-                    type = offType;
-                }
-                if (type.isBlock()) {
-                    location = BukkitUtil
-                        .getLocation(block.getRelative(event.getBlockFace()).getLocation());
-                    eventType = PlayerBlockEventType.PLACE_BLOCK;
-                    break;
-                }
-                lb = new BukkitLazyBlock(PlotBlock.get(type.toString()));
-                if (type.toString().toLowerCase().endsWith("egg")) {
-                    eventType = PlayerBlockEventType.SPAWN_MOB;
-                } else {
-                    switch (type) {
-                        case FIREWORK_ROCKET:
-                        case FIREWORK_STAR:
-                            eventType = PlayerBlockEventType.SPAWN_MOB;
-                            break;
-                        case ARMOR_STAND:
-                            location = BukkitUtil
-                                .getLocation(block.getRelative(event.getBlockFace()).getLocation());
-                            eventType = PlayerBlockEventType.PLACE_MISC;
-                            break;
-                        case BOOK:
-                        case ENCHANTED_BOOK:
-                        case KNOWLEDGE_BOOK:
-                        case WRITABLE_BOOK:
-                        case WRITTEN_BOOK:
-                            eventType = PlayerBlockEventType.READ;
-                            break;
-                        case APPLE:
-                        case BAKED_POTATO:
-                        case BEEF:
-                        case BREAD:
-                        case CARROT:
-                        case CHICKEN:
-                        case COD:
-                        case COOKED_BEEF:
-                        case COOKED_CHICKEN:
-                        case COOKED_COD:
-                        case COOKED_MUTTON:
-                        case COOKED_PORKCHOP:
-                        case COOKED_RABBIT:
-                        case COOKED_SALMON:
-                        case COOKIE:
-                        case GOLDEN_CARROT:
-                        case MUSHROOM_STEW:
-                        case MUTTON:
-                        case POISONOUS_POTATO:
-                        case PORKCHOP:
-                        case POTATO:
-                        case POTION:
-                        case PUFFERFISH:
-                        case PUMPKIN_PIE:
-                        case RABBIT:
-                        case RABBIT_FOOT:
-                        case RABBIT_STEW:
-                        case SALMON:
-                        case TROPICAL_FISH:
-                            eventType = PlayerBlockEventType.EAT;
-                            break;
-                        case ACACIA_BOAT:
-                        case BIRCH_BOAT:
-                        case CHEST_MINECART:
-                        case COMMAND_BLOCK_MINECART:
-                        case DARK_OAK_BOAT:
-                        case FURNACE_MINECART:
-                        case HOPPER_MINECART:
-                        case JUNGLE_BOAT:
-                        case MINECART:
-                        case OAK_BOAT:
-                        case SPRUCE_BOAT:
-                        case TNT_MINECART:
-                            eventType = PlayerBlockEventType.PLACE_VEHICLE;
-                            break;
-                        default:
-                            eventType = PlayerBlockEventType.INTERACT_BLOCK;
-                            break;
                     }
                 }
+
+                Material type = event.getMaterial();
+
+                // in the following, lb needs to have the material of the item in hand i.e. type
+                switch (type) {
+                    case REDSTONE:
+                    case STRING:
+                    case PUMPKIN_SEEDS:
+                    case MELON_SEEDS:
+                    case COCOA_BEANS:
+                    case WHEAT_SEEDS:
+                    case BEETROOT_SEEDS:
+                    case SWEET_BERRIES:
+                        return;
+                    default:
+                        //eventType = PlayerBlockEventType.PLACE_BLOCK;
+                        if (type.isBlock()) {
+                            return;
+                        }
+                }
+                if (PaperLib.isPaper()) {
+                    if (MaterialTags.SPAWN_EGGS.isTagged(type) || Material.EGG.equals(type)) {
+                        eventType = PlayerBlockEventType.SPAWN_MOB;
+                        break outer;
+                    }
+                } else {
+                    if (type.toString().toLowerCase().endsWith("egg")) {
+                        eventType = PlayerBlockEventType.SPAWN_MOB;
+                        break outer;
+                    }
+                }
+                if (type.isEdible()) {
+                    //Allow all players to eat while also allowing the block place event ot be fired
+                    return;
+                }
+                switch (type) {
+                    case ACACIA_BOAT:
+                    case BIRCH_BOAT:
+                    case CHEST_MINECART:
+                    case COMMAND_BLOCK_MINECART:
+                    case DARK_OAK_BOAT:
+                    case FURNACE_MINECART:
+                    case HOPPER_MINECART:
+                    case JUNGLE_BOAT:
+                    case MINECART:
+                    case OAK_BOAT:
+                    case SPRUCE_BOAT:
+                    case TNT_MINECART:
+                        eventType = PlayerBlockEventType.PLACE_VEHICLE;
+                        break outer;
+                    case FIREWORK_ROCKET:
+                    case FIREWORK_STAR:
+                        eventType = PlayerBlockEventType.SPAWN_MOB;
+                        break outer;
+                    case BOOK:
+                    case KNOWLEDGE_BOOK:
+                    case WRITABLE_BOOK:
+                    case WRITTEN_BOOK:
+                        eventType = PlayerBlockEventType.READ;
+                        break outer;
+                    case ARMOR_STAND:
+                        location = BukkitUtil
+                            .getLocation(block.getRelative(event.getBlockFace()).getLocation());
+                        eventType = PlayerBlockEventType.PLACE_MISC;
+                        break outer;
+                }
                 break;
             }
-            case LEFT_CLICK_BLOCK:
-                Block block = event.getClickedBlock();
+            case LEFT_CLICK_BLOCK: {
                 location = BukkitUtil.getLocation(block.getLocation());
-                eventType = PlayerBlockEventType.BREAK_BLOCK;
-                lb = new BukkitLazyBlock(block);
-                break;
+                //eventType = PlayerBlockEventType.BREAK_BLOCK;
+                blocktype1 = BukkitAdapter.asBlockType(block.getType());
+                if (block.getType() == Material.DRAGON_EGG) {
+                    eventType = PlayerBlockEventType.TELEPORT_OBJECT;
+                    break;
+                }
+
+                return;
+            }
             default:
                 return;
         }
         if (PlotSquared.get().worldedit != null && pp.getAttribute("worldedit")) {
-            if (player.getInventory().getItemInMainHand().getType() == Material
-                .getMaterial(PlotSquared.get().worldedit.getConfiguration().wandItem)) {
+            if (event.getMaterial() == Material.getMaterial(PlotSquared.get().worldedit.getConfiguration().wandItem)) {
                 return;
             }
         }
-        if (!EventUtil.manager.checkPlayerBlockEvent(pp, eventType, location, lb, true)) {
+        if (!EventUtil.manager.checkPlayerBlockEvent(pp, eventType, location, blocktype1, true)) {
             event.setCancelled(true);
+            event.setUseInteractedBlock(Event.Result.DENY);
         }
     }
 
@@ -2253,7 +2149,6 @@ import java.util.regex.Pattern;
         Plot plot = location.getOwnedPlot();
         if (plot == null || !plot.getFlag(Flags.BLOCK_BURN, false)) {
             event.setCancelled(true);
-            return;
         }
 
     }
@@ -2264,17 +2159,8 @@ import java.util.regex.Pattern;
         Entity ignitingEntity = event.getIgnitingEntity();
         Block block = event.getBlock();
         BlockIgniteEvent.IgniteCause igniteCause = event.getCause();
-        Location loc;
-        if (block != null) {
-            loc = BukkitUtil.getLocation(block.getLocation());
-        } else if (ignitingEntity != null) {
-            loc = BukkitUtil.getLocation(ignitingEntity);
-        } else if (player != null) {
-            loc = BukkitUtil.getLocation(player);
-        } else {
-            return;
-        }
-        PlotArea area = loc.getPlotArea();
+        Location location1 = BukkitUtil.getLocation(block.getLocation());
+        PlotArea area = location1.getPlotArea();
         if (area == null) {
             return;
         }
@@ -2283,7 +2169,7 @@ import java.util.regex.Pattern;
             return;
         }
 
-        Plot plot = area.getOwnedPlotAbs(loc);
+        Plot plot = area.getOwnedPlotAbs(location1);
         if (player != null) {
             PlotPlayer pp = BukkitUtil.getPlayer(player);
             if (plot == null) {
@@ -2379,7 +2265,7 @@ import java.util.regex.Pattern;
                 Captions.PERMISSION_ADMIN_BUILD_UNOWNED);
             event.setCancelled(true);
         } else if (!plot.isAdded(pp.getUUID())) {
-            if (Flags.USE.contains(plot, PlotBlock.get(event.getBucket().getId(), 0))) {
+            if (Flags.USE.contains(plot, BukkitAdapter.asItemType(block.getType()))) {
                 return;
             }
             if (Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
@@ -2439,9 +2325,9 @@ import java.util.regex.Pattern;
                 Captions.PERMISSION_ADMIN_BUILD_UNOWNED);
             event.setCancelled(true);
         } else if (!plot.isAdded(plotPlayer.getUUID())) {
-            Optional<HashSet<PlotBlock>> use = plot.getFlag(Flags.USE);
+            Optional<Set<BlockType>> use = plot.getFlag(Flags.USE);
             Block block = event.getBlockClicked();
-            if (use.isPresent() && use.get().contains(PlotBlock.get(block.getType().name()))) {
+            if (use.isPresent() && use.get().contains(BukkitAdapter.asBlockType(block.getType()))) {
                 return;
             }
             if (Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
@@ -2487,6 +2373,11 @@ import java.util.regex.Pattern;
             return;
         }
         Player p = event.getPlayer();
+        if (p == null) {
+            PlotSquared.debug("PlotSquared does not support HangingPlaceEvent for non-players.");
+            event.setCancelled(true);
+            return;
+        }
         PlotPlayer pp = BukkitUtil.getPlayer(p);
         Plot plot = area.getPlot(location);
         if (plot == null) {
@@ -2706,11 +2597,11 @@ import java.util.regex.Pattern;
         }
     }
 
-    @SuppressWarnings("deprecation") @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityCombustByEntity(EntityCombustByEntityEvent event) {
         EntityDamageByEntityEvent eventChange =
             new EntityDamageByEntityEvent(event.getCombuster(), event.getEntity(),
-                EntityDamageEvent.DamageCause.FIRE_TICK, (double) event.getDuration());
+                EntityDamageEvent.DamageCause.FIRE_TICK, event.getDuration());
         onEntityDamageByEntityEvent(eventChange);
         if (eventChange.isCancelled()) {
             event.setCancelled(true);
@@ -2984,9 +2875,9 @@ import java.util.regex.Pattern;
         Plot plot = area.getPlot(location);
         if (plot != null) {
             if ((location.getY() > area.MAX_BUILD_HEIGHT || location.getY() < area.MIN_BUILD_HEIGHT)
-                && !Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_HEIGHTLIMIT)) {
+                && !Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
-                MainUtil.sendMessage(pp, Captions.HEIGHT_LIMIT.s()
+                MainUtil.sendMessage(pp, Captions.HEIGHT_LIMIT.getTranslated()
                     .replace("{limit}", String.valueOf(area.MAX_BUILD_HEIGHT)));
             }
             if (!plot.hasOwner()) {
@@ -2997,11 +2888,11 @@ import java.util.regex.Pattern;
                     return;
                 }
             } else if (!plot.isAdded(pp.getUUID())) {
-                Set<PlotBlock> place = plot.getFlag(Flags.PLACE, null);
+                Set<BlockType> place = plot.getFlag(Flags.PLACE, null);
                 if (place != null) {
-                    Block block = event.getBlock();
-                    if (place.contains(PlotBlock.get(block.getType().name()))) {
-                        return;
+                Block block = event.getBlock();
+                    if (place.contains(BukkitAdapter.asBlockType(block.getType()))) {
+                    return;
                     }
                 }
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
@@ -3027,7 +2918,7 @@ import java.util.regex.Pattern;
         } else if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_ROAD)) {
             MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
                 Captions.PERMISSION_ADMIN_BUILD_ROAD);
-            event.setCancelled(true);
-        }
+        event.setCancelled(true);
     }
+}
 }

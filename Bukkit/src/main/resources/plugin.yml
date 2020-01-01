@@ -1,11 +1,11 @@
 name: ${name}
 main: com.github.intellectualsites.plotsquared.bukkit.BukkitMain
-api-version: 1.13
-version: ${version}
+api-version: "1.13"
+version: "${version}"
 load: STARTUP
-description: >
-             Easy, yet powerful Plot World generation and management.
+description: "Easy, yet powerful Plot World generation and management."
 authors: [Citymonstret, Empire92, MattBDev, dordsor21]
+website: https://github.com/IntellectualSites/
 softdepend: [BarAPI, CameraAPI, Vault]
 loadbefore: [MultiWorld, Multiverse-Core]
 depend: [WorldEdit]
@@ -126,6 +126,7 @@ permissions:
       plots.toggle: true
       plots.toggle.titles: true
       plots.toggle.chat: true
+      plots.toggle.time: true
       plots.set.biome: true
       plots.set.home: true
       plots.set.alias: true
@@ -251,9 +252,6 @@ permissions:
   plotme.limit.10:
     children:
       plots.plot.10: true
-  plotme.admin.home.other:
-    children:
-      plots.plot.: true
   plotme.admin.clear:
     children:
       plots.admin.command.clear: true

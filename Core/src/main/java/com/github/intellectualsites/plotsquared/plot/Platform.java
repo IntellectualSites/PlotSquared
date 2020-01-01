@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot;
 
 public enum Platform {
-    Bukkit, Sponge, Spigot
+    Bukkit, Sponge, Spigot, Paper
 
 }

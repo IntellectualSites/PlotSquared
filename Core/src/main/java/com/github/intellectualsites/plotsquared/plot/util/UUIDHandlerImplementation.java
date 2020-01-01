@@ -4,13 +4,23 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
+import com.github.intellectualsites.plotsquared.plot.object.StringWrapper;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.google.common.base.Charsets;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class UUIDHandlerImplementation {
@@ -20,7 +30,6 @@ public abstract class UUIDHandlerImplementation {
     protected UUIDWrapper uuidWrapper;
     private boolean cached = false;
     private BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<>());
-    //    private BiMap<UUID, StringWrapper> nameMap = uuidMap.inverse();
 
     public UUIDHandlerImplementation(UUIDWrapper wrapper) {
         this.uuidWrapper = wrapper;
@@ -152,19 +161,19 @@ public abstract class UUIDHandlerImplementation {
             });
         }
         try {
-            UUID offline = this.uuidMap.put(name, uuid);
-            if (offline != null) {
-                if (!offline.equals(uuid)) {
-                    Set<Plot> plots = PlotSquared.get().getPlots(offline);
+            UUID existing = this.uuidMap.put(name, uuid);
+            if (existing != null) {
+                if (!existing.equals(uuid)) {
+                    Set<Plot> plots = PlotSquared.get().getPlots(existing);
                     if (!plots.isEmpty()) {
                         for (Plot plot : plots) {
                             plot.owner = uuid;
                         }
-                        replace(offline, uuid, name.value);
+                        replace(existing, uuid, name.value);
                     }
                     return true;
                 } else {
-                    StringWrapper oName = this.uuidMap.inverse().get(offline);
+                    StringWrapper oName = this.uuidMap.inverse().get(existing);
                     if (!oName.equals(name)) {
                         this.uuidMap.remove(name);
                         this.uuidMap.put(name, uuid);
@@ -182,6 +191,13 @@ public abstract class UUIDHandlerImplementation {
                 PlotPlayer player = getPlayer(uuid);
                 if (player == null || player.getName().equalsIgnoreCase(name.value)) {
                     rename(uuid, name);
+                    return false;
+                }
+                StringWrapper newName = new StringWrapper(player.getName());
+                UUID newUUID = player.getUUID();
+                if (newUUID.equals(uuid) && !newName.equals(oldName)) {
+                    inverse.remove(uuid);
+                    this.uuidMap.put(newName, newUUID);
                 }
                 return false;
             }
@@ -216,7 +232,7 @@ public abstract class UUIDHandlerImplementation {
         this.uuidMap.clear();
     }
 
-    public String getName(UUID uuid) {
+    @Nullable public String getName(UUID uuid) {
         if (uuid == null) {
             return null;
         }
@@ -227,7 +243,7 @@ public abstract class UUIDHandlerImplementation {
         return null;
     }
 
-    public UUID getUUID(String name, RunnableVal<UUID> ifFetch) {
+    @Nullable public UUID getUUID(String name, RunnableVal<UUID> ifFetch) {
         if (name.isEmpty()) {
             return null;
         }
@@ -255,7 +271,7 @@ public abstract class UUIDHandlerImplementation {
         return null;
     }
 
-    public UUID getUUID(PlotPlayer player) {
+    @NotNull public UUID getUUID(PlotPlayer player) {
         return this.uuidWrapper.getUUID(player);
     }
 
@@ -263,7 +279,7 @@ public abstract class UUIDHandlerImplementation {
         return this.uuidWrapper.getUUID(player);
     }
 
-    public PlotPlayer getPlayer(UUID uuid) {
+    @Nullable public PlotPlayer getPlayer(UUID uuid) {
         String name = getName(uuid);
         if (name != null) {
             return getPlayer(name);

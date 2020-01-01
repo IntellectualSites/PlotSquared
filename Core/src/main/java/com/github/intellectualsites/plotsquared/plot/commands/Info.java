@@ -5,7 +5,11 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
+import com.github.intellectualsites.plotsquared.plot.object.PlotItemStack;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 
@@ -53,7 +57,7 @@ public class Info extends SubCommand {
             plot = player.getCurrentPlot();
         }
         if (plot == null) {
-            MainUtil.sendMessage(player, Captions.NOT_IN_PLOT.s());
+            MainUtil.sendMessage(player, Captions.NOT_IN_PLOT.getTranslated());
             return false;
         }
 
@@ -70,7 +74,8 @@ public class Info extends SubCommand {
             boolean allowed = false;
             for (final String argument : args) {
                 if (argument.equalsIgnoreCase("-f")) {
-                    if (!player.hasPermission(Captions.PERMISSION_AREA_INFO_FORCE.s())) {
+                    if (!player
+                        .hasPermission(Captions.PERMISSION_AREA_INFO_FORCE.getTranslated())) {
                         Captions.NO_PERMISSION.send(player, Captions.PERMISSION_AREA_INFO_FORCE);
                         return true;
                     }
@@ -95,9 +100,9 @@ public class Info extends SubCommand {
             UUID uuid = player.getUUID();
             String name = MainUtil.getName(plot.getOwner());
             inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cPlot Info",
-                "&cID: &6" + plot.getId().toString(), "&cOwner: &6" + name,
+                "&cID: &6" + plot.getId().toString(), "&cOwner:&6" + name,
                 "&cAlias: &6" + plot.getAlias(),
-                "&cBiome: &6" + plot.getBiome().replaceAll("_", "").toLowerCase(),
+                "&cBiome: &6" + plot.getBiome().toString().replaceAll("_", "").toLowerCase(),
                 "&cCan Build: &6" + plot.isAdded(uuid),
                 "&cSeen: &6" + MainUtil.secToTime((int) (ExpireManager.IMP.getAge(plot) / 1000)),
                 "&cIs Denied: &6" + plot.isDenied(uuid)));
@@ -125,7 +130,7 @@ public class Info extends SubCommand {
                 plot.getId().x + ";" + plot.getId().y);
             return true;
         }
-        String info = Captions.PLOT_INFO.s();
+        String info = Captions.PLOT_INFO.getTranslated();
         boolean full;
         if (arg != null) {
             info = getCaption(arg);
@@ -148,8 +153,8 @@ public class Info extends SubCommand {
         MainUtil.format(info, plot, player, full, new RunnableVal<String>() {
             @Override public void run(String value) {
                 MainUtil.sendMessage(player,
-                    Captions.PLOT_INFO_HEADER.s() + '\n' + value + '\n' + Captions.PLOT_INFO_FOOTER
-                        .s(), false);
+                    Captions.PLOT_INFO_HEADER.getTranslated() + '\n' + value + '\n'
+                        + Captions.PLOT_INFO_FOOTER.getTranslated(), false);
             }
         });
         return true;
@@ -158,29 +163,29 @@ public class Info extends SubCommand {
     private String getCaption(String string) {
         switch (string) {
             case "trusted":
-                return Captions.PLOT_INFO_TRUSTED.s();
+                return Captions.PLOT_INFO_TRUSTED.getTranslated();
             case "alias":
-                return Captions.PLOT_INFO_ALIAS.s();
+                return Captions.PLOT_INFO_ALIAS.getTranslated();
             case "biome":
-                return Captions.PLOT_INFO_BIOME.s();
+                return Captions.PLOT_INFO_BIOME.getTranslated();
             case "denied":
-                return Captions.PLOT_INFO_DENIED.s();
+                return Captions.PLOT_INFO_DENIED.getTranslated();
             case "flags":
-                return Captions.PLOT_INFO_FLAGS.s();
+                return Captions.PLOT_INFO_FLAGS.getTranslated();
             case "id":
-                return Captions.PLOT_INFO_ID.s();
+                return Captions.PLOT_INFO_ID.getTranslated();
             case "size":
-                return Captions.PLOT_INFO_SIZE.s();
+                return Captions.PLOT_INFO_SIZE.getTranslated();
             case "members":
-                return Captions.PLOT_INFO_MEMBERS.s();
+                return Captions.PLOT_INFO_MEMBERS.getTranslated();
             case "owner":
-                return Captions.PLOT_INFO_OWNER.s();
+                return Captions.PLOT_INFO_OWNER.getTranslated();
             case "rating":
-                return Captions.PLOT_INFO_RATING.s();
+                return Captions.PLOT_INFO_RATING.getTranslated();
             case "likes":
-                return Captions.PLOT_INFO_LIKES.s();
+                return Captions.PLOT_INFO_LIKES.getTranslated();
             case "seen":
-                return Captions.PLOT_INFO_SEEN.s();
+                return Captions.PLOT_INFO_SEEN.getTranslated();
             default:
                 return null;
         }

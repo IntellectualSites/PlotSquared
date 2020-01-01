@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@CommandDeclaration(command = "kick", aliases = {"k"}, description = "Kick a player from your plot",
+@CommandDeclaration(command = "kick", aliases = "k", description = "Kick a player from your plot",
     permission = "plots.kick", usage = "/plot kick <player>", category = CommandCategory.TELEPORT,
     requiredType = RequiredType.PLAYER) public class Kick extends SubCommand {
 
@@ -79,7 +79,7 @@ import java.util.UUID;
                     .getSpawn(PlotSquared.get().getPlotAreaManager().getAllWorlds()[0]);
                 if (plot.equals(newSpawn.getPlot())) {
                     // Kick from server if you can't be teleported to spawn
-                    player2.kick(Captions.YOU_GOT_KICKED.s());
+                    player2.kick(Captions.YOU_GOT_KICKED.getTranslated());
                 } else {
                     player2.plotkick(newSpawn);
                 }

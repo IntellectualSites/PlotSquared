@@ -13,8 +13,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Config {
 
@@ -361,12 +364,8 @@ public class Config {
      * @throws NoSuchFieldException
      * @throws IllegalAccessException
      */
-    private static void setAccessible(Field field)
-        throws NoSuchFieldException, IllegalAccessException {
+    private static void setAccessible(Field field) {
         field.setAccessible(true);
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
     }
 
     /**

@@ -10,19 +10,50 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.listener.WEManager;
-import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
+import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
+import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
+import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
+import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
 import com.google.common.io.Files;
+import com.sk89q.worldedit.world.block.BlockState;
 
-import javax.script.*;
+import javax.script.Bindings;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.script.SimpleScriptContext;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "debugexec", permission = "plots.admin",
     description = "Mutli-purpose debug command", aliases = {"exec", "$"},
@@ -93,7 +124,7 @@ import java.util.*;
 
         // Classes
         this.scope.put("Location", Location.class);
-        this.scope.put("PlotBlock", PlotBlock.class);
+        this.scope.put("BlockState", BlockState.class);
         this.scope.put("Plot", Plot.class);
         this.scope.put("PlotId", PlotId.class);
         this.scope.put("Runnable", Runnable.class);
@@ -107,7 +138,6 @@ import java.util.*;
             this.scope.put("WEManager", new WEManager());
         }
         this.scope.put("TaskManager", TaskManager.IMP);
-        this.scope.put("TitleManager", AbstractTitle.TITLE_CLASS);
         this.scope.put("ConsolePlayer", ConsolePlayer.getConsole());
         this.scope.put("SchematicHandler", SchematicHandler.manager);
         this.scope.put("ChunkManager", ChunkManager.manager);
@@ -276,7 +306,7 @@ import java.util.*;
                             System.getProperty("line.separator"));
                         new Command(MainCommand.getInstance(), true, args[1].split("\\.")[0], null,
                             RequiredType.NONE, CommandCategory.DEBUG) {
-                            @Override public void execute(PlotPlayer player, String[] args,
+                            @Override public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
                                 RunnableVal3<Command, Runnable, Runnable> confirm,
                                 RunnableVal2<Command, CommandResult> whenDone) {
                                 try {
@@ -287,6 +317,7 @@ import java.util.*;
                                     e.printStackTrace();
                                     MainUtil.sendMessage(player, Captions.COMMAND_WENT_WRONG);
                                 }
+                                return CompletableFuture.completedFuture(true);
                             }
                         };
                         return true;
@@ -359,17 +390,17 @@ import java.util.*;
                     Command cmd = MainCommand.getInstance().getCommand(args[3]);
                     String[] params = Arrays.copyOfRange(args, 4, args.length);
                     if ("true".equals(args[1])) {
-                        Location loc = player.getMeta(PlotPlayer.META_LOCATION);
+                        Location location = player.getMeta(PlotPlayer.META_LOCATION);
                         Plot plot = player.getMeta(PlotPlayer.META_LAST_PLOT);
                         for (Plot current : PlotSquared.get().getBasePlots()) {
                             player.setMeta(PlotPlayer.META_LOCATION, current.getBottomAbs());
                             player.setMeta(PlotPlayer.META_LAST_PLOT, current);
                             cmd.execute(player, params, null, null);
                         }
-                        if (loc == null) {
+                        if (location == null) {
                             player.deleteMeta(PlotPlayer.META_LOCATION);
                         } else {
-                            player.setMeta(PlotPlayer.META_LOCATION, loc);
+                            player.setMeta(PlotPlayer.META_LOCATION, location);
                         }
                         if (plot == null) {
                             player.deleteMeta(PlotPlayer.META_LAST_PLOT);

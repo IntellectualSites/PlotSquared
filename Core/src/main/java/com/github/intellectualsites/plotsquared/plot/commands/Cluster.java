@@ -5,7 +5,13 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.BlockLoc;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotCluster;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
@@ -297,7 +303,8 @@ import java.util.UUID;
                     Settings.Limit.MAX_PLOTS);
                 if (current + cluster.getArea() > allowed) {
                     MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_CLUSTER.s() + "." + (current + cluster.getArea()));
+                        Captions.PERMISSION_CLUSTER.getTranslated() + "." + (current + cluster
+                            .getArea()));
                     return false;
                 }
                 // resize cluster
@@ -466,7 +473,6 @@ import java.util.UUID;
                     PlotSquared.get().getPlots(player.getLocation().getWorld(), uuid))) {
                     PlotCluster current = plot.getCluster();
                     if (current != null && current.equals(cluster)) {
-                        player.getLocation().getWorld();
                         plot.unclaim();
                     }
                 }
@@ -589,7 +595,7 @@ import java.util.UUID;
                 String size = (cluster.getP2().x - cluster.getP1().x + 1) + "x" + (
                     cluster.getP2().y - cluster.getP1().y + 1);
                 String rights = cluster.isAdded(player.getUUID()) + "";
-                String message = Captions.CLUSTER_INFO.s();
+                String message = Captions.CLUSTER_INFO.getTranslated();
                 message = message.replaceAll("%id%", id);
                 message = message.replaceAll("%owner%", owner);
                 message = message.replaceAll("%name%", name);

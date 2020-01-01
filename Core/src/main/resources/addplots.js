@@ -1,6 +1,6 @@
 /*
 This will increase a player's allowed plots by the provided value
-/plot debugexec runasync addperm <player> <amount>
+/plot debugexec runasync addplots.js <player> <amount>
 */
 var uuid = UUIDHandler.getUUID('%s0', null);
 if (uuid === null) {

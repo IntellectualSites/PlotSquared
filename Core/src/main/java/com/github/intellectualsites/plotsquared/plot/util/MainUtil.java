@@ -10,12 +10,28 @@ import com.github.intellectualsites.plotsquared.plot.flag.DoubleFlag;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.stream.AbstractDelegateOutputStream;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
+import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.biome.BiomeType;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -23,8 +39,18 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -88,7 +114,7 @@ public class MainUtil {
 
     public static void sendAdmin(final String s) {
         for (final PlotPlayer player : UUIDHandler.getPlayers().values()) {
-            if (player.hasPermission(Captions.PERMISSION_ADMIN.s())) {
+            if (player.hasPermission(Captions.PERMISSION_ADMIN.getTranslated())) {
                 player.sendMessage(Captions.color(s));
             }
         }
@@ -193,10 +219,9 @@ public class MainUtil {
      * @return true if any changes were made
      */
     public static boolean resetBiome(PlotArea area, Location pos1, Location pos2) {
-        String biome = area.PLOT_BIOME;
-        if (!StringMan.isEqual(WorldUtil.IMP
-            .getBiome(area.worldname, (pos1.getX() + pos2.getX()) / 2,
-                (pos1.getZ() + pos2.getZ()) / 2), biome)) {
+        BiomeType biome = area.PLOT_BIOME;
+        if (!Objects.equals(WorldUtil.IMP.getBiome(area.worldname, (pos1.getX() + pos2.getX()) / 2,
+            (pos1.getZ() + pos2.getZ()) / 2), biome)) {
             MainUtil.setBiome(area.worldname, pos1.getX(), pos1.getZ(), pos2.getX(), pos2.getZ(),
                 biome);
             return true;
@@ -329,25 +354,33 @@ public class MainUtil {
      * @param owner
      * @return The player's name, None, Everyone or Unknown
      */
-    @Nonnull public static String getName(UUID owner) {
+    @NotNull public static String getName(UUID owner) {
         if (owner == null) {
-            return Captions.NONE.s();
+            return Captions.NONE.getTranslated();
         }
         if (owner.equals(DBFunc.EVERYONE)) {
-            return Captions.EVERYONE.s();
+            return Captions.EVERYONE.getTranslated();
         }
         if (owner.equals(DBFunc.SERVER)) {
-            return Captions.SERVER.s();
+            return Captions.SERVER.getTranslated();
         }
         String name = UUIDHandler.getName(owner);
         if (name == null) {
-            return Captions.UNKNOWN.s();
+            return Captions.UNKNOWN.getTranslated();
         }
         return name;
     }
 
     public static boolean isServerOwned(Plot plot) {
         return plot.getFlag(Flags.SERVER_PLOT).orElse(false);
+    }
+
+    @NotNull public static Location[] getCorners(String world, CuboidRegion region) {
+        BlockVector3 min = region.getMinimumPoint();
+        BlockVector3 max = region.getMaximumPoint();
+        Location pos1 = new Location(world, min.getX(), min.getY(), min.getZ());
+        Location pos2 = new Location(world, max.getX(), max.getY(), max.getZ());
+        return new Location[] {pos1, pos2};
     }
 
     /**
@@ -358,11 +391,11 @@ public class MainUtil {
      * @return
      * @see Plot#getCorners()
      */
-    @Nonnull public static Location[] getCorners(String world, Collection<RegionWrapper> regions) {
+    @NotNull public static Location[] getCorners(String world, Collection<CuboidRegion> regions) {
         Location min = null;
         Location max = null;
-        for (RegionWrapper region : regions) {
-            Location[] corners = region.getCorners(world);
+        for (CuboidRegion region : regions) {
+            Location[] corners = getCorners(world, region);
             if (min == null) {
                 min = corners[0];
                 max = corners[1];
@@ -399,8 +432,6 @@ public class MainUtil {
 
         List<UUID> uuids = new ArrayList<>();
         PlotId id = null;
-        PlotArea area = null;
-        String alias = null;
 
         for (String term : split) {
             try {
@@ -418,6 +449,8 @@ public class MainUtil {
             IntStream.range(0, size).mapToObj(i -> new ArrayList<Plot>())
                 .collect(Collectors.toCollection(() -> new ArrayList<>(size)));
 
+        PlotArea area = null;
+        String alias = null;
         for (Plot plot : PlotSquared.get().getPlots()) {
             int count = 0;
             if (!uuids.isEmpty()) {
@@ -500,7 +533,7 @@ public class MainUtil {
             }
             for (Plot p : plots) {
                 String name = p.getAlias();
-                if (!name.isEmpty() && StringMan.isEqualIgnoreCase(name, arg)) {
+                if (!name.isEmpty() && name.equalsIgnoreCase(arg)) {
                     return p;
                 }
             }
@@ -535,8 +568,10 @@ public class MainUtil {
      * @param p2z
      * @param biome
      */
-    public static void setBiome(String world, int p1x, int p1z, int p2x, int p2z, String biome) {
-        RegionWrapper region = new RegionWrapper(p1x, p2x, p1z, p2z);
+    public static void setBiome(String world, int p1x, int p1z, int p2x, int p2z, BiomeType biome) {
+        BlockVector3 pos1 = BlockVector2.at(p1x, p1z).toBlockVector3();
+        BlockVector3 pos2 = BlockVector2.at(p2x, p2z).toBlockVector3(Plot.MAX_HEIGHT - 1);
+        CuboidRegion region = new CuboidRegion(pos1, pos2);
         WorldUtil.IMP.setBiomes(world, region, biome);
     }
 
@@ -560,11 +595,11 @@ public class MainUtil {
      * Send a message to the player.
      *
      * @param player Player to receive message
-     * @param msg    Message to send
+     * @param message    Message to send
      * @return true Can be used in things such as commands (return PlayerFunctions.sendMessage(...))
      */
-    public static boolean sendMessage(PlotPlayer player, String msg) {
-        return sendMessage(player, msg, true);
+    public static boolean sendMessage(PlotPlayer player, String message) {
+        return sendMessage(player, message, true);
     }
 
     /**
@@ -585,13 +620,14 @@ public class MainUtil {
      * @param prefix If the message should be prefixed with the configured prefix
      * @return
      */
-    public static boolean sendMessage(CommandCaller player, String msg, boolean prefix) {
+    public static boolean sendMessage(CommandCaller player, @NotNull String msg, boolean prefix) {
         if (!msg.isEmpty()) {
             if (player == null) {
-                String message = (prefix ? Captions.PREFIX.s() : "") + msg;
+                String message = (prefix ? Captions.PREFIX.getTranslated() : "") + msg;
                 PlotSquared.log(message);
             } else {
-                player.sendMessage((prefix ? Captions.PREFIX.s() : "") + Captions.color(msg));
+                player.sendMessage(
+                    (prefix ? Captions.PREFIX.getTranslated() : "") + Captions.color(msg));
             }
         }
         return true;
@@ -617,7 +653,7 @@ public class MainUtil {
      */
     public static boolean sendMessage(final CommandCaller player, final Captions caption,
         final Object... args) {
-        if (caption.s().isEmpty()) {
+        if (caption.getTranslated().isEmpty()) {
             return true;
         }
         TaskManager.runTaskAsync(() -> {
@@ -713,37 +749,36 @@ public class MainUtil {
     public static void format(String info, final Plot plot, PlotPlayer player, final boolean full,
         final RunnableVal<String> whenDone) {
         int num = plot.getConnectedPlots().size();
-        String alias = !plot.getAlias().isEmpty() ? plot.getAlias() : Captions.NONE.s();
+        String alias = !plot.getAlias().isEmpty() ? plot.getAlias() : Captions.NONE.getTranslated();
         Location bot = plot.getCorners()[0];
-        String biome = WorldUtil.IMP.getBiome(plot.getWorldName(), bot.getX(), bot.getZ());
+        BiomeType biome = WorldUtil.IMP.getBiome(plot.getWorldName(), bot.getX(), bot.getZ());
         String trusted = getPlayerList(plot.getTrusted());
         String members = getPlayerList(plot.getMembers());
         String denied = getPlayerList(plot.getDenied());
         String seen;
         if (Settings.Enabled_Components.PLOT_EXPIRY && ExpireManager.IMP != null) {
             if (plot.isOnline()) {
-                seen = Captions.NOW.s();
+                seen = Captions.NOW.getTranslated();
             } else {
                 int time = (int) (ExpireManager.IMP.getAge(plot) / 1000);
                 if (time != 0) {
                     seen = MainUtil.secToTime(time);
                 } else {
-                    seen = Captions.UNKNOWN.s();
+                    seen = Captions.UNKNOWN.getTranslated();
                 }
             }
         } else {
-            seen = Captions.NEVER.s();
+            seen = Captions.NEVER.getTranslated();
         }
         Optional<String> descriptionFlag = plot.getFlag(Flags.DESCRIPTION);
-        String description = !descriptionFlag.isPresent() ?
-            Captions.NONE.s() :
+        String description = !descriptionFlag.isPresent() ? Captions.NONE.getTranslated() :
             Flags.DESCRIPTION.valueToString(descriptionFlag.get());
 
         StringBuilder flags = new StringBuilder();
         HashMap<Flag<?>, Object> flagMap =
             FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true);
         if (flagMap.isEmpty()) {
-            flags.append(Captions.NONE.s());
+            flags.append(Captions.NONE.getTranslated());
         } else {
             String prefix = "";
             for (Entry<Flag<?>, Object> entry : flagMap.entrySet()) {
@@ -754,7 +789,9 @@ public class MainUtil {
                     value = df.format(value);
                 }
                 flags.append(prefix)
-                    .append(Captions.PLOT_FLAG_LIST.f(entry.getKey().getName(), value));
+                    .append(Captions
+                        .format(Captions.PLOT_FLAG_LIST.getTranslated(), entry.getKey().getName(),
+                            value));
                 prefix = ", ";
             }
         }
@@ -764,7 +801,7 @@ public class MainUtil {
         info = info.replace("%alias%", alias);
         info = info.replace("%num%", String.valueOf(num));
         info = info.replace("%desc%", description);
-        info = info.replace("%biome%", biome);
+        info = info.replace("%biome%", biome.toString().toLowerCase());
         info = info.replace("%owner%", owner);
         info = info.replace("%members%", members);
         info = info.replace("%player%", player.getName());
@@ -837,11 +874,11 @@ public class MainUtil {
     public static String getPlayerList(Collection<UUID> uuids) {
         ArrayList<UUID> l = new ArrayList<>(uuids);
         if (l.size() < 1) {
-            return Captions.NONE.s();
+            return Captions.NONE.getTranslated();
         }
         List<String> users =
             l.stream().map(MainUtil::getName).sorted().collect(Collectors.toList());
-        String c = Captions.PLOT_USER_LIST.s();
+        String c = Captions.PLOT_USER_LIST.getTranslated();
         StringBuilder list = new StringBuilder();
         for (int x = 0; x < users.size(); x++) {
             if (x + 1 == l.size()) {

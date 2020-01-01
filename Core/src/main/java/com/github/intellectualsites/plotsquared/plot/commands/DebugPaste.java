@@ -17,21 +17,25 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "debugpaste", aliases = "dp", usage = "/plot debugpaste",
-    description = "Upload settings.yml, worlds.yml, PlotSquared.use_THIS.yml and your latest.log to https://athion.net/ISPaster/paste",
-    permission = "plots.debugpaste", category = CommandCategory.DEBUG) public class DebugPaste
-    extends SubCommand {
+    description = "Upload settings.yml, worlds.yml, PlotSquared.use_THIS.yml your latest.log and Multiverse's worlds.yml (if being used) to https://athion.net/ISPaster/paste",
+    permission = "plots.debugpaste", category = CommandCategory.DEBUG, confirmation = true, requiredType = RequiredType.NONE)
+public class DebugPaste extends SubCommand {
 
     private static String readFile(@NonNull final File file) throws IOException {
-        final StringBuilder content = new StringBuilder();
         final List<String> lines;
         try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
             lines = reader.lines().collect(Collectors.toList());
         }
+        final StringBuilder content = new StringBuilder();
         for (int i = Math.max(0, lines.size() - 1000); i < lines.size(); i++) {
             content.append(lines.get(i)).append("\n");
         }
@@ -41,44 +45,44 @@ import java.util.stream.Collectors;
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         TaskManager.runTaskAsync(() -> {
             try {
-                final IncendoPaster incendoPaster = new IncendoPaster("plotsquared");
 
                 StringBuilder b = new StringBuilder();
                 b.append(
                     "# Welcome to this paste\n# It is meant to provide us at IntellectualSites with better information about your "
                         + "problem\n\n");
                 b.append("# Server Information\n");
-                b.append("server.version: ").append(PlotSquared.get().IMP.getServerImplementation())
+                b.append("Server Version: ").append(PlotSquared.get().IMP.getServerImplementation())
                     .append("\n");
                 b.append("online_mode: ").append(UUIDHandler.getUUIDWrapper()).append(';')
                     .append(!Settings.UUID.OFFLINE).append('\n');
-                b.append("plugins:");
-                for (String id : PlotSquared.get().IMP.getPluginIds()) {
-                    String[] split = id.split(":");
-                    String[] split2 = split[0].split(";");
-                    String enabled = split.length == 2 ? split[1] : "unknown";
-                    String name = split2[0];
-                    String version = split2.length == 2 ? split2[1] : "unknown";
+                b.append("Plugins:");
+                for (Map.Entry<Map.Entry<String, String>, Boolean> pluginInfo : PlotSquared.get().IMP.getPluginIds()) {
+                    Map.Entry<String, String> nameVersion = pluginInfo.getKey();
+                    String name = nameVersion.getKey();
+                    String version = nameVersion.getValue();
+                    boolean enabled = pluginInfo.getValue();
                     b.append("\n  ").append(name).append(":\n    ").append("version: '")
                         .append(version).append('\'').append("\n    enabled: ").append(enabled);
                 }
                 b.append("\n\n# YAY! Now, let's see what we can find in your JVM\n");
                 Runtime runtime = Runtime.getRuntime();
-                b.append("memory.free: ").append(runtime.freeMemory()).append('\n');
-                b.append("memory.max: ").append(runtime.maxMemory()).append('\n');
-                b.append("java.specification.version: '")
-                    .append(System.getProperty("java.specification.version")).append("'\n");
-                b.append("java.vendor: '").append(System.getProperty("java.vendor")).append("'\n");
-                b.append("java.version: '").append(System.getProperty("java.version"))
-                    .append("'\n");
-                b.append("os.arch: '").append(System.getProperty("os.arch")).append("'\n");
-                b.append("os.name: '").append(System.getProperty("os.name")).append("'\n");
-                b.append("os.version: '").append(System.getProperty("os.version")).append("'\n\n");
+                RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();
+                b.append("Uptime: ").append(TimeUnit.MINUTES.convert(rb.getUptime(), TimeUnit.MILLISECONDS) + " minutes").append('\n');
+                b.append("JVM Flags: ").append(rb.getInputArguments()).append('\n');
+                b.append("Free Memory: ").append(runtime.freeMemory() / 1024 / 1024 + " MB").append('\n');
+                b.append("Max Memory: ").append(runtime.maxMemory() / 1024 / 1024 + " MB").append('\n');
+                b.append("Java Name: ").append(rb.getVmName()).append('\n');
+                b.append("Java Version: '").append(System.getProperty("java.version")).append("'\n");
+                b.append("Java Vendor: '").append(System.getProperty("java.vendor")).append("'\n");
+                b.append("Operating System: '").append(System.getProperty("os.name")).append("'\n");
+                b.append("OS Version: ").append(System.getProperty("os.version")).append('\n');
+                b.append("OS Arch: ").append(System.getProperty("os.arch")).append('\n');
                 b.append("# Okay :D Great. You are now ready to create your bug report!");
                 b.append(
                     "\n# You can do so at https://github.com/IntellectualSites/PlotSquared/issues");
                 b.append("\n# or via our Discord at https://discord.gg/ngZCzbU");
 
+                final IncendoPaster incendoPaster = new IncendoPaster("plotsquared");
                 incendoPaster.addFile(new IncendoPaster.PasteFile("information", b.toString()));
 
                 try {
@@ -115,6 +119,15 @@ import java.util.stream.Collectors;
                 }
 
                 try {
+                    final File MultiverseWorlds =
+                            new File(PlotSquared.get().IMP.getDirectory(), "../Multiverse-Core/worlds.yml");
+                    incendoPaster
+                            .addFile(new IncendoPaster.PasteFile("MultiverseCore/worlds.yml", readFile(MultiverseWorlds)));
+                } catch (final IOException ignored) {
+                    MainUtil.sendMessage(player, "&cSkipping Multiverse worlds.yml because the plugin is not in use");
+                }
+
+                try {
                     final String rawResponse = incendoPaster.upload();
                     final JsonObject jsonObject =
                         new JsonParser().parse(rawResponse).getAsJsonObject();
@@ -123,8 +136,8 @@ import java.util.stream.Collectors;
                         final String pasteId = jsonObject.get("paste_id").getAsString();
                         final String link =
                             String.format("https://athion.net/ISPaster/paste/view/%s", pasteId);
-                        player
-                            .sendMessage(Captions.DEBUG_REPORT_CREATED.s().replace("%url%", link));
+                        player.sendMessage(
+                            Captions.DEBUG_REPORT_CREATED.getTranslated().replace("%url%", link));
                     } else {
                         final String responseMessage = jsonObject.get("response").getAsString();
                         MainUtil.sendMessage(player, String

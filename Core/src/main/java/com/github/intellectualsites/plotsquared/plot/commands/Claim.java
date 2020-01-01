@@ -4,11 +4,17 @@ import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.github.intellectualsites.plotsquared.plot.util.ByteArrayUtilities;
+import com.github.intellectualsites.plotsquared.plot.object.Direction;
+import com.github.intellectualsites.plotsquared.plot.object.Expression;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.google.common.primitives.Ints;
 
 @CommandDeclaration(command = "claim", aliases = "c",
     description = "Claim the current plot you're standing on", category = CommandCategory.CLAIMING,
@@ -20,18 +26,19 @@ public class Claim extends SubCommand {
         if (args.length >= 1) {
             schematic = args[0];
         }
-        Location loc = player.getLocation();
-        final Plot plot = loc.getPlotAbs();
+        Location location = player.getLocation();
+        final Plot plot = location.getPlotAbs();
         if (plot == null) {
             return sendMessage(player, Captions.NOT_IN_PLOT);
         }
-        int currentPlots =
-            Settings.Limit.GLOBAL ? player.getPlotCount() : player.getPlotCount(loc.getWorld());
+        int currentPlots = Settings.Limit.GLOBAL ?
+            player.getPlotCount() :
+            player.getPlotCount(location.getWorld());
         int grants = 0;
         if (currentPlots >= player.getAllowedPlots()) {
             if (player.hasPersistentMeta("grantedPlots")) {
                 grants =
-                    ByteArrayUtilities.bytesToInteger(player.getPersistentMeta("grantedPlots"));
+                    Ints.fromByteArray(player.getPersistentMeta("grantedPlots"));
                 if (grants <= 0) {
                     player.removePersistentMeta("grantedPlots");
                     return sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
@@ -51,7 +58,8 @@ public class Claim extends SubCommand {
                         "non-existent: " + schematic);
                 }
                 if (!Permissions
-                    .hasPermission(player, Captions.PERMISSION_CLAIM_SCHEMATIC.f(schematic))
+                    .hasPermission(player, Captions
+                        .format(Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
                     && !Permissions
                     .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {
                     return sendMessage(player, Captions.NO_SCHEMATIC_PERMISSION, schematic);
@@ -78,7 +86,7 @@ public class Claim extends SubCommand {
                 player.removePersistentMeta("grantedPlots");
             } else {
                 player.setPersistentMeta("grantedPlots",
-                    ByteArrayUtilities.integerToBytes(grants - 1));
+                    Ints.toByteArray(grants - 1));
             }
             sendMessage(player, Captions.REMOVED_GRANTED_PLOT, "1", "" + (grants - 1));
         }
@@ -89,7 +97,7 @@ public class Claim extends SubCommand {
                 @Override public void run(Object value) {
                     plot.claim(player, true, finalSchematic, false);
                     if (area.AUTO_MERGE) {
-                        plot.autoMerge(-1, Integer.MAX_VALUE, player.getUUID(), true);
+                        plot.autoMerge(Direction.ALL, Integer.MAX_VALUE, player.getUUID(), true);
                     }
                 }
             }), () -> sendMessage(player, Captions.PLOT_NOT_CLAIMED));

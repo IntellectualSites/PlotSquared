@@ -4,7 +4,13 @@ import com.github.intellectualsites.plotsquared.bukkit.commands.DebugUUID;
 import com.github.intellectualsites.plotsquared.plot.commands.MainCommand;
 import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import org.bukkit.command.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.ProxiedCommandSender;
+import org.bukkit.command.RemoteConsoleCommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -42,12 +48,12 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         if (args.length == 0) {
             return Collections.singletonList("plots");
         }
-        Collection objects = MainCommand.getInstance().tab(player, args, s.endsWith(" "));
+        Collection<com.github.intellectualsites.plotsquared.commands.Command> objects = MainCommand.getInstance().tab(player, args, s.endsWith(" "));
         if (objects == null) {
             return null;
         }
         List<String> result = new ArrayList<>();
-        for (Object o : objects) {
+        for (com.github.intellectualsites.plotsquared.commands.Command o : objects) {
             result.add(o.toString());
         }
         return result.isEmpty() ? null : result;

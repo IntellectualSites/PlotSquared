@@ -1,11 +1,12 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
 
 public class PlotWeatherFlag extends Flag<PlotWeather> {
 
     public PlotWeatherFlag(String name) {
-        super(name);
+        super(Captions.FLAG_CATEGORY_WEATHER, name);
     }
 
     @Override public String valueToString(Object value) {
@@ -30,6 +31,6 @@ public class PlotWeatherFlag extends Flag<PlotWeather> {
     }
 
     @Override public String getValueDescription() {
-        return "Flag must be a weather: 'rain' or 'sun'";
+        return Captions.FLAG_ERROR_WEATHER.getTranslated();
     }
 }

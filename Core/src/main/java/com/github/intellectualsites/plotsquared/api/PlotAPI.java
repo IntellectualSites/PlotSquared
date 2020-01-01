@@ -165,7 +165,7 @@ import java.util.UUID;
      * @see Captions
      */
     public void sendConsoleMessage(Captions caption) {
-        sendConsoleMessage(caption.s());
+        sendConsoleMessage(caption.getTranslated());
     }
 
     /**

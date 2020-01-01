@@ -5,7 +5,12 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 import com.google.common.collect.ImmutableList;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Generic settings class.
@@ -80,6 +85,17 @@ public class PlotSettings {
         return false;
     }
 
+    public boolean setMerged(Direction direction, boolean merged) {
+        if (Direction.ALL == direction) {
+            throw new IllegalArgumentException("You cannot use Direction.ALL in this method!");
+        }
+        if (this.merged[direction.getIndex()] != merged) {
+            this.merged[direction.getIndex()] = merged;
+            return true;
+        }
+        return false;
+    }
+
     public BlockLoc getPosition() {
         if (this.position == null) {
             return new BlockLoc(0, 0, 0);
@@ -88,7 +104,7 @@ public class PlotSettings {
     }
 
     public void setPosition(BlockLoc position) {
-        if (position != null && position.x == 0 && position.y == 0 && position.z == 0) {
+        if (position != null && position.getX() == 0 && position.getY() == 0 && position.getZ() == 0) {
             position = null;
         }
         this.position = position;

@@ -15,6 +15,7 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "add",
     description = "Allow a user to build in a plot while you are online",
@@ -25,7 +26,7 @@ import java.util.UUID;
         super(MainCommand.getInstance(), true);
     }
 
-    @Override public void execute(final PlotPlayer player, String[] args,
+    @Override public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         final Plot plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);
@@ -36,25 +37,25 @@ import java.util.UUID;
         checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, getUsage());
         final Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
         checkTrue(!uuids.isEmpty(), Captions.INVALID_PLAYER, args[0]);
-        Iterator<UUID> iter = uuids.iterator();
+        Iterator<UUID> iterator = uuids.iterator();
         int size = plot.getTrusted().size() + plot.getMembers().size();
-        while (iter.hasNext()) {
-            UUID uuid = iter.next();
+        while (iterator.hasNext()) {
+            UUID uuid = iterator.next();
             if (uuid == DBFunc.EVERYONE && !(
                 Permissions.hasPermission(player, Captions.PERMISSION_TRUST_EVERYONE) || Permissions
                     .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST))) {
                 MainUtil.sendMessage(player, Captions.INVALID_PLAYER, MainUtil.getName(uuid));
-                iter.remove();
+                iterator.remove();
                 continue;
             }
             if (plot.isOwner(uuid)) {
-                MainUtil.sendMessage(player, Captions.ALREADY_OWNER, MainUtil.getName(uuid));
-                iter.remove();
+                MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
+                iterator.remove();
                 continue;
             }
             if (plot.getMembers().contains(uuid)) {
                 MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
-                iter.remove();
+                iterator.remove();
                 continue;
             }
             size += plot.getTrusted().contains(uuid) ? 0 : 1;
@@ -78,5 +79,7 @@ import java.util.UUID;
                 MainUtil.sendMessage(player, Captions.MEMBER_ADDED);
             }
         }, null);
+
+        return CompletableFuture.completedFuture(true);
     }
 }

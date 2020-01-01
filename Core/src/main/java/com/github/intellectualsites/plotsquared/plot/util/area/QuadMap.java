@@ -1,6 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.util.area;
 
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
+import com.sk89q.worldedit.regions.CuboidRegion;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -96,9 +97,9 @@ public class QuadMap<T> {
             this.objects.add(area);
             return;
         }
-        RegionWrapper region = getRegion(area);
-        if (region.minX >= this.x) {
-            if (region.minZ >= this.z) {
+        CuboidRegion region = getRegion(area);
+        if (region.getMinimumPoint().getX() >= this.x) {
+            if (region.getMinimumPoint().getZ() >= this.z) {
                 if (this.one == null) {
                     this.one =
                         newInstance(this.newsize, this.x + this.newsize, this.z + this.newsize,
@@ -107,7 +108,7 @@ public class QuadMap<T> {
                 this.one.add(area);
                 recalculateSkip();
                 return;
-            } else if (region.maxZ < this.z) {
+            } else if (region.getMaximumPoint().getZ() < this.z) {
                 if (this.two == null) {
                     this.two =
                         newInstance(this.newsize, this.x + this.newsize, this.z - this.newsize,
@@ -117,8 +118,8 @@ public class QuadMap<T> {
                 recalculateSkip();
                 return;
             }
-        } else if (region.maxX < this.x) {
-            if (region.minZ >= this.z) {
+        } else if (region.getMaximumPoint().getX() < this.x) {
+            if (region.getMinimumPoint().getZ() >= this.z) {
                 if (this.four == null) {
                     this.four =
                         newInstance(this.newsize, this.x - this.newsize, this.z + this.newsize,
@@ -127,7 +128,7 @@ public class QuadMap<T> {
                 this.four.add(area);
                 recalculateSkip();
                 return;
-            } else if (region.maxZ < this.z) {
+            } else if (region.getMaximumPoint().getZ() < this.z) {
                 if (this.three == null) {
                     this.three =
                         newInstance(this.newsize, this.x - this.newsize, this.z - this.newsize,
@@ -144,14 +145,14 @@ public class QuadMap<T> {
         this.objects.add(area);
     }
 
-    public RegionWrapper getRegion(T value) {
+    public CuboidRegion getRegion(T value) {
         return null;
     }
 
     public QuadMap<T> newInstance(int newsize, int x, int z, int min) {
         try {
             return new QuadMap<T>(newsize, x, z, min) {
-                @Override public RegionWrapper getRegion(T value) {
+                @Override public CuboidRegion getRegion(T value) {
                     return QuadMap.this.getRegion(value);
                 }
             };
@@ -172,9 +173,9 @@ public class QuadMap<T> {
                 this.skip = null;
             }
         } else {
-            RegionWrapper region = getRegion(area);
-            if (region.minX >= this.x) {
-                if (region.minZ >= this.z) {
+            CuboidRegion region = getRegion(area);
+            if (region.getMinimumPoint().getX() >= this.x) {
+                if (region.getMinimumPoint().getZ() >= this.z) {
                     if (this.one != null) {
                         if (this.one.remove(area)) {
                             this.one = null;
@@ -190,7 +191,7 @@ public class QuadMap<T> {
                     }
                 }
             } else {
-                if (region.minZ >= this.z) {
+                if (region.getMinimumPoint().getZ() >= this.z) {
                     if (this.four != null) {
                         if (this.four.remove(area)) {
                             this.four = null;
@@ -224,11 +225,11 @@ public class QuadMap<T> {
         this.skip = map.skip == null ? map : map.skip;
     }
 
-    public Set<T> get(RegionWrapper region) {
+    public Set<T> get(CuboidRegion region) {
         HashSet<T> set = new HashSet<>();
         if (this.objects != null) {
             for (T obj : this.objects) {
-                if (getRegion(obj).intersects(region)) {
+                if (RegionUtil.intersects(getRegion(obj), region)) {
                     set.add(obj);
                 }
             }
@@ -254,15 +255,15 @@ public class QuadMap<T> {
         return set;
     }
 
-    public boolean intersects(RegionWrapper other) {
-        return (other.minX <= this.x + this.size) && (other.maxX >= this.x - this.size) && (
-            other.minZ <= this.z + this.size) && (other.maxZ >= this.z - this.size);
+    public boolean intersects(CuboidRegion other) {
+        return (other.getMinimumPoint().getX() <= this.x + this.size) && (other.getMaximumPoint().getX() >= this.x - this.size) && (
+            other.getMinimumPoint().getZ() <= this.z + this.size) && (other.getMaximumPoint().getZ() >= this.z - this.size);
     }
 
     public T get(int x, int z) {
         if (this.objects != null) {
             for (T obj : this.objects) {
-                if (getRegion(obj).isIn(x, z)) {
+                if (RegionUtil.contains(getRegion(obj), x, z)) {
                     return obj;
                 }
             }

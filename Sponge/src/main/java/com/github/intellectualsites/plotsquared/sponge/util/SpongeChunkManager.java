@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.sponge.util;
 
-import com.github.intellectualsites.plotsquared.plot.object.ChunkLoc;
+import com.github.intellectualsites.plotsquared.plot.object.BlockVector2;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
@@ -53,12 +53,12 @@ public class SpongeChunkManager extends ChunkManager {
         return count;
     }
 
-    @Override public boolean loadChunk(String world, ChunkLoc loc, boolean force) {
+    @Override public boolean loadChunk(String world, BlockVector2 loc, boolean force) {
         World worldObj = SpongeUtil.getWorld(world);
         return worldObj.loadChunk(loc.x << 4, 0, loc.z << 4, force).isPresent();
     }
 
-    @Override public Set<ChunkLoc> getChunkChunks(String world) {
+    @Override public Set<BlockVector2> getChunkChunks(String world) {
         // TODO save world;
         return super.getChunkChunks(world);
     }
@@ -100,7 +100,7 @@ public class SpongeChunkManager extends ChunkManager {
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
 
-    @Override public void unloadChunk(String world, ChunkLoc loc, boolean save, boolean safe) {
+    @Override public void unloadChunk(String world, BlockVector2 loc, boolean save, boolean safe) {
         World worldObj = SpongeUtil.getWorld(world);
         Optional<Chunk> chunk = worldObj.getChunk(loc.x << 4, 0, loc.z << 4);
         if (chunk.isPresent()) {

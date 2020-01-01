@@ -4,13 +4,24 @@ import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
 import com.github.intellectualsites.plotsquared.plot.logger.ILogger;
-import com.github.intellectualsites.plotsquared.plot.object.BlockRegistry;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.ChatManager;
+import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
+import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
+import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
+import com.github.intellectualsites.plotsquared.plot.util.InventoryUtil;
+import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
+import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandlerImplementation;
+import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
+import com.sk89q.worldedit.extension.platform.Actor;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 public interface IPlotMain extends ILogger {
 
@@ -62,12 +73,12 @@ public interface IPlotMain extends ILogger {
      */
     String getPluginVersionString();
 
-    String getPluginName();
+    default String getPluginName() {
+        return "PlotSquared";
+    }
 
     /**
      * Gets the version of Minecraft that is running.
-     *
-     * @return
      */
     int[] getServerVersion();
 
@@ -100,7 +111,7 @@ public interface IPlotMain extends ILogger {
     /**
      * The task manager will run and manage Minecraft tasks.
      *
-     * @return
+     * @return the PlotSquared task manager
      */
     TaskManager getTaskManager();
 
@@ -137,49 +148,39 @@ public interface IPlotMain extends ILogger {
     /**
      * Gets the economy provider.
      *
-     * @return
+     * @return the PlotSquared economy manager
      */
     EconHandler getEconomyHandler();
 
     /**
      * Gets the {@link QueueProvider} class.
-     *
-     * @return
      */
     QueueProvider initBlockQueue();
 
     /**
      * Gets the {@link WorldUtil} class.
-     *
-     * @return
      */
     WorldUtil initWorldUtil();
 
     /**
      * Gets the EventUtil class.
-     *
-     * @return
      */
     EventUtil initEventUtil();
 
     /**
      * Gets the chunk manager.
      *
-     * @return
+     * @return the PlotSquared chunk manager
      */
     ChunkManager initChunkManager();
 
     /**
      * Gets the {@link SetupUtils} class.
-     *
-     * @return
      */
     SetupUtils initSetupUtils();
 
     /**
      * Gets {@link HybridUtils} class.
-     *
-     * @return
      */
     HybridUtils initHybridUtils();
 
@@ -198,32 +199,28 @@ public interface IPlotMain extends ILogger {
     /**
      * Gets the {@link UUIDHandlerImplementation} which will cache and
      * provide UUIDs.
-     *
-     * @return
      */
     UUIDHandlerImplementation initUUIDHandler();
 
     /**
      * Gets the {@link InventoryUtil} class (used for implementation specific
      * inventory guis).
-     *
-     * @return
      */
     InventoryUtil initInventoryUtil();
 
     /**
      * Unregisters a {@link PlotPlayer} from cache e.g. if they have logged off.
      *
-     * @param player
+     * @param player the player to remove
      */
     void unregister(PlotPlayer player);
 
     /**
      * Gets the generator wrapper for a world (world) and generator (name).
      *
-     * @param world
-     * @param name
-     * @return
+     * @param world the world to get the generator from
+     * @param name the name of the generator
+     * @return the generator being used for the provided world
      */
     GeneratorWrapper<?> getGenerator(String world, String name);
 
@@ -231,7 +228,7 @@ public interface IPlotMain extends ILogger {
 
     /**
      * Register the chunk processor which will clean out chunks that have too
-     * many blockstates or entities.
+     * many block states or entities.
      */
     void registerChunkProcessor();
 
@@ -246,19 +243,9 @@ public interface IPlotMain extends ILogger {
      *
      * @return Default implementation generator
      */
-    IndependentPlotGenerator getDefaultGenerator();
+    @NotNull IndependentPlotGenerator getDefaultGenerator();
 
-    /**
-     * Gets the class that will manage player titles.
-     *
-     * @return
-     */
-    AbstractTitle initTitleManager();
+    List<Map.Entry<Map.Entry<String, String>, Boolean>> getPluginIds();
 
-    List<String> getPluginIds();
-
-    BlockRegistry<?> getBlockRegistry();
-
-    LegacyMappings getLegacyMappings();
-
+    Actor getConsole();
 }

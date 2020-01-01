@@ -1,8 +1,14 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 
 public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
     private final int minX;
@@ -33,11 +39,11 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
     }
 
 
-    @Override public boolean setBiome(int x, int z, String biome) {
+    @Override public boolean setBiome(int x, int z, BiomeType biome) {
         return x >= 0 && x <= dx && z >= 0 && z <= dz && super.setBiome(x + minX, z + minZ, biome);
     }
 
-    public void fillBiome(String biome) {
+    public void fillBiome(BiomeType biome) {
         for (int x = 0; x <= dx; x++) {
             for (int z = 0; z < dz; z++) {
                 setBiome(x, z, biome);
@@ -50,7 +56,7 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
             .setBlock(x + minX, y + minY, z + minZ, id);
     }
 
-    @Override public boolean setBlock(int x, int y, int z, PlotBlock id) {
+    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
         return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super
             .setBlock(x + minX, y + minY, z + minZ, id);
     }
@@ -75,22 +81,22 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
         int bx = minX;
         int bz = minZ;
         PlotArea area = PlotSquared.get().getPlotArea(getWorld(), null);
-        Location loc = new Location(getWorld(), bx, 0, bz);
+        Location location = new Location(getWorld(), bx, 0, bz);
         if (area != null) {
             PlotManager manager = area.getPlotManager();
             for (int x = 0; x < 16; x++) {
-                loc.setX(bx + x);
+                location.setX(bx + x);
                 for (int z = 0; z < 16; z++) {
-                    loc.setZ(bz + z);
-                    task.run(area.getPlotAbs(loc), x, z);
+                    location.setZ(bz + z);
+                    task.run(area.getPlotAbs(location), x, z);
                 }
             }
         } else {
             for (int x = 0; x < 16; x++) {
-                loc.setX(bx + x);
+                location.setX(bx + x);
                 for (int z = 0; z < 16; z++) {
-                    loc.setZ(bz + z);
-                    task.run(loc.getPlotAbs(), x, z);
+                    location.setZ(bz + z);
+                    task.run(location.getPlotAbs(), x, z);
                 }
             }
         }

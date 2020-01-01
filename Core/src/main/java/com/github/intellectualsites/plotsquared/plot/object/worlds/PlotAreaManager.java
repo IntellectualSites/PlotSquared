@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.object.worlds;
 
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
+import com.sk89q.worldedit.regions.CuboidRegion;
 
 public interface PlotAreaManager {
     PlotArea getApplicablePlotArea(Location location);
@@ -11,7 +11,7 @@ public interface PlotAreaManager {
 
     PlotArea getPlotArea(String world, String id);
 
-    PlotArea[] getPlotAreas(String world, RegionWrapper region);
+    PlotArea[] getPlotAreas(String world, CuboidRegion region);
 
     PlotArea[] getAllPlotAreas();
 

@@ -44,11 +44,11 @@ import java.util.UUID;
         int count = 0;
         switch (args[0]) {
             case "unknown": {
-                ArrayList<UUID> toRemove = new ArrayList<>();
                 HashSet<UUID> all = new HashSet<>();
                 all.addAll(plot.getMembers());
                 all.addAll(plot.getTrusted());
                 all.addAll(plot.getDenied());
+                ArrayList<UUID> toRemove = new ArrayList<>();
                 for (UUID uuid : all) {
                     if (UUIDHandler.getName(uuid) == null) {
                         toRemove.add(uuid);
@@ -66,18 +66,7 @@ import java.util.UUID;
                 Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
                 if (!uuids.isEmpty()) {
                     for (UUID uuid : uuids) {
-                        if (uuid == DBFunc.EVERYONE) {
-                            if (plot.removeTrusted(uuid)) {
-                                EventUtil.manager.callTrusted(player, plot, uuid, false);
-                                count++;
-                            } else if (plot.removeMember(uuid)) {
-                                EventUtil.manager.callMember(player, plot, uuid, false);
-                                count++;
-                            } else if (plot.removeDenied(uuid)) {
-                                EventUtil.manager.callDenied(player, plot, uuid, false);
-                                count++;
-                            }
-                        } else if (plot.getTrusted().contains(uuid)) {
+                        if (plot.getTrusted().contains(uuid)) {
                             if (plot.removeTrusted(uuid)) {
                                 EventUtil.manager.callTrusted(player, plot, uuid, false);
                                 count++;
@@ -89,6 +78,17 @@ import java.util.UUID;
                             }
                         } else if (plot.getDenied().contains(uuid)) {
                             if (plot.removeDenied(uuid)) {
+                                EventUtil.manager.callDenied(player, plot, uuid, false);
+                                count++;
+                            }
+                        } else if (uuid == DBFunc.EVERYONE) {
+                            if (plot.removeTrusted(uuid)) {
+                                EventUtil.manager.callTrusted(player, plot, uuid, false);
+                                count++;
+                            } else if (plot.removeMember(uuid)) {
+                                EventUtil.manager.callMember(player, plot, uuid, false);
+                                count++;
+                            } else if (plot.removeDenied(uuid)) {
                                 EventUtil.manager.callDenied(player, plot, uuid, false);
                                 count++;
                             }

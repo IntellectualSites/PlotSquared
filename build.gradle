@@ -7,35 +7,36 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:5.0.0'
+        classpath("com.github.jengelman.gradle.plugins:shadow:5.0.0")
     }
     configurations.all {
         resolutionStrategy {
-            force 'org.ow2.asm:asm:7.1'
+            force("org.ow2.asm:asm:7.2")
+            force("org.jetbrains:annotations:18.0.0")
         }
     }
 }
 
 plugins {
-    id 'maven-publish'
-    id "org.ajoberstar.grgit" version "3.1.1"
+    id "maven-publish"
+    id "org.ajoberstar.grgit" version "4.0.0"
 }
 
-group = 'com.github.intellectualsites.plotsquared'
+group = "com.github.intellectualsites.plotsquared"
 
 def rootVersion = "4"
 def revision = ""
 def buildNumber = ""
 def date = ""
 ext {
-    git = Grgit.open(dir: '.git')
+    git = Grgit.open(dir: new File(rootDir.toString() + "/.git"))
     date = git.head().getDate().format("yy.MM.dd")
     revision = "-${git.head().abbreviatedId}"
-    parents = git.head().parentIds;
-    if (project.hasProperty('buildnumber')) {
+    parents = git.head().parentIds
+    if (project.hasProperty("buildnumber")) {
         buildNumber = "$buildnumber"
     } else {
-        index = -2042;  // Offset to match CI
+        index = -2042  // Offset to match CI
         for (; parents != null && !parents.isEmpty(); index++) {
             parents = git.getResolve().toCommit(parents.get(0)).getParentIds()
         }
@@ -43,57 +44,87 @@ ext {
     }
 }
 
-// version = String.format("%s.%s%s%s", rootVersion, date, revision, buildNumber)
 version = String.format("%s.%s", rootVersion, buildNumber)
 
 description = rootProject.name
 
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'maven'
-    apply plugin: 'eclipse'
-    apply plugin: 'idea'
-    apply plugin: 'com.github.johnrengelman.shadow'
+allprojects {
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xmaxerrs" << "1000"
+        }
+    }
+}
 
-    group = 'com.github.intellectualsites.plotsquared'
+subprojects {
+    apply(plugin: "java")
+    apply(plugin: "maven")
+    apply(plugin: "eclipse")
+    apply(plugin: "idea")
+    apply(plugin: "com.github.johnrengelman.shadow")
+
+    group = "com.github.intellectualsites.plotsquared"
 
     clean.doFirst {
-        delete "../target"
+        delete("../target")
     }
 
     dependencies {
-        implementation('com.sk89q.worldedit:worldedit-core:7.0.0-SNAPSHOT') {
-            exclude(module: 'bukkit-classloader-check')
-            exclude(module: 'mockito-core')
-            exclude(module: 'dummypermscompat')
+        implementation("com.sk89q.worldedit:worldedit-core:7.0.0") {
+            exclude(module: "bukkit-classloader-check")
+            exclude(module: "mockito-core")
+            exclude(module: "dummypermscompat")
         }
-        //Minecraft uses Guava 21 as of 1.13.
-        compile 'com.google.guava:guava:21.0'
-        compileOnly 'org.jetbrains:annotations:17.0.0'
-        compile("org.projectlombok:lombok:1.18.6")
-        compileOnly("org.projectlombok:lombok:1.18.6")
-        testCompileOnly("org.projectlombok:lombok:1.18.6")
-        annotationProcessor("org.projectlombok:lombok:1.18.6")
-        testAnnotationProcessor("org.projectlombok:lombok:1.18.6")
-        testImplementation "junit:junit:4.12"
+        implementation("net.kyori:text-api:3.0.2")
+        implementation("net.kyori:text-serializer-gson:3.0.2")
+        implementation("net.kyori:text-serializer-legacy:3.0.2")
+        implementation("net.kyori:text-serializer-plain:3.0.2")
+        implementation("com.google.guava:guava:21.0") {
+            because("Minecraft uses Guava 21 as of 1.13")
+        }
+        compileOnly("org.jetbrains:annotations:17.0.0")
+        compileClasspath("org.projectlombok:lombok:1.18.10")
+        testCompileOnly("org.projectlombok:lombok:1.18.8")
+        annotationProcessor("org.projectlombok:lombok:1.18.8")
+        testAnnotationProcessor("org.projectlombok:lombok:1.18.8")
+        testImplementation("junit:junit:4.12")
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            force("junit:junit:4.12")
+            force("com.google.guava:guava:21.0")
+            force("org.jetbrains:annotations:18.0.0")
+            force("com.google.code.findbugs:jsr305:3.0.2")
+        }
     }
 
     repositories {
         mavenCentral()
-        maven { url "http://maven.sk89q.com/repo/" }
-        maven { url "http://repo.maven.apache.org/maven2" }
-        maven { url 'https://jitpack.io' }
+        maven { url = "http://maven.sk89q.com/repo/" }
+        maven { url = "http://repo.maven.apache.org/maven2" }
+        maven { url = "https://jitpack.io" }
+    }
+
+    shadowJar {
+        dependencies {
+            include(dependency("net.kyori:text-api:3.0.2"))
+        }
+        relocate("io.papermc.lib", "com.github.intellectualsites.plotsquared.bukkit.paperlib")
+        // relocate('org.mcstats', 'com.plotsquared.stats')
+        archiveFileName = "${parent.name}-${project.name}-${parent.version}.jar"
+        destinationDirectory = file "../target"
     }
 }
 
-task aggregatedJavadocs(type: Javadoc, description: 'Generate javadocs from all child projects as if it was a single project', group: 'Documentation') {
+task aggregatedJavadocs(type: Javadoc, description: "Generate javadocs from all child projects as if it was a single project", group: "Documentation") {
     destinationDir = file("./docs/javadoc")
     title = "$project.name $version API"
     options.author true
-    options.links 'http://docs.spring.io/spring/docs/4.3.x/javadoc-api/', 'http://docs.oracle.com/javase/8/docs/api/', 'http://docs.spring.io/spring-ws/docs/2.3.0.RELEASE/api/', 'http://docs.spring.io/spring-security/site/docs/4.0.4.RELEASE/apidocs/'
-    options.addStringOption('Xdoclint:none', '-quiet')
+    options.links "http://docs.spring.io/spring/docs/4.3.x/javadoc-api/", "http://docs.oracle.com/javase/8/docs/api/", "http://docs.spring.io/spring-ws/docs/2.3.0.RELEASE/api/", "http://docs.spring.io/spring-security/site/docs/4.0.4.RELEASE/apidocs/"
+    options.addStringOption("Xdoclint:none", "-quiet")
 
-    delete "./docs"
+    delete("./docs")
 
     subprojects.each { proj ->
         proj.tasks.withType(Javadoc).each { javadocTask ->

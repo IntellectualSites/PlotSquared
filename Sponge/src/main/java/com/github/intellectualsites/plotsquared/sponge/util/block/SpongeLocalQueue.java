@@ -1,5 +1,7 @@
 package com.github.intellectualsites.plotsquared.sponge.util.block;
 
+import com.sk89q.worldedit.math.BlockVector2;
+
 import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
 import com.github.intellectualsites.plotsquared.plot.object.PseudoRandom;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;

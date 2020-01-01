@@ -6,19 +6,40 @@ import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.config.Storage;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.BlockLoc;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotCluster;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotSettings;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.google.common.base.Charsets;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -308,7 +329,6 @@ import java.util.concurrent.atomic.AtomicInteger;
                         PlotSquared.debug("============ DATABASE ERROR ============");
                         PlotSquared.debug("There was an error updating the database.");
                         PlotSquared.debug(" - It will be corrected on shutdown");
-                        PlotSquared.debug("========================================");
                         e.printStackTrace();
                         PlotSquared.debug("========================================");
                     }
@@ -326,15 +346,15 @@ import java.util.concurrent.atomic.AtomicInteger;
                 PreparedStatement statement = null;
                 UniqueStatement task = null;
                 UniqueStatement lastTask = null;
-                Iterator<Entry<Plot, Queue<UniqueStatement>>> iter =
+                Iterator<Entry<Plot, Queue<UniqueStatement>>> iterator =
                     this.plotTasks.entrySet().iterator();
-                while (iter.hasNext()) {
+                while (iterator.hasNext()) {
                     try {
-                        Entry<Plot, Queue<UniqueStatement>> entry = iter.next();
+                        Entry<Plot, Queue<UniqueStatement>> entry = iterator.next();
                         Plot plot = entry.getKey();
                         Queue<UniqueStatement> tasks = entry.getValue();
                         if (tasks.isEmpty()) {
-                            iter.remove();
+                            iterator.remove();
                             continue;
                         }
                         task = tasks.remove();
@@ -352,10 +372,10 @@ import java.util.concurrent.atomic.AtomicInteger;
                             task.set(statement);
                             task.addBatch(statement);
                             try {
-                                if (statement != null && statement.isClosed()) {
+                                if (statement.isClosed()) {
                                     statement = null;
                                 }
-                            } catch (AbstractMethodError ignore) {
+                            } catch (NullPointerException | AbstractMethodError ignore) {
                             }
                         }
                         lastTask = task;
@@ -858,10 +878,10 @@ import java.util.concurrent.atomic.AtomicInteger;
                 statement.setInt(i * 10 + 9, hash);
                 BlockLoc loc = pair.settings.getPosition();
                 String position;
-                if (loc.y == 0) {
+                if (loc.getY() == 0) {
                     position = "DEFAULT";
                 } else {
-                    position = loc.x + "," + loc.y + ',' + loc.z;
+                    position = loc.getX() + "," + loc.getY() + ',' + loc.getZ();
                 }
                 statement.setString(i * 10 + 10, position);
             }
@@ -899,10 +919,10 @@ import java.util.concurrent.atomic.AtomicInteger;
                 stmt.setInt(i * 10 + 9, n);
                 BlockLoc loc = pair.settings.getPosition();
                 String position;
-                if (loc.y == 0) {
+                if (loc.getY() == 0) {
                     position = "DEFAULT";
                 } else {
-                    position = loc.x + "," + loc.y + ',' + loc.z;
+                    position = loc.getX() + "," + loc.getY() + ',' + loc.getZ();
                 }
                 stmt.setString(i * 10 + 10, position);
             }
@@ -1615,17 +1635,17 @@ import java.util.concurrent.atomic.AtomicInteger;
                         PlotId plot_id = new PlotId(resultSet.getInt("plot_id_x"),
                             resultSet.getInt("plot_id_z"));
                         id = resultSet.getInt("id");
-                        String areaid = resultSet.getString("world");
-                        if (!areas.contains(areaid)) {
+                        String areaID = resultSet.getString("world");
+                        if (!areas.contains(areaID)) {
                             if (Settings.Enabled_Components.DATABASE_PURGER) {
                                 toDelete.add(id);
                                 continue;
                             } else {
-                                AtomicInteger value = noExist.get(areaid);
+                                AtomicInteger value = noExist.get(areaID);
                                 if (value != null) {
                                     value.incrementAndGet();
                                 } else {
-                                    noExist.put(areaid, new AtomicInteger(1));
+                                    noExist.put(areaID, new AtomicInteger(1));
                                 }
                             }
                         }
@@ -1657,7 +1677,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                                     .getTime();
                             } catch (ParseException e) {
                                 PlotSquared.debug(
-                                    "Could not parse date for plot: #" + id + "(" + areaid + ";"
+                                    "Could not parse date for plot: #" + id + "(" + areaID + ";"
                                         + plot_id + ") (" + parsable + ")");
                                 time = System.currentTimeMillis() + id;
                             }
@@ -1665,7 +1685,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                         Plot p = new Plot(plot_id, user, new HashSet<>(), new HashSet<>(),
                             new HashSet<>(), "", null, null, null,
                             new boolean[] {false, false, false, false}, time, id);
-                        HashMap<PlotId, Plot> map = newPlots.get(areaid);
+                        HashMap<PlotId, Plot> map = newPlots.get(areaID);
                         if (map != null) {
                             Plot last = map.put(p.getId(), p);
                             if (last != null) {
@@ -1679,7 +1699,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                             }
                         } else {
                             map = new HashMap<>();
-                            newPlots.put(areaid, map);
+                            newPlots.put(areaID, map);
                             map.put(p.getId(), p);
                         }
                         plots.put(id, p);
@@ -2171,7 +2191,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         });
     }
 
-    @Override public void getComments(@Nonnull Plot plot, final String inbox,
+    @Override public void getComments(@NotNull Plot plot, final String inbox,
         final RunnableVal<List<PlotComment>> whenDone) {
         addPlotTask(plot, new UniqueStatement("getComments_" + plot) {
             @Override public void set(PreparedStatement statement) throws SQLException {
@@ -2539,11 +2559,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                     id = resultSet.getInt("id");
                     String areaid = resultSet.getString("world");
                     if (!areas.contains(areaid)) {
-                        if (noExist.containsKey(areaid)) {
-                            noExist.put(areaid, noExist.get(areaid) + 1);
-                        } else {
-                            noExist.put(areaid, 1);
-                        }
+                        noExist.merge(areaid, 1, Integer::sum);
                     }
                     owner = resultSet.getString("owner");
                     user = uuids.get(owner);
@@ -2858,6 +2874,16 @@ import java.util.concurrent.atomic.AtomicInteger;
             if (plot.temp == -1) {
                 continue;
             }
+            if (plot.getArea() == null) {
+                PlotSquared.debug("CRITICAL ERROR IN VALIDATION TASK!");
+                PlotSquared.debug("PLOT AREA CANNOT BE NULL! SKIPPING PLOT!");
+                continue;
+            }
+            if (database == null) {
+                PlotSquared.debug("CRITICAL ERROR IN VALIDATION TASK!");
+                PlotSquared.debug("DATABASE VARIABLE CANNOT BE NULL! NOW ENDING VALIDATION!!");
+                break;
+            }
             HashMap<PlotId, Plot> worldPlots = database.get(plot.getArea().toString());
             if (worldPlots == null) {
                 PlotSquared.debug("&8 - &7Creating plot (1): " + plot);
@@ -2937,7 +2963,7 @@ import java.util.concurrent.atomic.AtomicInteger;
             boolean[] pm = plot.getMerged();
             boolean[] dm = dataPlot.getMerged();
             if (pm[0] != dm[0] || pm[1] != dm[1]) {
-                PlotSquared.debug("&8 - &7Correcting merge for: " + plot);
+                PlotSquared.debug(" - Correcting merge for: " + plot);
                 setMerged(dataPlot, plot.getMerged());
             }
             HashMap<Flag<?>, Object> pf = plot.getFlags();
@@ -2946,7 +2972,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 if (pf.size() != df.size() || !StringMan
                     .isEqual(StringMan.joinOrdered(pf.values(), ","),
                         StringMan.joinOrdered(df.values(), ","))) {
-                    PlotSquared.debug("&8 - &7Correcting flags for: " + plot);
+                    PlotSquared.debug(" - Correcting flags for: " + plot);
                     setFlags(plot, pf);
                 }
             }

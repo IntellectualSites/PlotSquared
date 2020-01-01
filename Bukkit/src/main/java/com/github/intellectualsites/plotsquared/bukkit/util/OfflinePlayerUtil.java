@@ -9,17 +9,15 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
-import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.*;
+import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.callConstructor;
+import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.callMethod;
+import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getCbClass;
+import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getNmsClass;
+import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getUtilClass;
+import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.makeConstructor;
+import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.makeMethod;
 
 public class OfflinePlayerUtil {
-
-    public static Player loadPlayer(String name) {
-        return loadPlayer(Bukkit.getOfflinePlayer(name));
-    }
-
-    public static Player loadPlayer(UUID id) {
-        return loadPlayer(Bukkit.getOfflinePlayer(id));
-    }
 
     public static Player loadPlayer(OfflinePlayer player) {
         if (player == null) {

@@ -8,14 +8,21 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.FileBytes;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -113,8 +120,7 @@ import java.util.zip.ZipOutputStream;
                     return true;
                 }
             }
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                "/plot template <import|export> <world> [template]");
+            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, getUsage());
             return true;
         }
         final String world = args[1];
@@ -159,7 +165,7 @@ import java.util.zip.ZipOutputStream;
                 setup.step = new ConfigurationNode[0];
                 setup.world = world;
                 SetupUtils.manager.setupWorld(setup);
-                GlobalBlockQueue.IMP.addTask(() -> {
+                GlobalBlockQueue.IMP.addEmptyTask(() -> {
                     MainUtil.sendMessage(player, "Done!");
                     player.teleport(WorldUtil.IMP.getSpawn(world));
                 });
@@ -179,7 +185,7 @@ import java.util.zip.ZipOutputStream;
                 final PlotManager manager = area.getPlotManager();
                 TaskManager.runTaskAsync(() -> {
                     try {
-                        manager.exportTemplate(area);
+                        manager.exportTemplate();
                     } catch (Exception e) { // Must recover from any exception thrown a third party template manager
                         e.printStackTrace();
                         MainUtil.sendMessage(player, "Failed: " + e.getMessage());

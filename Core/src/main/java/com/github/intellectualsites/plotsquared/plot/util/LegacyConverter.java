@@ -4,7 +4,7 @@ import com.github.intellectualsites.plotsquared.configuration.ConfigurationSecti
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 import lombok.NonNull;
 
 import java.util.Collection;
@@ -36,7 +36,7 @@ import java.util.Map;
     }
 
     private BlockBucket blockToBucket(@NonNull final String block) {
-        final PlotBlock plotBlock = WorldUtil.IMP.getClosestBlock(block).best;
+        final BlockState plotBlock = WorldUtil.IMP.getClosestBlock(block).best;
         return BlockBucket.withSingle(plotBlock);
     }
 
@@ -48,12 +48,10 @@ import java.util.Map;
         section.set(string, blocks.toString());
     }
 
-    private BlockBucket blockListToBucket(@NonNull final PlotBlock[] blocks) {
-        final Map<PlotBlock, Integer> counts = new HashMap<>();
-        for (final PlotBlock block : blocks) {
-            if (!counts.containsKey(block)) {
-                counts.put(block, 0);
-            }
+    private BlockBucket blockListToBucket(@NonNull final BlockState[] blocks) {
+        final Map<BlockState, Integer> counts = new HashMap<>();
+        for (final BlockState block : blocks) {
+            counts.putIfAbsent(block, 0);
             counts.put(block, counts.get(block) + 1);
         }
         boolean includeRatios = false;
@@ -65,8 +63,8 @@ import java.util.Map;
         }
         final BlockBucket bucket = new BlockBucket();
         if (includeRatios) {
-            for (final Map.Entry<PlotBlock, Integer> count : counts.entrySet()) {
-                bucket.addBlock(count.getKey(), (int) (count.getValue()));
+            for (final Map.Entry<BlockState, Integer> count : counts.entrySet()) {
+                bucket.addBlock(count.getKey(), count.getValue());
             }
         } else {
             counts.keySet().forEach(bucket::addBlock);
@@ -74,28 +72,30 @@ import java.util.Map;
         return bucket;
     }
 
-    private PlotBlock[] splitBlockList(@NonNull final List<String> list) {
+    private BlockState[] splitBlockList(@NonNull final List<String> list) {
         return list.stream().map(s -> WorldUtil.IMP.getClosestBlock(s).best)
-            .toArray(PlotBlock[]::new);
+            .toArray(BlockState[]::new);
     }
 
     private void convertBlock(@NonNull final ConfigurationSection section,
         @NonNull final String key, @NonNull final String block) {
         final BlockBucket bucket = this.blockToBucket(block);
         this.setString(section, key, bucket);
-        PlotSquared.log(Captions.LEGACY_CONFIG_REPLACED.f(block, bucket.toString()));
+        PlotSquared.log(Captions
+            .format(Captions.LEGACY_CONFIG_REPLACED.getTranslated(), block, bucket.toString()));
     }
 
     private void convertBlockList(@NonNull final ConfigurationSection section,
         @NonNull final String key, @NonNull final List<String> blockList) {
-        final PlotBlock[] blocks = this.splitBlockList(blockList);
+        final BlockState[] blocks = this.splitBlockList(blockList);
         final BlockBucket bucket = this.blockListToBucket(blocks);
         this.setString(section, key, bucket);
-        PlotSquared.log(
-            Captions.LEGACY_CONFIG_REPLACED.f(plotBlockArrayString(blocks), bucket.toString()));
+        PlotSquared.log(Captions
+            .format(Captions.LEGACY_CONFIG_REPLACED.getTranslated(), plotBlockArrayString(blocks),
+                bucket.toString()));
     }
 
-    private String plotBlockArrayString(@NonNull final PlotBlock[] blocks) {
+    private String plotBlockArrayString(@NonNull final BlockState[] blocks) {
         final StringBuilder builder = new StringBuilder();
         for (int i = 0; i < blocks.length; i++) {
             builder.append(blocks[i].toString());

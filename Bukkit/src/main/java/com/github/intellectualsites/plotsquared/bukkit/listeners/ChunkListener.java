@@ -1,7 +1,6 @@
 package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -9,6 +8,7 @@ import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.RefCla
 import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.RefField;
 import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.RefMethod;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -168,23 +168,24 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
 
     @EventHandler(priority = EventPriority.LOWEST) public void onItemSpawn(ItemSpawnEvent event) {
         Item entity = event.getEntity();
-        Chunk chunk = entity.getLocation().getChunk();
-        if (chunk == this.lastChunk) {
-            event.getEntity().remove();
-            event.setCancelled(true);
-            return;
-        }
-        if (!PlotSquared.get().hasPlotArea(chunk.getWorld().getName())) {
-            return;
-        }
-        Entity[] entities = chunk.getEntities();
-        if (entities.length > Settings.Chunk_Processor.MAX_ENTITIES) {
-            event.getEntity().remove();
-            event.setCancelled(true);
-            this.lastChunk = chunk;
-        } else {
-            this.lastChunk = null;
-        }
+        PaperLib.getChunkAtAsync(event.getLocation()).thenAccept(chunk -> {
+            if (chunk == this.lastChunk) {
+                event.getEntity().remove();
+                event.setCancelled(true);
+                return;
+            }
+            if (!PlotSquared.get().hasPlotArea(chunk.getWorld().getName())) {
+                return;
+            }
+            Entity[] entities = chunk.getEntities();
+            if (entities.length > Settings.Chunk_Processor.MAX_ENTITIES) {
+                event.getEntity().remove();
+                event.setCancelled(true);
+                this.lastChunk = chunk;
+            } else {
+                this.lastChunk = null;
+            }
+        });
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -197,23 +198,24 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntitySpawn(CreatureSpawnEvent event) {
         LivingEntity entity = event.getEntity();
-        Chunk chunk = entity.getLocation().getChunk();
-        if (chunk == this.lastChunk) {
-            event.getEntity().remove();
-            event.setCancelled(true);
-            return;
-        }
-        if (!PlotSquared.get().hasPlotArea(chunk.getWorld().getName())) {
-            return;
-        }
-        Entity[] entities = chunk.getEntities();
-        if (entities.length > Settings.Chunk_Processor.MAX_ENTITIES) {
-            event.getEntity().remove();
-            event.setCancelled(true);
-            this.lastChunk = chunk;
-        } else {
-            this.lastChunk = null;
-        }
+        PaperLib.getChunkAtAsync(event.getLocation()).thenAccept(chunk -> {
+            if (chunk == this.lastChunk) {
+                event.getEntity().remove();
+                event.setCancelled(true);
+                return;
+            }
+            if (!PlotSquared.get().hasPlotArea(chunk.getWorld().getName())) {
+                return;
+            }
+            Entity[] entities = chunk.getEntities();
+            if (entities.length > Settings.Chunk_Processor.MAX_ENTITIES) {
+                event.getEntity().remove();
+                event.setCancelled(true);
+                this.lastChunk = chunk;
+            } else {
+                this.lastChunk = null;
+            }
+        });
     }
 
     private void cleanChunk(final Chunk chunk) {
@@ -223,8 +225,7 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
             if (!chunk.isLoaded()) {
                 Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                 TaskManager.tasks.remove(currentIndex);
-                PlotSquared
-                    .debug(Captions.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
+                PlotSquared.debug("Successfully processed and unloaded chunk!");
                 chunk.unload(true);
                 return;
             }
@@ -232,8 +233,7 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
             if (tiles.length == 0) {
                 Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                 TaskManager.tasks.remove(currentIndex);
-                PlotSquared
-                    .debug(Captions.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
+                PlotSquared.debug("Successfully processed and unloaded chunk!");
                 chunk.unload(true);
                 return;
             }
@@ -243,8 +243,7 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
                 if (i >= tiles.length) {
                     Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                     TaskManager.tasks.remove(currentIndex);
-                    PlotSquared.debug(
-                        Captions.PREFIX.s() + "&aSuccessfully processed and unloaded chunk!");
+                    PlotSquared.debug("Successfully processed and unloaded chunk!");
                     chunk.unload(true);
                     return;
                 }
@@ -267,15 +266,11 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
                     ent.remove();
                 }
             }
-            PlotSquared.debug(
-                Captions.PREFIX.s() + "&a detected unsafe chunk and processed: " + (chunk.getX()
-                    << 4) + "," + (chunk.getX() << 4));
+            PlotSquared.debug("PlotSquared detected unsafe chunk and processed: " + (chunk.getX() << 4) + "," + (chunk.getX() << 4));
         }
         if (tiles.length > Settings.Chunk_Processor.MAX_TILES) {
             if (unload) {
-                PlotSquared.debug(
-                    Captions.PREFIX.s() + "&c detected unsafe chunk: " + (chunk.getX() << 4) + ","
-                        + (chunk.getX() << 4));
+                PlotSquared.debug("PlotSquared detected unsafe chunk: " + (chunk.getX()<< 4) + "," + (chunk.getX() << 4));
                 cleanChunk(chunk);
                 return true;
             }

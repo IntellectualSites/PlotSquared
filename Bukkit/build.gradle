@@ -1,22 +1,31 @@
+plugins {
+    id "com.github.johnrengelman.shadow"
+}
 repositories {
-    maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-    maven { url "http://nexus.hc.to/content/repositories/pub_releases" }
-    maven { url "https://repo.codemc.org/repository/maven-public" }
-    maven { url 'http://repo.onarandombox.com/content/groups/public'}
-    maven { url 'https://papermc.io/repo/repository/maven-public/' }
+    maven { url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
+    maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url = "http://nexus.hc.to/content/repositories/pub_releases" }
+    maven { url = "https://repo.codemc.org/repository/maven-public" }
+    maven {
+        name = "papermc"
+        url = "https://papermc.io/repo/repository/maven-public/"
+    }
     mavenLocal()
 }
 
+
 dependencies {
-    implementation project(':Core')
-    compile project(':Core')
-    compile 'com.destroystokyo.paper:paper-api:1.14-R0.1-SNAPSHOT'
-    implementation 'com.onarandombox.multiversecore:Multiverse-Core:3.0.0-SNAPSHOT'
-    implementation 'org.spigotmc:spigot-api:1.14-R0.1-SNAPSHOT'
-    compile(group: 'com.sk89q.worldedit', name: 'worldedit-bukkit', version: '7.0.0-SNAPSHOT')
+    implementation(project(":Core"))
+    compile(project(":Core"))
+    compile("com.destroystokyo.paper:paper-api:1.14.4-R0.1-SNAPSHOT")
+    //implementation 'com.onarandombox.multiversecore:Multiverse-Core:3.0.0-SNAPSHOT'
+    implementation("org.spigotmc:spigot-api:1.15.1-R0.1-SNAPSHOT")
+    compile(group: "com.sk89q.worldedit", name: "worldedit-bukkit", version: "7.0.1")
+    compile("io.papermc:paperlib:1.0.2")
+    compile(group: "com.squareup.retrofit2", name: "retrofit", version: "2.4.0")
+    implementation("net.kyori:text-adapter-bukkit:3.0.3")
     compile("net.milkbowl.vault:VaultAPI:1.7") {
-        exclude module: 'bukkit'
+        exclude(module: "bukkit")
     }
 }
 
@@ -24,29 +33,65 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 processResources {
-    from('src/main/resources') {
-        include 'plugin.yml'
+    from("src/main/resources") {
+        include("plugin.yml")
         expand(
                 name: project.parent.name,
                 version: project.parent.version
         )
     }
 }
-// We only want the shadow jar produced
-jar.enabled = false
+
+//noinspection GroovyAssignabilityCheck
+jar.archiveFileName = "PlotSquared-BukkitAPI-${project.parent.version}.jar"
+jar.destinationDirectory = file("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-BukkitAPI/" + project.parent.version)
+task createPom {
+    doLast {
+        pom {
+            project {
+                groupId = "com.github.intellectualsites.plotsquared"
+                artifactId = "PlotSquared-BukkitAPI"
+                version = project.parent.version
+            }
+        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-BukkitAPI/${project.parent.version}/PlotSquared-BukkitAPI-${project.parent.version}.pom")
+        pom {
+            project {
+                groupId = "com.github.intellectualsites.plotsquared"
+                artifactId = "PlotSquared-BukkitAPI"
+                version = "latest"
+            }
+        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-BukkitAPI/latest/PlotSquared-BukkitAPI-latest.pom")
+    }
+}
+
+task copyFiles {
+    doLast {
+        copy {
+            from("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-BukkitAPI/${project.parent.version}/")
+            into("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-BukkitAPI/latest/")
+            include("PlotSquared-BukkitAPI*.jar")
+            rename("PlotSquared-BukkitAPI-${project.parent.version}.jar", "PlotSquared-BukkitAPI-latest.jar")
+        }
+    }
+}
+
 
 shadowJar {
     dependencies {
-        include(dependency(':Core'))
+        include(dependency(":Core"))
         // update notification stuff
-        include(dependency('com.github.Sauilitired:Jenkins4J:2.0-SNAPSHOT'))
-        include(dependency('com.squareup.retrofit2:retrofit:2.4.0'))
-        include(dependency('com.squareup.okhttp3:okhttp:3.14.0'))
-        include(dependency('com.squareup.okio:okio:2.2.2'))
-        include(dependency('org.jetbrains.kotlin:kotlin-stdlib:1.3.30'))
+        include(dependency("com.github.Sauilitired:Jenkins4J:2.0-SNAPSHOT"))
+        include(dependency("com.squareup.retrofit2:retrofit:2.4.0"))
+        include(dependency("com.squareup.okhttp3:okhttp:4.2.2"))
+        include(dependency("com.squareup.okio:okio:2.4.1"))
+        include(dependency("org.jetbrains.kotlin:kotlin-stdlib:1.3.61"))
+        include(dependency("io.papermc:paperlib:1.0.2"))
+        include(dependency("net.kyori:text-adapter-bukkit:3.0.3"))
     }
-    archiveName = "${parent.name}-${project.name}-${parent.version}.jar"
-    destinationDir = file '../target'
+    relocate('net.kyori.text', 'com.github.intellectualsites.plotsquared.formatting.text')
+    relocate("io.papermc.lib", "com.github.intellectualsites.plotsquared.bukkit.paperlib")
+    archiveFileName = "${parent.name}-${project.name}-${parent.version}.jar"
+    destinationDirectory = file "../target"
 }
 
 shadowJar.doLast {
@@ -55,3 +100,5 @@ shadowJar.doLast {
 }
 
 build.dependsOn(shadowJar)
+build.finalizedBy(copyFiles)
+copyFiles.dependsOn(createPom)

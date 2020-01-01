@@ -1,6 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.listener;
 
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
 import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.entity.BaseEntity;
 import com.sk89q.worldedit.entity.Entity;
@@ -8,6 +7,7 @@ import com.sk89q.worldedit.extent.AbstractDelegateExtent;
 import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
@@ -15,15 +15,15 @@ import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.block.BlockTypes;
 
-import java.util.HashSet;
+import java.util.Set;
 
 public class WEExtent extends AbstractDelegateExtent {
 
     public static BlockState AIRSTATE = BlockTypes.AIR.getDefaultState();
     public static BaseBlock AIRBASE = BlockTypes.AIR.getDefaultState().toBaseBlock();
-    private final HashSet<RegionWrapper> mask;
+    private final Set<CuboidRegion> mask;
 
-    public WEExtent(HashSet<RegionWrapper> mask, Extent extent) {
+    public WEExtent(Set<CuboidRegion> mask, Extent extent) {
         super(extent);
         this.mask = mask;
     }

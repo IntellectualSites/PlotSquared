@@ -2,7 +2,6 @@ package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.object.ChunkLoc;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -12,6 +11,8 @@ import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.RefFie
 import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.RefMethod;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.sk89q.worldedit.math.BlockVector2;
+import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -42,7 +43,6 @@ public class SendChunk {
      * Constructor.
      */
     public SendChunk() throws ClassNotFoundException, NoSuchMethodException, NoSuchFieldException {
-        RefConstructor tempMapChunk;
         RefClass classCraftPlayer = getRefClass("{cb}.entity.CraftPlayer");
         this.methodGetHandlePlayer = classCraftPlayer.getMethod("getHandle");
         RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
@@ -50,8 +50,7 @@ public class SendChunk {
         RefClass classChunk = getRefClass("{nms}.Chunk");
         this.methodInitLighting = classChunk.getMethod("initLighting");
         RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
-        tempMapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), int.class);
-        this.mapChunk = tempMapChunk;
+        this.mapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), int.class);
         RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
         this.connection = classEntityPlayer.getField("playerConnection");
         RefClass classPacket = getRefClass("{nms}.Packet");
@@ -88,14 +87,14 @@ public class SendChunk {
             if (location == null) {
                 location = pp.getLocation();
             }
-            int cx = location.getX() >> 4;
-            int cz = location.getZ() >> 4;
+            int chunkX = location.getX() >> 4;
+            int chunkZ = location.getZ() >> 4;
             Player player = ((BukkitPlayer) pp).player;
             Object entity = this.methodGetHandlePlayer.of(player).call();
 
             for (Chunk chunk : list) {
-                int dx = Math.abs(cx - chunk.getX());
-                int dz = Math.abs(cz - chunk.getZ());
+                int dx = Math.abs(chunkX - chunk.getX());
+                int dz = Math.abs(chunkZ - chunk.getZ());
                 if ((dx > view) || (dz > view)) {
                     continue;
                 }
@@ -130,12 +129,12 @@ public class SendChunk {
         }
     }
 
-    public void sendChunk(String worldName, Collection<ChunkLoc> chunkLocations) {
+    public void sendChunk(String worldName, Collection<BlockVector2> chunkLocations) {
         World myWorld = Bukkit.getWorld(worldName);
         ArrayList<Chunk> chunks = new ArrayList<>();
-        for (ChunkLoc loc : chunkLocations) {
-            if (myWorld.isChunkLoaded(loc.x, loc.z)) {
-                chunks.add(myWorld.getChunkAt(loc.x, loc.z));
+        for (BlockVector2 loc : chunkLocations) {
+            if (myWorld.isChunkLoaded(loc.getX(), loc.getZ())) {
+                PaperLib.getChunkAtAsync(myWorld, loc.getX(), loc.getZ()).thenAccept(chunks::add);
             }
         }
         sendChunk(chunks);

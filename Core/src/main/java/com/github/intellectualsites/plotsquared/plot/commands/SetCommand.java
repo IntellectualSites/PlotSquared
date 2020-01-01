@@ -11,25 +11,27 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 public abstract class SetCommand extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
-        Location loc = player.getLocation();
-        Plot plot = loc.getPlotAbs();
+        Location location = player.getLocation();
+        Plot plot = location.getPlotAbs();
         if (plot == null) {
             return !sendMessage(player, Captions.NOT_IN_PLOT);
         }
         if (!plot.hasOwner()) {
             if (!Permissions
-                .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND.f(getFullId()))) {
+                .hasPermission(player,
+                    Captions.format(Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()))) {
                 MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                    Captions.PERMISSION_ADMIN_COMMAND.f(getFullId()));
+                    Captions.format(Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()));
                 MainUtil.sendMessage(player, Captions.PLOT_NOT_CLAIMED);
                 return false;
             }
         }
         if (!plot.isOwner(player.getUUID())) {
             if (!Permissions
-                .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND.f(getFullId()))) {
+                .hasPermission(player,
+                    Captions.format(Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()))) {
                 MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                    Captions.PERMISSION_ADMIN_COMMAND.f(getFullId()));
+                    Captions.format(Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()));
                 MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
                 return false;
             }

@@ -6,7 +6,7 @@ import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.math.Vector3;
 import com.github.intellectualsites.plotsquared.jnbt.*;
 import com.github.intellectualsites.plotsquared.nukkit.NukkitMain;
-import com.github.intellectualsites.plotsquared.plot.object.ChunkLoc;
+import com.github.intellectualsites.plotsquared.plot.object.BlockVector2;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
@@ -16,7 +16,6 @@ import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 
 import java.io.IOException;
-import java.util.*;
 
 /**
  * Schematic Handler.
@@ -98,10 +97,10 @@ public class NukkitSchematicHandler extends SchematicHandler {
                         final int sy = pos1.getY();
                         final int ey = pos2.getY();
                         // Generate list of chunks
-                        final ArrayList<ChunkLoc> chunks = new ArrayList<>();
+                        final ArrayList<BlockVector2> chunks = new ArrayList<>();
                         for (int x = bcx; x <= tcx; x++) {
                             for (int z = bcz; z <= tcz; z++) {
-                                chunks.add(new ChunkLoc(x, z));
+                                chunks.add(BlockVector2.at(x, z));
                             }
                         }
                         final Level worldObj = plugin.getServer().getLevelByName(world);
@@ -113,7 +112,7 @@ public class NukkitSchematicHandler extends SchematicHandler {
                                 while (!chunks.isEmpty()
                                     && System.currentTimeMillis() - start < 20) {
                                     // save schematics
-                                    ChunkLoc chunk = chunks.remove(0);
+                                    BlockVector2 chunk = chunks.remove(0);
                                     BaseFullChunk bc = worldObj.getChunk(chunk.x, chunk.z);
                                     try {
                                         bc.load(false);

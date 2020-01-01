@@ -3,14 +3,18 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
-import com.github.intellectualsites.plotsquared.plot.config.Configuration;
-import com.github.intellectualsites.plotsquared.plot.config.Configuration.UnknownBlockException;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
+import com.github.intellectualsites.plotsquared.plot.util.world.PatternUtil;
+import com.sk89q.worldedit.function.pattern.Pattern;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,9 +40,8 @@ import java.util.stream.IntStream;
             }
 
             @Override public boolean set(PlotPlayer player, final Plot plot, String value) {
-                PlotArea plotArea = player.getLocation().getPlotArea();
                 PlotManager manager = player.getLocation().getPlotManager();
-                String[] components = manager.getPlotComponents(plotArea, plot.getId());
+                String[] components = manager.getPlotComponents(plot.getId());
                 boolean allowUnsafe = DebugAllowUnsafe.unsafeAllowed.contains(player.getUUID());
 
                 String[] args = value.split(" ");
@@ -47,62 +50,29 @@ import java.util.stream.IntStream;
 
                 for (String component : components) {
                     if (component.equalsIgnoreCase(args[0])) {
-                        if (!Permissions.hasPermission(player,
-                            Captions.PERMISSION_SET_COMPONENT.f(component))) {
-                            MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                                Captions.PERMISSION_SET_COMPONENT.f(component));
+                        if (!Permissions.hasPermission(player, Captions
+                            .format(Captions.PERMISSION_SET_COMPONENT.getTranslated(), component))) {
+                            MainUtil.sendMessage(player, Captions.NO_PERMISSION, Captions
+                                .format(Captions.PERMISSION_SET_COMPONENT.getTranslated(),
+                                    component));
                             return false;
                         }
-                        // PlotBlock[] blocks;
-                        BlockBucket bucket;
-                        try {
-                            if (args.length < 2) {
-                                MainUtil.sendMessage(player, Captions.NEED_BLOCK);
-                                return true;
-                            }
-                            String[] split = material.split(",");
-                            // blocks = Configuration.BLOCKLIST.parseString(material);
-
-                            try {
-                                bucket = Configuration.BLOCK_BUCKET.parseString(material);
-                            } catch (final UnknownBlockException unknownBlockException) {
-                                final String unknownBlock = unknownBlockException.getUnknownValue();
-                                Captions.NOT_VALID_BLOCK.send(player, unknownBlock);
-                                StringComparison<PlotBlock>.ComparisonResult match =
-                                    WorldUtil.IMP.getClosestBlock(unknownBlock);
-                                if (match != null) {
-                                    final String found =
-                                        WorldUtil.IMP.getClosestMatchingName(match.best);
-                                    if (found != null) {
-                                        MainUtil.sendMessage(player, Captions.DID_YOU_MEAN,
-                                            found.toLowerCase());
-                                    }
-                                }
-                                return false;
-                            }
-
-                            if (!allowUnsafe) {
-                                for (final PlotBlock block : bucket.getBlocks()) {
-                                    if (!block.isAir() && !WorldUtil.IMP.isBlockSolid(block)) {
-                                        Captions.NOT_ALLOWED_BLOCK.send(player, block.toString());
-                                        return false;
-                                    }
-                                }
-                            }
-                        } catch (Exception ignored) {
-                            MainUtil.sendMessage(player, Captions.NOT_VALID_BLOCK, material);
-                            return false;
+                        if (args.length < 2) {
+                            MainUtil.sendMessage(player, Captions.NEED_BLOCK);
+                            return true;
                         }
+
+                        Pattern pattern = PatternUtil.parse(player, material);
                         if (plot.getRunning() > 0) {
                             MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
                             return false;
                         }
                         plot.addRunning();
                         for (Plot current : plot.getConnectedPlots()) {
-                            current.setComponent(component, bucket);
+                            current.setComponent(component, pattern);
                         }
                         MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
-                        GlobalBlockQueue.IMP.addTask(plot::removeRunning);
+                        GlobalBlockQueue.IMP.addEmptyTask(plot::removeRunning);
                         return true;
                     }
                 }
@@ -117,10 +87,11 @@ import java.util.stream.IntStream;
         Plot plot = player.getCurrentPlot();
         if (plot != null) {
             newValues.addAll(
-                Arrays.asList(plot.getManager().getPlotComponents(plot.getArea(), plot.getId())));
+                Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
         }
-        MainUtil.sendMessage(player, Captions.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringMan
-            .join(newValues, Captions.BLOCK_LIST_SEPARATER.formatted()));
+        MainUtil
+            .sendMessage(player, Captions.SUBCOMMAND_SET_OPTIONS_HEADER.getTranslated() + StringMan
+            .join(newValues, Captions.BLOCK_LIST_SEPARATOR.formatted()));
         return false;
     }
 
@@ -144,7 +115,7 @@ import java.util.stream.IntStream;
         }
         // components
         HashSet<String> components = new HashSet<>(
-            Arrays.asList(plot.getManager().getPlotComponents(plot.getArea(), plot.getId())));
+            Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
         if (components.contains(args[0].toLowerCase())) {
             return this.component.onCommand(player, Arrays.copyOfRange(args, 0, args.length));
         }

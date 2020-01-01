@@ -7,21 +7,52 @@ import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.generator.ClassicPlotWorld;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
-import com.sk89q.jnbt.*;
-import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
-import com.sk89q.worldedit.extent.clipboard.io.*;
+import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.jnbt.NBTInputStream;
+import com.sk89q.jnbt.NBTOutputStream;
+import com.sk89q.jnbt.StringTag;
+import com.sk89q.jnbt.Tag;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
+import com.sk89q.worldedit.extent.clipboard.io.MCEditSchematicReader;
+import com.sk89q.worldedit.extent.clipboard.io.SpongeSchematicReader;
+import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -51,15 +82,16 @@ public abstract class SchematicHandler {
                 Iterator<Plot> i = plots.iterator();
                 final Plot plot = i.next();
                 i.remove();
-                String o = UUIDHandler.getName(plot.guessOwner());
-                if (o == null) {
-                    o = "unknown";
+                String owner = UUIDHandler.getName(plot.guessOwner());
+                if (owner == null) {
+                    owner = "unknown";
                 }
                 final String name;
                 if (namingScheme == null) {
-                    name = plot.getId().x + ";" + plot.getId().y + ',' + plot.getArea() + ',' + o;
+                    name =
+                        plot.getId().x + ";" + plot.getId().y + ',' + plot.getArea() + ',' + owner;
                 } else {
-                    name = namingScheme.replaceAll("%owner%", o)
+                    name = namingScheme.replaceAll("%owner%", owner)
                         .replaceAll("%id%", plot.getId().toString())
                         .replaceAll("%idx%", plot.getId().x + "")
                         .replaceAll("%idy%", plot.getId().y + "")
@@ -136,19 +168,19 @@ public abstract class SchematicHandler {
                 final int LENGTH = dimension.getZ();
                 final int HEIGHT = dimension.getY();
                 // Validate dimensions
-                RegionWrapper region = plot.getLargestRegion();
-                if (((region.maxX - region.minX + xOffset + 1) < WIDTH) || (
-                    (region.maxZ - region.minZ + zOffset + 1) < LENGTH) || (HEIGHT > 256)) {
+                CuboidRegion region = plot.getLargestRegion();
+                if (((region.getMaximumPoint().getX() - region.getMinimumPoint().getX() + xOffset + 1) < WIDTH) || (
+                    (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + zOffset + 1) < LENGTH) || (HEIGHT > 256)) {
                     PlotSquared.debug("Schematic is too large");
                     PlotSquared.debug(
                         "(" + WIDTH + ',' + LENGTH + ',' + HEIGHT + ") is bigger than (" + (
-                            region.maxX - region.minX) + ',' + (region.maxZ - region.minZ)
+                            region.getMaximumPoint().getX() - region.getMinimumPoint().getX()) + ',' + (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ())
                             + ",256)");
                     TaskManager.runTask(whenDone);
                     return;
                 }
                 // block type and data arrays
-                final BlockArrayClipboard blockArrayClipboard = schematic.getClipboard();
+                final Clipboard blockArrayClipboard = schematic.getClipboard();
                 // Calculate the optimal height to paste the schematic at
                 final int y_offset_actual;
                 if (autoHeight) {
@@ -160,16 +192,16 @@ public abstract class SchematicHandler {
                             y_offset_actual = yOffset + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
                         } else {
                             y_offset_actual = yOffset + 1 + MainUtil
-                                .getHeighestBlock(plot.getWorldName(), region.minX + 1,
-                                    region.minZ + 1);
+                                .getHeighestBlock(plot.getWorldName(), region.getMinimumPoint().getX() + 1,
+                                    region.getMinimumPoint().getZ() + 1);
                         }
                     }
                 } else {
                     y_offset_actual = yOffset;
                 }
                 Location pos1 =
-                    new Location(plot.getWorldName(), region.minX + xOffset, y_offset_actual,
-                        region.minZ + zOffset);
+                    new Location(plot.getWorldName(), region.getMinimumPoint().getX() + xOffset, y_offset_actual,
+                        region.getMinimumPoint().getZ() + zOffset);
                 Location pos2 = pos1.clone().add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
                 final int p1x = pos1.getX();
                 final int p1z = pos1.getZ();
@@ -182,9 +214,9 @@ public abstract class SchematicHandler {
 
                 ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
                     @Override public void run(int[] value) {
-                        ChunkLoc chunk = new ChunkLoc(value[0], value[1]);
-                        int x = chunk.x;
-                        int z = chunk.z;
+                        BlockVector2 chunk = BlockVector2.at(value[0], value[1]);
+                        int x = chunk.getX();
+                        int z = chunk.getZ();
                         int xxb = x << 4;
                         int zzb = z << 4;
                         int xxt = xxb + 15;
@@ -267,7 +299,7 @@ public abstract class SchematicHandler {
      *
      * @return Immutable collection with schematic names
      */
-    public Collection<String> getShematicNames() {
+    public Collection<String> getSchematicNames() {
         final File parent =
             MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS);
         final List<String> names = new ArrayList<>();
@@ -276,7 +308,7 @@ public abstract class SchematicHandler {
                 parent.list((dir, name) -> name.endsWith(".schematic") || name.endsWith(".schem"));
             if (rawNames != null) {
                 final List<String> transformed = Arrays.stream(rawNames)
-                    .map(rawName -> rawName.substring(0, rawName.length() - 10))
+                    //.map(rawName -> rawName.substring(0, rawName.length() - 10))
                     .collect(Collectors.toList());
                 names.addAll(transformed);
             }
@@ -298,7 +330,7 @@ public abstract class SchematicHandler {
             ClipboardFormat format = ClipboardFormats.findByFile(file);
             if (format != null) {
                 ClipboardReader reader = format.getReader(new FileInputStream(file));
-                BlockArrayClipboard clip = (BlockArrayClipboard) reader.read();
+                Clipboard clip = reader.read();
                 return new Schematic(clip);
             } else {
                 throw new UnsupportedFormatException(
@@ -310,31 +342,28 @@ public abstract class SchematicHandler {
         return null;
     }
 
-    public Schematic getSchematic(URL url) {
+    public Schematic getSchematic(@NotNull URL url) {
         try {
-            ReadableByteChannel rbc = Channels.newChannel(url.openStream());
-            InputStream is = Channels.newInputStream(rbc);
-            return getSchematic(is);
+            ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
+            InputStream inputStream = Channels.newInputStream(readableByteChannel);
+            return getSchematic(inputStream);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public Schematic getSchematic(InputStream is) {
-        if (is == null) {
-            return null;
-        }
+    public Schematic getSchematic(@NotNull InputStream is) {
         try {
-            SpongeSchematicReader ssr =
+            SpongeSchematicReader schematicReader =
                 new SpongeSchematicReader(new NBTInputStream(new GZIPInputStream(is)));
-            BlockArrayClipboard clip = (BlockArrayClipboard) ssr.read();
+            Clipboard clip = schematicReader.read();
             return new Schematic(clip);
         } catch (IOException ignored) {
             try {
-                MCEditSchematicReader msr =
+                MCEditSchematicReader schematicReader =
                     new MCEditSchematicReader(new NBTInputStream(new GZIPInputStream(is)));
-                BlockArrayClipboard clip = (BlockArrayClipboard) msr.read();
+                Clipboard clip = schematicReader.read();
                 return new Schematic(clip);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -416,7 +445,7 @@ public abstract class SchematicHandler {
         return true;
     }
 
-    public abstract void getCompoundTag(String world, Set<RegionWrapper> regions,
+    public abstract void getCompoundTag(String world, Set<CuboidRegion> regions,
         RunnableVal<CompoundTag> whenDone);
 
     public void getCompoundTag(final Plot plot, final RunnableVal<CompoundTag> whenDone) {

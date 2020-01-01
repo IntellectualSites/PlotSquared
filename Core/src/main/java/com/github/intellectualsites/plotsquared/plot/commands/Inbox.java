@@ -14,9 +14,8 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import java.util.List;
 
 @CommandDeclaration(command = "inbox", description = "Review the comments for a plot",
-    usage = "/plot inbox [inbox] [delete <index>|clear|page]", permission = "plots.inbox",
-    category = CommandCategory.CHAT, requiredType = RequiredType.PLAYER) public class Inbox
-    extends SubCommand {
+    usage = "/plot inbox [inbox] [delete <index>|clear|page]", permission = "plots.inbox", category = CommandCategory.CHAT, requiredType = RequiredType.PLAYER)
+public class Inbox extends SubCommand {
 
     public void displayComments(PlotPlayer player, List<PlotComment> oldComments, int page) {
         if (oldComments == null || oldComments.isEmpty()) {
@@ -40,7 +39,8 @@ import java.util.List;
         }
         StringBuilder string = new StringBuilder();
         string.append(StringMan
-            .replaceAll(Captions.COMMENT_LIST_HEADER_PAGED.s(), "%amount%", comments.length, "%cur",
+            .replaceAll(Captions.COMMENT_LIST_HEADER_PAGED.getTranslated(), "%amount%",
+                comments.length, "%cur",
                 page + 1, "%max", totalPages + 1, "%word", "all") + '\n');
 
         // This might work xD
@@ -70,8 +70,7 @@ import java.util.List;
             return false;
         }
         if (args.length == 0) {
-            sendMessage(player, Captions.COMMAND_SYNTAX,
-                "/plot inbox [inbox] [delete <index>|clear|page]");
+            sendMessage(player, Captions.COMMAND_SYNTAX, getUsage());
             for (final CommentInbox inbox : CommentManager.inboxes.values()) {
                 if (inbox.canRead(plot, player)) {
                     if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
@@ -148,8 +147,15 @@ import java.util.List;
                             }
                             PlotComment comment = value.get(index - 1);
                             inbox.removeComment(plot, comment);
-                            plot.removeComment(comment);
-                            MainUtil.sendMessage(player, Captions.COMMENT_REMOVED, comment.comment);
+                            boolean success = plot.removeComment(comment);
+                            if (success) {
+                                MainUtil.sendMessage(player, Captions.COMMENT_REMOVED_SUCCESS,
+                                    comment.comment);
+                            } else {
+                                MainUtil.sendMessage(player, Captions.COMMENT_REMOVED_FAILURE,
+                                    comment.comment);
+
+                            }
                         }
                     })) {
                         sendMessage(player, Captions.NOT_IN_PLOT);
@@ -165,14 +171,13 @@ import java.util.List;
                     if (!comments.isEmpty()) {
                         plot.removeComments(comments);
                     }
-                    MainUtil.sendMessage(player, Captions.COMMENT_REMOVED, "*");
+                    MainUtil.sendMessage(player, Captions.COMMENT_REMOVED_SUCCESS, "*");
                     return true;
                 default:
                     try {
                         page = Integer.parseInt(args[1]);
                     } catch (NumberFormatException ignored) {
-                        sendMessage(player, Captions.COMMAND_SYNTAX,
-                            "/plot inbox [inbox] [delete <index>|clear|page]");
+                        sendMessage(player, Captions.COMMAND_SYNTAX, getUsage());
                         return false;
                     }
             }

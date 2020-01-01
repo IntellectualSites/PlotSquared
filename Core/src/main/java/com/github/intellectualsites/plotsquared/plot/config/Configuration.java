@@ -1,9 +1,10 @@
 package com.github.intellectualsites.plotsquared.plot.config;
 
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
-import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
-import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.world.biome.BiomeType;
+import com.sk89q.worldedit.world.biome.BiomeTypes;
+import com.sk89q.worldedit.world.block.BlockState;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -37,92 +38,39 @@ public class Configuration {
             return Boolean.parseBoolean(string);
         }
     };
-    public static final SettingValue<String> BIOME = new SettingValue<String>("BIOME") {
+    public static final SettingValue<BiomeType> BIOME = new SettingValue<BiomeType>("BIOME") {
         @Override public boolean validateValue(String string) {
             try {
-                int biome = WorldUtil.IMP.getBiomeFromString(string.toUpperCase());
-                return biome != -1;
+                return BiomeTypes.get(string) != null;
             } catch (Exception ignored) {
                 return false;
             }
         }
 
-        @Override public String parseString(String string) {
+        @Override public BiomeType parseString(String string) {
             if (validateValue(string)) {
-                return string.toUpperCase();
+                return BiomeTypes.get(string.toLowerCase());
             }
-            return "FOREST";
+            return BiomeTypes.FOREST;
         }
     };
 
     public static final SettingValue<BlockBucket> BLOCK_BUCKET =
         new SettingValue<BlockBucket>("BLOCK_BUCKET") {
-            @Override public BlockBucket parseString(final String string) {
-                if (string == null || string.isEmpty()) {
-                    return new BlockBucket();
-                }
-                final BlockBucket blockBucket = new BlockBucket();
-                final String[] parts = string.split(",");
-                for (final String part : parts) {
-                    String block;
-                    int chance = -1;
 
-                    if (part.contains(":")) {
-                        final String[] innerParts = part.split(":");
-                        if (innerParts.length > 1) {
-                            chance = Integer.parseInt(innerParts[1]);
-                        }
-                        block = innerParts[0];
-                    } else {
-                        block = part;
-                    }
-                    final StringComparison<PlotBlock>.ComparisonResult value =
-                        WorldUtil.IMP.getClosestBlock(block);
-                    if (value == null) {
-                        throw new UnknownBlockException(block);
-                    } else if (Settings.Enabled_Components.PREVENT_UNSAFE && !value.best.isAir()
-                        && !WorldUtil.IMP.isBlockSolid(value.best)) {
-                        throw new UnsafeBlockException(value.best);
-                    }
-                    blockBucket.addBlock(value.best, chance);
-                }
-                blockBucket.compile(); // Pre-compile :D
-                return blockBucket;
+            @Override public BlockBucket parseString(final String string) {
+                BlockBucket bucket = new BlockBucket(string);
+                bucket.compile();
+                Pattern pattern = bucket.toPattern();
+                return pattern != null ? bucket : null;
             }
 
             @Override public boolean validateValue(final String string) {
                 try {
-                    if (string == null || string.isEmpty()) {
-                        return false;
-                    }
-                    final String[] parts = string.split(",");
-                    for (final String part : parts) {
-                        String block;
-                        if (part.contains(":")) {
-                            final String[] innerParts = part.split(":");
-                            if (innerParts.length > 1) {
-                                final int chance = Integer.parseInt(innerParts[1]);
-                                if (chance < 1 || chance > 100) {
-                                    return false;
-                                }
-                            }
-                            block = innerParts[0];
-                        } else {
-                            block = part;
-                        }
-                        StringComparison<PlotBlock>.ComparisonResult value =
-                            WorldUtil.IMP.getClosestBlock(block);
-                        if (value == null || value.match > 1) {
-                            return false;
-                        } else if (Settings.Enabled_Components.PREVENT_UNSAFE && !value.best.isAir()
-                            && !WorldUtil.IMP.isBlockSolid(value.best)) {
-                            throw new UnsafeBlockException(value.best);
-                        }
-                    }
-                } catch (final Throwable exception) {
+                    return parseString(string) != null;
+                } catch (Exception e) {
                     return false;
                 }
-                return true;
             }
         };
 
@@ -162,9 +110,9 @@ public class Configuration {
 
     public static final class UnsafeBlockException extends IllegalArgumentException {
 
-        @Getter private final PlotBlock unsafeBlock;
+        @Getter private final BlockState unsafeBlock;
 
-        UnsafeBlockException(@NonNull final PlotBlock unsafeBlock) {
+        UnsafeBlockException(@NonNull final BlockState unsafeBlock) {
             super(String.format("%s is not a valid block", unsafeBlock));
             this.unsafeBlock = unsafeBlock;
         }

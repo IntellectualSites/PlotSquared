@@ -48,7 +48,7 @@ import java.util.Map.Entry;
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length < 1) {
-            MainUtil.sendMessage(player, "/plot database [area] <sqlite|mysql|import>");
+            MainUtil.sendMessage(player, getUsage());
             return false;
         }
         List<Plot> plots;
@@ -60,7 +60,7 @@ import java.util.Map.Entry;
             plots = PlotSquared.get().sortPlotsByTemp(PlotSquared.get().getPlots());
         }
         if (args.length < 1) {
-            MainUtil.sendMessage(player, "/plot database [world] <sqlite|mysql|import>");
+            MainUtil.sendMessage(player, getUsage());
             MainUtil.sendMessage(player, "[arg] indicates an optional argument");
             return false;
         }
@@ -87,8 +87,8 @@ import java.util.Map.Entry;
                     HashMap<String, HashMap<PlotId, Plot>> map = manager.getPlots();
                     plots = new ArrayList<>();
                     for (Entry<String, HashMap<PlotId, Plot>> entry : map.entrySet()) {
-                        String areaname = entry.getKey();
-                        PlotArea pa = PlotSquared.get().getPlotAreaByString(areaname);
+                        String areaName = entry.getKey();
+                        PlotArea pa = PlotSquared.get().getPlotAreaByString(areaName);
                         if (pa != null) {
                             for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
                                 Plot plot = entry2.getValue();
@@ -123,9 +123,9 @@ import java.util.Map.Entry;
                                 plots.add(plot);
                             }
                         } else {
-                            HashMap<PlotId, Plot> plotmap = PlotSquared.get().plots_tmp
-                                .computeIfAbsent(areaname, k -> new HashMap<>());
-                            plotmap.putAll(entry.getValue());
+                            HashMap<PlotId, Plot> plotMap = PlotSquared.get().plots_tmp
+                                .computeIfAbsent(areaName, k -> new HashMap<>());
+                            plotMap.putAll(entry.getValue());
                         }
                     }
                     DBFunc.createPlotsAndData(plots,

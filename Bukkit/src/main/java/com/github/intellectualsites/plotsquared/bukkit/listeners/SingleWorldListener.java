@@ -30,8 +30,8 @@ import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils
         this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle").getRealMethod();
         try {
             this.mustSave = classChunk.getField("mustSave").getRealField();
-        } catch (Throwable ignore) {
-            ignore.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
         }
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }

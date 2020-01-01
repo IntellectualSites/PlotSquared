@@ -1,7 +1,9 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
-import com.github.intellectualsites.plotsquared.plot.object.PlotBlock;
+import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 
 public class DelegateLocalBlockQueue extends LocalBlockQueue {
 
@@ -58,19 +60,23 @@ public class DelegateLocalBlockQueue extends LocalBlockQueue {
         }
     }
 
+    @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
+        return parent.setBlock(x, y, z, pattern);
+    }
+
     @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
         return parent.setBlock(x, y, z, id);
     }
 
-    @Override public boolean setBlock(int x, int y, int z, PlotBlock id) {
+    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
         return parent.setBlock(x, y, z, id);
     }
 
-    @Override public PlotBlock getBlock(int x, int y, int z) {
+    @Override public BlockState getBlock(int x, int y, int z) {
         return parent.getBlock(x, y, z);
     }
 
-    @Override public boolean setBiome(int x, int z, String biome) {
+    @Override public boolean setBiome(int x, int z, BiomeType biome) {
         return parent.setBiome(x, z, biome);
     }
 
@@ -102,9 +108,10 @@ public class DelegateLocalBlockQueue extends LocalBlockQueue {
         }
     }
 
-    @Override public void enqueue() {
+    @Override public boolean enqueue() {
         if (parent != null) {
-            parent.enqueue();
+            return parent.enqueue();
         }
+        return false;
     }
 }

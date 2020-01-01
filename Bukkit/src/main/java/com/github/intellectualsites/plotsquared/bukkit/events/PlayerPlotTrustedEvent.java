@@ -6,9 +6,6 @@ import org.bukkit.event.HandlerList;
 
 import java.util.UUID;
 
-/**
- *
- */
 public class PlayerPlotTrustedEvent extends PlotEvent {
 
     private static final HandlerList handlers = new HandlerList();

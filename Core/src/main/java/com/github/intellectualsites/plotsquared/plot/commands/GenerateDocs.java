@@ -142,7 +142,7 @@ public class GenerateDocs {
 
             Matcher m2 = p2.matcher(line);
             while (m2.find()) {
-                perms.add(Captions.valueOf("PERMISSION_" + m2.group(1)).s());
+                perms.add(Captions.valueOf("PERMISSION_" + m2.group(1)).getTranslated());
             }
             if (line.contains("Permissions.hasPermission(")) {
                 String[] split = line.split("Permissions.hasPermission");
@@ -151,7 +151,7 @@ public class GenerateDocs {
                     String perm = method.split("[,|)]")[1].trim();
                     if (!perm.equalsIgnoreCase(perm)) {
                         if (perm.startsWith("C.")) {
-                            perm = Captions.valueOf(perm.split("\\.")[1]).s();
+                            perm = Captions.valueOf(perm.split("\\.")[1]).getTranslated();
                         } else {
                             continue;
                         }
@@ -181,7 +181,7 @@ public class GenerateDocs {
                     String perm = method.split("[,|)]")[1].trim();
                     if (!perm.equalsIgnoreCase(perm)) {
                         if (perm.startsWith("C.")) {
-                            perm = Captions.valueOf(perm.split("\\.")[1]).s();
+                            perm = Captions.valueOf(perm.split("\\.")[1]).getTranslated();
                         } else {
                             continue;
                         }

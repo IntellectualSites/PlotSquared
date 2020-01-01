@@ -1,7 +1,6 @@
 package com.github.intellectualsites.plotsquared.sponge.util;
 
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
-import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.sponge.SpongeMain;
 import com.github.intellectualsites.plotsquared.sponge.events.*;

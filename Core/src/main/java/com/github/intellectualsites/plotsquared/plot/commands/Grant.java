@@ -8,12 +8,13 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
-import com.github.intellectualsites.plotsquared.plot.util.ByteArrayUtilities;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.google.common.primitives.Ints;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "grant", category = CommandCategory.CLAIMING,
     usage = "/plot grant <check|add> [player]", permission = "plots.grant",
@@ -23,7 +24,7 @@ import java.util.UUID;
         super(MainCommand.getInstance(), true);
     }
 
-    @Override public void execute(final PlotPlayer player, String[] args,
+    @Override public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         checkTrue(args.length >= 1 && args.length <= 2, Captions.COMMAND_SYNTAX, getUsage());
@@ -31,9 +32,11 @@ import java.util.UUID;
         switch (arg0) {
             case "add":
             case "check":
-                if (!Permissions.hasPermission(player, Captions.PERMISSION_GRANT.f(arg0))) {
-                    Captions.NO_PERMISSION.send(player, Captions.PERMISSION_GRANT.f(arg0));
-                    return;
+                if (!Permissions.hasPermission(player,
+                    Captions.format(Captions.PERMISSION_GRANT.getTranslated(), arg0))) {
+                    Captions.NO_PERMISSION.send(player,
+                        Captions.format(Captions.PERMISSION_GRANT.getTranslated(), arg0));
+                    return CompletableFuture.completedFuture(false);
                 }
                 if (args.length > 2) {
                     break;
@@ -46,7 +49,7 @@ import java.util.UUID;
                 }
                 if (uuid == null) {
                     Captions.INVALID_PLAYER.send(player, args[1]);
-                    return;
+                    return CompletableFuture.completedFuture(false);
                 }
                 MainUtil.getPersistentMeta(uuid, "grantedPlots", new RunnableVal<byte[]>() {
                     @Override public void run(byte[] array) {
@@ -55,7 +58,7 @@ import java.util.UUID;
                             if (array == null) {
                                 granted = 0;
                             } else {
-                                granted = ByteArrayUtilities.bytesToInteger(array);
+                                granted = Ints.fromByteArray(array);
                             }
                             Captions.GRANTED_PLOTS.send(player, granted);
                         } else { // add
@@ -63,11 +66,11 @@ import java.util.UUID;
                             if (array == null) {
                                 amount = 1;
                             } else {
-                                amount = 1 + ByteArrayUtilities.bytesToInteger(array);
+                                amount = 1 + Ints.fromByteArray(array);
                             }
                             boolean replace = array != null;
                             String key = "grantedPlots";
-                            byte[] rawData = ByteArrayUtilities.integerToBytes(amount);
+                            byte[] rawData = Ints.toByteArray(amount);
                             PlotPlayer online = UUIDHandler.getPlayer(uuid);
                             if (online != null) {
                                 online.setPersistentMeta(key, rawData);
@@ -77,7 +80,9 @@ import java.util.UUID;
                         }
                     }
                 });
+                return CompletableFuture.completedFuture(true);
         }
         Captions.COMMAND_SYNTAX.send(player, getUsage());
+        return CompletableFuture.completedFuture(true);
     }
 }

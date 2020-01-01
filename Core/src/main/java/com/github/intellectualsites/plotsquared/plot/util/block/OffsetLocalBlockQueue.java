@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util.block;
 
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 
 public class OffsetLocalBlockQueue extends DelegateLocalBlockQueue {
@@ -14,7 +15,7 @@ public class OffsetLocalBlockQueue extends DelegateLocalBlockQueue {
         this.oz = oz;
     }
 
-    @Override public boolean setBiome(int x, int y, String biome) {
+    @Override public boolean setBiome(int x, int y, BiomeType biome) {
         return super.setBiome(ox + x, oy + y, biome);
     }
 

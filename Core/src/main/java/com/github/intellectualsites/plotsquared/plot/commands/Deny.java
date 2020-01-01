@@ -8,9 +8,13 @@ import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+import com.sk89q.worldedit.world.gamemode.GameModes;
 
-import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
@@ -44,9 +48,7 @@ import java.util.UUID;
             MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
             return false;
         }
-        Iterator<UUID> iter = uuids.iterator();
-        while (iter.hasNext()) {
-            UUID uuid = iter.next();
+        for (UUID uuid : uuids) {
             if (uuid == DBFunc.EVERYONE && !(
                 Permissions.hasPermission(player, Captions.PERMISSION_DENY_EVERYONE) || Permissions
                     .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DENY))) {
@@ -54,7 +56,7 @@ import java.util.UUID;
                 continue;
             }
             if (plot.isOwner(uuid)) {
-                MainUtil.sendMessage(player, Captions.ALREADY_OWNER, MainUtil.getName(uuid));
+                MainUtil.sendMessage(player, Captions.CANT_REMOVE_OWNER, MainUtil.getName(uuid));
                 return false;
             }
 
@@ -92,18 +94,18 @@ import java.util.UUID;
         if (player.hasPermission("plots.admin.entry.denied")) {
             return;
         }
-        if (player.getGameMode() == PlotGameMode.SPECTATOR) {
+        if (player.getGameMode() == GameModes.SPECTATOR) {
             player.stopSpectating();
         }
-        Location loc = player.getLocation();
-        Location spawn = WorldUtil.IMP.getSpawn(loc.getWorld());
+        Location location = player.getLocation();
+        Location spawn = WorldUtil.IMP.getSpawn(location.getWorld());
         MainUtil.sendMessage(player, Captions.YOU_GOT_DENIED);
         if (plot.equals(spawn.getPlot())) {
             Location newSpawn =
                 WorldUtil.IMP.getSpawn(PlotSquared.get().getPlotAreaManager().getAllWorlds()[0]);
             if (plot.equals(newSpawn.getPlot())) {
                 // Kick from server if you can't be teleported to spawn
-                player.kick(Captions.YOU_GOT_DENIED.s());
+                player.kick(Captions.YOU_GOT_DENIED.getTranslated());
             } else {
                 player.teleport(newSpawn);
             }

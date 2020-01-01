@@ -7,6 +7,7 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import io.papermc.lib.PaperLib;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
@@ -75,7 +76,7 @@ public class EntitySpawnListener implements Listener {
                     if (!world.getName().equalsIgnoreCase(originWorld + "_the_end")) {
                         try {
                             ignoreTP = true;
-                            entity.teleport(origin);
+                            PaperLib.teleportAsync(entity,origin);
                         } finally {
                             ignoreTP = false;
                         }

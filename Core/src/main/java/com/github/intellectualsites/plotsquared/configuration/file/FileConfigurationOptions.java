@@ -25,11 +25,6 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
         return this;
     }
 
-    @Override public FileConfigurationOptions pathSeparator(char value) {
-        super.pathSeparator(value);
-        return this;
-    }
-
     /**
      * Gets the header that will be applied to the top of the saved output.
      *

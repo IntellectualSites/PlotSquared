@@ -4,6 +4,7 @@ import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 
 public class TeleportDenyFlag extends EnumFlag {
+
     public TeleportDenyFlag(String name) {
         super(name, "trusted", "members", "nonmembers", "nontrusted", "nonowners");
     }
@@ -22,14 +23,14 @@ public class TeleportDenyFlag extends EnumFlag {
                 result = !plot.getMembers().contains(player.getUUID());
                 break;
             case "nonmembers":
-                result = !plot.isAdded(player.getUUID());
+                result = plot.isAdded(player.getUUID());
                 break;
             case "nontrusted":
-                result = !plot.getTrusted().contains(player.getUUID()) && !plot
+                result = plot.getTrusted().contains(player.getUUID()) || plot
                     .isOwner(player.getUUID());
                 break;
             case "nonowners":
-                result = !plot.isOwner(player.getUUID());
+                result = plot.isOwner(player.getUUID());
                 break;
             default:
                 return true;

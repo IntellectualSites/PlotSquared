@@ -7,13 +7,14 @@ import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.CompoundTagBuilder;
-import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.transform.BlockTransformExtent;
 import com.sk89q.worldedit.internal.helper.MCDirections;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -21,6 +22,7 @@ import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.HashMap;
@@ -37,9 +39,14 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public int SCHEM_Y;
     private Location SIGN_LOCATION;
 
-    public HybridPlotWorld(String worldName, String id, IndependentPlotGenerator generator,
+    public HybridPlotWorld(String worldName, String id, @NotNull IndependentPlotGenerator generator,
         PlotId min, PlotId max) {
         super(worldName, id, generator, min, max);
+    }
+
+    @NotNull @Override
+    protected PlotManager createManager() {
+        return new HybridPlotManager(this);
     }
 
     public static byte wrap(byte data, int start) {
@@ -119,8 +126,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         try {
             setupSchematics();
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
+        } catch (Exception event) {
+            event.printStackTrace();
             PlotSquared.debug("&c - road schematics are disabled for this world.");
         }
     }
@@ -171,7 +178,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
         if (schematic3 != null) {
             this.PLOT_SCHEMATIC = true;
-            BlockArrayClipboard blockArrayClipboard3 = schematic3.getClipboard();
+            Clipboard blockArrayClipboard3 = schematic3.getClipboard();
 
             BlockVector3 d3 = blockArrayClipboard3.getDimensions();
             short w3 = (short) d3.getX();
@@ -245,9 +252,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         this.ROAD_SCHEMATIC_ENABLED = true;
         // Do not populate road if using schematic population
-        // TODO: What? this.ROAD_BLOCK = BlockBucket.empty(); // PlotBlock.getEmptyData(this.ROAD_BLOCK); // PlotBlock.get(this.ROAD_BLOCK.id, (byte) 0);
+        // TODO: What? this.ROAD_BLOCK = BlockBucket.empty(); // BlockState.getEmptyData(this.ROAD_BLOCK); // BlockUtil.get(this.ROAD_BLOCK.id, (byte) 0);
 
-        BlockArrayClipboard blockArrayClipboard1 = schematic1.getClipboard();
+        Clipboard blockArrayClipboard1 = schematic1.getClipboard();
 
         BlockVector3 d1 = blockArrayClipboard1.getDimensions();
         short w1 = (short) d1.getX();
@@ -270,7 +277,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             }
         }
 
-        BlockArrayClipboard blockArrayClipboard2 = schematic2.getClipboard();
+        Clipboard blockArrayClipboard2 = schematic2.getClipboard();
         BlockVector3 d2 = blockArrayClipboard2.getDimensions();
         short w2 = (short) d2.getX();
         short l2 = (short) d2.getZ();

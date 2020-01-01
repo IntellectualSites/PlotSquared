@@ -1,8 +1,15 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Array;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public class StringMan {
 
@@ -145,12 +152,7 @@ public class StringMan {
 
     public static String joinOrdered(Collection<?> collection, String delimiter) {
         Object[] array = collection.toArray();
-        Arrays.sort(array, new Comparator<Object>() {
-            @Override public int compare(Object a, Object b) {
-                return a.hashCode() - b.hashCode();
-            }
-
-        });
+        Arrays.sort(array, Comparator.comparingInt(Object::hashCode));
         return join(array, delimiter);
     }
 
@@ -186,8 +188,8 @@ public class StringMan {
             n = m;
             m = t.length();
         }
-        int p[] = new int[n + 1];
-        int d[] = new int[n + 1];
+        int[] p = new int[n + 1];
+        int[] d = new int[n + 1];
         int i;
         for (i = 0; i <= n; i++) {
             p[i] = i;
@@ -235,9 +237,9 @@ public class StringMan {
         return false;
     }
 
-    public static boolean isEqualIgnoreCaseToAny(String a, String... args) {
+    public static boolean isEqualIgnoreCaseToAny(@NotNull String a, String... args) {
         for (String arg : args) {
-            if (StringMan.isEqualIgnoreCase(a, arg)) {
+            if (a.equalsIgnoreCase(arg)) {
                 return true;
             }
         }

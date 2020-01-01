@@ -2,19 +2,31 @@ package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.schematic.StateWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.RegionWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
-import com.sk89q.jnbt.*;
+import com.sk89q.jnbt.ByteArrayTag;
+import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.jnbt.IntArrayTag;
+import com.sk89q.jnbt.IntTag;
+import com.sk89q.jnbt.ListTag;
+import com.sk89q.jnbt.ShortTag;
+import com.sk89q.jnbt.StringTag;
+import com.sk89q.jnbt.Tag;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BaseBlock;
 
 import java.io.ByteArrayOutputStream;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 /**
@@ -22,7 +34,7 @@ import java.util.stream.IntStream;
  */
 public class BukkitSchematicHandler extends SchematicHandler {
 
-    @Override public void getCompoundTag(final String world, final Set<RegionWrapper> regions,
+    @Override public void getCompoundTag(final String world, final Set<CuboidRegion> regions,
         final RunnableVal<CompoundTag> whenDone) {
         // async
         TaskManager.runTaskAsync(new Runnable() {
@@ -61,7 +73,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 List<CompoundTag> tileEntities = new ArrayList<>();
                 ByteArrayOutputStream buffer = new ByteArrayOutputStream(width * height * length);
                 // Queue
-                final ArrayDeque<RegionWrapper> queue = new ArrayDeque<>(regions);
+                final ArrayDeque<CuboidRegion> queue = new ArrayDeque<>(regions);
                 TaskManager.runTask(new Runnable() {
                     @Override public void run() {
                         if (queue.isEmpty()) {
@@ -82,9 +94,9 @@ public class BukkitSchematicHandler extends SchematicHandler {
                             return;
                         }
                         final Runnable regionTask = this;
-                        RegionWrapper region = queue.poll();
-                        Location pos1 = new Location(world, region.minX, region.minY, region.minZ);
-                        Location pos2 = new Location(world, region.maxX, region.maxY, region.maxZ);
+                        CuboidRegion region = queue.poll();
+                        Location pos1 = new Location(world, region.getMinimumPoint().getX(), region.getMinimumPoint().getY(), region.getMinimumPoint().getZ());
+                        Location pos2 = new Location(world, region.getMaximumPoint().getX(), region.getMaximumPoint().getY(), region.getMaximumPoint().getZ());
                         final int p1x = pos1.getX();
                         final int sy = pos1.getY();
                         final int p1z = pos1.getZ();

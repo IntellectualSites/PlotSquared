@@ -10,12 +10,25 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class Command {
 
@@ -33,19 +46,19 @@ public abstract class Command {
     private RequiredType required;
     private String usage;
     private String description;
-    private String perm;
+    private String permission;
     private boolean confirmation;
     private CommandCategory category;
     private Argument[] arguments;
 
-    public Command(Command parent, boolean isStatic, String id, String perm, RequiredType required,
-        CommandCategory cat) {
+    public Command(Command parent, boolean isStatic, String id, String permission,
+        RequiredType required, CommandCategory category) {
         this.parent = parent;
         this.isStatic = isStatic;
         this.id = id;
-        this.perm = perm;
+        this.permission = permission;
         this.required = required;
-        this.category = cat;
+        this.category = category;
         this.aliases = Arrays.asList(id);
         if (this.parent != null) {
             this.parent.register(this);
@@ -68,14 +81,16 @@ public abstract class Command {
                     && types[2] == String[].class && types[3] == RunnableVal3.class
                     && types[4] == RunnableVal2.class) {
                     Command tmp = new Command(this, true) {
-                        @Override public void execute(PlotPlayer player, String[] args,
+                        @Override public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
                             RunnableVal3<Command, Runnable, Runnable> confirm,
                             RunnableVal2<Command, CommandResult> whenDone) {
                             try {
                                 method.invoke(Command.this, this, player, args, confirm, whenDone);
+                                return CompletableFuture.completedFuture(true);
                             } catch (IllegalAccessException | InvocationTargetException e) {
                                 e.printStackTrace();
                             }
+                            return CompletableFuture.completedFuture(false);
                         }
                     };
                     tmp.init(method.getAnnotation(CommandDeclaration.class));
@@ -147,13 +162,13 @@ public abstract class Command {
 
     public void init(CommandDeclaration declaration) {
         this.id = declaration.command();
-        this.perm = declaration.permission();
+        this.permission = declaration.permission();
         this.required = declaration.requiredType();
         this.category = declaration.category();
-        HashMap<String, Object> options = new HashMap<>();
         List<String> aliasOptions = new ArrayList<>();
         aliasOptions.add(this.id);
         aliasOptions.addAll(Arrays.asList(declaration.aliases()));
+        HashMap<String, Object> options = new HashMap<>();
         options.put("aliases", aliasOptions);
         options.put("description", declaration.description());
         options.put("usage", declaration.usage());
@@ -197,8 +212,8 @@ public abstract class Command {
     }
 
     public String getPermission() {
-        if (this.perm != null && !this.perm.isEmpty()) {
-            return this.perm;
+        if (this.permission != null && !this.permission.isEmpty()) {
+            return this.permission;
         }
         if (this.parent == null) {
             return "plots.use";
@@ -237,29 +252,31 @@ public abstract class Command {
         if (page < totalPages && page > 0) { // Back | Next
             new PlotMessage().text("<-").color("$1").command(baseCommand + " " + page).text(" | ")
                 .color("$3").text("->").color("$1").command(baseCommand + " " + (page + 2))
-                .text(Captions.CLICKABLE.s()).color("$2").send(player);
+                .text(Captions.CLICKABLE.getTranslated()).color("$2").send(player);
             return;
         }
         if (page == 0 && totalPages != 0) { // Next
             new PlotMessage().text("<-").color("$3").text(" | ").color("$3").text("->").color("$1")
-                .command(baseCommand + " " + (0 + 2)).text(Captions.CLICKABLE.s()).color("$2")
+                .command(baseCommand + " " + 2).text(Captions.CLICKABLE.getTranslated()).color("$2")
                 .send(player);
             return;
         }
-        if (page == totalPages && totalPages != 0) { // Back
+        if (totalPages != 0) { // Back
             new PlotMessage().text("<-").color("$1").command(baseCommand + " " + page).text(" | ")
-                .color("$3").text("->").color("$3").text(Captions.CLICKABLE.s()).color("$2")
+                .color("$3").text("->").color("$3").text(Captions.CLICKABLE.getTranslated())
+                .color("$2")
                 .send(player);
         }
     }
 
     /**
      * @param player  Caller
-     * @param args    Arguments
+     * @param args Arguments
      * @param confirm Instance, Success, Failure
-     * @return
+     * @return CompletableFuture true if the command executed fully, false in
+     * any other case
      */
-    public void execute(PlotPlayer player, String[] args,
+    public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         if (args.length == 0 || args[0] == null) {
@@ -268,18 +285,18 @@ public abstract class Command {
             } else {
                 Captions.COMMAND_SYNTAX.send(player, getUsage());
             }
-            return;
+            return CompletableFuture.completedFuture(false);
         }
         if (this.allCommands.isEmpty()) {
             player.sendMessage(
                 "Not Implemented: https://github.com/IntellectualSites/PlotSquared/issues/new");
-            return;
+            return CompletableFuture.completedFuture(false);
         }
         Command cmd = getCommand(args[0]);
         if (cmd == null) {
             if (this.parent != null) {
                 Captions.COMMAND_SYNTAX.send(player, getUsage());
-                return;
+                return CompletableFuture.completedFuture(false);
             }
             // Help command
             try {
@@ -289,7 +306,7 @@ public abstract class Command {
                 // This will default certain syntax to the help command
                 // e.g. /plot, /plot 1, /plot claiming
                 MainCommand.getInstance().help.execute(player, args, null, null);
-                return;
+                return CompletableFuture.completedFuture(false);
             } catch (IllegalArgumentException ignored) {
             }
             // Command recommendation
@@ -298,13 +315,16 @@ public abstract class Command {
             if (commands.isEmpty()) {
                 MainUtil.sendMessage(player, Captions.DID_YOU_MEAN,
                     MainCommand.getInstance().help.getUsage());
-                return;
+                return CompletableFuture.completedFuture(false);
             }
-            String[] allargs =
-                Arrays.stream(args).map(String::toLowerCase).distinct().toArray(String[]::new);
+            HashSet<String> setArgs = new HashSet<>(args.length);
+            for (String arg : args) {
+                setArgs.add(arg.toLowerCase());
+            }
+            String[] allArgs = setArgs.toArray(new String[0]);
             int best = 0;
             for (Command current : commands) {
-                int match = getMatch(allargs, current);
+                int match = getMatch(allArgs, current);
                 if (match > best) {
                     cmd = current;
                 }
@@ -313,17 +333,18 @@ public abstract class Command {
                 cmd = new StringComparison<>(args[0], this.allCommands).getMatchObject();
             }
             MainUtil.sendMessage(player, Captions.DID_YOU_MEAN, cmd.getUsage());
-            return;
+            return CompletableFuture.completedFuture(false);
         }
         String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
         if (!cmd.checkArgs(player, newArgs) || !cmd.canExecute(player, true)) {
-            return;
+            return CompletableFuture.completedFuture(false);
         }
         try {
             cmd.execute(player, newArgs, confirm, whenDone);
         } catch (CommandException e) {
             e.perform(player);
         }
+        return CompletableFuture.completedFuture(true);
     }
 
     public boolean checkArgs(CommandCaller player, String[] args) {
@@ -375,7 +396,7 @@ public abstract class Command {
             String[] split = usage[i].split("\\|| |\\>|\\<|\\[|\\]|\\{|\\}|\\_|\\/");
             for (String aSplit : split) {
                 for (String arg : args) {
-                    if (StringMan.isEqualIgnoreCase(arg, aSplit)) {
+                    if (arg.equalsIgnoreCase(aSplit)) {
                         count += 5 - i + require;
                     }
                 }
@@ -477,7 +498,7 @@ public abstract class Command {
             return null;
         }
         List<Command> result = new ArrayList<>();
-        int index = input.length - (space ? 0 : 1);
+        int index = input.length;
         for (String arg : args) {
             arg = arg.replace(getCommandString() + " ", "");
             String[] split = arg.split(" ");

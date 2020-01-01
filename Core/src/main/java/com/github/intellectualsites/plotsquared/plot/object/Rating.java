@@ -5,7 +5,6 @@ import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.stream.IntStream;
 
 public class Rating {
@@ -55,7 +54,7 @@ public class Rating {
         if (Settings.Ratings.USE_LIKES) {
             return getLike() ? 10 : 1;
         }
-        double total = this.ratingMap.entrySet().stream().mapToDouble(Entry::getValue).sum();
+        double total = this.ratingMap.values().stream().mapToDouble(v -> v).sum();
         return total / this.ratingMap.size();
     }
 

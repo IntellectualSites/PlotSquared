@@ -14,6 +14,7 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "buy", description = "Buy the plot you are standing on",
     usage = "/plot buy", permission = "plots.buy", category = CommandCategory.CLAIMING,
@@ -23,7 +24,7 @@ import java.util.Set;
         super(MainCommand.getInstance(), true);
     }
 
-    @Override public void execute(final PlotPlayer player, String[] args,
+    @Override public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) {
 
@@ -65,5 +66,6 @@ import java.util.Set;
             player.deposit(price);
             whenDone.run(Buy.this, CommandResult.FAILURE);
         });
+        return CompletableFuture.completedFuture(true);
     }
 }

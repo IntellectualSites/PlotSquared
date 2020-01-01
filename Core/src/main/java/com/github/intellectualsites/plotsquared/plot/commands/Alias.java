@@ -21,12 +21,12 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
 
         if (args.length == 0) {
-            Captions.COMMAND_SYNTAX.send(player, "/plot alias <set|remove> <value>");
+            Captions.COMMAND_SYNTAX.send(player, getUsage());
             return false;
         }
 
-        Location loc = player.getLocation();
-        Plot plot = loc.getPlotAbs();
+        Location location = player.getLocation();
+        Plot plot = location.getPlotAbs();
         if (plot == null) {
             return !sendMessage(player, Captions.NOT_IN_PLOT);
         }
@@ -64,7 +64,7 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
                 }
                 break;
             default:
-                Captions.COMMAND_SYNTAX.send(player, "/plot alias <set|remove> <alias>");
+                Captions.COMMAND_SYNTAX.send(player, getUsage());
                 result = false;
         }
 
@@ -101,13 +101,14 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
             return false;
         }
         plot.setAlias(alias);
-        MainUtil.sendMessage(player, Captions.ALIAS_SET_TO.s().replaceAll("%alias%", alias));
+        MainUtil.sendMessage(player,
+            Captions.ALIAS_SET_TO.getTranslated().replaceAll("%alias%", alias));
         return true;
     }
 
     private boolean removeAlias(PlotPlayer player, Plot plot) {
         plot.setAlias(null);
-        MainUtil.sendMessage(player, Captions.ALIAS_REMOVED.s());
+        MainUtil.sendMessage(player, Captions.ALIAS_REMOVED.getTranslated());
         return true;
     }
 

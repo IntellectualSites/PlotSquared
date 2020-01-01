@@ -16,8 +16,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import java.util.*;
-
 public class SpongeCommand implements CommandCallable {
 
     @Override public CommandResult process(CommandSource source, String arguments)

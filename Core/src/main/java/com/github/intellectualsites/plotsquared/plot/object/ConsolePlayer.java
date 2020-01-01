@@ -3,10 +3,14 @@ package com.github.intellectualsites.plotsquared.plot.object;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.RequiredType;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.util.PlotGameMode;
 import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
+import com.sk89q.worldedit.extension.platform.Actor;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.gamemode.GameMode;
+import com.sk89q.worldedit.world.gamemode.GameModes;
+import com.sk89q.worldedit.world.item.ItemType;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public class ConsolePlayer extends PlotPlayer {
@@ -15,15 +19,15 @@ public class ConsolePlayer extends PlotPlayer {
 
     private ConsolePlayer() {
         PlotArea area = PlotSquared.get().getFirstPlotArea();
-        Location loc;
+        Location location;
         if (area != null) {
-            RegionWrapper region = area.getRegion();
-            loc = new Location(area.worldname, region.minX + region.maxX / 2, 0,
-                region.minZ + region.maxZ / 2);
+            CuboidRegion region = area.getRegion();
+            location = new Location(area.worldname, region.getMinimumPoint().getX() + region.getMaximumPoint().getX() / 2, 0,
+                region.getMinimumPoint().getZ() + region.getMaximumPoint().getZ() / 2);
         } else {
-            loc = new Location("world", 0, 0, 0);
+            location = new Location("world", 0, 0, 0);
         }
-        setMeta("location", loc);
+        setMeta("location", location);
     }
 
     public static ConsolePlayer getConsole() {
@@ -34,11 +38,19 @@ public class ConsolePlayer extends PlotPlayer {
         return instance;
     }
 
-    @Override public boolean canTeleport(Location loc) {
+    @Override public Actor toActor() {
+        return PlotSquared.get().IMP.getConsole();
+    }
+
+    @Override public boolean canTeleport(@NotNull Location location) {
         return true;
     }
 
-    @Override public Location getLocation() {
+    @Override
+    public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+    }
+
+    @NotNull @Override public Location getLocation() {
         return this.getMeta("location");
     }
 
@@ -46,7 +58,7 @@ public class ConsolePlayer extends PlotPlayer {
         return getLocation();
     }
 
-    @Nonnull @Override public UUID getUUID() {
+    @NotNull @Override public UUID getUUID() {
         return DBFunc.EVERYONE;
     }
 
@@ -96,14 +108,14 @@ public class ConsolePlayer extends PlotPlayer {
         return RequiredType.CONSOLE;
     }
 
-    @Override public void setWeather(PlotWeather weather) {
+    @Override public void setWeather(@NotNull PlotWeather weather) {
     }
 
-    @Override public PlotGameMode getGameMode() {
-        return PlotGameMode.NOT_SET;
+    @Override public @NotNull GameMode getGameMode() {
+        return GameModes.SPECTATOR;
     }
 
-    @Override public void setGameMode(PlotGameMode gameMode) {
+    @Override public void setGameMode(@NotNull GameMode gameMode) {
     }
 
     @Override public void setTime(long time) {
@@ -116,7 +128,7 @@ public class ConsolePlayer extends PlotPlayer {
     @Override public void setFlight(boolean fly) {
     }
 
-    @Override public void playMusic(Location location, PlotBlock id) {
+    @Override public void playMusic(@NotNull Location location, @NotNull ItemType id) {
     }
 
     @Override public void kick(String message) {

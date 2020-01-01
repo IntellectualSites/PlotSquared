@@ -8,7 +8,11 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.sk89q.jnbt.CompoundTag;
 
 import java.net.URL;
@@ -37,7 +41,7 @@ import java.net.URL;
             return false;
         }
         if ((!plot.isOwner(player.getUUID())) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN.s())) {
+            .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated())) {
             MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
             return false;
         }
@@ -72,7 +76,7 @@ import java.net.URL;
                 Captions.NO_PERMISSION.send(player, Captions.PERMISSION_DOWNLOAD_WORLD);
                 return false;
             }
-            MainUtil.sendMessage(player, "&cNote: The `.mca` files are 512x512");
+            MainUtil.sendMessage(player, Captions.MCA_FILE_SIZE);
             plot.addRunning();
             WorldUtil.IMP.saveWorld(world);
             WorldUtil.IMP.upload(plot, null, null, new RunnableVal<URL>() {

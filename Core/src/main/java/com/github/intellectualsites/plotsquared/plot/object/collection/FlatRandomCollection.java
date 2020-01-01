@@ -13,7 +13,7 @@ public class FlatRandomCollection<T> extends RandomCollection<T> {
         super(weights, random);
         int max = 0;
         int[] counts = new int[weights.size()];
-        Double[] weightDoubles = weights.values().toArray(new Double[weights.size()]);
+        Double[] weightDoubles = weights.values().toArray(new Double[0]);
         for (int i = 0; i < weightDoubles.length; i++) {
             int weight = (int) (weightDoubles[i] * 100);
             counts[i] = weight;

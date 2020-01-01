@@ -6,16 +6,32 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 @CommandDeclaration(command = "setup", permission = "plots.admin.command.setup",
     description = "Setup wizard for plot worlds", usage = "/plot setup", aliases = {"create"},
@@ -260,8 +276,9 @@ import java.util.Map.Entry;
                     Captions.NOT_ALLOWED_BLOCK.send(player, e.getUnsafeBlock().toString());
                 }
                 if (valid) {
-                    sendMessage(player, Captions.SETUP_VALID_ARG, step.getConstant(), args[0]);
                     step.setValue(args[0]);
+                    Object value = step.getValue();
+                    sendMessage(player, Captions.SETUP_VALID_ARG, step.getConstant(), value);
                     object.setup_index++;
                     if (object.setup_index == object.step.length) {
                         onCommand(player, args);
@@ -282,6 +299,11 @@ import java.util.Map.Entry;
             case 7:
                 if (args.length != 1) {
                     MainUtil.sendMessage(player, "&cYou need to choose a world name!");
+                    return false;
+                }
+                if (!d(args[0])) {
+                    MainUtil.sendMessage(player,
+                        "Non [a-z0-9_.-] character in the world name: " + args[0]);
                     return false;
                 }
                 if (WorldUtil.IMP.isWorld(args[0])) {
@@ -313,6 +335,11 @@ import java.util.Map.Entry;
         return false;
     }
 
+    private static boolean d(String s) {
+        return s.chars().allMatch((i) -> {
+            return i == 95 || i == 45 || i >= 97 && i <= 122 || i >= 48 && i <= 57 || i == 46;
+        });
+    }
     private static final class StepPickGenerator extends SetupStep {
 
         @Getter private String generator;
@@ -345,7 +372,7 @@ import java.util.Map.Entry;
             return messages;
         }
 
-        @Override public boolean parseInut(String input) {
+        @Override public boolean parseInput(String input) {
             this.generator = input.toLowerCase();
             return true;
         }
@@ -385,7 +412,7 @@ import java.util.Map.Entry;
             return messages;
         }
 
-        @Override public boolean parseInut(String input) {
+        @Override public boolean parseInput(String input) {
             if (!WORLD_TYPES.keySet().contains(input.toLowerCase())) {
                 return false;
             }
@@ -416,7 +443,7 @@ import java.util.Map.Entry;
 
         public abstract Collection<PlotMessage> showDescriptionMessage();
 
-        public abstract boolean parseInut(String input);
+        public abstract boolean parseInput(String input);
 
         public final PlotMessage getUsage() {
             return new PlotMessage("Usage: ").color("$1")

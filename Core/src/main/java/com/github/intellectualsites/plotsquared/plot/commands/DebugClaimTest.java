@@ -4,12 +4,19 @@ import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.StringWrapper;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.google.common.collect.BiMap;
+import com.sk89q.worldedit.math.BlockVector2;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -17,8 +24,7 @@ import java.util.UUID;
 
 @CommandDeclaration(command = "debugclaimtest", description =
     "If you accidentally delete your database, this command will attempt to restore all plots based on the data from plot signs. "
-        + "Execution time may vary", category = CommandCategory.DEBUG,
-    requiredType = RequiredType.CONSOLE, permission = "plots.debugclaimtest")
+        + "Execution time may vary", category = CommandCategory.DEBUG, requiredType = RequiredType.CONSOLE, permission = "plots.debugclaimtest")
 public class DebugClaimTest extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
@@ -55,58 +61,55 @@ public class DebugClaimTest extends SubCommand {
                 MainUtil.sendMessage(player, " - &cDB Already contains: " + plot.getId());
                 continue;
             }
-            Location loc = manager.getSignLoc(area, plot);
-            ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
-            boolean result = ChunkManager.manager.loadChunk(area.worldname, chunk, false);
-            if (!result) {
-                continue;
-            }
-            String[] lines = WorldUtil.IMP.getSign(loc);
-            if (lines != null) {
-                String line = lines[2];
-                if (line != null && line.length() > 2) {
-                    line = line.substring(2);
-                    BiMap<StringWrapper, UUID> map = UUIDHandler.getUuidMap();
-                    UUID uuid = map.get(new StringWrapper(line));
-                    if (uuid == null) {
-                        for (Map.Entry<StringWrapper, UUID> stringWrapperUUIDEntry : map
-                            .entrySet()) {
-                            if (stringWrapperUUIDEntry.getKey().value.toLowerCase()
-                                .startsWith(line.toLowerCase())) {
-                                uuid = stringWrapperUUIDEntry.getValue();
-                                break;
+            Location location = manager.getSignLoc(plot);
+            BlockVector2 chunk = BlockVector2.at(location.getX() >> 4, location.getZ() >> 4);
+            ChunkManager.manager.loadChunk(area.worldname, chunk, false).thenRun(() -> {
+                String[] lines = WorldUtil.IMP.getSign(location);
+                if (lines != null) {
+                    String line = lines[2];
+                    if (line != null && line.length() > 2) {
+                        line = line.substring(2);
+                        BiMap<StringWrapper, UUID> map = UUIDHandler.getUuidMap();
+                        UUID uuid = map.get(new StringWrapper(line));
+                        if (uuid == null) {
+                            for (Map.Entry<StringWrapper, UUID> stringWrapperUUIDEntry : map
+                                .entrySet()) {
+                                if (stringWrapperUUIDEntry.getKey().value.toLowerCase()
+                                    .startsWith(line.toLowerCase())) {
+                                    uuid = stringWrapperUUIDEntry.getValue();
+                                    break;
+                                }
                             }
                         }
-                    }
-                    if (uuid == null) {
-                        uuid = UUIDHandler.getUUID(line, null);
-                    }
-                    if (uuid != null) {
-                        MainUtil
-                            .sendMessage(player, " - &aFound plot: " + plot.getId() + " : " + line);
-                        plot.setOwner(uuid);
-                        plots.add(plot);
-                    } else {
-                        MainUtil.sendMessage(player,
-                            " - &cInvalid PlayerName: " + plot.getId() + " : " + line);
+                        if (uuid == null) {
+                            uuid = UUIDHandler.getUUID(line, null);
+                        }
+                        if (uuid != null) {
+                            MainUtil.sendMessage(player,
+                                " - &aFound plot: " + plot.getId() + " : " + line);
+                            plot.setOwner(uuid);
+                            plots.add(plot);
+                        } else {
+                            MainUtil.sendMessage(player,
+                                " - &cInvalid PlayerName: " + plot.getId() + " : " + line);
+                        }
                     }
                 }
-            }
-        }
-        if (!plots.isEmpty()) {
-            MainUtil.sendMessage(player,
-                "&3Sign Block&8->&3Plot&8: &7Updating '" + plots.size() + "' plots!");
-            DBFunc.createPlotsAndData(plots, new Runnable() {
-                @Override public void run() {
-                    MainUtil.sendMessage(player, "&6Database update finished!");
+            }).thenRun(() -> {
+                if (!plots.isEmpty()) {
+                    MainUtil.sendMessage(player,
+                        "&3Sign Block&8->&3Plot&8: &7Updating '" + plots.size() + "' plots!");
+                    DBFunc.createPlotsAndData(plots,
+                        () -> MainUtil.sendMessage(player, "&6Database update finished!"));
+                    for (Plot plot1 : plots) {
+                        plot.create();
+                    }
+                    MainUtil.sendMessage(player, "&3Sign Block&8->&3Plot&8: &7Complete!");
+                } else {
+                    MainUtil.sendMessage(player, "No plots were found for the given search.");
                 }
             });
-            for (Plot plot : plots) {
-                plot.create();
-            }
-            MainUtil.sendMessage(player, "&3Sign Block&8->&3Plot&8: &7Complete!");
-        } else {
-            MainUtil.sendMessage(player, "No plots were found for the given search.");
+            return true;
         }
         return true;
     }

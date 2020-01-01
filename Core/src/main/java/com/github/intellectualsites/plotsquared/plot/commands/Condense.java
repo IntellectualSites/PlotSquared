@@ -11,11 +11,16 @@ import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
-import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @CommandDeclaration(command = "condense", permission = "plots.admin",
+    usage = "/plot condense <area> <start|stop|info> [radius]",
     description = "Condense a plotworld", category = CommandCategory.ADMINISTRATION,
     requiredType = RequiredType.CONSOLE) public class Condense extends SubCommand {
 
@@ -23,7 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length != 2 && args.length != 3) {
-            MainUtil.sendMessage(player, "/plot condense <area> <start|stop|info> [radius]");
+            MainUtil.sendMessage(player, getUsage());
             return false;
         }
         PlotArea area = PlotSquared.get().getPlotAreaByString(args[0]);
@@ -104,6 +109,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
                     return false;
                 }
                 MainUtil.sendMessage(player, "TASK STARTED...");
+                Condense.TASK = true;
                 Runnable run = new Runnable() {
                     @Override public void run() {
                         if (!Condense.TASK) {
@@ -147,7 +153,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
                         }
                     }
                 };
-                Condense.TASK = true;
                 TaskManager.runTaskAsync(run);
                 return true;
             }

@@ -2,18 +2,26 @@ package com.github.intellectualsites.plotsquared.plot.object.worlds;
 
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
-import com.github.intellectualsites.plotsquared.plot.object.*;
-import com.google.common.collect.Sets;
+import com.github.intellectualsites.plotsquared.plot.object.BlockLoc;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class SinglePlot extends Plot {
-    private HashSet<RegionWrapper> regions = Sets.newHashSet(
-        new RegionWrapper(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
-            Integer.MAX_VALUE));
+    private Set<CuboidRegion> regions = Collections.singleton(
+        new CuboidRegion(BlockVector3.at(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE),
+            BlockVector3.at(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE)));
 
     public SinglePlot(PlotArea area, PlotId id, UUID owner) {
         super(area, id, owner);
@@ -35,7 +43,7 @@ public class SinglePlot extends Plot {
     }
 
     @Override public String getWorldName() {
-        return getId().toCommaSeparatedString();
+        return getId().getX() + "." + getId().getY();
     }
 
     @Override public SinglePlotArea getArea() {
@@ -60,7 +68,7 @@ public class SinglePlot extends Plot {
         return super.isLoaded();
     }
 
-    @Nonnull @Override public HashSet<RegionWrapper> getRegions() {
+    @NotNull @Override public Set<CuboidRegion> getRegions() {
         return regions;
     }
 

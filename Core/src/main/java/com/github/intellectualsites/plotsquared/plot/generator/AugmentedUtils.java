@@ -1,11 +1,19 @@
 package com.github.intellectualsites.plotsquared.plot.generator;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.util.block.DelegateLocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
+import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.biome.BiomeType;
+import com.sk89q.worldedit.world.block.BlockState;
+import com.sk89q.worldedit.world.block.BlockTypes;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
@@ -19,15 +27,15 @@ public class AugmentedUtils {
         enabled = true;
     }
 
-    public static boolean generate(final String world, final int cx, final int cz,
+    public static boolean generate(@NotNull final String world, final int chunkX, final int chunkZ,
         LocalBlockQueue queue) {
         if (!enabled) {
             return false;
         }
 
-        final int bx = cx << 4;
-        final int bz = cz << 4;
-        RegionWrapper region = new RegionWrapper(bx, bx + 15, bz, bz + 15);
+        final int blockX = chunkX << 4;
+        final int blockZ = chunkZ << 4;
+        CuboidRegion region = RegionUtil.createRegion(blockX, blockX + 15, blockZ, blockZ + 15);
         Set<PlotArea> areas = PlotSquared.get().getPlotAreas(world, region);
         if (areas.isEmpty()) {
             return false;
@@ -41,34 +49,31 @@ public class AugmentedUtils {
                 continue;
             }
             IndependentPlotGenerator generator = area.getGenerator();
-            if (generator == null) {
-                continue;
-            }
             // Mask
             if (queue == null) {
                 queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
             }
             LocalBlockQueue primaryMask;
-            // coords
+            // coordinates
             int bxx;
             int bzz;
             int txx;
             int tzz;
             // gen
             if (area.TYPE == 2) {
-                bxx = Math.max(0, area.getRegion().minX - bx);
-                bzz = Math.max(0, area.getRegion().minZ - bz);
-                txx = Math.min(15, area.getRegion().maxX - bx);
-                tzz = Math.min(15, area.getRegion().maxZ - bz);
+                bxx = Math.max(0, area.getRegion().getMinimumPoint().getX() - blockX);
+                bzz = Math.max(0, area.getRegion().getMinimumPoint().getZ() - blockZ);
+                txx = Math.min(15, area.getRegion().getMaximumPoint().getX() - blockX);
+                tzz = Math.min(15, area.getRegion().getMaximumPoint().getZ() - blockZ);
                 primaryMask = new DelegateLocalBlockQueue(queue) {
-                    @Override public boolean setBlock(int x, int y, int z, PlotBlock id) {
+                    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
                         if (area.contains(x, z)) {
                             return super.setBlock(x, y, z, id);
                         }
                         return false;
                     }
 
-                    @Override public boolean setBiome(int x, int z, String biome) {
+                    @Override public boolean setBiome(int x, int z, BiomeType biome) {
                         if (area.contains(x, z)) {
                             return super.setBiome(x, z, biome);
                         }
@@ -81,16 +86,16 @@ public class AugmentedUtils {
                 primaryMask = queue;
             }
             LocalBlockQueue secondaryMask;
-            PlotBlock air = StringPlotBlock.EVERYTHING;
+            BlockState air = BlockTypes.AIR.getDefaultState();
             if (area.TERRAIN == 2) {
                 PlotManager manager = area.getPlotManager();
                 final boolean[][] canPlace = new boolean[16][16];
                 boolean has = false;
                 for (int x = bxx; x <= txx; x++) {
                     for (int z = bzz; z <= tzz; z++) {
-                        int rx = x + bx;
-                        int rz = z + bz;
-                        boolean can = manager.getPlotId(area, rx, 0, rz) == null;
+                        int rx = x + blockX;
+                        int rz = z + blockZ;
+                        boolean can = manager.getPlotId(rx, 0, rz) == null;
                         if (can) {
                             for (int y = 1; y < 128; y++) {
                                 queue.setBlock(rx, y, rz, air);
@@ -105,14 +110,14 @@ public class AugmentedUtils {
                 }
                 toReturn = true;
                 secondaryMask = new DelegateLocalBlockQueue(primaryMask) {
-                    @Override public boolean setBlock(int x, int y, int z, PlotBlock id) {
-                        if (canPlace[x - bx][z - bz]) {
+                    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
+                        if (canPlace[x - blockX][z - blockZ]) {
                             return super.setBlock(x, y, z, id);
                         }
                         return false;
                     }
 
-                    @Override public boolean setBiome(int x, int y, String biome) {
+                    @Override public boolean setBiome(int x, int y, BiomeType biome) {
                         return super.setBiome(x, y, biome);
                     }
                 };
@@ -121,15 +126,15 @@ public class AugmentedUtils {
                 for (int x = bxx; x <= txx; x++) {
                     for (int z = bzz; z <= tzz; z++) {
                         for (int y = 1; y < 128; y++) {
-                            queue.setBlock(bx + x, y, bz + z, air);
+                            queue.setBlock(blockX + x, y, blockZ + z, air);
                         }
                     }
                 }
                 toReturn = true;
             }
-            ScopedLocalBlockQueue scoped =
-                new ScopedLocalBlockQueue(secondaryMask, new Location(area.worldname, bx, 0, bz),
-                    new Location(area.worldname, bx + 15, 255, bz + 15));
+            ScopedLocalBlockQueue scoped = new ScopedLocalBlockQueue(secondaryMask,
+                new Location(area.worldname, blockX, 0, blockZ),
+                new Location(area.worldname, blockX + 15, 255, blockZ + 15));
             generator.generateChunk(scoped, area);
             generator.populateChunk(scoped, area);
         }

@@ -11,17 +11,17 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 
 @CommandDeclaration(usage = "/plot move <X;Z>", command = "move", description = "Move a plot",
-    aliases = {"debugmove"}, permission = "plots.move", category = CommandCategory.CLAIMING,
+    permission = "plots.move", category = CommandCategory.CLAIMING,
     requiredType = RequiredType.PLAYER) public class Move extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
-        Location loc = player.getLocation();
-        Plot plot1 = loc.getPlotAbs();
+        Location location = player.getLocation();
+        Plot plot1 = location.getPlotAbs();
         if (plot1 == null) {
             return !MainUtil.sendMessage(player, Captions.NOT_IN_PLOT);
         }
         if (!plot1.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN.s())) {
+            .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated())) {
             MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
             return false;
         }
@@ -50,7 +50,7 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
             return false;
         }
         if (!plot1.getArea().isCompatible(plot2.getArea()) && (!override || !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN.s()))) {
+            .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated()))) {
             Captions.PLOTWORLD_INCOMPATIBLE.send(player);
             return false;
         }

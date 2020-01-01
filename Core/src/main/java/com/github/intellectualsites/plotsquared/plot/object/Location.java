@@ -2,15 +2,16 @@ package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import lombok.Getter;
 import lombok.Setter;
 
 public class Location implements Cloneable, Comparable<Location> {
 
-    @Getter private int x;
-    @Getter private int y;
-    @Getter private int z;
+    private int x;
+    private int y;
+    private int z;
     @Getter @Setter private float yaw;
     @Getter @Setter private float pitch;
     @Getter @Setter private String world;
@@ -26,12 +27,20 @@ public class Location implements Cloneable, Comparable<Location> {
         this.blockVector3 = BlockVector3.at(x, y, z);
     }
 
-    public Location() {
-        this.world = "";
-    }
-
     public Location(String world, int x, int y, int z) {
         this(world, x, y, z, 0f, 0f);
+    }
+
+    public int getX() {
+        return this.x;
+    }
+
+    public int getY() {
+        return this.y;
+    }
+
+    public int getZ() {
+        return this.z;
     }
 
     public void setX(int x) {
@@ -56,7 +65,8 @@ public class Location implements Cloneable, Comparable<Location> {
         this.z = blockVector3.getZ();
     }
 
-    @Override public Location clone() {
+    @Override
+    public Location clone() {
         try {
             return (Location) super.clone();
         } catch (CloneNotSupportedException e) {
@@ -95,6 +105,10 @@ public class Location implements Cloneable, Comparable<Location> {
         return area != null && area.getPlotAbs(this) == null;
     }
 
+    /**
+     * Checks if anyone owns a plot at the current location.
+     * @return true if the location is a road, not a plot area, or if the plot is unclaimed.
+     */
     public boolean isUnownedPlotArea() {
         PlotArea area = getPlotArea();
         return area != null && area.getOwnedPlotAbs(this) == null;
@@ -127,8 +141,8 @@ public class Location implements Cloneable, Comparable<Location> {
         }
     }
 
-    public ChunkLoc getChunkLoc() {
-        return new ChunkLoc(this.x >> 4, this.z >> 4);
+    public BlockVector2 getBlockVector2() {
+        return BlockVector2.at(this.x >> 4, this.z >> 4);
     }
 
     public Location add(int x, int y, int z) {

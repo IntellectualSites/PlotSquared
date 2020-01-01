@@ -16,7 +16,11 @@ import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.StringWrapper;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.google.common.collect.Sets;
 
@@ -24,8 +28,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 @CommandDeclaration(command = "uuidconvert", permission = "plots.admin",
     description = "Debug UUID conversion", usage = "/plot uuidconvert <lower|offline|online>",
@@ -63,7 +71,7 @@ import java.util.Map.Entry;
 
         if (args.length != 2 || !"-o".equals(args[1])) {
             MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                "/plot uuidconvert " + args[0] + " - o");
+                "/plot uuidconvert " + args[0] + " -o");
             MainUtil.sendMessage(player, "&cBe aware of the following!");
             MainUtil.sendMessage(player,
                 "&8 - &cUse the database command or another method to backup your plots beforehand");

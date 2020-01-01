@@ -1,9 +1,11 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
+
 public class LongFlag extends Flag<Long> {
 
     public LongFlag(String name) {
-        super(name);
+        super(Captions.FLAG_CATEGORY_INTEGERS, name);
     }
 
     @Override public Long parseValue(String value) {
@@ -19,6 +21,6 @@ public class LongFlag extends Flag<Long> {
     }
 
     @Override public String getValueDescription() {
-        return "Flag value must be a whole number (large numbers allowed)";
+        return Captions.FLAG_ERROR_LONG.getTranslated();
     }
 }

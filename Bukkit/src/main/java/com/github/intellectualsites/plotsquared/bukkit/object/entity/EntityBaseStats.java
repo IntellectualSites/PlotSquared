@@ -1,6 +1,5 @@
 package com.github.intellectualsites.plotsquared.bukkit.object.entity;
 
-
 class EntityBaseStats {
 
     EntityWrapper passenger;

@@ -1,9 +1,30 @@
 package com.github.intellectualsites.plotsquared.bukkit.object.entity;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import org.bukkit.*;
+import org.bukkit.Art;
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.Rotation;
+import org.bukkit.TreeSpecies;
+import org.bukkit.World;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.*;
+import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.Ageable;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Bat;
+import org.bukkit.entity.Boat;
+import org.bukkit.entity.ChestedHorse;
+import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.IronGolem;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Painting;
+import org.bukkit.entity.Rabbit;
+import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Slime;
+import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -576,14 +597,6 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 restoreAgeable((Ageable) entity);
                 restoreLiving((LivingEntity) entity);
                 return entity;
-            case GUARDIAN:
-            case ELDER_GUARDIAN:
-                restoreLiving((LivingEntity) entity);
-                return entity;
-            case SKELETON:
-            case WITHER_SKELETON:
-                restoreLiving((LivingEntity) entity);
-                return entity;
             case ARMOR_STAND:
                 // CHECK positions
                 ArmorStand stand = (ArmorStand) entity;
@@ -679,6 +692,10 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             case BLAZE:
             case SNOWMAN:
             case SHULKER:
+            case GUARDIAN:
+            case ELDER_GUARDIAN:
+            case SKELETON:
+            case WITHER_SKELETON:
                 restoreLiving((LivingEntity) entity);
                 return entity;
             case IRON_GOLEM:

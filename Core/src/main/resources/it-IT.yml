@@ -148,7 +148,7 @@ setup:
   setup_invalid_generator: '$2Generatore non valido. Opzioni possibili: %s'
 schematics:
   schematic_too_large: $2Il lotto è troppo grande per questa azione!
-  schematic_missing_arg: '$2Devi specificare un argomento. Valori possibili: $1test <nome>$2 , $1save$2 , $1paste $2, $1exportall'
+  schematic_missing_arg: '$2Devi specificare un argomento. Valori possibili: $1save$2, $1paste $2, $1exportall'
   schematic_invalid: '$2Quella non è una schematica valida. Motivo: $2%s'
   schematic_valid: $2Quella è una schematica valida
   schematic_paste_failed: $2L'incollaggio della schematica è fallito

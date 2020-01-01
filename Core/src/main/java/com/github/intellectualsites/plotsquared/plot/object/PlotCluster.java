@@ -2,6 +2,8 @@ package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
+import com.sk89q.worldedit.regions.CuboidRegion;
 
 import java.util.HashSet;
 import java.util.UUID;
@@ -15,7 +17,7 @@ public class PlotCluster {
     public int temp;
     private PlotId pos1;
     private PlotId pos2;
-    private RegionWrapper region;
+    private CuboidRegion region;
 
     public PlotCluster(PlotArea area, PlotId pos1, PlotId pos2, UUID owner) {
         this.area = area;
@@ -56,10 +58,10 @@ public class PlotCluster {
     }
 
     private void setRegion() {
-        this.region = new RegionWrapper(this.pos1.x, this.pos2.x, this.pos1.y, this.pos2.y);
+        this.region = RegionUtil.createRegion(this.pos1.x, this.pos2.x, this.pos1.y, this.pos2.y);
     }
 
-    public RegionWrapper getRegion() {
+    public CuboidRegion getRegion() {
         return this.region;
     }
 
@@ -126,17 +128,17 @@ public class PlotCluster {
     public Location getHome() {
         BlockLoc home = this.settings.getPosition();
         Location toReturn;
-        if (home.y == 0) {
+        if (home.getY() == 0) {
             // default pos
             Plot center = getCenterPlot();
             toReturn = center.getHome();
             if (toReturn.getY() == 0) {
                 PlotManager manager = this.area.getPlotManager();
-                Location loc = manager.getSignLoc(this.area, center);
-                toReturn.setY(loc.getY());
+                Location location = manager.getSignLoc(center);
+                toReturn.setY(location.getY());
             }
         } else {
-            toReturn = getClusterBottom().add(home.x, home.y, home.z);
+            toReturn = getClusterBottom().add(home.getX(), home.getY(), home.getZ());
         }
         int max = MainUtil.getHeighestBlock(this.area.worldname, toReturn.getX(), toReturn.getZ());
         if (max > toReturn.getY()) {
@@ -157,12 +159,12 @@ public class PlotCluster {
 
     public Location getClusterBottom() {
         PlotManager manager = this.area.getPlotManager();
-        return manager.getPlotBottomLocAbs(this.area, getP1());
+        return manager.getPlotBottomLocAbs(getP1());
     }
 
     public Location getClusterTop() {
         PlotManager manager = this.area.getPlotManager();
-        return manager.getPlotTopLocAbs(this.area, getP2());
+        return manager.getPlotTopLocAbs(getP2());
     }
 
     public boolean intersects(PlotId pos1, PlotId pos2) {

@@ -21,9 +21,9 @@ import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
                 MainUtil.sendMessage(player,
                     "$2>> $1&lAuthors$2: $1Citymonstret $2& $1Empire92 $2& $1MattBDev $2& $1dordsor21");
                 MainUtil.sendMessage(player,
-                    "$2>> $1&lWiki$2: $1https://github.com/IntellectualCrafters/PlotSquared/wiki");
-                MainUtil.sendMessage(player,
-                    "$2>> $1&lNewest Version$2: $1" + getNewestVersionString());
+                    "$2>> $1&lWiki$2: $1https://github.com/IntellectualSites/PlotSquared/wiki");
+                //                MainUtil.sendMessage(player,
+                //                    "$2>> $1&lNewest Version$2: $1" + getNewestVersionString());
             }
         });
         return true;

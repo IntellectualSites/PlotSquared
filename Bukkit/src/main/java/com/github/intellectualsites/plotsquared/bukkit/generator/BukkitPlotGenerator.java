@@ -5,13 +5,13 @@ import com.github.intellectualsites.plotsquared.bukkit.util.block.GenChunk;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
-import com.github.intellectualsites.plotsquared.plot.object.ChunkLoc;
 import com.github.intellectualsites.plotsquared.plot.object.ChunkWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SingleWorldGenerator;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
+import com.sk89q.worldedit.math.BlockVector2;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
@@ -41,7 +41,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
         this.plotGenerator = generator;
         this.platformGenerator = this;
         this.populators = new ArrayList<>();
-        this.populators.add(new PlotBlockPopulator(this.plotGenerator));
+        this.populators.add(new BlockStatePopulator(this.plotGenerator));
         this.full = true;
         MainUtil.initCache();
     }
@@ -73,7 +73,9 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return this.platformGenerator;
     }
 
-    @Override @NotNull public List<BlockPopulator> getDefaultPopulators(@NotNull World world) {
+    @Override
+    @NotNull
+    public List<BlockPopulator> getDefaultPopulators(@NotNull World world) {
         try {
             if (!this.loaded) {
                 String name = world.getName();
@@ -117,25 +119,26 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return toAdd;
     }
 
-    @Override @NotNull
+    @Override
+    @NotNull
     public ChunkData generateChunkData(@NotNull World world, @NotNull Random random, int x, int z,
         @NotNull BiomeGrid biome) {
 
         GenChunk result = new GenChunk();
         if (this.getPlotGenerator() instanceof SingleWorldGenerator) {
-            if (result.getCd() != null) {
-                for (int cx = 0; cx < 16; cx++) {
-                    for (int cz = 0; cz < 16; cz++) {
-                        biome.setBiome(cx, cz, Biome.PLAINS);
+            if (result.getChunkData() != null) {
+                for (int chunkX = 0; chunkX < 16; chunkX++) {
+                    for (int chunkZ = 0; chunkZ < 16; chunkZ++) {
+                        biome.setBiome(chunkX, chunkZ, Biome.PLAINS);
                     }
                 }
-                return result.getCd();
+                return result.getChunkData();
             }
         }
         // Set the chunk location
         result.setChunk(new ChunkWrapper(world.getName(), x, z));
         // Set the result data
-        result.setCd(createChunkData(world));
+        result.setChunkData(createChunkData(world));
         result.biomeGrid = biome;
         result.result = null;
 
@@ -145,16 +148,16 @@ public class BukkitPlotGenerator extends ChunkGenerator
             if (this.platformGenerator != this) {
                 return this.platformGenerator.generateChunkData(world, random, x, z, biome);
             } else {
-                generate(new ChunkLoc(x, z), world, result);
+                generate(BlockVector2.at(x, z), world, result);
             }
         } catch (Throwable e) {
             e.printStackTrace();
         }
         // Return the result data
-        return result.getCd();
+        return result.getChunkData();
     }
 
-    private void generate(ChunkLoc loc, World world, ScopedLocalBlockQueue result) {
+    private void generate(BlockVector2 loc, World world, ScopedLocalBlockQueue result) {
         // Load if improperly loaded
         if (!this.loaded) {
             String name = world.getName();

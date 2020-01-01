@@ -5,7 +5,11 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.CmdConfirm;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 
 import java.util.Set;
 import java.util.UUID;
@@ -16,6 +20,10 @@ import java.util.UUID;
     requiredType = RequiredType.NONE, confirmation = true) public class Owner extends SetCommand {
 
     @Override public boolean set(final PlotPlayer player, final Plot plot, String value) {
+        if (value == null || value.isEmpty()) {
+            Captions.SET_OWNER_MISSING_PLAYER.send(player);
+            return false;
+        }
         Set<Plot> plots = plot.getConnectedPlots();
         UUID uuid = null;
         String name = null;
@@ -33,8 +41,8 @@ import java.util.UUID;
         if (uuid == null || value.equalsIgnoreCase("-")) {
             if (value.equalsIgnoreCase("none") || value.equalsIgnoreCase("null") || value
                 .equalsIgnoreCase("-")) {
-                if (!Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SETOWNER.s(), true)) {
+                if (!Permissions.hasPermission(player,
+                    Captions.PERMISSION_ADMIN_COMMAND_SET_OWNER.getTranslated(), true)) {
                     return false;
                 }
                 Set<Plot> connected = plot.getConnectedPlots();
@@ -54,7 +62,7 @@ import java.util.UUID;
             Captions.ALREADY_OWNER.send(player, MainUtil.getName(uuid));
             return false;
         }
-        if (!Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SETOWNER)) {
+        if (!Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SET_OWNER)) {
             if (other == null) {
                 Captions.INVALID_PLAYER_OFFLINE.send(player, value);
                 return false;
@@ -71,20 +79,18 @@ import java.util.UUID;
         final String finalName = name;
         final UUID finalUUID = uuid;
         final boolean removeDenied = plot.isDenied(finalUUID);
-        Runnable run = new Runnable() {
-            @Override public void run() {
-                if (plot.setOwner(finalUUID, player)) {
-                    if (removeDenied)
-                        plot.removeDenied(finalUUID);
-                    plot.setSign(finalName);
-                    MainUtil.sendMessage(player, Captions.SET_OWNER);
-                    if (other != null) {
-                        MainUtil.sendMessage(other, Captions.NOW_OWNER,
-                            plot.getArea() + ";" + plot.getId());
-                    }
-                } else {
-                    MainUtil.sendMessage(player, Captions.SET_OWNER_CANCELLED);
+        Runnable run = () -> {
+            if (plot.setOwner(finalUUID, player)) {
+                if (removeDenied)
+                    plot.removeDenied(finalUUID);
+                plot.setSign(finalName);
+                MainUtil.sendMessage(player, Captions.SET_OWNER);
+                if (other != null) {
+                    MainUtil.sendMessage(other, Captions.NOW_OWNER,
+                        plot.getArea() + ";" + plot.getId());
                 }
+            } else {
+                MainUtil.sendMessage(player, Captions.SET_OWNER_CANCELLED);
             }
         };
         if (hasConfirmation(player)) {

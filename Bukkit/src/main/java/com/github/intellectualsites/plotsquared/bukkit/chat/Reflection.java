@@ -43,10 +43,6 @@ public final class Reflection {
      */
     public synchronized static String getVersion() {
         if (_versionString == null) {
-            if (Bukkit.getServer() == null) {
-                // The server hasn't started, static initializer call?
-                return null;
-            }
             String name = Bukkit.getServer().getClass().getPackage().getName();
             _versionString = name.substring(name.lastIndexOf('.') + 1) + ".";
         }
@@ -180,15 +176,11 @@ public final class Reflection {
      * @return A method object with the specified name declared by the specified class.
      */
     public synchronized static Method getMethod(Class<?> clazz, String name, Class<?>... args) {
-        if (!_loadedMethods.containsKey(clazz)) {
-            _loadedMethods.put(clazz, new HashMap<>());
-        }
+        _loadedMethods.computeIfAbsent(clazz, k -> new HashMap<>());
 
         Map<String, Map<ArrayWrapper<Class<?>>, Method>> loadedMethodNames =
             _loadedMethods.get(clazz);
-        if (!loadedMethodNames.containsKey(name)) {
-            loadedMethodNames.put(name, new HashMap<>());
-        }
+        loadedMethodNames.computeIfAbsent(name, k -> new HashMap<>());
 
         Map<ArrayWrapper<Class<?>>, Method> loadedSignatures = loadedMethodNames.get(name);
         ArrayWrapper<Class<?>> wrappedArg = new ArrayWrapper<>(args);

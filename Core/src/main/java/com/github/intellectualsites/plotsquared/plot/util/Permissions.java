@@ -15,7 +15,7 @@ import java.util.HashMap;
 public class Permissions {
 
     public static boolean hasPermission(PlotPlayer player, Captions caption, boolean notify) {
-        return hasPermission(player, caption.s(), notify);
+        return hasPermission(player, caption.getTranslated(), notify);
     }
 
     /**
@@ -26,7 +26,7 @@ public class Permissions {
      * @return
      */
     public static boolean hasPermission(PlotPlayer player, Captions caption) {
-        return hasPermission(player, caption.s());
+        return hasPermission(player, caption.getTranslated());
     }
 
     /**
@@ -68,7 +68,7 @@ public class Permissions {
         } else if (caller.isPermissionSet(permission)) {
             return false;
         }
-        if (caller.hasPermission(Captions.PERMISSION_ADMIN.s())) {
+        if (caller.hasPermission(Captions.PERMISSION_ADMIN.getTranslated())) {
             return true;
         }
         permission = permission.toLowerCase().replaceAll("^[^a-z|0-9|\\.|_|-]", "");
@@ -76,7 +76,7 @@ public class Permissions {
         StringBuilder n = new StringBuilder();
         for (int i = 0; i <= (nodes.length - 1); i++) {
             n.append(nodes[i] + ".");
-            String combined = n + Captions.PERMISSION_STAR.s();
+            String combined = n + Captions.PERMISSION_STAR.getTranslated();
             if (!permission.equals(combined)) {
                 if (caller.hasPermission(combined)) {
                     return true;
@@ -89,7 +89,7 @@ public class Permissions {
     }
 
     /**
-     * Check if a PlotPlayer has a permission, and optionally send the no permission message if applicable.
+     * Checks if a PlotPlayer has a permission, and optionally send the no permission message if applicable.
      *
      * @param player
      * @param permission
@@ -107,7 +107,7 @@ public class Permissions {
     }
 
     public static int hasPermissionRange(PlotPlayer player, Captions perm, int range) {
-        return hasPermissionRange(player, perm.s(), range);
+        return hasPermissionRange(player, perm.getTranslated(), range);
     }
 
     /**

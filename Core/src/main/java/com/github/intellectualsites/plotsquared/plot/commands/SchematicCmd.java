@@ -4,9 +4,19 @@ import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.google.common.collect.Lists;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -15,7 +25,7 @@ import java.util.UUID;
 
 @CommandDeclaration(command = "schematic", permission = "plots.schematic",
     description = "Schematic command", aliases = {"sch", "schem"},
-    category = CommandCategory.SCHEMATIC, usage = "/plot schematic <arg...>")
+    category = CommandCategory.SCHEMATIC, usage = "/plot schematic <save|saveall|paste>")
 public class SchematicCmd extends SubCommand {
 
     private boolean running = false;
@@ -52,7 +62,7 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 if (this.running) {
-                    MainUtil.sendMessage(player, "&cTask is already running.");
+                    MainUtil.sendMessage(player, Captions.TASK_IN_PROCESS);
                     return false;
                 }
                 final String location = args[1];
@@ -99,38 +109,6 @@ public class SchematicCmd extends SubCommand {
                 });
                 break;
             }
-            //            TODO test
-            //            case "test": {
-            //                if (!Permissions.hasPermission(plr, "plots.schematic.test")) {
-            //                    MainUtil.sendMessage(plr, Captions.NO_PERMISSION, "plots.schematic.test");
-            //                    return false;
-            //                }
-            //                if (args.length < 2) {
-            //                    sendMessage(plr, Captions.SCHEMATIC_MISSING_ARG);
-            //                    return false;
-            //                }
-            //                final Location loc = plr.getLocation();
-            //                final Plot plot = MainUtil.getPlot(loc);
-            //                if (plot == null) {
-            //                    sendMessage(plr, Captions.NOT_IN_PLOT);
-            //                    return false;
-            //                }
-            //                file = args[1];
-            //                schematic = SchematicHandler.manager.getSchematic(file);
-            //                if (schematic == null) {
-            //                    sendMessage(plr, Captions.SCHEMATIC_INVALID, "non-existent");
-            //                    return false;
-            //                }
-            //                final int l1 = schematic.getSchematicDimension().getX();
-            //                final int l2 = schematic.getSchematicDimension().getZ();
-            //                final int length = MainUtil.getPlotWidth(loc.getWorld(), plot.id);
-            //                if ((l1 < length) || (l2 < length)) {
-            //                    sendMessage(plr, Captions.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", l1, l2, length));
-            //                    break;
-            //                }
-            //                sendMessage(plr, Captions.SCHEMATIC_VALID);
-            //                break;
-            //            }
             case "saveall":
             case "exportall": {
                 if (!(player instanceof ConsolePlayer)) {
@@ -138,8 +116,7 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 if (args.length != 2) {
-                    MainUtil.sendMessage(player,
-                        "&cNeed world argument. Use &7/plot sch exportall <area>");
+                    MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_WORLD_ARGS);
                     return false;
                 }
                 PlotArea area = PlotSquared.get().getPlotAreaByString(args[1]);
@@ -149,20 +126,17 @@ public class SchematicCmd extends SubCommand {
                 }
                 Collection<Plot> plots = area.getPlots();
                 if (plots.isEmpty()) {
-                    MainUtil
-                        .sendMessage(player, "&cInvalid world. Use &7/plot sch exportall <area>");
+                    MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_WORLD);
                     return false;
                 }
                 boolean result = SchematicHandler.manager.exportAll(plots, null, null,
-                    () -> MainUtil.sendMessage(player, "&aFinished mass export"));
+                    () -> MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_FINISHED));
                 if (!result) {
-                    MainUtil.sendMessage(player, "&cTask is already running.");
+                    MainUtil.sendMessage(player, Captions.TASK_IN_PROCESS);
                     return false;
                 } else {
-                    MainUtil.sendMessage(player,
-                        "&3Plot&8->&3Schematic&8: &7Mass export has started. This may take a while.");
-                    MainUtil.sendMessage(player,
-                        "&3Plot&8->&3Schematic&8: &7Found &c" + plots.size() + "&7 plots...");
+                    MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_STARTED);
+                    MainUtil.sendMessage(player, "&3Plot&8->&3Schematic&8: &7Found &c" + plots.size() + "&7 plots...");
                 }
                 break;
             }
@@ -174,7 +148,7 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 if (this.running) {
-                    MainUtil.sendMessage(player, "&cTask is already running.");
+                    MainUtil.sendMessage(player, Captions.TASK_IN_PROCESS);
                     return false;
                 }
                 Location location = player.getLocation();
@@ -191,18 +165,16 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
                     return false;
                 }
-                location.getWorld();
-                Collection<Plot> plots = new ArrayList<>();
-                plots.add(plot);
+                ArrayList<Plot> plots = Lists.newArrayList(plot);
                 boolean result = SchematicHandler.manager.exportAll(plots, null, null, () -> {
-                    MainUtil.sendMessage(player, "&aFinished export");
+                    MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_SINGLE_FINISHED);
                     SchematicCmd.this.running = false;
                 });
                 if (!result) {
-                    MainUtil.sendMessage(player, "&cTask is already running.");
+                    MainUtil.sendMessage(player, Captions.TASK_IN_PROCESS);
                     return false;
                 } else {
-                    MainUtil.sendMessage(player, "&7Starting export...");
+                    MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_STARTED);
                 }
                 break;
             case "list": {
@@ -212,7 +184,7 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 final String string =
-                    StringMan.join(SchematicHandler.manager.getShematicNames(), "$2, $1");
+                    StringMan.join(SchematicHandler.manager.getSchematicNames(), "$2, $1");
                 Captions.SCHEMATIC_LIST.send(player, string);
             }
             break;

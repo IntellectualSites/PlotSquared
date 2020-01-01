@@ -1,29 +1,31 @@
 repositories {
-    maven { url 'https://jitpack.io' }
+    maven { url = "https://jitpack.io" }
 }
+def textVersion = "3.0.2"
 
 dependencies {
-    implementation 'org.yaml:snakeyaml:1.23'
-    //keep inline with Minecraft which uses gson 2.8.0
-    implementation 'com.google.code.gson:gson:2.8.0'
-    implementation("org.projectlombok:lombok:1.18.6")
-    compileOnly("org.projectlombok:lombok:1.18.6")
-    testCompileOnly("org.projectlombok:lombok:1.18.6")
-    annotationProcessor("org.projectlombok:lombok:1.18.6")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.6")
-
-    implementation 'com.github.Sauilitired:Jenkins4J:2.0-SNAPSHOT'
-    implementation 'com.squareup.okhttp3:okhttp:3.14.0'
-    implementation 'com.squareup.okio:okio:2.2.2'
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.3.30'
+    implementation("org.yaml:snakeyaml:1.25")
+    implementation("com.google.code.gson:gson:2.8.6") {
+        because("Minecraft uses GSON 2.8.0")
+        force = true
+    }
+    implementation("org.projectlombok:lombok:1.18.10")
+    compileOnly("org.projectlombok:lombok:1.18.8")
+    testCompileOnly("org.projectlombok:lombok:1.18.8")
+    annotationProcessor("org.projectlombok:lombok:1.18.8")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.8")
+    implementation("com.github.Sauilitired:Jenkins4J:2.0-SNAPSHOT")
+    implementation("com.squareup.okhttp3:okhttp:4.2.2")
+    implementation("com.squareup.okio:okio:2.4.1")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.3.61")
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 processResources {
-    from('src/main/resources') {
-        include 'plugin.properties'
+    from("src/main/resources") {
+        include "plugin.properties"
         expand(
                 version: "${project.parent.version}",
                 name: project.parent.name,
@@ -33,22 +35,23 @@ processResources {
     }
 }
 
-jar.setArchiveName("PlotSquared-API-${project.parent.version}.jar")
-jar.destinationDir = file '../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/' + project.parent.version
+//noinspection GroovyAssignabilityCheck
+jar.archiveFileName = "PlotSquared-API-${project.parent.version}.jar"
+jar.destinationDirectory = file("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/" + project.parent.version)
 task createPom {
     doLast {
         pom {
             project {
-                groupId 'com.github.intellectualsites.plotsquared'
-                artifactId 'PlotSquared-API'
-                version project.parent.version
+                groupId = "com.github.intellectualsites.plotsquared"
+                artifactId = "PlotSquared-API"
+                version = project.parent.version
             }
         }.writeTo("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/${project.parent.version}/PlotSquared-API-${project.parent.version}.pom")
         pom {
             project {
-                groupId 'com.github.intellectualsites.plotsquared'
-                artifactId 'PlotSquared-API'
-                version 'latest'
+                groupId = "com.github.intellectualsites.plotsquared"
+                artifactId = "PlotSquared-API"
+                version = "latest"
             }
         }.writeTo("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/latest/PlotSquared-API-latest.pom")
     }
@@ -57,13 +60,30 @@ task createPom {
 task copyFiles {
     doLast {
         copy {
-            from "../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/${project.parent.version}/"
-            into '../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/latest/'
-            include('*.jar')
-            rename("PlotSquared-API-${project.parent.version}.jar", 'PlotSquared-API-latest.jar')
+            from("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/${project.parent.version}/")
+            into("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/latest/")
+            include("*.jar")
+            rename("PlotSquared-API-${project.parent.version}.jar", "PlotSquared-API-latest.jar")
         }
     }
 }
+
+shadowJar {
+    dependencies {
+        include(dependency("net.kyori:text-api:3.0.2"))
+        include(dependency("net.kyori:text-serializer-gson:3.0.2"))
+        include(dependency("net.kyori:text-serializer-legacy:3.0.2"))
+        include(dependency("net.kyori:text-serializer-plain:3.0.2"))
+    }
+    relocate('net.kyori.text', 'com.github.intellectualsites.plotsquared.formatting.text')
+}
+
+shadowJar.doLast {
+    task ->
+        ant.checksum file: task.archivePath
+}
+
+build.dependsOn(shadowJar)
 
 build.finalizedBy(copyFiles)
 copyFiles.dependsOn(createPom)

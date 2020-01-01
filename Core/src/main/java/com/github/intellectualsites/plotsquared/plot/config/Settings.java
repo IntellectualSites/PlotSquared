@@ -16,19 +16,19 @@ public class Settings extends Config {
 
     @Comment("These first 7 aren't configurable") // This is a comment
     @Final // Indicates that this value isn't configurable
-    public static final String ISSUES = "https://github.com/IntellectualSites/PlotSquared/issues";
-    @Final public static final String SUGGESTION =
+    public static String ISSUES = "https://github.com/IntellectualSites/PlotSquared/issues";
+    @Final public static String SUGGESTION =
         "https://github.com/IntellectualSites/PlotSquaredSuggestions";
-    @Final public static final String WIKI =
+    @Final public static String WIKI =
         "https://github.com/IntellectualSites/PlotSquared/wiki";
     @Final public static String DATE; // These values are set from P2 before loading
     @Final public static String BUILD; // These values are set from P2 before loading
     @Final public static String COMMIT; // These values are set from P2 before loading
     @Final public static String PLATFORM; // These values are set from P2 before loading
 
-    @Comment("Show additional information in console") public static boolean DEBUG = true;
+    @Comment("Show additional information in console") public static boolean DEBUG = false;
     @Comment({"The big annoying text that appears when you enter a plot",
-        "For a single plot: `/plot flag set titles false`", "For just you: `/plot toggle titles`"})
+        "For a single plot: `/plot flag set titles false`", "For just you: `/plot toggle titles`", "For all plots: Add `titles: false` in the worlds.yml flags block"})
     public static boolean TITLES = true;
 
     @Create // This value will be generated automatically
@@ -256,10 +256,10 @@ public class Settings extends Config {
 
 
     public static final class Done {
-        @Comment("Require a done plot to download") public static boolean REQUIRED_FOR_DOWNLOAD =
+        @Comment("Require a plot marked as done to download") public static boolean REQUIRED_FOR_DOWNLOAD =
             false;
-        @Comment("Only done plots can be rated") public static boolean REQUIRED_FOR_RATINGS = false;
-        @Comment("Restrict building when a plot is done") public static boolean RESTRICT_BUILDING =
+        @Comment("Only plots marked as done can be rated") public static boolean REQUIRED_FOR_RATINGS = false;
+        @Comment("Restrict building when a plot is marked as done") public static boolean RESTRICT_BUILDING =
             false;
         @Comment("The limit being how many plots a player can claim") public static boolean
             COUNTS_TOWARDS_LIMIT = true;
@@ -269,14 +269,15 @@ public class Settings extends Config {
     public static final class Chat {
         @Comment("Sometimes console color doesn't work, you can disable it here")
         public static boolean CONSOLE_COLOR = true;
-        @Comment("Should chat be interactive") public static boolean INTERACTIVE = true;
+        @Comment("Should the chat be interactive?") public static boolean INTERACTIVE = true;
     }
 
 
     @Comment("Relating to how many plots someone can claim  ") public static final class Limit {
         @Comment("Should the limit be global (over multiple worlds)") public static boolean GLOBAL =
             false;
-        @Comment("The range of permissions to check e.g. plots.plot.127") public static int
+        @Comment({"The max. range of permissions to check e.g. plots.plot.127", "The value covers the range to check only, you need to assign the permission to players/groups still",
+        "Modifying the value does NOT change the amount of plots players can claim"}) public static int
             MAX_PLOTS = 127;
     }
 
@@ -291,7 +292,7 @@ public class Settings extends Config {
         @Comment("Teleport to your plot on death") public static boolean ON_DEATH = false;
         @Comment("Teleport to your plot on login") public static boolean ON_LOGIN = false;
         @Comment("Teleport to your plot on claim") public static boolean ON_CLAIM = true;
-        @Comment("Add a teleportation delay to all commands") public static int DELAY = 0;
+        @Comment("Add a delay to all teleport commands") public static int DELAY = 0;
         @Comment("The visit command is ordered by world instead of globally") public static boolean
             PER_WORLD_VISIT = false;
     }
@@ -322,7 +323,7 @@ public class Settings extends Config {
 
 
     @Comment(
-        {"Enable or disable part of the plugin", "Note: A cache will use some memory if enabled"})
+        {"Enable or disable parts of the plugin", "Note: A cache will use some memory if enabled"})
     public static final class Enabled_Components { // Group the following values into a new config section
         @Comment("The database stores all the plots") public static boolean DATABASE = true;
         @Comment("Events are needed to track a lot of things") public static boolean EVENTS = true;
@@ -330,7 +331,7 @@ public class Settings extends Config {
             true;
         @Comment("The UUID cacher is used to resolve player names") public static boolean
             UUID_CACHE = true;
-        @Comment("The plugin auto updater") public static boolean UPDATER = true;
+        @Comment("The plugin auto updater will notify you if updates are available.") public static boolean UPDATER = true;
         @Comment("Stores user metadata in a database") public static boolean PERSISTENT_META = true;
         @Comment("Optimizes permission checks") public static boolean PERMISSION_CACHE = true;
         @Comment("Optimizes block changing code") public static boolean BLOCK_CACHE = true;
@@ -339,7 +340,7 @@ public class Settings extends Config {
         @Comment("Allow WorldEdit to be restricted to plots") public static boolean
             WORLDEDIT_RESTRICTIONS = true;
         @Comment("Allow economy to be used") public static boolean ECONOMY = true;
-        @Comment("Send anonymous usage statistics. Bukkit only setting.") public static boolean
+        @Comment("Send anonymous usage statistics to bStats. Bukkit only setting.") public static boolean
             METRICS = true;
         @Comment("Expiry will clear old or simplistic plots") public static boolean PLOT_EXPIRY =
             false;
@@ -350,12 +351,12 @@ public class Settings extends Config {
         @Comment("Kill vehicles on roads") public static boolean KILL_ROAD_VEHICLES = false;
         @Comment("Notify a player of any missed comments upon plot entry") public static boolean
             COMMENT_NOTIFIER = false;
-        @Comment("Let player's claim entire worlds with PlotSquared") public static boolean WORLDS =
+        @Comment("Let players claim entire worlds with PlotSquared") public static boolean WORLDS =
             false;
         @Comment("Actively purge invalid database entries") public static boolean DATABASE_PURGER =
             false;
         @Comment("Delete plots when a player is banned") public static boolean BAN_DELETER = false;
-        @Comment("Prevent possibly unsafe blocks from being used in plot components")
+        @Comment({"Prevent possibly unsafe blocks from being used in plot components", "Can be bypassed with `/plot debugallowunsafe`"})
         public static boolean PREVENT_UNSAFE = true;
     }
 }
