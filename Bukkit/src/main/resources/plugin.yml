@@ -19,6 +19,8 @@ commands:
 permissions:
   plots.use:
     default: true
+  plots.teleport.delay.bypass:
+    default: op
   plots.permpack.basicflags:
     default: op
     children:
