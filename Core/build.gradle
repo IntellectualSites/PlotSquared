@@ -36,34 +36,34 @@ processResources {
 }
 
 //noinspection GroovyAssignabilityCheck
-jar.archiveFileName = "PlotSquared-API-${project.parent.version}.jar"
-jar.destinationDirectory = file("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/" + project.parent.version)
+jar.archiveFileName = "PlotSquared-CoreAPI-${project.parent.version}.jar"
+jar.destinationDirectory = file("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-CoreAPI/" + project.parent.version)
 task createPom {
     doLast {
         pom {
             project {
                 groupId = "com.github.intellectualsites.plotsquared"
-                artifactId = "PlotSquared-API"
+                artifactId = "PlotSquared-CoreAPI"
                 version = project.parent.version
             }
-        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/${project.parent.version}/PlotSquared-API-${project.parent.version}.pom")
+        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-CoreAPI/${project.parent.version}/PlotSquared-CoreAPI-${project.parent.version}.pom")
         pom {
             project {
                 groupId = "com.github.intellectualsites.plotsquared"
-                artifactId = "PlotSquared-API"
+                artifactId = "PlotSquared-CoreAPI"
                 version = "latest"
             }
-        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/latest/PlotSquared-API-latest.pom")
+        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-CoreAPI/latest/PlotSquared-CoreAPI-latest.pom")
     }
 }
 
 task copyFiles {
     doLast {
         copy {
-            from("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/${project.parent.version}/")
-            into("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-API/latest/")
+            from("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-CoreAPI/${project.parent.version}/")
+            into("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-CoreAPI/latest/")
             include("*.jar")
-            rename("PlotSquared-API-${project.parent.version}.jar", "PlotSquared-API-latest.jar")
+            rename("PlotSquared-CoreAPI-${project.parent.version}.jar", "PlotSquared-CoreAPI-latest.jar")
         }
     }
 }
