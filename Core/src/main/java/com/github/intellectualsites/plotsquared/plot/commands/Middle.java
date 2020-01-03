@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.TeleportCause;
 
 /**
  * @author manuelgu, altered by Citymonstret
@@ -20,7 +21,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
         if (plot == null) {
             return sendMessage(player, Captions.NOT_IN_PLOT);
         }
-        player.teleport(plot.getCenter());
+        player.teleport(plot.getCenter(), TeleportCause.COMMAND);
         return true;
     }
 }

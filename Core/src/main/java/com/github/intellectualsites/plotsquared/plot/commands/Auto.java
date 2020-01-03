@@ -12,6 +12,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
+import com.github.intellectualsites.plotsquared.plot.object.TeleportCause;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
@@ -82,7 +83,7 @@ public class Auto extends SubCommand {
         final String schematic) {
         Set<Plot> plots = player.getPlots();
         if (!plots.isEmpty()) {
-            plots.iterator().next().teleportPlayer(player);
+            plots.iterator().next().teleportPlayer(player, TeleportCause.COMMAND);
         } else {
             autoClaimSafe(player, area, start, schematic);
         }

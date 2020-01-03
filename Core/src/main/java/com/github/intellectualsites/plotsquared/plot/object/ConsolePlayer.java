@@ -78,7 +78,7 @@ public class ConsolePlayer extends PlotPlayer {
         PlotSquared.log(message);
     }
 
-    @Override public void teleport(Location location) {
+    @Override public void teleport(Location location, TeleportCause cause) {
         setMeta(PlotPlayer.META_LAST_PLOT, location.getPlot());
         setMeta(PlotPlayer.META_LOCATION, location);
     }

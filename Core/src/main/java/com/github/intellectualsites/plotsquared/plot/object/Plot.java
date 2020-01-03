@@ -1524,7 +1524,7 @@ public class Plot {
         setSign(player.getName());
         MainUtil.sendMessage(player, Captions.CLAIMED);
         if (teleport && Settings.Teleport.ON_CLAIM) {
-            teleportPlayer(player);
+            teleportPlayer(player, TeleportCause.COMMAND);
         }
         PlotArea plotworld = getArea();
         if (plotworld.SCHEMATIC_ON_CLAIM) {
@@ -2809,6 +2809,17 @@ public class Plot {
      * @return if the teleport succeeded
      */
     public boolean teleportPlayer(final PlotPlayer player) {
+        return teleportPlayer(player, TeleportCause.PLUGIN);
+    }
+
+    /**
+     * Teleport a player to a plot and send them the teleport message.
+     *
+     * @param player the player
+     * @param cause the cause of the teleport
+     * @return if the teleport succeeded
+     */
+    public boolean teleportPlayer(final PlotPlayer player, TeleportCause cause) {
         Plot plot = this.getBasePlot(false);
         boolean result = EventUtil.manager.callTeleport(player, player.getLocation(), plot);
         if (result) {
@@ -2818,14 +2829,12 @@ public class Plot {
             } else {
                 location = this.getDefaultHome(false);
             }
-            if (Settings.Teleport.DELAY == 0 || Permissions
-                .hasPermission(player, "plots.teleport.delay.bypass")) {
+            if (Settings.Teleport.DELAY == 0 || Permissions.hasPermission(player, "plots.teleport.delay.bypass")) {
                 MainUtil.sendMessage(player, Captions.TELEPORTED_TO_PLOT);
-                player.teleport(location);
+                player.teleport(location, cause);
                 return true;
             }
-            MainUtil
-                .sendMessage(player, Captions.TELEPORT_IN_SECONDS, Settings.Teleport.DELAY + "");
+            MainUtil.sendMessage(player, Captions.TELEPORT_IN_SECONDS, Settings.Teleport.DELAY + "");
             final String name = player.getName();
             TaskManager.TELEPORT_QUEUE.add(name);
             TaskManager.runTaskLater(() -> {
@@ -2836,7 +2845,7 @@ public class Plot {
                 TaskManager.TELEPORT_QUEUE.remove(name);
                 if (player.isOnline()) {
                     MainUtil.sendMessage(player, Captions.TELEPORTED_TO_PLOT);
-                    player.teleport(location);
+                    player.teleport(location, cause);
                 }
             }, Settings.Teleport.DELAY * 20);
             return true;

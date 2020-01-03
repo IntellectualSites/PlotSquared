@@ -25,11 +25,13 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Rating;
+import com.github.intellectualsites.plotsquared.plot.object.TeleportCause;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -129,5 +131,15 @@ public final class BukkitEventUtil extends EventUtil {
             return null;
         }
         return event.getRating();
+    }
+
+    public PlayerTeleportEvent.TeleportCause getTeleportCause(@NotNull final TeleportCause cause) {
+        switch (cause) {
+            case COMMAND:
+                return PlayerTeleportEvent.TeleportCause.COMMAND;
+            case PLUGIN:
+                return PlayerTeleportEvent.TeleportCause.PLUGIN;
+            default: return PlayerTeleportEvent.TeleportCause.UNKNOWN;
+        }
     }
 }

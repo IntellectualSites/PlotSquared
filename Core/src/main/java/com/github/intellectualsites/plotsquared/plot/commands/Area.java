@@ -15,6 +15,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
 import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
+import com.github.intellectualsites.plotsquared.plot.object.TeleportCause;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.CmdConfirm;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
@@ -134,7 +135,7 @@ import java.util.Set;
                                     if (WorldUtil.IMP.isWorld(world)) {
                                         PlotSquared.get().loadWorld(world, null);
                                         Captions.SETUP_FINISHED.send(player);
-                                        player.teleport(WorldUtil.IMP.getSpawn(world));
+                                        player.teleport(WorldUtil.IMP.getSpawn(world), TeleportCause.COMMAND);
                                         if (area.TERRAIN != 3) {
                                             ChunkManager.largeRegionTask(world, region,
                                                 new RunnableVal<BlockVector2>() {
@@ -257,7 +258,7 @@ import java.util.Set;
                                 String world = SetupUtils.manager.setupWorld(object);
                                 if (WorldUtil.IMP.isWorld(world)) {
                                     Captions.SETUP_FINISHED.send(player);
-                                    player.teleport(WorldUtil.IMP.getSpawn(world));
+                                    player.teleport(WorldUtil.IMP.getSpawn(world), TeleportCause.COMMAND);
                                 } else {
                                     MainUtil.sendMessage(player,
                                         "An error occurred while creating the world: "
@@ -284,13 +285,13 @@ import java.util.Set;
                         }
                         if (WorldUtil.IMP.isWorld(pa.worldname)) {
                             if (!player.getLocation().getWorld().equals(pa.worldname)) {
-                                player.teleport(WorldUtil.IMP.getSpawn(pa.worldname));
+                                player.teleport(WorldUtil.IMP.getSpawn(pa.worldname), TeleportCause.COMMAND);
                             }
                         } else {
                             object.terrain = 0;
                             object.type = 0;
                             SetupUtils.manager.setupWorld(object);
-                            player.teleport(WorldUtil.IMP.getSpawn(pa.worldname));
+                            player.teleport(WorldUtil.IMP.getSpawn(pa.worldname), TeleportCause.COMMAND);
                         }
                         player.setMeta("area_create_area", pa);
                         MainUtil.sendMessage(player,
@@ -468,7 +469,7 @@ import java.util.Set;
                     center.setY(1 + WorldUtil.IMP
                         .getHighestBlock(area.worldname, center.getX(), center.getZ()));
                 }
-                player.teleport(center);
+                player.teleport(center, TeleportCause.COMMAND);
                 return true;
             case "delete":
             case "remove":

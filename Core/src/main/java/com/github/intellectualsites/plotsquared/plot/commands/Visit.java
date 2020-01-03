@@ -11,6 +11,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
+import com.github.intellectualsites.plotsquared.plot.object.TeleportCause;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
@@ -145,7 +146,7 @@ import java.util.concurrent.CompletableFuture;
             }
         }
         confirm.run(this, () -> {
-            if (plot.teleportPlayer(player)) {
+            if (plot.teleportPlayer(player, TeleportCause.COMMAND)) {
                 whenDone.run(Visit.this, CommandResult.SUCCESS);
             } else {
                 whenDone.run(Visit.this, CommandResult.FAILURE);

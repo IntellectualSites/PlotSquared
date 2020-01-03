@@ -1,11 +1,14 @@
 package com.github.intellectualsites.plotsquared.bukkit.object;
 
+import com.github.intellectualsites.plotsquared.bukkit.util.BukkitEventUtil;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.TeleportCause;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
+import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
@@ -193,13 +196,13 @@ public class BukkitPlayer extends PlotPlayer {
         }
     }
 
-    @Override public void teleport(@NotNull final Location location) {
+    @Override public void teleport(@NotNull final Location location, @NotNull final TeleportCause cause) {
         if (Math.abs(location.getX()) >= 30000000 || Math.abs(location.getZ()) >= 30000000) {
             return;
         }
         final org.bukkit.Location bukkitLocation = new org.bukkit.Location(BukkitUtil.getWorld(location.getWorld()), location.getX() + 0.5,
             location.getY(), location.getZ() + 0.5, location.getYaw(), location.getPitch());
-        PaperLib.teleportAsync(player, bukkitLocation, PlayerTeleportEvent.TeleportCause.COMMAND);
+        PaperLib.teleportAsync(player, bukkitLocation, ((BukkitEventUtil) EventUtil.manager).getTeleportCause(cause));
     }
 
     @Override public String getName() {

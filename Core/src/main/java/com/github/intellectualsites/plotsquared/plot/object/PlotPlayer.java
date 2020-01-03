@@ -373,7 +373,17 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      *
      * @param location the target location
      */
-    public abstract void teleport(Location location);
+    public void teleport(Location location) {
+        teleport(location, TeleportCause.PLUGIN);
+    }
+
+    /**
+     * Teleport this player to a location.
+     *
+     * @param location the target location
+     * @param cause the cause of the teleport
+     */
+    public abstract void teleport(Location location, TeleportCause cause);
 
     /**
      * Kick this player to a location

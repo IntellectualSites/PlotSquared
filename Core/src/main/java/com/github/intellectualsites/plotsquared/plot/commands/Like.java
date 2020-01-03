@@ -9,6 +9,7 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Rating;
+import com.github.intellectualsites.plotsquared.plot.object.TeleportCause;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
@@ -42,7 +43,7 @@ import java.util.UUID;
                     for (final Plot plot : plots) {
                         if ((!Settings.Done.REQUIRED_FOR_RATINGS || plot.hasFlag(Flags.DONE))
                             && plot.isBasePlot() && (!plot.getLikes().containsKey(uuid))) {
-                            plot.teleportPlayer(player);
+                            plot.teleportPlayer(player, TeleportCause.COMMAND);
                             MainUtil.sendMessage(player, Captions.RATE_THIS);
                             return true;
                         }
