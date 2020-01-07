@@ -340,7 +340,7 @@ public class Settings extends Config {
         @Comment("Allow WorldEdit to be restricted to plots") public static boolean
             WORLDEDIT_RESTRICTIONS = true;
         @Comment("Allow economy to be used") public static boolean ECONOMY = true;
-        @Comment("Send anonymous usage statistics to bStats. Bukkit only setting.") public static boolean
+        @Comment("@deprecated - use bstats config.yml") public static boolean
             METRICS = true;
         @Comment("Expiry will clear old or simplistic plots") public static boolean PLOT_EXPIRY =
             false;
