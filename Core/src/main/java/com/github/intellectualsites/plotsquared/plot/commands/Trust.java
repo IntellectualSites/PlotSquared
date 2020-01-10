@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "trust", aliases = {"t"}, requiredType = RequiredType.PLAYER,
     usage = "/plot trust <player|*>",
-    description = "Allow a user to build in a plot and use WorldEdit while you are offline",
+    description = "Allow a user to build in a plot and use WorldEdit while the plot owner is offline.",
     category = CommandCategory.SETTINGS) public class Trust extends Command {
 
     public Trust() {
@@ -37,7 +37,7 @@ import java.util.concurrent.CompletableFuture;
         checkTrue(currentPlot.isOwner(player.getUUID()) || Permissions
                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
             Captions.NO_PLOT_PERMS);
-        checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, getUsage());
+        checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, "/plot trust <player|*>");
         final Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
         checkTrue(!uuids.isEmpty(), Captions.INVALID_PLAYER, args[0]);
         Iterator<UUID> iterator = uuids.iterator();

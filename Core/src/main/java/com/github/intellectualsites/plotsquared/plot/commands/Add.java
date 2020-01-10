@@ -19,7 +19,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "add",
-    description = "Allow a user to build in a plot while you are online",
+    description = "Allow a user to build in a plot while the plot owner is online.",
     usage = "/plot add <player|*>", category = CommandCategory.SETTINGS, permission = "plots.add",
     requiredType = RequiredType.PLAYER) public class Add extends Command {
 
@@ -35,7 +35,7 @@ import java.util.concurrent.CompletableFuture;
         checkTrue(plot.isOwner(player.getUUID()) || Permissions
                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
             Captions.NO_PLOT_PERMS);
-        checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, getUsage());
+        checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, "/plot add <player|*>");
         final Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
         checkTrue(!uuids.isEmpty(), Captions.INVALID_PLAYER, args[0]);
         Iterator<UUID> iterator = uuids.iterator();
