@@ -87,7 +87,7 @@ subprojects {
         testCompileOnly("org.projectlombok:lombok:1.18.8")
         annotationProcessor("org.projectlombok:lombok:1.18.8")
         testAnnotationProcessor("org.projectlombok:lombok:1.18.8")
-        testImplementation("junit:junit:4.12")
+        testImplementation("junit:junit:4.13")
     }
 
     configurations.all {
