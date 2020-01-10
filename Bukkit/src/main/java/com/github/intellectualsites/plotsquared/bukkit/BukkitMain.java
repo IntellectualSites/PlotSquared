@@ -682,6 +682,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return new BukkitSetupUtils();
     }
 
+    @Deprecated
+    // Metrics are controlled via bstats config
     @Override public void startMetrics() {
         if (this.metricsStarted) {
             return;
