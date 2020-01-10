@@ -37,7 +37,7 @@ import java.util.concurrent.CompletableFuture;
         checkTrue(currentPlot.isOwner(player.getUUID()) || Permissions
                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
             Captions.NO_PLOT_PERMS);
-        checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, "/plot trust <player|*>");
+        checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, getUsage());
         final Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
         checkTrue(!uuids.isEmpty(), Captions.INVALID_PLAYER, args[0]);
         Iterator<UUID> iterator = uuids.iterator();
