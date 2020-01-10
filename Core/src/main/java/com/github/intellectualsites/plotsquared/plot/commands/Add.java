@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
+import com.github.intellectualsites.plotsquared.commands.Argument;
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
@@ -19,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "add",
     description = "Allow a user to build in a plot while you are online",
-    usage = "/plot add <player>", category = CommandCategory.SETTINGS, permission = "plots.add",
+    usage = "/plot add <player|*>", category = CommandCategory.SETTINGS, permission = "plots.add",
     requiredType = RequiredType.PLAYER) public class Add extends Command {
 
     public Add() {

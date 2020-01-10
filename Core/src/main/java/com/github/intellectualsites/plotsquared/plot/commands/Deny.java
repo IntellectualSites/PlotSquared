@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @CommandDeclaration(command = "deny", aliases = {"d", "ban"},
-    description = "Deny a user from a plot", usage = "/plot deny <player>",
+    description = "Deny a user from a plot", usage = "/plot deny <player|*>",
     category = CommandCategory.SETTINGS, requiredType = RequiredType.PLAYER) public class Deny
     extends SubCommand {
 
