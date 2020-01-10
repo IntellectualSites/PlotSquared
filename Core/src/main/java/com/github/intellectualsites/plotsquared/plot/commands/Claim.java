@@ -18,7 +18,7 @@ import com.google.common.primitives.Ints;
 
 @CommandDeclaration(command = "claim", aliases = "c",
     description = "Claim the current plot you're standing on", category = CommandCategory.CLAIMING,
-    requiredType = RequiredType.NONE, permission = "plots.claim", usage = "/plot claim")
+    requiredType = RequiredType.PLAYER, permission = "plots.claim", usage = "/plot claim")
 public class Claim extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {

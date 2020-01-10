@@ -10,7 +10,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 
 @CommandDeclaration(command = "createroadschematic", aliases = {"crs"},
-    category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.NONE,
+    category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.PLAYER,
     permission = "plots.createroadschematic",
     description = "Add a road schematic to your world using the roads around your current plot",
     usage = "/plot createroadschematic") public class CreateRoadSchematic extends SubCommand {

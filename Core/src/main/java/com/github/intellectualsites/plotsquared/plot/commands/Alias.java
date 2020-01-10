@@ -46,7 +46,7 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
         switch (args[0].toLowerCase()) {
             case "set":
                 if (args.length != 2) {
-                    Captions.COMMAND_SYNTAX.send(player, "/plot alias <set> <value>");
+                    Captions.COMMAND_SYNTAX.send(player, getUsage());
                     return false;
                 }
 
@@ -74,7 +74,7 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 
     private boolean setAlias(PlotPlayer player, Plot plot, String alias) {
         if (alias.isEmpty()) {
-            Captions.COMMAND_SYNTAX.send(player, "/plot alias <set> <value>");
+            Captions.COMMAND_SYNTAX.send(player, getUsage());
             return false;
         }
         if (alias.length() >= 50) {
