@@ -101,8 +101,8 @@ subprojects {
 
     repositories {
         mavenCentral()
-        maven { url = "http://maven.sk89q.com/repo/" }
-        maven { url = "http://repo.maven.apache.org/maven2" }
+        maven { url = "https://maven.enginehub.org/repo/" }
+        maven { url = "https://repo.maven.apache.org/maven2" }
         maven { url = "https://jitpack.io" }
     }
 
