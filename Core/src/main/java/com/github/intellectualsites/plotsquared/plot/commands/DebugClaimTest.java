@@ -21,6 +21,7 @@ import com.sk89q.worldedit.math.BlockVector2;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "debugclaimtest", description =
     "If you accidentally delete your database, this command will attempt to restore all plots based on the data from plot signs. "
@@ -55,62 +56,61 @@ public class DebugClaimTest extends SubCommand {
             "&3Sign Block&8->&3Plot&8: Found an excess of 250,000 chunks. Limiting search radius... (~3.8 min)");
         PlotManager manager = area.getPlotManager();
         ArrayList<Plot> plots = new ArrayList<>();
-        for (PlotId id : MainUtil.getPlotSelectionIds(min, max)) {
-            Plot plot = area.getPlotAbs(id);
-            if (plot.hasOwner()) {
-                MainUtil.sendMessage(player, " - &cDB Already contains: " + plot.getId());
-                continue;
-            }
-            Location location = manager.getSignLoc(plot);
-            BlockVector2 chunk = BlockVector2.at(location.getX() >> 4, location.getZ() >> 4);
-            ChunkManager.manager.loadChunk(area.worldname, chunk, false).thenRun(() -> {
-                String[] lines = WorldUtil.IMP.getSign(location);
-                if (lines != null) {
-                    String line = lines[2];
-                    if (line != null && line.length() > 2) {
-                        line = line.substring(2);
-                        BiMap<StringWrapper, UUID> map = UUIDHandler.getUuidMap();
-                        UUID uuid = map.get(new StringWrapper(line));
-                        if (uuid == null) {
-                            for (Map.Entry<StringWrapper, UUID> stringWrapperUUIDEntry : map
-                                .entrySet()) {
-                                if (stringWrapperUUIDEntry.getKey().value.toLowerCase()
-                                    .startsWith(line.toLowerCase())) {
-                                    uuid = stringWrapperUUIDEntry.getValue();
-                                    break;
+        CompletableFuture.runAsync(() -> {
+            ArrayList<PlotId> plotSelectionIds = MainUtil.getPlotSelectionIds(min, max);
+            MainUtil.sendMessage(player, plotSelectionIds.size() + " plot ids to check!");
+            for (PlotId id : plotSelectionIds) {
+                Plot plot = area.getPlotAbs(id);
+                if (plot.hasOwner()) {
+                    MainUtil.sendMessage(player, " - &cDB Already contains: " + plot.getId());
+                    continue;
+                }
+                Location location = manager.getSignLoc(plot);
+                BlockVector2 chunk = BlockVector2.at(location.getX() >> 4, location.getZ() >> 4);
+                ChunkManager.manager.loadChunk(area.worldname, chunk, false).thenRun(() -> {
+                    String[] lines = WorldUtil.IMP.getSign(location);
+                    if (lines != null) {
+                        String line = lines[2];
+                        if (line != null && line.length() > 2) {
+                            line = line.substring(2);
+                            BiMap<StringWrapper, UUID> map = UUIDHandler.getUuidMap();
+                            UUID uuid = map.get(new StringWrapper(line));
+                            if (uuid == null) {
+                                for (Map.Entry<StringWrapper, UUID> stringWrapperUUIDEntry : map.entrySet()) {
+                                    if (stringWrapperUUIDEntry.getKey().value.toLowerCase()
+                                        .startsWith(line.toLowerCase())) {
+                                        uuid = stringWrapperUUIDEntry.getValue();
+                                        break;
+                                    }
                                 }
                             }
-                        }
-                        if (uuid == null) {
-                            uuid = UUIDHandler.getUUID(line, null);
-                        }
-                        if (uuid != null) {
-                            MainUtil.sendMessage(player,
-                                " - &aFound plot: " + plot.getId() + " : " + line);
-                            plot.setOwner(uuid);
-                            plots.add(plot);
-                        } else {
-                            MainUtil.sendMessage(player,
-                                " - &cInvalid PlayerName: " + plot.getId() + " : " + line);
+                            if (uuid == null) {
+                                uuid = UUIDHandler.getUUID(line, null);
+                            }
+                            if (uuid != null) {
+                                MainUtil.sendMessage(player, " - &aFound plot: " + plot.getId() + " : " + line);
+                                plot.setOwner(uuid);
+                                plots.add(plot);
+                            } else {
+                                MainUtil.sendMessage(player, " - &cInvalid PlayerName: " + plot.getId() + " : " + line);
+                            }
                         }
                     }
+                }).join();
+            }
+        }).thenRun(() -> {
+            MainUtil.sendMessage(player, "&3Sign Block&8->&3Plot&8: Finished scan. Updating data...");
+            if (!plots.isEmpty()) {
+                MainUtil.sendMessage(player, "&3Sign Block&8->&3Plot&8: &7Updating '" + plots.size() + "' plots!");
+                DBFunc.createPlotsAndData(plots, () -> MainUtil.sendMessage(player, "&6Database update finished!"));
+                for (Plot plot1 : plots) {
+                    plot1.create();
                 }
-            }).thenRun(() -> {
-                if (!plots.isEmpty()) {
-                    MainUtil.sendMessage(player,
-                        "&3Sign Block&8->&3Plot&8: &7Updating '" + plots.size() + "' plots!");
-                    DBFunc.createPlotsAndData(plots,
-                        () -> MainUtil.sendMessage(player, "&6Database update finished!"));
-                    for (Plot plot1 : plots) {
-                        plot.create();
-                    }
-                    MainUtil.sendMessage(player, "&3Sign Block&8->&3Plot&8: &7Complete!");
-                } else {
-                    MainUtil.sendMessage(player, "No plots were found for the given search.");
-                }
-            });
-            return true;
-        }
+                MainUtil.sendMessage(player, "&3Sign Block&8->&3Plot&8: &7Complete!");
+            } else {
+                MainUtil.sendMessage(player, "&3Sign Block&8->&3Plot&8: No plots were found for the given search.");
+            }
+        });
         return true;
     }
 }
