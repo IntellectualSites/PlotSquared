@@ -19,7 +19,7 @@ dependencies {
     compile(project(":Core"))
     compile("com.destroystokyo.paper:paper-api:1.14.4-R0.1-SNAPSHOT")
     //implementation 'com.onarandombox.multiversecore:Multiverse-Core:3.0.0-SNAPSHOT'
-    implementation("org.spigotmc:spigot-api:1.15.1-R0.1-SNAPSHOT")
+    implementation("org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT")
     compile(group: "com.sk89q.worldedit", name: "worldedit-bukkit", version: "7.0.1")
     compile("io.papermc:paperlib:1.0.2")
     compile(group: "com.squareup.retrofit2", name: "retrofit", version: "2.4.0")
