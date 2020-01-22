@@ -59,6 +59,8 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
@@ -119,6 +121,8 @@ import java.util.zip.ZipInputStream;
     public YamlConfiguration worlds;
     public YamlConfiguration storage;
     public YamlConfiguration commands;
+    public boolean PlaceholderAPI;
+    private PlaceholderAPIHook placeholderAPIHook;
     // Temporary hold the plots/clusters before the worlds load
     public HashMap<String, Set<PlotCluster>> clusters_tmp;
     public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
@@ -1851,6 +1855,24 @@ import java.util.zip.ZipInputStream;
             for (Entry<String, Object> node : object.entrySet()) {
                 this.style.set(node.getKey(), node.getValue());
             }
+        }
+    }
+
+    /**
+     * Setup and register placeholders if PlaceholderAPI is present.
+     */
+    private void setupPlaceholderAPI() {
+        Plugin papi = Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI");
+        if (papi != null && papi.isEnabled()) {
+            this.placeholderAPIHook = new PlaceholderAPIHook();
+            if (this.placeholderAPIHook.register()) {
+                PlaceholderAPI = true;
+                PlotSquared.log("Successfully registered placeholders with PlaceholderAPI.");
+            } else {
+                PlaceholderAPI = false;
+            }
+        } else {
+            PlaceholderAPI = false;
         }
     }
 
