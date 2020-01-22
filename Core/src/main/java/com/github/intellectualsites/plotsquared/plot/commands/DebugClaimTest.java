@@ -3,7 +3,6 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
-import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -55,11 +54,10 @@ public class DebugClaimTest extends SubCommand {
         MainUtil.sendMessage(player,
             "&3Sign Block&8->&3Plot&8: Found an excess of 250,000 chunks. Limiting search radius... (~3.8 min)");
         PlotManager manager = area.getPlotManager();
-        ArrayList<Plot> plots = new ArrayList<>();
         CompletableFuture.runAsync(() -> {
-            ArrayList<PlotId> plotSelectionIds = MainUtil.getPlotSelectionIds(min, max);
-            MainUtil.sendMessage(player, plotSelectionIds.size() + " plot ids to check!");
-            for (PlotId id : plotSelectionIds) {
+            ArrayList<PlotId> ids = MainUtil.getPlotSelectionIds(min, max);
+            MainUtil.sendMessage(player, "&3Sign Block&8->&3Plot&8: " + ids.size() + " plot ids to check!");
+            for (PlotId id : ids) {
                 Plot plot = area.getPlotAbs(id);
                 if (plot.hasOwner()) {
                     MainUtil.sendMessage(player, " - &cDB Already contains: " + plot.getId());
@@ -90,7 +88,7 @@ public class DebugClaimTest extends SubCommand {
                             if (uuid != null) {
                                 MainUtil.sendMessage(player, " - &aFound plot: " + plot.getId() + " : " + line);
                                 plot.setOwner(uuid);
-                                plots.add(plot);
+                                MainUtil.sendMessage(player, " - &8Updated plot: " + plot.getId());
                             } else {
                                 MainUtil.sendMessage(player, " - &cInvalid PlayerName: " + plot.getId() + " : " + line);
                             }
@@ -98,19 +96,7 @@ public class DebugClaimTest extends SubCommand {
                     }
                 }).join();
             }
-        }).thenRun(() -> {
-            MainUtil.sendMessage(player, "&3Sign Block&8->&3Plot&8: Finished scan. Updating data...");
-            if (!plots.isEmpty()) {
-                MainUtil.sendMessage(player, "&3Sign Block&8->&3Plot&8: &7Updating '" + plots.size() + "' plots!");
-                DBFunc.createPlotsAndData(plots, () -> MainUtil.sendMessage(player, "&6Database update finished!"));
-                for (Plot plot1 : plots) {
-                    plot1.create();
-                }
-                MainUtil.sendMessage(player, "&3Sign Block&8->&3Plot&8: &7Complete!");
-            } else {
-                MainUtil.sendMessage(player, "&3Sign Block&8->&3Plot&8: No plots were found for the given search.");
-            }
-        });
+        }).thenRun(() -> MainUtil.sendMessage(player, "&3Sign Block&8->&3Plot&8: Finished scan."));
         return true;
     }
 }
