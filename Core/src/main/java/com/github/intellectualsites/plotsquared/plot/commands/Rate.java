@@ -12,6 +12,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
 import com.github.intellectualsites.plotsquared.plot.object.PlotItemStack;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Rating;
+import com.github.intellectualsites.plotsquared.plot.object.TeleportCause;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
@@ -55,7 +56,7 @@ import java.util.UUID;
                         if ((!Settings.Done.REQUIRED_FOR_RATINGS || p.hasFlag(Flags.DONE)) && p
                             .isBasePlot() && (!p.getRatings().containsKey(uuid)) && !p
                             .isAdded(uuid)) {
-                            p.teleportPlayer(player);
+                            p.teleportPlayer(player, TeleportCause.COMMAND);
                             MainUtil.sendMessage(player, Captions.RATE_THIS);
                             return true;
                         }

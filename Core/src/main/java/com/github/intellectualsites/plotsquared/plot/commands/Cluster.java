@@ -12,6 +12,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotCluster;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.TeleportCause;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
@@ -551,7 +552,7 @@ import java.util.UUID;
                         return false;
                     }
                 }
-                player.teleport(cluster.getHome());
+                player.teleport(cluster.getHome(), TeleportCause.COMMAND);
                 return MainUtil.sendMessage(player, Captions.CLUSTER_TELEPORTING);
             }
             case "i":

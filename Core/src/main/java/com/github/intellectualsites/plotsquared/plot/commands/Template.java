@@ -13,6 +13,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
+import com.github.intellectualsites.plotsquared.plot.object.TeleportCause;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
@@ -167,7 +168,7 @@ import java.util.zip.ZipOutputStream;
                 SetupUtils.manager.setupWorld(setup);
                 GlobalBlockQueue.IMP.addEmptyTask(() -> {
                     MainUtil.sendMessage(player, "Done!");
-                    player.teleport(WorldUtil.IMP.getSpawn(world));
+                    player.teleport(WorldUtil.IMP.getSpawn(world), TeleportCause.COMMAND);
                 });
                 return true;
             }

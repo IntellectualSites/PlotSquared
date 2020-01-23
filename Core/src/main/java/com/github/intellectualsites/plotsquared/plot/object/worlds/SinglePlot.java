@@ -8,6 +8,7 @@ import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.TeleportCause;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.jetbrains.annotations.NotNull;
@@ -50,9 +51,9 @@ public class SinglePlot extends Plot {
         return (SinglePlotArea) super.getArea();
     }
 
-    public boolean teleportPlayer(final PlotPlayer player) {
+    public boolean teleportPlayer(final PlotPlayer player, TeleportCause cause) {
         if (isLoaded()) {
-            return super.teleportPlayer(player);
+            return super.teleportPlayer(player, cause);
         } else {
             Captions.NOT_LOADED.send(player);
             return false;

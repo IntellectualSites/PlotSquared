@@ -10,6 +10,7 @@ import com.github.intellectualsites.plotsquared.nukkit.util.NukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.TeleportCause;
 
 import java.util.Collections;
 import java.util.UUID;
@@ -107,7 +108,7 @@ public class NukkitPlayer extends PlotPlayer {
         }
     }
 
-    @Override public void teleport(Location to) {
+    @Override public void teleport(Location to, TeleportCause cause) {
         if (Math.abs(to.getX()) >= 30000000 || Math.abs(to.getZ()) >= 30000000) {
             return;
         }

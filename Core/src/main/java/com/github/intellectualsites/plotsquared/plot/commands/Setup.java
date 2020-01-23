@@ -11,6 +11,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
+import com.github.intellectualsites.plotsquared.plot.object.TeleportCause;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
@@ -325,7 +326,7 @@ import java.util.UUID;
                     world = object.setupManager.setupWorld(object);
                 }
                 try {
-                    player.teleport(WorldUtil.IMP.getSpawn(world));
+                    player.teleport(WorldUtil.IMP.getSpawn(world), TeleportCause.COMMAND);
                 } catch (Exception e) {
                     player.sendMessage("&cAn error occurred. See console for more information");
                     e.printStackTrace();
