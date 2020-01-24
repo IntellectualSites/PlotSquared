@@ -86,8 +86,9 @@ public class Metrics {
      * Class constructor.
      *
      * @param plugin The plugin which stats should be submitted.
+     * @param bstatsId ID of the plugin
      */
-    public Metrics(Plugin plugin) {
+    public Metrics(Plugin plugin, int bstatsId) {
         if (plugin == null) {
             throw new IllegalArgumentException("Plugin cannot be null!");
         }
