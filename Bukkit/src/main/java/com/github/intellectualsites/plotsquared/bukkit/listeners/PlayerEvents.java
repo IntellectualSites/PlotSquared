@@ -2,13 +2,13 @@ package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
 import com.destroystokyo.paper.MaterialTags;
 import com.github.intellectualsites.plotsquared.bukkit.BukkitMain;
-import com.github.intellectualsites.plotsquared.bukkit.object.BukkitBlockUtil;
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.ExplosionFlag;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
@@ -31,13 +31,11 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.UpdateUtility;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
-import com.sk89q.worldedit.world.item.ItemType;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -145,7 +143,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 /**
@@ -1146,7 +1143,7 @@ import java.util.regex.Pattern;
         }
         Plot plot = area.getOwnedPlot(location);
         if (plot != null) {
-            if (Flags.EXPLOSION.isTrue(plot)) {
+            if (plot.getFlag(ExplosionFlag.class)) {
                 List<MetadataValue> meta = event.getEntity().getMetadata("plot");
                 Plot origin;
                 if (meta.isEmpty()) {
@@ -1858,7 +1855,7 @@ import java.util.regex.Pattern;
             return;
         }
         Plot plot = area.getOwnedPlot(location);
-        if (plot == null || !plot.getFlag(Flags.EXPLOSION).orElse(false)) {
+        if (plot == null || !plot.getFlag(ExplosionFlag.class)) {
             event.setCancelled(true);
         }
         event.blockList().removeIf(

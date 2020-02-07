@@ -2,6 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.flag;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
+import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -219,7 +220,7 @@ public class FlagManager {
         return true;
     }
 
-    public static void setPlotFlags(Plot origin, HashMap<Flag<?>, Object> flags) {
+    public static void setPlotFlags(Plot origin, FlagContainer flagContainer) {
         for (Plot plot : origin.getConnectedPlots()) {
             if (flags != null && !flags.isEmpty()) {
                 plot.getFlags().clear();

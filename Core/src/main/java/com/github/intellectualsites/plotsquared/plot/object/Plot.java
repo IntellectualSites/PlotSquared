@@ -1,8 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
-
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
@@ -11,6 +8,8 @@ import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.generator.SquarePlotWorld;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
@@ -39,7 +38,8 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import java.util.concurrent.TimeUnit;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,6 +62,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -153,6 +154,11 @@ public class Plot {
     private Plot origin;
 
     /**
+     * Plot flag container
+     */
+    @Getter private FlagContainer flagContainer;
+
+    /**
      * Constructor for a new plot.
      * (Only changes after plot.create() will be properly set in the database)
      *
@@ -162,9 +168,7 @@ public class Plot {
      * @see Plot#getPlot(Location) for existing plots
      */
     public Plot(PlotArea area, @NotNull PlotId id, UUID owner) {
-        this.area = area;
-        this.id = id;
-        this.owner = owner;
+        this(area, id, owner, 0);
     }
 
     /**
@@ -176,8 +180,7 @@ public class Plot {
      * @see Plot#getPlot(Location) for existing plots
      */
     public Plot(PlotArea area, @NotNull PlotId id) {
-        this.area = area;
-        this.id = id;
+        this(area, id, null, 0);
     }
 
     /**
@@ -196,6 +199,7 @@ public class Plot {
         this.id = id;
         this.owner = owner;
         this.temp = temp;
+        this.flagContainer = new FlagContainer(area.getFlagContainer());
     }
 
     /**
@@ -209,7 +213,7 @@ public class Plot {
      * @see Plot#getPlot(Location) for existing plots
      */
     public Plot(@NotNull PlotId id, UUID owner, HashSet<UUID> trusted, HashSet<UUID> members,
-        HashSet<UUID> denied, String alias, BlockLoc position, Collection<Flag> flags,
+        HashSet<UUID> denied, String alias, BlockLoc position, Collection<PlotFlag<?>> flags,
         PlotArea area, boolean[] merged, long timestamp, int temp) {
         this.id = id;
         this.area = area;
@@ -221,13 +225,14 @@ public class Plot {
         this.settings.setAlias(alias);
         this.settings.setPosition(position);
         this.settings.setMerged(merged);
-        if (flags != null) {
-            for (Flag flag : flags) {
-                this.settings.flags.put(flag, flag);
-            }
-        }
         this.timestamp = timestamp;
         this.temp = temp;
+        this.flagContainer = new FlagContainer(area.getFlagContainer());
+        if (flags != null) {
+            for (PlotFlag<?> flag : flags) {
+                this.flagContainer.addFlag(flag);
+            }
+        }
     }
 
     /**
@@ -1099,30 +1104,6 @@ public class Plot {
      */
     public boolean removeFlag(Flag<?> flag) {
         return FlagManager.removePlotFlag(this, flag);
-    }
-
-    /**
-     * Gets the flag for a given key
-     *
-     * @param key Flag to get value for
-     */
-    public <V> Optional<V> getFlag(Flag<V> key) {
-        return FlagManager.getPlotFlag(this, key);
-    }
-
-    /**
-     * Gets the flag for a given key
-     *
-     * @param key          the flag
-     * @param defaultValue if the key is null, the value to return
-     */
-    public <V> V getFlag(Flag<V> key, V defaultValue) {
-        V value = FlagManager.getPlotFlagRaw(this, key);
-        if (value == null) {
-            return defaultValue;
-        } else {
-            return value;
-        }
     }
 
     /**
@@ -2016,22 +1997,16 @@ public class Plot {
     }
 
     /**
-     * Gets the flags specific to this plot<br>
-     * - Does not take default flags into account<br>
-     *
-     * @return
-     */
-    public HashMap<Flag<?>, Object> getFlags() {
-        return this.getSettings().flags;
-    }
-
-    /**
      * Sets a flag for this plot.
      *
      * @param flags
      */
     public void setFlags(HashMap<Flag<?>, Object> flags) {
         FlagManager.setPlotFlags(this, flags);
+    }
+
+    public void setFlagContainer(final FlagContainer flagContainer) {
+        this.flagContainer = flagContainer;
     }
 
     /**
@@ -2374,18 +2349,17 @@ public class Plot {
      * @param plot
      */
     public void mergeData(Plot plot) {
-        HashMap<Flag<?>, Object> flags1 = this.getFlags();
-        HashMap<Flag<?>, Object> flags2 = plot.getFlags();
-        if ((!flags1.isEmpty() || !flags2.isEmpty()) && !flags1.equals(flags2)) {
-            boolean greater = flags1.size() > flags2.size();
+        final FlagContainer flagContainer1 = this.getFlagContainer();
+        final FlagContainer flagContainer2 = plot.getFlagContainer();
+        if (!flagContainer1.equals(flagContainer2)) {
+            boolean greater = flagContainer1.getFlagMap().size() > flagContainer2.getFlagMap().size();
             if (greater) {
-                flags1.putAll(flags2);
+                flagContainer1.addAll(flagContainer2.getFlagMap().values());
             } else {
-                flags2.putAll(flags1);
+                flagContainer2.addAll(flagContainer1.getFlagMap().values());
             }
-            HashMap<Flag<?>, Object> net = (greater ? flags1 : flags2);
-            this.setFlags(net);
-            plot.setFlags(net);
+            this.setFlagContainer(greater ? flagContainer1 : flagContainer2);
+            plot.setFlagContainer(this.getFlagContainer());
         }
         if (!this.getAlias().isEmpty()) {
             plot.setAlias(this.getAlias());
@@ -3150,10 +3124,6 @@ public class Plot {
         return true;
     }
 
-    public boolean hasFlag(Flag<?> flag) {
-        return getFlags().containsKey(flag);
-    }
-
     public boolean removeComment(PlotComment comment) {
         return getSettings().removeComment(comment);
     }
@@ -3177,4 +3147,9 @@ public class Plot {
     public boolean getMerged(Direction direction) {
         return getMerged(direction.getIndex());
     }
+
+    public <T> T getFlag(final Class<? extends PlotFlag<T>> flagClass) {
+        return this.flagContainer.getFlag(flagClass).getValue();
+    }
+
 }

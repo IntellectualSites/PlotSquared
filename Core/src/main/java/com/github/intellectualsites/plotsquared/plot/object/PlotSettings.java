@@ -2,6 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 import com.google.common.collect.ImmutableList;
 
@@ -37,12 +38,6 @@ public class PlotSettings {
      * @deprecated Raw access
      */
     @Deprecated public HashMap<UUID, Integer> ratings;
-    /**
-     * Flags.
-     *
-     * @deprecated Raw access
-     */
-    @Deprecated public HashMap<Flag<?>, Object> flags = new HashMap<>();
     private List<PlotComment> comments = null;
     /**
      * Home Position.

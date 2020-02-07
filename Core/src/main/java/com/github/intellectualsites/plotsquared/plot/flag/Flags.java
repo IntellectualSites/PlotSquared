@@ -43,7 +43,6 @@ public final class Flags {
             return Captions.FLAG_ERROR_PRICE.getTranslated();
         }
     };
-    public static final BooleanFlag EXPLOSION = new BooleanFlag("explosion");
     public static final BooleanFlag GRASS_GROW = new BooleanFlag("grass-grow");
     public static final BooleanFlag VINE_GROW = new BooleanFlag("vine-grow");
     public static final BooleanFlag MYCEL_GROW = new BooleanFlag("mycel-grow");
