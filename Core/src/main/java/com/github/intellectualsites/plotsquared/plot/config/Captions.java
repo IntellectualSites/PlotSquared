@@ -569,7 +569,7 @@ public enum Captions {
     PLOT_REMOVED_USER("$1Plot %s of which you were added to has been deleted due to owner inactivity", "Trusted"),
     //</editor-fold>
     //<editor-fold desc="Member">
-    REMOVED_PLAYERS("$2Removed %s players from this plot.", "Member"),
+    REMOVED_PLAYERS("$2Removed %s player(s) from this plot.", "Member"),
     PLOT_LEFT("$2%s left the plot.", "Member"),
     ALREADY_OWNER("$2That user is already the plot owner: %s0", "Member"),
     ALREADY_ADDED("$2That user is already added to that category: %s0", "Member"),
