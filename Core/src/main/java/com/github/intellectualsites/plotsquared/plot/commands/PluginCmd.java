@@ -19,7 +19,7 @@ import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
                     "$2>> $1&l" + PlotSquared.imp().getPluginName() + " $2($1Version$2: $1%s$2)",
                     PlotSquared.get().getVersion()));
                 MainUtil.sendMessage(player,
-                    "$2>> $1&lAuthors$2: $1Citymonstret $2& $1Empire92 $2& $1MattBDev $2& $1dordsor21");
+                    "$2>> $1&lAuthors$2: $1Citymonstret $2& $1Empire92 $2& $1MattBDev $2& $1dordsor21 $2& $1NotMyFault");
                 MainUtil.sendMessage(player,
                     "$2>> $1&lWiki$2: $1https://github.com/IntellectualSites/PlotSquared/wiki");
                 //                MainUtil.sendMessage(player,
