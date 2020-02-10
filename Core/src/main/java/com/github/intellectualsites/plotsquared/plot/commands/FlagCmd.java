@@ -6,11 +6,12 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flag.BlockStateListFlag;
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.flag.IntegerFlag;
-import com.github.intellectualsites.plotsquared.plot.flag.ListFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.types.BlockTypeListFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.types.IntegerFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -37,7 +38,7 @@ import java.util.Set;
     "setflag"}, usage = "/plot flag <set|remove|add|list|info> <flag> <value>", description = "Set plot flags", category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE, permission = "plots.flag")
 public class FlagCmd extends SubCommand {
 
-    private boolean checkPermValue(PlotPlayer player, Flag flag, String key, String value) {
+    private boolean checkPermValue(PlotPlayer player, PlotFlag<?> flag, String key, String value) {
         key = key.toLowerCase();
         value = value.toLowerCase();
         String perm = Captions
@@ -62,20 +63,24 @@ public class FlagCmd extends SubCommand {
 
             } catch (NumberFormatException ignore) {
             }
-        } else if (flag instanceof BlockStateListFlag) {
-            final BlockStateListFlag blockListFlag = (BlockStateListFlag) flag;
-            Set<BlockType> parsedBlocks = blockListFlag.parseValue(value);
-            for (final BlockType block : parsedBlocks) {
-                final String permission = Captions
-                    .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
-                        key.toLowerCase(), block.toString().toLowerCase());
-                final boolean result = Permissions.hasPermission(player, permission);
-                if (!result) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION, Captions
+        } else if (flag instanceof BlockTypeListFlag) {
+            final BlockTypeListFlag blockListFlag = (BlockTypeListFlag) flag;
+            try {
+                List<BlockType> parsedBlocks = blockListFlag.parse(value);
+                for (final BlockType block : parsedBlocks) {
+                    final String permission = Captions
                         .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
-                            key.toLowerCase(), value.toLowerCase()));
-                    return false;
+                            key.toLowerCase(), block.toString().toLowerCase());
+                    final boolean result = Permissions.hasPermission(player, permission);
+                    if (!result) {
+                        MainUtil.sendMessage(player, Captions.NO_PERMISSION, Captions
+                            .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
+                                key.toLowerCase(), value.toLowerCase()));
+                        return false;
+                    }
                 }
+            } catch (final Exception e) {
+                return false;
             }
             return true;
         }
@@ -117,13 +122,13 @@ public class FlagCmd extends SubCommand {
                 .sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_SET_FLAG_OTHER);
             return false;
         }
-        Flag<?> flag = null;
+        PlotFlag<?> flag = null;
         if (args.length > 1) {
-            flag = FlagManager.getFlag(args[1]);
+            flag = GlobalFlagContainer.getInstance().getFlagFromString(args[1]);
             if (flag == null || flag.isReserved()) {
                 boolean suggested = false;
                 try {
-                    StringComparison<Flag<?>> stringComparison =
+                    StringComparison<PlotFlag<?>> stringComparison =
                         new StringComparison<>(args[1], Flags.getFlags());
                     String best = stringComparison.getBestMatch();
                     if (best != null) {

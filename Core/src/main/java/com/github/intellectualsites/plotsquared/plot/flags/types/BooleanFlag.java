@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.flags.types;
 
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import org.jetbrains.annotations.NotNull;
@@ -17,26 +18,29 @@ public abstract class BooleanFlag extends PlotFlag<Boolean> {
      * Construct a new flag instance.
      *
      * @param value Flag value
+     * @param description Flag description
      */
-    protected BooleanFlag(boolean value) {
-        super(value);
+    protected BooleanFlag(final boolean value, final Captions description) {
+        super(value, Captions.FLAG_CATEGORY_BOOLEAN, description);
     }
 
     /**
      * Construct a new boolean flag, with
      * {@code false} as the default value.
+     *
+     * @param description Flag description
      */
-    protected BooleanFlag() {
-        this(false);
+    protected BooleanFlag(final Captions description) {
+        this(false, description);
     }
 
     @Override public Boolean parse(@NotNull String input) throws FlagParseException {
         if (positiveValues.contains(input.toLowerCase(Locale.ENGLISH))) {
-            return this.setFlagValue(true);
+            return true;
         } else if (negativeValues.contains(input.toLowerCase(Locale.ENGLISH))) {
-            return this.setFlagValue(false);
+            return false;
         } else {
-            throw new FlagParseException(this, input);
+            throw new FlagParseException(this, input, Captions.FLAG_ERROR_BOOLEAN);
         }
     }
 

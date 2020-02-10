@@ -50,6 +50,18 @@ import java.util.Map;
         return this;
     }
 
+    public PlotFlag<?> getFlagErased(Class<?> flagClass) {
+        final PlotFlag<?> flag = this.flagMap.get(flagClass);
+        if (flag != null) {
+            return flag;
+        } else {
+            if (getParentContainer() != null) {
+                return getParentContainer().getFlagErased(flagClass);
+            }
+        }
+        return null;
+    }
+
     public <T> PlotFlag<T> getFlag(final Class<? extends PlotFlag<T>> flagClass) {
         final PlotFlag<?> flag = this.flagMap.get(flagClass);
         if (flag != null) {

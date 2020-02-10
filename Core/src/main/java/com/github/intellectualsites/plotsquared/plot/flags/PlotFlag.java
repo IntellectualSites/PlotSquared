@@ -1,8 +1,11 @@
 package com.github.intellectualsites.plotsquared.plot.flags;
 
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.google.common.base.Preconditions;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
 
 /**
  * A plot flag is any property that can be assigned
@@ -14,14 +17,19 @@ import org.jetbrains.annotations.NotNull;
 @EqualsAndHashCode(of = "value") public abstract class PlotFlag<T> {
 
     private T value;
+    private final Captions flagCategory;
+    private final Captions flagDescription;
 
     /**
      * Construct a new flag instance.
      *
      * @param value Flag value
      */
-    protected PlotFlag(@NotNull final T value) {
-        this.value = Preconditions.checkNotNull(value, "flag values may not be null");
+    protected PlotFlag(@NotNull final T value, @NotNull final Captions flagCategory,
+        @NotNull final Captions flagDescription) {
+        this.value = Preconditions.checkNotNull(value, "flag value may not be null");
+        this.flagCategory = Preconditions.checkNotNull(flagCategory, "flag category may not be null");
+        this.flagDescription = Preconditions.checkNotNull(flagDescription, "flag description may not be null");
     }
 
     /**
@@ -72,7 +80,17 @@ import org.jetbrains.annotations.NotNull;
     public abstract String toString();
 
     public final String getName() {
-        return this.getClass().getSimpleName();
+        return this.getClass().getSimpleName().toLowerCase(Locale.ENGLISH);
     }
+
+    public Captions getFlagDescription() {
+        return this.flagDescription;
+    }
+
+    public Captions getFlagCategory() {
+        return this.flagCategory;
+    }
+
+    public abstract String getExample();
 
 }

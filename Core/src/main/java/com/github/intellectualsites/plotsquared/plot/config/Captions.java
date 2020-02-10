@@ -548,6 +548,9 @@ public enum Captions {
     FLAG_CATEGORY_BOOLEAN("Boolean Flags", "Flags"),
     FLAG_CATEGORY_MIXED("Mixed Value Flags", "Flags"),
     //</editor-fold>
+    //<editor-fold desc="Flag descriptions">
+    FLAG_DESCRIPTION_EXPLOSION("Set to 'true' to enable explosions in the plot, and 'false' to disable them", "Flags"),
+    //</editor-fold>
     //<editor-fold desc="Flag category errors">
     FLAG_ERROR_BOOLEAN("Flag value must be a boolean (true|false)", "Flags"),
     FLAG_ERROR_ENUM("Must be one of: %s", "Flags"),
@@ -558,6 +561,7 @@ public enum Captions {
     FLAG_ERROR_KEEP("Flag value must be a timestamp or a boolean", "Flags"),
     FLAG_ERROR_LONG("Flag value must be a whole number (large numbers allowed)", "Flags"),
     FLAG_ERROR_PLOTBLOCKLIST("Flag value must be a block list", "Flags"),
+    FLAG_ERROR_INVALID_BLOCK("The provided value is not a valid block", "Flags"),
     FLAG_ERROR_PRICE("Flag value must be a positive number.", "Flags"),
     FLAG_ERROR_STRING("Flag value must be alphanumeric. Some special characters are allowed.", "Flags"),
     FLAG_ERROR_STRINGLIST("Flag value must be a string list", "Flags"),

@@ -18,9 +18,9 @@ import java.util.Map;
 public final class BlockUtil {
     private BlockUtil(){}
 
-    private static final ParserContext PARSER_CONTEXT = new ParserContext();
+    private static ParserContext PARSER_CONTEXT = new ParserContext();
 
-    private static final InputParser<BaseBlock> PARSER;
+    private static InputParser<BaseBlock> PARSER;
 
     static  {
         PARSER_CONTEXT.setRestricted(false);
@@ -29,15 +29,15 @@ public final class BlockUtil {
         PARSER = WorldEdit.getInstance().getBlockFactory().getParsers().get(0);
     }
 
-    public static final BlockState get(int id) {
+    public static BlockState get(int id) {
         return LegacyMapper.getInstance().getBlockFromLegacy(id);
     }
 
-    public static final BlockState get(int id, int data) {
+    public static BlockState get(int id, int data) {
         return LegacyMapper.getInstance().getBlockFromLegacy(id, data);
     }
 
-    public static final BlockState get(String id) {
+    public static BlockState get(String id) {
         if (id.length() == 1 && id.charAt(0) == '*') {
             return FuzzyBlockState.builder().type(BlockTypes.AIR).build();
         }
@@ -66,7 +66,7 @@ public final class BlockUtil {
         }
     }
 
-    public static final BlockState[] parse(String commaDelimited) {
+    public static BlockState[] parse(String commaDelimited) {
         String[] split = commaDelimited.split(",(?![^\\(\\[]*[\\]\\)])");
         BlockState[] result = new BlockState[split.length];
         for (int i = 0; i < split.length; i++) {
