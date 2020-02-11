@@ -129,7 +129,10 @@ public class BukkitPlotGenerator extends ChunkGenerator
             if (result.getChunkData() != null) {
                 for (int chunkX = 0; chunkX < 16; chunkX++) {
                     for (int chunkZ = 0; chunkZ < 16; chunkZ++) {
-                        biome.setBiome(chunkX, chunkZ, Biome.PLAINS);
+                        for (int y = 0; y < world.getMaxHeight(); y++) {
+                            biome.setBiome(chunkX, y, chunkZ, Biome.PLAINS);
+
+                        }
                     }
                 }
                 return result.getChunkData();
@@ -178,16 +181,29 @@ public class BukkitPlotGenerator extends ChunkGenerator
         ChunkManager.postProcessChunk(loc, result);
     }
 
-    /**
-     * Allow spawning everywhere.
-     *
-     * @param world Ignored
-     * @param x     Ignored
-     * @param z     Ignored
-     * @return always true
-     */
-    @Override public boolean canSpawn(@NotNull final World world, final int x, final int z) {
+    @Override
+    public boolean canSpawn(@NotNull final World world, final int x, final int z) {
         return true;
+    }
+
+    public boolean shouldGenerateCaves() {
+        return false;
+    }
+
+    public boolean shouldGenerateDecorations() {
+        return false;
+    }
+
+    public boolean isParallelCapable() {
+        return true;
+    }
+
+    public boolean shouldGenerateMobs() {
+        return false;
+    }
+
+    public boolean shouldGenerateStructures() {
+        return false;
     }
 
     @Override public String toString() {
