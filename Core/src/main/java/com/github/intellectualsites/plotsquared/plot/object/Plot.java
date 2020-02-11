@@ -213,7 +213,7 @@ public class Plot {
      * @see Plot#getPlot(Location) for existing plots
      */
     public Plot(@NotNull PlotId id, UUID owner, HashSet<UUID> trusted, HashSet<UUID> members,
-        HashSet<UUID> denied, String alias, BlockLoc position, Collection<PlotFlag<?>> flags,
+        HashSet<UUID> denied, String alias, BlockLoc position, Collection<PlotFlag<?, ?>> flags,
         PlotArea area, boolean[] merged, long timestamp, int temp) {
         this.id = id;
         this.area = area;
@@ -229,7 +229,7 @@ public class Plot {
         this.temp = temp;
         this.flagContainer = new FlagContainer(area.getFlagContainer());
         if (flags != null) {
-            for (PlotFlag<?> flag : flags) {
+            for (PlotFlag<?, ?> flag : flags) {
                 this.flagContainer.addFlag(flag);
             }
         }
@@ -3148,7 +3148,7 @@ public class Plot {
         return getMerged(direction.getIndex());
     }
 
-    public <T> T getFlag(final Class<? extends PlotFlag<T>> flagClass) {
+    public <T> T getFlag(final Class<? extends PlotFlag<T, ?>> flagClass) {
         return this.flagContainer.getFlag(flagClass).getValue();
     }
 

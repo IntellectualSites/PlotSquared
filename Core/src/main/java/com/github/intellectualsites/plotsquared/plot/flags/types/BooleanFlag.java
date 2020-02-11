@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 
-public abstract class BooleanFlag extends PlotFlag<Boolean> {
+public abstract class BooleanFlag<F extends PlotFlag<Boolean, F>> extends PlotFlag<Boolean, F> {
 
     private static final Collection<String> positiveValues = Arrays.asList("1", "yes", "allow", "true");
     private static final Collection<String> negativeValues = Arrays.asList("0", "no", "deny", "disallow", "false");
@@ -34,18 +34,18 @@ public abstract class BooleanFlag extends PlotFlag<Boolean> {
         this(false, description);
     }
 
-    @Override public Boolean parse(@NotNull String input) throws FlagParseException {
+    @Override public F parse(@NotNull String input) throws FlagParseException {
         if (positiveValues.contains(input.toLowerCase(Locale.ENGLISH))) {
-            return true;
+            return this.flagOf(true);
         } else if (negativeValues.contains(input.toLowerCase(Locale.ENGLISH))) {
-            return false;
+            return this.flagOf(false);
         } else {
             throw new FlagParseException(this, input, Captions.FLAG_ERROR_BOOLEAN);
         }
     }
 
-    @Override public Boolean merge(@NotNull Boolean oldValue, @NotNull Boolean newValue) {
-        return this.setFlagValue(oldValue || newValue);
+    @Override public F merge(@NotNull Boolean newValue) {
+        return this.flagOf(getValue() || newValue);
     }
 
     @Override public String toString() {

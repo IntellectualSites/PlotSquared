@@ -14,9 +14,9 @@ import java.util.Locale;
  *
  * @param <T> Value contained in the flag.
  */
-@EqualsAndHashCode(of = "value") public abstract class PlotFlag<T> {
+@EqualsAndHashCode(of = "value") public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
 
-    private T value;
+    private final T value;
     private final Captions flagCategory;
     private final Captions flagDescription;
 
@@ -42,33 +42,24 @@ import java.util.Locale;
     }
 
     /**
-     * Update the flag value.
-     *
-     * @param newValue New flag value.
-     */
-    public T setFlagValue(@NotNull final T newValue) {
-        return (this.value = Preconditions.checkNotNull(newValue, "flag values may not be null"));
-    }
-
-    /**
-     * Parse a string into a flag value, and throw an exception in the case that the
-     * string does not represent a valid flag value. The flag value will be updated to
-     * the newly parsed value.
+     * Parse a string into a flag, and throw an exception in the case that the
+     * string does not represent a valid flag value. This instance won't change its
+     * state, but instead an instance holding the parsed flag value will be returned.
      *
      * @param input String to parse.
      * @return Parsed value, if valid.
      * @throws FlagParseException If the value could not be parsed.
      */
-    public abstract T parse(@NotNull final String input) throws FlagParseException;
+    public abstract F parse(@NotNull final String input) throws FlagParseException;
 
     /**
-     * Merge two flag values into one and updates the flag value.
+     * Merge this flag's value with another value and return an instance
+     * holding the merged value.
      *
-     * @param oldValue Existing flag value.
      * @param newValue New flag value.
      * @return Flag containing parsed flag value.
      */
-    public abstract T merge(@NotNull final T oldValue, @NotNull final T newValue);
+    public abstract F merge(@NotNull final T newValue);
 
     /**
      * Returns a string representation of the flag instance, that when
@@ -92,5 +83,7 @@ import java.util.Locale;
     }
 
     public abstract String getExample();
+
+    protected abstract F flagOf(@NotNull T value);
 
 }

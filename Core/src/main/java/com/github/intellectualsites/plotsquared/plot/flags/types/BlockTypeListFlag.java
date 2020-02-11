@@ -10,17 +10,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockTypeListFlag extends ListFlag<BlockType> {
+public class BlockTypeListFlag extends ListFlag<BlockType, BlockTypeListFlag> {
 
-    public BlockTypeListFlag(Captions description) {
-        super(Captions.FLAG_CATEGORY_BLOCK_LIST, description);
+    public BlockTypeListFlag(List<BlockType> blockTypeList, Captions description) {
+        super(blockTypeList, Captions.FLAG_CATEGORY_BLOCK_LIST, description);
     }
 
-    @Override public List<BlockType> parse(@NotNull String input) throws FlagParseException {
+    @Override public BlockTypeListFlag parse(@NotNull String input) throws FlagParseException {
         final List<BlockType> parsedBlocks = new ArrayList<>();
         final String[] split = input.split(",(?![^\\(\\[]*[\\]\\)])");
         if (split.length == 0) {
-            return parsedBlocks;
+            return this.flagOf(parsedBlocks);
         }
         for (final String blockString : split) {
             final BlockState blockState = BlockUtil.get(blockString);
@@ -30,11 +30,15 @@ public class BlockTypeListFlag extends ListFlag<BlockType> {
                 parsedBlocks.add(blockState.getBlockType());
             }
         }
-        return parsedBlocks;
+        return this.flagOf(parsedBlocks);
     }
 
     @Override public String getExample() {
         return "air,grass_block";
+    }
+
+    @Override protected BlockTypeListFlag flagOf(@NotNull List<BlockType> value) {
+        return new BlockTypeListFlag(value, getFlagDescription()); // copy the description
     }
 
 }

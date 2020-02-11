@@ -11,7 +11,7 @@ import java.util.Map;
 @EqualsAndHashCode(of = "flagMap") public class FlagContainer {
 
     private final FlagContainer parentContainer;
-    private final Map<Class<?>, PlotFlag<?>> flagMap = new HashMap<>();
+    private final Map<Class<?>, PlotFlag<?, ?>> flagMap = new HashMap<>();
 
     public FlagContainer(@Nullable final FlagContainer parentContainer) {
         this.parentContainer = parentContainer;
@@ -21,25 +21,25 @@ import java.util.Map;
         return this.parentContainer;
     }
 
-    protected Map<Class<?>, PlotFlag<?>> getInternalPlotFlagMap() {
+    protected Map<Class<?>, PlotFlag<?, ?>> getInternalPlotFlagMap() {
         return this.flagMap;
     }
 
-    public Map<Class<?>, PlotFlag<?>> getFlagMap() {
-        return ImmutableMap.<Class<?>, PlotFlag<?>>builder().putAll(this.flagMap).build();
+    public Map<Class<?>, PlotFlag<?, ?>> getFlagMap() {
+        return ImmutableMap.<Class<?>, PlotFlag<?, ?>>builder().putAll(this.flagMap).build();
     }
 
-    public void addFlag(final PlotFlag<?> flag) {
+    public void addFlag(final PlotFlag<?, ? extends PlotFlag<?, ?>> flag) {
         this.flagMap.put(flag.getClass(), flag);
     }
 
-    public void addAll(final Collection<PlotFlag<?>> flags) {
-        for (final PlotFlag<?> flag : flags) {
+    public void addAll(final Collection<PlotFlag<?, ?>> flags) {
+        for (final PlotFlag<?, ?> flag : flags) {
             this.addFlag(flag);
         }
     }
 
-    public Collection<PlotFlag<?>> getRecognizedPlotFlags() {
+    public Collection<PlotFlag<?, ?>> getRecognizedPlotFlags() {
         return this.getHighestClassContainer().getFlagMap().values();
     }
 
@@ -50,8 +50,8 @@ import java.util.Map;
         return this;
     }
 
-    public PlotFlag<?> getFlagErased(Class<?> flagClass) {
-        final PlotFlag<?> flag = this.flagMap.get(flagClass);
+    public PlotFlag<?, ?> getFlagErased(Class<?> flagClass) {
+        final PlotFlag<?, ?> flag = this.flagMap.get(flagClass);
         if (flag != null) {
             return flag;
         } else {
@@ -62,10 +62,10 @@ import java.util.Map;
         return null;
     }
 
-    public <T> PlotFlag<T> getFlag(final Class<? extends PlotFlag<T>> flagClass) {
-        final PlotFlag<?> flag = this.flagMap.get(flagClass);
+    public <T> PlotFlag<T, ?> getFlag(final Class<? extends PlotFlag<T, ?>> flagClass) {
+        final PlotFlag<?, ?> flag = this.flagMap.get(flagClass);
         if (flag != null) {
-            return (PlotFlag<T>) flag;
+            return (PlotFlag<T, ?>) flag;
         } else {
             if (getParentContainer() != null) {
                 return getParentContainer().getFlag(flagClass);
