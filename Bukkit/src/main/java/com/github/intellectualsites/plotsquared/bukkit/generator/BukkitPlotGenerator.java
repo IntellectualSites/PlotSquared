@@ -203,7 +203,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
     }
 
     public boolean shouldGenerateStructures() {
-        return false;
+        return true;
     }
 
     @Override public String toString() {
