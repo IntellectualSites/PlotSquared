@@ -191,7 +191,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
     }
 
     public boolean shouldGenerateDecorations() {
-        return true;
+        return false;
     }
 
     public boolean isParallelCapable() {
