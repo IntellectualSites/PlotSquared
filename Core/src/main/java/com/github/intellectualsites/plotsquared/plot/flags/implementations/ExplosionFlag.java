@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.types.BooleanFlag;
 import org.jetbrains.annotations.NotNull;
 
 public class ExplosionFlag extends BooleanFlag<ExplosionFlag> {
+
     public static final ExplosionFlag EXPLOSION_TRUE = new ExplosionFlag(true);
     public static final ExplosionFlag EXPLOSION_FALSE = new ExplosionFlag(false);
 

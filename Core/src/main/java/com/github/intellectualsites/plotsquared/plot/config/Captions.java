@@ -536,6 +536,7 @@ public enum Captions implements Caption {
     FLAG_CATEGORY_TELEPORT_DENY("Teleport Deny Flag", "Flags"),
     FLAG_CATEGORY_STRING_LIST("String List Flags", "Flags"),
     FLAG_CATEGORY_WEATHER("Weather Flags", "Flags"),
+    FLAG_CATEGORY_MUSIC("Music Flags", "Flags"),
     FLAG_CATEGORY_BLOCK_LIST("Material Flags", "Flags"),
     FLAG_CATEGORY_INTERVALS("Interval Flags", "Flags"),
     FLAG_CATEGORY_INTEGER_LIST("Integer List Flags", "Flags"),
@@ -547,6 +548,7 @@ public enum Captions implements Caption {
     //</editor-fold>
     //<editor-fold desc="Flag descriptions">
     FLAG_DESCRIPTION_EXPLOSION("Set to 'true' to enable explosions in the plot, and 'false' to disable them", "Flags"),
+    FLAG_DESCRIPTION_MUSIC("Set to a music disk ID (item name) to play the music disc inside of the plot", "Flags"),
     //</editor-fold>
     //<editor-fold desc="Flag category errors">
     FLAG_ERROR_BOOLEAN("Flag value must be a boolean (true|false)", "Flags"),
@@ -563,6 +565,7 @@ public enum Captions implements Caption {
     FLAG_ERROR_STRING("Flag value must be alphanumeric. Some special characters are allowed.", "Flags"),
     FLAG_ERROR_STRINGLIST("Flag value must be a string list", "Flags"),
     FLAG_ERROR_WEATHER("Flag must be a weather: 'rain' or 'sun'", "Flags"),
+    FLAG_ERROR_MUSIC("Flag value must be a valid music disc ID.", "Flags"),
     //</editor-fold>
     //<editor-fold desc="Trusted">
     TRUSTED_ADDED("$4You successfully trusted a user to the plot", "Trusted"),

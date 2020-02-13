@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MusicFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -142,26 +143,26 @@ public class PlotListener {
                         FlagManager.removePlotFlag(plot, Flags.TIME);
                     }
                 }
+
                 Optional<PlotWeather> weatherFlag = plot.getFlag(Flags.WEATHER);
                 weatherFlag.ifPresent(player::setWeather);
-                Optional<String> musicFlag = plot.getFlag(Flags.MUSIC);
-                if (musicFlag.isPresent()) {
-                    final String id = musicFlag.get();
-                    final ItemType item = ItemUtil.get(id);
-                    final String rawId = item.getId();
-                    if (rawId.contains("disc") || item == ItemTypes.AIR) {
+
+                ItemType musicFlag = plot.getFlag(MusicFlag.class);
+                if (musicFlag != null) {
+                    final String rawId = musicFlag.getId();
+                    if (rawId.contains("disc") || musicFlag == ItemTypes.AIR) {
                         Location location = player.getLocation();
                         Location lastLocation = player.getMeta("music");
                         if (lastLocation != null) {
-                            player.playMusic(lastLocation, item);
-                            if (item == ItemTypes.AIR) {
+                            player.playMusic(lastLocation, musicFlag);
+                            if (musicFlag == ItemTypes.AIR) {
                                 player.deleteMeta("music");
                             }
                         }
-                        if (item != ItemTypes.AIR) {
+                        if (musicFlag != ItemTypes.AIR) {
                             try {
                                 player.setMeta("music", location);
-                                player.playMusic(location, item);
+                                player.playMusic(location, musicFlag);
                             } catch (Exception ignored) {
                             }
                         }

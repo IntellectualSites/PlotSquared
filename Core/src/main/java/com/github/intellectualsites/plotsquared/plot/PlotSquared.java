@@ -6,6 +6,7 @@ import com.github.intellectualsites.plotsquared.configuration.file.YamlConfigura
 import com.github.intellectualsites.plotsquared.configuration.serialization.ConfigurationSerialization;
 import com.github.intellectualsites.plotsquared.plot.commands.WE_Anywhere;
 import com.github.intellectualsites.plotsquared.plot.config.Caption;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
@@ -319,7 +320,7 @@ import java.util.zip.ZipInputStream;
             e.printStackTrace();
         }
 
-        PlotSquared.log(Captions.PREFIX + Captions
+        PlotSquared.log(Captions.PREFIX + CaptionUtility
             .format(Captions.ENABLED.getTranslated(), IMP.getPluginName()));
     }
 

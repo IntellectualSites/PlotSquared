@@ -1,7 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util.world;
 
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import com.sk89q.worldedit.world.registry.LegacyMapper;
@@ -12,6 +11,9 @@ public final class ItemUtil {
     private ItemUtil(){}
 
     public static ItemType get(String input) {
+        if (input == null || input.isEmpty()) {
+            return ItemTypes.AIR;
+        }
         input = input.toLowerCase(Locale.ROOT);
         if (Character.isDigit(input.charAt(0))) {
             String[] split = input.split(":");

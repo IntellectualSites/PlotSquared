@@ -1,6 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.flags;
 
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.ExplosionFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MusicFlag;
 import lombok.Getter;
 
 import javax.annotation.Nonnull;
@@ -38,6 +39,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         super(null);
         // Register all default flags here
         this.addFlag(ExplosionFlag.EXPLOSION_FALSE);
+        this.addFlag(MusicFlag.MUSIC_FLAG_NONE);
     }
 
     @Override public void addFlag(PlotFlag<?, ?> flag) {
