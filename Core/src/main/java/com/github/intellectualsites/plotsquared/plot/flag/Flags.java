@@ -1,15 +1,8 @@
 package com.github.intellectualsites.plotsquared.plot.flag;
 
-import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.github.intellectualsites.plotsquared.plot.util.StringMan;
-
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 
 public final class Flags {
 
@@ -114,85 +107,8 @@ public final class Flags {
             return Captions.FLAG_ERROR_KEEP.getTranslated();
         }
     };
+
     public static final TeleportDenyFlag DENY_TELEPORT = new TeleportDenyFlag("deny-teleport");
     public static final BooleanFlag DENY_EXIT = new BooleanFlag("deny-exit");
-    public static final BooleanFlag UNTRUSTED_VISIT = new BooleanFlag("untrusted-visit");
 
-
-    private static final HashMap<String, Flag<?>> flags;
-
-    static {
-        flags = new HashMap<>();
-        try {
-            for (Field field : Flags.class.getFields()) {
-                String fieldName = field.getName().replace("_", "-").toLowerCase();
-                Object fieldValue = field.get(null);
-                if (!(fieldValue instanceof Flag)) {
-                    continue;
-                }
-                Flag flag = (Flag) fieldValue;
-                if (!flag.getName().equals(fieldName)) {
-                    PlotSquared.debug(
-                        Flags.class + "Field doesn't match: " + fieldName + " != " + flag
-                            .getName());
-                }
-                flags.put(flag.getName(), flag);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Get an immutable collection of registered flags.
-     *
-     * @return a collection of registered flags.
-     */
-    public static Collection<Flag<?>> getFlags() {
-        return Collections.unmodifiableCollection(flags.values());
-    }
-
-    public static Flag<?> getFlag(String flag) {
-        return flags.get(flag);
-    }
-
-    public static void registerFlag(final Flag<?> flag) {
-        final Flag<?> duplicate = flags.put(flag.getName(), flag);
-        if (duplicate != null) {
-            PlotSquared.get().forEachPlotArea(value -> {
-                if (value.DEFAULT_FLAGS.containsKey(duplicate)) {
-                    Object remove = value.DEFAULT_FLAGS.remove(duplicate);
-                    try {
-                        if (remove instanceof Collection
-                            && remove.getClass().getMethod("toString").getDeclaringClass()
-                            == Object.class) {
-                            value.DEFAULT_FLAGS.put(flag,
-                                flag.parseValue(StringMan.join((Collection) remove, ',')));
-                        } else {
-                            value.DEFAULT_FLAGS.put(flag, flag.parseValue("" + remove));
-                        }
-                    } catch (NoSuchMethodException neverHappens) {
-                        neverHappens.printStackTrace();
-                    }
-                }
-            });
-            PlotSquared.get().forEachPlotRaw(value -> {
-                if (value.hasFlag(duplicate)) {
-                    Object remove = value.getFlags().remove(duplicate);
-                    try {
-                        if (remove instanceof Collection
-                            && remove.getClass().getMethod("toString").getDeclaringClass()
-                            == Object.class) {
-                            value.getFlags().put(flag,
-                                flag.parseValue(StringMan.join((Collection) remove, ',')));
-                        } else {
-                            value.getFlags().put(flag, flag.parseValue("" + remove));
-                        }
-                    } catch (NoSuchMethodException neverHappens) {
-                        neverHappens.printStackTrace();
-                    }
-                }
-            });
-        }
-    }
 }

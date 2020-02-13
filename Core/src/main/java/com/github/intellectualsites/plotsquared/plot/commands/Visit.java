@@ -5,7 +5,7 @@ import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.UntrustedVisitFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -140,7 +140,7 @@ import java.util.concurrent.CompletableFuture;
             }
         } else {
             if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OTHER) &&
-                !Flags.UNTRUSTED_VISIT.isTrue(plot)) {
+                !plot.getFlag(UntrustedVisitFlag.class)) {
                 Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OTHER);
                 return CompletableFuture.completedFuture(false);
             }

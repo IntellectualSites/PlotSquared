@@ -1089,7 +1089,7 @@ public class Plot {
      * @param flag  Flag to set
      * @param value Flag value
      */
-    public <V> boolean setFlag(Flag<V> flag, Object value) {
+    public <V> boolean setFlag(PlotFlag<V, ?> flag, Object value) {
         if (flag == Flags.KEEP && ExpireManager.IMP != null) {
             ExpireManager.IMP.updateExpired(this);
         }
@@ -1102,7 +1102,7 @@ public class Plot {
      * @param flag the flag to remove
      * @return success
      */
-    public boolean removeFlag(Flag<?> flag) {
+    public boolean removeFlag(PlotFlag<?, ?> flag) {
         return FlagManager.removePlotFlag(this, flag);
     }
 

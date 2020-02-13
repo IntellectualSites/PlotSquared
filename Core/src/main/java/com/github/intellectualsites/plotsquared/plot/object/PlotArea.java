@@ -72,7 +72,6 @@ public abstract class PlotArea {
     public boolean SCHEMATIC_ON_CLAIM = false;
     public String SCHEMATIC_FILE = "null";
     public List<String> SCHEMATICS = null;
-    public Map<Flag<?>, Object> DEFAULT_FLAGS;
     public boolean USE_ECONOMY = false;
     public Map<String, Expression<Double>> PRICES = new HashMap<>();
     public boolean SPAWN_EGGS = false;

@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.flag;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -131,6 +132,11 @@ public class FlagManager {
         return getSettingFlag(plot.getArea(), plot.getSettings(), flag);
     }
 
+    public static <V> boolean addPlotFlag(Plot origin, PlotFlag<V, ?> flag, Object value) {
+        // TODO: Implement this
+        return true;
+    }
+
     /**
      * Add a flag to a plot.
      *
@@ -192,6 +198,11 @@ public class FlagManager {
 
     public static Map<Flag<?>, Object> getSettingFlags(PlotArea area, PlotSettings settings) {
         return getPlotFlags(area, settings, false);
+    }
+
+    public static boolean removePlotFlag(Plot origin, PlotFlag<?, ?> flag) {
+        // TODO: Implement
+        return true;
     }
 
     /**

@@ -9,6 +9,7 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.ExplosionFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.UntrustedVisitFlag;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
@@ -790,7 +791,7 @@ import java.util.regex.Pattern;
                 // to is identical to the plot's home location, and untrusted-visit is true
                 // i.e. untrusted-visit can override deny-teleport
                 // this is acceptable, because otherwise it wouldn't make sense to have both flags set
-                if (!result && !(Flags.UNTRUSTED_VISIT.isTrue(plot) && plot.getHome().equals(BukkitUtil.getLocationFull(to)))) {
+                if (!result && !(plot.getFlag(UntrustedVisitFlag.class) && plot.getHome().equals(BukkitUtil.getLocationFull(to)))) {
                     MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
                         Captions.PERMISSION_ADMIN_ENTRY_DENIED);
                     event.setCancelled(true);

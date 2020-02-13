@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.flags;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.ExplosionFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlightFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MusicFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.UntrustedVisitFlag;
 import lombok.Getter;
 
 import javax.annotation.Nonnull;
@@ -42,6 +43,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(ExplosionFlag.EXPLOSION_FALSE);
         this.addFlag(MusicFlag.MUSIC_FLAG_NONE);
         this.addFlag(FlightFlag.FLIGHT_FLAG_FALSE);
+        this.addFlag(UntrustedVisitFlag.UNTRUSTED_VISIT_FLAG_TRUE);
     }
 
     @Override public void addFlag(PlotFlag<?, ?> flag) {
