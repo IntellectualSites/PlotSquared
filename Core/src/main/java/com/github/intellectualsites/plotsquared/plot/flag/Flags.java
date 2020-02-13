@@ -24,7 +24,6 @@ public final class Flags {
     public static final GameModeFlag GUEST_GAMEMODE = new GameModeFlag("guest-gamemode");
     public static final StringFlag DONE = (StringFlag) new StringFlag("done").reserve();
     public static final BooleanFlag REDSTONE = new BooleanFlag("redstone");
-    public static final BooleanFlag FLY = new BooleanFlag("fly");
     public static final BooleanFlag NOTIFY_LEAVE = new BooleanFlag("notify-leave");
     public static final BooleanFlag TITLES = new BooleanFlag("titles");
     public static final BooleanFlag NOTIFY_ENTER = new BooleanFlag("notify-enter");

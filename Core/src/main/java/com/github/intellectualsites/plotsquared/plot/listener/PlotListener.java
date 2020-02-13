@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlightFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MusicFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -94,8 +95,8 @@ public class PlotListener {
                         }
                     }
                 }
-                Optional<Boolean> flyFlag = plot.getFlag(Flags.FLY);
-                if (flyFlag.isPresent()) {
+
+                if (plot.getFlag(FlightFlag.class)) {
                     boolean flight = player.getFlight();
                     GameMode gamemode = player.getGameMode();
                     if (flight != (gamemode == GameModes.CREATIVE
@@ -103,10 +104,9 @@ public class PlotListener {
                         player.setPersistentMeta("flight",
                             ByteArrayUtilities.booleanToBytes(player.getFlight()));
                     }
-                    if (flyFlag.get() != player.getFlight()) {
-                        player.setFlight(flyFlag.get());
-                    }
+                    player.setFlight(true);
                 }
+
                 Optional<GameMode> gamemodeFlag = plot.getFlag(Flags.GAMEMODE);
                 if (gamemodeFlag.isPresent()) {
                     if (player.getGameMode() != gamemodeFlag.get()) {
@@ -254,7 +254,8 @@ public class PlotListener {
                     }
                 }
             }
-            if (plot.getFlag(Flags.FLY).isPresent()) {
+
+            if (plot.getFlag(FlightFlag.class)) {
                 if (player.hasPersistentMeta("flight")) {
                     player.setFlight(
                         ByteArrayUtilities.bytesToBoolean(player.getPersistentMeta("flight")));
@@ -268,6 +269,7 @@ public class PlotListener {
                     }
                 }
             }
+
             if (plot.getFlag(Flags.TIME).isPresent()) {
                 player.setTime(Long.MAX_VALUE);
             }
