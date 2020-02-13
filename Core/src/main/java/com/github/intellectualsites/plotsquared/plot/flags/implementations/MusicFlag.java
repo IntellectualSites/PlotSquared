@@ -8,8 +8,7 @@ import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import org.jetbrains.annotations.NotNull;
 
-
-public final class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
+public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
 
     public static final MusicFlag MUSIC_FLAG_NONE = new MusicFlag(ItemTypes.AIR);
 

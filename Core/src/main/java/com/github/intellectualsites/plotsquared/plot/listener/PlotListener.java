@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyExitFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlightFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MusicFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
@@ -213,7 +214,7 @@ public class PlotListener {
             if (pw == null) {
                 return true;
             }
-            if (Flags.DENY_EXIT.isTrue(plot)
+            if (plot.getFlag(DenyExitFlag.class)
                 && !Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_EXIT_DENIED)
                 && !player.getMeta("kick", false)) {
                 if (previous != null) {

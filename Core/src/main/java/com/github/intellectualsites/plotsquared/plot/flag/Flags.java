@@ -109,6 +109,5 @@ public final class Flags {
     };
 
     public static final TeleportDenyFlag DENY_TELEPORT = new TeleportDenyFlag("deny-teleport");
-    public static final BooleanFlag DENY_EXIT = new BooleanFlag("deny-exit");
 
 }
