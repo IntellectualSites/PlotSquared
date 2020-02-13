@@ -1,6 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.config;
 
-import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
@@ -11,14 +10,12 @@ import java.io.IOException;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 
 /**
  * Captions class.
  */
-public enum Captions {
+public enum Captions implements Caption {
 
     //@formatter:off
     //<editor-fold desc="Static Flags">
@@ -659,35 +656,6 @@ public enum Captions {
         this(defaultString, true, category.toLowerCase());
     }
 
-    public static String format(String message, Object... args) {
-        if (args.length == 0) {
-            return message;
-        }
-        Map<String, String> map = new LinkedHashMap<>();
-        for (int i = args.length - 1; i >= 0; i--) {
-            String arg = "" + args[i];
-            if (arg.isEmpty()) {
-                map.put("%s" + i, "");
-            } else {
-                arg = Captions.color(arg);
-                map.put("%s" + i, arg);
-            }
-            if (i == 0) {
-                map.put("%s", arg);
-            }
-        }
-        message = StringMan.replaceFromMap(message, map);
-        return message;
-    }
-
-    public static String format(Captions caption, Object... args) {
-        if (caption.usePrefix() && caption.translatedString.length() > 0) {
-            return Captions.PREFIX.getTranslated() + format(caption.translatedString, args);
-        } else {
-            return format(caption.translatedString, args);
-        }
-    }
-
     public static String color(String string) {
         return StringMan.replaceFromMap(string, replacements);
     }
@@ -778,11 +746,7 @@ public enum Captions {
         }
     }
 
-    @Override public String toString() {
-        return this.translatedString;
-    }
-
-    public String getTranslated() {
+    @Override public String getTranslated() {
         return this.translatedString;
     }
 
@@ -790,24 +754,8 @@ public enum Captions {
         return this.prefix;
     }
 
-    public String formatted() {
-        return StringMan.replaceFromMap(getTranslated(), replacements);
-    }
-
     public String getCategory() {
         return this.category;
     }
 
-    public void send(CommandCaller caller, String... args) {
-        send(caller, (Object[]) args);
-    }
-
-    public void send(CommandCaller caller, Object... args) {
-        String msg = format(this, args);
-        if (caller == null) {
-            PlotSquared.log(msg);
-        } else {
-            caller.sendMessage(msg);
-        }
-    }
 }

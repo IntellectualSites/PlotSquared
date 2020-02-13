@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.flags;
 
-import com.github.intellectualsites.plotsquared.plot.config.Captions;
+import com.github.intellectualsites.plotsquared.plot.config.Caption;
 import com.google.common.base.Preconditions;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;
@@ -17,16 +17,16 @@ import java.util.Locale;
 @EqualsAndHashCode(of = "value") public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
 
     private final T value;
-    private final Captions flagCategory;
-    private final Captions flagDescription;
+    private final Caption flagCategory;
+    private final Caption flagDescription;
 
     /**
      * Construct a new flag instance.
      *
      * @param value Flag value
      */
-    protected PlotFlag(@NotNull final T value, @NotNull final Captions flagCategory,
-        @NotNull final Captions flagDescription) {
+    protected PlotFlag(@NotNull final T value, @NotNull final Caption flagCategory,
+        @NotNull final Caption flagDescription) {
         this.value = Preconditions.checkNotNull(value, "flag value may not be null");
         this.flagCategory = Preconditions.checkNotNull(flagCategory, "flag category may not be null");
         this.flagDescription = Preconditions.checkNotNull(flagDescription, "flag description may not be null");
@@ -74,11 +74,11 @@ import java.util.Locale;
         return this.getClass().getSimpleName().toLowerCase(Locale.ENGLISH);
     }
 
-    public Captions getFlagDescription() {
+    public Caption getFlagDescription() {
         return this.flagDescription;
     }
 
-    public Captions getFlagCategory() {
+    public Caption getFlagCategory() {
         return this.flagCategory;
     }
 

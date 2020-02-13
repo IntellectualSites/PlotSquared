@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.flags.types;
 
+import com.github.intellectualsites.plotsquared.plot.config.Caption;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
@@ -7,11 +8,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class IntegerFlag extends PlotFlag<Integer, IntegerFlag> {
 
-    protected IntegerFlag(final int value, @NotNull Captions flagDescription) {
+    protected IntegerFlag(final int value, @NotNull Caption flagDescription) {
         super(value, Captions.FLAG_CATEGORY_INTEGERS, flagDescription);
     }
 
-    protected IntegerFlag(@NotNull Captions flagDescription) {
+    protected IntegerFlag(@NotNull Caption flagDescription) {
         this(0, flagDescription);
     }
 

@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.flags.types;
 
+import com.github.intellectualsites.plotsquared.plot.config.Caption;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
@@ -20,7 +21,7 @@ public abstract class BooleanFlag<F extends PlotFlag<Boolean, F>> extends PlotFl
      * @param value Flag value
      * @param description Flag description
      */
-    protected BooleanFlag(final boolean value, final Captions description) {
+    protected BooleanFlag(final boolean value, final Caption description) {
         super(value, Captions.FLAG_CATEGORY_BOOLEAN, description);
     }
 

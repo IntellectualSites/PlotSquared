@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.flags.types;
 
+import com.github.intellectualsites.plotsquared.plot.config.Caption;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
 import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public class BlockTypeListFlag extends ListFlag<BlockType, BlockTypeListFlag> {
 
-    public BlockTypeListFlag(List<BlockType> blockTypeList, Captions description) {
+    public BlockTypeListFlag(List<BlockType> blockTypeList, Caption description) {
         super(blockTypeList, Captions.FLAG_CATEGORY_BLOCK_LIST, description);
     }
 

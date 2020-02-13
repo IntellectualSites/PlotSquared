@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.configuration.MemorySection;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
 import com.github.intellectualsites.plotsquared.configuration.serialization.ConfigurationSerialization;
 import com.github.intellectualsites.plotsquared.plot.commands.WE_Anywhere;
+import com.github.intellectualsites.plotsquared.plot.config.Caption;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
@@ -345,7 +346,8 @@ import java.util.zip.ZipInputStream;
      * @see IPlotMain#log(String)
      */
     public static void log(Object message) {
-        if (message == null || message.toString().isEmpty()) {
+        if (message == null || (message instanceof Caption ? ((Caption) message).getTranslated().isEmpty() :
+            message.toString().isEmpty())) {
             return;
         }
         if (PlotSquared.get() == null || PlotSquared.get().getLogger() == null) {

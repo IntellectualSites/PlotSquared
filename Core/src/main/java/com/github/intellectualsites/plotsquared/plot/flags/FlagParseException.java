@@ -1,14 +1,14 @@
 package com.github.intellectualsites.plotsquared.plot.flags;
 
-import com.github.intellectualsites.plotsquared.plot.config.Captions;
+import com.github.intellectualsites.plotsquared.plot.config.Caption;
 
 public class FlagParseException extends Exception {
 
-    private final PlotFlag<?> flag;
+    private final PlotFlag<?, ?> flag;
     private final String value;
-    private final Captions errorMessage;
+    private final Caption errorMessage;
 
-    public FlagParseException(final PlotFlag<?> flag, final String value, final Captions errorMessage) {
+    public FlagParseException(final PlotFlag<?, ?> flag, final String value, final Caption errorMessage) {
         super(String.format("Failed to parse flag of type '%s'. Value '%s' was not accepted.",
             flag.getName(), value));
         this.flag = flag;
@@ -30,11 +30,11 @@ public class FlagParseException extends Exception {
      *
      * @return Flag that threw the exception
      */
-    public PlotFlag<?> getFlag() {
+    public PlotFlag<?, ?> getFlag() {
         return this.flag;
     }
 
-    public Captions getErrorMessage() {
+    public Caption getErrorMessage() {
         return errorMessage;
     }
 }

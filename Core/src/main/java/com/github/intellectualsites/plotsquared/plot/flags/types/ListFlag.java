@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.flags.types;
 
+import com.github.intellectualsites.plotsquared.plot.config.Caption;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public abstract class ListFlag<V, F extends PlotFlag<List<V>, F>> extends PlotFlag<List<V>, F> {
 
-    public ListFlag(final List<V> valueList, final Captions category, final Captions description) {
+    public ListFlag(final List<V> valueList, final Captions category, final Caption description) {
         super(valueList, category, description);
     }
 

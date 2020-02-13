@@ -3,6 +3,8 @@ package com.github.intellectualsites.plotsquared.plot.util;
 import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.Like;
+import com.github.intellectualsites.plotsquared.plot.config.Caption;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
@@ -640,7 +642,7 @@ public class MainUtil {
      * @param caption the message to send
      * @return boolean success
      */
-    public static boolean sendMessage(CommandCaller player, Captions caption, String... args) {
+    public static boolean sendMessage(CommandCaller player, Caption caption, String... args) {
         return sendMessage(player, caption, (Object[]) args);
     }
 
@@ -651,13 +653,13 @@ public class MainUtil {
      * @param caption the message to send
      * @return boolean success
      */
-    public static boolean sendMessage(final CommandCaller player, final Captions caption,
+    public static boolean sendMessage(final CommandCaller player, final Caption caption,
         final Object... args) {
         if (caption.getTranslated().isEmpty()) {
             return true;
         }
         TaskManager.runTaskAsync(() -> {
-            String m = Captions.format(caption, args);
+            String m = CaptionUtility.format(caption, args);
             if (player == null) {
                 PlotSquared.log(m);
             } else {
@@ -789,7 +791,7 @@ public class MainUtil {
                     value = df.format(value);
                 }
                 flags.append(prefix)
-                    .append(Captions
+                    .append(CaptionUtility
                         .format(Captions.PLOT_FLAG_LIST.getTranslated(), entry.getKey().getName(),
                             value));
                 prefix = ", ";

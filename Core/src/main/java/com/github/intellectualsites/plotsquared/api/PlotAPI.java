@@ -2,6 +2,7 @@ package com.github.intellectualsites.plotsquared.api;
 
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.Caption;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
@@ -164,7 +165,7 @@ import java.util.UUID;
      * @see #sendConsoleMessage(String)
      * @see Captions
      */
-    public void sendConsoleMessage(Captions caption) {
+    public void sendConsoleMessage(Caption caption) {
         sendConsoleMessage(caption.getTranslated());
     }
 
