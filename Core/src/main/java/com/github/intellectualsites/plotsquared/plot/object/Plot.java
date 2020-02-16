@@ -3157,4 +3157,8 @@ public class Plot {
         return this.flagContainer.getFlag(flagClass).getValue();
     }
 
+    public boolean setFlag(PlotFlag<?, ?> plotFlag) {
+        flagContainer.addFlag(plotFlag);
+        return true;
+    }
 }
