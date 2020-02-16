@@ -49,6 +49,10 @@ public abstract class BooleanFlag<F extends PlotFlag<Boolean, F>> extends PlotFl
         return this.flagOf(getValue() || newValue);
     }
 
+    @Override public String getExample() {
+        return "true";
+    }
+
     @Override public String toString() {
         return this.getValue().toString();
     }

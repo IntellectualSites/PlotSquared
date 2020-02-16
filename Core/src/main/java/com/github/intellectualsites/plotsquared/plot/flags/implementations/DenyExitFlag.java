@@ -12,10 +12,6 @@ public class DenyExitFlag extends BooleanFlag<DenyExitFlag> {
         super(value, Captions.FLAG_DESCRIPTION_DENY_EXIT);
     }
 
-    @Override public String getExample() {
-        return "true";
-    }
-
     @Override protected DenyExitFlag flagOf(@NotNull Boolean value) {
         return new DenyExitFlag(value);
     }

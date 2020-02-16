@@ -13,10 +13,6 @@ public class ExplosionFlag extends BooleanFlag<ExplosionFlag> {
         super(value, Captions.FLAG_DESCRIPTION_EXPLOSION);
     }
 
-    @Override public String getExample() {
-        return "true";
-    }
-
     @Override protected ExplosionFlag flagOf(@NotNull Boolean value) {
         return value ? EXPLOSION_TRUE : EXPLOSION_FALSE;
     }

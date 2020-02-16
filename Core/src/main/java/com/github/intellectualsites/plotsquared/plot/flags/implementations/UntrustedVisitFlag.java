@@ -12,10 +12,6 @@ public class UntrustedVisitFlag extends BooleanFlag<UntrustedVisitFlag> {
         super(value, Captions.FLAG_DESCRIPTION_UNTRUSTED);
     }
 
-    @Override public String getExample() {
-        return "";
-    }
-
     @Override protected UntrustedVisitFlag flagOf(@NotNull Boolean value) {
         return new UntrustedVisitFlag(value);
     }

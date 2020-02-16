@@ -12,10 +12,6 @@ public class FlightFlag extends BooleanFlag<FlightFlag> {
         super(value, Captions.FLAG_DESCRIPTION_FLIGHT);
     }
 
-    @Override public String getExample() {
-        return "true";
-    }
-
     @Override protected FlightFlag flagOf(@NotNull Boolean value) {
         return new FlightFlag(value);
     }
