@@ -166,7 +166,6 @@ public class Settings extends Config {
         Chat.CONSOLE_COLOR = config.getBoolean("console.color", Chat.CONSOLE_COLOR);
         Chat.INTERACTIVE = config.getBoolean("chat.fancy", Chat.INTERACTIVE);
 
-        Enabled_Components.METRICS = config.getBoolean("metrics", Enabled_Components.METRICS);
         Enabled_Components.UPDATER =
             config.getBoolean("update-notifications", Enabled_Components.UPDATER);
         Enabled_Components.DATABASE_PURGER =
@@ -340,8 +339,6 @@ public class Settings extends Config {
         @Comment("Allow WorldEdit to be restricted to plots") public static boolean
             WORLDEDIT_RESTRICTIONS = true;
         @Comment("Allow economy to be used") public static boolean ECONOMY = true;
-        @Comment("@deprecated - use bstats config.yml") public static boolean
-            METRICS = true;
         @Comment("Expiry will clear old or simplistic plots") public static boolean PLOT_EXPIRY =
             false;
         @Comment("Processes chunks (trimming, or entity/tile limits) ") public static boolean
