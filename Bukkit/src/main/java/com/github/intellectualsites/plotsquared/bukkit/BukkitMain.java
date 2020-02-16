@@ -67,7 +67,6 @@ import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extension.platform.Actor;
-import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
@@ -149,7 +148,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Override public void onEnable() {
         this.pluginName = getDescription().getName();
         PlotPlayer.registerConverter(Player.class, BukkitUtil::getPlayer);
-        PaperLib.suggestPaper(this);
 
         new PlotSquared(this, "Bukkit");
 
