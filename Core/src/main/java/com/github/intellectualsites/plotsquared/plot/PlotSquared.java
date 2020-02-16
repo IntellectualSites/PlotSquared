@@ -1437,42 +1437,10 @@ import java.util.zip.ZipInputStream;
         return Arrays.stream(split).map(s -> String.format("%4s", s)).collect(Collectors.joining());
     }
 
-    private boolean update(PlotPlayer sender, URL url) {
-        try {
-            String name = this.jarFile.getName();
-            MainUtil.sendMessage(sender, "$1Downloading from provided URL: &7" + url);
-            URLConnection con = url.openConnection();
-            try (InputStream stream = con.getInputStream()) {
-                File newJar = new File("plugins/update/" + name);
-                File parent = newJar.getParentFile();
-                if (!parent.exists()) {
-                    parent.mkdirs();
-                }
-                MainUtil.sendMessage(sender, "$2 - Output: " + newJar);
-                if (!newJar.delete()) {
-                    MainUtil.sendMessage(sender, "Failed to update " + IMP.getPluginName() + "");
-                    MainUtil.sendMessage(sender, "Jar file failed to delete.");
-                    MainUtil.sendMessage(sender, " - Please update manually");
-                }
-                Files.copy(stream, newJar.toPath());
-            }
-            MainUtil.sendMessage(sender,
-                "$1The update will take effect when the server is restarted next");
-            return true;
-        } catch (IOException e) {
-            MainUtil.sendMessage(sender, "Failed to update " + IMP.getPluginName() + "");
-            MainUtil.sendMessage(sender, " - Please update manually");
-            PlotSquared.log("============ Stacktrace ============");
-            e.printStackTrace();
-            PlotSquared.log("====================================");
-        }
-        return false;
-    }
-
     /**
      * Copies a file from inside the jar to a location
      *
-     * @param file   Name of the file inside PlotSquared.jar
+     * @param file Name of the file inside PlotSquared.jar
      * @param folder The output location relative to /plugins/PlotSquared/
      */
     public void copyFile(String file, String folder) {
