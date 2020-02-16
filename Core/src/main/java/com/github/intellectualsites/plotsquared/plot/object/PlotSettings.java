@@ -1,8 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 import com.google.common.collect.ImmutableList;
 
@@ -116,28 +113,6 @@ public class PlotSettings {
      */
     public void setAlias(String alias) {
         this.alias = alias;
-    }
-
-    public String getJoinMessage(PlotArea area) {
-        if (flags.containsKey(Flags.GREETING)) {
-            return (String) flags.get(Flags.GREETING);
-        } else {
-            return "";
-        }
-    }
-
-    /**
-     * Get the "farewell" flag value.
-     *
-     * @param plotArea The PlotArea
-     * @return Farewell flag
-     */
-    public String getLeaveMessage(PlotArea plotArea) {
-        if (flags.containsKey(Flags.FAREWELL)) {
-            return (String) flags.get(Flags.FAREWELL);
-        } else {
-            return "";
-        }
     }
 
     @SuppressWarnings({"UnstableApiUsage"}) public List<PlotComment> getComments(String inbox) {

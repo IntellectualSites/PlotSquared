@@ -3,7 +3,9 @@ package com.github.intellectualsites.plotsquared.plot.flags;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyExitFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DescriptionFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.ExplosionFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.FarewellFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlightFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.GreetingFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MusicFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.UntrustedVisitFlag;
 import lombok.Getter;
@@ -31,6 +33,8 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(UntrustedVisitFlag.UNTRUSTED_VISIT_FLAG_TRUE);
         this.addFlag(DenyExitFlag.DENY_EXIT_FLAG_TRUE);
         this.addFlag(DescriptionFlag.DESCRIPTION_FLAG_EMPTY);
+        this.addFlag(GreetingFlag.GREETING_FLAG_EMPTY);
+        this.addFlag(FarewellFlag.FAREWELL_FLAG_EMPTY);
     }
 
     @Override public PlotFlag<?, ?> getFlagErased(Class<?> flagClass) {

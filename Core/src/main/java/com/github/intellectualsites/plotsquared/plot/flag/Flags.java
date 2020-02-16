@@ -8,8 +8,6 @@ public final class Flags {
 
     public static final IntegerListFlag ANALYSIS =
         (IntegerListFlag) new IntegerListFlag("analysis").reserve();
-    public static final StringFlag GREETING = new StringFlag("greeting");
-    public static final StringFlag FAREWELL = new StringFlag("farewell");
     public static final IntervalFlag FEED = new IntervalFlag("feed");
     public static final IntervalFlag HEAL = new IntervalFlag("heal");
     public static final GameModeFlag GAMEMODE = new GameModeFlag("gamemode");

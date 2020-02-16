@@ -19,4 +19,5 @@ public class FlightFlag extends BooleanFlag<FlightFlag> {
     @Override protected FlightFlag flagOf(@NotNull Boolean value) {
         return new FlightFlag(value);
     }
+
 }

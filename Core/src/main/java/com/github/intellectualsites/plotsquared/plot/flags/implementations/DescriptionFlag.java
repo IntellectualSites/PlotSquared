@@ -25,7 +25,7 @@ public class DescriptionFlag extends PlotFlag<String, DescriptionFlag> {
     }
 
     @Override public String getExample() {
-        return "&6Welcome to my plot!";
+        return "&6This is my plot!";
     }
 
     @Override protected DescriptionFlag flagOf(@NotNull String value) {

@@ -6,7 +6,9 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyExitFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.FarewellFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlightFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.GreetingFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MusicFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -60,7 +62,7 @@ public class PlotListener {
             } else {
                 titles = Settings.TITLES;
             }
-            final String greeting;
+             String greeting;
             if (flags.isEmpty()) {
                 if (titles) {
                     greeting = "";
@@ -69,9 +71,9 @@ public class PlotListener {
                 }
             } else {
                 titles = plot.getFlag(Flags.TITLES, titles);
-                Optional<String> greetingFlag = plot.getFlag(Flags.GREETING);
-                if (greetingFlag.isPresent()) {
-                    greeting = greetingFlag.get();
+
+                greeting = plot.getFlag(GreetingFlag.class);
+                if (!greeting.isEmpty()) {
                     MainUtil
                         .format(Captions.PREFIX_GREETING.getTranslated() + greeting, plot, player,
                             false,
@@ -80,8 +82,6 @@ public class PlotListener {
                                 MainUtil.sendMessage(player, value);
                             }
                         });
-                } else {
-                    greeting = "";
                 }
                 Optional<Boolean> enter = plot.getFlag(Flags.NOTIFY_ENTER);
                 if (enter.isPresent() && enter.get()) {
@@ -234,14 +234,18 @@ public class PlotListener {
                     }
                 }
             }
-            Optional<String> farewell = plot.getFlag(Flags.FAREWELL);
-            farewell.ifPresent(s -> MainUtil
-                .format(Captions.PREFIX_FAREWELL.getTranslated() + s, plot, player, false,
-                    new RunnableVal<String>() {
-                        @Override public void run(String value) {
-                            MainUtil.sendMessage(player, value);
-                        }
-                    }));
+
+            final String farewell = plot.getFlag(FarewellFlag.class);
+            if (!farewell.isEmpty()) {
+                MainUtil
+                    .format(Captions.PREFIX_FAREWELL.getTranslated() + farewell, plot, player, false,
+                        new RunnableVal<String>() {
+                            @Override public void run(String value) {
+                                MainUtil.sendMessage(player, value);
+                            }
+                        });
+            }
+
             Optional<Boolean> leave = plot.getFlag(Flags.NOTIFY_LEAVE);
             if (leave.isPresent() && leave.get()) {
                 if (!Permissions.hasPermission(player, "plots.flag.notify-enter.bypass")) {

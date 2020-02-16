@@ -20,4 +20,5 @@ public class ExplosionFlag extends BooleanFlag<ExplosionFlag> {
     @Override protected ExplosionFlag flagOf(@NotNull Boolean value) {
         return value ? EXPLOSION_TRUE : EXPLOSION_FALSE;
     }
+
 }

@@ -19,4 +19,5 @@ public class UntrustedVisitFlag extends BooleanFlag<UntrustedVisitFlag> {
     @Override protected UntrustedVisitFlag flagOf(@NotNull Boolean value) {
         return new UntrustedVisitFlag(value);
     }
+
 }

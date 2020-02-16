@@ -554,6 +554,7 @@ public enum Captions implements Caption {
     FLAG_DESCRIPTION_DENY_EXIT("Set to 'true' to disallow players from exiting the plot.", "Flags"),
     FLAG_DESCRIPTION_DESCRIPTION("Plot description. Supports '&' color codes.", "Flags"),
     FLAG_DESCRIPTION_GREETING("Message sent to players on plot entry. Supports '&' color codes.", "Flags"),
+    FLAG_DESCRIPTION_FAREWELL("Message sent to players when leaving the plot. Supports '&' color codes.", "Flags"),
     //</editor-fold>
     //<editor-fold desc="Flag category errors">
     FLAG_ERROR_BOOLEAN("Flag value must be a boolean (true|false)", "Flags"),
