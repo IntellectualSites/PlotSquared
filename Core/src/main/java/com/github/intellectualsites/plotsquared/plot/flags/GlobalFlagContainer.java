@@ -15,8 +15,21 @@ import java.util.Map;
 public final class GlobalFlagContainer extends FlagContainer {
 
     @Getter private static final GlobalFlagContainer instance = new GlobalFlagContainer();
+    private static Map<String, Class<?>> stringClassMap = new HashMap<>();
 
-    private final Map<String, Class<?>> stringClassMap = new HashMap<>();
+    private GlobalFlagContainer() {
+        super(null, (flag, type) -> {
+            if (type == PlotFlagUpdateType.FLAG_ADDED) {
+                stringClassMap.put(flag.getName().toLowerCase(Locale.ENGLISH), flag.getClass());
+            }
+        });
+        // Register all default flags here
+        this.addFlag(ExplosionFlag.EXPLOSION_FALSE);
+        this.addFlag(MusicFlag.MUSIC_FLAG_NONE);
+        this.addFlag(FlightFlag.FLIGHT_FLAG_FALSE);
+        this.addFlag(UntrustedVisitFlag.UNTRUSTED_VISIT_FLAG_TRUE);
+        this.addFlag(DenyExitFlag.DENY_EXIT_FLAG_TRUE);
+    }
 
     @Override public PlotFlag<?, ?> getFlagErased(Class<?> flagClass) {
         final PlotFlag<?, ?> flag = super.getFlagErased(flagClass);
@@ -28,33 +41,19 @@ public final class GlobalFlagContainer extends FlagContainer {
         }
     }
 
-    @Nonnull @Override public <T> PlotFlag<T, ?> getFlag(Class<? extends PlotFlag<T, ?>> flagClass) {
+    @Nonnull @Override
+    public <V, T extends PlotFlag<V, ?>> T getFlag(Class<? extends T> flagClass) {
         final PlotFlag<?, ?> flag = super.getFlag(flagClass);
         if (flag != null) {
-            return (PlotFlag<T, ?>) flag;
+            return castUnsafe(flag);
         } else {
             throw new IllegalStateException(String.format("Unrecognized flag '%s'. All flag types"
                 + " must be present in the global flag container.", flagClass.getSimpleName()));
         }
     }
 
-    private GlobalFlagContainer() {
-        super(null);
-        // Register all default flags here
-        this.addFlag(ExplosionFlag.EXPLOSION_FALSE);
-        this.addFlag(MusicFlag.MUSIC_FLAG_NONE);
-        this.addFlag(FlightFlag.FLIGHT_FLAG_FALSE);
-        this.addFlag(UntrustedVisitFlag.UNTRUSTED_VISIT_FLAG_TRUE);
-        this.addFlag(DenyExitFlag.DENY_EXIT_FLAG_TRUE);
-    }
-
-    @Override public void addFlag(PlotFlag<?, ?> flag) {
-        super.addFlag(flag);
-        this.stringClassMap.put(flag.getName().toLowerCase(Locale.ENGLISH), flag.getClass());
-    }
-
     public Class<?> getFlagClassFromString(final String name) {
-        return this.stringClassMap.get(name.toLowerCase(Locale.ENGLISH));
+        return stringClassMap.get(name.toLowerCase(Locale.ENGLISH));
     }
 
     public PlotFlag<?, ?> getFlagFromString(final String name) {
