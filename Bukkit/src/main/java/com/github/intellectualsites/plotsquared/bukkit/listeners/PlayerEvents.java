@@ -1469,7 +1469,7 @@ import java.util.regex.Pattern;
                 event.setCancelled(true);
                 return;
             }
-            if (plot.getFlag(LiquidFlowFlag.class)) {
+            if (!plot.getFlag(LiquidFlowFlag.class)) {
                 switch (to.getType()) {
                     case WATER:
                     case LAVA:
