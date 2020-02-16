@@ -6,7 +6,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import org.jetbrains.annotations.NotNull;
 
-public class IntegerFlag extends PlotFlag<Integer, IntegerFlag> {
+public abstract class IntegerFlag<F extends PlotFlag<Integer, F>> extends PlotFlag<Integer, F> {
 
     protected IntegerFlag(final int value, @NotNull Caption flagDescription) {
         super(value, Captions.FLAG_CATEGORY_INTEGERS, flagDescription);
@@ -16,7 +16,7 @@ public class IntegerFlag extends PlotFlag<Integer, IntegerFlag> {
         this(0, flagDescription);
     }
 
-    @Override public IntegerFlag parse(@NotNull String input) throws FlagParseException {
+    @Override public F parse(@NotNull String input) throws FlagParseException {
         try {
             return flagOf(Integer.parseInt(input));
         } catch (final Throwable throwable) {
@@ -24,7 +24,7 @@ public class IntegerFlag extends PlotFlag<Integer, IntegerFlag> {
         }
     }
 
-    @Override public IntegerFlag merge(@NotNull Integer newValue) {
+    @Override public F merge(@NotNull Integer newValue) {
         return flagOf(getValue() + newValue);
     }
 
@@ -35,9 +35,4 @@ public class IntegerFlag extends PlotFlag<Integer, IntegerFlag> {
     @Override public String getExample() {
         return "10";
     }
-
-    @Override protected IntegerFlag flagOf(@NotNull Integer value) {
-        return new IntegerFlag(value, getFlagDescription());
-    }
-
 }
