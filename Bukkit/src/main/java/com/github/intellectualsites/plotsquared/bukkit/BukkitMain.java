@@ -7,6 +7,7 @@ import com.github.intellectualsites.plotsquared.bukkit.listeners.PlayerEvents;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.PlotPlusListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.SingleWorldListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.WorldEvents;
+import com.github.intellectualsites.plotsquared.bukkit.placeholders.Placeholders;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitChatManager;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitChunkManager;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitCommand;
@@ -162,6 +163,13 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
 
         new UpdateUtility(this).updateChecker();
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new Placeholders(this).register();
+            PlotSquared.log(Captions.PREFIX + "&6PlaceholderAPI found! Hook activated.");
+        } else {
+            PlotSquared.log(Captions.PREFIX + "&6PlaceholderAPI is not in use. Hook deactivated.");
+        }
 
         this.startMetrics();
         if (Settings.Enabled_Components.WORLDS) {
