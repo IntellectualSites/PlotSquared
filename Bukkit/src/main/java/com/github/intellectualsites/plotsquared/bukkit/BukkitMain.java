@@ -60,7 +60,7 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandlerImplementation;
-import com.github.intellectualsites.plotsquared.plot.util.UpdateUtility;
+import com.github.intellectualsites.plotsquared.bukkit.util.UpdateUtility;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
@@ -163,37 +163,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             return;
         }
 
-        // Check for updates
-        if (PlotSquared.get().getUpdateUtility() != null) {
-            final UpdateUtility updateUtility = PlotSquared.get().getUpdateUtility();
-            updateUtility.checkForUpdate(PlotSquared.get().getVersion().versionString(),
-                ((updateDescription, throwable) -> {
-                    Bukkit.getScheduler().runTask(BukkitMain.this, () -> {
-                        getLogger().info("-------- PlotSquared Update Check --------");
-                        if (throwable != null) {
-                            getLogger().severe(String
-                                .format("Could not check for updates. Reason: %s",
-                                    throwable.getMessage()));
-                        } else {
-                            if (updateDescription == null) {
-                                getLogger().info(
-                                    "You appear to be running the latest version of PlotSquared. Congratulations!");
-                            } else {
-                                getLogger()
-                                    .info("There appears to be a PlotSquared update available!");
-                                getLogger().info(String.format(
-                                    "You are running version %s, the newest available version is %s",
-                                    getPluginVersionString(), updateDescription.getVersion()));
-                                getLogger().info(
-                                    String.format("Update URL: %s", updateDescription.getUrl()));
-                            }
-                        }
-                        getLogger().info("-------- PlotSquared Update Check --------");
-                    });
-                }));
-        } else {
-            getLogger().warning("Update checking disabled. Skipping.");
-        }
+        new UpdateUtility(this).updateChecker();
 
         this.startMetrics();
         if (Settings.Enabled_Components.WORLDS) {

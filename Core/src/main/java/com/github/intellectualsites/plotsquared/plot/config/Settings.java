@@ -132,6 +132,9 @@ public class Settings extends Config {
         // Titles
         TITLES = config.getBoolean("titles", TITLES);
 
+        // Update Notifications
+        Enabled_Components.UPDATE_NOTIFICATIONS = config.getBoolean("update-notifications", Enabled_Components.UPDATE_NOTIFICATIONS);
+
         // Teleportation
         Teleport.DELAY = config.getInt("teleport.delay", Teleport.DELAY);
         Teleport.ON_LOGIN = config.getBoolean("teleport.on_login", Teleport.ON_LOGIN);
@@ -358,5 +361,6 @@ public class Settings extends Config {
         @Comment("Delete plots when a player is banned") public static boolean BAN_DELETER = false;
         @Comment({"Prevent possibly unsafe blocks from being used in plot components", "Can be bypassed with `/plot debugallowunsafe`"})
         public static boolean PREVENT_UNSAFE = true;
+        @Comment("Whether we should notify you about updates or not.") public static boolean UPDATE_NOTIFICATIONS = true;
     }
 }
