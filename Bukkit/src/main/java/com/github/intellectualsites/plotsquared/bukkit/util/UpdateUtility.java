@@ -35,13 +35,14 @@ public class UpdateUtility implements Listener {
                             connection.setRequestMethod("GET");
                             spigotVersion = (new BufferedReader(new InputStreamReader(connection.getInputStream()))).readLine();
                         } catch (IOException e) {
-                            PlotSquared.log(Captions.PREFIX + "&6Unable to check for updates because: " + e);
+                            PlotSquared.log(Captions.PREFIX + "&cUnable to check for updates because: " + e);
                             this.cancel();
                             return;
                         }
 
                         if (!internalVersion.equals(spigotVersion)) {
                             PlotSquared.log(Captions.PREFIX + "&6There appears to be a PlotSquared update available!");
+                            PlotSquared.log(Captions.PREFIX + "&6You are running version " + internalVersion + ", &6latest version is " + spigotVersion);
                             PlotSquared.log(Captions.PREFIX + "&6https://www.spigotmc.org/resources/1177/updates");
                         } else {
                             PlotSquared.log(Captions.PREFIX + "Congratulations! You are running the latest PlotSquared version.");

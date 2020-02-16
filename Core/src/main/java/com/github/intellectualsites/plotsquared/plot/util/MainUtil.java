@@ -67,7 +67,7 @@ public class MainUtil {
     public static boolean canSendChunk = false;
     /**
      * Cache of mapping x,y,z coordinates to the chunk array<br>
-     * - Used for efficent world generation<br>
+     * - Used for efficient world generation<br>
      */
     public static short[][] x_loc;
     public static short[][] y_loc;

@@ -138,7 +138,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 /**
@@ -152,6 +151,7 @@ import java.util.regex.Pattern;
     private boolean tmpTeleport = true;
     private Field fieldPlayer;
     private PlayerMoveEvent moveTmp;
+    private String internalVersion;
     private String spigotVersion;
 
     {
@@ -727,15 +727,17 @@ import java.util.regex.Pattern;
             try {
                 HttpsURLConnection connection = (HttpsURLConnection) new URL("https://api.spigotmc.org/legacy/update.php?resource=1177").openConnection();
                 connection.setRequestMethod("GET");
-                this.spigotVersion = (new BufferedReader(new InputStreamReader(connection.getInputStream()))).readLine();
+                spigotVersion = (new BufferedReader(new InputStreamReader(connection.getInputStream()))).readLine();
             } catch (IOException e) {
-                PlotSquared.log(Captions.PREFIX + "&6Unable to check for updates because: " + e);
+                new PlotMessage(Captions.PREFIX + "Unable to check for updates, check console for further information.").color("$13");
+                PlotSquared.log(Captions.PREFIX + "&cUnable to check for updates because: " + e);
                 return;
             }
 
             if (!UpdateUtility.internalVersion.equals(UpdateUtility.spigotVersion)) {
                 new PlotMessage("-----------------------------------").send(pp);
                 new PlotMessage(Captions.PREFIX + "There appears to be a PlotSquared update available!").color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates").send(pp);
+                new PlotMessage(Captions.PREFIX + "The latest version is " + spigotVersion).color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates").send(pp);
                 new PlotMessage(Captions.PREFIX + "https://www.spigotmc.org/resources/1177/updates").color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates").send(pp);
                 new PlotMessage("-----------------------------------").send(pp);
             }
