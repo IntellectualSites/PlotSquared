@@ -25,12 +25,6 @@ public final class Flags {
     public static final BlockStateListFlag USE = new BlockStateListFlag("use");
     public static final BlockStateListFlag BREAK = new BlockStateListFlag("break");
     public static final BlockStateListFlag PLACE = new BlockStateListFlag("place");
-    public static final IntegerFlag MISC_CAP = new IntegerFlag("misc-cap");
-    public static final IntegerFlag ENTITY_CAP = new IntegerFlag("entity-cap");
-    public static final IntegerFlag MOB_CAP = new IntegerFlag("mob-cap");
-    public static final IntegerFlag ANIMAL_CAP = new IntegerFlag("animal-cap");
-    public static final IntegerFlag HOSTILE_CAP = new IntegerFlag("hostile-cap");
-    public static final IntegerFlag VEHICLE_CAP = new IntegerFlag("vehicle-cap");
     public static final Flag<?> KEEP = new Flag(Captions.FLAG_CATEGORY_MIXED, "keep") {
         @Override public String valueToString(Object value) {
             return value.toString();

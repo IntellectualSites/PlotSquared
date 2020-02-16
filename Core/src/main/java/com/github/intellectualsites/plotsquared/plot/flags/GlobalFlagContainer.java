@@ -2,6 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.flags;
 
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnalysisFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnimalAttackFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnimalCapFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnimalInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockBurnFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockIgnitionFlag;
@@ -11,6 +12,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Devic
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DisablePhysicsFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DropProtectionFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.EntityCapFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.ExplosionFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FarewellFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlightFlag;
@@ -21,6 +23,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Hangi
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.HangingPlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.HideInfoFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.HostileAttackFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.HostileCapFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.HostileInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.IceFormFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.IceMeltFlag;
@@ -30,7 +33,9 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.ItemD
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.KelpGrowFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.LiquidFlowFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscBreakFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscCapFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MobBreakFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MobCapFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MobPlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MusicFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MycelGrowFlag;
@@ -51,6 +56,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Tamed
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.TitlesFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.UntrustedVisitFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleBreakFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleCapFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleUseFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VillagerInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VineGrowFlag;
@@ -74,6 +80,7 @@ public final class GlobalFlagContainer extends FlagContainer {
             }
         });
         // Register all default flags here
+        // Boolean flags
         this.addFlag(ExplosionFlag.EXPLOSION_FALSE);
         this.addFlag(MusicFlag.MUSIC_FLAG_NONE);
         this.addFlag(FlightFlag.FLIGHT_FLAG_FALSE);
@@ -126,6 +133,14 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(ItemDropFlag.ITEM_DROP_TRUE);
         this.addFlag(InstabreakFlag.INSTABREAK_FALSE);
         this.addFlag(InvincibleFlag.INVINCIBLE_FALSE);
+
+        //Integer flags
+        this.addFlag(AnimalCapFlag.ANIMAL_CAP_UNLIMITED);
+        this.addFlag(EntityCapFlag.ENTITY_CAP_UNLIMITED);
+        this.addFlag(HostileCapFlag.HOSTILE_CAP_UNLIMITED);
+        this.addFlag(MiscCapFlag.MISC_CAP_UNLIMITED);
+        this.addFlag(MobCapFlag.MOB_CAP_UNLIMITED);
+        this.addFlag(VehicleCapFlag.VEHICLE_CAP_UNLIMITED);
 
         // Internal flags
         this.addFlag(new AnalysisFlag(Collections.emptyList()));
