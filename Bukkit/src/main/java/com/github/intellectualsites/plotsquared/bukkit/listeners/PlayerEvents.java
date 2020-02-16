@@ -3,20 +3,14 @@ package com.github.intellectualsites.plotsquared.bukkit.listeners;
 import com.destroystokyo.paper.MaterialTags;
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
+import com.github.intellectualsites.plotsquared.bukkit.util.UpdateUtility;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotHandler;
-import com.github.intellectualsites.plotsquared.plot.object.PlotId;
-import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.StringWrapper;
+import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.EntityUtil;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
@@ -129,7 +123,12 @@ import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
+import javax.net.ssl.HttpsURLConnection;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -153,6 +152,7 @@ import java.util.regex.Pattern;
     private boolean tmpTeleport = true;
     private Field fieldPlayer;
     private PlayerMoveEvent moveTmp;
+    private String spigotVersion;
 
     {
         try {
@@ -721,6 +721,25 @@ import java.util.regex.Pattern;
             }
             EventUtil.manager.doJoinTask(pp);
         }, 20);
+
+        if (pp.hasPermission(Captions.PERMISSION_ADMIN_UPDATE_NOTIFICATION.getTranslated())
+                && Settings.Enabled_Components.UPDATE_NOTIFICATIONS) {
+            try {
+                HttpsURLConnection connection = (HttpsURLConnection) new URL("https://api.spigotmc.org/legacy/update.php?resource=1177").openConnection();
+                connection.setRequestMethod("GET");
+                this.spigotVersion = (new BufferedReader(new InputStreamReader(connection.getInputStream()))).readLine();
+            } catch (IOException e) {
+                PlotSquared.log(Captions.PREFIX + "&6Unable to check for updates because: " + e);
+                return;
+            }
+
+            if (!UpdateUtility.internalVersion.equals(UpdateUtility.spigotVersion)) {
+                new PlotMessage("-----------------------------------").send(pp);
+                new PlotMessage(Captions.PREFIX + "There appears to be a PlotSquared update available!").color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates").send(pp);
+                new PlotMessage(Captions.PREFIX + "https://www.spigotmc.org/resources/1177/updates").color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates").send(pp);
+                new PlotMessage("-----------------------------------").send(pp);
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
