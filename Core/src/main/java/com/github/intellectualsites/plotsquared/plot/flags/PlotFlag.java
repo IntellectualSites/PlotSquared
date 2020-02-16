@@ -5,8 +5,6 @@ import com.google.common.base.Preconditions;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Locale;
-
 /**
  * A plot flag is any property that can be assigned
  * to a plot, that will alter its functionality in some way.
@@ -19,6 +17,7 @@ import java.util.Locale;
     private final T value;
     private final Caption flagCategory;
     private final Caption flagDescription;
+    private final String flagName;
 
     /**
      * Construct a new flag instance.
@@ -30,6 +29,19 @@ import java.util.Locale;
         this.value = Preconditions.checkNotNull(value, "flag value may not be null");
         this.flagCategory = Preconditions.checkNotNull(flagCategory, "flag category may not be null");
         this.flagDescription = Preconditions.checkNotNull(flagDescription, "flag description may not be null");
+        // Parse flag name
+        final StringBuilder flagName = new StringBuilder();
+        final char[] chars = this.getClass().getSimpleName().replace("Flag", "").toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (i == 0) {
+                flagName.append(Character.toLowerCase(chars[i]));
+            } else if(Character.isUpperCase(chars[i])) {
+                flagName.append('-').append(Character.toLowerCase(chars[i]));
+            } else {
+                flagName.append(chars[i]);
+            }
+        }
+        this.flagName = flagName.toString();
     }
 
     /**
@@ -71,7 +83,7 @@ import java.util.Locale;
     public abstract String toString();
 
     public final String getName() {
-        return this.getClass().getSimpleName().toLowerCase(Locale.ENGLISH);
+        return this.flagName;
     }
 
     public Caption getFlagDescription() {
