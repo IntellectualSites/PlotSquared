@@ -10,6 +10,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Farew
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlightFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.GreetingFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MusicFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlotWeatherFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -145,8 +146,7 @@ public class PlotListener {
                     }
                 }
 
-                Optional<PlotWeather> weatherFlag = plot.getFlag(Flags.WEATHER);
-                weatherFlag.ifPresent(player::setWeather);
+                player.setWeather(plot.getFlag(PlotWeatherFlag.class));
 
                 ItemType musicFlag = plot.getFlag(MusicFlag.class);
                 if (musicFlag != null) {
@@ -279,8 +279,9 @@ public class PlotListener {
                 player.setTime(Long.MAX_VALUE);
             }
 
-            if (plot.getFlag(Flags.WEATHER).isPresent()) {
-                player.setWeather(PlotWeather.CLEAR);
+            final PlotWeather plotWeather = plot.getFlag(PlotWeatherFlag.class);
+            if (plotWeather != PlotWeather.RESET) {
+                player.setWeather(plotWeather);
             }
 
             Location lastLoc = player.getMeta("music");

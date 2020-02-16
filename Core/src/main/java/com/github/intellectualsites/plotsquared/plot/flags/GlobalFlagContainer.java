@@ -7,6 +7,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Farew
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlightFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.GreetingFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MusicFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlotWeatherFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.UntrustedVisitFlag;
 import lombok.Getter;
 
@@ -35,6 +36,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(DescriptionFlag.DESCRIPTION_FLAG_EMPTY);
         this.addFlag(GreetingFlag.GREETING_FLAG_EMPTY);
         this.addFlag(FarewellFlag.FAREWELL_FLAG_EMPTY);
+        this.addFlag(PlotWeatherFlag.PLOT_WEATHER_FLAG_OFF);
     }
 
     @Override public PlotFlag<?, ?> getFlagErased(Class<?> flagClass) {

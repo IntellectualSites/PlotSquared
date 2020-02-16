@@ -8,6 +8,7 @@ import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flag.BlockStateListFlag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flag.PlotWeatherFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.types.BlockTypeListFlag;
@@ -122,7 +123,7 @@ public class FlagCmd extends SubCommand {
                 .sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_SET_FLAG_OTHER);
             return false;
         }
-        PlotFlag<?> flag = null;
+        PlotFlag<?, ?> flag = null;
         if (args.length > 1) {
             flag = GlobalFlagContainer.getInstance().getFlagFromString(args[1]);
             if (flag == null || flag.isReserved()) {
@@ -254,7 +255,7 @@ public class FlagCmd extends SubCommand {
                 }
                 if (flag == Flags.TIME) {
                     player.setTime(Long.MAX_VALUE);
-                } else if (flag == Flags.WEATHER) {
+                } else if (flag.getClass().isInstance(PlotWeatherFlag.class)) {
                     player.setWeather(PlotWeather.RESET);
                 }
                 MainUtil.sendMessage(player, Captions.FLAG_REMOVED);
