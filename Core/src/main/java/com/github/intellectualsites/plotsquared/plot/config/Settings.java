@@ -123,6 +123,9 @@ public class Settings extends Config {
         // Titles
         TITLES = config.getBoolean("titles", TITLES);
 
+        // Update Notifications
+        Enabled_Components.UPDATE_NOTIFICATIONS = config.getBoolean("update-notifications", Enabled_Components.UPDATE_NOTIFICATIONS);
+
         // Teleportation
         Teleport.DELAY = config.getInt("teleport.delay", Teleport.DELAY);
         Teleport.ON_LOGIN = config.getBoolean("teleport.on_login", Teleport.ON_LOGIN);
@@ -157,8 +160,6 @@ public class Settings extends Config {
         Chat.CONSOLE_COLOR = config.getBoolean("console.color", Chat.CONSOLE_COLOR);
         Chat.INTERACTIVE = config.getBoolean("chat.fancy", Chat.INTERACTIVE);
 
-        Enabled_Components.UPDATER =
-            config.getBoolean("update-notifications", Enabled_Components.UPDATER);
         Enabled_Components.DATABASE_PURGER =
             config.getBoolean("auto-purge", Enabled_Components.DATABASE_PURGER);
         return true;
@@ -321,7 +322,7 @@ public class Settings extends Config {
             true;
         @Comment("The UUID cacher is used to resolve player names") public static boolean
             UUID_CACHE = true;
-        @Comment("The plugin auto updater will notify you if updates are available.") public static boolean UPDATER = true;
+        @Comment("Whether we should notify you about updates or not.") public static boolean UPDATE_NOTIFICATIONS = true;
         @Comment("Stores user metadata in a database") public static boolean PERSISTENT_META = true;
         @Comment("Optimizes permission checks") public static boolean PERMISSION_CACHE = true;
         @Comment("Optimizes block changing code") public static boolean BLOCK_CACHE = true;

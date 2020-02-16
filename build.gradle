@@ -24,7 +24,7 @@ plugins {
 
 group = "com.github.intellectualsites.plotsquared"
 
-def rootVersion = "4"
+def rootVersion = "5"
 def revision = ""
 def buildNumber = ""
 def date = ""

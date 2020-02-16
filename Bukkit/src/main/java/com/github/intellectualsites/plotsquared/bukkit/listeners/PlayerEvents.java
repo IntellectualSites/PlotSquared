@@ -1,25 +1,16 @@
 package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
 import com.destroystokyo.paper.MaterialTags;
-import com.github.intellectualsites.plotsquared.bukkit.BukkitMain;
-import com.github.intellectualsites.plotsquared.bukkit.object.BukkitBlockUtil;
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
+import com.github.intellectualsites.plotsquared.bukkit.util.UpdateUtility;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotHandler;
-import com.github.intellectualsites.plotsquared.plot.object.PlotId;
-import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
-import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.StringWrapper;
+import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.EntityUtil;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
@@ -28,16 +19,13 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.RegExUtil;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
-import com.github.intellectualsites.plotsquared.plot.util.UpdateUtility;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
-import com.sk89q.worldedit.world.item.ItemType;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -135,7 +123,12 @@ import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
+import javax.net.ssl.HttpsURLConnection;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -145,7 +138,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 /**
@@ -159,6 +151,8 @@ import java.util.regex.Pattern;
     private boolean tmpTeleport = true;
     private Field fieldPlayer;
     private PlayerMoveEvent moveTmp;
+    private String internalVersion;
+    private String spigotVersion;
 
     {
         try {
@@ -729,35 +723,24 @@ import java.util.regex.Pattern;
         }, 20);
 
         if (pp.hasPermission(Captions.PERMISSION_ADMIN_UPDATE_NOTIFICATION.getTranslated())
-            && PlotSquared.get().getUpdateUtility() != null) {
-            final UpdateUtility updateUtility = PlotSquared.get().getUpdateUtility();
-            final BukkitMain bukkitMain = BukkitMain.getPlugin(BukkitMain.class);
-            updateUtility.checkForUpdate(PlotSquared.get().getVersion().versionString(),
-                ((updateDescription, throwable) -> {
-                    if (throwable != null) {
-                        bukkitMain.getLogger().severe(String
-                            .format("Could not check for update. Reason: %s",
-                                throwable.getMessage()));
-                    } else {
-                        if (updateDescription != null) {
-                            new PlotMessage("-------- ").color("$2")
-                                .text("PlotSquared Update Notification").color("$1")
-                                .text(" --------").color("$2").send(pp);
-                            new PlotMessage("There appears to be a PlotSquared update available!")
-                                .color("$1").send(pp);
-                            new PlotMessage(String.format(
-                                "You are running version %s, the newest available version is %s",
-                                bukkitMain.getPluginVersionString(),
-                                updateDescription.getVersion())).color("$1").send(pp);
-                            new PlotMessage("Update URL").color("$1").text(": ").color("$2")
-                                .text(updateDescription.getUrl()).tooltip("Download update")
-                                .send(pp);
-                            new PlotMessage("-------- ").color("$2")
-                                .text("PlotSquared Update Notification").color("$1")
-                                .text(" --------").color("$2").send(pp);
-                        }
-                    }
-                }));
+                && Settings.Enabled_Components.UPDATE_NOTIFICATIONS) {
+            try {
+                HttpsURLConnection connection = (HttpsURLConnection) new URL("https://api.spigotmc.org/legacy/update.php?resource=1177").openConnection();
+                connection.setRequestMethod("GET");
+                spigotVersion = (new BufferedReader(new InputStreamReader(connection.getInputStream()))).readLine();
+            } catch (IOException e) {
+                new PlotMessage(Captions.PREFIX + "Unable to check for updates, check console for further information.").color("$13");
+                PlotSquared.log(Captions.PREFIX + "&cUnable to check for updates because: " + e);
+                return;
+            }
+
+            if (!UpdateUtility.internalVersion.equals(UpdateUtility.spigotVersion)) {
+                new PlotMessage("-----------------------------------").send(pp);
+                new PlotMessage(Captions.PREFIX + "There appears to be a PlotSquared update available!").color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates").send(pp);
+                new PlotMessage(Captions.PREFIX + "The latest version is " + spigotVersion).color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates").send(pp);
+                new PlotMessage(Captions.PREFIX + "https://www.spigotmc.org/resources/1177/updates").color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates").send(pp);
+                new PlotMessage("-----------------------------------").send(pp);
+            }
         }
     }
 

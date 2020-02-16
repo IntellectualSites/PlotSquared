@@ -34,18 +34,14 @@ public class PlotVersion {
         if (hash == 0 && build == 0) {
             return "NoVer-SNAPSHOT";
         } else {
-            return "4." + build;
+            return "5." + build;
         }
     }
     @Override public String toString() {
         if (hash == 0 && build == 0) {
             return "PlotSquared-NoVer-SNAPSHOT";
         } else {
-            return "PlotSquared-4." + build;
+            return "PlotSquared-5." + build;
         }
-    }
-
-    public boolean isNewer(PlotVersion other) {
-        return other.build < this.build;
     }
 }

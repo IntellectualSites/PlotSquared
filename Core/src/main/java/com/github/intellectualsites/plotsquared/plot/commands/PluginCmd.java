@@ -1,10 +1,8 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.json.JSONObject;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.HttpUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 
@@ -22,17 +20,8 @@ import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
                     "$2>> $1&lAuthors$2: $1Citymonstret $2& $1Empire92 $2& $1MattBDev $2& $1dordsor21 $2& $1NotMyFault");
                 MainUtil.sendMessage(player,
                     "$2>> $1&lWiki$2: $1https://github.com/IntellectualSites/PlotSquared/wiki");
-                //                MainUtil.sendMessage(player,
-                //                    "$2>> $1&lNewest Version$2: $1" + getNewestVersionString());
             }
         });
         return true;
-    }
-
-    public String getNewestVersionString() {
-        String str = HttpUtil
-            .readUrl("https://api.github.com/repos/IntellectualSites/PlotSquared/releases/latest");
-        JSONObject release = new JSONObject(str);
-        return release.getString("name");
     }
 }
