@@ -547,11 +547,13 @@ public enum Captions implements Caption {
     FLAG_CATEGORY_MIXED("Mixed Value Flags", "Flags"),
     //</editor-fold>
     //<editor-fold desc="Flag descriptions">
-    FLAG_DESCRIPTION_EXPLOSION("Set to 'true' to enable explosions in the plot, and 'false' to disable them", "Flags"),
-    FLAG_DESCRIPTION_MUSIC("Set to a music disk ID (item name) to play the music disc inside of the plot", "Flags"),
-    FLAG_DESCRIPTION_FLIGHT("Set to 'true' to enable flight within the plot when in survival or adventure mode", "Flags"),
-    FLAG_DESCRIPTION_UNTRUSTED("Set to 'false' to disallow untrusted players from visiting the plot", "Flags"),
-    FLAG_DESCRIPTION_DENY_EXIT("Set to 'true' to disallow players from exiting the plot", "Flags"),
+    FLAG_DESCRIPTION_EXPLOSION("Set to 'true' to enable explosions in the plot, and 'false' to disable them.", "Flags"),
+    FLAG_DESCRIPTION_MUSIC("Set to a music disk ID (item name) to play the music disc inside of the plot.", "Flags"),
+    FLAG_DESCRIPTION_FLIGHT("Set to 'true' to enable flight within the plot when in survival or adventure mode.", "Flags"),
+    FLAG_DESCRIPTION_UNTRUSTED("Set to 'false' to disallow untrusted players from visiting the plot.", "Flags"),
+    FLAG_DESCRIPTION_DENY_EXIT("Set to 'true' to disallow players from exiting the plot.", "Flags"),
+    FLAG_DESCRIPTION_DESCRIPTION("Plot description. Supports '&' color codes.", "Flags"),
+    FLAG_DESCRIPTION_GREETING("Message sent to players on plot entry. Supports '&' color codes.", "Flags"),
     //</editor-fold>
     //<editor-fold desc="Flag category errors">
     FLAG_ERROR_BOOLEAN("Flag value must be a boolean (true|false)", "Flags"),

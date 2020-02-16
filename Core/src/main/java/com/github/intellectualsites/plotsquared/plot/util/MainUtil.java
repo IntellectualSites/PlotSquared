@@ -12,6 +12,7 @@ import com.github.intellectualsites.plotsquared.plot.flag.DoubleFlag;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DescriptionFlag;
 import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -772,9 +773,11 @@ public class MainUtil {
         } else {
             seen = Captions.NEVER.getTranslated();
         }
-        Optional<String> descriptionFlag = plot.getFlag(Flags.DESCRIPTION);
-        String description = !descriptionFlag.isPresent() ? Captions.NONE.getTranslated() :
-            Flags.DESCRIPTION.valueToString(descriptionFlag.get());
+
+        String description = plot.getFlag(DescriptionFlag.class);
+        if (description.isEmpty()) {
+            description = Captions.NONE.getTranslated();
+        }
 
         StringBuilder flags = new StringBuilder();
         HashMap<Flag<?>, Object> flagMap =

@@ -1,6 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.flags;
 
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyExitFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DescriptionFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.ExplosionFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlightFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MusicFlag;
@@ -29,6 +30,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(FlightFlag.FLIGHT_FLAG_FALSE);
         this.addFlag(UntrustedVisitFlag.UNTRUSTED_VISIT_FLAG_TRUE);
         this.addFlag(DenyExitFlag.DENY_EXIT_FLAG_TRUE);
+        this.addFlag(DescriptionFlag.DESCRIPTION_FLAG_EMPTY);
     }
 
     @Override public PlotFlag<?, ?> getFlagErased(Class<?> flagClass) {

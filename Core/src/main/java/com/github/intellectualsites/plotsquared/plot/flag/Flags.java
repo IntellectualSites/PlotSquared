@@ -6,7 +6,6 @@ import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 
 public final class Flags {
 
-    public static final StringFlag DESCRIPTION = new StringFlag("description");
     public static final IntegerListFlag ANALYSIS =
         (IntegerListFlag) new IntegerListFlag("analysis").reserve();
     public static final StringFlag GREETING = new StringFlag("greeting");
