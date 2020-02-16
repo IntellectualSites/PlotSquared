@@ -6,7 +6,7 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
 import com.github.intellectualsites.plotsquared.plot.object.PlotItemStack;
@@ -53,7 +53,7 @@ import java.util.UUID;
                     });
                     UUID uuid = player.getUUID();
                     for (Plot p : plots) {
-                        if ((!Settings.Done.REQUIRED_FOR_RATINGS || p.hasFlag(Flags.DONE)) && p
+                        if ((!Settings.Done.REQUIRED_FOR_RATINGS || DoneFlag.isDone(p)) && p
                             .isBasePlot() && (!p.getRatings().containsKey(uuid)) && !p
                             .isAdded(uuid)) {
                             p.teleportPlayer(player, TeleportCause.COMMAND);
@@ -91,7 +91,7 @@ import java.util.UUID;
             sendMessage(player, Captions.RATING_NOT_YOUR_OWN);
             return false;
         }
-        if (Settings.Done.REQUIRED_FOR_RATINGS && !plot.hasFlag(Flags.DONE)) {
+        if (Settings.Done.REQUIRED_FOR_RATINGS && !DoneFlag.isDone(plot)) {
             sendMessage(player, Captions.RATING_NOT_DONE);
             return false;
         }

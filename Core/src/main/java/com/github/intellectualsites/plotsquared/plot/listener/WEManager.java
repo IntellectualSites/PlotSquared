@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.listener;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -78,7 +79,7 @@ public class WEManager {
         if (plot == null) {
             plot = player.getMeta("WorldEditRegionPlot");
         }
-        if (plot != null && (!Settings.Done.RESTRICT_BUILDING || !Flags.DONE.isSet(plot)) && (
+        if (plot != null && (!Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot)) && (
             (allowMember && plot.isAdded(uuid)) || (!allowMember && (plot.isOwner(uuid)) || plot
                 .getTrusted().contains(uuid))) && !(Flags.NO_WORLDEDIT.isTrue(plot))) {
             for (CuboidRegion region : plot.getRegions()) {

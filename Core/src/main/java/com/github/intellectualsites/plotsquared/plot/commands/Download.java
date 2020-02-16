@@ -4,7 +4,7 @@ import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
@@ -35,7 +35,7 @@ import java.net.URL;
             MainUtil.sendMessage(player, Captions.PLOT_UNOWNED);
             return false;
         }
-        if ((Settings.Done.REQUIRED_FOR_DOWNLOAD && (!plot.getFlag(Flags.DONE).isPresent()))
+        if ((Settings.Done.REQUIRED_FOR_DOWNLOAD && (!DoneFlag.isDone(plot)))
             && !Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DOWNLOAD)) {
             MainUtil.sendMessage(player, Captions.DONE_NOT_DONE);
             return false;

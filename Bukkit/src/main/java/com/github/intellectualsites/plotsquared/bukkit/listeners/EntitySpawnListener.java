@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.bukkit.listeners;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -118,7 +118,7 @@ public class EntitySpawnListener implements Listener {
             }
             return;
         }
-        if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
+        if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
             event.setCancelled(true);
         }
         switch (entity.getType()) {

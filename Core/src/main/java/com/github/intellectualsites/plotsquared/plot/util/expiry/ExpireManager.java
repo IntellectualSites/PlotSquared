@@ -6,6 +6,8 @@ import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnalysisFlag;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -306,8 +308,8 @@ public class ExpireManager {
                                             confirmation);
                                     }
                                 }, () -> {
-                                    FlagManager
-                                        .addPlotFlag(newPlot, Flags.ANALYSIS, changed.asList());
+                                    newPlot.setFlag(
+                                        GlobalFlagContainer.getInstance().getFlag(AnalysisFlag.class), changed.asList());
                                     TaskManager.runTaskLaterAsync(task, 20);
                                 });
                             }

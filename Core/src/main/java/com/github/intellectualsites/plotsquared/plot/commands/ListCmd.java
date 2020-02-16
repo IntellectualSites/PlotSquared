@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared.SortType;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
@@ -186,14 +187,13 @@ public class ListCmd extends SubCommand {
                 }
                 plots = new ArrayList<>();
                 for (Plot plot : PlotSquared.get().getPlots()) {
-                    Optional<String> flag = plot.getFlag(Flags.DONE);
-                    if (flag.isPresent()) {
+                    if (DoneFlag.isDone(plot)) {
                         plots.add(plot);
                     }
                 }
                 plots.sort((a, b) -> {
-                    String va = "" + a.getFlags().get(Flags.DONE);
-                    String vb = "" + b.getFlags().get(Flags.DONE);
+                    String va = a.getFlag(DoneFlag.class);
+                    String vb = b.getFlag(DoneFlag.class);
                     if (MathMan.isInteger(va)) {
                         if (MathMan.isInteger(vb)) {
                             return Integer.parseInt(vb) - Integer.parseInt(va);

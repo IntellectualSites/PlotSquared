@@ -1,7 +1,9 @@
 package com.github.intellectualsites.plotsquared.plot.flags;
 
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnalysisFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyExitFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DescriptionFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.ExplosionFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FarewellFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlightFlag;
@@ -12,6 +14,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Untru
 import lombok.Getter;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -37,6 +40,9 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(GreetingFlag.GREETING_FLAG_EMPTY);
         this.addFlag(FarewellFlag.FAREWELL_FLAG_EMPTY);
         this.addFlag(PlotWeatherFlag.PLOT_WEATHER_FLAG_OFF);
+        // Internal flags
+        this.addFlag(new AnalysisFlag(Collections.emptyList()));
+        this.addFlag(new DoneFlag(""));
     }
 
     @Override public PlotFlag<?, ?> getFlagErased(Class<?> flagClass) {

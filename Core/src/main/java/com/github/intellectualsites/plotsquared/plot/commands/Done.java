@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -29,7 +29,7 @@ import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
             MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
             return false;
         }
-        if (plot.hasFlag(Flags.DONE)) {
+        if (DoneFlag.isDone(plot)) {
             MainUtil.sendMessage(player, Captions.DONE_ALREADY_DONE);
             return false;
         }
@@ -59,7 +59,7 @@ import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
     private void finish(Plot plot, PlotPlayer pp, boolean success) {
         if (success) {
             long flagValue = System.currentTimeMillis() / 1000;
-            plot.setFlag(Flags.DONE, flagValue);
+            plot.setFlag(DoneFlag.class, Long.toString(flagValue));
             MainUtil.sendMessage(pp, Captions.DONE_SUCCESS);
         } else {
             MainUtil.sendMessage(pp, Captions.DONE_INSUFFICIENT_COMPLEXITY);

@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.util;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.flag.IntegerFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -38,7 +39,7 @@ import lombok.experimental.UtilityClass;
     }
 
     public static boolean checkEntity(Plot plot, IntegerFlag... flags) {
-        if (Settings.Done.RESTRICT_BUILDING && Flags.DONE.isSet(plot)) {
+        if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
             return true;
         }
         int[] mobs = null;

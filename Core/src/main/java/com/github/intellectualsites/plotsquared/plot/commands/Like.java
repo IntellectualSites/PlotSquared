@@ -41,7 +41,7 @@ import java.util.UUID;
                         return v2 > v1 ? 1 : -1;
                     });
                     for (final Plot plot : plots) {
-                        if ((!Settings.Done.REQUIRED_FOR_RATINGS || plot.hasFlag(Flags.DONE))
+                        if ((!Settings.Done.REQUIRED_FOR_RATINGS || DoneFlag.isDone(plot))
                             && plot.isBasePlot() && (!plot.getLikes().containsKey(uuid))) {
                             plot.teleportPlayer(player, TeleportCause.COMMAND);
                             MainUtil.sendMessage(player, Captions.RATE_THIS);
@@ -78,7 +78,7 @@ import java.util.UUID;
             sendMessage(player, Captions.RATING_NOT_YOUR_OWN);
             return false;
         }
-        if (Settings.Done.REQUIRED_FOR_RATINGS && !plot.hasFlag(Flags.DONE)) {
+        if (Settings.Done.REQUIRED_FOR_RATINGS && !DoneFlag.isDone(plot)) {
             sendMessage(player, Captions.RATING_NOT_DONE);
             return false;
         }

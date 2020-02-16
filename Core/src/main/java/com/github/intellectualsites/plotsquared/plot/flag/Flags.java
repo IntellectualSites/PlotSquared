@@ -6,13 +6,10 @@ import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 
 public final class Flags {
 
-    public static final IntegerListFlag ANALYSIS =
-        (IntegerListFlag) new IntegerListFlag("analysis").reserve();
     public static final IntervalFlag FEED = new IntervalFlag("feed");
     public static final IntervalFlag HEAL = new IntervalFlag("heal");
     public static final GameModeFlag GAMEMODE = new GameModeFlag("gamemode");
     public static final GameModeFlag GUEST_GAMEMODE = new GameModeFlag("guest-gamemode");
-    public static final StringFlag DONE = (StringFlag) new StringFlag("done").reserve();
     public static final BooleanFlag REDSTONE = new BooleanFlag("redstone");
     public static final BooleanFlag NOTIFY_LEAVE = new BooleanFlag("notify-leave");
     public static final BooleanFlag TITLES = new BooleanFlag("titles");

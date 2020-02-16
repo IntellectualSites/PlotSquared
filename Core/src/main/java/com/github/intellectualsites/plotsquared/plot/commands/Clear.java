@@ -4,8 +4,8 @@ import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnalysisFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
@@ -36,7 +36,7 @@ import java.util.concurrent.CompletableFuture;
                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_CLEAR),
             Captions.NO_PLOT_PERMS);
         checkTrue(plot.getRunning() == 0, Captions.WAIT_FOR_TIMER);
-        checkTrue(!Settings.Done.RESTRICT_BUILDING || !Flags.DONE.isSet(plot) || Permissions
+        checkTrue(!Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot) || Permissions
             .hasPermission(player, Captions.PERMISSION_CONTINUE), Captions.DONE_ALREADY_DONE);
         confirm.run(this, () -> {
             final long start = System.currentTimeMillis();
@@ -45,11 +45,11 @@ import java.util.concurrent.CompletableFuture;
                 GlobalBlockQueue.IMP.addEmptyTask(() -> {
                     plot.removeRunning();
                     // If the state changes, then mark it as no longer done
-                    if (plot.getFlag(Flags.DONE).isPresent()) {
-                        FlagManager.removePlotFlag(plot, Flags.DONE);
+                    if (DoneFlag.isDone(plot)) {
+                        plot.removeFlag(DoneFlag.class);
                     }
-                    if (plot.getFlag(Flags.ANALYSIS).isPresent()) {
-                        FlagManager.removePlotFlag(plot, Flags.ANALYSIS);
+                    if (!plot.getFlag(AnalysisFlag.class).isEmpty()) {
+                        plot.removeFlag(AnalysisFlag.class);
                     }
                     MainUtil.sendMessage(player, Captions.CLEARING_DONE,
                         "" + (System.currentTimeMillis() - start));

@@ -8,6 +8,7 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.ExplosionFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.UntrustedVisitFlag;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
@@ -1106,7 +1107,7 @@ import java.util.regex.Pattern;
                 MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
                     Captions.PERMISSION_ADMIN_DESTROY_OTHER);
                 event.setCancelled(true);
-            } else if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
+            } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                 if (!Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
                     MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
                         Captions.PERMISSION_ADMIN_BUILD_OTHER);
@@ -1806,7 +1807,7 @@ import java.util.regex.Pattern;
                 e.setCancelled(true);
             }
         } else {
-            if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
+            if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
                     MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT, Captions.PERMISSION_ADMIN_BUILD_OTHER);
                     e.setCancelled(true);
@@ -2272,7 +2273,7 @@ import java.util.regex.Pattern;
             MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
                 Captions.PERMISSION_ADMIN_BUILD_OTHER);
             event.setCancelled(true);
-        } else if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
+        } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
             if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
                 MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
                     Captions.PERMISSION_ADMIN_BUILD_OTHER);
@@ -2334,7 +2335,7 @@ import java.util.regex.Pattern;
             MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
                 Captions.PERMISSION_ADMIN_BUILD_OTHER);
             event.setCancelled(true);
-        } else if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
+        } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
             if (!Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
                 MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
                     Captions.PERMISSION_ADMIN_BUILD_OTHER);
@@ -2731,7 +2732,7 @@ import java.util.regex.Pattern;
             if (victim instanceof Hanging) { // hanging
                 if (plot != null && (plot.getFlag(Flags.HANGING_BREAK, false) || plot
                     .isAdded(plotPlayer.getUUID()))) {
-                    if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
+                    if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                         if (!Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
                             MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT, Captions.PERMISSION_ADMIN_BUILD_OTHER);
                             return false;
@@ -2899,7 +2900,7 @@ import java.util.regex.Pattern;
                     event.setCancelled(true);
                     return;
                 }
-            } else if (Settings.Done.RESTRICT_BUILDING && plot.hasFlag(Flags.DONE)) {
+            } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
                     MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
                         Captions.PERMISSION_ADMIN_BUILD_OTHER);

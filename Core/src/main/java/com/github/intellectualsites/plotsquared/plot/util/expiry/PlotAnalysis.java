@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.util.expiry;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnalysisFlag;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlotAnalysis {
@@ -33,10 +32,9 @@ public class PlotAnalysis {
     private int complexity;
 
     public static PlotAnalysis getAnalysis(Plot plot, Settings.Auto_Clear settings) {
-        Optional<List<Integer>> flag = plot.getFlag(Flags.ANALYSIS);
-        if (flag.isPresent()) {
+        final List<Integer> values = plot.getFlag(AnalysisFlag.class);
+        if (!values.isEmpty()) {
             PlotAnalysis analysis = new PlotAnalysis();
-            List<Integer> values = flag.get();
             analysis.changes = values.get(0); // 2126
             analysis.faces = values.get(1); // 90
             analysis.data = values.get(2); // 0

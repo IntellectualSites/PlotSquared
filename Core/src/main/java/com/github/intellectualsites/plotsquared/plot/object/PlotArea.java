@@ -533,7 +533,7 @@ public abstract class PlotArea {
 
     public int getPlotCount(@NotNull final UUID uuid) {
         if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
-            return (int) getPlotsAbs(uuid).stream().filter(plot -> !plot.hasFlag(Flags.DONE))
+            return (int) getPlotsAbs(uuid).stream().filter(plot -> !DoneFlag.isDone(plot))
                 .count();
         }
         return getPlotsAbs(uuid).size();

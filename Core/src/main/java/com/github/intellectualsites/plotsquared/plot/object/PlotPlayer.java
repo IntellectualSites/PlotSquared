@@ -7,6 +7,7 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.PlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAreaManager;
@@ -224,7 +225,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         PlotSquared.get().forEachPlotArea(value -> {
             if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
                 for (Plot plot : value.getPlotsAbs(uuid)) {
-                    if (!plot.hasFlag(Flags.DONE)) {
+                    if (!DoneFlag.isDone(plot)) {
                         count.incrementAndGet();
                     }
                 }
@@ -262,7 +263,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         for (PlotArea area : PlotSquared.get().getPlotAreas(world)) {
             if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
                 count += area.getPlotsAbs(uuid).stream()
-                    .filter(plot -> !plot.getFlag(Flags.DONE).isPresent()).count();
+                    .filter(plot -> !DoneFlag.isDone(plot)).count();
             } else {
                 count += area.getPlotsAbs(uuid).size();
             }

@@ -9,6 +9,7 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.generator.SquarePlotWorld;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
@@ -1089,11 +1090,15 @@ public class Plot {
      * @param flag  Flag to set
      * @param value Flag value
      */
-    public <V> boolean setFlag(PlotFlag<V, ?> flag, Object value) {
+    public <V> boolean setFlag(PlotFlag<V, ?> flag, V value) {
         if (flag == Flags.KEEP && ExpireManager.IMP != null) {
             ExpireManager.IMP.updateExpired(this);
         }
         return FlagManager.addPlotFlag(this, flag, value);
+    }
+
+    public <V> boolean setFlag(Class<? extends PlotFlag<V, ?>> flag, V value) {
+        return this.setFlag(GlobalFlagContainer.getInstance().getFlag(flag), value);
     }
 
     /**
@@ -1102,7 +1107,7 @@ public class Plot {
      * @param flag the flag to remove
      * @return success
      */
-    public boolean removeFlag(PlotFlag<?, ?> flag) {
+    public boolean removeFlag(Class<? extends PlotFlag<?, >> flag) {
         return FlagManager.removePlotFlag(this, flag);
     }
 
