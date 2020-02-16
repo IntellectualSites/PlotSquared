@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.HideInfoFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
 import com.github.intellectualsites.plotsquared.plot.object.PlotItemStack;
@@ -70,7 +71,7 @@ public class Info extends SubCommand {
         }
 
         // hide-info flag
-        if (plot.getFlag(Flags.HIDE_INFO).orElse(false)) {
+        if (plot.getFlag(HideInfoFlag.class)) {
             boolean allowed = false;
             for (final String argument : args) {
                 if (argument.equalsIgnoreCase("-f")) {

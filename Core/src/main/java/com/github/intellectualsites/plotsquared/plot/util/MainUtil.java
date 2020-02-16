@@ -13,6 +13,7 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DescriptionFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.ServerPlotFlag;
 import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -375,7 +376,7 @@ public class MainUtil {
     }
 
     public static boolean isServerOwned(Plot plot) {
-        return plot.getFlag(Flags.SERVER_PLOT).orElse(false);
+        return plot.getFlag(ServerPlotFlag.class);
     }
 
     @NotNull public static Location[] getCorners(String world, CuboidRegion region) {

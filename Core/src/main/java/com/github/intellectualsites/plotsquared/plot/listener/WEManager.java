@@ -2,8 +2,8 @@ package com.github.intellectualsites.plotsquared.plot.listener;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.NoWorldeditFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -81,7 +81,7 @@ public class WEManager {
         }
         if (plot != null && (!Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot)) && (
             (allowMember && plot.isAdded(uuid)) || (!allowMember && (plot.isOwner(uuid)) || plot
-                .getTrusted().contains(uuid))) && !(Flags.NO_WORLDEDIT.isTrue(plot))) {
+                .getTrusted().contains(uuid))) && !plot.getFlag(NoWorldeditFlag.class)) {
             for (CuboidRegion region : plot.getRegions()) {
                 BlockVector3 pos1 = region.getMinimumPoint().withY(area.MIN_BUILD_HEIGHT);
                 BlockVector3 pos2 = region.getMaximumPoint().withY(area.MAX_BUILD_HEIGHT);

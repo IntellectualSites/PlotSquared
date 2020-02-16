@@ -8,9 +8,40 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnimalAttackFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnimalInteractFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockBurnFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockIgnitionFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DisablePhysicsFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.ExplosionFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.GrassGrowFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.HangingBreakFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.HangingPlaceFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.HostileAttackFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.HostileInteractFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.IceFormFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.IceMeltFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.KelpGrowFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.LiquidFlowFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscBreakFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscInteractFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MobPlaceFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MycelGrowFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlayerInteractFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.PveFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.PvpFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.RedstoneFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.SnowFormFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.SnowMeltFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.SoilDryFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.TamedAttackFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.TamedInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.UntrustedVisitFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleBreakFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleUseFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.VillagerInteractFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.VineGrowFlag;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
@@ -414,7 +445,7 @@ import java.util.regex.Pattern;
         if (plot == null) {
             return;
         }
-        if (Flags.REDSTONE.isFalse(plot)) {
+        if (!plot.getFlag(RedstoneFlag.class)) {
             event.setNewCurrent(0);
             return;
         }
@@ -468,7 +499,7 @@ import java.util.regex.Pattern;
                 if (plot == null) {
                     return;
                 }
-                if (Flags.REDSTONE.isFalse(plot)) {
+                if (!plot.getFlag(RedstoneFlag.class)) {
                     event.setCancelled(true);
                 }
                 return;
@@ -490,7 +521,7 @@ import java.util.regex.Pattern;
                 if (plot == null) {
                     return;
                 }
-                if (Flags.DISABLE_PHYSICS.isFalse(plot)) {
+                if (plot.getFlag(DisablePhysicsFlag.class)) {
                     event.setCancelled(true);
                 }
                 return;
@@ -1220,7 +1251,7 @@ import java.util.regex.Pattern;
             PlotArea area = location.getPlotArea();
             if (area != null) {
                 Plot plot = area.getOwnedPlot(location);
-                if (plot != null && Flags.MOB_BREAK.isTrue(plot)) {
+                if (plot != null && plot.getFlag(MobPlaceFlag.class)) {
                     return;
                 }
                 event.setCancelled(true);
@@ -1249,7 +1280,7 @@ import java.util.regex.Pattern;
             Player player = (Player) entity;
             if (!plot.hasOwner()) {
                 PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
-                if (Flags.ICE_FORM.isTrue(plot)) {
+                if (plot.getFlag(IceFormFlag.class)) {
                     return;
                 }
                 event.setCancelled(true);
@@ -1257,7 +1288,7 @@ import java.util.regex.Pattern;
             }
             PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
             if (!plot.isAdded(plotPlayer.getUUID())) {
-                if (Flags.ICE_FORM.isTrue(plot)) {
+                if (plot.getFlag(IceFormFlag.class)) {
                     return;
                 }
                 event.setCancelled(true);
@@ -1265,7 +1296,7 @@ import java.util.regex.Pattern;
             }
             return;
         }
-        if (!Flags.ICE_FORM.isTrue(plot)) {
+        if (!plot.getFlag(IceFormFlag.class)) {
             event.setCancelled(true);
         }
     }
@@ -1288,22 +1319,22 @@ import java.util.regex.Pattern;
         }
         switch (event.getSource().getType()) {
             case GRASS:
-                if (Flags.GRASS_GROW.isFalse(plot)) {
+                if (!plot.getFlag(GrassGrowFlag.class)) {
                     event.setCancelled(true);
                 }
                 break;
             case MYCELIUM:
-                if (Flags.MYCEL_GROW.isFalse(plot)) {
+                if (!plot.getFlag(MycelGrowFlag.class)) {
                     event.setCancelled(true);
                 }
                 break;
             case VINE:
-                if (Flags.VINE_GROW.isFalse(plot)) {
+                if (!plot.getFlag(VineGrowFlag.class)) {
                     event.setCancelled(true);
                 }
                 break;
             case KELP:
-                if (Flags.KELP_GROW.isFalse(plot)) {
+                if (!plot.getFlag(KelpGrowFlag.class)) {
                     event.setCancelled(true);
                 }
                 break;
@@ -1329,14 +1360,14 @@ import java.util.regex.Pattern;
         switch (event.getNewState().getType()) {
             case SNOW:
             case SNOW_BLOCK:
-                if (Flags.SNOW_FORM.isFalse(plot)) {
+                if (!plot.getFlag(SnowFormFlag.class)) {
                     event.setCancelled(true);
                 }
                 return;
             case ICE:
             case FROSTED_ICE:
             case PACKED_ICE:
-                if (Flags.ICE_FORM.isFalse(plot)) {
+                if (!plot.getFlag(IceFormFlag.class)) {
                     event.setCancelled(true);
                 }
         }
@@ -1401,17 +1432,17 @@ import java.util.regex.Pattern;
         }
         switch (block.getType()) {
             case ICE:
-                if (Flags.ICE_MELT.isFalse(plot)) {
+                if (!plot.getFlag(IceMeltFlag.class)) {
                     event.setCancelled(true);
                 }
                 break;
             case SNOW:
-                if (Flags.SNOW_MELT.isFalse(plot)) {
+                if (!plot.getFlag(SnowMeltFlag.class)) {
                     event.setCancelled(true);
                 }
                 break;
             case FARMLAND:
-                if (Flags.SOIL_DRY.isFalse(plot)) {
+                if (!plot.getFlag(SoilDryFlag.class)) {
                     event.setCancelled(true);
                 }
                 break;
@@ -1430,7 +1461,7 @@ import java.util.regex.Pattern;
         Plot plot = area.getOwnedPlot(tLocation);
         Location fLocation = BukkitUtil.getLocation(from.getLocation());
         if (plot != null) {
-            if (Flags.DISABLE_PHYSICS.isFalse(plot)) {
+            if (plot.getFlag(DisablePhysicsFlag.class)) {
                 event.setCancelled(true);
                 return;
             } else if (!area.contains(fLocation.getX(), fLocation.getZ()) || !Objects
@@ -1438,7 +1469,7 @@ import java.util.regex.Pattern;
                 event.setCancelled(true);
                 return;
             }
-            if (Flags.LIQUID_FLOW.isFalse(plot)) {
+            if (plot.getFlag(LiquidFlowFlag.class)) {
                 switch (to.getType()) {
                     case WATER:
                     case LAVA:
@@ -1825,7 +1856,7 @@ import java.util.regex.Pattern;
                 if (plot.isAdded(uuid)) {
                     return;
                 }
-                if (Flags.MISC_INTERACT.isTrue(plot)) {
+                if (plot.getFlag(MiscInteractFlag.class)) {
                     return;
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
@@ -2110,7 +2141,7 @@ import java.util.regex.Pattern;
             return;
         }
         Plot plot = area.getOwnedPlotAbs(location);
-        if (plot == null || plot.getFlag(Flags.DISABLE_PHYSICS, false)) {
+        if (plot == null || plot.getFlag(DisablePhysicsFlag.class)) {
             event.setCancelled(true);
             return;
         }
@@ -2146,7 +2177,7 @@ import java.util.regex.Pattern;
         }
 
         Plot plot = location.getOwnedPlot();
-        if (plot == null || !plot.getFlag(Flags.BLOCK_BURN, false)) {
+        if (plot == null || !plot.getFlag(BlockBurnFlag.class)) {
             event.setCancelled(true);
         }
 
@@ -2189,7 +2220,7 @@ import java.util.regex.Pattern;
                         Captions.PERMISSION_ADMIN_BUILD_OTHER);
                     event.setCancelled(true);
                 }
-            } else if (Flags.BLOCK_IGNITION.isFalse(plot)) {
+            } else if (!plot.getFlag(BlockIgnitionFlag.class)) {
                 event.setCancelled(true);
             }
         } else {
@@ -2198,7 +2229,7 @@ import java.util.regex.Pattern;
                 return;
             }
             if (ignitingEntity != null) {
-                if (!plot.getFlag(Flags.BLOCK_IGNITION, false)) {
+                if (!plot.getFlag(BlockIgnitionFlag.class)) {
                     event.setCancelled(true);
                     return;
                 }
@@ -2224,11 +2255,11 @@ import java.util.regex.Pattern;
                 Block ignitingBlock = event.getIgnitingBlock();
                 Plot plotIgnited = BukkitUtil.getLocation(ignitingBlock.getLocation()).getPlot();
                 if (igniteCause == BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL && (
-                    !plot.getFlag(Flags.BLOCK_IGNITION, false) || plotIgnited == null
+                    !plot.getFlag(BlockIgnitionFlag.class) || plotIgnited == null
                         || !plotIgnited.equals(plot)) ||
                     (igniteCause == BlockIgniteEvent.IgniteCause.SPREAD
                         || igniteCause == BlockIgniteEvent.IgniteCause.LAVA) && (
-                        !plot.getFlag(Flags.BLOCK_IGNITION).orElse(false) || plotIgnited == null
+                        !plot.getFlag(BlockIgnitionFlag.class) || plotIgnited == null
                             || !plotIgnited.equals(plot))) {
                     event.setCancelled(true);
                 }
@@ -2395,7 +2426,7 @@ import java.util.regex.Pattern;
                 return;
             }
             if (!plot.isAdded(pp.getUUID())) {
-                if (!plot.getFlag(Flags.HANGING_PLACE, false)) {
+                if (!plot.getFlag(HangingPlaceFlag.class)) {
                     if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
                         MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
                             Captions.PERMISSION_ADMIN_BUILD_OTHER);
@@ -2436,7 +2467,7 @@ import java.util.regex.Pattern;
                     event.setCancelled(true);
                 }
             } else if (!plot.isAdded(pp.getUUID())) {
-                if (plot.getFlag(Flags.HANGING_BREAK, false)) {
+                if (plot.getFlag(HangingBreakFlag.class)) {
                     return;
                 }
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_DESTROY_OTHER)) {
@@ -2465,7 +2496,7 @@ import java.util.regex.Pattern;
                             event.setCancelled(true);
                         }
                     } else if (!plot.isAdded(player.getUUID())) {
-                        if (!plot.getFlag(Flags.HANGING_BREAK, false)) {
+                        if (!plot.getFlag(HangingBreakFlag.class)) {
                             if (!Permissions
                                 .hasPermission(player, Captions.PERMISSION_ADMIN_DESTROY_OTHER)) {
                                 MainUtil.sendMessage(player, Captions.NO_PERMISSION_EVENT,
@@ -2505,26 +2536,26 @@ import java.util.regex.Pattern;
             }
         } else if (!plot.isAdded(pp.getUUID())) {
             Entity entity = event.getRightClicked();
-            if (entity instanceof Monster && plot.getFlag(Flags.HOSTILE_INTERACT, false)) {
+            if (entity instanceof Monster && plot.getFlag(HostileInteractFlag.class)) {
                 return;
             }
-            if (entity instanceof Animals && plot.getFlag(Flags.ANIMAL_INTERACT, false)) {
+            if (entity instanceof Animals && plot.getFlag(AnimalInteractFlag.class)) {
                 return;
             }
-            if (entity instanceof Tameable && ((Tameable) entity).isTamed() && plot
-                .getFlag(Flags.TAMED_INTERACT, false)) {
+            if (entity instanceof Tameable && ((Tameable) entity).isTamed() && plot.getFlag(
+                TamedInteractFlag.class)) {
                 return;
             }
-            if (entity instanceof Vehicle && plot.getFlag(Flags.VEHICLE_USE, false)) {
+            if (entity instanceof Vehicle && plot.getFlag(VehicleUseFlag.class)) {
                 return;
             }
-            if (entity instanceof Player && plot.getFlag(Flags.PLAYER_INTERACT, false)) {
+            if (entity instanceof Player && plot.getFlag(PlayerInteractFlag.class)) {
                 return;
             }
-            if (entity instanceof Villager && plot.getFlag(Flags.VILLAGER_INTERACT, false)) {
+            if (entity instanceof Villager && plot.getFlag(VillagerInteractFlag.class)) {
                 return;
             }
-            if (entity instanceof ItemFrame && plot.getFlag(Flags.MISC_INTERACT, false)) {
+            if (entity instanceof ItemFrame && plot.getFlag(MiscInteractFlag.class)) {
                 return;
             }
             if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_INTERACT_OTHER)) {
@@ -2564,7 +2595,7 @@ import java.util.regex.Pattern;
                     return;
                 }
                 if (!plot.isAdded(pp.getUUID())) {
-                    if (plot.getFlag(Flags.VEHICLE_BREAK, false)) {
+                    if (plot.getFlag(VehicleBreakFlag.class)) {
                         return;
                     }
                     if (!Permissions.hasPermission(pp, "plots.admin.vehicle.break.other")) {
@@ -2730,7 +2761,7 @@ import java.util.regex.Pattern;
         if (player != null) {
             PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
             if (victim instanceof Hanging) { // hanging
-                if (plot != null && (plot.getFlag(Flags.HANGING_BREAK, false) || plot
+                if (plot != null && (plot.getFlag(HangingBreakFlag.class)) || plot
                     .isAdded(plotPlayer.getUUID()))) {
                     if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                         if (!Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
@@ -2746,7 +2777,7 @@ import java.util.regex.Pattern;
                     return false;
                 }
             } else if (victim.getType() == EntityType.ARMOR_STAND) {
-                if (plot != null && (plot.getFlag(Flags.MISC_BREAK, false) || plot
+                if (plot != null && (plot.getFlag(MiscBreakFlag.class) || plot
                     .isAdded(plotPlayer.getUUID()))) {
                     return true;
                 }
@@ -2757,8 +2788,8 @@ import java.util.regex.Pattern;
                 }
             } else if (victim instanceof Monster
                 || victim instanceof EnderDragon) { // victim is monster
-                if (plot != null && (plot.getFlag(Flags.HOSTILE_ATTACK, false) || plot
-                    .getFlag(Flags.PVE, false) || plot.isAdded(plotPlayer.getUUID()))) {
+                if (plot != null && (plot.getFlag(HostileAttackFlag.class) || plot.getFlag(PveFlag.class) ||
+                    plot.isAdded(plotPlayer.getUUID()))) {
                     return true;
                 }
                 if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
@@ -2767,8 +2798,8 @@ import java.util.regex.Pattern;
                     return false;
                 }
             } else if (victim instanceof Tameable) { // victim is tameable
-                if (plot != null && (plot.getFlag(Flags.TAMED_ATTACK, false) || plot
-                    .getFlag(Flags.PVE, false) || plot.isAdded(plotPlayer.getUUID()))) {
+                if (plot != null && (plot.getFlag(TamedAttackFlag.class) || plot.getFlag(PveFlag.class) ||
+                    plot.isAdded(plotPlayer.getUUID()))) {
                     return true;
                 }
                 if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
@@ -2778,7 +2809,7 @@ import java.util.regex.Pattern;
                 }
             } else if (victim instanceof Player) {
                 if (plot != null) {
-                    if (Flags.PVP.isFalse(plot) && !Permissions
+                    if (!plot.getFlag(PvpFlag.class) && !Permissions
                         .hasPermission(plotPlayer, "plots.admin.pvp." + stub)) {
                         MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
                             "plots.admin.pvp." + stub);
@@ -2793,8 +2824,8 @@ import java.util.regex.Pattern;
                     return false;
                 }
             } else if (victim instanceof Creature) { // victim is animal
-                if (plot != null && (plot.getFlag(Flags.ANIMAL_ATTACK, false) || plot
-                    .getFlag(Flags.PVE, false) || plot.isAdded(plotPlayer.getUUID()))) {
+                if (plot != null && (plot.getFlag(AnimalAttackFlag.class) || plot.getFlag(PveFlag.class)
+                    || plot.isAdded(plotPlayer.getUUID()))) {
                     return true;
                 }
                 if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
@@ -2805,7 +2836,7 @@ import java.util.regex.Pattern;
             } else if (victim instanceof Vehicle) { // Vehicles are managed in vehicle destroy event
                 return true;
             } else { // victim is something else
-                if (plot != null && (plot.getFlag(Flags.PVE, false) || plot
+                if (plot != null && (plot.getFlag(PveFlag.class) || plot
                     .isAdded(plotPlayer.getUUID()))) {
                     return true;
                 }
@@ -2818,7 +2849,7 @@ import java.util.regex.Pattern;
             return true;
         } else if (dplot != null && (!dplot.equals(vplot) || Objects
             .equals(dplot.guessOwner(), vplot.guessOwner()))) {
-            return vplot != null && Flags.PVE.isTrue(vplot);
+            return vplot != null && vplot.getFlag(PveFlag.class);
         }
         //disable the firework damage. too much of a headache to support at the moment.
         if (vplot != null) {
@@ -2827,7 +2858,7 @@ import java.util.regex.Pattern;
                 return false;
             }
         }
-        return ((vplot != null && Flags.PVE.isTrue(vplot)) || !(damager instanceof Arrow
+        return ((vplot != null && vplot.getFlag(PveFlag.class)) || !(damager instanceof Arrow
             && !(victim instanceof Creature)));
     }
 
@@ -2908,7 +2939,7 @@ import java.util.regex.Pattern;
                     return;
                 }
             }
-            if (plot.getFlag(Flags.DISABLE_PHYSICS, false)) {
+            if (plot.getFlag(DisablePhysicsFlag.class)) {
                 Block block = event.getBlockPlaced();
                 if (block.getType().hasGravity()) {
                     sendBlockChange(block.getLocation(), block.getBlockData());

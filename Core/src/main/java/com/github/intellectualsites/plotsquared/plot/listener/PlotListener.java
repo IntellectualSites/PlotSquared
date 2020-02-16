@@ -10,7 +10,10 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Farew
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlightFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.GreetingFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MusicFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.NotifyEnterFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.NotifyLeaveFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlotWeatherFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.TitlesFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -71,7 +74,7 @@ public class PlotListener {
                     return true;
                 }
             } else {
-                titles = plot.getFlag(Flags.TITLES, titles);
+                titles = titles && plot.getFlag(TitlesFlag.class);
 
                 greeting = plot.getFlag(GreetingFlag.class);
                 if (!greeting.isEmpty()) {
@@ -84,8 +87,8 @@ public class PlotListener {
                             }
                         });
                 }
-                Optional<Boolean> enter = plot.getFlag(Flags.NOTIFY_ENTER);
-                if (enter.isPresent() && enter.get()) {
+
+                if (plot.getFlag(NotifyEnterFlag.class)) {
                     if (!Permissions.hasPermission(player, "plots.flag.notify-enter.bypass")) {
                         for (UUID uuid : plot.getOwners()) {
                             PlotPlayer owner = UUIDHandler.getPlayer(uuid);
@@ -246,8 +249,7 @@ public class PlotListener {
                         });
             }
 
-            Optional<Boolean> leave = plot.getFlag(Flags.NOTIFY_LEAVE);
-            if (leave.isPresent() && leave.get()) {
+            if (plot.getFlag(NotifyLeaveFlag.class)) {
                 if (!Permissions.hasPermission(player, "plots.flag.notify-enter.bypass")) {
                     for (UUID uuid : plot.getOwners()) {
                         PlotPlayer owner = UUIDHandler.getPlayer(uuid);
