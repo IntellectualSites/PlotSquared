@@ -584,7 +584,7 @@ public enum Captions implements Caption {
     FLAG_DESCRIPTION_MOB_PLACE("Set to `true` to allow mobs to place blocks within the plot.", "Flags"),
     FLAG_DESCRIPTION_MYCEL_GROW("Set to `true` to allow mycelium to grow in the plot.", "Flags"),
     FLAG_DESCRIPTION_NOTIFY_ENTER("Set to `true` to notify the plot owners when someone enters the plot.", "Flags"),
-    FLAG_DESCRIPTION_NOITFY_LEAVE("Set to `true` to notify the plot owners when someone leaves the plot.", "Flags"),
+    FLAG_DESCRIPTION_NOTIFY_LEAVE("Set to `true` to notify the plot owners when someone leaves the plot.", "Flags"),
     FLAG_DESCRIPTION_NO_WORLDEDIT("Set to `true` to disable WorldEdit usage within the plot.", "Flags"),
     FLAG_DESCRIPTION_PLAYER_INTERACT("Set to `true` to allow guests to interact with players in the plot.", "Flags"),
     FLAG_DESCRIPTION_PVE("Set to `true` to enable PVE inside the plot.", "Flags"),
