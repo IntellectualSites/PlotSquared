@@ -8,9 +8,9 @@ import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flag.BlockStateListFlag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.flag.PlotWeatherFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlotWeatherFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.types.BlockTypeListFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.types.IntegerFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
@@ -253,9 +253,9 @@ public class FlagCmd extends SubCommand {
                         return false;
                     }
                 }
-                if (flag == Flags.TIME) {
+                if (flag.) {
                     player.setTime(Long.MAX_VALUE);
-                } else if (flag.getClass().isInstance(PlotWeatherFlag.class)) {
+                } else if (flag instanceof PlotWeatherFlag) {
                     player.setWeather(PlotWeather.RESET);
                 }
                 MainUtil.sendMessage(player, Captions.FLAG_REMOVED);

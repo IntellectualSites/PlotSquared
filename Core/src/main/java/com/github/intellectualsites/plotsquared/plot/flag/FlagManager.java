@@ -279,20 +279,6 @@ public class FlagManager {
         return flag;
     }
 
-    public static Flag<?> getOrCreateFlag(String string) {
-        Flag<?> flag = Flags.getFlag(string);
-        if (flag == null) {
-            flag = new StringFlag(string) {
-                @Override public String getValueDescription() {
-                    return "Generic Filler Flag";
-                }
-            };
-            flag.register();
-        }
-        return flag;
-    }
-
-
     public static Map<Flag<?>, Object> parseFlags(List<String> flagStrings) {
         HashMap<Flag<?>, Object> map = new HashMap<>();
 
