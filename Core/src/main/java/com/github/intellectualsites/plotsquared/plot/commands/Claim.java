@@ -1,6 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
@@ -58,7 +59,7 @@ public class Claim extends SubCommand {
                         "non-existent: " + schematic);
                 }
                 if (!Permissions
-                    .hasPermission(player, Captions
+                    .hasPermission(player, CaptionUtility
                         .format(Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
                     && !Permissions
                     .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {

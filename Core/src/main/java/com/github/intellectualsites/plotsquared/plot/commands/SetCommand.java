@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -19,9 +20,9 @@ public abstract class SetCommand extends SubCommand {
         if (!plot.hasOwner()) {
             if (!Permissions
                 .hasPermission(player,
-                    Captions.format(Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()))) {
+                    CaptionUtility.format(Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()))) {
                 MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                    Captions.format(Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()));
+                    CaptionUtility.format(Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()));
                 MainUtil.sendMessage(player, Captions.PLOT_NOT_CLAIMED);
                 return false;
             }
@@ -29,9 +30,9 @@ public abstract class SetCommand extends SubCommand {
         if (!plot.isOwner(player.getUUID())) {
             if (!Permissions
                 .hasPermission(player,
-                    Captions.format(Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()))) {
+                    CaptionUtility.format(Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()))) {
                 MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                    Captions.format(Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()));
+                    CaptionUtility.format(Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()));
                 MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
                 return false;
             }

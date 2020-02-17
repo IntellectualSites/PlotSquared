@@ -2,6 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
@@ -220,11 +221,11 @@ public class Auto extends SubCommand {
                 return true;
             }
             if (!Permissions.hasPermission(player,
-                Captions.format(Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
+                CaptionUtility.format(Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
                 && !Permissions
                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {
                 MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                    Captions.format(Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic));
+                    CaptionUtility.format(Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic));
                 return true;
             }
         }

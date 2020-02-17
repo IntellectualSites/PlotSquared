@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.object;
 import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.RequiredType;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
@@ -623,7 +624,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                                 if (getMeta("teleportOnLogin", true)) {
                                     teleport(location);
                                     sendMessage(
-                                        Captions.format(Captions.TELEPORTED_TO_PLOT.getTranslated())
+                                        CaptionUtility.format(Captions.TELEPORTED_TO_PLOT.getTranslated())
                                             + " (quitLoc) (" + plotX
                                             + "," + plotZ + ")");
                                 }
@@ -635,7 +636,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                                         if (getMeta("teleportOnLogin", true)) {
                                             if (plot.isLoaded()) {
                                                 teleport(location);
-                                                sendMessage(Captions.format(
+                                                sendMessage(CaptionUtility.format(
                                                     Captions.TELEPORTED_TO_PLOT.getTranslated())
                                                     + " (quitLoc-unloaded) (" + plotX + "," + plotZ
                                                     + ")");

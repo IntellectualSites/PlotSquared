@@ -2,6 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
@@ -50,9 +51,9 @@ import java.util.stream.IntStream;
 
                 for (String component : components) {
                     if (component.equalsIgnoreCase(args[0])) {
-                        if (!Permissions.hasPermission(player, Captions
+                        if (!Permissions.hasPermission(player, CaptionUtility
                             .format(Captions.PERMISSION_SET_COMPONENT.getTranslated(), component))) {
-                            MainUtil.sendMessage(player, Captions.NO_PERMISSION, Captions
+                            MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
                                 .format(Captions.PERMISSION_SET_COMPONENT.getTranslated(),
                                     component));
                             return false;

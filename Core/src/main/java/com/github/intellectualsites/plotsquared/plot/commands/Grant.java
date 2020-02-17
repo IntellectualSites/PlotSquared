@@ -2,6 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -33,9 +34,9 @@ import java.util.concurrent.CompletableFuture;
             case "add":
             case "check":
                 if (!Permissions.hasPermission(player,
-                    Captions.format(Captions.PERMISSION_GRANT.getTranslated(), arg0))) {
+                    CaptionUtility.format(Captions.PERMISSION_GRANT.getTranslated(), arg0))) {
                     Captions.NO_PERMISSION.send(player,
-                        Captions.format(Captions.PERMISSION_GRANT.getTranslated(), arg0));
+                        CaptionUtility.format(Captions.PERMISSION_GRANT.getTranslated(), arg0));
                     return CompletableFuture.completedFuture(false);
                 }
                 if (args.length > 2) {
