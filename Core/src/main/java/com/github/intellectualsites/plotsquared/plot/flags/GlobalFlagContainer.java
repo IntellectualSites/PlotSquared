@@ -15,12 +15,14 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.DropP
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.EntityCapFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.ExplosionFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FarewellFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.FeedFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlightFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.ForcefieldFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.GrassGrowFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.GreetingFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.HangingBreakFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.HangingPlaceFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.HealFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.HideInfoFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.HostileAttackFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.HostileCapFlag;
@@ -134,13 +136,17 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(InstabreakFlag.INSTABREAK_FALSE);
         this.addFlag(InvincibleFlag.INVINCIBLE_FALSE);
 
-        //Integer flags
+        // Integer flags
         this.addFlag(AnimalCapFlag.ANIMAL_CAP_UNLIMITED);
         this.addFlag(EntityCapFlag.ENTITY_CAP_UNLIMITED);
         this.addFlag(HostileCapFlag.HOSTILE_CAP_UNLIMITED);
         this.addFlag(MiscCapFlag.MISC_CAP_UNLIMITED);
         this.addFlag(MobCapFlag.MOB_CAP_UNLIMITED);
         this.addFlag(VehicleCapFlag.VEHICLE_CAP_UNLIMITED);
+
+        // Timed flags
+        this.addFlag(FeedFlag.FEED_NOTHING);
+        this.addFlag(HealFlag.HEAL_NOTHING);
 
         // Internal flags
         this.addFlag(new AnalysisFlag(Collections.emptyList()));

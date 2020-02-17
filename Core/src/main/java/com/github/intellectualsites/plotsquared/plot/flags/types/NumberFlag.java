@@ -24,7 +24,7 @@ public abstract class NumberFlag<N extends Number & Comparable<N>, F extends Plo
         final N parsed = parseNumber(input);
         if (parsed.compareTo(minimum) < 0 || parsed.compareTo(maximum) > 0) {
             throw new FlagParseException(this, input,
-                Captions.NOT_VALID_NUMBER); // TODO format Caption, provide valid range
+                Captions.NUMBER_NOT_IN_RANGE, minimum, maximum);
         }
         return flagOf(parsed);
 

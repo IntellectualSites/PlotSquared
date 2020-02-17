@@ -444,6 +444,9 @@ public enum Captions implements Caption {
     NOT_VALID_NUMBER("$2That's not a valid number within the range: %s", "Invalid"),
     NOT_VALID_PLOT_ID("$2That's not a valid plot id.", "Invalid"),
     FOUND_NO_PLOTS("$2Found no plots with your search query", "Invalid"),
+    NUMBER_NOT_IN_RANGE("That's not a valid number within the range: (%s, %s)", "Invalid"),
+    NUMBER_NOT_POSITIVE("That's not a positive number: %s", "Invalid"),
+    NOT_A_NUMBER("%s is not a valid number.", "Invalid"),
     //</editor-fold>
     //<editor-fold desc="Need">
     NEED_BLOCK("$2You've got to specify a block", "Need"),
@@ -577,10 +580,12 @@ public enum Captions implements Caption {
     FLAG_DESCRIPTION_DEVICE_INTERACT("Set to `true` to allow devices to be interacted with in the plot.", "Flags"),
     FLAG_DESCRIPTION_DISABLE_PHYSICS("Set to `true` to disable block physics in the plot.", "Flags"),
     FLAG_DESCRIPTION_DROP_PROTECTION("Set to `true` to prevent dropped items from being picked up by non-members of the plot.", "Flags"),
+    FLAG_DESCRIPTION_FEED("Specify an interval in seconds and an optional amount by which the players will be fed (amount is 1 by default).", "Flags"),
     FLAG_DESCRIPTION_FORCEFIELD("Set to `true` to enable member forcefield in the plot.", "Flags"),
     FLAG_DESCRIPTION_GRASS_GROW("Set to `false` to disable grass to grow within the plot.", "Flags"),
     FLAG_DESCRIPTION_HANGING_BREAK("Set to `true` to allow guests to break hanging objects in the plot.", "Flags"),
     FLAG_DESCRIPTION_HANGING_PLACE("Set to `true` to allow guests to hang objects in the plot.", "Flags"),
+    FLAG_DESCRIPTION_HEAL("Specify an interval in seconds and an optional amount by which the players will be healed (amount is 1 by default).", "Flags"),
     FLAG_DESCRIPTION_HIDE_INFO("Set to `true` to hide plot information.", "Flags"),
     FLAG_DESCRIPTION_HOSTILE_ATTACK("Set to `true` to enable players to attack hostile mobs in the plot.", "Flags"),
     FLAG_DESCRIPTION_HOSTILE_CAP("Set to an integer value to limit the amount of hostile entities on the plot.", "Flags"),
