@@ -26,6 +26,11 @@ public class HelpMenu {
         return this;
     }
 
+    public HelpMenu setCommands(final List<Command> commands) {
+        this.commands = commands;
+        return this;
+    }
+
     public HelpMenu getCommands() {
         this.commands =
             MainCommand.getInstance().getCommands(this.commandCategory, this.commandCaller);

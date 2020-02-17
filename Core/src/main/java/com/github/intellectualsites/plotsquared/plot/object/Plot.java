@@ -1107,8 +1107,18 @@ public class Plot {
      * @param flag the flag to remove
      * @return success
      */
-    public boolean removeFlag(Class<? extends PlotFlag<?, >> flag) {
+    public boolean removeFlag(Class<? extends PlotFlag> flag) {
         return FlagManager.removePlotFlag(this, flag);
+    }
+
+    /**
+     * Remove a flag from this plot
+     *
+     * @param flag the flag to remove
+     * @return success
+     */
+    public boolean removeFlag(PlotFlag<?, ?> flag) {
+        return this.removeFlag(flag.getClass());
     }
 
     /**

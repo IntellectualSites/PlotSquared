@@ -529,6 +529,8 @@ public enum Captions implements Caption {
     FLAG_ADDED("$4Successfully added flag", "Flag"),
     FLAG_TUTORIAL_USAGE("$1Have an admin set the flag: $2%s", "CommandConfig"),
     FLAG_LIST_ENTRY("$2%s: $1%s", "Flag"),
+    FLAG_LIST_SEE_INFO("Click to view information about the flag", "Flag"),
+    FLAG_PARSE_EXCEPTION("$2Failed to parse flag '%s', value '%s': %s", "Flag"),
     //</editor-fold>
     //<editor-fold desc="Flag">
     FLAG_INFO_COLOR_KEY("$1", "Flag"),

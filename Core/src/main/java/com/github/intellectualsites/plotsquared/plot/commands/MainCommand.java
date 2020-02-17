@@ -86,7 +86,8 @@ public class MainCommand extends Command {
             new DebugRoadRegen();
             new Trust();
             new DebugExec();
-            new FlagCmd();
+            // new FlagCmd();
+            new FlagCommand();
             new Target();
             new DebugFixFlags();
             new Move();
