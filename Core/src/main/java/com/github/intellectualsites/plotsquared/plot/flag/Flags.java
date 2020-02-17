@@ -37,6 +37,4 @@ public final class Flags {
         }
     };
 
-    public static final TeleportDenyFlag DENY_TELEPORT = new TeleportDenyFlag("deny-teleport");
-
 }

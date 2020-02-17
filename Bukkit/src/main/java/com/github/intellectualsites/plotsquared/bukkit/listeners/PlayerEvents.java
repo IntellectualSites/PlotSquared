@@ -8,10 +8,12 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flag.TeleportDenyFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnimalAttackFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnimalInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockBurnFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockIgnitionFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyTeleportFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DisablePhysicsFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.ExplosionFlag;
@@ -818,7 +820,7 @@ import java.util.regex.Pattern;
             }
             Plot plot = area.getPlot(location);
             if (plot != null) {
-                final boolean result = Flags.DENY_TELEPORT.allowsTeleport(pp, plot);
+                final boolean result = DenyTeleportFlag.allowsTeleport(pp, plot);
                 // there is one possibility to still allow teleportation:
                 // to is identical to the plot's home location, and untrusted-visit is true
                 // i.e. untrusted-visit can override deny-teleport

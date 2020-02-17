@@ -7,6 +7,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Anima
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockBurnFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockIgnitionFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyExitFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyTeleportFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DescriptionFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DeviceInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DisablePhysicsFlag;
@@ -92,7 +93,6 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(DescriptionFlag.DESCRIPTION_FLAG_EMPTY);
         this.addFlag(GreetingFlag.GREETING_FLAG_EMPTY);
         this.addFlag(FarewellFlag.FAREWELL_FLAG_EMPTY);
-        this.addFlag(PlotWeatherFlag.PLOT_WEATHER_FLAG_OFF);
         this.addFlag(AnimalAttackFlag.ANIMAL_ATTACK_FALSE);
         this.addFlag(AnimalInteractFlag.ANIMAL_INTERACT_FALSE);
         this.addFlag(BlockBurnFlag.BLOCK_BURN_FALSE);
@@ -136,6 +136,10 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(ItemDropFlag.ITEM_DROP_TRUE);
         this.addFlag(InstabreakFlag.INSTABREAK_FALSE);
         this.addFlag(InvincibleFlag.INVINCIBLE_FALSE);
+
+        // Enum Flags
+        this.addFlag(PlotWeatherFlag.PLOT_WEATHER_FLAG_OFF);
+        this.addFlag(DenyTeleportFlag.DENY_TELEPORT_FLAG_NONE);
 
         // Integer flags
         this.addFlag(AnimalCapFlag.ANIMAL_CAP_UNLIMITED);
