@@ -577,6 +577,7 @@ public enum Captions implements Caption {
     FLAG_DESCRIPTION_ANIMAL_INTERACT("Set to `true` to allow animals to be interacted with in the plot.", "Flags"),
     FLAG_DESCRIPTION_BLOCK_BURN("Set to `true` to allow blocks to burn within the plot.", "Flags"),
     FLAG_DESCRIPTION_BLOCK_IGNITION("Set to `true` to allow blocks to ignite within the plot.", "Flags"),
+    FLAG_DESCRIPTION_BREAK("Define a list of materials players should be able to break even when they aren't added to the plot.", "Flags"),
     FLAG_DESCRIPTION_DEVICE_INTERACT("Set to `true` to allow devices to be interacted with in the plot.", "Flags"),
     FLAG_DESCRIPTION_DISABLE_PHYSICS("Set to `true` to disable block physics in the plot.", "Flags"),
     FLAG_DESCRIPTION_DROP_PROTECTION("Set to `true` to prevent dropped items from being picked up by non-members of the plot.", "Flags"),

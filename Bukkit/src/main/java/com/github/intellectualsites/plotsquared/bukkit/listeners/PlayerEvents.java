@@ -13,6 +13,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Anima
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnimalInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockBurnFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockIgnitionFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.BreakFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyTeleportFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DisablePhysicsFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
@@ -1127,10 +1128,9 @@ import java.util.regex.Pattern;
                 return;
             }
             if (!plot.isAdded(plotPlayer.getUUID())) {
-                Optional<Set<BlockType>> destroy = plot.getFlag(Flags.BREAK);
+                List<BlockType> destroy = plot.getFlag(BreakFlag.class);
                 Block block = event.getBlock();
-                if (destroy.isPresent() && destroy.get()
-                    .contains(BukkitAdapter.asBlockType(block.getType()))) {
+                if (destroy.contains(BukkitAdapter.asBlockType(block.getType()))) {
                     return;
                 }
                 if (Permissions
@@ -1400,10 +1400,9 @@ import java.util.regex.Pattern;
             }
             PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
             if (!plot.isAdded(plotPlayer.getUUID())) {
-                Optional<Set<BlockType>> destroy = plot.getFlag(Flags.BREAK);
+                List<BlockType> destroy = plot.getFlag(BreakFlag.class);
                 Block block = event.getBlock();
-                if (destroy.isPresent() && destroy.get()
-                    .contains(BukkitAdapter.asBlockType(block.getType())) || Permissions
+                if (destroy.contains(BukkitAdapter.asBlockType(block.getType())) || Permissions
                     .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }

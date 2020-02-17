@@ -11,13 +11,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockTypeListFlag extends ListFlag<BlockType, BlockTypeListFlag> {
+public abstract class BlockTypeListFlag<F extends ListFlag<BlockType, F>> extends ListFlag<BlockType, F> {
 
-    public BlockTypeListFlag(List<BlockType> blockTypeList, Caption description) {
+    protected BlockTypeListFlag(List<BlockType> blockTypeList, Caption description) {
         super(blockTypeList, Captions.FLAG_CATEGORY_BLOCK_LIST, description);
     }
 
-    @Override public BlockTypeListFlag parse(@NotNull String input) throws FlagParseException {
+    @Override public F parse(@NotNull String input) throws FlagParseException {
         final List<BlockType> parsedBlocks = new ArrayList<>();
         final String[] split = input.split(",(?![^\\(\\[]*[\\]\\)])");
         if (split.length == 0) {
@@ -36,10 +36,6 @@ public class BlockTypeListFlag extends ListFlag<BlockType, BlockTypeListFlag> {
 
     @Override public String getExample() {
         return "air,grass_block";
-    }
-
-    @Override protected BlockTypeListFlag flagOf(@NotNull List<BlockType> value) {
-        return new BlockTypeListFlag(value, getFlagDescription()); // copy the description
     }
 
 }
