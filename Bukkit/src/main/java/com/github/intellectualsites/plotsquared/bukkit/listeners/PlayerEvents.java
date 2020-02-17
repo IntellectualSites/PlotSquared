@@ -13,7 +13,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Anima
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnimalInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockBurnFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockIgnitionFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.BreakFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockedCmdsFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyTeleportFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DisablePhysicsFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
@@ -672,10 +672,10 @@ import java.util.regex.Pattern;
         if (plot == null) {
             return;
         }
-        Optional<List<String>> flag = plot.getFlag(Flags.BLOCKED_CMDS);
-        if (flag.isPresent() && !Permissions
+
+        List<String> blockedCommands = plot.getFlag(BlockedCmdsFlag.class);
+        if (!blockedCommands.isEmpty() && !Permissions
             .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS)) {
-            List<String> blockedCommands = flag.get();
             String part = parts[0];
             if (parts[0].contains(":")) {
                 part = parts[0].split(":")[1];

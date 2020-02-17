@@ -6,6 +6,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Anima
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnimalInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockBurnFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockIgnitionFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockedCmdsFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.BreakFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyExitFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyTeleportFlag;
@@ -169,6 +170,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         // Misc
         this.addFlag(GamemodeFlag.GAMEMODE_FLAG_DEFAULT);
         this.addFlag(GuestGamemodeFlag.GUEST_GAMEMODE_FLAG_DEFAULT);
+        this.addFlag(BlockedCmdsFlag.BLOCKED_CMDS_FLAG_NONE);
 
         // Internal flags
         this.addFlag(new AnalysisFlag(Collections.emptyList()));
