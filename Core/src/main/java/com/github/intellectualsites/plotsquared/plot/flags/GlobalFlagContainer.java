@@ -48,6 +48,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Mycel
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.NoWorldeditFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.NotifyEnterFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.NotifyLeaveFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlayerInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlotWeatherFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PriceFlag;
@@ -161,6 +162,7 @@ public final class GlobalFlagContainer extends FlagContainer {
 
         // Block type list flags
         this.addFlag(BreakFlag.BREAK_NONE);
+        this.addFlag(PlaceFlag.PLACE_NONE);
 
 
         // Misc

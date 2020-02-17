@@ -31,6 +31,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscB
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MobPlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MycelGrowFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlayerInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PveFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PvpFlag;
@@ -2919,7 +2920,7 @@ import java.util.regex.Pattern;
                     return;
                 }
             } else if (!plot.isAdded(pp.getUUID())) {
-                Set<BlockType> place = plot.getFlag(Flags.PLACE, null);
+                List<BlockType> place = plot.getFlag(PlaceFlag.class);
                 if (place != null) {
                 Block block = event.getBlock();
                     if (place.contains(BukkitAdapter.asBlockType(block.getType()))) {

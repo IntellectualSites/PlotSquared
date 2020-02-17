@@ -8,6 +8,7 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DeviceInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscPlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MobPlaceFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehiclePlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
@@ -183,13 +184,10 @@ public abstract class EventUtil {
                 if (plot.getFlag(MobPlaceFlag.class)) {
                     return true;
                 }
-                Optional<Set<BlockType>> flagValue = plot.getFlag(Flags.PLACE);
-                Set<BlockType> value = flagValue.orElse(null);
-                if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(blockType)) {
-                    if (Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
-                            false)) {
+                List<BlockType> place = plot.getFlag(PlaceFlag.class);
+                if (!place.contains(BlockTypes.AIR) && !place.contains(blockType)) {
+                    if (Permissions
+                        .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(), false)) {
                         return true;
                     }
                     return !(!notifyPerms || MainUtil
@@ -213,13 +211,10 @@ public abstract class EventUtil {
                 if (plot.getFlag(MiscPlaceFlag.class)) {
                     return true;
                 }
-                Optional<Set<BlockType>> flag = plot.getFlag(Flags.PLACE);
-                Set<BlockType> value = flag.orElse(null);
-                if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(blockType)) {
-                    if (Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
-                            false)) {
+                List<BlockType> place = plot.getFlag(PlaceFlag.class);
+                if (!place.contains(BlockTypes.AIR) && !place.contains(blockType)) {
+                    if (Permissions
+                        .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(), false)) {
                         return true;
                     }
                     return !(!notifyPerms || MainUtil
