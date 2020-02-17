@@ -3167,6 +3167,12 @@ public class Plot {
         return this.flagContainer.getFlag(flagClass).getValue();
     }
 
+    public <T, V extends PlotFlag<T, ?>> T getFlag(final V flag) {
+        final Class<?> flagClass = flag.getClass();
+        final PlotFlag<?, ?> flagInstance = this.flagContainer.getFlagErased(flagClass);
+        return FlagContainer.<T, V>castUnsafe(flagInstance).getValue();
+    }
+
     public boolean setFlag(PlotFlag<?, ?> plotFlag) {
         flagContainer.addFlag(plotFlag);
         return true;

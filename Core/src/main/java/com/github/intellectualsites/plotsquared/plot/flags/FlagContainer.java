@@ -165,7 +165,7 @@ import java.util.Map;
     }
 
     @SuppressWarnings("ALL")
-    protected static <V, T extends PlotFlag<V, ?>> T castUnsafe(final PlotFlag<?, ?> flag) {
+    public static <V, T extends PlotFlag<V, ?>> T castUnsafe(final PlotFlag<?, ?> flag) {
         return (T) flag;
     }
 

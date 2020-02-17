@@ -1,8 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.flag.IntegerFlag;
+import com.github.intellectualsites.plotsquared.plot.config.Settings;;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import lombok.NonNull;
@@ -38,14 +37,14 @@ import lombok.experimental.UtilityClass;
         return i;
     }
 
-    public static boolean checkEntity(Plot plot, IntegerFlag... flags) {
+    public static boolean checkEntity(Plot plot, PlotFlag<Integer, ?> ... flags) {
         if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
             return true;
         }
         int[] mobs = null;
-        for (IntegerFlag flag : flags) {
+        for (PlotFlag<Integer, ?> flag : flags) {
             final int i = capNumeral(flag.getName());
-            int cap = plot.getFlag(flag, Integer.MAX_VALUE);
+            int cap = plot.getFlag(flag);
             if (cap == Integer.MAX_VALUE) {
                 continue;
             }
@@ -62,7 +61,7 @@ import lombok.experimental.UtilityClass;
             }
         }
         if (mobs != null) {
-            for (IntegerFlag flag : flags) {
+            for (PlotFlag<Integer, ?> flag : flags) {
                 final int i = capNumeral(flag.getName());
                 mobs[i]++;
             }
