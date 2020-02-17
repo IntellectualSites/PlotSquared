@@ -609,6 +609,7 @@ public enum Captions implements Caption {
     FLAG_DESCRIPTION_NOTIFY_LEAVE("Set to `true` to notify the plot owners when someone leaves the plot.", "Flags"),
     FLAG_DESCRIPTION_NO_WORLDEDIT("Set to `true` to disable WorldEdit usage within the plot.", "Flags"),
     FLAG_DESCRIPTION_PLAYER_INTERACT("Set to `true` to allow guests to interact with players in the plot.", "Flags"),
+    FLAG_DESCRIPTION_PRICE("Set a price for a plot. Must be a positive decimal number.", "Flags"),
     FLAG_DESCRIPTION_PVE("Set to `true` to enable PVE inside the plot.", "Flags"),
     FLAG_DESCRIPTION_PVP("Set to `true` to enable PVP inside the plot.", "Flags"),
     FLAG_DESCRIPTION_REDSTONE("Set to `false` to disable redstone in the plot.", "Flags"),

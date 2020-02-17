@@ -6,21 +6,9 @@ import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 
 public final class Flags {
 
-    public static final IntervalFlag FEED = new IntervalFlag("feed");
-    public static final IntervalFlag HEAL = new IntervalFlag("heal");
     public static final GameModeFlag GAMEMODE = new GameModeFlag("gamemode");
     public static final GameModeFlag GUEST_GAMEMODE = new GameModeFlag("guest-gamemode");
     public static final LongFlag TIME = new LongFlag("time");
-    public static final DoubleFlag PRICE = new DoubleFlag("price") {
-        @Override public Double parseValue(String input) {
-            Double value = super.parseValue(input);
-            return value != null && value > 0 ? value : null;
-        }
-
-        @Override public String getValueDescription() {
-            return Captions.FLAG_ERROR_DOUBLE.getTranslated();
-        }
-    };
     public static final StringListFlag BLOCKED_CMDS = new StringListFlag("blocked-cmds");
     public static final BlockStateListFlag USE = new BlockStateListFlag("use");
     public static final BlockStateListFlag BREAK = new BlockStateListFlag("break");

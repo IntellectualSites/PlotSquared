@@ -4,8 +4,8 @@ import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared.SortType;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.PriceFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.UUID;
 
 @CommandDeclaration(command = "list", aliases = {"l", "find", "search"}, description = "List plots",
@@ -248,8 +247,7 @@ public class ListCmd extends SubCommand {
                 }
                 plots = new ArrayList<>();
                 for (Plot plot : PlotSquared.get().getPlots()) {
-                    Optional<Double> price = plot.getFlag(Flags.PRICE);
-                    if (price.isPresent()) {
+                    if (plot.getFlag(PriceFlag.class) > 0) {
                         plots.add(plot);
                     }
                 }
