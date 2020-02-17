@@ -8,7 +8,9 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyExitFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FarewellFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlightFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.GamemodeFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.GreetingFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.GuestGamemodeFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MusicFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.NotifyEnterFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.NotifyLeaveFlag;
@@ -29,7 +31,6 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
-import com.github.intellectualsites.plotsquared.plot.util.world.ItemUtil;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
@@ -112,33 +113,35 @@ public class PlotListener {
                     player.setFlight(true);
                 }
 
-                Optional<GameMode> gamemodeFlag = plot.getFlag(Flags.GAMEMODE);
-                if (gamemodeFlag.isPresent()) {
-                    if (player.getGameMode() != gamemodeFlag.get()) {
+                final GameMode gameMode = plot.getFlag(GamemodeFlag.class);
+                if (!gameMode.equals(GamemodeFlag.DEFAULT)) {
+                    if (player.getGameMode() != gameMode) {
                         if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
-                            player.setGameMode(gamemodeFlag.get());
+                            player.setGameMode(gameMode);
                         } else {
                             MainUtil.sendMessage(player, StringMan
                                 .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.getTranslated(),
                                     "{plot}",
-                                    plot.getId(), "{gamemode}", gamemodeFlag.get()));
+                                    plot.getId(), "{gamemode}", gameMode));
                         }
                     }
                 }
-                Optional<GameMode> guestGamemodeFlag = plot.getFlag(Flags.GUEST_GAMEMODE);
-                if (guestGamemodeFlag.isPresent()) {
-                    if (player.getGameMode() != guestGamemodeFlag.get() && !plot
+
+                final GameMode guestGameMode = plot.getFlag(GuestGamemodeFlag.class);
+                if (!guestGameMode.equals(GamemodeFlag.DEFAULT)) {
+                    if (player.getGameMode() != guestGameMode && !plot
                         .isAdded(player.getUUID())) {
                         if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
-                            player.setGameMode(guestGamemodeFlag.get());
+                            player.setGameMode(guestGameMode);
                         } else {
                             MainUtil.sendMessage(player, StringMan
                                 .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.getTranslated(),
                                     "{plot}",
-                                    plot.getId(), "{gamemode}", guestGamemodeFlag.get()));
+                                    plot.getId(), "{gamemode}", guestGameMode));
                         }
                     }
                 }
+
                 Optional<Long> timeFlag = plot.getFlag(Flags.TIME);
                 if (timeFlag.isPresent() && !player.getAttribute("disabletime")) {
                     try {
@@ -225,8 +228,8 @@ public class PlotListener {
                 }
                 return false;
             }
-            if (plot.getFlag(Flags.GAMEMODE).isPresent() || plot.getFlag(Flags.GUEST_GAMEMODE)
-                .isPresent()) {
+            if (!plot.getFlag(GamemodeFlag.class).equals(GamemodeFlag.DEFAULT) ||
+                !plot.getFlag(GuestGamemodeFlag.class).equals(GamemodeFlag.DEFAULT)) {
                 if (player.getGameMode() != pw.GAMEMODE) {
                     if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
                         player.setGameMode(pw.GAMEMODE);

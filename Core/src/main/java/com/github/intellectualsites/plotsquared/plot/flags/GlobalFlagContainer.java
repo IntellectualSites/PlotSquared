@@ -19,8 +19,10 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Farew
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FeedFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlightFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.ForcefieldFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.GamemodeFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.GrassGrowFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.GreetingFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.GuestGamemodeFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.HangingBreakFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.HangingPlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.HealFlag;
@@ -155,6 +157,10 @@ public final class GlobalFlagContainer extends FlagContainer {
 
         // Double flags
         this.addFlag(PriceFlag.PRICE_NOT_BUYABLE);
+
+        // Misc
+        this.addFlag(GamemodeFlag.GAMEMODE_FLAG_DEFAULT);
+        this.addFlag(GuestGamemodeFlag.GUEST_GAMEMODE_FLAG_DEFAULT);
 
         // Internal flags
         this.addFlag(new AnalysisFlag(Collections.emptyList()));

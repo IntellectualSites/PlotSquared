@@ -6,8 +6,6 @@ import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 
 public final class Flags {
 
-    public static final GameModeFlag GAMEMODE = new GameModeFlag("gamemode");
-    public static final GameModeFlag GUEST_GAMEMODE = new GameModeFlag("guest-gamemode");
     public static final LongFlag TIME = new LongFlag("time");
     public static final StringListFlag BLOCKED_CMDS = new StringListFlag("blocked-cmds");
     public static final BlockStateListFlag USE = new BlockStateListFlag("use");

@@ -627,6 +627,8 @@ public enum Captions implements Caption {
     FLAG_DESCRIPTION_VILLAGER_INTERACT("Set to `true` to allow guests to interact with villagers in the plot.", "Flags"),
     FLAG_DESCRIPTION_VINE_GROW("Set to `true` to allow vines to grow within the plot.", "Flags"),
     FLAG_DESCRIPTION_DENY_TELEPORT("Deny a certain group from teleporting to the plot. Available groups: members, nonmembers, trusted, nontrusted, nonowners", "Flags"),
+    FLAG_DESCRIPTION_GAMEMODE("Determines the gamemode in the plot.", "Flags"),
+    FLAG_DESCRIPTION_GUEST_GAMEMODE("Determines the guest gamemode in the plot.", "Flags"),
     //</editor-fold>
     //<editor-fold desc="Flag category errors">
     FLAG_ERROR_BOOLEAN("Flag value must be a boolean (true|false)", "Flags"),
