@@ -25,7 +25,6 @@ import static org.junit.Assert.assertEquals;
 public class FlagTest {
 
     private ItemType testBlock;
-    private Flag<? extends Collection<?>> use = Flags.USE;
 
     @Before public void setUp() throws Exception {
         EventUtil.manager = new EventUtilTest();

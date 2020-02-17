@@ -42,6 +42,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.SoilD
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.TamedAttackFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.TamedInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.UntrustedVisitFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.UseFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleBreakFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleUseFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VillagerInteractFlag;
@@ -2297,7 +2298,8 @@ import java.util.regex.Pattern;
                 Captions.PERMISSION_ADMIN_BUILD_UNOWNED);
             event.setCancelled(true);
         } else if (!plot.isAdded(pp.getUUID())) {
-            if (Flags.USE.contains(plot, BukkitAdapter.asItemType(block.getType()))) {
+            List<BlockType> use = plot.getFlag(UseFlag.class);
+            if (use.contains(BukkitAdapter.asBlockType(block.getType()))) {
                 return;
             }
             if (Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
@@ -2357,9 +2359,9 @@ import java.util.regex.Pattern;
                 Captions.PERMISSION_ADMIN_BUILD_UNOWNED);
             event.setCancelled(true);
         } else if (!plot.isAdded(plotPlayer.getUUID())) {
-            Optional<Set<BlockType>> use = plot.getFlag(Flags.USE);
+            List<BlockType> use = plot.getFlag(UseFlag.class);
             Block block = event.getBlockClicked();
-            if (use.isPresent() && use.get().contains(BukkitAdapter.asBlockType(block.getType()))) {
+            if (use.contains(BukkitAdapter.asBlockType(block.getType()))) {
                 return;
             }
             if (Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {

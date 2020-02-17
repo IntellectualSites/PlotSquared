@@ -63,6 +63,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Tamed
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.TamedInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.TitlesFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.UntrustedVisitFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.UseFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleBreakFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleCapFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleUseFlag;
@@ -163,7 +164,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         // Block type list flags
         this.addFlag(BreakFlag.BREAK_NONE);
         this.addFlag(PlaceFlag.PLACE_NONE);
-
+        this.addFlag(UseFlag.USE_NONE);
 
         // Misc
         this.addFlag(GamemodeFlag.GAMEMODE_FLAG_DEFAULT);

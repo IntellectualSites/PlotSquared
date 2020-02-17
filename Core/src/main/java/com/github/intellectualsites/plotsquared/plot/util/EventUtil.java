@@ -9,6 +9,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Devic
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscPlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MobPlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlaceFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.UseFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehiclePlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
@@ -132,10 +133,8 @@ public abstract class EventUtil {
                         Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.getTranslated(),
                             notifyPerms);
                 }
-                Optional<Set<BlockType>> flagValue = plot.getFlag(Flags.USE);
-                Set<BlockType> value = flagValue.orElse(null);
-                if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(blockType)) {
+                List<BlockType> use = plot.getFlag(UseFlag.class);
+                if (!use.contains(BlockTypes.AIR) && !use.contains(blockType)) {
                     return Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(), false)
                         || !(!notifyPerms || MainUtil
@@ -157,10 +156,8 @@ public abstract class EventUtil {
                 if (plot.getFlag(DeviceInteractFlag.class)) {
                     return true;
                 }
-                Optional<Set<BlockType>> flagValue = plot.getFlag(Flags.USE);
-                Set<BlockType> value = flagValue.orElse(null);
-                if (value == null || !value.contains(BlockTypes.AIR) && !value
-                    .contains(blockType)) {
+                List<BlockType> use = plot.getFlag(UseFlag.class);
+                if (!use.contains(BlockTypes.AIR) && !use.contains(blockType)) {
                     if (Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
                             false)) {
