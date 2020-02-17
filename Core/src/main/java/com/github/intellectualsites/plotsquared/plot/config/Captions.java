@@ -533,6 +533,7 @@ public enum Captions implements Caption {
     //<editor-fold desc="Flag category captions">
     FLAG_CATEGORY_STRING("String Flags", "Flags"),
     FLAG_CATEGORY_INTEGERS("Integer Flags", "Flags"),
+    FLAG_CATEGORY_DOUBLES("Decimal Flags", "Flags"),
     FLAG_CATEGORY_TELEPORT_DENY("Teleport Deny Flag", "Flags"),
     FLAG_CATEGORY_STRING_LIST("String List Flags", "Flags"),
     FLAG_CATEGORY_WEATHER("Weather Flags", "Flags"),
@@ -620,7 +621,7 @@ public enum Captions implements Caption {
     FLAG_ERROR_LONG("Flag value must be a whole number (large numbers allowed)", "Flags"),
     FLAG_ERROR_PLOTBLOCKLIST("Flag value must be a block list", "Flags"),
     FLAG_ERROR_INVALID_BLOCK("The provided value is not a valid block", "Flags"),
-    FLAG_ERROR_PRICE("Flag value must be a positive number.", "Flags"),
+    FLAG_ERROR_DOUBLE("Flag value must be a decimal number.", "Flags"),
     FLAG_ERROR_STRING("Flag value must be alphanumeric. Some special characters are allowed.", "Flags"),
     FLAG_ERROR_STRINGLIST("Flag value must be a string list", "Flags"),
     FLAG_ERROR_WEATHER("Flag must be a weather: 'rain' or 'sun'", "Flags"),

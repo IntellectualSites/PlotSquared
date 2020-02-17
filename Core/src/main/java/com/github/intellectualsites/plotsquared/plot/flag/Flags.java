@@ -18,7 +18,7 @@ public final class Flags {
         }
 
         @Override public String getValueDescription() {
-            return Captions.FLAG_ERROR_PRICE.getTranslated();
+            return Captions.FLAG_ERROR_DOUBLE.getTranslated();
         }
     };
     public static final StringListFlag BLOCKED_CMDS = new StringListFlag("blocked-cmds");
