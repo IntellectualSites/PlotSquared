@@ -8,9 +8,6 @@ public final class Flags {
 
     public static final LongFlag TIME = new LongFlag("time");
     public static final StringListFlag BLOCKED_CMDS = new StringListFlag("blocked-cmds");
-    public static final BlockStateListFlag USE = new BlockStateListFlag("use");
-    public static final BlockStateListFlag BREAK = new BlockStateListFlag("break");
-    public static final BlockStateListFlag PLACE = new BlockStateListFlag("place");
     public static final Flag<?> KEEP = new Flag(Captions.FLAG_CATEGORY_MIXED, "keep") {
         @Override public String valueToString(Object value) {
             return value.toString();
