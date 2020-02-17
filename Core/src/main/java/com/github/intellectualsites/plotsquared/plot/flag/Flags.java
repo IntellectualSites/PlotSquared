@@ -6,7 +6,6 @@ import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 
 public final class Flags {
 
-    public static final LongFlag TIME = new LongFlag("time");
     public static final Flag<?> KEEP = new Flag(Captions.FLAG_CATEGORY_MIXED, "keep") {
         @Override public String valueToString(Object value) {
             return value.toString();

@@ -15,6 +15,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Music
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.NotifyEnterFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.NotifyLeaveFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlotWeatherFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.TimeFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.TitlesFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -142,13 +143,12 @@ public class PlotListener {
                     }
                 }
 
-                Optional<Long> timeFlag = plot.getFlag(Flags.TIME);
-                if (timeFlag.isPresent() && !player.getAttribute("disabletime")) {
+                long time = plot.getFlag(TimeFlag.class);
+                if (time != TimeFlag.TIME_DISABLED.getValue() && !player.getAttribute("disabletime")) {
                     try {
-                        long time = timeFlag.get();
                         player.setTime(time);
                     } catch (Exception ignored) {
-                        FlagManager.removePlotFlag(plot, Flags.TIME);
+                        plot.removeFlag(TimeFlag.class);
                     }
                 }
 
@@ -280,7 +280,7 @@ public class PlotListener {
                 }
             }
 
-            if (plot.getFlag(Flags.TIME).isPresent()) {
+            if (plot.getFlag(TimeFlag.class) != TimeFlag.TIME_DISABLED.getValue().longValue()) {
                 player.setTime(Long.MAX_VALUE);
             }
 

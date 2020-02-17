@@ -62,6 +62,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.SnowM
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.SoilDryFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.TamedAttackFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.TamedInteractFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.TimeFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.TitlesFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.UntrustedVisitFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.UseFlag;
@@ -153,6 +154,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(HostileCapFlag.HOSTILE_CAP_UNLIMITED);
         this.addFlag(MiscCapFlag.MISC_CAP_UNLIMITED);
         this.addFlag(MobCapFlag.MOB_CAP_UNLIMITED);
+        this.addFlag(TimeFlag.TIME_DISABLED);
         this.addFlag(VehicleCapFlag.VEHICLE_CAP_UNLIMITED);
 
         // Timed flags
