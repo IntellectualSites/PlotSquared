@@ -530,6 +530,15 @@ public enum Captions implements Caption {
     FLAG_TUTORIAL_USAGE("$1Have an admin set the flag: $2%s", "CommandConfig"),
     FLAG_LIST_ENTRY("$2%s: $1%s", "Flag"),
     //</editor-fold>
+    //<editor-fold desc="Flag">
+    FLAG_INFO_COLOR_KEY("$1", "Flag"),
+    FLAG_INFO_COLOR_VALUE("$2", "Flag"),
+    FLAG_INFO_NAME("Name: ", "Flag"),
+    FLAG_INFO_CATEGORY("Category: ", "Flag"),
+    FLAG_INFO_DESCRIPTION("Description: ", "Flag"),
+    FLAG_INFO_EXAMPLE("Example: ", "Flag"),
+    FLAG_INFO_DEFAULT_VALUE("Default Value: ", "Flag"),
+    //</editor-fold>
     //<editor-fold desc="Flag category captions">
     FLAG_CATEGORY_STRING("String Flags", "Flags"),
     FLAG_CATEGORY_INTEGERS("Integer Flags", "Flags"),
