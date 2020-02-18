@@ -681,9 +681,9 @@ public class MainUtil {
      * @return
      */
     public static double[] getAverageRatings(Plot plot) {
-        HashMap<UUID, Integer> rating;
-        if (plot.getSettings().ratings != null) {
-            rating = plot.getSettings().ratings;
+        Map<UUID, Integer> rating;
+        if (plot.getSettings().getRatings() != null) {
+            rating = plot.getSettings().getRatings();
         } else if (Settings.Enabled_Components.RATING_CACHE) {
             rating = new HashMap<>();
         } else {

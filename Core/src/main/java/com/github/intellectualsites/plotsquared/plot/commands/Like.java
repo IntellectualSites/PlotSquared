@@ -104,15 +104,15 @@ public class Like extends SubCommand {
                 }
             }
         };
-        if (plot.getSettings().ratings == null) {
+        if (plot.getSettings().getRatings() == null) {
             if (!Settings.Enabled_Components.RATING_CACHE) {
                 TaskManager.runTaskAsync(() -> {
-                    plot.getSettings().ratings = DBFunc.getRatings(plot);
+                    plot.getSettings().setRatings(DBFunc.getRatings(plot));
                     run.run();
                 });
                 return true;
             }
-            plot.getSettings().ratings = new HashMap<>();
+            plot.getSettings().setRatings(new HashMap<>());
         }
         run.run();
         return true;

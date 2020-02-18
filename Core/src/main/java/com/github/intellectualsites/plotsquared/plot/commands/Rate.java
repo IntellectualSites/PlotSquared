@@ -145,15 +145,15 @@ public class Rate extends SubCommand {
                     inventory.openInventory();
                 }
             };
-            if (plot.getSettings().ratings == null) {
+            if (plot.getSettings().getRatings() == null) {
                 if (!Settings.Enabled_Components.RATING_CACHE) {
                     TaskManager.runTaskAsync(() -> {
-                        plot.getSettings().ratings = DBFunc.getRatings(plot);
+                        plot.getSettings().setRatings(DBFunc.getRatings(plot));
                         run.run();
                     });
                     return true;
                 }
-                plot.getSettings().ratings = new HashMap<>();
+                plot.getSettings().setRatings(new HashMap<>());
             }
             run.run();
             return true;
@@ -186,15 +186,15 @@ public class Rate extends SubCommand {
                 sendMessage(player, Captions.RATING_APPLIED, plot.getId().toString());
             }
         };
-        if (plot.getSettings().ratings == null) {
+        if (plot.getSettings().getRatings() == null) {
             if (!Settings.Enabled_Components.RATING_CACHE) {
                 TaskManager.runTaskAsync(() -> {
-                    plot.getSettings().ratings = DBFunc.getRatings(plot);
+                    plot.getSettings().setRatings(DBFunc.getRatings(plot));
                     run.run();
                 });
                 return true;
             }
-            plot.getSettings().ratings = new HashMap<>();
+            plot.getSettings().setRatings(new HashMap<>());
         }
         run.run();
         return true;

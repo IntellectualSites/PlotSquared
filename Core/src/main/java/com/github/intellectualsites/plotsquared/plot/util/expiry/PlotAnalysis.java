@@ -84,7 +84,7 @@ public class PlotAnalysis {
                     " - $1Reducing " + plots.size() + " plots to those with sufficient data");
                 while (iterator.hasNext()) {
                     Plot plot = iterator.next();
-                    if (plot.getSettings().ratings == null || plot.getSettings().getRatings()
+                    if (plot.getSettings().getRatings() == null || plot.getSettings().getRatings()
                         .isEmpty()) {
                         iterator.remove();
                     } else {

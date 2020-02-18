@@ -542,9 +542,8 @@ public class Plot {
      * Gets or create plot settings.
      *
      * @return PlotSettings
-     * @deprecated use equivalent plot method; please file github issue if one does not exist.
      */
-    @Deprecated public PlotSettings getSettings() {
+    public PlotSettings getSettings() {
         if (this.settings == null) {
             this.settings = new PlotSettings();
         }
@@ -1099,7 +1098,7 @@ public class Plot {
     /**
      * Sets a flag for this plot
      *
-     * @param flag  Flag to set
+     * @param flag Flag to set
      */
     public <V> boolean setFlag(PlotFlag<V, ?> flag) {
         if (!EventUtil.manager.callFlagAdd(flag, origin)) {
@@ -1135,12 +1134,14 @@ public class Plot {
         return this.removeFlag(getFlagContainer().queryLocal(flag));
     }
 
-    public Collection<PlotFlag<?, ?>> getApplicableFlags(final boolean plotOnly, final boolean ignorePluginFlags) {
+    public Collection<PlotFlag<?, ?>> getApplicableFlags(final boolean plotOnly,
+        final boolean ignorePluginFlags) {
         if (!hasOwner()) {
             return Collections.emptyList();
         }
         final Map<Class<?>, PlotFlag<?, ?>> flags = new HashMap<>();
-        if (!plotOnly && getArea() != null && !getArea().getFlagContainer().getFlagMap().isEmpty()) {
+        if (!plotOnly && getArea() != null && !getArea().getFlagContainer().getFlagMap()
+            .isEmpty()) {
             final Map<Class<?>, PlotFlag<?, ?>> flagMap = getArea().getFlagContainer().getFlagMap();
             flags.putAll(flagMap);
         }
@@ -1478,9 +1479,9 @@ public class Plot {
     public void clearRatings() {
         Plot base = this.getBasePlot(false);
         PlotSettings baseSettings = base.getSettings();
-        if (baseSettings.ratings != null && !baseSettings.getRatings().isEmpty()) {
+        if (baseSettings.getRatings() != null && !baseSettings.getRatings().isEmpty()) {
             DBFunc.deleteRatings(base);
-            baseSettings.ratings = null;
+            baseSettings.setRatings(null);
         }
     }
 
@@ -1511,7 +1512,7 @@ public class Plot {
 
     public boolean hasRatings() {
         Plot base = this.getBasePlot(false);
-        return base.settings != null && base.settings.ratings != null;
+        return base.settings != null && base.settings.getRatings() != null;
     }
 
     /**

@@ -2,6 +2,8 @@ package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 import com.google.common.collect.ImmutableList;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,29 +21,24 @@ public class PlotSettings {
 
     /**
      * Merged plots.
-     *
-     * @deprecated Raw access
      */
-    @Deprecated public boolean[] merged = new boolean[] {false, false, false, false};
+    @Getter private boolean[] merged = new boolean[] {false, false, false, false};
     /**
      * Plot alias.
-     *
-     * @deprecated Raw access
      */
-    @Deprecated public String alias = "";
+    @Getter @Setter private String alias = "";
     /**
      * The ratings for a plot.
-     *
-     * @deprecated Raw access
      */
-    @Deprecated public HashMap<UUID, Integer> ratings;
-    private List<PlotComment> comments = null;
+    @Setter private HashMap<UUID, Integer> ratings;
+    /**
+     * Plot comments.
+     */
+    @Setter private List<PlotComment> comments = null;
     /**
      * Home Position.
-     *
-     * @deprecated Raw access
      */
-    @Deprecated private BlockLoc position;
+    private BlockLoc position;
 
     /**
      * <b>Check if the plot is merged in a direction</b><br> 0 = North<br> 1 = East<br> 2 = South<br> 3 = West<br>
@@ -53,10 +50,6 @@ public class PlotSettings {
         return this.merged[direction];
     }
 
-    public boolean[] getMerged() {
-        return this.merged;
-    }
-
     public void setMerged(boolean[] merged) {
         this.merged = merged;
     }
@@ -64,7 +57,6 @@ public class PlotSettings {
     public Map<UUID, Integer> getRatings() {
         if (this.ratings == null) {
             this.ratings = new HashMap<>();
-
         }
         return this.ratings;
     }
@@ -103,19 +95,6 @@ public class PlotSettings {
         this.position = position;
     }
 
-    public String getAlias() {
-        return this.alias;
-    }
-
-    /**
-     * Set the plot alias.
-     *
-     * @param alias alias to be used
-     */
-    public void setAlias(String alias) {
-        this.alias = alias;
-    }
-
     @SuppressWarnings({"UnstableApiUsage"}) public List<PlotComment> getComments(String inbox) {
         if (this.comments == null) {
             return Collections.emptyList();
@@ -123,10 +102,6 @@ public class PlotSettings {
 
         return this.comments.stream().filter(comment -> comment.inbox.equals(inbox))
             .collect(ImmutableList.toImmutableList());
-    }
-
-    void setComments(List<PlotComment> comments) {
-        this.comments = comments;
     }
 
     boolean removeComment(PlotComment comment) {
