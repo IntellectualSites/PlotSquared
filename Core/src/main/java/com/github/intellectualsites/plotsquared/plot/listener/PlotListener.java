@@ -2,9 +2,6 @@ package com.github.intellectualsites.plotsquared.plot.listener;
 
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
-import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
-import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyExitFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FarewellFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlightFlag;
@@ -37,7 +34,6 @@ import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -59,128 +55,117 @@ public class PlotListener {
         player.setMeta(PlotPlayer.META_LAST_PLOT, plot);
         EventUtil.manager.callEntry(player, plot);
         if (plot.hasOwner()) {
-
-            final Collection<PlotFlag<?, ?>> plotFlags = plot.getApplicableFlags(false);
-
-            boolean titles;
-            if (!plot.getArea().DEFAULT_FLAGS.isEmpty()) {
-                Boolean value = (Boolean) plot.getArea().DEFAULT_FLAGS.get(Flags.TITLES);
-                titles = value != null ? value : Settings.TITLES;
-            } else {
+            // This will inherit values from PlotArea
+            final TitlesFlag.TitlesFlagValue titleFlag = plot.getFlag(TitlesFlag.class);
+            final boolean titles;
+            if (titleFlag == TitlesFlag.TitlesFlagValue.NONE) {
                 titles = Settings.TITLES;
+            } else {
+                titles = titleFlag == TitlesFlag.TitlesFlagValue.TRUE;
             }
-            String greeting;
-            if (flags.isEmpty()) {
-                if (titles) {
-                    greeting = "";
-                } else {
-                    return true;
+
+            final String greeting = plot.getFlag(GreetingFlag.class);
+            if (!greeting.isEmpty()) {
+                MainUtil
+                    .format(Captions.PREFIX_GREETING.getTranslated() + greeting, plot, player,
+                        false, new RunnableVal<String>() {
+                            @Override public void run(String value) {
+                                MainUtil.sendMessage(player, value);
+                            }
+                        });
+            }
+
+            if (plot.getFlag(NotifyEnterFlag.class)) {
+                if (!Permissions.hasPermission(player, "plots.flag.notify-enter.bypass")) {
+                    for (UUID uuid : plot.getOwners()) {
+                        PlotPlayer owner = UUIDHandler.getPlayer(uuid);
+                        if (owner != null && !owner.getUUID().equals(player.getUUID())) {
+                            MainUtil.sendMessage(owner, Captions.NOTIFY_ENTER.getTranslated()
+                                .replace("%player", player.getName())
+                                .replace("%plot", plot.getId().toString()));
+                        }
+                    }
+                }
+            }
+
+            if (plot.getFlag(FlightFlag.class)) {
+                boolean flight = player.getFlight();
+                GameMode gamemode = player.getGameMode();
+                if (flight != (gamemode == GameModes.CREATIVE
+                    || gamemode == GameModes.SPECTATOR)) {
+                    player.setPersistentMeta("flight",
+                        ByteArrayUtilities.booleanToBytes(player.getFlight()));
+                }
+                player.setFlight(true);
+            }
+
+            final GameMode gameMode = plot.getFlag(GamemodeFlag.class);
+            if (!gameMode.equals(GamemodeFlag.DEFAULT)) {
+                if (player.getGameMode() != gameMode) {
+                    if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
+                        player.setGameMode(gameMode);
+                    } else {
+                        MainUtil.sendMessage(player, StringMan
+                            .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.getTranslated(),
+                                "{plot}", plot.getId(), "{gamemode}", gameMode));
+                    }
+                }
+            }
+
+            final GameMode guestGameMode = plot.getFlag(GuestGamemodeFlag.class);
+            if (!guestGameMode.equals(GamemodeFlag.DEFAULT)) {
+                if (player.getGameMode() != guestGameMode && !plot.isAdded(player.getUUID())) {
+                    if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
+                        player.setGameMode(guestGameMode);
+                    } else {
+                        MainUtil.sendMessage(player, StringMan
+                            .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.getTranslated(),
+                                "{plot}", plot.getId(), "{gamemode}", guestGameMode));
+                    }
+                }
+            }
+
+            long time = plot.getFlag(TimeFlag.class);
+            if (time != TimeFlag.TIME_DISABLED.getValue() && !player
+                .getAttribute("disabletime")) {
+                try {
+                    player.setTime(time);
+                } catch (Exception ignored) {
+                    plot.removeFlag(TimeFlag.class);
+                }
+            }
+
+            player.setWeather(plot.getFlag(PlotWeatherFlag.class));
+
+            ItemType musicFlag = plot.getFlag(MusicFlag.class);
+            if (musicFlag != null) {
+                final String rawId = musicFlag.getId();
+                if (rawId.contains("disc") || musicFlag == ItemTypes.AIR) {
+                    Location location = player.getLocation();
+                    Location lastLocation = player.getMeta("music");
+                    if (lastLocation != null) {
+                        player.playMusic(lastLocation, musicFlag);
+                        if (musicFlag == ItemTypes.AIR) {
+                            player.deleteMeta("music");
+                        }
+                    }
+                    if (musicFlag != ItemTypes.AIR) {
+                        try {
+                            player.setMeta("music", location);
+                            player.playMusic(location, musicFlag);
+                        } catch (Exception ignored) {
+                        }
+                    }
                 }
             } else {
-                titles = titles && plot.getFlag(TitlesFlag.class);
-
-                greeting = plot.getFlag(GreetingFlag.class);
-                if (!greeting.isEmpty()) {
-                    MainUtil
-                        .format(Captions.PREFIX_GREETING.getTranslated() + greeting, plot, player,
-                            false, new RunnableVal<String>() {
-                                @Override public void run(String value) {
-                                    MainUtil.sendMessage(player, value);
-                                }
-                            });
+                Location lastLoc = player.getMeta("music");
+                if (lastLoc != null) {
+                    player.deleteMeta("music");
+                    player.playMusic(lastLoc, ItemTypes.AIR);
                 }
-
-                if (plot.getFlag(NotifyEnterFlag.class)) {
-                    if (!Permissions.hasPermission(player, "plots.flag.notify-enter.bypass")) {
-                        for (UUID uuid : plot.getOwners()) {
-                            PlotPlayer owner = UUIDHandler.getPlayer(uuid);
-                            if (owner != null && !owner.getUUID().equals(player.getUUID())) {
-                                MainUtil.sendMessage(owner, Captions.NOTIFY_ENTER.getTranslated()
-                                    .replace("%player", player.getName())
-                                    .replace("%plot", plot.getId().toString()));
-                            }
-                        }
-                    }
-                }
-
-                if (plot.getFlag(FlightFlag.class)) {
-                    boolean flight = player.getFlight();
-                    GameMode gamemode = player.getGameMode();
-                    if (flight != (gamemode == GameModes.CREATIVE
-                        || gamemode == GameModes.SPECTATOR)) {
-                        player.setPersistentMeta("flight",
-                            ByteArrayUtilities.booleanToBytes(player.getFlight()));
-                    }
-                    player.setFlight(true);
-                }
-
-                final GameMode gameMode = plot.getFlag(GamemodeFlag.class);
-                if (!gameMode.equals(GamemodeFlag.DEFAULT)) {
-                    if (player.getGameMode() != gameMode) {
-                        if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
-                            player.setGameMode(gameMode);
-                        } else {
-                            MainUtil.sendMessage(player, StringMan
-                                .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.getTranslated(),
-                                    "{plot}", plot.getId(), "{gamemode}", gameMode));
-                        }
-                    }
-                }
-
-                final GameMode guestGameMode = plot.getFlag(GuestGamemodeFlag.class);
-                if (!guestGameMode.equals(GamemodeFlag.DEFAULT)) {
-                    if (player.getGameMode() != guestGameMode && !plot.isAdded(player.getUUID())) {
-                        if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
-                            player.setGameMode(guestGameMode);
-                        } else {
-                            MainUtil.sendMessage(player, StringMan
-                                .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.getTranslated(),
-                                    "{plot}", plot.getId(), "{gamemode}", guestGameMode));
-                        }
-                    }
-                }
-
-                long time = plot.getFlag(TimeFlag.class);
-                if (time != TimeFlag.TIME_DISABLED.getValue() && !player
-                    .getAttribute("disabletime")) {
-                    try {
-                        player.setTime(time);
-                    } catch (Exception ignored) {
-                        plot.removeFlag(TimeFlag.class);
-                    }
-                }
-
-                player.setWeather(plot.getFlag(PlotWeatherFlag.class));
-
-                ItemType musicFlag = plot.getFlag(MusicFlag.class);
-                if (musicFlag != null) {
-                    final String rawId = musicFlag.getId();
-                    if (rawId.contains("disc") || musicFlag == ItemTypes.AIR) {
-                        Location location = player.getLocation();
-                        Location lastLocation = player.getMeta("music");
-                        if (lastLocation != null) {
-                            player.playMusic(lastLocation, musicFlag);
-                            if (musicFlag == ItemTypes.AIR) {
-                                player.deleteMeta("music");
-                            }
-                        }
-                        if (musicFlag != ItemTypes.AIR) {
-                            try {
-                                player.setMeta("music", location);
-                                player.playMusic(location, musicFlag);
-                            } catch (Exception ignored) {
-                            }
-                        }
-                    }
-                } else {
-                    Location lastLoc = player.getMeta("music");
-                    if (lastLoc != null) {
-                        player.deleteMeta("music");
-                        player.playMusic(lastLoc, ItemTypes.AIR);
-                    }
-                }
-                CommentManager.sendTitle(player, plot);
             }
+            CommentManager.sendTitle(player, plot);
+
             if (titles && !player.getAttribute("disabletitles")) {
                 if (!Captions.TITLE_ENTERED_PLOT.getTranslated().isEmpty()
                     || !Captions.TITLE_ENTERED_PLOT_SUB.getTranslated().isEmpty()) {

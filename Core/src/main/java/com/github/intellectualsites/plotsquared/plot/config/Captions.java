@@ -624,7 +624,7 @@ public enum Captions implements Caption {
     FLAG_DESCRIPTION_TAMED_ATTACK("Set to `true` to allow guests to attack tamed animals in the plot.", "Flags"),
     FLAG_DESCRIPTION_TAMED_INTERACT("Set to `true` to allow guests to interact with tamed animals in the plot.", "Flags"),
     FLAG_DESCRIPTION_TIME("Set the time in the plot to a fixed value.", "Flags"),
-    FLAG_DESCRIPTION_TITLES("Set to `false` to disable plot titles.", "Flags"),
+    FLAG_DESCRIPTION_TITLES("Set to `false` to disable plot titles. Can be set to: 'none' (to inherit world settings), 'true', or 'false'", "Flags"),
     FLAG_DESCRIPTION_USE("Define a list of materials players should be able to interact with in the plot.", "Flags"),
     FLAG_DESCRIPTION_VEHICLE_BREAK("Set to `true` to allow guests to break vehicles in the plot.", "Flags"),
     FLAG_DESCRIPTION_VEHICLE_CAP("Set to an integer value to limit the amount of vehicles on the plot.", "Flags"),

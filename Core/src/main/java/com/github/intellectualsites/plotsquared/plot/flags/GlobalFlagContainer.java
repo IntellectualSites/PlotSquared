@@ -136,7 +136,6 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(SoilDryFlag.SOIL_DRY_FALSE);
         this.addFlag(TamedAttackFlag.TAMED_ATTACK_FALSE);
         this.addFlag(TamedInteractFlag.TAMED_INTERACT_FALSE);
-        this.addFlag(TitlesFlag.TITLES_TRUE);
         this.addFlag(VehicleBreakFlag.VEHICLE_BREAK_FALSE);
         this.addFlag(VehicleUseFlag.VEHICLE_USE_FALSE);
         this.addFlag(VillagerInteractFlag.VILLAGER_INTERACT_FALSE);
@@ -148,6 +147,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         // Enum Flags
         this.addFlag(PlotWeatherFlag.PLOT_WEATHER_FLAG_OFF);
         this.addFlag(DenyTeleportFlag.DENY_TELEPORT_FLAG_NONE);
+        this.addFlag(TitlesFlag.TITLES_NONE);
 
         // Integer flags
         this.addFlag(AnimalCapFlag.ANIMAL_CAP_UNLIMITED);
