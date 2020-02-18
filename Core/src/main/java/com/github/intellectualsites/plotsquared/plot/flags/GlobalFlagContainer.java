@@ -83,7 +83,7 @@ import java.util.Map;
 public final class GlobalFlagContainer extends FlagContainer {
 
     @Getter private static final GlobalFlagContainer instance = new GlobalFlagContainer();
-    private static Map<String, Class<?>> stringClassMap = new HashMap<>();
+    private static Map<String, Class<?>> stringClassMap;
 
     private GlobalFlagContainer() {
         super(null, (flag, type) -> {
@@ -91,6 +91,7 @@ public final class GlobalFlagContainer extends FlagContainer {
                 stringClassMap.put(flag.getName().toLowerCase(Locale.ENGLISH), flag.getClass());
             }
         });
+        stringClassMap = new HashMap<>();
         // Register all default flags here
         // Boolean flags
         this.addFlag(ExplosionFlag.EXPLOSION_FALSE);
