@@ -8,7 +8,6 @@ import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DescriptionFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.ServerPlotFlag;
@@ -784,7 +783,7 @@ public class MainUtil {
         }
 
         StringBuilder flags = new StringBuilder();
-        Collection<PlotFlag<?, ?>> flagCollection = FlagManager.getPlotFlags(plot, true);
+        Collection<PlotFlag<?, ?>> flagCollection = plot.getApplicableFlags(true);
         if (flagCollection.isEmpty()) {
             flags.append(Captions.NONE.getTranslated());
         } else {

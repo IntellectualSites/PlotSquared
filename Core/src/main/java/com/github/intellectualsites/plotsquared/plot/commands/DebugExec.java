@@ -6,8 +6,9 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
+import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.listener.WEManager;
 import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
@@ -219,10 +220,10 @@ import java.util.concurrent.CompletableFuture;
                         return false;
                     }
                     String flag = args[1];
-                    for (Plot plot : PlotSquared.get().getBasePlots()) {
-                        Flag<?> flag1 = FlagManager.getFlag(flag);
-                        if (plot.getFlag(flag1).isPresent()) {
-                            plot.removeFlag(flag1);
+                    final PlotFlag<?, ?> flagInstance = GlobalFlagContainer.getInstance().getFlagFromString(flag);
+                    if (flagInstance != null) {
+                        for (Plot plot : PlotSquared.get().getBasePlots()) {
+                            plot.removeFlag(flagInstance);
                         }
                     }
                     return MainUtil.sendMessage(player, "Cleared flag: " + flag);

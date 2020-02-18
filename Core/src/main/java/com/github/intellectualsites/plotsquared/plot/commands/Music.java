@@ -2,6 +2,8 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
+import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MusicFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
@@ -38,10 +40,10 @@ public class Music extends SubCommand {
                     return true;
                 }
                 if (item.getType() == ItemTypes.BEDROCK) {
-                    plot.removeFlag(Flags.MUSIC);
+                    plot.removeFlag(MusicFlag.class);
                     Captions.FLAG_REMOVED.send(player);
                 } else if (item.name.toLowerCase(Locale.ENGLISH).contains("disc")) {
-                    plot.setFlag(Flags.MUSIC, item.getType().getId());
+                    plot.setFlag(GlobalFlagContainer.getInstance().getFlag(MusicFlag.class).createFlagInstance(item.getType()));
                     Captions.FLAG_ADDED.send(player);
                 } else {
                     Captions.FLAG_NOT_ADDED.send(player);

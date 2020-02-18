@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.database;
 
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotCluster;
@@ -11,6 +11,7 @@ import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -303,7 +304,7 @@ public class DBFunc {
         DBFunc.dbManager.setMerged(plot, merged);
     }
 
-    public static void setFlags(Plot plot, HashMap<Flag<?>, Object> flags) {
+    public static void setFlags(Plot plot, Collection<PlotFlag<?, ?>> flags) {
         if (plot.temp == -1 || dbManager == null) {
             return;
         }

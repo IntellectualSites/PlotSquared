@@ -4,6 +4,7 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyExitFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FarewellFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlightFlag;
@@ -36,6 +37,7 @@ import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -57,7 +59,8 @@ public class PlotListener {
         player.setMeta(PlotPlayer.META_LAST_PLOT, plot);
         EventUtil.manager.callEntry(player, plot);
         if (plot.hasOwner()) {
-            Map<Flag<?>, Object> flags = FlagManager.getPlotFlags(plot);
+
+            final Collection<PlotFlag<?, ?>> plotFlags = plot.getApplicableFlags(false);
 
             boolean titles;
             if (!plot.getArea().DEFAULT_FLAGS.isEmpty()) {

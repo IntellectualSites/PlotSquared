@@ -2,12 +2,15 @@ package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.generator.GridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
@@ -318,7 +321,7 @@ public abstract class PlotArea {
             }
         }
         try {
-            this.DEFAULT_FLAGS = FlagManager.parseFlags(flags);
+            this.DEFAULT_FLAGS = parseFlags(flags);
         } catch (Exception e) {
             e.printStackTrace();
             PlotSquared.debug("&cInvalid default flags for " + this.worldname + ": " + StringMan
@@ -952,6 +955,28 @@ public abstract class PlotArea {
             }
         }
         return null;
+    }
+
+    public static Collection<PlotFlag<?, ?>> parseFlags(List<String> flagStrings) {
+        final Collection<PlotFlag<?, ?>> flags = new ArrayList<>();
+        for (final String key : flagStrings) {
+            final String[] split;
+            if (key.contains(";")) {
+                split = key.split(";");
+            } else {
+                split = key.split(":");
+            }
+            final PlotFlag<?, ?> flagInstance = GlobalFlagContainer.getInstance().getFlagFromString(split[0]);
+            if (flagInstance != null) {
+                try {
+                    flags.add(flagInstance.parse(split[1]));
+                } catch (final FlagParseException e) {
+                    Captions.FLAG_PARSE_EXCEPTION
+                        .send(ConsolePlayer.getConsole(), e.getFlag().getName(), e.getValue(), e.getErrorMessage());
+                }
+            }
+        }
+        return flags;
     }
 
 }

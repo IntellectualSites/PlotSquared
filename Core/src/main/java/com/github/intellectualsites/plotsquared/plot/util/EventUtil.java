@@ -4,7 +4,7 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DeviceInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscPlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MobPlaceFlag;
@@ -52,9 +52,9 @@ public abstract class EventUtil {
 
     public abstract boolean callDelete(Plot plot);
 
-    public abstract boolean callFlagAdd(Flag flag, Plot plot);
+    public abstract boolean callFlagAdd(PlotFlag<?, ?> flag, Plot plot);
 
-    public abstract boolean callFlagRemove(Flag<?> flag, Plot plot, Object value);
+    public abstract boolean callFlagRemove(PlotFlag<?, ?> flag, Plot plot, Object value);
 
     public abstract boolean callMerge(Plot plot, int dir, int max);
 

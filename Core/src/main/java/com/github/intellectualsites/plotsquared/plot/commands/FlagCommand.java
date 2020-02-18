@@ -8,6 +8,7 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.InternalFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.types.IntegerFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.types.ListFlag;
@@ -133,7 +134,7 @@ import java.util.Map;
         @NotNull final String arg) {
         if (arg != null && arg.length() > 0) {
             final PlotFlag<?, ?> flag = GlobalFlagContainer.getInstance().getFlagFromString(arg);
-            if (flag == null) {
+            if (flag instanceof InternalFlag || flag == null) {
                 boolean suggested = false;
                 try {
                     final StringComparison<PlotFlag<?, ?>> stringComparison =

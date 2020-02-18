@@ -5,10 +5,10 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.InternalFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.KeepFlag;
 import com.github.intellectualsites.plotsquared.plot.generator.SquarePlotWorld;
@@ -39,6 +39,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import lombok.AccessLevel;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -155,7 +156,7 @@ public class Plot {
     /**
      * Plot flag container
      */
-    @Getter private FlagContainer flagContainer;
+    @Getter(AccessLevel.PROTECTED) private FlagContainer flagContainer;
 
     /**
      * Constructor for a new plot.
@@ -1092,17 +1093,29 @@ public class Plot {
      * Sets a flag for this plot
      *
      * @param flag  Flag to set
-     * @param value Flag value
      */
-    public <V> boolean setFlag(PlotFlag<V, ?> flag, V value) {
+    public <V> boolean setFlag(PlotFlag<V, ?> flag) {
         if (flag instanceof KeepFlag && ExpireManager.IMP != null) {
             ExpireManager.IMP.updateExpired(this);
         }
-        return FlagManager.addPlotFlag(this, flag, value);
+        if (!EventUtil.manager.callFlagAdd(flag, origin)) {
+            return false;
+        }
+        for (final Plot plot : this.getConnectedPlots()) {
+            plot.getFlagContainer().addFlag(flag);
+            plot.reEnter();
+            DBFunc.setFlags(plot, plot.getFlagContainer().getFlagMap().values());
+        }
+        return true;
     }
 
-    public <V> boolean setFlag(Class<? extends PlotFlag<V, ?>> flag, V value) {
-        return this.setFlag(GlobalFlagContainer.getInstance().getFlag(flag), value);
+    public <V> boolean setFlag(Class<? extends PlotFlag<V, ?>> flag, String value) {
+        try {
+            this.setFlag(GlobalFlagContainer.getInstance().getFlag(flag).parse(value));
+        } catch (final Exception e) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -1111,8 +1124,31 @@ public class Plot {
      * @param flag the flag to remove
      * @return success
      */
-    public boolean removeFlag(Class<? extends PlotFlag> flag) {
-        return FlagManager.removePlotFlag(this, flag);
+    public boolean removeFlag(Class<? extends PlotFlag<?, ?>> flag) {
+        return this.removeFlag(getFlagContainer().queryLocal(flag));
+    }
+
+    public Collection<PlotFlag<?, ?>> getApplicableFlags(final boolean ignorePluginFlags) {
+        if (!hasOwner()) {
+            return Collections.emptyList();
+        }
+        final Map<Class<?>, PlotFlag<?, ?>> flags = new HashMap<>();
+        if (getArea() != null && !getArea().getFlagContainer().getFlagMap().isEmpty()) {
+            final Map<Class<?>, PlotFlag<?, ?>> flagMap = plot.getArea().getFlagContainer().getFlagMap();
+            flags.putAll(flagMap);
+        }
+        final Map<Class<?>, PlotFlag<?, ?>> flagMap = getFlagContainer().getFlagMap();
+        if (ignorePluginFlags) {
+            for (final PlotFlag<?, ?> flag : flagMap.values()) {
+                if (flag instanceof InternalFlag) {
+                    continue;
+                }
+                flags.put(flag.getClass(), flag);
+            }
+        } else {
+            flags.putAll(flagMap);
+        }
+        return flagMap.values();
     }
 
     /**
@@ -1122,7 +1158,24 @@ public class Plot {
      * @return success
      */
     public boolean removeFlag(PlotFlag<?, ?> flag) {
-        return this.removeFlag(flag.getClass());
+        boolean removed = false;
+        for (final Plot plot : origin.getConnectedPlots()) {
+            final Object value = plot.getFlagContainer().removeFlag(flag);
+            if (value == null) {
+                continue;
+            }
+            if (plot == origin) {
+                boolean result = EventUtil.manager.callFlagRemove(flag, plot, value);
+                if (!result) {
+                    plot.getFlagContainer().addFlag(flag);
+                    continue;
+                }
+            }
+            plot.reEnter();
+            DBFunc.setFlags(plot, plot.getFlagContainer().getFlagMap().values());
+            removed = true;
+        }
+        return removed;
     }
 
     /**
@@ -2018,15 +2071,6 @@ public class Plot {
      */
     @Override public int hashCode() {
         return this.id.hashCode();
-    }
-
-    /**
-     * Sets a flag for this plot.
-     *
-     * @param flags
-     */
-    public void setFlags(HashMap<Flag<?>, Object> flags) {
-        FlagManager.setPlotFlags(this, flags);
     }
 
     public void setFlagContainer(final FlagContainer flagContainer) {
@@ -3187,8 +3231,4 @@ public class Plot {
         return FlagContainer.<T, V>castUnsafe(flagInstance).getValue();
     }
 
-    public boolean setFlag(PlotFlag<?, ?> plotFlag) {
-        flagContainer.addFlag(plotFlag);
-        return true;
-    }
 }

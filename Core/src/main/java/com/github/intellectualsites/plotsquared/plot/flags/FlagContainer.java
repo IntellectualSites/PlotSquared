@@ -72,10 +72,15 @@ import java.util.Map;
      *
      * @param flag Flag to remove
      */
-    public <V, T extends PlotFlag<V, ?>> void removeFlag(final T flag) {
-        this.flagMap.remove(flag.getClass());
+    public <V, T extends PlotFlag<V, ?>> V removeFlag(final T flag) {
+        final Object value = this.flagMap.remove(flag.getClass());
         if (this.plotFlagUpdateHandler != null) {
             this.plotFlagUpdateHandler.handle(flag, PlotFlagUpdateType.FLAG_REMOVED);
+        }
+        if (value == null) {
+            return null;
+        } else {
+            return (V) flag;
         }
     }
 

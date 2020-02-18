@@ -100,4 +100,8 @@ import org.jetbrains.annotations.NotNull;
 
     protected abstract F flagOf(@NotNull T value);
 
+    public final F createFlagInstance(@NotNull final T value) {
+        return flagOf(Preconditions.checkNotNull(value));
+    }
+
 }
