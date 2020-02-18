@@ -115,7 +115,7 @@ public class Info extends SubCommand {
                 "&cAmount: &6" + plot.getDenied().size(),
                 "&8Click to view a list of denied players"));
             inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cFlags", "&cFlags",
-                "&cAmount: &6" + plot.getFlags().size(), "&8Click to view a list of plot flags"));
+                "&cAmount: &6" + plot.getFlagContainer().getFlagMap().size(), "&8Click to view a list of plot flags"));
             inv.openInventory();
             return true;
         }

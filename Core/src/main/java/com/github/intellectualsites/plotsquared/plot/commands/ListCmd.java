@@ -378,18 +378,11 @@ public class ListCmd extends SubCommand {
                         Captions.PLOT_INFO_MEMBERS.getTranslated()
                             .replaceAll("%members%", MainUtil.getPlayerList(plot.getMembers()))))
                         .color("$1");
-                    String strFlags = StringMan.join(plot.getFlags().values(), ",");
-                    if (strFlags.isEmpty()) {
-                        strFlags = Captions.NONE.getTranslated();
-                    }
-                    PlotMessage flags = new PlotMessage().text(Captions.color(
-                        Captions.PLOT_INFO_FLAGS.getTranslated().replaceAll("%flags%", strFlags)))
-                        .color("$1");
                     message.text("[").color("$3").text(i + "")
                         .command("/plot visit " + plot.getArea() + ";" + plot.getId())
                         .tooltip("/plot visit " + plot.getArea() + ";" + plot.getId()).color("$1")
                         .text("]").color("$3").text(" " + plot.toString())
-                        .tooltip(trusted, members, flags)
+                        .tooltip(trusted, members)
                         .command("/plot info " + plot.getArea() + ";" + plot.getId()).color(color)
                         .text(" - ").color("$2");
                     String prefix = "";

@@ -4,8 +4,7 @@ import com.github.intellectualsites.plotsquared.configuration.ConfigurationSecti
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.config.Storage;
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
-import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.object.BlockLoc;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -30,6 +29,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1991,7 +1991,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         addPlotTask(newPlot, null);
     }
 
-    @Override public void setFlags(final Plot plot, HashMap<Flag<?>, Object> flags) {
+    @Override public void setFlags(final Plot plot, Collection<PlotFlag<?, ?>> flags) {
         final String flag_string = FlagManager.toString(flags);
         addPlotTask(plot, new UniqueStatement("setFlags") {
             @Override public void set(PreparedStatement statement) throws SQLException {

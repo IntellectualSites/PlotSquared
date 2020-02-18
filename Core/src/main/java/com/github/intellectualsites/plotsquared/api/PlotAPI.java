@@ -4,7 +4,6 @@ import com.github.intellectualsites.plotsquared.configuration.file.YamlConfigura
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Caption;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -166,15 +165,6 @@ import java.util.UUID;
      */
     public void sendConsoleMessage(Caption caption) {
         sendConsoleMessage(caption.getTranslated());
-    }
-
-    /**
-     * Registers a flag for use in plots.
-     *
-     * @param flag the flag to register
-     */
-    public void addFlag(Flag<?> flag) {
-        Flags.registerFlag(flag);
     }
 
     /**

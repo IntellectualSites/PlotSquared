@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.database;
 
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotCluster;
@@ -9,6 +9,7 @@ import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -150,7 +151,7 @@ public interface AbstractDB {
      * @param plot  Plot Object
      * @param flags flags to set
      */
-    void setFlags(Plot plot, HashMap<Flag<?>, Object> flags);
+    void setFlags(Plot plot, Collection<PlotFlag<?, ?>> flags);
 
     /**
      * Renames a cluster to the given name.

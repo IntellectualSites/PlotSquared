@@ -173,7 +173,7 @@ import java.util.Map;
      * @return The flag instance, if it exists in this container, else null.
      */
     @Nullable public <V, T extends PlotFlag<V, ?>> T queryLocal(
-        final Class<? extends T> flagClass) {
+        final Class<?> flagClass) {
         final PlotFlag<?, ?> localFlag = this.flagMap.get(flagClass);
         if (localFlag == null) {
             return null;

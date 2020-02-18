@@ -4,6 +4,7 @@ import com.github.intellectualsites.plotsquared.configuration.ConfigurationSecti
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
+import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
 import com.github.intellectualsites.plotsquared.plot.generator.GridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -167,9 +168,12 @@ public class SinglePlotArea extends GridPlotWorld {
             return p;
         }
         PlotSettings s = p.getSettings();
+
+        final FlagContainer oldContainer = p.getFlagContainer();
         p = new SinglePlot(p.getId(), p.owner, p.getTrusted(), p.getMembers(), p.getDenied(),
             s.alias, s.getPosition(), null, this, s.merged, p.getTimestamp(), p.temp);
-        p.getSettings().flags = s.flags;
+        p.setFlagContainer(oldContainer);
+
         return p;
     }
 

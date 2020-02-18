@@ -153,7 +153,7 @@ public class Plot {
     /**
      * Plot flag container
      */
-    @Getter(AccessLevel.PROTECTED) private FlagContainer flagContainer;
+    @Getter private FlagContainer flagContainer;
 
     /**
      * Constructor for a new plot.
@@ -1105,9 +1105,9 @@ public class Plot {
         return true;
     }
 
-    public <V> boolean setFlag(Class<? extends PlotFlag<V, ?>> flag, String value) {
+    public boolean setFlag(Class<?> flag, String value) {
         try {
-            this.setFlag(GlobalFlagContainer.getInstance().getFlag(flag).parse(value));
+            this.setFlag(GlobalFlagContainer.getInstance().getFlagErased(flag).parse(value));
         } catch (final Exception e) {
             return false;
         }

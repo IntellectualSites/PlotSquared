@@ -288,8 +288,7 @@ public abstract class HybridUtils {
                     result.add(whenDone.value.data_sd);
                     result.add(whenDone.value.air_sd);
                     result.add(whenDone.value.variety_sd);
-                    origin.setFlag(GlobalFlagContainer.getInstance().getFlag(AnalysisFlag.class),
-                        result);
+                    origin.setFlag(GlobalFlagContainer.getInstance().getFlag(AnalysisFlag.class).createFlagInstance(result));
                     TaskManager.runTask(whenDone);
                     return;
                 }
