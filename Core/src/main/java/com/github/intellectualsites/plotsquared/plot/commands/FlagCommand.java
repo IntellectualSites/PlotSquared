@@ -225,7 +225,7 @@ import java.util.concurrent.CompletableFuture;
         if (!checkRequirements(player)) {
             return;
         }
-        if (args.length < 3) {
+        if (args.length < 2) {
             MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot flag add <flag> <values>");
             return;
         }
