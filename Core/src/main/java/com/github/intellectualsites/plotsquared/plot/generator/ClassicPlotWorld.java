@@ -7,9 +7,6 @@ import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
-import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
-import com.sk89q.worldedit.function.pattern.BlockPattern;
-import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.jetbrains.annotations.NotNull;
 

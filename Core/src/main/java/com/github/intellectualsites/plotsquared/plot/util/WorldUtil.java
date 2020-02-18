@@ -3,7 +3,6 @@ package com.github.intellectualsites.plotsquared.plot.util;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
 import com.sk89q.jnbt.CompoundTag;

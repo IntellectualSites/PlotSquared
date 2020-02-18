@@ -16,8 +16,6 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 
 import java.util.List;
 
-import static com.github.intellectualsites.plotsquared.plot.util.world.PatternUtil.isAir;
-
 /**
  * A plot manager with square plots which tessellate on a square grid with the following sections: ROAD, WALL, BORDER (wall), PLOT, FLOOR (plot).
  */

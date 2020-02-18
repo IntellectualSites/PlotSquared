@@ -1,11 +1,13 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.plot.config.Settings;;
+import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
+
+;
 
 /**
  * Entity related general utility methods
