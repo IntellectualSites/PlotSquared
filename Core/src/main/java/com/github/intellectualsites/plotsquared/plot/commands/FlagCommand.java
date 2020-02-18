@@ -365,6 +365,7 @@ import java.util.Map;
         }
         final PlotFlag<?, ?> plotFlag = getFlag(player, args[0]);
         if (plotFlag != null) {
+            Captions.FLAG_INFO_HEADER.send(player);
             // Flag name
             new PlotMessage(Captions.FLAG_INFO_NAME.getTranslated())
                 .color(Captions.FLAG_INFO_COLOR_KEY.getTranslated()).text(plotFlag.getName())
@@ -391,6 +392,8 @@ import java.util.Map;
             new PlotMessage(Captions.FLAG_INFO_DEFAULT_VALUE.getTranslated())
                 .color(Captions.FLAG_INFO_COLOR_KEY.getTranslated()).text(defaultValue)
                 .color(Captions.FLAG_INFO_COLOR_VALUE.getTranslated()).send(player);
+            // Footer
+            Captions.FLAG_INFO_FOOTER.send(player);
         }
     }
 

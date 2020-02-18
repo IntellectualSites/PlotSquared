@@ -536,6 +536,8 @@ public enum Captions implements Caption {
     FLAG_PARSE_EXCEPTION("$2Failed to parse flag '%s', value '%s': %s", "Flag"),
     //</editor-fold>
     //<editor-fold desc="Flag">
+    FLAG_INFO_HEADER("$3&m---------&r $1Plot² Flags $3&m---------", "Flag"),
+    FLAG_INFO_FOOTER("$3&m---------&r $1Plot² Flags $3&m---------", "Flag"),
     FLAG_INFO_COLOR_KEY("$1", "Flag"),
     FLAG_INFO_COLOR_VALUE("$2", "Flag"),
     FLAG_INFO_NAME("Name: ", "Flag"),
