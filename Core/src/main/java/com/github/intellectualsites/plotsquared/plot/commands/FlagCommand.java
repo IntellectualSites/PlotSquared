@@ -266,10 +266,10 @@ import java.util.Map;
         final Plot plot = player.getLocation().getPlotAbs();
         if (args.length == 2 && flag instanceof ListFlag) {
             String value = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
-            final ListFlag<?, ?> listFlag = (ListFlag<?, ?>) flag;
-            final List<?> list =
+            final ListFlag listFlag = (ListFlag) flag;
+            final List list =
                 plot.getFlag((Class<? extends ListFlag<?, ?>>) listFlag.getClass());
-            final PlotFlag<? extends List<?>, ?> parsedFlag;
+            final PlotFlag parsedFlag;
             try {
                 parsedFlag = listFlag.parse(value);
             } catch (final FlagParseException e) {
@@ -277,11 +277,11 @@ import java.util.Map;
                     .send(player, e.getFlag().getName(), e.getValue(), e.getErrorMessage());
                 return;
             }
-            if (parsedFlag.getValue().isEmpty()) {
+            if (((List) parsedFlag.getValue()).isEmpty()) {
                 MainUtil.sendMessage(player, Captions.FLAG_NOT_REMOVED);
                 return;
             }
-            if (list.removeAll(parsedFlag.getValue())) {
+            if (list.removeAll((List) parsedFlag.getValue())) {
                 if (list.isEmpty()) {
                     if (plot.removeFlag(flag)) {
                         MainUtil.sendMessage(player, Captions.FLAG_REMOVED);
@@ -291,14 +291,19 @@ import java.util.Map;
                         return;
                     }
                 } else {
-                    MainUtil.sendMessage(player, Captions.FLAG_REMOVED);
+                    // MainUtil.sendMessage(player, Captions.FLAG_REMOVED);
+                    if (plot.setFlag(parsedFlag.createFlagInstance(list))) {
+                        MainUtil.sendMessage(player, Captions.FLAG_PARTIALLY_REMOVED);
+                        return;
+                    } else {
+                        MainUtil.sendMessage(player, Captions.FLAG_NOT_REMOVED);
+                        return;
+                    }
                 }
             } else {
                 MainUtil.sendMessage(player, Captions.FLAG_NOT_REMOVED);
                 return;
             }
-            // TODO reimplement somewhere else: DBFunc.setFlags(plot, plot.getFlags());
-            return;
         } else {
             boolean result = plot.removeFlag(flag);
             if (!result) {
@@ -306,12 +311,6 @@ import java.util.Map;
                 return;
             }
         }
-        /* TODO reimplement, maybe handle it with events?
-                if (flag == Flags.TIME) {
-                    player.setTime(Long.MAX_VALUE);
-                } else if (flag == Flags.WEATHER) {
-                    player.setWeather(PlotWeather.RESET);
-                }*/
         MainUtil.sendMessage(player, Captions.FLAG_REMOVED);
     }
 

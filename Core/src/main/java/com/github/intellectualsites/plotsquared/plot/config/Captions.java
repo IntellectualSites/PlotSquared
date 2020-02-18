@@ -529,6 +529,7 @@ public enum Captions implements Caption {
     FLAG_NOT_REMOVED("$2The flag could not be removed", "Flag"),
     FLAG_NOT_ADDED("$2The flag could not be added", "Flag"),
     FLAG_REMOVED("$4Successfully removed flag", "Flag"),
+    FLAG_PARTIALLY_REMOVED("$4Successfully removed flag value(s)", "Flag"),
     FLAG_ADDED("$4Successfully added flag", "Flag"),
     FLAG_TUTORIAL_USAGE("$1Have an admin set the flag: $2%s", "CommandConfig"),
     FLAG_LIST_ENTRY("$2%s: $1%s", "Flag"),
