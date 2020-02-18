@@ -1185,6 +1185,12 @@ import java.util.concurrent.atomic.AtomicInteger;
                     + " `uuid` VARCHAR(40) NOT NULL," + " `key` VARCHAR(32) NOT NULL,"
                     + " `value` blob NOT NULL," + " PRIMARY KEY (`meta_id`)"
                     + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+                stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_flags`("
+                    + "`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+                    + "`plot_id` INT(11) NOT NULL," + " `flag` VARCHAR(256)," + " `value` VARCHAR(512),"
+                    + "FOREIGN KEY (plot_id) REFERENCES plot (id) ON DELETE CASCADE, "
+                    + "UNIQUE (plot_id, flag)"
+                    + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
             } else {
                 stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot` ("
                     + "`id` INTEGER PRIMARY KEY AUTOINCREMENT," + "`plot_id_x` INT(11) NOT NULL,"
@@ -1240,6 +1246,11 @@ import java.util.concurrent.atomic.AtomicInteger;
                     + " `meta_id` INTEGER PRIMARY KEY AUTOINCREMENT,"
                     + " `uuid` VARCHAR(40) NOT NULL," + " `key` VARCHAR(32) NOT NULL,"
                     + " `value` blob NOT NULL" + ')');
+                stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_flags`("
+                    + "`id` INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+                    + "`plot_id` INTEGER NOT NULL," + " `flag` VARCHAR(256)," + " `value` VARCHAR(512),"
+                    + "FOREIGN KEY (plot_id) REFERENCES plot (id) ON DELETE CASCADE, "
+                    + "UNIQUE (plot_id, flag))");
             }
             stmt.executeBatch();
             stmt.clearBatch();
