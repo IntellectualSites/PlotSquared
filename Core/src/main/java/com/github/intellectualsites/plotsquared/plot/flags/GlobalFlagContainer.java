@@ -52,7 +52,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Notif
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.NotifyLeaveFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlayerInteractFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlotWeatherFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.WeatherFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PriceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PveFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PvpFlag;
@@ -145,7 +145,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(InvincibleFlag.INVINCIBLE_FALSE);
 
         // Enum Flags
-        this.addFlag(PlotWeatherFlag.PLOT_WEATHER_FLAG_OFF);
+        this.addFlag(WeatherFlag.PLOT_WEATHER_FLAG_OFF);
         this.addFlag(DenyTeleportFlag.DENY_TELEPORT_FLAG_NONE);
         this.addFlag(TitlesFlag.TITLES_NONE);
 

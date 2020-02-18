@@ -5,25 +5,25 @@ import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
 import org.jetbrains.annotations.NotNull;
 
-public class PlotWeatherFlag extends PlotFlag<PlotWeather, PlotWeatherFlag> {
+public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
 
-    public static final PlotWeatherFlag PLOT_WEATHER_FLAG_RAIN =
-        new PlotWeatherFlag(PlotWeather.RAIN);
-    public static final PlotWeatherFlag PLOT_WEATHER_FLAG_CLEAR =
-        new PlotWeatherFlag(PlotWeather.CLEAR);
-    public static final PlotWeatherFlag PLOT_WEATHER_FLAG_OFF =
-        new PlotWeatherFlag(PlotWeather.RESET);
+    public static final WeatherFlag PLOT_WEATHER_FLAG_RAIN =
+        new WeatherFlag(PlotWeather.RAIN);
+    public static final WeatherFlag PLOT_WEATHER_FLAG_CLEAR =
+        new WeatherFlag(PlotWeather.CLEAR);
+    public static final WeatherFlag PLOT_WEATHER_FLAG_OFF =
+        new WeatherFlag(PlotWeather.RESET);
 
     /**
      * Construct a new flag instance.
      *
      * @param value Flag value
      */
-    protected PlotWeatherFlag(@NotNull PlotWeather value) {
+    protected WeatherFlag(@NotNull PlotWeather value) {
         super(value, Captions.FLAG_CATEGORY_WEATHER, Captions.FLAG_DESCRIPTION_WEATHER);
     }
 
-    @Override public PlotWeatherFlag parse(@NotNull String input) {
+    @Override public WeatherFlag parse(@NotNull String input) {
         switch (input.toLowerCase()) {
             case "rain":
             case "storm":
@@ -40,7 +40,7 @@ public class PlotWeatherFlag extends PlotFlag<PlotWeather, PlotWeatherFlag> {
         }
     }
 
-    @Override public PlotWeatherFlag merge(@NotNull PlotWeather newValue) {
+    @Override public WeatherFlag merge(@NotNull PlotWeather newValue) {
         return flagOf(newValue);
     }
 
@@ -52,7 +52,7 @@ public class PlotWeatherFlag extends PlotFlag<PlotWeather, PlotWeatherFlag> {
         return "storm";
     }
 
-    @Override protected PlotWeatherFlag flagOf(@NotNull PlotWeather value) {
+    @Override protected WeatherFlag flagOf(@NotNull PlotWeather value) {
         switch (value) {
             case RAIN:
                 return PLOT_WEATHER_FLAG_RAIN;

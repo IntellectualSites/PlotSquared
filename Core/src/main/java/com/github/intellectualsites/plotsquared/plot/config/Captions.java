@@ -850,4 +850,8 @@ public enum Captions implements Caption {
         return this.category;
     }
 
+    @Override public String toString() {
+        return this.getTranslated();
+    }
+
 }

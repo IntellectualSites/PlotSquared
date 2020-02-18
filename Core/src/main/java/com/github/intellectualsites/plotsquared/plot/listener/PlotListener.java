@@ -11,7 +11,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Guest
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MusicFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.NotifyEnterFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.NotifyLeaveFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlotWeatherFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.WeatherFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.TimeFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.TitlesFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
@@ -135,7 +135,7 @@ public class PlotListener {
                 }
             }
 
-            player.setWeather(plot.getFlag(PlotWeatherFlag.class));
+            player.setWeather(plot.getFlag(WeatherFlag.class));
 
             ItemType musicFlag = plot.getFlag(MusicFlag.class);
             if (musicFlag != null) {
@@ -267,9 +267,9 @@ public class PlotListener {
                 player.setTime(Long.MAX_VALUE);
             }
 
-            final PlotWeather plotWeather = plot.getFlag(PlotWeatherFlag.class);
+            final PlotWeather plotWeather = plot.getFlag(WeatherFlag.class);
             if (plotWeather != PlotWeather.RESET) {
-                player.setWeather(plotWeather);
+                player.setWeather(PlotWeather.RESET);
             }
 
             Location lastLoc = player.getMeta("music");

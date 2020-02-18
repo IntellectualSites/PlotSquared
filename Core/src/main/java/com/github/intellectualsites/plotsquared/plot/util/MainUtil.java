@@ -789,9 +789,11 @@ public class MainUtil {
         } else {
             String prefix = "";
             for (final PlotFlag<?, ?> flag : flagCollection) {
-                Object value = flag.getValue();
+                Object value;
                 if (flag instanceof DoubleFlag && !Settings.General.SCIENTIFIC) {
-                    value = FLAG_DECIMAL_FORMAT.format(value);
+                    value = FLAG_DECIMAL_FORMAT.format(flag.getValue());
+                } else {
+                    value = flag.toString();
                 }
                 flags.append(prefix).append(CaptionUtility.format(Captions.PLOT_FLAG_LIST.getTranslated(),
                     flag.getName(), value));

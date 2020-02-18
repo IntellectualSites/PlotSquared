@@ -35,11 +35,22 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "flag", aliases = {"f",
     "flag"}, usage = "/plot flag <set|remove|add|list|info> <flag> <value>", description = "Manage plot flags", category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE, permission = "plots.flag")
-@SuppressWarnings("unused") public final class FlagCommand extends SubCommand {
+@SuppressWarnings("unused") public final class FlagCommand extends Command {
+
+    public FlagCommand() {
+        super(MainCommand.getInstance(), true);
+    }
+
+    private static boolean sendMessage(PlotPlayer player, Captions message, Object... args) {
+        message.send(player, args);
+        return true;
+    }
 
     private static boolean checkPermValue(@Nonnull final PlotPlayer player,
         @NotNull final PlotFlag<?, ?> flag, @NotNull String key, @NotNull String value) {
@@ -156,10 +167,17 @@ import java.util.Map;
         return null;
     }
 
-    @Override public boolean onCommand(final PlotPlayer player, final String[] args) {
-        new HelpMenu(player).setCategory(CommandCategory.SETTINGS).setCommands(this.getCommands())
-            .generateMaxPages().generatePage(0, getParent().toString()).render();
-        return true;
+    @Override public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
+        RunnableVal3<Command, Runnable, Runnable> confirm,
+        RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
+        if (args.length == 0 || !Arrays.asList("set", "s", "list", "l", "delete", "remove", "r", "add", "a",
+            "info", "i").contains(args[0].toLowerCase(
+            Locale.ENGLISH))) {
+            new HelpMenu(player).setCategory(CommandCategory.SETTINGS).setCommands(this.getCommands())
+                .generateMaxPages().generatePage(0, getParent().toString()).render();
+            return CompletableFuture.completedFuture(true);
+        }
+        return super.execute(player, args, confirm, whenDone);
     }
 
     @Override public Collection<Command> tab(final PlotPlayer player, final String[] args,
@@ -268,7 +286,7 @@ import java.util.Map;
             String value = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
             final ListFlag listFlag = (ListFlag) flag;
             final List list =
-                plot.getFlag((Class<? extends ListFlag<?, ?>>) listFlag.getClass());
+                new ArrayList(plot.getFlag((Class<? extends ListFlag<?, ?>>) listFlag.getClass()));
             final PlotFlag parsedFlag;
             try {
                 parsedFlag = listFlag.parse(value);
@@ -382,7 +400,8 @@ import java.util.Map;
                 .color(Captions.FLAG_INFO_COLOR_VALUE.getTranslated()).send(player);
             // Flag example
             new PlotMessage(Captions.FLAG_INFO_EXAMPLE.getTranslated())
-                .color(Captions.FLAG_INFO_COLOR_KEY.getTranslated()).text(plotFlag.getExample())
+                .color(Captions.FLAG_INFO_COLOR_KEY.getTranslated()).text("/plot flag set " +
+                plotFlag.getName() + " " + plotFlag.getExample())
                 .color(Captions.FLAG_INFO_COLOR_VALUE.getTranslated())
                 .suggest("/plot flag set " + plotFlag.getName() + " " + plotFlag.getExample())
                 .send(player);
@@ -392,8 +411,8 @@ import java.util.Map;
             new PlotMessage(Captions.FLAG_INFO_DEFAULT_VALUE.getTranslated())
                 .color(Captions.FLAG_INFO_COLOR_KEY.getTranslated()).text(defaultValue)
                 .color(Captions.FLAG_INFO_COLOR_VALUE.getTranslated()).send(player);
-            // Footer
-            Captions.FLAG_INFO_FOOTER.send(player);
+            // Footer. Done this way to prevent the duplicate-message-thingy from catching it
+            MainUtil.sendMessage(player, "&r" + Captions.FLAG_INFO_FOOTER.getTranslated());
         }
     }
 
