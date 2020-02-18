@@ -871,7 +871,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                         flag_string.append(',');
                     }
                     flag_string.append(flag.getName()).append(':').append(
-                        flag.getValue().toString().replaceAll(":", "¯")
+                        flag.toString().replaceAll(":", "¯")
                             .replaceAll(",", "´"));
                     k++;
                 }
@@ -909,7 +909,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                         flag_string.append(',');
                     }
                     flag_string.append(flag.getName()).append(':').append(
-                        flag.getValue().toString().replaceAll(":", "¯")
+                        flag.toString().replaceAll(":", "¯")
                             .replaceAll(",", "´"));
                     k++;
                 }
@@ -3124,7 +3124,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 flag_string.append(',');
             }
             flag_string.append(flag.getName()).append(':')
-                .append(flag.getValue().toString().replaceAll(":", "¯").replaceAll(",", "´"));
+                .append(flag.toString().replaceAll(":", "¯").replaceAll(",", "´"));
             i++;
         }
         return flag_string.toString();
