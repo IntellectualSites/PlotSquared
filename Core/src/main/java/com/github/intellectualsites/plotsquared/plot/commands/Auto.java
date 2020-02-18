@@ -23,9 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-@CommandDeclaration(command = "auto", permission = "plots.auto",
-    category = CommandCategory.CLAIMING, requiredType = RequiredType.NONE,
-    description = "Claim the nearest plot", aliases = "a", usage = "/plot auto [length,width]")
+@CommandDeclaration(command = "auto", permission = "plots.auto", category = CommandCategory.CLAIMING, requiredType = RequiredType.NONE, description = "Claim the nearest plot", aliases = "a", usage = "/plot auto [length,width]")
 public class Auto extends SubCommand {
 
     @Deprecated public static PlotId getNextPlotId(PlotId id, int step) {
@@ -177,7 +175,7 @@ public class Auto extends SubCommand {
                 try {
                     String[] split = args[0].split(",|;");
                     if (split[1] == null) {
-                        MainUtil.sendMessage(player,"Correct use /plot auto [length,width]");
+                        MainUtil.sendMessage(player, "Correct use /plot auto [length,width]");
                         size_x = 1;
                         size_z = 1;
                     } else {
@@ -220,12 +218,12 @@ public class Auto extends SubCommand {
                 sendMessage(player, Captions.SCHEMATIC_INVALID, "non-existent: " + schematic);
                 return true;
             }
-            if (!Permissions.hasPermission(player,
-                CaptionUtility.format(Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
+            if (!Permissions.hasPermission(player, CaptionUtility
+                .format(Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
                 && !Permissions
                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {
-                MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                    CaptionUtility.format(Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic));
+                MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
+                    .format(Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic));
                 return true;
             }
         }

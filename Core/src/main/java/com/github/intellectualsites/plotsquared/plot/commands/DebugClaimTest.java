@@ -56,7 +56,8 @@ public class DebugClaimTest extends SubCommand {
         PlotManager manager = area.getPlotManager();
         CompletableFuture.runAsync(() -> {
             ArrayList<PlotId> ids = MainUtil.getPlotSelectionIds(min, max);
-            MainUtil.sendMessage(player, "&3Sign Block&8->&3Plot&8: " + ids.size() + " plot ids to check!");
+            MainUtil.sendMessage(player,
+                "&3Sign Block&8->&3Plot&8: " + ids.size() + " plot ids to check!");
             for (PlotId id : ids) {
                 Plot plot = area.getPlotAbs(id);
                 if (plot.hasOwner()) {
@@ -74,7 +75,8 @@ public class DebugClaimTest extends SubCommand {
                             BiMap<StringWrapper, UUID> map = UUIDHandler.getUuidMap();
                             UUID uuid = map.get(new StringWrapper(line));
                             if (uuid == null) {
-                                for (Map.Entry<StringWrapper, UUID> stringWrapperUUIDEntry : map.entrySet()) {
+                                for (Map.Entry<StringWrapper, UUID> stringWrapperUUIDEntry : map
+                                    .entrySet()) {
                                     if (stringWrapperUUIDEntry.getKey().value.toLowerCase()
                                         .startsWith(line.toLowerCase())) {
                                         uuid = stringWrapperUUIDEntry.getValue();
@@ -86,11 +88,13 @@ public class DebugClaimTest extends SubCommand {
                                 uuid = UUIDHandler.getUUID(line, null);
                             }
                             if (uuid != null) {
-                                MainUtil.sendMessage(player, " - &aFound plot: " + plot.getId() + " : " + line);
+                                MainUtil.sendMessage(player,
+                                    " - &aFound plot: " + plot.getId() + " : " + line);
                                 plot.setOwner(uuid);
                                 MainUtil.sendMessage(player, " - &8Updated plot: " + plot.getId());
                             } else {
-                                MainUtil.sendMessage(player, " - &cInvalid PlayerName: " + plot.getId() + " : " + line);
+                                MainUtil.sendMessage(player,
+                                    " - &cInvalid PlayerName: " + plot.getId() + " : " + line);
                             }
                         }
                     }

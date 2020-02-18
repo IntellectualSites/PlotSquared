@@ -8,8 +8,8 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 
-@CommandDeclaration(usage = "/plot swap <X;Z>", command = "swap", description = "Swap two plots",
-    aliases = {"switch"}, category = CommandCategory.CLAIMING, requiredType = RequiredType.PLAYER)
+@CommandDeclaration(usage = "/plot swap <X;Z>", command = "swap", description = "Swap two plots", aliases = {
+    "switch"}, category = CommandCategory.CLAIMING, requiredType = RequiredType.PLAYER)
 public class Swap extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {

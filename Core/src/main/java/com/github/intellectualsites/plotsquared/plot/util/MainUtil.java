@@ -596,8 +596,8 @@ public class MainUtil {
     /**
      * Send a message to the player.
      *
-     * @param player Player to receive message
-     * @param message    Message to send
+     * @param player  Player to receive message
+     * @param message Message to send
      * @return true Can be used in things such as commands (return PlayerFunctions.sendMessage(...))
      */
     public static boolean sendMessage(PlotPlayer player, String message) {
@@ -792,10 +792,9 @@ public class MainUtil {
                     df.setMaximumFractionDigits(340);
                     value = df.format(value);
                 }
-                flags.append(prefix)
-                    .append(CaptionUtility
-                        .format(Captions.PLOT_FLAG_LIST.getTranslated(), entry.getKey().getName(),
-                            value));
+                flags.append(prefix).append(CaptionUtility
+                    .format(Captions.PLOT_FLAG_LIST.getTranslated(), entry.getKey().getName(),
+                        value));
                 prefix = ", ";
             }
         }

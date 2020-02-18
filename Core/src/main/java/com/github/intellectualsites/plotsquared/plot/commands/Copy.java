@@ -8,9 +8,9 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 
-@CommandDeclaration(command = "copy", permission = "plots.copy", aliases = {"copypaste"},
-    category = CommandCategory.CLAIMING, description = "Copy a plot", usage = "/plot copy <X;Z>",
-    requiredType = RequiredType.NONE) public class Copy extends SubCommand {
+@CommandDeclaration(command = "copy", permission = "plots.copy", aliases = {
+    "copypaste"}, category = CommandCategory.CLAIMING, description = "Copy a plot", usage = "/plot copy <X;Z>", requiredType = RequiredType.NONE)
+public class Copy extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         Location location = player.getLocation();

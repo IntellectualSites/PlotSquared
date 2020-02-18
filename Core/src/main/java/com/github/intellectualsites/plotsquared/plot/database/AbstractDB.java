@@ -231,7 +231,7 @@ public interface AbstractDB {
 
     /**
      * @param cluster PlotCluster Object
-     * @param uuid Player that should be removed
+     * @param uuid    Player that should be removed
      */
     void setHelper(PlotCluster cluster, UUID uuid);
 
@@ -283,7 +283,7 @@ public interface AbstractDB {
     /**
      * Removes the specified comment from the given plot.
      *
-     * @param plot the plot
+     * @param plot    the plot
      * @param comment the comment to remove
      */
     void removeComment(Plot plot, PlotComment comment);
@@ -291,7 +291,7 @@ public interface AbstractDB {
     /**
      * Clears the specified inbox on the given plot.
      *
-     * @param plot the plot
+     * @param plot  the plot
      * @param inbox the inbox to clear
      */
     void clearInbox(Plot plot, String inbox);
@@ -299,7 +299,7 @@ public interface AbstractDB {
     /**
      * Adds the specified comment to the given plot.
      *
-     * @param plot the plot
+     * @param plot    the plot
      * @param comment the comment to add
      */
     void setComment(Plot plot, PlotComment comment);

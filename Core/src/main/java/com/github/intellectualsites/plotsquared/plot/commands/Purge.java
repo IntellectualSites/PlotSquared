@@ -18,11 +18,8 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-@CommandDeclaration(
-    usage = "/plot purge world:<world> area:<area> id:<id> owner:<owner> shared:<shared> unknown:[true|false]",
-    command = "purge", permission = "plots.admin", description = "Purge all plots for a world",
-    category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.CONSOLE,
-    confirmation = true) public class Purge extends SubCommand {
+@CommandDeclaration(usage = "/plot purge world:<world> area:<area> id:<id> owner:<owner> shared:<shared> unknown:[true|false]", command = "purge", permission = "plots.admin", description = "Purge all plots for a world", category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.CONSOLE, confirmation = true)
+public class Purge extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length == 0) {

@@ -23,7 +23,8 @@ public class BlockStateListFlag extends ListFlag<Set<BlockType>> {
     }
 
     @Override public Set<BlockType> parseValue(final String value) {
-        return Arrays.stream(BlockUtil.parse(value)).filter(Objects::nonNull).map(BlockState::getBlockType).collect(Collectors.toSet());
+        return Arrays.stream(BlockUtil.parse(value)).filter(Objects::nonNull)
+            .map(BlockState::getBlockType).collect(Collectors.toSet());
     }
 
     @Override public String getValueDescription() {

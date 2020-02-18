@@ -132,6 +132,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     public ConcurrentHashMap<String, Object> getMeta() {
         return meta;
     }
+
     /**
      * Delete the metadata for a key.
      * - metadata is session only
@@ -262,8 +263,8 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         int count = 0;
         for (PlotArea area : PlotSquared.get().getPlotAreas(world)) {
             if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
-                count += area.getPlotsAbs(uuid).stream()
-                    .filter(plot -> !DoneFlag.isDone(plot)).count();
+                count +=
+                    area.getPlotsAbs(uuid).stream().filter(plot -> !DoneFlag.isDone(plot)).count();
             } else {
                 count += area.getPlotsAbs(uuid).size();
             }
@@ -364,8 +365,6 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         sendTitle(title, subtitle, 10, 50, 10);
     }
 
-    ;
-
     public abstract void sendTitle(String title, String subtitle, int fadeIn, int stay,
         int fadeOut);
 
@@ -382,7 +381,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      * Teleport this player to a location.
      *
      * @param location the target location
-     * @param cause the cause of the teleport
+     * @param cause    the cause of the teleport
      */
     public abstract void teleport(Location location, TeleportCause cause);
 
@@ -622,10 +621,9 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                             TaskManager.runTask(() -> {
                                 if (getMeta("teleportOnLogin", true)) {
                                     teleport(location);
-                                    sendMessage(
-                                        CaptionUtility.format(Captions.TELEPORTED_TO_PLOT.getTranslated())
-                                            + " (quitLoc) (" + plotX
-                                            + "," + plotZ + ")");
+                                    sendMessage(CaptionUtility
+                                        .format(Captions.TELEPORTED_TO_PLOT.getTranslated())
+                                        + " (quitLoc) (" + plotX + "," + plotZ + ")");
                                 }
                             });
                         } else if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
@@ -658,9 +656,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     public void removePersistentMeta(String key) {
-        if (this.metaMap.containsKey(key)) {
-            this.metaMap.remove(key);
-        }
+        this.metaMap.remove(key);
         if (Settings.Enabled_Components.PERSISTENT_META) {
             DBFunc.removePersistentMeta(getUUID(), key);
         }

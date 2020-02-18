@@ -39,7 +39,8 @@ public class HybridPlotManager extends ClassicPlotManager {
 
     @Override public void exportTemplate() throws IOException {
         HashSet<FileBytes> files = Sets.newHashSet(
-            new FileBytes(Settings.Paths.TEMPLATES + "/tmp-data.yml", Template.getBytes(hybridPlotWorld)));
+            new FileBytes(Settings.Paths.TEMPLATES + "/tmp-data.yml",
+                Template.getBytes(hybridPlotWorld)));
         String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator
             + hybridPlotWorld.worldname + File.separator;
         try {
@@ -87,8 +88,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         return true;
     }
 
-    private void createSchemAbs(LocalBlockQueue queue, Location pos1,
-        Location pos2) {
+    private void createSchemAbs(LocalBlockQueue queue, Location pos1, Location pos2) {
         int size = hybridPlotWorld.SIZE;
         int minY;
         if (Settings.Schematics.PASTE_ON_TOP) {
@@ -165,8 +165,7 @@ public class HybridPlotManager extends ClassicPlotManager {
      * don't need to do something quite as complex unless you happen to have 512x512 sized plots.
      * </p>
      */
-    @Override public boolean clearPlot(Plot plot,
-                                       final Runnable whenDone) {
+    @Override public boolean clearPlot(Plot plot, final Runnable whenDone) {
         final String world = hybridPlotWorld.worldname;
         Location pos1 = plot.getBottomAbs();
         Location pos2 = plot.getExtendedTopAbs();
@@ -220,8 +219,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         return true;
     }
 
-    public void pastePlotSchematic(LocalBlockQueue queue,
-        Location bottom, Location top) {
+    public void pastePlotSchematic(LocalBlockQueue queue, Location bottom, Location top) {
         if (!hybridPlotWorld.PLOT_SCHEMATIC) {
             return;
         }
@@ -230,6 +228,7 @@ public class HybridPlotManager extends ClassicPlotManager {
 
     /**
      * Retrieves the location of where a sign should be for a plot.
+     *
      * @param plot The plot
      * @return The location where a sign should be
      */

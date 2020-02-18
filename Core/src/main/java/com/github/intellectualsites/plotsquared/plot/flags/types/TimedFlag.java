@@ -6,7 +6,8 @@ import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class TimedFlag<T, F extends PlotFlag<TimedFlag.Timed<T>, F>> extends PlotFlag<TimedFlag.Timed<T>, F> {
+public abstract class TimedFlag<T, F extends PlotFlag<TimedFlag.Timed<T>, F>>
+    extends PlotFlag<TimedFlag.Timed<T>, F> {
     private final T defaultValue;
 
     protected TimedFlag(@NotNull Timed<T> value, T defaultValue, @NotNull Caption flagDescription) {
@@ -33,7 +34,8 @@ public abstract class TimedFlag<T, F extends PlotFlag<TimedFlag.Timed<T>, F>> ex
     }
 
     @Override public F merge(@NotNull Timed<T> newValue) {
-        return flagOf(new Timed<>(getValue().interval + newValue.interval, mergeValue(newValue.value)));
+        return flagOf(
+            new Timed<>(getValue().interval + newValue.interval, mergeValue(newValue.value)));
     }
 
     protected abstract T parseValue(String input) throws FlagParseException;

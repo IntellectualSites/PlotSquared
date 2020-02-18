@@ -8,7 +8,8 @@ import com.sk89q.worldedit.world.registry.LegacyMapper;
 import java.util.Locale;
 
 public final class ItemUtil {
-    private ItemUtil(){}
+    private ItemUtil() {
+    }
 
     public static ItemType get(String input) {
         if (input == null || input.isEmpty()) {
@@ -20,14 +21,17 @@ public final class ItemUtil {
             if (MathMan.isInteger(split[0])) {
                 if (split.length == 2) {
                     if (MathMan.isInteger(split[1])) {
-                        return LegacyMapper.getInstance().getItemFromLegacy(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+                        return LegacyMapper.getInstance()
+                            .getItemFromLegacy(Integer.parseInt(split[0]),
+                                Integer.parseInt(split[1]));
                     }
                 } else {
                     return LegacyMapper.getInstance().getItemFromLegacy(Integer.parseInt(split[0]));
                 }
             }
         }
-        if (!input.split("\\[", 2)[0].contains(":")) input = "minecraft:" + input;
+        if (!input.split("\\[", 2)[0].contains(":"))
+            input = "minecraft:" + input;
         return ItemTypes.get(input);
     }
 

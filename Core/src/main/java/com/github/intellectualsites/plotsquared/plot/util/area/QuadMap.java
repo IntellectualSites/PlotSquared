@@ -256,8 +256,9 @@ public class QuadMap<T> {
     }
 
     public boolean intersects(CuboidRegion other) {
-        return (other.getMinimumPoint().getX() <= this.x + this.size) && (other.getMaximumPoint().getX() >= this.x - this.size) && (
-            other.getMinimumPoint().getZ() <= this.z + this.size) && (other.getMaximumPoint().getZ() >= this.z - this.size);
+        return (other.getMinimumPoint().getX() <= this.x + this.size) && (
+            other.getMaximumPoint().getX() >= this.x - this.size) && (other.getMinimumPoint().getZ()
+            <= this.z + this.size) && (other.getMaximumPoint().getZ() >= this.z - this.size);
     }
 
     public T get(int x, int z) {

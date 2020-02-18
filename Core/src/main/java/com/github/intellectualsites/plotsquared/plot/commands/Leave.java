@@ -13,10 +13,8 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-@CommandDeclaration(command = "leave",
-    description = "Removes self from being trusted or a member of the plot",
-    permission = "plots.leave", usage = "/plot leave", category = CommandCategory.CLAIMING,
-    requiredType = RequiredType.PLAYER) public class Leave extends Command {
+@CommandDeclaration(command = "leave", description = "Removes self from being trusted or a member of the plot", permission = "plots.leave", usage = "/plot leave", category = CommandCategory.CLAIMING, requiredType = RequiredType.PLAYER)
+public class Leave extends Command {
     public Leave() {
         super(MainCommand.getInstance(), true);
     }

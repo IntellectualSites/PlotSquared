@@ -37,6 +37,7 @@ public class PlotVersion {
             return "4." + build;
         }
     }
+
     @Override public String toString() {
         if (hash == 0 && build == 0) {
             return "PlotSquared-NoVer-SNAPSHOT";

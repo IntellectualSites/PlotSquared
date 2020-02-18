@@ -7,10 +7,10 @@ import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 
-@CommandDeclaration(command = "setdescription", permission = "plots.set.desc",
-    description = "Set the plot description", usage = "/plot desc <description>",
-    aliases = {"desc", "setdesc", "setd", "description"}, category = CommandCategory.SETTINGS,
-    requiredType = RequiredType.PLAYER) public class Desc extends SetCommand {
+@CommandDeclaration(command = "setdescription", permission = "plots.set.desc", description = "Set the plot description", usage = "/plot desc <description>", aliases = {
+    "desc", "setdesc", "setd",
+    "description"}, category = CommandCategory.SETTINGS, requiredType = RequiredType.PLAYER)
+public class Desc extends SetCommand {
 
     @Override public boolean set(PlotPlayer player, Plot plot, String desc) {
         if (desc.isEmpty()) {

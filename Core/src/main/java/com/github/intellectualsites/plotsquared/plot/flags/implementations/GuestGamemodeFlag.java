@@ -9,16 +9,21 @@ import org.jetbrains.annotations.NotNull;
 
 public class GuestGamemodeFlag extends PlotFlag<GameMode, GuestGamemodeFlag> {
 
-    public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_CREATIVE = new GuestGamemodeFlag(GameModes.CREATIVE);
-    public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_ADVENTURE = new GuestGamemodeFlag(GameModes.ADVENTURE);
-    public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_SPECTATOR = new GuestGamemodeFlag(GameModes.SPECTATOR);
-    public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_SURVIVAL = new GuestGamemodeFlag(GameModes.SURVIVAL);
-    public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_DEFAULT = new GuestGamemodeFlag(GamemodeFlag.DEFAULT);
+    public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_CREATIVE =
+        new GuestGamemodeFlag(GameModes.CREATIVE);
+    public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_ADVENTURE =
+        new GuestGamemodeFlag(GameModes.ADVENTURE);
+    public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_SPECTATOR =
+        new GuestGamemodeFlag(GameModes.SPECTATOR);
+    public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_SURVIVAL =
+        new GuestGamemodeFlag(GameModes.SURVIVAL);
+    public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_DEFAULT =
+        new GuestGamemodeFlag(GamemodeFlag.DEFAULT);
 
     /**
      * Construct a new flag instance.
      *
-     * @param value           Flag value
+     * @param value Flag value
      */
     protected GuestGamemodeFlag(@NotNull GameMode value) {
         super(value, Captions.FLAG_CATEGORY_GAMEMODE, Captions.FLAG_DESCRIPTION_GUEST_GAMEMODE);

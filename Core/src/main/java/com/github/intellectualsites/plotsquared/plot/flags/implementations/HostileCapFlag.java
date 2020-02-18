@@ -5,7 +5,8 @@ import com.github.intellectualsites.plotsquared.plot.flags.types.NonNegativeInte
 import org.jetbrains.annotations.NotNull;
 
 public class HostileCapFlag extends NonNegativeIntegerFlag<HostileCapFlag> {
-    public static final HostileCapFlag HOSTILE_CAP_UNLIMITED = new HostileCapFlag(Integer.MAX_VALUE);
+    public static final HostileCapFlag HOSTILE_CAP_UNLIMITED =
+        new HostileCapFlag(Integer.MAX_VALUE);
 
     protected HostileCapFlag(int value) {
         super(value, Captions.FLAG_DESCRIPTION_HOSTILE_CAP);

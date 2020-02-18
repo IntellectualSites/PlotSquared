@@ -92,7 +92,8 @@ public abstract class PlotArea {
     /**
      * Area flag container
      */
-    @Getter private FlagContainer flagContainer = new FlagContainer(GlobalFlagContainer.getInstance());
+    @Getter private FlagContainer flagContainer =
+        new FlagContainer(GlobalFlagContainer.getInstance());
 
     public PlotArea(@NotNull final String worldName, @Nullable final String id,
         @NotNull IndependentPlotGenerator generator, @Nullable final PlotId min,
@@ -130,7 +131,8 @@ public abstract class PlotArea {
     public CuboidRegion getRegion() {
         this.region = getRegionAbs();
         if (this.region == null) {
-            return new CuboidRegion(BlockVector3.at(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE),
+            return new CuboidRegion(
+                BlockVector3.at(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE),
                 BlockVector3.at(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE));
         }
         return this.region;
@@ -532,8 +534,7 @@ public abstract class PlotArea {
 
     public int getPlotCount(@NotNull final UUID uuid) {
         if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
-            return (int) getPlotsAbs(uuid).stream().filter(plot -> !DoneFlag.isDone(plot))
-                .count();
+            return (int) getPlotsAbs(uuid).stream().filter(plot -> !DoneFlag.isDone(plot)).count();
         }
         return getPlotsAbs(uuid).size();
     }
@@ -642,8 +643,7 @@ public abstract class PlotArea {
      * <br>
      * For persistent metadata use the flag system
      */
-    @Nullable
-    public Object getMeta(@NotNull final String key) {
+    @Nullable public Object getMeta(@NotNull final String key) {
         if (this.meta != null) {
             return this.meta.get(key);
         }
@@ -937,7 +937,8 @@ public abstract class PlotArea {
                 @Override public CuboidRegion getRegion(PlotCluster value) {
                     BlockVector2 pos1 = BlockVector2.at(value.getP1().x, value.getP1().y);
                     BlockVector2 pos2 = BlockVector2.at(value.getP2().x, value.getP2().y);
-                    return new CuboidRegion(pos1.toBlockVector3(), pos2.toBlockVector3(Plot.MAX_HEIGHT - 1));
+                    return new CuboidRegion(pos1.toBlockVector3(),
+                        pos2.toBlockVector3(Plot.MAX_HEIGHT - 1));
                 }
             };
         }

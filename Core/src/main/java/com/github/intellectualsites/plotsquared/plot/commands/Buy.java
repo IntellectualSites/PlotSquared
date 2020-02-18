@@ -15,9 +15,8 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-@CommandDeclaration(command = "buy", description = "Buy the plot you are standing on",
-    usage = "/plot buy", permission = "plots.buy", category = CommandCategory.CLAIMING,
-    requiredType = RequiredType.NONE) public class Buy extends Command {
+@CommandDeclaration(command = "buy", description = "Buy the plot you are standing on", usage = "/plot buy", permission = "plots.buy", category = CommandCategory.CLAIMING, requiredType = RequiredType.NONE)
+public class Buy extends Command {
 
     public Buy() {
         super(MainCommand.getInstance(), true);

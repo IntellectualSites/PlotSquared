@@ -33,8 +33,7 @@ public class SinglePlotArea extends GridPlotWorld {
         this.DEFAULT_HOME = new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE);
     }
 
-    @NotNull @Override
-    protected PlotManager createManager() {
+    @NotNull @Override protected PlotManager createManager() {
         return new SinglePlotManager(this);
     }
 

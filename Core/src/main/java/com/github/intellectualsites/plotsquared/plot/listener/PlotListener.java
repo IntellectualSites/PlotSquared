@@ -66,7 +66,7 @@ public class PlotListener {
             } else {
                 titles = Settings.TITLES;
             }
-             String greeting;
+            String greeting;
             if (flags.isEmpty()) {
                 if (titles) {
                     greeting = "";
@@ -80,12 +80,11 @@ public class PlotListener {
                 if (!greeting.isEmpty()) {
                     MainUtil
                         .format(Captions.PREFIX_GREETING.getTranslated() + greeting, plot, player,
-                            false,
-                        new RunnableVal<String>() {
-                            @Override public void run(String value) {
-                                MainUtil.sendMessage(player, value);
-                            }
-                        });
+                            false, new RunnableVal<String>() {
+                                @Override public void run(String value) {
+                                    MainUtil.sendMessage(player, value);
+                                }
+                            });
                 }
 
                 if (plot.getFlag(NotifyEnterFlag.class)) {
@@ -95,7 +94,7 @@ public class PlotListener {
                             if (owner != null && !owner.getUUID().equals(player.getUUID())) {
                                 MainUtil.sendMessage(owner, Captions.NOTIFY_ENTER.getTranslated()
                                     .replace("%player", player.getName())
-                                        .replace("%plot", plot.getId().toString()));
+                                    .replace("%plot", plot.getId().toString()));
                             }
                         }
                     }
@@ -120,29 +119,27 @@ public class PlotListener {
                         } else {
                             MainUtil.sendMessage(player, StringMan
                                 .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.getTranslated(),
-                                    "{plot}",
-                                    plot.getId(), "{gamemode}", gameMode));
+                                    "{plot}", plot.getId(), "{gamemode}", gameMode));
                         }
                     }
                 }
 
                 final GameMode guestGameMode = plot.getFlag(GuestGamemodeFlag.class);
                 if (!guestGameMode.equals(GamemodeFlag.DEFAULT)) {
-                    if (player.getGameMode() != guestGameMode && !plot
-                        .isAdded(player.getUUID())) {
+                    if (player.getGameMode() != guestGameMode && !plot.isAdded(player.getUUID())) {
                         if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
                             player.setGameMode(guestGameMode);
                         } else {
                             MainUtil.sendMessage(player, StringMan
                                 .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.getTranslated(),
-                                    "{plot}",
-                                    plot.getId(), "{gamemode}", guestGameMode));
+                                    "{plot}", plot.getId(), "{gamemode}", guestGameMode));
                         }
                     }
                 }
 
                 long time = plot.getFlag(TimeFlag.class);
-                if (time != TimeFlag.TIME_DISABLED.getValue() && !player.getAttribute("disabletime")) {
+                if (time != TimeFlag.TIME_DISABLED.getValue() && !player
+                    .getAttribute("disabletime")) {
                     try {
                         player.setTime(time);
                     } catch (Exception ignored) {
@@ -218,36 +215,36 @@ public class PlotListener {
             if (pw == null) {
                 return true;
             }
-            if (plot.getFlag(DenyExitFlag.class)
-                && !Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_EXIT_DENIED)
-                && !player.getMeta("kick", false)) {
+            if (plot.getFlag(DenyExitFlag.class) && !Permissions
+                .hasPermission(player, Captions.PERMISSION_ADMIN_EXIT_DENIED) && !player
+                .getMeta("kick", false)) {
                 if (previous != null) {
                     player.setMeta(PlotPlayer.META_LAST_PLOT, previous);
                 }
                 return false;
             }
-            if (!plot.getFlag(GamemodeFlag.class).equals(GamemodeFlag.DEFAULT) ||
-                !plot.getFlag(GuestGamemodeFlag.class).equals(GamemodeFlag.DEFAULT)) {
+            if (!plot.getFlag(GamemodeFlag.class).equals(GamemodeFlag.DEFAULT) || !plot
+                .getFlag(GuestGamemodeFlag.class).equals(GamemodeFlag.DEFAULT)) {
                 if (player.getGameMode() != pw.GAMEMODE) {
                     if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
                         player.setGameMode(pw.GAMEMODE);
                     } else {
                         MainUtil.sendMessage(player, StringMan
                             .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.getTranslated(), "{plot}",
-                                plot.toString(), "{gamemode}", pw.GAMEMODE.getName().toLowerCase()));
+                                plot.toString(), "{gamemode}",
+                                pw.GAMEMODE.getName().toLowerCase()));
                     }
                 }
             }
 
             final String farewell = plot.getFlag(FarewellFlag.class);
             if (!farewell.isEmpty()) {
-                MainUtil
-                    .format(Captions.PREFIX_FAREWELL.getTranslated() + farewell, plot, player, false,
-                        new RunnableVal<String>() {
-                            @Override public void run(String value) {
-                                MainUtil.sendMessage(player, value);
-                            }
-                        });
+                MainUtil.format(Captions.PREFIX_FAREWELL.getTranslated() + farewell, plot, player,
+                    false, new RunnableVal<String>() {
+                        @Override public void run(String value) {
+                            MainUtil.sendMessage(player, value);
+                        }
+                    });
             }
 
             if (plot.getFlag(NotifyLeaveFlag.class)) {
@@ -257,7 +254,7 @@ public class PlotListener {
                         if ((owner != null) && !owner.getUUID().equals(player.getUUID())) {
                             MainUtil.sendMessage(owner, Captions.NOTIFY_LEAVE.getTranslated()
                                 .replace("%player", player.getName())
-                                    .replace("%plot", plot.getId().toString()));
+                                .replace("%plot", plot.getId().toString()));
                         }
                     }
                 }

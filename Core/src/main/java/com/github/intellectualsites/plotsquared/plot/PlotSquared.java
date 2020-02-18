@@ -155,7 +155,7 @@ import java.util.zip.ZipInputStream;
         //
         // Register configuration serializable classes
         //
-//        ConfigurationSerialization.registerClass(BlockState.class, "BlockState");
+        //        ConfigurationSerialization.registerClass(BlockState.class, "BlockState");
         ConfigurationSerialization.registerClass(BlockBucket.class, "BlockBucket");
 
         try {
@@ -247,7 +247,8 @@ import java.util.zip.ZipInputStream;
             if (Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
                 try {
                     if (this.IMP.initWorldEdit()) {
-                        PlotSquared.log(Captions.PREFIX + "&6" + IMP.getPluginName() + " hooked into WorldEdit.");
+                        PlotSquared.log(Captions.PREFIX + "&6" + IMP.getPluginName()
+                            + " hooked into WorldEdit.");
                         this.worldedit = WorldEdit.getInstance();
                         WorldEdit.getInstance().getEventBus().register(new WESubscriber());
                         if (Settings.Enabled_Components.COMMANDS) {
@@ -284,7 +285,7 @@ import java.util.zip.ZipInputStream;
                         }
                         if (!WorldUtil.IMP.isWorld(world) && !world.equals("*")) {
                             debug("`" + world + "` was not properly loaded - " + IMP.getPluginName()
-                                    + " will now try to load it properly: ");
+                                + " will now try to load it properly: ");
                             debug(
                                 " - Are you trying to delete this world? Remember to remove it from the worlds.yml, bukkit.yml and multiverse worlds.yml");
                             debug(
@@ -347,7 +348,8 @@ import java.util.zip.ZipInputStream;
      * @see IPlotMain#log(String)
      */
     public static void log(Object message) {
-        if (message == null || (message instanceof Caption ? ((Caption) message).getTranslated().isEmpty() :
+        if (message == null || (message instanceof Caption ?
+            ((Caption) message).getTranslated().isEmpty() :
             message.toString().isEmpty())) {
             return;
         }
@@ -1832,7 +1834,8 @@ import java.util.zip.ZipInputStream;
         if (this.version != null) {
             this.style.set("Version", this.version.toString());
         }
-        this.style.set("Information", "Left Row: PlotSquared color codes ($), right row: Minecraft color codes (&)");
+        this.style.set("Information",
+            "Left Row: PlotSquared color codes ($), right row: Minecraft color codes (&)");
         Map<String, Object> object = new HashMap<>(16);
         object.put("color.1", "6");
         object.put("color.2", "7");

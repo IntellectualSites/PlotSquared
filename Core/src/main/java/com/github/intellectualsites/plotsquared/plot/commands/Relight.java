@@ -13,8 +13,8 @@ import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 
 import java.util.concurrent.CompletableFuture;
 
-@CommandDeclaration(command = "relight", description = "Relight your plot", usage = "/plot relight",
-    category = CommandCategory.DEBUG, requiredType = RequiredType.PLAYER) public class Relight extends Command {
+@CommandDeclaration(command = "relight", description = "Relight your plot", usage = "/plot relight", category = CommandCategory.DEBUG, requiredType = RequiredType.PLAYER)
+public class Relight extends Command {
     public Relight() {
         super(MainCommand.getInstance(), true);
     }

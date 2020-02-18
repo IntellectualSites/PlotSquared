@@ -8,7 +8,8 @@ import org.jetbrains.annotations.NotNull;
 public abstract class DoubleFlag<F extends NumberFlag<Double, F>> extends NumberFlag<Double, F> {
 
 
-    protected DoubleFlag(@NotNull Double value, Double minimum, Double maximum, @NotNull Caption flagDescription) {
+    protected DoubleFlag(@NotNull Double value, Double minimum, Double maximum,
+        @NotNull Caption flagDescription) {
         super(value, minimum, maximum, Captions.FLAG_CATEGORY_DOUBLES, flagDescription);
     }
 

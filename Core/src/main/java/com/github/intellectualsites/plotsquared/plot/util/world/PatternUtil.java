@@ -18,10 +18,8 @@ import com.sk89q.worldedit.world.block.BlockType;
 
 public class PatternUtil {
     public static BaseBlock apply(Pattern pattern, int x, int y, int z) {
-        if (pattern instanceof BlockPattern
-            || pattern instanceof RandomPattern
-            || pattern instanceof BlockState
-            || pattern instanceof BlockType
+        if (pattern instanceof BlockPattern || pattern instanceof RandomPattern
+            || pattern instanceof BlockState || pattern instanceof BlockType
             || pattern instanceof BaseBlock) {
             return pattern.apply(BlockVector3.ZERO);
         }

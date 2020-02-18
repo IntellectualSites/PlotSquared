@@ -27,6 +27,11 @@ import java.util.Map;
         this(parentContainer, null);
     }
 
+    @SuppressWarnings("ALL")
+    public static <V, T extends PlotFlag<V, ?>> T castUnsafe(final PlotFlag<?, ?> flag) {
+        return (T) flag;
+    }
+
     /**
      * Return the parent container (if the container has a parent)
      *
@@ -131,8 +136,8 @@ import java.util.Map;
      * {@link GlobalFlagContainer global flag container}.
      *
      * @param flagClass Flag class to query for
-     * @param <V> Flag value type
-     * @param <T> Flag type
+     * @param <V>       Flag value type
+     * @param <T>       Flag type
      * @return Flag instance
      */
     public <V, T extends PlotFlag<V, ?>> T getFlag(final Class<? extends T> flagClass) {
@@ -151,11 +156,12 @@ import java.util.Map;
      * Check for flag existence in this flag container instance.
      *
      * @param flagClass Flag class to query for
-     * @param <V> Flag value type
-     * @param <T> Flag type
+     * @param <V>       Flag value type
+     * @param <T>       Flag type
      * @return The flag instance, if it exists in this container, else null.
      */
-    @Nullable public <V, T extends PlotFlag<V, ?>> T queryLocal(final Class<? extends T> flagClass) {
+    @Nullable public <V, T extends PlotFlag<V, ?>> T queryLocal(
+        final Class<? extends T> flagClass) {
         final PlotFlag<?, ?> localFlag = this.flagMap.get(flagClass);
         if (localFlag == null) {
             return null;
@@ -163,26 +169,6 @@ import java.util.Map;
             return castUnsafe(localFlag);
         }
     }
-
-    @SuppressWarnings("ALL")
-    public static <V, T extends PlotFlag<V, ?>> T castUnsafe(final PlotFlag<?, ?> flag) {
-        return (T) flag;
-    }
-
-    /**
-     * Handler for update events in {@link FlagContainer flag containers}.
-     */
-    @FunctionalInterface public interface PlotFlagUpdateHandler {
-
-        /**
-         * Act on the flag update event
-         * @param plotFlag Plot flag
-         * @param type Update type
-         */
-        void handle(PlotFlag<?, ?> plotFlag, PlotFlagUpdateType type);
-
-    }
-
 
     /**
      * Update event types used in {@link PlotFlagUpdateHandler}.
@@ -196,6 +182,22 @@ import java.util.Map;
          * A flag was removed from a plot container
          */
         FLAG_REMOVED
+    }
+
+
+    /**
+     * Handler for update events in {@link FlagContainer flag containers}.
+     */
+    @FunctionalInterface public interface PlotFlagUpdateHandler {
+
+        /**
+         * Act on the flag update event
+         *
+         * @param plotFlag Plot flag
+         * @param type     Update type
+         */
+        void handle(PlotFlag<?, ?> plotFlag, PlotFlagUpdateType type);
+
     }
 
 }

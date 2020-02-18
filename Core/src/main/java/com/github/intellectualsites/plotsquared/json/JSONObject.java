@@ -186,7 +186,7 @@ public class JSONObject {
      * @param object An object that has fields that should be used to make a JSONObject.
      * @param names  An array of strings, the names of the fields to be obtained from the object.
      */
-    public JSONObject(Object object, String names[]) {
+    public JSONObject(Object object, String[] names) {
         this();
         Class c = object.getClass();
         for (String name : names) {

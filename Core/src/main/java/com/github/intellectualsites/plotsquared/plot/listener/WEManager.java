@@ -36,8 +36,7 @@ public class WEManager {
         return false;
     }
 
-    public static boolean maskContains(Set<CuboidRegion> mask, double dx, double dy,
-        double dz) {
+    public static boolean maskContains(Set<CuboidRegion> mask, double dx, double dy, double dz) {
         int x = Math.toIntExact(Math.round(dx >= 0 ? dx - 0.5 : dx + 0.5));
         int y = Math.toIntExact(Math.round(dy - 0.5));
         int z = Math.toIntExact(Math.round(dz >= 0 ? dz - 0.5 : dz + 0.5));
@@ -66,8 +65,9 @@ public class WEManager {
         Location location = player.getLocation();
         String world = location.getWorld();
         if (!PlotSquared.get().hasPlotArea(world)) {
-            regions.add(RegionUtil.createRegion(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
-                Integer.MAX_VALUE));
+            regions.add(RegionUtil
+                .createRegion(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
+                    Integer.MAX_VALUE));
             return regions;
         }
         PlotArea area = player.getApplicablePlotArea();

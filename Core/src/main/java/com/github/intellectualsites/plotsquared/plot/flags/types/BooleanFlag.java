@@ -12,13 +12,15 @@ import java.util.Locale;
 
 public abstract class BooleanFlag<F extends PlotFlag<Boolean, F>> extends PlotFlag<Boolean, F> {
 
-    private static final Collection<String> positiveValues = Arrays.asList("1", "yes", "allow", "true");
-    private static final Collection<String> negativeValues = Arrays.asList("0", "no", "deny", "disallow", "false");
+    private static final Collection<String> positiveValues =
+        Arrays.asList("1", "yes", "allow", "true");
+    private static final Collection<String> negativeValues =
+        Arrays.asList("0", "no", "deny", "disallow", "false");
 
     /**
      * Construct a new flag instance.
      *
-     * @param value Flag value
+     * @param value       Flag value
      * @param description Flag description
      */
     protected BooleanFlag(final boolean value, final Caption description) {

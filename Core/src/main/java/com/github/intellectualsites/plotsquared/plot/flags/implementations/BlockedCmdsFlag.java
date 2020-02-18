@@ -11,10 +11,12 @@ import java.util.List;
 
 public class BlockedCmdsFlag extends ListFlag<String, BlockedCmdsFlag> {
 
-    public static final BlockedCmdsFlag BLOCKED_CMDS_FLAG_NONE = new BlockedCmdsFlag(Collections.emptyList());
+    public static final BlockedCmdsFlag BLOCKED_CMDS_FLAG_NONE =
+        new BlockedCmdsFlag(Collections.emptyList());
 
     protected BlockedCmdsFlag(List<String> valueList) {
-        super(valueList, Captions.FLAG_CATEGORY_STRING_LIST, Captions.FLAG_DESCRIPTION_BLOCKED_CMDS);
+        super(valueList, Captions.FLAG_CATEGORY_STRING_LIST,
+            Captions.FLAG_DESCRIPTION_BLOCKED_CMDS);
     }
 
     @Override public BlockedCmdsFlag parse(@NotNull String input) throws FlagParseException {

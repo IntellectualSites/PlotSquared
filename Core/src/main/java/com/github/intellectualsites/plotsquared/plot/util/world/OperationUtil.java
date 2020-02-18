@@ -32,39 +32,9 @@ public class OperationUtil {
         ASYNC = hasFawe;
     }
 
-    public Future<?> withEditSession(@NotNull PlotPlayer plotPlayer, @NotNull Consumer<EditSession> consumer, @Nullable Consumer<Throwable> exceptionHandler) {
-        if (ASYNC) {
-            ListeningExecutorService exec = WorldEdit.getInstance().getExecutorService();
-            return exec.submit(
-                () -> withEditSessionOnThread(plotPlayer, consumer, exceptionHandler));
-        } else {
-            withEditSessionOnThread(plotPlayer, consumer, exceptionHandler);
-        }
-        return Futures.immediateFuture(true);
-    }
-
-    private void withEditSessionOnThread(PlotPlayer plotPlayer, Consumer<EditSession> consumer, Consumer<Throwable> exceptionHandler) {
-        Actor actor = plotPlayer.toActor();
-        World weWorld = getWorld(plotPlayer, actor);
-        LocalSession session = getSession(actor);
-        try (EditSession ess = createEditSession(weWorld, actor, session)) {
-            try {
-                consumer.accept(ess);
-            } finally {
-                ess.close();
-                session.remember(ess);
-            }
-        } catch (Throwable e) {
-            if (exceptionHandler != null) {
-                exceptionHandler.accept(e);
-            } else {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private static World getWorld(String worldName) {
-        Platform platform = WorldEdit.getInstance().getPlatformManager().queryCapability(Capability.WORLD_EDITING);
+        Platform platform =
+            WorldEdit.getInstance().getPlatformManager().queryCapability(Capability.WORLD_EDITING);
         List<? extends World> worlds = platform.getWorlds();
         for (World current : worlds) {
             if (current.getName().equals(worldName)) {
@@ -86,7 +56,7 @@ public class OperationUtil {
         return weWorld;
     }
 
-    private static  EditSession createEditSession(PlotPlayer plotPlayer) {
+    private static EditSession createEditSession(PlotPlayer plotPlayer) {
         Actor actor = plotPlayer.toActor();
         World weWorld = getWorld(plotPlayer, actor);
         return createEditSession(weWorld, actor);
@@ -96,18 +66,51 @@ public class OperationUtil {
         return WorldEdit.getInstance().getSessionManager().get(actor);
     }
 
-    private static  EditSession createEditSession(World world, Actor actor) {
+    private static EditSession createEditSession(World world, Actor actor) {
         return createEditSession(world, actor, getSession(actor));
     }
 
-    private static  EditSession createEditSession(World world, Actor actor, LocalSession session) {
+    private static EditSession createEditSession(World world, Actor actor, LocalSession session) {
         EditSession editSession;
         Player player = actor.isPlayer() ? (Player) actor : null;
-        editSession = WorldEdit.getInstance().getEditSessionFactory()
-            .getEditSession(world, -1, null, player);
+        editSession =
+            WorldEdit.getInstance().getEditSessionFactory().getEditSession(world, -1, null, player);
 
         editSession.setFastMode(!actor.isPlayer());
         editSession.setReorderMode(EditSession.ReorderMode.FAST);
         return editSession;
+    }
+
+    public Future<?> withEditSession(@NotNull PlotPlayer plotPlayer,
+        @NotNull Consumer<EditSession> consumer, @Nullable Consumer<Throwable> exceptionHandler) {
+        if (ASYNC) {
+            ListeningExecutorService exec = WorldEdit.getInstance().getExecutorService();
+            return exec
+                .submit(() -> withEditSessionOnThread(plotPlayer, consumer, exceptionHandler));
+        } else {
+            withEditSessionOnThread(plotPlayer, consumer, exceptionHandler);
+        }
+        return Futures.immediateFuture(true);
+    }
+
+    private void withEditSessionOnThread(PlotPlayer plotPlayer, Consumer<EditSession> consumer,
+        Consumer<Throwable> exceptionHandler) {
+        Actor actor = plotPlayer.toActor();
+        World weWorld = getWorld(plotPlayer, actor);
+        LocalSession session = getSession(actor);
+        try (EditSession ess = createEditSession(weWorld, actor, session)) {
+            try {
+                consumer.accept(ess);
+            } finally {
+                ess.close();
+                session.remember(ess);
+            }
+        } catch (Throwable e) {
+            if (exceptionHandler != null) {
+                exceptionHandler.accept(e);
+            } else {
+                e.printStackTrace();
+            }
+        }
     }
 }

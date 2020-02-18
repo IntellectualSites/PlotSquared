@@ -306,8 +306,8 @@ public class ExpireManager {
                                             confirmation);
                                     }
                                 }, () -> {
-                                    newPlot.setFlag(
-                                        GlobalFlagContainer.getInstance().getFlag(AnalysisFlag.class), changed.asList());
+                                    newPlot.setFlag(GlobalFlagContainer.getInstance()
+                                        .getFlag(AnalysisFlag.class), changed.asList());
                                     TaskManager.runTaskLaterAsync(task, 20);
                                 });
                             }

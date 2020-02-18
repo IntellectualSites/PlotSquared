@@ -22,10 +22,9 @@ import java.util.HashSet;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@CommandDeclaration(command = "set", description = "Set a plot value", aliases = {"s"},
-    usage = "/plot set <biome|alias|home|flag> <value...>", permission = "plots.set",
-    category = CommandCategory.APPEARANCE, requiredType = RequiredType.NONE) public class Set
-    extends SubCommand {
+@CommandDeclaration(command = "set", description = "Set a plot value", aliases = {
+    "s"}, usage = "/plot set <biome|alias|home|flag> <value...>", permission = "plots.set", category = CommandCategory.APPEARANCE, requiredType = RequiredType.NONE)
+public class Set extends SubCommand {
 
     public static final String[] values = new String[] {"biome", "alias", "home", "flag"};
     public static final String[] aliases = new String[] {"b", "w", "wf", "f", "a", "h", "fl"};
@@ -51,7 +50,8 @@ import java.util.stream.IntStream;
                 for (String component : components) {
                     if (component.equalsIgnoreCase(args[0])) {
                         if (!Permissions.hasPermission(player, CaptionUtility
-                            .format(Captions.PERMISSION_SET_COMPONENT.getTranslated(), component))) {
+                            .format(Captions.PERMISSION_SET_COMPONENT.getTranslated(),
+                                component))) {
                             MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
                                 .format(Captions.PERMISSION_SET_COMPONENT.getTranslated(),
                                     component));
@@ -86,12 +86,11 @@ import java.util.stream.IntStream;
             new ArrayList<>(Arrays.asList("biome", "alias", "home", "flag"));
         Plot plot = player.getCurrentPlot();
         if (plot != null) {
-            newValues.addAll(
-                Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
+            newValues.addAll(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
         }
-        MainUtil
-            .sendMessage(player, Captions.SUBCOMMAND_SET_OPTIONS_HEADER.getTranslated() + StringMan
-            .join(newValues, Captions.BLOCK_LIST_SEPARATOR.formatted()));
+        MainUtil.sendMessage(player,
+            Captions.SUBCOMMAND_SET_OPTIONS_HEADER.getTranslated() + StringMan
+                .join(newValues, Captions.BLOCK_LIST_SEPARATOR.formatted()));
         return false;
     }
 
@@ -114,8 +113,8 @@ import java.util.stream.IntStream;
             return false;
         }
         // components
-        HashSet<String> components = new HashSet<>(
-            Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
+        HashSet<String> components =
+            new HashSet<>(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
         if (components.contains(args[0].toLowerCase())) {
             return this.component.onCommand(player, Arrays.copyOfRange(args, 0, args.length));
         }

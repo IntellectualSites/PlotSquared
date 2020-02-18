@@ -55,9 +55,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-@CommandDeclaration(command = "debugexec", permission = "plots.admin",
-    description = "Mutli-purpose debug command", aliases = {"exec", "$"},
-    category = CommandCategory.DEBUG) public class DebugExec extends SubCommand {
+@CommandDeclaration(command = "debugexec", permission = "plots.admin", description = "Mutli-purpose debug command", aliases = {
+    "exec", "$"}, category = CommandCategory.DEBUG) public class DebugExec extends SubCommand {
     private ScriptEngine engine;
     private Bindings scope;
 
@@ -306,8 +305,8 @@ import java.util.concurrent.CompletableFuture;
                             System.getProperty("line.separator"));
                         new Command(MainCommand.getInstance(), true, args[1].split("\\.")[0], null,
                             RequiredType.NONE, CommandCategory.DEBUG) {
-                            @Override public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
-                                RunnableVal3<Command, Runnable, Runnable> confirm,
+                            @Override public CompletableFuture<Boolean> execute(PlotPlayer player,
+                                String[] args, RunnableVal3<Command, Runnable, Runnable> confirm,
                                 RunnableVal2<Command, CommandResult> whenDone) {
                                 try {
                                     DebugExec.this.scope.put("PlotPlayer", player);

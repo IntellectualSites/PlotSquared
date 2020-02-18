@@ -5,7 +5,8 @@ import com.github.intellectualsites.plotsquared.plot.flags.types.NonNegativeInte
 import org.jetbrains.annotations.NotNull;
 
 public class VehicleCapFlag extends NonNegativeIntegerFlag<VehicleCapFlag> {
-    public static final VehicleCapFlag VEHICLE_CAP_UNLIMITED = new VehicleCapFlag(Integer.MAX_VALUE);
+    public static final VehicleCapFlag VEHICLE_CAP_UNLIMITED =
+        new VehicleCapFlag(Integer.MAX_VALUE);
 
     protected VehicleCapFlag(int value) {
         super(value, Captions.FLAG_DESCRIPTION_VEHICLE_CAP);

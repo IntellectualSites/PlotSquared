@@ -35,22 +35,22 @@ public class Location implements Cloneable, Comparable<Location> {
         return this.x;
     }
 
-    public int getY() {
-        return this.y;
-    }
-
-    public int getZ() {
-        return this.z;
-    }
-
     public void setX(int x) {
         this.x = x;
         this.blockVector3 = BlockVector3.at(x, y, z);
     }
 
+    public int getY() {
+        return this.y;
+    }
+
     public void setY(int y) {
         this.y = y;
         this.blockVector3 = BlockVector3.at(x, y, z);
+    }
+
+    public int getZ() {
+        return this.z;
     }
 
     public void setZ(int z) {
@@ -65,8 +65,7 @@ public class Location implements Cloneable, Comparable<Location> {
         this.z = blockVector3.getZ();
     }
 
-    @Override
-    public Location clone() {
+    @Override public Location clone() {
         try {
             return (Location) super.clone();
         } catch (CloneNotSupportedException e) {
@@ -107,6 +106,7 @@ public class Location implements Cloneable, Comparable<Location> {
 
     /**
      * Checks if anyone owns a plot at the current location.
+     *
      * @return true if the location is a road, not a plot area, or if the plot is unclaimed.
      */
     public boolean isUnownedPlotArea() {

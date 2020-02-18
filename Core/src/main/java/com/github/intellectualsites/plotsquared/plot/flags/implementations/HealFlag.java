@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class HealFlag extends TimedFlag<Integer, HealFlag> {
     public static final HealFlag HEAL_NOTHING = new HealFlag(new Timed<>(0, 0));
+
     protected HealFlag(@NotNull Timed<Integer> value) {
         super(value, 1, Captions.FLAG_DESCRIPTION_HEAL);
     }

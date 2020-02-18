@@ -84,6 +84,7 @@ public class DBFunc {
 
 
     //TODO Consider Removal
+
     /**
      * Check if a {@link ResultSet} contains a column.
      *

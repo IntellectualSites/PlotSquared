@@ -34,9 +34,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-@CommandDeclaration(command = "setup", permission = "plots.admin.command.setup",
-    description = "Setup wizard for plot worlds", usage = "/plot setup", aliases = {"create"},
-    category = CommandCategory.ADMINISTRATION) public class Setup extends SubCommand {
+@CommandDeclaration(command = "setup", permission = "plots.admin.command.setup", description = "Setup wizard for plot worlds", usage = "/plot setup", aliases = {
+    "create"}, category = CommandCategory.ADMINISTRATION) public class Setup extends SubCommand {
+
+    private static boolean d(String s) {
+        return s.chars().allMatch((i) -> {
+            return i == 95 || i == 45 || i >= 97 && i <= 122 || i >= 48 && i <= 57 || i == 46;
+        });
+    }
 
     public void displayGenerators(PlotPlayer player) {
         StringBuilder message = new StringBuilder();
@@ -336,11 +341,7 @@ import java.util.UUID;
         return false;
     }
 
-    private static boolean d(String s) {
-        return s.chars().allMatch((i) -> {
-            return i == 95 || i == 45 || i >= 97 && i <= 122 || i >= 48 && i <= 57 || i == 46;
-        });
-    }
+
     private static final class StepPickGenerator extends SetupStep {
 
         @Getter private String generator;
@@ -414,7 +415,7 @@ import java.util.UUID;
         }
 
         @Override public boolean parseInput(String input) {
-            if (!WORLD_TYPES.keySet().contains(input.toLowerCase())) {
+            if (!WORLD_TYPES.containsKey(input.toLowerCase())) {
                 return false;
             }
             this.worldType = input.toLowerCase();

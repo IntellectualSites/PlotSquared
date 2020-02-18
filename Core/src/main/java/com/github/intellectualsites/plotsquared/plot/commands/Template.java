@@ -29,10 +29,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-@CommandDeclaration(command = "template", permission = "plots.admin",
-    description = "Create or use a world template",
-    usage = "/plot template [import|export] <world> <template>",
-    category = CommandCategory.ADMINISTRATION) public class Template extends SubCommand {
+@CommandDeclaration(command = "template", permission = "plots.admin", description = "Create or use a world template", usage = "/plot template [import|export] <world> <template>", category = CommandCategory.ADMINISTRATION)
+public class Template extends SubCommand {
 
     public static boolean extractAllFiles(String world, String template) {
         try {

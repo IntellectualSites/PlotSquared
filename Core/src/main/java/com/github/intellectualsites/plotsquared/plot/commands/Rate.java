@@ -24,9 +24,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-@CommandDeclaration(command = "rate", permission = "plots.rate", description = "Rate the plot",
-    usage = "/plot rate [#|next|purge]", aliases = "rt", category = CommandCategory.INFO,
-    requiredType = RequiredType.PLAYER) public class Rate extends SubCommand {
+@CommandDeclaration(command = "rate", permission = "plots.rate", description = "Rate the plot", usage = "/plot rate [#|next|purge]", aliases = "rt", category = CommandCategory.INFO, requiredType = RequiredType.PLAYER)
+public class Rate extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length == 1) {

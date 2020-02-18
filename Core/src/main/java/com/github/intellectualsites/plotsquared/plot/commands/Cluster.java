@@ -22,10 +22,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@CommandDeclaration(command = "cluster", aliases = "clusters",
-    category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.NONE,
-    permission = "plots.cluster", description = "Manage a plot cluster") public class Cluster
-    extends SubCommand {
+@CommandDeclaration(command = "cluster", aliases = "clusters", category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.NONE, permission = "plots.cluster", description = "Manage a plot cluster")
+public class Cluster extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
 

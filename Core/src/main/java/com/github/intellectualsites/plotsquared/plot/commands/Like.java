@@ -21,9 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-@CommandDeclaration(command = "like", permission = "plots.like", description = "Like the plot",
-    usage = "/plot like [next|purge]", category = CommandCategory.INFO,
-    requiredType = RequiredType.PLAYER) public class Like extends SubCommand {
+@CommandDeclaration(command = "like", permission = "plots.like", description = "Like the plot", usage = "/plot like [next|purge]", category = CommandCategory.INFO, requiredType = RequiredType.PLAYER)
+public class Like extends SubCommand {
 
     protected static boolean handleLike(final PlotPlayer player, String[] args,
         final boolean like) {
@@ -41,8 +40,8 @@ import java.util.UUID;
                         return v2 > v1 ? 1 : -1;
                     });
                     for (final Plot plot : plots) {
-                        if ((!Settings.Done.REQUIRED_FOR_RATINGS || DoneFlag.isDone(plot))
-                            && plot.isBasePlot() && (!plot.getLikes().containsKey(uuid))) {
+                        if ((!Settings.Done.REQUIRED_FOR_RATINGS || DoneFlag.isDone(plot)) && plot
+                            .isBasePlot() && (!plot.getLikes().containsKey(uuid))) {
                             plot.teleportPlayer(player, TeleportCause.COMMAND);
                             MainUtil.sendMessage(player, Captions.RATE_THIS);
                             return true;

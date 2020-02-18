@@ -25,9 +25,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-@CommandDeclaration(command = "debugpaste", aliases = "dp", usage = "/plot debugpaste",
-    description = "Upload settings.yml, worlds.yml, PlotSquared.use_THIS.yml your latest.log and Multiverse's worlds.yml (if being used) to https://athion.net/ISPaster/paste",
-    permission = "plots.debugpaste", category = CommandCategory.DEBUG, confirmation = true, requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "debugpaste", aliases = "dp", usage = "/plot debugpaste", description = "Upload settings.yml, worlds.yml, PlotSquared.use_THIS.yml your latest.log and Multiverse's worlds.yml (if being used) to https://athion.net/ISPaster/paste", permission = "plots.debugpaste", category = CommandCategory.DEBUG, confirmation = true, requiredType = RequiredType.NONE)
 public class DebugPaste extends SubCommand {
 
     private static String readFile(@NonNull final File file) throws IOException {
@@ -56,7 +54,8 @@ public class DebugPaste extends SubCommand {
                 b.append("online_mode: ").append(UUIDHandler.getUUIDWrapper()).append(';')
                     .append(!Settings.UUID.OFFLINE).append('\n');
                 b.append("Plugins:");
-                for (Map.Entry<Map.Entry<String, String>, Boolean> pluginInfo : PlotSquared.get().IMP.getPluginIds()) {
+                for (Map.Entry<Map.Entry<String, String>, Boolean> pluginInfo : PlotSquared
+                    .get().IMP.getPluginIds()) {
                     Map.Entry<String, String> nameVersion = pluginInfo.getKey();
                     String name = nameVersion.getKey();
                     String version = nameVersion.getValue();
@@ -67,12 +66,17 @@ public class DebugPaste extends SubCommand {
                 b.append("\n\n# YAY! Now, let's see what we can find in your JVM\n");
                 Runtime runtime = Runtime.getRuntime();
                 RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();
-                b.append("Uptime: ").append(TimeUnit.MINUTES.convert(rb.getUptime(), TimeUnit.MILLISECONDS) + " minutes").append('\n');
+                b.append("Uptime: ").append(
+                    TimeUnit.MINUTES.convert(rb.getUptime(), TimeUnit.MILLISECONDS) + " minutes")
+                    .append('\n');
                 b.append("JVM Flags: ").append(rb.getInputArguments()).append('\n');
-                b.append("Free Memory: ").append(runtime.freeMemory() / 1024 / 1024 + " MB").append('\n');
-                b.append("Max Memory: ").append(runtime.maxMemory() / 1024 / 1024 + " MB").append('\n');
+                b.append("Free Memory: ").append(runtime.freeMemory() / 1024 / 1024 + " MB")
+                    .append('\n');
+                b.append("Max Memory: ").append(runtime.maxMemory() / 1024 / 1024 + " MB")
+                    .append('\n');
                 b.append("Java Name: ").append(rb.getVmName()).append('\n');
-                b.append("Java Version: '").append(System.getProperty("java.version")).append("'\n");
+                b.append("Java Version: '").append(System.getProperty("java.version"))
+                    .append("'\n");
                 b.append("Java Vendor: '").append(System.getProperty("java.vendor")).append("'\n");
                 b.append("Operating System: '").append(System.getProperty("os.name")).append("'\n");
                 b.append("OS Version: ").append(System.getProperty("os.version")).append('\n');
@@ -119,12 +123,13 @@ public class DebugPaste extends SubCommand {
                 }
 
                 try {
-                    final File MultiverseWorlds =
-                            new File(PlotSquared.get().IMP.getDirectory(), "../Multiverse-Core/worlds.yml");
-                    incendoPaster
-                            .addFile(new IncendoPaster.PasteFile("MultiverseCore/worlds.yml", readFile(MultiverseWorlds)));
+                    final File MultiverseWorlds = new File(PlotSquared.get().IMP.getDirectory(),
+                        "../Multiverse-Core/worlds.yml");
+                    incendoPaster.addFile(new IncendoPaster.PasteFile("MultiverseCore/worlds.yml",
+                        readFile(MultiverseWorlds)));
                 } catch (final IOException ignored) {
-                    MainUtil.sendMessage(player, "&cSkipping Multiverse worlds.yml because the plugin is not in use");
+                    MainUtil.sendMessage(player,
+                        "&cSkipping Multiverse worlds.yml because the plugin is not in use");
                 }
 
                 try {

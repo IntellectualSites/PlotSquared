@@ -157,8 +157,7 @@ import java.util.Map;
 
     @Override public boolean onCommand(final PlotPlayer player, final String[] args) {
         new HelpMenu(player).setCategory(CommandCategory.SETTINGS).setCommands(this.getCommands())
-            .generateMaxPages()
-            .generatePage(0, getParent().toString()).render();
+            .generateMaxPages().generatePage(0, getParent().toString()).render();
         return true;
     }
 
@@ -229,8 +228,7 @@ import java.util.Map;
                 .send(player, e.getFlag().getName(), e.getValue(), e.getErrorMessage());
             return;
         }
-        boolean result = player.getLocation().getPlotAbs()
-            .setFlag(flag.merge(parsed.getValue()));
+        boolean result = player.getLocation().getPlotAbs().setFlag(flag.merge(parsed.getValue()));
         if (!result) {
             MainUtil.sendMessage(player, Captions.FLAG_NOT_ADDED);
             return;
@@ -247,18 +245,20 @@ import java.util.Map;
             return;
         }
         if (args.length != 1 && args.length != 2) {
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot flag remove <flag> [values]");
+            MainUtil
+                .sendMessage(player, Captions.COMMAND_SYNTAX, "/plot flag remove <flag> [values]");
             return;
         }
         final PlotFlag<?, ?> flag = getFlag(player, args[0]);
         if (flag == null) {
             return;
         }
-        if (!Permissions.hasPermission(player,
-            CaptionUtility.format(Captions.PERMISSION_SET_FLAG_KEY.getTranslated(), args[0].toLowerCase()))) {
+        if (!Permissions.hasPermission(player, CaptionUtility
+            .format(Captions.PERMISSION_SET_FLAG_KEY.getTranslated(), args[0].toLowerCase()))) {
             if (args.length != 2) {
                 MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                    .format(Captions.PERMISSION_SET_FLAG_KEY.getTranslated(), args[0].toLowerCase()));
+                    .format(Captions.PERMISSION_SET_FLAG_KEY.getTranslated(),
+                        args[0].toLowerCase()));
                 return;
             }
         }
@@ -266,7 +266,8 @@ import java.util.Map;
         if (args.length == 2 && flag instanceof ListFlag) {
             String value = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
             final ListFlag<?, ?> listFlag = (ListFlag<?, ?>) flag;
-            final List<?> list = plot.getFlag((Class<? extends ListFlag<?, ?>>) listFlag.getClass());
+            final List<?> list =
+                plot.getFlag((Class<? extends ListFlag<?, ?>>) listFlag.getClass());
             final PlotFlag<? extends List<?>, ?> parsedFlag;
             try {
                 parsedFlag = listFlag.parse(value);
@@ -325,20 +326,22 @@ import java.util.Map;
         final Map<String, ArrayList<String>> flags = new HashMap<>();
         for (PlotFlag<?, ?> plotFlag : GlobalFlagContainer.getInstance().getRecognizedPlotFlags()) {
             final String category = plotFlag.getFlagCategory().getTranslated();
-            final Collection<String> flagList = flags.computeIfAbsent(category, k -> new ArrayList<>());
+            final Collection<String> flagList =
+                flags.computeIfAbsent(category, k -> new ArrayList<>());
             flagList.add(plotFlag.getName());
         }
 
         for (final Map.Entry<String, ArrayList<String>> entry : flags.entrySet()) {
             Collections.sort(entry.getValue());
-            PlotMessage plotMessage = new PlotMessage(entry.getKey() + ": ").color(Captions.FLAG_INFO_COLOR_KEY.getTranslated());
+            PlotMessage plotMessage = new PlotMessage(entry.getKey() + ": ")
+                .color(Captions.FLAG_INFO_COLOR_KEY.getTranslated());
             final Iterator<String> flagIterator = entry.getValue().iterator();
             while (flagIterator.hasNext()) {
                 final String flag = flagIterator.next();
                 plotMessage = plotMessage.text(flag).command("/plot flag info " + flag)
-                    .color(Captions.FLAG_INFO_COLOR_VALUE.getTranslated())
-                    .tooltip(new PlotMessage(Captions.FLAG_LIST_SEE_INFO.getTranslated())
-                        .color(Captions.FLAG_INFO_COLOR_VALUE.getTranslated()));
+                    .color(Captions.FLAG_INFO_COLOR_VALUE.getTranslated()).tooltip(
+                        new PlotMessage(Captions.FLAG_LIST_SEE_INFO.getTranslated())
+                            .color(Captions.FLAG_INFO_COLOR_VALUE.getTranslated()));
                 if (flagIterator.hasNext()) {
                     plotMessage = plotMessage.text(", ")
                         .color(Captions.FLAG_INFO_COLOR_VALUE.getTranslated());

@@ -15,7 +15,7 @@ public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
     /**
      * Construct a new flag instance.
      *
-     * @param value           Flag value
+     * @param value Flag value
      */
     protected MusicFlag(ItemType value) {
         super(value, Captions.FLAG_CATEGORY_MUSIC, Captions.FLAG_DESCRIPTION_MUSIC);

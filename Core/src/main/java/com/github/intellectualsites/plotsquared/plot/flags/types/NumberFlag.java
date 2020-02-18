@@ -6,7 +6,8 @@ import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class NumberFlag<N extends Number & Comparable<N>, F extends PlotFlag<N, F>> extends PlotFlag<N, F> {
+public abstract class NumberFlag<N extends Number & Comparable<N>, F extends PlotFlag<N, F>>
+    extends PlotFlag<N, F> {
     protected final N minimum;
     protected final N maximum;
 
@@ -14,7 +15,8 @@ public abstract class NumberFlag<N extends Number & Comparable<N>, F extends Plo
         @NotNull Caption flagDescription) {
         super(value, flagCategory, flagDescription);
         if (maximum.compareTo(minimum) < 0) {
-            throw new IllegalArgumentException("Maximum may not be less than minimum:" + maximum + " < " + minimum);
+            throw new IllegalArgumentException(
+                "Maximum may not be less than minimum:" + maximum + " < " + minimum);
         }
         this.minimum = minimum;
         this.maximum = maximum;
@@ -23,8 +25,8 @@ public abstract class NumberFlag<N extends Number & Comparable<N>, F extends Plo
     @Override public F parse(@NotNull String input) throws FlagParseException {
         final N parsed = parseNumber(input);
         if (parsed.compareTo(minimum) < 0 || parsed.compareTo(maximum) > 0) {
-            throw new FlagParseException(this, input,
-                Captions.NUMBER_NOT_IN_RANGE, minimum, maximum);
+            throw new FlagParseException(this, input, Captions.NUMBER_NOT_IN_RANGE, minimum,
+                maximum);
         }
         return flagOf(parsed);
 

@@ -11,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BlockTypeListFlag<F extends ListFlag<BlockType, F>> extends ListFlag<BlockType, F> {
+public abstract class BlockTypeListFlag<F extends ListFlag<BlockType, F>>
+    extends ListFlag<BlockType, F> {
 
     protected BlockTypeListFlag(List<BlockType> blockTypeList, Caption description) {
         super(blockTypeList, Captions.FLAG_CATEGORY_BLOCK_LIST, description);

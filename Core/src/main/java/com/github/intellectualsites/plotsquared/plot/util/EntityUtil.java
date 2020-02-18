@@ -7,8 +7,6 @@ import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
-;
-
 /**
  * Entity related general utility methods
  */
@@ -39,7 +37,7 @@ import lombok.experimental.UtilityClass;
         return i;
     }
 
-    public static boolean checkEntity(Plot plot, PlotFlag<Integer, ?> ... flags) {
+    public static boolean checkEntity(Plot plot, PlotFlag<Integer, ?>... flags) {
         if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
             return true;
         }

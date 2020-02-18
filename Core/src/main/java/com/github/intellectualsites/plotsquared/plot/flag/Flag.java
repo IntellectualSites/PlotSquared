@@ -68,8 +68,8 @@ public abstract class Flag<V> implements StringComparison.StringComparable {
 
     public String getCategoryCaption() {
         return this.typeCaption == null ?
-               getClass().getSimpleName() :
-               this.typeCaption.getTranslated();
+            getClass().getSimpleName() :
+            this.typeCaption.getTranslated();
     }
 
 }

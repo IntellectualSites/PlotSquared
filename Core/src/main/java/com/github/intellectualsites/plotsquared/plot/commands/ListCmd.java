@@ -28,9 +28,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-@CommandDeclaration(command = "list", aliases = {"l", "find", "search"}, description = "List plots",
-    permission = "plots.list", category = CommandCategory.INFO,
-    usage = "/plot list <forsale|mine|shared|world|top|all|unowned|unknown|player|world|done|fuzzy <search...>> [#]")
+@CommandDeclaration(command = "list", aliases = {"l", "find",
+    "search"}, description = "List plots", permission = "plots.list", category = CommandCategory.INFO, usage = "/plot list <forsale|mine|shared|world|top|all|unowned|unknown|player|world|done|fuzzy <search...>> [#]")
 public class ListCmd extends SubCommand {
 
     private String[] getArgumentList(PlotPlayer player) {
@@ -137,11 +136,10 @@ public class ListCmd extends SubCommand {
                         Captions.PERMISSION_LIST_WORLD);
                     return false;
                 }
-                if (!Permissions
-                    .hasPermission(player,
-                        CaptionUtility.format(Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world))) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        CaptionUtility.format(Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world));
+                if (!Permissions.hasPermission(player, CaptionUtility
+                    .format(Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world))) {
+                    MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
+                        .format(Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world));
                     return false;
                 }
                 plots = new ArrayList<>(PlotSquared.get().getPlots(world));
@@ -162,11 +160,10 @@ public class ListCmd extends SubCommand {
                         .sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_LIST_AREA);
                     return false;
                 }
-                if (!Permissions
-                    .hasPermission(player,
-                        CaptionUtility.format(Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world))) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        CaptionUtility.format(Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world));
+                if (!Permissions.hasPermission(player, CaptionUtility
+                    .format(Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world))) {
+                    MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
+                        .format(Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world));
                     return false;
                 }
                 plots = area == null ? new ArrayList<Plot>() : new ArrayList<>(area.getPlots());
@@ -308,9 +305,8 @@ public class ListCmd extends SubCommand {
                             Captions.PERMISSION_LIST_WORLD);
                         return false;
                     }
-                    if (!Permissions
-                        .hasPermission(player, CaptionUtility
-                            .format(Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), args[0]))) {
+                    if (!Permissions.hasPermission(player, CaptionUtility
+                        .format(Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), args[0]))) {
                         MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
                             .format(Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), args[0]));
                         return false;

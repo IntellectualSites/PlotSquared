@@ -16,17 +16,17 @@ import lombok.NonNull;
 import java.util.Map;
 
 public final class BlockUtil {
-    private BlockUtil(){}
-
     private static ParserContext PARSER_CONTEXT = new ParserContext();
-
     private static InputParser<BaseBlock> PARSER;
 
-    static  {
+    static {
         PARSER_CONTEXT.setRestricted(false);
         PARSER_CONTEXT.setPreferringWildcard(false);
         PARSER_CONTEXT.setTryLegacy(true);
         PARSER = WorldEdit.getInstance().getBlockFactory().getParsers().get(0);
+    }
+
+    private BlockUtil() {
     }
 
     public static BlockState get(int id) {

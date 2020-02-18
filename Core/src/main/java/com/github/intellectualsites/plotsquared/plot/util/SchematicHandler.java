@@ -168,12 +168,15 @@ public abstract class SchematicHandler {
                 final int HEIGHT = dimension.getY();
                 // Validate dimensions
                 CuboidRegion region = plot.getLargestRegion();
-                if (((region.getMaximumPoint().getX() - region.getMinimumPoint().getX() + xOffset + 1) < WIDTH) || (
-                    (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + zOffset + 1) < LENGTH) || (HEIGHT > 256)) {
+                if (((region.getMaximumPoint().getX() - region.getMinimumPoint().getX() + xOffset
+                    + 1) < WIDTH) || (
+                    (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + zOffset
+                        + 1) < LENGTH) || (HEIGHT > 256)) {
                     PlotSquared.debug("Schematic is too large");
                     PlotSquared.debug(
                         "(" + WIDTH + ',' + LENGTH + ',' + HEIGHT + ") is bigger than (" + (
-                            region.getMaximumPoint().getX() - region.getMinimumPoint().getX()) + ',' + (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ())
+                            region.getMaximumPoint().getX() - region.getMinimumPoint().getX()) + ','
+                            + (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ())
                             + ",256)");
                     TaskManager.runTask(whenDone);
                     return;
@@ -191,7 +194,8 @@ public abstract class SchematicHandler {
                             y_offset_actual = yOffset + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
                         } else {
                             y_offset_actual = yOffset + 1 + MainUtil
-                                .getHeighestBlock(plot.getWorldName(), region.getMinimumPoint().getX() + 1,
+                                .getHeighestBlock(plot.getWorldName(),
+                                    region.getMinimumPoint().getX() + 1,
                                     region.getMinimumPoint().getZ() + 1);
                         }
                     }
@@ -199,8 +203,8 @@ public abstract class SchematicHandler {
                     y_offset_actual = yOffset;
                 }
                 Location pos1 =
-                    new Location(plot.getWorldName(), region.getMinimumPoint().getX() + xOffset, y_offset_actual,
-                        region.getMinimumPoint().getZ() + zOffset);
+                    new Location(plot.getWorldName(), region.getMinimumPoint().getX() + xOffset,
+                        y_offset_actual, region.getMinimumPoint().getZ() + zOffset);
                 Location pos2 = pos1.clone().add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
                 final int p1x = pos1.getX();
                 final int p1z = pos1.getZ();

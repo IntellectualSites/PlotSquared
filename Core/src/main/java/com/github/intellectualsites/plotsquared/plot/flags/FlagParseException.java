@@ -9,13 +9,13 @@ public class FlagParseException extends Exception {
     private final String value;
     private final String errorMessage;
 
-    public FlagParseException(final PlotFlag<?, ?> flag, final String value, final Caption errorMessage,
-        final Object ... args) {
+    public FlagParseException(final PlotFlag<?, ?> flag, final String value,
+        final Caption errorMessage, final Object... args) {
         super(String.format("Failed to parse flag of type '%s'. Value '%s' was not accepted.",
             flag.getName(), value));
         this.flag = flag;
         this.value = value;
-        this.errorMessage  = CaptionUtility.format(errorMessage, args);
+        this.errorMessage = CaptionUtility.format(errorMessage, args);
     }
 
     /**

@@ -14,7 +14,7 @@ public class KeepFlag extends PlotFlag<Object, KeepFlag> {
     /**
      * Construct a new flag instance.
      *
-     * @param value           Flag value
+     * @param value Flag value
      */
     protected KeepFlag(@NotNull Object value) {
         super(value, Captions.FLAG_CATEGORY_MIXED, Captions.FLAG_DESCRIPTION_KEEP);

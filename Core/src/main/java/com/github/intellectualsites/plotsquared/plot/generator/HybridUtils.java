@@ -51,7 +51,8 @@ public abstract class HybridUtils {
     public static PlotArea area;
     public static boolean UPDATE = false;
 
-    public void analyzeRegion(final String world, final CuboidRegion region, final RunnableVal<PlotAnalysis> whenDone) {
+    public void analyzeRegion(final String world, final CuboidRegion region,
+        final RunnableVal<PlotAnalysis> whenDone) {
         // int diff, int variety, int vertices, int rotation, int height_sd
         /*
          * diff: compare to base by looping through all blocks
@@ -127,22 +128,28 @@ public abstract class HybridUtils {
                                     // modifications_adjacent
                                     if (x > 0 && z > 0 && y > 0 && x < width - 1 && z < length - 1
                                         && y < 255) {
-                                        if (newBlocks[y - 1][x][z].getBlockType().getMaterial().isAir()) {
+                                        if (newBlocks[y - 1][x][z].getBlockType().getMaterial()
+                                            .isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y][x - 1][z].getBlockType().getMaterial().isAir()) {
+                                        if (newBlocks[y][x - 1][z].getBlockType().getMaterial()
+                                            .isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y][x][z - 1].getBlockType().getMaterial().isAir()) {
+                                        if (newBlocks[y][x][z - 1].getBlockType().getMaterial()
+                                            .isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y + 1][x][z].getBlockType().getMaterial().isAir()) {
+                                        if (newBlocks[y + 1][x][z].getBlockType().getMaterial()
+                                            .isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y][x + 1][z].getBlockType().getMaterial().isAir()) {
+                                        if (newBlocks[y][x + 1][z].getBlockType().getMaterial()
+                                            .isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y][x][z + 1].getBlockType().getMaterial().isAir()) {
+                                        if (newBlocks[y][x][z + 1].getBlockType().getMaterial()
+                                            .isAir()) {
                                             faces[i]++;
                                         }
                                     }
@@ -281,7 +288,8 @@ public abstract class HybridUtils {
                     result.add(whenDone.value.data_sd);
                     result.add(whenDone.value.air_sd);
                     result.add(whenDone.value.variety_sd);
-                    origin.setFlag(GlobalFlagContainer.getInstance().getFlag(AnalysisFlag.class), result);
+                    origin.setFlag(GlobalFlagContainer.getInstance().getFlag(AnalysisFlag.class),
+                        result);
                     TaskManager.runTask(whenDone);
                     return;
                 }
@@ -386,11 +394,13 @@ public abstract class HybridUtils {
                         try {
                             if (chunks.size() < 1024) {
                                 if (!HybridUtils.regions.isEmpty()) {
-                                    Iterator<BlockVector2> iterator = HybridUtils.regions.iterator();
+                                    Iterator<BlockVector2> iterator =
+                                        HybridUtils.regions.iterator();
                                     BlockVector2 loc = iterator.next();
                                     iterator.remove();
-                                    PlotSquared.debug("Updating .mcr: " + loc.getX() + ", " + loc.getZ()
-                                        + " (approx 1024 chunks)");
+                                    PlotSquared.debug(
+                                        "Updating .mcr: " + loc.getX() + ", " + loc.getZ()
+                                            + " (approx 1024 chunks)");
                                     PlotSquared
                                         .debug(" - Remaining: " + HybridUtils.regions.size());
                                     chunks.addAll(getChunks(loc));
@@ -421,8 +431,8 @@ public abstract class HybridUtils {
                             BlockVector2 loc = iterator.next();
                             iterator.remove();
                             PlotSquared.debug(
-                                "[ERROR] Could not update '" + area.worldname + "/region/r." + loc.getX()
-                                    + "." + loc.getZ() + ".mca' (Corrupt chunk?)");
+                                "[ERROR] Could not update '" + area.worldname + "/region/r." + loc
+                                    .getX() + "." + loc.getZ() + ".mca' (Corrupt chunk?)");
                             int sx = loc.getX() << 5;
                             int sz = loc.getZ() << 5;
                             for (int x = sx; x < sx + 32; x++) {
@@ -459,10 +469,10 @@ public abstract class HybridUtils {
         int tz = sz - 1;
         int ty = get_ey(plotManager, queue, sx, ex, bz, tz, sy);
 
-        Set<CuboidRegion> sideRoad =
-            new HashSet<>(Collections.singletonList(RegionUtil.createRegion(sx, ex, sy, ey, sz, ez)));
-        final Set<CuboidRegion> intersection =
-            new HashSet<>(Collections.singletonList(RegionUtil.createRegion(sx, ex, sy, ty, bz, tz)));
+        Set<CuboidRegion> sideRoad = new HashSet<>(
+            Collections.singletonList(RegionUtil.createRegion(sx, ex, sy, ey, sz, ez)));
+        final Set<CuboidRegion> intersection = new HashSet<>(
+            Collections.singletonList(RegionUtil.createRegion(sx, ex, sy, ty, bz, tz)));
 
         final String dir =
             "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.getArea()
@@ -583,11 +593,12 @@ public abstract class HybridUtils {
                                 } else {
                                     BaseBlock block = blocks[y];
                                     if (block != null) {
-                                        queue.setBlock(finalX + X + plotWorld.ROAD_OFFSET_X, minY + y,
-                                            finalZ + Z + plotWorld.ROAD_OFFSET_Z, block);
+                                        queue.setBlock(finalX + X + plotWorld.ROAD_OFFSET_X,
+                                            minY + y, finalZ + Z + plotWorld.ROAD_OFFSET_Z, block);
                                     } else {
-                                        queue.setBlock(finalX + X + plotWorld.ROAD_OFFSET_X, minY + y,
-                                            finalZ + Z + plotWorld.ROAD_OFFSET_Z, WEExtent.AIRBASE);
+                                        queue.setBlock(finalX + X + plotWorld.ROAD_OFFSET_X,
+                                            minY + y, finalZ + Z + plotWorld.ROAD_OFFSET_Z,
+                                            WEExtent.AIRBASE);
                                     }
                                 }
                             }

@@ -23,9 +23,8 @@ import java.util.concurrent.CompletableFuture;
 /**
  * PlotSquared command class.
  */
-@CommandDeclaration(command = "plot",
-    aliases = {"plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap"})
-public class MainCommand extends Command {
+@CommandDeclaration(command = "plot", aliases = {"plots", "p", "plotsquared", "plot2", "p2", "ps",
+    "2", "plotme", "plotz", "ap"}) public class MainCommand extends Command {
 
     private static MainCommand instance;
     public Help help;
@@ -208,7 +207,8 @@ public class MainCommand extends Command {
             PlotArea area = player.getApplicablePlotArea();
             Plot newPlot = Plot.fromString(area, args[0]);
             if (newPlot != null && (player instanceof ConsolePlayer || newPlot.getArea()
-                .equals(area) || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN) || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_SUDO_AREA))
+                .equals(area) || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN)
+                || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_SUDO_AREA))
                 && !newPlot.isDenied(player.getUUID())) {
                 Location newLoc = newPlot.getCenter();
                 if (player.canTeleport(newLoc)) {

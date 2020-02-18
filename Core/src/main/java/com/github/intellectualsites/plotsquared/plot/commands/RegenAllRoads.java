@@ -10,11 +10,9 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 
-@CommandDeclaration(command = "regenallroads",
-    description = "Regenerate all roads in the map using the set road schematic",
-    aliases = {"rgar"}, usage = "/plot regenallroads <world> [height]",
-    category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.CONSOLE,
-    permission = "plots.regenallroads") public class RegenAllRoads extends SubCommand {
+@CommandDeclaration(command = "regenallroads", description = "Regenerate all roads in the map using the set road schematic", aliases = {
+    "rgar"}, usage = "/plot regenallroads <world> [height]", category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.CONSOLE, permission = "plots.regenallroads")
+public class RegenAllRoads extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
         int height = 0;

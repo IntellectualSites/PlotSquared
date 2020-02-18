@@ -7,14 +7,17 @@ import org.jetbrains.annotations.NotNull;
 
 public class PlotWeatherFlag extends PlotFlag<PlotWeather, PlotWeatherFlag> {
 
-    public static final PlotWeatherFlag PLOT_WEATHER_FLAG_RAIN = new PlotWeatherFlag(PlotWeather.RAIN);
-    public static final PlotWeatherFlag PLOT_WEATHER_FLAG_CLEAR = new PlotWeatherFlag(PlotWeather.CLEAR);
-    public static final PlotWeatherFlag PLOT_WEATHER_FLAG_OFF = new PlotWeatherFlag(PlotWeather.RESET);
+    public static final PlotWeatherFlag PLOT_WEATHER_FLAG_RAIN =
+        new PlotWeatherFlag(PlotWeather.RAIN);
+    public static final PlotWeatherFlag PLOT_WEATHER_FLAG_CLEAR =
+        new PlotWeatherFlag(PlotWeather.CLEAR);
+    public static final PlotWeatherFlag PLOT_WEATHER_FLAG_OFF =
+        new PlotWeatherFlag(PlotWeather.RESET);
 
     /**
      * Construct a new flag instance.
      *
-     * @param value           Flag value
+     * @param value Flag value
      */
     protected PlotWeatherFlag(@NotNull PlotWeather value) {
         super(value, Captions.FLAG_CATEGORY_WEATHER, Captions.FLAG_DESCRIPTION_WEATHER);

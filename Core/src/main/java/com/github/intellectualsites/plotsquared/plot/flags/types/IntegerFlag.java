@@ -7,7 +7,8 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class IntegerFlag<F extends NumberFlag<Integer, F>> extends NumberFlag<Integer, F> {
 
-    protected IntegerFlag(final int value, int minimum, int maximum, @NotNull Caption flagDescription) {
+    protected IntegerFlag(final int value, int minimum, int maximum,
+        @NotNull Caption flagDescription) {
         super(value, minimum, maximum, Captions.FLAG_CATEGORY_INTEGERS, flagDescription);
     }
 

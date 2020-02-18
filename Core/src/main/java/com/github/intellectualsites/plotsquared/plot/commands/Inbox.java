@@ -13,8 +13,7 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 import java.util.List;
 
-@CommandDeclaration(command = "inbox", description = "Review the comments for a plot",
-    usage = "/plot inbox [inbox] [delete <index>|clear|page]", permission = "plots.inbox", category = CommandCategory.CHAT, requiredType = RequiredType.PLAYER)
+@CommandDeclaration(command = "inbox", description = "Review the comments for a plot", usage = "/plot inbox [inbox] [delete <index>|clear|page]", permission = "plots.inbox", category = CommandCategory.CHAT, requiredType = RequiredType.PLAYER)
 public class Inbox extends SubCommand {
 
     public void displayComments(PlotPlayer player, List<PlotComment> oldComments, int page) {
@@ -40,8 +39,7 @@ public class Inbox extends SubCommand {
         StringBuilder string = new StringBuilder();
         string.append(StringMan
             .replaceAll(Captions.COMMENT_LIST_HEADER_PAGED.getTranslated(), "%amount%",
-                comments.length, "%cur",
-                page + 1, "%max", totalPages + 1, "%word", "all") + '\n');
+                comments.length, "%cur", page + 1, "%max", totalPages + 1, "%word", "all") + '\n');
 
         // This might work xD
         for (int x = page * 12; x < max; x++) {

@@ -10,20 +10,22 @@ import org.jetbrains.annotations.NotNull;
 public class GamemodeFlag extends PlotFlag<GameMode, GamemodeFlag> {
 
     public static final GameMode DEFAULT = new GameMode("default");
+    public static final GamemodeFlag GAMEMODE_FLAG_CREATIVE = new GamemodeFlag(GameModes.CREATIVE);
+    public static final GamemodeFlag GAMEMODE_FLAG_ADVENTURE =
+        new GamemodeFlag(GameModes.ADVENTURE);
+    public static final GamemodeFlag GAMEMODE_FLAG_SPECTATOR =
+        new GamemodeFlag(GameModes.SPECTATOR);
+    public static final GamemodeFlag GAMEMODE_FLAG_SURVIVAL = new GamemodeFlag(GameModes.SURVIVAL);
+    public static final GamemodeFlag GAMEMODE_FLAG_DEFAULT = new GamemodeFlag(DEFAULT);
+
     static {
         GameModes.register(DEFAULT);
     }
 
-    public static final GamemodeFlag GAMEMODE_FLAG_CREATIVE = new GamemodeFlag(GameModes.CREATIVE);
-    public static final GamemodeFlag GAMEMODE_FLAG_ADVENTURE = new GamemodeFlag(GameModes.ADVENTURE);
-    public static final GamemodeFlag GAMEMODE_FLAG_SPECTATOR = new GamemodeFlag(GameModes.SPECTATOR);
-    public static final GamemodeFlag GAMEMODE_FLAG_SURVIVAL = new GamemodeFlag(GameModes.SURVIVAL);
-    public static final GamemodeFlag GAMEMODE_FLAG_DEFAULT = new GamemodeFlag(DEFAULT);
-
     /**
      * Construct a new flag instance.
      *
-     * @param value           Flag value
+     * @param value Flag value
      */
     protected GamemodeFlag(@NotNull GameMode value) {
         super(value, Captions.FLAG_CATEGORY_GAMEMODE, Captions.FLAG_DESCRIPTION_GAMEMODE);

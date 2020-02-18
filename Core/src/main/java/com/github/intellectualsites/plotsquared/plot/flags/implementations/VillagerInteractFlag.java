@@ -6,8 +6,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class VillagerInteractFlag extends BooleanFlag<VillagerInteractFlag> {
 
-    public static final VillagerInteractFlag VILLAGER_INTERACT_TRUE = new VillagerInteractFlag(true);
-    public static final VillagerInteractFlag VILLAGER_INTERACT_FALSE = new VillagerInteractFlag(false);
+    public static final VillagerInteractFlag VILLAGER_INTERACT_TRUE =
+        new VillagerInteractFlag(true);
+    public static final VillagerInteractFlag VILLAGER_INTERACT_FALSE =
+        new VillagerInteractFlag(false);
 
     private VillagerInteractFlag(boolean value) {
         super(value, Captions.FLAG_DESCRIPTION_VILLAGER_INTERACT);

@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
-@CommandDeclaration(command = "schematic", permission = "plots.schematic",
-    description = "Schematic command", aliases = {"sch", "schem"},
-    category = CommandCategory.SCHEMATIC, usage = "/plot schematic <save|saveall|paste>")
+@CommandDeclaration(command = "schematic", permission = "plots.schematic", description = "Schematic command", aliases = {
+    "sch",
+    "schem"}, category = CommandCategory.SCHEMATIC, usage = "/plot schematic <save|saveall|paste>")
 public class SchematicCmd extends SubCommand {
 
     private boolean running = false;
@@ -136,7 +136,8 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 } else {
                     MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_STARTED);
-                    MainUtil.sendMessage(player, "&3Plot&8->&3Schematic&8: &7Found &c" + plots.size() + "&7 plots...");
+                    MainUtil.sendMessage(player,
+                        "&3Plot&8->&3Schematic&8: &7Found &c" + plots.size() + "&7 plots...");
                 }
                 break;
             }

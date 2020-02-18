@@ -27,15 +27,17 @@ import org.jetbrains.annotations.NotNull;
     protected PlotFlag(@NotNull final T value, @NotNull final Caption flagCategory,
         @NotNull final Caption flagDescription) {
         this.value = Preconditions.checkNotNull(value, "flag value may not be null");
-        this.flagCategory = Preconditions.checkNotNull(flagCategory, "flag category may not be null");
-        this.flagDescription = Preconditions.checkNotNull(flagDescription, "flag description may not be null");
+        this.flagCategory =
+            Preconditions.checkNotNull(flagCategory, "flag category may not be null");
+        this.flagDescription =
+            Preconditions.checkNotNull(flagDescription, "flag description may not be null");
         // Parse flag name
         final StringBuilder flagName = new StringBuilder();
         final char[] chars = this.getClass().getSimpleName().replace("Flag", "").toCharArray();
         for (int i = 0; i < chars.length; i++) {
             if (i == 0) {
                 flagName.append(Character.toLowerCase(chars[i]));
-            } else if(Character.isUpperCase(chars[i])) {
+            } else if (Character.isUpperCase(chars[i])) {
                 flagName.append('-').append(Character.toLowerCase(chars[i]));
             } else {
                 flagName.append(chars[i]);

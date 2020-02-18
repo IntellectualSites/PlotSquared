@@ -8,9 +8,8 @@ import com.github.intellectualsites.plotsquared.plot.util.HttpUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 
-@CommandDeclaration(command = "plugin", permission = "plots.use",
-    description = "Show plugin information", usage = "/plot plugin", aliases = "version",
-    category = CommandCategory.INFO) public class PluginCmd extends SubCommand {
+@CommandDeclaration(command = "plugin", permission = "plots.use", description = "Show plugin information", usage = "/plot plugin", aliases = "version", category = CommandCategory.INFO)
+public class PluginCmd extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         TaskManager.IMP.taskAsync(new Runnable() {

@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-@CommandDeclaration(command = "visit", permission = "plots.visit",
-    description = "Visit someones plot", usage = "/plot visit [<player>|<alias>|<world>|<id>] [#]",
-    aliases = {"v", "tp", "teleport", "goto", "home", "h", "warp"}, requiredType = RequiredType.PLAYER,
-    category = CommandCategory.TELEPORT) public class Visit extends Command {
+@CommandDeclaration(command = "visit", permission = "plots.visit", description = "Visit someones plot", usage = "/plot visit [<player>|<alias>|<world>|<id>] [#]", aliases = {
+    "v", "tp", "teleport", "goto", "home", "h",
+    "warp"}, requiredType = RequiredType.PLAYER, category = CommandCategory.TELEPORT)
+public class Visit extends Command {
 
     public Visit() {
         super(MainCommand.getInstance(), true);
@@ -139,8 +139,8 @@ import java.util.concurrent.CompletableFuture;
                 return CompletableFuture.completedFuture(false);
             }
         } else {
-            if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OTHER) &&
-                !plot.getFlag(UntrustedVisitFlag.class)) {
+            if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OTHER) && !plot
+                .getFlag(UntrustedVisitFlag.class)) {
                 Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OTHER);
                 return CompletableFuture.completedFuture(false);
             }

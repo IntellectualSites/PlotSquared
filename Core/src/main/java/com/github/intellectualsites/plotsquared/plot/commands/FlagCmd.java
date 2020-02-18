@@ -30,30 +30,29 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 @CommandDeclaration(command = "flag", aliases = {"f",
-    "flag"}, usage = "/plot flag <set|remove|add|list|info> <flag> <value>",
-    description = "Set plot flags",
-    category = CommandCategory.SETTINGS,
-    requiredType = RequiredType.NONE,
-    permission = "plots.flag")
+    "flag"}, usage = "/plot flag <set|remove|add|list|info> <flag> <value>", description = "Set plot flags", category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE, permission = "plots.flag")
 public class FlagCmd extends SubCommand {
 
-    private boolean checkPermValue(PlotPlayer player, PlotFlag<?, ?> flag, String key, String value) {
+    private boolean checkPermValue(PlotPlayer player, PlotFlag<?, ?> flag, String key,
+        String value) {
         key = key.toLowerCase();
         value = value.toLowerCase();
         String perm = CaptionUtility
-            .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(), key.toLowerCase(), value.toLowerCase());
+            .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(), key.toLowerCase(),
+                value.toLowerCase());
         if (flag instanceof IntegerFlag && MathMan.isInteger(value)) {
             try {
                 int numeric = Integer.parseInt(value);
                 perm = perm.substring(0, perm.length() - value.length() - 1);
                 if (numeric > 0) {
-                    int checkRange =
-                        PlotSquared.get().getPlatform().equalsIgnoreCase("bukkit") ? numeric : Settings.Limit.MAX_PLOTS;
+                    int checkRange = PlotSquared.get().getPlatform().equalsIgnoreCase("bukkit") ?
+                        numeric :
+                        Settings.Limit.MAX_PLOTS;
                     final boolean result = player.hasPermissionRange(perm, checkRange) >= numeric;
                     if (!result) {
                         MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                            .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(), key.toLowerCase(),
-                                value.toLowerCase()));
+                            .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
+                                key.toLowerCase(), value.toLowerCase()));
                     }
                     return result;
                 }
@@ -87,13 +86,13 @@ public class FlagCmd extends SubCommand {
                 PlotFlag<? extends List<?>, ?> parsedFlag = listFlag.parse(value);
                 for (final Object entry : parsedFlag.getValue()) {
                     final String permission = CaptionUtility
-                        .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(), key.toLowerCase(),
-                            entry.toString().toLowerCase());
+                        .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
+                            key.toLowerCase(), entry.toString().toLowerCase());
                     final boolean result = Permissions.hasPermission(player, permission);
                     if (!result) {
                         MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                            .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(), key.toLowerCase(),
-                                value.toLowerCase()));
+                            .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
+                                key.toLowerCase(), value.toLowerCase()));
                         return false;
                     }
                 }
@@ -134,8 +133,10 @@ public class FlagCmd extends SubCommand {
             sendMessage(player, Captions.PLOT_NOT_CLAIMED);
             return false;
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, Captions.PERMISSION_SET_FLAG_OTHER)) {
-            MainUtil.sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_SET_FLAG_OTHER);
+        if (!plot.isOwner(player.getUUID()) && !Permissions
+            .hasPermission(player, Captions.PERMISSION_SET_FLAG_OTHER)) {
+            MainUtil
+                .sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_SET_FLAG_OTHER);
             return false;
         }
         PlotFlag flag = null;
@@ -145,7 +146,8 @@ public class FlagCmd extends SubCommand {
                 boolean suggested = false;
                 try {
                     StringComparison<PlotFlag<?, ?>> stringComparison =
-                        new StringComparison<>(args[1], GlobalFlagContainer.getInstance().getFlagMap().values());
+                        new StringComparison<>(args[1],
+                            GlobalFlagContainer.getInstance().getFlagMap().values());
                     String best = stringComparison.getBestMatch();
                     if (best != null) {
                         MainUtil.sendMessage(player, Captions.NOT_VALID_FLAG_SUGGESTED, best);
@@ -164,11 +166,13 @@ public class FlagCmd extends SubCommand {
             }
             case "set": {
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_SET_FLAG)) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_SET_FLAG);
+                    MainUtil
+                        .sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_SET_FLAG);
                     return false;
                 }
                 if (args.length < 3) {
-                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot flag set <flag> <value>");
+                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
+                        "/plot flag set <flag> <value>");
                     return false;
                 }
                 String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
@@ -188,25 +192,30 @@ public class FlagCmd extends SubCommand {
             }
             case "remove": {
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_FLAG_REMOVE)) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_FLAG_REMOVE);
+                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
+                        Captions.PERMISSION_FLAG_REMOVE);
                     return false;
                 }
                 if (args.length != 2 && args.length != 3) {
-                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot flag remove <flag> [values]");
+                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
+                        "/plot flag remove <flag> [values]");
                     return false;
                 }
-                if (!Permissions.hasPermission(player,
-                    CaptionUtility.format(Captions.PERMISSION_SET_FLAG_KEY.getTranslated(), args[1].toLowerCase()))) {
+                if (!Permissions.hasPermission(player, CaptionUtility
+                    .format(Captions.PERMISSION_SET_FLAG_KEY.getTranslated(),
+                        args[1].toLowerCase()))) {
                     if (args.length != 3) {
                         MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                            .format(Captions.PERMISSION_SET_FLAG_KEY.getTranslated(), args[1].toLowerCase()));
+                            .format(Captions.PERMISSION_SET_FLAG_KEY.getTranslated(),
+                                args[1].toLowerCase()));
                         return false;
                     }
                 }
                 if (args.length == 3 && flag instanceof ListFlag) {
                     String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
                     final ListFlag<?, ?> listFlag = (ListFlag<?, ?>) flag;
-                    final List<?> list = plot.getFlag((Class<? extends ListFlag<?, ?>>) listFlag.getClass());
+                    final List<?> list =
+                        plot.getFlag((Class<? extends ListFlag<?, ?>>) listFlag.getClass());
                     final PlotFlag<? extends List<?>, ?> parsedFlag;
                     try {
                         parsedFlag = listFlag.parse(value);
@@ -250,11 +259,13 @@ public class FlagCmd extends SubCommand {
             }
             case "add":
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_FLAG_ADD)) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_FLAG_ADD);
+                    MainUtil
+                        .sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_FLAG_ADD);
                     return false;
                 }
                 if (args.length < 3) {
-                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot flag add <flag> <values>");
+                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
+                        "/plot flag add <flag> <values>");
                     return false;
                 }
                 for (String entry : args[2].split(",")) {
@@ -279,7 +290,8 @@ public class FlagCmd extends SubCommand {
                 return true;
             case "list":
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_FLAG_LIST)) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_FLAG_LIST);
+                    MainUtil
+                        .sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_FLAG_LIST);
                     return false;
                 }
                 if (args.length > 1) {
@@ -287,20 +299,24 @@ public class FlagCmd extends SubCommand {
                     return false;
                 }
                 final Map<String, ArrayList<String>> flags = new HashMap<>();
-                for (PlotFlag<?, ?> plotFlag : GlobalFlagContainer.getInstance().getRecognizedPlotFlags()) {
+                for (PlotFlag<?, ?> plotFlag : GlobalFlagContainer.getInstance()
+                    .getRecognizedPlotFlags()) {
                     final String category = plotFlag.getFlagCategory().getTranslated();
-                    final Collection<String> flagList = flags.computeIfAbsent(category, k -> new ArrayList<>());
+                    final Collection<String> flagList =
+                        flags.computeIfAbsent(category, k -> new ArrayList<>());
                     flagList.add(plotFlag.getName());
                 }
 
-                final Iterator<Map.Entry<String, ArrayList<String>>> iterator = flags.entrySet().iterator();
+                final Iterator<Map.Entry<String, ArrayList<String>>> iterator =
+                    flags.entrySet().iterator();
                 final StringJoiner message = new StringJoiner("\n");
                 while (iterator.hasNext()) {
                     final Map.Entry<String, ArrayList<String>> flagsEntry = iterator.next();
                     final List<String> flagNames = flagsEntry.getValue();
                     Collections.sort(flagNames);
-                    message.add(String.format(Captions.FLAG_LIST_ENTRY.formatted(), flagsEntry.getKey(),
-                        StringMan.join(flagNames, ", ")));
+                    message.add(String
+                        .format(Captions.FLAG_LIST_ENTRY.formatted(), flagsEntry.getKey(),
+                            StringMan.join(flagNames, ", ")));
                 }
                 MainUtil.sendMessage(player, message.toString());
                 return true;

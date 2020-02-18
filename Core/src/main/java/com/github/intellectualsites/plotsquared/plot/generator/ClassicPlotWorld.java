@@ -33,8 +33,7 @@ import java.util.Locale;
     public boolean PLOT_BEDROCK = true;
 
     public ClassicPlotWorld(String worldName, String id,
-        @NotNull IndependentPlotGenerator generator,
-        PlotId min, PlotId max) {
+        @NotNull IndependentPlotGenerator generator, PlotId min, PlotId max) {
         super(worldName, id, generator, min, max);
     }
 
@@ -86,11 +85,9 @@ import java.util.Locale;
         this.WALL_BLOCK = new BlockBucket(config.getString("wall.block"));
         this.ROAD_HEIGHT = Math.min(255, config.getInt("road.height"));
         this.ROAD_BLOCK = new BlockBucket(config.getString("road.block"));
-        this.WALL_FILLING =
-            new BlockBucket(config.getString("wall.filling"));
+        this.WALL_FILLING = new BlockBucket(config.getString("wall.filling"));
         this.WALL_HEIGHT = Math.min(254, config.getInt("wall.height"));
-        this.CLAIMED_WALL_BLOCK =
-            new BlockBucket(config.getString("wall.block_claimed"));
+        this.CLAIMED_WALL_BLOCK = new BlockBucket(config.getString("wall.block_claimed"));
 
         // Dump world settings
         if (Settings.DEBUG) {
