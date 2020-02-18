@@ -4,7 +4,6 @@ import com.github.intellectualsites.plotsquared.json.JSONArray;
 import com.github.intellectualsites.plotsquared.json.JSONException;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.generator.ClassicPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -15,8 +14,6 @@ import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.NBTInputStream;
 import com.sk89q.jnbt.NBTOutputStream;
-import com.sk89q.jnbt.StringTag;
-import com.sk89q.jnbt.Tag;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
@@ -46,10 +43,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -151,6 +146,8 @@ public abstract class SchematicHandler {
             }
             try {
                 // Set flags
+                /*
+                TODO: Revisit
                 if (plot.hasOwner()) {
                     Map<String, Tag> flags = schematic.getFlags();
                     if (!flags.isEmpty()) {
@@ -161,6 +158,7 @@ public abstract class SchematicHandler {
 
                     }
                 }
+                */
                 final LocalBlockQueue queue = plot.getArea().getQueue(false);
                 BlockVector3 dimension = schematic.getClipboard().getDimensions();
                 final int WIDTH = dimension.getX();
@@ -454,6 +452,8 @@ public abstract class SchematicHandler {
     public void getCompoundTag(final Plot plot, final RunnableVal<CompoundTag> whenDone) {
         getCompoundTag(plot.getWorldName(), plot.getRegions(), new RunnableVal<CompoundTag>() {
             @Override public void run(CompoundTag value) {
+                /*
+                TODO: Revisit
                 if (!plot.getFlags().isEmpty()) {
                     HashMap<String, Tag> flagMap = new HashMap<>();
                     for (Map.Entry<Flag<?>, Object> entry : plot.getFlags().entrySet()) {
@@ -466,6 +466,7 @@ public abstract class SchematicHandler {
                     map.put("Flags", tag);
                     value.setValue(map);
                 }
+                 */
                 whenDone.run(value);
             }
         });
