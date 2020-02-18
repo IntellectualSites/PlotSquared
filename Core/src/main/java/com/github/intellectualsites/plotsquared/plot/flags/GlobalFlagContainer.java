@@ -95,10 +95,9 @@ public final class GlobalFlagContainer extends FlagContainer {
         // Register all default flags here
         // Boolean flags
         this.addFlag(ExplosionFlag.EXPLOSION_FALSE);
-        this.addFlag(MusicFlag.MUSIC_FLAG_NONE);
         this.addFlag(FlightFlag.FLIGHT_FLAG_FALSE);
         this.addFlag(UntrustedVisitFlag.UNTRUSTED_VISIT_FLAG_TRUE);
-        this.addFlag(DenyExitFlag.DENY_EXIT_FLAG_TRUE);
+        this.addFlag(DenyExitFlag.DENY_EXIT_FLAG_FALSE);
         this.addFlag(DescriptionFlag.DESCRIPTION_FLAG_EMPTY);
         this.addFlag(GreetingFlag.GREETING_FLAG_EMPTY);
         this.addFlag(FarewellFlag.FAREWELL_FLAG_EMPTY);
@@ -176,6 +175,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(GuestGamemodeFlag.GUEST_GAMEMODE_FLAG_DEFAULT);
         this.addFlag(BlockedCmdsFlag.BLOCKED_CMDS_FLAG_NONE);
         this.addFlag(KeepFlag.KEEP_FLAG_FALSE);
+        this.addFlag(MusicFlag.MUSIC_FLAG_NONE);
 
         // Internal flags
         this.addFlag(new AnalysisFlag(Collections.emptyList()));
