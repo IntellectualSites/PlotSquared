@@ -2,11 +2,9 @@ package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
@@ -321,12 +319,11 @@ public abstract class PlotArea {
             }
         }
         try {
-            this.DEFAULT_FLAGS = parseFlags(flags);
-        } catch (Exception e) {
+            this.getFlagContainer().addAll(parseFlags(flags));
+        } catch (FlagParseException e) {
             e.printStackTrace();
             PlotSquared.debug("&cInvalid default flags for " + this.worldname + ": " + StringMan
                 .join(flags, ","));
-            this.DEFAULT_FLAGS = new HashMap<>();
         }
         this.SPAWN_EGGS = config.getBoolean("event.spawn.egg");
         this.SPAWN_CUSTOM = config.getBoolean("event.spawn.custom");
@@ -626,8 +623,6 @@ public abstract class PlotArea {
      * Session only plot metadata (session is until the server stops).
      * <br>
      * For persistent metadata use the flag system
-     *
-     * @see FlagManager
      */
     public void setMeta(@NotNull final String key, @Nullable final Object value) {
         if (this.meta == null) {
@@ -957,7 +952,7 @@ public abstract class PlotArea {
         return null;
     }
 
-    public static Collection<PlotFlag<?, ?>> parseFlags(List<String> flagStrings) {
+    public static Collection<PlotFlag<?, ?>> parseFlags(List<String> flagStrings) throws FlagParseException {
         final Collection<PlotFlag<?, ?>> flags = new ArrayList<>();
         for (final String key : flagStrings) {
             final String[] split;
@@ -968,12 +963,7 @@ public abstract class PlotArea {
             }
             final PlotFlag<?, ?> flagInstance = GlobalFlagContainer.getInstance().getFlagFromString(split[0]);
             if (flagInstance != null) {
-                try {
-                    flags.add(flagInstance.parse(split[1]));
-                } catch (final FlagParseException e) {
-                    Captions.FLAG_PARSE_EXCEPTION
-                        .send(ConsolePlayer.getConsole(), e.getFlag().getName(), e.getValue(), e.getErrorMessage());
-                }
+                flags.add(flagInstance.parse(split[1]));
             }
         }
         return flags;
