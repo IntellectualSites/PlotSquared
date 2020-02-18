@@ -6,7 +6,6 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
@@ -120,7 +119,6 @@ import java.util.concurrent.CompletableFuture;
         this.scope.put("Settings", new Settings());
         this.scope.put("StringMan", new StringMan());
         this.scope.put("MathMan", new MathMan());
-        this.scope.put("FlagManager", new FlagManager());
 
         // Classes
         this.scope.put("Location", Location.class);

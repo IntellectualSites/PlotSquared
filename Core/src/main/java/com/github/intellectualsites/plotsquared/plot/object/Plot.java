@@ -1124,12 +1124,12 @@ public class Plot {
         return this.removeFlag(getFlagContainer().queryLocal(flag));
     }
 
-    public Collection<PlotFlag<?, ?>> getApplicableFlags(final boolean ignorePluginFlags) {
+    public Collection<PlotFlag<?, ?>> getApplicableFlags(final boolean plotOnly, final boolean ignorePluginFlags) {
         if (!hasOwner()) {
             return Collections.emptyList();
         }
         final Map<Class<?>, PlotFlag<?, ?>> flags = new HashMap<>();
-        if (getArea() != null && !getArea().getFlagContainer().getFlagMap().isEmpty()) {
+        if (!plotOnly && getArea() != null && !getArea().getFlagContainer().getFlagMap().isEmpty()) {
             final Map<Class<?>, PlotFlag<?, ?>> flagMap = getArea().getFlagContainer().getFlagMap();
             flags.putAll(flagMap);
         }
@@ -1145,6 +1145,10 @@ public class Plot {
             flags.putAll(flagMap);
         }
         return flagMap.values();
+    }
+
+    public Collection<PlotFlag<?, ?>> getApplicableFlags(final boolean ignorePluginFlags) {
+        return getApplicableFlags(false, ignorePluginFlags);
     }
 
     /**
