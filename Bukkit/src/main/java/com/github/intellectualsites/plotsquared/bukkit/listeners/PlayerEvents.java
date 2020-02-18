@@ -8,25 +8,31 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnimalAttackFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnimalCapFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnimalInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockBurnFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockIgnitionFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockedCmdsFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.BreakFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyTeleportFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DisablePhysicsFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.EntityCapFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.ExplosionFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.GrassGrowFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.HangingBreakFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.HangingPlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.HostileAttackFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.HostileCapFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.HostileInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.IceFormFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.IceMeltFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.KelpGrowFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.LiquidFlowFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscBreakFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscCapFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscInteractFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MobCapFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MobPlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MycelGrowFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlaceFlag;
@@ -42,6 +48,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Tamed
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.UntrustedVisitFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.UseFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleBreakFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleCapFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleUseFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VillagerInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VineGrowFlag;
@@ -223,7 +230,7 @@ import java.util.regex.Pattern;
 
     public static boolean checkEntity(Entity entity, Plot plot) {
         if (plot == null || !plot.hasOwner() || plot.getFlags().isEmpty() && plot
-            .getArea().DEFAULT_FLAGS.isEmpty()) {
+            .getArea().getFlagContainer().getFlagMap().isEmpty()) {
             return false;
         }
         switch (entity.getType()) {
@@ -258,11 +265,13 @@ import java.util.regex.Pattern;
             case UNKNOWN:
             case WITHER_SKULL:
                 // non moving / unmovable
-                return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP);
+                return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED);
             case ARMOR_STAND:
             case ITEM_FRAME:
             case PAINTING:
-                return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MISC_CAP);
+                return EntityUtil.checkEntity(plot,
+                    EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                    MiscCapFlag.MISC_CAP_UNLIMITED);
             // misc
             case BOAT:
             case MINECART:
@@ -272,7 +281,9 @@ import java.util.regex.Pattern;
             case MINECART_HOPPER:
             case MINECART_MOB_SPAWNER:
             case MINECART_TNT:
-                return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.VEHICLE_CAP);
+                return EntityUtil.checkEntity(plot,
+                    EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                    VehicleCapFlag.VEHICLE_CAP_UNLIMITED);
             case BAT:
             case CHICKEN:
             case CAT:
@@ -305,8 +316,10 @@ import java.util.regex.Pattern;
             case WOLF:
             case ZOMBIE_HORSE:
                 // animal
-                return EntityUtil
-                    .checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.ANIMAL_CAP);
+                return EntityUtil.checkEntity(plot,
+                    EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                    MobCapFlag.MOB_CAP_UNLIMITED,
+                    AnimalCapFlag.ANIMAL_CAP_UNLIMITED);
             case BLAZE:
             case CAVE_SPIDER:
             case CREEPER:
@@ -341,26 +354,39 @@ import java.util.regex.Pattern;
             case RAVAGER:
                 // monster
                 return EntityUtil
-                    .checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.HOSTILE_CAP);
+                    .checkEntity(plot,
+                        EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                        MobCapFlag.MOB_CAP_UNLIMITED,
+                        HostileCapFlag.HOSTILE_CAP_UNLIMITED);
             default:
                 if (entity instanceof LivingEntity) {
                     if (entity instanceof Animals || entity instanceof WaterMob) {
-                        return EntityUtil
-                            .checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.ANIMAL_CAP);
+                        return EntityUtil.checkEntity(plot,
+                            EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                            MobCapFlag.MOB_CAP_UNLIMITED,
+                            AnimalCapFlag.ANIMAL_CAP_UNLIMITED);
                     } else if (entity instanceof Monster) {
-                        return EntityUtil
-                            .checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP, Flags.HOSTILE_CAP);
+                        return EntityUtil.checkEntity(plot,
+                            EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                            MobCapFlag.MOB_CAP_UNLIMITED,
+                            HostileCapFlag.HOSTILE_CAP_UNLIMITED);
                     } else {
-                        return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP);
+                        return EntityUtil.checkEntity(plot,
+                            EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                            MobCapFlag.MOB_CAP_UNLIMITED);
                     }
                 }
                 if (entity instanceof Vehicle) {
-                    return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.VEHICLE_CAP);
+                    return EntityUtil.checkEntity(plot,
+                        EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                        VehicleCapFlag.VEHICLE_CAP_UNLIMITED);
                 }
                 if (entity instanceof Hanging) {
-                    return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP, Flags.MISC_CAP);
+                    return EntityUtil.checkEntity(plot,
+                        EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                        MiscCapFlag.MISC_CAP_UNLIMITED);
                 }
-                return EntityUtil.checkEntity(plot, Flags.ENTITY_CAP);
+                return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED);
         }
     }
 
@@ -2763,7 +2789,7 @@ import java.util.regex.Pattern;
             PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
             if (victim instanceof Hanging) { // hanging
                 if (plot != null && (plot.getFlag(HangingBreakFlag.class)) || plot
-                    .isAdded(plotPlayer.getUUID()))) {
+                    .isAdded(plotPlayer.getUUID())) {
                     if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                         if (!Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
                             MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT, Captions.PERMISSION_ADMIN_BUILD_OTHER);

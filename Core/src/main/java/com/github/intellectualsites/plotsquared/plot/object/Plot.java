@@ -1086,6 +1086,15 @@ public class Plot {
     }
 
     /**
+     * Gets all flags applied to this plot
+     *
+     * @return all applied flags
+     */
+    public Set<PlotFlag<?, ?>> getFlags() {
+        return ImmutableSet.copyOf(flagContainer.getFlagMap().values());
+    }
+
+    /**
      * Sets a flag for this plot
      *
      * @param flag  Flag to set
