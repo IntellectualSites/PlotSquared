@@ -55,7 +55,7 @@ public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, Den
         final DeniedGroup group = DeniedGroup.fromString(input);
         if (group == null) {
             throw new FlagParseException(this, input, Captions.FLAG_ERROR_ENUM,
-                "members, nonmembers," + " trusted, nontrusted, nonowners");
+                "members, nonmembers, trusted, nontrusted, nonowners");
         }
         return flagOf(group);
     }

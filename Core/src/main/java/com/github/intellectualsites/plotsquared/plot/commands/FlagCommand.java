@@ -343,6 +343,9 @@ import java.util.concurrent.CompletableFuture;
 
         final Map<String, ArrayList<String>> flags = new HashMap<>();
         for (PlotFlag<?, ?> plotFlag : GlobalFlagContainer.getInstance().getRecognizedPlotFlags()) {
+            if (plotFlag instanceof InternalFlag) {
+                continue;
+            }
             final String category = plotFlag.getFlagCategory().getTranslated();
             final Collection<String> flagList =
                 flags.computeIfAbsent(category, k -> new ArrayList<>());
