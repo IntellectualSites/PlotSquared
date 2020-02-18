@@ -97,6 +97,13 @@ import java.util.Map;
     }
 
     /**
+     * Clears the local flag map
+     */
+    public void clearLocal() {
+        this.flagMap.clear();
+    }
+
+    /**
      * Get a collection of all recognized plot flags. Will by
      * default use the values contained in {@link GlobalFlagContainer}.
      *

@@ -5,7 +5,6 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.InternalFlag;
@@ -142,8 +141,6 @@ public class Plot {
      * Session only plot metadata (session is until the server stops)<br>
      * <br>
      * For persistent metadata use the flag system
-     *
-     * @see FlagManager
      */
     private ConcurrentHashMap<String, Object> meta;
 
@@ -291,7 +288,6 @@ public class Plot {
      *
      * @param key   metadata key
      * @param value metadata value
-     * @see FlagManager
      */
     public void setMeta(String key, Object value) {
         if (this.meta == null) {
@@ -1095,11 +1091,11 @@ public class Plot {
      * @param flag  Flag to set
      */
     public <V> boolean setFlag(PlotFlag<V, ?> flag) {
-        if (flag instanceof KeepFlag && ExpireManager.IMP != null) {
-            ExpireManager.IMP.updateExpired(this);
-        }
         if (!EventUtil.manager.callFlagAdd(flag, origin)) {
             return false;
+        }
+        if (flag instanceof KeepFlag && ExpireManager.IMP != null) {
+            ExpireManager.IMP.updateExpired(this);
         }
         for (final Plot plot : this.getConnectedPlots()) {
             plot.getFlagContainer().addFlag(flag);
@@ -1134,7 +1130,7 @@ public class Plot {
         }
         final Map<Class<?>, PlotFlag<?, ?>> flags = new HashMap<>();
         if (getArea() != null && !getArea().getFlagContainer().getFlagMap().isEmpty()) {
-            final Map<Class<?>, PlotFlag<?, ?>> flagMap = plot.getArea().getFlagContainer().getFlagMap();
+            final Map<Class<?>, PlotFlag<?, ?>> flagMap = getArea().getFlagContainer().getFlagMap();
             flags.putAll(flagMap);
         }
         final Map<Class<?>, PlotFlag<?, ?>> flagMap = getFlagContainer().getFlagMap();
@@ -1158,6 +1154,9 @@ public class Plot {
      * @return success
      */
     public boolean removeFlag(PlotFlag<?, ?> flag) {
+        if (flag == null) {
+            return false;
+        }
         boolean removed = false;
         for (final Plot plot : origin.getConnectedPlots()) {
             final Object value = plot.getFlagContainer().removeFlag(flag);
@@ -3146,9 +3145,10 @@ public class Plot {
         for (Plot plot : plots) {
             Plot other = plot.getRelative(destination.getArea(), offset.x, offset.y);
             other.create(plot.getOwner(), false);
-            if (!plot.getFlags().isEmpty()) {
-                other.getSettings().flags = plot.getFlags();
-                DBFunc.setFlags(other, plot.getFlags());
+            if (!plot.getFlagContainer().getFlagMap().isEmpty()) {
+                other.getFlagContainer().clearLocal();
+                other.getFlagContainer().addAll(plot.getFlagContainer().getFlagMap().values());
+                DBFunc.setFlags(other, plot.getFlagContainer().getFlagMap().values());
             }
             if (plot.isMerged()) {
                 other.setMerged(plot.getMerged());
@@ -3178,7 +3178,7 @@ public class Plot {
             @Override public void run() {
                 if (regions.isEmpty()) {
                     for (Plot current : getConnectedPlots()) {
-                        destination.getManager().claimPlot(destination);
+                        destination.getManager().claimPlot(current);
                     }
                     destination.setSign();
                     TaskManager.runTask(whenDone);
