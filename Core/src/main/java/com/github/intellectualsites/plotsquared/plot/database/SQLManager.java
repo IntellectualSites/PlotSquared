@@ -4,6 +4,8 @@ import com.github.intellectualsites.plotsquared.configuration.ConfigurationSecti
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.config.Storage;
+import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.object.BlockLoc;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -546,7 +548,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                         for (Plot plot : myList) {
                             plotMap.put(plot.getId(), plot);
                         }
-                        ArrayList<SettingsPair> settings = new ArrayList<>();
+                        ArrayList<LegacySettings> settings = new ArrayList<>();
                         final ArrayList<UUIDPair> helpers = new ArrayList<>();
                         final ArrayList<UUIDPair> trusted = new ArrayList<>();
                         final ArrayList<UUIDPair> denied = new ArrayList<>();
@@ -562,7 +564,8 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 PlotId plotId = new PlotId(x, y);
                                 Plot plot = plotMap.get(plotId);
                                 if (plot != null) {
-                                    settings.add(new SettingsPair(id, plot.getSettings()));
+                                    settings.add(new LegacySettings(id, plot.getSettings(),
+                                        new FlagContainer(plot.getArea().getFlagContainer())));
                                     for (UUID uuid : plot.getDenied()) {
                                         denied.add(new UUIDPair(id, uuid));
                                     }
@@ -828,8 +831,8 @@ import java.util.concurrent.atomic.AtomicInteger;
         }
     }
 
-    public void createSettings(final ArrayList<SettingsPair> myList, final Runnable whenDone) {
-        final StmtMod<SettingsPair> mod = new StmtMod<SettingsPair>() {
+    public void createSettings(final ArrayList<LegacySettings> myList, final Runnable whenDone) {
+        final StmtMod<LegacySettings> mod = new StmtMod<LegacySettings>() {
             @Override public String getCreateMySQL(int size) {
                 return getCreateMySQL(size, "INSERT INTO `" + SQLManager.this.prefix
                     + "plot_settings`(`plot_plot_id`,`biome`,`rain`,`custom_time`,`time`,`deny_entry`,`alias`,`flags`,`merged`,"
@@ -848,7 +851,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                     + "plot_settings`(`plot_plot_id`) VALUES(?)";
             }
 
-            @Override public void setMySQL(PreparedStatement statement, int i, SettingsPair pair)
+            @Override public void setMySQL(PreparedStatement statement, int i, LegacySettings pair)
                 throws SQLException {
                 statement.setInt(i * 10 + 1, pair.id); // id
                 statement.setNull(i * 10 + 2, 4); // biome
@@ -863,12 +866,12 @@ import java.util.concurrent.atomic.AtomicInteger;
                 }
                 StringBuilder flag_string = new StringBuilder();
                 int k = 0;
-                for (Entry<Flag<?>, ?> flag : pair.settings.flags.entrySet()) {
+                for (PlotFlag<?, ?> flag : pair.flagContainer.getFlagMap().values()) {
                     if (k != 0) {
                         flag_string.append(',');
                     }
-                    flag_string.append(flag.getKey().getName()).append(':').append(
-                        flag.getKey().valueToString(flag.getValue()).replaceAll(":", "¯")
+                    flag_string.append(flag.getName()).append(':').append(
+                        flag.getValue().toString().replaceAll(":", "¯")
                             .replaceAll(",", "´"));
                     k++;
                 }
@@ -886,7 +889,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 statement.setString(i * 10 + 10, position);
             }
 
-            @Override public void setSQLite(PreparedStatement stmt, int i, SettingsPair pair)
+            @Override public void setSQLite(PreparedStatement stmt, int i, LegacySettings pair)
                 throws SQLException {
                 stmt.setInt(i * 10 + 1, pair.id); // id
                 stmt.setNull(i * 10 + 2, 4); // biome
@@ -901,12 +904,12 @@ import java.util.concurrent.atomic.AtomicInteger;
                 }
                 StringBuilder flag_string = new StringBuilder();
                 int k = 0;
-                for (Entry<Flag<?>, ?> flag : pair.settings.flags.entrySet()) {
+                for (PlotFlag<?, ?> flag : pair.flagContainer.getFlagMap().values()) {
                     if (k != 0) {
                         flag_string.append(',');
                     }
-                    flag_string.append(flag.getKey().getName()).append(':').append(
-                        flag.getKey().valueToString(flag.getValue()).replaceAll(":", "¯")
+                    flag_string.append(flag.getName()).append(':').append(
+                        flag.getValue().toString().replaceAll(":", "¯")
                             .replaceAll(",", "´"));
                     k++;
                 }
@@ -927,7 +930,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 stmt.setString(i * 10 + 10, position);
             }
 
-            @Override public void setSQL(PreparedStatement stmt, SettingsPair pair)
+            @Override public void setSQL(PreparedStatement stmt, LegacySettings pair)
                 throws SQLException {
                 stmt.setInt(1, pair.id);
             }
@@ -1853,18 +1856,21 @@ import java.util.concurrent.atomic.AtomicInteger;
                             if (myflags == null || myflags.isEmpty()) {
                                 flags_string = new String[] {};
                             } else {
-                                flags_string = myflags.split(",");
+                                flags_string = myflags.split(","); // splits flags
                             }
-                            HashMap<Flag<?>, Object> flags = new HashMap<>();
+                            HashSet<PlotFlag<?, ?>> flags = new HashSet<>();
                             boolean exception = false;
                             for (String element : flags_string) {
                                 if (element.contains(":")) {
-                                    String[] split = element.split(":");
+                                    String[] split = element.split(":"); // splits flag:value
                                     try {
                                         String flag_str =
                                             split[1].replaceAll("¯", ":").replaceAll("\u00B4", ",");
-                                        Flag<?> flag = FlagManager.getOrCreateFlag(split[0]);
-                                        flags.put(flag, flag.parseValue(flag_str));
+                                        PlotFlag<?, ?> flag = GlobalFlagContainer.getInstance().getFlagFromString(split[0]);
+                                        if (flag == null) {
+                                            PlotSquared.debug("Flag not found and therefore ignored: " + split[0]);
+                                        }
+                                        flags.add(flag.parse(flag_str));
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                         exception = true;
@@ -1874,8 +1880,10 @@ import java.util.concurrent.atomic.AtomicInteger;
                                         element.replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
                                     if (StringMan
                                         .isAlpha(element.replaceAll("_", "").replaceAll("-", ""))) {
-                                        Flag flag = FlagManager.getOrCreateFlag(element);
-                                        flags.put(flag, flag.parseValue(""));
+                                        PlotFlag<?, ?> flag = GlobalFlagContainer.getInstance().getFlagFromString(element);
+                                        if (flag == null) {
+                                            PlotSquared.debug("Flag not found and therefore ignored: " + element);
+                                        }
                                     } else {
                                         PlotSquared.debug("INVALID FLAG: " + element);
                                     }
@@ -1887,7 +1895,10 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 PlotSquared.debug("&c" + myflags);
                                 this.setFlags(plot, flags);
                             }
-                            plot.getSettings().flags = flags;
+                            // TODO throws NPE because PlotArea isn't set yet
+                            FlagContainer container = new FlagContainer(plot.getArea().getFlagContainer());
+                            container.addAll(flags);
+                            plot.setFlagContainer(container);
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
                         } else {
@@ -1992,7 +2003,8 @@ import java.util.concurrent.atomic.AtomicInteger;
     }
 
     @Override public void setFlags(final Plot plot, Collection<PlotFlag<?, ?>> flags) {
-        final String flag_string = FlagManager.toString(flags);
+        // TODO use something new instead
+        final String flag_string = toString(flags);
         addPlotTask(plot, new UniqueStatement("setFlags") {
             @Override public void set(PreparedStatement statement) throws SQLException {
                 statement.setString(1, flag_string);
@@ -2966,12 +2978,12 @@ import java.util.concurrent.atomic.AtomicInteger;
                 PlotSquared.debug(" - Correcting merge for: " + plot);
                 setMerged(dataPlot, plot.getMerged());
             }
-            HashMap<Flag<?>, Object> pf = plot.getFlags();
-            HashMap<Flag<?>, Object> df = dataPlot.getFlags();
+            Set<PlotFlag<?, ?>> pf = plot.getFlags();
+            Set<PlotFlag<?, ?>> df = dataPlot.getFlags();
             if (!pf.isEmpty() && !df.isEmpty()) {
                 if (pf.size() != df.size() || !StringMan
-                    .isEqual(StringMan.joinOrdered(pf.values(), ","),
-                        StringMan.joinOrdered(df.values(), ","))) {
+                    .isEqual(StringMan.joinOrdered(pf, ","),
+                        StringMan.joinOrdered(df, ","))) {
                     PlotSquared.debug(" - Correcting flags for: " + plot);
                     setFlags(plot, pf);
                 }
@@ -3104,6 +3116,20 @@ import java.util.concurrent.atomic.AtomicInteger;
         public abstract void set(PreparedStatement statement) throws SQLException;
     }
 
+    public static String toString(Collection<PlotFlag<?, ?>> flags) {
+        StringBuilder flag_string = new StringBuilder();
+        int i = 0;
+        for (PlotFlag<?, ?> flag : flags) {
+            if (i != 0) {
+                flag_string.append(',');
+            }
+            flag_string.append(flag.getName()).append(':')
+                .append(flag.getValue().toString().replaceAll(":", "¯").replaceAll(",", "´"));
+            i++;
+        }
+        return flag_string.toString();
+    }
+
 
     private class UUIDPair {
 
@@ -3117,14 +3143,16 @@ import java.util.concurrent.atomic.AtomicInteger;
     }
 
 
-    private class SettingsPair {
+    private static class LegacySettings {
 
         public final int id;
         public final PlotSettings settings;
+        public final FlagContainer flagContainer;
 
-        public SettingsPair(int id, PlotSettings settings) {
+        public LegacySettings(int id, PlotSettings settings, FlagContainer flagContainer) {
             this.id = id;
             this.settings = settings;
+            this.flagContainer = flagContainer;
         }
     }
 }

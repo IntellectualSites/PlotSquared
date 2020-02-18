@@ -224,10 +224,12 @@ public class Plot {
         this.settings.setMerged(merged);
         this.timestamp = timestamp;
         this.temp = temp;
-        this.flagContainer = new FlagContainer(area.getFlagContainer());
-        if (flags != null) {
-            for (PlotFlag<?, ?> flag : flags) {
-                this.flagContainer.addFlag(flag);
+        if (area != null) {
+            this.flagContainer = new FlagContainer(area.getFlagContainer());
+            if (flags != null) {
+                for (PlotFlag<?, ?> flag : flags) {
+                    this.flagContainer.addFlag(flag);
+                }
             }
         }
     }
