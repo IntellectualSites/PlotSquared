@@ -1895,10 +1895,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 PlotSquared.debug("&c" + myflags);
                                 this.setFlags(plot, flags);
                             }
-                            // TODO throws NPE because PlotArea isn't set yet
-                            FlagContainer container = new FlagContainer(plot.getArea().getFlagContainer());
-                            container.addAll(flags);
-                            plot.setFlagContainer(container);
+                            plot.getFlagContainer().addAll(flags);
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
                         } else {

@@ -38,7 +38,6 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import lombok.AccessLevel;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -153,7 +152,7 @@ public class Plot {
     /**
      * Plot flag container
      */
-    @Getter private FlagContainer flagContainer;
+    @Getter private final FlagContainer flagContainer = new FlagContainer(null);
 
     /**
      * Constructor for a new plot.
@@ -196,7 +195,7 @@ public class Plot {
         this.id = id;
         this.owner = owner;
         this.temp = temp;
-        this.flagContainer = new FlagContainer(area.getFlagContainer());
+        this.flagContainer.setParentContainer(area.getFlagContainer());
     }
 
     /**
@@ -225,7 +224,7 @@ public class Plot {
         this.timestamp = timestamp;
         this.temp = temp;
         if (area != null) {
-            this.flagContainer = new FlagContainer(area.getFlagContainer());
+            this.flagContainer.setParentContainer(area.getFlagContainer());
             if (flags != null) {
                 for (PlotFlag<?, ?> flag : flags) {
                     this.flagContainer.addFlag(flag);
@@ -526,6 +525,7 @@ public class Plot {
         }
         this.area = area;
         area.addPlot(this);
+        this.flagContainer.setParentContainer(area.getFlagContainer());
     }
 
     /**
@@ -2087,10 +2087,6 @@ public class Plot {
         return this.id.hashCode();
     }
 
-    public void setFlagContainer(final FlagContainer flagContainer) {
-        this.flagContainer = flagContainer;
-    }
-
     /**
      * Gets the plot alias.
      * - Returns an empty string if no alias is set
@@ -2441,8 +2437,12 @@ public class Plot {
             } else {
                 flagContainer2.addAll(flagContainer1.getFlagMap().values());
             }
-            this.setFlagContainer(greater ? flagContainer1 : flagContainer2);
-            plot.setFlagContainer(this.getFlagContainer());
+            if (!greater) {
+                this.flagContainer.clearLocal();
+                this.flagContainer.addAll(flagContainer2.getFlagMap().values());
+            }
+            plot.flagContainer.clearLocal();
+            plot.flagContainer.addAll(this.flagContainer.getFlagMap().values());
         }
         if (!this.getAlias().isEmpty()) {
             plot.setAlias(this.getAlias());

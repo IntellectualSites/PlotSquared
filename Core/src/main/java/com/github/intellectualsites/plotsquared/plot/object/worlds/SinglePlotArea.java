@@ -172,7 +172,7 @@ public class SinglePlotArea extends GridPlotWorld {
         final FlagContainer oldContainer = p.getFlagContainer();
         p = new SinglePlot(p.getId(), p.owner, p.getTrusted(), p.getMembers(), p.getDenied(),
             s.alias, s.getPosition(), null, this, s.merged, p.getTimestamp(), p.temp);
-        p.setFlagContainer(oldContainer);
+        p.getFlagContainer().addAll(oldContainer);
 
         return p;
     }

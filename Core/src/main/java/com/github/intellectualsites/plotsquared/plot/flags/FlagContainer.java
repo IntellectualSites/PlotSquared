@@ -2,6 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.flags;
 
 import com.google.common.collect.ImmutableMap;
 import lombok.EqualsAndHashCode;
+import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -13,7 +14,7 @@ import java.util.Map;
  */
 @EqualsAndHashCode(of = "flagMap") @SuppressWarnings("unused") public class FlagContainer {
 
-    private final FlagContainer parentContainer;
+    @Setter private FlagContainer parentContainer;
     private final Map<Class<?>, PlotFlag<?, ?>> flagMap = new HashMap<>();
     private final PlotFlagUpdateHandler plotFlagUpdateHandler;
 
@@ -94,6 +95,10 @@ import java.util.Map;
         for (final PlotFlag<?, ?> flag : flags) {
             this.addFlag(flag);
         }
+    }
+
+    public void addAll(final FlagContainer container) {
+        this.addAll(container.flagMap.values());
     }
 
     /**
