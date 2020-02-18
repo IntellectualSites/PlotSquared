@@ -8,10 +8,11 @@ import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DescriptionFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.ServerPlotFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.types.DoubleFlag;
 import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -59,6 +60,11 @@ import java.util.stream.IntStream;
  * plot functions
  */
 public class MainUtil {
+
+    private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
+    static {
+        FLAG_DECIMAL_FORMAT.setMaximumFractionDigits(340);
+    }
 
     /**
      * If the NMS code for sending chunk updates is functional<br>
@@ -778,22 +784,18 @@ public class MainUtil {
         }
 
         StringBuilder flags = new StringBuilder();
-        HashMap<Flag<?>, Object> flagMap =
-            FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true);
-        if (flagMap.isEmpty()) {
+        Collection<PlotFlag<?, ?>> flagCollection = FlagManager.getPlotFlags(plot, true);
+        if (flagCollection.isEmpty()) {
             flags.append(Captions.NONE.getTranslated());
         } else {
             String prefix = "";
-            for (Entry<Flag<?>, Object> entry : flagMap.entrySet()) {
-                Object value = entry.getValue();
-                if (entry.getKey() instanceof DoubleFlag && !Settings.General.SCIENTIFIC) {
-                    DecimalFormat df = new DecimalFormat("0");
-                    df.setMaximumFractionDigits(340);
-                    value = df.format(value);
+            for (final PlotFlag<?, ?> flag : flagCollection) {
+                Object value = flag.getValue();
+                if (flag instanceof DoubleFlag && !Settings.General.SCIENTIFIC) {
+                    value = FLAG_DECIMAL_FORMAT.format(value);
                 }
-                flags.append(prefix).append(CaptionUtility
-                    .format(Captions.PLOT_FLAG_LIST.getTranslated(), entry.getKey().getName(),
-                        value));
+                flags.append(prefix).append(CaptionUtility.format(Captions.PLOT_FLAG_LIST.getTranslated(),
+                    flag.getName(), value));
                 prefix = ", ";
             }
         }

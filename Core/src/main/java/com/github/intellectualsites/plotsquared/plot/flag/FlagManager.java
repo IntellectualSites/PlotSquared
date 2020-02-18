@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.flag;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.InternalFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -12,6 +13,8 @@ import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.google.common.collect.ImmutableSet;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -170,30 +173,24 @@ public class FlagManager {
         return getSettingFlags(plot.getArea(), plot.getSettings());
     }
 
-    public static HashMap<Flag<?>, Object> getPlotFlags(PlotArea area, PlotSettings settings,
-        boolean ignorePluginflags) {
-        HashMap<Flag<?>, Object> flags = null;
-        if (area != null && !area.DEFAULT_FLAGS.isEmpty()) {
-            flags = new HashMap<>(area.DEFAULT_FLAGS.size());
-            flags.putAll(area.DEFAULT_FLAGS);
+    public static Collection<PlotFlag<?, ?>> getPlotFlags(final Plot plot, final boolean ignorePluginFlags) {
+        final Map<Class<?>, PlotFlag<?, ?>> flags = new HashMap<>();
+        if (plot.getArea() != null && !plot.getArea().getFlagContainer().getFlagMap().isEmpty()) {
+            final Map<Class<?>, PlotFlag<?, ?>> flagMap = plot.getArea().getFlagContainer().getFlagMap();
+            flags.putAll(flagMap);
         }
-        if (ignorePluginflags) {
-            if (flags == null) {
-                flags = new HashMap<>(settings.flags.size());
-            }
-            for (Map.Entry<Flag<?>, Object> flag : settings.flags.entrySet()) {
-                if (flag.getKey().isReserved()) {
+        final Map<Class<?>, PlotFlag<?, ?>> flagMap = plot.getFlagContainer().getFlagMap();
+        if (ignorePluginFlags) {
+            for (final PlotFlag<?, ?> flag : flagMap.values()) {
+                if (flag instanceof InternalFlag) {
                     continue;
                 }
-                flags.put(flag.getKey(), flag.getValue());
+                flags.put(flag.getClass(), flag);
             }
-            return flags;
-        } else if (flags == null) {
-            return settings.flags;
         } else {
-            flags.putAll(settings.flags);
+            flags.putAll(flagMap);
         }
-        return flags;
+        return flagMap.values();
     }
 
     public static Map<Flag<?>, Object> getSettingFlags(PlotArea area, PlotSettings settings) {
