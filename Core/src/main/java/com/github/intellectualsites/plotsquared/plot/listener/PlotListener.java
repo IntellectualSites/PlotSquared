@@ -4,7 +4,6 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyExitFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FarewellFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlightFlag;
@@ -39,7 +38,6 @@ import com.sk89q.worldedit.world.item.ItemTypes;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 public class PlotListener {

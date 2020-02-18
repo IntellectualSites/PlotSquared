@@ -2,23 +2,10 @@ package com.github.intellectualsites.plotsquared.plot;
 
 import com.github.intellectualsites.plotsquared.plot.database.AbstractDBTest;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtilTest;
-import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
-import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.item.ItemType;
-import com.sk89q.worldedit.world.item.ItemTypes;
 import org.junit.Before;
-import org.junit.Test;
-
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 

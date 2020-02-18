@@ -7,10 +7,10 @@ import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flag.Flag;
 import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.KeepFlag;
 import com.github.intellectualsites.plotsquared.plot.generator.SquarePlotWorld;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
@@ -40,7 +40,6 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import lombok.Getter;
-import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,7 +58,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -1091,7 +1089,7 @@ public class Plot {
      * @param value Flag value
      */
     public <V> boolean setFlag(PlotFlag<V, ?> flag, V value) {
-        if (flag == Flags.KEEP && ExpireManager.IMP != null) {
+        if (flag instanceof KeepFlag && ExpireManager.IMP != null) {
             ExpireManager.IMP.updateExpired(this);
         }
         return FlagManager.addPlotFlag(this, flag, value);

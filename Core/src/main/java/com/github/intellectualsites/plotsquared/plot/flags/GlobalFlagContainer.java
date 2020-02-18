@@ -37,6 +37,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.IceMe
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.InstabreakFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.InvincibleFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.ItemDropFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.KeepFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.KelpGrowFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.LiquidFlowFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscBreakFlag;
@@ -173,6 +174,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(GamemodeFlag.GAMEMODE_FLAG_DEFAULT);
         this.addFlag(GuestGamemodeFlag.GUEST_GAMEMODE_FLAG_DEFAULT);
         this.addFlag(BlockedCmdsFlag.BLOCKED_CMDS_FLAG_NONE);
+        this.addFlag(KeepFlag.KEEP_FLAG_FALSE);
 
         // Internal flags
         this.addFlag(new AnalysisFlag(Collections.emptyList()));

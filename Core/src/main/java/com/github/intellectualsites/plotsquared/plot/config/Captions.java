@@ -634,6 +634,7 @@ public enum Captions implements Caption {
     FLAG_DESCRIPTION_GAMEMODE("Determines the gamemode in the plot.", "Flags"),
     FLAG_DESCRIPTION_GUEST_GAMEMODE("Determines the guest gamemode in the plot.", "Flags"),
     FLAG_DESCRIPTION_BLOCKED_CMDS("A list of commands that are blocked in the plot.", "Flags"),
+    FLAG_DESCRIPTION_KEEP("Prevents the plot from expiring. Can be set to: true, false, the number of milliseconds to keep the plot for or a timestamp (3w 2d 5h).", "Flags"),
     //</editor-fold>
     //<editor-fold desc="Flag category errors">
     FLAG_ERROR_BOOLEAN("Flag value must be a boolean (true|false)", "Flags"),

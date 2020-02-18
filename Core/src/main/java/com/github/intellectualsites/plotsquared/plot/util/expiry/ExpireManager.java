@@ -4,10 +4,9 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnalysisFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.KeepFlag;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -28,7 +27,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -445,9 +443,9 @@ public class ExpireManager {
             || UUIDHandler.getPlayer(plot.getOwner()) != null || plot.getRunning() > 0) {
             return 0;
         }
-        Optional<?> keep = plot.getFlag(Flags.KEEP);
-        if (keep.isPresent()) {
-            Object value = keep.get();
+
+        final Object value = plot.getFlag(KeepFlag.class);
+        if (!value.equals(false)) {
             if (value instanceof Boolean) {
                 if (Boolean.TRUE.equals(value)) {
                     return 0;
