@@ -787,7 +787,7 @@ public class MainUtil {
         if (flagCollection.isEmpty()) {
             flags.append(Captions.NONE.getTranslated());
         } else {
-            String prefix = "";
+            String prefix = " ";
             for (final PlotFlag<?, ?> flag : flagCollection) {
                 Object value;
                 if (flag instanceof DoubleFlag && !Settings.General.SCIENTIFIC) {
@@ -802,6 +802,12 @@ public class MainUtil {
         }
         boolean build = plot.isAdded(player.getUUID());
         String owner = plot.getOwners().isEmpty() ? "unowned" : getPlayerList(plot.getOwners());
+        if (plot.getArea() != null) {
+            info = info.replace("%area%", plot.getArea().worldname +
+                (plot.getArea().id == null ? "" : "(" + plot.getArea().id + ")"));
+        } else {
+            info = info.replace("%area%", Captions.NONE.getTranslated());
+        }
         info = info.replace("%id%", plot.getId().toString());
         info = info.replace("%alias%", alias);
         info = info.replace("%num%", String.valueOf(num));
@@ -816,7 +822,7 @@ public class MainUtil {
         info = info.replace("%seen%", seen);
         info = info.replace("%flags%", flags);
         info = info.replace("%build%", String.valueOf(build));
-        info = info.replace("%desc%", "No description set.");
+        info = info.replace("%desc%", Captions.PLOT_NO_DESCRIPTION.getTranslated());
         if (info.contains("%rating%")) {
             final String newInfo = info;
             TaskManager.runTaskAsync(() -> {

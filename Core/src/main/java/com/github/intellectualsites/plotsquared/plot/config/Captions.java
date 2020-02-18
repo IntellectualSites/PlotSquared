@@ -465,10 +465,11 @@ public enum Captions implements Caption {
     PLOT_INFO_UNCLAIMED("$2Plot $1%s$2 is not yet claimed", "Info"),
     PLOT_INFO_HEADER("$3&m---------&r $1INFO $3&m---------", false, "Info"),
     PLOT_INFO_HIDDEN("$2You cannot view the information about this plot", "Info"),
-    PLOT_INFO("$1ID: $2%id%$1&-" + "$1Alias:$2%alias%$1&-" + "$1Owner:$2%owner%$1&-"
+    PLOT_INFO_FORMAT("$1ID: $2%id%$1&-" + "$1Area: $2%area%$1&-"
+        +"$1Alias:$2%alias%$1&-" + "$1Owner:$2%owner%$1&-"
         + "$1Biome: $2%biome%$1&-" + "$1Can Build: $2%build%$1&-" + "$1Rating: $2%rating%&-"
         + "$1Seen: $2%seen%&-" + "$1Trusted:$2%trusted%$1&-" + "$1Members:$2%members%$1&-"
-        + "$1Denied:$2%denied%$1&-" + "$1Flags:$2%flags%", "Info"),
+        + "$1Denied:$2%denied%$1&-" + "$1Flags:$2%flags%&-$1Description: $2%desc%$1", "Info"),
     PLOT_INFO_FOOTER("$3&m---------&r $1INFO $3&m---------", false, "Info"),
     PLOT_INFO_TRUSTED("$1Trusted:$2%trusted%", "Info"),
     PLOT_INFO_MEMBERS("$1Members:$2%members%", "Info"),
@@ -483,7 +484,8 @@ public enum Captions implements Caption {
     PLOT_INFO_SIZE("$1Size:$2 %size%", "Info"),
     PLOT_INFO_SEEN("$1Seen:$2 %seen%", "Info"),
     PLOT_USER_LIST(" $1%user%$2,", "Info"),
-    PLOT_FLAG_LIST("$1%s0:%s1$2", "Info"),
+    PLOT_FLAG_LIST("$2%s0:%s1$3", "Info"),
+    PLOT_NO_DESCRIPTION("No description set.", "Info"),
     INFO_SYNTAX_CONSOLE("$2/plot info X;Z", "Info"),
     //</editor-fold>
     //<editor-fold desc="Working">

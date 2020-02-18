@@ -93,7 +93,7 @@ public class Info extends SubCommand {
                 plot.getId().x + ";" + plot.getId().y);
             return true;
         }
-        String info = Captions.PLOT_INFO.getTranslated();
+        String info = Captions.PLOT_INFO_FORMAT.getTranslated();
         boolean full;
         if (arg != null) {
             info = getCaption(arg);
