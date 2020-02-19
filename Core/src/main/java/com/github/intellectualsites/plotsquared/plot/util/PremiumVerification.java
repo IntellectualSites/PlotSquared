@@ -29,7 +29,7 @@ public class PremiumVerification {
      * Returns true if this plugin is premium
      */
     public static Boolean isPremium() {
-        return usingPremium == null ? isPremium(getUserID()) : usingPremium;
+        return usingPremium == null ? (usingPremium = isPremium(getUserID())) : usingPremium;
     }
 
 }
