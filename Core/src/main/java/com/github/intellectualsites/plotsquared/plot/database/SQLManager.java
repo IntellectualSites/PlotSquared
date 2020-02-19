@@ -5,7 +5,6 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.config.Storage;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
-import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.object.BlockLoc;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -835,14 +834,14 @@ import java.util.concurrent.atomic.AtomicInteger;
         final StmtMod<LegacySettings> mod = new StmtMod<LegacySettings>() {
             @Override public String getCreateMySQL(int size) {
                 return getCreateMySQL(size, "INSERT INTO `" + SQLManager.this.prefix
-                    + "plot_settings`(`plot_plot_id`,`biome`,`rain`,`custom_time`,`time`,`deny_entry`,`alias`,`flags`,`merged`,"
+                    + "plot_settings`(`plot_plot_id`,`biome`,`rain`,`custom_time`,`time`,`deny_entry`,`alias`,`merged`,"
                     + "`position`) VALUES ", 10);
             }
 
             @Override public String getCreateSQLite(int size) {
                 return getCreateSQLite(size, "INSERT INTO `" + SQLManager.this.prefix
                         + "plot_settings` SELECT ? AS `plot_plot_id`, ? AS `biome`, ? AS `rain`, ? AS `custom_time`, ? AS `time`, ? AS "
-                        + "`deny_entry`, ? AS `alias`, ? AS `flags`, ? AS `merged`, ? AS `position`",
+                        + "`deny_entry`, ? AS `alias`, ? AS `merged`, ? AS `position`",
                     10);
             }
 
@@ -864,21 +863,9 @@ import java.util.concurrent.atomic.AtomicInteger;
                 } else {
                     statement.setString(i * 10 + 7, pair.settings.getAlias());
                 }
-                StringBuilder flag_string = new StringBuilder();
-                int k = 0;
-                for (PlotFlag<?, ?> flag : pair.flagContainer.getFlagMap().values()) {
-                    if (k != 0) {
-                        flag_string.append(',');
-                    }
-                    flag_string.append(flag.getName()).append(':').append(
-                        flag.toString().replaceAll(":", "¯")
-                            .replaceAll(",", "´"));
-                    k++;
-                }
-                statement.setString(i * 10 + 8, flag_string.toString());
                 boolean[] merged = pair.settings.getMerged();
                 int hash = MainUtil.hash(merged);
-                statement.setInt(i * 10 + 9, hash);
+                statement.setInt(i * 10 + 8, hash);
                 BlockLoc loc = pair.settings.getPosition();
                 String position;
                 if (loc.getY() == 0) {
@@ -886,7 +873,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 } else {
                     position = loc.getX() + "," + loc.getY() + ',' + loc.getZ();
                 }
-                statement.setString(i * 10 + 10, position);
+                statement.setString(i * 10 + 9, position);
             }
 
             @Override public void setSQLite(PreparedStatement stmt, int i, LegacySettings pair)
@@ -902,24 +889,12 @@ import java.util.concurrent.atomic.AtomicInteger;
                 } else {
                     stmt.setString(i * 10 + 7, pair.settings.getAlias());
                 }
-                StringBuilder flag_string = new StringBuilder();
-                int k = 0;
-                for (PlotFlag<?, ?> flag : pair.flagContainer.getFlagMap().values()) {
-                    if (k != 0) {
-                        flag_string.append(',');
-                    }
-                    flag_string.append(flag.getName()).append(':').append(
-                        flag.toString().replaceAll(":", "¯")
-                            .replaceAll(",", "´"));
-                    k++;
-                }
-                stmt.setString(i * 10 + 8, flag_string.toString());
                 boolean[] merged = pair.settings.getMerged();
                 int n = 0;
                 for (int j = 0; j < 4; ++j) {
                     n = (n << 1) + (merged[j] ? 1 : 0);
                 }
-                stmt.setInt(i * 10 + 9, n);
+                stmt.setInt(i * 10 + 8, n);
                 BlockLoc loc = pair.settings.getPosition();
                 String position;
                 if (loc.getY() == 0) {
@@ -927,7 +902,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 } else {
                     position = loc.getX() + "," + loc.getY() + ',' + loc.getZ();
                 }
-                stmt.setString(i * 10 + 10, position);
+                stmt.setString(i * 10 + 9, position);
             }
 
             @Override public void setSQL(PreparedStatement stmt, LegacySettings pair)
@@ -947,7 +922,7 @@ import java.util.concurrent.atomic.AtomicInteger;
             @Override public String getCreateSQLite(int size) {
                 return getCreateSQLite(size, "INSERT INTO `" + SQLManager.this.prefix
                         + "plot_settings` SELECT ? AS `plot_plot_id`, ? AS `biome`, ? AS `rain`, ? AS `custom_time`, ? AS `time`, ? AS "
-                        + "`deny_entry`, ? AS `alias`, ? AS `flags`, ? AS `merged`, ? AS `position` ",
+                        + "`deny_entry`, ? AS `alias`, ? AS `merged`, ? AS `position` ",
                     10);
             }
 
@@ -971,8 +946,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 stmt.setNull(i * 10 + 6, 4);
                 stmt.setNull(i * 10 + 7, 4);
                 stmt.setNull(i * 10 + 8, 4);
-                stmt.setNull(i * 10 + 9, 4);
-                stmt.setString(i * 10 + 10, "DEFAULT");
+                stmt.setString(i * 10 + 9, "DEFAULT");
             }
 
             @Override public void setSQL(PreparedStatement stmt, Integer id) throws SQLException {
@@ -1145,7 +1119,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                     + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0,"
                     + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000',"
                     + "  `deny_entry` TINYINT(1) DEFAULT '0',"
-                    + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL,"
+                    + "  `alias` VARCHAR(50) DEFAULT NULL,"
                     + "  `merged` INT(11) DEFAULT NULL,"
                     + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT',"
                     + "  PRIMARY KEY (`plot_plot_id`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
@@ -1176,7 +1150,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                     + "  `cluster_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST',"
                     + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0',"
                     + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0',"
-                    + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL,"
+                    + "  `alias` VARCHAR(50) DEFAULT NULL,"
                     + "  `merged` INT(11) DEFAULT NULL,"
                     + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT',"
                     + "  PRIMARY KEY (`cluster_id`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
@@ -1216,7 +1190,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                     + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0,"
                     + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000',"
                     + "  `deny_entry` TINYINT(1) DEFAULT '0',"
-                    + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL,"
+                    + "  `alias` VARCHAR(50) DEFAULT NULL,"
                     + "  `merged` INT(11) DEFAULT NULL,"
                     + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT',"
                     + "  PRIMARY KEY (`plot_plot_id`)" + ')');
@@ -1238,7 +1212,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                     + "  `cluster_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST',"
                     + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0',"
                     + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0',"
-                    + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL,"
+                    + "  `alias` VARCHAR(50) DEFAULT NULL,"
                     + "  `merged` INT(11) DEFAULT NULL,"
                     + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT',"
                     + "  PRIMARY KEY (`cluster_id`)" + ')');
@@ -1862,6 +1836,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 merged[3 - i] = (m & 1 << i) != 0;
                             }
                             plot.getSettings().setMerged(merged);
+                            /*
                             String[] flags_string;
                             String myflags = resultSet.getString("flags");
                             if (myflags == null || myflags.isEmpty()) {
@@ -1907,6 +1882,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 this.setFlags(plot, flags);
                             }
                             plot.getFlagContainer().addAll(flags);
+                            */
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
                         } else {
@@ -3123,21 +3099,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
         public abstract void set(PreparedStatement statement) throws SQLException;
     }
-
-    public static String toString(Collection<PlotFlag<?, ?>> flags) {
-        StringBuilder flag_string = new StringBuilder();
-        int i = 0;
-        for (PlotFlag<?, ?> flag : flags) {
-            if (i != 0) {
-                flag_string.append(',');
-            }
-            flag_string.append(flag.getName()).append(':')
-                .append(flag.toString().replaceAll(":", "¯").replaceAll(",", "´"));
-            i++;
-        }
-        return flag_string.toString();
-    }
-
 
     private class UUIDPair {
 
