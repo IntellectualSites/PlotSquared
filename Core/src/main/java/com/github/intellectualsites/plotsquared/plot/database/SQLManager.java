@@ -1827,7 +1827,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 } catch (final FlagParseException e) {
                                     PlotSquared.debug("Plot with ID " + id + " has an invalid value:");
                                     PlotSquared.debug(Captions.FLAG_PARSE_ERROR.getTranslated().replace("%flag_name%", plotFlag.getName())
-                                        .replace("%flag_value%", value).replace("%error%", e.getErrorMessage()));
+                                        .replace("%flag_value%", e.getValue()).replace("%error%", e.getErrorMessage()));
                                     if (!invalidFlags.containsKey(plot)) {
                                         invalidFlags.put(plot, new ArrayList<>());
                                     }

@@ -77,7 +77,6 @@ import java.util.stream.Stream;
                     }
                     return result;
                 }
-
             } catch (NumberFormatException ignore) {
             }
         } else if (flag instanceof ListFlag) {
@@ -96,6 +95,10 @@ import java.util.stream.Stream;
                         return false;
                     }
                 }
+            } catch (final FlagParseException e) {
+                MainUtil.sendMessage(player, Captions.FLAG_PARSE_ERROR.getTranslated().replace("%flag_name%", flag.getName())
+                    .replace("%flag_value%", e.getValue()).replace("%error%", e.getErrorMessage()));
+                return false;
             } catch (final Exception e) {
                 return false;
             }
@@ -253,7 +256,7 @@ import java.util.stream.Stream;
             parsed = plotFlag.parse(value);
         } catch (final FlagParseException e) {
             MainUtil.sendMessage(player, Captions.FLAG_PARSE_ERROR.getTranslated().replace("%flag_name%", plotFlag.getName())
-                .replace("%flag_value%", value).replace("%error%", e.getErrorMessage()));
+                .replace("%flag_value%", e.getValue()).replace("%error%", e.getErrorMessage()));
             return;
         }
         player.getLocation().getPlotAbs().setFlag(parsed);
@@ -288,7 +291,7 @@ import java.util.stream.Stream;
             parsed = flag.parse(value);
         } catch (FlagParseException e) {
             MainUtil.sendMessage(player, Captions.FLAG_PARSE_ERROR.getTranslated().replace("%flag_name%", flag.getName())
-                .replace("%flag_value%", value).replace("%error%", e.getErrorMessage()));
+                .replace("%flag_value%", e.getValue()).replace("%error%", e.getErrorMessage()));
             return;
         }
         boolean result = player.getLocation().getPlotAbs().setFlag(localFlag.merge(parsed.getValue()));
@@ -336,7 +339,7 @@ import java.util.stream.Stream;
                 parsedFlag = listFlag.parse(value);
             } catch (final FlagParseException e) {
                 MainUtil.sendMessage(player, Captions.FLAG_PARSE_ERROR.getTranslated().replace("%flag_name%", flag.getName())
-                    .replace("%flag_value%", value).replace("%error%", e.getErrorMessage()));
+                    .replace("%flag_value%", e.getValue()).replace("%error%", e.getErrorMessage()));
                 return;
             }
             if (((List) parsedFlag.getValue()).isEmpty()) {

@@ -30,7 +30,7 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockType, F>>
             final BlockState blockState = BlockUtil.get(blockString);
             if (blockState == null) {
                 throw new FlagParseException(this, blockString, Captions.FLAG_ERROR_INVALID_BLOCK);
-            } else {
+            } else if (!parsedBlocks.contains(blockState.getBlockType())) {
                 parsedBlocks.add(blockState.getBlockType());
             }
         }
