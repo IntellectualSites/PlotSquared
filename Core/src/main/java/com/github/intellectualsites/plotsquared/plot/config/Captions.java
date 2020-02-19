@@ -643,7 +643,7 @@ public enum Captions implements Caption {
     //</editor-fold>
     //<editor-fold desc="Flag category errors">
     FLAG_ERROR_BOOLEAN("Flag value must be a boolean (true|false)", false, "Flags"),
-    FLAG_ERROR_ENUM("Must be one of: %s", "Flags"),
+    FLAG_ERROR_ENUM("Must be one of: %s", false, "Flags"),
     FLAG_ERROR_GAMEMODE("Flag value must be a gamemode: 'survival', 'creative', 'adventure' or 'spectator.", false, "Flags"),
     FLAG_ERROR_INTEGER("Flag value must be a whole number", false, "Flags"),
     FLAG_ERROR_INTEGER_LIST("Flag value must be an integer list", false, "Flags"),
