@@ -1110,7 +1110,7 @@ public class Plot {
         for (final Plot plot : this.getConnectedPlots()) {
             plot.getFlagContainer().addFlag(flag);
             plot.reEnter();
-            DBFunc.setFlags(plot, plot.getFlagContainer().getFlagMap().values());
+            DBFunc.setFlag(plot, flag);
         }
         return true;
     }
@@ -1187,7 +1187,7 @@ public class Plot {
                 }
             }
             plot.reEnter();
-            DBFunc.setFlags(plot, plot.getFlagContainer().getFlagMap().values());
+            DBFunc.removeFlag(plot, flag);
             removed = true;
         }
         return removed;
@@ -3162,9 +3162,18 @@ public class Plot {
             Plot other = plot.getRelative(destination.getArea(), offset.x, offset.y);
             other.create(plot.getOwner(), false);
             if (!plot.getFlagContainer().getFlagMap().isEmpty()) {
+                final Collection<PlotFlag<?,?>> existingFlags = other.getFlags();
                 other.getFlagContainer().clearLocal();
                 other.getFlagContainer().addAll(plot.getFlagContainer().getFlagMap().values());
-                DBFunc.setFlags(other, plot.getFlagContainer().getFlagMap().values());
+                // Update the database
+                for (final PlotFlag<?,?> flag : existingFlags) {
+                    final PlotFlag<?,?> newFlag = other.getFlagContainer().queryLocal(flag.getClass());
+                    if (other.getFlagContainer().queryLocal(flag.getClass()) == null) {
+                        DBFunc.removeFlag(other, flag);
+                    } else {
+                        DBFunc.setFlag(other, newFlag);
+                    }
+                }
             }
             if (plot.isMerged()) {
                 other.setMerged(plot.getMerged());

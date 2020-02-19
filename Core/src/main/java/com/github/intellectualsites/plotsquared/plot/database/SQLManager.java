@@ -2,9 +2,13 @@ package com.github.intellectualsites.plotsquared.plot.database;
 
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.config.Storage;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
+import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.object.BlockLoc;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -1075,7 +1079,7 @@ import java.util.concurrent.atomic.AtomicInteger;
     @Override public void createTables() throws SQLException {
         String[] tables =
             new String[] {"plot", "plot_denied", "plot_helpers", "plot_comments", "plot_trusted",
-                "plot_rating", "plot_settings", "cluster", "player_meta"};
+                "plot_rating", "plot_settings", "cluster", "player_meta", "plot_flags"};
         DatabaseMetaData meta = this.connection.getMetaData();
         int create = 0;
         for (String s : tables) {
@@ -1221,7 +1225,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                     + " `uuid` VARCHAR(40) NOT NULL," + " `key` VARCHAR(32) NOT NULL,"
                     + " `value` blob NOT NULL" + ')');
                 stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_flags`("
-                    + "`id` INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+                    + "`id` INTEGER PRIMARY KEY AUTOINCREMENT,"
                     + "`plot_id` INTEGER NOT NULL," + " `flag` VARCHAR(256)," + " `value` VARCHAR(512),"
                     + "FOREIGN KEY (plot_id) REFERENCES plot (id) ON DELETE CASCADE, "
                     + "UNIQUE (plot_id, flag))");
@@ -1805,6 +1809,51 @@ import java.util.concurrent.atomic.AtomicInteger;
                     deleteRows(toDelete, this.prefix + "plot_denied", "plot_plot_id");
                 }
 
+                try (final ResultSet resultSet = statement.executeQuery("SELECT * FROM `" + this.prefix + "plot_flags`")) {
+                    final ArrayList<Integer> toDelete = new ArrayList<>();
+                    final Map<Plot, Collection<PlotFlag<?,?>>> invalidFlags = new HashMap<>();
+                    while (resultSet.next()) {
+                        id = resultSet.getInt("plot_id");
+                        final String flag = resultSet.getString("flag");
+                        final String value = resultSet.getString("value");
+                        final Plot plot = plots.get(id);
+                        if (plot != null) {
+                            final PlotFlag<?,?> plotFlag = GlobalFlagContainer.getInstance().getFlagFromString(flag);
+                            if (plotFlag == null) {
+                                PlotSquared.debug("&cPlot " + id
+                                    + " in `plot_flags` has an unknown flag type: " + flag);
+                            } else {
+                                try {
+                                    plot.getFlagContainer().addFlag(plotFlag.parse(value));
+                                } catch (final FlagParseException e) {
+                                    PlotSquared.debug("Plot with ID " + id + " has an invalid value:");
+                                    PlotSquared.debug(CaptionUtility.format(
+                                        Captions.FLAG_PARSE_EXCEPTION, flag, value, e.getErrorMessage()));
+                                    if (!invalidFlags.containsKey(plot)) {
+                                        invalidFlags.put(plot, new ArrayList<>());
+                                    }
+                                    invalidFlags.get(plot).add(plotFlag);
+                                }
+                            }
+                        } else if (Settings.Enabled_Components.DATABASE_PURGER) {
+                            toDelete.add(id);
+                        } else {
+                            PlotSquared.debug("&cPlot " + id
+                                + " in `plot_flags` does not exist. Create this plot or set `database-purger: true` in the settings.yml.");
+                        }
+                    }
+                    if (Settings.Enabled_Components.DATABASE_PURGER) {
+                        for (final Map.Entry<Plot, Collection<PlotFlag<?,?>>> plotFlagEntry : invalidFlags.entrySet()) {
+                            for (final PlotFlag<?,?> flag : plotFlagEntry.getValue()) {
+                                PlotSquared.debug("&cPlot \"" + plotFlagEntry.getKey() + "\""
+                                    + " had an invalid flag (" + flag.getName() + "). A fix has been attempted.");
+                                removeFlag(plotFlagEntry.getKey(), flag);
+                            }
+                        }
+                    }
+                    deleteRows(toDelete, this.prefix + "plot_flags", "plot_id");
+                }
+
                 try (ResultSet resultSet = statement
                     .executeQuery("SELECT * FROM `" + this.prefix + "plot_settings`")) {
                     ArrayList<Integer> toDelete = new ArrayList<>();
@@ -1986,19 +2035,39 @@ import java.util.concurrent.atomic.AtomicInteger;
         addPlotTask(newPlot, null);
     }
 
-    @Override public void setFlags(final Plot plot, Collection<PlotFlag<?, ?>> flags) {
-        // TODO use something new instead
-        final String flag_string = toString(flags);
-        addPlotTask(plot, new UniqueStatement("setFlags") {
+    @Override public void setFlag(final Plot plot, final PlotFlag<?, ?> flag) {
+        addPlotTask(plot, new UniqueStatement("setFlag") {
             @Override public void set(PreparedStatement statement) throws SQLException {
-                statement.setString(1, flag_string);
-                statement.setInt(2, getId(plot));
+                statement.setInt(1, getId(plot));
+                statement.setString(2, flag.getName());
+                statement.setString(3, flag.toString());
+                statement.setString(4, flag.toString());
             }
 
             @Override public PreparedStatement get() throws SQLException {
-                return SQLManager.this.connection.prepareStatement(
-                    "UPDATE `" + SQLManager.this.prefix
-                        + "plot_settings` SET `flags` = ? WHERE `plot_plot_id` = ?");
+                final String statement;
+                if (SQLManager.this.mySQL) {
+                    statement = "INSERT INTO `" + SQLManager.this.prefix + "plot_flags`(`plot_id`, `flag`, `value`) VALUES(?, ?, ?) "
+                        + "ON DUPLICATE KEY UPDATE `value` = ?";
+                } else {
+                    statement = "INSERT INTO `" + SQLManager.this.prefix + "plot_flags`(`plot_id`, `flag`, `value`) VALUES(?, ?, ?) "
+                        + "ON CONFLICT(`plot_id`,`flag`) DO UPDATE SET `value` = ?";
+                }
+                return SQLManager.this.connection.prepareStatement(statement);
+            }
+        });
+    }
+
+    @Override public void removeFlag(final Plot plot, final PlotFlag<?, ?> flag) {
+        addPlotTask(plot, new UniqueStatement("removeFlag") {
+            @Override public void set(PreparedStatement statement) throws SQLException {
+                statement.setInt(1, getId(plot));
+                statement.setString(2, flag.getName());
+            }
+
+            @Override public PreparedStatement get() throws SQLException {
+                return SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix
+                    + "plot_flags` WHERE `plot_id` = ? AND `flag` = ?");
             }
         });
     }
@@ -2969,7 +3038,8 @@ import java.util.concurrent.atomic.AtomicInteger;
                     .isEqual(StringMan.joinOrdered(pf, ","),
                         StringMan.joinOrdered(df, ","))) {
                     PlotSquared.debug(" - Correcting flags for: " + plot);
-                    setFlags(plot, pf);
+                    // setFlags(plot, pf);
+                    // TODO: Re-implement
                 }
             }
         }

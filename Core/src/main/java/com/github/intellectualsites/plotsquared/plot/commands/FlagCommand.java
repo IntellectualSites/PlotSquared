@@ -233,6 +233,7 @@ import java.util.concurrent.CompletableFuture;
         if (flag == null) {
             return;
         }
+        final PlotFlag localFlag = player.getLocation().getPlotAbs().getFlagContainer().getFlag(flag.getClass());
         for (String entry : args[1].split(",")) {
             if (!checkPermValue(player, flag, args[0], entry)) {
                 return;
@@ -247,7 +248,7 @@ import java.util.concurrent.CompletableFuture;
                 .send(player, e.getFlag().getName(), e.getValue(), e.getErrorMessage());
             return;
         }
-        boolean result = player.getLocation().getPlotAbs().setFlag(flag.merge(parsed.getValue()));
+        boolean result = player.getLocation().getPlotAbs().setFlag(localFlag.merge(parsed.getValue()));
         if (!result) {
             MainUtil.sendMessage(player, Captions.FLAG_NOT_ADDED);
             return;

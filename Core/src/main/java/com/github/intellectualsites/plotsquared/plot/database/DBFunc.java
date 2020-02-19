@@ -11,7 +11,6 @@ import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -304,11 +303,18 @@ public class DBFunc {
         DBFunc.dbManager.setMerged(plot, merged);
     }
 
-    public static void setFlags(Plot plot, Collection<PlotFlag<?, ?>> flags) {
+    public static void setFlag(Plot plot, PlotFlag<?, ?> flag) {
         if (plot.temp == -1 || dbManager == null) {
             return;
         }
-        DBFunc.dbManager.setFlags(plot, flags);
+        DBFunc.dbManager.setFlag(plot, flag);
+    }
+
+    public static void removeFlag(Plot plot, PlotFlag<?, ?> flag) {
+        if (plot.temp == -1 || dbManager == null) {
+            return;
+        }
+        DBFunc.dbManager.removeFlag(plot, flag);
     }
 
     /**

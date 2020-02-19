@@ -9,7 +9,6 @@ import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -146,12 +145,20 @@ public interface AbstractDB {
     void swapPlots(Plot plot1, Plot plot2);
 
     /**
-     * Sets plot flags.
+     * Sets plot flag.
      *
-     * @param plot  Plot Object
-     * @param flags flags to set
+     * @param plot Plot Object
+     * @param flag Flag to set
      */
-    void setFlags(Plot plot, Collection<PlotFlag<?, ?>> flags);
+    void setFlag(Plot plot, PlotFlag<?, ?> flag);
+
+    /**
+     * Remove a plot flag.
+     *
+     * @param plot Plot Object
+     * @param flag Flag to remove
+     */
+    void removeFlag(Plot plot, PlotFlag<?, ?> flag);
 
     /**
      * Renames a cluster to the given name.

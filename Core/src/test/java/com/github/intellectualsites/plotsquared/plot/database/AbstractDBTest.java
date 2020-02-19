@@ -9,7 +9,6 @@ import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +90,10 @@ public class AbstractDBTest implements AbstractDB {
     @Override public void swapPlots(Plot plot1, Plot plot2) {
     }
 
-    @Override public void setFlags(Plot plot, Collection<PlotFlag<?, ?>> flags) {
+    @Override public void setFlag(Plot plot, PlotFlag<?, ?> flag) {
+    }
+
+    @Override public void removeFlag(Plot plot, PlotFlag<?, ?> flag) {
     }
 
     @Override public void setClusterName(PlotCluster cluster, String name) {
