@@ -1,8 +1,6 @@
 package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
 import com.destroystokyo.paper.MaterialTags;
-import com.github.intellectualsites.plotsquared.bukkit.BukkitMain;
-import com.github.intellectualsites.plotsquared.bukkit.object.BukkitBlockUtil;
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
@@ -17,7 +15,6 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotHandler;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
-import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.StringWrapper;
 import com.github.intellectualsites.plotsquared.plot.util.EntityUtil;
@@ -28,16 +25,13 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.RegExUtil;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
-import com.github.intellectualsites.plotsquared.plot.util.UpdateUtility;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
-import com.sk89q.worldedit.world.item.ItemType;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -145,7 +139,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 /**
@@ -727,38 +720,6 @@ import java.util.regex.Pattern;
             }
             EventUtil.manager.doJoinTask(pp);
         }, 20);
-
-        if (pp.hasPermission(Captions.PERMISSION_ADMIN_UPDATE_NOTIFICATION.getTranslated())
-            && PlotSquared.get().getUpdateUtility() != null) {
-            final UpdateUtility updateUtility = PlotSquared.get().getUpdateUtility();
-            final BukkitMain bukkitMain = BukkitMain.getPlugin(BukkitMain.class);
-            updateUtility.checkForUpdate(PlotSquared.get().getVersion().versionString(),
-                ((updateDescription, throwable) -> {
-                    if (throwable != null) {
-                        bukkitMain.getLogger().severe(String
-                            .format("Could not check for update. Reason: %s",
-                                throwable.getMessage()));
-                    } else {
-                        if (updateDescription != null) {
-                            new PlotMessage("-------- ").color("$2")
-                                .text("PlotSquared Update Notification").color("$1")
-                                .text(" --------").color("$2").send(pp);
-                            new PlotMessage("There appears to be a PlotSquared update available!")
-                                .color("$1").send(pp);
-                            new PlotMessage(String.format(
-                                "You are running version %s, the newest available version is %s",
-                                bukkitMain.getPluginVersionString(),
-                                updateDescription.getVersion())).color("$1").send(pp);
-                            new PlotMessage("Update URL").color("$1").text(": ").color("$2")
-                                .text(updateDescription.getUrl()).tooltip("Download update")
-                                .send(pp);
-                            new PlotMessage("-------- ").color("$2")
-                                .text("PlotSquared Update Notification").color("$1")
-                                .text(" --------").color("$2").send(pp);
-                        }
-                    }
-                }));
-        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
