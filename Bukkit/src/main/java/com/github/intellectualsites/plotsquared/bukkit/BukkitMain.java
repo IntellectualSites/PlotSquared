@@ -47,22 +47,8 @@ import com.github.intellectualsites.plotsquared.plot.object.worlds.PlotAreaManag
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SingleWorldGenerator;
-import com.github.intellectualsites.plotsquared.plot.util.ChatManager;
-import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
-import com.github.intellectualsites.plotsquared.plot.util.ConsoleColors;
-import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
-import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
-import com.github.intellectualsites.plotsquared.plot.util.InventoryUtil;
-import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils;
-import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
-import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
-import com.github.intellectualsites.plotsquared.plot.util.StringMan;
-import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
-import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
-import com.github.intellectualsites.plotsquared.plot.util.UUIDHandlerImplementation;
+import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.bukkit.util.UpdateUtility;
-import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
@@ -100,6 +86,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.github.intellectualsites.plotsquared.plot.util.PremiumVerification.getUserID;
 import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getRefClass;
 
 public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
@@ -163,6 +150,15 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
 
         new UpdateUtility(this).updateChecker();
+
+        new PremiumVerification();
+        PremiumVerification.isPremium();
+        if (PremiumVerification.isPremium()) {
+            PlotSquared.log(Captions.PREFIX + "&6PlotSquared version licensed to Spigot user " + getUserID());
+            PlotSquared.log(Captions.PREFIX + "&6Thanks for supporting us :)");
+        } else {
+            PlotSquared.log(Captions.PREFIX + "&6Couldn't verify purchase :(");
+        }
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new Placeholders(this).register();
