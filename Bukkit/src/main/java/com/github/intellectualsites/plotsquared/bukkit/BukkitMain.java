@@ -7,6 +7,7 @@ import com.github.intellectualsites.plotsquared.bukkit.listeners.PlayerEvents;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.PlotPlusListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.SingleWorldListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.WorldEvents;
+import com.github.intellectualsites.plotsquared.bukkit.placeholders.Placeholders;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitChatManager;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitChunkManager;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitCommand;
@@ -60,7 +61,7 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandlerImplementation;
-import com.github.intellectualsites.plotsquared.plot.util.UpdateUtility;
+import com.github.intellectualsites.plotsquared.bukkit.util.UpdateUtility;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
@@ -161,36 +162,13 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             return;
         }
 
-        // Check for updates
-        if (PlotSquared.get().getUpdateUtility() != null) {
-            final UpdateUtility updateUtility = PlotSquared.get().getUpdateUtility();
-            updateUtility.checkForUpdate(PlotSquared.get().getVersion().versionString(),
-                ((updateDescription, throwable) -> {
-                    Bukkit.getScheduler().runTask(BukkitMain.this, () -> {
-                        getLogger().info("-------- PlotSquared Update Check --------");
-                        if (throwable != null) {
-                            getLogger().severe(String
-                                .format("Could not check for updates. Reason: %s",
-                                    throwable.getMessage()));
-                        } else {
-                            if (updateDescription == null) {
-                                getLogger().info(
-                                    "You appear to be running the latest version of PlotSquared. Congratulations!");
-                            } else {
-                                getLogger()
-                                    .info("There appears to be a PlotSquared update available!");
-                                getLogger().info(String.format(
-                                    "You are running version %s, the newest available version is %s",
-                                    getPluginVersionString(), updateDescription.getVersion()));
-                                getLogger().info(
-                                    String.format("Update URL: %s", updateDescription.getUrl()));
-                            }
-                        }
-                        getLogger().info("-------- PlotSquared Update Check --------");
-                    });
-                }));
+        new UpdateUtility(this).updateChecker();
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new Placeholders(this).register();
+            PlotSquared.log(Captions.PREFIX + "&6PlaceholderAPI found! Hook activated.");
         } else {
-            getLogger().warning("Update checking disabled. Skipping.");
+            PlotSquared.log(Captions.PREFIX + "&6PlaceholderAPI is not in use. Hook deactivated.");
         }
 
         this.startMetrics();
@@ -689,7 +667,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
         this.metricsStarted = true;
         Metrics metrics = new Metrics(this, BSTATS_ID);// bstats
-        PlotSquared.log(Captions.PREFIX + "&6Metrics enabled.");
     }
 
     @Override public ChunkManager initChunkManager() {

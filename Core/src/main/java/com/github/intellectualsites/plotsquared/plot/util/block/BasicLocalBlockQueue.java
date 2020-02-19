@@ -88,7 +88,7 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
         this.modified = modified;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
+    @Override public boolean setBlock(int x, int y, int z, @NotNull Pattern pattern) {
         return setBlock(x, y, z, PatternUtil.apply(pattern, x, y, z));
     }
 

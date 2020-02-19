@@ -14,9 +14,9 @@ assignees: ''
 <!--- # NOTICE: 
 ```diff
 ! PlotSquared for Minecraft Java Edition versions between 1.7 through to 1.12.2 are considered
-! legacy, and will receive limited to no support. Please consider upgrading to 1.13+ for
+! legacy, and will receive no support. Please consider upgrading to 1.13+ for
 ! future support.  Plugins exist for 1.13+ which bring back behaviors found in 1.8.8
-! All versions of PlotSquared for Sponge and Nukkit(X) will receive limited to no support
+! All versions of PlotSquared for Sponge and NukkitX will receive limited to no support
 ! due to lack of developer interest and time. Additionally, NukkitX has not had feature
 ! updates since the Better Together, which prevents some PlotSquared features from ever
 ! functioning. Contributions are always welcome however!
@@ -49,7 +49,7 @@ assignees: ''
 **Select one**
 <!-- Select the type you are reporting the issue for (put an "X" between of brackets): 
 The maintained versions are 1.14.4 and 1.15.x -->
-- [] Minecraft 1.15
+- [] Minecraft 1.15.2
 - [] Minecraft 1.14.4
 - [] Minecraft 1.13.2
 - [] Minecraft Java Edition *other versions, please specify*:
@@ -62,9 +62,9 @@ Paste the output here, between the tick marks, replacing this text
 ```
 
 ### WorldEdit/FAWE versions:
-<!--- Specify which plugin you are using, and add its version -->
-- [] FAWE *version*:
-- [] WorldEdit *version*: 
+<!--- Specify which plugin you are using, and add its version. Either use /fawe version or /we version -->
+- [] FAWE version:
+- [] WorldEdit version: 
 
 ### Description of the problem:
 <!--- Be as specific as possible.  Don't lie, redact information, or use false names/situations. -->

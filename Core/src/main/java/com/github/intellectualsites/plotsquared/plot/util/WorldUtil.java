@@ -28,6 +28,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class WorldUtil {
     public static WorldUtil IMP;
@@ -64,10 +65,7 @@ public abstract class WorldUtil {
 
     public abstract com.sk89q.worldedit.world.World getWeWorld(String world);
 
-    public void upload(final Plot plot, UUID uuid, String file, RunnableVal<URL> whenDone) {
-        if (plot == null) {
-            throw new IllegalArgumentException("Plot may not be null!");
-        }
+    public void upload(@NotNull final Plot plot, UUID uuid, String file, RunnableVal<URL> whenDone) {
         final Location home = plot.getHome();
         MainUtil.upload(uuid, file, "zip", new RunnableVal<OutputStream>() {
             @Override public void run(OutputStream output) {

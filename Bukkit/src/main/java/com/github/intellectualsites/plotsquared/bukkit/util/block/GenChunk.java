@@ -22,6 +22,7 @@ import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
 
 import java.util.Arrays;
+import org.jetbrains.annotations.NotNull;
 
 public class GenChunk extends ScopedLocalBlockQueue {
 
@@ -107,7 +108,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
         return false;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
+    @Override public boolean setBlock(int x, int y, int z, @NotNull Pattern pattern) {
         return setBlock(x, y, z, PatternUtil.apply(pattern, x, y, z));
     }
 

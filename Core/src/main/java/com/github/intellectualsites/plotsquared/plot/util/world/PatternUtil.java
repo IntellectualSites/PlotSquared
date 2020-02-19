@@ -15,11 +15,14 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
+import org.jetbrains.annotations.NotNull;
 
 public class PatternUtil {
-    public static BaseBlock apply(Pattern pattern, int x, int y, int z) {
-        if (pattern instanceof BlockPattern || pattern instanceof RandomPattern
-            || pattern instanceof BlockState || pattern instanceof BlockType
+    public static BaseBlock apply(@NotNull Pattern pattern, int x, int y, int z) {
+        if (pattern instanceof BlockPattern
+            || pattern instanceof RandomPattern
+            || pattern instanceof BlockState
+            || pattern instanceof BlockType
             || pattern instanceof BaseBlock) {
             return pattern.apply(BlockVector3.ZERO);
         }
@@ -42,9 +45,7 @@ public class PatternUtil {
         context.setPreferringWildcard(false);
         context.setTryLegacy(true);
         try {
-            Pattern pattern =
-                WorldEdit.getInstance().getPatternFactory().parseFromInput(input, context);
-            return pattern;
+            return WorldEdit.getInstance().getPatternFactory().parseFromInput(input, context);
         } catch (InputParseException e) {
             throw new Command.CommandException(Captions.NOT_VALID_BLOCK, e.getMessage());
         }

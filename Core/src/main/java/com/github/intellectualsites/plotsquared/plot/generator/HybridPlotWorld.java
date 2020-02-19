@@ -313,6 +313,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         int pair = MathMan.pair(x, z);
         BaseBlock[] existing = this.G_SCH.computeIfAbsent(pair, k -> new BaseBlock[height]);
+        if (y >= height) {
+            PlotSquared.log("Error adding overlay block. `y > height` ");
+            return;
+        }
         existing[y] = id;
     }
 }

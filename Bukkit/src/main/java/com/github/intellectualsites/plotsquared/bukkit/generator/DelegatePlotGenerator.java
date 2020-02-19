@@ -9,7 +9,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import lombok.RequiredArgsConstructor;
+import java.util.Random;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
@@ -17,12 +17,15 @@ import org.bukkit.generator.ChunkGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
-import java.util.Random;
-
-@RequiredArgsConstructor final class DelegatePlotGenerator extends IndependentPlotGenerator {
+final class DelegatePlotGenerator extends IndependentPlotGenerator {
 
     private final ChunkGenerator chunkGenerator;
     private final String world;
+
+    public DelegatePlotGenerator(ChunkGenerator chunkGenerator, String world) {
+        this.chunkGenerator = chunkGenerator;
+        this.world = world;
+    }
 
     @Override public void initialize(PlotArea area) {
     }
@@ -44,11 +47,22 @@ import java.util.Random;
         try {
             ChunkGenerator.BiomeGrid grid = new ChunkGenerator.BiomeGrid() {
                 @Override public void setBiome(@Range(from = 0, to = 15) int x,
-                    @Range(from = 0, to = 15) int z, Biome biome) {
+                    @Range(from = 0, to = 15) int z, @NotNull Biome biome) {
                     result.setBiome(x, z, BukkitAdapter.adapt(biome));
                 }
 
+                //do not annotate with Override until we discontinue support for 1.4.4
+                public void setBiome(int x, int y, int z, @NotNull Biome biome) {
+                    result.setBiome(x, z, BukkitAdapter.adapt(biome));
+
+                }
+
                 @Override @NotNull public Biome getBiome(int x, int z) {
+                    return Biome.FOREST;
+                }
+
+                @Override
+                public @NotNull Biome getBiome(int x, int y, int z) {
                     return Biome.FOREST;
                 }
             };
