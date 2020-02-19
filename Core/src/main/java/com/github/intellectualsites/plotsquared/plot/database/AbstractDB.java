@@ -113,6 +113,8 @@ public interface AbstractDB {
      */
     int getClusterId(PlotCluster cluster);
 
+    boolean convertFlags();
+
     /**
      * @return A linked HashMap containing all plots
      */

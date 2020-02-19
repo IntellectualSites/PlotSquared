@@ -72,8 +72,6 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -81,7 +79,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -194,6 +191,17 @@ import java.util.zip.ZipInputStream;
             if (Settings.Enabled_Components.DATABASE) {
                 setupDatabase();
             }
+
+            // Check if we need to convert old flag values, etc
+            if (!getConfigurationVersion().equalsIgnoreCase("v5")) {
+                // Perform upgrade
+                if (DBFunc.dbManager.convertFlags()) {
+                    log(Captions.PREFIX.getTranslated() + "Flags were converted successfully!");
+                    // Update the config version
+                    setConfigurationVersion("v5");
+                }
+            }
+
             // Comments
             CommentManager.registerDefaultInboxes();
             // Kill entities
@@ -1648,9 +1656,9 @@ import java.util.zip.ZipInputStream;
             this.worlds = YamlConfiguration.loadConfiguration(this.worldsFile);
 
             if (this.worlds.contains("worlds")) {
-                if (!this.worlds.contains("configuration_version") || !this.worlds
-                    .getString("configuration_version")
-                    .equalsIgnoreCase(LegacyConverter.CONFIGURATION_VERSION)) {
+                if (!this.worlds.contains("configuration_version") ||
+                    (!this.worlds.getString("configuration_version").equalsIgnoreCase(LegacyConverter.CONFIGURATION_VERSION) &&
+                    !this.worlds.getString("configuration_version").equalsIgnoreCase("v5"))) {
                     // Conversion needed
                     log(Captions.LEGACY_CONFIG_FOUND.getTranslated());
                     try {
@@ -1661,10 +1669,8 @@ import java.util.zip.ZipInputStream;
                             this.worlds.getConfigurationSection("worlds");
                         final LegacyConverter converter = new LegacyConverter(worlds);
                         converter.convert();
-                        this.worlds
-                            .set("configuration_version", LegacyConverter.CONFIGURATION_VERSION);
-                        this.worlds.set("worlds", worlds); // Redundant, but hey... ¯\_(ツ)_/¯
-                        this.worlds.save(this.worldsFile);
+                        this.worlds.set("worlds", worlds);
+                        this.setConfigurationVersion(LegacyConverter.CONFIGURATION_VERSION);
                         log(Captions.LEGACY_CONFIG_DONE.getTranslated());
                     } catch (final Exception e) {
                         log(Captions.LEGACY_CONFIG_CONVERSION_FAILED.getTranslated());
@@ -1738,6 +1744,15 @@ import java.util.zip.ZipInputStream;
             e.printStackTrace();
         }
         return true;
+    }
+
+    public String getConfigurationVersion() {
+        return this.worlds.get("configuration_version", LegacyConverter.CONFIGURATION_VERSION).toString();
+    }
+
+    public void setConfigurationVersion(final String newVersion) throws IOException {
+        this.worlds.set("configuration_version", newVersion);
+        this.worlds.save(this.worldsFile);
     }
 
     /**

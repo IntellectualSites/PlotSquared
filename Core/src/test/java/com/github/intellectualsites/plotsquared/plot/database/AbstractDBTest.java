@@ -73,6 +73,10 @@ public class AbstractDBTest implements AbstractDB {
         return 0;
     }
 
+    @Override public boolean convertFlags() {
+        return true;
+    }
+
     @Override public HashMap<String, HashMap<PlotId, Plot>> getPlots() {
         return null;
     }

@@ -5,7 +5,6 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.config.Storage;
-import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
@@ -566,8 +565,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 PlotId plotId = new PlotId(x, y);
                                 Plot plot = plotMap.get(plotId);
                                 if (plot != null) {
-                                    settings.add(new LegacySettings(id, plot.getSettings(),
-                                        new FlagContainer(plot.getArea().getFlagContainer())));
+                                    settings.add(new LegacySettings(id, plot.getSettings()));
                                     for (UUID uuid : plot.getDenied()) {
                                         denied.add(new UUIDPair(id, uuid));
                                     }
@@ -1581,6 +1579,82 @@ import java.util.concurrent.atomic.AtomicInteger;
         }, null);
     }
 
+    @Override public boolean convertFlags() {
+        final Map<Integer, Map<String, String>> flagMap = new HashMap<>();
+        try (Statement statement = this.connection.createStatement()) {
+            try (ResultSet resultSet = statement
+                .executeQuery("SELECT * FROM `" + this.prefix + "plot_settings`")) {
+                while (resultSet.next()) {
+                    final int id = resultSet.getInt("plot_plot_id");
+                    final String plotFlags = resultSet.getString("flags");
+                    if (plotFlags == null || plotFlags.isEmpty()) {
+                        continue;
+                    }
+                    flagMap.put(id, new HashMap<>());
+                    for (String element : plotFlags.split(",")) {
+                        if (element.contains(":")) {
+                            String[] split = element.split(":"); // splits flag:value
+                            try {
+                                String flag_str =
+                                    split[1].replaceAll("¯", ":").replaceAll("\u00B4", ",");
+                                PlotFlag<?, ?> flag = GlobalFlagContainer.getInstance().getFlagFromString(split[0]);
+                                if (flag == null) {
+                                    PlotSquared.log(Captions.PREFIX.getTranslated() + "Flag not found and therefore ignored: " + split[0]);
+                                    continue;
+                                }
+                                flagMap.get(id).put(flag.getName(), flag_str);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            element = element.replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
+                            if (StringMan
+                                .isAlpha(element.replaceAll("_", "").replaceAll("-", ""))) {
+                                PlotFlag<?, ?> flag = GlobalFlagContainer.getInstance().getFlagFromString(element);
+                                if (flag == null) {
+                                    PlotSquared.log(Captions.PREFIX.getTranslated() + "Flag not found and therefore ignored: " + element);
+                                }
+                            } else {
+                                PlotSquared.log(Captions.PREFIX.getTranslated() + "INVALID FLAG: " + element);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            PlotSquared.log(Captions.PREFIX.getTranslated() + "Failed to load old flag values:");
+            e.printStackTrace();
+            return false;
+        }
+        PlotSquared.log(Captions.PREFIX.getTranslated() + "Loaded " + flagMap.size() + " plot flag collections...");
+        PlotSquared.log(Captions.PREFIX.getTranslated() + "Attempting to store these flags in the new table...");
+        //
+        try (final PreparedStatement preparedStatement =
+            this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_flags`(`plot_id`, `flag`, `value`) VALUES(?, ?, ?)")) {
+            for (final Map.Entry<Integer, Map<String, String>> plotFlagEntry : flagMap.entrySet()) {
+                for (final Map.Entry<String, String> flagEntry : plotFlagEntry.getValue().entrySet()) {
+                    preparedStatement.setInt(1, plotFlagEntry.getKey());
+                    preparedStatement.setString(2, flagEntry.getKey());
+                    preparedStatement.setString(3, flagEntry.getValue());
+                    preparedStatement.addBatch();
+                }
+                try {
+                    preparedStatement.executeBatch();
+                } catch (final Exception e) {
+                    PlotSquared.log(Captions.PREFIX.getTranslated() + "Failed to store flag values for plot with entry ID: " + plotFlagEntry.getKey());
+                    e.printStackTrace();
+                    continue;
+                }
+                PlotSquared.debug(Captions.PREFIX.getTranslated() + "- Finished converting flags for plot with entry ID: " + plotFlagEntry.getKey());
+            }
+        } catch (final Exception e) {
+            PlotSquared.log(Captions.PREFIX.getTranslated() + "Failed to store flag values:");
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Load all plots, helpers, denied, trusted, and every setting from DB into a {@link HashMap}.
      */
@@ -1884,53 +1958,6 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 merged[3 - i] = (m & 1 << i) != 0;
                             }
                             plot.getSettings().setMerged(merged);
-                            /*
-                            String[] flags_string;
-                            String myflags = resultSet.getString("flags");
-                            if (myflags == null || myflags.isEmpty()) {
-                                flags_string = new String[] {};
-                            } else {
-                                flags_string = myflags.split(","); // splits flags
-                            }
-                            HashSet<PlotFlag<?, ?>> flags = new HashSet<>();
-                            boolean exception = false;
-                            for (String element : flags_string) {
-                                if (element.contains(":")) {
-                                    String[] split = element.split(":"); // splits flag:value
-                                    try {
-                                        String flag_str =
-                                            split[1].replaceAll("¯", ":").replaceAll("\u00B4", ",");
-                                        PlotFlag<?, ?> flag = GlobalFlagContainer.getInstance().getFlagFromString(split[0]);
-                                        if (flag == null) {
-                                            PlotSquared.debug("Flag not found and therefore ignored: " + split[0]);
-                                        }
-                                        flags.add(flag.parse(flag_str));
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                        exception = true;
-                                    }
-                                } else {
-                                    element =
-                                        element.replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
-                                    if (StringMan
-                                        .isAlpha(element.replaceAll("_", "").replaceAll("-", ""))) {
-                                        PlotFlag<?, ?> flag = GlobalFlagContainer.getInstance().getFlagFromString(element);
-                                        if (flag == null) {
-                                            PlotSquared.debug("Flag not found and therefore ignored: " + element);
-                                        }
-                                    } else {
-                                        PlotSquared.debug("INVALID FLAG: " + element);
-                                    }
-                                }
-                            }
-                            if (exception) {
-                                PlotSquared.debug("&cPlot #" + id + "(" + plot + ") | " + plot
-                                    + " had an invalid flag. A fix has been attempted.");
-                                PlotSquared.debug("&c" + myflags);
-                                this.setFlags(plot, flags);
-                            }
-                            plot.getFlagContainer().addAll(flags);
-                            */
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
                         } else {
@@ -3185,12 +3212,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
         public final int id;
         public final PlotSettings settings;
-        public final FlagContainer flagContainer;
 
-        public LegacySettings(int id, PlotSettings settings, FlagContainer flagContainer) {
+        public LegacySettings(int id, PlotSettings settings) {
             this.id = id;
             this.settings = settings;
-            this.flagContainer = flagContainer;
         }
     }
 }
