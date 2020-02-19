@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @CommandDeclaration(command = "flag", aliases = {"f",
     "flag"}, usage = "/plot flag <set|remove|add|list|info> <flag> <value>", description = "Manage plot flags", category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE, permission = "plots.flag")
@@ -182,7 +184,48 @@ import java.util.concurrent.CompletableFuture;
 
     @Override public Collection<Command> tab(final PlotPlayer player, final String[] args,
         final boolean space) {
-        return tabOf(player, args, space, getUsage());
+        if (args.length == 1) {
+            return Stream.of("s", "set", "add", "a", "remove", "r", "delete", "info", "i", "list", "l")
+                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                .map(value ->
+                new Command(null, false, value, "", RequiredType.NONE, null) {}
+            ).collect(Collectors.toList());
+        } else if (Arrays.asList("s", "set", "add", "a", "remove", "r", "delete", "info", "i").contains(args[0].toLowerCase(Locale.ENGLISH)) && args.length == 2) {
+            return GlobalFlagContainer.getInstance().getRecognizedPlotFlags().stream()
+                .filter(flag -> flag.getName().startsWith(args[1].toLowerCase(Locale.ENGLISH)))
+                .map(flag -> new Command(null, false, flag.getName(), "", RequiredType.NONE, null) {}
+            ).collect(Collectors.toList());
+        } else if (Arrays.asList("s", "set", "add", "a", "remove", "r", "delete").contains(args[0].toLowerCase(Locale.ENGLISH)) && args.length == 3) {
+            try {
+                final PlotFlag<?,?> flag = GlobalFlagContainer.getInstance().getFlagFromString(args[1]);
+                if (flag != null) {
+                    Stream<String> stream = flag.getTabCompletions().stream();
+                    if (flag instanceof ListFlag && args[2].contains(",")) {
+                        final String[] split = args[2].split(",");
+                        // Prefix earlier values onto all suggestions
+                        StringBuilder prefix = new StringBuilder();
+                        for (int i = 0; i < split.length - 1; i++) {
+                            prefix.append(split[i]).append(",");
+                        }
+                        final String cmp;
+                        if (!args[2].endsWith(",")) {
+                            cmp = split[split.length - 1];
+                        } else {
+                            prefix.append(split[split.length - 1]).append(",");
+                            cmp = "";
+                        }
+                        return stream.filter(value -> value.startsWith(cmp.toLowerCase(Locale.ENGLISH))).map(value ->
+                            new Command(null, false, prefix + value, "", RequiredType.NONE, null) {}
+                        ).collect(Collectors.toList());
+                    } else {
+                        return stream.filter(value -> value.startsWith(args[2].toLowerCase(Locale.ENGLISH))).map(value ->
+                            new Command(null, false, value, "", RequiredType.NONE, null) {}
+                        ).collect(Collectors.toList());
+                    }
+                }
+            } catch (final Exception e) {}
+        }
+        return tabOf(player, args, space);
     }
 
     @CommandDeclaration(command = "set", aliases = {"s",

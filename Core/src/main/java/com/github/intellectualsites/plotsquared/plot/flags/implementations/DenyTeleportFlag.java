@@ -8,6 +8,9 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, DenyTeleportFlag> {
 
     public static final DenyTeleportFlag DENY_TELEPORT_FLAG_NONE =
@@ -77,6 +80,10 @@ public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, Den
 
     @Override protected DenyTeleportFlag flagOf(@NotNull DeniedGroup value) {
         return new DenyTeleportFlag(value);
+    }
+
+    @Override public Collection<String> getTabCompletions() {
+        return Arrays.asList("none", "members", "trusted", "nonmembers", "nontrusted", "nonowners");
     }
 
     public enum DeniedGroup {

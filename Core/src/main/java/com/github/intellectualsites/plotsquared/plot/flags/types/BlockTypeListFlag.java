@@ -9,7 +9,9 @@ import com.sk89q.worldedit.world.block.BlockType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class BlockTypeListFlag<F extends ListFlag<BlockType, F>>
     extends ListFlag<BlockType, F> {
@@ -37,6 +39,11 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockType, F>>
 
     @Override public String getExample() {
         return "air,grass_block";
+    }
+
+    @Override public Collection<String> getTabCompletions() {
+        return BlockType.REGISTRY.keySet().stream().map(val -> val.replace("minecraft:", ""))
+            .collect(Collectors.toList());
     }
 
 }

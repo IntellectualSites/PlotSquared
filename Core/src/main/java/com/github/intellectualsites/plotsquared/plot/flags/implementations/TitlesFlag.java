@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Locale;
 
 public class TitlesFlag extends PlotFlag<TitlesFlag.TitlesFlagValue, TitlesFlag> {
@@ -50,6 +51,10 @@ public class TitlesFlag extends PlotFlag<TitlesFlag.TitlesFlagValue, TitlesFlag>
             return TITLES_FALSE;
         }
         return TITLES_NONE;
+    }
+
+    @Override public Collection<String> getTabCompletions() {
+        return Arrays.asList("none", "true", "false");
     }
 
     public enum TitlesFlagValue {

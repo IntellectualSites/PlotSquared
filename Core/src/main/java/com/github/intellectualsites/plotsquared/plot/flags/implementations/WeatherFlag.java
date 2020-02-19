@@ -5,6 +5,9 @@ import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
 
     public static final WeatherFlag PLOT_WEATHER_FLAG_RAIN =
@@ -61,6 +64,10 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
             default:
                 return PLOT_WEATHER_FLAG_OFF;
         }
+    }
+
+    @Override public Collection<String> getTabCompletions() {
+        return Arrays.asList("rain", "storm", "on", "lightning", "thunder", "clear", "off", "sun", "reset");
     }
 
 }

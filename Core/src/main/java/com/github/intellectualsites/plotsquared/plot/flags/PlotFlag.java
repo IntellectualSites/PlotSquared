@@ -5,6 +5,9 @@ import com.google.common.base.Preconditions;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.Collections;
+
 /**
  * A plot flag is any property that can be assigned
  * to a plot, that will alter its functionality in some way.
@@ -102,6 +105,10 @@ import org.jetbrains.annotations.NotNull;
 
     public final F createFlagInstance(@NotNull final T value) {
         return flagOf(Preconditions.checkNotNull(value));
+    }
+
+    public Collection<String> getTabCompletions() {
+        return Collections.emptyList();
     }
 
 }
