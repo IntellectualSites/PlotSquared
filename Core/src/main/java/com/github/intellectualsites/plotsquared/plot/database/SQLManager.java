@@ -2,7 +2,6 @@ package com.github.intellectualsites.plotsquared.plot.database;
 
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.config.Storage;
@@ -1827,8 +1826,8 @@ import java.util.concurrent.atomic.AtomicInteger;
                                     plot.getFlagContainer().addFlag(plotFlag.parse(value));
                                 } catch (final FlagParseException e) {
                                     PlotSquared.debug("Plot with ID " + id + " has an invalid value:");
-                                    PlotSquared.debug(CaptionUtility.format(
-                                        Captions.FLAG_PARSE_EXCEPTION, flag, value, e.getErrorMessage()));
+                                    PlotSquared.debug(Captions.FLAG_PARSE_ERROR.getTranslated().replace("%flag_name%", plotFlag.getName())
+                                        .replace("%flag_value%", value).replace("%error%", e.getErrorMessage()));
                                     if (!invalidFlags.containsKey(plot)) {
                                         invalidFlags.put(plot, new ArrayList<>());
                                     }
