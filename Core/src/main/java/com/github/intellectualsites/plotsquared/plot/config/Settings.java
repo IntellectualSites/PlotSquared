@@ -331,7 +331,8 @@ public class Settings extends Config {
             true;
         @Comment("The UUID cacher is used to resolve player names") public static boolean
             UUID_CACHE = true;
-        @Comment("The plugin auto updater will notify you if updates are available.") public static boolean UPDATER = true;
+        @Comment({"@deprecated PlotSquared v4 will no longer receive updates, consider updating to v5", "The plugin auto updater will notify you if updates are available."})
+        public static boolean UPDATER = true;
         @Comment("Stores user metadata in a database") public static boolean PERSISTENT_META = true;
         @Comment("Optimizes permission checks") public static boolean PERMISSION_CACHE = true;
         @Comment("Optimizes block changing code") public static boolean BLOCK_CACHE = true;
