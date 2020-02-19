@@ -7,18 +7,20 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
-import lombok.RequiredArgsConstructor;
+import java.util.Random;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Random;
-
-@RequiredArgsConstructor final class BlockStatePopulator extends BlockPopulator {
+final class BlockStatePopulator extends BlockPopulator {
 
     private final IndependentPlotGenerator plotGenerator;
     private LocalBlockQueue queue;
+
+    public BlockStatePopulator(IndependentPlotGenerator plotGenerator) {
+        this.plotGenerator = plotGenerator;
+    }
 
     @Override public void populate(@NotNull final World world, @NotNull final Random random,
         @NotNull final Chunk source) {

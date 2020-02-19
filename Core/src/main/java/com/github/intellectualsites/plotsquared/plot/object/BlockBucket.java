@@ -108,8 +108,8 @@ public final class BlockBucket implements ConfigurationSerializable {
                 if (matcher.find()) {
                     String chanceStr = matcher.group("chance");
                     String block = matcher.group("block");
-                    if (chanceStr != null && block != null && !MathMan.isInteger(block) && MathMan
-                        .isInteger(chanceStr)) {
+                    //noinspection PointlessNullCheck
+                    if (chanceStr != null && block != null && !MathMan.isInteger(block) && MathMan.isInteger(chanceStr)) {
                         String namespace = matcher.group("namespace");
                         string = (namespace == null ? "" : namespace + ":") + block;
                     }
@@ -125,6 +125,7 @@ public final class BlockBucket implements ConfigurationSerializable {
             Matcher matcher = regex.matcher(entry);
             if (matcher.find()) {
                 String chanceStr = matcher.group("chance");
+                //noinspection PointlessNullCheck
                 if (chanceStr != null && MathMan.isInteger(chanceStr)) {
                     String[] parts = entry.split(":");
                     parts = Arrays.copyOf(parts, parts.length - 1);

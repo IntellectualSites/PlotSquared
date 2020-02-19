@@ -417,10 +417,16 @@ import java.util.Set;
     public void setBiomes(@NonNull final String worldName, @NonNull final CuboidRegion region,
         @NonNull final BiomeType biomeType) {
         final World world = getWorld(worldName);
+        if (world == null) {
+            PlotSquared.log("An error occurred setting the biome because the world was null.");
+            return;
+        }
         final Biome biome = BukkitAdapter.adapt(biomeType);
         for (int x = region.getMinimumPoint().getX(); x <= region.getMaximumPoint().getX(); x++) {
             for (int z = region.getMinimumPoint().getZ(); z <= region.getMaximumPoint().getZ(); z++) {
-                world.setBiome(x, z, biome);
+                for (int y = 0; y < world.getMaxHeight(); y++) {
+                    world.setBiome(x, y, z, biome);
+                }
             }
         }
     }

@@ -13,10 +13,13 @@ import java.util.Map;
 public class Debug extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
-        if ((args.length > 0) && "player".equalsIgnoreCase(args[1])) {
-            for (Map.Entry<String, Object> meta : player.getMeta().entrySet()) {
-                MainUtil.sendMessage(player,
-                    "Key: " + meta.getKey() + " Value: " + meta.getValue().toString() + " , ");
+        if (args.length > 0) {
+            if ("player".equalsIgnoreCase(args[0])) {
+                for (Map.Entry<String, Object> meta : player.getMeta().entrySet()) {
+                    MainUtil.sendMessage(player,
+                        "Key: " + meta.getKey() + " Value: " + meta.getValue().toString() + " , ");
+                }
+                ;
             }
         }
         if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {
