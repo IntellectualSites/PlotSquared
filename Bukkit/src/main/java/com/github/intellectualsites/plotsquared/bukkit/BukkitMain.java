@@ -151,8 +151,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
         new UpdateUtility(this).updateChecker();
 
-        new PremiumVerification();
-        PremiumVerification.isPremium();
         if (PremiumVerification.isPremium()) {
             PlotSquared.log(Captions.PREFIX + "&6PlotSquared version licensed to Spigot user " + getUserID());
             PlotSquared.log(Captions.PREFIX + "&6Thanks for supporting us :)");
