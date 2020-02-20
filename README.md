@@ -16,20 +16,14 @@ flags. Such as: weather, time, game modes, pvp status.
 Whilst we provide a whole load of unique features, the biggest focus
 is to provide a lag-free and smooth experience.
 
-***NOTE:** This is the branch for the 1.13+ version of PlotSquared. Switch to the master branch for legacy PlotSquared.*
-
 ## Links
 
 * [Download](https://github.com/IntellectualSites/PlotSquared/releases/tag/dev)
-* [[Jenkins (Dev Builds)](https://ci.athion.net/job/PlotSquared-Breaking/)] [[Jenkins (Releases)](https://ci.athion.net/job/PlotSquared-Releases/)]
-* [Spigot Page](https://www.spigotmc.org/resources/plotsquared.1177/)
 * [Discord](https://discord.gg/ngZCzbU)
 * [Wiki](https://github.com/IntellectualSites/PlotSquared/wiki)
 
 ### Developer Resources
-* [[JavaDoc](https://ci.athion.net/job/PlotSquared-Breaking/javadoc/)]
-* [[Maven Repo (CI)](http://ci.athion.net/job/PlotSquared-Breaking/ws/mvn/)]
-* [API Documentation](https://github.com/IntellectualSites/PlotSquared/wiki/Developer-Documentation)
+* [API Documentation](https://github.com/IntellectualSites/PlotSquared/wiki/API-Documentation)
 
 # Building
 Gradle is the **recommended** way to build the project. Use `./gradlew build` in the main project directory to build the project. Gradle is required if you intend to build or develop the Sponge module.
