@@ -1893,8 +1893,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                         if (plot != null) {
                             final PlotFlag<?,?> plotFlag = GlobalFlagContainer.getInstance().getFlagFromString(flag);
                             if (plotFlag == null) {
-                                PlotSquared.debug("&cPlot " + id
-                                    + " in `plot_flags` has an unknown flag type: " + flag);
+                                plot.getFlagContainer().addUnknownFlag(flag, value);
                             } else {
                                 try {
                                     plot.getFlagContainer().addFlag(plotFlag.parse(value));

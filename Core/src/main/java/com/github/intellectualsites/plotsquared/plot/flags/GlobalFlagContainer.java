@@ -52,7 +52,6 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Notif
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.NotifyLeaveFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlayerInteractFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.WeatherFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PriceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PveFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PvpFlag;
@@ -72,6 +71,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Vehic
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleUseFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VillagerInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VineGrowFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.WeatherFlag;
 import lombok.Getter;
 
 import javax.annotation.Nonnull;

@@ -5,8 +5,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -15,13 +17,20 @@ import java.util.Map;
 @EqualsAndHashCode(of = "flagMap") @SuppressWarnings("unused") public class FlagContainer {
 
     @Setter private FlagContainer parentContainer;
+    private final Map<String, String> unknownFlags = new HashMap<>();
     private final Map<Class<?>, PlotFlag<?, ?>> flagMap = new HashMap<>();
     private final PlotFlagUpdateHandler plotFlagUpdateHandler;
+    private final Collection<PlotFlagUpdateHandler> updateSubscribers = new ArrayList<>();
 
     public FlagContainer(@Nullable final FlagContainer parentContainer,
         @Nullable PlotFlagUpdateHandler plotFlagUpdateHandler) {
         this.parentContainer = parentContainer;
         this.plotFlagUpdateHandler = plotFlagUpdateHandler;
+        if (this instanceof GlobalFlagContainer) {
+            return;
+        } else {
+            GlobalFlagContainer.getInstance().subscribe(this::handleUnknowns);
+        }
     }
 
     public FlagContainer(@Nullable final FlagContainer parentContainer) {
@@ -66,6 +75,7 @@ import java.util.Map;
         if (this.plotFlagUpdateHandler != null) {
             this.plotFlagUpdateHandler.handle(flag, PlotFlagUpdateType.FLAG_ADDED);
         }
+        this.updateSubscribers.forEach(subscriber -> subscriber.handle(flag, PlotFlagUpdateType.FLAG_ADDED));
     }
 
     /**
@@ -78,6 +88,7 @@ import java.util.Map;
         if (this.plotFlagUpdateHandler != null) {
             this.plotFlagUpdateHandler.handle(flag, PlotFlagUpdateType.FLAG_REMOVED);
         }
+        this.updateSubscribers.forEach(subscriber -> subscriber.handle(flag, PlotFlagUpdateType.FLAG_REMOVED));
         if (value == null) {
             return null;
         } else {
@@ -185,6 +196,26 @@ import java.util.Map;
         } else {
             return castUnsafe(localFlag);
         }
+    }
+
+    public void subscribe(final PlotFlagUpdateHandler plotFlagUpdateHandler) {
+        this.updateSubscribers.add(plotFlagUpdateHandler);
+    }
+
+    private void handleUnknowns(final PlotFlag<?, ?> flag, final PlotFlagUpdateType plotFlagUpdateType) {
+        if (plotFlagUpdateType == PlotFlagUpdateType.FLAG_ADDED && this.unknownFlags.containsKey(flag.getName())) {
+            final String value = this.unknownFlags.remove(flag.getName());
+            if (value != null) {
+                try {
+                    this.addFlag(flag.parse(value));
+                } catch (final Exception ignored) {
+                }
+            }
+        }
+    }
+
+    public void addUnknownFlag(final String flagName, final String value) {
+        this.unknownFlags.put(flagName.toLowerCase(Locale.ENGLISH), value);
     }
 
     /**
