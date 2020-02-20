@@ -348,8 +348,7 @@ public class Settings extends Config {
         @Comment("Actively purge invalid database entries") public static boolean DATABASE_PURGER =
             false;
         @Comment("Delete plots when a player is banned") public static boolean BAN_DELETER = false;
-        @Comment({"Prevent possibly unsafe blocks from being used in plot components",
-            "Can be bypassed with `/plot debugallowunsafe`"}) public static boolean PREVENT_UNSAFE =
-            true;
+        @Comment("Allows PlaceholderAPI placeholders to be used in captions, flags, etc")
+        public static boolean EXTERNAL_PLACEHOLDERS = true;
     }
 }

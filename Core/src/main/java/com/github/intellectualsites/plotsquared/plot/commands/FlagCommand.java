@@ -59,7 +59,7 @@ import java.util.stream.Stream;
         key = key.toLowerCase();
         value = value.toLowerCase();
         String perm = CaptionUtility
-            .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(), key.toLowerCase(),
+            .format(player, Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(), key.toLowerCase(),
                 value.toLowerCase());
         if (flag instanceof IntegerFlag && MathMan.isInteger(value)) {
             try {
@@ -72,7 +72,7 @@ import java.util.stream.Stream;
                     final boolean result = player.hasPermissionRange(perm, checkRange) >= numeric;
                     if (!result) {
                         MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                            .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
+                            .format(player, Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
                                 key.toLowerCase(), value.toLowerCase()));
                     }
                     return result;
@@ -85,12 +85,12 @@ import java.util.stream.Stream;
                 PlotFlag<? extends List<?>, ?> parsedFlag = listFlag.parse(value);
                 for (final Object entry : parsedFlag.getValue()) {
                     final String permission = CaptionUtility
-                        .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
+                        .format(player, Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
                             key.toLowerCase(), entry.toString().toLowerCase());
                     final boolean result = Permissions.hasPermission(player, permission);
                     if (!result) {
                         MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                            .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
+                            .format(player, Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
                                 key.toLowerCase(), value.toLowerCase()));
                         return false;
                     }
@@ -107,7 +107,7 @@ import java.util.stream.Stream;
         final boolean result = Permissions.hasPermission(player, perm);
         if (!result) {
             MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(), key.toLowerCase(),
+                .format(player, Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(), key.toLowerCase(),
                     value.toLowerCase()));
         }
         return result;
@@ -320,10 +320,10 @@ import java.util.stream.Stream;
             return;
         }
         if (!Permissions.hasPermission(player, CaptionUtility
-            .format(Captions.PERMISSION_SET_FLAG_KEY.getTranslated(), args[0].toLowerCase()))) {
+            .format(player, Captions.PERMISSION_SET_FLAG_KEY.getTranslated(), args[0].toLowerCase()))) {
             if (args.length != 2) {
                 MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                    .format(Captions.PERMISSION_SET_FLAG_KEY.getTranslated(),
+                    .format(player, Captions.PERMISSION_SET_FLAG_KEY.getTranslated(),
                         args[0].toLowerCase()));
                 return;
             }

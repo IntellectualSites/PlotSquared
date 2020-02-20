@@ -15,7 +15,7 @@ public class FlagParseException extends Exception {
             flag.getName(), value));
         this.flag = flag;
         this.value = value;
-        this.errorMessage = CaptionUtility.format(errorMessage, args);
+        this.errorMessage = CaptionUtility.format(null, errorMessage, args);
     }
 
     /**

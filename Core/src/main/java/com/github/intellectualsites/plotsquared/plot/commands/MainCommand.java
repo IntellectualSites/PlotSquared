@@ -1,7 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
-import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
@@ -282,7 +281,7 @@ import java.util.concurrent.CompletableFuture;
         return CompletableFuture.completedFuture(true);
     }
 
-    @Override public boolean canExecute(CommandCaller player, boolean message) {
+    @Override public boolean canExecute(PlotPlayer player, boolean message) {
         return true;
     }
 }

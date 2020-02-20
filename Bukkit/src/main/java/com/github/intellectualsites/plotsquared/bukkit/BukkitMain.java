@@ -7,6 +7,7 @@ import com.github.intellectualsites.plotsquared.bukkit.listeners.PlayerEvents;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.PlotPlusListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.SingleWorldListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.WorldEvents;
+import com.github.intellectualsites.plotsquared.bukkit.placeholders.PlaceholderFormatter;
 import com.github.intellectualsites.plotsquared.bukkit.placeholders.Placeholders;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitChatManager;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitChunkManager;
@@ -31,6 +32,7 @@ import com.github.intellectualsites.plotsquared.configuration.ConfigurationSecti
 import com.github.intellectualsites.plotsquared.plot.IPlotMain;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
+import com.github.intellectualsites.plotsquared.plot.config.ChatFormatter;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
@@ -160,6 +162,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new Placeholders(this).register();
+            if (Settings.Enabled_Components.EXTERNAL_PLACEHOLDERS) {
+                ChatFormatter.formatters.add(new PlaceholderFormatter());
+            }
             PlotSquared.log(Captions.PREFIX + "&6PlaceholderAPI found! Hook activated.");
         } else {
             PlotSquared.log(Captions.PREFIX + "&6PlaceholderAPI is not in use. Hook deactivated.");

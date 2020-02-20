@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.config;
 
-import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 public interface Caption {
@@ -12,12 +12,12 @@ public interface Caption {
         return StringMan.replaceFromMap(getTranslated(), Captions.replacements);
     }
 
-    default void send(CommandCaller caller, String... args) {
+    default void send(PlotPlayer caller, String... args) {
         send(caller, (Object[]) args);
     }
 
-    default void send(CommandCaller caller, Object... args) {
-        String msg = CaptionUtility.format(this, args);
+    default void send(PlotPlayer caller, Object... args) {
+        String msg = CaptionUtility.format(caller, this, args);
         if (caller == null) {
             PlotSquared.log(msg);
         } else {

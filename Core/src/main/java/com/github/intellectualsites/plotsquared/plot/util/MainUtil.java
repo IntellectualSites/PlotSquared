@@ -1,6 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.Like;
 import com.github.intellectualsites.plotsquared.plot.config.Caption;
@@ -626,14 +625,14 @@ public class MainUtil {
      * @param prefix If the message should be prefixed with the configured prefix
      * @return
      */
-    public static boolean sendMessage(CommandCaller player, @NotNull String msg, boolean prefix) {
+    public static boolean sendMessage(PlotPlayer player, @NotNull String msg, boolean prefix) {
         if (!msg.isEmpty()) {
             if (player == null) {
-                String message = (prefix ? Captions.PREFIX.getTranslated() : "") + msg;
+                String message = CaptionUtility.format(null, (prefix ? Captions.PREFIX.getTranslated() : "") + msg);
                 PlotSquared.log(message);
             } else {
                 player.sendMessage(
-                    (prefix ? Captions.PREFIX.getTranslated() : "") + Captions.color(msg));
+                    CaptionUtility.format(player, (prefix ? Captions.PREFIX.getTranslated() : "") + Captions.color(msg)));
             }
         }
         return true;
@@ -646,7 +645,7 @@ public class MainUtil {
      * @param caption the message to send
      * @return boolean success
      */
-    public static boolean sendMessage(CommandCaller player, Caption caption, String... args) {
+    public static boolean sendMessage(PlotPlayer player, Caption caption, String... args) {
         return sendMessage(player, caption, (Object[]) args);
     }
 
@@ -657,13 +656,13 @@ public class MainUtil {
      * @param caption the message to send
      * @return boolean success
      */
-    public static boolean sendMessage(final CommandCaller player, final Caption caption,
+    public static boolean sendMessage(final PlotPlayer player, final Caption caption,
         final Object... args) {
         if (caption.getTranslated().isEmpty()) {
             return true;
         }
         TaskManager.runTaskAsync(() -> {
-            String m = CaptionUtility.format(caption, args);
+            String m = CaptionUtility.format(player, caption, args);
             if (player == null) {
                 PlotSquared.log(m);
             } else {
@@ -795,8 +794,8 @@ public class MainUtil {
                 } else {
                     value = flag.toString();
                 }
-                flags.append(prefix).append(CaptionUtility.format(Captions.PLOT_FLAG_LIST.getTranslated(),
-                    flag.getName(), value));
+                flags.append(prefix).append(CaptionUtility.format(player, Captions.PLOT_FLAG_LIST.getTranslated(),
+                    flag.getName(), CaptionUtility.formatRaw(player, value.toString(), "")));
                 prefix = ", ";
             }
         }

@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
+import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
 import com.sk89q.worldedit.world.block.BlockState;
 import lombok.NonNull;
 
@@ -83,7 +84,7 @@ import java.util.Map;
         final BlockBucket bucket = this.blockToBucket(block);
         this.setString(section, key, bucket);
         PlotSquared.log(CaptionUtility
-            .format(Captions.LEGACY_CONFIG_REPLACED.getTranslated(), block, bucket.toString()));
+            .format(ConsolePlayer.getConsole(), Captions.LEGACY_CONFIG_REPLACED.getTranslated(), block, bucket.toString()));
     }
 
     private void convertBlockList(@NonNull final ConfigurationSection section,
@@ -92,7 +93,7 @@ import java.util.Map;
         final BlockBucket bucket = this.blockListToBucket(blocks);
         this.setString(section, key, bucket);
         PlotSquared.log(CaptionUtility
-            .format(Captions.LEGACY_CONFIG_REPLACED.getTranslated(), plotBlockArrayString(blocks),
+            .format(ConsolePlayer.getConsole(), Captions.LEGACY_CONFIG_REPLACED.getTranslated(), plotBlockArrayString(blocks),
                 bucket.toString()));
     }
 
