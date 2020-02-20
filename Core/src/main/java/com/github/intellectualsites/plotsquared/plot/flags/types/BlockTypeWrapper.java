@@ -32,9 +32,19 @@ import java.util.Map;
 
     @Override public String toString() {
         if (this.blockType != null) {
-            return this.blockType.toString();
+            final String key = this.blockType.toString();
+            if (key.startsWith("minecraft:")) {
+                return key.substring(10);
+            } else {
+                return key;
+            }
         } else if(this.blockCategory != null) {
-            return this.blockCategory.toString();
+            final String key = this.blockCategory.toString();
+            if (key.startsWith("minecraft:")) {
+                return '#' + key.substring(10);
+            } else {
+                return '#' + key;
+            }
         } else {
             return null;
         }

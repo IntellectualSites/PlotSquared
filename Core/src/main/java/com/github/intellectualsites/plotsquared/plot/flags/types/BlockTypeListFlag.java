@@ -32,8 +32,8 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
             final BlockState blockState = BlockUtil.get(blockString);
             if (blockState == null) {
                 // If it's not a block state, we assume it's a block category
-                final BlockCategory blockCategory = BlockCategory.REGISTRY.get(blockString);
-                if (blockCategory == null) {
+                final BlockCategory blockCategory;
+                if (!blockString.startsWith("#") || (blockCategory = BlockCategory.REGISTRY.get(blockString.substring(1))) == null) {
                     throw new FlagParseException(this, blockString, Captions.FLAG_ERROR_INVALID_BLOCK);
                 } else {
                     blockTypeWrapper = BlockTypeWrapper.get(blockCategory);
@@ -56,7 +56,7 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
         final Collection<String> tabCompletions = new ArrayList<>();
         tabCompletions.addAll(BlockType.REGISTRY.keySet().stream().map(val -> val.replace("minecraft:", ""))
             .collect(Collectors.toList()));
-        tabCompletions.addAll(BlockCategory.REGISTRY.keySet().stream().map(val -> val.replace("minecraft:", ""))
+        tabCompletions.addAll(BlockCategory.REGISTRY.keySet().stream().map(val -> "#" + val.replace("minecraft:", ""))
             .collect(Collectors.toList()));
         return tabCompletions;
     }
