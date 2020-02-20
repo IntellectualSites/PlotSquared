@@ -60,6 +60,6 @@ public abstract class BooleanFlag<F extends PlotFlag<Boolean, F>> extends PlotFl
     }
 
     @Override public Collection<String> getTabCompletions() {
-        return Arrays.asList("1", "yes", "allow", "true", "0", "no", "deny", "disallow", "false");
+        return Arrays.asList("true", "false");
     }
 }
