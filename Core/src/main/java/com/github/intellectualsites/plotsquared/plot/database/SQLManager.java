@@ -1597,16 +1597,16 @@ import java.util.concurrent.atomic.AtomicInteger;
                             try {
                                 String flag_str =
                                     split[1].replaceAll("¯", ":").replaceAll("\u00B4", ",");
-                                PlotFlag<?, ?> flag = GlobalFlagContainer.getInstance().getFlagFromString(split[0]);
+                                /*PlotFlag<?, ?> flag = GlobalFlagContainer.getInstance().getFlagFromString(split[0]);
                                 if (flag == null) {
                                     PlotSquared.log(Captions.PREFIX.getTranslated() + "Flag not found and therefore ignored: " + split[0]);
                                     continue;
-                                }
-                                flagMap.get(id).put(flag.getName(), flag_str);
+                                }*/
+                                flagMap.get(id).put(split[0], flag_str);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                        } else {
+                        } /*else {
                             element = element.replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
                             if (StringMan
                                 .isAlpha(element.replaceAll("_", "").replaceAll("-", ""))) {
@@ -1617,7 +1617,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                             } else {
                                 PlotSquared.log(Captions.PREFIX.getTranslated() + "INVALID FLAG: " + element);
                             }
-                        }
+                        }*/
                     }
                 }
             }
