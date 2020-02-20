@@ -778,7 +778,7 @@ public class MainUtil {
 
         String description = plot.getFlag(DescriptionFlag.class);
         if (description.isEmpty()) {
-            description = Captions.NONE.getTranslated();
+            description = Captions.PLOT_NO_DESCRIPTION.getTranslated();
         }
 
         StringBuilder flags = new StringBuilder();
@@ -821,7 +821,6 @@ public class MainUtil {
         info = info.replace("%seen%", seen);
         info = info.replace("%flags%", flags);
         info = info.replace("%build%", String.valueOf(build));
-        info = info.replace("%desc%", Captions.PLOT_NO_DESCRIPTION.getTranslated());
         if (info.contains("%rating%")) {
             final String newInfo = info;
             TaskManager.runTaskAsync(() -> {
