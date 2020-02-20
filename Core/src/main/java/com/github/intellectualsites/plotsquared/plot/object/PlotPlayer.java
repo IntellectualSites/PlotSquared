@@ -622,7 +622,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                                 if (getMeta("teleportOnLogin", true)) {
                                     teleport(location);
                                     sendMessage(
-                                        Captions.format(Captions.TELEPORTED_TO_PLOT.getTranslated())
+                                        Captions.format(PlotPlayer.this, Captions.TELEPORTED_TO_PLOT.getTranslated())
                                             + " (quitLoc) (" + plotX
                                             + "," + plotZ + ")");
                                 }
@@ -634,7 +634,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                                         if (getMeta("teleportOnLogin", true)) {
                                             if (plot.isLoaded()) {
                                                 teleport(location);
-                                                sendMessage(Captions.format(
+                                                sendMessage(Captions.format(PlotPlayer.this,
                                                     Captions.TELEPORTED_TO_PLOT.getTranslated())
                                                     + " (quitLoc-unloaded) (" + plotX + "," + plotZ
                                                     + ")");

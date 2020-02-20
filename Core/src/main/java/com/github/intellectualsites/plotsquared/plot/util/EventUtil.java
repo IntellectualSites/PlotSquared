@@ -88,7 +88,7 @@ public abstract class EventUtil {
             .getArea() instanceof SinglePlotArea)) {
             TaskManager.runTask(() -> plot.teleportPlayer(player));
             MainUtil.sendMessage(player,
-                Captions.format(Captions.TELEPORTED_TO_ROAD.getTranslated()) + " (on-login) " + "(" + plot.getId().x + ";" + plot
+                Captions.format(player, Captions.TELEPORTED_TO_ROAD.getTranslated()) + " (on-login) " + "(" + plot.getId().x + ";" + plot
                     .getId().y + ")");
         }
     }

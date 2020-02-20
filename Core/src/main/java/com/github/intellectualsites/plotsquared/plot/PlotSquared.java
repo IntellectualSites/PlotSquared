@@ -21,6 +21,7 @@ import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGe
 import com.github.intellectualsites.plotsquared.plot.listener.WESubscriber;
 import com.github.intellectualsites.plotsquared.plot.logger.ILogger;
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
+import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -311,7 +312,7 @@ import java.util.zip.ZipInputStream;
         }
 
         PlotSquared.log(Captions.PREFIX + Captions
-            .format(Captions.ENABLED.getTranslated(), IMP.getPluginName()));
+            .format(ConsolePlayer.getConsole(), Captions.ENABLED.getTranslated(), IMP.getPluginName()));
     }
 
     /**

@@ -41,7 +41,7 @@ public class FlagCmd extends SubCommand {
         key = key.toLowerCase();
         value = value.toLowerCase();
         String perm = Captions
-            .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(), key.toLowerCase(),
+            .format(player, Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(), key.toLowerCase(),
                 value.toLowerCase());
         if (flag instanceof IntegerFlag && MathMan.isInteger(value)) {
             try {
@@ -54,7 +54,7 @@ public class FlagCmd extends SubCommand {
                     final boolean result = player.hasPermissionRange(perm, checkRange) >= numeric;
                     if (!result) {
                         MainUtil.sendMessage(player, Captions.NO_PERMISSION, Captions
-                            .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
+                            .format(player, Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
                                 key.toLowerCase(), value.toLowerCase()));
                     }
                     return result;
@@ -67,12 +67,12 @@ public class FlagCmd extends SubCommand {
             Set<BlockType> parsedBlocks = blockListFlag.parseValue(value);
             for (final BlockType block : parsedBlocks) {
                 final String permission = Captions
-                    .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
+                    .format(player, Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
                         key.toLowerCase(), block.toString().toLowerCase());
                 final boolean result = Permissions.hasPermission(player, permission);
                 if (!result) {
                     MainUtil.sendMessage(player, Captions.NO_PERMISSION, Captions
-                        .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
+                        .format(player, Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
                             key.toLowerCase(), value.toLowerCase()));
                     return false;
                 }
@@ -82,7 +82,7 @@ public class FlagCmd extends SubCommand {
         final boolean result = Permissions.hasPermission(player, perm);
         if (!result) {
             MainUtil.sendMessage(player, Captions.NO_PERMISSION, Captions
-                .format(Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(), key.toLowerCase(),
+                .format(player, Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(), key.toLowerCase(),
                     value.toLowerCase()));
         }
         return result;
@@ -200,11 +200,11 @@ public class FlagCmd extends SubCommand {
                     return false;
                 }
                 if (!Permissions.hasPermission(player, Captions
-                    .format(Captions.PERMISSION_SET_FLAG_KEY.getTranslated(),
+                    .format(player, Captions.PERMISSION_SET_FLAG_KEY.getTranslated(),
                         args[1].toLowerCase()))) {
                     if (args.length != 3) {
                         MainUtil.sendMessage(player, Captions.NO_PERMISSION, Captions
-                            .format(Captions.PERMISSION_SET_FLAG_KEY.getTranslated(),
+                            .format(player, Captions.PERMISSION_SET_FLAG_KEY.getTranslated(),
                                 args[1].toLowerCase()));
                         return false;
                     }

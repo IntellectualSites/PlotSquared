@@ -220,11 +220,11 @@ public class Auto extends SubCommand {
                 return true;
             }
             if (!Permissions.hasPermission(player,
-                Captions.format(Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
+                Captions.format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
                 && !Permissions
                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {
                 MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                    Captions.format(Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic));
+                    Captions.format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic));
                 return true;
             }
         }

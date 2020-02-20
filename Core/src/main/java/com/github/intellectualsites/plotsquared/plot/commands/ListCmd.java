@@ -138,9 +138,9 @@ public class ListCmd extends SubCommand {
                 }
                 if (!Permissions
                     .hasPermission(player,
-                        Captions.format(Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world))) {
+                        Captions.format(player, Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world))) {
                     MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.format(Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world));
+                        Captions.format(player, Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world));
                     return false;
                 }
                 plots = new ArrayList<>(PlotSquared.get().getPlots(world));
@@ -163,9 +163,9 @@ public class ListCmd extends SubCommand {
                 }
                 if (!Permissions
                     .hasPermission(player,
-                        Captions.format(Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world))) {
+                        Captions.format(player, Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world))) {
                     MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.format(Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world));
+                        Captions.format(player, Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world));
                     return false;
                 }
                 plots = area == null ? new ArrayList<Plot>() : new ArrayList<>(area.getPlots());
@@ -311,9 +311,9 @@ public class ListCmd extends SubCommand {
                     }
                     if (!Permissions
                         .hasPermission(player, Captions
-                            .format(Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), args[0]))) {
+                            .format(player, Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), args[0]))) {
                         MainUtil.sendMessage(player, Captions.NO_PERMISSION, Captions
-                            .format(Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), args[0]));
+                            .format(player, Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), args[0]));
                         return false;
                     }
                     plots = new ArrayList<>(PlotSquared.get().getPlots(args[0]));

@@ -59,7 +59,7 @@ public class Claim extends SubCommand {
                 }
                 if (!Permissions
                     .hasPermission(player, Captions
-                        .format(Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
+                        .format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
                     && !Permissions
                     .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {
                     return sendMessage(player, Captions.NO_SCHEMATIC_PERMISSION, schematic);

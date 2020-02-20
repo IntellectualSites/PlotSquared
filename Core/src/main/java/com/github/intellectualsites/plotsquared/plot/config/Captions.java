@@ -1,9 +1,9 @@
 package com.github.intellectualsites.plotsquared.plot.config;
 
-import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 import java.io.File;
@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -655,32 +653,27 @@ public enum Captions {
         this(defaultString, true, category.toLowerCase());
     }
 
-    public static String format(String message, Object... args) {
-        if (args.length == 0) {
-            return message;
+    public static String formatRaw(PlotPlayer recipient, String message, Object... args) {
+        final ChatFormatter.ChatContext chatContext = new ChatFormatter.ChatContext(recipient, message, args, true);
+        for (final ChatFormatter chatFormatter : ChatFormatter.formatters) {
+            chatFormatter.format(chatContext);
         }
-        Map<String, String> map = new LinkedHashMap<>();
-        for (int i = args.length - 1; i >= 0; i--) {
-            String arg = "" + args[i];
-            if (arg.isEmpty()) {
-                map.put("%s" + i, "");
-            } else {
-                arg = Captions.color(arg);
-                map.put("%s" + i, arg);
-            }
-            if (i == 0) {
-                map.put("%s", arg);
-            }
-        }
-        message = StringMan.replaceFromMap(message, map);
-        return message;
+        return chatContext.getMessage();
     }
 
-    public static String format(Captions caption, Object... args) {
+    public static String format(PlotPlayer recipient, String message, Object... args) {
+        final ChatFormatter.ChatContext chatContext = new ChatFormatter.ChatContext(recipient, message, args, false);
+        for (final ChatFormatter chatFormatter : ChatFormatter.formatters) {
+            chatFormatter.format(chatContext);
+        }
+        return chatContext.getMessage();
+    }
+
+    public static String format(PlotPlayer recipient, Captions caption, Object... args) {
         if (caption.usePrefix() && caption.translatedString.length() > 0) {
-            return Captions.PREFIX.getTranslated() + format(caption.translatedString, args);
+            return Captions.PREFIX.getTranslated() + format(recipient, caption.translatedString, args);
         } else {
-            return format(caption.translatedString, args);
+            return format(recipient, caption.translatedString, args);
         }
     }
 
@@ -794,12 +787,12 @@ public enum Captions {
         return this.category;
     }
 
-    public void send(CommandCaller caller, String... args) {
+    public void send(PlotPlayer caller, String... args) {
         send(caller, (Object[]) args);
     }
 
-    public void send(CommandCaller caller, Object... args) {
-        String msg = format(this, args);
+    public void send(PlotPlayer caller, Object... args) {
+        String msg = format(caller, this, args);
         if (caller == null) {
             PlotSquared.log(msg);
         } else {

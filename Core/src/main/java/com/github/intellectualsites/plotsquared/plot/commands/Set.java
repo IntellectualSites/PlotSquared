@@ -51,9 +51,9 @@ import java.util.stream.IntStream;
                 for (String component : components) {
                     if (component.equalsIgnoreCase(args[0])) {
                         if (!Permissions.hasPermission(player, Captions
-                            .format(Captions.PERMISSION_SET_COMPONENT.getTranslated(), component))) {
+                            .format(player, Captions.PERMISSION_SET_COMPONENT.getTranslated(), component))) {
                             MainUtil.sendMessage(player, Captions.NO_PERMISSION, Captions
-                                .format(Captions.PERMISSION_SET_COMPONENT.getTranslated(),
+                                .format(player, Captions.PERMISSION_SET_COMPONENT.getTranslated(),
                                     component));
                             return false;
                         }

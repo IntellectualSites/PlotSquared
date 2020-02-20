@@ -1,7 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
-import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -21,7 +20,7 @@ public class Help extends Command {
         super(parent, true);
     }
 
-    @Override public boolean canExecute(CommandCaller player, boolean message) {
+    @Override public boolean canExecute(PlotPlayer player, boolean message) {
         return true;
     }
 
@@ -56,7 +55,7 @@ public class Help extends Command {
         return CompletableFuture.completedFuture(true);
     }
 
-    public CompletableFuture<Boolean> displayHelp(final CommandCaller player, final String catRaw, final int page) {
+    public CompletableFuture<Boolean> displayHelp(final PlotPlayer player, final String catRaw, final int page) {
         return CompletableFuture.supplyAsync(() -> {
             String cat = catRaw;
 
