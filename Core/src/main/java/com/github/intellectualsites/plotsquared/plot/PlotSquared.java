@@ -62,13 +62,11 @@ import lombok.NonNull;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -1619,18 +1617,6 @@ import java.util.zip.ZipInputStream;
             }
         }
         Settings.load(configFile);
-        //Sets the version information for the settings.yml file
-        try (InputStream stream = getClass().getResourceAsStream("/plugin.properties")) {
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(stream))) {
-                String versionString = br.readLine();
-                String commitString = br.readLine();
-                String dateString = br.readLine();
-                this.version = PlotVersion.tryParse(versionString, commitString, dateString);
-                System.out.println("Version is " + this.version);
-            }
-        } catch (IOException throwable) {
-            throwable.printStackTrace();
-        }
         Settings.save(configFile);
         config = YamlConfiguration.loadConfiguration(configFile);
     }
