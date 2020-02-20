@@ -11,6 +11,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.MobPl
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.UseFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehiclePlaceFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.types.BlockTypeWrapper;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -129,14 +130,16 @@ public abstract class EventUtil {
                     return Permissions.hasPermission(player,
                         Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.getTranslated(), notifyPerms);
                 }
-                List<BlockType> use = plot.getFlag(UseFlag.class);
-                if (!use.contains(BlockTypes.AIR) && !use.contains(blockType)) {
-                    return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(), false) || !(
-                        !notifyPerms || MainUtil.sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
-                            Captions.FLAG_USE.getTranslated()));
+                final List<BlockTypeWrapper> use = plot.getFlag(UseFlag.class);
+                for (final BlockTypeWrapper blockTypeWrapper : use) {
+                    if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper.accepts(blockType)) {
+                        return true;
+                    }
                 }
-                return true;
+                return Permissions.hasPermission(player,
+                    Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(), false) || !(
+                    !notifyPerms || MainUtil.sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
+                        Captions.FLAG_USE.getTranslated()));
             }
             case TRIGGER_PHYSICAL: {
                 if (plot == null) {
@@ -150,12 +153,14 @@ public abstract class EventUtil {
                 if (plot.getFlag(DeviceInteractFlag.class)) {
                     return true;
                 }
-                List<BlockType> use = plot.getFlag(UseFlag.class);
-                if (!use.contains(BlockTypes.AIR) && !use.contains(blockType)) {
-                    return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(), false);
+                List<BlockTypeWrapper> use = plot.getFlag(UseFlag.class);
+                for (final BlockTypeWrapper blockTypeWrapper : use) {
+                    if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper.accepts(blockType)) {
+                        return true;
+                    }
                 }
-                return true;
+                return Permissions.hasPermission(player,
+                    Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(), false);
             }
             case SPAWN_MOB: {
                 if (plot == null) {
@@ -169,18 +174,20 @@ public abstract class EventUtil {
                 if (plot.getFlag(MobPlaceFlag.class)) {
                     return true;
                 }
-                List<BlockType> place = plot.getFlag(PlaceFlag.class);
-                if (!place.contains(BlockTypes.AIR) && !place.contains(blockType)) {
-                    if (Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(), false)) {
+                List<BlockTypeWrapper> place = plot.getFlag(PlaceFlag.class);
+                for (final BlockTypeWrapper blockTypeWrapper : place) {
+                    if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper.accepts(blockType)) {
                         return true;
                     }
-                    return !(!notifyPerms || MainUtil
-                        .sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
-                            Captions.FLAG_MOB_PLACE.getTranslated() + '/' + Captions.FLAG_PLACE
-                                .getTranslated()));
                 }
-                return true;
+                if (Permissions.hasPermission(player,
+                    Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(), false)) {
+                    return true;
+                }
+                return !(!notifyPerms || MainUtil
+                    .sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
+                        Captions.FLAG_MOB_PLACE.getTranslated() + '/' + Captions.FLAG_PLACE
+                            .getTranslated()));
             }
             case PLACE_MISC: {
                 if (plot == null) {
@@ -194,19 +201,20 @@ public abstract class EventUtil {
                 if (plot.getFlag(MiscPlaceFlag.class)) {
                     return true;
                 }
-                List<BlockType> place = plot.getFlag(PlaceFlag.class);
-                if (!place.contains(BlockTypes.AIR) && !place.contains(blockType)) {
-                    if (Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(), false)) {
+                List<BlockTypeWrapper> place = plot.getFlag(PlaceFlag.class);
+                for (final BlockTypeWrapper blockTypeWrapper : place) {
+                    if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper.accepts(blockType)) {
                         return true;
                     }
-                    return !(!notifyPerms || MainUtil
-                        .sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
-                            Captions.FLAG_MISC_PLACE.getTranslated() + '/' + Captions.FLAG_PLACE
-                                .getTranslated()));
                 }
-
-                return true;
+                if (Permissions.hasPermission(player,
+                    Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(), false)) {
+                    return true;
+                }
+                return !(!notifyPerms || MainUtil
+                    .sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
+                        Captions.FLAG_MISC_PLACE.getTranslated() + '/' + Captions.FLAG_PLACE
+                            .getTranslated()));
             }
             case PLACE_VEHICLE:
                 if (plot == null) {

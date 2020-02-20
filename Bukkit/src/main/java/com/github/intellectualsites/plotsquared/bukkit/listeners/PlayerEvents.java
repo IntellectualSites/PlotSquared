@@ -1,7 +1,6 @@
 package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
 import com.destroystokyo.paper.MaterialTags;
-import com.github.intellectualsites.plotsquared.bukkit.BukkitMain;
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.bukkit.util.UpdateUtility;
@@ -53,9 +52,18 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Vehic
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleUseFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VillagerInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VineGrowFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.types.BlockTypeWrapper;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
-import com.github.intellectualsites.plotsquared.plot.object.*;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotHandler;
+import com.github.intellectualsites.plotsquared.plot.object.PlotId;
+import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
+import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.StringWrapper;
 import com.github.intellectualsites.plotsquared.plot.util.EntityUtil;
 import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
@@ -1141,10 +1149,13 @@ import java.util.regex.Pattern;
                 return;
             }
             if (!plot.isAdded(plotPlayer.getUUID())) {
-                List<BlockType> destroy = plot.getFlag(BreakFlag.class);
+                List<BlockTypeWrapper> destroy = plot.getFlag(BreakFlag.class);
                 Block block = event.getBlock();
-                if (destroy.contains(BukkitAdapter.asBlockType(block.getType()))) {
-                    return;
+                final BlockType blockType = BukkitAdapter.asBlockType(block.getType());
+                for (final BlockTypeWrapper blockTypeWrapper : destroy) {
+                    if (blockTypeWrapper.accepts(blockType)) {
+                        return;
+                    }
                 }
                 if (Permissions
                     .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_DESTROY_OTHER)) {
@@ -1413,9 +1424,9 @@ import java.util.regex.Pattern;
             }
             PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
             if (!plot.isAdded(plotPlayer.getUUID())) {
-                List<BlockType> destroy = plot.getFlag(BreakFlag.class);
+                List<BlockTypeWrapper> destroy = plot.getFlag(BreakFlag.class);
                 Block block = event.getBlock();
-                if (destroy.contains(BukkitAdapter.asBlockType(block.getType())) || Permissions
+                if (destroy.contains(BlockTypeWrapper.get(BukkitAdapter.asBlockType(block.getType()))) || Permissions
                     .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }
@@ -2309,9 +2320,12 @@ import java.util.regex.Pattern;
                 Captions.PERMISSION_ADMIN_BUILD_UNOWNED);
             event.setCancelled(true);
         } else if (!plot.isAdded(pp.getUUID())) {
-            List<BlockType> use = plot.getFlag(UseFlag.class);
-            if (use.contains(BukkitAdapter.asBlockType(block.getType()))) {
-                return;
+            List<BlockTypeWrapper> use = plot.getFlag(UseFlag.class);
+            final BlockType blockType = BukkitAdapter.asBlockType(block.getType());
+            for (final BlockTypeWrapper blockTypeWrapper : use) {
+                if (blockTypeWrapper.accepts(blockType)) {
+                    return;
+                }
             }
             if (Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
                 return;
@@ -2370,10 +2384,13 @@ import java.util.regex.Pattern;
                 Captions.PERMISSION_ADMIN_BUILD_UNOWNED);
             event.setCancelled(true);
         } else if (!plot.isAdded(plotPlayer.getUUID())) {
-            List<BlockType> use = plot.getFlag(UseFlag.class);
+            List<BlockTypeWrapper> use = plot.getFlag(UseFlag.class);
             Block block = event.getBlockClicked();
-            if (use.contains(BukkitAdapter.asBlockType(block.getType()))) {
-                return;
+            final BlockType blockType = BukkitAdapter.asBlockType(block.getType());
+            for (final BlockTypeWrapper blockTypeWrapper : use) {
+                if (blockTypeWrapper.accepts(blockType)) {
+                    return;
+                }
             }
             if (Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
                 return;
@@ -2933,10 +2950,10 @@ import java.util.regex.Pattern;
                     return;
                 }
             } else if (!plot.isAdded(pp.getUUID())) {
-                List<BlockType> place = plot.getFlag(PlaceFlag.class);
+                List<BlockTypeWrapper> place = plot.getFlag(PlaceFlag.class);
                 if (place != null) {
                 Block block = event.getBlock();
-                    if (place.contains(BukkitAdapter.asBlockType(block.getType()))) {
+                    if (place.contains(BlockTypeWrapper.get(BukkitAdapter.asBlockType(block.getType())))) {
                     return;
                     }
                 }

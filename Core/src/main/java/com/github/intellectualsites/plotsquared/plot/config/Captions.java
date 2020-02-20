@@ -651,7 +651,7 @@ public enum Captions implements Caption {
     FLAG_ERROR_KEEP("Flag value must be a timestamp or a boolean", false, "Flags"),
     FLAG_ERROR_LONG("Flag value must be a whole number (large numbers allowed)", false, "Flags"),
     FLAG_ERROR_PLOTBLOCKLIST("Flag value must be a block list", false, "Flags"),
-    FLAG_ERROR_INVALID_BLOCK("The provided value is not a valid block", false, "Flags"),
+    FLAG_ERROR_INVALID_BLOCK("The provided value is not a valid block or block category", false, "Flags"),
     FLAG_ERROR_DOUBLE("Flag value must be a decimal number.", false, "Flags"),
     FLAG_ERROR_STRING("Flag value must be alphanumeric. Some special characters are allowed.", false, "Flags"),
     FLAG_ERROR_STRINGLIST("Flag value must be a string list", false, "Flags"),
