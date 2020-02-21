@@ -49,7 +49,6 @@ import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
-import com.github.intellectualsites.plotsquared.plot.util.UpdateUtility;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
@@ -89,7 +88,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -127,7 +125,6 @@ import java.util.zip.ZipInputStream;
     @Setter @Getter private ILogger logger;
     // Platform / Version / Update URL
     private PlotVersion version;
-    @Nullable @Getter private UpdateUtility updateUtility;
     // Files and configuration
     @Getter private File jarFile = null; // This file
     private File storageFile;
@@ -1641,7 +1638,6 @@ import java.util.zip.ZipInputStream;
             }
         }
         Settings.load(configFile);
-        setupUpdateUtility();
         //Sets the version information for the settings.yml file
         try (InputStream stream = getClass().getResourceAsStream("/plugin.properties")) {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(stream))) {
@@ -1662,28 +1658,6 @@ import java.util.zip.ZipInputStream;
         }
         Settings.save(configFile);
         config = YamlConfiguration.loadConfiguration(configFile);
-    }
-
-    private void setupUpdateUtility() {
-        try {
-            copyFile("updater.properties", "config");
-            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
-                new FileInputStream(new File(new File(this.IMP.getDirectory(), "config"),
-                    "updater.properties"))))) {
-                final Properties properties = new Properties();
-                properties.load(bufferedReader);
-                final boolean enabled =
-                    Boolean.parseBoolean(properties.getOrDefault("enabled", true).toString());
-                if (enabled) {
-                    this.updateUtility = new UpdateUtility(properties.getProperty("path"),
-                        properties.getProperty("job"), properties.getProperty("artifact"));
-                }
-            } catch (final IOException throwable) {
-                throwable.printStackTrace();
-            }
-        } catch (final Throwable throwable) {
-            throwable.printStackTrace();
-        }
     }
 
     /**
