@@ -1,23 +1,7 @@
 import org.ajoberstar.grgit.Grgit
 
-buildscript {
-    repositories {
-        mavenCentral()
-        maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
-        jcenter()
-    }
-    dependencies {
-        classpath("com.github.jengelman.gradle.plugins:shadow:5.0.0")
-    }
-    configurations.all {
-        resolutionStrategy {
-            force("org.ow2.asm:asm:7.3.1")
-            force("org.jetbrains:annotations:18.0.0")
-        }
-    }
-}
-
 plugins {
+    id "com.github.johnrengelman.shadow" version "5.2.0"
     id "maven-publish"
     id "org.ajoberstar.grgit" version "4.0.1"
 }
@@ -70,7 +54,7 @@ subprojects {
     }
 
     dependencies {
-        implementation("com.sk89q.worldedit:worldedit-core:7.0.0") {
+        implementation("com.sk89q.worldedit:worldedit-core:7.1.0") {
             exclude(module: "bukkit-classloader-check")
             exclude(module: "mockito-core")
             exclude(module: "dummypermscompat")
@@ -82,7 +66,7 @@ subprojects {
         implementation("com.google.guava:guava:21.0") {
             because("Minecraft uses Guava 21 as of 1.13")
         }
-        compileOnly("org.jetbrains:annotations:17.0.0")
+        compileOnly("org.jetbrains:annotations:18.0.0")
         compileClasspath("org.projectlombok:lombok:1.18.12")
         testCompileOnly("org.projectlombok:lombok:1.18.12")
         annotationProcessor("org.projectlombok:lombok:1.18.8")
@@ -92,7 +76,7 @@ subprojects {
 
     configurations.all {
         resolutionStrategy {
-            force("junit:junit:4.12")
+            force("junit:junit:4.13")
             force("com.google.guava:guava:21.0")
             force("org.jetbrains:annotations:18.0.0")
             force("com.google.code.findbugs:jsr305:3.0.2")
