@@ -26,9 +26,7 @@ import java.util.Map;
         @Nullable PlotFlagUpdateHandler plotFlagUpdateHandler) {
         this.parentContainer = parentContainer;
         this.plotFlagUpdateHandler = plotFlagUpdateHandler;
-        if (this instanceof GlobalFlagContainer) {
-            return;
-        } else {
+        if (!(this instanceof GlobalFlagContainer)) {
             GlobalFlagContainer.getInstance().subscribe(this::handleUnknowns);
         }
     }
@@ -71,11 +69,17 @@ import java.util.Map;
      * @see #addAll(Collection) to add multiple flags
      */
     public <V, T extends PlotFlag<V, ?>> void addFlag(final T flag) {
-        this.flagMap.put(flag.getClass(), flag);
-        if (this.plotFlagUpdateHandler != null) {
-            this.plotFlagUpdateHandler.handle(flag, PlotFlagUpdateType.FLAG_ADDED);
+        final PlotFlag<?,?> oldInstance = this.flagMap.put(flag.getClass(), flag);
+        final PlotFlagUpdateType plotFlagUpdateType;
+        if (oldInstance != null) {
+            plotFlagUpdateType = PlotFlagUpdateType.FLAG_UPDATED;
+        } else {
+            plotFlagUpdateType = PlotFlagUpdateType.FLAG_ADDED;
         }
-        this.updateSubscribers.forEach(subscriber -> subscriber.handle(flag, PlotFlagUpdateType.FLAG_ADDED));
+        if (this.plotFlagUpdateHandler != null) {
+            this.plotFlagUpdateHandler.handle(flag, plotFlagUpdateType);
+        }
+        this.updateSubscribers.forEach(subscriber -> subscriber.handle(flag, plotFlagUpdateType));
     }
 
     /**
@@ -203,7 +207,7 @@ import java.util.Map;
     }
 
     private void handleUnknowns(final PlotFlag<?, ?> flag, final PlotFlagUpdateType plotFlagUpdateType) {
-        if (plotFlagUpdateType == PlotFlagUpdateType.FLAG_ADDED && this.unknownFlags.containsKey(flag.getName())) {
+        if (plotFlagUpdateType != PlotFlagUpdateType.FLAG_REMOVED && this.unknownFlags.containsKey(flag.getName())) {
             final String value = this.unknownFlags.remove(flag.getName());
             if (value != null) {
                 try {
@@ -229,7 +233,12 @@ import java.util.Map;
         /**
          * A flag was removed from a plot container
          */
-        FLAG_REMOVED
+        FLAG_REMOVED,
+        /**
+         * A flag was already stored in this container,
+         * but a new instance has bow replaced it
+         */
+        FLAG_UPDATED
     }
 
 
