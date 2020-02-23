@@ -14,7 +14,7 @@ public abstract class PlotFlagEvent extends PlotEvent {
     /**
      * Get the flag involved
      *
-     * @return Flag
+     * @return the flag involved 
      */
     public PlotFlag<?, ?> getFlag() {
         return flag;
