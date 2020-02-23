@@ -1087,18 +1087,19 @@ public class Plot {
     }
 
     /**
-     * Gets all flags applied to this plot
+     * Get an immutable view of all the flags associated with the plot.
      *
-     * @return all applied flags
+     * @return Immutable set containing the flags associated with the plot
      */
     public Set<PlotFlag<?, ?>> getFlags() {
         return ImmutableSet.copyOf(flagContainer.getFlagMap().values());
     }
 
     /**
-     * Sets a flag for this plot
+     * Sets a flag for the plot and stores it in the database.
      *
      * @param flag Flag to set
+     * @return A boolean indicating whether or not the operation succeeded
      */
     public <V> boolean setFlag(PlotFlag<V, ?> flag) {
         if (!EventUtil.manager.callFlagAdd(flag, origin)) {
@@ -1115,6 +1116,14 @@ public class Plot {
         return true;
     }
 
+    /**
+     * Parse the flag value into a flag instance based on the provided
+     * flag class, and store it in the database.
+     *
+     * @param flag  Flag type
+     * @param value Flag value
+     * @return A boolean indicating whether or not the operation succeeded
+     */
     public boolean setFlag(Class<?> flag, String value) {
         try {
             this.setFlag(GlobalFlagContainer.getInstance().getFlagErased(flag).parse(value));
@@ -1134,6 +1143,14 @@ public class Plot {
         return this.removeFlag(getFlagContainer().queryLocal(flag));
     }
 
+    /**
+     * Get flags associated with the plot.
+     *
+     * @param plotOnly          Whether or not to only consider the plot. If this parameter is set to
+     *                          true, the default values of the owning plot area will not be considered
+     * @param ignorePluginFlags Whether or not to ignore {@link InternalFlag internal flags}
+     * @return Collection containing all the flags that matched the given criteria
+     */
     public Collection<PlotFlag<?, ?>> getApplicableFlags(final boolean plotOnly,
         final boolean ignorePluginFlags) {
         if (!hasOwner()) {
@@ -1159,6 +1176,12 @@ public class Plot {
         return flagMap.values();
     }
 
+    /**
+     * Get flags associated with the plot and the plot area that contains it.
+     *
+     * @param ignorePluginFlags Whether or not to ignore {@link InternalFlag internal flags}
+     * @return Collection containing all the flags that matched the given criteria
+     */
     public Collection<PlotFlag<?, ?>> getApplicableFlags(final boolean ignorePluginFlags) {
         return getApplicableFlags(false, ignorePluginFlags);
     }
@@ -3162,12 +3185,13 @@ public class Plot {
             Plot other = plot.getRelative(destination.getArea(), offset.x, offset.y);
             other.create(plot.getOwner(), false);
             if (!plot.getFlagContainer().getFlagMap().isEmpty()) {
-                final Collection<PlotFlag<?,?>> existingFlags = other.getFlags();
+                final Collection<PlotFlag<?, ?>> existingFlags = other.getFlags();
                 other.getFlagContainer().clearLocal();
                 other.getFlagContainer().addAll(plot.getFlagContainer().getFlagMap().values());
                 // Update the database
-                for (final PlotFlag<?,?> flag : existingFlags) {
-                    final PlotFlag<?,?> newFlag = other.getFlagContainer().queryLocal(flag.getClass());
+                for (final PlotFlag<?, ?> flag : existingFlags) {
+                    final PlotFlag<?, ?> newFlag =
+                        other.getFlagContainer().queryLocal(flag.getClass());
                     if (other.getFlagContainer().queryLocal(flag.getClass()) == null) {
                         DBFunc.removeFlag(other, flag);
                     } else {
@@ -3246,10 +3270,26 @@ public class Plot {
         return getMerged(direction.getIndex());
     }
 
+    /**
+     * Get the value associated with the specified flag. This will first look at plot
+     * specific flag values, then at the containing plot area and its default values
+     * and at last, it will look at the default values stored in {@link GlobalFlagContainer}.
+     *
+     * @param flagClass The flag type (Class)
+     * @return The flag value
+     */
     public <T> T getFlag(final Class<? extends PlotFlag<T, ?>> flagClass) {
         return this.flagContainer.getFlag(flagClass).getValue();
     }
 
+    /**
+     * Get the value associated with the specified flag. This will first look at plot
+     * specific flag values, then at the containing plot area and its default values
+     * and at last, it will look at the default values stored in {@link GlobalFlagContainer}.
+     *
+     * @param flag The flag type (Any instance of the flag)
+     * @return The flag value
+     */
     public <T, V extends PlotFlag<T, ?>> T getFlag(final V flag) {
         final Class<?> flagClass = flag.getClass();
         final PlotFlag<?, ?> flagInstance = this.flagContainer.getFlagErased(flagClass);

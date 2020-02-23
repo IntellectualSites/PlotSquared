@@ -952,7 +952,7 @@ public abstract class PlotArea {
         return null;
     }
 
-    public static Collection<PlotFlag<?, ?>> parseFlags(List<String> flagStrings) throws FlagParseException {
+    private static Collection<PlotFlag<?, ?>> parseFlags(List<String> flagStrings) throws FlagParseException {
         final Collection<PlotFlag<?, ?>> flags = new ArrayList<>();
         for (final String key : flagStrings) {
             final String[] split;
