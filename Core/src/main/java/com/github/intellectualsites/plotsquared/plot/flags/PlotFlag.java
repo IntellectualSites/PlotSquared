@@ -15,7 +15,8 @@ import java.util.Collections;
  *
  * @param <T> Value contained in the flag.
  */
-@EqualsAndHashCode(of = "value") public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
+@EqualsAndHashCode(of = "value")
+public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
 
     private final T value;
     private final Caption flagCategory;
@@ -25,7 +26,9 @@ import java.util.Collections;
     /**
      * Construct a new flag instance.
      *
-     * @param value Flag value
+     * @param value           Flag value
+     * @param flagCategory    The flag category
+     * @param flagDescription A caption describing the flag functionality
      */
     protected PlotFlag(@NotNull final T value, @NotNull final Caption flagCategory,
         @NotNull final Caption flagDescription) {
@@ -87,26 +90,64 @@ import java.util.Collections;
      */
     public abstract String toString();
 
+    /**
+     * Get the flag name.
+     *
+     * @return Flag name
+     */
     public final String getName() {
         return this.flagName;
     }
 
+    /**
+     * Get a simple caption that describes the flag usage.
+     *
+     * @return Flag description.
+     */
     public Caption getFlagDescription() {
         return this.flagDescription;
     }
 
+    /**
+     * Get the category this flag belongs to. Usually a caption from
+     * {@link com.github.intellectualsites.plotsquared.plot.config.Captions}
+     * <p>
+     * These categories are used to categorize the flags when outputting
+     * flag lists to players.
+     *
+     * @return Flag category
+     */
     public Caption getFlagCategory() {
         return this.flagCategory;
     }
 
+    /**
+     * An example of a string that would parse into a valid
+     * flag value.
+     *
+     * @return An example flag value.
+     */
     public abstract String getExample();
 
     protected abstract F flagOf(@NotNull T value);
 
+    /**
+     * Create a new instance of the flag using a provided
+     * (non-null) value.
+     *
+     * @param value The flag value
+     * @return The created flag instance
+     */
     public final F createFlagInstance(@NotNull final T value) {
         return flagOf(Preconditions.checkNotNull(value));
     }
 
+    /**
+     * Get the tab completable values associated with the flag type, or
+     * an empty collection if tab completion isn't supported.
+     *
+     * @return Collection containing tab completable flag values
+     */
     public Collection<String> getTabCompletions() {
         return Collections.emptyList();
     }
