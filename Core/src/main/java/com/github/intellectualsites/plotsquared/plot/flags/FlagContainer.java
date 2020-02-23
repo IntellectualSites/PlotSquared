@@ -14,7 +14,8 @@ import java.util.Map;
 /**
  * Container type for {@link PlotFlag plot flags}.
  */
-@EqualsAndHashCode(of = "flagMap") @SuppressWarnings("unused") public class FlagContainer {
+@EqualsAndHashCode(of = "flagMap")
+public class FlagContainer {
 
     @Setter private FlagContainer parentContainer;
     private final Map<String, String> unknownFlags = new HashMap<>();
@@ -35,8 +36,18 @@ import java.util.Map;
         this(parentContainer, null);
     }
 
-    @SuppressWarnings("ALL")
-    public static <V, T extends PlotFlag<V, ?>> T castUnsafe(final PlotFlag<?, ?> flag) {
+    /**
+     * Cast a plot flag with wildcard parameters into a parametrisized
+     * PlotFlag. This is an unsafe operation, and should only be performed
+     * if the generic parameters are known beforehand.
+     *
+     * @param flag Flag instance
+     * @param <V>  Flag value type
+     * @param <T>  Flag type
+     * @return Casted flag
+     */
+    @SuppressWarnings("ALL") public static <V, T extends PlotFlag<V, ?>> T castUnsafe(
+        final PlotFlag<?, ?> flag) {
         return (T) flag;
     }
 
@@ -49,7 +60,7 @@ import java.util.Map;
         return this.parentContainer;
     }
 
-    protected Map<Class<?>, PlotFlag<?, ?>> getInternalPlotFlagMap() {
+    @SuppressWarnings("unused") protected Map<Class<?>, PlotFlag<?, ?>> getInternalPlotFlagMap() {
         return this.flagMap;
     }
 
@@ -69,7 +80,7 @@ import java.util.Map;
      * @see #addAll(Collection) to add multiple flags
      */
     public <V, T extends PlotFlag<V, ?>> void addFlag(final T flag) {
-        final PlotFlag<?,?> oldInstance = this.flagMap.put(flag.getClass(), flag);
+        final PlotFlag<?, ?> oldInstance = this.flagMap.put(flag.getClass(), flag);
         final PlotFlagUpdateType plotFlagUpdateType;
         if (oldInstance != null) {
             plotFlagUpdateType = PlotFlagUpdateType.FLAG_UPDATED;
@@ -92,11 +103,12 @@ import java.util.Map;
         if (this.plotFlagUpdateHandler != null) {
             this.plotFlagUpdateHandler.handle(flag, PlotFlagUpdateType.FLAG_REMOVED);
         }
-        this.updateSubscribers.forEach(subscriber -> subscriber.handle(flag, PlotFlagUpdateType.FLAG_REMOVED));
+        this.updateSubscribers
+            .forEach(subscriber -> subscriber.handle(flag, PlotFlagUpdateType.FLAG_REMOVED));
         if (value == null) {
             return null;
         } else {
-            return (V) flag;
+            return (V) value;
         }
     }
 
@@ -192,8 +204,7 @@ import java.util.Map;
      * @param <T>       Flag type
      * @return The flag instance, if it exists in this container, else null.
      */
-    @Nullable public <V, T extends PlotFlag<V, ?>> T queryLocal(
-        final Class<?> flagClass) {
+    @Nullable public <V, T extends PlotFlag<V, ?>> T queryLocal(final Class<?> flagClass) {
         final PlotFlag<?, ?> localFlag = this.flagMap.get(flagClass);
         if (localFlag == null) {
             return null;
@@ -206,8 +217,10 @@ import java.util.Map;
         this.updateSubscribers.add(plotFlagUpdateHandler);
     }
 
-    private void handleUnknowns(final PlotFlag<?, ?> flag, final PlotFlagUpdateType plotFlagUpdateType) {
-        if (plotFlagUpdateType != PlotFlagUpdateType.FLAG_REMOVED && this.unknownFlags.containsKey(flag.getName())) {
+    private void handleUnknowns(final PlotFlag<?, ?> flag,
+        final PlotFlagUpdateType plotFlagUpdateType) {
+        if (plotFlagUpdateType != PlotFlagUpdateType.FLAG_REMOVED && this.unknownFlags
+            .containsKey(flag.getName())) {
             final String value = this.unknownFlags.remove(flag.getName());
             if (value != null) {
                 try {
@@ -245,7 +258,8 @@ import java.util.Map;
     /**
      * Handler for update events in {@link FlagContainer flag containers}.
      */
-    @FunctionalInterface public interface PlotFlagUpdateHandler {
+    @FunctionalInterface
+    public interface PlotFlagUpdateHandler {
 
         /**
          * Act on the flag update event
