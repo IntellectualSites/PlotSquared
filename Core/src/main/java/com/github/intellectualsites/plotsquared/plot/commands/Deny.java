@@ -74,6 +74,10 @@ import java.util.UUID;
                 handleKick(UUIDHandler.getPlayer(uuid), plot);
             } else {
                 for (PlotPlayer plotPlayer : plot.getPlayersInPlot()) {
+                    // Ignore plot-owners
+                    if (plot.isOwner(plotPlayer.getUUID())) {
+                        continue;
+                    }
                     handleKick(plotPlayer, plot);
                 }
             }
