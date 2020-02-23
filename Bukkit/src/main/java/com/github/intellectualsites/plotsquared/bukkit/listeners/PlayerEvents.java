@@ -6,6 +6,7 @@ import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
@@ -413,17 +414,19 @@ import java.util.regex.Pattern;
             return;
         }
         if (Settings.Redstone.DISABLE_OFFLINE) {
-            boolean disable;
-            if (plot.isMerged()) {
-                disable = true;
-                for (UUID owner : plot.getOwners()) {
-                    if (UUIDHandler.getPlayer(owner) != null) {
-                        disable = false;
-                        break;
+            boolean disable = false;
+            if (!plot.getOwner().equals(DBFunc.SERVER)) {
+                if (plot.isMerged()) {
+                    disable = true;
+                    for (UUID owner : plot.getOwners()) {
+                        if (UUIDHandler.getPlayer(owner) != null) {
+                            disable = false;
+                            break;
+                        }
                     }
+                } else {
+                    disable = UUIDHandler.getPlayer(plot.guessOwner()) == null;
                 }
-            } else {
-                disable = UUIDHandler.getPlayer(plot.guessOwner()) == null;
             }
             if (disable) {
                 for (UUID trusted : plot.getTrusted()) {
