@@ -183,7 +183,9 @@ public class FlagContainer {
 
     /**
      * Has the same functionality as {@link #getFlag(Class)}, but
-     * with erased generic types.
+     * with wildcard generic types.
+     *
+     * @param flagClass The {@link PlotFlag} class.
      */
     public PlotFlag<?, ?> getFlagErased(Class<?> flagClass) {
         final PlotFlag<?, ?> flag = this.flagMap.get(flagClass);
