@@ -24,7 +24,7 @@ import java.util.Map.Entry;
 
 @CommandDeclaration(command = "database", aliases = {
     "convert"}, category = CommandCategory.ADMINISTRATION, permission = "plots.database", description = "Convert/Backup Storage", requiredType = RequiredType.CONSOLE, usage = "/plot database [area] <sqlite|mysql|import>")
-public class Database extends SubCommand {
+public class DatabaseCommand extends SubCommand {
 
     public static void insertPlots(final SQLManager manager, final List<Plot> plots,
         final PlotPlayer player) {
@@ -157,7 +157,7 @@ public class Database extends SubCommand {
             }
             try {
                 SQLManager manager = new SQLManager(implementation, prefix, true);
-                Database.insertPlots(manager, plots, player);
+                DatabaseCommand.insertPlots(manager, plots, player);
                 return true;
             } catch (ClassNotFoundException | SQLException e) {
                 MainUtil.sendMessage(player, "$1Failed to save plots, read stacktrace for info");

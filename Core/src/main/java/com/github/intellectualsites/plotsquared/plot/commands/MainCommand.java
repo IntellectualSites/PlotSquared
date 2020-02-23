@@ -78,7 +78,7 @@ import java.util.concurrent.CompletableFuture;
             new DebugClaimTest();
             new Inbox();
             new Comment();
-            new Database();
+            new DatabaseCommand();
             new Swap();
             new Music();
             new DebugRoadRegen();
