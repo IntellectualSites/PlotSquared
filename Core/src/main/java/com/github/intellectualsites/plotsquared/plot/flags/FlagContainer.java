@@ -43,9 +43,9 @@ import java.util.Map;
     /**
      * Return the parent container (if the container has a parent)
      *
-     * @return Parent container
+     * @return Parent container, if it exists
      */
-    public FlagContainer getParentContainer() {
+    @Nullable public FlagContainer getParentContainer() {
         return this.parentContainer;
     }
 
