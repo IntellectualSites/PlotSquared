@@ -78,7 +78,7 @@ public final class BlockBucket implements ConfigurationSerializable {
     private void addBlock(@NonNull final BlockState block, double chance) {
         if (chance == -1) chance = 1;
         String prefix = input.length() == 0 ? "" : ",";
-        input.append(prefix).append(chance).append("%").append(prefix);
+        input.append(prefix).append(chance).append("%").append(block.toString());
         this.compiled = false;
     }
 

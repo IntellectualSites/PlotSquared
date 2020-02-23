@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.util.world;
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.google.common.base.Preconditions;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.entity.Player;
 import com.sk89q.worldedit.extension.input.InputParseException;
@@ -18,7 +19,9 @@ import com.sk89q.worldedit.world.block.BlockType;
 import org.jetbrains.annotations.NotNull;
 
 public class PatternUtil {
+
     public static BaseBlock apply(@NotNull Pattern pattern, int x, int y, int z) {
+        Preconditions.checkNotNull(pattern, "Pattern may not be null");
         if (pattern instanceof BlockPattern
             || pattern instanceof RandomPattern
             || pattern instanceof BlockState
