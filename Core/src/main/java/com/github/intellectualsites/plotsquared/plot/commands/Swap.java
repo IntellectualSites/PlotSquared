@@ -40,11 +40,11 @@ public class Swap extends SubCommand {
             Captions.PLOTWORLD_INCOMPATIBLE.send(player);
             return false;
         }
-        if (plot1.move(plot2, new Runnable() {
-            @Override public void run() {
-                MainUtil.sendMessage(player, Captions.SWAP_SUCCESS);
-            }
-        }, true)) {
+        if (plot1.isMerged() || plot2.isMerged()) {
+            Captions.SWAP_MERGED.send(player);
+            return false;
+        }
+        if (plot1.move(plot2, () -> MainUtil.sendMessage(player, Captions.SWAP_SUCCESS), true)) {
             return true;
         } else {
             MainUtil.sendMessage(player, Captions.SWAP_OVERLAP);

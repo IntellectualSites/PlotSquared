@@ -237,6 +237,7 @@ public enum Captions {
     SWAP_DIMENSIONS("$2The proposed areas must have comparable dimensions", "Swap"),
     SWAP_SYNTAX("$2/plot swap <id>", "Swap"),
     SWAP_SUCCESS("$4Successfully swapped plots", "Swap"),
+    SWAP_MERGED("$2Merged plots may not be swapped. Please unmerge the plot before performing the swap.", "Swap"),
     //</editor-fold>
     //<editor-fold desc="Comments">
     INBOX_NOTIFICATION("%s unread messages. Use /plot inbox", "Comment"),
