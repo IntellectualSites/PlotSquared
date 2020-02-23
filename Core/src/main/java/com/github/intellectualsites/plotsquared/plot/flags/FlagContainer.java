@@ -23,6 +23,18 @@ public class FlagContainer {
     private final PlotFlagUpdateHandler plotFlagUpdateHandler;
     private final Collection<PlotFlagUpdateHandler> updateSubscribers = new ArrayList<>();
 
+    /**
+     * Construct a new flag container with an optional parent container and update handler.
+     * Default values are inherited from the parent container. At the top
+     * of the parent-child hierarchy must be the {@link GlobalFlagContainer}
+     * (or an equivalent top level flag container).
+     *
+     * @param parentContainer       Parent container. The top level flag container should not have a parent,
+     *                              and can set this parameter to null. If this is not a top level
+     *                              flag container, the parent should not be null.
+     * @param plotFlagUpdateHandler Event handler that will be called whenever a plot flag is
+     *                              added, removed or updated in this flag container.
+     */
     public FlagContainer(@Nullable final FlagContainer parentContainer,
         @Nullable PlotFlagUpdateHandler plotFlagUpdateHandler) {
         this.parentContainer = parentContainer;
@@ -32,6 +44,16 @@ public class FlagContainer {
         }
     }
 
+    /**
+     * Construct a new flag container with an optional parent container.
+     * Default values are inherited from the parent container. At the top
+     * of the parent-child hierarchy must be the {@link GlobalFlagContainer}
+     * (or an equivalent top level flag container).
+     *
+     * @param parentContainer Parent container. The top level flag container should not have a parent,
+     *                        and can set this parameter to null. If this is not a top level
+     *                        flag container, the parent should not be null.
+     */
     public FlagContainer(@Nullable final FlagContainer parentContainer) {
         this(parentContainer, null);
     }
