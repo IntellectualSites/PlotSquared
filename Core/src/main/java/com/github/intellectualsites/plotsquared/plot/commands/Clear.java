@@ -16,7 +16,14 @@ import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue
 
 import java.util.concurrent.CompletableFuture;
 
-@CommandDeclaration(command = "clear", description = "Clear the plot you stand on", requiredType = RequiredType.NONE, permission = "plots.clear", category = CommandCategory.APPEARANCE, usage = "/plot clear", aliases = "reset", confirmation = true)
+@CommandDeclaration(command = "clear",
+    description = "Clear the plot you stand on",
+    requiredType = RequiredType.NONE,
+    permission = "plots.clear",
+    category = CommandCategory.APPEARANCE,
+    usage = "/plot clear",
+    aliases = "reset",
+    confirmation = true)
 public class Clear extends Command {
 
     // Note: To clear a specific plot use /plot <plot> clear

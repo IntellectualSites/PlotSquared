@@ -15,7 +15,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 
-@CommandDeclaration(command = "music", permission = "plots.music", description = "Play music in your plot", usage = "/plot music", category = CommandCategory.APPEARANCE, requiredType = RequiredType.PLAYER)
+@CommandDeclaration(command = "music",
+    permission = "plots.music",
+    description = "Play music in your plot",
+    usage = "/plot music",
+    category = CommandCategory.APPEARANCE,
+    requiredType = RequiredType.PLAYER)
 public class Music extends SubCommand {
 
     private static final Collection<String> DISCS = Arrays
@@ -43,7 +48,8 @@ public class Music extends SubCommand {
                     plot.removeFlag(MusicFlag.class);
                     Captions.FLAG_REMOVED.send(player);
                 } else if (item.name.toLowerCase(Locale.ENGLISH).contains("disc")) {
-                    plot.setFlag(GlobalFlagContainer.getInstance().getFlag(MusicFlag.class).createFlagInstance(item.getType()));
+                    plot.setFlag(GlobalFlagContainer.getInstance().getFlag(MusicFlag.class)
+                        .createFlagInstance(item.getType()));
                     Captions.FLAG_ADDED.send(player);
                 } else {
                     Captions.FLAG_NOT_ADDED.send(player);

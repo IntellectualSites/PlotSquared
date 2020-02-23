@@ -17,9 +17,13 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.google.common.primitives.Ints;
 
-@CommandDeclaration(command = "claim", aliases = "c",
-    description = "Claim the current plot you're standing on", category = CommandCategory.CLAIMING,
-    requiredType = RequiredType.PLAYER, permission = "plots.claim", usage = "/plot claim")
+@CommandDeclaration(command = "claim",
+    aliases = "c",
+    description = "Claim the current plot you're standing on",
+    category = CommandCategory.CLAIMING,
+    requiredType = RequiredType.PLAYER,
+    permission = "plots.claim",
+    usage = "/plot claim")
 public class Claim extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
@@ -57,9 +61,8 @@ public class Claim extends SubCommand {
                     return sendMessage(player, Captions.SCHEMATIC_INVALID,
                         "non-existent: " + schematic);
                 }
-                if (!Permissions
-                    .hasPermission(player, CaptionUtility
-                        .format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
+                if (!Permissions.hasPermission(player, CaptionUtility
+                    .format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
                     && !Permissions
                     .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {
                     return sendMessage(player, Captions.NO_SCHEMATIC_PERMISSION, schematic);

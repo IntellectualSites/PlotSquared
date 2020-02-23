@@ -11,7 +11,12 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 import java.util.concurrent.CompletableFuture;
 
-@CommandDeclaration(command = "near", aliases = "n", description = "Display nearby players", usage = "/plot near", category = CommandCategory.INFO, requiredType = RequiredType.PLAYER)
+@CommandDeclaration(command = "near",
+    aliases = "n",
+    description = "Display nearby players",
+    usage = "/plot near",
+    category = CommandCategory.INFO,
+    requiredType = RequiredType.PLAYER)
 public class Near extends Command {
     public Near() {
         super(MainCommand.getInstance(), true);

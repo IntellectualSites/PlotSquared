@@ -21,7 +21,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-@CommandDeclaration(command = "like", permission = "plots.like", description = "Like the plot", usage = "/plot like [next|purge]", category = CommandCategory.INFO, requiredType = RequiredType.PLAYER)
+@CommandDeclaration(command = "like",
+    permission = "plots.like",
+    description = "Like the plot",
+    usage = "/plot like [next|purge]",
+    category = CommandCategory.INFO,
+    requiredType = RequiredType.PLAYER)
 public class Like extends SubCommand {
 
     protected static boolean handleLike(final PlotPlayer player, String[] args,

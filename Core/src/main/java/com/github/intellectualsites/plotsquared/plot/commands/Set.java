@@ -18,8 +18,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
-@CommandDeclaration(command = "set", description = "Set a plot value", aliases = {
-    "s"}, usage = "/plot set <biome|alias|home|flag> <value...>", permission = "plots.set", category = CommandCategory.APPEARANCE, requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "set",
+    description = "Set a plot value",
+    aliases = {"s"},
+    usage = "/plot set <biome|alias|home|flag> <value...>",
+    permission = "plots.set",
+    category = CommandCategory.APPEARANCE,
+    requiredType = RequiredType.NONE)
 public class Set extends SubCommand {
 
     public static final String[] values = new String[] {"biome", "alias", "home"};
@@ -46,7 +51,8 @@ public class Set extends SubCommand {
                 for (String component : components) {
                     if (component.equalsIgnoreCase(args[0])) {
                         if (!Permissions.hasPermission(player, CaptionUtility
-                            .format(player, Captions.PERMISSION_SET_COMPONENT.getTranslated(), component))) {
+                            .format(player, Captions.PERMISSION_SET_COMPONENT.getTranslated(),
+                                component))) {
                             MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
                                 .format(player, Captions.PERMISSION_SET_COMPONENT.getTranslated(),
                                     component));
@@ -77,8 +83,7 @@ public class Set extends SubCommand {
     }
 
     public boolean noArgs(PlotPlayer player) {
-        ArrayList<String> newValues =
-            new ArrayList<>(Arrays.asList("biome", "alias", "home"));
+        ArrayList<String> newValues = new ArrayList<>(Arrays.asList("biome", "alias", "home"));
         Plot plot = player.getCurrentPlot();
         if (plot != null) {
             newValues.addAll(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));

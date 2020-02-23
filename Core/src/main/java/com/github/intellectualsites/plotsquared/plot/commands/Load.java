@@ -19,7 +19,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-@CommandDeclaration(command = "load", aliases = "restore", category = CommandCategory.SCHEMATIC, requiredType = RequiredType.NONE, description = "Load your plot", permission = "plots.load", usage = "/plot load")
+@CommandDeclaration(command = "load",
+    aliases = "restore",
+    category = CommandCategory.SCHEMATIC,
+    requiredType = RequiredType.NONE,
+    description = "Load your plot",
+    permission = "plots.load",
+    usage = "/plot load")
 public class Load extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {

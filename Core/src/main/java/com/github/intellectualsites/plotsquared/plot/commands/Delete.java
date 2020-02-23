@@ -15,9 +15,14 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 
 
-@CommandDeclaration(command = "delete", permission = "plots.delete", description = "Delete the plot you stand on", usage = "/plot delete", aliases = {
-    "dispose", "del",
-    "unclaim"}, category = CommandCategory.CLAIMING, requiredType = RequiredType.NONE, confirmation = true)
+@CommandDeclaration(command = "delete",
+    permission = "plots.delete",
+    description = "Delete the plot you stand on",
+    usage = "/plot delete",
+    aliases = {"dispose", "del", "unclaim"},
+    category = CommandCategory.CLAIMING,
+    requiredType = RequiredType.NONE,
+    confirmation = true)
 public class Delete extends SubCommand {
 
     // Note: To delete a specific plot use /plot <plot> delete

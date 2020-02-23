@@ -6,7 +6,8 @@ import lombok.RequiredArgsConstructor;
 /**
  * CommandCategory.
  */
-@RequiredArgsConstructor public enum CommandCategory {
+@RequiredArgsConstructor
+public enum CommandCategory {
     /**
      * Claiming CommandConfig.
      * Such as: /plot claim

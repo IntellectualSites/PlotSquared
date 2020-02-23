@@ -11,8 +11,13 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 
-@CommandDeclaration(command = "unlink", aliases = {"u",
-    "unmerge"}, description = "Unlink a mega-plot", usage = "/plot unlink [createroads]", requiredType = RequiredType.PLAYER, category = CommandCategory.SETTINGS, confirmation = true)
+@CommandDeclaration(command = "unlink",
+    aliases = {"u", "unmerge"},
+    description = "Unlink a mega-plot",
+    usage = "/plot unlink [createroads]",
+    requiredType = RequiredType.PLAYER,
+    category = CommandCategory.SETTINGS,
+    confirmation = true)
 public class Unlink extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {

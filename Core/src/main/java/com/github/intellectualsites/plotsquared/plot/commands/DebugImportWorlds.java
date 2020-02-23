@@ -18,7 +18,11 @@ import java.io.File;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-@CommandDeclaration(command = "debugimportworlds", permission = "plots.admin", description = "Import worlds by player name", requiredType = RequiredType.CONSOLE, category = CommandCategory.TELEPORT)
+@CommandDeclaration(command = "debugimportworlds",
+    permission = "plots.admin",
+    description = "Import worlds by player name",
+    requiredType = RequiredType.CONSOLE,
+    category = CommandCategory.TELEPORT)
 public class DebugImportWorlds extends Command {
     public DebugImportWorlds() {
         super(MainCommand.getInstance(), true);

@@ -14,9 +14,14 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import java.util.Set;
 import java.util.UUID;
 
-@CommandDeclaration(command = "setowner", permission = "plots.set.owner", description = "Set the plot owner", usage = "/plot setowner <player>", aliases = {
-    "owner", "so",
-    "seto"}, category = CommandCategory.CLAIMING, requiredType = RequiredType.NONE, confirmation = true)
+@CommandDeclaration(command = "setowner",
+    permission = "plots.set.owner",
+    description = "Set the plot owner",
+    usage = "/plot setowner <player>",
+    aliases = {"owner", "so", "seto"},
+    category = CommandCategory.CLAIMING,
+    requiredType = RequiredType.NONE,
+    confirmation = true)
 public class Owner extends SetCommand {
 
     @Override public boolean set(final PlotPlayer player, final Plot plot, String value) {

@@ -34,8 +34,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-@CommandDeclaration(command = "setup", permission = "plots.admin.command.setup", description = "Setup wizard for plot worlds", usage = "/plot setup", aliases = {
-    "create"}, category = CommandCategory.ADMINISTRATION) public class Setup extends SubCommand {
+@CommandDeclaration(command = "setup",
+    permission = "plots.admin.command.setup",
+    description = "Setup wizard for plot worlds",
+    usage = "/plot setup",
+    aliases = {"create"},
+    category = CommandCategory.ADMINISTRATION)
+public class Setup extends SubCommand {
 
     private static boolean d(String s) {
         return s.chars().allMatch((i) -> {
@@ -428,7 +433,9 @@ import java.util.UUID;
     }
 
 
-    @ToString @EqualsAndHashCode(of = "uuid") @AllArgsConstructor
+    @ToString
+    @EqualsAndHashCode(of = "uuid")
+    @AllArgsConstructor
     private static class SetupContext {
 
         private final UUID uuid;

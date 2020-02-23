@@ -30,7 +30,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-@CommandDeclaration(command = "trim", permission = "plots.admin", description = "Delete unmodified portions of your plotworld", usage = "/plot trim <world> [regenerate]", requiredType = RequiredType.CONSOLE, category = CommandCategory.ADMINISTRATION)
+@CommandDeclaration(command = "trim",
+    permission = "plots.admin",
+    description = "Delete unmodified portions of your plotworld",
+    usage = "/plot trim <world> [regenerate]",
+    requiredType = RequiredType.CONSOLE,
+    category = CommandCategory.ADMINISTRATION)
 public class Trim extends SubCommand {
 
     public static ArrayList<Plot> expired = null;

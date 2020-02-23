@@ -55,8 +55,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-@CommandDeclaration(command = "debugexec", permission = "plots.admin", description = "Mutli-purpose debug command", aliases = {
-    "exec", "$"}, category = CommandCategory.DEBUG) public class DebugExec extends SubCommand {
+@CommandDeclaration(command = "debugexec",
+    permission = "plots.admin",
+    description = "Mutli-purpose debug command",
+    aliases = {"exec", "$"},
+    category = CommandCategory.DEBUG)
+public class DebugExec extends SubCommand {
     private ScriptEngine engine;
     private Bindings scope;
 
@@ -218,7 +222,8 @@ import java.util.concurrent.CompletableFuture;
                         return false;
                     }
                     String flag = args[1];
-                    final PlotFlag<?, ?> flagInstance = GlobalFlagContainer.getInstance().getFlagFromString(flag);
+                    final PlotFlag<?, ?> flagInstance =
+                        GlobalFlagContainer.getInstance().getFlagFromString(flag);
                     if (flagInstance != null) {
                         for (Plot plot : PlotSquared.get().getBasePlots()) {
                             plot.removeFlag(flagInstance);

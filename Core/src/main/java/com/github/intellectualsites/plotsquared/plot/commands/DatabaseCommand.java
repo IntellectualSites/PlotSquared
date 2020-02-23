@@ -22,8 +22,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-@CommandDeclaration(command = "database", aliases = {
-    "convert"}, category = CommandCategory.ADMINISTRATION, permission = "plots.database", description = "Convert/Backup Storage", requiredType = RequiredType.CONSOLE, usage = "/plot database [area] <sqlite|mysql|import>")
+@CommandDeclaration(command = "database",
+    aliases = {"convert"},
+    category = CommandCategory.ADMINISTRATION,
+    permission = "plots.database",
+    description = "Convert/Backup Storage",
+    requiredType = RequiredType.CONSOLE,
+    usage = "/plot database [area] <sqlite|mysql|import>")
 public class DatabaseCommand extends SubCommand {
 
     public static void insertPlots(final SQLManager manager, final List<Plot> plots,

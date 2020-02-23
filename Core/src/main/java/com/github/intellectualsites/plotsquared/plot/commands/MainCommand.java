@@ -22,8 +22,9 @@ import java.util.concurrent.CompletableFuture;
 /**
  * PlotSquared command class.
  */
-@CommandDeclaration(command = "plot", aliases = {"plots", "p", "plotsquared", "plot2", "p2", "ps",
-    "2", "plotme", "plotz", "ap"}) public class MainCommand extends Command {
+@CommandDeclaration(command = "plot",
+    aliases = {"plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap"})
+public class MainCommand extends Command {
 
     private static MainCommand instance;
     public Help help;

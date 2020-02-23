@@ -17,9 +17,12 @@ import com.google.common.primitives.Ints;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-@CommandDeclaration(command = "grant", category = CommandCategory.CLAIMING,
-    usage = "/plot grant <check|add> [player]", permission = "plots.grant",
-    requiredType = RequiredType.NONE) public class Grant extends Command {
+@CommandDeclaration(command = "grant",
+    category = CommandCategory.CLAIMING,
+    usage = "/plot grant <check|add> [player]",
+    permission = "plots.grant",
+    requiredType = RequiredType.NONE)
+public class Grant extends Command {
 
     public Grant() {
         super(MainCommand.getInstance(), true);
@@ -33,10 +36,10 @@ import java.util.concurrent.CompletableFuture;
         switch (arg0) {
             case "add":
             case "check":
-                if (!Permissions.hasPermission(player,
-                    CaptionUtility.format(player, Captions.PERMISSION_GRANT.getTranslated(), arg0))) {
-                    Captions.NO_PERMISSION.send(player,
-                        CaptionUtility.format(player, Captions.PERMISSION_GRANT.getTranslated(), arg0));
+                if (!Permissions.hasPermission(player, CaptionUtility
+                    .format(player, Captions.PERMISSION_GRANT.getTranslated(), arg0))) {
+                    Captions.NO_PERMISSION.send(player, CaptionUtility
+                        .format(player, Captions.PERMISSION_GRANT.getTranslated(), arg0));
                     return CompletableFuture.completedFuture(false);
                 }
                 if (args.length > 2) {

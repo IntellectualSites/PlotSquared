@@ -33,7 +33,14 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Set;
 
-@CommandDeclaration(command = "area", permission = "plots.area", category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.NONE, description = "Create a new PlotArea", aliases = "world", usage = "/plot area <create|info|list|tp|regen>", confirmation = true)
+@CommandDeclaration(command = "area",
+    permission = "plots.area",
+    category = CommandCategory.ADMINISTRATION,
+    requiredType = RequiredType.NONE,
+    description = "Create a new PlotArea",
+    aliases = "world",
+    usage = "/plot area <create|info|list|tp|regen>",
+    confirmation = true)
 public class Area extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {

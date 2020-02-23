@@ -10,7 +10,11 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 
-@CommandDeclaration(command = "info", aliases = "i", description = "Display plot info", usage = "/plot info <id> [-f, to force info]", category = CommandCategory.INFO)
+@CommandDeclaration(command = "info",
+    aliases = "i",
+    description = "Display plot info",
+    usage = "/plot info <id> [-f, to force info]",
+    category = CommandCategory.INFO)
 public class Info extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {

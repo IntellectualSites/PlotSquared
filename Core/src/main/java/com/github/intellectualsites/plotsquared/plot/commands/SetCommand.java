@@ -21,7 +21,8 @@ public abstract class SetCommand extends SubCommand {
             if (!Permissions.hasPermission(player, CaptionUtility
                 .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()))) {
                 MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                    .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()));
+                    .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(),
+                        getFullId()));
                 MainUtil.sendMessage(player, Captions.PLOT_NOT_CLAIMED);
                 return false;
             }
@@ -30,7 +31,8 @@ public abstract class SetCommand extends SubCommand {
             if (!Permissions.hasPermission(player, CaptionUtility
                 .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()))) {
                 MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                    .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()));
+                    .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(),
+                        getFullId()));
                 MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
                 return false;
             }
