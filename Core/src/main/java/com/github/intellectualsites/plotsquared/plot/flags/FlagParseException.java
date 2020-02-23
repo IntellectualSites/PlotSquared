@@ -9,6 +9,15 @@ public class FlagParseException extends Exception {
     private final String value;
     private final String errorMessage;
 
+    /**
+     * Construct a new flag parse exception to indicate that an attempt to parse a plot
+     * flag was unsuccessful.
+     *
+     * @param flag         Flag instance
+     * @param value        Value that failed ot parse
+     * @param errorMessage An error message explaining the failure
+     * @param args         Arguments used to format the error message
+     */
     public FlagParseException(final PlotFlag<?, ?> flag, final String value,
         final Caption errorMessage, final Object... args) {
         super(String.format("Failed to parse flag of type '%s'. Value '%s' was not accepted.",
@@ -36,6 +45,11 @@ public class FlagParseException extends Exception {
         return this.flag;
     }
 
+    /**
+     * Get the error message that was supplied by the flag instance.
+     *
+     * @return Error message.
+     */
     public String getErrorMessage() {
         return errorMessage;
     }
