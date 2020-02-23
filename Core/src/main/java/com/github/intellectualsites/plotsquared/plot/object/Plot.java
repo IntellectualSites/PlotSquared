@@ -1,8 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
-
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
@@ -39,7 +36,6 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,7 +57,9 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -1615,9 +1613,9 @@ public class Plot {
      *
      * @return the name of the biome
      */
-    public BiomeType getBiome() {
+    public CompletableFuture<BiomeType> getBiome() {
         Location location = this.getCenter();
-        return WorldUtil.IMP.getBiome(location.getWorld(), location.getX(), location.getZ());
+        return WorldUtil.IMP.getBiome(location.getWorld(), location.getX(), location.getY(), location.getZ());
     }
 
     //TODO Better documentation needed.

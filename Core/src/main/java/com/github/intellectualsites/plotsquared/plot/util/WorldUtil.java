@@ -3,7 +3,6 @@ package com.github.intellectualsites.plotsquared.plot.util;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
 import com.sk89q.jnbt.CompoundTag;
@@ -15,6 +14,7 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -25,11 +25,11 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class WorldUtil {
     public static WorldUtil IMP;
@@ -52,7 +52,7 @@ public abstract class WorldUtil {
 
     public abstract StringComparison<BlockState>.ComparisonResult getClosestBlock(String name);
 
-    public abstract BiomeType getBiome(String world, int x, int z);
+    public abstract CompletableFuture<BiomeType> getBiome(String world, int x, int y, int z);
 
     public abstract BlockState getBlock(Location location);
 

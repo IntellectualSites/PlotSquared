@@ -20,6 +20,7 @@ import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockState;
+import io.papermc.lib.PaperLib;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -44,6 +45,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings({"unused", "WeakerAccess"}) public class BukkitUtil extends WorldUtil {
 
@@ -288,8 +290,9 @@ import java.util.Set;
         return getWorld(worldName) != null;
     }
 
-    @Override public BiomeType getBiome(String world, int x, int z) {
-        return BukkitAdapter.adapt(getWorld(world).getBiome(x, z));
+    @Override public CompletableFuture<BiomeType> getBiome(String world, int x, int y, int z) {
+        return PaperLib.getChunkAtAsync(getWorld(world), x << 4, z << 4)
+            .thenApply(chunk -> BukkitAdapter.adapt(chunk.getBlock(x, y, z).getBiome()));
     }
 
     @Override public int getHighestBlock(@NonNull final String world, final int x, final int z) {
