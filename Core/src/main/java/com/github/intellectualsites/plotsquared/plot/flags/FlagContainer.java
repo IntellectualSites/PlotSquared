@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.flags;
 import com.google.common.collect.ImmutableMap;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -17,11 +18,11 @@ import java.util.Map;
 @EqualsAndHashCode(of = "flagMap")
 public class FlagContainer {
 
-    @Setter private FlagContainer parentContainer;
     private final Map<String, String> unknownFlags = new HashMap<>();
     private final Map<Class<?>, PlotFlag<?, ?>> flagMap = new HashMap<>();
     private final PlotFlagUpdateHandler plotFlagUpdateHandler;
     private final Collection<PlotFlagUpdateHandler> updateSubscribers = new ArrayList<>();
+    @Setter private FlagContainer parentContainer;
 
     /**
      * Construct a new flag container with an optional parent container and update handler.
@@ -235,7 +236,15 @@ public class FlagContainer {
         }
     }
 
-    public void subscribe(final PlotFlagUpdateHandler plotFlagUpdateHandler) {
+    /**
+     * Subscribe to flag updates in this particular flag container instance.
+     * Updates are: a flag being removed, a flag being added or a flag
+     * being updated.
+     *
+     * @param plotFlagUpdateHandler The update handler which will react to changes.
+     * @see PlotFlagUpdateType Plot flag update types
+     */
+    public void subscribe(@NotNull final PlotFlagUpdateHandler plotFlagUpdateHandler) {
         this.updateSubscribers.add(plotFlagUpdateHandler);
     }
 
@@ -253,6 +262,17 @@ public class FlagContainer {
         }
     }
 
+    /**
+     * Register a flag key-value pair which cannot yet be associated with
+     * an existing flag instance (such as when third party flag values are
+     * loaded before the flag type has been registered).
+     * <p>
+     * These values will be registered in the flag container if the associated
+     * flag type is registered in the top level flag container.
+     *
+     * @param flagName Flag name
+     * @param value    Flag value
+     */
     public void addUnknownFlag(final String flagName, final String value) {
         this.unknownFlags.put(flagName.toLowerCase(Locale.ENGLISH), value);
     }
