@@ -7,6 +7,7 @@ import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.world.PatternUtil;
+import com.google.common.base.Preconditions;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
@@ -20,9 +21,9 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import org.jetbrains.annotations.NotNull;
 
 public class GenChunk extends ScopedLocalBlockQueue {
 
@@ -109,7 +110,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
     }
 
     @Override public boolean setBlock(int x, int y, int z, @NotNull Pattern pattern) {
-        return setBlock(x, y, z, PatternUtil.apply(pattern, x, y, z));
+        return setBlock(x, y, z, PatternUtil.apply(Preconditions.checkNotNull(pattern, "Pattern may not be null"), x, y, z));
     }
 
     @Override public boolean setBlock(int x, int y, int z, BlockState id) {
