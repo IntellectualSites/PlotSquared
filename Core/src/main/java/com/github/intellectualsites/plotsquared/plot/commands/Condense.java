@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @CommandDeclaration(command = "condense", permission = "plots.admin",
@@ -132,13 +133,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
                             }
                             i++;
                             final AtomicBoolean result = new AtomicBoolean(false);
-                            result.set(origin.move(possible, () -> {
-                                if (result.get()) {
-                                    MainUtil.sendMessage(player,
-                                        "Moving: " + origin + " -> " + possible);
-                                    TaskManager.runTaskLater(task, 1);
-                                }
-                            }, false));
+                            try {
+                                result.set(origin.move(possible, () -> {
+                                    if (result.get()) {
+                                        MainUtil.sendMessage(player,
+                                            "Moving: " + origin + " -> " + possible);
+                                        TaskManager.runTaskLater(task, 1);
+                                    }
+                                }, false).get());
+                            } catch (InterruptedException | ExecutionException e) {
+                                e.printStackTrace();
+                            }
                             if (result.get()) {
                                 break;
                             }

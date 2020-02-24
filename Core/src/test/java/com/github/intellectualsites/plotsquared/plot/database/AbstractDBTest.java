@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class AbstractDBTest implements AbstractDB {
 
@@ -87,7 +88,8 @@ public class AbstractDBTest implements AbstractDB {
     @Override public void setMerged(Plot plot, boolean[] merged) {
     }
 
-    @Override public void swapPlots(Plot plot1, Plot plot2) {
+    @Override public CompletableFuture<Boolean> swapPlots(Plot plot1, Plot plot2) {
+        return CompletableFuture.completedFuture(true);
     }
 
     @Override public void setFlags(Plot plot, HashMap<Flag<?>, Object> flags) {
