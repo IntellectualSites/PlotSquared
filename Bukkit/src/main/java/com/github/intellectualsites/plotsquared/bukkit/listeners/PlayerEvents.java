@@ -1434,9 +1434,27 @@ import java.util.regex.Pattern;
             event.setCancelled(true);
         } else if (event.getBlock().isLiquid()) {
             final org.bukkit.Location location = event.getBlock().getLocation();
-            if (BukkitUtil.getPlot(location.clone().add(0, 0, 1)) != null ||
-                BukkitUtil.getPlot(location.clone().add(1, 0, 0)) != null ||
-                BukkitUtil.getPlot(location.clone().add(1, 0, 1)) != null) {
+
+            /*
+                X = block location
+                A-H = potential plot locations
+
+               Z
+               ^
+               |    A B C
+               o    D X E
+               |    F G H
+               v
+                <-----O-----> x
+             */
+            if (BukkitUtil.getPlot(location.clone().add(-1, 0, 1)  /* A */ ) != null ||
+                BukkitUtil.getPlot(location.clone().add(1, 0, 0)   /* B */ ) != null ||
+                BukkitUtil.getPlot(location.clone().add(1, 0, 1)   /* C */ ) != null ||
+                BukkitUtil.getPlot(location.clone().add(-1, 0, 0)  /* D */ ) != null ||
+                BukkitUtil.getPlot(location.clone().add(1, 0, 0)   /* E */ ) != null ||
+                BukkitUtil.getPlot(location.clone().add(-1, 0, -1) /* F */ ) != null ||
+                BukkitUtil.getPlot(location.clone().add(0, 0, -1)  /* G */ ) != null ||
+                BukkitUtil.getPlot(location.clone().add(1, 0, 1)   /* H */ ) != null) {
                 event.setCancelled(true);
             }
         }
