@@ -18,10 +18,13 @@ import com.sk89q.worldedit.world.gamemode.GameModes;
 import java.util.Set;
 import java.util.UUID;
 
-@CommandDeclaration(command = "deny", aliases = {"d", "ban"},
-    description = "Deny a user from entering a plot", usage = "/plot deny <player|*>",
-    category = CommandCategory.SETTINGS, requiredType = RequiredType.PLAYER) public class Deny
-    extends SubCommand {
+@CommandDeclaration(command = "deny",
+    aliases = {"d", "ban"},
+    description = "Deny a user from entering a plot",
+    usage = "/plot deny <player|*>",
+    category = CommandCategory.SETTINGS,
+    requiredType = RequiredType.PLAYER)
+public class Deny extends SubCommand {
 
     public Deny() {
         super(Argument.PlayerName);

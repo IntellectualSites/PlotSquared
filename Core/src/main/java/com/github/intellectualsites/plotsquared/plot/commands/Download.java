@@ -4,7 +4,7 @@ import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
@@ -17,10 +17,14 @@ import com.sk89q.jnbt.CompoundTag;
 
 import java.net.URL;
 
-@CommandDeclaration(usage = "/plot download [schematic|world]", command = "download",
-    aliases = {"dl"}, category = CommandCategory.SCHEMATIC, requiredType = RequiredType.NONE,
-    description = "Download your plot", permission = "plots.download") public class Download
-    extends SubCommand {
+@CommandDeclaration(usage = "/plot download [schematic|world]",
+    command = "download",
+    aliases = {"dl"},
+    category = CommandCategory.SCHEMATIC,
+    requiredType = RequiredType.NONE,
+    description = "Download your plot",
+    permission = "plots.download")
+public class Download extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         String world = player.getLocation().getWorld();
@@ -35,8 +39,8 @@ import java.net.URL;
             MainUtil.sendMessage(player, Captions.PLOT_UNOWNED);
             return false;
         }
-        if ((Settings.Done.REQUIRED_FOR_DOWNLOAD && (!plot.getFlag(Flags.DONE).isPresent()))
-            && !Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DOWNLOAD)) {
+        if ((Settings.Done.REQUIRED_FOR_DOWNLOAD && (!DoneFlag.isDone(plot))) && !Permissions
+            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DOWNLOAD)) {
             MainUtil.sendMessage(player, Captions.DONE_NOT_DONE);
             return false;
         }

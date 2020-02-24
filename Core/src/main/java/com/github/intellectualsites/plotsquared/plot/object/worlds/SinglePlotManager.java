@@ -68,8 +68,7 @@ public class SinglePlotManager extends PlotManager {
         return new String[0];
     }
 
-    @Override public boolean setComponent(PlotId plotId, String component,
-                                          Pattern blocks) {
+    @Override public boolean setComponent(PlotId plotId, String component, Pattern blocks) {
         return false;
     }
 
@@ -113,5 +112,7 @@ public class SinglePlotManager extends PlotManager {
         return false;
     }
 
-    @Override public boolean regenerateAllPlotWalls() { return false; }
+    @Override public boolean regenerateAllPlotWalls() {
+        return false;
+    }
 }

@@ -1,9 +1,9 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 import com.google.common.collect.ImmutableList;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,35 +21,24 @@ public class PlotSettings {
 
     /**
      * Merged plots.
-     *
-     * @deprecated Raw access
      */
-    @Deprecated public boolean[] merged = new boolean[] {false, false, false, false};
+    @Getter private boolean[] merged = new boolean[] {false, false, false, false};
     /**
      * Plot alias.
-     *
-     * @deprecated Raw access
      */
-    @Deprecated public String alias = "";
+    @Getter @Setter private String alias = "";
     /**
      * The ratings for a plot.
-     *
-     * @deprecated Raw access
      */
-    @Deprecated public HashMap<UUID, Integer> ratings;
+    @Setter private HashMap<UUID, Integer> ratings;
     /**
-     * Flags.
-     *
-     * @deprecated Raw access
+     * Plot comments.
      */
-    @Deprecated public HashMap<Flag<?>, Object> flags = new HashMap<>();
-    private List<PlotComment> comments = null;
+    @Setter private List<PlotComment> comments = null;
     /**
      * Home Position.
-     *
-     * @deprecated Raw access
      */
-    @Deprecated private BlockLoc position;
+    private BlockLoc position;
 
     /**
      * <b>Check if the plot is merged in a direction</b><br> 0 = North<br> 1 = East<br> 2 = South<br> 3 = West<br>
@@ -61,10 +50,6 @@ public class PlotSettings {
         return this.merged[direction];
     }
 
-    public boolean[] getMerged() {
-        return this.merged;
-    }
-
     public void setMerged(boolean[] merged) {
         this.merged = merged;
     }
@@ -72,7 +57,6 @@ public class PlotSettings {
     public Map<UUID, Integer> getRatings() {
         if (this.ratings == null) {
             this.ratings = new HashMap<>();
-
         }
         return this.ratings;
     }
@@ -104,45 +88,11 @@ public class PlotSettings {
     }
 
     public void setPosition(BlockLoc position) {
-        if (position != null && position.getX() == 0 && position.getY() == 0 && position.getZ() == 0) {
+        if (position != null && position.getX() == 0 && position.getY() == 0
+            && position.getZ() == 0) {
             position = null;
         }
         this.position = position;
-    }
-
-    public String getAlias() {
-        return this.alias;
-    }
-
-    /**
-     * Set the plot alias.
-     *
-     * @param alias alias to be used
-     */
-    public void setAlias(String alias) {
-        this.alias = alias;
-    }
-
-    public String getJoinMessage(PlotArea area) {
-        if (flags.containsKey(Flags.GREETING)) {
-            return (String) flags.get(Flags.GREETING);
-        } else {
-            return "";
-        }
-    }
-
-    /**
-     * Get the "farewell" flag value.
-     *
-     * @param plotArea The PlotArea
-     * @return Farewell flag
-     */
-    public String getLeaveMessage(PlotArea plotArea) {
-        if (flags.containsKey(Flags.FAREWELL)) {
-            return (String) flags.get(Flags.FAREWELL);
-        } else {
-            return "";
-        }
     }
 
     @SuppressWarnings({"UnstableApiUsage"}) public List<PlotComment> getComments(String inbox) {
@@ -152,10 +102,6 @@ public class PlotSettings {
 
         return this.comments.stream().filter(comment -> comment.inbox.equals(inbox))
             .collect(ImmutableList.toImmutableList());
-    }
-
-    void setComments(List<PlotComment> comments) {
-        this.comments = comments;
     }
 
     boolean removeComment(PlotComment comment) {

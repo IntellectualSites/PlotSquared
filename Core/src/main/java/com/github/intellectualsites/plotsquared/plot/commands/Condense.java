@@ -20,10 +20,13 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@CommandDeclaration(command = "condense", permission = "plots.admin",
+@CommandDeclaration(command = "condense",
+    permission = "plots.admin",
     usage = "/plot condense <area> <start|stop|info> [radius]",
-    description = "Condense a plotworld", category = CommandCategory.ADMINISTRATION,
-    requiredType = RequiredType.CONSOLE) public class Condense extends SubCommand {
+    description = "Condense a plotworld",
+    category = CommandCategory.ADMINISTRATION,
+    requiredType = RequiredType.CONSOLE)
+public class Condense extends SubCommand {
 
     public static boolean TASK = false;
 

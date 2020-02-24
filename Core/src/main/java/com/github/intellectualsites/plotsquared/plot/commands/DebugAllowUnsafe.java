@@ -9,9 +9,12 @@ import java.util.List;
 import java.util.UUID;
 
 @CommandDeclaration(command = "debugallowunsafe",
-    description = "Allow unsafe actions until toggled off", usage = "/plot debugallowunsafe",
-    category = CommandCategory.DEBUG, requiredType = RequiredType.NONE,
-    permission = "plots.debugallowunsafe") public class DebugAllowUnsafe extends SubCommand {
+    description = "Allow unsafe actions until toggled off",
+    usage = "/plot debugallowunsafe",
+    category = CommandCategory.DEBUG,
+    requiredType = RequiredType.NONE,
+    permission = "plots.debugallowunsafe")
+public class DebugAllowUnsafe extends SubCommand {
 
     public static final List<UUID> unsafeAllowed = new ArrayList<>();
 

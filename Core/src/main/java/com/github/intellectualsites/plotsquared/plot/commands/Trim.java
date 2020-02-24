@@ -30,10 +30,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-@CommandDeclaration(command = "trim", permission = "plots.admin",
+@CommandDeclaration(command = "trim",
+    permission = "plots.admin",
     description = "Delete unmodified portions of your plotworld",
-    usage = "/plot trim <world> [regenerate]", requiredType = RequiredType.CONSOLE,
-    category = CommandCategory.ADMINISTRATION) public class Trim extends SubCommand {
+    usage = "/plot trim <world> [regenerate]",
+    requiredType = RequiredType.CONSOLE,
+    category = CommandCategory.ADMINISTRATION)
+public class Trim extends SubCommand {
 
     public static ArrayList<Plot> expired = null;
     private static volatile boolean TASK = false;
@@ -177,18 +180,20 @@ import java.util.Set;
                             }
                             int bx = cbx << 4;
                             int bz = cbz << 4;
-                            CuboidRegion region = RegionUtil.createRegion(bx, bx + 511, bz, bz + 511);
+                            CuboidRegion region =
+                                RegionUtil.createRegion(bx, bx + 511, bz, bz + 511);
                             for (Plot plot : PlotSquared.get().getPlots(world)) {
                                 Location bot = plot.getBottomAbs();
                                 Location top = plot.getExtendedTopAbs();
-                                CuboidRegion plotReg =
-                                    RegionUtil.createRegion(bot.getX(), top.getX(), bot.getZ(),
-                                        top.getZ());
+                                CuboidRegion plotReg = RegionUtil
+                                    .createRegion(bot.getX(), top.getX(), bot.getZ(), top.getZ());
                                 if (!RegionUtil.intersects(region, plotReg)) {
                                     continue;
                                 }
-                                for (int x = plotReg.getMinimumPoint().getX() >> 4; x <= plotReg.getMaximumPoint().getX() >> 4; x++) {
-                                    for (int z = plotReg.getMinimumPoint().getZ() >> 4; z <= plotReg.getMaximumPoint().getZ() >> 4; z++) {
+                                for (int x = plotReg.getMinimumPoint().getX() >> 4;
+                                     x <= plotReg.getMaximumPoint().getX() >> 4; x++) {
+                                    for (int z = plotReg.getMinimumPoint().getZ() >> 4;
+                                         z <= plotReg.getMaximumPoint().getZ() >> 4; z++) {
                                         BlockVector2 loc = BlockVector2.at(x, z);
                                         chunks.remove(loc);
                                     }

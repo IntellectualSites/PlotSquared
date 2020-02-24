@@ -2,13 +2,15 @@ package com.github.intellectualsites.plotsquared.plot.util;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.Like;
+import com.github.intellectualsites.plotsquared.plot.config.Caption;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.flag.DoubleFlag;
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
-import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DescriptionFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.ServerPlotFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.types.DoubleFlag;
 import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -47,7 +49,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -57,6 +58,11 @@ import java.util.stream.IntStream;
  * plot functions
  */
 public class MainUtil {
+
+    private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
+    static {
+        FLAG_DECIMAL_FORMAT.setMaximumFractionDigits(340);
+    }
 
     /**
      * If the NMS code for sending chunk updates is functional<br>
@@ -371,7 +377,7 @@ public class MainUtil {
     }
 
     public static boolean isServerOwned(Plot plot) {
-        return plot.getFlag(Flags.SERVER_PLOT).orElse(false);
+        return plot.getFlag(ServerPlotFlag.class);
     }
 
     @NotNull public static Location[] getCorners(String world, CuboidRegion region) {
@@ -593,8 +599,8 @@ public class MainUtil {
     /**
      * Send a message to the player.
      *
-     * @param player Player to receive message
-     * @param message    Message to send
+     * @param player  Player to receive message
+     * @param message Message to send
      * @return true Can be used in things such as commands (return PlayerFunctions.sendMessage(...))
      */
     public static boolean sendMessage(PlotPlayer player, String message) {
@@ -622,11 +628,11 @@ public class MainUtil {
     public static boolean sendMessage(PlotPlayer player, @NotNull String msg, boolean prefix) {
         if (!msg.isEmpty()) {
             if (player == null) {
-                String message = Captions.format(null, (prefix ? Captions.PREFIX.getTranslated() : "") + msg);
+                String message = CaptionUtility.format(null, (prefix ? Captions.PREFIX.getTranslated() : "") + msg);
                 PlotSquared.log(message);
             } else {
                 player.sendMessage(
-                    Captions.format(player, (prefix ? Captions.PREFIX.getTranslated() : "") + Captions.color(msg)));
+                    CaptionUtility.format(player, (prefix ? Captions.PREFIX.getTranslated() : "") + Captions.color(msg)));
             }
         }
         return true;
@@ -639,7 +645,7 @@ public class MainUtil {
      * @param caption the message to send
      * @return boolean success
      */
-    public static boolean sendMessage(PlotPlayer player, Captions caption, String... args) {
+    public static boolean sendMessage(PlotPlayer player, Caption caption, String... args) {
         return sendMessage(player, caption, (Object[]) args);
     }
 
@@ -650,13 +656,13 @@ public class MainUtil {
      * @param caption the message to send
      * @return boolean success
      */
-    public static boolean sendMessage(final PlotPlayer player, final Captions caption,
+    public static boolean sendMessage(final PlotPlayer player, final Caption caption,
         final Object... args) {
         if (caption.getTranslated().isEmpty()) {
             return true;
         }
         TaskManager.runTaskAsync(() -> {
-            String m = Captions.format(player, caption, args);
+            String m = CaptionUtility.format(player, caption, args);
             if (player == null) {
                 PlotSquared.log(m);
             } else {
@@ -674,9 +680,9 @@ public class MainUtil {
      * @return
      */
     public static double[] getAverageRatings(Plot plot) {
-        HashMap<UUID, Integer> rating;
-        if (plot.getSettings().ratings != null) {
-            rating = plot.getSettings().ratings;
+        Map<UUID, Integer> rating;
+        if (plot.getSettings().getRatings() != null) {
+            rating = plot.getSettings().getRatings();
         } else if (Settings.Enabled_Components.RATING_CACHE) {
             rating = new HashMap<>();
         } else {
@@ -769,33 +775,38 @@ public class MainUtil {
         } else {
             seen = Captions.NEVER.getTranslated();
         }
-        Optional<String> descriptionFlag = plot.getFlag(Flags.DESCRIPTION);
-        String description = !descriptionFlag.isPresent() ? Captions.NONE.getTranslated() :
-            Flags.DESCRIPTION.valueToString(descriptionFlag.get());
+
+        String description = plot.getFlag(DescriptionFlag.class);
+        if (description.isEmpty()) {
+            description = Captions.PLOT_NO_DESCRIPTION.getTranslated();
+        }
 
         StringBuilder flags = new StringBuilder();
-        HashMap<Flag<?>, Object> flagMap =
-            FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true);
-        if (flagMap.isEmpty()) {
+        Collection<PlotFlag<?, ?>> flagCollection = plot.getApplicableFlags(true);
+        if (flagCollection.isEmpty()) {
             flags.append(Captions.NONE.getTranslated());
         } else {
-            String prefix = "";
-            for (Entry<Flag<?>, Object> entry : flagMap.entrySet()) {
-                Object value = entry.getValue();
-                if (entry.getKey() instanceof DoubleFlag && !Settings.General.SCIENTIFIC) {
-                    DecimalFormat df = new DecimalFormat("0");
-                    df.setMaximumFractionDigits(340);
-                    value = df.format(value);
+            String prefix = " ";
+            for (final PlotFlag<?, ?> flag : flagCollection) {
+                Object value;
+                if (flag instanceof DoubleFlag && !Settings.General.SCIENTIFIC) {
+                    value = FLAG_DECIMAL_FORMAT.format(flag.getValue());
+                } else {
+                    value = flag.toString();
                 }
-                flags.append(prefix)
-                    .append(Captions
-                        .format(player, Captions.PLOT_FLAG_LIST.getTranslated(), entry.getKey().getName(),
-                            Captions.formatRaw(player, value.toString(), "")));
+                flags.append(prefix).append(CaptionUtility.format(player, Captions.PLOT_FLAG_LIST.getTranslated(),
+                    flag.getName(), CaptionUtility.formatRaw(player, value.toString(), "")));
                 prefix = ", ";
             }
         }
         boolean build = plot.isAdded(player.getUUID());
         String owner = plot.getOwners().isEmpty() ? "unowned" : getPlayerList(plot.getOwners());
+        if (plot.getArea() != null) {
+            info = info.replace("%area%", plot.getArea().worldname +
+                (plot.getArea().id == null ? "" : "(" + plot.getArea().id + ")"));
+        } else {
+            info = info.replace("%area%", Captions.NONE.getTranslated());
+        }
         info = info.replace("%id%", plot.getId().toString());
         info = info.replace("%alias%", alias);
         info = info.replace("%num%", String.valueOf(num));
@@ -810,7 +821,6 @@ public class MainUtil {
         info = info.replace("%seen%", seen);
         info = info.replace("%flags%", flags);
         info = info.replace("%build%", String.valueOf(build));
-        info = info.replace("%desc%", "No description set.");
         if (info.contains("%rating%")) {
             final String newInfo = info;
             TaskManager.runTaskAsync(() -> {

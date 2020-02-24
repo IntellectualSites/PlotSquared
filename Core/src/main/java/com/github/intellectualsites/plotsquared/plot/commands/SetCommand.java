@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -17,21 +18,21 @@ public abstract class SetCommand extends SubCommand {
             return !sendMessage(player, Captions.NOT_IN_PLOT);
         }
         if (!plot.hasOwner()) {
-            if (!Permissions
-                .hasPermission(player,
-                    Captions.format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()))) {
-                MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                    Captions.format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()));
+            if (!Permissions.hasPermission(player, CaptionUtility
+                .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()))) {
+                MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
+                    .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(),
+                        getFullId()));
                 MainUtil.sendMessage(player, Captions.PLOT_NOT_CLAIMED);
                 return false;
             }
         }
         if (!plot.isOwner(player.getUUID())) {
-            if (!Permissions
-                .hasPermission(player,
-                    Captions.format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()))) {
-                MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                    Captions.format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()));
+            if (!Permissions.hasPermission(player, CaptionUtility
+                .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()))) {
+                MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
+                    .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(),
+                        getFullId()));
                 MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
                 return false;
             }

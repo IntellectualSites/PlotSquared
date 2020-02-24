@@ -5,6 +5,8 @@ import com.github.intellectualsites.plotsquared.configuration.MemorySection;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
 import com.github.intellectualsites.plotsquared.configuration.serialization.ConfigurationSerialization;
 import com.github.intellectualsites.plotsquared.plot.commands.WE_Anywhere;
+import com.github.intellectualsites.plotsquared.plot.config.Caption;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
@@ -151,7 +153,7 @@ import java.util.zip.ZipInputStream;
         //
         // Register configuration serializable classes
         //
-//        ConfigurationSerialization.registerClass(BlockState.class, "BlockState");
+        //        ConfigurationSerialization.registerClass(BlockState.class, "BlockState");
         ConfigurationSerialization.registerClass(BlockBucket.class, "BlockBucket");
 
         try {
@@ -193,6 +195,17 @@ import java.util.zip.ZipInputStream;
             if (Settings.Enabled_Components.DATABASE) {
                 setupDatabase();
             }
+
+            // Check if we need to convert old flag values, etc
+            if (!getConfigurationVersion().equalsIgnoreCase("v5")) {
+                // Perform upgrade
+                if (DBFunc.dbManager.convertFlags()) {
+                    log(Captions.PREFIX.getTranslated() + "Flags were converted successfully!");
+                    // Update the config version
+                    setConfigurationVersion("v5");
+                }
+            }
+
             // Comments
             CommentManager.registerDefaultInboxes();
             // Kill entities
@@ -243,7 +256,8 @@ import java.util.zip.ZipInputStream;
             if (Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
                 try {
                     if (this.IMP.initWorldEdit()) {
-                        PlotSquared.log(Captions.PREFIX + "&6" + IMP.getPluginName() + " hooked into WorldEdit.");
+                        PlotSquared.log(Captions.PREFIX.getTranslated() + "&6" + IMP.getPluginName()
+                            + " hooked into WorldEdit.");
                         this.worldedit = WorldEdit.getInstance();
                         WorldEdit.getInstance().getEventBus().register(new WESubscriber());
                         if (Settings.Enabled_Components.COMMANDS) {
@@ -280,7 +294,7 @@ import java.util.zip.ZipInputStream;
                         }
                         if (!WorldUtil.IMP.isWorld(world) && !world.equals("*")) {
                             debug("`" + world + "` was not properly loaded - " + IMP.getPluginName()
-                                    + " will now try to load it properly: ");
+                                + " will now try to load it properly: ");
                             debug(
                                 " - Are you trying to delete this world? Remember to remove it from the worlds.yml, bukkit.yml and multiverse worlds.yml");
                             debug(
@@ -316,7 +330,7 @@ import java.util.zip.ZipInputStream;
             e.printStackTrace();
         }
 
-        PlotSquared.log(Captions.PREFIX + Captions
+        PlotSquared.log(Captions.PREFIX + CaptionUtility
             .format(ConsolePlayer.getConsole(), Captions.ENABLED.getTranslated(), IMP.getPluginName()));
     }
 
@@ -343,7 +357,9 @@ import java.util.zip.ZipInputStream;
      * @see IPlotMain#log(String)
      */
     public static void log(Object message) {
-        if (message == null || message.toString().isEmpty()) {
+        if (message == null || (message instanceof Caption ?
+            ((Caption) message).getTranslated().isEmpty() :
+            message.toString().isEmpty())) {
             return;
         }
         if (PlotSquared.get() == null || PlotSquared.get().getLogger() == null) {
@@ -1644,9 +1660,9 @@ import java.util.zip.ZipInputStream;
             this.worlds = YamlConfiguration.loadConfiguration(this.worldsFile);
 
             if (this.worlds.contains("worlds")) {
-                if (!this.worlds.contains("configuration_version") || !this.worlds
-                    .getString("configuration_version")
-                    .equalsIgnoreCase(LegacyConverter.CONFIGURATION_VERSION)) {
+                if (!this.worlds.contains("configuration_version") ||
+                    (!this.worlds.getString("configuration_version").equalsIgnoreCase(LegacyConverter.CONFIGURATION_VERSION) &&
+                    !this.worlds.getString("configuration_version").equalsIgnoreCase("v5"))) {
                     // Conversion needed
                     log(Captions.LEGACY_CONFIG_FOUND.getTranslated());
                     try {
@@ -1657,10 +1673,8 @@ import java.util.zip.ZipInputStream;
                             this.worlds.getConfigurationSection("worlds");
                         final LegacyConverter converter = new LegacyConverter(worlds);
                         converter.convert();
-                        this.worlds
-                            .set("configuration_version", LegacyConverter.CONFIGURATION_VERSION);
-                        this.worlds.set("worlds", worlds); // Redundant, but hey... ¯\_(ツ)_/¯
-                        this.worlds.save(this.worldsFile);
+                        this.worlds.set("worlds", worlds);
+                        this.setConfigurationVersion(LegacyConverter.CONFIGURATION_VERSION);
                         log(Captions.LEGACY_CONFIG_DONE.getTranslated());
                     } catch (final Exception e) {
                         log(Captions.LEGACY_CONFIG_CONVERSION_FAILED.getTranslated());
@@ -1736,6 +1750,15 @@ import java.util.zip.ZipInputStream;
         return true;
     }
 
+    public String getConfigurationVersion() {
+        return this.worlds.get("configuration_version", LegacyConverter.CONFIGURATION_VERSION).toString();
+    }
+
+    public void setConfigurationVersion(final String newVersion) throws IOException {
+        this.worlds.set("configuration_version", newVersion);
+        this.worlds.save(this.worldsFile);
+    }
+
     /**
      * Setup the storage file (load + save missing nodes).
      */
@@ -1766,7 +1789,8 @@ import java.util.zip.ZipInputStream;
         if (this.version != null) {
             this.style.set("Version", this.version.toString());
         }
-        this.style.set("Information", "Left Row: PlotSquared color codes ($), right row: Minecraft color codes (&)");
+        this.style.set("Information",
+            "Left Row: PlotSquared color codes ($), right row: Minecraft color codes (&)");
         Map<String, Object> object = new HashMap<>(16);
         object.put("color.1", "6");
         object.put("color.2", "7");

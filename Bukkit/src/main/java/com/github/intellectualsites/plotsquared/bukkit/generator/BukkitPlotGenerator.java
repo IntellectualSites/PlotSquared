@@ -12,6 +12,7 @@ import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
 import com.sk89q.worldedit.math.BlockVector2;
+import lombok.Getter;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
@@ -34,10 +35,13 @@ public class BukkitPlotGenerator extends ChunkGenerator
     private List<BlockPopulator> populators;
     private boolean loaded = false;
 
-    public BukkitPlotGenerator(IndependentPlotGenerator generator) {
+    @Getter private final String levelName;
+
+    public BukkitPlotGenerator(String name, IndependentPlotGenerator generator) {
         if (generator == null) {
             throw new IllegalArgumentException("Generator may not be null!");
         }
+        this.levelName = name;
         this.plotGenerator = generator;
         this.platformGenerator = this;
         this.populators = new ArrayList<>();
@@ -51,6 +55,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
             throw new IllegalArgumentException("ChunkGenerator: " + cg.getClass().getName()
                 + " is already a BukkitPlotGenerator!");
         }
+        this.levelName = world;
         this.full = false;
         this.platformGenerator = cg;
         this.plotGenerator = new DelegatePlotGenerator(cg, world);
@@ -172,6 +177,10 @@ public class BukkitPlotGenerator extends ChunkGenerator
             return;
         }
         PlotArea area = PlotSquared.get().getPlotArea(world.getName(), null);
+        if (area == null && (area = PlotSquared.get().getPlotArea(this.levelName, null)) == null) {
+            throw new IllegalStateException("Cannot regenerate chunk that does not belong to a plot area."
+                + " Location: " + loc + ", world: " + world);
+        }
         try {
             this.plotGenerator.generateChunk(result, area);
         } catch (Throwable e) {

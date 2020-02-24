@@ -71,9 +71,7 @@ public class ChunkBlockQueue extends ScopedLocalBlockQueue {
         return true;
     }
 
-    @Override
-    @Nullable
-    public BlockState getBlock(int x, int y, int z) {
+    @Override @Nullable public BlockState getBlock(int x, int y, int z) {
         BlockState[][] blocksY = result[y];
         if (blocksY != null) {
             BlockState[] blocksYZ = blocksY[z];
@@ -84,9 +82,7 @@ public class ChunkBlockQueue extends ScopedLocalBlockQueue {
         return null;
     }
 
-    @Override
-    @Nullable
-    public String getWorld() {
+    @Override @Nullable public String getWorld() {
         return null;
     }
 

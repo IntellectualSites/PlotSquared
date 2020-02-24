@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -37,11 +37,11 @@ public class EventUtilTest extends EventUtil {
         return false;
     }
 
-    @Override public boolean callFlagAdd(Flag flag, Plot plot) {
+    @Override public boolean callFlagAdd(PlotFlag<?, ?> flag, Plot plot) {
         return true;
     }
 
-    @Override public boolean callFlagRemove(Flag<?> flag, Plot plot, Object value) {
+    @Override public boolean callFlagRemove(PlotFlag<?, ?> flag, Plot plot, Object value) {
         return true;
     }
 

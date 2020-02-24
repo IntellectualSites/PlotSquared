@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.PriceFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
@@ -12,13 +12,16 @@ import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-@CommandDeclaration(command = "buy", description = "Buy the plot you are standing on",
-    usage = "/plot buy", permission = "plots.buy", category = CommandCategory.CLAIMING,
-    requiredType = RequiredType.NONE) public class Buy extends Command {
+@CommandDeclaration(command = "buy",
+    description = "Buy the plot you are standing on",
+    usage = "/plot buy",
+    permission = "plots.buy",
+    category = CommandCategory.CLAIMING,
+    requiredType = RequiredType.NONE)
+public class Buy extends Command {
 
     public Buy() {
         super(MainCommand.getInstance(), true);
@@ -41,11 +44,10 @@ import java.util.concurrent.CompletableFuture;
         Set<Plot> plots = plot.getConnectedPlots();
         checkTrue(player.getPlotCount() + plots.size() <= player.getAllowedPlots(),
             Captions.CANT_CLAIM_MORE_PLOTS);
-        Optional<Double> flag = plot.getFlag(Flags.PRICE);
-        if (!flag.isPresent()) {
+        double price = plot.getFlag(PriceFlag.class);
+        if (price <= 0) {
             throw new CommandException(Captions.NOT_FOR_SALE);
         }
-        final double price = flag.get();
         checkTrue(player.getMoney() >= price, Captions.CANNOT_AFFORD_PLOT);
         player.withdraw(price);
         // Failure
@@ -58,7 +60,7 @@ import java.util.concurrent.CompletableFuture;
             if (owner != null) {
                 Captions.PLOT_SOLD.send(owner, plot.getId(), player.getName(), price);
             }
-            plot.removeFlag(Flags.PRICE);
+            plot.removeFlag(PriceFlag.class);
             plot.setOwner(player.getUUID());
             Captions.CLAIMED.send(player);
             whenDone.run(Buy.this, CommandResult.SUCCESS);

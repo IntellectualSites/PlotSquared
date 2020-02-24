@@ -66,4 +66,5 @@ public class PlotMessage {
     public void send(PlotPlayer player) {
         ChatManager.manager.send(this, player);
     }
+
 }

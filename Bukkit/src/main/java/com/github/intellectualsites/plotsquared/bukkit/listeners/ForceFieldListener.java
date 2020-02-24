@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.bukkit.listeners;
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.ForcefieldFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -80,7 +80,7 @@ import java.util.UUID;
     }
 
     public static void handleForcefield(Player player, PlotPlayer plotPlayer, Plot plot) {
-        if (Flags.FORCEFIELD.isTrue(plot)) {
+        if (plot.getFlag(ForcefieldFlag.class)) {
             UUID uuid = plotPlayer.getUUID();
             if (plot.isAdded(uuid)) {
                 Set<PlotPlayer> players = getNearbyPlayers(player, plot);

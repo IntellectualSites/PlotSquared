@@ -7,8 +7,10 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
+import com.google.common.base.Preconditions;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import org.jetbrains.annotations.NotNull;
 
 public class HybridGen extends IndependentPlotGenerator {
 
@@ -34,7 +36,10 @@ public class HybridGen extends IndependentPlotGenerator {
         }
     }
 
-    @Override public void generateChunk(ScopedLocalBlockQueue result, PlotArea settings) {
+    @Override public void generateChunk(@NotNull ScopedLocalBlockQueue result, @NotNull PlotArea settings) {
+        Preconditions.checkNotNull(result, "result cannot be null");
+        Preconditions.checkNotNull(settings, "settings cannot be null");
+
         HybridPlotWorld hpw = (HybridPlotWorld) settings;
         // Biome
         result.fillBiome(hpw.PLOT_BIOME);

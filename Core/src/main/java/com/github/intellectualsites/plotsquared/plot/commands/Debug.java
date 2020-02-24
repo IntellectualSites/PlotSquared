@@ -9,8 +9,11 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 import java.util.Map;
 
-@CommandDeclaration(command = "debug", category = CommandCategory.DEBUG,
-    description = "Show debug information", usage = "/plot debug [msg]", permission = "plots.admin")
+@CommandDeclaration(command = "debug",
+    category = CommandCategory.DEBUG,
+    description = "Show debug information",
+    usage = "/plot debug [msg]",
+    permission = "plots.admin")
 public class Debug extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {

@@ -9,16 +9,21 @@ import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
 
-@CommandDeclaration(command = "setbiome", permission = "plots.set.biome",
-    description = "Set the plot biome", usage = "/plot biome [biome]",
-    aliases = {"biome", "sb", "setb", "b"}, category = CommandCategory.APPEARANCE,
-    requiredType = RequiredType.NONE) public class Biome extends SetCommand {
+@CommandDeclaration(command = "setbiome",
+    permission = "plots.set.biome",
+    description = "Set the plot biome",
+    usage = "/plot biome [biome]",
+    aliases = {"biome", "sb", "setb", "b"},
+    category = CommandCategory.APPEARANCE,
+    requiredType = RequiredType.NONE)
+public class Biome extends SetCommand {
 
     @Override public boolean set(final PlotPlayer player, final Plot plot, final String value) {
         BiomeType biome = null;
         try {
             biome = BiomeTypes.get(value.toLowerCase());
-        } catch (final Exception ignore) {}
+        } catch (final Exception ignore) {
+        }
         if (biome == null) {
             String biomes = StringMan
                 .join(BiomeType.REGISTRY.values(), Captions.BLOCK_LIST_SEPARATOR.getTranslated());

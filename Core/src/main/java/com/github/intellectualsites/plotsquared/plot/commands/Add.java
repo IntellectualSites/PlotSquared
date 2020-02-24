@@ -19,8 +19,11 @@ import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "add",
     description = "Allow a user to build in a plot while the plot owner is online.",
-    usage = "/plot add <player|*>", category = CommandCategory.SETTINGS, permission = "plots.add",
-    requiredType = RequiredType.PLAYER) public class Add extends Command {
+    usage = "/plot add <player|*>",
+    category = CommandCategory.SETTINGS,
+    permission = "plots.add",
+    requiredType = RequiredType.PLAYER)
+public class Add extends Command {
 
     public Add() {
         super(MainCommand.getInstance(), true);

@@ -18,7 +18,7 @@ import com.github.intellectualsites.plotsquared.bukkit.events.PlotMergeEvent;
 import com.github.intellectualsites.plotsquared.bukkit.events.PlotRateEvent;
 import com.github.intellectualsites.plotsquared.bukkit.events.PlotUnlinkEvent;
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -75,11 +75,11 @@ public final class BukkitEventUtil extends EventUtil {
         return callEvent(new PlotDeleteEvent(plot));
     }
 
-    @Override public boolean callFlagAdd(Flag flag, Plot plot) {
+    @Override public boolean callFlagAdd(PlotFlag<?, ?> flag, Plot plot) {
         return callEvent(new PlotFlagAddEvent(flag, plot));
     }
 
-    @Override public boolean callFlagRemove(Flag<?> flag, Plot plot, Object value) {
+    @Override public boolean callFlagRemove(PlotFlag<?, ?> flag, Plot plot, Object value) {
         return callEvent(new PlotFlagRemoveEvent(flag, plot));
     }
 

@@ -5,9 +5,11 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
-import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.InternalFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.KeepFlag;
 import com.github.intellectualsites.plotsquared.plot.generator.SquarePlotWorld;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
@@ -36,6 +38,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,7 +58,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -141,8 +143,6 @@ public class Plot {
      * Session only plot metadata (session is until the server stops)<br>
      * <br>
      * For persistent metadata use the flag system
-     *
-     * @see FlagManager
      */
     private ConcurrentHashMap<String, Object> meta;
 
@@ -153,18 +153,21 @@ public class Plot {
     private Plot origin;
 
     /**
+     * Plot flag container
+     */
+    @Getter private final FlagContainer flagContainer = new FlagContainer(null);
+
+    /**
      * Constructor for a new plot.
      * (Only changes after plot.create() will be properly set in the database)
      *
-     * @param area the PlotArea where the plot is located
-     * @param id the plot id
+     * @param area  the PlotArea where the plot is located
+     * @param id    the plot id
      * @param owner the plot owner
      * @see Plot#getPlot(Location) for existing plots
      */
     public Plot(PlotArea area, @NotNull PlotId id, UUID owner) {
-        this.area = area;
-        this.id = id;
-        this.owner = owner;
+        this(area, id, owner, 0);
     }
 
     /**
@@ -172,12 +175,11 @@ public class Plot {
      * (Only changes after plot.create() will be properly set in the database)
      *
      * @param area the PlotArea where the plot is located
-     * @param id the plot id
+     * @param id   the plot id
      * @see Plot#getPlot(Location) for existing plots
      */
     public Plot(PlotArea area, @NotNull PlotId id) {
-        this.area = area;
-        this.id = id;
+        this(area, id, null, 0);
     }
 
     /**
@@ -185,10 +187,10 @@ public class Plot {
      * The database will ignore any queries regarding temporary plots.
      * Please note that some bulk plot management functions may still affect temporary plots (TODO: fix this)
      *
-     * @param area the PlotArea where the plot is located
-     * @param id the plot id
+     * @param area  the PlotArea where the plot is located
+     * @param id    the plot id
      * @param owner the owner of the plot
-     * @param temp Represents whatever the database manager needs it to
+     * @param temp  Represents whatever the database manager needs it to
      * @see Plot#getPlot(Location) for existing plots
      */
     public Plot(PlotArea area, @NotNull PlotId id, UUID owner, int temp) {
@@ -196,20 +198,21 @@ public class Plot {
         this.id = id;
         this.owner = owner;
         this.temp = temp;
+        this.flagContainer.setParentContainer(area.getFlagContainer());
     }
 
     /**
      * Constructor for a saved plots (Used by the database manager when plots are fetched)
      *
-     * @param id the plot id
-     * @param owner the plot owner
+     * @param id      the plot id
+     * @param owner   the plot owner
      * @param trusted the plot trusted players
-     * @param denied the plot denied players
-     * @param merged an array giving merged plots
+     * @param denied  the plot denied players
+     * @param merged  an array giving merged plots
      * @see Plot#getPlot(Location) for existing plots
      */
     public Plot(@NotNull PlotId id, UUID owner, HashSet<UUID> trusted, HashSet<UUID> members,
-        HashSet<UUID> denied, String alias, BlockLoc position, Collection<Flag> flags,
+        HashSet<UUID> denied, String alias, BlockLoc position, Collection<PlotFlag<?, ?>> flags,
         PlotArea area, boolean[] merged, long timestamp, int temp) {
         this.id = id;
         this.area = area;
@@ -221,20 +224,23 @@ public class Plot {
         this.settings.setAlias(alias);
         this.settings.setPosition(position);
         this.settings.setMerged(merged);
-        if (flags != null) {
-            for (Flag flag : flags) {
-                this.settings.flags.put(flag, flag);
-            }
-        }
         this.timestamp = timestamp;
         this.temp = temp;
+        if (area != null) {
+            this.flagContainer.setParentContainer(area.getFlagContainer());
+            if (flags != null) {
+                for (PlotFlag<?, ?> flag : flags) {
+                    this.flagContainer.addFlag(flag);
+                }
+            }
+        }
     }
 
     /**
      * Gets a plot from a string e.g. [area];[id]
      *
      * @param defaultArea if no area is specified
-     * @param string plot id/area + id
+     * @param string      plot id/area + id
      * @return New or existing plot object
      */
     public static Plot fromString(PlotArea defaultArea, String string) {
@@ -286,7 +292,6 @@ public class Plot {
      *
      * @param key   metadata key
      * @param value metadata value
-     * @see FlagManager
      */
     public void setMeta(String key, Object value) {
         if (this.meta == null) {
@@ -523,6 +528,7 @@ public class Plot {
         }
         this.area = area;
         area.addPlot(this);
+        this.flagContainer.setParentContainer(area.getFlagContainer());
     }
 
     /**
@@ -539,9 +545,8 @@ public class Plot {
      * Gets or create plot settings.
      *
      * @return PlotSettings
-     * @deprecated use equivalent plot method; please file github issue if one does not exist.
      */
-    @Deprecated public PlotSettings getSettings() {
+    public PlotSettings getSettings() {
         if (this.settings == null) {
             this.settings = new PlotSettings();
         }
@@ -651,9 +656,7 @@ public class Plot {
                 if (this.getSettings().getMerged(i2)) {
                     if (this.getSettings().getMerged(i)) {
                         if (this.area.getPlotAbs(this.id.getRelative(i)).getMerged(i2)) {
-                            if (this.area.getPlotAbs(this.id.getRelative(i2)).getMerged(i)) {
-                                return true;
-                            }
+                            return this.area.getPlotAbs(this.id.getRelative(i2)).getMerged(i);
                         }
                     }
                 }
@@ -818,7 +821,7 @@ public class Plot {
     /**
      * Sets the plot owner (and update the database)
      *
-     * @param owner uuid to set as owner
+     * @param owner     uuid to set as owner
      * @param initiator player initiating set owner
      * @return boolean
      */
@@ -943,23 +946,31 @@ public class Plot {
                     return;
                 }
                 CuboidRegion region = regions.poll();
-                Location pos1 = new Location(getWorldName(), region.getMinimumPoint().getX() - extendBiome, region.getMinimumPoint().getY(),
-                    region.getMinimumPoint().getZ() - extendBiome);
-                Location pos2 = new Location(getWorldName(), region.getMaximumPoint().getX() + extendBiome, region.getMaximumPoint().getY(),
-                    region.getMaximumPoint().getZ() + extendBiome);
+                Location pos1 =
+                    new Location(getWorldName(), region.getMinimumPoint().getX() - extendBiome,
+                        region.getMinimumPoint().getY(),
+                        region.getMinimumPoint().getZ() - extendBiome);
+                Location pos2 =
+                    new Location(getWorldName(), region.getMaximumPoint().getX() + extendBiome,
+                        region.getMaximumPoint().getY(),
+                        region.getMaximumPoint().getZ() + extendBiome);
                 ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
                     @Override public void run(int[] value) {
                         BlockVector2 loc = BlockVector2.at(value[0], value[1]);
                         long start = System.currentTimeMillis();
                         ChunkManager.manager.loadChunk(getWorldName(), loc, false);
                         long end = System.currentTimeMillis();
-                        PlotSquared.debug("[Biome Operation] Loading chunk took: " + TimeUnit.MILLISECONDS.toSeconds(end - start));
+                        PlotSquared.debug(
+                            "[Biome Operation] Loading chunk took: " + TimeUnit.MILLISECONDS
+                                .toSeconds(end - start));
                         MainUtil.setBiome(getWorldName(), value[2], value[3], value[4], value[5],
                             biome);
                         start = System.currentTimeMillis();
                         ChunkManager.manager.unloadChunk(getWorldName(), loc, true);
                         end = System.currentTimeMillis();
-                        PlotSquared.debug("[Biome Operation] Unloading chunk took: " + TimeUnit.MILLISECONDS.toSeconds(end - start));
+                        PlotSquared.debug(
+                            "[Biome Operation] Unloading chunk took: " + TimeUnit.MILLISECONDS
+                                .toSeconds(end - start));
                     }
                 }, this, 5);
 
@@ -1079,16 +1090,50 @@ public class Plot {
     }
 
     /**
-     * Sets a flag for this plot
+     * Get an immutable view of all the flags associated with the plot.
      *
-     * @param flag  Flag to set
-     * @param value Flag value
+     * @return Immutable set containing the flags associated with the plot
      */
-    public <V> boolean setFlag(Flag<V> flag, Object value) {
-        if (flag == Flags.KEEP && ExpireManager.IMP != null) {
+    public Set<PlotFlag<?, ?>> getFlags() {
+        return ImmutableSet.copyOf(flagContainer.getFlagMap().values());
+    }
+
+    /**
+     * Sets a flag for the plot and stores it in the database.
+     *
+     * @param flag Flag to set
+     * @return A boolean indicating whether or not the operation succeeded
+     */
+    public <V> boolean setFlag(PlotFlag<V, ?> flag) {
+        if (!EventUtil.manager.callFlagAdd(flag, origin)) {
+            return false;
+        }
+        if (flag instanceof KeepFlag && ExpireManager.IMP != null) {
             ExpireManager.IMP.updateExpired(this);
         }
-        return FlagManager.addPlotFlag(this, flag, value);
+        for (final Plot plot : this.getConnectedPlots()) {
+            plot.getFlagContainer().addFlag(flag);
+            plot.reEnter();
+            DBFunc.setFlag(plot, flag);
+        }
+        return true;
+    }
+
+    /**
+     * Parse the flag value into a flag instance based on the provided
+     * flag class, and store it in the database.
+     *
+     * @param flag  Flag type
+     * @param value Flag value
+     * @return A boolean indicating whether or not the operation succeeded
+     */
+    public boolean setFlag(Class<?> flag, String value) {
+        try {
+            this.setFlag(GlobalFlagContainer.getInstance().getFlagErased(flag).parse(value));
+        } catch (final Exception e) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -1097,32 +1142,81 @@ public class Plot {
      * @param flag the flag to remove
      * @return success
      */
-    public boolean removeFlag(Flag<?> flag) {
-        return FlagManager.removePlotFlag(this, flag);
+    public boolean removeFlag(Class<? extends PlotFlag<?, ?>> flag) {
+        return this.removeFlag(getFlagContainer().queryLocal(flag));
     }
 
     /**
-     * Gets the flag for a given key
+     * Get flags associated with the plot.
      *
-     * @param key Flag to get value for
+     * @param plotOnly          Whether or not to only consider the plot. If this parameter is set to
+     *                          true, the default values of the owning plot area will not be considered
+     * @param ignorePluginFlags Whether or not to ignore {@link InternalFlag internal flags}
+     * @return Collection containing all the flags that matched the given criteria
      */
-    public <V> Optional<V> getFlag(Flag<V> key) {
-        return FlagManager.getPlotFlag(this, key);
-    }
-
-    /**
-     * Gets the flag for a given key
-     *
-     * @param key          the flag
-     * @param defaultValue if the key is null, the value to return
-     */
-    public <V> V getFlag(Flag<V> key, V defaultValue) {
-        V value = FlagManager.getPlotFlagRaw(this, key);
-        if (value == null) {
-            return defaultValue;
-        } else {
-            return value;
+    public Collection<PlotFlag<?, ?>> getApplicableFlags(final boolean plotOnly,
+        final boolean ignorePluginFlags) {
+        if (!hasOwner()) {
+            return Collections.emptyList();
         }
+        final Map<Class<?>, PlotFlag<?, ?>> flags = new HashMap<>();
+        if (!plotOnly && getArea() != null && !getArea().getFlagContainer().getFlagMap()
+            .isEmpty()) {
+            final Map<Class<?>, PlotFlag<?, ?>> flagMap = getArea().getFlagContainer().getFlagMap();
+            flags.putAll(flagMap);
+        }
+        final Map<Class<?>, PlotFlag<?, ?>> flagMap = getFlagContainer().getFlagMap();
+        if (ignorePluginFlags) {
+            for (final PlotFlag<?, ?> flag : flagMap.values()) {
+                if (flag instanceof InternalFlag) {
+                    continue;
+                }
+                flags.put(flag.getClass(), flag);
+            }
+        } else {
+            flags.putAll(flagMap);
+        }
+        return flagMap.values();
+    }
+
+    /**
+     * Get flags associated with the plot and the plot area that contains it.
+     *
+     * @param ignorePluginFlags Whether or not to ignore {@link InternalFlag internal flags}
+     * @return Collection containing all the flags that matched the given criteria
+     */
+    public Collection<PlotFlag<?, ?>> getApplicableFlags(final boolean ignorePluginFlags) {
+        return getApplicableFlags(false, ignorePluginFlags);
+    }
+
+    /**
+     * Remove a flag from this plot
+     *
+     * @param flag the flag to remove
+     * @return success
+     */
+    public boolean removeFlag(PlotFlag<?, ?> flag) {
+        if (flag == null) {
+            return false;
+        }
+        boolean removed = false;
+        for (final Plot plot : origin.getConnectedPlots()) {
+            final Object value = plot.getFlagContainer().removeFlag(flag);
+            if (value == null) {
+                continue;
+            }
+            if (plot == origin) {
+                boolean result = EventUtil.manager.callFlagRemove(flag, plot, value);
+                if (!result) {
+                    plot.getFlagContainer().addFlag(flag);
+                    continue;
+                }
+            }
+            plot.reEnter();
+            DBFunc.removeFlag(plot, flag);
+            removed = true;
+        }
+        return removed;
     }
 
     /**
@@ -1256,7 +1350,7 @@ public class Plot {
         Location bot = corners[1];
         Location location =
             new Location(this.getWorldName(), MathMan.average(bot.getX(), top.getX()),
-            MathMan.average(bot.getY(), top.getY()), MathMan.average(bot.getZ(), top.getZ()));
+                MathMan.average(bot.getY(), top.getY()), MathMan.average(bot.getZ(), top.getZ()));
         if (!isLoaded()) {
             return location;
         }
@@ -1270,7 +1364,8 @@ public class Plot {
 
     public Location getSide() {
         CuboidRegion largest = getLargestRegion();
-        int x = (largest.getMaximumPoint().getX() >> 1) - (largest.getMinimumPoint().getX() >> 1) + largest.getMinimumPoint().getX();
+        int x = (largest.getMaximumPoint().getX() >> 1) - (largest.getMinimumPoint().getX() >> 1)
+            + largest.getMinimumPoint().getX();
         int z = largest.getMinimumPoint().getZ() - 1;
         PlotManager manager = getManager();
         int y = isLoaded() ? WorldUtil.IMP.getHighestBlock(getWorldName(), x, z) : 62;
@@ -1291,10 +1386,9 @@ public class Plot {
             return this.getDefaultHome(true);
         } else {
             Location bottom = this.getBottomAbs();
-            Location location =
-                new Location(bottom.getWorld(), bottom.getX() + home.getX(), bottom.getY() + home
-                    .getY(),
-                    bottom.getZ() + home.getZ(), home.getYaw(), home.getPitch());
+            Location location = new Location(bottom.getWorld(), bottom.getX() + home.getX(),
+                bottom.getY() + home.getY(), bottom.getZ() + home.getZ(), home.getYaw(),
+                home.getPitch());
             if (!isLoaded()) {
                 return location;
             }
@@ -1344,8 +1438,10 @@ public class Plot {
             if (loc.getX() == Integer.MAX_VALUE && loc.getZ() == Integer.MAX_VALUE) {
                 // center
                 CuboidRegion largest = plot.getLargestRegion();
-                x = (largest.getMaximumPoint().getX() >> 1) - (largest.getMinimumPoint().getX() >> 1) + largest.getMinimumPoint().getX();
-                z = (largest.getMaximumPoint().getZ() >> 1) - (largest.getMinimumPoint().getZ() >> 1) + largest.getMinimumPoint().getZ();
+                x = (largest.getMaximumPoint().getX() >> 1) - (largest.getMinimumPoint().getX()
+                    >> 1) + largest.getMinimumPoint().getX();
+                z = (largest.getMaximumPoint().getZ() >> 1) - (largest.getMinimumPoint().getZ()
+                    >> 1) + largest.getMinimumPoint().getZ();
             } else {
                 // specific
                 Location bot = plot.getBottomAbs();
@@ -1365,7 +1461,8 @@ public class Plot {
         double count = 0;
         for (CuboidRegion region : getRegions()) {
             count +=
-                (region.getMaximumPoint().getX() - (double) region.getMinimumPoint().getX() + 1) * (region.getMaximumPoint().getZ() - (double) region.getMinimumPoint().getZ() + 1)
+                (region.getMaximumPoint().getX() - (double) region.getMinimumPoint().getX() + 1) * (
+                    region.getMaximumPoint().getZ() - (double) region.getMinimumPoint().getZ() + 1)
                     * MAX_HEIGHT;
         }
         return count;
@@ -1408,9 +1505,9 @@ public class Plot {
     public void clearRatings() {
         Plot base = this.getBasePlot(false);
         PlotSettings baseSettings = base.getSettings();
-        if (baseSettings.ratings != null && !baseSettings.getRatings().isEmpty()) {
+        if (baseSettings.getRatings() != null && !baseSettings.getRatings().isEmpty()) {
             DBFunc.deleteRatings(base);
-            baseSettings.ratings = null;
+            baseSettings.setRatings(null);
         }
     }
 
@@ -1441,7 +1538,7 @@ public class Plot {
 
     public boolean hasRatings() {
         Plot base = this.getBasePlot(false);
-        return base.settings != null && base.settings.ratings != null;
+        return base.settings != null && base.settings.getRatings() != null;
     }
 
     /**
@@ -1452,8 +1549,10 @@ public class Plot {
         LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(getWorldName(), false);
         HashSet<BlockVector2> chunks = new HashSet<>();
         for (CuboidRegion region : Plot.this.getRegions()) {
-            for (int x = region.getMinimumPoint().getX() >> 4; x <= region.getMaximumPoint().getX() >> 4; x++) {
-                for (int z = region.getMinimumPoint().getZ() >> 4; z <= region.getMaximumPoint().getZ() >> 4; z++) {
+            for (int x = region.getMinimumPoint().getX() >> 4;
+                 x <= region.getMaximumPoint().getX() >> 4; x++) {
+                for (int z = region.getMinimumPoint().getZ() >> 4;
+                     z <= region.getMaximumPoint().getZ() >> 4; z++) {
                     if (chunks.add(BlockVector2.at(x, z))) {
                         queue.refreshChunk(x, z);
                     }
@@ -1472,7 +1571,8 @@ public class Plot {
         }
         Location location = manager.getSignLoc(this);
         LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(getWorldName(), false);
-        queue.setBlock(location.getX(), location.getY(), location.getZ(), BlockTypes.AIR.getDefaultState());
+        queue.setBlock(location.getX(), location.getY(), location.getZ(),
+            BlockTypes.AIR.getDefaultState());
         queue.flush();
     }
 
@@ -1601,8 +1701,7 @@ public class Plot {
      * Sets components such as border, wall, floor.
      * (components are generator specific)
      */
-    @Deprecated
-    public boolean setComponent(String component, String blocks) {
+    @Deprecated public boolean setComponent(String component, String blocks) {
         BlockBucket parsed = Configuration.BLOCK_BUCKET.parseString(blocks);
         if (parsed != null && parsed.isEmpty()) {
             return false;
@@ -1679,7 +1778,7 @@ public class Plot {
     /**
      * Moves the settings for a plot.
      *
-     * @param plot the plot to move
+     * @param plot     the plot to move
      * @param whenDone
      * @return
      */
@@ -2007,25 +2106,6 @@ public class Plot {
     }
 
     /**
-     * Gets the flags specific to this plot<br>
-     * - Does not take default flags into account<br>
-     *
-     * @return
-     */
-    public HashMap<Flag<?>, Object> getFlags() {
-        return this.getSettings().flags;
-    }
-
-    /**
-     * Sets a flag for this plot.
-     *
-     * @param flags
-     */
-    public void setFlags(HashMap<Flag<?>, Object> flags) {
-        FlagManager.setPlotFlags(this, flags);
-    }
-
-    /**
      * Gets the plot alias.
      * - Returns an empty string if no alias is set
      *
@@ -2247,9 +2327,9 @@ public class Plot {
     /**
      * Auto merge a plot in a specific direction.
      *
-     * @param dir the direction to merge
-     * @param max the max number of merges to do
-     * @param uuid the UUID it is allowed to merge with
+     * @param dir         the direction to merge
+     * @param max         the max number of merges to do
+     * @param uuid        the UUID it is allowed to merge with
      * @param removeRoads whether to remove roads
      * @return true if a merge takes place
      */
@@ -2365,18 +2445,22 @@ public class Plot {
      * @param plot
      */
     public void mergeData(Plot plot) {
-        HashMap<Flag<?>, Object> flags1 = this.getFlags();
-        HashMap<Flag<?>, Object> flags2 = plot.getFlags();
-        if ((!flags1.isEmpty() || !flags2.isEmpty()) && !flags1.equals(flags2)) {
-            boolean greater = flags1.size() > flags2.size();
+        final FlagContainer flagContainer1 = this.getFlagContainer();
+        final FlagContainer flagContainer2 = plot.getFlagContainer();
+        if (!flagContainer1.equals(flagContainer2)) {
+            boolean greater =
+                flagContainer1.getFlagMap().size() > flagContainer2.getFlagMap().size();
             if (greater) {
-                flags1.putAll(flags2);
+                flagContainer1.addAll(flagContainer2.getFlagMap().values());
             } else {
-                flags2.putAll(flags1);
+                flagContainer2.addAll(flagContainer1.getFlagMap().values());
             }
-            HashMap<Flag<?>, Object> net = (greater ? flags1 : flags2);
-            this.setFlags(net);
-            plot.setFlags(net);
+            if (!greater) {
+                this.flagContainer.clearLocal();
+                this.flagContainer.addAll(flagContainer2.getFlagMap().values());
+            }
+            plot.flagContainer.clearLocal();
+            plot.flagContainer.addAll(this.flagContainer.getFlagMap().values());
         }
         if (!this.getAlias().isEmpty()) {
             plot.setAlias(this.getAlias());
@@ -2695,13 +2779,13 @@ public class Plot {
                     Location botabs = plot.getBottomAbs();
                     Location topabs = plot.getTopAbs();
                     BlockVector3 pos1 = BlockVector3.at(botabs.getX(), 0, topabs.getZ() + 1);
-                    BlockVector3 pos2 = BlockVector3.at(topabs.getX(), Plot.MAX_HEIGHT - 1, toploc.getZ());
+                    BlockVector3 pos2 =
+                        BlockVector3.at(topabs.getX(), Plot.MAX_HEIGHT - 1, toploc.getZ());
                     regions.add(new CuboidRegion(pos1, pos2));
                     if (plot.getMerged(Direction.SOUTHEAST)) {
                         pos1 = BlockVector3.at(topabs.getX() + 1, 0, topabs.getZ() + 1);
                         pos2 = BlockVector3.at(toploc.getX(), Plot.MAX_HEIGHT - 1, toploc.getZ());
-                        regions.add(
-                            new CuboidRegion(pos1, pos2));
+                        regions.add(new CuboidRegion(pos1, pos2));
                         // intersection
                     }
                 }
@@ -2715,21 +2799,21 @@ public class Plot {
                     Location botabs = plot.getBottomAbs();
                     Location topabs = plot.getTopAbs();
                     BlockVector3 pos1 = BlockVector3.at(topabs.getX() + 1, 0, botabs.getZ());
-                    BlockVector3 pos2 = BlockVector3.at(toploc.getX(), Plot.MAX_HEIGHT - 1, topabs.getZ());
+                    BlockVector3 pos2 =
+                        BlockVector3.at(toploc.getX(), Plot.MAX_HEIGHT - 1, topabs.getZ());
                     regions.add(new CuboidRegion(pos1, pos2));
                     if (plot.getMerged(Direction.SOUTHEAST)) {
                         pos1 = BlockVector3.at(topabs.getX() + 1, 0, topabs.getZ() + 1);
                         pos2 = BlockVector3.at(toploc.getX(), Plot.MAX_HEIGHT - 1, toploc.getZ());
-                        regions.add(
-                            new CuboidRegion(pos1, pos2));
+                        regions.add(new CuboidRegion(pos1, pos2));
                         // intersection
                     }
                 }
             }
             BlockVector3 pos1 = BlockVector3.at(gbotabs.getX(), 0, gbotabs.getZ());
-            BlockVector3 pos2 = BlockVector3.at(gtopabs.getX(), Plot.MAX_HEIGHT - 1, gtopabs.getZ());
-            regions.add(
-                new CuboidRegion(pos1, pos2));
+            BlockVector3 pos2 =
+                BlockVector3.at(gtopabs.getX(), Plot.MAX_HEIGHT - 1, gtopabs.getZ());
+            regions.add(new CuboidRegion(pos1, pos2));
         }
         return regions;
     }
@@ -2745,7 +2829,8 @@ public class Plot {
         double area = Double.NEGATIVE_INFINITY;
         for (CuboidRegion region : regions) {
             double current =
-                (region.getMaximumPoint().getX() - (double) region.getMinimumPoint().getX() + 1) * (region.getMaximumPoint().getZ() - (double) region.getMinimumPoint().getZ() + 1);
+                (region.getMaximumPoint().getX() - (double) region.getMinimumPoint().getX() + 1) * (
+                    region.getMaximumPoint().getZ() - (double) region.getMinimumPoint().getZ() + 1);
             if (current > area) {
                 max = region;
                 area = current;
@@ -2775,8 +2860,10 @@ public class Plot {
     public List<Location> getAllCorners() {
         Area area = new Area();
         for (CuboidRegion region : this.getRegions()) {
-            Rectangle2D rect = new Rectangle2D.Double(region.getMinimumPoint().getX() - 0.6, region.getMinimumPoint().getZ() - 0.6,
-                region.getMaximumPoint().getX() - region.getMinimumPoint().getX() + 1.2, region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + 1.2);
+            Rectangle2D rect = new Rectangle2D.Double(region.getMinimumPoint().getX() - 0.6,
+                region.getMinimumPoint().getZ() - 0.6,
+                region.getMaximumPoint().getX() - region.getMinimumPoint().getX() + 1.2,
+                region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + 1.2);
             Area rectArea = new Area(rect);
             area.add(rectArea);
         }
@@ -2807,7 +2894,7 @@ public class Plot {
      * Teleport a player to a plot and send them the teleport message.
      *
      * @param player the player
-     * @param cause the cause of the teleport
+     * @param cause  the cause of the teleport
      * @return if the teleport succeeded
      */
     public boolean teleportPlayer(final PlotPlayer player, TeleportCause cause) {
@@ -2820,12 +2907,14 @@ public class Plot {
             } else {
                 location = this.getDefaultHome(false);
             }
-            if (Settings.Teleport.DELAY == 0 || Permissions.hasPermission(player, "plots.teleport.delay.bypass")) {
+            if (Settings.Teleport.DELAY == 0 || Permissions
+                .hasPermission(player, "plots.teleport.delay.bypass")) {
                 MainUtil.sendMessage(player, Captions.TELEPORTED_TO_PLOT);
                 player.teleport(location, cause);
                 return true;
             }
-            MainUtil.sendMessage(player, Captions.TELEPORT_IN_SECONDS, Settings.Teleport.DELAY + "");
+            MainUtil
+                .sendMessage(player, Captions.TELEPORT_IN_SECONDS, Settings.Teleport.DELAY + "");
             final String name = player.getName();
             TaskManager.TELEPORT_QUEUE.add(name);
             TaskManager.runTaskLater(() -> {
@@ -2874,8 +2963,7 @@ public class Plot {
      * @return
      */
     public boolean setComponent(String component, Pattern blocks) {
-        if (StringMan
-            .isEqualToAny(component, getManager().getPlotComponents(this.getId()))) {
+        if (StringMan.isEqualToAny(component, getManager().getPlotComponents(this.getId()))) {
             EventUtil.manager.callComponentSet(this, component);
         }
         return this.getManager().setComponent(this.getId(), component, blocks);
@@ -3116,9 +3204,20 @@ public class Plot {
         for (Plot plot : plots) {
             Plot other = plot.getRelative(destination.getArea(), offset.x, offset.y);
             other.create(plot.getOwner(), false);
-            if (!plot.getFlags().isEmpty()) {
-                other.getSettings().flags = plot.getFlags();
-                DBFunc.setFlags(other, plot.getFlags());
+            if (!plot.getFlagContainer().getFlagMap().isEmpty()) {
+                final Collection<PlotFlag<?, ?>> existingFlags = other.getFlags();
+                other.getFlagContainer().clearLocal();
+                other.getFlagContainer().addAll(plot.getFlagContainer().getFlagMap().values());
+                // Update the database
+                for (final PlotFlag<?, ?> flag : existingFlags) {
+                    final PlotFlag<?, ?> newFlag =
+                        other.getFlagContainer().queryLocal(flag.getClass());
+                    if (other.getFlagContainer().queryLocal(flag.getClass()) == null) {
+                        DBFunc.removeFlag(other, flag);
+                    } else {
+                        DBFunc.setFlag(other, newFlag);
+                    }
+                }
             }
             if (plot.isMerged()) {
                 other.setMerged(plot.getMerged());
@@ -3148,7 +3247,7 @@ public class Plot {
             @Override public void run() {
                 if (regions.isEmpty()) {
                     for (Plot current : getConnectedPlots()) {
-                        destination.getManager().claimPlot(destination);
+                        destination.getManager().claimPlot(current);
                     }
                     destination.setSign();
                     TaskManager.runTask(whenDone);
@@ -3165,10 +3264,6 @@ public class Plot {
         };
         run.run();
         return true;
-    }
-
-    public boolean hasFlag(Flag<?> flag) {
-        return getFlags().containsKey(flag);
     }
 
     public boolean removeComment(PlotComment comment) {
@@ -3194,4 +3289,31 @@ public class Plot {
     public boolean getMerged(Direction direction) {
         return getMerged(direction.getIndex());
     }
+
+    /**
+     * Get the value associated with the specified flag. This will first look at plot
+     * specific flag values, then at the containing plot area and its default values
+     * and at last, it will look at the default values stored in {@link GlobalFlagContainer}.
+     *
+     * @param flagClass The flag type (Class)
+     * @return The flag value
+     */
+    public <T> T getFlag(final Class<? extends PlotFlag<T, ?>> flagClass) {
+        return this.flagContainer.getFlag(flagClass).getValue();
+    }
+
+    /**
+     * Get the value associated with the specified flag. This will first look at plot
+     * specific flag values, then at the containing plot area and its default values
+     * and at last, it will look at the default values stored in {@link GlobalFlagContainer}.
+     *
+     * @param flag The flag type (Any instance of the flag)
+     * @return The flag value
+     */
+    public <T, V extends PlotFlag<T, ?>> T getFlag(final V flag) {
+        final Class<?> flagClass = flag.getClass();
+        final PlotFlag<?, ?> flagInstance = this.flagContainer.getFlagErased(flagClass);
+        return FlagContainer.<T, V>castUnsafe(flagInstance).getValue();
+    }
+
 }

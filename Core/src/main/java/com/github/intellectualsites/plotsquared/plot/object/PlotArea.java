@@ -5,9 +5,11 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
-import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
+import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.generator.GridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
@@ -28,6 +30,7 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,7 +72,6 @@ public abstract class PlotArea {
     public boolean SCHEMATIC_ON_CLAIM = false;
     public String SCHEMATIC_FILE = "null";
     public List<String> SCHEMATICS = null;
-    public Map<Flag<?>, Object> DEFAULT_FLAGS;
     public boolean USE_ECONOMY = false;
     public Map<String, Expression<Double>> PRICES = new HashMap<>();
     public boolean SPAWN_EGGS = false;
@@ -88,6 +90,11 @@ public abstract class PlotArea {
     private CuboidRegion region;
     private ConcurrentHashMap<String, Object> meta;
     private QuadMap<PlotCluster> clusters;
+    /**
+     * Area flag container
+     */
+    @Getter private FlagContainer flagContainer =
+        new FlagContainer(GlobalFlagContainer.getInstance());
 
     public PlotArea(@NotNull final String worldName, @Nullable final String id,
         @NotNull IndependentPlotGenerator generator, @Nullable final PlotId min,
@@ -125,7 +132,8 @@ public abstract class PlotArea {
     public CuboidRegion getRegion() {
         this.region = getRegionAbs();
         if (this.region == null) {
-            return new CuboidRegion(BlockVector3.at(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE),
+            return new CuboidRegion(
+                BlockVector3.at(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE),
                 BlockVector3.at(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE));
         }
         return this.region;
@@ -311,12 +319,11 @@ public abstract class PlotArea {
             }
         }
         try {
-            this.DEFAULT_FLAGS = FlagManager.parseFlags(flags);
-        } catch (Exception e) {
+            this.getFlagContainer().addAll(parseFlags(flags));
+        } catch (FlagParseException e) {
             e.printStackTrace();
             PlotSquared.debug("&cInvalid default flags for " + this.worldname + ": " + StringMan
                 .join(flags, ","));
-            this.DEFAULT_FLAGS = new HashMap<>();
         }
         this.SPAWN_EGGS = config.getBoolean("event.spawn.egg");
         this.SPAWN_CUSTOM = config.getBoolean("event.spawn.custom");
@@ -527,8 +534,7 @@ public abstract class PlotArea {
 
     public int getPlotCount(@NotNull final UUID uuid) {
         if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
-            return (int) getPlotsAbs(uuid).stream().filter(plot -> !plot.hasFlag(Flags.DONE))
-                .count();
+            return (int) getPlotsAbs(uuid).stream().filter(plot -> !DoneFlag.isDone(plot)).count();
         }
         return getPlotsAbs(uuid).size();
     }
@@ -617,8 +623,6 @@ public abstract class PlotArea {
      * Session only plot metadata (session is until the server stops).
      * <br>
      * For persistent metadata use the flag system
-     *
-     * @see FlagManager
      */
     public void setMeta(@NotNull final String key, @Nullable final Object value) {
         if (this.meta == null) {
@@ -637,8 +641,7 @@ public abstract class PlotArea {
      * <br>
      * For persistent metadata use the flag system
      */
-    @Nullable
-    public Object getMeta(@NotNull final String key) {
+    @Nullable public Object getMeta(@NotNull final String key) {
         if (this.meta != null) {
             return this.meta.get(key);
         }
@@ -932,7 +935,8 @@ public abstract class PlotArea {
                 @Override public CuboidRegion getRegion(PlotCluster value) {
                     BlockVector2 pos1 = BlockVector2.at(value.getP1().x, value.getP1().y);
                     BlockVector2 pos2 = BlockVector2.at(value.getP2().x, value.getP2().y);
-                    return new CuboidRegion(pos1.toBlockVector3(), pos2.toBlockVector3(Plot.MAX_HEIGHT - 1));
+                    return new CuboidRegion(pos1.toBlockVector3(),
+                        pos2.toBlockVector3(Plot.MAX_HEIGHT - 1));
                 }
             };
         }
@@ -946,6 +950,23 @@ public abstract class PlotArea {
             }
         }
         return null;
+    }
+
+    private static Collection<PlotFlag<?, ?>> parseFlags(List<String> flagStrings) throws FlagParseException {
+        final Collection<PlotFlag<?, ?>> flags = new ArrayList<>();
+        for (final String key : flagStrings) {
+            final String[] split;
+            if (key.contains(";")) {
+                split = key.split(";");
+            } else {
+                split = key.split(":");
+            }
+            final PlotFlag<?, ?> flagInstance = GlobalFlagContainer.getInstance().getFlagFromString(split[0]);
+            if (flagInstance != null) {
+                flags.add(flagInstance.parse(split[1]));
+            }
+        }
+        return flags;
     }
 
 }

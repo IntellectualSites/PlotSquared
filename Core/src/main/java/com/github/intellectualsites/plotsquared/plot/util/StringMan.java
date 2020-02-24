@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
+import com.github.intellectualsites.plotsquared.plot.config.Caption;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
@@ -50,6 +51,9 @@ public class StringMan {
         }
         if (obj instanceof String) {
             return (String) obj;
+        }
+        if (obj instanceof Caption) {
+            return ((Caption) obj).getTranslated();
         }
         if (obj.getClass().isArray()) {
             StringBuilder result = new StringBuilder();

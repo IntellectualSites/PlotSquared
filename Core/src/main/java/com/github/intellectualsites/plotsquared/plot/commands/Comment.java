@@ -15,8 +15,12 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map.Entry;
 
-@CommandDeclaration(command = "comment", aliases = {"msg"}, description = "Comment on a plot",
-    category = CommandCategory.CHAT, requiredType = RequiredType.PLAYER, permission = "plots.comment")
+@CommandDeclaration(command = "comment",
+    aliases = {"msg"},
+    description = "Comment on a plot",
+    category = CommandCategory.CHAT,
+    requiredType = RequiredType.PLAYER,
+    permission = "plots.comment")
 public class Comment extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {

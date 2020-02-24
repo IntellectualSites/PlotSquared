@@ -5,8 +5,10 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.config.Storage;
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
-import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
+import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
+import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.object.BlockLoc;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -31,6 +33,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -542,13 +545,15 @@ import java.util.concurrent.atomic.AtomicInteger;
             try {
                 // Create the plots
                 createPlots(myList, () -> {
+                    final Map<PlotId, Integer> idMap = new HashMap<>();
+
                     try {
                         // Creating datastructures
                         HashMap<PlotId, Plot> plotMap = new HashMap<>();
                         for (Plot plot : myList) {
                             plotMap.put(plot.getId(), plot);
                         }
-                        ArrayList<SettingsPair> settings = new ArrayList<>();
+                        ArrayList<LegacySettings> settings = new ArrayList<>();
                         final ArrayList<UUIDPair> helpers = new ArrayList<>();
                         final ArrayList<UUIDPair> trusted = new ArrayList<>();
                         final ArrayList<UUIDPair> denied = new ArrayList<>();
@@ -563,8 +568,9 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 int y = result.getInt("plot_id_z");
                                 PlotId plotId = new PlotId(x, y);
                                 Plot plot = plotMap.get(plotId);
+                                idMap.put(plotId, id);
                                 if (plot != null) {
-                                    settings.add(new SettingsPair(id, plot.getSettings()));
+                                    settings.add(new LegacySettings(id, plot.getSettings()));
                                     for (UUID uuid : plot.getDenied()) {
                                         denied.add(new UUIDPair(id, uuid));
                                     }
@@ -577,21 +583,24 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 }
                             }
                         }
-                        createSettings(settings, () -> createTiers(helpers, "helpers",
-                            () -> createTiers(trusted, "trusted",
-                                () -> createTiers(denied, "denied", () -> {
-                                    try {
-                                        SQLManager.this.connection.commit();
-                                    } catch (SQLException e) {
-                                        e.printStackTrace();
-                                    }
-                                    if (whenDone != null) {
-                                        whenDone.run();
-                                    }
-                                }))));
+
+                        createFlags(idMap, myList, () ->
+                            createSettings(settings,
+                                () -> createTiers(helpers, "helpers",
+                                    () -> createTiers(trusted, "trusted",
+                                        () -> createTiers(denied, "denied", () -> {
+                                            try {
+                                                SQLManager.this.connection.commit();
+                                            } catch (SQLException e) {
+                                                e.printStackTrace();
+                                            }
+                                            if (whenDone != null) {
+                                                whenDone.run();
+                                            }
+                                    })))));
                     } catch (SQLException e) {
                         e.printStackTrace();
-                        PlotSquared.debug("&7[WARN] Failed to set all helpers for plots");
+                        PlotSquared.debug("&7[WARN] Failed to set all flags and member tiers for plots");
                         try {
                             SQLManager.this.connection.commit();
                         } catch (SQLException e1) {
@@ -653,6 +662,34 @@ import java.util.concurrent.atomic.AtomicInteger;
             }
         };
         setBulk(myList, mod, whenDone);
+    }
+
+    public void createFlags(Map<PlotId, Integer> ids, List<Plot> plots, Runnable whenDone) {
+        try (final PreparedStatement preparedStatement =
+            this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_flags`(`plot_id`, `flag`, `value`) VALUES(?, ?, ?)")) {
+            for (final Plot plot : plots) {
+                final FlagContainer flagContainer = plot.getFlagContainer();
+                for (final PlotFlag<?,?> flagEntry : flagContainer.getFlagMap().values()) {
+                    preparedStatement.setInt(1, ids.get(plot.getId()));
+                    preparedStatement.setString(2, flagEntry.getName());
+                    preparedStatement.setString(3, flagEntry.toString());
+                    preparedStatement.addBatch();
+                }
+                try {
+                    preparedStatement.executeBatch();
+                } catch (final Exception e) {
+                    PlotSquared.log(Captions.PREFIX.getTranslated() + "Failed to store flag values for plot with entry ID: " + plot.getId());
+                    e.printStackTrace();
+                    continue;
+                }
+                PlotSquared.debug(Captions.PREFIX.getTranslated() + "- Finished converting flags for plot with entry ID: " + plot.getId());
+            }
+        } catch (final Exception e) {
+            PlotSquared.log(Captions.PREFIX.getTranslated() + "Failed to store flag values:");
+            e.printStackTrace();
+        }
+        PlotSquared.log(Captions.PREFIX.getTranslated() + "Finished converting flags (" + plots.size() + " plots processed)");
+        whenDone.run();
     }
 
     /**
@@ -830,111 +867,71 @@ import java.util.concurrent.atomic.AtomicInteger;
         }
     }
 
-    public void createSettings(final ArrayList<SettingsPair> myList, final Runnable whenDone) {
-        final StmtMod<SettingsPair> mod = new StmtMod<SettingsPair>() {
-            @Override public String getCreateMySQL(int size) {
-                return getCreateMySQL(size, "INSERT INTO `" + SQLManager.this.prefix
-                    + "plot_settings`(`plot_plot_id`,`biome`,`rain`,`custom_time`,`time`,`deny_entry`,`alias`,`flags`,`merged`,"
-                    + "`position`) VALUES ", 10);
+    public void createSettings(final ArrayList<LegacySettings> myList, final Runnable whenDone) {
+        try (final PreparedStatement preparedStatement =
+            this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_settings`"
+                + "(`plot_plot_id`,`biome`,`rain`,`custom_time`,`time`,`deny_entry`,`alias`,`merged`,`position`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+
+            int packet;
+            if (this.mySQL) {
+                packet = Math.min(myList.size(), 5000);
+            } else {
+                packet = Math.min(myList.size(), 50);
             }
 
-            @Override public String getCreateSQLite(int size) {
-                return getCreateSQLite(size, "INSERT INTO `" + SQLManager.this.prefix
-                        + "plot_settings` SELECT ? AS `plot_plot_id`, ? AS `biome`, ? AS `rain`, ? AS `custom_time`, ? AS `time`, ? AS "
-                        + "`deny_entry`, ? AS `alias`, ? AS `flags`, ? AS `merged`, ? AS `position`",
-                    10);
-            }
+            int totalUpdated = 0;
+            int updated = 0;
 
-            @Override public String getCreateSQL() {
-                return "INSERT INTO `" + SQLManager.this.prefix
-                    + "plot_settings`(`plot_plot_id`) VALUES(?)";
-            }
-
-            @Override public void setMySQL(PreparedStatement statement, int i, SettingsPair pair)
-                throws SQLException {
-                statement.setInt(i * 10 + 1, pair.id); // id
-                statement.setNull(i * 10 + 2, 4); // biome
-                statement.setNull(i * 10 + 3, 4); // rain
-                statement.setNull(i * 10 + 4, 4); // custom_time
-                statement.setNull(i * 10 + 5, 4); // time
-                statement.setNull(i * 10 + 6, 4); // deny_entry
-                if (pair.settings.getAlias().isEmpty()) {
-                    statement.setNull(i * 10 + 7, 4);
+            for (final LegacySettings legacySettings : myList) {
+                preparedStatement.setInt(1, legacySettings.id);
+                preparedStatement.setNull(2, 4);
+                preparedStatement.setNull(3, 4);
+                preparedStatement.setNull(4, 4);
+                preparedStatement.setNull(5, 4);
+                preparedStatement.setNull(6, 4);
+                if (legacySettings.settings.getAlias().isEmpty()) {
+                    preparedStatement.setNull(7, 4);
                 } else {
-                    statement.setString(i * 10 + 7, pair.settings.getAlias());
+                    preparedStatement.setString(7, legacySettings.settings.getAlias());
                 }
-                StringBuilder flag_string = new StringBuilder();
-                int k = 0;
-                for (Entry<Flag<?>, ?> flag : pair.settings.flags.entrySet()) {
-                    if (k != 0) {
-                        flag_string.append(',');
-                    }
-                    flag_string.append(flag.getKey().getName()).append(':').append(
-                        flag.getKey().valueToString(flag.getValue()).replaceAll(":", "¯")
-                            .replaceAll(",", "´"));
-                    k++;
-                }
-                statement.setString(i * 10 + 8, flag_string.toString());
-                boolean[] merged = pair.settings.getMerged();
+                boolean[] merged = legacySettings.settings.getMerged();
                 int hash = MainUtil.hash(merged);
-                statement.setInt(i * 10 + 9, hash);
-                BlockLoc loc = pair.settings.getPosition();
+                preparedStatement.setInt(8, hash);
+                BlockLoc loc = legacySettings.settings.getPosition();
                 String position;
                 if (loc.getY() == 0) {
                     position = "DEFAULT";
                 } else {
                     position = loc.getX() + "," + loc.getY() + ',' + loc.getZ();
                 }
-                statement.setString(i * 10 + 10, position);
-            }
-
-            @Override public void setSQLite(PreparedStatement stmt, int i, SettingsPair pair)
-                throws SQLException {
-                stmt.setInt(i * 10 + 1, pair.id); // id
-                stmt.setNull(i * 10 + 2, 4); // biome
-                stmt.setNull(i * 10 + 3, 4); // rain
-                stmt.setNull(i * 10 + 4, 4); // custom_time
-                stmt.setNull(i * 10 + 5, 4); // time
-                stmt.setNull(i * 10 + 6, 4); // deny_entry
-                if (pair.settings.getAlias().isEmpty()) {
-                    stmt.setNull(i * 10 + 7, 4);
-                } else {
-                    stmt.setString(i * 10 + 7, pair.settings.getAlias());
-                }
-                StringBuilder flag_string = new StringBuilder();
-                int k = 0;
-                for (Entry<Flag<?>, ?> flag : pair.settings.flags.entrySet()) {
-                    if (k != 0) {
-                        flag_string.append(',');
+                preparedStatement.setString( 9, position);
+                preparedStatement.addBatch();
+                if (++updated >= packet) {
+                    try {
+                        preparedStatement.executeBatch();
+                    } catch (final Exception e) {
+                        PlotSquared.log(Captions.PREFIX.getTranslated() + "Failed to store settings values for plot with entry ID: " + legacySettings.id);
+                        e.printStackTrace();
+                        continue;
                     }
-                    flag_string.append(flag.getKey().getName()).append(':').append(
-                        flag.getKey().valueToString(flag.getValue()).replaceAll(":", "¯")
-                            .replaceAll(",", "´"));
-                    k++;
                 }
-                stmt.setString(i * 10 + 8, flag_string.toString());
-                boolean[] merged = pair.settings.getMerged();
-                int n = 0;
-                for (int j = 0; j < 4; ++j) {
-                    n = (n << 1) + (merged[j] ? 1 : 0);
-                }
-                stmt.setInt(i * 10 + 9, n);
-                BlockLoc loc = pair.settings.getPosition();
-                String position;
-                if (loc.getY() == 0) {
-                    position = "DEFAULT";
-                } else {
-                    position = loc.getX() + "," + loc.getY() + ',' + loc.getZ();
-                }
-                stmt.setString(i * 10 + 10, position);
+                totalUpdated += 1;
             }
 
-            @Override public void setSQL(PreparedStatement stmt, SettingsPair pair)
-                throws SQLException {
-                stmt.setInt(1, pair.id);
+            if (totalUpdated < myList.size()) {
+                try {
+                    preparedStatement.executeBatch();
+                } catch (final Exception e) {
+                    PlotSquared.log(Captions.PREFIX.getTranslated() + "Failed to store settings values");
+                    e.printStackTrace();
+                }
             }
-        };
-        addGlobalTask(() -> setBulk(myList, mod, whenDone));
+        } catch (final Exception e) {
+            PlotSquared.log(Captions.PREFIX.getTranslated() + "Failed to store settings values:");
+            e.printStackTrace();
+        }
+        PlotSquared.log(Captions.PREFIX.getTranslated() + "Finished converting settings (" + myList.size() + " plots processed)");
+        whenDone.run();
     }
 
     public void createEmptySettings(final ArrayList<Integer> myList, final Runnable whenDone) {
@@ -946,7 +943,7 @@ import java.util.concurrent.atomic.AtomicInteger;
             @Override public String getCreateSQLite(int size) {
                 return getCreateSQLite(size, "INSERT INTO `" + SQLManager.this.prefix
                         + "plot_settings` SELECT ? AS `plot_plot_id`, ? AS `biome`, ? AS `rain`, ? AS `custom_time`, ? AS `time`, ? AS "
-                        + "`deny_entry`, ? AS `alias`, ? AS `flags`, ? AS `merged`, ? AS `position` ",
+                        + "`deny_entry`, ? AS `alias`, ? AS `merged`, ? AS `position` ",
                     10);
             }
 
@@ -970,8 +967,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 stmt.setNull(i * 10 + 6, 4);
                 stmt.setNull(i * 10 + 7, 4);
                 stmt.setNull(i * 10 + 8, 4);
-                stmt.setNull(i * 10 + 9, 4);
-                stmt.setString(i * 10 + 10, "DEFAULT");
+                stmt.setString(i * 10 + 9, "DEFAULT");
             }
 
             @Override public void setSQL(PreparedStatement stmt, Integer id) throws SQLException {
@@ -1100,7 +1096,7 @@ import java.util.concurrent.atomic.AtomicInteger;
     @Override public void createTables() throws SQLException {
         String[] tables =
             new String[] {"plot", "plot_denied", "plot_helpers", "plot_comments", "plot_trusted",
-                "plot_rating", "plot_settings", "cluster", "player_meta"};
+                "plot_rating", "plot_settings", "cluster", "player_meta", "plot_flags"};
         DatabaseMetaData meta = this.connection.getMetaData();
         int create = 0;
         for (String s : tables) {
@@ -1144,7 +1140,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                     + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0,"
                     + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000',"
                     + "  `deny_entry` TINYINT(1) DEFAULT '0',"
-                    + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL,"
+                    + "  `alias` VARCHAR(50) DEFAULT NULL,"
                     + "  `merged` INT(11) DEFAULT NULL,"
                     + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT',"
                     + "  PRIMARY KEY (`plot_plot_id`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
@@ -1175,7 +1171,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                     + "  `cluster_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST',"
                     + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0',"
                     + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0',"
-                    + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL,"
+                    + "  `alias` VARCHAR(50) DEFAULT NULL,"
                     + "  `merged` INT(11) DEFAULT NULL,"
                     + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT',"
                     + "  PRIMARY KEY (`cluster_id`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
@@ -1183,6 +1179,12 @@ import java.util.concurrent.atomic.AtomicInteger;
                     + " `meta_id` INT(11) NOT NULL AUTO_INCREMENT,"
                     + " `uuid` VARCHAR(40) NOT NULL," + " `key` VARCHAR(32) NOT NULL,"
                     + " `value` blob NOT NULL," + " PRIMARY KEY (`meta_id`)"
+                    + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+                stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_flags`("
+                    + "`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+                    + "`plot_id` INT(11) NOT NULL," + " `flag` VARCHAR(256)," + " `value` VARCHAR(512),"
+                    + "FOREIGN KEY (plot_id) REFERENCES `" + this.prefix + "plot` (id) ON DELETE CASCADE, "
+                    + "UNIQUE (plot_id, flag)"
                     + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
             } else {
                 stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot` ("
@@ -1209,7 +1211,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                     + "  `biome` VARCHAR(45) DEFAULT 'FOREST'," + "  `rain` INT(1) DEFAULT 0,"
                     + "  `custom_time` TINYINT(1) DEFAULT '0'," + "  `time` INT(11) DEFAULT '8000',"
                     + "  `deny_entry` TINYINT(1) DEFAULT '0',"
-                    + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL,"
+                    + "  `alias` VARCHAR(50) DEFAULT NULL,"
                     + "  `merged` INT(11) DEFAULT NULL,"
                     + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT',"
                     + "  PRIMARY KEY (`plot_plot_id`)" + ')');
@@ -1231,7 +1233,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                     + "  `cluster_id` INT(11) NOT NULL," + "  `biome` VARCHAR(45) DEFAULT 'FOREST',"
                     + "  `rain` INT(1) DEFAULT 0," + "  `custom_time` TINYINT(1) DEFAULT '0',"
                     + "  `time` INT(11) DEFAULT '8000'," + "  `deny_entry` TINYINT(1) DEFAULT '0',"
-                    + "  `alias` VARCHAR(50) DEFAULT NULL," + "  `flags` VARCHAR(512) DEFAULT NULL,"
+                    + "  `alias` VARCHAR(50) DEFAULT NULL,"
                     + "  `merged` INT(11) DEFAULT NULL,"
                     + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT',"
                     + "  PRIMARY KEY (`cluster_id`)" + ')');
@@ -1239,6 +1241,11 @@ import java.util.concurrent.atomic.AtomicInteger;
                     + " `meta_id` INTEGER PRIMARY KEY AUTOINCREMENT,"
                     + " `uuid` VARCHAR(40) NOT NULL," + " `key` VARCHAR(32) NOT NULL,"
                     + " `value` blob NOT NULL" + ')');
+                stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_flags`("
+                    + "`id` INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + "`plot_id` INTEGER NOT NULL," + " `flag` VARCHAR(256)," + " `value` VARCHAR(512),"
+                    + "FOREIGN KEY (plot_id) REFERENCES `" + this.prefix + "plot` (id) ON DELETE CASCADE, "
+                    + "UNIQUE (plot_id, flag))");
             }
             stmt.executeBatch();
             stmt.clearBatch();
@@ -1592,6 +1599,82 @@ import java.util.concurrent.atomic.AtomicInteger;
         }, null);
     }
 
+    @Override public boolean convertFlags() {
+        final Map<Integer, Map<String, String>> flagMap = new HashMap<>();
+        try (Statement statement = this.connection.createStatement()) {
+            try (ResultSet resultSet = statement
+                .executeQuery("SELECT * FROM `" + this.prefix + "plot_settings`")) {
+                while (resultSet.next()) {
+                    final int id = resultSet.getInt("plot_plot_id");
+                    final String plotFlags = resultSet.getString("flags");
+                    if (plotFlags == null || plotFlags.isEmpty()) {
+                        continue;
+                    }
+                    flagMap.put(id, new HashMap<>());
+                    for (String element : plotFlags.split(",")) {
+                        if (element.contains(":")) {
+                            String[] split = element.split(":"); // splits flag:value
+                            try {
+                                String flag_str =
+                                    split[1].replaceAll("¯", ":").replaceAll("\u00B4", ",");
+                                /*PlotFlag<?, ?> flag = GlobalFlagContainer.getInstance().getFlagFromString(split[0]);
+                                if (flag == null) {
+                                    PlotSquared.log(Captions.PREFIX.getTranslated() + "Flag not found and therefore ignored: " + split[0]);
+                                    continue;
+                                }*/
+                                flagMap.get(id).put(split[0], flag_str);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } /*else {
+                            element = element.replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
+                            if (StringMan
+                                .isAlpha(element.replaceAll("_", "").replaceAll("-", ""))) {
+                                PlotFlag<?, ?> flag = GlobalFlagContainer.getInstance().getFlagFromString(element);
+                                if (flag == null) {
+                                    PlotSquared.log(Captions.PREFIX.getTranslated() + "Flag not found and therefore ignored: " + element);
+                                }
+                            } else {
+                                PlotSquared.log(Captions.PREFIX.getTranslated() + "INVALID FLAG: " + element);
+                            }
+                        }*/
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            PlotSquared.log(Captions.PREFIX.getTranslated() + "Failed to load old flag values:");
+            e.printStackTrace();
+            return false;
+        }
+        PlotSquared.log(Captions.PREFIX.getTranslated() + "Loaded " + flagMap.size() + " plot flag collections...");
+        PlotSquared.log(Captions.PREFIX.getTranslated() + "Attempting to store these flags in the new table...");
+        //
+        try (final PreparedStatement preparedStatement =
+            this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_flags`(`plot_id`, `flag`, `value`) VALUES(?, ?, ?)")) {
+            for (final Map.Entry<Integer, Map<String, String>> plotFlagEntry : flagMap.entrySet()) {
+                for (final Map.Entry<String, String> flagEntry : plotFlagEntry.getValue().entrySet()) {
+                    preparedStatement.setInt(1, plotFlagEntry.getKey());
+                    preparedStatement.setString(2, flagEntry.getKey());
+                    preparedStatement.setString(3, flagEntry.getValue());
+                    preparedStatement.addBatch();
+                }
+                try {
+                    preparedStatement.executeBatch();
+                } catch (final Exception e) {
+                    PlotSquared.log(Captions.PREFIX.getTranslated() + "Failed to store flag values for plot with entry ID: " + plotFlagEntry.getKey());
+                    e.printStackTrace();
+                    continue;
+                }
+                PlotSquared.debug(Captions.PREFIX.getTranslated() + "- Finished converting flags for plot with entry ID: " + plotFlagEntry.getKey());
+            }
+        } catch (final Exception e) {
+            PlotSquared.log(Captions.PREFIX.getTranslated() + "Failed to store flag values:");
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Load all plots, helpers, denied, trusted, and every setting from DB into a {@link HashMap}.
      */
@@ -1819,6 +1902,50 @@ import java.util.concurrent.atomic.AtomicInteger;
                     deleteRows(toDelete, this.prefix + "plot_denied", "plot_plot_id");
                 }
 
+                try (final ResultSet resultSet = statement.executeQuery("SELECT * FROM `" + this.prefix + "plot_flags`")) {
+                    final ArrayList<Integer> toDelete = new ArrayList<>();
+                    final Map<Plot, Collection<PlotFlag<?,?>>> invalidFlags = new HashMap<>();
+                    while (resultSet.next()) {
+                        id = resultSet.getInt("plot_id");
+                        final String flag = resultSet.getString("flag");
+                        final String value = resultSet.getString("value");
+                        final Plot plot = plots.get(id);
+                        if (plot != null) {
+                            final PlotFlag<?,?> plotFlag = GlobalFlagContainer.getInstance().getFlagFromString(flag);
+                            if (plotFlag == null) {
+                                plot.getFlagContainer().addUnknownFlag(flag, value);
+                            } else {
+                                try {
+                                    plot.getFlagContainer().addFlag(plotFlag.parse(value));
+                                } catch (final FlagParseException e) {
+                                    PlotSquared.debug("Plot with ID " + id + " has an invalid value:");
+                                    PlotSquared.debug(Captions.FLAG_PARSE_ERROR.getTranslated().replace("%flag_name%", plotFlag.getName())
+                                        .replace("%flag_value%", e.getValue()).replace("%error%", e.getErrorMessage()));
+                                    if (!invalidFlags.containsKey(plot)) {
+                                        invalidFlags.put(plot, new ArrayList<>());
+                                    }
+                                    invalidFlags.get(plot).add(plotFlag);
+                                }
+                            }
+                        } else if (Settings.Enabled_Components.DATABASE_PURGER) {
+                            toDelete.add(id);
+                        } else {
+                            PlotSquared.debug("&cPlot " + id
+                                + " in `plot_flags` does not exist. Create this plot or set `database-purger: true` in the settings.yml.");
+                        }
+                    }
+                    if (Settings.Enabled_Components.DATABASE_PURGER) {
+                        for (final Map.Entry<Plot, Collection<PlotFlag<?,?>>> plotFlagEntry : invalidFlags.entrySet()) {
+                            for (final PlotFlag<?,?> flag : plotFlagEntry.getValue()) {
+                                PlotSquared.debug("&cPlot \"" + plotFlagEntry.getKey() + "\""
+                                    + " had an invalid flag (" + flag.getName() + "). A fix has been attempted.");
+                                removeFlag(plotFlagEntry.getKey(), flag);
+                            }
+                        }
+                    }
+                    deleteRows(toDelete, this.prefix + "plot_flags", "plot_id");
+                }
+
                 try (ResultSet resultSet = statement
                     .executeQuery("SELECT * FROM `" + this.prefix + "plot_settings`")) {
                     ArrayList<Integer> toDelete = new ArrayList<>();
@@ -1850,46 +1977,6 @@ import java.util.concurrent.atomic.AtomicInteger;
                                 merged[3 - i] = (m & 1 << i) != 0;
                             }
                             plot.getSettings().setMerged(merged);
-                            String[] flags_string;
-                            String myflags = resultSet.getString("flags");
-                            if (myflags == null || myflags.isEmpty()) {
-                                flags_string = new String[] {};
-                            } else {
-                                flags_string = myflags.split(",");
-                            }
-                            HashMap<Flag<?>, Object> flags = new HashMap<>();
-                            boolean exception = false;
-                            for (String element : flags_string) {
-                                if (element.contains(":")) {
-                                    String[] split = element.split(":");
-                                    try {
-                                        String flag_str =
-                                            split[1].replaceAll("¯", ":").replaceAll("\u00B4", ",");
-                                        Flag<?> flag = FlagManager.getOrCreateFlag(split[0]);
-                                        flags.put(flag, flag.parseValue(flag_str));
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                        exception = true;
-                                    }
-                                } else {
-                                    element =
-                                        element.replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
-                                    if (StringMan
-                                        .isAlpha(element.replaceAll("_", "").replaceAll("-", ""))) {
-                                        Flag flag = FlagManager.getOrCreateFlag(element);
-                                        flags.put(flag, flag.parseValue(""));
-                                    } else {
-                                        PlotSquared.debug("INVALID FLAG: " + element);
-                                    }
-                                }
-                            }
-                            if (exception) {
-                                PlotSquared.debug("&cPlot #" + id + "(" + plot + ") | " + plot
-                                    + " had an invalid flag. A fix has been attempted.");
-                                PlotSquared.debug("&c" + myflags);
-                                this.setFlags(plot, flags);
-                            }
-                            plot.getSettings().flags = flags;
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
                         } else {
@@ -1988,18 +2075,39 @@ import java.util.concurrent.atomic.AtomicInteger;
         addPlotTask(newPlot, null);
     }
 
-    @Override public void setFlags(final Plot plot, HashMap<Flag<?>, Object> flags) {
-        final String flag_string = FlagManager.toString(flags);
-        addPlotTask(plot, new UniqueStatement("setFlags") {
+    @Override public void setFlag(final Plot plot, final PlotFlag<?, ?> flag) {
+        addPlotTask(plot, new UniqueStatement("setFlag") {
             @Override public void set(PreparedStatement statement) throws SQLException {
-                statement.setString(1, flag_string);
-                statement.setInt(2, getId(plot));
+                statement.setInt(1, getId(plot));
+                statement.setString(2, flag.getName());
+                statement.setString(3, flag.toString());
+                statement.setString(4, flag.toString());
             }
 
             @Override public PreparedStatement get() throws SQLException {
-                return SQLManager.this.connection.prepareStatement(
-                    "UPDATE `" + SQLManager.this.prefix
-                        + "plot_settings` SET `flags` = ? WHERE `plot_plot_id` = ?");
+                final String statement;
+                if (SQLManager.this.mySQL) {
+                    statement = "INSERT INTO `" + SQLManager.this.prefix + "plot_flags`(`plot_id`, `flag`, `value`) VALUES(?, ?, ?) "
+                        + "ON DUPLICATE KEY UPDATE `value` = ?";
+                } else {
+                    statement = "INSERT INTO `" + SQLManager.this.prefix + "plot_flags`(`plot_id`, `flag`, `value`) VALUES(?, ?, ?) "
+                        + "ON CONFLICT(`plot_id`,`flag`) DO UPDATE SET `value` = ?";
+                }
+                return SQLManager.this.connection.prepareStatement(statement);
+            }
+        });
+    }
+
+    @Override public void removeFlag(final Plot plot, final PlotFlag<?, ?> flag) {
+        addPlotTask(plot, new UniqueStatement("removeFlag") {
+            @Override public void set(PreparedStatement statement) throws SQLException {
+                statement.setInt(1, getId(plot));
+                statement.setString(2, flag.getName());
+            }
+
+            @Override public PreparedStatement get() throws SQLException {
+                return SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix
+                    + "plot_flags` WHERE `plot_id` = ? AND `flag` = ?");
             }
         });
     }
@@ -2963,14 +3071,15 @@ import java.util.concurrent.atomic.AtomicInteger;
                 PlotSquared.debug(" - Correcting merge for: " + plot);
                 setMerged(dataPlot, plot.getMerged());
             }
-            HashMap<Flag<?>, Object> pf = plot.getFlags();
-            HashMap<Flag<?>, Object> df = dataPlot.getFlags();
+            Set<PlotFlag<?, ?>> pf = plot.getFlags();
+            Set<PlotFlag<?, ?>> df = dataPlot.getFlags();
             if (!pf.isEmpty() && !df.isEmpty()) {
                 if (pf.size() != df.size() || !StringMan
-                    .isEqual(StringMan.joinOrdered(pf.values(), ","),
-                        StringMan.joinOrdered(df.values(), ","))) {
+                    .isEqual(StringMan.joinOrdered(pf, ","),
+                        StringMan.joinOrdered(df, ","))) {
                     PlotSquared.debug(" - Correcting flags for: " + plot);
-                    setFlags(plot, pf);
+                    // setFlags(plot, pf);
+                    // TODO: Re-implement
                 }
             }
         }
@@ -3101,7 +3210,6 @@ import java.util.concurrent.atomic.AtomicInteger;
         public abstract void set(PreparedStatement statement) throws SQLException;
     }
 
-
     private class UUIDPair {
 
         public final int id;
@@ -3114,12 +3222,12 @@ import java.util.concurrent.atomic.AtomicInteger;
     }
 
 
-    private class SettingsPair {
+    private static class LegacySettings {
 
         public final int id;
         public final PlotSettings settings;
 
-        public SettingsPair(int id, PlotSettings settings) {
+        public LegacySettings(int id, PlotSettings settings) {
             this.id = id;
             this.settings = settings;
         }

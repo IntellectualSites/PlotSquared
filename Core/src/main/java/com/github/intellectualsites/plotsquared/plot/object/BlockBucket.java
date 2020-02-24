@@ -26,8 +26,9 @@ import java.util.regex.Matcher;
  */
 @EqualsAndHashCode(of = {"input"}) @SuppressWarnings({"unused", "WeakerAccess"})
 public final class BlockBucket implements ConfigurationSerializable {
+    private static java.util.regex.Pattern regex = java.util.regex.Pattern.compile(
+        "((?<namespace>[A-Za-z_]+):)?(?<block>([A-Za-z_]+(\\[?[\\S\\s]+\\])?))(:(?<chance>[0-9]{1,3}))?");
     private boolean compiled;
-
     private StringBuilder input;
     private BlockState single;
     private Pattern pattern;
@@ -76,7 +77,8 @@ public final class BlockBucket implements ConfigurationSerializable {
     }
 
     private void addBlock(@NonNull final BlockState block, double chance) {
-        if (chance == -1) chance = 1;
+        if (chance == -1)
+            chance = 1;
         String prefix = input.length() == 0 ? "" : ",";
         input.append(prefix).append(block.toString()).append(":").append(chance);
         this.compiled = false;
@@ -85,8 +87,6 @@ public final class BlockBucket implements ConfigurationSerializable {
     public boolean isEmpty() {
         return input == null || input.length() == 0;
     }
-
-    private static java.util.regex.Pattern regex = java.util.regex.Pattern.compile("((?<namespace>[A-Za-z_]+):)?(?<block>([A-Za-z_]+(\\[?[\\S\\s]+\\])?))(:(?<chance>[0-9]{1,3}))?");
 
     public void compile() {
         if (isCompiled()) {
@@ -117,7 +117,8 @@ public final class BlockBucket implements ConfigurationSerializable {
                 this.single = BlockUtil.get(string);
                 this.pattern = new BlockPattern(single);
                 return;
-            } catch (Exception ignore) { }
+            } catch (Exception ignore) {
+            }
         }
         for (int i = 0; i < blocksStr.length; i++) {
             String entry = blocksStr[i];

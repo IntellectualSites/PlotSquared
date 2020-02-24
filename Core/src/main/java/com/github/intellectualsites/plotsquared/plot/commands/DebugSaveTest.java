@@ -9,8 +9,10 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 
 import java.util.ArrayList;
 
-@CommandDeclaration(command = "debugsavetest", permission = "plots.debugsavetest",
-    category = CommandCategory.DEBUG, requiredType = RequiredType.CONSOLE,
+@CommandDeclaration(command = "debugsavetest",
+    permission = "plots.debugsavetest",
+    category = CommandCategory.DEBUG,
+    requiredType = RequiredType.CONSOLE,
     usage = "/plot debugsavetest",
     description = "This command will force the recreation of all plots in the DB")
 public class DebugSaveTest extends SubCommand {

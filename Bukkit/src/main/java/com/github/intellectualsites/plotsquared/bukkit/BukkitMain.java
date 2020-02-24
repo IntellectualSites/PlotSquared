@@ -646,7 +646,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             }
             return new BukkitPlotGenerator(world, gen);
         } else {
-            return new BukkitPlotGenerator(PlotSquared.get().IMP.getDefaultGenerator());
+            return new BukkitPlotGenerator(world, PlotSquared.get().IMP.getDefaultGenerator());
         }
     }
 
@@ -802,7 +802,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override public GeneratorWrapper<?> wrapPlotGenerator(@Nullable final String world,
         @NonNull final IndependentPlotGenerator generator) {
-        return new BukkitPlotGenerator(generator);
+        return new BukkitPlotGenerator(world, generator);
     }
 
     @Override public List<Map.Entry<Map.Entry<String, String>, Boolean>> getPluginIds() {

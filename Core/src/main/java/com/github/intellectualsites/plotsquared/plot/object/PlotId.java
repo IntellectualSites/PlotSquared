@@ -25,14 +25,6 @@ public class PlotId {
         this.y = y;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
     /**
      * Get a Plot Id based on a string
      *
@@ -76,6 +68,14 @@ public class PlotId {
      */
     public static PlotId unpair(int hash) {
         return new PlotId(hash >> 16, hash & 0xFFFF);
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 
     public PlotId getNextId(int step) {

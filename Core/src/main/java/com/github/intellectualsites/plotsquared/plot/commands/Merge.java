@@ -20,10 +20,14 @@ import java.util.UUID;
 
 import static com.github.intellectualsites.plotsquared.plot.object.Direction.getFromIndex;
 
-@CommandDeclaration(command = "merge", aliases = "m",
+@CommandDeclaration(command = "merge",
+    aliases = "m",
     description = "Merge the plot you are standing on with another plot",
-    permission = "plots.merge", usage = "/plot merge <all|n|e|s|w> [removeroads]",
-    category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE, confirmation = true)
+    permission = "plots.merge",
+    usage = "/plot merge <all|n|e|s|w> [removeroads]",
+    category = CommandCategory.SETTINGS,
+    requiredType = RequiredType.NONE,
+    confirmation = true)
 public class Merge extends SubCommand {
 
     public static final String[] values = new String[] {"north", "east", "south", "west", "auto"};
@@ -160,8 +164,7 @@ public class Merge extends SubCommand {
         }
         Plot adjacent = plot.getRelative(direction);
         if (adjacent == null || !adjacent.hasOwner() || adjacent
-            .getMerged((direction.getIndex() + 2) % 4)
-            || adjacent.isOwner(uuid)) {
+            .getMerged((direction.getIndex() + 2) % 4) || adjacent.isOwner(uuid)) {
             MainUtil.sendMessage(player, Captions.NO_AVAILABLE_AUTOMERGE);
             return false;
         }
