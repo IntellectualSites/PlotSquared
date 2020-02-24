@@ -52,9 +52,10 @@ public class Swap extends SubCommand {
             return CompletableFuture.completedFuture(false);
         }
 
-        return plot1.move(plot2, () -> MainUtil.sendMessage(player, Captions.SWAP_SUCCESS), true)
+        return plot1.move(plot2, () -> {}, true)
             .thenApply(result -> {
                 if (result) {
+                    MainUtil.sendMessage(player, Captions.SWAP_SUCCESS);
                     return true;
                 } else {
                     MainUtil.sendMessage(player, Captions.SWAP_OVERLAP);

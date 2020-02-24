@@ -3023,6 +3023,9 @@ public class Plot {
         }
 
         return future.thenApply(result -> {
+            if (!result) {
+                return false;
+            }
             // copy terrain
             if (occupied.get()) {
                 Runnable swap = new Runnable() {
@@ -3075,7 +3078,7 @@ public class Plot {
                 };
                 move.run();
             }
-            return result;
+            return true;
         });
     }
 
