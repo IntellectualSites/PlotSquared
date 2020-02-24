@@ -3028,26 +3028,29 @@ public class Plot {
             }
             // copy terrain
             if (occupied.get()) {
-                Runnable swap = new Runnable() {
+                new Runnable() {
                     @Override public void run() {
                         if (regions.isEmpty()) {
+                            // Update signs
+                            destination.setSign();
+                            Plot.this.setSign();
+                            // Run final tasks
                             TaskManager.runTask(whenDone);
-                            return;
+                        } else {
+                            CuboidRegion region = regions.poll();
+                            Location[] corners = MainUtil.getCorners(getWorldName(), region);
+                            Location pos1 = corners[0];
+                            Location pos2 = corners[1];
+                            Location pos3 = pos1.clone().add(offsetX, 0, offsetZ);
+                            Location pos4 = pos2.clone().add(offsetX, 0, offsetZ);
+                            pos3.setWorld(destination.getWorldName());
+                            pos4.setWorld(destination.getWorldName());
+                            ChunkManager.manager.swap(pos1, pos2, pos3, pos4, this);
                         }
-                        CuboidRegion region = regions.poll();
-                        Location[] corners = MainUtil.getCorners(getWorldName(), region);
-                        Location pos1 = corners[0];
-                        Location pos2 = corners[1];
-                        Location pos3 = pos1.clone().add(offsetX, 0, offsetZ);
-                        Location pos4 = pos2.clone().add(offsetX, 0, offsetZ);
-                        pos3.setWorld(destination.getWorldName());
-                        pos4.setWorld(destination.getWorldName());
-                        ChunkManager.manager.swap(pos1, pos2, pos3, pos4, this);
                     }
-                };
-                swap.run();
+                }.run();
             } else {
-                Runnable move = new Runnable() {
+                new Runnable() {
                     @Override public void run() {
                         if (regions.isEmpty()) {
                             Plot plot = destination.getRelative(0, 0);
@@ -3075,8 +3078,7 @@ public class Plot {
                         newPos.setWorld(destination.getWorldName());
                         ChunkManager.manager.copyRegion(pos1, pos2, newPos, task);
                     }
-                };
-                move.run();
+                }.run();
             }
             return true;
         });
