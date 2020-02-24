@@ -86,7 +86,7 @@ public class OperationUtil {
         return weWorld;
     }
 
-    private static  EditSession createEditSession(PlotPlayer plotPlayer) {
+    private static EditSession createEditSession(PlotPlayer plotPlayer) {
         Actor actor = plotPlayer.toActor();
         World weWorld = getWorld(plotPlayer, actor);
         return createEditSession(weWorld, actor);
@@ -100,7 +100,7 @@ public class OperationUtil {
         return createEditSession(world, actor, getSession(actor));
     }
 
-    private static  EditSession createEditSession(World world, Actor actor, LocalSession session) {
+    private static EditSession createEditSession(World world, Actor actor, LocalSession session) {
         EditSession editSession;
         Player player = actor.isPlayer() ? (Player) actor : null;
         editSession = WorldEdit.getInstance().getEditSessionFactory()
