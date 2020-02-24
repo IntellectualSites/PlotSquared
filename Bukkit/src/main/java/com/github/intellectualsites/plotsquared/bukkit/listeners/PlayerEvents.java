@@ -1432,6 +1432,13 @@ import java.util.regex.Pattern;
         } else if (!area.contains(fLocation.getX(), fLocation.getZ()) || !Objects
             .equals(null, area.getOwnedPlot(fLocation))) {
             event.setCancelled(true);
+        } else if (event.getBlock().isLiquid()) {
+            final org.bukkit.Location location = event.getBlock().getLocation();
+            if (BukkitUtil.getPlot(location.clone().add(0, 0, 1)) != null ||
+                BukkitUtil.getPlot(location.clone().add(1, 0, 0)) != null ||
+                BukkitUtil.getPlot(location.clone().add(1, 0, 1)) != null) {
+                event.setCancelled(true);
+            }
         }
     }
 
