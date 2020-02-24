@@ -3048,13 +3048,19 @@ public class Plot {
                     @Override public void run() {
                         if (regions.isEmpty()) {
                             Plot plot = destination.getRelative(0, 0);
-                            for (Plot current : plot.getConnectedPlots()) {
-                                getManager().claimPlot(current);
-                                Plot originPlot = originArea.getPlotAbs(new PlotId(current.id.x - offset.x, current.id.y - offset.y));
-                                originPlot.getManager().unClaimPlot(originPlot, null);
+                            Plot originPlot = originArea.getPlotAbs(new PlotId(plot.id.x - offset.x, plot.id.y - offset.y));
+                            final Runnable clearDone = () -> {
+                                for (final Plot current : plot.getConnectedPlots()) {
+                                    getManager().claimPlot(current);
+                                }
+                                plot.setSign();
+                                TaskManager.runTask(whenDone);
+                            };
+                            if (originPlot != null) {
+                                originPlot.clear(false, true, clearDone);
+                            } else {
+                                clearDone.run();
                             }
-                            plot.setSign();
-                            TaskManager.runTask(whenDone);
                             return;
                         }
                         final Runnable task = this;
@@ -3064,7 +3070,7 @@ public class Plot {
                         final Location pos2 = corners[1];
                         Location newPos = pos1.clone().add(offsetX, 0, offsetZ);
                         newPos.setWorld(destination.getWorldName());
-                        ChunkManager.manager.copyRegion(pos1, pos2, newPos, () -> ChunkManager.manager.regenerateRegion(pos1, pos2, false, task));
+                        ChunkManager.manager.copyRegion(pos1, pos2, newPos, task);
                     }
                 };
                 move.run();

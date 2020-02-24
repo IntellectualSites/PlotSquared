@@ -177,6 +177,7 @@ public enum Captions {
     //</editor-fold>
     //<editor-fold desc="Move">
     MOVE_SUCCESS("$4Successfully moved plot.", "Move"),
+    MOVE_MERGED("$2Merged plots may not be moved. Please unmerge the plot before performing the move.", "Move"),
     COPY_SUCCESS("$4Successfully copied plot.", "Move"),
     REQUIRES_UNOWNED("$2The location specified is already occupied.", "Move"),
     //</editor-fold>

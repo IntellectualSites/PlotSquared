@@ -66,6 +66,10 @@ public class Move extends SubCommand {
             Captions.PLOTWORLD_INCOMPATIBLE.send(player);
             return CompletableFuture.completedFuture(false);
         }
+        if (plot1.isMerged() || plot2.isMerged()) {
+            Captions.MOVE_MERGED.send(player);
+            return CompletableFuture.completedFuture(false);
+        }
 
         return plot1.move(plot2, () -> MainUtil.sendMessage(player, Captions.MOVE_SUCCESS), false)
             .thenApply(result -> {
