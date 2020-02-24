@@ -145,20 +145,6 @@ public abstract class SchematicHandler {
                 return;
             }
             try {
-                // Set flags
-                /*
-                TODO: Revisit
-                if (plot.hasOwner()) {
-                    Map<String, Tag> flags = schematic.getFlags();
-                    if (!flags.isEmpty()) {
-                        for (Map.Entry<String, Tag> entry : flags.entrySet()) {
-                            plot.setFlag(Flags.getFlag(entry.getKey()),
-                                ((StringTag) entry.getValue()).getValue());
-                        }
-
-                    }
-                }
-                */
                 final LocalBlockQueue queue = plot.getArea().getQueue(false);
                 BlockVector3 dimension = schematic.getClipboard().getDimensions();
                 final int WIDTH = dimension.getX();
@@ -452,21 +438,6 @@ public abstract class SchematicHandler {
     public void getCompoundTag(final Plot plot, final RunnableVal<CompoundTag> whenDone) {
         getCompoundTag(plot.getWorldName(), plot.getRegions(), new RunnableVal<CompoundTag>() {
             @Override public void run(CompoundTag value) {
-                /*
-                TODO: Revisit
-                if (!plot.getFlags().isEmpty()) {
-                    HashMap<String, Tag> flagMap = new HashMap<>();
-                    for (Map.Entry<Flag<?>, Object> entry : plot.getFlags().entrySet()) {
-                        String key = entry.getKey().getName();
-                        flagMap.put(key,
-                            new StringTag(entry.getKey().valueToString(entry.getValue())));
-                    }
-                    CompoundTag tag = new CompoundTag(flagMap);
-                    HashMap<String, Tag> map = new HashMap<>(value.getValue());
-                    map.put("Flags", tag);
-                    value.setValue(map);
-                }
-                 */
                 whenDone.run(value);
             }
         });
