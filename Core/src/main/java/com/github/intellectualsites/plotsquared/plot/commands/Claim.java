@@ -1,6 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
@@ -16,9 +17,13 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.google.common.primitives.Ints;
 
-@CommandDeclaration(command = "claim", aliases = "c",
-    description = "Claim the current plot you're standing on", category = CommandCategory.CLAIMING,
-    requiredType = RequiredType.PLAYER, permission = "plots.claim", usage = "/plot claim")
+@CommandDeclaration(command = "claim",
+    aliases = "c",
+    description = "Claim the current plot you're standing on",
+    category = CommandCategory.CLAIMING,
+    requiredType = RequiredType.PLAYER,
+    permission = "plots.claim",
+    usage = "/plot claim")
 public class Claim extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
@@ -37,8 +42,7 @@ public class Claim extends SubCommand {
         int grants = 0;
         if (currentPlots >= player.getAllowedPlots()) {
             if (player.hasPersistentMeta("grantedPlots")) {
-                grants =
-                    Ints.fromByteArray(player.getPersistentMeta("grantedPlots"));
+                grants = Ints.fromByteArray(player.getPersistentMeta("grantedPlots"));
                 if (grants <= 0) {
                     player.removePersistentMeta("grantedPlots");
                     return sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
@@ -57,9 +61,8 @@ public class Claim extends SubCommand {
                     return sendMessage(player, Captions.SCHEMATIC_INVALID,
                         "non-existent: " + schematic);
                 }
-                if (!Permissions
-                    .hasPermission(player, Captions
-                        .format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
+                if (!Permissions.hasPermission(player, CaptionUtility
+                    .format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
                     && !Permissions
                     .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {
                     return sendMessage(player, Captions.NO_SCHEMATIC_PERMISSION, schematic);
@@ -85,8 +88,7 @@ public class Claim extends SubCommand {
             if (grants == 1) {
                 player.removePersistentMeta("grantedPlots");
             } else {
-                player.setPersistentMeta("grantedPlots",
-                    Ints.toByteArray(grants - 1));
+                player.setPersistentMeta("grantedPlots", Ints.toByteArray(grants - 1));
             }
             sendMessage(player, Captions.REMOVED_GRANTED_PLOT, "1", "" + (grants - 1));
         }

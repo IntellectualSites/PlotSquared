@@ -6,7 +6,7 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
 import com.github.intellectualsites.plotsquared.plot.object.PlotItemStack;
@@ -24,9 +24,14 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-@CommandDeclaration(command = "rate", permission = "plots.rate", description = "Rate the plot",
-    usage = "/plot rate [#|next|purge]", aliases = "rt", category = CommandCategory.INFO,
-    requiredType = RequiredType.PLAYER) public class Rate extends SubCommand {
+@CommandDeclaration(command = "rate",
+    permission = "plots.rate",
+    description = "Rate the plot",
+    usage = "/plot rate [#|next|purge]",
+    aliases = "rt",
+    category = CommandCategory.INFO,
+    requiredType = RequiredType.PLAYER)
+public class Rate extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length == 1) {
@@ -53,7 +58,7 @@ import java.util.UUID;
                     });
                     UUID uuid = player.getUUID();
                     for (Plot p : plots) {
-                        if ((!Settings.Done.REQUIRED_FOR_RATINGS || p.hasFlag(Flags.DONE)) && p
+                        if ((!Settings.Done.REQUIRED_FOR_RATINGS || DoneFlag.isDone(p)) && p
                             .isBasePlot() && (!p.getRatings().containsKey(uuid)) && !p
                             .isAdded(uuid)) {
                             p.teleportPlayer(player, TeleportCause.COMMAND);
@@ -91,7 +96,7 @@ import java.util.UUID;
             sendMessage(player, Captions.RATING_NOT_YOUR_OWN);
             return false;
         }
-        if (Settings.Done.REQUIRED_FOR_RATINGS && !plot.hasFlag(Flags.DONE)) {
+        if (Settings.Done.REQUIRED_FOR_RATINGS && !DoneFlag.isDone(plot)) {
             sendMessage(player, Captions.RATING_NOT_DONE);
             return false;
         }
@@ -146,15 +151,15 @@ import java.util.UUID;
                     inventory.openInventory();
                 }
             };
-            if (plot.getSettings().ratings == null) {
+            if (plot.getSettings().getRatings() == null) {
                 if (!Settings.Enabled_Components.RATING_CACHE) {
                     TaskManager.runTaskAsync(() -> {
-                        plot.getSettings().ratings = DBFunc.getRatings(plot);
+                        plot.getSettings().setRatings(DBFunc.getRatings(plot));
                         run.run();
                     });
                     return true;
                 }
-                plot.getSettings().ratings = new HashMap<>();
+                plot.getSettings().setRatings(new HashMap<>());
             }
             run.run();
             return true;
@@ -187,15 +192,15 @@ import java.util.UUID;
                 sendMessage(player, Captions.RATING_APPLIED, plot.getId().toString());
             }
         };
-        if (plot.getSettings().ratings == null) {
+        if (plot.getSettings().getRatings() == null) {
             if (!Settings.Enabled_Components.RATING_CACHE) {
                 TaskManager.runTaskAsync(() -> {
-                    plot.getSettings().ratings = DBFunc.getRatings(plot);
+                    plot.getSettings().setRatings(DBFunc.getRatings(plot));
                     run.run();
                 });
                 return true;
             }
-            plot.getSettings().ratings = new HashMap<>();
+            plot.getSettings().setRatings(new HashMap<>());
         }
         run.run();
         return true;

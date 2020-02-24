@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
@@ -11,8 +11,10 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 
 @CommandDeclaration(command = "continue",
     description = "Continue a plot that was previously marked as done",
-    permission = "plots.continue", category = CommandCategory.SETTINGS,
-    requiredType = RequiredType.PLAYER) public class Continue extends SubCommand {
+    permission = "plots.continue",
+    category = CommandCategory.SETTINGS,
+    requiredType = RequiredType.PLAYER)
+public class Continue extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
         Plot plot = player.getCurrentPlot();
@@ -24,7 +26,7 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
             MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
             return false;
         }
-        if (!plot.hasFlag(Flags.DONE)) {
+        if (!DoneFlag.isDone(plot)) {
             MainUtil.sendMessage(player, Captions.DONE_NOT_DONE);
             return false;
         }
@@ -39,7 +41,7 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
             MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
             return false;
         }
-        plot.removeFlag(Flags.DONE);
+        plot.removeFlag(DoneFlag.class);
         MainUtil.sendMessage(player, Captions.DONE_REMOVED);
         return true;
     }

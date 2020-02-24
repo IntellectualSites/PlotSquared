@@ -68,8 +68,8 @@ public class BlockLoc {
         if (this.getX() == 0 && this.getY() == 0 && this.getZ() == 0) {
             return "";
         }
-        return this.getX() + "," + this.getY() + ',' + this.getZ() + ',' + this.getYaw()
-            + ',' + this.getPitch();
+        return this.getX() + "," + this.getY() + ',' + this.getZ() + ',' + this.getYaw() + ','
+            + this.getPitch();
 
     }
 

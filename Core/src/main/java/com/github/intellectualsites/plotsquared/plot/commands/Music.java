@@ -2,7 +2,8 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MusicFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
@@ -14,10 +15,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 
-@CommandDeclaration(command = "music", permission = "plots.music",
-    description = "Play music in your plot", usage = "/plot music",
-    category = CommandCategory.APPEARANCE, requiredType = RequiredType.PLAYER) public class Music
-    extends SubCommand {
+@CommandDeclaration(command = "music",
+    permission = "plots.music",
+    description = "Play music in your plot",
+    usage = "/plot music",
+    category = CommandCategory.APPEARANCE,
+    requiredType = RequiredType.PLAYER)
+public class Music extends SubCommand {
 
     private static final Collection<String> DISCS = Arrays
         .asList("music_disc_13", "music_disc_cat", "music_disc_blocks", "music_disc_chirp",
@@ -41,10 +45,11 @@ import java.util.Locale;
                     return true;
                 }
                 if (item.getType() == ItemTypes.BEDROCK) {
-                    plot.removeFlag(Flags.MUSIC);
+                    plot.removeFlag(MusicFlag.class);
                     Captions.FLAG_REMOVED.send(player);
                 } else if (item.name.toLowerCase(Locale.ENGLISH).contains("disc")) {
-                    plot.setFlag(Flags.MUSIC, item.getType().getId());
+                    plot.setFlag(GlobalFlagContainer.getInstance().getFlag(MusicFlag.class)
+                        .createFlagInstance(item.getType()));
                     Captions.FLAG_ADDED.send(player);
                 } else {
                     Captions.FLAG_NOT_ADDED.send(player);

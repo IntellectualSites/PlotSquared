@@ -3,8 +3,10 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared.SortType;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.PriceFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
@@ -24,11 +26,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.UUID;
 
-@CommandDeclaration(command = "list", aliases = {"l", "find", "search"}, description = "List plots",
-    permission = "plots.list", category = CommandCategory.INFO,
+@CommandDeclaration(command = "list",
+    aliases = {"l", "find", "search"},
+    description = "List plots",
+    permission = "plots.list",
+    category = CommandCategory.INFO,
     usage = "/plot list <forsale|mine|shared|world|top|all|unowned|unknown|player|world|done|fuzzy <search...>> [#]")
 public class ListCmd extends SubCommand {
 
@@ -136,11 +140,11 @@ public class ListCmd extends SubCommand {
                         Captions.PERMISSION_LIST_WORLD);
                     return false;
                 }
-                if (!Permissions
-                    .hasPermission(player,
-                        Captions.format(player, Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world))) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.format(player, Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world));
+                if (!Permissions.hasPermission(player, CaptionUtility
+                    .format(player, Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world))) {
+                    MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
+                        .format(player, Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(),
+                            world));
                     return false;
                 }
                 plots = new ArrayList<>(PlotSquared.get().getPlots(world));
@@ -161,11 +165,11 @@ public class ListCmd extends SubCommand {
                         .sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_LIST_AREA);
                     return false;
                 }
-                if (!Permissions
-                    .hasPermission(player,
-                        Captions.format(player, Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world))) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.format(player, Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world));
+                if (!Permissions.hasPermission(player, CaptionUtility
+                    .format(player, Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), world))) {
+                    MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
+                        .format(player, Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(),
+                            world));
                     return false;
                 }
                 plots = area == null ? new ArrayList<Plot>() : new ArrayList<>(area.getPlots());
@@ -186,14 +190,13 @@ public class ListCmd extends SubCommand {
                 }
                 plots = new ArrayList<>();
                 for (Plot plot : PlotSquared.get().getPlots()) {
-                    Optional<String> flag = plot.getFlag(Flags.DONE);
-                    if (flag.isPresent()) {
+                    if (DoneFlag.isDone(plot)) {
                         plots.add(plot);
                     }
                 }
                 plots.sort((a, b) -> {
-                    String va = "" + a.getFlags().get(Flags.DONE);
-                    String vb = "" + b.getFlags().get(Flags.DONE);
+                    String va = a.getFlag(DoneFlag.class);
+                    String vb = b.getFlag(DoneFlag.class);
                     if (MathMan.isInteger(va)) {
                         if (MathMan.isInteger(vb)) {
                             return Integer.parseInt(vb) - Integer.parseInt(va);
@@ -248,8 +251,7 @@ public class ListCmd extends SubCommand {
                 }
                 plots = new ArrayList<>();
                 for (Plot plot : PlotSquared.get().getPlots()) {
-                    Optional<Double> price = plot.getFlag(Flags.PRICE);
-                    if (price.isPresent()) {
+                    if (plot.getFlag(PriceFlag.class) > 0) {
                         plots.add(plot);
                     }
                 }
@@ -309,11 +311,12 @@ public class ListCmd extends SubCommand {
                             Captions.PERMISSION_LIST_WORLD);
                         return false;
                     }
-                    if (!Permissions
-                        .hasPermission(player, Captions
-                            .format(player, Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), args[0]))) {
-                        MainUtil.sendMessage(player, Captions.NO_PERMISSION, Captions
-                            .format(player, Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(), args[0]));
+                    if (!Permissions.hasPermission(player, CaptionUtility
+                        .format(player, Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(),
+                            args[0]))) {
+                        MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
+                            .format(player, Captions.PERMISSION_LIST_WORLD_NAME.getTranslated(),
+                                args[0]));
                         return false;
                     }
                     plots = new ArrayList<>(PlotSquared.get().getPlots(args[0]));
@@ -383,18 +386,10 @@ public class ListCmd extends SubCommand {
                         Captions.PLOT_INFO_MEMBERS.getTranslated()
                             .replaceAll("%members%", MainUtil.getPlayerList(plot.getMembers()))))
                         .color("$1");
-                    String strFlags = StringMan.join(plot.getFlags().values(), ",");
-                    if (strFlags.isEmpty()) {
-                        strFlags = Captions.NONE.getTranslated();
-                    }
-                    PlotMessage flags = new PlotMessage().text(Captions.color(
-                        Captions.PLOT_INFO_FLAGS.getTranslated().replaceAll("%flags%", strFlags)))
-                        .color("$1");
                     message.text("[").color("$3").text(i + "")
                         .command("/plot visit " + plot.getArea() + ";" + plot.getId())
                         .tooltip("/plot visit " + plot.getArea() + ";" + plot.getId()).color("$1")
-                        .text("]").color("$3").text(" " + plot.toString())
-                        .tooltip(trusted, members, flags)
+                        .text("]").color("$3").text(" " + plot.toString()).tooltip(trusted, members)
                         .command("/plot info " + plot.getArea() + ";" + plot.getId()).color(color)
                         .text(" - ").color("$2");
                     String prefix = "";

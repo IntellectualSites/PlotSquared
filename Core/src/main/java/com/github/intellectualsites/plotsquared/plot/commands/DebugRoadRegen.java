@@ -13,10 +13,12 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 
 import java.util.Arrays;
 
-@CommandDeclaration(command = "debugroadregen", usage = DebugRoadRegen.USAGE,
+@CommandDeclaration(command = "debugroadregen",
+    usage = DebugRoadRegen.USAGE,
     requiredType = RequiredType.NONE,
     description = "Regenerate roads in the plot or region the user is, based on the road schematic",
-    category = CommandCategory.DEBUG, permission = "plots.debugroadregen")
+    category = CommandCategory.DEBUG,
+    permission = "plots.debugroadregen")
 public class DebugRoadRegen extends SubCommand {
     public static final String USAGE = "/plot debugroadregen <plot|region [height]>";
 
@@ -67,13 +69,11 @@ public class DebugRoadRegen extends SubCommand {
                 height = Integer.parseInt(args[0]);
             } catch (NumberFormatException ignored) {
                 MainUtil.sendMessage(player, Captions.NOT_VALID_NUMBER, "(0, 256)");
-                MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                    DebugRoadRegen.USAGE);
+                MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, DebugRoadRegen.USAGE);
                 return false;
             }
         } else if (args.length != 0) {
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                DebugRoadRegen.USAGE);
+            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, DebugRoadRegen.USAGE);
             return false;
         }
 

@@ -4,8 +4,6 @@ import com.github.intellectualsites.plotsquared.json.JSONArray;
 import com.github.intellectualsites.plotsquared.json.JSONException;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.generator.ClassicPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -16,8 +14,6 @@ import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.NBTInputStream;
 import com.sk89q.jnbt.NBTOutputStream;
-import com.sk89q.jnbt.StringTag;
-import com.sk89q.jnbt.Tag;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
@@ -47,10 +43,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -151,17 +145,6 @@ public abstract class SchematicHandler {
                 return;
             }
             try {
-                // Set flags
-                if (plot.hasOwner()) {
-                    Map<String, Tag> flags = schematic.getFlags();
-                    if (!flags.isEmpty()) {
-                        for (Map.Entry<String, Tag> entry : flags.entrySet()) {
-                            plot.setFlag(Flags.getFlag(entry.getKey()),
-                                ((StringTag) entry.getValue()).getValue());
-                        }
-
-                    }
-                }
                 final LocalBlockQueue queue = plot.getArea().getQueue(false);
                 BlockVector3 dimension = schematic.getClipboard().getDimensions();
                 final int WIDTH = dimension.getX();
@@ -169,12 +152,15 @@ public abstract class SchematicHandler {
                 final int HEIGHT = dimension.getY();
                 // Validate dimensions
                 CuboidRegion region = plot.getLargestRegion();
-                if (((region.getMaximumPoint().getX() - region.getMinimumPoint().getX() + xOffset + 1) < WIDTH) || (
-                    (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + zOffset + 1) < LENGTH) || (HEIGHT > 256)) {
+                if (((region.getMaximumPoint().getX() - region.getMinimumPoint().getX() + xOffset
+                    + 1) < WIDTH) || (
+                    (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + zOffset
+                        + 1) < LENGTH) || (HEIGHT > 256)) {
                     PlotSquared.debug("Schematic is too large");
                     PlotSquared.debug(
                         "(" + WIDTH + ',' + LENGTH + ',' + HEIGHT + ") is bigger than (" + (
-                            region.getMaximumPoint().getX() - region.getMinimumPoint().getX()) + ',' + (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ())
+                            region.getMaximumPoint().getX() - region.getMinimumPoint().getX()) + ','
+                            + (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ())
                             + ",256)");
                     TaskManager.runTask(whenDone);
                     return;
@@ -192,7 +178,8 @@ public abstract class SchematicHandler {
                             y_offset_actual = yOffset + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
                         } else {
                             y_offset_actual = yOffset + 1 + MainUtil
-                                .getHeighestBlock(plot.getWorldName(), region.getMinimumPoint().getX() + 1,
+                                .getHeighestBlock(plot.getWorldName(),
+                                    region.getMinimumPoint().getX() + 1,
                                     region.getMinimumPoint().getZ() + 1);
                         }
                     }
@@ -200,8 +187,8 @@ public abstract class SchematicHandler {
                     y_offset_actual = yOffset;
                 }
                 Location pos1 =
-                    new Location(plot.getWorldName(), region.getMinimumPoint().getX() + xOffset, y_offset_actual,
-                        region.getMinimumPoint().getZ() + zOffset);
+                    new Location(plot.getWorldName(), region.getMinimumPoint().getX() + xOffset,
+                        y_offset_actual, region.getMinimumPoint().getZ() + zOffset);
                 Location pos2 = pos1.clone().add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
                 final int p1x = pos1.getX();
                 final int p1z = pos1.getZ();
@@ -451,18 +438,6 @@ public abstract class SchematicHandler {
     public void getCompoundTag(final Plot plot, final RunnableVal<CompoundTag> whenDone) {
         getCompoundTag(plot.getWorldName(), plot.getRegions(), new RunnableVal<CompoundTag>() {
             @Override public void run(CompoundTag value) {
-                if (!plot.getFlags().isEmpty()) {
-                    HashMap<String, Tag> flagMap = new HashMap<>();
-                    for (Map.Entry<Flag<?>, Object> entry : plot.getFlags().entrySet()) {
-                        String key = entry.getKey().getName();
-                        flagMap.put(key,
-                            new StringTag(entry.getKey().valueToString(entry.getValue())));
-                    }
-                    CompoundTag tag = new CompoundTag(flagMap);
-                    HashMap<String, Tag> map = new HashMap<>(value.getValue());
-                    map.put("Flags", tag);
-                    value.setValue(map);
-                }
                 whenDone.run(value);
             }
         });

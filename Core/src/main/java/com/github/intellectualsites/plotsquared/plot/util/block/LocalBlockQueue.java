@@ -51,9 +51,9 @@ public abstract class LocalBlockQueue {
     /**
      * Sets the block at the coordinates provided to the given id.
      *
-     * @param x the x coordinate from from 0 to 15 inclusive
-     * @param y the y coordinate from from 0 (inclusive) - maxHeight(exclusive)
-     * @param z the z coordinate from 0 to 15 inclusive
+     * @param x  the x coordinate from from 0 to 15 inclusive
+     * @param y  the y coordinate from from 0 (inclusive) - maxHeight(exclusive)
+     * @param z  the z coordinate from 0 to 15 inclusive
      * @param id the id to set the block to
      */
     public abstract boolean setBlock(final int x, final int y, final int z, final BlockState id);

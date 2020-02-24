@@ -6,8 +6,8 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
-import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
+import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.listener.WEManager;
 import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
@@ -55,9 +55,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-@CommandDeclaration(command = "debugexec", permission = "plots.admin",
-    description = "Mutli-purpose debug command", aliases = {"exec", "$"},
-    category = CommandCategory.DEBUG) public class DebugExec extends SubCommand {
+@CommandDeclaration(command = "debugexec",
+    permission = "plots.admin",
+    description = "Mutli-purpose debug command",
+    aliases = {"exec", "$"},
+    category = CommandCategory.DEBUG)
+public class DebugExec extends SubCommand {
     private ScriptEngine engine;
     private Bindings scope;
 
@@ -120,7 +123,6 @@ import java.util.concurrent.CompletableFuture;
         this.scope.put("Settings", new Settings());
         this.scope.put("StringMan", new StringMan());
         this.scope.put("MathMan", new MathMan());
-        this.scope.put("FlagManager", new FlagManager());
 
         // Classes
         this.scope.put("Location", Location.class);
@@ -220,10 +222,11 @@ import java.util.concurrent.CompletableFuture;
                         return false;
                     }
                     String flag = args[1];
-                    for (Plot plot : PlotSquared.get().getBasePlots()) {
-                        Flag<?> flag1 = FlagManager.getFlag(flag);
-                        if (plot.getFlag(flag1).isPresent()) {
-                            plot.removeFlag(flag1);
+                    final PlotFlag<?, ?> flagInstance =
+                        GlobalFlagContainer.getInstance().getFlagFromString(flag);
+                    if (flagInstance != null) {
+                        for (Plot plot : PlotSquared.get().getBasePlots()) {
+                            plot.removeFlag(flagInstance);
                         }
                     }
                     return MainUtil.sendMessage(player, "Cleared flag: " + flag);
@@ -306,8 +309,8 @@ import java.util.concurrent.CompletableFuture;
                             System.getProperty("line.separator"));
                         new Command(MainCommand.getInstance(), true, args[1].split("\\.")[0], null,
                             RequiredType.NONE, CommandCategory.DEBUG) {
-                            @Override public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
-                                RunnableVal3<Command, Runnable, Runnable> confirm,
+                            @Override public CompletableFuture<Boolean> execute(PlotPlayer player,
+                                String[] args, RunnableVal3<Command, Runnable, Runnable> confirm,
                                 RunnableVal2<Command, CommandResult> whenDone) {
                                 try {
                                     DebugExec.this.scope.put("PlotPlayer", player);

@@ -3,7 +3,6 @@ package com.github.intellectualsites.plotsquared.plot.config;
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 import java.io.File;
@@ -16,7 +15,7 @@ import java.util.Set;
 /**
  * Captions class.
  */
-public enum Captions {
+public enum Captions implements Caption {
 
     //@formatter:off
     //<editor-fold desc="Static Flags">
@@ -445,6 +444,9 @@ public enum Captions {
     NOT_VALID_NUMBER("$2That's not a valid number within the range: %s", "Invalid"),
     NOT_VALID_PLOT_ID("$2That's not a valid plot id.", "Invalid"),
     FOUND_NO_PLOTS("$2Found no plots with your search query", "Invalid"),
+    NUMBER_NOT_IN_RANGE("That's not a valid number within the range: (%s, %s)", "Invalid"),
+    NUMBER_NOT_POSITIVE("That's not a positive number: %s", "Invalid"),
+    NOT_A_NUMBER("%s is not a valid number.", "Invalid"),
     //</editor-fold>
     //<editor-fold desc="Need">
     NEED_BLOCK("$2You've got to specify a block", "Need"),
@@ -463,10 +465,11 @@ public enum Captions {
     PLOT_INFO_UNCLAIMED("$2Plot $1%s$2 is not yet claimed", "Info"),
     PLOT_INFO_HEADER("$3&m---------&r $1INFO $3&m---------", false, "Info"),
     PLOT_INFO_HIDDEN("$2You cannot view the information about this plot", "Info"),
-    PLOT_INFO("$1ID: $2%id%$1&-" + "$1Alias:$2%alias%$1&-" + "$1Owner:$2%owner%$1&-"
+    PLOT_INFO_FORMAT("$1ID: $2%id%$1&-" + "$1Area: $2%area%$1&-"
+        +"$1Alias:$2%alias%$1&-" + "$1Owner:$2%owner%$1&-"
         + "$1Biome: $2%biome%$1&-" + "$1Can Build: $2%build%$1&-" + "$1Rating: $2%rating%&-"
         + "$1Seen: $2%seen%&-" + "$1Trusted:$2%trusted%$1&-" + "$1Members:$2%members%$1&-"
-        + "$1Denied:$2%denied%$1&-" + "$1Flags:$2%flags%", "Info"),
+        + "$1Denied:$2%denied%$1&-" + "$1Flags:$2%flags%&-$1Description: $2%desc%$1", "Info"),
     PLOT_INFO_FOOTER("$3&m---------&r $1INFO $3&m---------", false, "Info"),
     PLOT_INFO_TRUSTED("$1Trusted:$2%trusted%", "Info"),
     PLOT_INFO_MEMBERS("$1Members:$2%members%", "Info"),
@@ -481,7 +484,8 @@ public enum Captions {
     PLOT_INFO_SIZE("$1Size:$2 %size%", "Info"),
     PLOT_INFO_SEEN("$1Seen:$2 %seen%", "Info"),
     PLOT_USER_LIST(" $1%user%$2,", "Info"),
-    PLOT_FLAG_LIST("$1%s0:%s1$2", "Info"),
+    PLOT_FLAG_LIST("$2%s0:%s1$3", "Info"),
+    PLOT_NO_DESCRIPTION("No description set.", "Info"),
     INFO_SYNTAX_CONSOLE("$2/plot info X;Z", "Info"),
     //</editor-fold>
     //<editor-fold desc="Working">
@@ -527,16 +531,32 @@ public enum Captions {
     FLAG_NOT_REMOVED("$2The flag could not be removed", "Flag"),
     FLAG_NOT_ADDED("$2The flag could not be added", "Flag"),
     FLAG_REMOVED("$4Successfully removed flag", "Flag"),
+    FLAG_PARTIALLY_REMOVED("$4Successfully removed flag value(s)", "Flag"),
     FLAG_ADDED("$4Successfully added flag", "Flag"),
     FLAG_TUTORIAL_USAGE("$1Have an admin set the flag: $2%s", "CommandConfig"),
     FLAG_LIST_ENTRY("$2%s: $1%s", "Flag"),
+    FLAG_LIST_SEE_INFO("Click to view information about the flag", "Flag"),
+    FLAG_PARSE_ERROR("$2Failed to parse flag '%flag_name%', value '%flag_value%': %error%", "Flag"),
+    //</editor-fold>
+    //<editor-fold desc="Flag">
+    FLAG_INFO_HEADER("$3&m---------&r $1Plot² Flags $3&m---------", "Flag"),
+    FLAG_INFO_FOOTER("$3&m---------&r $1Plot² Flags $3&m---------", "Flag"),
+    FLAG_INFO_COLOR_KEY("$1", "Flag"),
+    FLAG_INFO_COLOR_VALUE("$2", "Flag"),
+    FLAG_INFO_NAME("Name: ", "Flag"),
+    FLAG_INFO_CATEGORY("Category: ", "Flag"),
+    FLAG_INFO_DESCRIPTION("Description: ", "Flag"),
+    FLAG_INFO_EXAMPLE("Example: ", "Flag"),
+    FLAG_INFO_DEFAULT_VALUE("Default Value: ", "Flag"),
     //</editor-fold>
     //<editor-fold desc="Flag category captions">
     FLAG_CATEGORY_STRING("String Flags", "Flags"),
     FLAG_CATEGORY_INTEGERS("Integer Flags", "Flags"),
+    FLAG_CATEGORY_DOUBLES("Decimal Flags", "Flags"),
     FLAG_CATEGORY_TELEPORT_DENY("Teleport Deny Flag", "Flags"),
     FLAG_CATEGORY_STRING_LIST("String List Flags", "Flags"),
     FLAG_CATEGORY_WEATHER("Weather Flags", "Flags"),
+    FLAG_CATEGORY_MUSIC("Music Flags", "Flags"),
     FLAG_CATEGORY_BLOCK_LIST("Material Flags", "Flags"),
     FLAG_CATEGORY_INTERVALS("Interval Flags", "Flags"),
     FLAG_CATEGORY_INTEGER_LIST("Integer List Flags", "Flags"),
@@ -546,20 +566,97 @@ public enum Captions {
     FLAG_CATEGORY_BOOLEAN("Boolean Flags", "Flags"),
     FLAG_CATEGORY_MIXED("Mixed Value Flags", "Flags"),
     //</editor-fold>
+    //<editor-fold desc="Flag descriptions">
+    FLAG_DESCRIPTION_ENTITY_CAP("Set to an integer value to limit the amount of entities on the plot.", "Flags"),
+    FLAG_DESCRIPTION_EXPLOSION("Set to `true` to enable explosions in the plot, and `false` to disable them.", "Flags"),
+    FLAG_DESCRIPTION_MUSIC("Set to a music disk ID (item name) to play the music disc inside of the plot.", "Flags"),
+    FLAG_DESCRIPTION_FLIGHT("Set to `true` to enable flight within the plot when in survival or adventure mode.", "Flags"),
+    FLAG_DESCRIPTION_UNTRUSTED("Set to `false` to disallow untrusted players from visiting the plot.", "Flags"),
+    FLAG_DESCRIPTION_DENY_EXIT("Set to `true` to disallow players from exiting the plot.", "Flags"),
+    FLAG_DESCRIPTION_DESCRIPTION("Plot description. Supports '&' color codes.", "Flags"),
+    FLAG_DESCRIPTION_GREETING("Message sent to players on plot entry. Supports '&' color codes.", "Flags"),
+    FLAG_DESCRIPTION_FAREWELL("Message sent to players when leaving the plot. Supports '&' color codes.", "Flags"),
+    FLAG_DESCRIPTION_WEATHER("Specifies the weather conditions inside of the plot.", "Flags"),
+    FLAG_DESCRIPTION_ANIMAL_ATTACK("Set to `true` to allow animals to be attacked in the plot.", "Flags"),
+    FLAG_DESCRIPTION_ANIMAL_CAP("Set to an integer value to limit the amount of animals on the plot.", "Flags"),
+    FLAG_DESCRIPTION_ANIMAL_INTERACT("Set to `true` to allow animals to be interacted with in the plot.", "Flags"),
+    FLAG_DESCRIPTION_BLOCK_BURN("Set to `true` to allow blocks to burn within the plot.", "Flags"),
+    FLAG_DESCRIPTION_BLOCK_IGNITION("Set to `false` to prevent blocks from igniting within the plot.", "Flags"),
+    FLAG_DESCRIPTION_BREAK("Define a list of materials players should be able to break even when they aren't added to the plot.", "Flags"),
+    FLAG_DESCRIPTION_DEVICE_INTERACT("Set to `true` to allow devices to be interacted with in the plot.", "Flags"),
+    FLAG_DESCRIPTION_DISABLE_PHYSICS("Set to `true` to disable block physics in the plot.", "Flags"),
+    FLAG_DESCRIPTION_DROP_PROTECTION("Set to `true` to prevent dropped items from being picked up by non-members of the plot.", "Flags"),
+    FLAG_DESCRIPTION_FEED("Specify an interval in seconds and an optional amount by which the players will be fed (amount is 1 by default).", "Flags"),
+    FLAG_DESCRIPTION_FORCEFIELD("Set to `true` to enable member forcefield in the plot.", "Flags"),
+    FLAG_DESCRIPTION_GRASS_GROW("Set to `false` to prevent grass from growing within the plot.", "Flags"),
+    FLAG_DESCRIPTION_HANGING_BREAK("Set to `true` to allow guests to break hanging objects in the plot.", "Flags"),
+    FLAG_DESCRIPTION_HANGING_PLACE("Set to `true` to allow guests to hang objects in the plot.", "Flags"),
+    FLAG_DESCRIPTION_HEAL("Specify an interval in seconds and an optional amount by which the players will be healed (amount is 1 by default).", "Flags"),
+    FLAG_DESCRIPTION_HIDE_INFO("Set to `true` to hide plot information.", "Flags"),
+    FLAG_DESCRIPTION_HOSTILE_ATTACK("Set to `true` to enable players to attack hostile mobs in the plot.", "Flags"),
+    FLAG_DESCRIPTION_HOSTILE_CAP("Set to an integer value to limit the amount of hostile entities on the plot.", "Flags"),
+    FLAG_DESCRIPTION_HOSTILE_INTERACT("Set to `true` to allow players to interact with hostile mobs in the plot.", "Flags"),
+    FLAG_DESCRIPTION_ICE_FORM("Set to `true` to allow ice to form in the plot.", "Flags"),
+    FLAG_DESCRIPTION_ICE_MELT("Set to `false` to disable ice melting in the plot.", "Flags"),
+    FLAG_DESCRIPTION_INSTABREAK("Set to `true` to allow blocks to be instantaneously broken in survival mode.", "Flags"),
+    FLAG_DESCRIPTION_INVINCIBLE("Set to `true` to prevent players from taking damage inside of the plot.", "Flags"),
+    FLAG_DESCRIPTION_ITEM_DROP("Set to `false` to prevent items from being dropped inside of the plot.", "Flags"),
+    FLAG_DESCRIPTION_KELP_GROW("Set to `false` to prevent kelp from growing in the plot.", "Flags"),
+    FLAG_DESCRIPTION_LIQUID_FLOW("Set to `false` to disable liquids from flowing within the plot.", "Flags"),
+    FLAG_DESCRIPTION_MISC_BREAK("Set to `true` to allow guests to break miscellaneous items.", "Flags"),
+    FLAG_DESCRIPTION_MISC_CAP("Set to an integer value to limit the amount of miscellaneous entities on the plot.", "Flags"),
+    FLAG_DESCRIPTION_MISC_INTERACT("Set to `true` to allow guests to interact with miscellaneous items.", "Flags"),
+    FLAG_DESCRIPTION_MISC_PLACE("Set to `true` to allow guests to place miscellaneous items.", "Flags"),
+    FLAG_DESCRIPTION_MOB_BREAK("Set to `true` to allow mobs to break blocks within the plot.", "Flags"),
+    FLAG_DESCRIPTION_MOB_CAP("Set to an integer value to limit the amount of mobs on the plot.", "Flags"),
+    FLAG_DESCRIPTION_MOB_PLACE("Set to `true` to allow mobs to place blocks within the plot.", "Flags"),
+    FLAG_DESCRIPTION_MYCEL_GROW("Set to `false` to prevent mycelium from growing in the plot.", "Flags"),
+    FLAG_DESCRIPTION_NOTIFY_ENTER("Set to `true` to notify the plot owners when someone enters the plot.", "Flags"),
+    FLAG_DESCRIPTION_NOTIFY_LEAVE("Set to `true` to notify the plot owners when someone leaves the plot.", "Flags"),
+    FLAG_DESCRIPTION_NO_WORLDEDIT("Set to `true` to disable WorldEdit usage within the plot.", "Flags"),
+    FLAG_DESCRIPTION_PLACE("Define a list of materials players should be able to place in the plot.", "Flags"),
+    FLAG_DESCRIPTION_PLAYER_INTERACT("Set to `true` to allow guests to interact with players in the plot.", "Flags"),
+    FLAG_DESCRIPTION_PRICE("Set a price for a plot. Must be a positive decimal number.", "Flags"),
+    FLAG_DESCRIPTION_PVE("Set to `true` to enable PVE inside the plot.", "Flags"),
+    FLAG_DESCRIPTION_PVP("Set to `true` to enable PVP inside the plot.", "Flags"),
+    FLAG_DESCRIPTION_REDSTONE("Set to `false` to disable redstone in the plot.", "Flags"),
+    FLAG_DESCRIPTION_SERVER_PLOT("Set to `true` to turn the plot into a server plot. This is equivalent to setting the server as the plot owner.", "Flags"),
+    FLAG_DESCRIPTION_SNOW_FORM("Set to `true` to allow snow to form within the plot.", "Flags"),
+    FLAG_DESCRIPTION_SNOW_MELT("Set to `true` to allow snow to melt within the plot.", "Flags"),
+    FLAG_DESCRIPTION_SOIL_DRY("Set to `true` to allow soil to dry within the plot.", "Flags"),
+    FLAG_DESCRIPTION_TAMED_ATTACK("Set to `true` to allow guests to attack tamed animals in the plot.", "Flags"),
+    FLAG_DESCRIPTION_TAMED_INTERACT("Set to `true` to allow guests to interact with tamed animals in the plot.", "Flags"),
+    FLAG_DESCRIPTION_TIME("Set the time in the plot to a fixed value.", "Flags"),
+    FLAG_DESCRIPTION_TITLES("Set to `false` to disable plot titles. Can be set to: `none` (to inherit world settings), `true`, or `false`", "Flags"),
+    FLAG_DESCRIPTION_USE("Define a list of materials players should be able to interact with in the plot.", "Flags"),
+    FLAG_DESCRIPTION_VEHICLE_BREAK("Set to `true` to allow guests to break vehicles in the plot.", "Flags"),
+    FLAG_DESCRIPTION_VEHICLE_CAP("Set to an integer value to limit the amount of vehicles on the plot.", "Flags"),
+    FLAG_DESCRIPTION_VEHICLE_PLACE("Set to `true` to allow guests to place vehicles in the plot.", "Flags"),
+    FLAG_DESCRIPTION_VEHICLE_USE("Set to `true` to allow guests to use vehicles in the plot.", "Flags"),
+    FLAG_DESCRIPTION_VILLAGER_INTERACT("Set to `true` to allow guests to interact with villagers in the plot.", "Flags"),
+    FLAG_DESCRIPTION_VINE_GROW("Set to `false` to prevent vines from growing within the plot.", "Flags"),
+    FLAG_DESCRIPTION_DENY_TELEPORT("Deny a certain group from teleporting to the plot. Available groups: members, nonmembers, trusted, nontrusted, nonowners", "Flags"),
+    FLAG_DESCRIPTION_GAMEMODE("Determines the gamemode in the plot.", "Flags"),
+    FLAG_DESCRIPTION_GUEST_GAMEMODE("Determines the guest gamemode in the plot.", "Flags"),
+    FLAG_DESCRIPTION_BLOCKED_CMDS("A list of commands that are blocked in the plot.", "Flags"),
+    FLAG_DESCRIPTION_KEEP("Prevents the plot from expiring. Can be set to: true, false, the number of milliseconds to keep the plot for or a timestamp (3w 2d 5h).", "Flags"),
+    //</editor-fold>
     //<editor-fold desc="Flag category errors">
-    FLAG_ERROR_BOOLEAN("Flag value must be a boolean (true|false)", "Flags"),
-    FLAG_ERROR_ENUM("Must be one of: %s", "Flags"),
-    FLAG_ERROR_GAMEMODE("Flag value must be a gamemode: 'survival', 'creative', 'adventure' or 'spectator.", "Flags"),
-    FLAG_ERROR_INTEGER("Flag value must be a whole number", "Flags"),
-    FLAG_ERROR_INTEGER_LIST("Flag value must be an integer list", "Flags"),
-    FLAG_ERROR_INTERVAL("Value(s) must be numeric. /plot set flag <flag> <interval> [amount]", "Flags"),
-    FLAG_ERROR_KEEP("Flag value must be a timestamp or a boolean", "Flags"),
-    FLAG_ERROR_LONG("Flag value must be a whole number (large numbers allowed)", "Flags"),
-    FLAG_ERROR_PLOTBLOCKLIST("Flag value must be a block list", "Flags"),
-    FLAG_ERROR_PRICE("Flag value must be a positive number.", "Flags"),
-    FLAG_ERROR_STRING("Flag value must be alphanumeric. Some special characters are allowed.", "Flags"),
-    FLAG_ERROR_STRINGLIST("Flag value must be a string list", "Flags"),
-    FLAG_ERROR_WEATHER("Flag must be a weather: 'rain' or 'sun'", "Flags"),
+    FLAG_ERROR_BOOLEAN("Flag value must be a boolean (true|false)", false, "Flags"),
+    FLAG_ERROR_ENUM("Must be one of: %s", false, "Flags"),
+    FLAG_ERROR_GAMEMODE("Flag value must be a gamemode: 'survival', 'creative', 'adventure' or 'spectator.", false, "Flags"),
+    FLAG_ERROR_INTEGER("Flag value must be a whole number", false, "Flags"),
+    FLAG_ERROR_INTEGER_LIST("Flag value must be an integer list", false, "Flags"),
+    FLAG_ERROR_INTERVAL("Value(s) must be numeric. /plot set flag <flag> <interval> [amount]", false, "Flags"),
+    FLAG_ERROR_KEEP("Flag value must be a timestamp or a boolean", false, "Flags"),
+    FLAG_ERROR_LONG("Flag value must be a whole number (large numbers allowed)", false, "Flags"),
+    FLAG_ERROR_PLOTBLOCKLIST("Flag value must be a block list", false, "Flags"),
+    FLAG_ERROR_INVALID_BLOCK("The provided value is not a valid block or block category", false, "Flags"),
+    FLAG_ERROR_DOUBLE("Flag value must be a decimal number.", false, "Flags"),
+    FLAG_ERROR_STRING("Flag value must be alphanumeric. Some special characters are allowed.", false, "Flags"),
+    FLAG_ERROR_STRINGLIST("Flag value must be a string list", false, "Flags"),
+    FLAG_ERROR_WEATHER("Flag must be a weather: 'rain' or 'sun'", false, "Flags"),
+    FLAG_ERROR_MUSIC("Flag value must be a valid music disc ID.", false, "Flags"),
     //</editor-fold>
     //<editor-fold desc="Trusted">
     TRUSTED_ADDED("$4You successfully trusted a user to the plot", "Trusted"),
@@ -653,30 +750,6 @@ public enum Captions {
         this(defaultString, true, category.toLowerCase());
     }
 
-    public static String formatRaw(PlotPlayer recipient, String message, Object... args) {
-        final ChatFormatter.ChatContext chatContext = new ChatFormatter.ChatContext(recipient, message, args, true);
-        for (final ChatFormatter chatFormatter : ChatFormatter.formatters) {
-            chatFormatter.format(chatContext);
-        }
-        return chatContext.getMessage();
-    }
-
-    public static String format(PlotPlayer recipient, String message, Object... args) {
-        final ChatFormatter.ChatContext chatContext = new ChatFormatter.ChatContext(recipient, message, args, false);
-        for (final ChatFormatter chatFormatter : ChatFormatter.formatters) {
-            chatFormatter.format(chatContext);
-        }
-        return chatContext.getMessage();
-    }
-
-    public static String format(PlotPlayer recipient, Captions caption, Object... args) {
-        if (caption.usePrefix() && caption.translatedString.length() > 0) {
-            return Captions.PREFIX.getTranslated() + format(recipient, caption.translatedString, args);
-        } else {
-            return format(recipient, caption.translatedString, args);
-        }
-    }
-
     public static String color(String string) {
         return StringMan.replaceFromMap(string, replacements);
     }
@@ -767,11 +840,7 @@ public enum Captions {
         }
     }
 
-    @Override public String toString() {
-        return this.translatedString;
-    }
-
-    public String getTranslated() {
+    @Override public String getTranslated() {
         return this.translatedString;
     }
 
@@ -779,24 +848,12 @@ public enum Captions {
         return this.prefix;
     }
 
-    public String formatted() {
-        return StringMan.replaceFromMap(getTranslated(), replacements);
-    }
-
     public String getCategory() {
         return this.category;
     }
 
-    public void send(PlotPlayer caller, String... args) {
-        send(caller, (Object[]) args);
+    @Override public String toString() {
+        return this.getTranslated();
     }
 
-    public void send(PlotPlayer caller, Object... args) {
-        String msg = format(caller, this, args);
-        if (caller == null) {
-            PlotSquared.log(msg);
-        } else {
-            caller.sendMessage(msg);
-        }
-    }
 }

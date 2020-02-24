@@ -32,6 +32,11 @@ public class HelpMenu {
         return this;
     }
 
+    public HelpMenu setCommands(final List<Command> commands) {
+        this.commands = commands;
+        return this;
+    }
+
     public HelpMenu generateMaxPages() {
         this.maxPage = Math.max((this.commands.size() - 1) / PER_PAGE, 0);
         return this;

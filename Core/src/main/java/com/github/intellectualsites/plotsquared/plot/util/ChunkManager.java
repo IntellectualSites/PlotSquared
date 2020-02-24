@@ -90,16 +90,19 @@ public abstract class ChunkManager {
                 int bz = mcr.getZ() << 9;
                 int tx = bx + 511;
                 int tz = bz + 511;
-                if (bx <= region.getMaximumPoint().getX() && tx >= region.getMinimumPoint().getX() && bz <= region.getMaximumPoint().getZ()
-                    && tz >= region.getMinimumPoint().getZ()) {
+                if (bx <= region.getMaximumPoint().getX() && tx >= region.getMinimumPoint().getX()
+                    && bz <= region.getMaximumPoint().getZ() && tz >= region.getMinimumPoint()
+                    .getZ()) {
                     for (int x = bx >> 4; x <= (tx >> 4); x++) {
                         int cbx = x << 4;
                         int ctx = cbx + 15;
-                        if (cbx <= region.getMaximumPoint().getX() && ctx >= region.getMinimumPoint().getX()) {
+                        if (cbx <= region.getMaximumPoint().getX() && ctx >= region
+                            .getMinimumPoint().getX()) {
                             for (int z = bz >> 4; z <= (tz >> 4); z++) {
                                 int cbz = z << 4;
                                 int ctz = cbz + 15;
-                                if (cbz <= region.getMaximumPoint().getZ() && ctz >= region.getMinimumPoint().getZ()) {
+                                if (cbz <= region.getMaximumPoint().getZ() && ctz >= region
+                                    .getMinimumPoint().getZ()) {
                                     chunks.add(BlockVector2.at(x, z));
                                 }
                             }
@@ -110,7 +113,7 @@ public abstract class ChunkManager {
             TaskManager.objectTask(chunks, new RunnableVal<BlockVector2>() {
 
                 @Override public void run(BlockVector2 value) {
-                    manager.loadChunk(world, value, false).thenRun(()-> task.run(value));
+                    manager.loadChunk(world, value, false).thenRun(() -> task.run(value));
                 }
             }, whenDone);
         });
@@ -126,8 +129,10 @@ public abstract class ChunkManager {
                     return;
                 }
                 CuboidRegion value = regions.remove(0);
-                Location pos1 = new Location(plot.getWorldName(), value.getMinimumPoint().getX(), 0, value.getMinimumPoint().getZ());
-                Location pos2 = new Location(plot.getWorldName(), value.getMaximumPoint().getX(), 0, value.getMaximumPoint().getZ());
+                Location pos1 = new Location(plot.getWorldName(), value.getMinimumPoint().getX(), 0,
+                    value.getMinimumPoint().getZ());
+                Location pos2 = new Location(plot.getWorldName(), value.getMaximumPoint().getX(), 0,
+                    value.getMaximumPoint().getZ());
                 chunkTask(pos1, pos2, task, this, allocate);
             }
         };
@@ -249,8 +254,8 @@ public abstract class ChunkManager {
         TaskManager.runTaskAsync(() -> {
             for (BlockVector2 loc : chunks) {
                 String directory =
-                    world + File.separator + "region" + File.separator + "r." + loc.getX() + "." + loc.getZ()
-                        + ".mca";
+                    world + File.separator + "region" + File.separator + "r." + loc.getX() + "."
+                        + loc.getZ() + ".mca";
                 File file = new File(PlotSquared.get().IMP.getWorldContainer(), directory);
                 PlotSquared.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
                 if (file.exists()) {

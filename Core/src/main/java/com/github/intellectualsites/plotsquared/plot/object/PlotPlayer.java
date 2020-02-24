@@ -3,10 +3,11 @@ package com.github.intellectualsites.plotsquared.plot.object;
 import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.RequiredType;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.PlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAreaManager;
@@ -131,6 +132,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     public ConcurrentHashMap<String, Object> getMeta() {
         return meta;
     }
+
     /**
      * Delete the metadata for a key.
      * - metadata is session only
@@ -224,7 +226,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         PlotSquared.get().forEachPlotArea(value -> {
             if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
                 for (Plot plot : value.getPlotsAbs(uuid)) {
-                    if (!plot.hasFlag(Flags.DONE)) {
+                    if (!DoneFlag.isDone(plot)) {
                         count.incrementAndGet();
                     }
                 }
@@ -261,8 +263,8 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         int count = 0;
         for (PlotArea area : PlotSquared.get().getPlotAreas(world)) {
             if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
-                count += area.getPlotsAbs(uuid).stream()
-                    .filter(plot -> !plot.getFlag(Flags.DONE).isPresent()).count();
+                count +=
+                    area.getPlotsAbs(uuid).stream().filter(plot -> !DoneFlag.isDone(plot)).count();
             } else {
                 count += area.getPlotsAbs(uuid).size();
             }
@@ -363,8 +365,6 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         sendTitle(title, subtitle, 10, 50, 10);
     }
 
-    ;
-
     public abstract void sendTitle(String title, String subtitle, int fadeIn, int stay,
         int fadeOut);
 
@@ -381,7 +381,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      * Teleport this player to a location.
      *
      * @param location the target location
-     * @param cause the cause of the teleport
+     * @param cause    the cause of the teleport
      */
     public abstract void teleport(Location location, TeleportCause cause);
 
@@ -622,7 +622,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                                 if (getMeta("teleportOnLogin", true)) {
                                     teleport(location);
                                     sendMessage(
-                                        Captions.format(PlotPlayer.this, Captions.TELEPORTED_TO_PLOT.getTranslated())
+                                        CaptionUtility.format(PlotPlayer.this, Captions.TELEPORTED_TO_PLOT.getTranslated())
                                             + " (quitLoc) (" + plotX
                                             + "," + plotZ + ")");
                                 }
@@ -634,7 +634,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                                         if (getMeta("teleportOnLogin", true)) {
                                             if (plot.isLoaded()) {
                                                 teleport(location);
-                                                sendMessage(Captions.format(PlotPlayer.this,
+                                                sendMessage(CaptionUtility.format(PlotPlayer.this,
                                                     Captions.TELEPORTED_TO_PLOT.getTranslated())
                                                     + " (quitLoc-unloaded) (" + plotX + "," + plotZ
                                                     + ")");
@@ -657,9 +657,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     public void removePersistentMeta(String key) {
-        if (this.metaMap.containsKey(key)) {
-            this.metaMap.remove(key);
-        }
+        this.metaMap.remove(key);
         if (Settings.Enabled_Components.PERSISTENT_META) {
             DBFunc.removePersistentMeta(getUUID(), key);
         }

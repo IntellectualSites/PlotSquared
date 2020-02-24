@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.google.common.primitives.Ints;
-
 public class ByteArrayUtilities {
 
     public static boolean bytesToBoolean(byte[] bytes) {

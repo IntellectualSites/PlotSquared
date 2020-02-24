@@ -44,11 +44,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         super(worldName, id, generator, min, max);
     }
 
-    @NotNull @Override
-    protected PlotManager createManager() {
-        return new HybridPlotManager(this);
-    }
-
     public static byte wrap(byte data, int start) {
         if ((data >= start) && (data < (start + 4))) {
             data = (byte) ((((data - start) + 2) & 3) + start);
@@ -94,6 +89,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             }
         }
         return BlockTransformExtent.transform(id, transform);
+    }
+
+    @NotNull @Override protected PlotManager createManager() {
+        return new HybridPlotManager(this);
     }
 
     public Location getSignLocation(Plot plot) {

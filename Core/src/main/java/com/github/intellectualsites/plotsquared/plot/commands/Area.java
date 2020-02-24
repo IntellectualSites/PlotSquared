@@ -33,11 +33,15 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Set;
 
-@CommandDeclaration(command = "area", permission = "plots.area",
-    category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.NONE,
-    description = "Create a new PlotArea", aliases = "world",
-    usage = "/plot area <create|info|list|tp|regen>", confirmation = true) public class Area
-    extends SubCommand {
+@CommandDeclaration(command = "area",
+    permission = "plots.area",
+    category = CommandCategory.ADMINISTRATION,
+    requiredType = RequiredType.NONE,
+    description = "Create a new PlotArea",
+    aliases = "world",
+    usage = "/plot area <create|info|list|tp|regen>",
+    confirmation = true)
+public class Area extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length == 0) {
@@ -135,14 +139,14 @@ import java.util.Set;
                                     if (WorldUtil.IMP.isWorld(world)) {
                                         PlotSquared.get().loadWorld(world, null);
                                         Captions.SETUP_FINISHED.send(player);
-                                        player.teleport(WorldUtil.IMP.getSpawn(world), TeleportCause.COMMAND);
+                                        player.teleport(WorldUtil.IMP.getSpawn(world),
+                                            TeleportCause.COMMAND);
                                         if (area.TERRAIN != 3) {
                                             ChunkManager.largeRegionTask(world, region,
                                                 new RunnableVal<BlockVector2>() {
                                                     @Override public void run(BlockVector2 value) {
-                                                        AugmentedUtils
-                                                            .generate(world, value.getX(), value.getZ(),
-                                                                null);
+                                                        AugmentedUtils.generate(world, value.getX(),
+                                                            value.getZ(), null);
                                                     }
                                                 }, null);
                                         }
@@ -258,7 +262,8 @@ import java.util.Set;
                                 String world = SetupUtils.manager.setupWorld(object);
                                 if (WorldUtil.IMP.isWorld(world)) {
                                     Captions.SETUP_FINISHED.send(player);
-                                    player.teleport(WorldUtil.IMP.getSpawn(world), TeleportCause.COMMAND);
+                                    player.teleport(WorldUtil.IMP.getSpawn(world),
+                                        TeleportCause.COMMAND);
                                 } else {
                                     MainUtil.sendMessage(player,
                                         "An error occurred while creating the world: "
@@ -285,13 +290,15 @@ import java.util.Set;
                         }
                         if (WorldUtil.IMP.isWorld(pa.worldname)) {
                             if (!player.getLocation().getWorld().equals(pa.worldname)) {
-                                player.teleport(WorldUtil.IMP.getSpawn(pa.worldname), TeleportCause.COMMAND);
+                                player.teleport(WorldUtil.IMP.getSpawn(pa.worldname),
+                                    TeleportCause.COMMAND);
                             }
                         } else {
                             object.terrain = 0;
                             object.type = 0;
                             SetupUtils.manager.setupWorld(object);
-                            player.teleport(WorldUtil.IMP.getSpawn(pa.worldname), TeleportCause.COMMAND);
+                            player.teleport(WorldUtil.IMP.getSpawn(pa.worldname),
+                                TeleportCause.COMMAND);
                         }
                         player.setMeta("area_create_area", pa);
                         MainUtil.sendMessage(player,
@@ -432,10 +439,11 @@ import java.util.Set;
                         "$4Stop the server and delete: " + area.worldname + "/region");
                     return false;
                 }
-                ChunkManager
-                    .largeRegionTask(area.worldname, area.getRegion(), new RunnableVal<BlockVector2>() {
+                ChunkManager.largeRegionTask(area.worldname, area.getRegion(),
+                    new RunnableVal<BlockVector2>() {
                         @Override public void run(BlockVector2 value) {
-                            AugmentedUtils.generate(area.worldname, value.getX(), value.getZ(), null);
+                            AugmentedUtils
+                                .generate(area.worldname, value.getX(), value.getZ(), null);
                         }
                     }, () -> player.sendMessage("Regen complete"));
                 return true;
@@ -463,9 +471,10 @@ import java.util.Set;
                     center = WorldUtil.IMP.getSpawn(area.worldname);
                 } else {
                     CuboidRegion region = area.getRegion();
-                    center =
-                        new Location(area.worldname, region.getMinimumPoint().getX() + (region.getMaximumPoint().getX() - region.getMinimumPoint().getX()) / 2,
-                            0, region.getMinimumPoint().getZ() + (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ()) / 2);
+                    center = new Location(area.worldname, region.getMinimumPoint().getX()
+                        + (region.getMaximumPoint().getX() - region.getMinimumPoint().getX()) / 2,
+                        0, region.getMinimumPoint().getZ()
+                        + (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ()) / 2);
                     center.setY(1 + WorldUtil.IMP
                         .getHighestBlock(area.worldname, center.getX(), center.getZ()));
                 }

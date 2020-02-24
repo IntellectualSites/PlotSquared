@@ -10,10 +10,13 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
-@CommandDeclaration(command = "target", usage = "/plot target <<plot>|nearest>",
-    description = "Target a plot with your compass", permission = "plots.target",
-    requiredType = RequiredType.PLAYER, category = CommandCategory.INFO) public class Target
-    extends SubCommand {
+@CommandDeclaration(command = "target",
+    usage = "/plot target <<plot>|nearest>",
+    description = "Target a plot with your compass",
+    permission = "plots.target",
+    requiredType = RequiredType.PLAYER,
+    category = CommandCategory.INFO)
+public class Target extends SubCommand {
 
     public Target() {
         super(Argument.PlotID);

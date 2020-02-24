@@ -2,10 +2,8 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
-import com.github.intellectualsites.plotsquared.plot.flag.FlagManager;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -19,16 +17,18 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-@CommandDeclaration(command = "set", description = "Set a plot value", aliases = {"s"},
-    usage = "/plot set <biome|alias|home|flag> <value...>", permission = "plots.set",
-    category = CommandCategory.APPEARANCE, requiredType = RequiredType.NONE) public class Set
-    extends SubCommand {
+@CommandDeclaration(command = "set",
+    description = "Set a plot value",
+    aliases = {"s"},
+    usage = "/plot set <biome|alias|home|flag> <value...>",
+    permission = "plots.set",
+    category = CommandCategory.APPEARANCE,
+    requiredType = RequiredType.NONE)
+public class Set extends SubCommand {
 
-    public static final String[] values = new String[] {"biome", "alias", "home", "flag"};
-    public static final String[] aliases = new String[] {"b", "w", "wf", "f", "a", "h", "fl"};
+    public static final String[] values = new String[] {"biome", "alias", "home"};
+    public static final String[] aliases = new String[] {"b", "w", "wf", "a", "h"};
 
     private final SetCommand component;
 
@@ -50,9 +50,10 @@ import java.util.stream.IntStream;
 
                 for (String component : components) {
                     if (component.equalsIgnoreCase(args[0])) {
-                        if (!Permissions.hasPermission(player, Captions
-                            .format(player, Captions.PERMISSION_SET_COMPONENT.getTranslated(), component))) {
-                            MainUtil.sendMessage(player, Captions.NO_PERMISSION, Captions
+                        if (!Permissions.hasPermission(player, CaptionUtility
+                            .format(player, Captions.PERMISSION_SET_COMPONENT.getTranslated(),
+                                component))) {
+                            MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
                                 .format(player, Captions.PERMISSION_SET_COMPONENT.getTranslated(),
                                     component));
                             return false;
@@ -82,16 +83,14 @@ import java.util.stream.IntStream;
     }
 
     public boolean noArgs(PlotPlayer player) {
-        ArrayList<String> newValues =
-            new ArrayList<>(Arrays.asList("biome", "alias", "home", "flag"));
+        ArrayList<String> newValues = new ArrayList<>(Arrays.asList("biome", "alias", "home"));
         Plot plot = player.getCurrentPlot();
         if (plot != null) {
-            newValues.addAll(
-                Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
+            newValues.addAll(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
         }
-        MainUtil
-            .sendMessage(player, Captions.SUBCOMMAND_SET_OPTIONS_HEADER.getTranslated() + StringMan
-            .join(newValues, Captions.BLOCK_LIST_SEPARATOR.formatted()));
+        MainUtil.sendMessage(player,
+            Captions.SUBCOMMAND_SET_OPTIONS_HEADER.getTranslated() + StringMan
+                .join(newValues, Captions.BLOCK_LIST_SEPARATOR.formatted()));
         return false;
     }
 
@@ -114,21 +113,10 @@ import java.util.stream.IntStream;
             return false;
         }
         // components
-        HashSet<String> components = new HashSet<>(
-            Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
+        HashSet<String> components =
+            new HashSet<>(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
         if (components.contains(args[0].toLowerCase())) {
             return this.component.onCommand(player, Arrays.copyOfRange(args, 0, args.length));
-        }
-        // flag
-        Flag<?> flag = FlagManager.getFlag(args[0].toLowerCase());
-        if (Flags.getFlags().contains(flag)) {
-            String a = "";
-            if (args.length > 1) {
-                a = IntStream.range(1, args.length).mapToObj(x -> " " + args[x])
-                    .collect(Collectors.joining());
-            }
-            MainCommand.onCommand(player, ("flag set " + args[0] + a).split(" "));
-            return true;
         }
         return noArgs(player);
     }

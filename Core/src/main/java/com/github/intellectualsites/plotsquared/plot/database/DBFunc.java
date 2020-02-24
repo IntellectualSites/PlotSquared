@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.database;
 
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotCluster;
@@ -84,6 +84,7 @@ public class DBFunc {
 
 
     //TODO Consider Removal
+
     /**
      * Check if a {@link ResultSet} contains a column.
      *
@@ -302,11 +303,18 @@ public class DBFunc {
         DBFunc.dbManager.setMerged(plot, merged);
     }
 
-    public static void setFlags(Plot plot, HashMap<Flag<?>, Object> flags) {
+    public static void setFlag(Plot plot, PlotFlag<?, ?> flag) {
         if (plot.temp == -1 || dbManager == null) {
             return;
         }
-        DBFunc.dbManager.setFlags(plot, flags);
+        DBFunc.dbManager.setFlag(plot, flag);
+    }
+
+    public static void removeFlag(Plot plot, PlotFlag<?, ?> flag) {
+        if (plot.temp == -1 || dbManager == null) {
+            return;
+        }
+        DBFunc.dbManager.removeFlag(plot, flag);
     }
 
     /**

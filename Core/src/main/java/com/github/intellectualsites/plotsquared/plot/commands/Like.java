@@ -5,7 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Rating;
@@ -21,9 +21,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-@CommandDeclaration(command = "like", permission = "plots.like", description = "Like the plot",
-    usage = "/plot like [next|purge]", category = CommandCategory.INFO,
-    requiredType = RequiredType.PLAYER) public class Like extends SubCommand {
+@CommandDeclaration(command = "like",
+    permission = "plots.like",
+    description = "Like the plot",
+    usage = "/plot like [next|purge]",
+    category = CommandCategory.INFO,
+    requiredType = RequiredType.PLAYER)
+public class Like extends SubCommand {
 
     protected static boolean handleLike(final PlotPlayer player, String[] args,
         final boolean like) {
@@ -41,8 +45,8 @@ import java.util.UUID;
                         return v2 > v1 ? 1 : -1;
                     });
                     for (final Plot plot : plots) {
-                        if ((!Settings.Done.REQUIRED_FOR_RATINGS || plot.hasFlag(Flags.DONE))
-                            && plot.isBasePlot() && (!plot.getLikes().containsKey(uuid))) {
+                        if ((!Settings.Done.REQUIRED_FOR_RATINGS || DoneFlag.isDone(plot)) && plot
+                            .isBasePlot() && (!plot.getLikes().containsKey(uuid))) {
                             plot.teleportPlayer(player, TeleportCause.COMMAND);
                             MainUtil.sendMessage(player, Captions.RATE_THIS);
                             return true;
@@ -78,7 +82,7 @@ import java.util.UUID;
             sendMessage(player, Captions.RATING_NOT_YOUR_OWN);
             return false;
         }
-        if (Settings.Done.REQUIRED_FOR_RATINGS && !plot.hasFlag(Flags.DONE)) {
+        if (Settings.Done.REQUIRED_FOR_RATINGS && !DoneFlag.isDone(plot)) {
             sendMessage(player, Captions.RATING_NOT_DONE);
             return false;
         }
@@ -105,15 +109,15 @@ import java.util.UUID;
                 }
             }
         };
-        if (plot.getSettings().ratings == null) {
+        if (plot.getSettings().getRatings() == null) {
             if (!Settings.Enabled_Components.RATING_CACHE) {
                 TaskManager.runTaskAsync(() -> {
-                    plot.getSettings().ratings = DBFunc.getRatings(plot);
+                    plot.getSettings().setRatings(DBFunc.getRatings(plot));
                     run.run();
                 });
                 return true;
             }
-            plot.getSettings().ratings = new HashMap<>();
+            plot.getSettings().setRatings(new HashMap<>());
         }
         run.run();
         return true;

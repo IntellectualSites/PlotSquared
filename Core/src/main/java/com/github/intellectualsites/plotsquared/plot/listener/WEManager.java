@@ -2,7 +2,8 @@ package com.github.intellectualsites.plotsquared.plot.listener;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.NoWorldeditFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -35,8 +36,7 @@ public class WEManager {
         return false;
     }
 
-    public static boolean maskContains(Set<CuboidRegion> mask, double dx, double dy,
-        double dz) {
+    public static boolean maskContains(Set<CuboidRegion> mask, double dx, double dy, double dz) {
         int x = Math.toIntExact(Math.round(dx >= 0 ? dx - 0.5 : dx + 0.5));
         int y = Math.toIntExact(Math.round(dy - 0.5));
         int z = Math.toIntExact(Math.round(dz >= 0 ? dz - 0.5 : dz + 0.5));
@@ -65,8 +65,9 @@ public class WEManager {
         Location location = player.getLocation();
         String world = location.getWorld();
         if (!PlotSquared.get().hasPlotArea(world)) {
-            regions.add(RegionUtil.createRegion(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
-                Integer.MAX_VALUE));
+            regions.add(RegionUtil
+                .createRegion(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
+                    Integer.MAX_VALUE));
             return regions;
         }
         PlotArea area = player.getApplicablePlotArea();
@@ -78,9 +79,9 @@ public class WEManager {
         if (plot == null) {
             plot = player.getMeta("WorldEditRegionPlot");
         }
-        if (plot != null && (!Settings.Done.RESTRICT_BUILDING || !Flags.DONE.isSet(plot)) && (
+        if (plot != null && (!Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot)) && (
             (allowMember && plot.isAdded(uuid)) || (!allowMember && (plot.isOwner(uuid)) || plot
-                .getTrusted().contains(uuid))) && !(Flags.NO_WORLDEDIT.isTrue(plot))) {
+                .getTrusted().contains(uuid))) && !plot.getFlag(NoWorldeditFlag.class)) {
             for (CuboidRegion region : plot.getRegions()) {
                 BlockVector3 pos1 = region.getMinimumPoint().withY(area.MIN_BUILD_HEIGHT);
                 BlockVector3 pos2 = region.getMaximumPoint().withY(area.MAX_BUILD_HEIGHT);

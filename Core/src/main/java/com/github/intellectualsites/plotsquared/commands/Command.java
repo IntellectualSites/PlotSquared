@@ -81,7 +81,8 @@ public abstract class Command {
                     && types[2] == String[].class && types[3] == RunnableVal3.class
                     && types[4] == RunnableVal2.class) {
                     Command tmp = new Command(this, true) {
-                        @Override public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
+                        @Override
+                        public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
                             RunnableVal3<Command, Runnable, Runnable> confirm,
                             RunnableVal2<Command, CommandResult> whenDone) {
                             try {
@@ -264,14 +265,13 @@ public abstract class Command {
         if (totalPages != 0) { // Back
             new PlotMessage().text("<-").color("$1").command(baseCommand + " " + page).text(" | ")
                 .color("$3").text("->").color("$3").text(Captions.CLICKABLE.getTranslated())
-                .color("$2")
-                .send(player);
+                .color("$2").send(player);
         }
     }
 
     /**
      * @param player  Caller
-     * @param args Arguments
+     * @param args    Arguments
      * @param confirm Instance, Success, Failure
      * @return CompletableFuture true if the command executed fully, false in
      * any other case

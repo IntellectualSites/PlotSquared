@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.database;
 
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotCluster;
@@ -73,6 +73,10 @@ public class AbstractDBTest implements AbstractDB {
         return 0;
     }
 
+    @Override public boolean convertFlags() {
+        return true;
+    }
+
     @Override public HashMap<String, HashMap<PlotId, Plot>> getPlots() {
         return null;
     }
@@ -90,7 +94,10 @@ public class AbstractDBTest implements AbstractDB {
     @Override public void swapPlots(Plot plot1, Plot plot2) {
     }
 
-    @Override public void setFlags(Plot plot, HashMap<Flag<?>, Object> flags) {
+    @Override public void setFlag(Plot plot, PlotFlag<?, ?> flag) {
+    }
+
+    @Override public void removeFlag(Plot plot, PlotFlag<?, ?> flag) {
     }
 
     @Override public void setClusterName(PlotCluster cluster, String name) {

@@ -3,8 +3,13 @@ package com.github.intellectualsites.plotsquared.bukkit.listeners;
 import com.github.intellectualsites.plotsquared.bukkit.events.PlayerEnterPlotEvent;
 import com.github.intellectualsites.plotsquared.bukkit.events.PlayerLeavePlotEvent;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.flag.IntervalFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DropProtectionFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.FeedFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.HealFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.InstabreakFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.InvincibleFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.ItemDropFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.types.TimedFlag;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -28,7 +33,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.UUID;
 
 @SuppressWarnings("unused") public class PlotPlusListener extends PlotListener implements Listener {
@@ -90,7 +94,7 @@ import java.util.UUID;
         if (plot == null) {
             return;
         }
-        if (Flags.INSTABREAK.isTrue(plot)) {
+        if (plot.getFlag(InstabreakFlag.class)) {
             Block block = event.getBlock();
             BlockBreakEvent call = new BlockBreakEvent(block, player);
             Bukkit.getServer().getPluginManager().callEvent(call);
@@ -108,7 +112,7 @@ import java.util.UUID;
         if (plot == null) {
             return;
         }
-        if (Flags.INVINCIBLE.isTrue(plot)) {
+        if (plot.getFlag(InvincibleFlag.class)) {
             event.setCancelled(true);
         }
     }
@@ -122,7 +126,7 @@ import java.util.UUID;
         }
         UUID uuid = pp.getUUID();
         if (!plot.isAdded(uuid)) {
-            if (Flags.ITEM_DROP.isFalse(plot)) {
+            if (!plot.getFlag(ItemDropFlag.class)) {
                 event.setCancelled(true);
             }
         }
@@ -131,12 +135,14 @@ import java.util.UUID;
     @EventHandler public void onPlotEnter(PlayerEnterPlotEvent event) {
         Player player = event.getPlayer();
         Plot plot = event.getPlot();
-        Optional<IntervalFlag.Interval> feed = plot.getFlag(Flags.FEED);
-        feed.ifPresent(value -> feedRunnable
-            .put(player.getUniqueId(), new Interval(value.getVal1(), value.getVal2(), 20)));
-        Optional<IntervalFlag.Interval> heal = plot.getFlag(Flags.HEAL);
-        heal.ifPresent(value -> healRunnable
-            .put(player.getUniqueId(), new Interval(value.getVal1(), value.getVal2(), 20)));
+        TimedFlag.Timed<Integer> feed = plot.getFlag(FeedFlag.class);
+        if (feed.getInterval() != 0 && feed.getValue() != 0) {
+            feedRunnable.put(player.getUniqueId(), new Interval(feed.getInterval(), feed.getValue(), 20));
+        }
+        TimedFlag.Timed<Integer> heal = plot.getFlag(HealFlag.class);
+        if (heal.getInterval() != 0 && heal.getValue() != 0) {
+            healRunnable.put(player.getUniqueId(), new Interval(heal.getInterval(), heal.getValue(), 20));
+        }
     }
 
     @EventHandler public void onPlayerQuit(PlayerQuitEvent event) {
@@ -166,7 +172,7 @@ import java.util.UUID;
                 return;
             }
             UUID uuid = pp.getUUID();
-            if (!plot.isAdded(uuid) && Flags.DROP_PROTECTION.isTrue(plot)) {
+            if (!plot.isAdded(uuid) && plot.getFlag(DropProtectionFlag.class)) {
                 event.setCancelled(true);
             }
         }

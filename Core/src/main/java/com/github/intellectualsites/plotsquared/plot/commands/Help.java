@@ -13,8 +13,12 @@ import com.github.intellectualsites.plotsquared.plot.util.helpmenu.HelpMenu;
 
 import java.util.concurrent.CompletableFuture;
 
-@CommandDeclaration(command = "help", description = "Get this help menu", aliases = "?",
-    category = CommandCategory.INFO, usage = "help [category|#]", permission = "plots.use")
+@CommandDeclaration(command = "help",
+    description = "Get this help menu",
+    aliases = "?",
+    category = CommandCategory.INFO,
+    usage = "help [category|#]",
+    permission = "plots.use")
 public class Help extends Command {
     public Help(Command parent) {
         super(parent, true);
@@ -55,7 +59,8 @@ public class Help extends Command {
         return CompletableFuture.completedFuture(true);
     }
 
-    public CompletableFuture<Boolean> displayHelp(final PlotPlayer player, final String catRaw, final int page) {
+    public CompletableFuture<Boolean> displayHelp(final PlotPlayer player, final String catRaw,
+        final int page) {
         return CompletableFuture.supplyAsync(() -> {
             String cat = catRaw;
 
@@ -80,12 +85,11 @@ public class Help extends Command {
                 for (CommandCategory c : CommandCategory.values()) {
                     builder.append("\n").append(StringMan
                         .replaceAll(Captions.HELP_INFO_ITEM.getTranslated(), "%category%",
-                            c.toString().toLowerCase(),
-                            "%category_desc%", c.toString()));
+                            c.toString().toLowerCase(), "%category_desc%", c.toString()));
                 }
-                builder.append("\n")
-                    .append(Captions.HELP_INFO_ITEM.getTranslated().replaceAll("%category%", "all")
-                    .replaceAll("%category_desc%", "Display all commands"));
+                builder.append("\n").append(
+                    Captions.HELP_INFO_ITEM.getTranslated().replaceAll("%category%", "all")
+                        .replaceAll("%category_desc%", "Display all commands"));
                 builder.append("\n").append(Captions.HELP_FOOTER.getTranslated());
                 MainUtil.sendMessage(player, builder.toString(), false);
                 return true;

@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.database;
 
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotCluster;
@@ -113,6 +113,8 @@ public interface AbstractDB {
      */
     int getClusterId(PlotCluster cluster);
 
+    boolean convertFlags();
+
     /**
      * @return A linked HashMap containing all plots
      */
@@ -145,12 +147,20 @@ public interface AbstractDB {
     void swapPlots(Plot plot1, Plot plot2);
 
     /**
-     * Sets plot flags.
+     * Sets plot flag.
      *
-     * @param plot  Plot Object
-     * @param flags flags to set
+     * @param plot Plot Object
+     * @param flag Flag to set
      */
-    void setFlags(Plot plot, HashMap<Flag<?>, Object> flags);
+    void setFlag(Plot plot, PlotFlag<?, ?> flag);
+
+    /**
+     * Remove a plot flag.
+     *
+     * @param plot Plot Object
+     * @param flag Flag to remove
+     */
+    void removeFlag(Plot plot, PlotFlag<?, ?> flag);
 
     /**
      * Renames a cluster to the given name.
@@ -231,7 +241,7 @@ public interface AbstractDB {
 
     /**
      * @param cluster PlotCluster Object
-     * @param uuid Player that should be removed
+     * @param uuid    Player that should be removed
      */
     void setHelper(PlotCluster cluster, UUID uuid);
 
@@ -283,7 +293,7 @@ public interface AbstractDB {
     /**
      * Removes the specified comment from the given plot.
      *
-     * @param plot the plot
+     * @param plot    the plot
      * @param comment the comment to remove
      */
     void removeComment(Plot plot, PlotComment comment);
@@ -291,7 +301,7 @@ public interface AbstractDB {
     /**
      * Clears the specified inbox on the given plot.
      *
-     * @param plot the plot
+     * @param plot  the plot
      * @param inbox the inbox to clear
      */
     void clearInbox(Plot plot, String inbox);
@@ -299,7 +309,7 @@ public interface AbstractDB {
     /**
      * Adds the specified comment to the given plot.
      *
-     * @param plot the plot
+     * @param plot    the plot
      * @param comment the comment to add
      */
     void setComment(Plot plot, PlotComment comment);

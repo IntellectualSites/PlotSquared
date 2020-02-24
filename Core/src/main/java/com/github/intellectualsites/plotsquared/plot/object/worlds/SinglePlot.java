@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot.object.worlds;
 
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
-import com.github.intellectualsites.plotsquared.plot.flag.Flag;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.object.BlockLoc;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -37,7 +37,7 @@ public class SinglePlot extends Plot {
     }
 
     public SinglePlot(PlotId id, UUID owner, HashSet<UUID> trusted, HashSet<UUID> members,
-        HashSet<UUID> denied, String alias, BlockLoc position, Collection<Flag> flags,
+        HashSet<UUID> denied, String alias, BlockLoc position, Collection<PlotFlag<?, ?>> flags,
         PlotArea area, boolean[] merged, long timestamp, int temp) {
         super(id, owner, trusted, members, denied, alias, position, flags, area, merged, timestamp,
             temp);
