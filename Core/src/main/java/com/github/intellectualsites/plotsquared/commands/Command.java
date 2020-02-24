@@ -114,7 +114,7 @@ public abstract class Command {
         return this.id;
     }
 
-    public List<Command> getCommands(CommandCaller player) {
+    public List<Command> getCommands(PlotPlayer player) {
         List<Command> commands = new ArrayList<>();
         for (Command cmd : this.allCommands) {
             if (cmd.canExecute(player, false)) {
@@ -124,7 +124,7 @@ public abstract class Command {
         return commands;
     }
 
-    public List<Command> getCommands(CommandCategory category, CommandCaller player) {
+    public List<Command> getCommands(CommandCategory category, PlotPlayer player) {
         List<Command> commands = getCommands(player);
         if (category != null) {
             commands.removeIf(command -> command.category != category);
@@ -347,7 +347,7 @@ public abstract class Command {
         return CompletableFuture.completedFuture(true);
     }
 
-    public boolean checkArgs(CommandCaller player, String[] args) {
+    public boolean checkArgs(PlotPlayer player, String[] args) {
         Argument<?>[] reqArgs = getRequiredArguments();
         if (reqArgs != null && reqArgs.length > 0) {
             boolean failed = args.length < reqArgs.length;
@@ -440,7 +440,7 @@ public abstract class Command {
         return null;
     }
 
-    public boolean canExecute(CommandCaller player, boolean message) {
+    public boolean canExecute(PlotPlayer player, boolean message) {
         if (player == null) {
             return true;
         }
@@ -595,7 +595,7 @@ public abstract class Command {
             this.args = args;
         }
 
-        public void perform(CommandCaller player) {
+        public void perform(PlotPlayer player) {
             if (player != null && message != null) {
                 message.send(player, args);
             }

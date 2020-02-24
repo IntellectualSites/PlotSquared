@@ -1,6 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.Like;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
@@ -67,7 +66,7 @@ public class MainUtil {
     public static boolean canSendChunk = false;
     /**
      * Cache of mapping x,y,z coordinates to the chunk array<br>
-     * - Used for efficent world generation<br>
+     * - Used for efficient world generation<br>
      */
     public static short[][] x_loc;
     public static short[][] y_loc;
@@ -620,14 +619,14 @@ public class MainUtil {
      * @param prefix If the message should be prefixed with the configured prefix
      * @return
      */
-    public static boolean sendMessage(CommandCaller player, @NotNull String msg, boolean prefix) {
+    public static boolean sendMessage(PlotPlayer player, @NotNull String msg, boolean prefix) {
         if (!msg.isEmpty()) {
             if (player == null) {
-                String message = (prefix ? Captions.PREFIX.getTranslated() : "") + msg;
+                String message = Captions.format(null, (prefix ? Captions.PREFIX.getTranslated() : "") + msg);
                 PlotSquared.log(message);
             } else {
                 player.sendMessage(
-                    (prefix ? Captions.PREFIX.getTranslated() : "") + Captions.color(msg));
+                    Captions.format(player, (prefix ? Captions.PREFIX.getTranslated() : "") + Captions.color(msg)));
             }
         }
         return true;
@@ -640,7 +639,7 @@ public class MainUtil {
      * @param caption the message to send
      * @return boolean success
      */
-    public static boolean sendMessage(CommandCaller player, Captions caption, String... args) {
+    public static boolean sendMessage(PlotPlayer player, Captions caption, String... args) {
         return sendMessage(player, caption, (Object[]) args);
     }
 
@@ -651,13 +650,13 @@ public class MainUtil {
      * @param caption the message to send
      * @return boolean success
      */
-    public static boolean sendMessage(final CommandCaller player, final Captions caption,
+    public static boolean sendMessage(final PlotPlayer player, final Captions caption,
         final Object... args) {
         if (caption.getTranslated().isEmpty()) {
             return true;
         }
         TaskManager.runTaskAsync(() -> {
-            String m = Captions.format(caption, args);
+            String m = Captions.format(player, caption, args);
             if (player == null) {
                 PlotSquared.log(m);
             } else {
@@ -790,8 +789,8 @@ public class MainUtil {
                 }
                 flags.append(prefix)
                     .append(Captions
-                        .format(Captions.PLOT_FLAG_LIST.getTranslated(), entry.getKey().getName(),
-                            value));
+                        .format(player, Captions.PLOT_FLAG_LIST.getTranslated(), entry.getKey().getName(),
+                            Captions.formatRaw(player, value.toString(), "")));
                 prefix = ", ";
             }
         }

@@ -33,9 +33,9 @@ import java.util.concurrent.CompletableFuture;
             case "add":
             case "check":
                 if (!Permissions.hasPermission(player,
-                    Captions.format(Captions.PERMISSION_GRANT.getTranslated(), arg0))) {
+                    Captions.format(player, Captions.PERMISSION_GRANT.getTranslated(), arg0))) {
                     Captions.NO_PERMISSION.send(player,
-                        Captions.format(Captions.PERMISSION_GRANT.getTranslated(), arg0));
+                        Captions.format(player, Captions.PERMISSION_GRANT.getTranslated(), arg0));
                     return CompletableFuture.completedFuture(false);
                 }
                 if (args.length > 2) {

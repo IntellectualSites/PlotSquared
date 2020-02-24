@@ -6,7 +6,7 @@ load: STARTUP
 description: "Easy, yet powerful Plot World generation and management."
 authors: [Citymonstret, Empire92, MattBDev, dordsor21, NotMyFault]
 website: https://github.com/IntellectualSites/
-softdepend: [BarAPI, CameraAPI, Vault]
+softdepend: [Vault, PlaceholderAPI]
 loadbefore: [MultiWorld, Multiverse-Core]
 depend: [WorldEdit]
 database: false

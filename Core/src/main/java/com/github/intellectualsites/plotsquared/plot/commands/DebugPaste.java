@@ -25,6 +25,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.github.intellectualsites.plotsquared.plot.util.PremiumVerification.getDownloadID;
+import static com.github.intellectualsites.plotsquared.plot.util.PremiumVerification.getUserID;
+
 @CommandDeclaration(command = "debugpaste", aliases = "dp", usage = "/plot debugpaste",
     description = "Upload settings.yml, worlds.yml, PlotSquared.use_THIS.yml your latest.log and Multiverse's worlds.yml (if being used) to https://athion.net/ISPaster/paste",
     permission = "plots.debugpaste", category = CommandCategory.DEBUG, confirmation = true, requiredType = RequiredType.NONE)
@@ -50,6 +53,8 @@ public class DebugPaste extends SubCommand {
                 b.append(
                     "# Welcome to this paste\n# It is meant to provide us at IntellectualSites with better information about your "
                         + "problem\n\n");
+                b.append("# PlotSquared Information\n");
+                b.append("This PlotSquared version is licensed to the spigot user ").append(getUserID()).append(" under ").append(getDownloadID()).append("\n");
                 b.append("# Server Information\n");
                 b.append("Server Version: ").append(PlotSquared.get().IMP.getServerImplementation())
                     .append("\n");

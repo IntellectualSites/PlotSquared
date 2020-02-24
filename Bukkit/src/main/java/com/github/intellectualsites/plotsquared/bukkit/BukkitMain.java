@@ -7,6 +7,8 @@ import com.github.intellectualsites.plotsquared.bukkit.listeners.PlayerEvents;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.PlotPlusListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.SingleWorldListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.WorldEvents;
+import com.github.intellectualsites.plotsquared.bukkit.placeholders.PlaceholderFormatter;
+import com.github.intellectualsites.plotsquared.bukkit.placeholders.Placeholders;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitChatManager;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitChunkManager;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitCommand;
@@ -30,6 +32,7 @@ import com.github.intellectualsites.plotsquared.configuration.ConfigurationSecti
 import com.github.intellectualsites.plotsquared.plot.IPlotMain;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
+import com.github.intellectualsites.plotsquared.plot.config.ChatFormatter;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
@@ -46,27 +49,13 @@ import com.github.intellectualsites.plotsquared.plot.object.worlds.PlotAreaManag
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SingleWorldGenerator;
-import com.github.intellectualsites.plotsquared.plot.util.ChatManager;
-import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
-import com.github.intellectualsites.plotsquared.plot.util.ConsoleColors;
-import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
-import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
-import com.github.intellectualsites.plotsquared.plot.util.InventoryUtil;
-import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils;
-import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
-import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
-import com.github.intellectualsites.plotsquared.plot.util.StringMan;
-import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
-import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
-import com.github.intellectualsites.plotsquared.plot.util.UUIDHandlerImplementation;
-import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.bukkit.util.UpdateUtility;
 import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extension.platform.Actor;
-import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
@@ -99,6 +88,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.github.intellectualsites.plotsquared.plot.util.PremiumVerification.getUserID;
 import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getRefClass;
 
 public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
@@ -148,7 +138,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Override public void onEnable() {
         this.pluginName = getDescription().getName();
         PlotPlayer.registerConverter(Player.class, BukkitUtil::getPlayer);
-        PaperLib.suggestPaper(this);
 
         new PlotSquared(this, "Bukkit");
 
@@ -160,6 +149,25 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             System.out.println("The server will now be shutdown to prevent any corruption.");
             Bukkit.shutdown();
             return;
+        }
+
+        new UpdateUtility(this).updateChecker();
+
+        if (PremiumVerification.isPremium()) {
+            PlotSquared.log(Captions.PREFIX + "&6PlotSquared version licensed to Spigot user " + getUserID());
+            PlotSquared.log(Captions.PREFIX + "&6Thanks for supporting us :)");
+        } else {
+            PlotSquared.log(Captions.PREFIX + "&6Couldn't verify purchase :(");
+        }
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new Placeholders(this).register();
+            if (Settings.Enabled_Components.EXTERNAL_PLACEHOLDERS) {
+                ChatFormatter.formatters.add(new PlaceholderFormatter());
+            }
+            PlotSquared.log(Captions.PREFIX + "&6PlaceholderAPI found! Hook activated.");
+        } else {
+            PlotSquared.log(Captions.PREFIX + "&6PlaceholderAPI is not in use. Hook deactivated.");
         }
 
         this.startMetrics();
@@ -658,7 +666,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
         this.metricsStarted = true;
         Metrics metrics = new Metrics(this, BSTATS_ID);// bstats
-        PlotSquared.log(Captions.PREFIX + "&6Metrics enabled.");
     }
 
     @Override public ChunkManager initChunkManager() {

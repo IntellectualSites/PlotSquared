@@ -21,6 +21,7 @@ import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGe
 import com.github.intellectualsites.plotsquared.plot.listener.WESubscriber;
 import com.github.intellectualsites.plotsquared.plot.logger.ILogger;
 import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
+import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -316,7 +317,7 @@ import java.util.zip.ZipInputStream;
         }
 
         PlotSquared.log(Captions.PREFIX + Captions
-            .format(Captions.ENABLED.getTranslated(), IMP.getPluginName()));
+            .format(ConsolePlayer.getConsole(), Captions.ENABLED.getTranslated(), IMP.getPluginName()));
     }
 
     /**
@@ -1437,42 +1438,10 @@ import java.util.zip.ZipInputStream;
         return Arrays.stream(split).map(s -> String.format("%4s", s)).collect(Collectors.joining());
     }
 
-    private boolean update(PlotPlayer sender, URL url) {
-        try {
-            String name = this.jarFile.getName();
-            MainUtil.sendMessage(sender, "$1Downloading from provided URL: &7" + url);
-            URLConnection con = url.openConnection();
-            try (InputStream stream = con.getInputStream()) {
-                File newJar = new File("plugins/update/" + name);
-                File parent = newJar.getParentFile();
-                if (!parent.exists()) {
-                    parent.mkdirs();
-                }
-                MainUtil.sendMessage(sender, "$2 - Output: " + newJar);
-                if (!newJar.delete()) {
-                    MainUtil.sendMessage(sender, "Failed to update " + IMP.getPluginName() + "");
-                    MainUtil.sendMessage(sender, "Jar file failed to delete.");
-                    MainUtil.sendMessage(sender, " - Please update manually");
-                }
-                Files.copy(stream, newJar.toPath());
-            }
-            MainUtil.sendMessage(sender,
-                "$1The update will take effect when the server is restarted next");
-            return true;
-        } catch (IOException e) {
-            MainUtil.sendMessage(sender, "Failed to update " + IMP.getPluginName() + "");
-            MainUtil.sendMessage(sender, " - Please update manually");
-            PlotSquared.log("============ Stacktrace ============");
-            e.printStackTrace();
-            PlotSquared.log("====================================");
-        }
-        return false;
-    }
-
     /**
      * Copies a file from inside the jar to a location
      *
-     * @param file   Name of the file inside PlotSquared.jar
+     * @param file Name of the file inside PlotSquared.jar
      * @param folder The output location relative to /plugins/PlotSquared/
      */
     public void copyFile(String file, String folder) {
@@ -1619,13 +1588,13 @@ import java.util.zip.ZipInputStream;
         String lastVersionString = this.getConfig().getString("version");
         if (lastVersionString != null) {
             String[] split = lastVersionString.split("\\.");
-            int[] lastVersion = new int[] {Integer.parseInt(split[0]), Integer.parseInt(split[1]),
-                Integer.parseInt(split[2])};
-            if (checkVersion(new int[] {3, 4, 0}, lastVersion)) {
+            int[] lastVersion = new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]),
+                    Integer.parseInt(split[2])};
+            if (checkVersion(new int[]{3, 4, 0}, lastVersion)) {
                 Settings.convertLegacy(configFile);
                 if (getConfig().contains("worlds")) {
                     ConfigurationSection worldSection =
-                        getConfig().getConfigurationSection("worlds");
+                            getConfig().getConfigurationSection("worlds");
                     worlds.set("worlds", worldSection);
                     try {
                         worlds.save(worldsFile);
@@ -1645,12 +1614,6 @@ import java.util.zip.ZipInputStream;
                 String commitString = br.readLine();
                 String dateString = br.readLine();
                 this.version = PlotVersion.tryParse(versionString, commitString, dateString);
-                Settings.DATE =
-                    new Date(100 + version.year, version.month, version.day).toGMTString();
-                Settings.BUILD = "https://ci.athion.net/job/PlotSquared-Releases/" + version.build;
-                Settings.COMMIT =
-                    "https://github.com/IntellectualSites/PlotSquared/commit/" + Integer
-                        .toHexString(version.hash);
                 System.out.println("Version is " + this.version);
             }
         } catch (IOException throwable) {

@@ -1,9 +1,9 @@
 package com.github.intellectualsites.plotsquared.plot.util.helpmenu;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
-import com.github.intellectualsites.plotsquared.commands.CommandCaller;
 import com.github.intellectualsites.plotsquared.plot.commands.CommandCategory;
 import com.github.intellectualsites.plotsquared.plot.commands.MainCommand;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 
 import java.util.List;
 
@@ -11,13 +11,13 @@ public class HelpMenu {
 
     private static final int PER_PAGE = 5;
 
-    private final CommandCaller commandCaller;
+    private final PlotPlayer commandCaller;
     private HelpPage page = new HelpPage(CommandCategory.INFO, 0, 0);
     private int maxPage;
     private CommandCategory commandCategory;
     private List<Command> commands;
 
-    public HelpMenu(CommandCaller commandCaller) {
+    public HelpMenu(PlotPlayer commandCaller) {
         this.commandCaller = commandCaller;
     }
 

@@ -14,16 +14,7 @@ public class Settings extends Config {
     NOTE: Fields are saved in declaration order, classes in reverse order
      */
 
-    @Comment("These first 7 aren't configurable") // This is a comment
-    @Final // Indicates that this value isn't configurable
-    public static String ISSUES = "https://github.com/IntellectualSites/PlotSquared/issues";
-    @Final public static String SUGGESTION =
-        "https://github.com/IntellectualSites/PlotSquaredSuggestions";
-    @Final public static String WIKI =
-        "https://github.com/IntellectualSites/PlotSquared/wiki";
-    @Final public static String DATE; // These values are set from P2 before loading
-    @Final public static String BUILD; // These values are set from P2 before loading
-    @Final public static String COMMIT; // These values are set from P2 before loading
+    @Comment("The first value is not configurable") // This is a comment
     @Final public static String PLATFORM; // These values are set from P2 before loading
 
     @Comment("Show additional information in console") public static boolean DEBUG = false;
@@ -132,6 +123,9 @@ public class Settings extends Config {
         // Titles
         TITLES = config.getBoolean("titles", TITLES);
 
+        // Update Notifications
+        Enabled_Components.UPDATE_NOTIFICATIONS = config.getBoolean("update-notifications", Enabled_Components.UPDATE_NOTIFICATIONS);
+
         // Teleportation
         Teleport.DELAY = config.getInt("teleport.delay", Teleport.DELAY);
         Teleport.ON_LOGIN = config.getBoolean("teleport.on_login", Teleport.ON_LOGIN);
@@ -166,9 +160,6 @@ public class Settings extends Config {
         Chat.CONSOLE_COLOR = config.getBoolean("console.color", Chat.CONSOLE_COLOR);
         Chat.INTERACTIVE = config.getBoolean("chat.fancy", Chat.INTERACTIVE);
 
-        Enabled_Components.METRICS = config.getBoolean("metrics", Enabled_Components.METRICS);
-        Enabled_Components.UPDATER =
-            config.getBoolean("update-notifications", Enabled_Components.UPDATER);
         Enabled_Components.DATABASE_PURGER =
             config.getBoolean("auto-purge", Enabled_Components.DATABASE_PURGER);
         return true;
@@ -331,8 +322,7 @@ public class Settings extends Config {
             true;
         @Comment("The UUID cacher is used to resolve player names") public static boolean
             UUID_CACHE = true;
-        @Comment({"@deprecated PlotSquared v4 will no longer receive updates, consider updating to v5", "The plugin auto updater will notify you if updates are available."})
-        public static boolean UPDATER = true;
+        @Comment("Whether we should notify you about updates or not.") public static boolean UPDATE_NOTIFICATIONS = true;
         @Comment("Stores user metadata in a database") public static boolean PERSISTENT_META = true;
         @Comment("Optimizes permission checks") public static boolean PERMISSION_CACHE = true;
         @Comment("Optimizes block changing code") public static boolean BLOCK_CACHE = true;
@@ -341,8 +331,6 @@ public class Settings extends Config {
         @Comment("Allow WorldEdit to be restricted to plots") public static boolean
             WORLDEDIT_RESTRICTIONS = true;
         @Comment("Allow economy to be used") public static boolean ECONOMY = true;
-        @Comment("@deprecated - use bstats config.yml") public static boolean
-            METRICS = true;
         @Comment("Expiry will clear old or simplistic plots") public static boolean PLOT_EXPIRY =
             false;
         @Comment("Processes chunks (trimming, or entity/tile limits) ") public static boolean
@@ -359,5 +347,7 @@ public class Settings extends Config {
         @Comment("Delete plots when a player is banned") public static boolean BAN_DELETER = false;
         @Comment({"Prevent possibly unsafe blocks from being used in plot components", "Can be bypassed with `/plot debugallowunsafe`"})
         public static boolean PREVENT_UNSAFE = true;
+        @Comment("Allows PlaceholderAPI placeholders to be used in captions, flags, etc")
+        public static boolean EXTERNAL_PLACEHOLDERS = true;
     }
 }

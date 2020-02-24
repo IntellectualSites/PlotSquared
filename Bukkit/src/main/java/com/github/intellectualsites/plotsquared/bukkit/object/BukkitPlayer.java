@@ -187,7 +187,9 @@ public class BukkitPlayer extends PlotPlayer {
         return this.player.isPermissionSet(permission);
     }
 
-    @Override public void sendMessage(final String message) {
+    @Override public void sendMessage(String message) {
+        message = message.replace('\u2010', '%')
+            .replace('\u2020', '&').replace('\u2030', '&');
         if (!StringMan.isEqual(this.getMeta("lastMessage"), message) || (
             System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
             setMeta("lastMessage", message);
