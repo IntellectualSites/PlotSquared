@@ -71,9 +71,10 @@ public class Move extends SubCommand {
             return CompletableFuture.completedFuture(false);
         }
 
-        return plot1.move(plot2, () -> MainUtil.sendMessage(player, Captions.MOVE_SUCCESS), false)
+        return plot1.move(plot2, () -> {}, false)
             .thenApply(result -> {
                 if (result) {
+                    MainUtil.sendMessage(player, Captions.MOVE_SUCCESS);
                     return true;
                 } else {
                     MainUtil.sendMessage(player, Captions.REQUIRES_UNOWNED);
