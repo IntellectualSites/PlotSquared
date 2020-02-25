@@ -167,7 +167,7 @@ public class Merge extends SubCommand {
             return true;
         }
         if (plot.autoMerge(direction, maxSize - size, uuid, terrain)) {
-            if (EconHandler.manager != null && plotArea.USE_ECONOMY && price > 0d) {
+            if (EconHandler.manager != null && plotArea.isUseEconomy() && price > 0d) {
                 EconHandler.manager.withdrawMoney(player, price);
                 sendMessage(player, Captions.REMOVED_BALANCE, String.valueOf(price));
             }
@@ -201,7 +201,7 @@ public class Merge extends SubCommand {
                     sendMessage(accepter, Captions.MERGE_NOT_VALID);
                     return;
                 }
-                if (EconHandler.manager != null && plotArea.USE_ECONOMY && price > 0d) {
+                if (EconHandler.manager != null && plotArea.isUseEconomy() && price > 0d) {
                     if (!force && EconHandler.manager.getMoney(player) < price) {
                         sendMessage(player, Captions.CANNOT_AFFORD_MERGE, String.valueOf(price));
                         return;

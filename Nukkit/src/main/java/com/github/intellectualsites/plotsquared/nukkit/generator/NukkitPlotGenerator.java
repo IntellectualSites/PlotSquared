@@ -85,7 +85,7 @@ public class NukkitPlotGenerator extends Generator implements GeneratorWrapper<G
     }
 
     @Override public void augment(PlotArea area) {
-        NukkitAugmentedGenerator.get(NukkitUtil.getWorld(area.worldname));
+        NukkitAugmentedGenerator.get(NukkitUtil.getWorld(area.getWorldName()));
     }
 
     @Override public boolean isFull() {

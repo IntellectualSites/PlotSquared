@@ -101,7 +101,7 @@ public class EntitySpawnListener implements Listener {
         }
         Plot plot = location.getOwnedPlotAbs();
         if (plot == null) {
-            if (!area.MOB_SPAWNING) {
+            if (!area.isMobSpawning()) {
                 EntityType type = entity.getType();
                 switch (type) {
                     case DROPPED_ITEM:
@@ -112,7 +112,7 @@ public class EntitySpawnListener implements Listener {
                     case PLAYER:
                         return;
                 }
-                if (type.isAlive() || !area.MISC_SPAWN_UNOWNED) {
+                if (type.isAlive() || !area.isMiscSpawnUnowned()) {
                     event.setCancelled(true);
                 }
             }

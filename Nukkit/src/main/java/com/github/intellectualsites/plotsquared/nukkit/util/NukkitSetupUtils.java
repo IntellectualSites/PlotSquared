@@ -155,7 +155,7 @@ public class NukkitSetupUtils extends SetupUtils {
         if (SetupUtils.generators.isEmpty()) {
             updateGenerators();
         }
-        Level world = NukkitUtil.getWorld(plotArea.worldname);
+        Level world = NukkitUtil.getWorld(plotArea.getWorldName());
         if (world == null) {
             return null;
         }

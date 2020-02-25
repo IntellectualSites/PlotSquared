@@ -81,7 +81,7 @@ public class Template extends SubCommand {
 
     public static byte[] getBytes(PlotArea plotArea) {
         ConfigurationSection section =
-            PlotSquared.get().worlds.getConfigurationSection("worlds." + plotArea.worldname);
+            PlotSquared.get().worlds.getConfigurationSection("worlds." + plotArea.getWorldName());
         YamlConfiguration config = new YamlConfiguration();
         String generator = SetupUtils.manager.getGenerator(plotArea);
         if (generator != null) {

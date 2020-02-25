@@ -55,7 +55,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             + squarePlotWorld.PLOT_WIDTH))) - (int) Math.floor(squarePlotWorld.ROAD_WIDTH / 2) - 1;
         int z = (squarePlotWorld.ROAD_OFFSET_Z + (pz * (squarePlotWorld.ROAD_WIDTH
             + squarePlotWorld.PLOT_WIDTH))) - (int) Math.floor(squarePlotWorld.ROAD_WIDTH / 2) - 1;
-        return new Location(squarePlotWorld.worldname, x, Math.min(getWorldHeight(), 255), z);
+        return new Location(squarePlotWorld.getWorldName(), x, Math.min(getWorldHeight(), 255), z);
     }
 
     @Override public PlotId getPlotIdAbs(int x, int y, int z) {
@@ -204,7 +204,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             PlotSquared.debug("invalid location: " + Arrays.toString(merged));
         } catch (Exception ignored) {
             PlotSquared.debug("Invalid plot / road width in settings.yml for world: "
-                + squarePlotWorld.worldname);
+                + squarePlotWorld.getWorldName());
         }
         return null;
     }
@@ -221,6 +221,6 @@ public abstract class SquarePlotManager extends GridPlotManager {
         int z = (squarePlotWorld.ROAD_OFFSET_Z + (pz * (squarePlotWorld.ROAD_WIDTH
             + squarePlotWorld.PLOT_WIDTH))) - squarePlotWorld.PLOT_WIDTH - (int) Math
             .floor(squarePlotWorld.ROAD_WIDTH / 2);
-        return new Location(squarePlotWorld.worldname, x, squarePlotWorld.MIN_BUILD_HEIGHT, z);
+        return new Location(squarePlotWorld.getWorldName(), x, squarePlotWorld.getMinBuildHeight(), z);
     }
 }

@@ -221,7 +221,7 @@ public class ExpireManager {
         // Run applicable non confirming tasks
         for (int i = 0; i < applicable.size(); i++) {
             ExpiryTask expiryTask = applicable.poll();
-            if (!expiryTask.needsAnalysis() || plot.getArea().TYPE != 0) {
+            if (!expiryTask.needsAnalysis() || plot.getArea().getType() != 0) {
                 if (!expiryTask.requiresConfirmation()) {
                     return Collections.singletonList(expiryTask);
                 }
@@ -231,7 +231,7 @@ public class ExpireManager {
         // Run applicable confirming tasks
         for (int i = 0; i < applicable.size(); i++) {
             ExpiryTask expiryTask = applicable.poll();
-            if (!expiryTask.needsAnalysis() || plot.getArea().TYPE != 0) {
+            if (!expiryTask.needsAnalysis() || plot.getArea().getType() != 0) {
                 return Collections.singletonList(expiryTask);
             }
             applicable.add(expiryTask);

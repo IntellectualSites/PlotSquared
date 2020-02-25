@@ -350,7 +350,7 @@ public abstract class HybridUtils {
             return false;
         }
         HybridUtils.UPDATE = true;
-        Set<BlockVector2> regions = ChunkManager.manager.getChunkChunks(area.worldname);
+        Set<BlockVector2> regions = ChunkManager.manager.getChunkChunks(area.getWorldName());
         return scheduleRoadUpdate(area, regions, extend);
     }
 
@@ -381,7 +381,7 @@ public abstract class HybridUtils {
                         if (!regenedRoad) {
                             PlotSquared.debug("Failed to regenerate roads.");
                         }
-                        ChunkManager.manager.unloadChunk(area.worldname, chunk, true);
+                        ChunkManager.manager.unloadChunk(area.getWorldName(), chunk, true);
                     }
                     PlotSquared.debug("Cancelled road task");
                     return;
@@ -440,14 +440,14 @@ public abstract class HybridUtils {
                             BlockVector2 loc = iterator.next();
                             iterator.remove();
                             PlotSquared.debug(
-                                "[ERROR] Could not update '" + area.worldname + "/region/r." + loc
+                                "[ERROR] Could not update '" + area.getWorldName() + "/region/r." + loc
                                     .getX() + "." + loc.getZ() + ".mca' (Corrupt chunk?)");
                             int sx = loc.getX() << 5;
                             int sz = loc.getZ() << 5;
                             for (int x = sx; x < sx + 32; x++) {
                                 for (int z = sz; z < sz + 32; z++) {
                                     ChunkManager.manager
-                                        .unloadChunk(area.worldname, BlockVector2.at(x, z), true);
+                                        .unloadChunk(area.getWorldName(), BlockVector2.at(x, z), true);
                                 }
                             }
                             PlotSquared.debug(" - Potentially skipping 1024 chunks");
@@ -535,7 +535,7 @@ public abstract class HybridUtils {
             return false;
         }
         AtomicBoolean toCheck = new AtomicBoolean(false);
-        if (plotWorld.TYPE == 2) {
+        if (plotWorld.getType() == 2) {
             boolean chunk1 = area.contains(x, z);
             boolean chunk2 = area.contains(ex, ez);
             if (!chunk1 && !chunk2) {
@@ -551,9 +551,9 @@ public abstract class HybridUtils {
         z -= plotWorld.ROAD_OFFSET_Z;
         final int finalX = x;
         final int finalZ = z;
-        LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(plotWorld.worldname, false);
+        LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(plotWorld.getWorldName(), false);
         if (id1 == null || id2 == null || id1 != id2) {
-            ChunkManager.manager.loadChunk(area.worldname, chunk, false).thenRun(() -> {
+            ChunkManager.manager.loadChunk(area.getWorldName(), chunk, false).thenRun(() -> {
                 if (id1 != null) {
                     Plot p1 = area.getPlotAbs(id1);
                     if (p1 != null && p1.hasOwner() && p1.isMerged()) {

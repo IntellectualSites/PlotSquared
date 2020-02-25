@@ -28,16 +28,16 @@ public class Reload extends SubCommand {
             Captions.load(PlotSquared.get().translationFile);
             PlotSquared.get().forEachPlotArea(area -> {
                 ConfigurationSection worldSection =
-                    PlotSquared.get().worlds.getConfigurationSection("worlds." + area.worldname);
+                    PlotSquared.get().worlds.getConfigurationSection("worlds." + area.getWorldName());
                 if (worldSection == null) {
                     return;
                 }
-                if (area.TYPE != 2 || !worldSection.contains("areas")) {
+                if (area.getType() != 2 || !worldSection.contains("areas")) {
                     area.saveConfiguration(worldSection);
                     area.loadDefaultConfiguration(worldSection);
                 } else {
                     ConfigurationSection areaSection = worldSection.getConfigurationSection(
-                        "areas." + area.id + "-" + area.getMin() + "-" + area.getMax());
+                        "areas." + area.getId() + "-" + area.getMin() + "-" + area.getMax());
                     YamlConfiguration clone = new YamlConfiguration();
                     for (String key : areaSection.getKeys(true)) {
                         if (areaSection.get(key) instanceof MemorySection) {

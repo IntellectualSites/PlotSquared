@@ -200,7 +200,7 @@ public class Setup extends SubCommand {
                     return false;
                 }
                 for (PlotArea area : PlotSquared.get().getPlotAreas()) {
-                    if (area.id != null && area.id.equalsIgnoreCase(args[0])) {
+                    if (area.getId() != null && area.getId().equalsIgnoreCase(args[0])) {
                         MainUtil.sendMessage(player,
                             "&cYou must choose an area id that is not in use!");
                         return false;

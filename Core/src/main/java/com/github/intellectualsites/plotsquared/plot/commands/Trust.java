@@ -67,7 +67,7 @@ public class Trust extends Command {
             size += currentPlot.getMembers().contains(uuid) ? 0 : 1;
         }
         checkTrue(!uuids.isEmpty(), null);
-        checkTrue(size <= currentPlot.getArea().MAX_PLOT_MEMBERS || Permissions
+        checkTrue(size <= currentPlot.getArea().getMaxPlotMembers() || Permissions
                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
             Captions.PLOT_MAX_MEMBERS);
         // Success

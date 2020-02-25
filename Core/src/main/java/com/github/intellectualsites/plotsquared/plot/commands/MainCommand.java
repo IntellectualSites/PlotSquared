@@ -144,7 +144,7 @@ public class MainCommand extends Command {
                             if (EconHandler.manager != null) {
                                 PlotArea area = player.getApplicablePlotArea();
                                 if (area != null) {
-                                    Expression<Double> priceEval = area.PRICES.get(cmd.getFullId());
+                                    Expression<Double> priceEval = area.getPrices().get(cmd.getFullId());
                                     Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
                                     if (price != null
                                         && EconHandler.manager.getMoney(player) < price) {
@@ -164,7 +164,7 @@ public class MainCommand extends Command {
                     if (EconHandler.manager != null) {
                         PlotArea area = player.getApplicablePlotArea();
                         if (area != null) {
-                            Expression<Double> priceEval = area.PRICES.get(cmd.getFullId());
+                            Expression<Double> priceEval = area.getPrices().get(cmd.getFullId());
                             Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
                             if (price != 0d && EconHandler.manager.getMoney(player) < price) {
                                 if (failure != null) {
@@ -230,7 +230,7 @@ public class MainCommand extends Command {
                             if (EconHandler.manager != null) {
                                 PlotArea area = player.getApplicablePlotArea();
                                 if (area != null) {
-                                    Expression<Double> priceEval = area.PRICES.get(cmd.getFullId());
+                                    Expression<Double> priceEval = area.getPrices().get(cmd.getFullId());
                                     Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
                                     if (price != 0d
                                         && EconHandler.manager.getMoney(player) < price) {

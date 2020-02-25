@@ -38,7 +38,7 @@ public class DebugClaimTest extends SubCommand {
                     + "plot signs. \n\n&cMissing world arg /plot debugclaimtest {world} {PlotId min} {PlotId max}");
         }
         PlotArea area = PlotSquared.get().getPlotAreaByString(args[0]);
-        if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
+        if (area == null || !WorldUtil.IMP.isWorld(area.getWorldName())) {
             Captions.NOT_VALID_PLOT_WORLD.send(player, args[0]);
             return false;
         }
@@ -70,7 +70,7 @@ public class DebugClaimTest extends SubCommand {
                 }
                 Location location = manager.getSignLoc(plot);
                 BlockVector2 chunk = BlockVector2.at(location.getX() >> 4, location.getZ() >> 4);
-                ChunkManager.manager.loadChunk(area.worldname, chunk, false).thenRun(() -> {
+                ChunkManager.manager.loadChunk(area.getWorldName(), chunk, false).thenRun(() -> {
                     String[] lines = WorldUtil.IMP.getSign(location);
                     if (lines != null) {
                         String line = lines[2];

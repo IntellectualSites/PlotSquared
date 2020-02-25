@@ -996,7 +996,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         PlotPlayer plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
         Location location = plotPlayer.getLocation();
         PlotArea area = location.getPlotArea();
-        if (area == null || (area.PLOT_CHAT == plotPlayer.getAttribute("chat"))) {
+        if (area == null || (area.isPlotChat() == plotPlayer.getAttribute("chat"))) {
             return;
         }
         Plot plot = area.getPlot(location);
@@ -1064,12 +1064,12 @@ public class PlayerEvents extends PlotListener implements Listener {
                     return;
                 }
             } else if (
-                (location.getY() > area.MAX_BUILD_HEIGHT || location.getY() < area.MIN_BUILD_HEIGHT)
+                (location.getY() > area.getMaxBuildHeight() || location.getY() < area.getMinBuildHeight())
                     && !Permissions
                     .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
                 MainUtil.sendMessage(plotPlayer, Captions.HEIGHT_LIMIT.getTranslated()
-                    .replace("{limit}", String.valueOf(area.MAX_BUILD_HEIGHT)));
+                    .replace("{limit}", String.valueOf(area.getMaxBuildHeight())));
             }
             if (!plot.hasOwner()) {
                 if (!Permissions
@@ -2075,7 +2075,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             case EGG:
             case OCELOT_BABY:
             case SPAWNER_EGG:
-                if (!area.SPAWN_EGGS) {
+                if (!area.isSpawnEggs()) {
                     event.setCancelled(true);
                     return;
                 }
@@ -2083,12 +2083,12 @@ public class PlayerEvents extends PlotListener implements Listener {
             case REINFORCEMENTS:
             case NATURAL:
             case CHUNK_GEN:
-                if (!area.MOB_SPAWNING) {
+                if (!area.isMobSpawning()) {
                     event.setCancelled(true);
                     return;
                 }
             case BREEDING:
-                if (!area.SPAWN_BREEDING) {
+                if (!area.isSpawnBreeding()) {
                     event.setCancelled(true);
                     return;
                 }
@@ -2097,13 +2097,13 @@ public class PlayerEvents extends PlotListener implements Listener {
             case BUILD_SNOWMAN:
             case BUILD_WITHER:
             case CUSTOM:
-                if (!area.SPAWN_CUSTOM && entity.getType() != EntityType.ARMOR_STAND) {
+                if (!area.isSpawnCustom() && entity.getType() != EntityType.ARMOR_STAND) {
                     event.setCancelled(true);
                     return;
                 }
                 break;
             case SPAWNER:
-                if (!area.MOB_SPAWNER_SPAWNING) {
+                if (!area.isMobSpawnerSpawning()) {
                     event.setCancelled(true);
                     return;
                 }
@@ -2111,7 +2111,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         Plot plot = area.getOwnedPlotAbs(location);
         if (plot == null) {
-            if (!area.MOB_SPAWNING) {
+            if (!area.isMobSpawning()) {
                 event.setCancelled(true);
             }
             return;
@@ -2909,11 +2909,11 @@ public class PlayerEvents extends PlotListener implements Listener {
         PlotPlayer pp = BukkitUtil.getPlayer(player);
         Plot plot = area.getPlot(location);
         if (plot != null) {
-            if ((location.getY() > area.MAX_BUILD_HEIGHT || location.getY() < area.MIN_BUILD_HEIGHT)
+            if ((location.getY() > area.getMaxBuildHeight() || location.getY() < area.getMinBuildHeight())
                 && !Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
                 MainUtil.sendMessage(pp, Captions.HEIGHT_LIMIT.getTranslated()
-                    .replace("{limit}", String.valueOf(area.MAX_BUILD_HEIGHT)));
+                    .replace("{limit}", String.valueOf(area.getMaxBuildHeight())));
             }
             if (!plot.hasOwner()) {
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_UNOWNED)) {

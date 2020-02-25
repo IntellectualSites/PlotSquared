@@ -92,7 +92,7 @@ import java.util.Locale;
         // Dump world settings
         if (Settings.DEBUG) {
             PlotSquared.debug(String
-                .format("- Dumping settings for ClassicPlotWorld with name %s", this.worldname));
+                .format("- Dumping settings for ClassicPlotWorld with name %s", this.getWorldName()));
             final Field[] fields = this.getClass().getFields();
             for (final Field field : fields) {
                 final String name = field.getName().toLowerCase(Locale.ENGLISH);

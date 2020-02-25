@@ -447,12 +447,12 @@ import java.util.zip.ZipInputStream;
     }
 
     public PlotManager getPlotManager(Plot plot) {
-        return plot.getArea().manager;
+        return plot.getArea().getPlotManager();
     }
 
     public PlotManager getPlotManager(Location location) {
         PlotArea pa = getPlotAreaAbs(location);
-        return pa != null ? pa.manager : null;
+        return pa != null ? pa.getPlotManager() : null;
     }
 
     /**
@@ -464,8 +464,8 @@ import java.util.zip.ZipInputStream;
     public void addPlotArea(PlotArea plotArea) {
         HashMap<PlotId, Plot> plots;
         if (plots_tmp == null || (plots = plots_tmp.remove(plotArea.toString())) == null) {
-            if (plotArea.TYPE == 2) {
-                plots = this.plots_tmp != null ? this.plots_tmp.get(plotArea.worldname) : null;
+            if (plotArea.getType() == 2) {
+                plots = this.plots_tmp != null ? this.plots_tmp.get(plotArea.getWorldName()) : null;
                 if (plots != null) {
                     Iterator<Entry<PlotId, Plot>> iterator = plots.entrySet().iterator();
                     while (iterator.hasNext()) {
@@ -485,9 +485,9 @@ import java.util.zip.ZipInputStream;
         }
         Set<PlotCluster> clusters;
         if (clusters_tmp == null || (clusters = clusters_tmp.remove(plotArea.toString())) == null) {
-            if (plotArea.TYPE == 2) {
+            if (plotArea.getType() == 2) {
                 clusters =
-                    this.clusters_tmp != null ? this.clusters_tmp.get(plotArea.worldname) : null;
+                    this.clusters_tmp != null ? this.clusters_tmp.get(plotArea.getWorldName()) : null;
                 if (clusters != null) {
                     Iterator<PlotCluster> iterator = clusters.iterator();
                     while (iterator.hasNext()) {
@@ -520,7 +520,7 @@ import java.util.zip.ZipInputStream;
 
     public void removePlotAreas(String world) {
         for (PlotArea area : getPlotAreas(world)) {
-            if (area.worldname.equals(world)) {
+            if (area.getWorldName().equals(world)) {
                 removePlotArea(area);
             }
         }
@@ -1249,7 +1249,7 @@ import java.util.zip.ZipInputStream;
                         + ". Expected form `<name>-<x1;z1>-<x2;z2>`");
                 }
                 PlotArea existing = getPlotArea(world, name);
-                if (existing != null && name.equals(existing.id)) {
+                if (existing != null && name.equals(existing.getId())) {
                     continue;
                 }
                 ConfigurationSection section = areasSection.getConfigurationSection(areaId);
@@ -1883,7 +1883,7 @@ import java.util.zip.ZipInputStream;
 
     public boolean isAugmented(@NonNull final String world) {
         final PlotArea[] areas = plotAreaManager.getPlotAreas(world, null);
-        return areas != null && (areas.length > 1 || areas[0].TYPE != 0);
+        return areas != null && (areas.length > 1 || areas[0].getType() != 0);
     }
 
     /**
@@ -1938,8 +1938,8 @@ import java.util.zip.ZipInputStream;
         PlotArea[] areas = plotAreaManager.getPlotAreas(split[0], null);
         if (areas == null) {
             for (PlotArea area : plotAreaManager.getAllPlotAreas()) {
-                if (area.worldname.equalsIgnoreCase(split[0])) {
-                    if (area.id == null || split.length == 2 && area.id
+                if (area.getWorldName().equalsIgnoreCase(split[0])) {
+                    if (area.getId() == null || split.length == 2 && area.getId()
                         .equalsIgnoreCase(split[1])) {
                         return area;
                     }
@@ -1953,7 +1953,7 @@ import java.util.zip.ZipInputStream;
             return null;
         } else {
             for (PlotArea area : areas) {
-                if (StringMan.isEqual(split[1], area.id)) {
+                if (StringMan.isEqual(split[1], area.getId())) {
                     return area;
                 }
             }

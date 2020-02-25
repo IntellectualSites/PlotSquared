@@ -318,7 +318,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Override @SuppressWarnings("deprecation") public void runEntityTask() {
         PlotSquared.log(Captions.PREFIX + "KillAllEntities started.");
         TaskManager.runTaskRepeat(() -> PlotSquared.get().forEachPlotArea(plotArea -> {
-            final World world = Bukkit.getWorld(plotArea.worldname);
+            final World world = Bukkit.getWorld(plotArea.getWorldName());
             try {
                 if (world == null) {
                     return;

@@ -224,7 +224,7 @@ public class BukkitSetupUtils extends SetupUtils {
         if (SetupUtils.generators.isEmpty()) {
             updateGenerators();
         }
-        World world = Bukkit.getWorld(plotArea.worldname);
+        World world = Bukkit.getWorld(plotArea.getWorldName());
         if (world == null) {
             return null;
         }

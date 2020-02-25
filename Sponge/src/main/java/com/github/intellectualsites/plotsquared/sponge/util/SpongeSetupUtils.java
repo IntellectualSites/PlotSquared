@@ -59,7 +59,7 @@ public class SpongeSetupUtils extends SetupUtils {
         if (SetupUtils.generators.isEmpty()) {
             updateGenerators();
         }
-        World world = SpongeUtil.getWorld(plotArea.worldname);
+        World world = SpongeUtil.getWorld(plotArea.getWorldName());
         if (world == null) {
             return null;
         }

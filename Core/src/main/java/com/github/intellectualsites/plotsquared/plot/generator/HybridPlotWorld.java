@@ -141,7 +141,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public void setupSchematics() throws SchematicHandler.UnsupportedFormatException {
         this.G_SCH = new HashMap<>();
         File root = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
-            "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname);
+            "schematics/GEN_ROAD_SCHEMATIC/" + this.getWorldName());
         File schematic1File = new File(root, "sideroad.schem");
         if (!schematic1File.exists())
             schematic1File = new File(root, "sideroad.schematic");

@@ -50,7 +50,7 @@ public class Auto extends SubCommand {
         if (Settings.Limit.GLOBAL) {
             currentPlots = player.getPlotCount();
         } else {
-            currentPlots = player.getPlotCount(plotarea.worldname);
+            currentPlots = player.getPlotCount(plotarea.getWorldName());
         }
         int diff = currentPlots - allowedPlots;
         if (diff + sizeX * sizeZ > 0) {
@@ -135,7 +135,7 @@ public class Auto extends SubCommand {
 
                         if (checkAllowedPlots(player, area, allowedPlots, 1, 1)) {
                             plot.claim(player, true, schematic, false);
-                            if (area.AUTO_MERGE) {
+                            if (area.isAutoMerge()) {
                                 PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
                                     .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
                                 if (event.getEventResult() == Result.DENY) {
@@ -173,7 +173,7 @@ public class Auto extends SubCommand {
             if (EconHandler.manager != null) {
                 for (PlotArea area : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
                     if (EconHandler.manager
-                        .hasPermission(area.worldname, player.getName(), "plots.auto")) {
+                        .hasPermission(area.getWorldName(), player.getName(), "plots.auto")) {
                         if (plotarea != null) {
                             plotarea = null;
                             break;
@@ -249,7 +249,7 @@ public class Auto extends SubCommand {
         }
 
         if (schematic != null && !schematic.isEmpty()) {
-            if (!plotarea.SCHEMATICS.contains(schematic.toLowerCase())) {
+            if (!plotarea.getSchematics().contains(schematic.toLowerCase())) {
                 sendMessage(player, Captions.SCHEMATIC_INVALID, "non-existent: " + schematic);
                 return true;
             }
@@ -263,11 +263,11 @@ public class Auto extends SubCommand {
                 return true;
             }
         }
-        if (EconHandler.manager != null && plotarea.USE_ECONOMY) {
-            Expression<Double> costExp = plotarea.PRICES.get("claim");
+        if (EconHandler.manager != null && plotarea.isUseEconomy()) {
+            Expression<Double> costExp = plotarea.getPrices().get("claim");
             double cost = costExp.evaluate((double) (Settings.Limit.GLOBAL ?
                 player.getPlotCount() :
-                player.getPlotCount(plotarea.worldname)));
+                player.getPlotCount(plotarea.getWorldName())));
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
                 if (!force && EconHandler.manager.getMoney(player) < cost) {
@@ -283,7 +283,7 @@ public class Auto extends SubCommand {
             autoClaimSafe(player, plotarea, null, schematic, allowed_plots);
             return true;
         } else {
-            if (plotarea.TYPE == 2) {
+            if (plotarea.getType() == 2) {
                 MainUtil.sendMessage(player, Captions.NO_FREE_PLOTS);
                 return false;
             }

@@ -30,6 +30,7 @@ import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,40 +52,40 @@ import java.util.function.Consumer;
  */
 public abstract class PlotArea {
 
-    public final String worldname;
-    public final String id;
-    @NotNull public final PlotManager manager;
-    public final int worldhash;
     protected final ConcurrentHashMap<PlotId, Plot> plots = new ConcurrentHashMap<>();
+    @Getter @NotNull private final String worldName;
+    @Getter private final String id;
+    @Getter @NotNull private final PlotManager plotManager;
+    @Getter private final int worldHash;
     private final PlotId min;
     private final PlotId max;
-    @NotNull private final IndependentPlotGenerator generator;
-    public int MAX_PLOT_MEMBERS = 128;
-    public boolean AUTO_MERGE = false;
-    public boolean ALLOW_SIGNS = true;
-    public boolean MISC_SPAWN_UNOWNED = false;
-    public boolean MOB_SPAWNING = false;
-    public boolean MOB_SPAWNER_SPAWNING = false;
-    public BiomeType PLOT_BIOME = BiomeTypes.FOREST;
-    public boolean PLOT_CHAT = false;
-    public boolean SCHEMATIC_CLAIM_SPECIFY = false;
-    public boolean SCHEMATIC_ON_CLAIM = false;
-    public String SCHEMATIC_FILE = "null";
-    public List<String> SCHEMATICS = null;
-    public boolean USE_ECONOMY = false;
-    public Map<String, Expression<Double>> PRICES = new HashMap<>();
-    public boolean SPAWN_EGGS = false;
-    public boolean SPAWN_CUSTOM = true;
-    public boolean SPAWN_BREEDING = false;
-    public boolean WORLD_BORDER = false;
-    public int TYPE = 0;
-    public int TERRAIN = 0;
-    public boolean HOME_ALLOW_NONMEMBER = false;
-    public PlotLoc NONMEMBER_HOME;
-    public PlotLoc DEFAULT_HOME;
-    public int MAX_BUILD_HEIGHT = 256;
-    public int MIN_BUILD_HEIGHT = 1;
-    public GameMode GAMEMODE = GameModes.CREATIVE;
+    @Getter @NotNull private final IndependentPlotGenerator generator;
+    @Getter @Setter private int maxPlotMembers = 128;
+    @Getter @Setter private boolean autoMerge = false;
+    @Getter @Setter private boolean allowSigns = true;
+    @Getter @Setter private boolean miscSpawnUnowned = false;
+    @Getter @Setter private boolean mobSpawning = false;
+    @Getter @Setter private boolean mobSpawnerSpawning = false;
+    @Getter @Setter private BiomeType plotBiome = BiomeTypes.FOREST;
+    @Getter @Setter private boolean plotChat = false;
+    @Getter @Setter private boolean schematicClaimSpecify = false;
+    @Getter @Setter private boolean schematicOnClaim = false;
+    @Getter @Setter private String schematicFile = "null";
+    @Getter @Setter private List<String> schematics = null;
+    @Getter @Setter private boolean useEconomy = false;
+    @Getter @Setter private Map<String, Expression<Double>> prices = new HashMap<>();
+    @Getter @Setter private boolean spawnEggs = false;
+    @Getter @Setter private boolean spawnCustom = true;
+    @Getter @Setter private boolean spawnBreeding = false;
+    @Getter @Setter private boolean worldBorder = false;
+    @Getter @Setter private int type = 0;
+    @Getter @Setter private int terrain = 0;
+    @Getter @Setter private boolean homeAllowNonmember = false;
+    @Getter @Setter private PlotLoc nonmemberHome;
+    @Getter @Setter private PlotLoc defaultHome;
+    @Getter @Setter private int maxBuildHeight = 256;
+    @Getter @Setter private int minBuildHeight = 1;
+    @Getter @Setter private GameMode gameMode = GameModes.CREATIVE;
     private int hash;
     private CuboidRegion region;
     private ConcurrentHashMap<String, Object> meta;
@@ -98,9 +99,9 @@ public abstract class PlotArea {
     public PlotArea(@NotNull final String worldName, @Nullable final String id,
         @NotNull IndependentPlotGenerator generator, @Nullable final PlotId min,
         @Nullable final PlotId max) {
-        this.worldname = worldName;
+        this.worldName = worldName;
         this.id = id;
-        this.manager = createManager();
+        this.plotManager = createManager();
         this.generator = generator;
         if (min == null || max == null) {
             if (min != max) {
@@ -113,13 +114,13 @@ public abstract class PlotArea {
             this.min = min;
             this.max = max;
         }
-        this.worldhash = worldName.hashCode();
+        this.worldHash = worldName.hashCode();
     }
 
     @NotNull protected abstract PlotManager createManager();
 
     public LocalBlockQueue getQueue(final boolean autoQueue) {
-        return GlobalBlockQueue.IMP.getNewQueue(worldname, autoQueue);
+        return GlobalBlockQueue.IMP.getNewQueue(worldName, autoQueue);
     }
 
     /**
@@ -174,15 +175,6 @@ public abstract class PlotArea {
         return this.max == null ? new PlotId(Integer.MAX_VALUE, Integer.MAX_VALUE) : this.max;
     }
 
-    /**
-     * Get the implementation independent generator for this area.
-     *
-     * @return the {@link IndependentPlotGenerator}
-     */
-    @NotNull public IndependentPlotGenerator getGenerator() {
-        return this.generator;
-    }
-
     @Override public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -191,8 +183,8 @@ public abstract class PlotArea {
             return false;
         }
         PlotArea plotarea = (PlotArea) obj;
-        return this.worldhash == plotarea.worldhash && this.worldname.equals(plotarea.worldname)
-            && StringMan.isEqual(this.id, plotarea.id);
+        return this.getWorldHash() == plotarea.getWorldHash() && this.getWorldName().equals(plotarea.getWorldName())
+            && StringMan.isEqual(this.getId(), plotarea.getId());
     }
 
     public Set<PlotCluster> getClusters() {
@@ -208,9 +200,9 @@ public abstract class PlotArea {
     public boolean isCompatible(PlotArea plotArea) {
         ConfigurationSection section = PlotSquared.get().worlds.getConfigurationSection("worlds");
         for (ConfigurationNode setting : plotArea.getSettingNodes()) {
-            Object constant = section.get(plotArea.worldname + '.' + setting.getConstant());
+            Object constant = section.get(plotArea.worldName + '.' + setting.getConstant());
             if (constant == null || !constant
-                .equals(section.get(this.worldname + '.' + setting.getConstant()))) {
+                .equals(section.get(this.worldName + '.' + setting.getConstant()))) {
                 return false;
             }
         }
@@ -227,79 +219,79 @@ public abstract class PlotArea {
             throw new IllegalArgumentException("Must extend GridPlotWorld to provide");
         }
         if (config.contains("generator.terrain")) {
-            this.TERRAIN = config.getInt("generator.terrain");
-            this.TYPE = config.getInt("generator.type");
+            this.terrain = config.getInt("generator.terrain");
+            this.type = config.getInt("generator.type");
         }
-        this.MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
-        this.MISC_SPAWN_UNOWNED = config.getBoolean("misc_spawn_unowned");
-        this.MOB_SPAWNER_SPAWNING = config.getBoolean("mob_spawner_spawning");
-        this.AUTO_MERGE = config.getBoolean("plot.auto_merge");
-        this.MAX_PLOT_MEMBERS = config.getInt("limits.max-members");
-        this.ALLOW_SIGNS = config.getBoolean("plot.create_signs");
-        this.PLOT_BIOME = Configuration.BIOME.parseString(config.getString("plot.biome"));
-        this.SCHEMATIC_ON_CLAIM = config.getBoolean("schematic.on_claim");
-        this.SCHEMATIC_FILE = config.getString("schematic.file");
-        this.SCHEMATIC_CLAIM_SPECIFY = config.getBoolean("schematic.specify_on_claim");
-        this.SCHEMATICS = new ArrayList<>(config.getStringList("schematic.schematics"));
-        this.SCHEMATICS.replaceAll(String::toLowerCase);
-        this.USE_ECONOMY = config.getBoolean("economy.use") && EconHandler.getEconHandler() != null;
+        this.mobSpawning = config.getBoolean("natural_mob_spawning");
+        this.miscSpawnUnowned = config.getBoolean("misc_spawn_unowned");
+        this.mobSpawnerSpawning = config.getBoolean("mob_spawner_spawning");
+        this.autoMerge = config.getBoolean("plot.auto_merge");
+        this.maxPlotMembers = config.getInt("limits.max-members");
+        this.allowSigns = config.getBoolean("plot.create_signs");
+        this.plotBiome = Configuration.BIOME.parseString(config.getString("plot.biome"));
+        this.schematicOnClaim = config.getBoolean("schematic.on_claim");
+        this.schematicFile = config.getString("schematic.file");
+        this.schematicClaimSpecify = config.getBoolean("schematic.specify_on_claim");
+        this.schematics = new ArrayList<>(config.getStringList("schematic.schematics"));
+        this.schematics.replaceAll(String::toLowerCase);
+        this.useEconomy = config.getBoolean("economy.use") && EconHandler.getEconHandler() != null;
         ConfigurationSection priceSection = config.getConfigurationSection("economy.prices");
-        if (this.USE_ECONOMY) {
-            this.PRICES = new HashMap<>();
+        if (this.useEconomy) {
+            this.prices = new HashMap<>();
             for (String key : priceSection.getKeys(false)) {
-                this.PRICES.put(key, Expression.doubleExpression(priceSection.getString(key)));
+                this.prices.put(key, Expression.doubleExpression(priceSection.getString(key)));
             }
         }
-        this.PLOT_CHAT = config.getBoolean("chat.enabled");
-        this.WORLD_BORDER = config.getBoolean("world.border");
-        this.MAX_BUILD_HEIGHT = config.getInt("world.max_height");
-        this.MIN_BUILD_HEIGHT = config.getInt("world.min_height");
+        this.plotChat = config.getBoolean("chat.enabled");
+        this.worldBorder = config.getBoolean("world.border");
+        this.maxBuildHeight = config.getInt("world.max_height");
+        this.minBuildHeight = config.getInt("world.min_height");
 
         switch (config.getString("world.gamemode").toLowerCase()) {
             case "creative":
             case "c":
             case "1":
-                this.GAMEMODE = GameModes.CREATIVE;
+                this.gameMode = GameModes.CREATIVE;
                 break;
             case "adventure":
             case "a":
             case "2":
-                this.GAMEMODE = GameModes.ADVENTURE;
+                this.gameMode = GameModes.ADVENTURE;
                 break;
             case "spectator":
             case "3":
-                this.GAMEMODE = GameModes.SPECTATOR;
+                this.gameMode = GameModes.SPECTATOR;
                 break;
             case "survival":
             case "s":
             case "0":
             default:
-                this.GAMEMODE = GameModes.SURVIVAL;
+                this.gameMode = GameModes.SURVIVAL;
                 break;
         }
 
         String homeNonMembers = config.getString("home.nonmembers");
         String homeDefault = config.getString("home.default");
-        this.DEFAULT_HOME = PlotLoc.fromString(homeDefault);
-        this.HOME_ALLOW_NONMEMBER = homeNonMembers.equalsIgnoreCase(homeDefault);
-        if (this.HOME_ALLOW_NONMEMBER) {
-            this.NONMEMBER_HOME = DEFAULT_HOME;
+        this.defaultHome = PlotLoc.fromString(homeDefault);
+        this.homeAllowNonmember = homeNonMembers.equalsIgnoreCase(homeDefault);
+        if (this.homeAllowNonmember) {
+            this.nonmemberHome = defaultHome;
         } else {
-            this.NONMEMBER_HOME = PlotLoc.fromString(homeNonMembers);
+            this.setNonmemberHome(PlotLoc.fromString(homeNonMembers));
         }
 
         if ("side".equalsIgnoreCase(homeDefault)) {
-            this.DEFAULT_HOME = null;
+            this.defaultHome = null;
         } else if (StringMan.isEqualIgnoreCaseToAny(homeDefault, "center", "middle")) {
-            this.DEFAULT_HOME = new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE);
+            this.defaultHome = new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE);
         } else {
             try {
                 /*String[] split = homeDefault.split(",");
                 this.DEFAULT_HOME =
                     new PlotLoc(Integer.parseInt(split[0]), Integer.parseInt(split[1]));*/
-                this.DEFAULT_HOME = PlotLoc.fromString(homeDefault);
+                this.defaultHome = PlotLoc.fromString(homeDefault);
             } catch (NumberFormatException ignored) {
-                this.DEFAULT_HOME = null;
+                this.defaultHome = null;
             }
         }
 
@@ -321,12 +313,12 @@ public abstract class PlotArea {
             this.getFlagContainer().addAll(parseFlags(flags));
         } catch (FlagParseException e) {
             e.printStackTrace();
-            PlotSquared.debug("&cInvalid default flags for " + this.worldname + ": " + StringMan
+            PlotSquared.debug("&cInvalid default flags for " + this.getWorldName() + ": " + StringMan
                 .join(flags, ","));
         }
-        this.SPAWN_EGGS = config.getBoolean("event.spawn.egg");
-        this.SPAWN_CUSTOM = config.getBoolean("event.spawn.custom");
-        this.SPAWN_BREEDING = config.getBoolean("event.spawn.breeding");
+        this.setSpawnEggs(config.getBoolean("event.spawn.egg"));
+        this.setSpawnCustom(config.getBoolean("event.spawn.custom"));
+        this.setSpawnBreeding(config.getBoolean("event.spawn.breeding"));
         loadConfiguration(config);
     }
 
@@ -339,40 +331,40 @@ public abstract class PlotArea {
      */
     public void saveConfiguration(ConfigurationSection config) {
         HashMap<String, Object> options = new HashMap<>();
-        options.put("natural_mob_spawning", this.MOB_SPAWNING);
-        options.put("misc_spawn_unowned", this.MISC_SPAWN_UNOWNED);
-        options.put("mob_spawner_spawning", this.MOB_SPAWNER_SPAWNING);
-        options.put("plot.auto_merge", this.AUTO_MERGE);
-        options.put("plot.create_signs", this.ALLOW_SIGNS);
+        options.put("natural_mob_spawning", this.isMobSpawning());
+        options.put("misc_spawn_unowned", this.isMiscSpawnUnowned());
+        options.put("mob_spawner_spawning", this.isMobSpawnerSpawning());
+        options.put("plot.auto_merge", this.isAutoMerge());
+        options.put("plot.create_signs", this.isAllowSigns());
         options.put("plot.biome", "FOREST");
-        options.put("schematic.on_claim", this.SCHEMATIC_ON_CLAIM);
-        options.put("schematic.file", this.SCHEMATIC_FILE);
-        options.put("schematic.specify_on_claim", this.SCHEMATIC_CLAIM_SPECIFY);
-        options.put("schematic.schematics", this.SCHEMATICS);
-        options.put("economy.use", this.USE_ECONOMY);
+        options.put("schematic.on_claim", this.isSchematicOnClaim());
+        options.put("schematic.file", this.getSchematicFile());
+        options.put("schematic.specify_on_claim", this.isSchematicClaimSpecify());
+        options.put("schematic.schematics", this.getSchematics());
+        options.put("economy.use", this.isUseEconomy());
         options.put("economy.prices.claim", 100);
         options.put("economy.prices.merge", 100);
         options.put("economy.prices.sell", 100);
-        options.put("chat.enabled", this.PLOT_CHAT);
+        options.put("chat.enabled", this.isPlotChat());
         options.put("flags.default", null);
-        options.put("event.spawn.egg", this.SPAWN_EGGS);
-        options.put("event.spawn.custom", this.SPAWN_CUSTOM);
-        options.put("event.spawn.breeding", this.SPAWN_BREEDING);
-        options.put("world.border", this.WORLD_BORDER);
-        options.put("limits.max-members", this.MAX_PLOT_MEMBERS);
+        options.put("event.spawn.egg", this.isSpawnEggs());
+        options.put("event.spawn.custom", this.isSpawnCustom());
+        options.put("event.spawn.breeding", this.isSpawnBreeding());
+        options.put("world.border", this.isWorldBorder());
+        options.put("limits.max-members", this.getMaxPlotMembers());
         options.put("home.default", "side");
         String position = config.getString("home.nonmembers",
             config.getBoolean("home.allow-nonmembers", false) ?
                 config.getString("home.default", "side") :
                 "side");
         options.put("home.nonmembers", position);
-        options.put("world.max_height", this.MAX_BUILD_HEIGHT);
-        options.put("world.min_height", this.MIN_BUILD_HEIGHT);
-        options.put("world.gamemode", this.GAMEMODE.getName().toLowerCase());
+        options.put("world.max_height", this.getMaxBuildHeight());
+        options.put("world.min_height", this.getMinBuildHeight());
+        options.put("world.gamemode", this.getGameMode().getName().toLowerCase());
 
-        if (this.TYPE != 0) {
-            options.put("generator.terrain", this.TERRAIN);
-            options.put("generator.type", this.TYPE);
+        if (this.getType() != 0) {
+            options.put("generator.terrain", this.getTerrain());
+            options.put("generator.type", this.getType());
         }
         ConfigurationNode[] settings = getSettingNodes();
         /*
@@ -393,10 +385,10 @@ public abstract class PlotArea {
     }
 
     @NotNull @Override public String toString() {
-        if (this.id == null) {
-            return this.worldname;
+        if (this.getId() == null) {
+            return this.getWorldName();
         } else {
-            return this.worldname + ";" + this.id;
+            return this.getWorldName() + ";" + this.getId();
         }
     }
 
@@ -422,7 +414,7 @@ public abstract class PlotArea {
      */
     @Nullable public Plot getPlotAbs(@NotNull final Location location) {
         final PlotId pid =
-            this.manager.getPlotId(location.getX(), location.getY(), location.getZ());
+            this.getPlotManager().getPlotId(location.getX(), location.getY(), location.getZ());
         if (pid == null) {
             return null;
         }
@@ -437,7 +429,7 @@ public abstract class PlotArea {
      */
     @Nullable public Plot getPlot(@NotNull final Location location) {
         final PlotId pid =
-            this.manager.getPlotId(location.getX(), location.getY(), location.getZ());
+            this.getPlotManager().getPlotId(location.getX(), location.getY(), location.getZ());
         if (pid == null) {
             return null;
         }
@@ -452,7 +444,7 @@ public abstract class PlotArea {
      */
     @Nullable public Plot getOwnedPlot(@NotNull final Location location) {
         final PlotId pid =
-            this.manager.getPlotId(location.getX(), location.getY(), location.getZ());
+            this.getPlotManager().getPlotId(location.getX(), location.getY(), location.getZ());
         if (pid == null) {
             return null;
         }
@@ -468,7 +460,7 @@ public abstract class PlotArea {
      */
     @Nullable public Plot getOwnedPlotAbs(@NotNull final Location location) {
         final PlotId pid =
-            this.manager.getPlotId(location.getX(), location.getY(), location.getZ());
+            this.getPlotManager().getPlotId(location.getX(), location.getY(), location.getZ());
         if (pid == null) {
             return null;
         }
@@ -491,7 +483,7 @@ public abstract class PlotArea {
     }
 
     public boolean contains(final int x, final int z) {
-        return this.TYPE != 2 || RegionUtil.contains(getRegionAbs(), x, z);
+        return this.getType() != 2 || RegionUtil.contains(getRegionAbs(), x, z);
     }
 
     public boolean contains(@NotNull final PlotId id) {
@@ -500,7 +492,7 @@ public abstract class PlotArea {
     }
 
     public boolean contains(@NotNull final Location location) {
-        return StringMan.isEqual(location.getWorld(), this.worldname) && (getRegionAbs() == null
+        return StringMan.isEqual(location.getWorld(), this.getWorldName()) && (getRegionAbs() == null
             || this.region.contains(location.getBlockVector3()));
     }
 
@@ -614,10 +606,6 @@ public abstract class PlotArea {
         return this.clusters != null ? this.clusters.get(id.x, id.y) : null;
     }
 
-    @NotNull public PlotManager getPlotManager() {
-        return this.manager;
-    }
-
     /**
      * Session only plot metadata (session is until the server stops).
      * <br>
@@ -700,7 +688,7 @@ public abstract class PlotArea {
         PlotId center;
         PlotId min = getMin();
         PlotId max = getMax();
-        if (TYPE == 2) {
+        if (getType() == 2) {
             center = new PlotId(MathMan.average(min.x, max.x), MathMan.average(min.y, max.y));
             plots = Math.max(max.x - min.x + 1, max.y - min.y + 1) + 1;
             if (start != null) {
@@ -762,7 +750,7 @@ public abstract class PlotArea {
      * Setup the plot border for a world (usually done when the world is created).
      */
     public void setupBorder() {
-        if (!this.WORLD_BORDER) {
+        if (!this.isWorldBorder()) {
             return;
         }
         final Integer meta = (Integer) getMeta("worldBorder");

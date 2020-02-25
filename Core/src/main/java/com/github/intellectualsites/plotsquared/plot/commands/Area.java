@@ -107,24 +107,24 @@ public class Area extends SubCommand {
                                 final int offsetZ = bz - (area.ROAD_WIDTH == 0 ? 0 : lower);
                                 final CuboidRegion region = RegionUtil.createRegion(bx, tx, bz, tz);
                                 Set<PlotArea> areas =
-                                    PlotSquared.get().getPlotAreas(area.worldname, region);
+                                    PlotSquared.get().getPlotAreas(area.getWorldName(), region);
                                 if (!areas.isEmpty()) {
                                     Captions.CLUSTER_INTERSECTION
                                         .send(player, areas.iterator().next().toString());
                                     return false;
                                 }
                                 final SetupObject object = new SetupObject();
-                                object.world = area.worldname;
-                                object.id = area.id;
-                                object.terrain = area.TERRAIN;
-                                object.type = area.TYPE;
+                                object.world = area.getWorldName();
+                                object.id = area.getId();
+                                object.terrain = area.getTerrain();
+                                object.type = area.getType();
                                 object.min = new PlotId(1, 1);
                                 object.max = new PlotId(numX, numZ);
                                 object.plotManager = PlotSquared.imp().getPluginName();
                                 object.setupGenerator = PlotSquared.imp().getPluginName();
                                 object.step = area.getSettingNodes();
                                 final String path =
-                                    "worlds." + area.worldname + ".areas." + area.id + '-'
+                                    "worlds." + area.getWorldName() + ".areas." + area.getId() + '-'
                                         + object.min + '-' + object.max;
                                 Runnable run = () -> {
                                     if (offsetX != 0) {
@@ -141,7 +141,7 @@ public class Area extends SubCommand {
                                         Captions.SETUP_FINISHED.send(player);
                                         player.teleport(WorldUtil.IMP.getSpawn(world),
                                             TeleportCause.COMMAND);
-                                        if (area.TERRAIN != 3) {
+                                        if (area.getTerrain() != 3) {
                                             ChunkManager.largeRegionTask(world, region,
                                                 new RunnableVal<BlockVector2>() {
                                                     @Override public void run(BlockVector2 value) {
@@ -153,7 +153,7 @@ public class Area extends SubCommand {
                                     } else {
                                         MainUtil.sendMessage(player,
                                             "An error occurred while creating the world: "
-                                                + area.worldname);
+                                                + area.getWorldName());
                                     }
                                 };
                                 if (hasConfirmation(player)) {
@@ -176,15 +176,15 @@ public class Area extends SubCommand {
                         object.world = split[0];
                         final HybridPlotWorld pa = new HybridPlotWorld(object.world, id,
                             PlotSquared.get().IMP.getDefaultGenerator(), null, null);
-                        PlotArea other = PlotSquared.get().getPlotArea(pa.worldname, id);
-                        if (other != null && Objects.equals(pa.id, other.id)) {
+                        PlotArea other = PlotSquared.get().getPlotArea(pa.getWorldName(), id);
+                        if (other != null && Objects.equals(pa.getId(), other.getId())) {
                             Captions.SETUP_WORLD_TAKEN.send(player, pa.toString());
                             return false;
                         }
-                        Set<PlotArea> areas = PlotSquared.get().getPlotAreas(pa.worldname);
+                        Set<PlotArea> areas = PlotSquared.get().getPlotAreas(pa.getWorldName());
                         if (!areas.isEmpty()) {
                             PlotArea area = areas.iterator().next();
-                            pa.TYPE = area.TYPE;
+                            pa.setType(area.getType());
                         }
                         pa.SIZE = (short) (pa.PLOT_WIDTH + pa.ROAD_WIDTH);
                         for (int i = 2; i < args.length; i++) {
@@ -230,12 +230,12 @@ public class Area extends SubCommand {
                                     pa.WALL_BLOCK = Configuration.BLOCK_BUCKET.parseString(pair[1]);
                                     break;
                                 case "terrain":
-                                    pa.TERRAIN = Integer.parseInt(pair[1]);
-                                    object.terrain = pa.TERRAIN;
+                                    pa.setTerrain(Integer.parseInt(pair[1]));
+                                    object.terrain = pa.getTerrain();
                                     break;
                                 case "type":
-                                    pa.TYPE = Integer.parseInt(pair[1]);
-                                    object.type = pa.TYPE;
+                                    pa.setType(Integer.parseInt(pair[1]));
+                                    object.type = pa.getType();
                                     break;
                                 default:
                                     Captions.COMMAND_SYNTAX.send(player, getCommandString()
@@ -243,13 +243,13 @@ public class Area extends SubCommand {
                                     return false;
                             }
                         }
-                        if (pa.TYPE != 2) {
-                            if (WorldUtil.IMP.isWorld(pa.worldname)) {
-                                Captions.SETUP_WORLD_TAKEN.send(player, pa.worldname);
+                        if (pa.getType() != 2) {
+                            if (WorldUtil.IMP.isWorld(pa.getWorldName())) {
+                                Captions.SETUP_WORLD_TAKEN.send(player, pa.getWorldName());
                                 return false;
                             }
                             Runnable run = () -> {
-                                String path = "worlds." + pa.worldname;
+                                String path = "worlds." + pa.getWorldName();
                                 if (!PlotSquared.get().worlds.contains(path)) {
                                     PlotSquared.get().worlds.createSection(path);
                                 }
@@ -267,7 +267,7 @@ public class Area extends SubCommand {
                                 } else {
                                     MainUtil.sendMessage(player,
                                         "An error occurred while creating the world: "
-                                            + pa.worldname);
+                                            + pa.getWorldName());
                                 }
                                 try {
                                     PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
@@ -283,21 +283,21 @@ public class Area extends SubCommand {
                             }
                             return true;
                         }
-                        if (pa.id == null) {
+                        if (pa.getId() == null) {
                             Captions.COMMAND_SYNTAX.send(player, getCommandString()
                                 + " create [world[:id]] [<modifier>=<value>]...");
                             return false;
                         }
-                        if (WorldUtil.IMP.isWorld(pa.worldname)) {
-                            if (!player.getLocation().getWorld().equals(pa.worldname)) {
-                                player.teleport(WorldUtil.IMP.getSpawn(pa.worldname),
+                        if (WorldUtil.IMP.isWorld(pa.getWorldName())) {
+                            if (!player.getLocation().getWorld().equals(pa.getWorldName())) {
+                                player.teleport(WorldUtil.IMP.getSpawn(pa.getWorldName()),
                                     TeleportCause.COMMAND);
                             }
                         } else {
                             object.terrain = 0;
                             object.type = 0;
                             SetupUtils.manager.setupWorld(object);
-                            player.teleport(WorldUtil.IMP.getSpawn(pa.worldname),
+                            player.teleport(WorldUtil.IMP.getSpawn(pa.getWorldName()),
                                 TeleportCause.COMMAND);
                         }
                         player.setMeta("area_create_area", pa);
@@ -339,20 +339,20 @@ public class Area extends SubCommand {
                 int clusters = area.getClusters().size();
                 String region;
                 String generator = String.valueOf(area.getGenerator());
-                if (area.TYPE == 2) {
+                if (area.getType() == 2) {
                     PlotId min = area.getMin();
                     PlotId max = area.getMax();
-                    name = area.worldname + ';' + area.id + ';' + min + ';' + max;
+                    name = area.getWorldName() + ';' + area.getId() + ';' + min + ';' + max;
                     int size = (max.x - min.x + 1) * (max.y - min.y + 1);
                     percent = claimed == 0 ? 0 : size / (double) claimed;
                     region = area.getRegion().toString();
                 } else {
-                    name = area.worldname;
+                    name = area.getWorldName();
                     percent = claimed == 0 ? 0 : 100d * claimed / Integer.MAX_VALUE;
                     region = "N/A";
                 }
-                String value = "&r$1NAME: " + name + "\n$1Type: $2" + area.TYPE + "\n$1Terrain: $2"
-                    + area.TERRAIN + "\n$1Usage: $2" + String.format("%.2f", percent) + '%'
+                String value = "&r$1NAME: " + name + "\n$1Type: $2" + area.getType() + "\n$1Terrain: $2"
+                    + area.getTerrain() + "\n$1Usage: $2" + String.format("%.2f", percent) + '%'
                     + "\n$1Claimed: $2" + claimed + "\n$1Clusters: $2" + clusters + "\n$1Region: $2"
                     + region + "\n$1Generator: $2" + generator;
                 MainUtil.sendMessage(player,
@@ -390,15 +390,15 @@ public class Area extends SubCommand {
                             int clusters = area.getClusters().size();
                             String region;
                             String generator = String.valueOf(area.getGenerator());
-                            if (area.TYPE == 2) {
+                            if (area.getType() == 2) {
                                 PlotId min = area.getMin();
                                 PlotId max = area.getMax();
-                                name = area.worldname + ';' + area.id + ';' + min + ';' + max;
+                                name = area.getWorldName() + ';' + area.getId() + ';' + min + ';' + max;
                                 int size = (max.x - min.x + 1) * (max.y - min.y + 1);
                                 percent = claimed == 0 ? 0 : size / (double) claimed;
                                 region = area.getRegion().toString();
                             } else {
-                                name = area.worldname;
+                                name = area.getWorldName();
                                 percent = claimed == 0 ?
                                     0 :
                                     Short.MAX_VALUE * Short.MAX_VALUE / (double) claimed;
@@ -417,7 +417,7 @@ public class Area extends SubCommand {
                                 .tooltip(visit).color("$1").text("]").color("$3").text(' ' + name)
                                 .tooltip(tooltip).command(getCommandString() + " info " + area)
                                 .color("$1").text(" - ").color("$2")
-                                .text(area.TYPE + ":" + area.TERRAIN).color("$3");
+                                .text(area.getType() + ":" + area.getTerrain()).color("$3");
                         }
                     }, "/plot area list", Captions.AREA_LIST_HEADER_PAGED.getTranslated());
                 return true;
@@ -434,16 +434,16 @@ public class Area extends SubCommand {
                     Captions.NOT_IN_PLOT_WORLD.send(player);
                     return false;
                 }
-                if (area.TYPE != 2) {
+                if (area.getType() != 2) {
                     MainUtil.sendMessage(player,
-                        "$4Stop the server and delete: " + area.worldname + "/region");
+                        "$4Stop the server and delete: " + area.getWorldName() + "/region");
                     return false;
                 }
-                ChunkManager.largeRegionTask(area.worldname, area.getRegion(),
+                ChunkManager.largeRegionTask(area.getWorldName(), area.getRegion(),
                     new RunnableVal<BlockVector2>() {
                         @Override public void run(BlockVector2 value) {
                             AugmentedUtils
-                                .generate(area.worldname, value.getX(), value.getZ(), null);
+                                .generate(area.getWorldName(), value.getX(), value.getZ(), null);
                         }
                     }, () -> player.sendMessage("Regen complete"));
                 return true;
@@ -467,16 +467,16 @@ public class Area extends SubCommand {
                     return false;
                 }
                 Location center;
-                if (area.TYPE != 2) {
-                    center = WorldUtil.IMP.getSpawn(area.worldname);
+                if (area.getType() != 2) {
+                    center = WorldUtil.IMP.getSpawn(area.getWorldName());
                 } else {
                     CuboidRegion region = area.getRegion();
-                    center = new Location(area.worldname, region.getMinimumPoint().getX()
+                    center = new Location(area.getWorldName(), region.getMinimumPoint().getX()
                         + (region.getMaximumPoint().getX() - region.getMinimumPoint().getX()) / 2,
                         0, region.getMinimumPoint().getZ()
                         + (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ()) / 2);
                     center.setY(1 + WorldUtil.IMP
-                        .getHighestBlock(area.worldname, center.getX(), center.getZ()));
+                        .getHighestBlock(area.getWorldName(), center.getX(), center.getZ()));
                 }
                 player.teleport(center, TeleportCause.COMMAND);
                 return true;

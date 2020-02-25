@@ -224,10 +224,10 @@ public class MainUtil {
      * @return true if any changes were made
      */
     public static boolean resetBiome(PlotArea area, Location pos1, Location pos2) {
-        BiomeType biome = area.PLOT_BIOME;
-        if (!Objects.equals(WorldUtil.IMP.getBiome(area.worldname, (pos1.getX() + pos2.getX()) / 2,
+        BiomeType biome = area.getPlotBiome();
+        if (!Objects.equals(WorldUtil.IMP.getBiome(area.getWorldName(), (pos1.getX() + pos2.getX()) / 2,
             (pos1.getZ() + pos2.getZ()) / 2), biome)) {
-            MainUtil.setBiome(area.worldname, pos1.getX(), pos1.getZ(), pos2.getX(), pos2.getZ(),
+            MainUtil.setBiome(area.getWorldName(), pos1.getX(), pos1.getZ(), pos2.getX(), pos2.getZ(),
                 biome);
             return true;
         }
@@ -802,8 +802,8 @@ public class MainUtil {
         boolean build = plot.isAdded(player.getUUID());
         String owner = plot.getOwners().isEmpty() ? "unowned" : getPlayerList(plot.getOwners());
         if (plot.getArea() != null) {
-            info = info.replace("%area%", plot.getArea().worldname +
-                (plot.getArea().id == null ? "" : "(" + plot.getArea().id + ")"));
+            info = info.replace("%area%", plot.getArea().getWorldName() +
+                (plot.getArea().getId() == null ? "" : "(" + plot.getArea().getId() + ")"));
         } else {
             info = info.replace("%area%", Captions.NONE.getTranslated());
         }

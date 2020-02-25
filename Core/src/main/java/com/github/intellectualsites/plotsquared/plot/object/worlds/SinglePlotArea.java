@@ -30,8 +30,8 @@ public class SinglePlotArea extends GridPlotWorld {
 
     public SinglePlotArea() {
         super("*", null, new SingleWorldGenerator(), null, null);
-        this.ALLOW_SIGNS = false;
-        this.DEFAULT_HOME = new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE);
+        this.setAllowSigns(false);
+        this.setDefaultHome(new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE));
     }
 
     @NotNull @Override protected PlotManager createManager() {
@@ -54,8 +54,8 @@ public class SinglePlotArea extends GridPlotWorld {
         SetupObject setup = new SetupObject();
         setup.plotManager = "PlotSquared:single";
         setup.setupGenerator = "PlotSquared:single";
-        setup.type = TYPE;
-        setup.terrain = TERRAIN;
+        setup.type = getType();
+        setup.terrain = getTerrain();
         setup.step = new ConfigurationNode[0];
         setup.world = worldName;
 
