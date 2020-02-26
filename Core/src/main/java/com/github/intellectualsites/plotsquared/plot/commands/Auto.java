@@ -249,7 +249,7 @@ public class Auto extends SubCommand {
         }
 
         if (schematic != null && !schematic.isEmpty()) {
-            if (!plotarea.getSchematics().contains(schematic.toLowerCase())) {
+            if (!plotarea.hasSchematic(schematic)) {
                 sendMessage(player, Captions.SCHEMATIC_INVALID, "non-existent: " + schematic);
                 return true;
             }

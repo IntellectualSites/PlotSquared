@@ -62,7 +62,7 @@ public class Claim extends SubCommand {
         final PlotArea area = plot.getArea();
         if (schematic != null && !schematic.isEmpty()) {
             if (area.isSchematicClaimSpecify()) {
-                if (!area.getSchematics().contains(schematic.toLowerCase())) {
+                if (!area.hasSchematic(schematic)) {
                     return sendMessage(player, Captions.SCHEMATIC_INVALID,
                         "non-existent: " + schematic);
                 }

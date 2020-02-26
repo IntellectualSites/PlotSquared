@@ -29,6 +29,7 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
@@ -71,9 +72,7 @@ public abstract class PlotArea {
     @Getter @Setter private boolean schematicClaimSpecify = false;
     @Getter @Setter private boolean schematicOnClaim = false;
     @Getter @Setter private String schematicFile = "null";
-    @Getter @Setter private List<String> schematics = null;
     @Getter @Setter private boolean useEconomy = false;
-    @Getter @Setter private Map<String, Expression<Double>> prices = new HashMap<>();
     @Getter @Setter private boolean spawnEggs = false;
     @Getter @Setter private boolean spawnCustom = true;
     @Getter @Setter private boolean spawnBreeding = false;
@@ -86,6 +85,8 @@ public abstract class PlotArea {
     @Getter @Setter private int maxBuildHeight = 256;
     @Getter @Setter private int minBuildHeight = 1;
     @Getter @Setter private GameMode gameMode = GameModes.CREATIVE;
+    @Getter private Map<String, Expression<Double>> prices = new HashMap<>();
+    @Getter(AccessLevel.PROTECTED) private List<String> schematics = new ArrayList<>();
     private int hash;
     private CuboidRegion region;
     private ConcurrentHashMap<String, Object> meta;
@@ -932,6 +933,17 @@ public abstract class PlotArea {
             }
         }
         return null;
+    }
+
+    /**
+     * Get whether a schematic with that name is available or not.
+     * If a schematic is available, it can be used for plot claiming.
+     *
+     * @param schematic the schematic to look for.
+     * @return true if the schematic exists, false otherwise.
+     */
+    public boolean hasSchematic(@NotNull String schematic) {
+        return getSchematics().contains(schematic.toLowerCase());
     }
 
     private static Collection<PlotFlag<?, ?>> parseFlags(List<String> flagStrings) throws FlagParseException {
