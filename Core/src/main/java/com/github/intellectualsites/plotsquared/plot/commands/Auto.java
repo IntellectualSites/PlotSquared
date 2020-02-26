@@ -263,7 +263,7 @@ public class Auto extends SubCommand {
                 return true;
             }
         }
-        if (EconHandler.manager != null && plotarea.isUseEconomy()) {
+        if (EconHandler.manager != null && plotarea.useEconomy()) {
             Expression<Double> costExp = plotarea.getPrices().get("claim");
             double cost = costExp.evaluate((double) (Settings.Limit.GLOBAL ?
                 player.getPlotCount() :

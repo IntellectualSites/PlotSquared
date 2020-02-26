@@ -72,11 +72,9 @@ public abstract class PlotArea {
     @Getter @Setter private boolean schematicClaimSpecify = false;
     @Getter @Setter private boolean schematicOnClaim = false;
     @Getter @Setter private String schematicFile = "null";
-    @Getter @Setter private boolean useEconomy = false;
     @Getter @Setter private boolean spawnEggs = false;
     @Getter @Setter private boolean spawnCustom = true;
     @Getter @Setter private boolean spawnBreeding = false;
-    @Getter @Setter private boolean worldBorder = false;
     @Getter @Setter private int type = 0;
     @Getter @Setter private int terrain = 0;
     @Getter @Setter private boolean homeAllowNonmember = false;
@@ -87,6 +85,8 @@ public abstract class PlotArea {
     @Getter @Setter private GameMode gameMode = GameModes.CREATIVE;
     @Getter private Map<String, Expression<Double>> prices = new HashMap<>();
     @Getter(AccessLevel.PROTECTED) private List<String> schematics = new ArrayList<>();
+    private boolean worldBorder = false;
+    private boolean useEconomy = false;
     private int hash;
     private CuboidRegion region;
     private ConcurrentHashMap<String, Object> meta;
@@ -342,7 +342,7 @@ public abstract class PlotArea {
         options.put("schematic.file", this.getSchematicFile());
         options.put("schematic.specify_on_claim", this.isSchematicClaimSpecify());
         options.put("schematic.schematics", this.getSchematics());
-        options.put("economy.use", this.isUseEconomy());
+        options.put("economy.use", this.useEconomy());
         options.put("economy.prices.claim", 100);
         options.put("economy.prices.merge", 100);
         options.put("economy.prices.sell", 100);
@@ -351,7 +351,7 @@ public abstract class PlotArea {
         options.put("event.spawn.egg", this.isSpawnEggs());
         options.put("event.spawn.custom", this.isSpawnCustom());
         options.put("event.spawn.breeding", this.isSpawnBreeding());
-        options.put("world.border", this.isWorldBorder());
+        options.put("world.border", this.hasWorldBorder());
         options.put("limits.max-members", this.getMaxPlotMembers());
         options.put("home.default", "side");
         String position = config.getString("home.nonmembers",
@@ -545,10 +545,10 @@ public abstract class PlotArea {
     }
 
     //todo check if this method is needed in this class
+
     public int getPlotCount(@Nullable final PlotPlayer player) {
         return player != null ? getPlotCount(player.getUUID()) : 0;
     }
-
     @Nullable public Plot getPlotAbs(@NotNull final PlotId id) {
         Plot plot = getOwnedPlotAbs(id);
         if (plot == null) {
@@ -751,7 +751,7 @@ public abstract class PlotArea {
      * Setup the plot border for a world (usually done when the world is created).
      */
     public void setupBorder() {
-        if (!this.isWorldBorder()) {
+        if (!this.hasWorldBorder()) {
             return;
         }
         final Integer meta = (Integer) getMeta("worldBorder");
@@ -946,6 +946,24 @@ public abstract class PlotArea {
         return getSchematics().contains(schematic.toLowerCase());
     }
 
+    /**
+     * Get whether economy is enabled and used on this plot area or not.
+     *
+     * @return true if this plot area uses economy, false otherwise.
+     */
+    public boolean useEconomy() {
+        return useEconomy;
+    }
+
+    /**
+     * Get whether the plot area is limited by a world border or not.
+     *
+     * @return true if the plot area has a world border, false otherwise.
+     */
+    public boolean hasWorldBorder() {
+        return worldBorder;
+    }
+
     private static Collection<PlotFlag<?, ?>> parseFlags(List<String> flagStrings) throws FlagParseException {
         final Collection<PlotFlag<?, ?>> flags = new ArrayList<>();
         for (final String key : flagStrings) {
@@ -962,5 +980,4 @@ public abstract class PlotArea {
         }
         return flags;
     }
-
 }
