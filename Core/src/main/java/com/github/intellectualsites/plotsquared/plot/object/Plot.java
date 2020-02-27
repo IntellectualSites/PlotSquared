@@ -1513,9 +1513,14 @@ public class Plot {
 
     public boolean claim(final PlotPlayer player, boolean teleport, String schematic,
         boolean updateDB) {
+        
         boolean result = EventUtil.manager.callClaim(player, this, false);
+        if(!result) {
+            return false;
+        }
+        
         if (updateDB) {
-            if (!result || (!create(player.getUUID(), true))) {
+            if (!create(player.getUUID(), true)) {
                 return false;
             }
         } else {
