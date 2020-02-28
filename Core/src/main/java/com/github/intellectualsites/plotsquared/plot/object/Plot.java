@@ -54,13 +54,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
@@ -1742,26 +1745,19 @@ public class Plot {
      * Swaps the settings for two plots.
      *
      * @param plot     the plot to swap data with
-     * @param whenDone the task to run at the end of this method.
-     * @return
+     * @return Future containing the result
      */
-    public boolean swapData(Plot plot, Runnable whenDone) {
+    public CompletableFuture<Boolean> swapData(Plot plot) {
         if (this.owner == null) {
-            if (plot == null) {
-                return false;
+            if (plot != null && plot.hasOwner()) {
+                plot.moveData(this, null);
+                return CompletableFuture.completedFuture(true);
             }
-            if (plot.hasOwner()) {
-                plot.moveData(this, whenDone);
-                return true;
-            }
-            return false;
+            return CompletableFuture.completedFuture(false);
         }
-        if (plot == null) {
-            this.moveData(plot, whenDone);
-            return true;
-        } else if (plot.getOwner() == null) {
-            this.moveData(plot, whenDone);
-            return true;
+        if (plot == null || plot.getOwner() == null) {
+            this.moveData(plot, null);
+            return CompletableFuture.completedFuture(true);
         }
         // Swap cached
         PlotId temp = new PlotId(this.getId().x, this.getId().y);
@@ -1776,9 +1772,7 @@ public class Plot {
         this.area.addPlotAbs(this);
         plot.area.addPlotAbs(plot);
         // Swap database
-        DBFunc.swapPlots(plot, this);
-        TaskManager.runTaskLater(whenDone, 1);
-        return true;
+        return DBFunc.swapPlots(plot, this);
     }
 
     /**
@@ -1911,10 +1905,10 @@ public class Plot {
      * @param whenDone    A task to run when finished, or null
      * @return boolean if swap was successful
      * @see ChunkManager#swap(Location, Location, Location, Location, Runnable) to swap terrain
-     * @see this#swapData(Plot, Runnable) to swap plot settings
-     * @see this#swapData(Plot, Runnable)
+     * @see this#swapData(Plot) to swap plot settings
+     * @see this#swapData(Plot)
      */
-    public boolean swap(Plot destination, Runnable whenDone) {
+    public CompletableFuture<Boolean> swap(Plot destination, Runnable whenDone) {
         return this.move(destination, whenDone, true);
     }
 
@@ -1926,7 +1920,7 @@ public class Plot {
      * @param whenDone    A task to run when done, or null
      * @return if the move was successful
      */
-    public boolean move(Plot destination, Runnable whenDone) {
+    public CompletableFuture<Boolean> move(Plot destination, Runnable whenDone) {
         return this.move(destination, whenDone, false);
     }
 
@@ -3067,7 +3061,7 @@ public class Plot {
      * @param allowSwap   whether to swap plots
      * @return success
      */
-    public boolean move(final Plot destination, final Runnable whenDone, boolean allowSwap) {
+    public CompletableFuture<Boolean> move(final Plot destination, final Runnable whenDone, boolean allowSwap) {
         final PlotId offset = new PlotId(destination.getId().x - this.getId().x,
             destination.getId().y - this.getId().y);
         Location db = destination.getBottomAbs();
@@ -3076,18 +3070,18 @@ public class Plot {
         final int offsetZ = db.getZ() - ob.getZ();
         if (this.owner == null) {
             TaskManager.runTaskLater(whenDone, 1);
-            return false;
+            return CompletableFuture.completedFuture(false);
         }
-        boolean occupied = false;
+        AtomicBoolean occupied = new AtomicBoolean(false);
         Set<Plot> plots = this.getConnectedPlots();
         for (Plot plot : plots) {
             Plot other = plot.getRelative(destination.getArea(), offset.x, offset.y);
             if (other.hasOwner()) {
                 if (!allowSwap) {
                     TaskManager.runTaskLater(whenDone, 1);
-                    return false;
+                    return CompletableFuture.completedFuture(false);
                 }
-                occupied = true;
+                occupied.set(true);
             } else {
                 plot.removeSign();
             }
@@ -3097,59 +3091,85 @@ public class Plot {
         final ArrayDeque<CuboidRegion> regions = new ArrayDeque<>(this.getRegions());
         // move / swap data
         final PlotArea originArea = getArea();
-        for (Plot plot : plots) {
-            Plot other = plot.getRelative(destination.getArea(), offset.x, offset.y);
-            plot.swapData(other, null);
-        }
-        // copy terrain
-        if (occupied) {
-            Runnable swap = new Runnable() {
-                @Override public void run() {
-                    if (regions.isEmpty()) {
-                        TaskManager.runTask(whenDone);
-                        return;
-                    }
-                    CuboidRegion region = regions.poll();
-                    Location[] corners = MainUtil.getCorners(getWorldName(), region);
-                    Location pos1 = corners[0];
-                    Location pos2 = corners[1];
-                    Location pos3 = pos1.clone().add(offsetX, 0, offsetZ);
-                    Location pos4 = pos2.clone().add(offsetX, 0, offsetZ);
-                    pos3.setWorld(destination.getWorldName());
-                    pos4.setWorld(destination.getWorldName());
-                    ChunkManager.manager.swap(pos1, pos2, pos3, pos4, this);
+
+        final Iterator<Plot> plotIterator = plots.iterator();
+
+        CompletableFuture<Boolean> future = null;
+        if (plotIterator.hasNext()) {
+            while (plotIterator.hasNext()) {
+                final Plot plot = plotIterator.next();
+                final Plot other = plot.getRelative(destination.getArea(), offset.x, offset.y);
+                final CompletableFuture<Boolean> swapResult = plot.swapData(other);
+                if (future == null) {
+                    future = swapResult;
+                } else {
+                    future = future.thenCombine(swapResult, (fn, th) -> fn);
                 }
-            };
-            swap.run();
+            }
         } else {
-            Runnable move = new Runnable() {
-                @Override public void run() {
-                    if (regions.isEmpty()) {
-                        Plot plot = destination.getRelative(0, 0);
-                        for (Plot current : plot.getConnectedPlots()) {
-                            getManager().claimPlot(current);
-                            Plot originPlot = originArea.getPlotAbs(
-                                new PlotId(current.id.x - offset.x, current.id.y - offset.y));
-                            originPlot.getManager().unClaimPlot(originPlot, null);
-                        }
-                        plot.setSign();
-                        TaskManager.runTask(whenDone);
-                        return;
-                    }
-                    final Runnable task = this;
-                    CuboidRegion region = regions.poll();
-                    Location[] corners = MainUtil.getCorners(getWorldName(), region);
-                    final Location pos1 = corners[0];
-                    final Location pos2 = corners[1];
-                    Location newPos = pos1.clone().add(offsetX, 0, offsetZ);
-                    newPos.setWorld(destination.getWorldName());
-                    ChunkManager.manager.copyRegion(pos1, pos2, newPos,
-                        () -> ChunkManager.manager.regenerateRegion(pos1, pos2, false, task));
-                }
-            };
-            move.run();
+            future = CompletableFuture.completedFuture(true);
         }
-        return true;
+
+        return future.thenApply(result -> {
+            if (!result) {
+                return false;
+            }
+            // copy terrain
+            if (occupied.get()) {
+                new Runnable() {
+                    @Override public void run() {
+                        if (regions.isEmpty()) {
+                            // Update signs
+                            destination.setSign();
+                            Plot.this.setSign();
+                            // Run final tasks
+                            TaskManager.runTask(whenDone);
+                        } else {
+                            CuboidRegion region = regions.poll();
+                            Location[] corners = MainUtil.getCorners(getWorldName(), region);
+                            Location pos1 = corners[0];
+                            Location pos2 = corners[1];
+                            Location pos3 = pos1.clone().add(offsetX, 0, offsetZ);
+                            Location pos4 = pos2.clone().add(offsetX, 0, offsetZ);
+                            pos3.setWorld(destination.getWorldName());
+                            pos4.setWorld(destination.getWorldName());
+                            ChunkManager.manager.swap(pos1, pos2, pos3, pos4, this);
+                        }
+                    }
+                }.run();
+            } else {
+                new Runnable() {
+                    @Override public void run() {
+                        if (regions.isEmpty()) {
+                            Plot plot = destination.getRelative(0, 0);
+                            Plot originPlot = originArea.getPlotAbs(new PlotId(plot.id.x - offset.x, plot.id.y - offset.y));
+                            final Runnable clearDone = () -> {
+                                for (final Plot current : plot.getConnectedPlots()) {
+                                    getManager().claimPlot(current);
+                                }
+                                plot.setSign();
+                                TaskManager.runTask(whenDone);
+                            };
+                            if (originPlot != null) {
+                                originPlot.clear(false, true, clearDone);
+                            } else {
+                                clearDone.run();
+                            }
+                            return;
+                        }
+                        final Runnable task = this;
+                        CuboidRegion region = regions.poll();
+                        Location[] corners = MainUtil.getCorners(getWorldName(), region);
+                        final Location pos1 = corners[0];
+                        final Location pos2 = corners[1];
+                        Location newPos = pos1.clone().add(offsetX, 0, offsetZ);
+                        newPos.setWorld(destination.getWorldName());
+                        ChunkManager.manager.copyRegion(pos1, pos2, newPos, task);
+                    }
+                }.run();
+            }
+            return true;
+        });
     }
 
     /**

@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.area.QuadMap;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,7 +62,7 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
                 if (areas == null) {
                     return null;
                 }
-                int y;
+                int z;
                 int x;
                 switch (areas.length) {
                     case 1:
@@ -74,9 +75,9 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
                     case 7:
                     case 8:
                         x = location.getX();
-                        y = location.getY();
+                        z = location.getZ();
                         for (PlotArea area : areas) {
-                            if (area.contains(x, y)) {
+                            if (area.contains(x, z)) {
                                 return area;
                             }
                         }
@@ -139,7 +140,7 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         return null;
     }
 
-    @Override public PlotArea getPlotArea(Location location) {
+    @Override public PlotArea getPlotArea(@NotNull Location location) {
         switch (this.plotAreas.length) {
             case 0:
                 return null;
@@ -174,7 +175,7 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
                     return null;
                 }
                 int x;
-                int y;
+                int z;
                 switch (areas.length) {
                     case 0:
                         PlotArea a = areas[0];
@@ -187,9 +188,9 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
                     case 7:
                     case 8:
                         x = location.getX();
-                        y = location.getY();
+                        z = location.getZ();
                         for (PlotArea area : areas) {
-                            if (area.contains(x, y)) {
+                            if (area.contains(x, z)) {
                                 return area;
                             }
                         }

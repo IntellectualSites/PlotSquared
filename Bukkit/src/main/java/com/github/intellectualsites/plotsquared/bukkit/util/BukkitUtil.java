@@ -39,12 +39,21 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @SuppressWarnings({"unused", "WeakerAccess"}) public class BukkitUtil extends WorldUtil {
+
+    private static Method biomeSetter;
+    static {
+        try {
+            biomeSetter = World.class.getMethod("setBiome", Integer.class, Integer.class, Biome.class);
+        } catch (final Exception ignored) {
+        }
+    }
 
     private static String lastString = null;
     private static World lastWorld = null;
@@ -425,7 +434,16 @@ import java.util.Set;
         for (int x = region.getMinimumPoint().getX(); x <= region.getMaximumPoint().getX(); x++) {
             for (int z = region.getMinimumPoint().getZ(); z <= region.getMaximumPoint().getZ(); z++) {
                 for (int y = 0; y < world.getMaxHeight(); y++) {
-                    world.setBiome(x, y, z, biome);
+                    try {
+                        if (biomeSetter != null) {
+                            biomeSetter.invoke(world, x, z, biome);
+                        } else {
+                            world.setBiome(x, y, z, biome);
+                        }
+                    } catch (final Exception e) {
+                        PlotSquared.log("An error occurred setting the biome:");
+                        e.printStackTrace();
+                    }
                 }
             }
         }

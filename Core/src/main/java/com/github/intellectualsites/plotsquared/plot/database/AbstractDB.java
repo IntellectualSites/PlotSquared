@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public interface AbstractDB {
 
@@ -144,7 +145,7 @@ public interface AbstractDB {
      * @param plot1 Plot1
      * @param plot2 Plot2
      */
-    void swapPlots(Plot plot1, Plot plot2);
+    CompletableFuture<Boolean> swapPlots(Plot plot1, Plot plot2);
 
     /**
      * Sets plot flag.
