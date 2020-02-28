@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
+import com.github.intellectualsites.plotsquared.plot.events.PlotEvent.Result;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.InternalFlag;
@@ -14,16 +15,7 @@ import com.github.intellectualsites.plotsquared.plot.generator.SquarePlotWorld;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
-import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
-import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
-import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.github.intellectualsites.plotsquared.plot.util.Permissions;
-import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
-import com.github.intellectualsites.plotsquared.plot.util.StringMan;
-import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
-import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
-import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
@@ -823,9 +815,9 @@ public class Plot {
      * @return boolean
      */
     public boolean setOwner(UUID owner, PlotPlayer initiator) {
-        boolean result = EventUtil.manager
+        Result result = PlotSquared.get().getEventUtil()
             .callOwnerChange(initiator, this, owner, hasOwner() ? this.owner : null, hasOwner());
-        if (!result) {
+        if (result.getValue() == 0) {
             return false;
         }
         if (!hasOwner()) {
@@ -864,14 +856,14 @@ public class Plot {
         if (checkRunning && this.getRunning() != 0) {
             return false;
         }
+        Result Result;
         if (isDelete) {
-            if (!EventUtil.manager.callDelete(this)) {
-                return false;
-            }
+            Result = PlotSquared.get().getEventUtil().callDelete(this);
         } else {
-            if (!EventUtil.manager.callClear(this)) {
-                return false;
-            }
+            Result = PlotSquared.get().getEventUtil().callClear(this);
+        }
+        if (Result.getValue() == 0) {
+            return false;
         }
         final Set<CuboidRegion> regions = this.getRegions();
         final Set<Plot> plots = this.getConnectedPlots();
@@ -993,8 +985,8 @@ public class Plot {
             current.setHome(null);
             ids.add(current.getId());
         }
-        boolean result = EventUtil.manager.callUnlink(this.area, ids);
-        if (!result) {
+        Result result = PlotSquared.get().getEventUtil().callUnlink(this.area, ids, this);
+        if (result.getValue() == 0) {
             return false;
         }
         this.clearRatings();
@@ -1102,7 +1094,7 @@ public class Plot {
      * @return A boolean indicating whether or not the operation succeeded
      */
     public <V> boolean setFlag(PlotFlag<V, ?> flag) {
-        if (!EventUtil.manager.callFlagAdd(flag, origin)) {
+        if (PlotSquared.get().getEventUtil().callFlagAdd(flag, origin).getValue() == 0) {
             return false;
         }
         if (flag instanceof KeepFlag && ExpireManager.IMP != null) {
@@ -1203,8 +1195,8 @@ public class Plot {
                 continue;
             }
             if (plot == origin) {
-                boolean result = EventUtil.manager.callFlagRemove(flag, plot, value);
-                if (!result) {
+                Result result = PlotSquared.get().getEventUtil().callFlagRemove(flag, plot, value);
+                if (result.getValue() == 0) {
                     plot.getFlagContainer().addFlag(flag);
                     continue;
                 }
@@ -1610,9 +1602,9 @@ public class Plot {
 
     public boolean claim(final PlotPlayer player, boolean teleport, String schematic,
         boolean updateDB) {
-        boolean result = EventUtil.manager.callClaim(player, this, false);
+        Result result = PlotSquared.get().getEventUtil().callClaim(player, this, false);
         if (updateDB) {
-            if (!result || (!create(player.getUUID(), true))) {
+            if (result.getValue() == 0 || (!create(player.getUUID(), true))) {
                 return false;
             }
         } else {
@@ -2345,7 +2337,7 @@ public class Plot {
             return false;
         }
         //Call the merge event
-        if (!EventUtil.manager.callMerge(this, dir.getIndex(), max)) {
+        if (PlotSquared.get().getEventUtil().callMerge(this, dir.getIndex(), max).getValue() == 0) {
             return false;
         }
         Set<Plot> connected = this.getConnectedPlots();
@@ -2905,8 +2897,9 @@ public class Plot {
      */
     public boolean teleportPlayer(final PlotPlayer player, TeleportCause cause) {
         Plot plot = this.getBasePlot(false);
-        boolean result = EventUtil.manager.callTeleport(player, player.getLocation(), plot);
-        if (result) {
+        Result result =
+            PlotSquared.get().getEventUtil().callTeleport(player, player.getLocation(), plot);
+        if (result.getValue() == 0) {
             final Location location;
             if (this.area.HOME_ALLOW_NONMEMBER || plot.isAdded(player.getUUID())) {
                 location = this.getHome();
@@ -2970,7 +2963,7 @@ public class Plot {
      */
     public boolean setComponent(String component, Pattern blocks) {
         if (StringMan.isEqualToAny(component, getManager().getPlotComponents(this.getId()))) {
-            EventUtil.manager.callComponentSet(this, component);
+            PlotSquared.get().getEventUtil().callComponentSet(this, component);
         }
         return this.getManager().setComponent(this.getId(), component, blocks);
     }

@@ -8,7 +8,6 @@ import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
@@ -18,12 +17,8 @@ import com.sk89q.worldedit.world.gamemode.GameModes;
 import java.util.Set;
 import java.util.UUID;
 
-@CommandDeclaration(command = "deny",
-    aliases = {"d", "ban"},
-    description = "Deny a user from entering a plot",
-    usage = "/plot deny <player|*>",
-    category = CommandCategory.SETTINGS,
-    requiredType = RequiredType.PLAYER)
+@CommandDeclaration(command = "deny", aliases = {"d",
+    "ban"}, description = "Deny a user from entering a plot", usage = "/plot deny <player|*>", category = CommandCategory.SETTINGS, requiredType = RequiredType.PLAYER)
 public class Deny extends SubCommand {
 
     public Deny() {
@@ -72,7 +67,7 @@ public class Deny extends SubCommand {
                 plot.removeTrusted(uuid);
             }
             plot.addDenied(uuid);
-            EventUtil.manager.callDenied(player, plot, uuid, true);
+            PlotSquared.get().getEventUtil().callDenied(player, plot, uuid, true);
             if (!uuid.equals(DBFunc.EVERYONE)) {
                 handleKick(UUIDHandler.getPlayer(uuid), plot);
             } else {

@@ -1,24 +1,18 @@
-package com.github.intellectualsites.plotsquared.bukkit.events;
+package com.github.intellectualsites.plotsquared.plot.events;
 
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
-import org.bukkit.event.HandlerList;
 
 /**
  * Called when a plot component is set
  */
 public class PlotComponentSetEvent extends PlotEvent {
 
-    private static final HandlerList handlers = new HandlerList();
     private final String component;
 
     public PlotComponentSetEvent(Plot plot, String component) {
         super(plot);
         this.component = component;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
     /**
@@ -48,7 +42,4 @@ public class PlotComponentSetEvent extends PlotEvent {
         return this.component;
     }
 
-    @Override public HandlerList getHandlers() {
-        return handlers;
-    }
 }

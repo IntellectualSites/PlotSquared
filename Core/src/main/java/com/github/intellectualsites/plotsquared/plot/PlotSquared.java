@@ -73,8 +73,6 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -82,7 +80,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -132,6 +129,7 @@ import java.util.zip.ZipInputStream;
     @Getter private File jarFile = null; // This file
     private File storageFile;
     @Getter private PlotAreaManager plotAreaManager;
+    @Getter private EventUtil eventUtil;
 
     /**
      * Initialize PlotSquared with the desired Implementation class.
@@ -231,8 +229,8 @@ import java.util.zip.ZipInputStream;
                 UUIDHandler.add(new StringWrapper("*"), DBFunc.EVERYONE);
                 startExpiryTasks();
             }
-            // create event util class
-            EventUtil.manager = this.IMP.initEventUtil();
+            // Create Event utility class
+            eventUtil = new EventUtil();
             // create Hybrid utility class
             HybridUtils.manager = this.IMP.initHybridUtils();
             // Inventory utility class
@@ -1053,7 +1051,7 @@ import java.util.zip.ZipInputStream;
             return false;
         }
         if (callEvent) {
-            EventUtil.manager.callDelete(plot);
+            eventUtil.callDelete(plot);
         }
         if (plot.getArea().removePlot(plot.getId())) {
             PlotId last = (PlotId) plot.getArea().getMeta("lastPlot");

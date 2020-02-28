@@ -1,24 +1,19 @@
-package com.github.intellectualsites.plotsquared.bukkit.events;
+package com.github.intellectualsites.plotsquared.plot.events;
 
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import lombok.Getter;
-import lombok.Setter;
-import org.bukkit.World;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Event called when several plots are merged
  * {@inheritDoc}
  */
-public final class PlotMergeEvent extends PlotEvent implements Cancellable {
+public final class PlotMergeEvent extends PlotEvent implements CancellablePlotEvent {
 
-    private static final HandlerList handlers = new HandlerList();
     @Getter private final int dir;
     @Getter private final int max;
-    @Getter private final World world;
-    @Getter @Setter private boolean cancelled;
+    @Getter private final String world;
+    private Result eventResult;
 
     /**
      * PlotMergeEvent: Called when plots are merged
@@ -28,7 +23,7 @@ public final class PlotMergeEvent extends PlotEvent implements Cancellable {
      * @param dir   The direction of the merge
      * @param max   Max merge size
      */
-    public PlotMergeEvent(@NotNull final World world, @NotNull final Plot plot,
+    public PlotMergeEvent(@NotNull final String world, @NotNull final Plot plot,
         @NotNull final int dir, @NotNull final int max) {
         super(plot);
         this.world = world;
@@ -36,11 +31,18 @@ public final class PlotMergeEvent extends PlotEvent implements Cancellable {
         this.max = max;
     }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
+    @Override
+    public Result getEventResult() {
+        return eventResult;
     }
 
-    @Override public HandlerList getHandlers() {
-        return handlers;
+    @Override
+    public int getEventResultRaw() {
+        return eventResult.getValue();
+    }
+
+    @Override
+    public void setEventResult(Result e) {
+        this.eventResult = e;
     }
 }

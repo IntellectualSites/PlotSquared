@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
-import com.github.intellectualsites.plotsquared.bukkit.events.PlayerEnterPlotEvent;
-import com.github.intellectualsites.plotsquared.bukkit.events.PlayerLeavePlotEvent;
+import com.github.intellectualsites.plotsquared.plot.events.PlayerEnterPlotEvent;
+import com.github.intellectualsites.plotsquared.plot.events.PlayerLeavePlotEvent;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DropProtectionFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FeedFlag;
@@ -133,15 +133,15 @@ import java.util.UUID;
     }
 
     @EventHandler public void onPlotEnter(PlayerEnterPlotEvent event) {
-        Player player = event.getPlayer();
+        PlotPlayer player = event.getPlotPlayer();
         Plot plot = event.getPlot();
         TimedFlag.Timed<Integer> feed = plot.getFlag(FeedFlag.class);
         if (feed.getInterval() != 0 && feed.getValue() != 0) {
-            feedRunnable.put(player.getUniqueId(), new Interval(feed.getInterval(), feed.getValue(), 20));
+            feedRunnable.put(player.getUUID(), new Interval(feed.getInterval(), feed.getValue(), 20));
         }
         TimedFlag.Timed<Integer> heal = plot.getFlag(HealFlag.class);
         if (heal.getInterval() != 0 && heal.getValue() != 0) {
-            healRunnable.put(player.getUniqueId(), new Interval(heal.getInterval(), heal.getValue(), 20));
+            healRunnable.put(player.getUUID(), new Interval(heal.getInterval(), heal.getValue(), 20));
         }
     }
 
@@ -152,14 +152,13 @@ import java.util.UUID;
     }
 
     @EventHandler public void onPlotLeave(PlayerLeavePlotEvent event) {
-        Player leaver = event.getPlayer();
+        PlotPlayer leaver = event.getPlotPlayer();
         Plot plot = event.getPlot();
         if (!plot.hasOwner()) {
             return;
         }
-        BukkitUtil.getPlayer(leaver);
-        feedRunnable.remove(leaver.getUniqueId());
-        healRunnable.remove(leaver.getUniqueId());
+        feedRunnable.remove(leaver.getUUID());
+        healRunnable.remove(leaver.getUUID());
     }
 
     @EventHandler public void onItemPickup(EntityPickupItemEvent event) {

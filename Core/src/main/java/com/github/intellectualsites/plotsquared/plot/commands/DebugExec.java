@@ -23,7 +23,6 @@ import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
-import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
@@ -145,7 +144,7 @@ public class DebugExec extends SubCommand {
         this.scope.put("ChunkManager", ChunkManager.manager);
         this.scope.put("BlockManager", WorldUtil.IMP);
         this.scope.put("SetupUtils", SetupUtils.manager);
-        this.scope.put("EventUtil", EventUtil.manager);
+        this.scope.put("EventUtil", PlotSquared.get().getEventUtil());
         this.scope.put("EconHandler", EconHandler.manager);
         this.scope.put("UUIDHandler", UUIDHandler.implementation);
         this.scope.put("DBFunc", DBFunc.dbManager);

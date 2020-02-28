@@ -1,21 +1,18 @@
-package com.github.intellectualsites.plotsquared.bukkit.events;
+package com.github.intellectualsites.plotsquared.plot.events;
 
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.HandlerList;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 
 import java.util.UUID;
 
-public class PlotChangeOwnerEvent extends PlotEvent implements Cancellable {
+public class PlotChangeOwnerEvent extends PlotEvent implements CancellablePlotEvent {
 
-    private static final HandlerList handlers = new HandlerList();
-    private final Player initiator;
+    private final PlotPlayer initiator;
     private final UUID newOwner;
     private final UUID oldOwner;
     private boolean hasOldOwner;
-    private boolean cancelled;
+    private Result eventResult;
 
     /**
      * PlotChangeOwnerEvent: Called when a plot's owner is change.
@@ -24,17 +21,13 @@ public class PlotChangeOwnerEvent extends PlotEvent implements Cancellable {
      * @param oldOwner The old owner of the plot
      * @param plot     The plot having its owner changed
      */
-    public PlotChangeOwnerEvent(Player initiator, Plot plot, UUID oldOwner, UUID newOwner,
+    public PlotChangeOwnerEvent(PlotPlayer initiator, Plot plot, UUID oldOwner, UUID newOwner,
         boolean hasOldOwner) {
         super(plot);
         this.initiator = initiator;
         this.newOwner = newOwner;
         this.oldOwner = oldOwner;
         this.hasOldOwner = hasOldOwner;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
     /**
@@ -60,7 +53,7 @@ public class PlotChangeOwnerEvent extends PlotEvent implements Cancellable {
      *
      * @return Player
      */
-    public Player getInitiator() {
+    public PlotPlayer getInitiator() {
         return this.initiator;
     }
 
@@ -91,15 +84,18 @@ public class PlotChangeOwnerEvent extends PlotEvent implements Cancellable {
         return this.hasOldOwner;
     }
 
-    @Override public HandlerList getHandlers() {
-        return handlers;
+    @Override
+    public Result getEventResult() {
+        return eventResult;
     }
 
-    @Override public boolean isCancelled() {
-        return this.cancelled;
+    @Override
+    public int getEventResultRaw() {
+        return eventResult.getValue();
     }
 
-    @Override public void setCancelled(boolean b) {
-        this.cancelled = b;
+    @Override
+    public void setEventResult(Result e) {
+        this.eventResult = e;
     }
 }

@@ -4,6 +4,8 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import com.github.intellectualsites.plotsquared.plot.events.*;
+import com.github.intellectualsites.plotsquared.plot.events.PlotEvent.Result;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DeviceInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscPlaceFlag;
@@ -13,14 +15,10 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.UseFl
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehiclePlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.types.BlockTypeWrapper;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotId;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.Rating;
+import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotArea;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
+import com.google.common.eventbus.EventBus;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.jetbrains.annotations.NotNull;
@@ -29,52 +27,96 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class EventUtil {
+public class EventUtil {
 
-    public static EventUtil manager = null;
+    EventBus eventBus = new EventBus("PlotSquaredEvents");
 
-    /**
-     * Submit a plot rate event and return the updated rating
-     *
-     * @param player Player that rated the plot
-     * @param plot   Plot that was rated
-     * @param rating Rating given to the plot
-     * @return Updated rating or null if the event was cancelled
-     */
-    @Nullable public abstract Rating callRating(PlotPlayer player, Plot plot, Rating rating);
+    public void registerListener(Object listener) {
+        eventBus.register(listener);
+    }
 
-    public abstract boolean callClaim(PlotPlayer player, Plot plot, boolean auto);
+    private Result callEvent(@NotNull final PlotEvent event) {
+        eventBus.post(event);
+        if (event instanceof CancellablePlotEvent) {
+            return ((CancellablePlotEvent) event).getEventResult();
+        }
+        return null;
+    }
 
-    public abstract boolean callTeleport(PlotPlayer player, Location from, Plot plot);
+    public Result callClaim(PlotPlayer player, Plot plot, boolean auto) {
+        return callEvent(new PlayerClaimPlotEvent(player, plot, auto));
+    }
 
-    public abstract boolean callComponentSet(Plot plot, String component);
+    public Result callTeleport(PlotPlayer player, Location from, Plot plot) {
+        return callEvent(new PlayerTeleportToPlotEvent(player, from, plot));
+    }
 
-    public abstract boolean callClear(Plot plot);
+    public Result callComponentSet(Plot plot, String component) {
+        return callEvent(new PlotComponentSetEvent(plot, component));
+    }
 
-    public abstract boolean callDelete(Plot plot);
+    public Result callClear(Plot plot) {
+        return callEvent(new PlotClearEvent(plot));
+    }
 
-    public abstract boolean callFlagAdd(PlotFlag<?, ?> flag, Plot plot);
+    public Result callDelete(Plot plot) {
+        return callEvent(new PlotDeleteEvent(plot));
+    }
 
-    public abstract boolean callFlagRemove(PlotFlag<?, ?> flag, Plot plot, Object value);
+    public Result callFlagAdd(PlotFlag<?, ?> flag, Plot plot) {
+        return callEvent(new PlotFlagAddEvent(flag, plot));
+    }
 
-    public abstract boolean callMerge(Plot plot, int dir, int max);
+    public Result callFlagRemove(PlotFlag<?, ?> flag, Plot plot, Object value) {
+        return callEvent(new PlotFlagRemoveEvent(flag, plot));
+    }
 
-    public abstract boolean callAutoMerge(Plot plot, List<PlotId> plots);
+    public Result callMerge(Plot plot, int dir, int max) {
+        return callEvent(new PlotMergeEvent(plot.getWorldName(), plot, dir, max));
+    }
 
-    public abstract boolean callUnlink(PlotArea area, List<PlotId> plots);
+    public Result callAutoMerge(Plot plot, List<PlotId> plots) {
+        return callEvent(new PlotAutoMergeEvent(plot.getWorldName(), plot, plots));
+    }
 
-    public abstract void callEntry(PlotPlayer player, Plot plot);
+    public Result callUnlink(PlotArea area, List<PlotId> plots, Plot plot) {
+        return callEvent(new PlotUnlinkEvent(area.worldname, area, plots, plot));
+    }
 
-    public abstract void callLeave(PlotPlayer player, Plot plot);
+    public void callEntry(PlotPlayer player, Plot plot) {
+        callEvent(new PlayerEnterPlotEvent(player, plot));
+    }
 
-    public abstract void callDenied(PlotPlayer initiator, Plot plot, UUID player, boolean added);
+    public void callLeave(PlotPlayer player, Plot plot) {
+        callEvent(new PlayerLeavePlotEvent(player, plot));
+    }
 
-    public abstract void callTrusted(PlotPlayer initiator, Plot plot, UUID player, boolean added);
+    public void callDenied(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
+        callEvent(new PlayerPlotDeniedEvent(initiator, plot, player, added));
+    }
 
-    public abstract void callMember(PlotPlayer initiator, Plot plot, UUID player, boolean added);
+    public void callTrusted(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
+        callEvent(new PlayerPlotTrustedEvent(initiator, plot, player, added));
+    }
 
-    public abstract boolean callOwnerChange(PlotPlayer initiator, Plot plot, UUID newOwner,
-        UUID oldOwner, boolean hasOldOwner);
+    public void callMember(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
+        callEvent(new PlayerPlotHelperEvent(initiator, plot, player, added));
+    }
+
+    public Result callOwnerChange(PlotPlayer initiator, Plot plot, UUID oldOwner, UUID newOwner,
+        boolean hasOldOwner) {
+        return callEvent(
+            new PlotChangeOwnerEvent(initiator, plot, oldOwner, newOwner, hasOldOwner));
+    }
+
+    @Nullable public Rating callRating(PlotPlayer player, Plot plot, Rating rating) {
+        PlotRateEvent event = new PlotRateEvent(player, rating, plot);
+        eventBus.post(event);
+        if (event.getEventResultRaw() == 0) {
+            return null;
+        }
+        return event.getRating();
+    }
 
     public void doJoinTask(final PlotPlayer player) {
         if (player == null) {
@@ -93,8 +135,8 @@ public abstract class EventUtil {
             .getArea() instanceof SinglePlotArea)) {
             TaskManager.runTask(() -> plot.teleportPlayer(player));
             MainUtil.sendMessage(player,
-                CaptionUtility.format(player, Captions.TELEPORTED_TO_ROAD.getTranslated()) + " (on-login) " + "(" + plot.getId().x + ";" + plot
-                    .getId().y + ")");
+                CaptionUtility.format(player, Captions.TELEPORTED_TO_ROAD.getTranslated())
+                    + " (on-login) " + "(" + plot.getId().x + ";" + plot.getId().y + ")");
         }
     }
 
@@ -132,13 +174,15 @@ public abstract class EventUtil {
                 }
                 final List<BlockTypeWrapper> use = plot.getFlag(UseFlag.class);
                 for (final BlockTypeWrapper blockTypeWrapper : use) {
-                    if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper.accepts(blockType)) {
+                    if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper
+                        .accepts(blockType)) {
                         return true;
                     }
                 }
-                return Permissions.hasPermission(player,
-                    Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(), false) || !(
-                    !notifyPerms || MainUtil.sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
+                return Permissions
+                    .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
+                        false) || !(!notifyPerms || MainUtil
+                    .sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
                         Captions.FLAG_USE.getTranslated()));
             }
             case TRIGGER_PHYSICAL: {
@@ -155,12 +199,14 @@ public abstract class EventUtil {
                 }
                 List<BlockTypeWrapper> use = plot.getFlag(UseFlag.class);
                 for (final BlockTypeWrapper blockTypeWrapper : use) {
-                    if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper.accepts(blockType)) {
+                    if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper
+                        .accepts(blockType)) {
                         return true;
                     }
                 }
-                return Permissions.hasPermission(player,
-                    Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(), false);
+                return Permissions
+                    .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
+                        false);
             }
             case SPAWN_MOB: {
                 if (plot == null) {
@@ -176,18 +222,19 @@ public abstract class EventUtil {
                 }
                 List<BlockTypeWrapper> place = plot.getFlag(PlaceFlag.class);
                 for (final BlockTypeWrapper blockTypeWrapper : place) {
-                    if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper.accepts(blockType)) {
+                    if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper
+                        .accepts(blockType)) {
                         return true;
                     }
                 }
-                if (Permissions.hasPermission(player,
-                    Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(), false)) {
+                if (Permissions
+                    .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
+                        false)) {
                     return true;
                 }
-                return !(!notifyPerms || MainUtil
-                    .sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
-                        Captions.FLAG_MOB_PLACE.getTranslated() + '/' + Captions.FLAG_PLACE
-                            .getTranslated()));
+                return !(!notifyPerms || MainUtil.sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
+                    Captions.FLAG_MOB_PLACE.getTranslated() + '/' + Captions.FLAG_PLACE
+                        .getTranslated()));
             }
             case PLACE_MISC: {
                 if (plot == null) {
@@ -203,18 +250,19 @@ public abstract class EventUtil {
                 }
                 List<BlockTypeWrapper> place = plot.getFlag(PlaceFlag.class);
                 for (final BlockTypeWrapper blockTypeWrapper : place) {
-                    if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper.accepts(blockType)) {
+                    if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper
+                        .accepts(blockType)) {
                         return true;
                     }
                 }
-                if (Permissions.hasPermission(player,
-                    Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(), false)) {
+                if (Permissions
+                    .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
+                        false)) {
                     return true;
                 }
-                return !(!notifyPerms || MainUtil
-                    .sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
-                        Captions.FLAG_MISC_PLACE.getTranslated() + '/' + Captions.FLAG_PLACE
-                            .getTranslated()));
+                return !(!notifyPerms || MainUtil.sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
+                    Captions.FLAG_MISC_PLACE.getTranslated() + '/' + Captions.FLAG_PLACE
+                        .getTranslated()));
             }
             case PLACE_VEHICLE:
                 if (plot == null) {

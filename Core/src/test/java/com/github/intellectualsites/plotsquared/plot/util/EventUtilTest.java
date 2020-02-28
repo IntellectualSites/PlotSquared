@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
+import com.github.intellectualsites.plotsquared.plot.events.PlotEvent.Result;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -17,44 +18,44 @@ public class EventUtilTest extends EventUtil {
         return null;
     }
 
-    @Override public boolean callClaim(PlotPlayer player, Plot plot, boolean auto) {
-        return false;
+    @Override public Result callClaim(PlotPlayer player, Plot plot, boolean auto) {
+        return Result.DENY;
     }
 
-    @Override public boolean callTeleport(PlotPlayer player, Location from, Plot plot) {
-        return false;
+    @Override public Result callTeleport(PlotPlayer player, Location from, Plot plot) {
+        return Result.DENY;
     }
 
-    @Override public boolean callComponentSet(Plot plot, String component) {
-        return false;
+    @Override public Result callComponentSet(Plot plot, String component) {
+        return Result.DENY;
     }
 
-    @Override public boolean callClear(Plot plot) {
-        return false;
+    @Override public Result callClear(Plot plot) {
+        return Result.DENY;
     }
 
-    @Override public boolean callDelete(Plot plot) {
-        return false;
+    @Override public Result callDelete(Plot plot) {
+        return Result.DENY;
     }
 
-    @Override public boolean callFlagAdd(PlotFlag<?, ?> flag, Plot plot) {
-        return true;
+    @Override public Result callFlagAdd(PlotFlag<?, ?> flag, Plot plot) {
+        return Result.ACCEPT;
     }
 
-    @Override public boolean callFlagRemove(PlotFlag<?, ?> flag, Plot plot, Object value) {
-        return true;
+    @Override public Result callFlagRemove(PlotFlag<?, ?> flag, Plot plot, Object value) {
+        return Result.ACCEPT;
     }
 
-    @Override public boolean callMerge(Plot plot, int dir, int max) {
-        return false;
+    @Override public Result callMerge(Plot plot, int dir, int max) {
+        return Result.DENY;
     }
 
-    @Override public boolean callAutoMerge(Plot plot, List<PlotId> plots) {
-        return false;
+    @Override public Result callAutoMerge(Plot plot, List<PlotId> plots) {
+        return Result.DENY;
     }
 
-    @Override public boolean callUnlink(PlotArea area, List<PlotId> plots) {
-        return false;
+    @Override public Result callUnlink(PlotArea area, List<PlotId> plots, Plot plot) {
+        return Result.DENY;
     }
 
     @Override public void callEntry(PlotPlayer player, Plot plot) {
@@ -73,8 +74,8 @@ public class EventUtilTest extends EventUtil {
     }
 
     @Override
-    public boolean callOwnerChange(PlotPlayer initiator, Plot plot, UUID newOwner, UUID oldOwner,
+    public Result callOwnerChange(PlotPlayer initiator, Plot plot, UUID newOwner, UUID oldOwner,
         boolean hasOldOwner) {
-        return false;
+        return Result.DENY;
     }
 }

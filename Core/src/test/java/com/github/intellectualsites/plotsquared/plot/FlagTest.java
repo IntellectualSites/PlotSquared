@@ -14,7 +14,7 @@ public class FlagTest {
     private ItemType testBlock;
 
     @Before public void setUp() throws Exception {
-        EventUtil.manager = new EventUtilTest();
+        //EventUtil.manager = new EventUtilTest();
         DBFunc.dbManager = new AbstractDBTest();
     }
 

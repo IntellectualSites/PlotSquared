@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.listener;
 
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyExitFlag;
@@ -21,7 +22,6 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.ByteArrayUtilities;
 import com.github.intellectualsites.plotsquared.plot.util.CommentManager;
-import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
@@ -53,7 +53,7 @@ public class PlotListener {
             ExpireManager.IMP.handleEntry(player, plot);
         }
         player.setMeta(PlotPlayer.META_LAST_PLOT, plot);
-        EventUtil.manager.callEntry(player, plot);
+        PlotSquared.get().getEventUtil().callEntry(player, plot);
         if (plot.hasOwner()) {
             // This will inherit values from PlotArea
             final TitlesFlag.TitlesFlagValue titleFlag = plot.getFlag(TitlesFlag.class);
@@ -197,7 +197,7 @@ public class PlotListener {
 
     public static boolean plotExit(final PlotPlayer player, Plot plot) {
         Object previous = player.deleteMeta(PlotPlayer.META_LAST_PLOT);
-        EventUtil.manager.callLeave(player, plot);
+        PlotSquared.get().getEventUtil().callLeave(player, plot);
         if (plot.hasOwner()) {
             PlotArea pw = plot.getArea();
             if (pw == null) {

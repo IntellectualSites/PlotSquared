@@ -1,15 +1,13 @@
-package com.github.intellectualsites.plotsquared.bukkit.events;
+package com.github.intellectualsites.plotsquared.plot.events;
 
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 
 import java.util.UUID;
 
 public class PlayerPlotTrustedEvent extends PlotEvent {
 
-    private static final HandlerList handlers = new HandlerList();
-    private final Player initiator;
+    private final PlotPlayer initiator;
     private final boolean added;
     private final UUID player;
 
@@ -21,15 +19,11 @@ public class PlayerPlotTrustedEvent extends PlotEvent {
      * @param player    Player that was added/removed from the trusted list
      * @param added     true of the player was added, false if the player was removed
      */
-    public PlayerPlotTrustedEvent(Player initiator, Plot plot, UUID player, boolean added) {
+    public PlayerPlotTrustedEvent(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
         super(plot);
         this.initiator = initiator;
         this.added = added;
         this.player = player;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
     /**
@@ -53,13 +47,9 @@ public class PlayerPlotTrustedEvent extends PlotEvent {
     /**
      * The player initiating the action
      *
-     * @return Player
+     * @return PlotPlayer
      */
-    public Player getInitiator() {
+    public PlotPlayer getInitiator() {
         return this.initiator;
-    }
-
-    @Override public HandlerList getHandlers() {
-        return handlers;
     }
 }

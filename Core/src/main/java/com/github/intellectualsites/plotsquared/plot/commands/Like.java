@@ -10,7 +10,6 @@ import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Rating;
 import com.github.intellectualsites.plotsquared.plot.object.TeleportCause;
-import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
@@ -99,7 +98,7 @@ public class Like extends SubCommand {
                 rating = 1;
             }
             plot.addRating(uuid, new Rating(rating));
-            final Rating result = EventUtil.manager.callRating(player, plot, new Rating(rating));
+            final Rating result = PlotSquared.get().getEventUtil().callRating(player, plot, new Rating(rating));
             if (result != null) {
                 plot.addRating(uuid, result);
                 if (like) {

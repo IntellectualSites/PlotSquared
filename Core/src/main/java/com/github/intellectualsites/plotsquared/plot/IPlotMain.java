@@ -163,11 +163,6 @@ public interface IPlotMain extends ILogger {
     WorldUtil initWorldUtil();
 
     /**
-     * Gets the EventUtil class.
-     */
-    EventUtil initEventUtil();
-
-    /**
      * Gets the chunk manager.
      *
      * @return the PlotSquared chunk manager

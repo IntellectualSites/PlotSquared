@@ -13,7 +13,6 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotItemStack;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Rating;
 import com.github.intellectualsites.plotsquared.plot.object.TeleportCause;
-import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
@@ -118,7 +117,7 @@ public class Rate extends SubCommand {
                             if (index.getValue() >= Settings.Ratings.CATEGORIES.size()) {
                                 int rV = rating.getValue();
                                 Rating result =
-                                    EventUtil.manager.callRating(this.player, plot, new Rating(rV));
+                                    PlotSquared.get().getEventUtil().callRating(this.player, plot, new Rating(rV));
                                 if (result != null) {
                                     plot.addRating(this.player.getUUID(), result);
                                     sendMessage(this.player, Captions.RATING_APPLIED,
@@ -186,7 +185,7 @@ public class Rate extends SubCommand {
                 sendMessage(player, Captions.RATING_ALREADY_EXISTS, plot.getId().toString());
                 return;
             }
-            Rating result = EventUtil.manager.callRating(player, plot, new Rating(rating));
+            Rating result = PlotSquared.get().getEventUtil().callRating(player, plot, new Rating(rating));
             if (result != null) {
                 plot.addRating(uuid, result);
                 sendMessage(player, Captions.RATING_APPLIED, plot.getId().toString());

@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import com.github.intellectualsites.plotsquared.plot.events.PlotEvent;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
@@ -828,8 +829,9 @@ public abstract class PlotArea {
         final PlotId pos2 = plotIds.get(plotIds.size() - 1);
         final PlotManager manager = getPlotManager();
 
-        final boolean result = EventUtil.manager.callAutoMerge(getPlotAbs(pos1), plotIds);
-        if (!result) {
+        final PlotEvent.Result
+            result = PlotSquared.get().getEventUtil().callAutoMerge(getPlotAbs(pos1), plotIds);
+        if (result.getValue() == 0) {
             return false;
         }
 

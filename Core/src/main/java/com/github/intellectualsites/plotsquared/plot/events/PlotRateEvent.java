@@ -1,26 +1,19 @@
-package com.github.intellectualsites.plotsquared.bukkit.events;
+package com.github.intellectualsites.plotsquared.plot.events;
 
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Rating;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.HandlerList;
 
-public class PlotRateEvent extends PlotEvent implements Cancellable {
+public class PlotRateEvent extends PlotEvent implements CancellablePlotEvent {
 
-    private static final HandlerList handlers = new HandlerList();
     private final PlotPlayer rater;
     private Rating rating;
-    private boolean cancelled = false;
+    private Result eventResult;
 
     public PlotRateEvent(PlotPlayer rater, Rating rating, Plot plot) {
         super(plot);
         this.rater = rater;
         this.rating = rating;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
     public PlotPlayer getRater() {
@@ -35,15 +28,18 @@ public class PlotRateEvent extends PlotEvent implements Cancellable {
         this.rating = rating;
     }
 
-    @Override public HandlerList getHandlers() {
-        return handlers;
+    @Override
+    public Result getEventResult() {
+        return eventResult;
     }
 
-    @Override public boolean isCancelled() {
-        return this.cancelled;
+    @Override
+    public int getEventResultRaw() {
+        return eventResult.getValue();
     }
 
-    @Override public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
+    @Override
+    public void setEventResult(Result e) {
+        this.eventResult = e;
     }
 }

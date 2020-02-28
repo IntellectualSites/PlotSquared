@@ -522,7 +522,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
             removePersistentMeta("quitLoc");
         }
         if (plot != null) {
-            EventUtil.manager.callLeave(this, plot);
+            PlotSquared.get().getEventUtil().callLeave(this, plot);
         }
         if (Settings.Enabled_Components.BAN_DELETER && isBanned()) {
             for (Plot owned : getPlots()) {

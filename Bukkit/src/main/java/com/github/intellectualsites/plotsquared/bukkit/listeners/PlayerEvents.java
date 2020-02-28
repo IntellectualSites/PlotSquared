@@ -65,7 +65,6 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.StringWrapper;
 import com.github.intellectualsites.plotsquared.plot.util.EntityUtil;
-import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
@@ -790,7 +789,7 @@ import java.util.regex.Pattern;
             if (!player.hasPlayedBefore() && player.isOnline()) {
                 player.saveData();
             }
-            EventUtil.manager.doJoinTask(pp);
+            PlotSquared.get().getEventUtil().doJoinTask(pp);
         }, 20);
 
         if (pp.hasPermission(Captions.PERMISSION_ADMIN_UPDATE_NOTIFICATION.getTranslated())
@@ -819,7 +818,7 @@ import java.util.regex.Pattern;
     public void playerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
-        EventUtil.manager.doRespawnTask(pp);
+        PlotSquared.get().getEventUtil().doRespawnTask(pp);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -1972,7 +1971,7 @@ import java.util.regex.Pattern;
                 Block block = player.getTargetBlockExact(5, FluidCollisionMode.SOURCE_ONLY);
                 if (block != null && block.getType() != Material.AIR) {
                     Location location = BukkitUtil.getLocation(block.getLocation());
-                    if (!EventUtil.manager
+                    if (!PlotSquared.get().getEventUtil()
                         .checkPlayerBlockEvent(pp, PlayerBlockEventType.SPAWN_MOB, location, null, true)) {
                         event.setCancelled(true);
                         event.setUseItemInHand(Event.Result.DENY);
@@ -2106,7 +2105,7 @@ import java.util.regex.Pattern;
                 return;
             }
         }
-        if (!EventUtil.manager.checkPlayerBlockEvent(pp, eventType, location, blocktype1, true)) {
+        if (!PlotSquared.get().getEventUtil().checkPlayerBlockEvent(pp, eventType, location, blocktype1, true)) {
             event.setCancelled(true);
             event.setUseInteractedBlock(Event.Result.DENY);
         }
