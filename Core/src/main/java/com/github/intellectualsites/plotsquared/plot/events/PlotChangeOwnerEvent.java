@@ -90,11 +90,6 @@ public class PlotChangeOwnerEvent extends PlotEvent implements CancellablePlotEv
     }
 
     @Override
-    public int getEventResultRaw() {
-        return eventResult.getValue();
-    }
-
-    @Override
     public void setEventResult(Result e) {
         this.eventResult = e;
     }

@@ -4,7 +4,9 @@ public interface CancellablePlotEvent {
 
     PlotEvent.Result getEventResult();
 
-    int getEventResultRaw();
+    default int getEventResultRaw() {
+        return getEventResult().getValue();
+    }
 
     void setEventResult(PlotEvent.Result eventResult);
 

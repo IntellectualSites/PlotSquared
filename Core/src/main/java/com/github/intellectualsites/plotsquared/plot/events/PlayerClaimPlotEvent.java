@@ -32,11 +32,6 @@ public class PlayerClaimPlotEvent extends PlotPlayerEvent implements Cancellable
     }
 
     @Override
-    public int getEventResultRaw() {
-        return eventResult.getValue();
-    }
-
-    @Override
     public void setEventResult(Result e) {
         this.eventResult = e;
     }

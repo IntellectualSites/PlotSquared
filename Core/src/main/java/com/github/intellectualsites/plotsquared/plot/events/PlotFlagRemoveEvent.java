@@ -26,11 +26,6 @@ public class PlotFlagRemoveEvent extends PlotFlagEvent implements CancellablePlo
     }
 
     @Override
-    public int getEventResultRaw() {
-        return eventResult.getValue();
-    }
-
-    @Override
     public void setEventResult(Result e) {
         this.eventResult = e;
     }
