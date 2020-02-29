@@ -53,7 +53,7 @@ public class PlotListener {
             ExpireManager.IMP.handleEntry(player, plot);
         }
         player.setMeta(PlotPlayer.META_LAST_PLOT, plot);
-        PlotSquared.get().getEventUtil().callEntry(player, plot);
+        PlotSquared.get().getEventDispatcher().callEntry(player, plot);
         if (plot.hasOwner()) {
             // This will inherit values from PlotArea
             final TitlesFlag.TitlesFlagValue titleFlag = plot.getFlag(TitlesFlag.class);
@@ -197,7 +197,7 @@ public class PlotListener {
 
     public static boolean plotExit(final PlotPlayer player, Plot plot) {
         Object previous = player.deleteMeta(PlotPlayer.META_LAST_PLOT);
-        PlotSquared.get().getEventUtil().callLeave(player, plot);
+        PlotSquared.get().getEventDispatcher().callLeave(player, plot);
         if (plot.hasOwner()) {
             PlotArea pw = plot.getArea();
             if (pw == null) {

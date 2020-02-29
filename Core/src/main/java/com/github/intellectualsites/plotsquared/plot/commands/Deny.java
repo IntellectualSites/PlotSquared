@@ -17,8 +17,12 @@ import com.sk89q.worldedit.world.gamemode.GameModes;
 import java.util.Set;
 import java.util.UUID;
 
-@CommandDeclaration(command = "deny", aliases = {"d",
-    "ban"}, description = "Deny a user from entering a plot", usage = "/plot deny <player|*>", category = CommandCategory.SETTINGS, requiredType = RequiredType.PLAYER)
+@CommandDeclaration(command = "deny",
+    aliases = {"d", "ban"},
+    description = "Deny a user from entering a plot",
+    usage = "/plot deny <player|*>",
+    category = CommandCategory.SETTINGS,
+    requiredType = RequiredType.PLAYER)
 public class Deny extends SubCommand {
 
     public Deny() {
@@ -67,7 +71,7 @@ public class Deny extends SubCommand {
                 plot.removeTrusted(uuid);
             }
             plot.addDenied(uuid);
-            PlotSquared.get().getEventUtil().callDenied(player, plot, uuid, true);
+            PlotSquared.get().getEventDispatcher().callDenied(player, plot, uuid, true);
             if (!uuid.equals(DBFunc.EVERYONE)) {
                 handleKick(UUIDHandler.getPlayer(uuid), plot);
             } else {

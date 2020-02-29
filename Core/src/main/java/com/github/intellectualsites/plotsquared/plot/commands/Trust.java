@@ -81,7 +81,7 @@ public class Trust extends Command {
                     }
                 }
                 currentPlot.addTrusted(uuid);
-                PlotSquared.get().getEventUtil().callTrusted(player, currentPlot, uuid, true);
+                PlotSquared.get().getEventDispatcher().callTrusted(player, currentPlot, uuid, true);
                 MainUtil.sendMessage(player, Captions.TRUSTED_ADDED);
             }
         }, null);

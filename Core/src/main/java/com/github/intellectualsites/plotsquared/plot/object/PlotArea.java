@@ -14,7 +14,6 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneF
 import com.github.intellectualsites.plotsquared.plot.generator.GridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
-import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
@@ -830,7 +829,7 @@ public abstract class PlotArea {
         final PlotManager manager = getPlotManager();
 
         final PlotEvent.Result
-            result = PlotSquared.get().getEventUtil().callAutoMerge(getPlotAbs(pos1), plotIds);
+            result = PlotSquared.get().getEventDispatcher().callAutoMerge(getPlotAbs(pos1), plotIds);
         if (result.getValue() == 0) {
             return false;
         }

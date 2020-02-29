@@ -789,7 +789,7 @@ import java.util.regex.Pattern;
             if (!player.hasPlayedBefore() && player.isOnline()) {
                 player.saveData();
             }
-            PlotSquared.get().getEventUtil().doJoinTask(pp);
+            PlotSquared.get().getEventDispatcher().doJoinTask(pp);
         }, 20);
 
         if (pp.hasPermission(Captions.PERMISSION_ADMIN_UPDATE_NOTIFICATION.getTranslated())
@@ -818,7 +818,7 @@ import java.util.regex.Pattern;
     public void playerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
-        PlotSquared.get().getEventUtil().doRespawnTask(pp);
+        PlotSquared.get().getEventDispatcher().doRespawnTask(pp);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -1971,7 +1971,7 @@ import java.util.regex.Pattern;
                 Block block = player.getTargetBlockExact(5, FluidCollisionMode.SOURCE_ONLY);
                 if (block != null && block.getType() != Material.AIR) {
                     Location location = BukkitUtil.getLocation(block.getLocation());
-                    if (!PlotSquared.get().getEventUtil()
+                    if (!PlotSquared.get().getEventDispatcher()
                         .checkPlayerBlockEvent(pp, PlayerBlockEventType.SPAWN_MOB, location, null, true)) {
                         event.setCancelled(true);
                         event.setUseItemInHand(Event.Result.DENY);
@@ -2105,7 +2105,7 @@ import java.util.regex.Pattern;
                 return;
             }
         }
-        if (!PlotSquared.get().getEventUtil().checkPlayerBlockEvent(pp, eventType, location, blocktype1, true)) {
+        if (!PlotSquared.get().getEventDispatcher().checkPlayerBlockEvent(pp, eventType, location, blocktype1, true)) {
             event.setCancelled(true);
             event.setUseInteractedBlock(Event.Result.DENY);
         }

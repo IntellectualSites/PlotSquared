@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public class EventUtil {
+public class EventDispatcher {
 
     EventBus eventBus = new EventBus("PlotSquaredEvents");
 

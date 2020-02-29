@@ -98,7 +98,7 @@ public class Like extends SubCommand {
                 rating = 1;
             }
             plot.addRating(uuid, new Rating(rating));
-            final Rating result = PlotSquared.get().getEventUtil().callRating(player, plot, new Rating(rating));
+            final Rating result = PlotSquared.get().getEventDispatcher().callRating(player, plot, new Rating(rating));
             if (result != null) {
                 plot.addRating(uuid, result);
                 if (like) {

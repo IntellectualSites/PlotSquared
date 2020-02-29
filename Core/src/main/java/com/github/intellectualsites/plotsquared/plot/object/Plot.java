@@ -815,7 +815,7 @@ public class Plot {
      * @return boolean
      */
     public boolean setOwner(UUID owner, PlotPlayer initiator) {
-        Result result = PlotSquared.get().getEventUtil()
+        Result result = PlotSquared.get().getEventDispatcher()
             .callOwnerChange(initiator, this, owner, hasOwner() ? this.owner : null, hasOwner());
         if (result.getValue() == 0) {
             return false;
@@ -858,9 +858,9 @@ public class Plot {
         }
         Result Result;
         if (isDelete) {
-            Result = PlotSquared.get().getEventUtil().callDelete(this);
+            Result = PlotSquared.get().getEventDispatcher().callDelete(this);
         } else {
-            Result = PlotSquared.get().getEventUtil().callClear(this);
+            Result = PlotSquared.get().getEventDispatcher().callClear(this);
         }
         if (Result.getValue() == 0) {
             return false;
@@ -985,7 +985,7 @@ public class Plot {
             current.setHome(null);
             ids.add(current.getId());
         }
-        Result result = PlotSquared.get().getEventUtil().callUnlink(this.area, ids, this);
+        Result result = PlotSquared.get().getEventDispatcher().callUnlink(this.area, ids, this);
         if (result.getValue() == 0) {
             return false;
         }
@@ -1094,7 +1094,7 @@ public class Plot {
      * @return A boolean indicating whether or not the operation succeeded
      */
     public <V> boolean setFlag(PlotFlag<V, ?> flag) {
-        if (PlotSquared.get().getEventUtil().callFlagAdd(flag, origin).getValue() == 0) {
+        if (PlotSquared.get().getEventDispatcher().callFlagAdd(flag, origin).getValue() == 0) {
             return false;
         }
         if (flag instanceof KeepFlag && ExpireManager.IMP != null) {
@@ -1195,7 +1195,7 @@ public class Plot {
                 continue;
             }
             if (plot == origin) {
-                Result result = PlotSquared.get().getEventUtil().callFlagRemove(flag, plot, value);
+                Result result = PlotSquared.get().getEventDispatcher().callFlagRemove(flag, plot, value);
                 if (result.getValue() == 0) {
                     plot.getFlagContainer().addFlag(flag);
                     continue;
@@ -1602,7 +1602,7 @@ public class Plot {
 
     public boolean claim(final PlotPlayer player, boolean teleport, String schematic,
         boolean updateDB) {
-        Result result = PlotSquared.get().getEventUtil().callClaim(player, this, false);
+        Result result = PlotSquared.get().getEventDispatcher().callClaim(player, this, false);
         if (updateDB) {
             if (result.getValue() == 0 || (!create(player.getUUID(), true))) {
                 return false;
@@ -2337,7 +2337,7 @@ public class Plot {
             return false;
         }
         //Call the merge event
-        if (PlotSquared.get().getEventUtil().callMerge(this, dir.getIndex(), max).getValue() == 0) {
+        if (PlotSquared.get().getEventDispatcher().callMerge(this, dir.getIndex(), max).getValue() == 0) {
             return false;
         }
         Set<Plot> connected = this.getConnectedPlots();
@@ -2898,7 +2898,7 @@ public class Plot {
     public boolean teleportPlayer(final PlotPlayer player, TeleportCause cause) {
         Plot plot = this.getBasePlot(false);
         Result result =
-            PlotSquared.get().getEventUtil().callTeleport(player, player.getLocation(), plot);
+            PlotSquared.get().getEventDispatcher().callTeleport(player, player.getLocation(), plot);
         if (result.getValue() == 0) {
             final Location location;
             if (this.area.HOME_ALLOW_NONMEMBER || plot.isAdded(player.getUUID())) {
@@ -2963,7 +2963,7 @@ public class Plot {
      */
     public boolean setComponent(String component, Pattern blocks) {
         if (StringMan.isEqualToAny(component, getManager().getPlotComponents(this.getId()))) {
-            PlotSquared.get().getEventUtil().callComponentSet(this, component);
+            PlotSquared.get().getEventDispatcher().callComponentSet(this, component);
         }
         return this.getManager().setComponent(this.getId(), component, blocks);
     }

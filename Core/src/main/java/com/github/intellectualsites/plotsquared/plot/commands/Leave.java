@@ -38,10 +38,10 @@ public class Leave extends Command {
             UUID uuid = player.getUUID();
             if (plot.isAdded(uuid)) {
                 if (plot.removeTrusted(uuid)) {
-                    PlotSquared.get().getEventUtil().callTrusted(player, plot, uuid, false);
+                    PlotSquared.get().getEventDispatcher().callTrusted(player, plot, uuid, false);
                 }
                 if (plot.removeMember(uuid)) {
-                    PlotSquared.get().getEventUtil().callMember(player, plot, uuid, false);
+                    PlotSquared.get().getEventDispatcher().callMember(player, plot, uuid, false);
                 }
                 MainUtil.sendMessage(player, Captions.PLOT_LEFT, player.getName());
             } else {

@@ -144,7 +144,7 @@ public class DebugExec extends SubCommand {
         this.scope.put("ChunkManager", ChunkManager.manager);
         this.scope.put("BlockManager", WorldUtil.IMP);
         this.scope.put("SetupUtils", SetupUtils.manager);
-        this.scope.put("EventUtil", PlotSquared.get().getEventUtil());
+        this.scope.put("EventUtil", PlotSquared.get().getEventDispatcher());
         this.scope.put("EconHandler", EconHandler.manager);
         this.scope.put("UUIDHandler", UUIDHandler.implementation);
         this.scope.put("DBFunc", DBFunc.dbManager);

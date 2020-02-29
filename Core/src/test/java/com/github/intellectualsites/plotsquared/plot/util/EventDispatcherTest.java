@@ -12,7 +12,7 @@ import com.github.intellectualsites.plotsquared.plot.object.Rating;
 import java.util.List;
 import java.util.UUID;
 
-public class EventUtilTest extends EventUtil {
+public class EventDispatcherTest extends EventDispatcher {
 
     @Override public Rating callRating(PlotPlayer player, Plot plot, Rating rating) {
         return null;

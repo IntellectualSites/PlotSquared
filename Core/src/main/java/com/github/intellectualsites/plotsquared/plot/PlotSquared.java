@@ -41,7 +41,7 @@ import com.github.intellectualsites.plotsquared.plot.util.ChatManager;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.CommentManager;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
-import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
+import com.github.intellectualsites.plotsquared.plot.util.EventDispatcher;
 import com.github.intellectualsites.plotsquared.plot.util.InventoryUtil;
 import com.github.intellectualsites.plotsquared.plot.util.LegacyConverter;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
@@ -129,7 +129,7 @@ import java.util.zip.ZipInputStream;
     @Getter private File jarFile = null; // This file
     private File storageFile;
     @Getter private PlotAreaManager plotAreaManager;
-    @Getter private EventUtil eventUtil;
+    @Getter private EventDispatcher eventDispatcher;
 
     /**
      * Initialize PlotSquared with the desired Implementation class.
@@ -230,7 +230,7 @@ import java.util.zip.ZipInputStream;
                 startExpiryTasks();
             }
             // Create Event utility class
-            eventUtil = new EventUtil();
+            eventDispatcher = new EventDispatcher();
             // create Hybrid utility class
             HybridUtils.manager = this.IMP.initHybridUtils();
             // Inventory utility class
@@ -1051,7 +1051,7 @@ import java.util.zip.ZipInputStream;
             return false;
         }
         if (callEvent) {
-            eventUtil.callDelete(plot);
+            eventDispatcher.callDelete(plot);
         }
         if (plot.getArea().removePlot(plot.getId())) {
             PlotId last = (PlotId) plot.getArea().getMeta("lastPlot");
