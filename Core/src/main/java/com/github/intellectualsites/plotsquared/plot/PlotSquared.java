@@ -213,7 +213,6 @@ import java.util.zip.ZipInputStream;
             }
             if (Settings.Enabled_Components.EVENTS) {
                 this.IMP.registerPlayerEvents();
-                this.IMP.registerPlotPlusEvents();
             }
             // Required
             this.IMP.registerWorldEvents();

@@ -4,7 +4,6 @@ import com.github.intellectualsites.plotsquared.bukkit.generator.BukkitPlotGener
 import com.github.intellectualsites.plotsquared.bukkit.listeners.ChunkListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.EntitySpawnListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.PlayerEvents;
-import com.github.intellectualsites.plotsquared.bukkit.listeners.PlotPlusListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.SingleWorldListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.WorldEvents;
 import com.github.intellectualsites.plotsquared.bukkit.placeholders.PlaceholderFormatter;
@@ -585,11 +584,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         final PlayerEvents main = new PlayerEvents();
         getServer().getPluginManager().registerEvents(main, this);
         getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
-    }
-
-    @Override public void registerPlotPlusEvents() {
-        PlotPlusListener.startRunnable(this);
-        getServer().getPluginManager().registerEvents(new PlotPlusListener(), this);
     }
 
     @Override public void registerForceFieldEvents() {

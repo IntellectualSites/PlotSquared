@@ -130,11 +130,6 @@ public interface IPlotMain extends ILogger {
     void registerPlayerEvents();
 
     /**
-     * Register plot plus related events.
-     */
-    void registerPlotPlusEvents();
-
-    /**
      * Register force field events.
      */
     void registerForceFieldEvents();

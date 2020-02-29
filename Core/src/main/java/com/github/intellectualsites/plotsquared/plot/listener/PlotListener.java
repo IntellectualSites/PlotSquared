@@ -3,31 +3,14 @@ package com.github.intellectualsites.plotsquared.plot.listener;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyExitFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.FarewellFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlightFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.GamemodeFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.GreetingFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.GuestGamemodeFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.MusicFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.NotifyEnterFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.NotifyLeaveFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.WeatherFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.TimeFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.TitlesFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.*;
+import com.github.intellectualsites.plotsquared.plot.flags.types.TimedFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
-import com.github.intellectualsites.plotsquared.plot.util.ByteArrayUtilities;
-import com.github.intellectualsites.plotsquared.plot.util.CommentManager;
-import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.Permissions;
-import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
-import com.github.intellectualsites.plotsquared.plot.util.StringMan;
-import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
-import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
@@ -35,10 +18,59 @@ import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
 public class PlotListener {
+
+    private static final HashMap<UUID, Interval> feedRunnable = new HashMap<>();
+    private static final HashMap<UUID, Interval> healRunnable = new HashMap<>();
+
+    public static void startRunnable() {
+        TaskManager.runTaskRepeat(() -> {
+            if (!healRunnable.isEmpty()) {
+                for (Iterator<Map.Entry<UUID, Interval>> iterator =
+                     healRunnable.entrySet().iterator(); iterator.hasNext(); ) {
+                    Map.Entry<UUID, Interval> entry = iterator.next();
+                    Interval value = entry.getValue();
+                    ++value.count;
+                    if (value.count == value.interval) {
+                        value.count = 0;
+                        PlotPlayer player = WorldUtil.IMP.wrapPlayer(entry.getKey());
+                        if (player == null) {
+                            iterator.remove();
+                            continue;
+                        }
+                        double level = WorldUtil.IMP.getHealth(player);
+                        if (level != value.max) {
+                            WorldUtil.IMP.setHealth(player, Math.min(level + value.amount, value.max));
+                        }
+                    }
+                }
+            }
+            if (!feedRunnable.isEmpty()) {
+                for (Iterator<Map.Entry<UUID, Interval>> iterator =
+                     feedRunnable.entrySet().iterator(); iterator.hasNext(); ) {
+                    Map.Entry<UUID, Interval> entry = iterator.next();
+                    Interval value = entry.getValue();
+                    ++value.count;
+                    if (value.count == value.interval) {
+                        value.count = 0;
+                        PlotPlayer player = WorldUtil.IMP.wrapPlayer(entry.getKey());
+                        if (player == null) {
+                            iterator.remove();
+                            continue;
+                        }
+                        int level = WorldUtil.IMP.getFoodLevel(player);
+                        if (level != value.max) {
+                            WorldUtil.IMP.setFoodLevel(player, Math.min(level + value.amount, value.max));
+                        }
+                    }
+                }
+            }
+        }, 20);
+    }
 
     public static boolean plotEntry(final PlotPlayer player, final Plot plot) {
         if (plot.isDenied(player.getUUID()) && !Permissions
@@ -190,6 +222,15 @@ public class PlotListener {
                     }, 20);
                 }
             }
+
+            TimedFlag.Timed<Integer> feed = plot.getFlag(FeedFlag.class);
+            if (feed != null && feed.getInterval() != 0 && feed.getValue() != 0) {
+                feedRunnable.put(player.getUUID(), new Interval(feed.getInterval(), feed.getValue(), 20));
+            }
+            TimedFlag.Timed<Integer> heal = plot.getFlag(HealFlag.class);
+            if (heal != null && heal.getInterval() != 0 && heal.getValue() != 0) {
+                healRunnable.put(player.getUUID(), new Interval(heal.getInterval(), heal.getValue(), 20));
+            }
             return true;
         }
         return true;
@@ -277,7 +318,29 @@ public class PlotListener {
                 player.deleteMeta("music");
                 player.playMusic(lastLoc, ItemTypes.AIR);
             }
+
+            feedRunnable.remove(player.getUUID());
+            healRunnable.remove(player.getUUID());
         }
         return true;
+    }
+
+    public static void logout(UUID uuid) {
+        feedRunnable.remove(uuid);
+        healRunnable.remove(uuid);
+    }
+
+    private static class Interval {
+
+        final int interval;
+        final int amount;
+        final int max;
+        int count = 0;
+
+        Interval(int interval, int amount, int max) {
+            this.interval = interval;
+            this.amount = amount;
+            this.max = max;
+        }
     }
 }

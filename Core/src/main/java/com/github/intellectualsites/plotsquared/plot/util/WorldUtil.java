@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.util;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
 import com.sk89q.jnbt.CompoundTag;
@@ -157,4 +158,14 @@ public abstract class WorldUtil {
     }
 
     public abstract boolean isBlockSame(BlockState block1, BlockState block2);
+
+    public abstract PlotPlayer wrapPlayer(UUID uuid);
+
+    public abstract double getHealth(PlotPlayer player);
+
+    public abstract void setHealth(PlotPlayer player, double health);
+
+    public abstract int getFoodLevel(PlotPlayer player);
+
+    public abstract void setFoodLevel(PlotPlayer player, int foodLevel);
 }

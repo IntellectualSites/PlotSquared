@@ -7,51 +7,7 @@ import com.github.intellectualsites.plotsquared.bukkit.util.UpdateUtility;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnimalAttackFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnimalCapFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnimalInteractFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockBurnFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockIgnitionFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockedCmdsFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.BreakFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyTeleportFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.DisablePhysicsFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.EntityCapFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.ExplosionFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.GrassGrowFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.HangingBreakFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.HangingPlaceFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.HostileAttackFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.HostileCapFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.HostileInteractFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.IceFormFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.IceMeltFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.KelpGrowFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.LiquidFlowFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscBreakFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscCapFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscInteractFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.MobCapFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.MobPlaceFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.MycelGrowFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlaceFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlayerInteractFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.PveFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.PvpFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.RedstoneFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.SnowFormFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.SnowMeltFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.SoilDryFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.TamedAttackFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.TamedInteractFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.UntrustedVisitFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.UseFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleBreakFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleCapFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleUseFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.VillagerInteractFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.VineGrowFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.*;
 import com.github.intellectualsites.plotsquared.plot.flags.types.BlockTypeWrapper;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
@@ -74,11 +30,7 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
 import io.papermc.lib.PaperLib;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.FluidCollisionMode;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -128,36 +80,12 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.EntityBlockFormEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntityCombustByEntityEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.ExplosionPrimeEvent;
-import org.bukkit.event.entity.LingeringPotionSplashEvent;
-import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerBucketFillEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerEggThrowEvent;
-import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
@@ -194,7 +122,8 @@ import java.util.regex.Pattern;
 /**
  * Player Events involving plots.
  */
-@SuppressWarnings("unused") public class PlayerEvents extends PlotListener implements Listener {
+@SuppressWarnings("unused")
+public class PlayerEvents extends PlotListener implements Listener {
 
     private boolean pistonBlocks = true;
     private float lastRadius;
@@ -235,8 +164,8 @@ import java.util.regex.Pattern;
     }
 
     public static boolean checkEntity(Entity entity, Plot plot) {
-        if (plot == null || !plot.hasOwner() || plot.getFlags().isEmpty() && plot
-            .getArea().getFlagContainer().getFlagMap().isEmpty()) {
+        if (plot == null || !plot.hasOwner() || plot.getFlags().isEmpty() && plot.getArea()
+            .getFlagContainer().getFlagMap().isEmpty()) {
             return false;
         }
         switch (entity.getType()) {
@@ -275,8 +204,7 @@ import java.util.regex.Pattern;
             case ARMOR_STAND:
             case ITEM_FRAME:
             case PAINTING:
-                return EntityUtil.checkEntity(plot,
-                    EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
                     MiscCapFlag.MISC_CAP_UNLIMITED);
             // misc
             case BOAT:
@@ -287,8 +215,7 @@ import java.util.regex.Pattern;
             case MINECART_HOPPER:
             case MINECART_MOB_SPAWNER:
             case MINECART_TNT:
-                return EntityUtil.checkEntity(plot,
-                    EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
                     VehicleCapFlag.VEHICLE_CAP_UNLIMITED);
             case BAT:
             case CHICKEN:
@@ -322,10 +249,8 @@ import java.util.regex.Pattern;
             case WOLF:
             case ZOMBIE_HORSE:
                 // animal
-                return EntityUtil.checkEntity(plot,
-                    EntityCapFlag.ENTITY_CAP_UNLIMITED,
-                    MobCapFlag.MOB_CAP_UNLIMITED,
-                    AnimalCapFlag.ANIMAL_CAP_UNLIMITED);
+                return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                    MobCapFlag.MOB_CAP_UNLIMITED, AnimalCapFlag.ANIMAL_CAP_UNLIMITED);
             case BLAZE:
             case CAVE_SPIDER:
             case CREEPER:
@@ -359,37 +284,27 @@ import java.util.regex.Pattern;
             case PHANTOM:
             case RAVAGER:
                 // monster
-                return EntityUtil
-                    .checkEntity(plot,
-                        EntityCapFlag.ENTITY_CAP_UNLIMITED,
-                        MobCapFlag.MOB_CAP_UNLIMITED,
-                        HostileCapFlag.HOSTILE_CAP_UNLIMITED);
+                return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                    MobCapFlag.MOB_CAP_UNLIMITED, HostileCapFlag.HOSTILE_CAP_UNLIMITED);
             default:
                 if (entity instanceof LivingEntity) {
                     if (entity instanceof Animals || entity instanceof WaterMob) {
-                        return EntityUtil.checkEntity(plot,
-                            EntityCapFlag.ENTITY_CAP_UNLIMITED,
-                            MobCapFlag.MOB_CAP_UNLIMITED,
-                            AnimalCapFlag.ANIMAL_CAP_UNLIMITED);
+                        return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                            MobCapFlag.MOB_CAP_UNLIMITED, AnimalCapFlag.ANIMAL_CAP_UNLIMITED);
                     } else if (entity instanceof Monster) {
-                        return EntityUtil.checkEntity(plot,
-                            EntityCapFlag.ENTITY_CAP_UNLIMITED,
-                            MobCapFlag.MOB_CAP_UNLIMITED,
-                            HostileCapFlag.HOSTILE_CAP_UNLIMITED);
+                        return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                            MobCapFlag.MOB_CAP_UNLIMITED, HostileCapFlag.HOSTILE_CAP_UNLIMITED);
                     } else {
-                        return EntityUtil.checkEntity(plot,
-                            EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                        return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
                             MobCapFlag.MOB_CAP_UNLIMITED);
                     }
                 }
                 if (entity instanceof Vehicle) {
-                    return EntityUtil.checkEntity(plot,
-                        EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                    return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
                         VehicleCapFlag.VEHICLE_CAP_UNLIMITED);
                 }
                 if (entity instanceof Hanging) {
-                    return EntityUtil.checkEntity(plot,
-                        EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                    return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
                         MiscCapFlag.MISC_CAP_UNLIMITED);
                 }
                 return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED);
@@ -793,22 +708,34 @@ import java.util.regex.Pattern;
         }, 20);
 
         if (pp.hasPermission(Captions.PERMISSION_ADMIN_UPDATE_NOTIFICATION.getTranslated())
-                && Settings.Enabled_Components.UPDATE_NOTIFICATIONS) {
+            && Settings.Enabled_Components.UPDATE_NOTIFICATIONS) {
             try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL("https://api.spigotmc.org/legacy/update.php?resource=1177").openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(
+                    "https://api.spigotmc.org/legacy/update.php?resource=1177").openConnection();
                 connection.setRequestMethod("GET");
-                spigotVersion = (new BufferedReader(new InputStreamReader(connection.getInputStream()))).readLine();
+                spigotVersion =
+                    (new BufferedReader(new InputStreamReader(connection.getInputStream())))
+                        .readLine();
             } catch (IOException e) {
-                new PlotMessage(Captions.PREFIX + "Unable to check for updates, check console for further information.").color("$13");
+                new PlotMessage(Captions.PREFIX
+                    + "Unable to check for updates, check console for further information.")
+                    .color("$13");
                 PlotSquared.log(Captions.PREFIX + "&cUnable to check for updates because: " + e);
                 return;
             }
 
             if (!UpdateUtility.internalVersion.equals(UpdateUtility.spigotVersion)) {
                 new PlotMessage("-----------------------------------").send(pp);
-                new PlotMessage(Captions.PREFIX + "There appears to be a PlotSquared update available!").color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates").send(pp);
-                new PlotMessage(Captions.PREFIX + "The latest version is " + spigotVersion).color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates").send(pp);
-                new PlotMessage(Captions.PREFIX + "https://www.spigotmc.org/resources/1177/updates").color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates").send(pp);
+                new PlotMessage(
+                    Captions.PREFIX + "There appears to be a PlotSquared update available!")
+                    .color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates")
+                    .send(pp);
+                new PlotMessage(Captions.PREFIX + "The latest version is " + spigotVersion)
+                    .color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates")
+                    .send(pp);
+                new PlotMessage(Captions.PREFIX + "https://www.spigotmc.org/resources/1177/updates")
+                    .color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates")
+                    .send(pp);
                 new PlotMessage("-----------------------------------").send(pp);
             }
         }
@@ -846,7 +773,8 @@ import java.util.regex.Pattern;
                 // to is identical to the plot's home location, and untrusted-visit is true
                 // i.e. untrusted-visit can override deny-teleport
                 // this is acceptable, because otherwise it wouldn't make sense to have both flags set
-                if (!result && !(plot.getFlag(UntrustedVisitFlag.class) && plot.getHome().equals(BukkitUtil.getLocationFull(to)))) {
+                if (!result && !(plot.getFlag(UntrustedVisitFlag.class) && plot.getHome()
+                    .equals(BukkitUtil.getLocationFull(to)))) {
                     MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
                         Captions.PERMISSION_ADMIN_ENTRY_DENIED);
                     event.setCancelled(true);
@@ -1105,8 +1033,8 @@ import java.util.regex.Pattern;
         }
         if (!spies.isEmpty()) {
             String spyMessage = Captions.PLOT_CHAT_SPY_FORMAT.getTranslated()
-                .replace("%plot_id%", id.x + ";" + id.y)
-                    .replace("%sender%", sender).replace("%msg%", message);
+                .replace("%plot_id%", id.x + ";" + id.y).replace("%sender%", sender)
+                .replace("%msg%", message);
             for (Player player : spies) {
                 player.sendMessage(spyMessage);
             }
@@ -1406,8 +1334,19 @@ import java.util.regex.Pattern;
         if (area == null) {
             return;
         }
+        if (player.getGameMode() != GameMode.SURVIVAL) {
+            return;
+        }
         Plot plot = area.getPlot(location);
         if (plot != null) {
+            if (plot.getFlag(InstabreakFlag.class)) {
+                Block block = event.getBlock();
+                BlockBreakEvent call = new BlockBreakEvent(block, player);
+                Bukkit.getServer().getPluginManager().callEvent(call);
+                if (!call.isCancelled()) {
+                    event.getBlock().breakNaturally();
+                }
+            }
             if (location.getY() == 0) {
                 event.setCancelled(true);
                 return;
@@ -1425,7 +1364,9 @@ import java.util.regex.Pattern;
             if (!plot.isAdded(plotPlayer.getUUID())) {
                 List<BlockTypeWrapper> destroy = plot.getFlag(BreakFlag.class);
                 Block block = event.getBlock();
-                if (destroy.contains(BlockTypeWrapper.get(BukkitAdapter.asBlockType(block.getType()))) || Permissions
+                if (destroy
+                    .contains(BlockTypeWrapper.get(BukkitAdapter.asBlockType(block.getType())))
+                    || Permissions
                     .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }
@@ -1518,14 +1459,14 @@ import java.util.regex.Pattern;
                v
                 <-----O-----> x
              */
-            if (BukkitUtil.getPlot(location.clone().add(-1, 0, 1)  /* A */ ) != null ||
-                BukkitUtil.getPlot(location.clone().add(1, 0, 0)   /* B */ ) != null ||
-                BukkitUtil.getPlot(location.clone().add(1, 0, 1)   /* C */ ) != null ||
-                BukkitUtil.getPlot(location.clone().add(-1, 0, 0)  /* D */ ) != null ||
-                BukkitUtil.getPlot(location.clone().add(1, 0, 0)   /* E */ ) != null ||
-                BukkitUtil.getPlot(location.clone().add(-1, 0, -1) /* F */ ) != null ||
-                BukkitUtil.getPlot(location.clone().add(0, 0, -1)  /* G */ ) != null ||
-                BukkitUtil.getPlot(location.clone().add(1, 0, 1)   /* H */ ) != null) {
+            if (BukkitUtil.getPlot(location.clone().add(-1, 0, 1)  /* A */) != null
+                || BukkitUtil.getPlot(location.clone().add(1, 0, 0)   /* B */) != null
+                || BukkitUtil.getPlot(location.clone().add(1, 0, 1)   /* C */) != null
+                || BukkitUtil.getPlot(location.clone().add(-1, 0, 0)  /* D */) != null
+                || BukkitUtil.getPlot(location.clone().add(1, 0, 0)   /* E */) != null
+                || BukkitUtil.getPlot(location.clone().add(-1, 0, -1) /* F */) != null
+                || BukkitUtil.getPlot(location.clone().add(0, 0, -1)  /* G */) != null
+                || BukkitUtil.getPlot(location.clone().add(1, 0, 1)   /* H */) != null) {
                 event.setCancelled(true);
             }
         }
@@ -1882,14 +1823,14 @@ import java.util.regex.Pattern;
         PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
         if (plot == null) {
             if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
-                MainUtil
-                    .sendMessage(pp, Captions.NO_PERMISSION_EVENT, "plots.admin.interact.road");
+                MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT, "plots.admin.interact.road");
                 e.setCancelled(true);
             }
         } else {
             if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
-                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT, Captions.PERMISSION_ADMIN_BUILD_OTHER);
+                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
+                        Captions.PERMISSION_ADMIN_BUILD_OTHER);
                     e.setCancelled(true);
                     return;
                 }
@@ -1972,7 +1913,8 @@ import java.util.regex.Pattern;
                 if (block != null && block.getType() != Material.AIR) {
                     Location location = BukkitUtil.getLocation(block.getLocation());
                     if (!PlotSquared.get().getEventDispatcher()
-                        .checkPlayerBlockEvent(pp, PlayerBlockEventType.SPAWN_MOB, location, null, true)) {
+                        .checkPlayerBlockEvent(pp, PlayerBlockEventType.SPAWN_MOB, location, null,
+                            true)) {
                         event.setCancelled(true);
                         event.setUseItemInHand(Event.Result.DENY);
                     }
@@ -1994,7 +1936,8 @@ import java.util.regex.Pattern;
         Block block = event.getClickedBlock();
         Location location = BukkitUtil.getLocation(block.getLocation());
         Action action = event.getAction();
-        outer: switch (action) {
+        outer:
+        switch (action) {
             case PHYSICAL: {
                 eventType = PlayerBlockEventType.TRIGGER_PHYSICAL;
                 blocktype1 = BukkitAdapter.asBlockType(block.getType());
@@ -2101,11 +2044,13 @@ import java.util.regex.Pattern;
                 return;
         }
         if (PlotSquared.get().worldedit != null && pp.getAttribute("worldedit")) {
-            if (event.getMaterial() == Material.getMaterial(PlotSquared.get().worldedit.getConfiguration().wandItem)) {
+            if (event.getMaterial() == Material
+                .getMaterial(PlotSquared.get().worldedit.getConfiguration().wandItem)) {
                 return;
             }
         }
-        if (!PlotSquared.get().getEventDispatcher().checkPlayerBlockEvent(pp, eventType, location, blocktype1, true)) {
+        if (!PlotSquared.get().getEventDispatcher()
+            .checkPlayerBlockEvent(pp, eventType, location, blocktype1, true)) {
             event.setCancelled(true);
             event.setUseInteractedBlock(Event.Result.DENY);
         }
@@ -2304,12 +2249,11 @@ import java.util.regex.Pattern;
                 Block ignitingBlock = event.getIgnitingBlock();
                 Plot plotIgnited = BukkitUtil.getLocation(ignitingBlock.getLocation()).getPlot();
                 if (igniteCause == BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL && (
-                    !plot.getFlag(BlockIgnitionFlag.class) || plotIgnited == null
-                        || !plotIgnited.equals(plot)) ||
-                    (igniteCause == BlockIgniteEvent.IgniteCause.SPREAD
-                        || igniteCause == BlockIgniteEvent.IgniteCause.LAVA) && (
-                        !plot.getFlag(BlockIgnitionFlag.class) || plotIgnited == null
-                            || !plotIgnited.equals(plot))) {
+                    !plot.getFlag(BlockIgnitionFlag.class) || plotIgnited == null || !plotIgnited
+                        .equals(plot)) || (igniteCause == BlockIgniteEvent.IgniteCause.SPREAD
+                    || igniteCause == BlockIgniteEvent.IgniteCause.LAVA) && (
+                    !plot.getFlag(BlockIgnitionFlag.class) || plotIgnited == null || !plotIgnited
+                        .equals(plot))) {
                     event.setCancelled(true);
                 }
             }
@@ -2598,8 +2542,8 @@ import java.util.regex.Pattern;
             if (entity instanceof Animals && plot.getFlag(AnimalInteractFlag.class)) {
                 return;
             }
-            if (entity instanceof Tameable && ((Tameable) entity).isTamed() && plot.getFlag(
-                TamedInteractFlag.class)) {
+            if (entity instanceof Tameable && ((Tameable) entity).isTamed() && plot
+                .getFlag(TamedInteractFlag.class)) {
                 return;
             }
             if (entity instanceof Vehicle && plot.getFlag(VehicleUseFlag.class)) {
@@ -2820,8 +2764,10 @@ import java.util.regex.Pattern;
                 if (plot != null && (plot.getFlag(HangingBreakFlag.class)) || plot
                     .isAdded(plotPlayer.getUUID())) {
                     if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
-                        if (!Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
-                            MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT, Captions.PERMISSION_ADMIN_BUILD_OTHER);
+                        if (!Permissions
+                            .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
+                            MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
+                                Captions.PERMISSION_ADMIN_BUILD_OTHER);
                             return false;
                         }
                     }
@@ -2844,8 +2790,8 @@ import java.util.regex.Pattern;
                 }
             } else if (victim instanceof Monster
                 || victim instanceof EnderDragon) { // victim is monster
-                if (plot != null && (plot.getFlag(HostileAttackFlag.class) || plot.getFlag(PveFlag.class) ||
-                    plot.isAdded(plotPlayer.getUUID()))) {
+                if (plot != null && (plot.getFlag(HostileAttackFlag.class) || plot
+                    .getFlag(PveFlag.class) || plot.isAdded(plotPlayer.getUUID()))) {
                     return true;
                 }
                 if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
@@ -2854,8 +2800,8 @@ import java.util.regex.Pattern;
                     return false;
                 }
             } else if (victim instanceof Tameable) { // victim is tameable
-                if (plot != null && (plot.getFlag(TamedAttackFlag.class) || plot.getFlag(PveFlag.class) ||
-                    plot.isAdded(plotPlayer.getUUID()))) {
+                if (plot != null && (plot.getFlag(TamedAttackFlag.class) || plot
+                    .getFlag(PveFlag.class) || plot.isAdded(plotPlayer.getUUID()))) {
                     return true;
                 }
                 if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
@@ -2880,8 +2826,8 @@ import java.util.regex.Pattern;
                     return false;
                 }
             } else if (victim instanceof Creature) { // victim is animal
-                if (plot != null && (plot.getFlag(AnimalAttackFlag.class) || plot.getFlag(PveFlag.class)
-                    || plot.isAdded(plotPlayer.getUUID()))) {
+                if (plot != null && (plot.getFlag(AnimalAttackFlag.class) || plot
+                    .getFlag(PveFlag.class) || plot.isAdded(plotPlayer.getUUID()))) {
                     return true;
                 }
                 if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
@@ -2976,9 +2922,10 @@ import java.util.regex.Pattern;
             } else if (!plot.isAdded(pp.getUUID())) {
                 List<BlockTypeWrapper> place = plot.getFlag(PlaceFlag.class);
                 if (place != null) {
-                Block block = event.getBlock();
-                    if (place.contains(BlockTypeWrapper.get(BukkitAdapter.asBlockType(block.getType())))) {
-                    return;
+                    Block block = event.getBlock();
+                    if (place.contains(
+                        BlockTypeWrapper.get(BukkitAdapter.asBlockType(block.getType())))) {
+                        return;
                     }
                 }
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
@@ -3004,7 +2951,51 @@ import java.util.regex.Pattern;
         } else if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_ROAD)) {
             MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
                 Captions.PERMISSION_ADMIN_BUILD_ROAD);
-        event.setCancelled(true);
+            event.setCancelled(true);
+        }
     }
-}
+
+    @EventHandler(priority = EventPriority.HIGH) public void onDamage(EntityDamageEvent event) {
+        if (event.getEntityType() != EntityType.PLAYER) {
+            return;
+        }
+        Plot plot = BukkitUtil.getLocation(event.getEntity()).getOwnedPlot();
+        if (plot == null) {
+            return;
+        }
+        if (plot.getFlag(InvincibleFlag.class)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler public void onItemDrop(PlayerDropItemEvent event) {
+        Player player = event.getPlayer();
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        Plot plot = BukkitUtil.getLocation(player).getOwnedPlot();
+        if (plot == null) {
+            return;
+        }
+        UUID uuid = pp.getUUID();
+        if (!plot.isAdded(uuid)) {
+            if (!plot.getFlag(ItemDropFlag.class)) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler public void onItemPickup(EntityPickupItemEvent event) {
+        LivingEntity ent = event.getEntity();
+        if (ent instanceof Player) {
+            Player player = (Player) ent;
+            PlotPlayer pp = BukkitUtil.getPlayer(player);
+            Plot plot = BukkitUtil.getLocation(player).getOwnedPlot();
+            if (plot == null) {
+                return;
+            }
+            UUID uuid = pp.getUUID();
+            if (!plot.isAdded(uuid) && plot.getFlag(DropProtectionFlag.class)) {
+                event.setCancelled(true);
+            }
+        }
+    }
 }
