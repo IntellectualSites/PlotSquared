@@ -19,8 +19,7 @@ public abstract class PlotEvent {
         return this.plot;
     }
 
-    @NotNull
-    public String getEventName() {
+    @NotNull public String getEventName() {
         if (name == null) {
             name = getClass().getSimpleName();
         }
@@ -31,7 +30,7 @@ public abstract class PlotEvent {
         DENY(0), ACCEPT(1), FORCE(2);
 
         private int value;
-        private static Map map = new HashMap<>();
+        private static Map<Integer, Result> map = new HashMap<>();
 
         Result(int value) {
             this.value = value;
