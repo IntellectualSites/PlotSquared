@@ -15,40 +15,25 @@ public abstract class PlotEvent {
         this.plot = plot;
     }
 
+    /**
+     * Obtain the plot involved in the event
+     *
+     * @return Plot
+     */
     public final Plot getPlot() {
         return this.plot;
     }
 
+    /**
+     * Obtain the event's class name
+     *
+     * @return the event class name
+     */
     @NotNull public String getEventName() {
         if (name == null) {
             name = getClass().getSimpleName();
         }
         return name;
-    }
-
-    public enum Result {
-        DENY(0), ACCEPT(1), FORCE(2);
-
-        private int value;
-        private static Map<Integer, Result> map = new HashMap<>();
-
-        Result(int value) {
-            this.value = value;
-        }
-
-        static {
-            for (Result eventResult : Result.values()) {
-                map.put(eventResult.value, eventResult);
-            }
-        }
-
-        public static Result valueOf(int eventResult) {
-            return (Result) map.get(eventResult);
-        }
-
-        public int getValue() {
-            return value;
-        }
     }
 
 }

@@ -1,13 +1,16 @@
 package com.github.intellectualsites.plotsquared.plot.events;
 
+/**
+ * PlotSquared event with {@link Result} to cancel, force, or allow.
+ */
 public interface CancellablePlotEvent {
 
-    PlotEvent.Result getEventResult();
+    Result getEventResult();
+
+    void setEventResult(Result eventResult);
 
     default int getEventResultRaw() {
         return getEventResult().getValue();
     }
-
-    void setEventResult(PlotEvent.Result eventResult);
 
 }
