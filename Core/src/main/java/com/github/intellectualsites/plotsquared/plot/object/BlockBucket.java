@@ -80,7 +80,7 @@ public final class BlockBucket implements ConfigurationSerializable {
         if (chance == -1)
             chance = 1;
         String prefix = input.length() == 0 ? "" : ",";
-        input.append(prefix).append(chance).append("%").append(prefix);
+        input.append(prefix).append(block.toString()).append(":").append(chance);
         this.compiled = false;
     }
 

@@ -44,6 +44,7 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -2028,37 +2029,32 @@ import java.util.concurrent.atomic.AtomicInteger;
         });
     }
 
-    @Override public void swapPlots(Plot plot1, Plot plot2) {
-        final int id1 = getId(plot1);
-        final int id2 = getId(plot2);
-        final PlotId pos1 = plot1.getId();
-        final PlotId pos2 = plot2.getId();
-        addPlotTask(plot1, new UniqueStatement("swapPlots") {
-            @Override public void set(PreparedStatement statement) throws SQLException {
-                statement.setInt(1, pos2.x);
-                statement.setInt(2, pos2.y);
-                statement.setInt(3, id1);
+    @Override public CompletableFuture<Boolean> swapPlots(Plot plot1, Plot plot2) {
+        final CompletableFuture<Boolean> future = new CompletableFuture<>();
+        TaskManager.runTaskAsync(() -> {
+            final int id1 = getId(plot1);
+            final int id2 = getId(plot2);
+            final PlotId pos1 = plot1.getId();
+            final PlotId pos2 = plot2.getId();
+            try (final PreparedStatement preparedStatement = this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix
+                + "plot` SET `plot_id_x` = ?, `plot_id_z` = ? WHERE `id` = ?")) {
+                preparedStatement.setInt(1, pos1.getX());
+                preparedStatement.setInt(2, pos1.getY());
+                preparedStatement.setInt(3, id1);
+                preparedStatement.execute();
+                preparedStatement.setInt(1, pos2.getX());
+                preparedStatement.setInt(2, pos2.getY());
+                preparedStatement.setInt(3, id2);
+                preparedStatement.execute();
+            } catch (final Exception e) {
+                PlotSquared.log(Captions.PREFIX.getTranslated() + "Failed to persist swap of " + plot1 + " and " + plot2 + "!");
+                e.printStackTrace();
+                future.complete(false);
+                return;
             }
-
-            @Override public PreparedStatement get() throws SQLException {
-                return SQLManager.this.connection.prepareStatement(
-                    "UPDATE `" + SQLManager.this.prefix
-                        + "plot` SET `plot_id_x` = ?, `plot_id_z` = ? WHERE `id` = ?");
-            }
+            future.complete(true);
         });
-        addPlotTask(plot2, new UniqueStatement("swapPlots") {
-            @Override public void set(PreparedStatement statement) throws SQLException {
-                statement.setInt(1, pos1.x);
-                statement.setInt(2, pos1.y);
-                statement.setInt(3, id2);
-            }
-
-            @Override public PreparedStatement get() throws SQLException {
-                return SQLManager.this.connection.prepareStatement(
-                    "UPDATE `" + SQLManager.this.prefix
-                        + "plot` SET `plot_id_x` = ?, `plot_id_z` = ? WHERE `id` = ?");
-            }
-        });
+        return future;
     }
 
     @Override public void movePlot(final Plot original, final Plot newPlot) {

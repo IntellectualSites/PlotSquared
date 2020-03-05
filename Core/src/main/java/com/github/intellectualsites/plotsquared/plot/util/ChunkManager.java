@@ -52,7 +52,9 @@ public abstract class ChunkManager {
             }
             queue.flush();
         } else {
-            forceChunks.put(loc, force);
+            if (force != null) {
+                forceChunks.put(loc, force);
+            }
             addChunks.put(loc, add);
             queue.regenChunk(loc.getX(), loc.getZ());
             forceChunks.remove(loc);
