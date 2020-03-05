@@ -6,6 +6,7 @@ import com.github.intellectualsites.plotsquared.configuration.MemorySection;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 
@@ -32,7 +33,7 @@ public class Reload extends SubCommand {
                 if (worldSection == null) {
                     return;
                 }
-                if (area.getType() != 2 || !worldSection.contains("areas")) {
+                if (area.getType() != PlotAreaType.PARTIAL || !worldSection.contains("areas")) {
                     area.saveConfiguration(worldSection);
                     area.loadDefaultConfiguration(worldSection);
                 } else {

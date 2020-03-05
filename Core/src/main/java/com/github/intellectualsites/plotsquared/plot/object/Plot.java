@@ -1040,9 +1040,9 @@ public class Plot {
             return;
         }
         PlotManager manager = this.area.getPlotManager();
-        if (this.area.isAllowSigns()) {
+        if (this.area.allowSigns()) {
             Location location = manager.getSignLoc(this);
-            String id = this.id.x + ";" + this.id.y;
+            String id = this.id.toString();
             String[] lines =
                 new String[] {Captions.OWNER_SIGN_LINE_1.formatted().replaceAll("%id%", id),
                     Captions.OWNER_SIGN_LINE_2.formatted().replaceAll("%id%", id).replaceAll(
@@ -1330,7 +1330,7 @@ public class Plot {
             return location;
         }
         int y = WorldUtil.IMP.getHighestBlock(getWorldName(), location.getX(), location.getZ());
-        if (area.isAllowSigns()) {
+        if (area.allowSigns()) {
             y = Math.max(y, getManager().getSignLoc(this).getY());
         }
         location.setY(1 + y);
@@ -1344,7 +1344,7 @@ public class Plot {
         int z = largest.getMinimumPoint().getZ() - 1;
         PlotManager manager = getManager();
         int y = isLoaded() ? WorldUtil.IMP.getHighestBlock(getWorldName(), x, z) : 62;
-        if (area.isAllowSigns() && (y <= 0 || y >= 255)) {
+        if (area.allowSigns() && (y <= 0 || y >= 255)) {
             y = Math.max(y, manager.getSignLoc(this).getY() - 1);
         }
         return new Location(getWorldName(), x, y + 1, z);
@@ -1541,7 +1541,7 @@ public class Plot {
      */
     public void removeSign() {
         PlotManager manager = this.area.getPlotManager();
-        if (!this.area.isAllowSigns()) {
+        if (!this.area.allowSigns()) {
             return;
         }
         Location location = manager.getSignLoc(this);
@@ -1846,7 +1846,7 @@ public class Plot {
      * - Used when a plot is merged<br>
      */
     public void removeRoadEast() {
-        if (this.area.getType() != 0 && this.area.getTerrain() > 1) {
+        if (this.area.getType() != PlotAreaType.NORMAL && this.area.getTerrain() > 1) {
             if (this.area.getTerrain() == 3) {
                 return;
             }
@@ -2228,7 +2228,7 @@ public class Plot {
         if (this.hasOwner()) {
             return this.owner;
         }
-        if (!this.area.isAllowSigns()) {
+        if (!this.area.allowSigns()) {
             return null;
         }
         try {
@@ -2291,7 +2291,7 @@ public class Plot {
      * - Used when a plot is merged<br>
      */
     public void removeRoadSouth() {
-        if (this.area.getType() != 0 && this.area.getTerrain() > 1) {
+        if (this.area.getType() != PlotAreaType.NORMAL && this.area.getTerrain() > 1) {
             if (this.area.getTerrain() == 3) {
                 return;
             }
@@ -2470,7 +2470,7 @@ public class Plot {
      * Remove the SE road (only effects terrain)
      */
     public void removeRoadSouthEast() {
-        if (this.area.getType() != 0 && this.area.getTerrain() > 1) {
+        if (this.area.getType() != PlotAreaType.NORMAL && this.area.getTerrain() > 1) {
             if (this.area.getTerrain() == 3) {
                 return;
             }

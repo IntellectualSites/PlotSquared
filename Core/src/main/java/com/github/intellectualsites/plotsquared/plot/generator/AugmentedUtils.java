@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.generator;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.util.block.DelegateLocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
@@ -42,7 +43,7 @@ public class AugmentedUtils {
         }
         boolean toReturn = false;
         for (final PlotArea area : areas) {
-            if (area.getType() == 0) {
+            if (area.getType() == PlotAreaType.NORMAL) {
                 return false;
             }
             if (area.getTerrain() == 3) {
@@ -60,7 +61,7 @@ public class AugmentedUtils {
             int txx;
             int tzz;
             // gen
-            if (area.getType() == 2) {
+            if (area.getType() == PlotAreaType.PARTIAL) {
                 bxx = Math.max(0, area.getRegion().getMinimumPoint().getX() - blockX);
                 bzz = Math.max(0, area.getRegion().getMinimumPoint().getZ() - blockZ);
                 txx = Math.min(15, area.getRegion().getMaximumPoint().getX() - blockX);

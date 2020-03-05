@@ -39,6 +39,7 @@ import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
@@ -728,7 +729,14 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             SetupObject setup = new SetupObject();
             setup.plotManager = manager;
             setup.setupGenerator = worldConfig.getString("generator.init", manager);
-            setup.type = worldConfig.getInt("generator.type");
+            String type = worldConfig.getString("generator.type");
+            if (type == null) {
+                setup.type = PlotAreaType.NORMAL;
+            } else if (MathMan.isInteger(type)) {
+                setup.type = PlotAreaType.fromLegacyInt(Integer.parseInt(type)).orElse(PlotAreaType.NORMAL);
+            } else {
+                setup.type = PlotAreaType.fromString(type).orElse(PlotAreaType.NORMAL);
+            }
             setup.terrain = worldConfig.getInt("generator.terrain");
             setup.step = new ConfigurationNode[0];
             setup.world = worldName;

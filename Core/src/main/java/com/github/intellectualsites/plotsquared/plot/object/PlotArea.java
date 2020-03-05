@@ -61,28 +61,28 @@ public abstract class PlotArea {
     private final PlotId min;
     private final PlotId max;
     @Getter @NotNull private final IndependentPlotGenerator generator;
-    @Getter @Setter private int maxPlotMembers = 128;
-    @Getter @Setter private boolean autoMerge = false;
-    @Getter @Setter private boolean allowSigns = true;
-    @Getter @Setter private boolean miscSpawnUnowned = false;
-    @Getter @Setter private boolean mobSpawning = false;
-    @Getter @Setter private boolean mobSpawnerSpawning = false;
-    @Getter @Setter private BiomeType plotBiome = BiomeTypes.FOREST;
-    @Getter @Setter private boolean plotChat = false;
-    @Getter @Setter private boolean schematicClaimSpecify = false;
-    @Getter @Setter private boolean schematicOnClaim = false;
-    @Getter @Setter private String schematicFile = "null";
-    @Getter @Setter private boolean spawnEggs = false;
-    @Getter @Setter private boolean spawnCustom = true;
-    @Getter @Setter private boolean spawnBreeding = false;
-    @Getter @Setter private int type = 0;
-    @Getter @Setter private int terrain = 0;
-    @Getter @Setter private boolean homeAllowNonmember = false;
-    @Getter @Setter private PlotLoc nonmemberHome;
-    @Getter @Setter private PlotLoc defaultHome;
-    @Getter @Setter private int maxBuildHeight = 256;
-    @Getter @Setter private int minBuildHeight = 1;
-    @Getter @Setter private GameMode gameMode = GameModes.CREATIVE;
+    @Getter private int maxPlotMembers = 128;
+    @Getter private boolean autoMerge = false;
+    @Setter private boolean allowSigns = true;
+    @Getter private boolean miscSpawnUnowned = false;
+    @Getter private boolean mobSpawning = false;
+    @Getter private boolean mobSpawnerSpawning = false;
+    @Getter private BiomeType plotBiome = BiomeTypes.FOREST;
+    @Getter private boolean plotChat = false;
+    @Getter private boolean schematicClaimSpecify = false;
+    @Getter private boolean schematicOnClaim = false;
+    @Getter private String schematicFile = "null";
+    @Getter private boolean spawnEggs = false;
+    @Getter private boolean spawnCustom = true;
+    @Getter private boolean spawnBreeding = false;
+    @Getter private PlotAreaType type = PlotAreaType.NORMAL;
+    @Getter private int terrain = 0;
+    @Getter private boolean homeAllowNonmember = false;
+    @Getter private PlotLoc nonmemberHome;
+    @Getter @Setter(AccessLevel.PROTECTED) private PlotLoc defaultHome;
+    @Getter private int maxBuildHeight = 256;
+    @Getter private int minBuildHeight = 1;
+    @Getter private GameMode gameMode = GameModes.CREATIVE;
     @Getter private Map<String, Expression<Double>> prices = new HashMap<>();
     @Getter(AccessLevel.PROTECTED) private List<String> schematics = new ArrayList<>();
     private boolean worldBorder = false;
@@ -221,7 +221,14 @@ public abstract class PlotArea {
         }
         if (config.contains("generator.terrain")) {
             this.terrain = config.getInt("generator.terrain");
-            this.type = config.getInt("generator.type");
+            String type = config.getString("generator.type");
+            if (type == null) {
+                this.type = PlotAreaType.NORMAL;
+            } else if (MathMan.isInteger(type)) {
+                this.type = PlotAreaType.fromLegacyInt(Integer.parseInt(type)).orElse(PlotAreaType.NORMAL);
+            } else {
+                this.type = PlotAreaType.fromString(type).orElse(PlotAreaType.NORMAL);
+            }
         }
         this.mobSpawning = config.getBoolean("natural_mob_spawning");
         this.miscSpawnUnowned = config.getBoolean("misc_spawn_unowned");
@@ -278,7 +285,7 @@ public abstract class PlotArea {
         if (this.homeAllowNonmember) {
             this.nonmemberHome = defaultHome;
         } else {
-            this.setNonmemberHome(PlotLoc.fromString(homeNonMembers));
+            this.nonmemberHome = PlotLoc.fromString(homeNonMembers);
         }
 
         if ("side".equalsIgnoreCase(homeDefault)) {
@@ -317,9 +324,9 @@ public abstract class PlotArea {
             PlotSquared.debug("&cInvalid default flags for " + this.getWorldName() + ": " + StringMan
                 .join(flags, ","));
         }
-        this.setSpawnEggs(config.getBoolean("event.spawn.egg"));
-        this.setSpawnCustom(config.getBoolean("event.spawn.custom"));
-        this.setSpawnBreeding(config.getBoolean("event.spawn.breeding"));
+        this.spawnEggs = config.getBoolean("event.spawn.egg");
+        this.spawnCustom = config.getBoolean("event.spawn.custom");
+        this.spawnBreeding = config.getBoolean("event.spawn.breeding");
         loadConfiguration(config);
     }
 
@@ -336,7 +343,7 @@ public abstract class PlotArea {
         options.put("misc_spawn_unowned", this.isMiscSpawnUnowned());
         options.put("mob_spawner_spawning", this.isMobSpawnerSpawning());
         options.put("plot.auto_merge", this.isAutoMerge());
-        options.put("plot.create_signs", this.isAllowSigns());
+        options.put("plot.create_signs", this.allowSigns());
         options.put("plot.biome", "FOREST");
         options.put("schematic.on_claim", this.isSchematicOnClaim());
         options.put("schematic.file", this.getSchematicFile());
@@ -363,9 +370,9 @@ public abstract class PlotArea {
         options.put("world.min_height", this.getMinBuildHeight());
         options.put("world.gamemode", this.getGameMode().getName().toLowerCase());
 
-        if (this.getType() != 0) {
+        if (this.getType() != PlotAreaType.NORMAL) {
             options.put("generator.terrain", this.getTerrain());
-            options.put("generator.type", this.getType());
+            options.put("generator.type", this.getType().toString());
         }
         ConfigurationNode[] settings = getSettingNodes();
         /*
@@ -484,7 +491,7 @@ public abstract class PlotArea {
     }
 
     public boolean contains(final int x, final int z) {
-        return this.getType() != 2 || RegionUtil.contains(getRegionAbs(), x, z);
+        return this.getType() != PlotAreaType.PARTIAL || RegionUtil.contains(getRegionAbs(), x, z);
     }
 
     public boolean contains(@NotNull final PlotId id) {
@@ -689,7 +696,7 @@ public abstract class PlotArea {
         PlotId center;
         PlotId min = getMin();
         PlotId max = getMax();
-        if (getType() == 2) {
+        if (getType() == PlotAreaType.PARTIAL) {
             center = new PlotId(MathMan.average(min.x, max.x), MathMan.average(min.y, max.y));
             plots = Math.max(max.x - min.x + 1, max.y - min.y + 1) + 1;
             if (start != null) {
@@ -962,6 +969,25 @@ public abstract class PlotArea {
      */
     public boolean hasWorldBorder() {
         return worldBorder;
+    }
+
+    /**
+     * Get whether plot signs are allowed or not.
+     *
+     * @return true if plot signs are allow, false otherwise.
+     */
+    public boolean allowSigns() {
+        return allowSigns;
+    }
+
+    /**
+     * Set the type of this plot area.
+     *
+     * @param type the type of the plot area.
+     */
+    public void setType(PlotAreaType type) {
+        // TODO this should probably work only if type == null
+        this.type = type;
     }
 
     private static Collection<PlotFlag<?, ?>> parseFlags(List<String> flagStrings) throws FlagParseException {

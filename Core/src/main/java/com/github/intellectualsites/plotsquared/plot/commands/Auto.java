@@ -14,6 +14,7 @@ import com.github.intellectualsites.plotsquared.plot.object.Direction;
 import com.github.intellectualsites.plotsquared.plot.object.Expression;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
@@ -278,12 +279,12 @@ public class Auto extends SubCommand {
                 sendMessage(player, Captions.REMOVED_BALANCE, cost + "");
             }
         }
-        // TODO handle type 2 the same as normal worlds!
+        // TODO handle type 2 (partial) the same as normal worlds!
         if (size_x == 1 && size_z == 1) {
             autoClaimSafe(player, plotarea, null, schematic, allowed_plots);
             return true;
         } else {
-            if (plotarea.getType() == 2) {
+            if (plotarea.getType() == PlotAreaType.PARTIAL) {
                 MainUtil.sendMessage(player, Captions.NO_FREE_PLOTS);
                 return false;
             }

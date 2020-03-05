@@ -11,6 +11,7 @@ import com.github.intellectualsites.plotsquared.plot.listener.WEExtent;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
@@ -535,7 +536,7 @@ public abstract class HybridUtils {
             return false;
         }
         AtomicBoolean toCheck = new AtomicBoolean(false);
-        if (plotWorld.getType() == 2) {
+        if (plotWorld.getType() == PlotAreaType.PARTIAL) {
             boolean chunk1 = area.contains(x, z);
             boolean chunk2 = area.contains(ex, ez);
             if (!chunk1 && !chunk2) {

@@ -6,6 +6,7 @@ import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.FileBytes;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
@@ -171,7 +172,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         Location pos2 = plot.getExtendedTopAbs();
         // If augmented
         final boolean canRegen =
-            (hybridPlotWorld.getType() == 0) && (hybridPlotWorld.getTerrain() == 0) && REGENERATIVE_CLEAR;
+            (hybridPlotWorld.getType() == PlotAreaType.NORMAL) && (hybridPlotWorld.getTerrain() == 0) && REGENERATIVE_CLEAR;
         // The component blocks
         final Pattern plotfloor = hybridPlotWorld.TOP_BLOCK.toPattern();
         final Pattern filling = hybridPlotWorld.MAIN_BLOCK.toPattern();

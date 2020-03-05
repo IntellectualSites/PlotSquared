@@ -27,6 +27,7 @@ import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotCluster;
 import com.github.intellectualsites.plotsquared.plot.object.PlotFilter;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
@@ -464,7 +465,7 @@ import java.util.zip.ZipInputStream;
     public void addPlotArea(PlotArea plotArea) {
         HashMap<PlotId, Plot> plots;
         if (plots_tmp == null || (plots = plots_tmp.remove(plotArea.toString())) == null) {
-            if (plotArea.getType() == 2) {
+            if (plotArea.getType() == PlotAreaType.PARTIAL) {
                 plots = this.plots_tmp != null ? this.plots_tmp.get(plotArea.getWorldName()) : null;
                 if (plots != null) {
                     Iterator<Entry<PlotId, Plot>> iterator = plots.entrySet().iterator();
@@ -485,7 +486,7 @@ import java.util.zip.ZipInputStream;
         }
         Set<PlotCluster> clusters;
         if (clusters_tmp == null || (clusters = clusters_tmp.remove(plotArea.toString())) == null) {
-            if (plotArea.getType() == 2) {
+            if (plotArea.getType() == PlotAreaType.PARTIAL) {
                 clusters =
                     this.clusters_tmp != null ? this.clusters_tmp.get(plotArea.getWorldName()) : null;
                 if (clusters != null) {
@@ -1883,7 +1884,7 @@ import java.util.zip.ZipInputStream;
 
     public boolean isAugmented(@NonNull final String world) {
         final PlotArea[] areas = plotAreaManager.getPlotAreas(world, null);
-        return areas != null && (areas.length > 1 || areas[0].getType() != 0);
+        return areas != null && (areas.length > 1 || areas[0].getType() != PlotAreaType.NORMAL);
     }
 
     /**

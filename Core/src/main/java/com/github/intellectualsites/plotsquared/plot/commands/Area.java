@@ -9,6 +9,7 @@ import com.github.intellectualsites.plotsquared.plot.generator.AugmentedUtils;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -234,7 +235,7 @@ public class Area extends SubCommand {
                                     object.terrain = pa.getTerrain();
                                     break;
                                 case "type":
-                                    pa.setType(Integer.parseInt(pair[1]));
+                                    pa.setType(PlotAreaType.fromString(pair[1]).orElseThrow(() -> new IllegalArgumentException(pair[1] + " is not a valid type.")));
                                     object.type = pa.getType();
                                     break;
                                 default:
@@ -243,7 +244,7 @@ public class Area extends SubCommand {
                                     return false;
                             }
                         }
-                        if (pa.getType() != 2) {
+                        if (pa.getType() != PlotAreaType.PARTIAL) {
                             if (WorldUtil.IMP.isWorld(pa.getWorldName())) {
                                 Captions.SETUP_WORLD_TAKEN.send(player, pa.getWorldName());
                                 return false;
@@ -295,7 +296,7 @@ public class Area extends SubCommand {
                             }
                         } else {
                             object.terrain = 0;
-                            object.type = 0;
+                            object.type = PlotAreaType.NORMAL;
                             SetupUtils.manager.setupWorld(object);
                             player.teleport(WorldUtil.IMP.getSpawn(pa.getWorldName()),
                                 TeleportCause.COMMAND);
@@ -339,7 +340,7 @@ public class Area extends SubCommand {
                 int clusters = area.getClusters().size();
                 String region;
                 String generator = String.valueOf(area.getGenerator());
-                if (area.getType() == 2) {
+                if (area.getType() == PlotAreaType.PARTIAL) {
                     PlotId min = area.getMin();
                     PlotId max = area.getMax();
                     name = area.getWorldName() + ';' + area.getId() + ';' + min + ';' + max;
@@ -390,7 +391,7 @@ public class Area extends SubCommand {
                             int clusters = area.getClusters().size();
                             String region;
                             String generator = String.valueOf(area.getGenerator());
-                            if (area.getType() == 2) {
+                            if (area.getType() == PlotAreaType.PARTIAL) {
                                 PlotId min = area.getMin();
                                 PlotId max = area.getMax();
                                 name = area.getWorldName() + ';' + area.getId() + ';' + min + ';' + max;
@@ -434,7 +435,7 @@ public class Area extends SubCommand {
                     Captions.NOT_IN_PLOT_WORLD.send(player);
                     return false;
                 }
-                if (area.getType() != 2) {
+                if (area.getType() != PlotAreaType.PARTIAL) {
                     MainUtil.sendMessage(player,
                         "$4Stop the server and delete: " + area.getWorldName() + "/region");
                     return false;
@@ -467,7 +468,7 @@ public class Area extends SubCommand {
                     return false;
                 }
                 Location center;
-                if (area.getType() != 2) {
+                if (area.getType() != PlotAreaType.PARTIAL) {
                     center = WorldUtil.IMP.getSpawn(area.getWorldName());
                 } else {
                     CuboidRegion region = area.getRegion();

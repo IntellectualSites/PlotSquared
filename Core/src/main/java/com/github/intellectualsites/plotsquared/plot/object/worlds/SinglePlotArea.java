@@ -8,6 +8,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
 import com.github.intellectualsites.plotsquared.plot.generator.GridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotLoc;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
@@ -69,7 +70,7 @@ public class SinglePlotArea extends GridPlotWorld {
             }
         }
         // Duplicate 0;0
-        if (setup.type != 0) {
+        if (setup.type != PlotAreaType.NORMAL) {
             if (!destination.exists()) {
                 File src = new File(container, "0.0");
                 if (src.exists()) {
