@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Database Functions
@@ -58,10 +59,11 @@ public class DBFunc {
         }
     }
 
-    public static void swapPlots(Plot plot1, Plot plot2) {
+    public static CompletableFuture<Boolean> swapPlots(Plot plot1, Plot plot2) {
         if (dbManager != null) {
-            dbManager.swapPlots(plot1, plot2);
+            return dbManager.swapPlots(plot1, plot2);
         }
+        return CompletableFuture.completedFuture(false);
     }
 
     public static boolean deleteTables() {

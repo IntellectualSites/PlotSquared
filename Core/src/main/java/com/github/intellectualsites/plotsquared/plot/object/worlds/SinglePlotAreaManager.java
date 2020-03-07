@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.util.ArrayUtil;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import org.jetbrains.annotations.NotNull;
 
 public class SinglePlotAreaManager extends DefaultPlotAreaManager {
     private final SinglePlotArea[] array;
@@ -82,7 +83,7 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
         return isWorld(world) || world.equals("*") ? area : super.getPlotArea(world, id);
     }
 
-    @Override public PlotArea getPlotArea(Location location) {
+    @Override public PlotArea getPlotArea(@NotNull Location location) {
         PlotArea found = super.getPlotArea(location);
         if (found != null) {
             return found;

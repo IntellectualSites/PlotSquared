@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.config;
 import com.github.intellectualsites.plotsquared.configuration.MemorySection;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.Settings.Enabled_Components;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 
 import java.io.File;
@@ -30,7 +31,7 @@ public class Config {
      * @param <T>
      * @return
      */
-    public static <T> T get(String key, Class root) {
+    public static <T> T get(String key, Class<?> root) {
         String[] split = key.split("\\.");
         Object instance = getInstance(split, root);
         if (instance != null) {
@@ -55,7 +56,7 @@ public class Config {
      * @param value value
      * @param root
      */
-    public static void set(String key, Object value, Class root) {
+    public static void set(String key, Object value, Class<? extends Config> root) {
         String[] split = key.split("\\.");
         Object instance = getInstance(split, root);
         if (instance != null) {
@@ -81,7 +82,7 @@ public class Config {
         PlotSquared.debug("Failed to set config option: " + key + ": " + value + " | " + instance);
     }
 
-    public static boolean load(File file, Class root) {
+    public static boolean load(File file, Class<? extends Config> root) {
         if (!file.exists()) {
             return false;
         }
@@ -102,7 +103,7 @@ public class Config {
      * @param file
      * @param root
      */
-    public static void save(File file, Class root) {
+    public static void save(File file, Class<? extends Config> root) {
         try {
             if (!file.exists()) {
                 file.getParentFile().mkdirs();
@@ -123,7 +124,7 @@ public class Config {
      * @param clazz
      * @return
      */
-    public static Map<String, Object> getFields(Class clazz) {
+    public static Map<String, Object> getFields(Class<Enabled_Components> clazz) {
         HashMap<String, Object> map = new HashMap<>();
         for (Field field : clazz.getFields()) {
             if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
@@ -242,7 +243,7 @@ public class Config {
      * @param root
      * @return
      */
-    private static Field getField(String[] split, Class root) {
+    private static Field getField(String[] split, Class<?> root) {
         Object instance = getInstance(split, root);
         if (instance == null) {
             return null;
@@ -278,7 +279,7 @@ public class Config {
      * @param root
      * @return The instance or null
      */
-    private static Object getInstance(String[] split, Class root) {
+    private static Object getInstance(String[] split, Class<?> root) {
         try {
             Class<?> clazz = root == null ? MethodHandles.lookup().lookupClass() : root;
             Object instance = clazz.newInstance();
@@ -286,9 +287,9 @@ public class Config {
                 if (split.length == 1) {
                     return instance;
                 }
-                Class found = null;
+                Class<?> found = null;
                 Class<?>[] classes = clazz.getDeclaredClasses();
-                for (Class current : classes) {
+                for (Class<?> current : classes) {
                     if (current.getSimpleName().equalsIgnoreCase(toFieldName(split[0]))) {
                         found = current;
                         break;
@@ -361,8 +362,6 @@ public class Config {
      * Set some field to be accessible.
      *
      * @param field
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
      */
     private static void setAccessible(Field field) {
         field.setAccessible(true);

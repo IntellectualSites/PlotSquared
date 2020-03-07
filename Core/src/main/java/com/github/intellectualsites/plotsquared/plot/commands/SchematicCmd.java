@@ -68,6 +68,10 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(player, Captions.TASK_IN_PROCESS);
                     return false;
                 }
+                if (plot.isMerged()) {
+                    MainUtil.sendMessage(player, Captions.SCHEMATIC_PASTE_MERGED);
+                    return false;
+                }
                 final String location = args[1];
                 this.running = true;
                 TaskManager.runTaskAsync(() -> {
