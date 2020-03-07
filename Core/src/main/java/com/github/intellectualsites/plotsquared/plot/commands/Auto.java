@@ -6,6 +6,8 @@ import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
+import com.github.intellectualsites.plotsquared.plot.events.PlayerClaimPlotEvent;
+import com.github.intellectualsites.plotsquared.plot.events.Result;
 import com.github.intellectualsites.plotsquared.plot.object.Direction;
 import com.github.intellectualsites.plotsquared.plot.object.Expression;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -269,6 +271,12 @@ public class Auto extends SubCommand {
                             boolean teleport = i == end.x && j == end.y;
                             if (plot == null) {
                                 return false;
+                            }
+                            //TODO: do a better plot auto event.
+                            Result result = PlotSquared.get().getEventDispatcher().callClaim(player, plot, true, schematic);
+                            if (result == Result.DENY) {
+                                player.sendMessage(CaptionUtility.format(player, result.getReason()));
+                                return true;
                             }
                             plot.claim(player, teleport, null);
                         }

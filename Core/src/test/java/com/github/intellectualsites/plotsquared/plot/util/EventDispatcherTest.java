@@ -18,7 +18,7 @@ public class EventDispatcherTest extends EventDispatcher {
         return null;
     }
 
-    @Override public Result callClaim(PlotPlayer player, Plot plot, boolean auto) {
+    @Override public Result callClaim(PlotPlayer player, Plot plot, boolean auto, String schematic) {
         return Result.DENY;
     }
 

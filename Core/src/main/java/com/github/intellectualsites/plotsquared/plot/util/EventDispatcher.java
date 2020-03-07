@@ -35,7 +35,7 @@ public class EventDispatcher {
         eventBus.register(listener);
     }
 
-    private Result callEvent(@NotNull final PlotEvent event) {
+    public Result callEvent(@NotNull final PlotEvent event) {
         eventBus.post(event);
         if (event instanceof CancellablePlotEvent) {
             return ((CancellablePlotEvent) event).getEventResult();
@@ -43,8 +43,8 @@ public class EventDispatcher {
         return null;
     }
 
-    public Result callClaim(PlotPlayer player, Plot plot, boolean auto) {
-        return callEvent(new PlayerClaimPlotEvent(player, plot, auto));
+    public Result callClaim(PlotPlayer player, Plot plot, boolean auto, @Nullable String schematic) {
+        return callEvent(new PlayerClaimPlotEvent(player, plot, auto, schematic));
     }
 
     public Result callTeleport(PlotPlayer player, Location from, Plot plot) {

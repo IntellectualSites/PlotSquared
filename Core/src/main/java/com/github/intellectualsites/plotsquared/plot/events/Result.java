@@ -22,6 +22,7 @@ public enum Result {
         }
     }
 
+    private String reason = "Cancelled by external plugin.";
     private int value;
 
     Result(int value) {
@@ -45,5 +46,21 @@ public enum Result {
      */
     public int getValue() {
         return value;
+    }
+
+    /**
+     * Obtain the reason for the result value (usually only used for DENY)
+     *
+     * @return Result's reason
+     */
+    public String getReason() {
+        return reason;
+    }
+
+    /**
+     * Set the reason for the result value (usually only used for DENY)
+     */
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 }

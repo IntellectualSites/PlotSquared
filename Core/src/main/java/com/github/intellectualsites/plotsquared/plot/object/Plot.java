@@ -1602,9 +1602,9 @@ public class Plot {
 
     public boolean claim(final PlotPlayer player, boolean teleport, String schematic,
         boolean updateDB) {
-        Result result = PlotSquared.get().getEventDispatcher().callClaim(player, this, false);
+
         if (updateDB) {
-            if (result.getValue() == 0 || (!create(player.getUUID(), true))) {
+            if (!create(player.getUUID(), true)) {
                 return false;
             }
         } else {
@@ -2337,7 +2337,8 @@ public class Plot {
             return false;
         }
         //Call the merge event
-        if (PlotSquared.get().getEventDispatcher().callMerge(this, dir.getIndex(), max).getValue() == 0) {
+        if (PlotSquared.get().getEventDispatcher().callMerge(this, dir.getIndex(), max).getValue()
+            == 0) {
             return false;
         }
         Set<Plot> connected = this.getConnectedPlots();
