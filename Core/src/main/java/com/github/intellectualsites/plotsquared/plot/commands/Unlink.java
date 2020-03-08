@@ -1,7 +1,11 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
+import com.github.intellectualsites.plotsquared.plot.events.PlotUnlinkEvent;
+import com.github.intellectualsites.plotsquared.plot.events.Result;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -29,10 +33,6 @@ public class Unlink extends SubCommand {
         if (!plot.hasOwner()) {
             return !sendMessage(player, Captions.PLOT_UNOWNED);
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_UNLINK)) {
-            return sendMessage(player, Captions.NO_PLOT_PERMS);
-        }
         if (!plot.isMerged()) {
             return sendMessage(player, Captions.UNLINK_IMPOSSIBLE);
         }
@@ -45,6 +45,19 @@ public class Unlink extends SubCommand {
             createRoad = Boolean.parseBoolean(args[0]);
         } else {
             createRoad = true;
+        }
+
+        PlotUnlinkEvent event = PlotSquared.get().getEventDispatcher()
+            .callUnlink(plot.getArea(), plot, createRoad, createRoad,
+                PlotUnlinkEvent.REASON.PLAYER_COMMAND);
+        if (event.getEventResult() == Result.DENY) {
+            player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+            return true;
+        }
+        boolean force = event.getEventResult() == Result.FORCE;
+        if (!force && !plot.isOwner(player.getUUID()) && !Permissions
+            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_UNLINK)) {
+            return sendMessage(player, Captions.NO_PLOT_PERMS);
         }
         Runnable runnable = () -> {
             if (!plot.unlinkPlot(createRoad, createRoad)) {

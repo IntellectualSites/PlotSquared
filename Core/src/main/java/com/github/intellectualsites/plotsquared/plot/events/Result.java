@@ -8,7 +8,8 @@ import java.util.Map;
  * <p>
  * DENY: do not allow the event to happen
  * ALLOW: allow the event to continue as normal, subject to standard checks
- * FORCE: force the event to occur, even if normal checks would deny
+ * FORCE: force the event to occur, even if normal checks would deny.
+ * WARNING: this may have unintended consequences! Make sure you study the appropriate code before using!
  */
 public enum Result {
 

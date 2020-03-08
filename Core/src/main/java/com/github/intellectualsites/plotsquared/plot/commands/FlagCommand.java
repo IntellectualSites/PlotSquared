@@ -6,6 +6,8 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import com.github.intellectualsites.plotsquared.plot.events.PlotFlagAddEvent;
+import com.github.intellectualsites.plotsquared.plot.events.Result;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.InternalFlag;
@@ -270,8 +272,15 @@ public final class FlagCommand extends Command {
         if (plotFlag == null) {
             return;
         }
+        Plot plot = player.getLocation().getPlotAbs();
+        PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
+        if (event.getEventResult() == Result.DENY) {
+            player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+            return;
+        }
+        boolean force = event.getEventResult() == Result.FORCE;
         final String value = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
-        if (!checkPermValue(player, plotFlag, args[0], value)) {
+        if (!force && !checkPermValue(player, plotFlag, args[0], value)) {
             return;
         }
         final PlotFlag<?, ?> parsed;
@@ -283,7 +292,7 @@ public final class FlagCommand extends Command {
                     .replace("%flag_value%", e.getValue()).replace("%error%", e.getErrorMessage()));
             return;
         }
-        player.getLocation().getPlotAbs().setFlag(parsed);
+        plot.setFlag(parsed);
         MainUtil.sendMessage(player, Captions.FLAG_ADDED);
     }
 
@@ -304,24 +313,32 @@ public final class FlagCommand extends Command {
             MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot flag add <flag> <values>");
             return;
         }
-        final PlotFlag flag = getFlag(player, args[0]);
-        if (flag == null) {
+        final PlotFlag<?, ?> plotFlag = getFlag(player, args[0]);
+        if (plotFlag == null) {
             return;
         }
-        final PlotFlag localFlag =
-            player.getLocation().getPlotAbs().getFlagContainer().getFlag(flag.getClass());
-        for (String entry : args[1].split(",")) {
-            if (!checkPermValue(player, flag, args[0], entry)) {
-                return;
-            }
+        Plot plot = player.getLocation().getPlotAbs();
+        PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
+        if (event.getEventResult() == Result.DENY) {
+            player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+            return;
         }
-        final String value = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
+        boolean force = event.getEventResult() == Result.FORCE;
+        final PlotFlag localFlag = player.getLocation().getPlotAbs().getFlagContainer()
+            .getFlag(event.getFlag().getClass());
+        if (!force) {
+            for (String entry : args[1].split(",")) {
+                if (!checkPermValue(player, event.getFlag(), args[0], entry)) {
+                    return;
+                }
+            }
+        } final String value = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
         final PlotFlag parsed;
         try {
-            parsed = flag.parse(value);
+            parsed = event.getFlag().parse(value);
         } catch (FlagParseException e) {
             MainUtil.sendMessage(player,
-                Captions.FLAG_PARSE_ERROR.getTranslated().replace("%flag_name%", flag.getName())
+                Captions.FLAG_PARSE_ERROR.getTranslated().replace("%flag_name%", plotFlag.getName())
                     .replace("%flag_value%", e.getValue()).replace("%error%", e.getErrorMessage()));
             return;
         }
@@ -397,7 +414,13 @@ public final class FlagCommand extends Command {
                     }
                 } else {
                     // MainUtil.sendMessage(player, Captions.FLAG_REMOVED);
-                    if (plot.setFlag(parsedFlag.createFlagInstance(list))) {
+                    PlotFlag plotFlag = parsedFlag.createFlagInstance(list);
+                    PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
+                    if (event.getEventResult() == Result.DENY) {
+                        player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+                        return;
+                    }
+                    if (plot.setFlag(event.getFlag())) {
                         MainUtil.sendMessage(player, Captions.FLAG_PARTIALLY_REMOVED);
                         return;
                     } else {

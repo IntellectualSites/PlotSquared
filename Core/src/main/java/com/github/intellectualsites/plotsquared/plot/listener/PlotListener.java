@@ -3,6 +3,10 @@ package com.github.intellectualsites.plotsquared.plot.listener;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import com.github.intellectualsites.plotsquared.plot.events.PlotFlagRemoveEvent;
+import com.github.intellectualsites.plotsquared.plot.events.Result;
+import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.*;
 import com.github.intellectualsites.plotsquared.plot.flags.types.TimedFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
@@ -163,7 +167,13 @@ public class PlotListener {
                 try {
                     player.setTime(time);
                 } catch (Exception ignored) {
-                    plot.removeFlag(TimeFlag.class);
+                    PlotFlag<?, ?> plotFlag =
+                        GlobalFlagContainer.getInstance().getFlag(TimeFlag.class);
+                    PlotFlagRemoveEvent event =
+                        PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
+                    if (event.getEventResult() != Result.DENY) {
+                        plot.removeFlag(event.getFlag());
+                    }
                 }
             }
 

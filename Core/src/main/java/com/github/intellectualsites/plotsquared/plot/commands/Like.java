@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
+import com.github.intellectualsites.plotsquared.plot.events.PlotRateEvent;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -98,9 +99,10 @@ public class Like extends SubCommand {
                 rating = 1;
             }
             plot.addRating(uuid, new Rating(rating));
-            final Rating result = PlotSquared.get().getEventDispatcher().callRating(player, plot, new Rating(rating));
-            if (result != null) {
-                plot.addRating(uuid, result);
+            final PlotRateEvent
+                event = PlotSquared.get().getEventDispatcher().callRating(player, plot, new Rating(rating));
+            if (event.getRating() != null) {
+                plot.addRating(uuid, event.getRating());
                 if (like) {
                     sendMessage(player, Captions.RATING_LIKED, plot.getId().toString());
                 } else {

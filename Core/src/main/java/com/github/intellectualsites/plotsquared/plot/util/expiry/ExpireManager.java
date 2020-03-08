@@ -4,7 +4,11 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
+import com.github.intellectualsites.plotsquared.plot.events.PlotFlagAddEvent;
+import com.github.intellectualsites.plotsquared.plot.events.PlotUnlinkEvent;
+import com.github.intellectualsites.plotsquared.plot.events.Result;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnalysisFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.KeepFlag;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
@@ -306,8 +310,13 @@ public class ExpireManager {
                                             confirmation);
                                     }
                                 }, () -> {
-                                    newPlot.setFlag(GlobalFlagContainer.getInstance()
-                                        .getFlag(AnalysisFlag.class).createFlagInstance(changed.asList()));
+                                    PlotFlag<?, ?> plotFlag = GlobalFlagContainer.getInstance()
+                                        .getFlag(AnalysisFlag.class).createFlagInstance(changed.asList());
+                                    PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, newPlot);
+                                    if (event.getEventResult() == Result.DENY) {
+                                        return;
+                                    }
+                                    newPlot.setFlag(event.getFlag());
                                     TaskManager.runTaskLaterAsync(task, 20);
                                 });
                             }
@@ -366,7 +375,12 @@ public class ExpireManager {
 
     public void deleteWithMessage(Plot plot, Runnable whenDone) {
         if (plot.isMerged()) {
-            plot.unlinkPlot(true, false);
+            PlotUnlinkEvent event = PlotSquared.get().getEventDispatcher()
+                .callUnlink(plot.getArea(), plot, true, false,
+                    PlotUnlinkEvent.REASON.EXPIRE_DELETE);
+            if (event.getEventResult() != Result.DENY) {
+                plot.unlinkPlot(event.isCreateRoad(), event.isCreateSign());
+            }
         }
         for (UUID helper : plot.getTrusted()) {
             PlotPlayer player = UUIDHandler.getPlayer(helper);

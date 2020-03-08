@@ -6,7 +6,9 @@ import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.events.PlayerClaimPlotEvent;
+import com.github.intellectualsites.plotsquared.plot.events.PlayerAutoPlotEvent;
+import com.github.intellectualsites.plotsquared.plot.events.PlotAutoMergeEvent;
+import com.github.intellectualsites.plotsquared.plot.events.PlotMergeEvent;
 import com.github.intellectualsites.plotsquared.plot.events.Result;
 import com.github.intellectualsites.plotsquared.plot.object.Direction;
 import com.github.intellectualsites.plotsquared.plot.object.Expression;
@@ -23,6 +25,7 @@ import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.google.common.primitives.Ints;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 @CommandDeclaration(command = "auto",
@@ -127,11 +130,21 @@ public class Auto extends SubCommand {
                         player.deleteMeta(Auto.class.getName());
                         if (plot == null) {
                             MainUtil.sendMessage(player, Captions.NO_FREE_PLOTS);
-                        } else if (checkAllowedPlots(player, area, allowedPlots, 1, 1)) {
+                            return;
+                        }
+
+                        if (checkAllowedPlots(player, area, allowedPlots, 1, 1)) {
                             plot.claim(player, true, schematic, false);
                             if (area.AUTO_MERGE) {
-                                plot.autoMerge(Direction.ALL, Integer.MAX_VALUE, player.getUUID(),
-                                    true);
+                                PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
+                                    .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
+                                if (event.getEventResult() == Result.DENY) {
+                                    player.sendMessage(CaptionUtility
+                                        .format(player, event.getEventResult().getReason()));
+                                } else {
+                                    plot.autoMerge(event.getDir(), event.getMax(), player.getUUID(),
+                                        true);
+                                }
                             }
                         } else {
                             DBFunc.delete(plot);
@@ -178,46 +191,61 @@ public class Auto extends SubCommand {
         int size_x = 1;
         int size_z = 1;
         String schematic = null;
+        boolean mega = false;
         if (args.length > 0) {
-            if (Permissions.hasPermission(player, Captions.PERMISSION_AUTO_MEGA)) {
-                try {
-                    String[] split = args[0].split(",|;");
-                    if (split[1] == null) {
-                        MainUtil.sendMessage(player, "Correct use /plot auto [length,width]");
+            try {
+                String[] split = args[0].split(",|;");
+                switch (split.length) {
+                    case 1:
                         size_x = 1;
                         size_z = 1;
-                    } else {
+                        break;
+                    case 2:
                         size_x = Integer.parseInt(split[0]);
                         size_z = Integer.parseInt(split[1]);
-                    }
-                    if (size_x < 1 || size_z < 1) {
-                        MainUtil.sendMessage(player, "Error: size<=0");
-                    }
-                    if (args.length > 1) {
-                        schematic = args[1];
-                    }
-                } catch (NumberFormatException ignored) {
-                    size_x = 1;
-                    size_z = 1;
-                    schematic = args[0];
-                    // PlayerFunctions.sendMessage(plr,
-                    // "&cError: Invalid size (X,Y)");
-                    // return false;
+                        break;
+                    default:
+                        MainUtil.sendMessage(player, "Correct use /plot auto [length,width]");
+                        return true;
                 }
-            } else {
+                if (size_x < 1 || size_z < 1) {
+                    MainUtil.sendMessage(player, "Error: size<=0");
+                }
+                if (args.length > 1) {
+                    schematic = args[1];
+                }
+                mega = true;
+            } catch (NumberFormatException ignored) {
+                size_x = 1;
+                size_z = 1;
                 schematic = args[0];
-                // PlayerFunctions.sendMessage(plr, Captions.NO_PERMISSION);
+                // PlayerFunctions.sendMessage(plr,
+                // "&cError: Invalid size (X,Y)");
                 // return false;
             }
         }
-        if (size_x * size_z > Settings.Claim.MAX_AUTO_AREA) {
+        PlayerAutoPlotEvent event = PlotSquared.get().getEventDispatcher()
+            .callAuto(player, plotarea, schematic, size_x, size_z);
+        if(event.getEventResult() == Result.DENY) {
+            player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+            return true;
+        }
+        boolean force = event.getEventResult() == Result.FORCE;
+        size_x = event.getSize_x();
+        size_z = event.getSize_z();
+        schematic = event.getSchematic();
+        if (!force && mega && !Permissions.hasPermission(player, Captions.PERMISSION_AUTO_MEGA)) {
+            MainUtil.sendMessage(player, Captions.NO_PERMISSION,
+                CaptionUtility.format(player, Captions.PERMISSION_AUTO_MEGA));
+        }
+        if (!force && size_x * size_z > Settings.Claim.MAX_AUTO_AREA) {
             MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS_NUM,
                 Settings.Claim.MAX_AUTO_AREA + "");
             return false;
         }
         final int allowed_plots = player.getAllowedPlots();
-        if (player.getMeta(Auto.class.getName(), false) || !checkAllowedPlots(player, plotarea,
-            allowed_plots, size_x, size_z)) {
+        if (!force && (player.getMeta(Auto.class.getName(), false) || !checkAllowedPlots(player, plotarea,
+            allowed_plots, size_x, size_z))) {
             return false;
         }
 
@@ -226,7 +254,7 @@ public class Auto extends SubCommand {
                 sendMessage(player, Captions.SCHEMATIC_INVALID, "non-existent: " + schematic);
                 return true;
             }
-            if (!Permissions.hasPermission(player, CaptionUtility
+            if (!force && !Permissions.hasPermission(player, CaptionUtility
                 .format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
                 && !Permissions
                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {
@@ -243,7 +271,7 @@ public class Auto extends SubCommand {
                 player.getPlotCount(plotarea.worldname)));
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
-                if (EconHandler.manager.getMoney(player) < cost) {
+                if (!force && EconHandler.manager.getMoney(player) < cost) {
                     sendMessage(player, Captions.CANNOT_AFFORD_PLOT, "" + cost);
                     return true;
                 }
@@ -272,16 +300,19 @@ public class Auto extends SubCommand {
                             if (plot == null) {
                                 return false;
                             }
-                            //TODO: do a better plot auto event.
-                            Result result = PlotSquared.get().getEventDispatcher().callClaim(player, plot, true, schematic);
-                            if (result == Result.DENY) {
-                                player.sendMessage(CaptionUtility.format(player, result.getReason()));
-                                return true;
-                            }
                             plot.claim(player, teleport, null);
                         }
                     }
-                    if (!plotarea.mergePlots(MainUtil.getPlotSelectionIds(start, end), true)) {
+                    ArrayList<PlotId> plotIds = MainUtil.getPlotSelectionIds(start, end);
+                    final PlotId pos1 = plotIds.get(0);
+                    final PlotAutoMergeEvent mergeEvent = PlotSquared.get().getEventDispatcher()
+                        .callAutoMerge(plotarea.getPlotAbs(pos1), plotIds);
+                    if (!force && mergeEvent.getEventResult() == Result.DENY) {
+                        player.sendMessage(
+                            CaptionUtility.format(player, mergeEvent.getEventResult().getReason()));
+                        return false;
+                    }
+                    if (!plotarea.mergePlots(mergeEvent.getPlots(), true)) {
                         return false;
                     }
                     break;

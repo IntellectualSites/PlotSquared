@@ -7,6 +7,7 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.events.PlayerClaimPlotEvent;
+import com.github.intellectualsites.plotsquared.plot.events.PlotMergeEvent;
 import com.github.intellectualsites.plotsquared.plot.events.Result;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
@@ -29,14 +30,13 @@ public class Claim extends SubCommand {
         if (plot == null) {
             return sendMessage(player, Captions.NOT_IN_PLOT);
         }
-        PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, false, schematic);
+        PlayerClaimPlotEvent event = PlotSquared.get().getEventDispatcher().callClaim(player, plot, schematic);
         schematic = event.getSchematic();
-        Result result = PlotSquared.get().getEventDispatcher().callEvent(event);
-        if (result == Result.DENY) {
-            player.sendMessage(CaptionUtility.format(player, result.getReason()));
+        if (event.getEventResult() == Result.DENY) {
+            player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
             return true;
         }
-        boolean force = result == Result.FORCE;
+        boolean force = event.getEventResult() == Result.FORCE;
         int currentPlots = Settings.Limit.GLOBAL ?
             player.getPlotCount() :
             player.getPlotCount(location.getWorld());
@@ -99,7 +99,14 @@ public class Claim extends SubCommand {
             @Override public void run(Object value) {
                 plot.claim(player, true, finalSchematic);
                 if (area.AUTO_MERGE) {
-                    plot.autoMerge(Direction.ALL, Integer.MAX_VALUE, player.getUUID(), true);
+                    PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
+                        .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
+                    if (event.getEventResult() == Result.DENY) {
+                        player.sendMessage(
+                            CaptionUtility.format(player, event.getEventResult().getReason()));
+                    } else {
+                        plot.autoMerge(event.getDir(), event.getMax(), player.getUUID(), true);
+                    }
                 }
             }
         }), () -> sendMessage(player, Captions.PLOT_NOT_CLAIMED));

@@ -5,117 +5,169 @@ import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.events.*;
-import com.github.intellectualsites.plotsquared.plot.events.Result;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.DeviceInteractFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscPlaceFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.MobPlaceFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlaceFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.UseFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehiclePlaceFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.*;
 import com.github.intellectualsites.plotsquared.plot.flags.types.BlockTypeWrapper;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
 import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotArea;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.google.common.eventbus.EventBus;
+import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class EventDispatcher {
 
-    EventBus eventBus = new EventBus("PlotSquaredEvents");
+    private EventBus eventBus = new EventBus("PlotSquaredEvents");
+
+    private List<Object> listeners = new ArrayList<>();
 
     public void registerListener(Object listener) {
         eventBus.register(listener);
+        listeners.add(listener);
     }
 
-    public Result callEvent(@NotNull final PlotEvent event) {
-        eventBus.post(event);
-        if (event instanceof CancellablePlotEvent) {
-            return ((CancellablePlotEvent) event).getEventResult();
+    public void unregisterListener(Object listener) {
+        eventBus.unregister(listener);
+        listeners.remove(listener);
+    }
+
+    public void unregisterAll() {
+        for (Object listener : listeners) {
+            eventBus.unregister(listener);
         }
-        return null;
     }
 
-    public Result callClaim(PlotPlayer player, Plot plot, boolean auto, @Nullable String schematic) {
-        return callEvent(new PlayerClaimPlotEvent(player, plot, auto, schematic));
+    public void callEvent(@NotNull final PlotEvent event) {
+        eventBus.post(event);
     }
 
-    public Result callTeleport(PlotPlayer player, Location from, Plot plot) {
-        return callEvent(new PlayerTeleportToPlotEvent(player, from, plot));
+    public PlayerClaimPlotEvent callClaim(PlotPlayer player, Plot plot, String schematic) {
+        PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, schematic);
+        callEvent(event);
+        return event;
     }
 
-    public Result callComponentSet(Plot plot, String component) {
-        return callEvent(new PlotComponentSetEvent(plot, component));
+    public PlayerAutoPlotEvent callAuto(PlotPlayer player, PlotArea area, String schematic,
+        int size_x, int size_z) {
+        PlayerAutoPlotEvent event =
+            new PlayerAutoPlotEvent(player, area, schematic, size_x, size_z);
+        callEvent(event);
+        return event;
     }
 
-    public Result callClear(Plot plot) {
-        return callEvent(new PlotClearEvent(plot));
+    public PlayerTeleportToPlotEvent callTeleport(PlotPlayer player, Location from, Plot plot) {
+        PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, plot);
+        callEvent(event);
+        return event;
     }
 
-    public Result callDelete(Plot plot) {
-        return callEvent(new PlotDeleteEvent(plot));
+    public PlotComponentSetEvent callComponentSet(Plot plot, String component, Pattern pattern) {
+        PlotComponentSetEvent event = new PlotComponentSetEvent(plot, component, pattern);
+        callEvent(event);
+        return event;
     }
 
-    public Result callFlagAdd(PlotFlag<?, ?> flag, Plot plot) {
-        return callEvent(new PlotFlagAddEvent(flag, plot));
+    public PlotClearEvent callClear(Plot plot) {
+        PlotClearEvent event = new PlotClearEvent(plot);
+        callEvent(event);
+        return event;
     }
 
-    public Result callFlagRemove(PlotFlag<?, ?> flag, Plot plot, Object value) {
-        return callEvent(new PlotFlagRemoveEvent(flag, plot));
+    public PlotDeleteEvent callDelete(Plot plot) {
+        PlotDeleteEvent event = new PlotDeleteEvent(plot);
+        callEvent(event);
+        return event;
     }
 
-    public Result callMerge(Plot plot, int dir, int max) {
-        return callEvent(new PlotMergeEvent(plot.getWorldName(), plot, dir, max));
+    public PlotFlagAddEvent callFlagAdd(PlotFlag<?, ?> flag, Plot plot) {
+        PlotFlagAddEvent event = new PlotFlagAddEvent(flag, plot);
+        callEvent(event);
+        return event;
     }
 
-    public Result callAutoMerge(Plot plot, List<PlotId> plots) {
-        return callEvent(new PlotAutoMergeEvent(plot.getWorldName(), plot, plots));
+    public PlotFlagRemoveEvent callFlagRemove(PlotFlag<?, ?> flag, Plot plot) {
+        PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(flag, plot);
+        callEvent(event);
+        return event;
     }
 
-    public Result callUnlink(PlotArea area, List<PlotId> plots, Plot plot) {
-        return callEvent(new PlotUnlinkEvent(area.worldname, area, plots, plot));
+    public PlotMergeEvent callMerge(Plot plot, Direction dir, int max, PlotPlayer player) {
+        PlotMergeEvent event = new PlotMergeEvent(plot.getWorldName(), plot, dir, max, player);
+        callEvent(event);
+        return event;
     }
 
-    public void callEntry(PlotPlayer player, Plot plot) {
-        callEvent(new PlayerEnterPlotEvent(player, plot));
+    public PlotAutoMergeEvent callAutoMerge(Plot plot, List<PlotId> plots) {
+        PlotAutoMergeEvent event = new PlotAutoMergeEvent(plot.getWorldName(), plot, plots);
+        callEvent(event);
+        return event;
     }
 
-    public void callLeave(PlotPlayer player, Plot plot) {
-        callEvent(new PlayerLeavePlotEvent(player, plot));
+    public PlotUnlinkEvent callUnlink(PlotArea area, Plot plot, boolean createRoad,
+        boolean createSign, PlotUnlinkEvent.REASON reason) {
+        PlotUnlinkEvent event = new PlotUnlinkEvent(area, plot, createRoad, createSign, reason);
+        callEvent(event);
+        return event;
     }
 
-    public void callDenied(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
-        callEvent(new PlayerPlotDeniedEvent(initiator, plot, player, added));
+    public PlayerEnterPlotEvent callEntry(PlotPlayer player, Plot plot) {
+        PlayerEnterPlotEvent event = new PlayerEnterPlotEvent(player, plot);
+        callEvent(event);
+        return event;
     }
 
-    public void callTrusted(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
-        callEvent(new PlayerPlotTrustedEvent(initiator, plot, player, added));
+    public PlayerLeavePlotEvent callLeave(PlotPlayer player, Plot plot) {
+        PlayerLeavePlotEvent event = new PlayerLeavePlotEvent(player, plot);
+        callEvent(event);
+        return event;
     }
 
-    public void callMember(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
-        callEvent(new PlayerPlotHelperEvent(initiator, plot, player, added));
+    public PlayerPlotDeniedEvent callDenied(PlotPlayer initiator, Plot plot, UUID player,
+        boolean added) {
+        PlayerPlotDeniedEvent event = new PlayerPlotDeniedEvent(initiator, plot, player, added);
+        callEvent(event);
+        return event;
     }
 
-    public Result callOwnerChange(PlotPlayer initiator, Plot plot, UUID oldOwner, UUID newOwner,
-        boolean hasOldOwner) {
-        return callEvent(
-            new PlotChangeOwnerEvent(initiator, plot, oldOwner, newOwner, hasOldOwner));
+    public PlayerPlotTrustedEvent callTrusted(PlotPlayer initiator, Plot plot, UUID player,
+        boolean added) {
+        PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(initiator, plot, player, added);
+        callEvent(event);
+        return event;
     }
 
-    @Nullable public Rating callRating(PlotPlayer player, Plot plot, Rating rating) {
+    public PlayerPlotHelperEvent callMember(PlotPlayer initiator, Plot plot, UUID player,
+        boolean added) {
+        PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(initiator, plot, player, added);
+        callEvent(event);
+        return event;
+    }
+
+    public PlotChangeOwnerEvent callOwnerChange(PlotPlayer initiator, Plot plot, UUID oldOwner,
+        UUID newOwner, boolean hasOldOwner) {
+        PlotChangeOwnerEvent event =
+            new PlotChangeOwnerEvent(initiator, plot, oldOwner, newOwner, hasOldOwner);
+        callEvent(event);
+        return event;
+    }
+
+    public PlotRateEvent callRating(PlotPlayer player, Plot plot, Rating rating) {
         PlotRateEvent event = new PlotRateEvent(player, rating, plot);
         eventBus.post(event);
-        if (event.getEventResultRaw() == 0) {
-            return null;
-        }
-        return event.getRating();
+        return event;
+    }
+
+    public PlotDoneEvent callDone(Plot plot) {
+        PlotDoneEvent event = new PlotDoneEvent(plot);
+        callEvent(event);
+        return event;
     }
 
     public void doJoinTask(final PlotPlayer player) {

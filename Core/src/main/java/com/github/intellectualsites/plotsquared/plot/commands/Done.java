@@ -1,8 +1,15 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import com.github.intellectualsites.plotsquared.plot.events.PlotDoneEvent;
+import com.github.intellectualsites.plotsquared.plot.events.PlotFlagAddEvent;
+import com.github.intellectualsites.plotsquared.plot.events.Result;
+import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
@@ -28,7 +35,13 @@ public class Done extends SubCommand {
         if ((plot == null) || !plot.hasOwner()) {
             return !sendMessage(player, Captions.NOT_IN_PLOT);
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions
+        PlotDoneEvent event = PlotSquared.get().getEventDispatcher().callDone(plot);
+        if (event.getEventResult() == Result.DENY) {
+            player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+            return true;
+        }
+        boolean force = event.getEventResult() == Result.FORCE;
+        if (!force && !plot.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DONE)) {
             MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
             return false;
@@ -61,12 +74,19 @@ public class Done extends SubCommand {
     }
 
     private void finish(Plot plot, PlotPlayer pp, boolean success) {
-        if (success) {
-            long flagValue = System.currentTimeMillis() / 1000;
-            plot.setFlag(DoneFlag.class, Long.toString(flagValue));
-            MainUtil.sendMessage(pp, Captions.DONE_SUCCESS);
-        } else {
+        if (!success) {
             MainUtil.sendMessage(pp, Captions.DONE_INSUFFICIENT_COMPLEXITY);
+            return;
         }
+        long flagValue = System.currentTimeMillis() / 1000;
+        PlotFlag<?, ?> plotFlag = GlobalFlagContainer.getInstance().getFlag(DoneFlag.class)
+            .createFlagInstance(Long.toString(flagValue));
+        PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
+        if (event.getEventResult() == Result.DENY) {
+            pp.sendMessage(CaptionUtility.format(pp, event.getEventResult().getReason()));
+            return;
+        }
+        plot.setFlag(plotFlag);
+        MainUtil.sendMessage(pp, Captions.DONE_SUCCESS);
     }
 }

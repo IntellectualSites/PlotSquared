@@ -6,6 +6,7 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
+import com.github.intellectualsites.plotsquared.plot.events.PlotRateEvent;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
@@ -116,10 +117,10 @@ public class Rate extends SubCommand {
                             index.increment();
                             if (index.getValue() >= Settings.Ratings.CATEGORIES.size()) {
                                 int rV = rating.getValue();
-                                Rating result =
+                                PlotRateEvent event =
                                     PlotSquared.get().getEventDispatcher().callRating(this.player, plot, new Rating(rV));
-                                if (result != null) {
-                                    plot.addRating(this.player.getUUID(), result);
+                                if (event.getRating() != null) {
+                                    plot.addRating(this.player.getUUID(), event.getRating());
                                     sendMessage(this.player, Captions.RATING_APPLIED,
                                         plot.getId().toString());
                                     if (Permissions
@@ -185,9 +186,9 @@ public class Rate extends SubCommand {
                 sendMessage(player, Captions.RATING_ALREADY_EXISTS, plot.getId().toString());
                 return;
             }
-            Rating result = PlotSquared.get().getEventDispatcher().callRating(player, plot, new Rating(rating));
-            if (result != null) {
-                plot.addRating(uuid, result);
+            PlotRateEvent event = PlotSquared.get().getEventDispatcher().callRating(player, plot, new Rating(rating));
+            if (event.getRating() != null) {
+                plot.addRating(uuid, event.getRating());
                 sendMessage(player, Captions.RATING_APPLIED, plot.getId().toString());
             }
         };

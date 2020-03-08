@@ -2,7 +2,10 @@ package com.github.intellectualsites.plotsquared.plot.generator;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import com.github.intellectualsites.plotsquared.plot.events.PlotFlagAddEvent;
+import com.github.intellectualsites.plotsquared.plot.events.Result;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnalysisFlag;
 import com.github.intellectualsites.plotsquared.plot.listener.WEExtent;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
@@ -288,7 +291,14 @@ public abstract class HybridUtils {
                     result.add(whenDone.value.data_sd);
                     result.add(whenDone.value.air_sd);
                     result.add(whenDone.value.variety_sd);
-                    origin.setFlag(GlobalFlagContainer.getInstance().getFlag(AnalysisFlag.class).createFlagInstance(result));
+                    PlotFlag<?, ?> plotFlag =
+                        GlobalFlagContainer.getInstance().getFlag(AnalysisFlag.class)
+                            .createFlagInstance(result);
+                    PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, origin);
+                    if (event.getEventResult() == Result.DENY) {
+                        return;
+                    }
+                    origin.setFlag(event.getFlag());
                     TaskManager.runTask(whenDone);
                     return;
                 }

@@ -2,12 +2,9 @@ package com.github.intellectualsites.plotsquared.plot.events;
 
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Event called when several merged plots are unlinked
@@ -15,41 +12,39 @@ import java.util.List;
  */
 public final class PlotUnlinkEvent extends PlotEvent implements CancellablePlotEvent {
 
-    private final List<PlotId> plots;
-    @Getter private final String world;
     @Getter private final PlotArea area;
+    @Getter @Setter boolean createRoad;
+    @Getter @Setter boolean createSign;
+    @Getter REASON reason;
     private Result eventResult = Result.ACCEPT;
 
     /**
-     * Called when a mega-plot is unlinked.
+     * PlotUnlinkEvent: Called when a mega plot is unlinked
      *
-     * @param world World in which the event occurred
-     * @param plots Plots that are involved in the event
+     * @param area       The applicable plot area
+     * @param plot       The plot being unlinked from
+     * @param createRoad Whether to regenerate the road
+     * @param createSign Whether to regenerate signs
+     * @param reason     The {@link REASON} for the unlink
      */
-    public PlotUnlinkEvent(@NotNull final String world, @NotNull final PlotArea area,
-        @NotNull final List<PlotId> plots, Plot plot) {
+    public PlotUnlinkEvent(@NotNull final PlotArea area, Plot plot, boolean createRoad,
+        boolean createSign, REASON reason) {
         super(plot);
-        this.plots = plots;
-        this.world = world;
         this.area = area;
+        this.createRoad = createRoad;
+        this.createSign = createSign;
+        this.reason = reason;
     }
 
-    /**
-     * Get the plots involved.
-     *
-     * @return Unmodifiable list containing {@link PlotId PlotIds} of the plots involved
-     */
-    public List<PlotId> getPlots() {
-        return Collections.unmodifiableList(this.plots);
-    }
-
-    @Override
-    public Result getEventResult() {
+    @Override public Result getEventResult() {
         return eventResult;
     }
 
-    @Override
-    public void setEventResult(Result e) {
+    @Override public void setEventResult(Result e) {
         this.eventResult = e;
+    }
+
+    public enum REASON {
+        NEW_OWNER, PLAYER_COMMAND, CLEAR, DELETE, EXPIRE_DELETE
     }
 }

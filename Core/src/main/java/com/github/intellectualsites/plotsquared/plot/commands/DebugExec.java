@@ -6,6 +6,8 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
+import com.github.intellectualsites.plotsquared.plot.events.PlotFlagRemoveEvent;
+import com.github.intellectualsites.plotsquared.plot.events.Result;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
@@ -225,7 +227,11 @@ public class DebugExec extends SubCommand {
                         GlobalFlagContainer.getInstance().getFlagFromString(flag);
                     if (flagInstance != null) {
                         for (Plot plot : PlotSquared.get().getBasePlots()) {
-                            plot.removeFlag(flagInstance);
+                            PlotFlagRemoveEvent event = PlotSquared.get().getEventDispatcher()
+                                .callFlagRemove(flagInstance, plot);
+                            if (event.getEventResult() != Result.DENY) {
+                                plot.removeFlag(event.getFlag());
+                            }
                         }
                     }
                     return MainUtil.sendMessage(player, "Cleared flag: " + flag);

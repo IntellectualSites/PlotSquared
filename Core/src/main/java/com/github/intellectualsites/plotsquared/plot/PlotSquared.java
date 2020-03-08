@@ -1524,6 +1524,7 @@ import java.util.zip.ZipInputStream;
      */
     public void disable() {
         try {
+            eventDispatcher.unregisterAll();
             // Validate that all data in the db is correct
             final HashSet<Plot> plots = new HashSet<>();
             try {

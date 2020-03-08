@@ -1,10 +1,14 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
+import com.github.intellectualsites.plotsquared.plot.events.PlotComponentSetEvent;
+import com.github.intellectualsites.plotsquared.plot.events.PlotMergeEvent;
+import com.github.intellectualsites.plotsquared.plot.events.PlotUnlinkEvent;
 import com.github.intellectualsites.plotsquared.plot.events.Result;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
@@ -818,11 +822,6 @@ public class Plot {
      * @return boolean
      */
     public boolean setOwner(UUID owner, PlotPlayer initiator) {
-        Result result = PlotSquared.get().getEventDispatcher()
-            .callOwnerChange(initiator, this, owner, hasOwner() ? this.owner : null, hasOwner());
-        if (result.getValue() == 0) {
-            return false;
-        }
         if (!hasOwner()) {
             this.owner = owner;
             create();
@@ -859,22 +858,18 @@ public class Plot {
         if (checkRunning && this.getRunning() != 0) {
             return false;
         }
-        Result Result;
-        if (isDelete) {
-            Result = PlotSquared.get().getEventDispatcher().callDelete(this);
-        } else {
-            Result = PlotSquared.get().getEventDispatcher().callClear(this);
-        }
-        if (Result.getValue() == 0) {
-            return false;
-        }
         final Set<CuboidRegion> regions = this.getRegions();
         final Set<Plot> plots = this.getConnectedPlots();
         final ArrayDeque<Plot> queue = new ArrayDeque<>(plots);
         if (isDelete) {
             this.removeSign();
         }
-        this.unlinkPlot(true, !isDelete);
+        PlotUnlinkEvent event = PlotSquared.get().getEventDispatcher()
+            .callUnlink(getArea(), this, true, !isDelete,
+                isDelete ? PlotUnlinkEvent.REASON.DELETE : PlotUnlinkEvent.REASON.CLEAR);
+        if (event.getEventResult() != Result.DENY) {
+            this.unlinkPlot(event.isCreateRoad(), event.isCreateSign());
+        }
         final PlotManager manager = this.area.getPlotManager();
         Runnable run = new Runnable() {
             @Override public void run() {
@@ -988,10 +983,6 @@ public class Plot {
             current.setHome(null);
             ids.add(current.getId());
         }
-        Result result = PlotSquared.get().getEventDispatcher().callUnlink(this.area, ids, this);
-        if (result.getValue() == 0) {
-            return false;
-        }
         this.clearRatings();
         if (createSign) {
             this.removeSign();
@@ -1097,9 +1088,6 @@ public class Plot {
      * @return A boolean indicating whether or not the operation succeeded
      */
     public <V> boolean setFlag(PlotFlag<V, ?> flag) {
-        if (PlotSquared.get().getEventDispatcher().callFlagAdd(flag, origin).getValue() == 0) {
-            return false;
-        }
         if (flag instanceof KeepFlag && ExpireManager.IMP != null) {
             ExpireManager.IMP.updateExpired(this);
         }
@@ -1196,13 +1184,6 @@ public class Plot {
             final Object value = plot.getFlagContainer().removeFlag(flag);
             if (value == null) {
                 continue;
-            }
-            if (plot == origin) {
-                Result result = PlotSquared.get().getEventDispatcher().callFlagRemove(flag, plot, value);
-                if (result.getValue() == 0) {
-                    plot.getFlagContainer().addFlag(flag);
-                    continue;
-                }
             }
             plot.reEnter();
             DBFunc.removeFlag(plot, flag);
@@ -1681,7 +1662,15 @@ public class Plot {
             DBFunc.createPlotAndSettings(this, () -> {
                 PlotArea plotworld = Plot.this.area;
                 if (notify && plotworld.AUTO_MERGE) {
-                    Plot.this.autoMerge(Direction.ALL, Integer.MAX_VALUE, uuid, true);
+                    PlotPlayer player = WorldUtil.IMP.wrapPlayer(uuid);
+                    PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
+                        .callMerge(this, Direction.ALL, Integer.MAX_VALUE, player);
+                    if (event.getEventResult() == Result.DENY) {
+                        player.sendMessage(
+                            CaptionUtility.format(player, event.getEventResult().getReason()));
+                        return;
+                    }
+                    Plot.this.autoMerge(event.getDir(), event.getMax(), uuid, true);
                 }
             });
             return true;
@@ -2330,11 +2319,6 @@ public class Plot {
         if (this.owner == null) {
             return false;
         }
-        //Call the merge event
-        if (PlotSquared.get().getEventDispatcher().callMerge(this, dir.getIndex(), max).getValue()
-            == 0) {
-            return false;
-        }
         Set<Plot> connected = this.getConnectedPlots();
         HashSet<PlotId> merged =
             connected.stream().map(Plot::getId).collect(Collectors.toCollection(HashSet::new));
@@ -2893,38 +2877,38 @@ public class Plot {
     public boolean teleportPlayer(final PlotPlayer player, TeleportCause cause) {
         Plot plot = this.getBasePlot(false);
         Result result =
-            PlotSquared.get().getEventDispatcher().callTeleport(player, player.getLocation(), plot);
-        if (result.getValue() == 0) {
-            final Location location;
-            if (this.area.HOME_ALLOW_NONMEMBER || plot.isAdded(player.getUUID())) {
-                location = this.getHome();
-            } else {
-                location = this.getDefaultHome(false);
-            }
-            if (Settings.Teleport.DELAY == 0 || Permissions
-                .hasPermission(player, "plots.teleport.delay.bypass")) {
-                MainUtil.sendMessage(player, Captions.TELEPORTED_TO_PLOT);
-                player.teleport(location, cause);
-                return true;
-            }
-            MainUtil
-                .sendMessage(player, Captions.TELEPORT_IN_SECONDS, Settings.Teleport.DELAY + "");
-            final String name = player.getName();
-            TaskManager.TELEPORT_QUEUE.add(name);
-            TaskManager.runTaskLater(() -> {
-                if (!TaskManager.TELEPORT_QUEUE.contains(name)) {
-                    MainUtil.sendMessage(player, Captions.TELEPORT_FAILED);
-                    return;
-                }
-                TaskManager.TELEPORT_QUEUE.remove(name);
-                if (player.isOnline()) {
-                    MainUtil.sendMessage(player, Captions.TELEPORTED_TO_PLOT);
-                    player.teleport(location, cause);
-                }
-            }, Settings.Teleport.DELAY * 20);
+            PlotSquared.get().getEventDispatcher().callTeleport(player, player.getLocation(), plot).getEventResult();
+        if (result == Result.DENY) {
+            player.sendMessage(CaptionUtility.format(player, result.getReason()));
+            return false;
+        }
+        final Location location;
+        if (this.area.HOME_ALLOW_NONMEMBER || plot.isAdded(player.getUUID())) {
+            location = this.getHome();
+        } else {
+            location = this.getDefaultHome(false);
+        }
+        if (Settings.Teleport.DELAY == 0 || Permissions
+            .hasPermission(player, "plots.teleport.delay.bypass")) {
+            MainUtil.sendMessage(player, Captions.TELEPORTED_TO_PLOT);
+            player.teleport(location, cause);
             return true;
         }
-        return false;
+        MainUtil.sendMessage(player, Captions.TELEPORT_IN_SECONDS, Settings.Teleport.DELAY + "");
+        final String name = player.getName();
+        TaskManager.TELEPORT_QUEUE.add(name);
+        TaskManager.runTaskLater(() -> {
+            if (!TaskManager.TELEPORT_QUEUE.contains(name)) {
+                MainUtil.sendMessage(player, Captions.TELEPORT_FAILED);
+                return;
+            }
+            TaskManager.TELEPORT_QUEUE.remove(name);
+            if (player.isOnline()) {
+                MainUtil.sendMessage(player, Captions.TELEPORTED_TO_PLOT);
+                player.teleport(location, cause);
+            }
+        }, Settings.Teleport.DELAY * 20);
+        return true;
     }
 
     /**
@@ -2957,9 +2941,9 @@ public class Plot {
      * @return
      */
     public boolean setComponent(String component, Pattern blocks) {
-        if (StringMan.isEqualToAny(component, getManager().getPlotComponents(this.getId()))) {
-            PlotSquared.get().getEventDispatcher().callComponentSet(this, component);
-        }
+        PlotComponentSetEvent event = PlotSquared.get().getEventDispatcher().callComponentSet(this, component, blocks);
+        component = event.getComponent();
+        blocks = event.getPattern();
         return this.getManager().setComponent(this.getId(), component, blocks);
     }
 

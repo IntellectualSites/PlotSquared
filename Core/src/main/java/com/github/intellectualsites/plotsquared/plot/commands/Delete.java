@@ -1,8 +1,11 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import com.github.intellectualsites.plotsquared.plot.events.Result;
 import com.github.intellectualsites.plotsquared.plot.object.Expression;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -37,7 +40,13 @@ public class Delete extends SubCommand {
         if (!plot.hasOwner()) {
             return !sendMessage(player, Captions.PLOT_UNOWNED);
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions
+        Result eventResult = PlotSquared.get().getEventDispatcher().callDelete(plot).getEventResult();
+        if (eventResult == Result.DENY) {
+            player.sendMessage(CaptionUtility.format(player, eventResult.getReason()));
+            return true;
+        }
+        boolean force = eventResult == Result.FORCE;
+        if (!force && !plot.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DELETE)) {
             return !sendMessage(player, Captions.NO_PLOT_PERMS);
         }
@@ -46,33 +55,29 @@ public class Delete extends SubCommand {
         final int currentPlots = Settings.Limit.GLOBAL ?
             player.getPlotCount() :
             player.getPlotCount(location.getWorld());
-        Runnable run = new Runnable() {
-            @Override public void run() {
-                if (plot.getRunning() > 0) {
-                    MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
-                    return;
-                }
-                final long start = System.currentTimeMillis();
-                boolean result = plot.deletePlot(new Runnable() {
-                    @Override public void run() {
-                        plot.removeRunning();
-                        if ((EconHandler.manager != null) && plotArea.USE_ECONOMY) {
-                            Expression<Double> valueExr = plotArea.PRICES.get("sell");
-                            double value = plots.size() * valueExr.evaluate((double) currentPlots);
-                            if (value > 0d) {
-                                EconHandler.manager.depositMoney(player, value);
-                                sendMessage(player, Captions.ADDED_BALANCE, String.valueOf(value));
-                            }
-                        }
-                        MainUtil.sendMessage(player, Captions.DELETING_DONE,
-                            System.currentTimeMillis() - start);
+        Runnable run = () -> {
+            if (plot.getRunning() > 0) {
+                MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+                return;
+            }
+            final long start = System.currentTimeMillis();
+            boolean result = plot.deletePlot(() -> {
+                plot.removeRunning();
+                if ((EconHandler.manager != null) && plotArea.USE_ECONOMY) {
+                    Expression<Double> valueExr = plotArea.PRICES.get("sell");
+                    double value = plots.size() * valueExr.evaluate((double) currentPlots);
+                    if (value > 0d) {
+                        EconHandler.manager.depositMoney(player, value);
+                        sendMessage(player, Captions.ADDED_BALANCE, String.valueOf(value));
                     }
-                });
-                if (result) {
-                    plot.addRunning();
-                } else {
-                    MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
                 }
+                MainUtil.sendMessage(player, Captions.DELETING_DONE,
+                    System.currentTimeMillis() - start);
+            });
+            if (result) {
+                plot.addRunning();
+            } else {
+                MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
             }
         };
         if (hasConfirmation(player)) {
