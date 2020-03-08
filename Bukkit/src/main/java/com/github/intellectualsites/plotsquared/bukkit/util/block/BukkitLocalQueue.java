@@ -7,7 +7,13 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.BasicLocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
 import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.function.operation.Operations;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
@@ -64,7 +70,22 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
     @Override public final void regenChunk(int x, int z) {
         World worldObj = Bukkit.getWorld(getWorld());
         if (worldObj != null) {
-            worldObj.regenerateChunk(x, z);
+            try {
+                worldObj.regenerateChunk(x, z);
+            } catch (UnsupportedOperationException e) {
+                com.sk89q.worldedit.world.World world = BukkitAdapter.adapt(worldObj);
+                EditSession editSession =
+                    WorldEdit.getInstance().getEditSessionFactory().getEditSession(world, -1);
+                CuboidRegion region =
+                    new CuboidRegion(world, BlockVector3.at((x << 4), 0, (z << 4)),
+                        BlockVector3.at((x << 4) + 15, 255, (z << 4) + 15));
+                world.regenerate(region, editSession);
+                try {
+                    Operations.complete(editSession.commit());
+                } catch (WorldEditException ex) {
+                    ex.printStackTrace();
+                }
+            }
         } else {
             PlotSquared.debug("Error Regenerating Chunk");
         }
