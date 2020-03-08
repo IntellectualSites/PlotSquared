@@ -74,16 +74,12 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
                 worldObj.regenerateChunk(x, z);
             } catch (UnsupportedOperationException e) {
                 com.sk89q.worldedit.world.World world = BukkitAdapter.adapt(worldObj);
-                EditSession editSession =
-                    WorldEdit.getInstance().getEditSessionFactory().getEditSession(world, -1);
-                CuboidRegion region =
-                    new CuboidRegion(world, BlockVector3.at((x << 4), 0, (z << 4)),
-                        BlockVector3.at((x << 4) + 15, 255, (z << 4) + 15));
-                world.regenerate(region, editSession);
-                try {
-                    Operations.complete(editSession.commit());
-                } catch (WorldEditException ex) {
-                    ex.printStackTrace();
+                try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory()
+                    .getEditSession(world, -1);) {
+                    CuboidRegion region =
+                        new CuboidRegion(world, BlockVector3.at((x << 4), 0, (z << 4)),
+                            BlockVector3.at((x << 4) + 15, 255, (z << 4) + 15));
+                    world.regenerate(region, editSession);
                 }
             }
         } else {
