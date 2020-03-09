@@ -19,7 +19,7 @@ is to provide a lag-free and smooth experience.
 ## Links
 
 * [Download](https://github.com/IntellectualSites/PlotSquared/releases/tag/dev)
-* [Discord](https://discord.gg/ngZCzbU)
+* [Discord](https://discord.gg/KxkjDVg)
 * [Wiki](https://github.com/IntellectualSites/PlotSquared/wiki)
 
 ### Developer Resources
