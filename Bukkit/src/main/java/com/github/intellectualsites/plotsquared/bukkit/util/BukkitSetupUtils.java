@@ -103,7 +103,7 @@ public class BukkitSetupUtils extends SetupUtils {
                         options.put(step.getConstant(), step.getValue());
                     }
                     options.put("generator.type", object.type.toString());
-                    options.put("generator.terrain", object.terrain);
+                    options.put("generator.terrain", object.terrain.toString());
                     options.put("generator.plugin", object.plotManager);
                     if (object.setupGenerator != null && !object.setupGenerator
                         .equals(object.plotManager)) {
@@ -143,7 +143,7 @@ public class BukkitSetupUtils extends SetupUtils {
                     PlotSquared.get().worlds
                         .set("worlds." + world + ".generator.type", object.type.toString());
                     PlotSquared.get().worlds
-                        .set("worlds." + world + ".generator.terrain", object.terrain);
+                        .set("worlds." + world + ".generator.terrain", object.terrain.toString());
                     PlotSquared.get().worlds
                         .set("worlds." + world + ".generator.plugin", object.plotManager);
                     if (object.setupGenerator != null && !object.setupGenerator

@@ -3,6 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.generator;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaTerrainType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.util.block.DelegateLocalBlockQueue;
@@ -46,7 +47,7 @@ public class AugmentedUtils {
             if (area.getType() == PlotAreaType.NORMAL) {
                 return false;
             }
-            if (area.getTerrain() == 3) {
+            if (area.getTerrain() == PlotAreaTerrainType.ALL) {
                 continue;
             }
             IndependentPlotGenerator generator = area.getGenerator();
@@ -88,7 +89,7 @@ public class AugmentedUtils {
             }
             LocalBlockQueue secondaryMask;
             BlockState air = BlockTypes.AIR.getDefaultState();
-            if (area.getTerrain() == 2) {
+            if (area.getTerrain() == PlotAreaTerrainType.ROAD) {
                 PlotManager manager = area.getPlotManager();
                 final boolean[][] canPlace = new boolean[16][16];
                 boolean has = false;

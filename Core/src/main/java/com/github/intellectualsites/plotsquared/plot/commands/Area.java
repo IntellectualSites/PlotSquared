@@ -9,6 +9,7 @@ import com.github.intellectualsites.plotsquared.plot.generator.AugmentedUtils;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridPlotWorld;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaTerrainType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
@@ -142,7 +143,7 @@ public class Area extends SubCommand {
                                         Captions.SETUP_FINISHED.send(player);
                                         player.teleport(WorldUtil.IMP.getSpawn(world),
                                             TeleportCause.COMMAND);
-                                        if (area.getTerrain() != 3) {
+                                        if (area.getTerrain() != PlotAreaTerrainType.ALL) {
                                             ChunkManager.largeRegionTask(world, region,
                                                 new RunnableVal<BlockVector2>() {
                                                     @Override public void run(BlockVector2 value) {
@@ -231,7 +232,7 @@ public class Area extends SubCommand {
                                     pa.WALL_BLOCK = Configuration.BLOCK_BUCKET.parseString(pair[1]);
                                     break;
                                 case "terrain":
-                                    pa.setTerrain(Integer.parseInt(pair[1]));
+                                    pa.setTerrain(PlotAreaTerrainType.fromString(pair[1]).orElseThrow(() -> new IllegalArgumentException(pair[1] + " is not a valid terrain.")));
                                     object.terrain = pa.getTerrain();
                                     break;
                                 case "type":
@@ -295,7 +296,7 @@ public class Area extends SubCommand {
                                     TeleportCause.COMMAND);
                             }
                         } else {
-                            object.terrain = 0;
+                            object.terrain = PlotAreaTerrainType.NONE;
                             object.type = PlotAreaType.NORMAL;
                             SetupUtils.manager.setupWorld(object);
                             player.teleport(WorldUtil.IMP.getSpawn(pa.getWorldName()),

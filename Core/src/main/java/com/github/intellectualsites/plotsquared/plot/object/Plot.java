@@ -894,7 +894,7 @@ public class Plot {
                     return;
                 }
                 Plot current = queue.poll();
-                if (Plot.this.area.getTerrain() != 0) {
+                if (Plot.this.area.getTerrain() != PlotAreaTerrainType.NONE) {
                     try {
                         ChunkManager.manager
                             .regenerateRegion(current.getBottomAbs(), current.getTopAbs(), false,
@@ -993,7 +993,7 @@ public class Plot {
         if (createRoad) {
             manager.startPlotUnlink(ids);
         }
-        if (this.area.getTerrain() != 3 && createRoad) {
+        if (this.area.getTerrain() != PlotAreaTerrainType.ALL && createRoad) {
             for (Plot current : plots) {
                 if (current.getMerged(Direction.EAST)) {
                     manager.createRoadEast(current);
@@ -1846,17 +1846,14 @@ public class Plot {
      * - Used when a plot is merged<br>
      */
     public void removeRoadEast() {
-        if (this.area.getType() != PlotAreaType.NORMAL && this.area.getTerrain() > 1) {
-            if (this.area.getTerrain() == 3) {
-                return;
-            }
+        if (this.area.getType() != PlotAreaType.NORMAL && this.area.getTerrain() == PlotAreaTerrainType.ROAD) {
             Plot other = this.getRelative(Direction.EAST);
             Location bot = other.getBottomAbs();
             Location top = this.getTopAbs();
             Location pos1 = new Location(this.getWorldName(), top.getX(), 0, bot.getZ());
             Location pos2 = new Location(this.getWorldName(), bot.getX(), MAX_HEIGHT, top.getZ());
             ChunkManager.manager.regenerateRegion(pos1, pos2, true, null);
-        } else {
+        } else if (this.area.getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.area.getPlotManager().removeRoadEast(this);
         }
     }
@@ -2291,17 +2288,14 @@ public class Plot {
      * - Used when a plot is merged<br>
      */
     public void removeRoadSouth() {
-        if (this.area.getType() != PlotAreaType.NORMAL && this.area.getTerrain() > 1) {
-            if (this.area.getTerrain() == 3) {
-                return;
-            }
+        if (this.area.getType() != PlotAreaType.NORMAL && this.area.getTerrain() == PlotAreaTerrainType.ROAD) {
             Plot other = this.getRelative(Direction.SOUTH);
             Location bot = other.getBottomAbs();
             Location top = this.getTopAbs();
             Location pos1 = new Location(this.getWorldName(), bot.getX(), 0, top.getZ());
             Location pos2 = new Location(this.getWorldName(), top.getX(), MAX_HEIGHT, bot.getZ());
             ChunkManager.manager.regenerateRegion(pos1, pos2, true, null);
-        } else {
+        } else if (this.area.getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.getManager().removeRoadSouth(this);
         }
     }
@@ -2470,17 +2464,14 @@ public class Plot {
      * Remove the SE road (only effects terrain)
      */
     public void removeRoadSouthEast() {
-        if (this.area.getType() != PlotAreaType.NORMAL && this.area.getTerrain() > 1) {
-            if (this.area.getTerrain() == 3) {
-                return;
-            }
+        if (this.area.getType() != PlotAreaType.NORMAL && this.area.getTerrain() == PlotAreaTerrainType.ROAD) {
             Plot other = this.getRelative(1, 1);
             Location pos1 = this.getTopAbs().add(1, 0, 1);
             Location pos2 = other.getBottomAbs().subtract(1, 0, 1);
             pos1.setY(0);
             pos2.setY(MAX_HEIGHT);
             ChunkManager.manager.regenerateRegion(pos1, pos2, true, null);
-        } else {
+        } else if (this.area.getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.area.getPlotManager().removeRoadSouthEast(this);
         }
     }

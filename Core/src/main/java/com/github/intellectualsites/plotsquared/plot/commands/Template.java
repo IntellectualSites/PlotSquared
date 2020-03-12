@@ -10,6 +10,7 @@ import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.FileBytes;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaTerrainType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -168,11 +169,18 @@ public class Template extends SubCommand {
                 } else {
                     setup.type = PlotAreaType.fromString(type).orElse(PlotAreaType.NORMAL);
                 }
-                int terrain = worldConfig.getInt("generator.terrain");
+                String terrain = worldConfig.getString("generator.terrain");
+                if (terrain == null) {
+                    setup.terrain = PlotAreaTerrainType.NONE;
+                } else if (MathMan.isInteger(terrain)) {
+                    setup.terrain = PlotAreaTerrainType.fromLegacyInt(Integer.parseInt(terrain))
+                            .orElse(PlotAreaTerrainType.NONE);
+                } else {
+                    setup.terrain = PlotAreaTerrainType.fromString(terrain).orElse(PlotAreaTerrainType.NONE);
+                }
 
                 setup.plotManager = manager;
                 setup.setupGenerator = generator;
-                setup.terrain = terrain;
                 setup.step = new ConfigurationNode[0];
                 setup.world = world;
                 SetupUtils.manager.setupWorld(setup);

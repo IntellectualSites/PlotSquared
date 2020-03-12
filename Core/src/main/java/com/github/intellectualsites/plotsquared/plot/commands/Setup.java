@@ -7,6 +7,7 @@ import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaTerrainType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
@@ -246,8 +247,8 @@ public class Setup extends SubCommand {
                     + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
                 break;
             case 5: { // Choose terrain
-                List<String> terrain = Arrays.asList("none", "ore", "road", "all");
-                if (args.length != 1 || !terrain.contains(args[0].toLowerCase())) {
+                Optional<PlotAreaTerrainType> optTerrain;
+                if (args.length != 1 || !(optTerrain = PlotAreaTerrainType.fromString(args[0])).isPresent()) {
                     MainUtil.sendMessage(player,
                         "&cYou must choose the terrain!" + "\n&8 - &2NONE&8 - &7No terrain at all"
                             + "\n&8 - &7ORE&8 - &7Just some ore veins and trees"
@@ -255,7 +256,7 @@ public class Setup extends SubCommand {
                             + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
                     return false;
                 }
-                object.terrain = terrain.indexOf(args[0].toLowerCase());
+                object.terrain = optTerrain.get();
                 object.current++;
                 if (object.step == null) {
                     object.step = SetupUtils.generators.get(object.plotManager).getPlotGenerator()

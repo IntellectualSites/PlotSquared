@@ -76,7 +76,7 @@ public abstract class PlotArea {
     @Getter private boolean spawnCustom = true;
     @Getter private boolean spawnBreeding = false;
     @Getter private PlotAreaType type = PlotAreaType.NORMAL;
-    @Getter private int terrain = 0;
+    @Getter private PlotAreaTerrainType terrain = PlotAreaTerrainType.NONE;
     @Getter private boolean homeAllowNonmember = false;
     @Getter private PlotLoc nonmemberHome;
     @Getter @Setter(AccessLevel.PROTECTED) private PlotLoc defaultHome;
@@ -220,7 +220,15 @@ public abstract class PlotArea {
             throw new IllegalArgumentException("Must extend GridPlotWorld to provide");
         }
         if (config.contains("generator.terrain")) {
-            this.terrain = config.getInt("generator.terrain");
+            String terrain = config.getString("generator.terrain");
+            if (terrain == null) {
+                this.terrain = PlotAreaTerrainType.NONE;
+            } else if (MathMan.isInteger(terrain)) {
+                this.terrain = PlotAreaTerrainType.fromLegacyInt(Integer.parseInt(terrain))
+                        .orElse(PlotAreaTerrainType.NONE);
+            } else {
+                this.terrain = PlotAreaTerrainType.fromString(terrain).orElse(PlotAreaTerrainType.NONE);
+            }
             String type = config.getString("generator.type");
             if (type == null) {
                 this.type = PlotAreaType.NORMAL;
@@ -988,6 +996,15 @@ public abstract class PlotArea {
     public void setType(PlotAreaType type) {
         // TODO this should probably work only if type == null
         this.type = type;
+    }
+
+    /**
+     * Set the terrain generation type of this plot area.
+     *
+     * @param terrain the terrain type of the plot area.
+     */
+    public void setTerrain(PlotAreaTerrainType terrain) {
+        this.terrain = terrain;
     }
 
     private static Collection<PlotFlag<?, ?>> parseFlags(List<String> flagStrings) throws FlagParseException {

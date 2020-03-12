@@ -43,7 +43,7 @@ public class SetupObject {
     /**
      * The terrain type
      */
-    public int terrain;
+    public PlotAreaTerrainType terrain;
 
     /**
      * Area ID (may be null)

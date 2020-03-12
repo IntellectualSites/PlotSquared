@@ -39,6 +39,7 @@ import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaTerrainType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -732,12 +733,19 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             String type = worldConfig.getString("generator.type");
             if (type == null) {
                 setup.type = PlotAreaType.NORMAL;
-            } else if (MathMan.isInteger(type)) {
+            } else if (MathMan.isInteger(type)) { // Legacy, only for compatibility reasons
                 setup.type = PlotAreaType.fromLegacyInt(Integer.parseInt(type)).orElse(PlotAreaType.NORMAL);
             } else {
                 setup.type = PlotAreaType.fromString(type).orElse(PlotAreaType.NORMAL);
             }
-            setup.terrain = worldConfig.getInt("generator.terrain");
+            String terrain = worldConfig.getString("generator.terrain");
+            if (terrain == null) {
+                setup.terrain = PlotAreaTerrainType.NONE;
+            } else if (MathMan.isInteger(terrain)) { // Legacy, only for compatibility reasons
+                setup.terrain = PlotAreaTerrainType.fromLegacyInt(Integer.parseInt(terrain)).orElse(PlotAreaTerrainType.NONE);
+            } else {
+                setup.terrain = PlotAreaTerrainType.fromString(terrain).orElse(PlotAreaTerrainType.NONE);
+            }
             setup.step = new ConfigurationNode[0];
             setup.world = worldName;
             SetupUtils.manager.setupWorld(setup);
