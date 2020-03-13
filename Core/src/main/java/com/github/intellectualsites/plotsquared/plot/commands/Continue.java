@@ -2,7 +2,6 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.events.PlotFlagRemoveEvent;
@@ -50,7 +49,7 @@ public class Continue extends SubCommand {
         PlotFlagRemoveEvent event =
             PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
-            player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+            sendMessage(player, Captions.EVENT_DENIED, "Done flag removal");
             return true;
         }
         plot.removeFlag(event.getFlag());

@@ -2,7 +2,6 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.events.PlotFlagAddEvent;
 import com.github.intellectualsites.plotsquared.plot.events.PlotFlagRemoveEvent;
@@ -26,7 +25,7 @@ public class Desc extends SetCommand {
             PlotFlagRemoveEvent event = PlotSquared.get().getEventDispatcher()
                 .callFlagRemove(plot.getFlagContainer().getFlag(DescriptionFlag.class), plot);
             if (event.getEventResult() == Result.DENY) {
-                player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+                sendMessage(player, Captions.EVENT_DENIED, "Description removal");
                 return false;
             }
             plot.removeFlag(event.getFlag());
@@ -36,7 +35,7 @@ public class Desc extends SetCommand {
         PlotFlagAddEvent event = PlotSquared.get().getEventDispatcher().callFlagAdd(
             plot.getFlagContainer().getFlag(DescriptionFlag.class).createFlagInstance(desc), plot);
         if (event.getEventResult() == Result.DENY) {
-            player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+            sendMessage(player, Captions.EVENT_DENIED, "Description set");
             return false;
         }
         boolean result = plot.setFlag(event.getFlag());

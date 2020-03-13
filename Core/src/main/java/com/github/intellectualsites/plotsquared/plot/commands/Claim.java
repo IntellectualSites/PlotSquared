@@ -37,7 +37,7 @@ public class Claim extends SubCommand {
         PlayerClaimPlotEvent event = PlotSquared.get().getEventDispatcher().callClaim(player, plot, schematic);
         schematic = event.getSchematic();
         if (event.getEventResult() == Result.DENY) {
-            player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+            sendMessage(player, Captions.EVENT_DENIED, "Claim");
             return true;
         }
         boolean force = event.getEventResult() == Result.FORCE;
@@ -106,8 +106,7 @@ public class Claim extends SubCommand {
                     PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
                         .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
                     if (event.getEventResult() == Result.DENY) {
-                        player.sendMessage(
-                            CaptionUtility.format(player, event.getEventResult().getReason()));
+                        sendMessage(player, Captions.EVENT_DENIED, "Auto merge on claim");
                     } else {
                         plot.autoMerge(event.getDir(), event.getMax(), player.getUUID(), true);
                     }

@@ -42,7 +42,7 @@ public class Delete extends SubCommand {
         }
         Result eventResult = PlotSquared.get().getEventDispatcher().callDelete(plot).getEventResult();
         if (eventResult == Result.DENY) {
-            player.sendMessage(CaptionUtility.format(player, eventResult.getReason()));
+            sendMessage(player, Captions.EVENT_DENIED, "Delete");
             return true;
         }
         boolean force = eventResult == Result.FORCE;

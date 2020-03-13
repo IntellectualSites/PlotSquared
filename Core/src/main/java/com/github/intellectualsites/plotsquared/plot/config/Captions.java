@@ -716,6 +716,10 @@ public enum Captions implements Caption {
     GRANTED_PLOT_FAILED("$1Grant failed: $2%s", "Grants"),
     //</editor-fold>
 
+    //<editor-fold desc="Events">
+    EVENT_DENIED("$2%s $1cancelled by external plugin.", "Events"),
+    //</editor-fold>
+
     /**
      * Legacy Configuration Conversion
      */

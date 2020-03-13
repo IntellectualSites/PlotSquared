@@ -2,7 +2,6 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.events.PlotChangeOwnerEvent;
@@ -10,11 +9,7 @@ import com.github.intellectualsites.plotsquared.plot.events.PlotUnlinkEvent;
 import com.github.intellectualsites.plotsquared.plot.events.Result;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.CmdConfirm;
-import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.Permissions;
-import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
-import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.github.intellectualsites.plotsquared.plot.util.*;
 
 import java.util.Set;
 import java.util.UUID;
@@ -57,7 +52,7 @@ public class Owner extends SetCommand {
             .callOwnerChange(player, plot, plot.hasOwner() ? plot.owner : null, uuid,
                 plot.hasOwner());
         if (event.getEventResult() == Result.DENY) {
-            player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+            sendMessage(player, Captions.EVENT_DENIED, "Owner change");
             return false;
         }
         uuid = event.getNewOwner();
@@ -72,8 +67,7 @@ public class Owner extends SetCommand {
             PlotUnlinkEvent unlinkEvent = PlotSquared.get().getEventDispatcher()
                 .callUnlink(plot.getArea(), plot, false, false, PlotUnlinkEvent.REASON.NEW_OWNER);
             if (unlinkEvent.getEventResult() == Result.DENY) {
-                player
-                    .sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+                sendMessage(player, Captions.EVENT_DENIED, "Unlink on owner change");
                 return true;
             }
             plot.unlinkPlot(unlinkEvent.isCreateRoad(), unlinkEvent.isCreateRoad());

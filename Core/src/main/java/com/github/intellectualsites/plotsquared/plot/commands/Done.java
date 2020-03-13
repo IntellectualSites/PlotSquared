@@ -2,7 +2,6 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.events.PlotDoneEvent;
@@ -36,7 +35,7 @@ public class Done extends SubCommand {
         }
         PlotDoneEvent event = PlotSquared.get().getEventDispatcher().callDone(plot);
         if (event.getEventResult() == Result.DENY) {
-            player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+            sendMessage(player, Captions.EVENT_DENIED, "Done");
             return true;
         }
         boolean force = event.getEventResult() == Result.FORCE;
@@ -82,7 +81,7 @@ public class Done extends SubCommand {
             .createFlagInstance(Long.toString(flagValue));
         PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
-            pp.sendMessage(CaptionUtility.format(pp, event.getEventResult().getReason()));
+            sendMessage(pp, Captions.EVENT_DENIED, "Done flag addition");
             return;
         }
         plot.setFlag(plotFlag);

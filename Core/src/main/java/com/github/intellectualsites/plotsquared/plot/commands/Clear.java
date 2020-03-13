@@ -3,7 +3,6 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.events.PlotFlagRemoveEvent;
@@ -20,6 +19,8 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 
 import java.util.concurrent.CompletableFuture;
+
+import static com.github.intellectualsites.plotsquared.plot.commands.SubCommand.sendMessage;
 
 @CommandDeclaration(command = "clear",
     description = "Clear the plot you stand on",
@@ -46,7 +47,7 @@ public class Clear extends Command {
         Result eventResult =
             PlotSquared.get().getEventDispatcher().callClear(plot).getEventResult();
         if (eventResult == Result.DENY) {
-            player.sendMessage(CaptionUtility.format(player, eventResult.getReason()));
+            sendMessage(player, Captions.EVENT_DENIED, "Clear");
             return CompletableFuture.completedFuture(true);
         }
         boolean force = eventResult == Result.FORCE;

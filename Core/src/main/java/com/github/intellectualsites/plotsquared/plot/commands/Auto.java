@@ -139,8 +139,7 @@ public class Auto extends SubCommand {
                                 PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
                                     .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
                                 if (event.getEventResult() == Result.DENY) {
-                                    player.sendMessage(CaptionUtility
-                                        .format(player, event.getEventResult().getReason()));
+                                    sendMessage(player, Captions.EVENT_DENIED, "Auto merge");
                                 } else {
                                     plot.autoMerge(event.getDir(), event.getMax(), player.getUUID(),
                                         true);
@@ -227,7 +226,7 @@ public class Auto extends SubCommand {
         PlayerAutoPlotEvent event = PlotSquared.get().getEventDispatcher()
             .callAuto(player, plotarea, schematic, size_x, size_z);
         if (event.getEventResult() == Result.DENY) {
-            player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+            sendMessage(player, Captions.EVENT_DENIED, "Auto claim");
             return true;
         }
         boolean force = event.getEventResult() == Result.FORCE;
@@ -308,8 +307,7 @@ public class Auto extends SubCommand {
                     final PlotAutoMergeEvent mergeEvent = PlotSquared.get().getEventDispatcher()
                         .callAutoMerge(plotarea.getPlotAbs(pos1), plotIds);
                     if (!force && mergeEvent.getEventResult() == Result.DENY) {
-                        player.sendMessage(
-                            CaptionUtility.format(player, mergeEvent.getEventResult().getReason()));
+                        sendMessage(player, Captions.EVENT_DENIED, "Auto merge");
                         return false;
                     }
                     if (!plotarea.mergePlots(mergeEvent.getPlots(), true)) {

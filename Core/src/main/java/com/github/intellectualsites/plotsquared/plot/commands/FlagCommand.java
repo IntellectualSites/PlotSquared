@@ -276,7 +276,7 @@ public final class FlagCommand extends Command {
         Plot plot = player.getLocation().getPlotAbs();
         PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
-            player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+            sendMessage(player, Captions.EVENT_DENIED, "Flag set");
             return;
         }
         boolean force = event.getEventResult() == Result.FORCE;
@@ -321,7 +321,7 @@ public final class FlagCommand extends Command {
         Plot plot = player.getLocation().getPlotAbs();
         PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
-            player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+            sendMessage(player, Captions.EVENT_DENIED, "Flag add");
             return;
         }
         boolean force = event.getEventResult() == Result.FORCE;
@@ -377,7 +377,7 @@ public final class FlagCommand extends Command {
         final Plot plot = player.getLocation().getPlotAbs();
         PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(flag, plot);
         if (event.getEventResult() == Result.DENY) {
-            player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+            sendMessage(player, Captions.EVENT_DENIED, "Flag remove");
             return;
         }
         boolean force = event.getEventResult() == Result.FORCE;
@@ -425,7 +425,7 @@ public final class FlagCommand extends Command {
                     PlotFlag plotFlag = parsedFlag.createFlagInstance(list);
                     PlotFlagAddEvent addEvent = new PlotFlagAddEvent(plotFlag, plot);
                     if (addEvent.getEventResult() == Result.DENY) {
-                        player.sendMessage(CaptionUtility.format(player, addEvent.getEventResult().getReason()));
+                        sendMessage(player, Captions.EVENT_DENIED, "Re-addition of " + plotFlag.getName());
                         return;
                     }
                     if (plot.setFlag(addEvent.getFlag())) {

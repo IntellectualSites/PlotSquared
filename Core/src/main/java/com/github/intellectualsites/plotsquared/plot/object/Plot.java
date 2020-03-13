@@ -62,6 +62,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import static com.github.intellectualsites.plotsquared.plot.commands.SubCommand.sendMessage;
+
 /**
  * The plot class<br>
  * [IMPORTANT]
@@ -1666,8 +1668,7 @@ public class Plot {
                     PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
                         .callMerge(this, Direction.ALL, Integer.MAX_VALUE, player);
                     if (event.getEventResult() == Result.DENY) {
-                        player.sendMessage(
-                            CaptionUtility.format(player, event.getEventResult().getReason()));
+                        sendMessage(player, Captions.EVENT_DENIED, "Auto merge on claim");
                         return;
                     }
                     Plot.this.autoMerge(event.getDir(), event.getMax(), uuid, true);
@@ -2879,7 +2880,7 @@ public class Plot {
         Result result =
             PlotSquared.get().getEventDispatcher().callTeleport(player, player.getLocation(), plot).getEventResult();
         if (result == Result.DENY) {
-            player.sendMessage(CaptionUtility.format(player, result.getReason()));
+            sendMessage(player, Captions.EVENT_DENIED, "Teleport");
             return false;
         }
         final Location location;

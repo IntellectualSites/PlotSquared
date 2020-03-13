@@ -2,7 +2,6 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.events.PlotUnlinkEvent;
 import com.github.intellectualsites.plotsquared.plot.events.Result;
@@ -51,7 +50,7 @@ public class Unlink extends SubCommand {
             .callUnlink(plot.getArea(), plot, createRoad, createRoad,
                 PlotUnlinkEvent.REASON.PLAYER_COMMAND);
         if (event.getEventResult() == Result.DENY) {
-            player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+            sendMessage(player, Captions.EVENT_DENIED, "Unlink");
             return true;
         }
         boolean force = event.getEventResult() == Result.FORCE;

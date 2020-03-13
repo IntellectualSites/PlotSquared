@@ -1,7 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
-import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.events.PlotFlagAddEvent;
 import com.github.intellectualsites.plotsquared.plot.events.PlotFlagRemoveEvent;
@@ -49,8 +48,7 @@ public class Music extends SubCommand {
                         .createFlagInstance(item.getType());
                     PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(plotFlag, plot);
                     if (event.getEventResult() == Result.DENY) {
-                        player.sendMessage(
-                            CaptionUtility.format(player, event.getEventResult().getReason()));
+                        sendMessage(player, Captions.EVENT_DENIED, "Music removal");
                         return true;
                     }
                     plot.removeFlag(event.getFlag());
@@ -60,8 +58,7 @@ public class Music extends SubCommand {
                         .createFlagInstance(item.getType());
                     PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
                     if (event.getEventResult() == Result.DENY) {
-                        player.sendMessage(
-                            CaptionUtility.format(player, event.getEventResult().getReason()));
+                        sendMessage(player, Captions.EVENT_DENIED, "Music addition");
                         return true;
                     }
                     plot.setFlag(event.getFlag());
