@@ -7,7 +7,6 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.events.PlotFlagRemoveEvent;
 import com.github.intellectualsites.plotsquared.plot.events.Result;
-import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -47,8 +46,7 @@ public class Continue extends SubCommand {
             MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
             return false;
         }
-        PlotFlag<?, ?> plotFlag =
-            GlobalFlagContainer.getInstance().getFlag(DoneFlag.class);
+        PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(DoneFlag.class);
         PlotFlagRemoveEvent event =
             PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {

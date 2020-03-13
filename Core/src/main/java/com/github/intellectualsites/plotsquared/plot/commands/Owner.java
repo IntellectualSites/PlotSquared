@@ -71,17 +71,16 @@ public class Owner extends SetCommand {
             }
             PlotUnlinkEvent unlinkEvent = PlotSquared.get().getEventDispatcher()
                 .callUnlink(plot.getArea(), plot, false, false, PlotUnlinkEvent.REASON.NEW_OWNER);
-            if (unlinkEvent.getEventResult() != Result.DENY) {
-                plot.unlinkPlot(unlinkEvent.isCreateRoad(), unlinkEvent.isCreateRoad());
-                Set<Plot> connected = plot.getConnectedPlots();
-                for (Plot current : connected) {
-                    current.unclaim();
-                    current.removeSign();
-                }
-            } else {
+            if (unlinkEvent.getEventResult() == Result.DENY) {
                 player
                     .sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
                 return true;
+            }
+            plot.unlinkPlot(unlinkEvent.isCreateRoad(), unlinkEvent.isCreateRoad());
+            Set<Plot> connected = plot.getConnectedPlots();
+            for (Plot current : connected) {
+                current.unclaim();
+                current.removeSign();
             }
             MainUtil.sendMessage(player, Captions.SET_OWNER);
             return true;

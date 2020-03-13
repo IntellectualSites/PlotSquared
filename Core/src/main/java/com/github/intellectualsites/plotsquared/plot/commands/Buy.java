@@ -3,11 +3,9 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.events.PlotFlagRemoveEvent;
 import com.github.intellectualsites.plotsquared.plot.events.Result;
-import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.PriceFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -66,7 +64,7 @@ public class Buy extends Command {
             if (owner != null) {
                 Captions.PLOT_SOLD.send(owner, plot.getId(), player.getName(), price);
             }
-            PlotFlag<?, ?> plotFlag = GlobalFlagContainer.getInstance().getFlag(PriceFlag.class);
+            PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(PriceFlag.class);
             PlotFlagRemoveEvent event = PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
             if(event.getEventResult() != Result.DENY) {
                 plot.removeFlag(event.getFlag());

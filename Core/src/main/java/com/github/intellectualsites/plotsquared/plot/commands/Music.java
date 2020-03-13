@@ -6,14 +6,9 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.events.PlotFlagAddEvent;
 import com.github.intellectualsites.plotsquared.plot.events.PlotFlagRemoveEvent;
 import com.github.intellectualsites.plotsquared.plot.events.Result;
-import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MusicFlag;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotInventory;
-import com.github.intellectualsites.plotsquared.plot.object.PlotItemStack;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.sk89q.worldedit.world.item.ItemTypes;
 
 import java.util.Arrays;
@@ -50,8 +45,8 @@ public class Music extends SubCommand {
                     return true;
                 }
                 if (item.getType() == ItemTypes.BEDROCK) {
-                    PlotFlag<?, ?> plotFlag =
-                        GlobalFlagContainer.getInstance().getFlag(MusicFlag.class);
+                    PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(MusicFlag.class)
+                        .createFlagInstance(item.getType());
                     PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(plotFlag, plot);
                     if (event.getEventResult() == Result.DENY) {
                         player.sendMessage(
@@ -61,9 +56,8 @@ public class Music extends SubCommand {
                     plot.removeFlag(event.getFlag());
                     Captions.FLAG_REMOVED.send(player);
                 } else if (item.name.toLowerCase(Locale.ENGLISH).contains("disc")) {
-                    PlotFlag<?, ?> plotFlag =
-                        GlobalFlagContainer.getInstance().getFlag(MusicFlag.class)
-                            .createFlagInstance(item.getType());
+                    PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(MusicFlag.class)
+                        .createFlagInstance(item.getType());
                     PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
                     if (event.getEventResult() == Result.DENY) {
                         player.sendMessage(

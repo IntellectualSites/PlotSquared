@@ -226,7 +226,7 @@ public class Auto extends SubCommand {
         }
         PlayerAutoPlotEvent event = PlotSquared.get().getEventDispatcher()
             .callAuto(player, plotarea, schematic, size_x, size_z);
-        if(event.getEventResult() == Result.DENY) {
+        if (event.getEventResult() == Result.DENY) {
             player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
             return true;
         }

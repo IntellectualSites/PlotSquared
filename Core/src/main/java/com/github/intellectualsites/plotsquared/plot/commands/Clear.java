@@ -8,7 +8,6 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.events.PlotFlagRemoveEvent;
 import com.github.intellectualsites.plotsquared.plot.events.Result;
-import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnalysisFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
@@ -65,8 +64,7 @@ public class Clear extends Command {
                     plot.removeRunning();
                     // If the state changes, then mark it as no longer done
                     if (DoneFlag.isDone(plot)) {
-                        PlotFlag<?, ?> plotFlag =
-                            GlobalFlagContainer.getInstance().getFlag(DoneFlag.class);
+                        PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(DoneFlag.class);
                         PlotFlagRemoveEvent event =
                             PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
                         if (event.getEventResult() != Result.DENY) {
@@ -75,7 +73,7 @@ public class Clear extends Command {
                     }
                     if (!plot.getFlag(AnalysisFlag.class).isEmpty()) {
                         PlotFlag<?, ?> plotFlag =
-                            GlobalFlagContainer.getInstance().getFlag(AnalysisFlag.class);
+                            plot.getFlagContainer().getFlag(AnalysisFlag.class);
                         PlotFlagRemoveEvent event =
                             PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
                         if (event.getEventResult() != Result.DENY) {

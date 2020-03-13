@@ -8,7 +8,6 @@ import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.events.PlotDoneEvent;
 import com.github.intellectualsites.plotsquared.plot.events.PlotFlagAddEvent;
 import com.github.intellectualsites.plotsquared.plot.events.Result;
-import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
@@ -79,7 +78,7 @@ public class Done extends SubCommand {
             return;
         }
         long flagValue = System.currentTimeMillis() / 1000;
-        PlotFlag<?, ?> plotFlag = GlobalFlagContainer.getInstance().getFlag(DoneFlag.class)
+        PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(DoneFlag.class)
             .createFlagInstance(Long.toString(flagValue));
         PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {

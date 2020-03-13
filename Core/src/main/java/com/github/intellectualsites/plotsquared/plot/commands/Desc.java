@@ -2,11 +2,11 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.events.PlotFlagAddEvent;
 import com.github.intellectualsites.plotsquared.plot.events.PlotFlagRemoveEvent;
 import com.github.intellectualsites.plotsquared.plot.events.Result;
-import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DescriptionFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -24,9 +24,9 @@ public class Desc extends SetCommand {
     @Override public boolean set(PlotPlayer player, Plot plot, String desc) {
         if (desc.isEmpty()) {
             PlotFlagRemoveEvent event = PlotSquared.get().getEventDispatcher()
-                .callFlagRemove(GlobalFlagContainer.getInstance().getFlag(DescriptionFlag.class),
-                    plot);
+                .callFlagRemove(plot.getFlagContainer().getFlag(DescriptionFlag.class), plot);
             if (event.getEventResult() == Result.DENY) {
+                player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
                 return false;
             }
             plot.removeFlag(event.getFlag());
@@ -34,9 +34,9 @@ public class Desc extends SetCommand {
             return true;
         }
         PlotFlagAddEvent event = PlotSquared.get().getEventDispatcher().callFlagAdd(
-            GlobalFlagContainer.getInstance().getFlag(DescriptionFlag.class)
-                .createFlagInstance(desc), plot);
+            plot.getFlagContainer().getFlag(DescriptionFlag.class).createFlagInstance(desc), plot);
         if (event.getEventResult() == Result.DENY) {
+            player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
             return false;
         }
         boolean result = plot.setFlag(event.getFlag());

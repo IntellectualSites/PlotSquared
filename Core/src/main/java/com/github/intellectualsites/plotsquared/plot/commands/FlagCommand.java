@@ -7,6 +7,7 @@ import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.events.PlotFlagAddEvent;
+import com.github.intellectualsites.plotsquared.plot.events.PlotFlagRemoveEvent;
 import com.github.intellectualsites.plotsquared.plot.events.Result;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
@@ -369,11 +370,19 @@ public final class FlagCommand extends Command {
                 .sendMessage(player, Captions.COMMAND_SYNTAX, "/plot flag remove <flag> [values]");
             return;
         }
-        final PlotFlag<?, ?> flag = getFlag(player, args[0]);
+        PlotFlag<?, ?> flag = getFlag(player, args[0]);
         if (flag == null) {
             return;
         }
-        if (!Permissions.hasPermission(player, CaptionUtility
+        final Plot plot = player.getLocation().getPlotAbs();
+        PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(flag, plot);
+        if (event.getEventResult() == Result.DENY) {
+            player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+            return;
+        }
+        boolean force = event.getEventResult() == Result.FORCE;
+        flag = event.getFlag();
+        if (!force && !Permissions.hasPermission(player, CaptionUtility
             .format(player, Captions.PERMISSION_SET_FLAG_KEY.getTranslated(),
                 args[0].toLowerCase()))) {
             if (args.length != 2) {
@@ -383,7 +392,6 @@ public final class FlagCommand extends Command {
                 return;
             }
         }
-        final Plot plot = player.getLocation().getPlotAbs();
         if (args.length == 2 && flag instanceof ListFlag) {
             String value = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
             final ListFlag listFlag = (ListFlag) flag;
@@ -415,12 +423,12 @@ public final class FlagCommand extends Command {
                 } else {
                     // MainUtil.sendMessage(player, Captions.FLAG_REMOVED);
                     PlotFlag plotFlag = parsedFlag.createFlagInstance(list);
-                    PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
-                    if (event.getEventResult() == Result.DENY) {
-                        player.sendMessage(CaptionUtility.format(player, event.getEventResult().getReason()));
+                    PlotFlagAddEvent addEvent = new PlotFlagAddEvent(plotFlag, plot);
+                    if (addEvent.getEventResult() == Result.DENY) {
+                        player.sendMessage(CaptionUtility.format(player, addEvent.getEventResult().getReason()));
                         return;
                     }
-                    if (plot.setFlag(event.getFlag())) {
+                    if (plot.setFlag(addEvent.getFlag())) {
                         MainUtil.sendMessage(player, Captions.FLAG_PARTIALLY_REMOVED);
                         return;
                     } else {
