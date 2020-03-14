@@ -717,7 +717,7 @@ public enum Captions implements Caption {
     //</editor-fold>
 
     //<editor-fold desc="Events">
-    EVENT_DENIED("$2%s $1cancelled by external plugin.", "Events"),
+    EVENT_DENIED("$1%s $2Cancelled by external plugin.", "Events"),
     //</editor-fold>
 
     /**
