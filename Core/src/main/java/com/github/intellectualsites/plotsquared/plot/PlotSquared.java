@@ -41,7 +41,7 @@ import com.github.intellectualsites.plotsquared.plot.util.ChatManager;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.CommentManager;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
-import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
+import com.github.intellectualsites.plotsquared.plot.util.EventDispatcher;
 import com.github.intellectualsites.plotsquared.plot.util.InventoryUtil;
 import com.github.intellectualsites.plotsquared.plot.util.LegacyConverter;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
@@ -73,8 +73,6 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -82,7 +80,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -132,6 +129,7 @@ import java.util.zip.ZipInputStream;
     @Getter private File jarFile = null; // This file
     private File storageFile;
     @Getter private PlotAreaManager plotAreaManager;
+    @Getter private EventDispatcher eventDispatcher;
 
     /**
      * Initialize PlotSquared with the desired Implementation class.
@@ -215,7 +213,6 @@ import java.util.zip.ZipInputStream;
             }
             if (Settings.Enabled_Components.EVENTS) {
                 this.IMP.registerPlayerEvents();
-                this.IMP.registerPlotPlusEvents();
             }
             // Required
             this.IMP.registerWorldEvents();
@@ -231,8 +228,8 @@ import java.util.zip.ZipInputStream;
                 UUIDHandler.add(new StringWrapper("*"), DBFunc.EVERYONE);
                 startExpiryTasks();
             }
-            // create event util class
-            EventUtil.manager = this.IMP.initEventUtil();
+            // Create Event utility class
+            eventDispatcher = new EventDispatcher();
             // create Hybrid utility class
             HybridUtils.manager = this.IMP.initHybridUtils();
             // Inventory utility class
@@ -1053,7 +1050,7 @@ import java.util.zip.ZipInputStream;
             return false;
         }
         if (callEvent) {
-            EventUtil.manager.callDelete(plot);
+            eventDispatcher.callDelete(plot);
         }
         if (plot.getArea().removePlot(plot.getId())) {
             PlotId last = (PlotId) plot.getArea().getMeta("lastPlot");
@@ -1527,6 +1524,7 @@ import java.util.zip.ZipInputStream;
      */
     public void disable() {
         try {
+            eventDispatcher.unregisterAll();
             // Validate that all data in the db is correct
             final HashSet<Plot> plots = new HashSet<>();
             try {

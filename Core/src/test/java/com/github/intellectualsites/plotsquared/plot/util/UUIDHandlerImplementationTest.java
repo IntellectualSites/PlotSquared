@@ -15,7 +15,6 @@ public class UUIDHandlerImplementationTest extends UUIDHandlerImplementation {
     }
 
     @Before public void setUp() throws Exception {
-        EventUtil.manager = new EventUtilTest();
         DBFunc.dbManager = new AbstractDBTest();
     }
 

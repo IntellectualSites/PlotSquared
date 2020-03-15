@@ -2,8 +2,6 @@ package com.github.intellectualsites.plotsquared.plot;
 
 import com.github.intellectualsites.plotsquared.plot.database.AbstractDBTest;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
-import com.github.intellectualsites.plotsquared.plot.util.EventUtilTest;
 import com.sk89q.worldedit.world.item.ItemType;
 import org.junit.Before;
 
@@ -14,7 +12,7 @@ public class FlagTest {
     private ItemType testBlock;
 
     @Before public void setUp() throws Exception {
-        EventUtil.manager = new EventUtilTest();
+        //EventUtil.manager = new EventUtilTest();
         DBFunc.dbManager = new AbstractDBTest();
     }
 

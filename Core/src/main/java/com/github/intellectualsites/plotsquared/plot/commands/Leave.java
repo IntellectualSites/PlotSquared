@@ -2,12 +2,12 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
-import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 
 import java.util.UUID;
@@ -38,10 +38,10 @@ public class Leave extends Command {
             UUID uuid = player.getUUID();
             if (plot.isAdded(uuid)) {
                 if (plot.removeTrusted(uuid)) {
-                    EventUtil.manager.callTrusted(player, plot, uuid, false);
+                    PlotSquared.get().getEventDispatcher().callTrusted(player, plot, uuid, false);
                 }
                 if (plot.removeMember(uuid)) {
-                    EventUtil.manager.callMember(player, plot, uuid, false);
+                    PlotSquared.get().getEventDispatcher().callMember(player, plot, uuid, false);
                 }
                 MainUtil.sendMessage(player, Captions.PLOT_LEFT, player.getName());
             } else {

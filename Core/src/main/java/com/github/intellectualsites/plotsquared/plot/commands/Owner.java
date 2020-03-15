@@ -1,15 +1,15 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import com.github.intellectualsites.plotsquared.plot.events.PlotChangeOwnerEvent;
+import com.github.intellectualsites.plotsquared.plot.events.PlotUnlinkEvent;
+import com.github.intellectualsites.plotsquared.plot.events.Result;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.CmdConfirm;
-import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.Permissions;
-import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
-import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.github.intellectualsites.plotsquared.plot.util.*;
 
 import java.util.Set;
 import java.util.UUID;
@@ -31,43 +31,61 @@ public class Owner extends SetCommand {
         }
         Set<Plot> plots = plot.getConnectedPlots();
         UUID uuid = null;
-        String name = null;
+        String name;
         if (value.length() == 36) {
             try {
                 uuid = UUID.fromString(value);
-                name = MainUtil.getName(uuid);
             } catch (Exception ignored) {
             }
         } else {
             uuid = UUIDHandler.getUUID(value, null);
-            name = uuid == null ? value : UUIDHandler.getName(uuid);
-            name = name == null ? value : name;
         }
-        if (uuid == null || value.equalsIgnoreCase("-")) {
-            if (value.equalsIgnoreCase("none") || value.equalsIgnoreCase("null") || value
-                .equalsIgnoreCase("-")) {
-                if (!Permissions.hasPermission(player,
-                    Captions.PERMISSION_ADMIN_COMMAND_SET_OWNER.getTranslated(), true)) {
-                    return false;
-                }
-                Set<Plot> connected = plot.getConnectedPlots();
-                plot.unlinkPlot(false, false);
-                for (Plot current : connected) {
-                    current.unclaim();
-                    current.removeSign();
-                }
-                MainUtil.sendMessage(player, Captions.SET_OWNER);
-                return true;
-            }
+        if (uuid == null) {
             Captions.INVALID_PLAYER.send(player, value);
             return false;
+        }
+        if (value.equalsIgnoreCase("none") || value.equalsIgnoreCase("null") || value
+            .equalsIgnoreCase("-")) {
+            uuid = null;
+        }
+        PlotChangeOwnerEvent event = PlotSquared.get().getEventDispatcher()
+            .callOwnerChange(player, plot, plot.hasOwner() ? plot.owner : null, uuid,
+                plot.hasOwner());
+        if (event.getEventResult() == Result.DENY) {
+            sendMessage(player, Captions.EVENT_DENIED, "Owner change");
+            return false;
+        }
+        uuid = event.getNewOwner();
+        name = uuid == null ? value : UUIDHandler.getName(uuid);
+        boolean force = event.getEventResult() == Result.FORCE;
+        if (uuid == null) {
+            if (!force && !Permissions
+                .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SET_OWNER.getTranslated(),
+                    true)) {
+                return false;
+            }
+            PlotUnlinkEvent unlinkEvent = PlotSquared.get().getEventDispatcher()
+                .callUnlink(plot.getArea(), plot, false, false, PlotUnlinkEvent.REASON.NEW_OWNER);
+            if (unlinkEvent.getEventResult() == Result.DENY) {
+                sendMessage(player, Captions.EVENT_DENIED, "Unlink on owner change");
+                return true;
+            }
+            plot.unlinkPlot(unlinkEvent.isCreateRoad(), unlinkEvent.isCreateRoad());
+            Set<Plot> connected = plot.getConnectedPlots();
+            for (Plot current : connected) {
+                current.unclaim();
+                current.removeSign();
+            }
+            MainUtil.sendMessage(player, Captions.SET_OWNER);
+            return true;
         }
         final PlotPlayer other = UUIDHandler.getPlayer(uuid);
         if (plot.isOwner(uuid)) {
             Captions.ALREADY_OWNER.send(player, MainUtil.getName(uuid));
             return false;
         }
-        if (!Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SET_OWNER)) {
+        if (!force && !Permissions
+            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SET_OWNER)) {
             if (other == null) {
                 Captions.INVALID_PLAYER_OFFLINE.send(player, value);
                 return false;

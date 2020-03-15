@@ -1,17 +1,15 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.object.Direction;
-import com.github.intellectualsites.plotsquared.plot.object.Expression;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
+import com.github.intellectualsites.plotsquared.plot.events.PlayerClaimPlotEvent;
+import com.github.intellectualsites.plotsquared.plot.events.PlotMergeEvent;
+import com.github.intellectualsites.plotsquared.plot.events.Result;
+import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
@@ -27,7 +25,7 @@ import com.google.common.primitives.Ints;
 public class Claim extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
-        String schematic = "";
+        String schematic = null;
         if (args.length >= 1) {
             schematic = args[0];
         }
@@ -36,11 +34,18 @@ public class Claim extends SubCommand {
         if (plot == null) {
             return sendMessage(player, Captions.NOT_IN_PLOT);
         }
+        PlayerClaimPlotEvent event = PlotSquared.get().getEventDispatcher().callClaim(player, plot, schematic);
+        schematic = event.getSchematic();
+        if (event.getEventResult() == Result.DENY) {
+            sendMessage(player, Captions.EVENT_DENIED, "Claim");
+            return true;
+        }
+        boolean force = event.getEventResult() == Result.FORCE;
         int currentPlots = Settings.Limit.GLOBAL ?
             player.getPlotCount() :
             player.getPlotCount(location.getWorld());
         int grants = 0;
-        if (currentPlots >= player.getAllowedPlots()) {
+        if (currentPlots >= player.getAllowedPlots() && !force) {
             if (player.hasPersistentMeta("grantedPlots")) {
                 grants = Ints.fromByteArray(player.getPersistentMeta("grantedPlots"));
                 if (grants <= 0) {
@@ -55,7 +60,7 @@ public class Claim extends SubCommand {
             return sendMessage(player, Captions.PLOT_IS_CLAIMED);
         }
         final PlotArea area = plot.getArea();
-        if (!schematic.isEmpty()) {
+        if (schematic != null && !schematic.isEmpty()) {
             if (area.SCHEMATIC_CLAIM_SPECIFY) {
                 if (!area.SCHEMATICS.contains(schematic.toLowerCase())) {
                     return sendMessage(player, Captions.SCHEMATIC_INVALID,
@@ -64,16 +69,12 @@ public class Claim extends SubCommand {
                 if (!Permissions.hasPermission(player, CaptionUtility
                     .format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
                     && !Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {
+                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC) && !force) {
                     return sendMessage(player, Captions.NO_SCHEMATIC_PERMISSION, schematic);
                 }
             }
         }
-        int border = area.getBorder();
-        if (border != Integer.MAX_VALUE && plot.getDistanceFromOrigin() > border) {
-            return !sendMessage(player, Captions.BORDER);
-        }
-        if ((EconHandler.manager != null) && area.USE_ECONOMY) {
+        if ((EconHandler.manager != null) && area.USE_ECONOMY && !force) {
             Expression<Double> costExr = area.PRICES.get("claim");
             double cost = costExr.evaluate((double) currentPlots);
             if (cost > 0d) {
@@ -92,21 +93,26 @@ public class Claim extends SubCommand {
             }
             sendMessage(player, Captions.REMOVED_GRANTED_PLOT, "1", "" + (grants - 1));
         }
-        if (plot.canClaim(player)) {
-            plot.owner = player.getUUID();
-            final String finalSchematic = schematic;
-            DBFunc.createPlotSafe(plot, () -> TaskManager.IMP.sync(new RunnableVal<Object>() {
-                @Override public void run(Object value) {
-                    plot.claim(player, true, finalSchematic, false);
-                    if (area.AUTO_MERGE) {
-                        plot.autoMerge(Direction.ALL, Integer.MAX_VALUE, player.getUUID(), true);
+        int border = area.getBorder();
+        if (border != Integer.MAX_VALUE && plot.getDistanceFromOrigin() > border && !force) {
+            return !sendMessage(player, Captions.BORDER);
+        }
+        plot.owner = player.getUUID();
+        final String finalSchematic = schematic;
+        DBFunc.createPlotSafe(plot, () -> TaskManager.IMP.sync(new RunnableVal<Object>() {
+            @Override public void run(Object value) {
+                plot.claim(player, true, finalSchematic);
+                if (area.AUTO_MERGE) {
+                    PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
+                        .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
+                    if (event.getEventResult() == Result.DENY) {
+                        sendMessage(player, Captions.EVENT_DENIED, "Auto merge on claim");
+                    } else {
+                        plot.autoMerge(event.getDir(), event.getMax(), player.getUUID(), true);
                     }
                 }
-            }), () -> sendMessage(player, Captions.PLOT_NOT_CLAIMED));
-            return true;
-        } else {
-            sendMessage(player, Captions.PLOT_NOT_CLAIMED);
-        }
-        return false;
+            }
+        }), () -> sendMessage(player, Captions.PLOT_NOT_CLAIMED));
+        return true;
     }
 }

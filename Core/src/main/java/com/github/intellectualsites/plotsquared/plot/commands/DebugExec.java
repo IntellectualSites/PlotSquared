@@ -6,6 +6,8 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
+import com.github.intellectualsites.plotsquared.plot.events.PlotFlagRemoveEvent;
+import com.github.intellectualsites.plotsquared.plot.events.Result;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
@@ -23,7 +25,6 @@ import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
-import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
@@ -145,7 +146,7 @@ public class DebugExec extends SubCommand {
         this.scope.put("ChunkManager", ChunkManager.manager);
         this.scope.put("BlockManager", WorldUtil.IMP);
         this.scope.put("SetupUtils", SetupUtils.manager);
-        this.scope.put("EventUtil", EventUtil.manager);
+        this.scope.put("EventUtil", PlotSquared.get().getEventDispatcher());
         this.scope.put("EconHandler", EconHandler.manager);
         this.scope.put("UUIDHandler", UUIDHandler.implementation);
         this.scope.put("DBFunc", DBFunc.dbManager);
@@ -226,7 +227,11 @@ public class DebugExec extends SubCommand {
                         GlobalFlagContainer.getInstance().getFlagFromString(flag);
                     if (flagInstance != null) {
                         for (Plot plot : PlotSquared.get().getBasePlots()) {
-                            plot.removeFlag(flagInstance);
+                            PlotFlagRemoveEvent event = PlotSquared.get().getEventDispatcher()
+                                .callFlagRemove(flagInstance, plot);
+                            if (event.getEventResult() != Result.DENY) {
+                                plot.removeFlag(event.getFlag());
+                            }
                         }
                     }
                     return MainUtil.sendMessage(player, "Cleared flag: " + flag);

@@ -12,7 +12,6 @@ import com.github.intellectualsites.plotsquared.plot.object.worlds.PlotAreaManag
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
-import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
@@ -522,7 +521,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
             removePersistentMeta("quitLoc");
         }
         if (plot != null) {
-            EventUtil.manager.callLeave(this, plot);
+            PlotSquared.get().getEventDispatcher().callLeave(this, plot);
         }
         if (Settings.Enabled_Components.BAN_DELETER && isBanned()) {
             for (Plot owned : getPlots()) {

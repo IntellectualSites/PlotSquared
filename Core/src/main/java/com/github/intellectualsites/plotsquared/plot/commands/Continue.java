@@ -1,8 +1,12 @@
 package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import com.github.intellectualsites.plotsquared.plot.events.PlotFlagRemoveEvent;
+import com.github.intellectualsites.plotsquared.plot.events.Result;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -41,7 +45,14 @@ public class Continue extends SubCommand {
             MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
             return false;
         }
-        plot.removeFlag(DoneFlag.class);
+        PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(DoneFlag.class);
+        PlotFlagRemoveEvent event =
+            PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
+        if (event.getEventResult() == Result.DENY) {
+            sendMessage(player, Captions.EVENT_DENIED, "Done flag removal");
+            return true;
+        }
+        plot.removeFlag(event.getFlag());
         MainUtil.sendMessage(player, Captions.DONE_REMOVED);
         return true;
     }

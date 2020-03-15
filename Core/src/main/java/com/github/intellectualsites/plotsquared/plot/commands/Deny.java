@@ -8,7 +8,6 @@ import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
@@ -72,7 +71,7 @@ public class Deny extends SubCommand {
                 plot.removeTrusted(uuid);
             }
             plot.addDenied(uuid);
-            EventUtil.manager.callDenied(player, plot, uuid, true);
+            PlotSquared.get().getEventDispatcher().callDenied(player, plot, uuid, true);
             if (!uuid.equals(DBFunc.EVERYONE)) {
                 handleKick(UUIDHandler.getPlayer(uuid), plot);
             } else {

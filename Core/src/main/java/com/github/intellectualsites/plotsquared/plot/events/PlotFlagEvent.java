@@ -1,4 +1,4 @@
-package com.github.intellectualsites.plotsquared.bukkit.events;
+package com.github.intellectualsites.plotsquared.plot.events;
 
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;

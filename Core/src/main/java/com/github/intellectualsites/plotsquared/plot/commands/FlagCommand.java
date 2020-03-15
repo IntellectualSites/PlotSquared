@@ -6,6 +6,9 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import com.github.intellectualsites.plotsquared.plot.events.PlotFlagAddEvent;
+import com.github.intellectualsites.plotsquared.plot.events.PlotFlagRemoveEvent;
+import com.github.intellectualsites.plotsquared.plot.events.Result;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.InternalFlag;
@@ -270,8 +273,15 @@ public final class FlagCommand extends Command {
         if (plotFlag == null) {
             return;
         }
+        Plot plot = player.getLocation().getPlotAbs();
+        PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
+        if (event.getEventResult() == Result.DENY) {
+            sendMessage(player, Captions.EVENT_DENIED, "Flag set");
+            return;
+        }
+        boolean force = event.getEventResult() == Result.FORCE;
         final String value = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
-        if (!checkPermValue(player, plotFlag, args[0], value)) {
+        if (!force && !checkPermValue(player, plotFlag, args[0], value)) {
             return;
         }
         final PlotFlag<?, ?> parsed;
@@ -283,7 +293,7 @@ public final class FlagCommand extends Command {
                     .replace("%flag_value%", e.getValue()).replace("%error%", e.getErrorMessage()));
             return;
         }
-        player.getLocation().getPlotAbs().setFlag(parsed);
+        plot.setFlag(parsed);
         MainUtil.sendMessage(player, Captions.FLAG_ADDED);
     }
 
@@ -304,24 +314,32 @@ public final class FlagCommand extends Command {
             MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot flag add <flag> <values>");
             return;
         }
-        final PlotFlag flag = getFlag(player, args[0]);
-        if (flag == null) {
+        final PlotFlag<?, ?> plotFlag = getFlag(player, args[0]);
+        if (plotFlag == null) {
             return;
         }
-        final PlotFlag localFlag =
-            player.getLocation().getPlotAbs().getFlagContainer().getFlag(flag.getClass());
-        for (String entry : args[1].split(",")) {
-            if (!checkPermValue(player, flag, args[0], entry)) {
-                return;
-            }
+        Plot plot = player.getLocation().getPlotAbs();
+        PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
+        if (event.getEventResult() == Result.DENY) {
+            sendMessage(player, Captions.EVENT_DENIED, "Flag add");
+            return;
         }
-        final String value = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
+        boolean force = event.getEventResult() == Result.FORCE;
+        final PlotFlag localFlag = player.getLocation().getPlotAbs().getFlagContainer()
+            .getFlag(event.getFlag().getClass());
+        if (!force) {
+            for (String entry : args[1].split(",")) {
+                if (!checkPermValue(player, event.getFlag(), args[0], entry)) {
+                    return;
+                }
+            }
+        } final String value = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
         final PlotFlag parsed;
         try {
-            parsed = flag.parse(value);
+            parsed = event.getFlag().parse(value);
         } catch (FlagParseException e) {
             MainUtil.sendMessage(player,
-                Captions.FLAG_PARSE_ERROR.getTranslated().replace("%flag_name%", flag.getName())
+                Captions.FLAG_PARSE_ERROR.getTranslated().replace("%flag_name%", plotFlag.getName())
                     .replace("%flag_value%", e.getValue()).replace("%error%", e.getErrorMessage()));
             return;
         }
@@ -352,11 +370,19 @@ public final class FlagCommand extends Command {
                 .sendMessage(player, Captions.COMMAND_SYNTAX, "/plot flag remove <flag> [values]");
             return;
         }
-        final PlotFlag<?, ?> flag = getFlag(player, args[0]);
+        PlotFlag<?, ?> flag = getFlag(player, args[0]);
         if (flag == null) {
             return;
         }
-        if (!Permissions.hasPermission(player, CaptionUtility
+        final Plot plot = player.getLocation().getPlotAbs();
+        PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(flag, plot);
+        if (event.getEventResult() == Result.DENY) {
+            sendMessage(player, Captions.EVENT_DENIED, "Flag remove");
+            return;
+        }
+        boolean force = event.getEventResult() == Result.FORCE;
+        flag = event.getFlag();
+        if (!force && !Permissions.hasPermission(player, CaptionUtility
             .format(player, Captions.PERMISSION_SET_FLAG_KEY.getTranslated(),
                 args[0].toLowerCase()))) {
             if (args.length != 2) {
@@ -366,7 +392,6 @@ public final class FlagCommand extends Command {
                 return;
             }
         }
-        final Plot plot = player.getLocation().getPlotAbs();
         if (args.length == 2 && flag instanceof ListFlag) {
             String value = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
             final ListFlag listFlag = (ListFlag) flag;
@@ -397,7 +422,13 @@ public final class FlagCommand extends Command {
                     }
                 } else {
                     // MainUtil.sendMessage(player, Captions.FLAG_REMOVED);
-                    if (plot.setFlag(parsedFlag.createFlagInstance(list))) {
+                    PlotFlag plotFlag = parsedFlag.createFlagInstance(list);
+                    PlotFlagAddEvent addEvent = new PlotFlagAddEvent(plotFlag, plot);
+                    if (addEvent.getEventResult() == Result.DENY) {
+                        sendMessage(player, Captions.EVENT_DENIED, "Re-addition of " + plotFlag.getName());
+                        return;
+                    }
+                    if (plot.setFlag(addEvent.getFlag())) {
                         MainUtil.sendMessage(player, Captions.FLAG_PARTIALLY_REMOVED);
                         return;
                     } else {

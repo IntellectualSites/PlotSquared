@@ -4,7 +4,6 @@ import com.github.intellectualsites.plotsquared.bukkit.generator.BukkitPlotGener
 import com.github.intellectualsites.plotsquared.bukkit.listeners.ChunkListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.EntitySpawnListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.PlayerEvents;
-import com.github.intellectualsites.plotsquared.bukkit.listeners.PlotPlusListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.SingleWorldListener;
 import com.github.intellectualsites.plotsquared.bukkit.listeners.WorldEvents;
 import com.github.intellectualsites.plotsquared.bukkit.placeholders.PlaceholderFormatter;
@@ -13,7 +12,6 @@ import com.github.intellectualsites.plotsquared.bukkit.util.BukkitChatManager;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitChunkManager;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitCommand;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitEconHandler;
-import com.github.intellectualsites.plotsquared.bukkit.util.BukkitEventUtil;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitHybridUtils;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitInventoryUtil;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitSchematicHandler;
@@ -588,11 +586,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
     }
 
-    @Override public void registerPlotPlusEvents() {
-        PlotPlusListener.startRunnable(this);
-        getServer().getPluginManager().registerEvents(new PlotPlusListener(), this);
-    }
-
     @Override public void registerForceFieldEvents() {
     }
 
@@ -670,10 +663,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override public ChunkManager initChunkManager() {
         return new BukkitChunkManager();
-    }
-
-    @Override public EventUtil initEventUtil() {
-        return new BukkitEventUtil();
     }
 
     @Override public void unregister(@NonNull final PlotPlayer player) {

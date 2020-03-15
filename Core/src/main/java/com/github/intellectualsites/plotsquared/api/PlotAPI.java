@@ -7,10 +7,7 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
-import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
-import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import lombok.NoArgsConstructor;
@@ -200,5 +197,15 @@ import java.util.UUID;
      */
     public PlotPlayer wrapPlayer(String player) {
         return PlotPlayer.wrap(player);
+    }
+
+    /**
+     * Registers a listener for PlotSquared Events
+     *
+     * @param listener the listener class to register
+     * @see EventDispatcher#registerListener(Object)
+     */
+    public void registerListener(Object listener) {
+        PlotSquared.get().getEventDispatcher().registerListener(listener);
     }
 }

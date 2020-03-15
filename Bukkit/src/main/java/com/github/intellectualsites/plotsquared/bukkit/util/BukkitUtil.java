@@ -42,10 +42,13 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.UUID;
 import java.util.List;
 import java.util.Set;
 
-@SuppressWarnings({"unused", "WeakerAccess"}) public class BukkitUtil extends WorldUtil {
+
+@SuppressWarnings({"unused", "WeakerAccess"})
+public class BukkitUtil extends WorldUtil {
 
     private static Method biomeSetter;
     static {
@@ -136,6 +139,18 @@ import java.util.Set;
      */
     public static PlotPlayer wrapPlayer(Player player) {
         return PlotPlayer.wrap(player);
+    }
+
+    /**
+     * Gets the PlotPlayer for a UUID. The PlotPlayer is usually cached and
+     * will provide useful functions relating to players.
+     *
+     * @param uuid the uuid to wrap
+     * @return a {@code PlotPlayer}
+     * @see PlotPlayer#wrap(Object)
+     */
+    @Override public PlotPlayer wrapPlayer(UUID uuid) {
+        return PlotPlayer.wrap(Bukkit.getOfflinePlayer(uuid));
     }
 
     /**
@@ -231,9 +246,9 @@ import java.util.Set;
     }
 
     public static Location getLocationFull(@NonNull final org.bukkit.Location location) {
-      return new Location(location.getWorld().getName(), MathMan.roundInt(location.getX()),
-          MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()),
-          location.getYaw(), location.getPitch());
+        return new Location(location.getWorld().getName(), MathMan.roundInt(location.getX()),
+            MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()), location.getYaw(),
+            location.getPitch());
     }
 
     public static org.bukkit.Location getLocation(@NonNull final Location location) {
@@ -315,7 +330,8 @@ import java.util.Set;
     }
 
     @Override @Nullable public String[] getSign(@NonNull final Location location) {
-        Block block = getWorld(location.getWorld()).getBlockAt(location.getX(), location.getY(), location.getZ());
+        Block block = getWorld(location.getWorld())
+            .getBlockAt(location.getX(), location.getY(), location.getZ());
         return TaskManager.IMP.sync(new RunnableVal<String[]>() {
             @Override public void run(String[] value) {
                 if (block.getState() instanceof Sign) {
@@ -395,7 +411,8 @@ import java.util.Set;
             Inventory inv = holder.getInventory();
             for (int i = 0; i < items.types.length; i++) {
                 // ItemStack item = new ItemStack(LegacyMappings.fromLegacyId(items.id[i]).getMaterial(), items.amount[i], items.data[i]);
-                ItemStack item = new ItemStack(BukkitAdapter.adapt(items.types[i]), items.amount[i]);
+                ItemStack item =
+                    new ItemStack(BukkitAdapter.adapt(items.types[i]), items.amount[i]);
                 inv.addItem(item);
             }
             state.update(true);
@@ -432,7 +449,8 @@ import java.util.Set;
         }
         final Biome biome = BukkitAdapter.adapt(biomeType);
         for (int x = region.getMinimumPoint().getX(); x <= region.getMaximumPoint().getX(); x++) {
-            for (int z = region.getMinimumPoint().getZ(); z <= region.getMaximumPoint().getZ(); z++) {
+            for (int z = region.getMinimumPoint().getZ();
+                 z <= region.getMaximumPoint().getZ(); z++) {
                 for (int y = 0; y < world.getMaxHeight(); y++) {
                     try {
                         if (biomeSetter != null) {
@@ -461,5 +479,21 @@ import java.util.Set;
 
     @Override public String getMainWorld() {
         return Bukkit.getWorlds().get(0).getName();
+    }
+
+    @Override public double getHealth(PlotPlayer player) {
+        return Bukkit.getPlayer(player.getUUID()).getHealth();
+    }
+
+    @Override public int getFoodLevel(PlotPlayer player) {
+        return Bukkit.getPlayer(player.getUUID()).getFoodLevel();
+    }
+
+    @Override public void setHealth(PlotPlayer player, double health) {
+        Bukkit.getPlayer(player.getUUID()).setHealth(health);
+    }
+
+    @Override public void setFoodLevel(PlotPlayer player, int foodLevel) {
+        Bukkit.getPlayer(player.getUUID()).setFoodLevel(foodLevel);
     }
 }

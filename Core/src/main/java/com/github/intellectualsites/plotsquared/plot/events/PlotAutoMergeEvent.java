@@ -1,12 +1,8 @@
-package com.github.intellectualsites.plotsquared.bukkit.events;
+package com.github.intellectualsites.plotsquared.plot.events;
 
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import lombok.Getter;
-import lombok.Setter;
-import org.bukkit.World;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -16,12 +12,11 @@ import java.util.List;
  * Event called when plots are automatically merged with /plot auto
  * {@inheritDoc}
  */
-public final class PlotAutoMergeEvent extends PlotEvent implements Cancellable {
+public final class PlotAutoMergeEvent extends PlotEvent implements CancellablePlotEvent {
 
-    private static final HandlerList handlers = new HandlerList();
     private final List<PlotId> plots;
-    @Getter private final World world;
-    @Getter @Setter private boolean cancelled;
+    @Getter private final String world;
+    private Result eventResult;
 
     /**
      * PlotAutoMergeEvent: Called when plots are automatically merged with /plot auto
@@ -30,17 +25,12 @@ public final class PlotAutoMergeEvent extends PlotEvent implements Cancellable {
      * @param plot  Plot that was merged
      * @param plots A list of plots involved in the event
      */
-    public PlotAutoMergeEvent(@NotNull final World world, @NotNull final Plot plot,
+    public PlotAutoMergeEvent(@NotNull final String world, @NotNull final Plot plot,
         @NotNull final List<PlotId> plots) {
         super(plot);
         this.world = world;
         this.plots = plots;
     }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
     /**
      * Get the plots being added.
      *
@@ -50,7 +40,13 @@ public final class PlotAutoMergeEvent extends PlotEvent implements Cancellable {
         return Collections.unmodifiableList(this.plots);
     }
 
-    @Override public HandlerList getHandlers() {
-        return handlers;
+    @Override
+    public Result getEventResult() {
+        return eventResult;
+    }
+
+    @Override
+    public void setEventResult(Result e) {
+        this.eventResult = e;
     }
 }

@@ -8,7 +8,6 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.ChatManager;
 import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
-import com.github.intellectualsites.plotsquared.plot.util.EventUtil;
 import com.github.intellectualsites.plotsquared.plot.util.InventoryUtil;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
@@ -131,11 +130,6 @@ public interface IPlotMain extends ILogger {
     void registerPlayerEvents();
 
     /**
-     * Register plot plus related events.
-     */
-    void registerPlotPlusEvents();
-
-    /**
      * Register force field events.
      */
     void registerForceFieldEvents();
@@ -161,11 +155,6 @@ public interface IPlotMain extends ILogger {
      * Gets the {@link WorldUtil} class.
      */
     WorldUtil initWorldUtil();
-
-    /**
-     * Gets the EventUtil class.
-     */
-    EventUtil initEventUtil();
 
     /**
      * Gets the chunk manager.

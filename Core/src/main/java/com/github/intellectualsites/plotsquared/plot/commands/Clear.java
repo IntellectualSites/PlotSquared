@@ -2,8 +2,12 @@ package com.github.intellectualsites.plotsquared.plot.commands;
 
 import com.github.intellectualsites.plotsquared.commands.Command;
 import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
+import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import com.github.intellectualsites.plotsquared.plot.events.PlotFlagRemoveEvent;
+import com.github.intellectualsites.plotsquared.plot.events.Result;
+import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnalysisFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
@@ -15,6 +19,8 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 
 import java.util.concurrent.CompletableFuture;
+
+import static com.github.intellectualsites.plotsquared.plot.commands.SubCommand.sendMessage;
 
 @CommandDeclaration(command = "clear",
     description = "Clear the plot you stand on",
@@ -38,11 +44,18 @@ public class Clear extends Command {
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         checkTrue(args.length == 0, Captions.COMMAND_SYNTAX, getUsage());
         final Plot plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);
-        checkTrue(plot.isOwner(player.getUUID()) || Permissions
+        Result eventResult =
+            PlotSquared.get().getEventDispatcher().callClear(plot).getEventResult();
+        if (eventResult == Result.DENY) {
+            sendMessage(player, Captions.EVENT_DENIED, "Clear");
+            return CompletableFuture.completedFuture(true);
+        }
+        boolean force = eventResult == Result.FORCE;
+        checkTrue(force || plot.isOwner(player.getUUID()) || Permissions
                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_CLEAR),
             Captions.NO_PLOT_PERMS);
         checkTrue(plot.getRunning() == 0, Captions.WAIT_FOR_TIMER);
-        checkTrue(!Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot) || Permissions
+        checkTrue(force || !Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot) || Permissions
             .hasPermission(player, Captions.PERMISSION_CONTINUE), Captions.DONE_ALREADY_DONE);
         confirm.run(this, () -> {
             final long start = System.currentTimeMillis();
@@ -52,10 +65,21 @@ public class Clear extends Command {
                     plot.removeRunning();
                     // If the state changes, then mark it as no longer done
                     if (DoneFlag.isDone(plot)) {
-                        plot.removeFlag(DoneFlag.class);
+                        PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(DoneFlag.class);
+                        PlotFlagRemoveEvent event =
+                            PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
+                        if (event.getEventResult() != Result.DENY) {
+                            plot.removeFlag(event.getFlag());
+                        }
                     }
                     if (!plot.getFlag(AnalysisFlag.class).isEmpty()) {
-                        plot.removeFlag(AnalysisFlag.class);
+                        PlotFlag<?, ?> plotFlag =
+                            plot.getFlagContainer().getFlag(AnalysisFlag.class);
+                        PlotFlagRemoveEvent event =
+                            PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
+                        if (event.getEventResult() != Result.DENY) {
+                            plot.removeFlag(event.getFlag());
+                        }
                     }
                     MainUtil.sendMessage(player, Captions.CLEARING_DONE,
                         "" + (System.currentTimeMillis() - start));
