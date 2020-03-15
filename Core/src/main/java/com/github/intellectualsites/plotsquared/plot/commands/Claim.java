@@ -102,7 +102,7 @@ public class Claim extends SubCommand {
         DBFunc.createPlotSafe(plot, () -> TaskManager.IMP.sync(new RunnableVal<Object>() {
             @Override public void run(Object value) {
                 plot.claim(player, true, finalSchematic);
-                if (area.autoMerge()) {
+                if (area.isAutoMerge()) {
                     PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
                         .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
                     if (event.getEventResult() == Result.DENY) {

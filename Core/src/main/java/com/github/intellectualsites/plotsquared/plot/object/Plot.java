@@ -1663,7 +1663,7 @@ public class Plot {
         if (this.area.addPlot(this)) {
             DBFunc.createPlotAndSettings(this, () -> {
                 PlotArea plotworld = Plot.this.area;
-                if (notify && plotworld.autoMerge()) {
+                if (notify && plotworld.isAutoMerge()) {
                     PlotPlayer player = WorldUtil.IMP.wrapPlayer(uuid);
                     PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
                         .callMerge(this, Direction.ALL, Integer.MAX_VALUE, player);
