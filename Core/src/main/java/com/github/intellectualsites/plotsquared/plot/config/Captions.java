@@ -237,6 +237,7 @@ public enum Captions {
     SWAP_DIMENSIONS("$2The proposed areas must have comparable dimensions", "Swap"),
     SWAP_SYNTAX("$2/plot swap <id>", "Swap"),
     SWAP_SUCCESS("$4Successfully swapped plots", "Swap"),
+    SWAP_MERGED("$2Merged plots may not be swapped. Please unmerge the plot before performing the swap.", "Swap"),
     //</editor-fold>
     //<editor-fold desc="Comments">
     INBOX_NOTIFICATION("%s unread messages. Use /plot inbox", "Comment"),
@@ -321,6 +322,7 @@ public enum Captions {
     SCHEMATIC_MISSING_ARG("$2You need to specify an argument. Possible values: $1save$2, $1paste $2, $1exportall$2, $1list", "Schematics"),
     SCHEMATIC_INVALID("$2That is not a valid schematic. Reason: $2%s", "Schematics"),
     SCHEMATIC_VALID("$2That is a valid schematic", "Schematics"),
+    SCHEMATIC_PASTE_MERGED("$2Schematics cannot be pasted onto merged plots. Please unmerge the plot before performing the paste.", "Schematics"),
     SCHEMATIC_PASTE_FAILED("$2Failed to paste the schematic", "Schematics"),
     SCHEMATIC_PASTE_SUCCESS("$4The schematic pasted successfully", "Schematics"),
     SCHEMATIC_LIST("$4Saved Schematics: $1%s", "Schematics"),

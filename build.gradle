@@ -66,7 +66,7 @@ subprojects {
         implementation("com.google.guava:guava:21.0") {
             because("Minecraft uses Guava 21 as of 1.13")
         }
-        compileOnly("org.jetbrains:annotations:18.0.0")
+        compileOnly("org.jetbrains:annotations:19.0.0")
         compileClasspath("org.projectlombok:lombok:1.18.12")
         testCompileOnly("org.projectlombok:lombok:1.18.12")
         annotationProcessor("org.projectlombok:lombok:1.18.8")
@@ -78,7 +78,7 @@ subprojects {
         resolutionStrategy {
             force("junit:junit:4.13")
             force("com.google.guava:guava:21.0")
-            force("org.jetbrains:annotations:18.0.0")
+            force("org.jetbrains:annotations:19.0.0")
             force("com.google.code.findbugs:jsr305:3.0.2")
         }
     }
