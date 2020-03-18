@@ -1849,7 +1849,9 @@ import java.util.zip.ZipInputStream;
             return;
         }
         for (final PlotArea area : array) {
-            consumer.accept(area);
+            if (world.equalsIgnoreCase(area.worldname)) {
+                consumer.accept(area);
+            }
         }
     }
 
