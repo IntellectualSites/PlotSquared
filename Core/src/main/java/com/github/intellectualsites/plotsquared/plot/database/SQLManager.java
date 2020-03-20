@@ -2142,7 +2142,8 @@ import java.util.concurrent.atomic.AtomicInteger;
                         int count = 0;
                         int last = -1;
                         for (int j = 0; j <= amount; j++) {
-                            PlotSquared.debug("Purging " + (j * packet) + " / " + size);
+                            int purging = Math.max(j * packet, size);
+                            PlotSquared.debug("Purging " + purging + " / " + size);
                             List<Integer> subList =
                                 uniqueIdsList.subList(j * packet, Math.min(size, (j + 1) * packet));
                             if (subList.isEmpty()) {

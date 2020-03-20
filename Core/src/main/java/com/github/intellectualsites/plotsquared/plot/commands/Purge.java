@@ -11,14 +11,17 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.CmdConfirm;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-@CommandDeclaration(usage = "/plot purge world:<world> area:<area> id:<id> owner:<owner> shared:<shared> unknown:[true|false]",
+@CommandDeclaration(usage = "/plot purge world:<world> area:<area> id:<id> owner:<owner> shared:<shared> unknown:[true|false] clear:[true|false]",
     command = "purge",
     permission = "plots.admin",
     description = "Purge all plots for a world",
@@ -29,6 +32,7 @@ public class Purge extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length == 0) {
+            Captions.COMMAND_SYNTAX.send(player, getUsage());
             return false;
         }
 
@@ -38,6 +42,7 @@ public class Purge extends SubCommand {
         UUID owner = null;
         UUID added = null;
         boolean unknown = false;
+        boolean clear = false;
         for (String arg : args) {
             String[] split = arg.split(":");
             if (split.length != 2) {
@@ -86,6 +91,13 @@ public class Purge extends SubCommand {
                 case "?":
                 case "u":
                     unknown = Boolean.parseBoolean(split[1]);
+                    break;
+                case "clear":
+                case "c":
+                case "delete":
+                case "d":
+                case "del":
+                    clear = Boolean.parseBoolean(split[1]);
                     break;
                 default:
                     Captions.COMMAND_SYNTAX.send(player, getUsage());
@@ -145,21 +157,43 @@ public class Purge extends SubCommand {
         }
         String cmd =
             "/plot purge " + StringMan.join(args, " ") + " (" + toDelete.size() + " plots)";
+        boolean finalClear = clear;
         Runnable run = () -> {
             PlotSquared.debug("Calculating plots to purge, please wait...");
             HashSet<Integer> ids = new HashSet<>();
-            for (Plot plot : toDelete) {
-                if (plot.temp != Integer.MAX_VALUE) {
-                    ids.add(plot.temp);
-                    plot.getArea().removePlot(plot.getId());
-                    for (PlotPlayer pp : plot.getPlayersInPlot()) {
-                        PlotListener.plotEntry(pp, plot);
+            Iterator<Plot> iterator = toDelete.iterator();
+            AtomicBoolean cleared = new AtomicBoolean(true);
+            Runnable runasync = new Runnable() {
+                @Override public void run() {
+                    while (iterator.hasNext() && cleared.get()) {
+                        cleared.set(false);
+                        Plot plot = iterator.next();
+                        if (plot.temp != Integer.MAX_VALUE) {
+                            ids.add(plot.temp);
+                            if (finalClear) {
+                                plot.clear(false, true, () -> PlotSquared
+                                    .debug("Plot " + plot.getId() + " cleared by purge."));
+                            } else {
+                                plot.removeSign();
+                            }
+                            plot.getArea().removePlot(plot.getId());
+                            for (PlotPlayer pp : plot.getPlayersInPlot()) {
+                                PlotListener.plotEntry(pp, plot);
+                            }
+                        }
+                        cleared.set(true);
                     }
-                    plot.removeSign();
+                    if (iterator.hasNext()) {
+                        TaskManager.runTaskAsync(this);
+                    } else {
+                        TaskManager.runTask(() -> {
+                            DBFunc.purgeIds(ids);
+                            Captions.PURGE_SUCCESS.send(player, ids.size() + "/" + toDelete.size());
+                        });
+                    }
                 }
-            }
-            DBFunc.purgeIds(ids);
-            Captions.PURGE_SUCCESS.send(player, ids.size() + "/" + toDelete.size());
+            };
+            TaskManager.runTaskAsync(runasync);
         };
         if (hasConfirmation(player)) {
             CmdConfirm.addPending(player, cmd, run);
