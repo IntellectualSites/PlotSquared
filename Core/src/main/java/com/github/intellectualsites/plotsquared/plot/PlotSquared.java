@@ -57,19 +57,14 @@ import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpiryTask;
 import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -506,6 +501,44 @@ import java.util.zip.ZipInputStream;
         }
         plotAreaManager.addPlotArea(plotArea);
         plotArea.setupBorder();
+        if (!Settings.Enabled_Components.PERSISTENT_ROAD_REGEN) {
+            return;
+        }
+        File file = new File(
+            this.IMP.getDirectory() + File.separator + "persistent_regen_data_" + plotArea.id + "_"
+                + plotArea.worldname);
+        if (!file.exists()) {
+            return;
+        }
+        TaskManager.runTask(() -> {
+            try {
+                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
+                List<Object> list = (List<Object>) ois.readObject();
+                ois.close();
+                ArrayList<Integer[]> regionInts = (ArrayList<Integer[]>) list.get(0);
+                ArrayList<Integer[]> chunkInts = (ArrayList<Integer[]>) list.get(1);
+                HashSet<BlockVector2> regions = new HashSet<>();
+                Set<BlockVector2> chunks = new HashSet<>();
+                regionInts.forEach(l -> regions.add(BlockVector2.at(l[0], l[1])));
+                chunkInts.forEach(l -> chunks.add(BlockVector2.at(l[0], l[1])));
+                int height = (int) list.get(2);
+                PlotSquared.log(
+                    Captions.PREFIX + "Incomplete road regeneration found. Restarting in world "
+                        + plotArea.worldname + " with height " + height + ".");
+                PlotSquared.debug("   Regions: " + regions.size());
+                PlotSquared.debug("   Chunks: " + chunks.size());
+                HybridUtils.UPDATE = true;
+                HybridUtils.manager.scheduleRoadUpdate(plotArea, regions, height, chunks);
+                if (!file.delete()) {
+                    PlotSquared.log(
+                        Captions.PREFIX + "Error deleting persistent_regen_data_" + plotArea.id
+                            + ". Please manually delete this file.");
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                PlotSquared.log(Captions.PREFIX + "Error restarting road regeneration.");
+                e.printStackTrace();
+            }
+        });
     }
 
     /**
@@ -1525,6 +1558,44 @@ import java.util.zip.ZipInputStream;
     public void disable() {
         try {
             eventDispatcher.unregisterAll();
+            if (HybridUtils.UPDATE && Settings.Enabled_Components.PERSISTENT_ROAD_REGEN && (
+                !HybridUtils.regions.isEmpty() || !HybridUtils.chunks.isEmpty())) {
+                PlotSquared.log(Captions.PREFIX
+                    + "Road regeneration incomplete. Saving incomplete regions to disk.");
+                PlotSquared.debug("   Regions: " + HybridUtils.regions.size());
+                PlotSquared.debug("   Chunks: " + HybridUtils.chunks.size());
+                try {
+                    ArrayList<Integer[]> regions = new ArrayList<>();
+                    ArrayList<Integer[]> chunks = new ArrayList<>();
+                    for (BlockVector2 r : HybridUtils.regions) {
+                        regions.add(new Integer[] {r.getBlockX(), r.getBlockZ()});
+                    }
+                    for (BlockVector2 c : HybridUtils.chunks) {
+                        chunks.add(new Integer[] {c.getBlockX(), c.getBlockZ()});
+                    }
+                    List<Object> list = new ArrayList<>();
+                    list.add(regions);
+                    list.add(chunks);
+                    list.add(HybridUtils.height);
+                    File file = new File(
+                        this.IMP.getDirectory() + File.separator + "persistent_regen_data_"
+                            + HybridUtils.area.id + "_" + HybridUtils.area.worldname);
+                    if (file.exists() && !file.delete()) {
+                        PlotSquared.log(Captions.PREFIX
+                            + "persistent_regen_data file already exists and could not be deleted.");
+                    }
+                    if (!file.createNewFile()) {
+                        PlotSquared
+                            .log(Captions.PREFIX + "Error create persistent_regen_data file.");
+                    }
+                    ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
+                    oos.writeObject(list);
+                    oos.flush();
+                    oos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             // Validate that all data in the db is correct
             final HashSet<Plot> plots = new HashSet<>();
             try {
