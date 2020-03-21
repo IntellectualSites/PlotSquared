@@ -8,6 +8,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
 import com.google.common.base.Preconditions;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +34,10 @@ public class HybridGen extends IndependentPlotGenerator {
                     result.setBlock(x, minY + y, z, blocks[y]);
                 }
             }
+        }
+        BiomeType biome = world.G_SCH_B.get(MathMan.pair(relativeX, relativeZ));
+        if (biome != null) {
+            result.setBiome(x, z, biome);
         }
     }
 

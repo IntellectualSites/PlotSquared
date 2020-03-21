@@ -9,9 +9,7 @@ import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
@@ -90,6 +88,9 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
     @Override public final void setComponents(LocalChunk lc)
         throws ExecutionException, InterruptedException {
         setBaseBlocks(lc);
+        if (setBiome()) {
+            setBiomes(lc);
+        }
     }
 
     public void setBaseBlocks(LocalChunk localChunk) {
@@ -143,22 +144,26 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
     }
 
     public void setBiomes(LocalChunk lc) {
-        if (lc.biomes != null) {
-            World worldObj = Bukkit.getWorld(getWorld());
-            int bx = lc.getX() << 4;
-            int bz = lc.getX() << 4;
+        World worldObj = Bukkit.getWorld(getWorld());
+        if (worldObj == null) {
+            throw new NullPointerException("World cannot be null.");
+        }
+        PaperLib.getChunkAtAsync(worldObj, lc.getX(), lc.getZ(), true).thenAccept(chunk -> {
             for (int x = 0; x < lc.biomes.length; x++) {
-                BiomeType[] biomes2 = lc.biomes[x];
-                if (biomes2 != null) {
-                    for (BiomeType biomeStr : biomes2) {
-                        if (biomeStr != null) {
-                            Biome biome = BukkitAdapter.adapt(biomeStr);
-                            worldObj.setBiome(bx, bz, biome);
+                BiomeType[] biomeZ = lc.biomes[x];
+                if (biomeZ != null) {
+                    for (int z = 0; z < biomeZ.length; z++) {
+                        if (biomeZ[z] != null) {
+                            BiomeType biomeType = biomeZ[z];
+
+                            Biome biome = BukkitAdapter.adapt(biomeType);
+                            worldObj
+                                .setBiome((chunk.getX() << 4) + x, (chunk.getZ() << 4) + z, biome);
                         }
                     }
                 }
             }
-        }
+        });
     }
 
 }

@@ -24,6 +24,7 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
     private LocalChunk lastWrappedChunk;
     private int lastX = Integer.MIN_VALUE;
     private int lastZ = Integer.MIN_VALUE;
+    private boolean setbiome = false;
 
     public BasicLocalBlockQueue(String world) {
         super(world);
@@ -139,7 +140,12 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
             }
         }
         result.setBiome(x & 15, z & 15, biomeType);
+        setbiome = true;
         return true;
+    }
+
+    @Override public final boolean setBiome() {
+        return setbiome;
     }
 
     public final void setChunk(LocalChunk chunk) {

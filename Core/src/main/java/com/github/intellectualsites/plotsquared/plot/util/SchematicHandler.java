@@ -23,6 +23,7 @@ import com.sk89q.worldedit.extent.clipboard.io.SpongeSchematicReader;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import org.jetbrains.annotations.NotNull;
 
@@ -234,6 +235,11 @@ public abstract class SchematicHandler {
                                     BaseBlock id = blockArrayClipboard
                                         .getFullBlock(BlockVector3.at(rx, ry, rz));
                                     queue.setBlock(xx, yy, zz, id);
+                                    if (ry == 0) {
+                                        BiomeType biome =
+                                            blockArrayClipboard.getBiome(BlockVector2.at(rx, rz));
+                                        queue.setBiome(xx, zz, biome);
+                                    }
                                 }
                             }
                         }
@@ -392,7 +398,7 @@ public abstract class SchematicHandler {
             TaskManager.runTask(whenDone);
             return;
         }
-        MainUtil.upload(uuid, file, "schematic", new RunnableVal<OutputStream>() {
+        MainUtil.upload(uuid, file, "schem", new RunnableVal<OutputStream>() {
             @Override public void run(OutputStream output) {
                 try (NBTOutputStream nos = new NBTOutputStream(
                     new GZIPOutputStream(output, true))) {
@@ -444,7 +450,7 @@ public abstract class SchematicHandler {
     }
 
 
-    public class UnsupportedFormatException extends Exception {
+    public static class UnsupportedFormatException extends Exception {
         /**
          * Throw with a message.
          *
