@@ -515,8 +515,8 @@ import java.util.zip.ZipInputStream;
                 ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
                 List<Object> list = (List<Object>) ois.readObject();
                 ois.close();
-                ArrayList<Integer[]> regionInts = (ArrayList<Integer[]>) list.get(0);
-                ArrayList<Integer[]> chunkInts = (ArrayList<Integer[]>) list.get(1);
+                ArrayList<int[]> regionInts = (ArrayList<int[]>) list.get(0);
+                ArrayList<int[]> chunkInts = (ArrayList<int[]>) list.get(1);
                 HashSet<BlockVector2> regions = new HashSet<>();
                 Set<BlockVector2> chunks = new HashSet<>();
                 regionInts.forEach(l -> regions.add(BlockVector2.at(l[0], l[1])));
@@ -1565,13 +1565,13 @@ import java.util.zip.ZipInputStream;
                 PlotSquared.debug("   Regions: " + HybridUtils.regions.size());
                 PlotSquared.debug("   Chunks: " + HybridUtils.chunks.size());
                 try {
-                    ArrayList<Integer[]> regions = new ArrayList<>();
-                    ArrayList<Integer[]> chunks = new ArrayList<>();
+                    ArrayList<int[]> regions = new ArrayList<>();
+                    ArrayList<int[]> chunks = new ArrayList<>();
                     for (BlockVector2 r : HybridUtils.regions) {
-                        regions.add(new Integer[] {r.getBlockX(), r.getBlockZ()});
+                        regions.add(new int[] {r.getBlockX(), r.getBlockZ()});
                     }
                     for (BlockVector2 c : HybridUtils.chunks) {
-                        chunks.add(new Integer[] {c.getBlockX(), c.getBlockZ()});
+                        chunks.add(new int[] {c.getBlockX(), c.getBlockZ()});
                     }
                     List<Object> list = new ArrayList<>();
                     list.add(regions);
