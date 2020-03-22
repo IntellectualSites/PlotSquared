@@ -350,5 +350,7 @@ public class Settings extends Config {
         @Comment("Delete plots when a player is banned") public static boolean BAN_DELETER = false;
         @Comment("Allows PlaceholderAPI placeholders to be used in captions, flags, etc")
         public static boolean EXTERNAL_PLACEHOLDERS = true;
+        @Comment("Make road regeneration persistent across restarts") public static boolean
+            PERSISTENT_ROAD_REGEN = false;
     }
 }

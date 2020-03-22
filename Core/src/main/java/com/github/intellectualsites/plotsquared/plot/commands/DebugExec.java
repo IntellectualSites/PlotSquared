@@ -49,11 +49,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "debugexec",
@@ -249,7 +245,7 @@ public class DebugExec extends SubCommand {
                     boolean result;
                     if (HybridUtils.regions != null) {
                         result =
-                            HybridUtils.manager.scheduleRoadUpdate(area, HybridUtils.regions, 0);
+                            HybridUtils.manager.scheduleRoadUpdate(area, HybridUtils.regions, 0, new HashSet<>());
                     } else {
                         result = HybridUtils.manager.scheduleRoadUpdate(area, 0);
                     }
