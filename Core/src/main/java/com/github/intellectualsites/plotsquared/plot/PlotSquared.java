@@ -1096,13 +1096,13 @@ import java.util.zip.ZipInputStream;
         }
         String path = "worlds." + world;
         ConfigurationSection worldSection = this.worlds.getConfigurationSection(path);
-        int type;
+        PlotAreaType type;
         if (worldSection != null) {
-            type = worldSection.getInt("generator.type", 0);
+            type = MainUtil.getType(worldSection);
         } else {
-            type = 0;
+            type = PlotAreaType.NORMAL;
         }
-        if (type == 0) {
+        if (type == PlotAreaType.NORMAL) {
             if (plotAreaManager.getPlotAreas(world, null).length != 0) {
                 debug("World possibly already loaded: " + world);
                 return;
@@ -1164,7 +1164,7 @@ import java.util.zip.ZipInputStream;
                 }
                 PlotSquared.log(Captions.PREFIX + "&aDetected world load for '" + world + "'");
                 String gen_string = worldSection.getString("generator.plugin", IMP.getPluginName());
-                if (type == 2) {
+                if (type == PlotAreaType.PARTIAL) {
                     Set<PlotCluster> clusters =
                         this.clusters_tmp != null ? this.clusters_tmp.get(world) : new HashSet<>();
                     if (clusters == null) {
@@ -1231,9 +1231,9 @@ import java.util.zip.ZipInputStream;
                 addPlotArea(pa);
                 return;
             }
-            if (type == 1) {
+            if (type == PlotAreaType.AUGMENTED) {
                 throw new IllegalArgumentException(
-                    "Invalid type for multi-area world. Expected `2`, got `" + 1 + "`");
+                    "Invalid type for multi-area world. Expected `PARTIAL`, got `" + PlotAreaType.AUGMENTED + "`");
             }
             for (String areaId : areasSection.getKeys(false)) {
                 PlotSquared.log(Captions.PREFIX + " - " + areaId);

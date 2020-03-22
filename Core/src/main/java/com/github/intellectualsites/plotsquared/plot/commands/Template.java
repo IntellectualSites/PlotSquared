@@ -161,23 +161,8 @@ public class Template extends SubCommand {
                     worldConfig.getString("generator.plugin", PlotSquared.imp().getPluginName());
                 String generator = worldConfig.getString("generator.init", manager);
                 SetupObject setup = new SetupObject();
-                String type = worldConfig.getString("generator.type");
-                if (type == null) {
-                    setup.type = PlotAreaType.NORMAL;
-                } else if (MathMan.isInteger(type)) {
-                    setup.type = PlotAreaType.fromLegacyInt(Integer.parseInt(type)).orElse(PlotAreaType.NORMAL);
-                } else {
-                    setup.type = PlotAreaType.fromString(type).orElse(PlotAreaType.NORMAL);
-                }
-                String terrain = worldConfig.getString("generator.terrain");
-                if (terrain == null) {
-                    setup.terrain = PlotAreaTerrainType.NONE;
-                } else if (MathMan.isInteger(terrain)) {
-                    setup.terrain = PlotAreaTerrainType.fromLegacyInt(Integer.parseInt(terrain))
-                            .orElse(PlotAreaTerrainType.NONE);
-                } else {
-                    setup.terrain = PlotAreaTerrainType.fromString(terrain).orElse(PlotAreaTerrainType.NONE);
-                }
+                setup.type = MainUtil.getType(worldConfig);
+                setup.terrain = MainUtil.getTerrain(worldConfig);
 
                 setup.plotManager = manager;
                 setup.setupGenerator = generator;

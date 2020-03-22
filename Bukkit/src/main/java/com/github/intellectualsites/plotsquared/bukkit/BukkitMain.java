@@ -730,22 +730,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             SetupObject setup = new SetupObject();
             setup.plotManager = manager;
             setup.setupGenerator = worldConfig.getString("generator.init", manager);
-            String type = worldConfig.getString("generator.type");
-            if (type == null) {
-                setup.type = PlotAreaType.NORMAL;
-            } else if (MathMan.isInteger(type)) { // Legacy, only for compatibility reasons
-                setup.type = PlotAreaType.fromLegacyInt(Integer.parseInt(type)).orElse(PlotAreaType.NORMAL);
-            } else {
-                setup.type = PlotAreaType.fromString(type).orElse(PlotAreaType.NORMAL);
-            }
-            String terrain = worldConfig.getString("generator.terrain");
-            if (terrain == null) {
-                setup.terrain = PlotAreaTerrainType.NONE;
-            } else if (MathMan.isInteger(terrain)) { // Legacy, only for compatibility reasons
-                setup.terrain = PlotAreaTerrainType.fromLegacyInt(Integer.parseInt(terrain)).orElse(PlotAreaTerrainType.NONE);
-            } else {
-                setup.terrain = PlotAreaTerrainType.fromString(terrain).orElse(PlotAreaTerrainType.NONE);
-            }
+            setup.type = MainUtil.getType(worldConfig);
+            setup.terrain = MainUtil.getTerrain(worldConfig);
             setup.step = new ConfigurationNode[0];
             setup.world = worldName;
             SetupUtils.manager.setupWorld(setup);

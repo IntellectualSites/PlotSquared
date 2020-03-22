@@ -220,23 +220,8 @@ public abstract class PlotArea {
             throw new IllegalArgumentException("Must extend GridPlotWorld to provide");
         }
         if (config.contains("generator.terrain")) {
-            String terrain = config.getString("generator.terrain");
-            if (terrain == null) {
-                this.terrain = PlotAreaTerrainType.NONE;
-            } else if (MathMan.isInteger(terrain)) {
-                this.terrain = PlotAreaTerrainType.fromLegacyInt(Integer.parseInt(terrain))
-                        .orElse(PlotAreaTerrainType.NONE);
-            } else {
-                this.terrain = PlotAreaTerrainType.fromString(terrain).orElse(PlotAreaTerrainType.NONE);
-            }
-            String type = config.getString("generator.type");
-            if (type == null) {
-                this.type = PlotAreaType.NORMAL;
-            } else if (MathMan.isInteger(type)) {
-                this.type = PlotAreaType.fromLegacyInt(Integer.parseInt(type)).orElse(PlotAreaType.NORMAL);
-            } else {
-                this.type = PlotAreaType.fromString(type).orElse(PlotAreaType.NORMAL);
-            }
+            this.terrain = MainUtil.getTerrain(config);
+            this.type = MainUtil.getType(config);
         }
         this.mobSpawning = config.getBoolean("natural_mob_spawning");
         this.miscSpawnUnowned = config.getBoolean("misc_spawn_unowned");
