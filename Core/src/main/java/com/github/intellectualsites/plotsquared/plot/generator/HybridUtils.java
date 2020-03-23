@@ -51,6 +51,7 @@ public abstract class HybridUtils {
 
     public static HybridUtils manager;
     public static Set<BlockVector2> regions;
+    public static int height;
     public static Set<BlockVector2> chunks = new HashSet<>();
     public static PlotArea area;
     public static boolean UPDATE = false;
@@ -352,7 +353,7 @@ public abstract class HybridUtils {
         }
         HybridUtils.UPDATE = true;
         Set<BlockVector2> regions = ChunkManager.manager.getChunkChunks(area.getWorldName());
-        return scheduleRoadUpdate(area, regions, extend);
+        return scheduleRoadUpdate(area, regions, extend, new HashSet<>());
     }
 
     public boolean scheduleSingleRegionRoadUpdate(Plot plot, int extend) {
@@ -362,14 +363,15 @@ public abstract class HybridUtils {
         HybridUtils.UPDATE = true;
         Set<BlockVector2> regions = new HashSet<>();
         regions.add(ChunkManager.getRegion(plot.getCenter()));
-        return scheduleRoadUpdate(plot.getArea(), regions, extend);
+        return scheduleRoadUpdate(plot.getArea(), regions, extend, new HashSet<>());
     }
 
     public boolean scheduleRoadUpdate(final PlotArea area, Set<BlockVector2> regions,
-        final int extend) {
+        final int extend, Set<BlockVector2> chunks) {
         HybridUtils.regions = regions;
         HybridUtils.area = area;
-        chunks = new HashSet<>();
+        HybridUtils.height = extend;
+        HybridUtils.chunks = chunks;
         final AtomicInteger count = new AtomicInteger(0);
         TaskManager.runTask(new Runnable() {
             @Override public void run() {
@@ -396,7 +398,7 @@ public abstract class HybridUtils {
                     regeneratePlotWalls(area);
 
                     HybridUtils.UPDATE = false;
-                    PlotSquared.debug("Finished road conversion");
+                    PlotSquared.log("Finished road conversion");
                     // CANCEL TASK
                 } else {
                     final Runnable task = this;
@@ -622,7 +624,7 @@ public abstract class HybridUtils {
         return false;
     }
 
-    public boolean regeneratePlotWalls(final PlotArea area) {
+    public static boolean regeneratePlotWalls(final PlotArea area) {
         PlotManager plotManager = area.getPlotManager();
         return plotManager.regenerateAllPlotWalls();
     }

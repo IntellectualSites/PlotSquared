@@ -22,75 +22,32 @@ import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
 import com.github.intellectualsites.plotsquared.plot.listener.WESubscriber;
 import com.github.intellectualsites.plotsquared.plot.logger.ILogger;
-import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
-import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
-import com.github.intellectualsites.plotsquared.plot.object.PlotCluster;
-import com.github.intellectualsites.plotsquared.plot.object.PlotFilter;
-import com.github.intellectualsites.plotsquared.plot.object.PlotId;
-import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.StringWrapper;
+import com.github.intellectualsites.plotsquared.plot.object.*;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.DefaultPlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.PlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAreaManager;
-import com.github.intellectualsites.plotsquared.plot.util.ChatManager;
-import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
-import com.github.intellectualsites.plotsquared.plot.util.CommentManager;
-import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
-import com.github.intellectualsites.plotsquared.plot.util.EventDispatcher;
-import com.github.intellectualsites.plotsquared.plot.util.InventoryUtil;
-import com.github.intellectualsites.plotsquared.plot.util.LegacyConverter;
-import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils;
-import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
-import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
-import com.github.intellectualsites.plotsquared.plot.util.StringMan;
-import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
-import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
-import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
+import com.github.intellectualsites.plotsquared.plot.util.*;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpiryTask;
 import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -507,6 +464,43 @@ import java.util.zip.ZipInputStream;
         }
         plotAreaManager.addPlotArea(plotArea);
         plotArea.setupBorder();
+        if (!Settings.Enabled_Components.PERSISTENT_ROAD_REGEN) {
+            return;
+        }
+        File file = new File(
+            this.IMP.getDirectory() + File.separator + "persistent_regen_data_" + plotArea.id + "_"
+                + plotArea.worldname);
+        if (!file.exists()) {
+            return;
+        }
+        TaskManager.runTask(() -> {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                List<Object> list = (List<Object>) ois.readObject();
+                ArrayList<int[]> regionInts = (ArrayList<int[]>) list.get(0);
+                ArrayList<int[]> chunkInts = (ArrayList<int[]>) list.get(1);
+                HashSet<BlockVector2> regions = new HashSet<>();
+                Set<BlockVector2> chunks = new HashSet<>();
+                regionInts.forEach(l -> regions.add(BlockVector2.at(l[0], l[1])));
+                chunkInts.forEach(l -> chunks.add(BlockVector2.at(l[0], l[1])));
+                int height = (int) list.get(2);
+                PlotSquared.log(
+                    Captions.PREFIX + "Incomplete road regeneration found. Restarting in world "
+                        + plotArea.worldname + " with height " + height + ".");
+                PlotSquared.debug("   Regions: " + regions.size());
+                PlotSquared.debug("   Chunks: " + chunks.size());
+                HybridUtils.UPDATE = true;
+                HybridUtils.manager.scheduleRoadUpdate(plotArea, regions, height, chunks);
+            } catch (IOException | ClassNotFoundException e) {
+                PlotSquared.log(Captions.PREFIX + "Error restarting road regeneration.");
+                e.printStackTrace();
+            } finally {
+                if (!file.delete()) {
+                    PlotSquared.log(
+                        Captions.PREFIX + "Error deleting persistent_regen_data_" + plotArea.id
+                            + ". Please manually delete this file.");
+                }
+            }
+        });
     }
 
     /**
@@ -1526,6 +1520,7 @@ import java.util.zip.ZipInputStream;
     public void disable() {
         try {
             eventDispatcher.unregisterAll();
+            checkRoadRegenPersistence();
             // Validate that all data in the db is correct
             final HashSet<Plot> plots = new HashSet<>();
             try {
@@ -1540,6 +1535,46 @@ import java.util.zip.ZipInputStream;
         } catch (NullPointerException throwable) {
             throwable.printStackTrace();
             PlotSquared.log("&cCould not close database connection!");
+        }
+    }
+
+    /**
+     * Handle road regen persistence
+     */
+    private void checkRoadRegenPersistence() {
+        if (!HybridUtils.UPDATE || !Settings.Enabled_Components.PERSISTENT_ROAD_REGEN || (
+            HybridUtils.regions.isEmpty() && HybridUtils.chunks.isEmpty())) {
+            return;
+        }
+        PlotSquared.log(
+            Captions.PREFIX + "Road regeneration incomplete. Saving incomplete regions to disk.");
+        PlotSquared.debug("   Regions: " + HybridUtils.regions.size());
+        PlotSquared.debug("   Chunks: " + HybridUtils.chunks.size());
+        ArrayList<int[]> regions = new ArrayList<>();
+        ArrayList<int[]> chunks = new ArrayList<>();
+        for (BlockVector2 r : HybridUtils.regions) {
+            regions.add(new int[] {r.getBlockX(), r.getBlockZ()});
+        }
+        for (BlockVector2 c : HybridUtils.chunks) {
+            chunks.add(new int[] {c.getBlockX(), c.getBlockZ()});
+        }
+        List<Object> list = new ArrayList<>();
+        list.add(regions);
+        list.add(chunks);
+        list.add(HybridUtils.height);
+        File file = new File(this.IMP.getDirectory() + File.separator + "persistent_regen_data_"
+            + HybridUtils.area.id + "_" + HybridUtils.area.worldname);
+        if (file.exists() && !file.delete()) {
+            PlotSquared.log(Captions.PREFIX
+                + "persistent_regen_data file already exists and could not be deleted.");
+            return;
+        }
+        try (ObjectOutputStream oos = new ObjectOutputStream(
+            Files.newOutputStream(file.toPath(), StandardOpenOption.CREATE_NEW))) {
+            oos.writeObject(list);
+        } catch (IOException e) {
+            PlotSquared.log(Captions.PREFIX + "Error create persistent_regen_data file.");
+            e.printStackTrace();
         }
     }
 

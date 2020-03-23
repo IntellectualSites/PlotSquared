@@ -290,10 +290,9 @@ public class BukkitChunkManager extends ChunkManager {
                         continue;
                     }
                     final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
-                    if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z
-                        && PlotSquared.imp().getServerVersion()[1] == 13) {
-                        AugmentedUtils
-                            .bypass(ignoreAugment, () -> queue.regenChunkSafe(chunk.getX(), chunk.getZ()));
+                    if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z) {
+                        AugmentedUtils.bypass(ignoreAugment,
+                            () -> queue.regenChunkSafe(chunk.getX(), chunk.getZ()));
                         continue;
                     }
                     boolean checkX1 = false;
