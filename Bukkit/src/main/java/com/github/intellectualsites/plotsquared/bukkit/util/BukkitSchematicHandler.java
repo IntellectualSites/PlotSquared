@@ -7,26 +7,17 @@ import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
-import com.sk89q.jnbt.ByteArrayTag;
-import com.sk89q.jnbt.CompoundTag;
-import com.sk89q.jnbt.IntArrayTag;
-import com.sk89q.jnbt.IntTag;
-import com.sk89q.jnbt.ListTag;
-import com.sk89q.jnbt.ShortTag;
-import com.sk89q.jnbt.StringTag;
-import com.sk89q.jnbt.Tag;
+import com.sk89q.jnbt.*;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.extension.platform.Capability;
+import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.IntStream;
 
 /**
@@ -52,7 +43,9 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 int height = cuboidRegion.getHeight();
                 final int length = cuboidRegion.getLength();
                 Map<String, Tag> schematic = new HashMap<>();
-                schematic.put("Version", new IntTag(1));
+                schematic.put("Version", new IntTag(2));
+                schematic.put("DataVersion", new IntTag(WorldEdit.getInstance().getPlatformManager()
+                    .queryCapability(Capability.WORLD_EDITING).getDataVersion()));
 
                 Map<String, Tag> metadata = new HashMap<>();
                 metadata.put("WEOffsetX", new IntTag(0));
@@ -69,9 +62,11 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 schematic.put("Offset", new IntArrayTag(new int[] {0, 0, 0,}));
 
                 Map<String, Integer> palette = new HashMap<>();
+                Map<String, Integer> biomePalette = new HashMap<>();
 
                 List<CompoundTag> tileEntities = new ArrayList<>();
                 ByteArrayOutputStream buffer = new ByteArrayOutputStream(width * height * length);
+                ByteArrayOutputStream biomeBuffer = new ByteArrayOutputStream(width * length);
                 // Queue
                 final ArrayDeque<CuboidRegion> queue = new ArrayDeque<>(regions);
                 TaskManager.runTask(new Runnable() {
@@ -88,6 +83,14 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                 schematic.put("BlockData", new ByteArrayTag(buffer.toByteArray()));
                                 schematic.put("TileEntities",
                                     new ListTag(CompoundTag.class, tileEntities));
+
+                                schematic.put("BiomePaletteMax", new IntTag(biomePalette.size()));
+
+                                Map<String, Tag> biomePaletteTag = new HashMap<>();
+                                biomePalette.forEach((key, value) -> biomePaletteTag.put(key, new IntTag(value)));
+
+                                schematic.put("BiomePalette", new CompoundTag(biomePaletteTag));
+                                schematic.put("BiomeData", new ByteArrayTag(biomeBuffer.toByteArray()));
                                 whenDone.value = new CompoundTag(schematic);
                                 TaskManager.runTask(whenDone);
                             });
@@ -177,6 +180,31 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                                                 blockId >>>= 7;
                                                             }
                                                             buffer.write(blockId);
+
+                                                            if (ry == sy) {
+                                                                BlockVector2 pt =
+                                                                    BlockVector2.at(x, z);
+                                                                BiomeType biome =
+                                                                    cuboidRegion.getWorld()
+                                                                        .getBiome(pt);
+                                                                String biomeStr = biome.getId();
+                                                                int biomeId;
+                                                                if (biomePalette
+                                                                    .containsKey(biomeStr)) {
+                                                                    biomeId =
+                                                                        biomePalette.get(biomeStr);
+                                                                } else {
+                                                                    biomeId = biomePalette.size();
+                                                                    biomePalette
+                                                                        .put(biomeStr, biomeId);
+                                                                }
+                                                                while ((biomeId & -128) != 0) {
+                                                                    biomeBuffer
+                                                                        .write(biomeId & 127 | 128);
+                                                                    biomeId >>>= 7;
+                                                                }
+                                                                biomeBuffer.write(biomeId);
+                                                            }
                                                         }
                                                         if (xiter.hasNext()) {
                                                             this.run();

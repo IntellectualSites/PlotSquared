@@ -118,6 +118,12 @@ public class HybridPlotManager extends ClassicPlotManager {
                         }
                     }
                 }
+                BiomeType biome = hybridPlotWorld.G_SCH_B.get(MathMan.pair(absX, absZ));
+                if (biome != null) {
+                    queue.setBiome(x, z, biome);
+                } else {
+                    queue.setBiome(x, z, hybridPlotWorld.PLOT_BIOME);
+                }
             }
         }
     }

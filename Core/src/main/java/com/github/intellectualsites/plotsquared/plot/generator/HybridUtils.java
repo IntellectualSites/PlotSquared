@@ -29,6 +29,7 @@ import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
@@ -612,6 +613,14 @@ public abstract class HybridUtils {
                                             WEExtent.AIRBASE);
                                     }
                                 }
+                            }
+                            BiomeType biome = plotWorld.G_SCH_B.get(MathMan.pair(absX, absZ));
+                            if (biome != null) {
+                                queue.setBiome(finalX + X + plotWorld.ROAD_OFFSET_X,
+                                    finalZ + Z + plotWorld.ROAD_OFFSET_Z, biome);
+                            } else {
+                                queue.setBiome(finalX + X + plotWorld.ROAD_OFFSET_X,
+                                    finalZ + Z + plotWorld.ROAD_OFFSET_Z, plotWorld.PLOT_BIOME);
                             }
                         }
                     }

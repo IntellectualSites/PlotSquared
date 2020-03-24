@@ -73,6 +73,8 @@ public abstract class LocalBlockQueue {
 
     public abstract boolean setBiome(int x, int z, BiomeType biome);
 
+    public abstract boolean setBiome();
+
     public abstract String getWorld();
 
     public abstract void flush();

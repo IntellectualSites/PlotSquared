@@ -17,10 +17,12 @@ import com.sk89q.jnbt.CompoundTagBuilder;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.transform.BlockTransformExtent;
 import com.sk89q.worldedit.internal.helper.MCDirections;
+import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.util.Direction;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +38,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public short PATH_WIDTH_LOWER;
     public short PATH_WIDTH_UPPER;
     public HashMap<Integer, BaseBlock[]> G_SCH;
+    public HashMap<Integer, BiomeType> G_SCH_B;
     public int SCHEM_Y;
     private Location SIGN_LOCATION;
 
@@ -211,6 +214,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                                 id, false, h3);
                         }
                     }
+                    BiomeType biome = blockArrayClipboard3
+                        .getBiome(BlockVector2.at(x + min.getBlockX(), z + min.getBlockZ()));
+                    addOverlayBiome((short) (x + shift + oddshift + centerShiftX),
+                        (short) (z + shift + oddshift + centerShiftZ), biome);
                 }
             }
 /*            HashMap<BlockLoc, CompoundTag> items = schematic3.getTiles();
@@ -318,5 +325,20 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             return;
         }
         existing[y] = id;
+    }
+
+    public void addOverlayBiome(short x, short z, BiomeType id) {
+        if (z < 0) {
+            z += this.SIZE;
+        } else if (z >= this.SIZE) {
+            z -= this.SIZE;
+        }
+        if (x < 0) {
+            x += this.SIZE;
+        } else if (x >= this.SIZE) {
+            x -= this.SIZE;
+        }
+        int pair = MathMan.pair(x, z);
+        this.G_SCH_B.put(pair, id);
     }
 }
