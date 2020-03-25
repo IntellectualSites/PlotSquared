@@ -60,6 +60,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Serve
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.SnowFormFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.SnowMeltFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.SoilDryFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.CoralDryFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.TamedAttackFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.TamedInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.TimeFlag;
@@ -134,6 +135,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(SnowFormFlag.SNOW_FORM_FALSE);
         this.addFlag(SnowMeltFlag.SNOW_MELT_TRUE);
         this.addFlag(SoilDryFlag.SOIL_DRY_FALSE);
+        this.addFlag(CoralDryFlag.CORAL_DRY_FALSE);
         this.addFlag(TamedAttackFlag.TAMED_ATTACK_FALSE);
         this.addFlag(TamedInteractFlag.TAMED_INTERACT_FALSE);
         this.addFlag(VehicleBreakFlag.VEHICLE_BREAK_FALSE);

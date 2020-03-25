@@ -627,6 +627,7 @@ public enum Captions implements Caption {
     FLAG_DESCRIPTION_SNOW_FORM("Set to `true` to allow snow to form within the plot.", "Flags"),
     FLAG_DESCRIPTION_SNOW_MELT("Set to `true` to allow snow to melt within the plot.", "Flags"),
     FLAG_DESCRIPTION_SOIL_DRY("Set to `true` to allow soil to dry within the plot.", "Flags"),
+    FLAG_DESCRIPTION_CORAL_DRY("Set to `true` to allow coral blocks to dry within the plot.", "Flags"),
     FLAG_DESCRIPTION_TAMED_ATTACK("Set to `true` to allow guests to attack tamed animals in the plot.", "Flags"),
     FLAG_DESCRIPTION_TAMED_INTERACT("Set to `true` to allow guests to interact with tamed animals in the plot.", "Flags"),
     FLAG_DESCRIPTION_TIME("Set the time in the plot to a fixed value.", "Flags"),

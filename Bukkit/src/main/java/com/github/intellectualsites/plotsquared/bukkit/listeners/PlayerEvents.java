@@ -1414,6 +1414,25 @@ public class PlayerEvents extends PlotListener implements Listener {
                     event.setCancelled(true);
                 }
                 break;
+            case TUBE_CORAL_BLOCK:
+            case BRAIN_CORAL_BLOCK:
+            case BUBBLE_CORAL_BLOCK:
+            case FIRE_CORAL_BLOCK:
+            case DEAD_HORN_CORAL_BLOCK:
+            case TUBE_CORAL:
+            case BRAIN_CORAL:
+            case BUBBLE_CORAL:
+            case FIRE_CORAL:
+            case HORN_CORAL:
+            case TUBE_CORAL_FAN:
+            case BRAIN_CORAL_FAN:
+            case BUBBLE_CORAL_FAN:
+            case FIRE_CORAL_FAN:
+            case HORN_CORAL_FAN:
+                if (!plot.getFlag(CoralDryFlag.class)) {
+                    event.setCancelled(true);
+                }
+                break;
         }
     }
 
