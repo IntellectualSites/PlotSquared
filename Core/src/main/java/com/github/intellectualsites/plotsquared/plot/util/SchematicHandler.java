@@ -282,7 +282,7 @@ public abstract class SchematicHandler {
             Settings.Paths.SCHEMATICS + File.separator + name);
         if (!file.exists()) {
             file = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
-                Settings.Paths.SCHEMATICS + File.separator + name + "atic");
+                Settings.Paths.SCHEMATICS + File.separator + name);
         }
         return getSchematic(file);
     }
@@ -319,18 +319,17 @@ public abstract class SchematicHandler {
         if (!file.exists()) {
             return null;
         }
-        try {
-            ClipboardFormat format = ClipboardFormats.findByFile(file);
-            if (format != null) {
-                ClipboardReader reader = format.getReader(new FileInputStream(file));
+        ClipboardFormat format = ClipboardFormats.findByFile(file);
+        if (format != null) {
+            try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
                 Clipboard clip = reader.read();
                 return new Schematic(clip);
-            } else {
-                throw new UnsupportedFormatException(
-                    "This schematic format is not recognised or supported.");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } else {
+            throw new UnsupportedFormatException(
+                "This schematic format is not recognised or supported.");
         }
         return null;
     }
