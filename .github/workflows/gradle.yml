@@ -5,12 +5,12 @@ on:
     branches:
     - v4
     - v5
-    - leagcy/1.8-1.12
+    - legacy/1.8-1.12
   pull_request:
     branches:
     - v4
     - v5
-    - leagcy/1.8-1.12
+    - legacy/1.8-1.12
  
 jobs:
   test:
