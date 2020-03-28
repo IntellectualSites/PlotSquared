@@ -281,6 +281,11 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                             (short) (shift - x + (oddshift - 1)), id, true, h1);
                     }
                 }
+                BiomeType biome = blockArrayClipboard1
+                    .getBiome(BlockVector2.at(x + min.getBlockX(), z + min.getBlockZ()));
+                addOverlayBiome((short) (x - shift), (short) (z + shift + oddshift), biome);
+                addOverlayBiome((short) (z + shift + oddshift),
+                    (short) (shift - x + (oddshift - 1)), biome);
             }
         }
 
@@ -300,6 +305,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                             (short) (z - shift), id, false, h2);
                     }
                 }
+                BiomeType biome = blockArrayClipboard1
+                    .getBiome(BlockVector2.at(x + min.getBlockX(), z + min.getBlockZ()));
+                addOverlayBiome((short) (x - shift), (short) (z - shift), biome);
             }
         }
     }
