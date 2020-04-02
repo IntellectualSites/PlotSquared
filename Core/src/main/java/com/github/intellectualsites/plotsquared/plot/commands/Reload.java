@@ -6,6 +6,7 @@ import com.github.intellectualsites.plotsquared.configuration.MemorySection;
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 
@@ -28,16 +29,16 @@ public class Reload extends SubCommand {
             Captions.load(PlotSquared.get().translationFile);
             PlotSquared.get().forEachPlotArea(area -> {
                 ConfigurationSection worldSection =
-                    PlotSquared.get().worlds.getConfigurationSection("worlds." + area.worldname);
+                    PlotSquared.get().worlds.getConfigurationSection("worlds." + area.getWorldName());
                 if (worldSection == null) {
                     return;
                 }
-                if (area.TYPE != 2 || !worldSection.contains("areas")) {
+                if (area.getType() != PlotAreaType.PARTIAL || !worldSection.contains("areas")) {
                     area.saveConfiguration(worldSection);
                     area.loadDefaultConfiguration(worldSection);
                 } else {
                     ConfigurationSection areaSection = worldSection.getConfigurationSection(
-                        "areas." + area.id + "-" + area.getMin() + "-" + area.getMax());
+                        "areas." + area.getId() + "-" + area.getMin() + "-" + area.getMax());
                     YamlConfiguration clone = new YamlConfiguration();
                     for (String key : areaSection.getKeys(true)) {
                         if (areaSection.get(key) instanceof MemorySection) {

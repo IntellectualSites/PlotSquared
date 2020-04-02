@@ -85,7 +85,7 @@ public class SpongeTerrainGen
     }
 
     @Override public void augment(PlotArea area) {
-        SpongeAugmentedGenerator.get(SpongeUtil.getWorld(area.worldname));
+        SpongeAugmentedGenerator.get(SpongeUtil.getWorld(area.getWorldName()));
     }
 
     @Override public boolean isFull() {

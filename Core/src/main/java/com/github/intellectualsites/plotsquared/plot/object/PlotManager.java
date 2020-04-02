@@ -84,7 +84,7 @@ public abstract class PlotManager {
         HashSet<FileBytes> files = new HashSet<>(Collections.singletonList(
             new FileBytes(Settings.Paths.TEMPLATES + "/tmp-data.yml",
                 Template.getBytes(plotArea))));
-        Template.zipAll(plotArea.worldname, files);
+        Template.zipAll(plotArea.getWorldName(), files);
     }
 
     public int getWorldHeight() {

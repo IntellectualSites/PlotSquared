@@ -63,7 +63,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
     }
 
     @Override public void augment(PlotArea area) {
-        BukkitAugmentedGenerator.get(BukkitUtil.getWorld(area.worldname));
+        BukkitAugmentedGenerator.get(BukkitUtil.getWorld(area.getWorldName()));
     }
 
     @Override public boolean isFull() {
@@ -88,8 +88,8 @@ public class BukkitPlotGenerator extends ChunkGenerator
                 Set<PlotArea> areas = PlotSquared.get().getPlotAreas(name);
                 if (!areas.isEmpty()) {
                     PlotArea area = areas.iterator().next();
-                    if (!area.MOB_SPAWNING) {
-                        if (!area.SPAWN_EGGS) {
+                    if (!area.isMobSpawning()) {
+                        if (!area.isSpawnEggs()) {
                             world.setSpawnFlags(false, false);
                         }
                         world.setAmbientSpawnLimit(0);

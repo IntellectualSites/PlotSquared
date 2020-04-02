@@ -83,8 +83,8 @@ public class WEManager {
             (allowMember && plot.isAdded(uuid)) || (!allowMember && (plot.isOwner(uuid)) || plot
                 .getTrusted().contains(uuid))) && !plot.getFlag(NoWorldeditFlag.class)) {
             for (CuboidRegion region : plot.getRegions()) {
-                BlockVector3 pos1 = region.getMinimumPoint().withY(area.MIN_BUILD_HEIGHT);
-                BlockVector3 pos2 = region.getMaximumPoint().withY(area.MAX_BUILD_HEIGHT);
+                BlockVector3 pos1 = region.getMinimumPoint().withY(area.getMinBuildHeight());
+                BlockVector3 pos2 = region.getMaximumPoint().withY(area.getMaxBuildHeight());
                 CuboidRegion copy = new CuboidRegion(pos1, pos2);
                 regions.add(copy);
             }

@@ -39,6 +39,8 @@ import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaTerrainType;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
@@ -318,7 +320,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Override @SuppressWarnings("deprecation") public void runEntityTask() {
         PlotSquared.log(Captions.PREFIX + "KillAllEntities started.");
         TaskManager.runTaskRepeat(() -> PlotSquared.get().forEachPlotArea(plotArea -> {
-            final World world = Bukkit.getWorld(plotArea.worldname);
+            final World world = Bukkit.getWorld(plotArea.getWorldName());
             try {
                 if (world == null) {
                     return;
@@ -728,8 +730,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             SetupObject setup = new SetupObject();
             setup.plotManager = manager;
             setup.setupGenerator = worldConfig.getString("generator.init", manager);
-            setup.type = worldConfig.getInt("generator.type");
-            setup.terrain = worldConfig.getInt("generator.terrain");
+            setup.type = MainUtil.getType(worldConfig);
+            setup.terrain = MainUtil.getTerrain(worldConfig);
             setup.step = new ConfigurationNode[0];
             setup.world = worldName;
             SetupUtils.manager.setupWorld(setup);

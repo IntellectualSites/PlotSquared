@@ -15,6 +15,7 @@ import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
@@ -221,7 +222,7 @@ public class ExpireManager {
         // Run applicable non confirming tasks
         for (int i = 0; i < applicable.size(); i++) {
             ExpiryTask expiryTask = applicable.poll();
-            if (!expiryTask.needsAnalysis() || plot.getArea().TYPE != 0) {
+            if (!expiryTask.needsAnalysis() || plot.getArea().getType() != PlotAreaType.NORMAL) {
                 if (!expiryTask.requiresConfirmation()) {
                     return Collections.singletonList(expiryTask);
                 }
@@ -231,7 +232,7 @@ public class ExpireManager {
         // Run applicable confirming tasks
         for (int i = 0; i < applicable.size(); i++) {
             ExpiryTask expiryTask = applicable.poll();
-            if (!expiryTask.needsAnalysis() || plot.getArea().TYPE != 0) {
+            if (!expiryTask.needsAnalysis() || plot.getArea().getType() != PlotAreaType.NORMAL) {
                 return Collections.singletonList(expiryTask);
             }
             applicable.add(expiryTask);

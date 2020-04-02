@@ -128,7 +128,7 @@ public class BukkitChunkManager extends ChunkManager {
             return existing;
         }
         PlotArea area = plot.getArea();
-        World world = BukkitUtil.getWorld(area.worldname);
+        World world = BukkitUtil.getWorld(area.getWorldName());
 
         Location bot = plot.getBottomAbs();
         Location top = plot.getTopAbs();

@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
+import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.commands.Like;
 import com.github.intellectualsites.plotsquared.plot.config.Caption;
@@ -15,6 +16,8 @@ import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaTerrainType;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
@@ -49,8 +52,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -224,10 +231,10 @@ public class MainUtil {
      * @return true if any changes were made
      */
     public static boolean resetBiome(PlotArea area, Location pos1, Location pos2) {
-        BiomeType biome = area.PLOT_BIOME;
-        if (!Objects.equals(WorldUtil.IMP.getBiome(area.worldname, (pos1.getX() + pos2.getX()) / 2,
+        BiomeType biome = area.getPlotBiome();
+        if (!Objects.equals(WorldUtil.IMP.getBiome(area.getWorldName(), (pos1.getX() + pos2.getX()) / 2,
             (pos1.getZ() + pos2.getZ()) / 2), biome)) {
-            MainUtil.setBiome(area.worldname, pos1.getX(), pos1.getZ(), pos2.getX(), pos2.getZ(),
+            MainUtil.setBiome(area.getWorldName(), pos1.getX(), pos1.getZ(), pos2.getX(), pos2.getZ(),
                 biome);
             return true;
         }
@@ -802,8 +809,8 @@ public class MainUtil {
         boolean build = plot.isAdded(player.getUUID());
         String owner = plot.getOwners().isEmpty() ? "unowned" : getPlayerList(plot.getOwners());
         if (plot.getArea() != null) {
-            info = info.replace("%area%", plot.getArea().worldname +
-                (plot.getArea().id == null ? "" : "(" + plot.getArea().id + ")"));
+            info = info.replace("%area%", plot.getArea().getWorldName() +
+                (plot.getArea().getId() == null ? "" : "(" + plot.getArea().getId() + ")"));
         } else {
             info = info.replace("%area%", Captions.NONE.getTranslated());
         }
@@ -911,5 +918,33 @@ public class MainUtil {
                 }
             });
         }
+    }
+
+    private static <T> T getValueFromConfig(ConfigurationSection config, String path,
+                                            IntFunction<Optional<T>> intParser,
+                                            Function<String, Optional<T>> textualParser,
+                                            Supplier<T> defaultValue) {
+        String value = config.getString(path);
+        if (value == null) {
+            return defaultValue.get();
+        }
+        if (MathMan.isInteger(value)) {
+            return intParser.apply(Integer.parseInt(value)).orElseGet(defaultValue);
+        }
+        return textualParser.apply(value).orElseGet(defaultValue);
+    }
+
+    public static PlotAreaType getType(ConfigurationSection config) {
+        return getValueFromConfig(config, "generator.type",
+                PlotAreaType::fromLegacyInt,
+                PlotAreaType::fromString,
+                () -> PlotAreaType.NORMAL);
+    }
+
+    public static PlotAreaTerrainType getTerrain(ConfigurationSection config) {
+        return getValueFromConfig(config, "generator.terrain",
+                PlotAreaTerrainType::fromLegacyInt,
+                PlotAreaTerrainType::fromString,
+                () -> PlotAreaTerrainType.NONE);
     }
 }

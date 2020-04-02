@@ -26,7 +26,7 @@ public class ExpiryTask {
     }
 
     public boolean allowsArea(PlotArea area) {
-        return settings.WORLDS.contains(area.toString()) || settings.WORLDS.contains(area.worldname)
+        return settings.WORLDS.contains(area.toString()) || settings.WORLDS.contains(area.getWorldName())
             || settings.WORLDS.contains("*");
     }
 

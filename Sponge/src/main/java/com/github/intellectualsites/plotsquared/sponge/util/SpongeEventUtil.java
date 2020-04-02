@@ -56,7 +56,7 @@ public class SpongeEventUtil extends EventUtil {
     }
 
     @Override public boolean callUnlink(PlotArea area, ArrayList<PlotId> plots) {
-        return callEvent(new PlotUnlinkEvent(SpongeUtil.getWorld(area.worldname), plots));
+        return callEvent(new PlotUnlinkEvent(SpongeUtil.getWorld(area.getWorldName()), plots));
     }
 
     @Override public void callEntry(PlotPlayer player, Plot plot) {

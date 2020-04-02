@@ -264,14 +264,14 @@ public class PlotListener {
             }
             if (!plot.getFlag(GamemodeFlag.class).equals(GamemodeFlag.DEFAULT) || !plot
                 .getFlag(GuestGamemodeFlag.class).equals(GamemodeFlag.DEFAULT)) {
-                if (player.getGameMode() != pw.GAMEMODE) {
+                if (player.getGameMode() != pw.getGameMode()) {
                     if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
-                        player.setGameMode(pw.GAMEMODE);
+                        player.setGameMode(pw.getGameMode());
                     } else {
                         MainUtil.sendMessage(player, StringMan
                             .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.getTranslated(), "{plot}",
                                 plot.toString(), "{gamemode}",
-                                pw.GAMEMODE.getName().toLowerCase()));
+                                pw.getGameMode().getName().toLowerCase()));
                     }
                 }
             }

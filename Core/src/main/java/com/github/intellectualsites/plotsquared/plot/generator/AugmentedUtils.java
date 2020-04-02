@@ -3,6 +3,8 @@ package com.github.intellectualsites.plotsquared.plot.generator;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaTerrainType;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.util.block.DelegateLocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
@@ -42,10 +44,10 @@ public class AugmentedUtils {
         }
         boolean toReturn = false;
         for (final PlotArea area : areas) {
-            if (area.TYPE == 0) {
+            if (area.getType() == PlotAreaType.NORMAL) {
                 return false;
             }
-            if (area.TERRAIN == 3) {
+            if (area.getTerrain() == PlotAreaTerrainType.ALL) {
                 continue;
             }
             IndependentPlotGenerator generator = area.getGenerator();
@@ -60,7 +62,7 @@ public class AugmentedUtils {
             int txx;
             int tzz;
             // gen
-            if (area.TYPE == 2) {
+            if (area.getType() == PlotAreaType.PARTIAL) {
                 bxx = Math.max(0, area.getRegion().getMinimumPoint().getX() - blockX);
                 bzz = Math.max(0, area.getRegion().getMinimumPoint().getZ() - blockZ);
                 txx = Math.min(15, area.getRegion().getMaximumPoint().getX() - blockX);
@@ -87,7 +89,7 @@ public class AugmentedUtils {
             }
             LocalBlockQueue secondaryMask;
             BlockState air = BlockTypes.AIR.getDefaultState();
-            if (area.TERRAIN == 2) {
+            if (area.getTerrain() == PlotAreaTerrainType.ROAD) {
                 PlotManager manager = area.getPlotManager();
                 final boolean[][] canPlace = new boolean[16][16];
                 boolean has = false;
@@ -133,8 +135,8 @@ public class AugmentedUtils {
                 toReturn = true;
             }
             ScopedLocalBlockQueue scoped = new ScopedLocalBlockQueue(secondaryMask,
-                new Location(area.worldname, blockX, 0, blockZ),
-                new Location(area.worldname, blockX + 15, 255, blockZ + 15));
+                new Location(area.getWorldName(), blockX, 0, blockZ),
+                new Location(area.getWorldName(), blockX + 15, 255, blockZ + 15));
             generator.generateChunk(scoped, area);
             generator.populateChunk(scoped, area);
         }

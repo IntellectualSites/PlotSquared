@@ -10,11 +10,14 @@ import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.FileBytes;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaTerrainType;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
 import com.github.intellectualsites.plotsquared.plot.object.TeleportCause;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
@@ -81,7 +84,7 @@ public class Template extends SubCommand {
 
     public static byte[] getBytes(PlotArea plotArea) {
         ConfigurationSection section =
-            PlotSquared.get().worlds.getConfigurationSection("worlds." + plotArea.worldname);
+            PlotSquared.get().worlds.getConfigurationSection("worlds." + plotArea.getWorldName());
         YamlConfiguration config = new YamlConfiguration();
         String generator = SetupUtils.manager.getGenerator(plotArea);
         if (generator != null) {
@@ -157,14 +160,12 @@ public class Template extends SubCommand {
                 String manager =
                     worldConfig.getString("generator.plugin", PlotSquared.imp().getPluginName());
                 String generator = worldConfig.getString("generator.init", manager);
-                int type = worldConfig.getInt("generator.type");
-                int terrain = worldConfig.getInt("generator.terrain");
-
                 SetupObject setup = new SetupObject();
+                setup.type = MainUtil.getType(worldConfig);
+                setup.terrain = MainUtil.getTerrain(worldConfig);
+
                 setup.plotManager = manager;
                 setup.setupGenerator = generator;
-                setup.type = type;
-                setup.terrain = terrain;
                 setup.step = new ConfigurationNode[0];
                 setup.world = world;
                 SetupUtils.manager.setupWorld(setup);

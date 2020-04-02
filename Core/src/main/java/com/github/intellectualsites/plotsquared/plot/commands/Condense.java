@@ -36,7 +36,7 @@ public class Condense extends SubCommand {
             return false;
         }
         PlotArea area = PlotSquared.get().getPlotAreaByString(args[0]);
-        if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
+        if (area == null || !WorldUtil.IMP.isWorld(area.getWorldName())) {
             MainUtil.sendMessage(player, "INVALID AREA");
             return false;
         }
@@ -204,7 +204,7 @@ public class Condense extends SubCommand {
                 return true;
         }
         MainUtil.sendMessage(player,
-            "/plot condense " + area.worldname + " <start|stop|info> [radius]");
+            "/plot condense " + area.getWorldName() + " <start|stop|info> [radius]");
         return false;
     }
 

@@ -38,12 +38,12 @@ public class SetupObject {
     /**
      * The management type (normal, augmented, partial)
      */
-    public int type;
+    public PlotAreaType type;
 
     /**
      * The terrain type
      */
-    public int terrain;
+    public PlotAreaTerrainType terrain;
 
     /**
      * Area ID (may be null)

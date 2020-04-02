@@ -7,6 +7,8 @@ import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaTerrainType;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
@@ -32,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.UUID;
 
 @CommandDeclaration(command = "setup",
@@ -114,21 +117,22 @@ public class Setup extends SubCommand {
                         + "\n&8 - &7AUGMENTED&8 - &7Plot generation with terrain" + partial);
                 break;
             case 1:  // choose world type
-                List<String> allTypes = Arrays.asList("default", "augmented", "partial");
+                List<String> allTypes = Arrays.asList("normal", "augmented", "partial");
                 List<String> allDesc = Arrays
                     .asList("Standard plot generation", "Plot generation with vanilla terrain",
                         "Vanilla with clusters of plots");
                 ArrayList<String> types = new ArrayList<>();
                 if (SetupUtils.generators.get(object.setupGenerator).isFull()) {
-                    types.add("default");
+                    types.add("normal");
                 }
                 types.add("augmented");
                 types.add("partial");
-                if (args.length != 1 || !types.contains(args[0].toLowerCase())) {
+                Optional<PlotAreaType> plotAreaType;
+                if (args.length != 1 || !(plotAreaType = PlotAreaType.fromString(args[0])).isPresent()) {
                     MainUtil.sendMessage(player, "&cYou must choose a world type!");
                     for (String type : types) {
                         int i = allTypes.indexOf(type);
-                        if (type.equals("default")) {
+                        if (type.equals("normal")) {
                             MainUtil
                                 .sendMessage(player, "&8 - &2" + type + " &8-&7 " + allDesc.get(i));
                         } else {
@@ -138,9 +142,9 @@ public class Setup extends SubCommand {
                     }
                     return false;
                 }
-                object.type = allTypes.indexOf(args[0].toLowerCase());
+                object.type = plotAreaType.orElse(PlotAreaType.NORMAL);
                 GeneratorWrapper<?> gen = SetupUtils.generators.get(object.setupGenerator);
-                if (object.type == 0) {
+                if (object.type == PlotAreaType.NORMAL) {
                     object.current = 6;
                     if (object.step == null) {
                         object.plotManager = object.setupGenerator;
@@ -181,7 +185,7 @@ public class Setup extends SubCommand {
                                 .getNewPlotArea("CheckingPlotSquaredGenerator", null, null, null)
                                 .getSettingNodes();
                     }
-                    if (object.type == 2) {
+                    if (object.type == PlotAreaType.PARTIAL) {
                         MainUtil.sendMessage(player, "What would you like this area called?");
                         object.current++;
                     } else {
@@ -200,7 +204,7 @@ public class Setup extends SubCommand {
                     return false;
                 }
                 for (PlotArea area : PlotSquared.get().getPlotAreas()) {
-                    if (area.id != null && area.id.equalsIgnoreCase(args[0])) {
+                    if (area.getId() != null && area.getId().equalsIgnoreCase(args[0])) {
                         MainUtil.sendMessage(player,
                             "&cYou must choose an area id that is not in use!");
                         return false;
@@ -243,8 +247,8 @@ public class Setup extends SubCommand {
                     + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
                 break;
             case 5: { // Choose terrain
-                List<String> terrain = Arrays.asList("none", "ore", "road", "all");
-                if (args.length != 1 || !terrain.contains(args[0].toLowerCase())) {
+                Optional<PlotAreaTerrainType> optTerrain;
+                if (args.length != 1 || !(optTerrain = PlotAreaTerrainType.fromString(args[0])).isPresent()) {
                     MainUtil.sendMessage(player,
                         "&cYou must choose the terrain!" + "\n&8 - &2NONE&8 - &7No terrain at all"
                             + "\n&8 - &7ORE&8 - &7Just some ore veins and trees"
@@ -252,7 +256,7 @@ public class Setup extends SubCommand {
                             + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
                     return false;
                 }
-                object.terrain = terrain.indexOf(args[0].toLowerCase());
+                object.terrain = optTerrain.get();
                 object.current++;
                 if (object.step == null) {
                     object.step = SetupUtils.generators.get(object.plotManager).getPlotGenerator()

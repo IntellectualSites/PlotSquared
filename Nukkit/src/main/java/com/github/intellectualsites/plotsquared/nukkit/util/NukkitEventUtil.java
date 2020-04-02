@@ -66,7 +66,7 @@ public class NukkitEventUtil extends EventUtil {
     }
 
     @Override public boolean callUnlink(PlotArea area, ArrayList<PlotId> plots) {
-        return callEvent(new PlotUnlinkEvent(NukkitUtil.getWorld(area.worldname), area, plots));
+        return callEvent(new PlotUnlinkEvent(NukkitUtil.getWorld(area.getWorldName()), area, plots));
     }
 
     @Override public void callEntry(PlotPlayer player, Plot plot) {

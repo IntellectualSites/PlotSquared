@@ -280,7 +280,7 @@ public class Plot {
     }
 
     public String getWorldName() {
-        return area.worldname;
+        return area.getWorldName();
     }
 
     /**
@@ -894,7 +894,7 @@ public class Plot {
                     return;
                 }
                 Plot current = queue.poll();
-                if (Plot.this.area.TERRAIN != 0) {
+                if (Plot.this.area.getTerrain() != PlotAreaTerrainType.NONE) {
                     try {
                         ChunkManager.manager
                             .regenerateRegion(current.getBottomAbs(), current.getTopAbs(), false,
@@ -993,7 +993,7 @@ public class Plot {
         if (createRoad) {
             manager.startPlotUnlink(ids);
         }
-        if (this.area.TERRAIN != 3 && createRoad) {
+        if (this.area.getTerrain() != PlotAreaTerrainType.ALL && createRoad) {
             for (Plot current : plots) {
                 if (current.getMerged(Direction.EAST)) {
                     manager.createRoadEast(current);
@@ -1040,9 +1040,9 @@ public class Plot {
             return;
         }
         PlotManager manager = this.area.getPlotManager();
-        if (this.area.ALLOW_SIGNS) {
+        if (this.area.allowSigns()) {
             Location location = manager.getSignLoc(this);
-            String id = this.id.x + ";" + this.id.y;
+            String id = this.id.toString();
             String[] lines =
                 new String[] {Captions.OWNER_SIGN_LINE_1.formatted().replaceAll("%id%", id),
                     Captions.OWNER_SIGN_LINE_2.formatted().replaceAll("%id%", id).replaceAll(
@@ -1330,7 +1330,7 @@ public class Plot {
             return location;
         }
         int y = WorldUtil.IMP.getHighestBlock(getWorldName(), location.getX(), location.getZ());
-        if (area.ALLOW_SIGNS) {
+        if (area.allowSigns()) {
             y = Math.max(y, getManager().getSignLoc(this).getY());
         }
         location.setY(1 + y);
@@ -1344,7 +1344,7 @@ public class Plot {
         int z = largest.getMinimumPoint().getZ() - 1;
         PlotManager manager = getManager();
         int y = isLoaded() ? WorldUtil.IMP.getHighestBlock(getWorldName(), x, z) : 62;
-        if (area.ALLOW_SIGNS && (y <= 0 || y >= 255)) {
+        if (area.allowSigns() && (y <= 0 || y >= 255)) {
             y = Math.max(y, manager.getSignLoc(this).getY() - 1);
         }
         return new Location(getWorldName(), x, y + 1, z);
@@ -1406,7 +1406,7 @@ public class Plot {
 
     public Location getDefaultHome(boolean member) {
         Plot plot = this.getBasePlot(false);
-        PlotLoc loc = member ? area.DEFAULT_HOME : area.NONMEMBER_HOME;
+        PlotLoc loc = member ? area.getDefaultHome() : area.getNonmemberHome();
         if (loc != null) {
             int x;
             int z;
@@ -1541,7 +1541,7 @@ public class Plot {
      */
     public void removeSign() {
         PlotManager manager = this.area.getPlotManager();
-        if (!this.area.ALLOW_SIGNS) {
+        if (!this.area.allowSigns()) {
             return;
         }
         Location location = manager.getSignLoc(this);
@@ -1602,15 +1602,15 @@ public class Plot {
             teleportPlayer(player, TeleportCause.COMMAND);
         }
         PlotArea plotworld = getArea();
-        if (plotworld.SCHEMATIC_ON_CLAIM) {
+        if (plotworld.isSchematicOnClaim()) {
             Schematic sch;
             try {
                 if (schematic == null || schematic.isEmpty()) {
-                    sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
+                    sch = SchematicHandler.manager.getSchematic(plotworld.getSchematicFile());
                 } else {
                     sch = SchematicHandler.manager.getSchematic(schematic);
                     if (sch == null) {
-                        sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
+                        sch = SchematicHandler.manager.getSchematic(plotworld.getSchematicFile());
                     }
                 }
             } catch (SchematicHandler.UnsupportedFormatException e) {
@@ -1663,7 +1663,7 @@ public class Plot {
         if (this.area.addPlot(this)) {
             DBFunc.createPlotAndSettings(this, () -> {
                 PlotArea plotworld = Plot.this.area;
-                if (notify && plotworld.AUTO_MERGE) {
+                if (notify && plotworld.isAutoMerge()) {
                     PlotPlayer player = WorldUtil.IMP.wrapPlayer(uuid);
                     PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
                         .callMerge(this, Direction.ALL, Integer.MAX_VALUE, player);
@@ -1846,17 +1846,14 @@ public class Plot {
      * - Used when a plot is merged<br>
      */
     public void removeRoadEast() {
-        if (this.area.TYPE != 0 && this.area.TERRAIN > 1) {
-            if (this.area.TERRAIN == 3) {
-                return;
-            }
+        if (this.area.getType() != PlotAreaType.NORMAL && this.area.getTerrain() == PlotAreaTerrainType.ROAD) {
             Plot other = this.getRelative(Direction.EAST);
             Location bot = other.getBottomAbs();
             Location top = this.getTopAbs();
             Location pos1 = new Location(this.getWorldName(), top.getX(), 0, bot.getZ());
             Location pos2 = new Location(this.getWorldName(), bot.getX(), MAX_HEIGHT, top.getZ());
             ChunkManager.manager.regenerateRegion(pos1, pos2, true, null);
-        } else {
+        } else if (this.area.getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.area.getPlotManager().removeRoadEast(this);
         }
     }
@@ -2228,7 +2225,7 @@ public class Plot {
         if (this.hasOwner()) {
             return this.owner;
         }
-        if (!this.area.ALLOW_SIGNS) {
+        if (!this.area.allowSigns()) {
             return null;
         }
         try {
@@ -2291,17 +2288,14 @@ public class Plot {
      * - Used when a plot is merged<br>
      */
     public void removeRoadSouth() {
-        if (this.area.TYPE != 0 && this.area.TERRAIN > 1) {
-            if (this.area.TERRAIN == 3) {
-                return;
-            }
+        if (this.area.getType() != PlotAreaType.NORMAL && this.area.getTerrain() == PlotAreaTerrainType.ROAD) {
             Plot other = this.getRelative(Direction.SOUTH);
             Location bot = other.getBottomAbs();
             Location top = this.getTopAbs();
             Location pos1 = new Location(this.getWorldName(), bot.getX(), 0, top.getZ());
             Location pos2 = new Location(this.getWorldName(), top.getX(), MAX_HEIGHT, bot.getZ());
             ChunkManager.manager.regenerateRegion(pos1, pos2, true, null);
-        } else {
+        } else if (this.area.getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.getManager().removeRoadSouth(this);
         }
     }
@@ -2470,17 +2464,14 @@ public class Plot {
      * Remove the SE road (only effects terrain)
      */
     public void removeRoadSouthEast() {
-        if (this.area.TYPE != 0 && this.area.TERRAIN > 1) {
-            if (this.area.TERRAIN == 3) {
-                return;
-            }
+        if (this.area.getType() != PlotAreaType.NORMAL && this.area.getTerrain() == PlotAreaTerrainType.ROAD) {
             Plot other = this.getRelative(1, 1);
             Location pos1 = this.getTopAbs().add(1, 0, 1);
             Location pos2 = other.getBottomAbs().subtract(1, 0, 1);
             pos1.setY(0);
             pos2.setY(MAX_HEIGHT);
             ChunkManager.manager.regenerateRegion(pos1, pos2, true, null);
-        } else {
+        } else if (this.area.getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.area.getPlotManager().removeRoadSouthEast(this);
         }
     }
@@ -2884,7 +2875,7 @@ public class Plot {
             return false;
         }
         final Location location;
-        if (this.area.HOME_ALLOW_NONMEMBER || plot.isAdded(player.getUUID())) {
+        if (this.area.isHomeAllowNonmember() || plot.isAdded(player.getUUID())) {
             location = this.getHome();
         } else {
             location = this.getDefaultHome(false);

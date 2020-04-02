@@ -47,7 +47,7 @@ public class HybridGen extends IndependentPlotGenerator {
 
         HybridPlotWorld hpw = (HybridPlotWorld) settings;
         // Biome
-        result.fillBiome(hpw.PLOT_BIOME);
+        result.fillBiome(hpw.getPlotBiome());
         // Bedrock
         if (hpw.PLOT_BEDROCK) {
             for (short x = 0; x < 16; x++) {

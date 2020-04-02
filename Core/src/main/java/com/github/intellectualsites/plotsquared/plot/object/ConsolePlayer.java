@@ -22,7 +22,7 @@ public class ConsolePlayer extends PlotPlayer {
         Location location;
         if (area != null) {
             CuboidRegion region = area.getRegion();
-            location = new Location(area.worldname,
+            location = new Location(area.getWorldName(),
                 region.getMinimumPoint().getX() + region.getMaximumPoint().getX() / 2, 0,
                 region.getMinimumPoint().getZ() + region.getMaximumPoint().getZ() / 2);
         } else {

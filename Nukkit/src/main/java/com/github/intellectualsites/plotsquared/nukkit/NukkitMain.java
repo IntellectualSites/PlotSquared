@@ -185,7 +185,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
             @Override public void run() {
                 PlotSquared.get().foreachPlotArea(new RunnableVal<PlotArea>() {
                     @Override public void run(PlotArea plotArea) {
-                        Level world = getServer().getLevelByName(plotArea.worldname);
+                        Level world = getServer().getLevelByName(plotArea.getWorldName());
                         try {
                             if (world == null) {
                                 return;

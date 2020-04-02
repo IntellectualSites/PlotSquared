@@ -88,7 +88,7 @@ public class Load extends SubCommand {
                     }
                     PlotArea area = plot.getArea();
                     SchematicHandler.manager
-                        .paste(taskSchematic, plot, 0, area.MIN_BUILD_HEIGHT, 0, false,
+                        .paste(taskSchematic, plot, 0, area.getMinBuildHeight(), 0, false,
                             new RunnableVal<Boolean>() {
                                 @Override public void run(Boolean value) {
                                     plot.removeRunning();

@@ -61,8 +61,8 @@ public class Claim extends SubCommand {
         }
         final PlotArea area = plot.getArea();
         if (schematic != null && !schematic.isEmpty()) {
-            if (area.SCHEMATIC_CLAIM_SPECIFY) {
-                if (!area.SCHEMATICS.contains(schematic.toLowerCase())) {
+            if (area.isSchematicClaimSpecify()) {
+                if (!area.hasSchematic(schematic)) {
                     return sendMessage(player, Captions.SCHEMATIC_INVALID,
                         "non-existent: " + schematic);
                 }
@@ -74,8 +74,8 @@ public class Claim extends SubCommand {
                 }
             }
         }
-        if ((EconHandler.manager != null) && area.USE_ECONOMY && !force) {
-            Expression<Double> costExr = area.PRICES.get("claim");
+        if ((EconHandler.manager != null) && area.useEconomy() && !force) {
+            Expression<Double> costExr = area.getPrices().get("claim");
             double cost = costExr.evaluate((double) currentPlots);
             if (cost > 0d) {
                 if (EconHandler.manager.getMoney(player) < cost) {
@@ -102,7 +102,7 @@ public class Claim extends SubCommand {
         DBFunc.createPlotSafe(plot, () -> TaskManager.IMP.sync(new RunnableVal<Object>() {
             @Override public void run(Object value) {
                 plot.claim(player, true, finalSchematic);
-                if (area.AUTO_MERGE) {
+                if (area.isAutoMerge()) {
                     PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
                         .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
                     if (event.getEventResult() == Result.DENY) {
