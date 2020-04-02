@@ -124,7 +124,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                 if (biome != null) {
                     queue.setBiome(x, z, biome);
                 } else {
-                    queue.setBiome(x, z, hybridPlotWorld.PLOT_BIOME);
+                    queue.setBiome(x, z, hybridPlotWorld.getPlotBiome());
                 }
             }
         }

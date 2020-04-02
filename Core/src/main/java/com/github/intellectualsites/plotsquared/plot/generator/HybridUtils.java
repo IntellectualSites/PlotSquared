@@ -621,7 +621,7 @@ public abstract class HybridUtils {
                                     finalZ + Z + plotWorld.ROAD_OFFSET_Z, biome);
                             } else {
                                 queue.setBiome(finalX + X + plotWorld.ROAD_OFFSET_X,
-                                    finalZ + Z + plotWorld.ROAD_OFFSET_Z, plotWorld.PLOT_BIOME);
+                                    finalZ + Z + plotWorld.ROAD_OFFSET_Z, plotWorld.getPlotBiome());
                             }
                         }
                     }

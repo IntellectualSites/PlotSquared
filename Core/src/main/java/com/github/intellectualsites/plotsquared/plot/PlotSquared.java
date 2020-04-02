@@ -468,8 +468,8 @@ import java.util.zip.ZipInputStream;
             return;
         }
         File file = new File(
-            this.IMP.getDirectory() + File.separator + "persistent_regen_data_" + plotArea.id + "_"
-                + plotArea.worldname);
+            this.IMP.getDirectory() + File.separator + "persistent_regen_data_" + plotArea.getId() + "_"
+                + plotArea.getWorldName());
         if (!file.exists()) {
             return;
         }
@@ -485,7 +485,7 @@ import java.util.zip.ZipInputStream;
                 int height = (int) list.get(2);
                 PlotSquared.log(
                     Captions.PREFIX + "Incomplete road regeneration found. Restarting in world "
-                        + plotArea.worldname + " with height " + height + ".");
+                        + plotArea.getWorldName() + " with height " + height + ".");
                 PlotSquared.debug("   Regions: " + regions.size());
                 PlotSquared.debug("   Chunks: " + chunks.size());
                 HybridUtils.UPDATE = true;
@@ -496,7 +496,7 @@ import java.util.zip.ZipInputStream;
             } finally {
                 if (!file.delete()) {
                     PlotSquared.log(
-                        Captions.PREFIX + "Error deleting persistent_regen_data_" + plotArea.id
+                        Captions.PREFIX + "Error deleting persistent_regen_data_" + plotArea.getId()
                             + ". Please manually delete this file.");
                 }
             }
@@ -1563,7 +1563,7 @@ import java.util.zip.ZipInputStream;
         list.add(chunks);
         list.add(HybridUtils.height);
         File file = new File(this.IMP.getDirectory() + File.separator + "persistent_regen_data_"
-            + HybridUtils.area.id + "_" + HybridUtils.area.worldname);
+            + HybridUtils.area.getId() + "_" + HybridUtils.area.getWorldName());
         if (file.exists() && !file.delete()) {
             PlotSquared.log(Captions.PREFIX
                 + "persistent_regen_data file already exists and could not be deleted.");
