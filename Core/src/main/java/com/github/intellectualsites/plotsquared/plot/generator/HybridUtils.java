@@ -378,7 +378,7 @@ public abstract class HybridUtils {
                     regeneratePlotWalls(area);
 
                     HybridUtils.UPDATE = false;
-                    PlotSquared.debug("Finished road conversion");
+                    PlotSquared.log("Finished road conversion");
                     // CANCEL TASK
                 } else {
                     final Runnable task = this;

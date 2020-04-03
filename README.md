@@ -23,7 +23,7 @@ is to provide a lag-free and smooth experience.
 * [Download](https://github.com/IntellectualSites/PlotSquared/releases/tag/dev)
 * [[Jenkins (Dev Builds)](https://ci.athion.net/job/PlotSquared-Breaking/)] [[Jenkins (Releases)](https://ci.athion.net/job/PlotSquared-Releases/)]
 * [Spigot Page](https://www.spigotmc.org/resources/plotsquared.1177/)
-* [Discord](https://discord.gg/ngZCzbU)
+* [Discord](https://discord.gg/KxkjDVg)
 * [Wiki](https://github.com/IntellectualSites/PlotSquared/wiki)
 
 ### Developer Resources
