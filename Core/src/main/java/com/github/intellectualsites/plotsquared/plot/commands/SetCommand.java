@@ -26,7 +26,7 @@ public abstract class SetCommand extends SubCommand {
                 return false;
             }
         }
-        if (!plot.isOwner(player.getUUID())) {
+        if (!plot.isOwner(player.getUUID()) && !plot.getTrusted().contains(player.getUUID())) {
             if (!Permissions
                 .hasPermission(player,
                     Captions.format(Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()))) {
