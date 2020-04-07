@@ -1,7 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
@@ -19,7 +18,14 @@ import com.github.intellectualsites.plotsquared.plot.generator.SquarePlotWorld;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
-import com.github.intellectualsites.plotsquared.plot.util.*;
+import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.plot.util.Permissions;
+import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
@@ -1581,6 +1587,9 @@ public class Plot {
 
     public boolean claim(final PlotPlayer player, boolean teleport, String schematic) {
         if (!canClaim(player)) {
+            PlotSquared.debug(Captions.PREFIX.getTranslated() +
+                String.format("Player %s attempted to claim plot %s, but was not allowed",
+                    player.getName(), this.getId().toCommaSeparatedString()));
             return false;
         }
         return claim(player, teleport, schematic, true);
@@ -1591,6 +1600,9 @@ public class Plot {
 
         if (updateDB) {
             if (!create(player.getUUID(), true)) {
+                PlotSquared.debug(Captions.PREFIX.getTranslated() +
+                    String.format("Player %s attempted to claim plot %s, but the database failed to update",
+                        player.getName(), this.getId().toCommaSeparatedString()));
                 return false;
             }
         } else {
@@ -1676,6 +1688,9 @@ public class Plot {
             });
             return true;
         }
+        PlotSquared.get().getLogger().log(Captions.PREFIX.getTranslated() +
+            String.format("Failed to add plot %s to plot area %s", this.getId().toCommaSeparatedString(),
+            this.area.toString()));
         return false;
     }
 
@@ -2212,7 +2227,13 @@ public class Plot {
                 return false;
             }
         }
-        return this.guessOwner() == null && !isMerged();
+        final UUID owner = this.guessOwner();
+        if (owner != null) {
+            if (player == null || !player.getUUID().equals(owner)) {
+                return false;
+            }
+        }
+        return !isMerged();
     }
 
     /**

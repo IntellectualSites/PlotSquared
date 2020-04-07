@@ -978,7 +978,6 @@ import java.util.concurrent.atomic.AtomicInteger;
     }
 
     public void createPlotSafe(final Plot plot, final Runnable success, final Runnable failure) {
-        final long timestamp = plot.getTimestamp();
         addPlotTask(plot, new UniqueStatement("createPlotSafe_" + plot.hashCode()) {
             @Override public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, plot.getId().x);
