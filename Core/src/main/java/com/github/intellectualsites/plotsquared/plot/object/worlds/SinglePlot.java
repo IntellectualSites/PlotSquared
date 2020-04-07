@@ -1,14 +1,11 @@
 package com.github.intellectualsites.plotsquared.plot.object.worlds;
 
-import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.object.BlockLoc;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.TeleportCause;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +15,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class SinglePlot extends Plot {
     private Set<CuboidRegion> regions = Collections.singleton(
@@ -51,17 +49,8 @@ public class SinglePlot extends Plot {
         return (SinglePlotArea) super.getArea();
     }
 
-    public boolean teleportPlayer(final PlotPlayer player, TeleportCause cause) {
-        if (isLoaded()) {
-            return super.teleportPlayer(player, cause);
-        } else {
-            Captions.NOT_LOADED.send(player);
-            return false;
-        }
-    }
-
-    @Override public Location getSide() {
-        return getCenter();
+    @Override public void getSide(Consumer<Location> result) {
+        getCenter(result);
     }
 
     @Override protected boolean isLoaded() {

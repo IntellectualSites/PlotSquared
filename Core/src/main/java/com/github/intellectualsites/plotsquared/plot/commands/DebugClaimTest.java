@@ -71,7 +71,7 @@ public class DebugClaimTest extends SubCommand {
                 Location location = manager.getSignLoc(plot);
                 BlockVector2 chunk = BlockVector2.at(location.getX() >> 4, location.getZ() >> 4);
                 ChunkManager.manager.loadChunk(area.getWorldName(), chunk, false).thenRun(() -> {
-                    String[] lines = WorldUtil.IMP.getSign(location);
+                    String[] lines = WorldUtil.IMP.getSignSynchronous(location);
                     if (lines != null) {
                         String line = lines[2];
                         if (line != null && line.length() > 2) {

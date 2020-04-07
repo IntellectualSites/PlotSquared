@@ -471,16 +471,18 @@ public class Area extends SubCommand {
                 Location center;
                 if (area.getType() != PlotAreaType.PARTIAL) {
                     center = WorldUtil.IMP.getSpawn(area.getWorldName());
+                    player.teleport(center, TeleportCause.COMMAND);
                 } else {
                     CuboidRegion region = area.getRegion();
                     center = new Location(area.getWorldName(), region.getMinimumPoint().getX()
                         + (region.getMaximumPoint().getX() - region.getMinimumPoint().getX()) / 2,
                         0, region.getMinimumPoint().getZ()
                         + (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ()) / 2);
-                    center.setY(1 + WorldUtil.IMP
-                        .getHighestBlock(area.getWorldName(), center.getX(), center.getZ()));
+                    WorldUtil.IMP.getHighestBlock(area.getWorldName(), center.getX(), center.getZ(), y -> {
+                        center.setY(1 + y);
+                        player.teleport(center, TeleportCause.COMMAND);
+                    });
                 }
-                player.teleport(center, TeleportCause.COMMAND);
                 return true;
             case "delete":
             case "remove":

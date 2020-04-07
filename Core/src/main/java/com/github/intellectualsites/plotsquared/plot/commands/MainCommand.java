@@ -208,7 +208,7 @@ public class MainCommand extends Command {
                 .equals(area) || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN)
                 || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_SUDO_AREA))
                 && !newPlot.isDenied(player.getUUID())) {
-                Location newLoc = newPlot.getCenter();
+                Location newLoc = newPlot.getCenterSynchronous();
                 if (player.canTeleport(newLoc)) {
                     // Save meta
                     location = player.getMeta(PlotPlayer.META_LOCATION);

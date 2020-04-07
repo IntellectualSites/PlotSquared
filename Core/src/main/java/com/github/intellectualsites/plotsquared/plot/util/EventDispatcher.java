@@ -185,7 +185,7 @@ public class EventDispatcher {
         final Plot plot = player.getCurrentPlot();
         if (Settings.Teleport.ON_LOGIN && plot != null && !(plot
             .getArea() instanceof SinglePlotArea)) {
-            TaskManager.runTask(() -> plot.teleportPlayer(player));
+            TaskManager.runTask(() -> plot.teleportPlayer(player, result -> {}));
             MainUtil.sendMessage(player,
                 CaptionUtility.format(player, Captions.TELEPORTED_TO_ROAD.getTranslated())
                     + " (on-login) " + "(" + plot.getId().x + ";" + plot.getId().y + ")");
@@ -195,7 +195,7 @@ public class EventDispatcher {
     public void doRespawnTask(final PlotPlayer player) {
         final Plot plot = player.getCurrentPlot();
         if (Settings.Teleport.ON_DEATH && plot != null) {
-            TaskManager.runTask(() -> plot.teleportPlayer(player));
+            TaskManager.runTask(() -> plot.teleportPlayer(player, result -> {}));
             MainUtil.sendMessage(player, Captions.TELEPORTED_TO_ROAD);
         }
     }

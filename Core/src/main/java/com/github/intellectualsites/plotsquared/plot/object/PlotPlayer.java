@@ -628,19 +628,17 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                             });
                         } else if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
                             if (getMeta("teleportOnLogin", true)) {
-                                if (plot.teleportPlayer(PlotPlayer.this)) {
-                                    TaskManager.runTask(() -> {
-                                        if (getMeta("teleportOnLogin", true)) {
-                                            if (plot.isLoaded()) {
-                                                teleport(location);
-                                                sendMessage(CaptionUtility.format(PlotPlayer.this,
-                                                    Captions.TELEPORTED_TO_PLOT.getTranslated())
-                                                    + " (quitLoc-unloaded) (" + plotX + "," + plotZ
-                                                    + ")");
-                                            }
+                                plot.teleportPlayer(PlotPlayer.this, result -> TaskManager.runTask(() -> {
+                                    if (getMeta("teleportOnLogin", true)) {
+                                        if (plot.isLoaded()) {
+                                            teleport(location);
+                                            sendMessage(CaptionUtility.format(PlotPlayer.this,
+                                                Captions.TELEPORTED_TO_PLOT.getTranslated())
+                                                + " (quitLoc-unloaded) (" + plotX + "," + plotZ
+                                                + ")");
                                         }
-                                    });
-                                }
+                                    }
+                                }));
                             }
                         }
                     } catch (Throwable e) {

@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
+import com.github.intellectualsites.plotsquared.bukkit.BukkitMain;
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
@@ -7,7 +8,6 @@ import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
-import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
@@ -20,8 +20,10 @@ import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockState;
+import io.papermc.lib.PaperLib;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -33,18 +35,16 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.UUID;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+import java.util.function.Consumer;
 
 
 @SuppressWarnings({"unused", "WeakerAccess"})
@@ -102,17 +102,6 @@ public class BukkitUtil extends WorldUtil {
      */
     public static Plot getPlot(Player player) {
         return getPlot(player.getLocation());
-    }
-
-    /**
-     * Get home location.
-     *
-     * @param plot Plot that you want to get the location for
-     * @return plot bottom location
-     * @see Plot
-     */
-    public static org.bukkit.Location getHomeLocation(Plot plot) {
-        return BukkitUtil.getLocation(plot.getHome());
     }
 
     /**
@@ -219,7 +208,6 @@ public class BukkitUtil extends WorldUtil {
      *
      * @param player  the recipient of the message
      * @param caption the message
-     * @see MainUtil#sendMessage(com.github.intellectualsites.plotsquared.commands.CommandCaller, Captions, String...)
      */
     public static void sendMessage(Player player, Captions caption) {
         MainUtil.sendMessage(BukkitUtil.getPlayer(player), caption);
@@ -303,11 +291,43 @@ public class BukkitUtil extends WorldUtil {
         return getWorld(worldName) != null;
     }
 
-    @Override public BiomeType getBiome(String world, int x, int z) {
+    @Override public void getBiome(String world, int x, int z, final Consumer<BiomeType> result) {
+        ensureLoaded(world, x, z, chunk ->
+            result.accept(BukkitAdapter.adapt(getWorld(world).getBiome(x, z))));
+    }
+
+    @Override public BiomeType getBiomeSynchronous(String world, int x, int z) {
         return BukkitAdapter.adapt(getWorld(world).getBiome(x, z));
     }
 
-    @Override public int getHighestBlock(@NonNull final String world, final int x, final int z) {
+    @Override public void getHighestBlock(@NonNull final String world, final int x, final int z,
+        final Consumer<Integer> result) {
+        ensureLoaded(world, x, z, chunk -> {
+            final World bukkitWorld = getWorld(world);
+            // Skip top and bottom block
+            int air = 1;
+            for (int y = bukkitWorld.getMaxHeight() - 1; y >= 0; y--) {
+                Block block = bukkitWorld.getBlockAt(x, y, z);
+                Material type = block.getType();
+                if (type.isSolid()) {
+                    if (air > 1) {
+                        result.accept(y);
+                        return;
+                    }
+                    air = 0;
+                } else {
+                    if (block.isLiquid()) {
+                        result.accept(y);
+                        return;
+                    }
+                    air++;
+                }
+            }
+            result.accept(bukkitWorld.getMaxHeight() - 1);
+        });
+    }
+
+    @Override public int getHighestBlockSynchronous(String world, int x, int z) {
         final World bukkitWorld = getWorld(world);
         // Skip top and bottom block
         int air = 1;
@@ -329,7 +349,17 @@ public class BukkitUtil extends WorldUtil {
         return bukkitWorld.getMaxHeight() - 1;
     }
 
-    @Override @Nullable public String[] getSign(@NonNull final Location location) {
+    @Override public void getSign(@NonNull final Location location, final Consumer<String[]> result) {
+        ensureLoaded(location, chunk -> {
+            final Block block = chunk.getWorld().getBlockAt(getLocation(location));
+            if (block.getState() instanceof Sign) {
+                Sign sign = (Sign) block.getState();
+                result.accept(sign.getLines());
+            }
+        });
+    }
+
+    @Override @Nullable public String[] getSignSynchronous(@NonNull final Location location) {
         Block block = getWorld(location.getWorld())
             .getBlockAt(location.getX(), location.getY(), location.getZ());
         return TaskManager.IMP.sync(new RunnableVal<String[]>() {
@@ -365,60 +395,42 @@ public class BukkitUtil extends WorldUtil {
     @Override @SuppressWarnings("deprecation")
     public void setSign(@NonNull final String worldName, final int x, final int y, final int z,
         @NonNull final String[] lines) {
-        final World world = getWorld(worldName);
-        final Block block = world.getBlockAt(x, y, z);
-        //        block.setType(Material.AIR);
-        final Material type = block.getType();
-        if (type != Material.LEGACY_SIGN && type != Material.LEGACY_WALL_SIGN) {
-            BlockFace facing = BlockFace.EAST;
-            if (world.getBlockAt(x, y, z + 1).getType().isSolid()) {
-                facing = BlockFace.NORTH;
-            } else if (world.getBlockAt(x + 1, y, z).getType().isSolid()) {
-                facing = BlockFace.WEST;
-            } else if (world.getBlockAt(x, y, z - 1).getType().isSolid()) {
-                facing = BlockFace.SOUTH;
+        ensureLoaded(worldName, x, z, chunk -> {
+            final World world = getWorld(worldName);
+            final Block block = world.getBlockAt(x, y, z);
+            //        block.setType(Material.AIR);
+            final Material type = block.getType();
+            if (type != Material.LEGACY_SIGN && type != Material.LEGACY_WALL_SIGN) {
+                BlockFace facing = BlockFace.EAST;
+                if (world.getBlockAt(x, y, z + 1).getType().isSolid()) {
+                    facing = BlockFace.NORTH;
+                } else if (world.getBlockAt(x + 1, y, z).getType().isSolid()) {
+                    facing = BlockFace.WEST;
+                } else if (world.getBlockAt(x, y, z - 1).getType().isSolid()) {
+                    facing = BlockFace.SOUTH;
+                }
+                if (PlotSquared.get().IMP.getServerVersion()[1] == 13) {
+                    block.setType(Material.valueOf("WALL_SIGN"), false);
+                } else {
+                    block.setType(Material.valueOf("OAK_WALL_SIGN"), false);
+                }
+                if (!(block.getBlockData() instanceof WallSign)) {
+                    PlotSquared.debug(block.getBlockData().getAsString());
+                    throw new RuntimeException("Something went wrong generating a sign");
+                }
+                final Directional sign = (Directional) block.getBlockData();
+                sign.setFacing(facing);
+                block.setBlockData(sign, false);
             }
-            if (PlotSquared.get().IMP.getServerVersion()[1] == 13) {
-                block.setType(Material.valueOf("WALL_SIGN"), false);
-            } else {
-                block.setType(Material.valueOf("OAK_WALL_SIGN"), false);
+            final org.bukkit.block.BlockState blockstate = block.getState();
+            if (blockstate instanceof Sign) {
+                final Sign sign = (Sign) blockstate;
+                for (int i = 0; i < lines.length; i++) {
+                    sign.setLine(i, lines[i]);
+                }
+                sign.update(true);
             }
-            if (!(block.getBlockData() instanceof WallSign)) {
-                PlotSquared.debug(block.getBlockData().getAsString());
-                throw new RuntimeException("Something went wrong generating a sign");
-            }
-            final Directional sign = (Directional) block.getBlockData();
-            sign.setFacing(facing);
-            block.setBlockData(sign, false);
-        }
-        final org.bukkit.block.BlockState blockstate = block.getState();
-        if (blockstate instanceof Sign) {
-            final Sign sign = (Sign) blockstate;
-            for (int i = 0; i < lines.length; i++) {
-                sign.setLine(i, lines[i]);
-            }
-            sign.update(true);
-        }
-    }
-
-    @Override
-    public boolean addItems(@NonNull final String worldName, @NonNull final PlotItem items) {
-        final World world = getWorld(worldName);
-        final Block block = world.getBlockAt(items.x, items.y, items.z);
-        final org.bukkit.block.BlockState state = block.getState();
-        if (state instanceof InventoryHolder) {
-            InventoryHolder holder = (InventoryHolder) state;
-            Inventory inv = holder.getInventory();
-            for (int i = 0; i < items.types.length; i++) {
-                // ItemStack item = new ItemStack(LegacyMappings.fromLegacyId(items.id[i]).getMaterial(), items.amount[i], items.data[i]);
-                ItemStack item =
-                    new ItemStack(BukkitAdapter.adapt(items.types[i]), items.amount[i]);
-                inv.addItem(item);
-            }
-            state.update(true);
-            return true;
-        }
-        return false;
+        });
     }
 
     @Override public boolean isBlockSolid(@NonNull final BlockState block) {
@@ -471,7 +483,15 @@ public class BukkitUtil extends WorldUtil {
         return new BukkitWorld(Bukkit.getWorld(world));
     }
 
-    @Override public BlockState getBlock(@NonNull final Location location) {
+    @Override public void getBlock(@NonNull final Location location, final Consumer<BlockState> result) {
+        ensureLoaded(location, chunk -> {
+            final World world = getWorld(location.getWorld());
+            final Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
+            result.accept(BukkitAdapter.asBlockType(block.getType()).getDefaultState());
+        });
+    }
+
+    @Override public BlockState getBlockSynchronous(@NonNull final Location location) {
         final World world = getWorld(location.getWorld());
         final Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
         return BukkitAdapter.asBlockType(block.getType()).getDefaultState();
@@ -496,4 +516,24 @@ public class BukkitUtil extends WorldUtil {
     @Override public void setFoodLevel(PlotPlayer player, int foodLevel) {
         Bukkit.getPlayer(player.getUUID()).setFoodLevel(foodLevel);
     }
+
+    private static void ensureLoaded(final String world, final int x, final int z, final Consumer<Chunk> chunkConsumer) {
+        PaperLib.getChunkAtAsync(getWorld(world), x << 4, z << 4, true).thenAccept(chunk ->
+            ensureMainThread(chunkConsumer, chunk));
+    }
+
+    private static void ensureLoaded(final Location location, final Consumer<Chunk> chunkConsumer) {
+        PaperLib.getChunkAtAsync(getLocation(location), true).thenAccept(chunk ->
+            ensureMainThread(chunkConsumer, chunk));
+    }
+
+    private static <T> void ensureMainThread(final Consumer<T> consumer, final T value) {
+        if (Bukkit.isPrimaryThread()) {
+            consumer.accept(value);
+        } else {
+            Bukkit.getScheduler().runTask(BukkitMain.getPlugin(BukkitMain.class), () ->
+                consumer.accept(value));
+        }
+    }
+
 }

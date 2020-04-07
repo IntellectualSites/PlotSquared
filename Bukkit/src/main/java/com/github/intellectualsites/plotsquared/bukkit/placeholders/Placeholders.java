@@ -162,7 +162,7 @@ public class Placeholders extends PlaceholderExpansion {
                 if (pl.getCurrentPlot() == null) {
                     return "";
                 }
-                return plot.getBiome() + "";
+                return plot.getBiomeSynchronous() + "";
             }
             default:
                 break;

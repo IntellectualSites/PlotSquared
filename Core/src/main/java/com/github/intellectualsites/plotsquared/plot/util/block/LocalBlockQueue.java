@@ -13,9 +13,9 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class LocalBlockQueue {
 
@@ -100,7 +100,7 @@ public abstract class LocalBlockQueue {
                 .equals(loc)) {
                 continue;
             }
-            pLoc.setY(WorldUtil.IMP.getHighestBlock(getWorld(), pLoc.getX(), pLoc.getZ()));
+            pLoc.setY(WorldUtil.IMP.getHighestBlockSynchronous(getWorld(), pLoc.getX(), pLoc.getZ()));
             pp.teleport(pLoc);
         }
     }

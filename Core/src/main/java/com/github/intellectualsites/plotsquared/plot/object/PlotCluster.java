@@ -7,6 +7,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 
 import java.util.HashSet;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class PlotCluster {
     public PlotArea area;
@@ -86,8 +87,6 @@ public class PlotCluster {
 
     /**
      * Get the area (in plots).
-     *
-     * @return
      */
     public int getArea() {
         return (1 + this.pos2.x - this.pos1.x) * (1 + this.pos2.y - this.pos1.y);
@@ -125,26 +124,31 @@ public class PlotCluster {
             + this.pos2.y;
     }
 
-    public Location getHome() {
+    public void getHome(Consumer<Location> result) {
         BlockLoc home = this.settings.getPosition();
-        Location toReturn;
+        Consumer<Location> locationConsumer = toReturn -> {
+            MainUtil.getHeighestBlock(this.area.getWorldName(), toReturn.getX(), toReturn.getZ(), max -> {
+                if (max > toReturn.getY()) {
+                    toReturn.setY(1 + max);
+                }
+                result.accept(toReturn);
+            });
+        };
         if (home.getY() == 0) {
             // default pos
             Plot center = getCenterPlot();
-            toReturn = center.getHome();
-            if (toReturn.getY() == 0) {
-                PlotManager manager = this.area.getPlotManager();
-                Location location = manager.getSignLoc(center);
-                toReturn.setY(location.getY());
-            }
+            center.getHome(location -> {
+                Location toReturn = location;
+                if (toReturn.getY() == 0) {
+                    PlotManager manager = this.area.getPlotManager();
+                    Location locationSign = manager.getSignLoc(center);
+                    toReturn.setY(locationSign.getY());
+                }
+                locationConsumer.accept(toReturn);
+            });
         } else {
-            toReturn = getClusterBottom().add(home.getX(), home.getY(), home.getZ());
+            locationConsumer.accept(getClusterBottom().add(home.getX(), home.getY(), home.getZ()));
         }
-        int max = MainUtil.getHeighestBlock(this.area.getWorldName(), toReturn.getX(), toReturn.getZ());
-        if (max > toReturn.getY()) {
-            toReturn.setY(1 + max);
-        }
-        return toReturn;
     }
 
     public PlotId getCenterPlotId() {

@@ -94,7 +94,7 @@ public class Auto extends SubCommand {
         final String schematic) {
         Set<Plot> plots = player.getPlots();
         if (!plots.isEmpty()) {
-            plots.iterator().next().teleportPlayer(player, TeleportCause.COMMAND);
+            plots.iterator().next().teleportPlayer(player, TeleportCause.COMMAND, result -> {});
         } else {
             autoClaimSafe(player, area, start, schematic);
         }
