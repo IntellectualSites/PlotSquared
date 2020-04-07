@@ -2368,7 +2368,7 @@ public class Plot {
         if (this.hasOwner()) {
             return this.owner;
         }
-        if (!this.area.allowSigns()) {
+        if (!this.area.allowSigns() || !Settings.Enabled_Components.GUESS_PLOT_OWNER) {
             return null;
         }
         try {
