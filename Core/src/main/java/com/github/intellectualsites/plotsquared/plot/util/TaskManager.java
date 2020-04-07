@@ -93,21 +93,7 @@ public abstract class TaskManager {
     public static <T> void objectTask(Collection<T> objects, final RunnableVal<T> task,
         final Runnable whenDone) {
         final Iterator<T> iterator = objects.iterator();
-        TaskManager.runTask(new Runnable() {
-            @Override public void run() {
-                long start = System.currentTimeMillis();
-                boolean hasNext;
-                while ((hasNext = iterator.hasNext()) && System.currentTimeMillis() - start < 5) {
-                    task.value = iterator.next();
-                    task.run();
-                }
-                if (!hasNext) {
-                    TaskManager.runTaskLater(whenDone, 1);
-                } else {
-                    TaskManager.runTaskLater(this, 1);
-                }
-            }
-        });
+        TaskManager.runTask(new ObjectTaskRunnable<>(iterator, task, whenDone));
     }
 
     public <T> T sync(final RunnableVal<T> function) {
@@ -120,22 +106,7 @@ public abstract class TaskManager {
             return function.value;
         }
         final AtomicBoolean running = new AtomicBoolean(true);
-        RunnableVal<RuntimeException> run = new RunnableVal<RuntimeException>() {
-            @Override public void run(RuntimeException value) {
-                try {
-                    function.run();
-                } catch (RuntimeException e) {
-                    this.value = e;
-                } catch (Throwable neverHappens) {
-                    neverHappens.printStackTrace();
-                } finally {
-                    running.set(false);
-                }
-                synchronized (function) {
-                    function.notifyAll();
-                }
-            }
-        };
+        final RuntimeExceptionRunnableVal<T> run = new RuntimeExceptionRunnableVal<>(function, running);
         TaskManager.IMP.task(run);
         try {
             synchronized (function) {

@@ -1042,10 +1042,6 @@ public class Plot {
         if (!isLoaded()) {
             return;
         }
-        if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
-            TaskManager.runTask(() -> Plot.this.setSign(name));
-            return;
-        }
         PlotManager manager = this.area.getPlotManager();
         if (this.area.allowSigns()) {
             Location location = manager.getSignLoc(this);
@@ -1058,9 +1054,7 @@ public class Plot {
                         "%plr%", name),
                     Captions.OWNER_SIGN_LINE_4.formatted().replaceAll("%id%", id).replaceAll(
                         "%plr%", name)};
-            WorldUtil.IMP
-                .setSign(this.getWorldName(), location.getX(), location.getY(), location.getZ(),
-                    lines);
+            WorldUtil.IMP.setSign(this.getWorldName(), location.getX(), location.getY(), location.getZ(), lines);
         }
     }
 
