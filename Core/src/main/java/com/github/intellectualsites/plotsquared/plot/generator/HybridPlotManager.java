@@ -179,8 +179,8 @@ public class HybridPlotManager extends ClassicPlotManager {
         Location pos2 = plot.getExtendedTopAbs();
         // If augmented
         final boolean canRegen =
-            (hybridPlotWorld.getType() == PlotAreaType.NORMAL)
-                    && (hybridPlotWorld.getTerrain() == PlotAreaTerrainType.NONE) && REGENERATIVE_CLEAR;
+            (hybridPlotWorld.getType() == PlotAreaType.AUGMENTED)
+                    && (hybridPlotWorld.getTerrain() != PlotAreaTerrainType.NONE) && REGENERATIVE_CLEAR;
         // The component blocks
         final Pattern plotfloor = hybridPlotWorld.TOP_BLOCK.toPattern();
         final Pattern filling = hybridPlotWorld.MAIN_BLOCK.toPattern();
