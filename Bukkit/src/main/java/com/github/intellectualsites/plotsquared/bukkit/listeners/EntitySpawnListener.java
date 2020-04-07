@@ -39,7 +39,7 @@ public class EntitySpawnListener implements Listener {
     private static boolean hasPlotArea = false;
     private static String areaName = null;
 
-    public static void testNether(Entity entity) {
+    public static void testNether(final Entity entity) {
         @NotNull World world = entity.getWorld();
         if (world.getEnvironment() != World.Environment.NETHER
             && world.getEnvironment() != World.Environment.THE_END) {
@@ -48,15 +48,16 @@ public class EntitySpawnListener implements Listener {
         test(entity);
     }
 
-    public static void testCreate(Entity entity) {
+    public static void testCreate(final Entity entity) {
         @NotNull World world = entity.getWorld();
         if (areaName == world.getName()) {
         } else {
             areaName = world.getName();
             hasPlotArea = PlotSquared.get().hasPlotArea(areaName);
         }
-        if (!hasPlotArea)
+        if (!hasPlotArea) {
             return;
+        }
         test(entity);
     }
 
@@ -76,15 +77,21 @@ public class EntitySpawnListener implements Listener {
                     if (!world.getName().equalsIgnoreCase(originWorld + "_the_end")) {
                         try {
                             ignoreTP = true;
-                            PaperLib.teleportAsync(entity,origin);
+                            PaperLib.teleportAsync(entity, origin);
                         } finally {
                             ignoreTP = false;
+                        }
+                        if (entity.getType() == EntityType.PLAYER) {
+                            return;
                         }
                         if (entity.getLocation().getWorld().equals(world)) {
                             entity.remove();
                         }
                     }
                 } else {
+                    if (entity.getType() == EntityType.PLAYER) {
+                        return;
+                    }
                     entity.remove();
                 }
             }
@@ -136,7 +143,7 @@ public class EntitySpawnListener implements Listener {
 
     @EventHandler public void onChunkLoad(ChunkLoadEvent event) {
         @NotNull Chunk chunk = event.getChunk();
-        for (Entity entity : chunk.getEntities()) {
+        for (final Entity entity : chunk.getEntities()) {
             testCreate(entity);
         }
     }

@@ -101,8 +101,12 @@ public class Claim extends SubCommand {
         final String finalSchematic = schematic;
         DBFunc.createPlotSafe(plot, () -> TaskManager.IMP.sync(new RunnableVal<Object>() {
             @Override public void run(Object value) {
-                plot.claim(player, true, finalSchematic);
-                if (area.isAutoMerge()) {
+                if (!plot.claim(player, true, finalSchematic)) {
+                    PlotSquared.get().getLogger().log(Captions.PREFIX.getTranslated() +
+                        String.format("Failed to claim plot %s", plot.getId().toCommaSeparatedString()));
+                    sendMessage(player, Captions.PLOT_NOT_CLAIMED);
+                    plot.owner = null;
+                } else if (area.isAutoMerge()) {
                     PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
                         .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
                     if (event.getEventResult() == Result.DENY) {
@@ -112,7 +116,12 @@ public class Claim extends SubCommand {
                     }
                 }
             }
-        }), () -> sendMessage(player, Captions.PLOT_NOT_CLAIMED));
+        }), () -> {
+            PlotSquared.get().getLogger().log(Captions.PREFIX.getTranslated() +
+                String.format("Failed to add plot %s to the database", plot.getId().toCommaSeparatedString()));
+            sendMessage(player, Captions.PLOT_NOT_CLAIMED);
+            plot.owner = null;
+        });
         return true;
     }
 }

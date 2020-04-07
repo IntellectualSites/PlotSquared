@@ -1709,6 +1709,9 @@ public class Plot {
 
     public boolean claim(final PlotPlayer player, boolean teleport, String schematic) {
         if (!canClaim(player)) {
+            PlotSquared.debug(Captions.PREFIX.getTranslated() +
+                String.format("Player %s attempted to claim plot %s, but was not allowed",
+                    player.getName(), this.getId().toCommaSeparatedString()));
             return false;
         }
         return claim(player, teleport, schematic, true);
@@ -1719,6 +1722,9 @@ public class Plot {
 
         if (updateDB) {
             if (!create(player.getUUID(), true)) {
+                PlotSquared.debug(Captions.PREFIX.getTranslated() +
+                    String.format("Player %s attempted to claim plot %s, but the database failed to update",
+                        player.getName(), this.getId().toCommaSeparatedString()));
                 return false;
             }
         } else {
@@ -1804,6 +1810,9 @@ public class Plot {
             });
             return true;
         }
+        PlotSquared.get().getLogger().log(Captions.PREFIX.getTranslated() +
+            String.format("Failed to add plot %s to plot area %s", this.getId().toCommaSeparatedString(),
+            this.area.toString()));
         return false;
     }
 
@@ -2346,7 +2355,13 @@ public class Plot {
                 return false;
             }
         }
-        return this.guessOwner() == null && !isMerged();
+        final UUID owner = this.guessOwner();
+        if (owner != null) {
+            if (player == null || !player.getUUID().equals(owner)) {
+                return false;
+            }
+        }
+        return !isMerged();
     }
 
     /**
