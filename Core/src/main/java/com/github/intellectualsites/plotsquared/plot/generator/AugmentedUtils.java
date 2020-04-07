@@ -16,6 +16,7 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -29,7 +30,7 @@ public class AugmentedUtils {
         enabled = true;
     }
 
-    public static boolean generate(@NotNull final String world, final int chunkX, final int chunkZ,
+    public static boolean generate(@Nullable Object chunkObject, @NotNull final String world, final int chunkX, final int chunkZ,
         LocalBlockQueue queue) {
         if (!enabled) {
             return false;
@@ -54,6 +55,7 @@ public class AugmentedUtils {
             // Mask
             if (queue == null) {
                 queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
+                queue.setChunkObject(chunkObject);
             }
             LocalBlockQueue primaryMask;
             // coordinates
@@ -102,7 +104,7 @@ public class AugmentedUtils {
                             for (int y = 1; y < 128; y++) {
                                 queue.setBlock(rx, y, rz, air);
                             }
-                            canPlace[x][z] = can;
+                            canPlace[x][z] = true;
                             has = true;
                         }
                     }
@@ -134,6 +136,11 @@ public class AugmentedUtils {
                 }
                 toReturn = true;
             }
+            primaryMask.setChunkObject(chunkObject);
+            primaryMask.setForceSync(true);
+            secondaryMask.setChunkObject(chunkObject);
+            secondaryMask.setForceSync(true);
+
             ScopedLocalBlockQueue scoped = new ScopedLocalBlockQueue(secondaryMask,
                 new Location(area.getWorldName(), blockX, 0, blockZ),
                 new Location(area.getWorldName(), blockX + 15, 255, blockZ + 15));
@@ -141,6 +148,7 @@ public class AugmentedUtils {
             generator.populateChunk(scoped, area);
         }
         if (queue != null) {
+            queue.setForceSync(true);
             queue.flush();
         }
         return toReturn;

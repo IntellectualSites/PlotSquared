@@ -222,6 +222,7 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
 
 
     public class BasicLocalChunk extends LocalChunk {
+
         public BasicLocalChunk(BasicLocalBlockQueue parent, int x, int z) {
             super(parent, x, z);
             baseblocks = new BaseBlock[16][];

@@ -147,7 +147,7 @@ public class Area extends SubCommand {
                                             ChunkManager.largeRegionTask(world, region,
                                                 new RunnableVal<BlockVector2>() {
                                                     @Override public void run(BlockVector2 value) {
-                                                        AugmentedUtils.generate(world, value.getX(),
+                                                        AugmentedUtils.generate(null, world, value.getX(),
                                                             value.getZ(), null);
                                                     }
                                                 }, null);
@@ -445,7 +445,7 @@ public class Area extends SubCommand {
                     new RunnableVal<BlockVector2>() {
                         @Override public void run(BlockVector2 value) {
                             AugmentedUtils
-                                .generate(area.getWorldName(), value.getX(), value.getZ(), null);
+                                .generate(null, area.getWorldName(), value.getX(), value.getZ(), null);
                         }
                     }, () -> player.sendMessage("Regen complete"));
                 return true;
