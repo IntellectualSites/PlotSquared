@@ -577,7 +577,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Override public void registerPlayerEvents() {
         final PlayerEvents main = new PlayerEvents();
         getServer().getPluginManager().registerEvents(main, this);
-        getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
+        if (!Settings.Enabled_Components.UNSAFE) {
+            getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
+        }
     }
 
     @Override public void registerPlotPlusEvents() {

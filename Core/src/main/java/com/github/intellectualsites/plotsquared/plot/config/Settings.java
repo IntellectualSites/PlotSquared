@@ -359,5 +359,7 @@ public class Settings extends Config {
         @Comment("Delete plots when a player is banned") public static boolean BAN_DELETER = false;
         @Comment({"Prevent possibly unsafe blocks from being used in plot components", "Can be bypassed with `/plot debugallowunsafe`"})
         public static boolean PREVENT_UNSAFE = true;
+        @Comment("Do not touch this setting unless you know what it does") public static boolean UNSAFE = false;
+
     }
 }
