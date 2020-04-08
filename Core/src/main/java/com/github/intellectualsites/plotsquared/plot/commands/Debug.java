@@ -4,8 +4,10 @@ import com.github.intellectualsites.plotsquared.commands.CommandDeclaration;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 
 import java.util.Map;
 
@@ -23,8 +25,15 @@ public class Debug extends SubCommand {
                     MainUtil.sendMessage(player,
                         "Key: " + meta.getKey() + " Value: " + meta.getValue().toString() + " , ");
                 }
-                ;
             }
+        }
+        if (args.length > 0 && "loadedchunks".equalsIgnoreCase(args[0])) {
+            final long start = System.currentTimeMillis();
+            MainUtil.sendMessage(player, "Fetching loaded chunks...");
+            TaskManager.runTaskAsync(() -> MainUtil.sendMessage(player,"Loaded chunks: " +
+                ChunkManager.manager.getChunkChunks(player.getLocation().getWorld()).size() + "(" + (System.currentTimeMillis() - start) + "ms) using thread: " +
+                Thread.currentThread().getName()));
+            return true;
         }
         if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {
             StringBuilder msg = new StringBuilder();

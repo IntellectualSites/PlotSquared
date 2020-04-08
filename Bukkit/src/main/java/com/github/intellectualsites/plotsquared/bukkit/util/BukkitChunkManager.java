@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
+import com.github.intellectualsites.plotsquared.bukkit.BukkitMain;
 import com.github.intellectualsites.plotsquared.bukkit.object.entity.EntityWrapper;
 import com.github.intellectualsites.plotsquared.bukkit.object.entity.ReplicatingEntityWrapper;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
@@ -43,6 +44,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Semaphore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -114,9 +116,28 @@ public class BukkitChunkManager extends ChunkManager {
 
     @Override public Set<BlockVector2> getChunkChunks(String world) {
         Set<BlockVector2> chunks = super.getChunkChunks(world);
-        for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world)).getLoadedChunks()) {
-            BlockVector2 loc = BlockVector2.at(chunk.getX() >> 5, chunk.getZ() >> 5);
-            chunks.add(loc);
+        if (Bukkit.isPrimaryThread()) {
+            for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world)).getLoadedChunks()) {
+                BlockVector2 loc = BlockVector2.at(chunk.getX() >> 5, chunk.getZ() >> 5);
+                chunks.add(loc);
+            }
+        } else {
+            final Semaphore semaphore = new Semaphore(1);
+            try {
+                PlotSquared.debug("Attempting to make an asynchronous call to getLoadedChunks."
+                    + " Will halt the calling thread until completed.");
+                semaphore.acquire();
+                Bukkit.getScheduler().runTask(BukkitMain.getPlugin(BukkitMain.class), () -> {
+                    for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world)).getLoadedChunks()) {
+                        BlockVector2 loc = BlockVector2.at(chunk.getX() >> 5, chunk.getZ() >> 5);
+                        chunks.add(loc);
+                    }
+                    semaphore.release();
+                });
+                semaphore.acquireUninterruptibly();
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
         }
         return chunks;
     }
