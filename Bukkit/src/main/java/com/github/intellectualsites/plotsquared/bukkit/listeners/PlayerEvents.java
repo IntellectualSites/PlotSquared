@@ -2353,6 +2353,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         TaskManager.TELEPORT_QUEUE.remove(event.getPlayer().getName());
         PlotPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
         pp.unregister();
+        PlotListener.logout(pp.getUUID());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
