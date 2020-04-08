@@ -12,9 +12,11 @@ import java.util.UUID;
 import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.callConstructor;
 import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.callMethod;
 import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getCbClass;
+import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getField;
 import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getNmsClass;
 import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getUtilClass;
 import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.makeConstructor;
+import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.makeField;
 import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.makeMethod;
 
 public class OfflinePlayerUtil {
@@ -67,11 +69,26 @@ public class OfflinePlayerUtil {
         return callConstructor(c, worldServer);
     }
 
+    public static Object getWorldServerNew() {
+        Object server = getMinecraftServer();
+        Class<?> minecraftServerClass = getNmsClass("MinecraftServer");
+        Class<?> dimensionManager = getNmsClass("DimensionManager");
+        Object overworld = getField(makeField(dimensionManager, "OVERWORLD"), null);
+        Method getWorldServer = makeMethod(minecraftServerClass, "getWorldServer", dimensionManager);
+        return callMethod(getWorldServer, server, overworld);
+    }
+
     private static Object getWorldServer() {
         Object server = getMinecraftServer();
         Class<?> minecraftServerClass = getNmsClass("MinecraftServer");
         Method getWorldServer = makeMethod(minecraftServerClass, "getWorldServer", int.class);
-        return callMethod(getWorldServer, server, 0);
+        Object o;
+        try {
+            o = callMethod(getWorldServer, server, 0);
+        } catch (final RuntimeException e) {
+            o = getWorldServerNew();
+        }
+        return o;
     }
 
     //NMS Utils
