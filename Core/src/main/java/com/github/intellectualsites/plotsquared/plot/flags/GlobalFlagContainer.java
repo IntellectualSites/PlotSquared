@@ -69,6 +69,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Untru
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.UseFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleBreakFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleCapFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehiclePlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleUseFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VillagerInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.VineGrowFlag;
@@ -138,6 +139,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(TamedAttackFlag.TAMED_ATTACK_FALSE);
         this.addFlag(TamedInteractFlag.TAMED_INTERACT_FALSE);
         this.addFlag(VehicleBreakFlag.VEHICLE_BREAK_FALSE);
+        this.addFlag(VehiclePlaceFlag.VEHICLE_PLACE_FALSE);
         this.addFlag(VehicleUseFlag.VEHICLE_USE_FALSE);
         this.addFlag(VillagerInteractFlag.VILLAGER_INTERACT_FALSE);
         this.addFlag(VineGrowFlag.VINE_GROW_TRUE);
