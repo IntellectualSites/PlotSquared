@@ -114,7 +114,8 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
                             BlockData blockData = BukkitAdapter.adapt(block);
 
                             Block existing = chunk.getBlock(x, y, z);
-                            if (BukkitBlockUtil.get(existing).equals(block) && existing
+                            final BlockState existingBaseBlock = BukkitAdapter.adapt(existing.getBlockData());
+                            if (BukkitBlockUtil.get(existing).equals(existingBaseBlock) && existing
                                 .getBlockData().matches(blockData)) {
                                 continue;
                             }
