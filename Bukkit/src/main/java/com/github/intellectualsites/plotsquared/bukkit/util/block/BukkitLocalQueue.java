@@ -142,13 +142,17 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
     }
 
     private Chunk getChunk(final World world, final LocalChunk localChunk) {
+        Chunk chunk = null;
         if (this.getChunkObject() != null && this.getChunkObject() instanceof Chunk) {
-            final Chunk chunk = (Chunk) this.getChunkObject();
-            if (chunk.getWorld().equals(world) && chunk.getX() == localChunk.getX() && chunk.getZ() == localChunk.getZ()) {
-                return chunk;
-            }
+            chunk = (Chunk) this.getChunkObject();
         }
-        return world.getChunkAt(localChunk.getX(), localChunk.getZ());
+        if (chunk == null) {
+            chunk = world.getChunkAt(localChunk.getX(), localChunk.getZ());
+        }
+        if (!chunk.isLoaded()) {
+            chunk.load(true);
+        }
+        return chunk;
     }
 
     private void setMaterial(@NonNull final BlockState plotBlock, @NonNull final Block block) {

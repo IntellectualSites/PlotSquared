@@ -11,8 +11,11 @@ import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
+import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
+import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.jetbrains.annotations.NotNull;
@@ -121,6 +124,24 @@ public class AugmentedUtils {
                         return false;
                     }
 
+                    @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
+                        try {
+                            if (canPlace[x - blockX][z - blockZ]) {
+                                return super.setBlock(x, y, z, id);
+                            }
+                        } catch (final Exception e) {
+                            PlotSquared.debug(String.format("Failed to set block at: %d;%d;%d (to = %s) with offset %d;%d."
+                                + " Translated to: %d;%d", x, y, z, id, blockX, blockZ, x - blockX, z - blockZ));
+                            throw e;
+                        }
+                        return false;
+                    }
+
+                    @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
+                        final BlockVector3 blockVector3 = BlockVector3.at(x + blockX, y, z + blockZ);
+                        return this.setBlock(x, y, z, pattern.apply(blockVector3));
+                    }
+
                     @Override public boolean setBiome(int x, int y, BiomeType biome) {
                         return super.setBiome(x, y, biome);
                     }
@@ -141,9 +162,8 @@ public class AugmentedUtils {
             secondaryMask.setChunkObject(chunkObject);
             secondaryMask.setForceSync(true);
 
-            ScopedLocalBlockQueue scoped = new ScopedLocalBlockQueue(secondaryMask,
-                new Location(area.getWorldName(), blockX, 0, blockZ),
-                new Location(area.getWorldName(), blockX + 15, 255, blockZ + 15));
+            ScopedLocalBlockQueue scoped = new ScopedLocalBlockQueue(secondaryMask, new Location(world, blockX, 0, blockZ),
+                new Location(world, blockX + 15, 255, blockZ + 15));
             generator.generateChunk(scoped, area);
             generator.populateChunk(scoped, area);
         }

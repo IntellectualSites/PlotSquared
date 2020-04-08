@@ -518,7 +518,7 @@ public class BukkitUtil extends WorldUtil {
     }
 
     private static void ensureLoaded(final String world, final int x, final int z, final Consumer<Chunk> chunkConsumer) {
-        PaperLib.getChunkAtAsync(getWorld(world), x << 4, z << 4, true).thenAccept(chunk ->
+        PaperLib.getChunkAtAsync(getWorld(world), x >> 4, z >> 4, true).thenAccept(chunk ->
             ensureMainThread(chunkConsumer, chunk));
     }
 
