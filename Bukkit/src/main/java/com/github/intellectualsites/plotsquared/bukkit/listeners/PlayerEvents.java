@@ -2222,7 +2222,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
 
-        Plot plot = area.getOwnedPlotAbs(location1);
+        Plot plot = area.getOwnedPlot(location1);
         if (player != null) {
             PlotPlayer pp = BukkitUtil.getPlayer(player);
             if (plot == null) {
