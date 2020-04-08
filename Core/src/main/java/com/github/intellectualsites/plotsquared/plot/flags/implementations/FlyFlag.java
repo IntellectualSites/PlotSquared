@@ -4,6 +4,9 @@ import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 public class FlyFlag extends PlotFlag<FlyFlag.FlyStatus, FlyFlag> {
 
     public static final FlyFlag FLIGHT_FLAG_DISABLED = new FlyFlag(FlyStatus.DISABLED);
@@ -53,6 +56,10 @@ public class FlyFlag extends PlotFlag<FlyFlag.FlyStatus, FlyFlag> {
             default:
                 return FLIGHT_FLAG_DEFAULT;
         }
+    }
+
+    @Override public Collection<String> getTabCompletions() {
+        return Arrays.asList("true", "false", "default");
     }
 
     public enum FlyStatus {
