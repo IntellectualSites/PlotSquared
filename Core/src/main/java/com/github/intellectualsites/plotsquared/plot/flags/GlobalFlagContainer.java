@@ -8,6 +8,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Block
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockIgnitionFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockedCmdsFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.BreakFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.CoralDryFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyExitFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyTeleportFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.DescriptionFlag;
@@ -19,7 +20,7 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Entit
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.ExplosionFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FarewellFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.FeedFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlightFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.FlyFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.ForcefieldFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.GamemodeFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.GrassGrowFlag;
@@ -60,7 +61,6 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.Serve
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.SnowFormFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.SnowMeltFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.SoilDryFlag;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.CoralDryFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.TamedAttackFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.TamedInteractFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.TimeFlag;
@@ -96,7 +96,6 @@ public final class GlobalFlagContainer extends FlagContainer {
         // Register all default flags here
         // Boolean flags
         this.addFlag(ExplosionFlag.EXPLOSION_FALSE);
-        this.addFlag(FlightFlag.FLIGHT_FLAG_FALSE);
         this.addFlag(UntrustedVisitFlag.UNTRUSTED_VISIT_FLAG_TRUE);
         this.addFlag(DenyExitFlag.DENY_EXIT_FLAG_FALSE);
         this.addFlag(DescriptionFlag.DESCRIPTION_FLAG_EMPTY);
@@ -150,6 +149,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(WeatherFlag.PLOT_WEATHER_FLAG_OFF);
         this.addFlag(DenyTeleportFlag.DENY_TELEPORT_FLAG_NONE);
         this.addFlag(TitlesFlag.TITLES_NONE);
+        this.addFlag(FlyFlag.FLIGHT_FLAG_DEFAULT);
 
         // Integer flags
         this.addFlag(AnimalCapFlag.ANIMAL_CAP_UNLIMITED);

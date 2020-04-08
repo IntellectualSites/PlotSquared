@@ -53,6 +53,7 @@ public enum Captions implements Caption {
     PERMISSION_ADMIN_UPDATE_NOTIFICATION("plots.admin.update.notify", "static.permissions"),
     PERMISSION_ADMIN_EXIT_DENIED("plots.admin.exit.denied", "static.permissions"),
     PERMISSION_ADMIN_ENTRY_DENIED("plots.admin.entry.denied", "static.permissions"),
+    PERMISSION_ADMIN_VISIT_UNTRUSTED("plots.admin.visit.untrusted", "static.permissions"),
     PERMISSION_ADMIN_ENTRY_FORCEFIELD("plots.admin.entry.forcefield", "static.permissions"),
     PERMISSION_COMMANDS_CHAT("plots.admin.command.chat", "static.permissions"),
     PERMISSION_MERGE_OTHER("plots.merge.other", "static.permissions"),
@@ -567,13 +568,15 @@ public enum Captions implements Caption {
     FLAG_CATEGORY_ENUM("Generic Enum Flags", "Flags"),
     FLAG_CATEGORY_DECIMAL("Decimal Flags", "Flags"),
     FLAG_CATEGORY_BOOLEAN("Boolean Flags", "Flags"),
+    FLAG_CATEGORY_FLY("Flight Flags", "Flags"),
     FLAG_CATEGORY_MIXED("Mixed Value Flags", "Flags"),
     //</editor-fold>
     //<editor-fold desc="Flag descriptions">
     FLAG_DESCRIPTION_ENTITY_CAP("Set to an integer value to limit the amount of entities on the plot.", "Flags"),
     FLAG_DESCRIPTION_EXPLOSION("Set to `true` to enable explosions in the plot, and `false` to disable them.", "Flags"),
     FLAG_DESCRIPTION_MUSIC("Set to a music disk ID (item name) to play the music disc inside of the plot.", "Flags"),
-    FLAG_DESCRIPTION_FLIGHT("Set to `true` to enable flight within the plot when in survival or adventure mode.", "Flags"),
+    FLAG_DESCRIPTION_FLIGHT("Set to `true` to enable flight within the plot when in survival or adventure mode,"
+        + " set to `default` to use the gamemode default, and `false` to disable flight entirely.", "Flags"),
     FLAG_DESCRIPTION_UNTRUSTED("Set to `false` to disallow untrusted players from visiting the plot.", "Flags"),
     FLAG_DESCRIPTION_DENY_EXIT("Set to `true` to disallow players from exiting the plot.", "Flags"),
     FLAG_DESCRIPTION_DESCRIPTION("Plot description. Supports '&' color codes.", "Flags"),

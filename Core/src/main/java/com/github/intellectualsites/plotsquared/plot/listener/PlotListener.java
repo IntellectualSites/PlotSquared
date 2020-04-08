@@ -124,7 +124,8 @@ public class PlotListener {
                 }
             }
 
-            if (plot.getFlag(FlightFlag.class)) {
+            final FlyFlag.FlyStatus flyStatus = plot.getFlag(FlyFlag.class);
+            if (flyStatus != FlyFlag.FlyStatus.DEFAULT) {
                 boolean flight = player.getFlight();
                 GameMode gamemode = player.getGameMode();
                 if (flight != (gamemode == GameModes.CREATIVE
@@ -132,7 +133,7 @@ public class PlotListener {
                     player.setPersistentMeta("flight",
                         ByteArrayUtilities.booleanToBytes(player.getFlight()));
                 }
-                player.setFlight(true);
+                player.setFlight(flyStatus == FlyFlag.FlyStatus.ENABLED);
             }
 
             final GameMode gameMode = plot.getFlag(GamemodeFlag.class);
@@ -299,7 +300,8 @@ public class PlotListener {
                 }
             }
 
-            if (plot.getFlag(FlightFlag.class)) {
+            final FlyFlag.FlyStatus flyStatus = plot.getFlag(FlyFlag.class);
+            if (flyStatus != FlyFlag.FlyStatus.DEFAULT) {
                 if (player.hasPersistentMeta("flight")) {
                     player.setFlight(
                         ByteArrayUtilities.bytesToBoolean(player.getPersistentMeta("flight")));

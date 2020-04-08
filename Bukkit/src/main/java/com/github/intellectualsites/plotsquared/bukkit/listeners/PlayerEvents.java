@@ -1439,6 +1439,18 @@ public class PlayerEvents extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChange(BlockFromToEvent event) {
         Block from = event.getBlock();
+
+        // Check liquid flow flag inside of origin plot too
+        final Location fLocation = BukkitUtil.getLocation(from.getLocation());
+        final PlotArea fromArea = fLocation.getPlotArea();
+        if (fromArea != null) {
+            final Plot plot = fromArea.getOwnedPlot(fLocation);
+            if (plot != null && !plot.getFlag(LiquidFlowFlag.class) && event.getBlock().isLiquid()) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+
         Block to = event.getToBlock();
         Location tLocation = BukkitUtil.getLocation(to.getLocation());
         PlotArea area = tLocation.getPlotArea();
@@ -1446,7 +1458,6 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Plot plot = area.getOwnedPlot(tLocation);
-        Location fLocation = BukkitUtil.getLocation(from.getLocation());
         if (plot != null) {
             if (plot.getFlag(DisablePhysicsFlag.class)) {
                 event.setCancelled(true);
@@ -1456,12 +1467,8 @@ public class PlayerEvents extends PlotListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if (!plot.getFlag(LiquidFlowFlag.class)) {
-                switch (to.getType()) {
-                    case WATER:
-                    case LAVA:
-                        event.setCancelled(true);
-                }
+            if (!plot.getFlag(LiquidFlowFlag.class) && event.getBlock().isLiquid()) {
+                event.setCancelled(true);
             }
         } else if (!area.contains(fLocation.getX(), fLocation.getZ()) || !Objects
             .equals(null, area.getOwnedPlot(fLocation))) {
@@ -2215,7 +2222,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
 
-        Plot plot = area.getOwnedPlotAbs(location1);
+        Plot plot = area.getOwnedPlot(location1);
         if (player != null) {
             PlotPlayer pp = BukkitUtil.getPlayer(player);
             if (plot == null) {
