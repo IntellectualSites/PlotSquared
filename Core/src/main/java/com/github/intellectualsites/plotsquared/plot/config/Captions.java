@@ -53,6 +53,7 @@ public enum Captions implements Caption {
     PERMISSION_ADMIN_UPDATE_NOTIFICATION("plots.admin.update.notify", "static.permissions"),
     PERMISSION_ADMIN_EXIT_DENIED("plots.admin.exit.denied", "static.permissions"),
     PERMISSION_ADMIN_ENTRY_DENIED("plots.admin.entry.denied", "static.permissions"),
+    PERMISSION_ADMIN_VISIT_UNTRUSTED("plots.admin.visit.untrusted", "static.permissions"),
     PERMISSION_ADMIN_ENTRY_FORCEFIELD("plots.admin.entry.forcefield", "static.permissions"),
     PERMISSION_COMMANDS_CHAT("plots.admin.command.chat", "static.permissions"),
     PERMISSION_MERGE_OTHER("plots.merge.other", "static.permissions"),

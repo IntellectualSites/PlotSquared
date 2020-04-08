@@ -143,9 +143,13 @@ public class Visit extends Command {
                 return CompletableFuture.completedFuture(false);
             }
         } else {
-            if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OTHER) && !plot
-                .getFlag(UntrustedVisitFlag.class)) {
+            if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OTHER)) {
                 Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OTHER);
+                return CompletableFuture.completedFuture(false);
+            }
+            if (!plot.getFlag(UntrustedVisitFlag.class) &&
+                       !Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
+                Captions.NO_PERMISSION.send(player, Captions.PERMISSION_ADMIN_VISIT_UNTRUSTED);
                 return CompletableFuture.completedFuture(false);
             }
         }
