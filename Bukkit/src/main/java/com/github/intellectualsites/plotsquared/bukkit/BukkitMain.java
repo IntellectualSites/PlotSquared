@@ -20,6 +20,7 @@ import com.github.intellectualsites.plotsquared.bukkit.util.BukkitTaskManager;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
 import com.github.intellectualsites.plotsquared.bukkit.util.Metrics;
 import com.github.intellectualsites.plotsquared.bukkit.util.SetGenCB;
+import com.github.intellectualsites.plotsquared.bukkit.util.UpdateUtility;
 import com.github.intellectualsites.plotsquared.bukkit.util.block.BukkitLocalQueue;
 import com.github.intellectualsites.plotsquared.bukkit.uuid.DefaultUUIDWrapper;
 import com.github.intellectualsites.plotsquared.bukkit.uuid.FileUUIDHandler;
@@ -37,10 +38,9 @@ import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridGen;
 import com.github.intellectualsites.plotsquared.plot.generator.HybridUtils;
 import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
+import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotAreaTerrainType;
-import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
@@ -49,8 +49,21 @@ import com.github.intellectualsites.plotsquared.plot.object.worlds.PlotAreaManag
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SinglePlotAreaManager;
 import com.github.intellectualsites.plotsquared.plot.object.worlds.SingleWorldGenerator;
-import com.github.intellectualsites.plotsquared.plot.util.*;
-import com.github.intellectualsites.plotsquared.bukkit.util.UpdateUtility;
+import com.github.intellectualsites.plotsquared.plot.util.ChatManager;
+import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
+import com.github.intellectualsites.plotsquared.plot.util.ConsoleColors;
+import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
+import com.github.intellectualsites.plotsquared.plot.util.InventoryUtil;
+import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
+import com.github.intellectualsites.plotsquared.plot.util.PremiumVerification;
+import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils;
+import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
+import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
+import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.github.intellectualsites.plotsquared.plot.util.UUIDHandlerImplementation;
+import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.github.intellectualsites.plotsquared.plot.util.block.QueueProvider;
 import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
@@ -586,6 +599,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         final PlayerEvents main = new PlayerEvents();
         getServer().getPluginManager().registerEvents(main, this);
         getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
+        PlotListener.startRunnable();
     }
 
     @Override public void registerForceFieldEvents() {
