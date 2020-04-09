@@ -46,6 +46,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Fireball;
+import org.bukkit.entity.Golem;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.ItemFrame;
@@ -2569,7 +2570,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             if (entity instanceof Monster && plot.getFlag(HostileInteractFlag.class)) {
                 return;
             }
-            if (entity instanceof Animals && plot.getFlag(AnimalInteractFlag.class)) {
+            if ((entity instanceof Animals || entity instanceof Golem) && plot.getFlag(AnimalInteractFlag.class)) {
                 return;
             }
             if (entity instanceof Tameable && ((Tameable) entity).isTamed() && plot
