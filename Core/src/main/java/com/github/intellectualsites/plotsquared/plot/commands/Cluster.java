@@ -555,7 +555,7 @@ public class Cluster extends SubCommand {
                         return false;
                     }
                 }
-                player.teleport(cluster.getHome(), TeleportCause.COMMAND);
+                cluster.getHome(home -> player.teleport(home, TeleportCause.COMMAND));
                 return MainUtil.sendMessage(player, Captions.CLUSTER_TELEPORTING);
             }
             case "i":

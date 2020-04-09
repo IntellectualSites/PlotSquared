@@ -56,6 +56,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -232,7 +233,7 @@ public class MainUtil {
      */
     public static boolean resetBiome(PlotArea area, Location pos1, Location pos2) {
         BiomeType biome = area.getPlotBiome();
-        if (!Objects.equals(WorldUtil.IMP.getBiome(area.getWorldName(), (pos1.getX() + pos2.getX()) / 2,
+        if (!Objects.equals(WorldUtil.IMP.getBiomeSynchronous(area.getWorldName(), (pos1.getX() + pos2.getX()) / 2,
             (pos1.getZ() + pos2.getZ()) / 2), biome)) {
             MainUtil.setBiome(area.getWorldName(), pos1.getX(), pos1.getZ(), pos2.getX(), pos2.getZ(),
                 biome);
@@ -589,18 +590,15 @@ public class MainUtil {
 
     /**
      * Get the highest block at a location.
-     *
-     * @param world
-     * @param x
-     * @param z
-     * @return
      */
-    public static int getHeighestBlock(String world, int x, int z) {
-        int result = WorldUtil.IMP.getHighestBlock(world, x, z);
-        if (result == 0) {
-            return 63;
-        }
-        return result;
+    public static void getHighestBlock(String world, int x, int z, IntConsumer result) {
+        WorldUtil.IMP.getHighestBlock(world, x, z, highest -> {
+            if (highest == 0) {
+                result.accept(63);
+            } else {
+                result.accept(highest);
+            }
+        });
     }
 
     /**
@@ -752,116 +750,118 @@ public class MainUtil {
     /**
      * Format a string with plot information.
      *
-     * @param info
+     * @param iInfo
      * @param plot
      * @param player
      * @param full
      * @param whenDone
      */
-    public static void format(String info, final Plot plot, PlotPlayer player, final boolean full,
+    public static void format(final String iInfo, final Plot plot, PlotPlayer player, final boolean full,
         final RunnableVal<String> whenDone) {
         int num = plot.getConnectedPlots().size();
         String alias = !plot.getAlias().isEmpty() ? plot.getAlias() : Captions.NONE.getTranslated();
         Location bot = plot.getCorners()[0];
-        BiomeType biome = WorldUtil.IMP.getBiome(plot.getWorldName(), bot.getX(), bot.getZ());
-        String trusted = getPlayerList(plot.getTrusted());
-        String members = getPlayerList(plot.getMembers());
-        String denied = getPlayerList(plot.getDenied());
-        String seen;
-        if (Settings.Enabled_Components.PLOT_EXPIRY && ExpireManager.IMP != null) {
-            if (plot.isOnline()) {
-                seen = Captions.NOW.getTranslated();
-            } else {
-                int time = (int) (ExpireManager.IMP.getAge(plot) / 1000);
-                if (time != 0) {
-                    seen = MainUtil.secToTime(time);
+        WorldUtil.IMP.getBiome(plot.getWorldName(), bot.getX(), bot.getZ(), biome -> {
+            String info = iInfo;
+            String trusted = getPlayerList(plot.getTrusted());
+            String members = getPlayerList(plot.getMembers());
+            String denied = getPlayerList(plot.getDenied());
+            String seen;
+            if (Settings.Enabled_Components.PLOT_EXPIRY && ExpireManager.IMP != null) {
+                if (plot.isOnline()) {
+                    seen = Captions.NOW.getTranslated();
                 } else {
-                    seen = Captions.UNKNOWN.getTranslated();
-                }
-            }
-        } else {
-            seen = Captions.NEVER.getTranslated();
-        }
-
-        String description = plot.getFlag(DescriptionFlag.class);
-        if (description.isEmpty()) {
-            description = Captions.PLOT_NO_DESCRIPTION.getTranslated();
-        }
-
-        StringBuilder flags = new StringBuilder();
-        Collection<PlotFlag<?, ?>> flagCollection = plot.getApplicableFlags(true);
-        if (flagCollection.isEmpty()) {
-            flags.append(Captions.NONE.getTranslated());
-        } else {
-            String prefix = " ";
-            for (final PlotFlag<?, ?> flag : flagCollection) {
-                Object value;
-                if (flag instanceof DoubleFlag && !Settings.General.SCIENTIFIC) {
-                    value = FLAG_DECIMAL_FORMAT.format(flag.getValue());
-                } else {
-                    value = flag.toString();
-                }
-                flags.append(prefix).append(CaptionUtility.format(player, Captions.PLOT_FLAG_LIST.getTranslated(),
-                    flag.getName(), CaptionUtility.formatRaw(player, value.toString(), "")));
-                prefix = ", ";
-            }
-        }
-        boolean build = plot.isAdded(player.getUUID());
-        String owner = plot.getOwners().isEmpty() ? "unowned" : getPlayerList(plot.getOwners());
-        if (plot.getArea() != null) {
-            info = info.replace("%area%", plot.getArea().getWorldName() +
-                (plot.getArea().getId() == null ? "" : "(" + plot.getArea().getId() + ")"));
-        } else {
-            info = info.replace("%area%", Captions.NONE.getTranslated());
-        }
-        info = info.replace("%id%", plot.getId().toString());
-        info = info.replace("%alias%", alias);
-        info = info.replace("%num%", String.valueOf(num));
-        info = info.replace("%desc%", description);
-        info = info.replace("%biome%", biome.toString().toLowerCase());
-        info = info.replace("%owner%", owner);
-        info = info.replace("%members%", members);
-        info = info.replace("%player%", player.getName());
-        info = info.replace("%trusted%", trusted);
-        info = info.replace("%helpers%", members);
-        info = info.replace("%denied%", denied);
-        info = info.replace("%seen%", seen);
-        info = info.replace("%flags%", flags);
-        info = info.replace("%build%", String.valueOf(build));
-        if (info.contains("%rating%")) {
-            final String newInfo = info;
-            TaskManager.runTaskAsync(() -> {
-                String info1;
-                if (Settings.Ratings.USE_LIKES) {
-                    info1 = newInfo.replaceAll("%rating%",
-                        String.format("%.0f%%", Like.getLikesPercentage(plot) * 100D));
-                } else {
-                    int max = 10;
-                    if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES
-                        .isEmpty()) {
-                        max = 8;
-                    }
-                    if (full && Settings.Ratings.CATEGORIES != null
-                        && Settings.Ratings.CATEGORIES.size() > 1) {
-                        double[] ratings = MainUtil.getAverageRatings(plot);
-                        String rating = "";
-                        String prefix = "";
-                        for (int i = 0; i < ratings.length; i++) {
-                            rating += prefix + Settings.Ratings.CATEGORIES.get(i) + '=' + String
-                                .format("%.1f", ratings[i]);
-                            prefix = ",";
-                        }
-                        info1 = newInfo.replaceAll("%rating%", rating);
+                    int time = (int) (ExpireManager.IMP.getAge(plot) / 1000);
+                    if (time != 0) {
+                        seen = MainUtil.secToTime(time);
                     } else {
-                        info1 = newInfo.replaceAll("%rating%",
-                            String.format("%.1f", plot.getAverageRating()) + '/' + max);
+                        seen = Captions.UNKNOWN.getTranslated();
                     }
                 }
-                whenDone.run(info1);
-            });
-            return;
-        }
-        whenDone.run(info);
+            } else {
+                seen = Captions.NEVER.getTranslated();
+            }
+
+            String description = plot.getFlag(DescriptionFlag.class);
+            if (description.isEmpty()) {
+                description = Captions.PLOT_NO_DESCRIPTION.getTranslated();
+            }
+
+            StringBuilder flags = new StringBuilder();
+            Collection<PlotFlag<?, ?>> flagCollection = plot.getApplicableFlags(true);
+            if (flagCollection.isEmpty()) {
+                flags.append(Captions.NONE.getTranslated());
+            } else {
+                String prefix = " ";
+                for (final PlotFlag<?, ?> flag : flagCollection) {
+                    Object value;
+                    if (flag instanceof DoubleFlag && !Settings.General.SCIENTIFIC) {
+                        value = FLAG_DECIMAL_FORMAT.format(flag.getValue());
+                    } else {
+                        value = flag.toString();
+                    }
+                    flags.append(prefix).append(CaptionUtility.format(player, Captions.PLOT_FLAG_LIST.getTranslated(),
+                        flag.getName(), CaptionUtility.formatRaw(player, value.toString(), "")));
+                    prefix = ", ";
+                }
+            }
+            boolean build = plot.isAdded(player.getUUID());
+            String owner = plot.getOwners().isEmpty() ? "unowned" : getPlayerList(plot.getOwners());
+            if (plot.getArea() != null) {
+                info = info.replace("%area%", plot.getArea().getWorldName() +
+                    (plot.getArea().getId() == null ? "" : "(" + plot.getArea().getId() + ")"));
+            } else {
+                info = info.replace("%area%", Captions.NONE.getTranslated());
+            }
+            info = info.replace("%id%", plot.getId().toString());
+            info = info.replace("%alias%", alias);
+            info = info.replace("%num%", String.valueOf(num));
+            info = info.replace("%desc%", description);
+            info = info.replace("%biome%", biome.toString().toLowerCase());
+            info = info.replace("%owner%", owner);
+            info = info.replace("%members%", members);
+            info = info.replace("%player%", player.getName());
+            info = info.replace("%trusted%", trusted);
+            info = info.replace("%helpers%", members);
+            info = info.replace("%denied%", denied);
+            info = info.replace("%seen%", seen);
+            info = info.replace("%flags%", flags);
+            info = info.replace("%build%", String.valueOf(build));
+            if (info.contains("%rating%")) {
+                final String newInfo = info;
+                TaskManager.runTaskAsync(() -> {
+                    String info1;
+                    if (Settings.Ratings.USE_LIKES) {
+                        info1 = newInfo.replaceAll("%rating%",
+                            String.format("%.0f%%", Like.getLikesPercentage(plot) * 100D));
+                    } else {
+                        int max = 10;
+                        if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES
+                            .isEmpty()) {
+                            max = 8;
+                        }
+                        if (full && Settings.Ratings.CATEGORIES != null
+                            && Settings.Ratings.CATEGORIES.size() > 1) {
+                            double[] ratings = MainUtil.getAverageRatings(plot);
+                            String rating = "";
+                            String prefix = "";
+                            for (int i = 0; i < ratings.length; i++) {
+                                rating += prefix + Settings.Ratings.CATEGORIES.get(i) + '=' + String
+                                    .format("%.1f", ratings[i]);
+                                prefix = ",";
+                            }
+                            info1 = newInfo.replaceAll("%rating%", rating);
+                        } else {
+                            info1 = newInfo.replaceAll("%rating%",
+                                String.format("%.1f", plot.getAverageRating()) + '/' + max);
+                        }
+                    }
+                    whenDone.run(info1);
+                });
+                return;
+            }
+            whenDone.run(info);
+        });
     }
 
     public static boolean deleteDirectory(File directory) {

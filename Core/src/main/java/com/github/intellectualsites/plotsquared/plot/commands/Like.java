@@ -47,7 +47,7 @@ public class Like extends SubCommand {
                     for (final Plot plot : plots) {
                         if ((!Settings.Done.REQUIRED_FOR_RATINGS || DoneFlag.isDone(plot)) && plot
                             .isBasePlot() && (!plot.getLikes().containsKey(uuid))) {
-                            plot.teleportPlayer(player, TeleportCause.COMMAND);
+                            plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {});
                             MainUtil.sendMessage(player, Captions.RATE_THIS);
                             return true;
                         }

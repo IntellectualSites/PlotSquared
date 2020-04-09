@@ -5,7 +5,6 @@ import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
-import com.github.intellectualsites.plotsquared.plot.object.schematic.PlotItem;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.IntTag;
 import com.sk89q.jnbt.NBTInputStream;
@@ -15,6 +14,7 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -25,11 +25,12 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class WorldUtil {
     public static WorldUtil IMP;
@@ -38,7 +39,13 @@ public abstract class WorldUtil {
 
     public abstract boolean isWorld(String worldName);
 
-    public abstract String[] getSign(Location location);
+    public abstract void getSign(Location location, Consumer<String[]> result);
+
+    /**
+     * @deprecated May result in synchronous chunk loading
+     */
+    @Deprecated
+    public abstract String[] getSignSynchronous(Location location);
 
     public abstract Location getSpawn(String world);
 
@@ -52,13 +59,29 @@ public abstract class WorldUtil {
 
     public abstract StringComparison<BlockState>.ComparisonResult getClosestBlock(String name);
 
-    public abstract BiomeType getBiome(String world, int x, int z);
+    public abstract void getBiome(String world, int x, int z, Consumer<BiomeType> result);
 
-    public abstract BlockState getBlock(Location location);
+    /**
+     * @deprecated May result in synchronous chunk loading
+     */
+    @Deprecated
+    public abstract BiomeType getBiomeSynchronous(String world, int x, int z);
 
-    public abstract int getHighestBlock(String world, int x, int z);
+    public abstract void getBlock(Location location, Consumer<BlockState> result);
 
-    public abstract boolean addItems(String world, PlotItem item);
+    /**
+     * @deprecated May result in synchronous chunk loading
+     */
+    @Deprecated
+    public abstract BlockState getBlockSynchronous(Location location);
+
+    public abstract void getHighestBlock(String world, int x, int z, final IntConsumer result);
+
+    /**
+     * @deprecated May result in synchronous chunk loading
+     */
+    @Deprecated
+    public abstract int getHighestBlockSynchronous(String world, int x, int z);
 
     public abstract void setSign(String world, int x, int y, int z, String[] lines);
 
@@ -67,8 +90,7 @@ public abstract class WorldUtil {
     public abstract com.sk89q.worldedit.world.World getWeWorld(String world);
 
     public void upload(@NotNull final Plot plot, UUID uuid, String file, RunnableVal<URL> whenDone) {
-        final Location home = plot.getHome();
-        MainUtil.upload(uuid, file, "zip", new RunnableVal<OutputStream>() {
+        plot.getHome(home -> MainUtil.upload(uuid, file, "zip", new RunnableVal<OutputStream>() {
             @Override public void run(OutputStream output) {
                 try (final ZipOutputStream zos = new ZipOutputStream(output)) {
                     File dat = getDat(plot.getWorldName());
@@ -135,7 +157,7 @@ public abstract class WorldUtil {
                     e.printStackTrace();
                 }
             }
-        }, whenDone);
+        }, whenDone));
     }
 
     public File getDat(String world) {

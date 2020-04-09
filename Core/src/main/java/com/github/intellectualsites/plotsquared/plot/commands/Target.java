@@ -32,7 +32,7 @@ public class Target extends SubCommand {
         if (StringMan.isEqualIgnoreCaseToAny(args[0], "near", "nearest")) {
             int distance = Integer.MAX_VALUE;
             for (Plot plot : PlotSquared.get().getPlots(location.getWorld())) {
-                double current = plot.getCenter().getEuclideanDistanceSquared(location);
+                double current = plot.getCenterSynchronous().getEuclideanDistanceSquared(location);
                 if (current < distance) {
                     distance = (int) current;
                     target = plot;
@@ -45,7 +45,7 @@ public class Target extends SubCommand {
         } else if ((target = MainUtil.getPlotFromString(player, args[0], true)) == null) {
             return false;
         }
-        player.setCompassTarget(target.getCenter());
+        target.getCenter(player::setCompassTarget);
         MainUtil.sendMessage(player, Captions.COMPASS_TARGET);
         return true;
     }

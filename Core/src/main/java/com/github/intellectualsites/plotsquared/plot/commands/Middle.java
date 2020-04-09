@@ -24,7 +24,7 @@ public class Middle extends SubCommand {
         if (plot == null) {
             return sendMessage(player, Captions.NOT_IN_PLOT);
         }
-        player.teleport(plot.getCenter(), TeleportCause.COMMAND);
+        plot.getCenter(center -> player.teleport(center, TeleportCause.COMMAND));
         return true;
     }
 }

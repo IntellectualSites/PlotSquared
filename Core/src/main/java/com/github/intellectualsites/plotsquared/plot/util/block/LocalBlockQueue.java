@@ -13,11 +13,17 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
+import lombok.Getter;
+import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class LocalBlockQueue {
+
+    @Getter @Setter private boolean forceSync = false;
+    @Getter @Setter @Nullable private Object chunkObject;
 
     /**
      * Needed for compatibility with FAWE.
@@ -100,7 +106,7 @@ public abstract class LocalBlockQueue {
                 .equals(loc)) {
                 continue;
             }
-            pLoc.setY(WorldUtil.IMP.getHighestBlock(getWorld(), pLoc.getX(), pLoc.getZ()));
+            pLoc.setY(WorldUtil.IMP.getHighestBlockSynchronous(getWorld(), pLoc.getX(), pLoc.getZ()));
             pp.teleport(pLoc);
         }
     }

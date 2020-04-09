@@ -32,7 +32,7 @@ public enum PlotAreaTerrainType {
             .collect(Collectors.toMap(e -> e.toString().toLowerCase(), Function.identity()));
 
     public static Optional<PlotAreaTerrainType> fromString(String typeString) {
-        return Optional.ofNullable(types.get(typeString));
+        return Optional.ofNullable(types.get(typeString.toLowerCase()));
     }
 
     @Deprecated

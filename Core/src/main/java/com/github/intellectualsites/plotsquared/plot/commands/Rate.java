@@ -61,7 +61,7 @@ public class Rate extends SubCommand {
                         if ((!Settings.Done.REQUIRED_FOR_RATINGS || DoneFlag.isDone(p)) && p
                             .isBasePlot() && (!p.getRatings().containsKey(uuid)) && !p
                             .isAdded(uuid)) {
-                            p.teleportPlayer(player, TeleportCause.COMMAND);
+                            p.teleportPlayer(player, TeleportCause.COMMAND, result -> {});
                             MainUtil.sendMessage(player, Captions.RATE_THIS);
                             return true;
                         }

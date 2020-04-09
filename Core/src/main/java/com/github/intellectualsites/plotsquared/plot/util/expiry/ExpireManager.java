@@ -119,7 +119,7 @@ public class ExpireManager {
                 if (!isExpired(new ArrayDeque<>(tasks), current).isEmpty()) {
                     TaskManager.runTask(() -> {
                         pp.setMeta("ignoreExpireTask", true);
-                        pp.teleport(current.getCenter());
+                        current.getCenter(pp::teleport);
                         pp.deleteMeta("ignoreExpireTask");
                         PlotMessage msg = new PlotMessage()
                             .text(num + " " + (num > 1 ? "plots are" : "plot is") + " expired: ")

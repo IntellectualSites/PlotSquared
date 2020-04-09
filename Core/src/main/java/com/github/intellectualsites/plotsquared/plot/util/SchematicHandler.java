@@ -178,8 +178,7 @@ public abstract class SchematicHandler {
                         if (pw instanceof ClassicPlotWorld) {
                             y_offset_actual = yOffset + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
                         } else {
-                            y_offset_actual = yOffset + 1 + MainUtil
-                                .getHeighestBlock(plot.getWorldName(),
+                            y_offset_actual = yOffset + 1 + WorldUtil.IMP.getHighestBlockSynchronous(plot.getWorldName(),
                                     region.getMinimumPoint().getX() + 1,
                                     region.getMinimumPoint().getZ() + 1);
                         }

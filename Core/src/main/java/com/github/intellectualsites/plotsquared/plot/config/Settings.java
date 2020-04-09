@@ -352,5 +352,7 @@ public class Settings extends Config {
         public static boolean EXTERNAL_PLACEHOLDERS = true;
         @Comment("Make road regeneration persistent across restarts") public static boolean
             PERSISTENT_ROAD_REGEN = false;
+        @Comment("Try to guess plot owners from sign data. This may decrease server performance")
+        public static boolean GUESS_PLOT_OWNER = false;
     }
 }

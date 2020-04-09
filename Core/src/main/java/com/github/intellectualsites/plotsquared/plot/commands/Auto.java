@@ -8,9 +8,7 @@ import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
 import com.github.intellectualsites.plotsquared.plot.events.PlayerAutoPlotEvent;
 import com.github.intellectualsites.plotsquared.plot.events.PlotAutoMergeEvent;
-import com.github.intellectualsites.plotsquared.plot.events.PlotMergeEvent;
 import com.github.intellectualsites.plotsquared.plot.events.Result;
-import com.github.intellectualsites.plotsquared.plot.object.Direction;
 import com.github.intellectualsites.plotsquared.plot.object.Expression;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
@@ -19,6 +17,7 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.TeleportCause;
+import com.github.intellectualsites.plotsquared.plot.util.AutoClaimFinishTask;
 import com.github.intellectualsites.plotsquared.plot.util.EconHandler;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.Permissions;
@@ -42,7 +41,7 @@ public class Auto extends SubCommand {
         return id.getNextId(step);
     }
 
-    private static boolean checkAllowedPlots(PlotPlayer player, PlotArea plotarea,
+    public static boolean checkAllowedPlots(PlotPlayer player, PlotArea plotarea,
         @Nullable Integer allowedPlots, int sizeX, int sizeZ) {
         if (allowedPlots == null) {
             allowedPlots = player.getAllowedPlots();
@@ -94,7 +93,7 @@ public class Auto extends SubCommand {
         final String schematic) {
         Set<Plot> plots = player.getPlots();
         if (!plots.isEmpty()) {
-            plots.iterator().next().teleportPlayer(player, TeleportCause.COMMAND);
+            plots.iterator().next().teleportPlayer(player, TeleportCause.COMMAND, result -> {});
         } else {
             autoClaimSafe(player, area, start, schematic);
         }
@@ -126,31 +125,7 @@ public class Auto extends SubCommand {
         player.setMeta(Auto.class.getName(), true);
         autoClaimFromDatabase(player, area, start, new RunnableVal<Plot>() {
             @Override public void run(final Plot plot) {
-                TaskManager.IMP.sync(new RunnableVal<Object>() {
-                    @Override public void run(Object ignore) {
-                        player.deleteMeta(Auto.class.getName());
-                        if (plot == null) {
-                            MainUtil.sendMessage(player, Captions.NO_FREE_PLOTS);
-                            return;
-                        }
-
-                        if (checkAllowedPlots(player, area, allowedPlots, 1, 1)) {
-                            plot.claim(player, true, schematic, false);
-                            if (area.isAutoMerge()) {
-                                PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
-                                    .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
-                                if (event.getEventResult() == Result.DENY) {
-                                    sendMessage(player, Captions.EVENT_DENIED, "Auto merge");
-                                } else {
-                                    plot.autoMerge(event.getDir(), event.getMax(), player.getUUID(),
-                                        true);
-                                }
-                            }
-                        } else {
-                            DBFunc.delete(plot);
-                        }
-                    }
-                });
+                TaskManager.IMP.sync(new AutoClaimFinishTask(player, plot, area, allowedPlots, schematic));
             }
         });
     }

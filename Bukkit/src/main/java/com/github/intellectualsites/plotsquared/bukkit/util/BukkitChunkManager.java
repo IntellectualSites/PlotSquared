@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
+import com.github.intellectualsites.plotsquared.bukkit.BukkitMain;
 import com.github.intellectualsites.plotsquared.bukkit.object.entity.EntityWrapper;
 import com.github.intellectualsites.plotsquared.bukkit.object.entity.ReplicatingEntityWrapper;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
@@ -43,6 +44,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Semaphore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -114,9 +116,28 @@ public class BukkitChunkManager extends ChunkManager {
 
     @Override public Set<BlockVector2> getChunkChunks(String world) {
         Set<BlockVector2> chunks = super.getChunkChunks(world);
-        for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world)).getLoadedChunks()) {
-            BlockVector2 loc = BlockVector2.at(chunk.getX() >> 5, chunk.getZ() >> 5);
-            chunks.add(loc);
+        if (Bukkit.isPrimaryThread()) {
+            for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world)).getLoadedChunks()) {
+                BlockVector2 loc = BlockVector2.at(chunk.getX() >> 5, chunk.getZ() >> 5);
+                chunks.add(loc);
+            }
+        } else {
+            final Semaphore semaphore = new Semaphore(1);
+            try {
+                PlotSquared.debug("Attempting to make an asynchronous call to getLoadedChunks."
+                    + " Will halt the calling thread until completed.");
+                semaphore.acquire();
+                Bukkit.getScheduler().runTask(BukkitMain.getPlugin(BukkitMain.class), () -> {
+                    for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world)).getLoadedChunks()) {
+                        BlockVector2 loc = BlockVector2.at(chunk.getX() >> 5, chunk.getZ() >> 5);
+                        chunks.add(loc);
+                    }
+                    semaphore.release();
+                });
+                semaphore.acquireUninterruptibly();
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
         }
         return chunks;
     }
@@ -285,111 +306,112 @@ public class BukkitChunkManager extends ChunkManager {
                     int zzb = z << 4;
                     int xxt = xxb + 15;
                     int zzt = zzb + 15;
-                    Chunk chunkObj = worldObj.getChunkAt(x, z);
-                    if (!chunkObj.load(false)) {
-                        continue;
-                    }
-                    final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
-                    if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z) {
+                    PaperLib.getChunkAtAsync(worldObj, x, z, false).thenAccept(chunkObj -> {
+                        if (chunkObj == null) {
+                            return;
+                        }
+                        final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
+                        if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z) {
+                            AugmentedUtils.bypass(ignoreAugment,
+                                () -> queue.regenChunkSafe(chunk.getX(), chunk.getZ()));
+                            return;
+                        }
+                        boolean checkX1 = false;
+
+                        int xxb2;
+
+                        if (x == bcx) {
+                            xxb2 = p1x - 1;
+                            checkX1 = true;
+                        } else {
+                            xxb2 = xxb;
+                        }
+                        boolean checkX2 = false;
+                        int xxt2;
+                        if (x == tcx) {
+                            xxt2 = p2x + 1;
+                            checkX2 = true;
+                        } else {
+                            xxt2 = xxt;
+                        }
+                        boolean checkZ1 = false;
+                        int zzb2;
+                        if (z == bcz) {
+                            zzb2 = p1z - 1;
+                            checkZ1 = true;
+                        } else {
+                            zzb2 = zzb;
+                        }
+                        boolean checkZ2 = false;
+                        int zzt2;
+                        if (z == tcz) {
+                            zzt2 = p2z + 1;
+                            checkZ2 = true;
+                        } else {
+                            zzt2 = zzt;
+                        }
+                        final ContentMap map = new ContentMap();
+                        if (checkX1) {
+                            map.saveRegion(bukkitWorldObj, xxb, xxb2, zzb2, zzt2); //
+                        }
+                        if (checkX2) {
+                            map.saveRegion(bukkitWorldObj, xxt2, xxt, zzb2, zzt2); //
+                        }
+                        if (checkZ1) {
+                            map.saveRegion(bukkitWorldObj, xxb2, xxt2, zzb, zzb2); //
+                        }
+                        if (checkZ2) {
+                            map.saveRegion(bukkitWorldObj, xxb2, xxt2, zzt2, zzt); //
+                        }
+                        if (checkX1 && checkZ1) {
+                            map.saveRegion(bukkitWorldObj, xxb, xxb2, zzb, zzb2); //
+                        }
+                        if (checkX2 && checkZ1) {
+                            map.saveRegion(bukkitWorldObj, xxt2, xxt, zzb, zzb2); // ?
+                        }
+                        if (checkX1 && checkZ2) {
+                            map.saveRegion(bukkitWorldObj, xxb, xxb2, zzt2, zzt); // ?
+                        }
+                        if (checkX2 && checkZ2) {
+                            map.saveRegion(bukkitWorldObj, xxt2, xxt, zzt2, zzt); //
+                        }
+                        CuboidRegion currentPlotClear =
+                            RegionUtil.createRegion(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
+                        map.saveEntitiesOut(chunkObj, currentPlotClear);
                         AugmentedUtils.bypass(ignoreAugment,
-                            () -> queue.regenChunkSafe(chunk.getX(), chunk.getZ()));
-                        continue;
-                    }
-                    boolean checkX1 = false;
-
-                    int xxb2;
-
-                    if (x == bcx) {
-                        xxb2 = p1x - 1;
-                        checkX1 = true;
-                    } else {
-                        xxb2 = xxb;
-                    }
-                    boolean checkX2 = false;
-                    int xxt2;
-                    if (x == tcx) {
-                        xxt2 = p2x + 1;
-                        checkX2 = true;
-                    } else {
-                        xxt2 = xxt;
-                    }
-                    boolean checkZ1 = false;
-                    int zzb2;
-                    if (z == bcz) {
-                        zzb2 = p1z - 1;
-                        checkZ1 = true;
-                    } else {
-                        zzb2 = zzb;
-                    }
-                    boolean checkZ2 = false;
-                    int zzt2;
-                    if (z == tcz) {
-                        zzt2 = p2z + 1;
-                        checkZ2 = true;
-                    } else {
-                        zzt2 = zzt;
-                    }
-                    final ContentMap map = new ContentMap();
-                    if (checkX1) {
-                        map.saveRegion(bukkitWorldObj, xxb, xxb2, zzb2, zzt2); //
-                    }
-                    if (checkX2) {
-                        map.saveRegion(bukkitWorldObj, xxt2, xxt, zzb2, zzt2); //
-                    }
-                    if (checkZ1) {
-                        map.saveRegion(bukkitWorldObj, xxb2, xxt2, zzb, zzb2); //
-                    }
-                    if (checkZ2) {
-                        map.saveRegion(bukkitWorldObj, xxb2, xxt2, zzt2, zzt); //
-                    }
-                    if (checkX1 && checkZ1) {
-                        map.saveRegion(bukkitWorldObj, xxb, xxb2, zzb, zzb2); //
-                    }
-                    if (checkX2 && checkZ1) {
-                        map.saveRegion(bukkitWorldObj, xxt2, xxt, zzb, zzb2); // ?
-                    }
-                    if (checkX1 && checkZ2) {
-                        map.saveRegion(bukkitWorldObj, xxb, xxb2, zzt2, zzt); // ?
-                    }
-                    if (checkX2 && checkZ2) {
-                        map.saveRegion(bukkitWorldObj, xxt2, xxt, zzt2, zzt); //
-                    }
-                    CuboidRegion currentPlotClear =
-                        RegionUtil.createRegion(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
-                    map.saveEntitiesOut(chunkObj, currentPlotClear);
-                    AugmentedUtils.bypass(ignoreAugment,
-                        () -> setChunkInPlotArea(null, new RunnableVal<ScopedLocalBlockQueue>() {
-                            @Override public void run(ScopedLocalBlockQueue value) {
-                                Location min = value.getMin();
-                                int bx = min.getX();
-                                int bz = min.getZ();
-                                for (int x1 = 0; x1 < 16; x1++) {
-                                    for (int z1 = 0; z1 < 16; z1++) {
-                                        PlotLoc plotLoc = new PlotLoc(bx + x1, bz + z1);
-                                        BaseBlock[] ids = map.allBlocks.get(plotLoc);
-                                        if (ids != null) {
-                                            for (int y = 0; y < Math.min(128, ids.length); y++) {
-                                                BaseBlock id = ids[y];
-                                                if (id != null) {
-                                                    value.setBlock(x1, y, z1, id);
-                                                } else {
-                                                    value.setBlock(x1, y, z1, BlockTypes.AIR.getDefaultState());
+                            () -> setChunkInPlotArea(null, new RunnableVal<ScopedLocalBlockQueue>() {
+                                @Override public void run(ScopedLocalBlockQueue value) {
+                                    Location min = value.getMin();
+                                    int bx = min.getX();
+                                    int bz = min.getZ();
+                                    for (int x1 = 0; x1 < 16; x1++) {
+                                        for (int z1 = 0; z1 < 16; z1++) {
+                                            PlotLoc plotLoc = new PlotLoc(bx + x1, bz + z1);
+                                            BaseBlock[] ids = map.allBlocks.get(plotLoc);
+                                            if (ids != null) {
+                                                for (int y = 0; y < Math.min(128, ids.length); y++) {
+                                                    BaseBlock id = ids[y];
+                                                    if (id != null) {
+                                                        value.setBlock(x1, y, z1, id);
+                                                    } else {
+                                                        value.setBlock(x1, y, z1, BlockTypes.AIR.getDefaultState());
+                                                    }
                                                 }
-                                            }
-                                            for (int y = Math.min(128, ids.length);
-                                                 y < ids.length; y++) {
-                                                BaseBlock id = ids[y];
-                                                if (id != null) {
-                                                    value.setBlock(x1, y, z1, id);
+                                                for (int y = Math.min(128, ids.length);
+                                                     y < ids.length; y++) {
+                                                    BaseBlock id = ids[y];
+                                                    if (id != null) {
+                                                        value.setBlock(x1, y, z1, id);
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                 }
-                            }
-                        }, world, chunk));
-                    //map.restoreBlocks(worldObj, 0, 0);
-                    map.restoreEntities(worldObj, 0, 0);
+                            }, world, chunk));
+                        //map.restoreBlocks(worldObj, 0, 0);
+                        map.restoreEntities(worldObj, 0, 0);
+                    });
                 }
                 if (!chunks.isEmpty()) {
                     TaskManager.runTaskLater(this, 1);

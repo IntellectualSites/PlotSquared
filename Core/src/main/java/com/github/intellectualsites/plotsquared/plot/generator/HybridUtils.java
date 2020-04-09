@@ -363,7 +363,7 @@ public abstract class HybridUtils {
         }
         HybridUtils.UPDATE = true;
         Set<BlockVector2> regions = new HashSet<>();
-        regions.add(ChunkManager.getRegion(plot.getCenter()));
+        regions.add(ChunkManager.getRegion(plot.getCenterSynchronous()));
         return scheduleRoadUpdate(plot.getArea(), regions, extend, new HashSet<>());
     }
 

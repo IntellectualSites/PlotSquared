@@ -153,13 +153,14 @@ public class Visit extends Command {
                 return CompletableFuture.completedFuture(false);
             }
         }
-        confirm.run(this, () -> {
-            if (plot.teleportPlayer(player, TeleportCause.COMMAND)) {
+        confirm.run(this, () ->
+            plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
+            if (result) {
                 whenDone.run(Visit.this, CommandResult.SUCCESS);
             } else {
                 whenDone.run(Visit.this, CommandResult.FAILURE);
             }
-        }, () -> whenDone.run(Visit.this, CommandResult.FAILURE));
+        }), () -> whenDone.run(Visit.this, CommandResult.FAILURE));
 
         return CompletableFuture.completedFuture(true);
     }

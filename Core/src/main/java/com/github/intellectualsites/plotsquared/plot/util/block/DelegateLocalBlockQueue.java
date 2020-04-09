@@ -12,6 +12,11 @@ public class DelegateLocalBlockQueue extends LocalBlockQueue {
     public DelegateLocalBlockQueue(LocalBlockQueue parent) {
         super(parent == null ? null : parent.getWorld());
         this.parent = parent;
+
+        if (parent != null) {
+            this.setForceSync(parent.isForceSync());
+            this.setChunkObject(parent.getChunkObject());
+        }
     }
 
     public LocalBlockQueue getParent() {

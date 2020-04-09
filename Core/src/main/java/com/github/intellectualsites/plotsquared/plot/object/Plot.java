@@ -66,6 +66,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static com.github.intellectualsites.plotsquared.plot.commands.SubCommand.sendMessage;
@@ -1041,10 +1042,6 @@ public class Plot {
         if (!isLoaded()) {
             return;
         }
-        if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
-            TaskManager.runTask(() -> Plot.this.setSign(name));
-            return;
-        }
         PlotManager manager = this.area.getPlotManager();
         if (this.area.allowSigns()) {
             Location location = manager.getSignLoc(this);
@@ -1057,9 +1054,7 @@ public class Plot {
                         "%plr%", name),
                     Captions.OWNER_SIGN_LINE_4.formatted().replaceAll("%id%", id).replaceAll(
                         "%plr%", name)};
-            WorldUtil.IMP
-                .setSign(this.getWorldName(), location.getX(), location.getY(), location.getZ(),
-                    lines);
+            WorldUtil.IMP.setSign(this.getWorldName(), location.getX(), location.getY(), location.getZ(), lines);
         }
     }
 
@@ -1325,7 +1320,32 @@ public class Plot {
         return this.unlinkPlot(true, true);
     }
 
-    public Location getCenter() {
+    public void getCenter(final Consumer<Location> result) {
+        Location[] corners = getCorners();
+        Location top = corners[0];
+        Location bot = corners[1];
+        Location location =
+            new Location(this.getWorldName(), MathMan.average(bot.getX(), top.getX()),
+                MathMan.average(bot.getY(), top.getY()), MathMan.average(bot.getZ(), top.getZ()));
+        if (!isLoaded()) {
+            result.accept(location);
+            return;
+        }
+        WorldUtil.IMP.getHighestBlock(getWorldName(), location.getX(), location.getZ(), y -> {
+            int height = y;
+            if (area.allowSigns()) {
+               height = Math.max(y, getManager().getSignLoc(this).getY());
+            }
+            location.setY(1 + height);
+            result.accept(location);
+        });
+    }
+
+    /**
+     * @deprecated May cause synchronous chunk loads
+     */
+    @Deprecated
+    public Location getCenterSynchronous() {
         Location[] corners = getCorners();
         Location top = corners[0];
         Location bot = corners[1];
@@ -1335,7 +1355,7 @@ public class Plot {
         if (!isLoaded()) {
             return location;
         }
-        int y = WorldUtil.IMP.getHighestBlock(getWorldName(), location.getX(), location.getZ());
+        int y = WorldUtil.IMP.getHighestBlockSynchronous(getWorldName(), location.getX(), location.getZ());
         if (area.allowSigns()) {
             y = Math.max(y, getManager().getSignLoc(this).getY());
         }
@@ -1343,28 +1363,54 @@ public class Plot {
         return location;
     }
 
-    public Location getSide() {
+    /**
+     * @deprecated May cause synchronous chunk loads
+     */
+    @Deprecated
+    public Location getSideSynchronous() {
         CuboidRegion largest = getLargestRegion();
         int x = (largest.getMaximumPoint().getX() >> 1) - (largest.getMinimumPoint().getX() >> 1)
             + largest.getMinimumPoint().getX();
         int z = largest.getMinimumPoint().getZ() - 1;
         PlotManager manager = getManager();
-        int y = isLoaded() ? WorldUtil.IMP.getHighestBlock(getWorldName(), x, z) : 62;
+        int y = isLoaded() ? WorldUtil.IMP.getHighestBlockSynchronous(getWorldName(), x, z) : 62;
         if (area.allowSigns() && (y <= 0 || y >= 255)) {
             y = Math.max(y, manager.getSignLoc(this).getY() - 1);
         }
         return new Location(getWorldName(), x, y + 1, z);
     }
 
+    public void getSide(Consumer<Location> result) {
+        CuboidRegion largest = getLargestRegion();
+        int x = (largest.getMaximumPoint().getX() >> 1) - (largest.getMinimumPoint().getX() >> 1)
+            + largest.getMinimumPoint().getX();
+        int z = largest.getMinimumPoint().getZ() - 1;
+        PlotManager manager = getManager();
+        if (isLoaded()) {
+            WorldUtil.IMP.getHighestBlock(getWorldName(), x, z, y -> {
+                int height = y;
+                if (area.allowSigns() && (y <= 0 || y >= 255)) {
+                    height = Math.max(y, manager.getSignLoc(this).getY() - 1);
+                }
+                result.accept(new Location(getWorldName(), x, height + 1, z));
+            });
+        } else {
+            int y = 62;
+            if (area.allowSigns()) {
+                y = Math.max(y, manager.getSignLoc(this).getY() - 1);
+            }
+            result.accept(new Location(getWorldName(), x, y + 1, z));
+        }
+    }
+
     /**
-     * Return the home location for the plot
-     *
-     * @return Home location
+     * @deprecated May cause synchronous chunk loading
      */
-    public Location getHome() {
+    @Deprecated
+    public Location getHomeSynchronous() {
         BlockLoc home = this.getPosition();
         if (home == null || home.getX() == 0 && home.getZ() == 0) {
-            return this.getDefaultHome(true);
+            return this.getDefaultHomeSynchronous(true);
         } else {
             Location bottom = this.getBottomAbs();
             Location location = new Location(bottom.getWorld(), bottom.getX() + home.getX(),
@@ -1373,12 +1419,43 @@ public class Plot {
             if (!isLoaded()) {
                 return location;
             }
-            if (!WorldUtil.IMP.getBlock(location).getBlockType().getMaterial().isAir()) {
+            if (!WorldUtil.IMP.getBlockSynchronous(location).getBlockType().getMaterial().isAir()) {
                 location.setY(Math.max(1 + WorldUtil.IMP
-                        .getHighestBlock(this.getWorldName(), location.getX(), location.getZ()),
+                        .getHighestBlockSynchronous(this.getWorldName(), location.getX(), location.getZ()),
                     bottom.getY()));
             }
             return location;
+        }
+    }
+
+    /**
+     * Return the home location for the plot
+     */
+    public void getHome(final Consumer<Location> result) {
+        BlockLoc home = this.getPosition();
+        if (home == null || home.getX() == 0 && home.getZ() == 0) {
+            this.getDefaultHome(result);
+        } else {
+            Location bottom = this.getBottomAbs();
+            Location location = new Location(bottom.getWorld(), bottom.getX() + home.getX(),
+                bottom.getY() + home.getY(), bottom.getZ() + home.getZ(), home.getYaw(),
+                home.getPitch());
+            if (!isLoaded()) {
+                result.accept(location);
+                return;
+            }
+            WorldUtil.IMP.getBlock(location, block -> {
+                if (!block.getBlockType().getMaterial().isAir()) {
+                    WorldUtil.IMP
+                        .getHighestBlock(this.getWorldName(), location.getX(), location.getZ(), y -> {
+                            location.setY(Math.max(1 + y,
+                                bottom.getY()));
+                            result.accept(location);
+                        });
+                } else {
+                    result.accept(location);
+                }
+            });
         }
     }
 
@@ -1406,11 +1483,15 @@ public class Plot {
      *
      * @return Location
      */
-    public Location getDefaultHome() {
-        return getDefaultHome(false);
+    public void getDefaultHome(Consumer<Location> result) {
+        getDefaultHome(false, result);
     }
 
-    public Location getDefaultHome(boolean member) {
+    /**
+     * @deprecated May cause synchronous chunk loads
+     */
+    @Deprecated
+    public Location getDefaultHomeSynchronous(final boolean member) {
         Plot plot = this.getBasePlot(false);
         PlotLoc loc = member ? area.getDefaultHome() : area.getNonmemberHome();
         if (loc != null) {
@@ -1430,12 +1511,47 @@ public class Plot {
                 z = bot.getZ() + loc.getZ();
             }
             int y = loc.getY() < 1 ?
-                (isLoaded() ? WorldUtil.IMP.getHighestBlock(plot.getWorldName(), x, z) + 1 : 63) :
+                (isLoaded() ? WorldUtil.IMP.getHighestBlockSynchronous(plot.getWorldName(), x, z) + 1 : 63) :
                 loc.getY();
             return new Location(plot.getWorldName(), x, y, z);
         }
         // Side
-        return plot.getSide();
+        return plot.getSideSynchronous();
+    }
+
+    public void getDefaultHome(boolean member, Consumer<Location> result) {
+        Plot plot = this.getBasePlot(false);
+        PlotLoc loc = member ? area.getDefaultHome() : area.getNonmemberHome();
+        if (loc != null) {
+            int x;
+            int z;
+            if (loc.getX() == Integer.MAX_VALUE && loc.getZ() == Integer.MAX_VALUE) {
+                // center
+                CuboidRegion largest = plot.getLargestRegion();
+                x = (largest.getMaximumPoint().getX() >> 1) - (largest.getMinimumPoint().getX()
+                    >> 1) + largest.getMinimumPoint().getX();
+                z = (largest.getMaximumPoint().getZ() >> 1) - (largest.getMinimumPoint().getZ()
+                    >> 1) + largest.getMinimumPoint().getZ();
+            } else {
+                // specific
+                Location bot = plot.getBottomAbs();
+                x = bot.getX() + loc.getX();
+                z = bot.getZ() + loc.getZ();
+            }
+            if (loc.getY() < 1) {
+                if (isLoaded()) {
+                    WorldUtil.IMP.getHighestBlock(plot.getWorldName(), x, z, y ->
+                        result.accept(new Location(plot.getWorldName(), x, y + 1, z)));
+                } else {
+                    result.accept(new Location(plot.getWorldName(), x, 63, z));
+                }
+            } else {
+                result.accept(new Location(plot.getWorldName(), x, loc.getY(), z));
+            }
+            return;
+        }
+        // Side
+        plot.getSide(result);
     }
 
     public double getVolume() {
@@ -1611,7 +1727,7 @@ public class Plot {
         setSign(player.getName());
         MainUtil.sendMessage(player, Captions.CLAIMED);
         if (teleport && Settings.Teleport.ON_CLAIM) {
-            teleportPlayer(player, TeleportCause.COMMAND);
+            teleportPlayer(player, TeleportCause.COMMAND, result -> {});
         }
         PlotArea plotworld = getArea();
         if (plotworld.isSchematicOnClaim()) {
@@ -1711,9 +1827,18 @@ public class Plot {
      *
      * @return the name of the biome
      */
-    public BiomeType getBiome() {
-        Location location = this.getCenter();
-        return WorldUtil.IMP.getBiome(location.getWorld(), location.getX(), location.getZ());
+    public void getBiome(Consumer<BiomeType> result) {
+        this.getCenter(location ->
+            WorldUtil.IMP.getBiome(location.getWorld(), location.getX(), location.getZ(), result));
+    }
+
+    /**
+     * @deprecated May cause synchronous chunk loads
+     */
+    @Deprecated
+    public BiomeType getBiomeSynchronous() {
+        final Location location = this.getCenterSynchronous();
+        return WorldUtil.IMP.getBiomeSynchronous(location.getWorld(), location.getX(), location.getZ());
     }
 
     //TODO Better documentation needed.
@@ -2205,9 +2330,6 @@ public class Plot {
     /**
      * Gets the set home location or 0,0,0 if no location is set<br>
      * - Does not take the default home location into account
-     *
-     * @return
-     * @see #getHome()
      */
     public BlockLoc getPosition() {
         return this.getSettings().getPosition();
@@ -2246,7 +2368,7 @@ public class Plot {
         if (this.hasOwner()) {
             return this.owner;
         }
-        if (!this.area.allowSigns()) {
+        if (!this.area.allowSigns() || !Settings.Enabled_Components.GUESS_PLOT_OWNER) {
             return null;
         }
         try {
@@ -2255,7 +2377,7 @@ public class Plot {
                 @Override public void run(String[] value) {
                     ChunkManager.manager
                         .loadChunk(location.getWorld(), location.getBlockVector2(), false);
-                    this.value = WorldUtil.IMP.getSign(location);
+                    this.value = WorldUtil.IMP.getSignSynchronous(location);
                 }
             });
             if (lines == null) {
@@ -2876,8 +2998,8 @@ public class Plot {
      * @param player the player
      * @return if the teleport succeeded
      */
-    public boolean teleportPlayer(final PlotPlayer player) {
-        return teleportPlayer(player, TeleportCause.PLUGIN);
+    public void teleportPlayer(final PlotPlayer player, Consumer<Boolean> result) {
+        teleportPlayer(player, TeleportCause.PLUGIN, result);
     }
 
     /**
@@ -2887,41 +3009,43 @@ public class Plot {
      * @param cause  the cause of the teleport
      * @return if the teleport succeeded
      */
-    public boolean teleportPlayer(final PlotPlayer player, TeleportCause cause) {
+    public void teleportPlayer(final PlotPlayer player, TeleportCause cause, Consumer<Boolean> resultConsumer) {
         Plot plot = this.getBasePlot(false);
         Result result =
             PlotSquared.get().getEventDispatcher().callTeleport(player, player.getLocation(), plot).getEventResult();
         if (result == Result.DENY) {
             sendMessage(player, Captions.EVENT_DENIED, "Teleport");
-            return false;
+            resultConsumer.accept(false);
+            return;
         }
-        final Location location;
-        if (this.area.isHomeAllowNonmember() || plot.isAdded(player.getUUID())) {
-            location = this.getHome();
-        } else {
-            location = this.getDefaultHome(false);
-        }
-        if (Settings.Teleport.DELAY == 0 || Permissions
-            .hasPermission(player, "plots.teleport.delay.bypass")) {
-            MainUtil.sendMessage(player, Captions.TELEPORTED_TO_PLOT);
-            player.teleport(location, cause);
-            return true;
-        }
-        MainUtil.sendMessage(player, Captions.TELEPORT_IN_SECONDS, Settings.Teleport.DELAY + "");
-        final String name = player.getName();
-        TaskManager.TELEPORT_QUEUE.add(name);
-        TaskManager.runTaskLater(() -> {
-            if (!TaskManager.TELEPORT_QUEUE.contains(name)) {
-                MainUtil.sendMessage(player, Captions.TELEPORT_FAILED);
-                return;
-            }
-            TaskManager.TELEPORT_QUEUE.remove(name);
-            if (player.isOnline()) {
+        final Consumer<Location> locationConsumer = location -> {
+            if (Settings.Teleport.DELAY == 0 || Permissions.hasPermission(player, "plots.teleport.delay.bypass")) {
                 MainUtil.sendMessage(player, Captions.TELEPORTED_TO_PLOT);
                 player.teleport(location, cause);
+                resultConsumer.accept(true);
+                return;
             }
-        }, Settings.Teleport.DELAY * 20);
-        return true;
+            MainUtil.sendMessage(player, Captions.TELEPORT_IN_SECONDS, Settings.Teleport.DELAY + "");
+            final String name = player.getName();
+            TaskManager.TELEPORT_QUEUE.add(name);
+            TaskManager.runTaskLater(() -> {
+                if (!TaskManager.TELEPORT_QUEUE.contains(name)) {
+                    MainUtil.sendMessage(player, Captions.TELEPORT_FAILED);
+                    return;
+                }
+                TaskManager.TELEPORT_QUEUE.remove(name);
+                if (player.isOnline()) {
+                    MainUtil.sendMessage(player, Captions.TELEPORTED_TO_PLOT);
+                    player.teleport(location, cause);
+                }
+            }, Settings.Teleport.DELAY * 20);
+            resultConsumer.accept(true);
+        };
+        if (this.area.isHomeAllowNonmember() || plot.isAdded(player.getUUID())) {
+            this.getHome(locationConsumer);
+        } else {
+            this.getDefaultHome(false, locationConsumer);
+        }
     }
 
     /**
