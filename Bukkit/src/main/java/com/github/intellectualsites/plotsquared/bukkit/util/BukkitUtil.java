@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 
 
 @SuppressWarnings({"unused", "WeakerAccess"})
@@ -301,7 +302,7 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override public void getHighestBlock(@NonNull final String world, final int x, final int z,
-        final Consumer<Integer> result) {
+        final IntConsumer result) {
         ensureLoaded(world, x, z, chunk -> {
             final World bukkitWorld = getWorld(world);
             // Skip top and bottom block

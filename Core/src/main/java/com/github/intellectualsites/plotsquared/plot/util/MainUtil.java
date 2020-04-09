@@ -55,8 +55,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -591,7 +591,7 @@ public class MainUtil {
     /**
      * Get the highest block at a location.
      */
-    public static void getHeighestBlock(String world, int x, int z, Consumer<Integer> result) {
+    public static void getHighestBlock(String world, int x, int z, IntConsumer result) {
         WorldUtil.IMP.getHighestBlock(world, x, z, highest -> {
             if (highest == 0) {
                 result.accept(63);

@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
@@ -74,7 +75,7 @@ public abstract class WorldUtil {
     @Deprecated
     public abstract BlockState getBlockSynchronous(Location location);
 
-    public abstract void getHighestBlock(String world, int x, int z, final Consumer<Integer> result);
+    public abstract void getHighestBlock(String world, int x, int z, final IntConsumer result);
 
     /**
      * @deprecated May result in synchronous chunk loading

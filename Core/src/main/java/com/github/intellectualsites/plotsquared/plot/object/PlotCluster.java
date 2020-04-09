@@ -127,7 +127,7 @@ public class PlotCluster {
     public void getHome(Consumer<Location> result) {
         BlockLoc home = this.settings.getPosition();
         Consumer<Location> locationConsumer = toReturn -> {
-            MainUtil.getHeighestBlock(this.area.getWorldName(), toReturn.getX(), toReturn.getZ(), max -> {
+            MainUtil.getHighestBlock(this.area.getWorldName(), toReturn.getX(), toReturn.getZ(), max -> {
                 if (max > toReturn.getY()) {
                     toReturn.setY(1 + max);
                 }
