@@ -1,7 +1,5 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.json.JSONArray;
-import com.github.intellectualsites.plotsquared.json.JSONException;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.generator.ClassicPlotWorld;
@@ -26,6 +24,8 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.File;

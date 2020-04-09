@@ -75,6 +75,8 @@ subprojects {
             exclude(module: "mockito-core")
             exclude(module: "dummypermscompat")
         }
+        compile group: 'org.json', name: 'json', version: '20190722'
+
         implementation("net.kyori:text-api:3.0.2")
         implementation("net.kyori:text-serializer-gson:3.0.2")
         implementation("net.kyori:text-serializer-legacy:3.0.2")
@@ -111,6 +113,7 @@ subprojects {
             include(dependency("net.kyori:text-api:3.0.2"))
         }
         relocate("io.papermc.lib", "com.github.intellectualsites.plotsquared.bukkit.paperlib")
+        relocate("org.json", "com.github.intellectualsites.plotsquared.json")
         // relocate('org.mcstats', 'com.plotsquared.stats')
         archiveFileName = "${parent.name}-${project.name}-${parent.version}.jar"
         destinationDirectory = file "../target"
