@@ -37,9 +37,6 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
         this.dx = maxX - minX;
         this.dy = maxY - minY;
         this.dz = maxZ - minZ;
-
-        this.setForceSync(parent.isForceSync());
-        this.setChunkObject(parent.getChunkObject());
     }
 
     @Override public boolean setBiome(int x, int z, BiomeType biome) {
