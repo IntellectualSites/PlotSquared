@@ -5,6 +5,7 @@ import com.github.intellectualsites.plotsquared.plot.object.BlockBucket;
 import com.github.intellectualsites.plotsquared.plot.object.Direction;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaTerrainType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.util.MathMan;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
@@ -150,6 +151,12 @@ public class ClassicPlotManager extends SquarePlotManager {
         if (classicPlotWorld.ROAD_WIDTH == 0) {
             return false;
         }
+        // When using full vanilla generation, don't generate the walls
+        if (classicPlotWorld.getTerrain() == PlotAreaTerrainType.ALL) {
+            // Return true because the method actually did what it's intended to in this case,
+            // which is absolutely nothing
+            return true;
+        }
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
         Location bottom = plot.getBottomAbs();
         Location top = plot.getExtendedTopAbs();
@@ -206,6 +213,12 @@ public class ClassicPlotManager extends SquarePlotManager {
         if (classicPlotWorld.ROAD_WIDTH == 0) {
             return false;
         }
+        // When using full vanilla generation, don't generate the walls
+        if (classicPlotWorld.getTerrain() == PlotAreaTerrainType.ALL) {
+            // Return true because the method actually did what it's intended to in this case,
+            // which is absolutely nothing
+            return true;
+        }
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
         Location bot = plot.getExtendedBottomAbs()
             .subtract(plot.getMerged(Direction.WEST) ? 0 : 1, 0,
@@ -252,6 +265,12 @@ public class ClassicPlotManager extends SquarePlotManager {
     public boolean setWall(PlotId plotId, Pattern blocks) {
         if (classicPlotWorld.ROAD_WIDTH == 0) {
             return false;
+        }
+        // When using full vanilla generation, don't generate the walls
+        if (classicPlotWorld.getTerrain() == PlotAreaTerrainType.ALL) {
+            // Return true because the method actually did what it's intended to in this case,
+            // which is absolutely nothing
+            return true;
         }
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
         Location bot = plot.getExtendedBottomAbs()
