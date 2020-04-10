@@ -8,7 +8,7 @@ import java.util.UUID;
 public class PlotHandler {
 
     public static boolean sameOwners(@NotNull final Plot plot1, @NotNull final Plot plot2) {
-        if (plot1.hasOwner() || plot2.hasOwner()) {
+        if (plot1.getOwnerAbs() == null || plot2.getOwnerAbs() == null) {
             return false;
         }
         final Set<UUID> owners = plot1.getOwners();
