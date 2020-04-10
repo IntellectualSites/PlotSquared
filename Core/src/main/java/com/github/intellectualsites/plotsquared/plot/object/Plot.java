@@ -411,16 +411,13 @@ public class Plot {
     }
 
     /**
-     * plot owner
+     * Get the plot owner of this particular sub-plot.
      * (Merged plots can have multiple owners)
-     * Direct access is Deprecated: use getOwners()
+     * Direct access is discouraged: use getOwners()
      *
      * @see #getOwnerAbs() getOwnerAbs() to get the owner as stored in the database
-     * @deprecated A mega-plot may have multiple owners
-     * and this method only considers the
-     * owner of this particular sub-plot.
      */
-    @Deprecated public UUID getOwner() {
+    public UUID getOwner() {
         if (MainUtil.isServerOwned(this)) {
             return DBFunc.SERVER;
         }
