@@ -49,7 +49,7 @@ public class Owner extends SetCommand {
             uuid = null;
         }
         PlotChangeOwnerEvent event = PlotSquared.get().getEventDispatcher()
-            .callOwnerChange(player, plot, plot.hasOwner() ? plot.owner : null, uuid,
+            .callOwnerChange(player, plot, plot.hasOwner() ? plot.getOwnerAbs() : null, uuid,
                 plot.hasOwner());
         if (event.getEventResult() == Result.DENY) {
             sendMessage(player, Captions.EVENT_DENIED, "Owner change");

@@ -130,8 +130,8 @@ public abstract class UUIDHandlerImplementation {
                     UUIDHandlerImplementation.this.unknown.remove(offline);
                     Set<Plot> plots = PlotSquared.get().getPlotsAbs(offline);
                     if (!plots.isEmpty()) {
-                        for (Plot plot : plots) {
-                            plot.owner = uuid;
+                        for (final Plot plot : plots) {
+                            plot.setOwnerAbs(uuid);
                         }
                         DBFunc.replaceUUID(offline, uuid);
                         PlotSquared.debug("&cDetected invalid UUID stored for: " + name.value);
@@ -152,8 +152,8 @@ public abstract class UUIDHandlerImplementation {
                     UUIDHandlerImplementation.this.unknown.remove(offlineUpper);
                     Set<Plot> plots = PlotSquared.get().getPlotsAbs(offlineUpper);
                     if (!plots.isEmpty()) {
-                        for (Plot plot : plots) {
-                            plot.owner = uuid;
+                        for (final Plot plot : plots) {
+                            plot.setOwnerAbs(uuid);
                         }
                         replace(offlineUpper, uuid, name.value);
                     }
@@ -166,8 +166,8 @@ public abstract class UUIDHandlerImplementation {
                 if (!existing.equals(uuid)) {
                     Set<Plot> plots = PlotSquared.get().getPlots(existing);
                     if (!plots.isEmpty()) {
-                        for (Plot plot : plots) {
-                            plot.owner = uuid;
+                        for (final Plot plot : plots) {
+                            plot.setOwnerAbs(uuid);
                         }
                         replace(existing, uuid, name.value);
                     }

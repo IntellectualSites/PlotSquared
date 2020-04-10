@@ -347,8 +347,8 @@ import java.util.zip.ZipInputStream;
                 UUIDHandler.add(new StringWrapper("*"), DBFunc.EVERYONE);
                 forEachPlotRaw(plot -> {
                     if (plot.hasOwner() && plot.temp != -1) {
-                        if (UUIDHandler.getName(plot.owner) == null) {
-                            UUIDHandler.implementation.unknown.add(plot.owner);
+                        if (UUIDHandler.getName(plot.getOwnerAbs()) == null) {
+                            UUIDHandler.implementation.unknown.add(plot.getOwnerAbs());
                         }
                     }
                 });
@@ -736,7 +736,7 @@ import java.util.zip.ZipInputStream;
         } else {
             list = new ArrayList<>(input);
         }
-        list.sort(Comparator.comparingLong(a -> ExpireManager.IMP.getTimestamp(a.owner)));
+        list.sort(Comparator.comparingLong(a -> ExpireManager.IMP.getTimestamp(a.getOwnerAbs())));
         return list;
     }
 

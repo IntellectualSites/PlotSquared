@@ -718,7 +718,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 stmt.setInt(i * 5 + 1, plot.getId().x);
                 stmt.setInt(i * 5 + 2, plot.getId().y);
                 try {
-                    stmt.setString(i * 5 + 3, plot.owner.toString());
+                    stmt.setString(i * 5 + 3, plot.getOwnerAbs().toString());
                 } catch (SQLException ignored) {
                     stmt.setString(i * 5 + 3, everyone.toString());
                 }
@@ -732,7 +732,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 stmt.setInt(i * 6 + 2, plot.getId().x);
                 stmt.setInt(i * 6 + 3, plot.getId().y);
                 try {
-                    stmt.setString(i * 6 + 4, plot.owner.toString());
+                    stmt.setString(i * 6 + 4, plot.getOwnerAbs().toString());
                 } catch (SQLException ignored) {
                     stmt.setString(i * 6 + 4, everyone.toString());
                 }
@@ -743,7 +743,7 @@ import java.util.concurrent.atomic.AtomicInteger;
             @Override public void setSQL(PreparedStatement stmt, Plot plot) throws SQLException {
                 stmt.setInt(1, plot.getId().x);
                 stmt.setInt(2, plot.getId().y);
-                stmt.setString(3, plot.owner.toString());
+                stmt.setString(3, plot.getOwnerAbs().toString());
                 stmt.setString(4, plot.getArea().toString());
                 stmt.setTimestamp(5, new Timestamp(plot.getTimestamp()));
 
@@ -982,7 +982,7 @@ import java.util.concurrent.atomic.AtomicInteger;
             @Override public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, plot.getId().x);
                 statement.setInt(2, plot.getId().y);
-                statement.setString(3, plot.owner.toString());
+                statement.setString(3, plot.getOwnerAbs().toString());
                 statement.setString(4, plot.getArea().toString());
                 statement.setTimestamp(5, new Timestamp(plot.getTimestamp()));
                 statement.setString(6, plot.getArea().toString());
@@ -1051,7 +1051,7 @@ import java.util.concurrent.atomic.AtomicInteger;
             @Override public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, plot.getId().x);
                 statement.setInt(2, plot.getId().y);
-                statement.setString(3, plot.owner.toString());
+                statement.setString(3, plot.getOwnerAbs().toString());
                 statement.setString(4, plot.getArea().toString());
                 statement.setTimestamp(5, new Timestamp(plot.getTimestamp()));
             }
@@ -1356,7 +1356,7 @@ import java.util.concurrent.atomic.AtomicInteger;
     @Override public void delete(final Plot plot) {
         PlotSquared.debug(
             "Deleting plot... Id: " + plot.getId() + " World: " + plot.getWorldName() + " Owner: "
-                + plot.owner + " Index: " + plot.temp);
+                + plot.getOwnerAbs() + " Index: " + plot.temp);
         deleteSettings(plot);
         deleteDenied(plot);
         deleteHelpers(plot);
@@ -1384,7 +1384,7 @@ import java.util.concurrent.atomic.AtomicInteger;
     @Override public void createPlotSettings(final int id, Plot plot) {
         PlotSquared.debug(
             "Creating plot... Id: " + plot.getId() + " World: " + plot.getWorldName() + " Owner: "
-                + plot.owner + " Index: " + id);
+                + plot.getOwnerAbs() + " Index: " + id);
         addPlotTask(plot, new UniqueStatement("createPlotSettings") {
             @Override public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, id);
@@ -3002,10 +3002,10 @@ import java.util.concurrent.atomic.AtomicInteger;
                 continue;
             }
             // owner
-            if (!plot.owner.equals(dataPlot.owner)) {
+            if (!plot.getOwnerAbs().equals(dataPlot.getOwnerAbs())) {
                 PlotSquared
-                    .debug("&8 - &7Setting owner: " + plot + " -> " + MainUtil.getName(plot.owner));
-                setOwner(plot, plot.owner);
+                    .debug("&8 - &7Setting owner: " + plot + " -> " + MainUtil.getName(plot.getOwnerAbs()));
+                setOwner(plot, plot.getOwnerAbs());
             }
             // trusted
             if (!plot.getTrusted().equals(dataPlot.getTrusted())) {

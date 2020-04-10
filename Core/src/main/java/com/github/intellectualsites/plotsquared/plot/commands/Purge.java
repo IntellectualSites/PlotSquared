@@ -121,7 +121,7 @@ public class Purge extends SubCommand {
             if (added != null && !plot.isAdded(added)) {
                 continue;
             }
-            if (unknown && UUIDHandler.getName(plot.owner) != null) {
+            if (unknown && UUIDHandler.getName(plot.getOwnerAbs()) != null) {
                 continue;
             }
             toDelete.addAll(plot.getConnectedPlots());
@@ -144,7 +144,7 @@ public class Purge extends SubCommand {
                     if (added != null && !plot.isAdded(added)) {
                         continue;
                     }
-                    if (unknown && UUIDHandler.getName(plot.owner) != null) {
+                    if (unknown && UUIDHandler.getName(plot.getOwnerAbs()) != null) {
                         continue;
                     }
                     toDelete.add(plot);
