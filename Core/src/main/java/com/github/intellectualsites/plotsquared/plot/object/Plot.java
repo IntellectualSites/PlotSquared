@@ -487,7 +487,7 @@ public class Plot {
      * @return true if the player is added/trusted or is the owner
      */
     public boolean isAdded(UUID uuid) {
-        if (this.getOwnerAbs() == null || getDenied().contains(uuid)) {
+        if (!this.hasOwner() || getDenied().contains(uuid)) {
             return false;
         }
         if (isOwner(uuid)) {
@@ -911,7 +911,7 @@ public class Plot {
                         TaskManager.runTask(whenDone);
                     };
                     for (Plot current : plots) {
-                        if (isDelete || current.getOwnerAbs() == null) {
+                        if (isDelete || !current.hasOwner()) {
                             manager.unClaimPlot(current, null);
                         } else {
                             manager.claimPlot(current);
@@ -1313,7 +1313,7 @@ public class Plot {
      * @return false if the Plot has no owner, otherwise true.
      */
     public boolean unclaim() {
-        if (this.getOwnerAbs() == null) {
+        if (!this.hasOwner()) {
             return false;
         }
         for (Plot current : getConnectedPlots()) {
@@ -1698,7 +1698,7 @@ public class Plot {
      * Sets the plot sign if plot signs are enabled.
      */
     public void setSign() {
-        if (this.getOwnerAbs() == null) {
+        if (!this.hasOwner()) {
             this.setSign("unknown");
             return;
         }
@@ -1892,7 +1892,7 @@ public class Plot {
      * @return Future containing the result
      */
     public CompletableFuture<Boolean> swapData(Plot plot) {
-        if (this.getOwnerAbs() == null) {
+        if (!this.hasOwner()) {
             if (plot != null && plot.hasOwner()) {
                 plot.moveData(this, null);
                 return CompletableFuture.completedFuture(true);
@@ -1927,7 +1927,7 @@ public class Plot {
      * @return
      */
     public boolean moveData(Plot plot, Runnable whenDone) {
-        if (this.getOwnerAbs() == null) {
+        if (!this.hasOwner()) {
             PlotSquared.debug(plot + " is unowned (single)");
             TaskManager.runTask(whenDone);
             return false;
@@ -2480,7 +2480,7 @@ public class Plot {
      */
     public boolean autoMerge(Direction dir, int max, UUID uuid, boolean removeRoads) {
         //Ignore merging if there is no owner for the plot
-        if (this.getOwnerAbs() == null) {
+        if (!this.hasOwner()) {
             return false;
         }
         Set<Plot> connected = this.getConnectedPlots();
@@ -2780,7 +2780,7 @@ public class Plot {
         }
         Plot current;
         while ((current = frontier.poll()) != null) {
-            if (current.getOwnerAbs() == null || current.settings == null) {
+            if (!current.hasOwner() || current.settings == null) {
                 // Invalid plot
                 // merged onto unclaimed plot
                 PlotSquared.debug(
@@ -3088,7 +3088,7 @@ public class Plot {
      * @return true if the owner of the Plot is online
      */
     public boolean isOnline() {
-        if (this.getOwnerAbs() == null) {
+        if (!this.hasOwner()) {
             return false;
         }
         if (!isMerged()) {
@@ -3219,7 +3219,7 @@ public class Plot {
         Location ob = this.getBottomAbs();
         final int offsetX = db.getX() - ob.getX();
         final int offsetZ = db.getZ() - ob.getZ();
-        if (this.getOwnerAbs() == null) {
+        if (!this.hasOwner()) {
             TaskManager.runTaskLater(whenDone, 1);
             return CompletableFuture.completedFuture(false);
         }
@@ -3338,7 +3338,7 @@ public class Plot {
         Location ob = this.getBottomAbs();
         final int offsetX = db.getX() - ob.getX();
         final int offsetZ = db.getZ() - ob.getZ();
-        if (this.getOwnerAbs() == null) {
+        if (!this.hasOwner()) {
             TaskManager.runTaskLater(whenDone, 1);
             return false;
         }
