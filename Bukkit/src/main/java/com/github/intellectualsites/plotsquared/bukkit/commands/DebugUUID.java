@@ -256,9 +256,9 @@ import java.util.UUID;
             MainUtil.sendMessage(player, "&7 - Updating plot objects");
 
             for (Plot plot : PlotSquared.get().getPlots()) {
-                UUID value = uCMap.get(plot.owner);
+                UUID value = uCMap.get(plot.getOwnerAbs());
                 if (value != null) {
-                    plot.owner = value;
+                    plot.setOwnerAbs(value);
                 }
                 plot.getTrusted().clear();
                 plot.getMembers().clear();
@@ -275,9 +275,9 @@ import java.util.UUID;
                 if (!result) {
                     MainUtil.sendMessage(player, "&cConversion failed! Attempting recovery");
                     for (Plot plot : PlotSquared.get().getPlots()) {
-                        UUID value = uCReverse.get(plot.owner);
+                        UUID value = uCReverse.get(plot.getOwnerAbs());
                         if (value != null) {
-                            plot.owner = value;
+                            plot.setOwnerAbs(value);
                         }
                     }
                     DBFunc.createPlotsAndData(new ArrayList<>(PlotSquared.get().getPlots()),

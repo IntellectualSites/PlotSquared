@@ -528,7 +528,7 @@ public abstract class PlotArea {
         }
         final HashSet<Plot> myPlots = new HashSet<>();
         forEachPlotAbs(value -> {
-            if (uuid.equals(value.owner)) {
+            if (uuid.equals(value.getOwnerAbs())) {
                 myPlots.add(value);
             }
         });

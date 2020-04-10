@@ -86,7 +86,7 @@ public class UUIDHandler {
         final HashSet<UUID> uuids = new HashSet<>();
         PlotSquared.get().forEachPlotRaw(plot -> {
             if (plot.hasOwner()) {
-                uuids.add(plot.owner);
+                uuids.add(plot.getOwnerAbs());
                 uuids.addAll(plot.getTrusted());
                 uuids.addAll(plot.getMembers());
                 uuids.addAll(plot.getDenied());
@@ -132,8 +132,8 @@ public class UUIDHandler {
         return implementation.getName(uuid);
     }
 
-    public static PlotPlayer getPlayer(UUID uuid) {
-        if (implementation == null) {
+    @Nullable public static PlotPlayer getPlayer(@Nullable final UUID uuid) {
+        if (implementation == null || uuid == null) {
             return null;
         }
         return check(implementation.getPlayer(uuid));
