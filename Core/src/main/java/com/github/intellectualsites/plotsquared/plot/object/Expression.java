@@ -1,8 +1,8 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.commands.DebugExec;
-import com.github.intellectualsites.plotsquared.plot.commands.MainCommand;
+import com.github.intellectualsites.plotsquared.PlotSquared;
+import com.github.intellectualsites.plotsquared.commands.DebugExec;
+import com.github.intellectualsites.plotsquared.commands.MainCommand;
 
 import javax.script.ScriptException;
 

@@ -1,8 +1,5 @@
 package com.github.intellectualsites.plotsquared.commands;
 
-import com.github.intellectualsites.plotsquared.plot.commands.CommandCategory;
-import com.github.intellectualsites.plotsquared.plot.commands.RequiredType;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

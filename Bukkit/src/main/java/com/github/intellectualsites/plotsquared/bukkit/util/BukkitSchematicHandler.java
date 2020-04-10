@@ -2,11 +2,11 @@ package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.schematic.StateWrapper;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
-import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
-import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
-import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
+import com.github.intellectualsites.plotsquared.util.tasks.RunnableVal;
+import com.github.intellectualsites.plotsquared.util.MainUtil;
+import com.github.intellectualsites.plotsquared.util.SchematicHandler;
+import com.github.intellectualsites.plotsquared.util.tasks.TaskManager;
+import com.github.intellectualsites.plotsquared.queue.LocalBlockQueue;
 import com.sk89q.jnbt.*;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.extension.platform.Capability;

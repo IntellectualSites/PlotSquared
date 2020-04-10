@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.config;
 
-import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.util.StringMan;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

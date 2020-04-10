@@ -1,35 +1,37 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.PlotSquared;
+import com.github.intellectualsites.plotsquared.player.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.events.PlotComponentSetEvent;
-import com.github.intellectualsites.plotsquared.plot.events.PlotMergeEvent;
-import com.github.intellectualsites.plotsquared.plot.events.PlotUnlinkEvent;
-import com.github.intellectualsites.plotsquared.plot.events.Result;
+import com.github.intellectualsites.plotsquared.database.DBFunc;
+import com.github.intellectualsites.plotsquared.events.PlotComponentSetEvent;
+import com.github.intellectualsites.plotsquared.events.PlotMergeEvent;
+import com.github.intellectualsites.plotsquared.events.PlotUnlinkEvent;
+import com.github.intellectualsites.plotsquared.events.Result;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.GlobalFlagContainer;
 import com.github.intellectualsites.plotsquared.plot.flags.InternalFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.KeepFlag;
-import com.github.intellectualsites.plotsquared.plot.generator.SquarePlotWorld;
-import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
-import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
+import com.github.intellectualsites.plotsquared.generator.SquarePlotWorld;
+import com.github.intellectualsites.plotsquared.listener.PlotListener;
+import com.github.intellectualsites.plotsquared.plot.comment.PlotComment;
 import com.github.intellectualsites.plotsquared.plot.object.schematic.Schematic;
-import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
-import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.github.intellectualsites.plotsquared.plot.util.Permissions;
-import com.github.intellectualsites.plotsquared.plot.util.SchematicHandler;
-import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
-import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
-import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
-import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
-import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
-import com.github.intellectualsites.plotsquared.plot.util.expiry.ExpireManager;
-import com.github.intellectualsites.plotsquared.plot.util.expiry.PlotAnalysis;
+import com.github.intellectualsites.plotsquared.util.ChunkManager;
+import com.github.intellectualsites.plotsquared.util.MainUtil;
+import com.github.intellectualsites.plotsquared.util.MathMan;
+import com.github.intellectualsites.plotsquared.util.Permissions;
+import com.github.intellectualsites.plotsquared.util.SchematicHandler;
+import com.github.intellectualsites.plotsquared.util.tasks.TaskManager;
+import com.github.intellectualsites.plotsquared.util.uuid.UUIDHandler;
+import com.github.intellectualsites.plotsquared.util.WorldUtil;
+import com.github.intellectualsites.plotsquared.queue.GlobalBlockQueue;
+import com.github.intellectualsites.plotsquared.queue.LocalBlockQueue;
+import com.github.intellectualsites.plotsquared.plot.expiration.ExpireManager;
+import com.github.intellectualsites.plotsquared.plot.expiration.PlotAnalysis;
+import com.github.intellectualsites.plotsquared.util.tasks.RunnableVal;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -69,7 +71,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static com.github.intellectualsites.plotsquared.plot.commands.SubCommand.sendMessage;
+import static com.github.intellectualsites.plotsquared.commands.SubCommand.sendMessage;
 
 /**
  * The plot class<br>
@@ -83,10 +85,7 @@ public class Plot {
 
     public static final int MAX_HEIGHT = 256;
 
-    /**
-     * @deprecated raw access is deprecated
-     */
-    @Deprecated private static Set<Plot> connected_cache;
+    private static Set<Plot> connected_cache;
     private static Set<CuboidRegion> regions_cache;
 
     @NotNull private final PlotId id;

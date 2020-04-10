@@ -1,16 +1,16 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
-import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.RefClass;
-import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.RefConstructor;
-import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.RefField;
-import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.RefMethod;
-import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
-import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.github.intellectualsites.plotsquared.player.PlotPlayer;
+import com.github.intellectualsites.plotsquared.util.ReflectionUtils.RefClass;
+import com.github.intellectualsites.plotsquared.util.ReflectionUtils.RefConstructor;
+import com.github.intellectualsites.plotsquared.util.ReflectionUtils.RefField;
+import com.github.intellectualsites.plotsquared.util.ReflectionUtils.RefMethod;
+import com.github.intellectualsites.plotsquared.util.tasks.TaskManager;
+import com.github.intellectualsites.plotsquared.util.uuid.UUIDHandler;
 import com.sk89q.worldedit.math.BlockVector2;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
 
-import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getRefClass;
+import static com.github.intellectualsites.plotsquared.util.ReflectionUtils.getRefClass;
 
 /**
  * An utility that can be used to send chunks, rather than using bukkit code

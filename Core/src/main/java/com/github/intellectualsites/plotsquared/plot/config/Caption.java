@@ -1,8 +1,8 @@
 package com.github.intellectualsites.plotsquared.plot.config;
 
-import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.PlotSquared;
+import com.github.intellectualsites.plotsquared.player.PlotPlayer;
+import com.github.intellectualsites.plotsquared.util.StringMan;
 
 public interface Caption {
 

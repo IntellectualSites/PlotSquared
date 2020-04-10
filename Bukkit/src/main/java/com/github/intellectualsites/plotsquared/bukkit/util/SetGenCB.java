@@ -1,9 +1,9 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.bukkit.generator.BukkitAugmentedGenerator;
-import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.generator.GeneratorWrapper;
-import com.github.intellectualsites.plotsquared.plot.util.SetupUtils;
+import com.github.intellectualsites.plotsquared.PlotSquared;
+import com.github.intellectualsites.plotsquared.generator.GeneratorWrapper;
+import com.github.intellectualsites.plotsquared.util.SetupUtils;
 import org.bukkit.World;
 import org.bukkit.generator.ChunkGenerator;
 

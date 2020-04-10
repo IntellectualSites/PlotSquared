@@ -2,10 +2,10 @@ package com.github.intellectualsites.plotsquared.bukkit.util.block;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitBlockUtil;
 import com.github.intellectualsites.plotsquared.bukkit.object.schematic.StateWrapper;
-import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.block.BasicLocalBlockQueue;
-import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
+import com.github.intellectualsites.plotsquared.PlotSquared;
+import com.github.intellectualsites.plotsquared.util.MainUtil;
+import com.github.intellectualsites.plotsquared.queue.BasicLocalBlockQueue;
+import com.github.intellectualsites.plotsquared.util.BlockUtil;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;

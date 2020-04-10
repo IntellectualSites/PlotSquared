@@ -2,9 +2,9 @@ package com.github.intellectualsites.plotsquared.bukkit.uuid;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitOfflinePlayer;
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
+import com.github.intellectualsites.plotsquared.player.OfflinePlotPlayer;
+import com.github.intellectualsites.plotsquared.player.PlotPlayer;
+import com.github.intellectualsites.plotsquared.util.uuid.UUIDWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;

@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.plot;
 
-import com.github.intellectualsites.plotsquared.plot.database.AbstractDBTest;
-import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
+import com.github.intellectualsites.plotsquared.database.AbstractDBTest;
+import com.github.intellectualsites.plotsquared.database.DBFunc;
 import com.sk89q.worldedit.world.item.ItemType;
 import org.junit.Before;
 

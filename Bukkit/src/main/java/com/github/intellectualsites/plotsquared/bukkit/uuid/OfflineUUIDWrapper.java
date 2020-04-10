@@ -1,12 +1,12 @@
 package com.github.intellectualsites.plotsquared.bukkit.uuid;
 
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitOfflinePlayer;
-import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.PlotSquared;
+import com.github.intellectualsites.plotsquared.player.OfflinePlotPlayer;
+import com.github.intellectualsites.plotsquared.player.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.StringWrapper;
-import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
-import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
+import com.github.intellectualsites.plotsquared.util.uuid.UUIDHandler;
+import com.github.intellectualsites.plotsquared.util.uuid.UUIDWrapper;
 import com.google.common.base.Charsets;
 import com.google.common.collect.BiMap;
 import org.bukkit.Bukkit;

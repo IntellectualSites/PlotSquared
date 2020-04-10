@@ -1,15 +1,19 @@
 package com.github.intellectualsites.plotsquared.api;
 
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
-import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Caption;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.*;
-import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
-import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
+import com.github.intellectualsites.plotsquared.player.PlotPlayer;
+import com.github.intellectualsites.plotsquared.queue.GlobalBlockQueue;
+import com.github.intellectualsites.plotsquared.util.ChunkManager;
+import com.github.intellectualsites.plotsquared.util.EventDispatcher;
+import com.github.intellectualsites.plotsquared.util.MainUtil;
+import com.github.intellectualsites.plotsquared.util.SchematicHandler;
+import com.github.intellectualsites.plotsquared.util.uuid.UUIDHandler;
+import com.github.intellectualsites.plotsquared.util.uuid.UUIDWrapper;
 import lombok.NoArgsConstructor;
 
 import java.util.Collections;

@@ -2,10 +2,10 @@ package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.configuration.serialization.ConfigurationSerializable;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
-import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.github.intellectualsites.plotsquared.plot.util.StringMan;
-import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
-import com.github.intellectualsites.plotsquared.plot.util.world.PatternUtil;
+import com.github.intellectualsites.plotsquared.util.MathMan;
+import com.github.intellectualsites.plotsquared.util.StringMan;
+import com.github.intellectualsites.plotsquared.util.BlockUtil;
+import com.github.intellectualsites.plotsquared.util.PatternUtil;
 import com.google.common.collect.ImmutableMap;
 import com.sk89q.worldedit.function.pattern.BlockPattern;
 import com.sk89q.worldedit.function.pattern.Pattern;

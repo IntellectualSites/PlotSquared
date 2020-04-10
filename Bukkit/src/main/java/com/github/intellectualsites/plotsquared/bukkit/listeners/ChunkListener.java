@@ -1,13 +1,13 @@
 package com.github.intellectualsites.plotsquared.bukkit.listeners;
 
-import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
-import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.RefClass;
-import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.RefField;
-import com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.RefMethod;
-import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.util.ReflectionUtils.RefClass;
+import com.github.intellectualsites.plotsquared.util.ReflectionUtils.RefField;
+import com.github.intellectualsites.plotsquared.util.ReflectionUtils.RefMethod;
+import com.github.intellectualsites.plotsquared.util.tasks.TaskManager;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -30,7 +30,7 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 
-import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getRefClass;
+import static com.github.intellectualsites.plotsquared.util.ReflectionUtils.getRefClass;
 
 @SuppressWarnings("unused") public class ChunkListener implements Listener {
 

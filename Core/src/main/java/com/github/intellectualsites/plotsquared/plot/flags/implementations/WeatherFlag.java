@@ -2,7 +2,7 @@ package com.github.intellectualsites.plotsquared.plot.flags.implementations;
 
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
-import com.github.intellectualsites.plotsquared.plot.util.PlotWeather;
+import com.github.intellectualsites.plotsquared.plot.PlotWeather;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;

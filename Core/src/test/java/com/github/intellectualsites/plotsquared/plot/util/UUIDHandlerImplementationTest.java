@@ -1,9 +1,10 @@
 package com.github.intellectualsites.plotsquared.plot.util;
 
-import com.github.intellectualsites.plotsquared.plot.database.AbstractDBTest;
-import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
-import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
+import com.github.intellectualsites.plotsquared.database.AbstractDBTest;
+import com.github.intellectualsites.plotsquared.database.DBFunc;
+import com.github.intellectualsites.plotsquared.util.uuid.UUIDHandlerImplementation;
+import com.github.intellectualsites.plotsquared.util.tasks.RunnableVal;
+import com.github.intellectualsites.plotsquared.util.uuid.UUIDWrapper;
 import org.junit.Before;
 
 import java.util.UUID;

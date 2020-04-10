@@ -1,7 +1,8 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import com.github.intellectualsites.plotsquared.plot.commands.Template;
+import com.github.intellectualsites.plotsquared.commands.Template;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
+import com.github.intellectualsites.plotsquared.util.FileBytes;
 import com.sk89q.worldedit.function.pattern.Pattern;
 
 import java.io.IOException;

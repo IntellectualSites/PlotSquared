@@ -1,7 +1,7 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.bukkit.BukkitMain;
-import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.util.tasks.TaskManager;
 import org.bukkit.Bukkit;
 
 public class BukkitTaskManager extends TaskManager {

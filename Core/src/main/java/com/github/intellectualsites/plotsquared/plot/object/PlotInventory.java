@@ -1,7 +1,8 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.util.InventoryUtil;
+import com.github.intellectualsites.plotsquared.PlotSquared;
+import com.github.intellectualsites.plotsquared.player.PlotPlayer;
+import com.github.intellectualsites.plotsquared.util.InventoryUtil;
 import lombok.NonNull;
 
 public class PlotInventory {

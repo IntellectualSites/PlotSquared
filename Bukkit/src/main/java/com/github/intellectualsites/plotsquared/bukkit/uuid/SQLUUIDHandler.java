@@ -1,16 +1,16 @@
 package com.github.intellectualsites.plotsquared.bukkit.uuid;
 
-import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.database.SQLite;
-import com.github.intellectualsites.plotsquared.plot.object.RunnableVal;
+import com.github.intellectualsites.plotsquared.database.SQLite;
+import com.github.intellectualsites.plotsquared.util.tasks.RunnableVal;
 import com.github.intellectualsites.plotsquared.plot.object.StringWrapper;
-import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
-import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
-import com.github.intellectualsites.plotsquared.plot.util.UUIDHandlerImplementation;
-import com.github.intellectualsites.plotsquared.plot.uuid.UUIDWrapper;
+import com.github.intellectualsites.plotsquared.util.MainUtil;
+import com.github.intellectualsites.plotsquared.util.tasks.TaskManager;
+import com.github.intellectualsites.plotsquared.util.uuid.UUIDHandler;
+import com.github.intellectualsites.plotsquared.util.uuid.UUIDHandlerImplementation;
+import com.github.intellectualsites.plotsquared.util.uuid.UUIDWrapper;
 import com.google.common.collect.HashBiMap;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

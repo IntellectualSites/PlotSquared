@@ -1,9 +1,9 @@
 package com.github.intellectualsites.plotsquared.bukkit.util;
 
 import com.github.intellectualsites.plotsquared.bukkit.commands.DebugUUID;
-import com.github.intellectualsites.plotsquared.plot.commands.MainCommand;
-import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
+import com.github.intellectualsites.plotsquared.commands.MainCommand;
+import com.github.intellectualsites.plotsquared.player.ConsolePlayer;
+import com.github.intellectualsites.plotsquared.player.PlotPlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

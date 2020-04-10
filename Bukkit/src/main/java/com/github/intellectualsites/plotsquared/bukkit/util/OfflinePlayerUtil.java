@@ -9,15 +9,15 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
-import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.callConstructor;
-import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.callMethod;
-import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getCbClass;
-import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getField;
-import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getNmsClass;
-import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.getUtilClass;
-import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.makeConstructor;
-import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.makeField;
-import static com.github.intellectualsites.plotsquared.plot.util.ReflectionUtils.makeMethod;
+import static com.github.intellectualsites.plotsquared.util.ReflectionUtils.callConstructor;
+import static com.github.intellectualsites.plotsquared.util.ReflectionUtils.callMethod;
+import static com.github.intellectualsites.plotsquared.util.ReflectionUtils.getCbClass;
+import static com.github.intellectualsites.plotsquared.util.ReflectionUtils.getField;
+import static com.github.intellectualsites.plotsquared.util.ReflectionUtils.getNmsClass;
+import static com.github.intellectualsites.plotsquared.util.ReflectionUtils.getUtilClass;
+import static com.github.intellectualsites.plotsquared.util.ReflectionUtils.makeConstructor;
+import static com.github.intellectualsites.plotsquared.util.ReflectionUtils.makeField;
+import static com.github.intellectualsites.plotsquared.util.ReflectionUtils.makeMethod;
 
 public class OfflinePlayerUtil {
 

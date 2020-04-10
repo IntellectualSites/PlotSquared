@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.flags.implementations;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
-import com.github.intellectualsites.plotsquared.plot.util.world.ItemUtil;
+import com.github.intellectualsites.plotsquared.util.ItemUtil;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import org.jetbrains.annotations.NotNull;

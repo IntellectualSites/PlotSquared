@@ -4,10 +4,10 @@ import com.github.intellectualsites.plotsquared.bukkit.chat.FancyMessage;
 import com.github.intellectualsites.plotsquared.bukkit.object.BukkitPlayer;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
-import com.github.intellectualsites.plotsquared.plot.object.ConsolePlayer;
-import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.util.ChatManager;
+import com.github.intellectualsites.plotsquared.player.ConsolePlayer;
+import com.github.intellectualsites.plotsquared.plot.object.message.PlotMessage;
+import com.github.intellectualsites.plotsquared.player.PlotPlayer;
+import com.github.intellectualsites.plotsquared.util.ChatManager;
 import org.bukkit.ChatColor;
 
 import java.util.Arrays;

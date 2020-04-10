@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.util.StringMan;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 

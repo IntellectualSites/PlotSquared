@@ -3,8 +3,8 @@ package com.github.intellectualsites.plotsquared.plot.flags.implementations;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
-import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.MathMan;
+import com.github.intellectualsites.plotsquared.util.MainUtil;
+import com.github.intellectualsites.plotsquared.util.MathMan;
 import org.jetbrains.annotations.NotNull;
 
 public class KeepFlag extends PlotFlag<Object, KeepFlag> {

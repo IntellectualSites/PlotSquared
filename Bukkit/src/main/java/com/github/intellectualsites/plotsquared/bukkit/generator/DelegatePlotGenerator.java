@@ -1,13 +1,13 @@
 package com.github.intellectualsites.plotsquared.bukkit.generator;
 
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
-import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGenerator;
+import com.github.intellectualsites.plotsquared.PlotSquared;
+import com.github.intellectualsites.plotsquared.generator.IndependentPlotGenerator;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
-import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
+import com.github.intellectualsites.plotsquared.util.MathMan;
+import com.github.intellectualsites.plotsquared.queue.ScopedLocalBlockQueue;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import java.util.Random;
 import org.bukkit.World;

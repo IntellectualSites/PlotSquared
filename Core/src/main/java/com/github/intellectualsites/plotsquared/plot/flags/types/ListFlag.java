@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.flags.types;
 import com.github.intellectualsites.plotsquared.plot.config.Caption;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flags.PlotFlag;
-import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.util.StringMan;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

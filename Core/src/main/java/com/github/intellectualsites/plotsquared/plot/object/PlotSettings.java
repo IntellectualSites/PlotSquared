@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import com.github.intellectualsites.plotsquared.plot.object.comment.PlotComment;
+import com.github.intellectualsites.plotsquared.plot.comment.PlotComment;
 import com.google.common.collect.ImmutableList;
 import lombok.Getter;
 import lombok.Setter;

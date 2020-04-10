@@ -1,20 +1,17 @@
 package com.github.intellectualsites.plotsquared.commands;
 
 import com.github.intellectualsites.plotsquared.configuration.file.YamlConfiguration;
-import com.github.intellectualsites.plotsquared.plot.PlotSquared;
-import com.github.intellectualsites.plotsquared.plot.commands.CommandCategory;
-import com.github.intellectualsites.plotsquared.plot.commands.MainCommand;
-import com.github.intellectualsites.plotsquared.plot.commands.RequiredType;
+import com.github.intellectualsites.plotsquared.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
-import com.github.intellectualsites.plotsquared.plot.object.PlotMessage;
-import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
-import com.github.intellectualsites.plotsquared.plot.object.RunnableVal2;
-import com.github.intellectualsites.plotsquared.plot.object.RunnableVal3;
-import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.MathMan;
-import com.github.intellectualsites.plotsquared.plot.util.Permissions;
-import com.github.intellectualsites.plotsquared.plot.util.StringComparison;
-import com.github.intellectualsites.plotsquared.plot.util.StringMan;
+import com.github.intellectualsites.plotsquared.plot.object.message.PlotMessage;
+import com.github.intellectualsites.plotsquared.player.PlotPlayer;
+import com.github.intellectualsites.plotsquared.util.tasks.RunnableVal2;
+import com.github.intellectualsites.plotsquared.util.tasks.RunnableVal3;
+import com.github.intellectualsites.plotsquared.util.MainUtil;
+import com.github.intellectualsites.plotsquared.util.MathMan;
+import com.github.intellectualsites.plotsquared.util.Permissions;
+import com.github.intellectualsites.plotsquared.util.StringComparison;
+import com.github.intellectualsites.plotsquared.util.StringMan;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

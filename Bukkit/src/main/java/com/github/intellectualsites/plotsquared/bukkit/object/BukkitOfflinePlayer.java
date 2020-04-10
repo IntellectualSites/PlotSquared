@@ -1,6 +1,6 @@
 package com.github.intellectualsites.plotsquared.bukkit.object;
 
-import com.github.intellectualsites.plotsquared.plot.object.OfflinePlotPlayer;
+import com.github.intellectualsites.plotsquared.player.OfflinePlotPlayer;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,8 +1,8 @@
 package com.github.intellectualsites.plotsquared.plot.object;
 
-import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
-import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
+import com.github.intellectualsites.plotsquared.database.DBFunc;
+import com.github.intellectualsites.plotsquared.util.MainUtil;
+import com.github.intellectualsites.plotsquared.util.RegionUtil;
 import com.sk89q.worldedit.regions.CuboidRegion;
 
 import java.util.HashSet;

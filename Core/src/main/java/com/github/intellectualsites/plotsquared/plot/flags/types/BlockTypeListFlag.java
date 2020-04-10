@@ -3,7 +3,7 @@ package com.github.intellectualsites.plotsquared.plot.flags.types;
 import com.github.intellectualsites.plotsquared.plot.config.Caption;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.flags.FlagParseException;
-import com.github.intellectualsites.plotsquared.plot.util.world.BlockUtil;
+import com.github.intellectualsites.plotsquared.util.BlockUtil;
 import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;

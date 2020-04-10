@@ -1,5 +1,6 @@
 package com.github.intellectualsites.plotsquared.plot;
 
+import com.github.intellectualsites.plotsquared.PlotVersion;
 import org.junit.Test;
 
 public class PlotVersionTest {
