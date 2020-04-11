@@ -33,7 +33,56 @@ import com.github.intellectualsites.plotsquared.plot.PlotSquared;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
 import com.github.intellectualsites.plotsquared.plot.database.DBFunc;
-import com.github.intellectualsites.plotsquared.plot.flags.implementations.*;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnimalAttackFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnimalCapFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.AnimalInteractFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockBurnFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockIgnitionFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.BlockedCmdsFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.BreakFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.CoralDryFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DenyTeleportFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DisablePhysicsFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DoneFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.DropProtectionFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.EntityCapFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.ExplosionFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.GrassGrowFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.HangingBreakFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.HangingPlaceFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.HostileAttackFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.HostileCapFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.HostileInteractFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.IceFormFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.IceMeltFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.InstabreakFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.InvincibleFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.ItemDropFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.KelpGrowFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.LiquidFlowFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscBreakFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscCapFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscInteractFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MobCapFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MobPlaceFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MycelGrowFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlaceFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.PlayerInteractFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.PveFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.PvpFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.RedstoneFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.SnowFormFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.SnowMeltFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.SoilDryFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.TamedAttackFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.TamedInteractFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.UntrustedVisitFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.UseFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleBreakFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleCapFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.VehicleUseFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.VillagerInteractFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.VineGrowFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.types.BlockTypeWrapper;
 import com.github.intellectualsites.plotsquared.plot.listener.PlayerBlockEventType;
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
@@ -56,7 +105,12 @@ import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
 import io.papermc.lib.PaperLib;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.FluidCollisionMode;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -65,8 +119,8 @@ import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Boss;
 import org.bukkit.entity.Creature;
-import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
@@ -79,6 +133,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Slime;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.ThrownPotion;
@@ -107,12 +162,38 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.EntityBlockFormEvent;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityCombustByEntityEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.ExplosionPrimeEvent;
+import org.bukkit.event.entity.LingeringPotionSplashEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerEggThrowEvent;
+import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
@@ -2592,7 +2673,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
         } else if (!plot.isAdded(pp.getUUID())) {
             Entity entity = event.getRightClicked();
-            if (entity instanceof Monster && plot.getFlag(HostileInteractFlag.class)) {
+            if (isMonster(entity) && plot.getFlag(HostileInteractFlag.class)) {
                 return;
             }
             if ((entity instanceof Animals || entity instanceof Golem) && plot.getFlag(AnimalInteractFlag.class)) {
@@ -2844,8 +2925,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                         "plots.admin.destroy." + stub);
                     return false;
                 }
-            } else if (victim instanceof Monster
-                || victim instanceof EnderDragon) { // victim is monster
+            } else if (isMonster(victim)) {
                 if (plot != null && (plot.getFlag(HostileAttackFlag.class) || plot
                     .getFlag(PveFlag.class) || plot.isAdded(plotPlayer.getUUID()))) {
                     return true;
@@ -3053,5 +3133,9 @@ public class PlayerEvents extends PlotListener implements Listener {
                 event.setCancelled(true);
             }
         }
+    }
+
+    private boolean isMonster(Entity entity) {
+        return entity instanceof Monster || entity instanceof Boss || entity instanceof Slime; // :)))
     }
 }
