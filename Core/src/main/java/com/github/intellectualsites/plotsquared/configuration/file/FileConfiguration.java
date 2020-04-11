@@ -170,7 +170,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      * Compiles the header for this FileConfiguration and returns the
      * result.
      *
-     * <p>This will use the header from {@link #options()} -> {@link
+     * <p>This will use the header from {@link #options()} -&gt; {@link
      * FileConfigurationOptions#header()}, respecting the rules of {@link
      * FileConfigurationOptions#copyHeader()} if set.
      *

@@ -398,11 +398,11 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Check if `version` is >= `version2`.
+     * Check if `version` is &gt;= `version2`.
      *
      * @param version  First version
      * @param version2 Second version
-     * @return true if `version` is >= `version2`
+     * @return true if `version` is &gt;= `version2`
      */
     public boolean checkVersion(int[] version, int... version2) {
         return version[0] > version2[0] || version[0] == version2[0] && version[1] > version2[1]
@@ -2027,7 +2027,7 @@ import java.util.zip.ZipInputStream;
      *
      * @param alias     to search plots
      * @param worldname to filter alias to a specific world [optional] null means all worlds
-     * @return Set<{ @ link Plot }> empty if nothing found
+     * @return Set&lt;{@link Plot }&gt; empty if nothing found
      */
     public Set<Plot> getPlotsByAlias(@Nullable final String alias,
         @NonNull final String worldname) {

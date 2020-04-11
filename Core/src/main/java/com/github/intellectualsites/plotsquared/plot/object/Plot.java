@@ -901,7 +901,7 @@ public class Plot {
      * Clear a plot.
      *
      * @param whenDone A runnable to execute when clearing finishes, or null
-     * @see this#clear(boolean, boolean, Runnable)
+     * @see #clear(boolean, boolean, Runnable)
      * @see #deletePlot(Runnable) to clear and delete a plot
      */
     public void clear(Runnable whenDone) {
@@ -1361,7 +1361,7 @@ public class Plot {
      * Unlink a plot and remove the roads
      *
      * @return true if plot was linked
-     * @see this#unlinkPlot(boolean, boolean)
+     * @see #unlinkPlot(boolean, boolean)
      */
     public boolean unlink() {
         return this.unlinkPlot(true, true);
@@ -1525,8 +1525,6 @@ public class Plot {
     /**
      * Gets the default home location for a plot<br>
      * - Ignores any home location set for that specific plot
-     *
-     * @return Location
      */
     public void getDefaultHome(Consumer<Location> result) {
         getDefaultHome(false, result);
@@ -1871,8 +1869,6 @@ public class Plot {
 
     /**
      * Retrieve the biome of the plot.
-     *
-     * @return the name of the biome
      */
     public void getBiome(Consumer<BiomeType> result) {
         this.getCenter(location -> WorldUtil.IMP
@@ -2073,8 +2069,7 @@ public class Plot {
      * @param whenDone    A task to run when finished, or null
      * @return boolean if swap was successful
      * @see ChunkManager#swap(Location, Location, Location, Location, Runnable) to swap terrain
-     * @see this#swapData(Plot) to swap plot settings
-     * @see this#swapData(Plot)
+     * @see #swapData(Plot) to swap plot settings
      */
     public CompletableFuture<Boolean> swap(Plot destination, Runnable whenDone) {
         return this.move(destination, whenDone, true);
@@ -2194,8 +2189,6 @@ public class Plot {
 
     /**
      * Export the plot as a schematic to the configured output directory.
-     *
-     * @return
      */
     public void export(final RunnableVal<Boolean> whenDone) {
         SchematicHandler.manager.getCompoundTag(this, new RunnableVal<CompoundTag>() {
@@ -3051,7 +3044,7 @@ public class Plot {
      * Teleport a player to a plot and send them the teleport message.
      *
      * @param player the player
-     * @return if the teleport succeeded
+     * @param result Called with the result of the teleportation
      */
     public void teleportPlayer(final PlotPlayer player, Consumer<Boolean> result) {
         teleportPlayer(player, TeleportCause.PLUGIN, result);
@@ -3062,7 +3055,7 @@ public class Plot {
      *
      * @param player the player
      * @param cause  the cause of the teleport
-     * @return if the teleport succeeded
+     * @param resultConsumer Called with the result of the teleportation
      */
     public void teleportPlayer(final PlotPlayer player, TeleportCause cause,
         Consumer<Boolean> resultConsumer) {

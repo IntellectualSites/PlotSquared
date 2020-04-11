@@ -37,8 +37,8 @@ import java.util.concurrent.CompletableFuture;
 /**
  * SubCommand class
  *
- * @Deprecated In favor of normal Command class
- * @see Command(Command, boolean)
+ * @deprecated In favor of normal Command class
+ * @see Command
  */
 public abstract class SubCommand extends Command {
     public SubCommand() {
