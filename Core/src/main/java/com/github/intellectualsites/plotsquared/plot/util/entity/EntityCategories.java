@@ -30,14 +30,15 @@ package com.github.intellectualsites.plotsquared.plot.util.entity;
  */
 public class EntityCategories {
 
-    public static final EntityCategory ANIMAL   = register("animal");
-    public static final EntityCategory TAMEABLE = register("tameable");
-    public static final EntityCategory VEHICLE  = register("vehicle");
-    public static final EntityCategory HOSTILE  = register("hostile");
-    public static final EntityCategory HANGING  = register("hanging");
-    public static final EntityCategory VILLAGER = register("villager");
-    public static final EntityCategory PROJECTILE = register("projectile");
-    public static final EntityCategory DECORATION = register("decoration");
+    public static final EntityCategory ANIMAL       = register("animal");
+    public static final EntityCategory TAMEABLE     = register("tameable");
+    public static final EntityCategory VEHICLE      = register("vehicle");
+    public static final EntityCategory HOSTILE      = register("hostile");
+    public static final EntityCategory HANGING      = register("hanging");
+    public static final EntityCategory VILLAGER     = register("villager");
+    public static final EntityCategory PROJECTILE   = register("projectile");
+    public static final EntityCategory OTHER        = register("other");
+    public static final EntityCategory PLAYER       = register("player");
 
     public static EntityCategory register(final String id) {
         final EntityCategory entityCategory = new EntityCategory(id);
