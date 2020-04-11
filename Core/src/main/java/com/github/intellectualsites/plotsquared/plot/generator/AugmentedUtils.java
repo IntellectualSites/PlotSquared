@@ -31,16 +31,13 @@ import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
 import com.github.intellectualsites.plotsquared.plot.object.PlotAreaTerrainType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotManager;
-import com.github.intellectualsites.plotsquared.plot.util.block.DelegateLocalBlockQueue;
+import com.github.intellectualsites.plotsquared.plot.util.block.AreaBoundDelegateLocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
+import com.github.intellectualsites.plotsquared.plot.util.block.LocationOffsetDelegateLocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
-import com.sk89q.worldedit.function.pattern.Pattern;
-import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import com.sk89q.worldedit.world.biome.BiomeType;
-import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.jetbrains.annotations.NotNull;
@@ -106,21 +103,7 @@ public class AugmentedUtils {
                 relativeTopX = Math.min(15, area.getRegion().getMaximumPoint().getX() - blockX);
                 relativeTopZ = Math.min(15, area.getRegion().getMaximumPoint().getZ() - blockZ);
 
-                primaryMask = new DelegateLocalBlockQueue(queue) {
-                    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
-                        if (area.contains(x, z)) {
-                            return super.setBlock(x, y, z, id);
-                        }
-                        return false;
-                    }
-
-                    @Override public boolean setBiome(int x, int z, BiomeType biome) {
-                        if (area.contains(x, z)) {
-                            return super.setBiome(x, z, biome);
-                        }
-                        return false;
-                    }
-                };
+                primaryMask = new AreaBoundDelegateLocalBlockQueue(area, queue);
             } else {
                 relativeBottomX = relativeBottomZ = 0;
                 relativeTopX = relativeTopZ = 15;
@@ -151,36 +134,8 @@ public class AugmentedUtils {
                     continue;
                 }
                 generationResult = true;
-                secondaryMask = new DelegateLocalBlockQueue(primaryMask) {
-                    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
-                        if (canPlace[x - blockX][z - blockZ]) {
-                            return super.setBlock(x, y, z, id);
-                        }
-                        return false;
-                    }
-
-                    @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
-                        try {
-                            if (canPlace[x - blockX][z - blockZ]) {
-                                return super.setBlock(x, y, z, id);
-                            }
-                        } catch (final Exception e) {
-                            PlotSquared.debug(String.format("Failed to set block at: %d;%d;%d (to = %s) with offset %d;%d."
-                                + " Translated to: %d;%d", x, y, z, id, blockX, blockZ, x - blockX, z - blockZ));
-                            throw e;
-                        }
-                        return false;
-                    }
-
-                    @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
-                        final BlockVector3 blockVector3 = BlockVector3.at(x + blockX, y, z + blockZ);
-                        return this.setBlock(x, y, z, pattern.apply(blockVector3));
-                    }
-
-                    @Override public boolean setBiome(int x, int y, BiomeType biome) {
-                        return super.setBiome(x, y, biome);
-                    }
-                };
+                secondaryMask = new LocationOffsetDelegateLocalBlockQueue(canPlace, blockX,
+                    blockZ, primaryMask);
             } else {
                 secondaryMask = primaryMask;
                 for (int x = relativeBottomX; x <= relativeTopX; x++) {
