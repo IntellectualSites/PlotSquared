@@ -68,6 +68,8 @@ import com.github.intellectualsites.plotsquared.plot.flags.implementations.KelpG
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.LiquidFlowFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscBreakFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscCapFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscInteractFlag;
+import com.github.intellectualsites.plotsquared.plot.flags.implementations.MiscPlaceFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MobBreakFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MobCapFlag;
 import com.github.intellectualsites.plotsquared.plot.flags.implementations.MobPlaceFlag;
@@ -148,6 +150,8 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(RedstoneFlag.REDSTONE_TRUE);
         this.addFlag(ServerPlotFlag.SERVER_PLOT_FALSE);
         this.addFlag(MiscBreakFlag.MISC_BREAK_FALSE);
+        this.addFlag(MiscInteractFlag.MISC_INTERACT_FALSE);
+        this.addFlag(MiscPlaceFlag.MISC_PLACE_FALSE);
         this.addFlag(MobBreakFlag.MOB_BREAK_FALSE);
         this.addFlag(MobPlaceFlag.MOB_PLACE_FALSE);
         this.addFlag(MycelGrowFlag.MYCEL_GROW_TRUE);
