@@ -209,13 +209,15 @@ public class HybridPlotManager extends ClassicPlotManager {
         // The component blocks
         final Pattern plotfloor = hybridPlotWorld.TOP_BLOCK.toPattern();
         final Pattern filling = hybridPlotWorld.MAIN_BLOCK.toPattern();
+
         final BlockState bedrock;
+        final BlockState air = BlockTypes.AIR.getDefaultState();
         if (hybridPlotWorld.PLOT_BEDROCK) {
-            bedrock = BlockUtil.get((short) 7, (byte) 0);
+            bedrock = BlockTypes.BEDROCK.getDefaultState();
         } else {
-            bedrock = BlockUtil.get((short) 0, (byte) 0);
+            bedrock = air;
         }
-        final BlockState air = BlockUtil.get((short) 0, (byte) 0);
+
         final BiomeType biome = hybridPlotWorld.getPlotBiome();
         final LocalBlockQueue queue = hybridPlotWorld.getQueue(false);
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {

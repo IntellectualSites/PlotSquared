@@ -70,11 +70,11 @@ public class HybridGen extends IndependentPlotGenerator {
         Preconditions.checkNotNull(result, "result cannot be null");
         Preconditions.checkNotNull(settings, "settings cannot be null");
 
-        HybridPlotWorld hpw = (HybridPlotWorld) settings;
+        HybridPlotWorld hybridPlotWorld = (HybridPlotWorld) settings;
         // Biome
-        result.fillBiome(hpw.getPlotBiome());
+        result.fillBiome(hybridPlotWorld.getPlotBiome());
         // Bedrock
-        if (hpw.PLOT_BEDROCK) {
+        if (hybridPlotWorld.PLOT_BEDROCK) {
             for (short x = 0; x < 16; x++) {
                 for (short z = 0; z < 16; z++) {
                     result.setBlock(x, 0, z, BlockTypes.BEDROCK.getDefaultState());
@@ -83,178 +83,128 @@ public class HybridGen extends IndependentPlotGenerator {
         }
         // Coords
         Location min = result.getMin();
-        int bx = (min.getX()) - hpw.ROAD_OFFSET_X;
-        int bz = (min.getZ()) - hpw.ROAD_OFFSET_Z;
-        short rbx;
+        int bx = (min.getX()) - hybridPlotWorld.ROAD_OFFSET_X;
+        int bz = (min.getZ()) - hybridPlotWorld.ROAD_OFFSET_Z;
+        // The relative X-coordinate (within the plot) of the minimum X coordinate
+        // contained in the scoped queue
+        short relativeOffsetX;
         if (bx < 0) {
-            rbx = (short) (hpw.SIZE + (bx % hpw.SIZE));
+            relativeOffsetX = (short) (hybridPlotWorld.SIZE + (bx % hybridPlotWorld.SIZE));
         } else {
-            rbx = (short) (bx % hpw.SIZE);
+            relativeOffsetX = (short) (bx % hybridPlotWorld.SIZE);
         }
-        short rbz;
+        // The relative Z-coordinate (within the plot) of the minimum Z coordinate
+        // contained in the scoped queue
+        short relativeOffsetZ;
         if (bz < 0) {
-            rbz = (short) (hpw.SIZE + (bz % hpw.SIZE));
+            relativeOffsetZ = (short) (hybridPlotWorld.SIZE + (bz % hybridPlotWorld.SIZE));
         } else {
-            rbz = (short) (bz % hpw.SIZE);
+            relativeOffsetZ = (short) (bz % hybridPlotWorld.SIZE);
         }
-        short[] rx = new short[16];
-        boolean[] gx = new boolean[16];
-        boolean[] wx = new boolean[16];
+        // The X-coordinate of a given X coordinate, relative to the
+        // plot (Counting from the corner with the least positive
+        // coordinates)
+        short[] relativeX = new short[16];
+        boolean[] insideRoadX = new boolean[16];
+        boolean[] insideWallX = new boolean[16];
         for (short i = 0; i < 16; i++) {
-            short v = (short) (rbx + i);
-            if (v >= hpw.SIZE) {
-                v -= hpw.SIZE;
+            short v = (short) (relativeOffsetX + i);
+            if (v >= hybridPlotWorld.SIZE) {
+                v -= hybridPlotWorld.SIZE;
             }
-            rx[i] = v;
-            if (hpw.ROAD_WIDTH != 0) {
-                gx[i] = v < hpw.PATH_WIDTH_LOWER || v > hpw.PATH_WIDTH_UPPER;
-                wx[i] = v == hpw.PATH_WIDTH_LOWER || v == hpw.PATH_WIDTH_UPPER;
+            relativeX[i] = v;
+            if (hybridPlotWorld.ROAD_WIDTH != 0) {
+                insideRoadX[i] = v < hybridPlotWorld.PATH_WIDTH_LOWER || v > hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideWallX[i] = v == hybridPlotWorld.PATH_WIDTH_LOWER || v == hybridPlotWorld.PATH_WIDTH_UPPER;
             }
         }
-        short[] rz = new short[16];
-        boolean[] gz = new boolean[16];
-        boolean[] wz = new boolean[16];
+        // The Z-coordinate of a given Z coordinate, relative to the
+        // plot (Counting from the corner with the least positive
+        // coordinates)
+        short[] relativeZ = new short[16];
+        // Whether or not the given Z coordinate belongs to the road
+        boolean[] insideRoadZ = new boolean[16];
+        // Whether or not the given Z coordinate belongs to the wall
+        boolean[] insideWallZ = new boolean[16];
         for (short i = 0; i < 16; i++) {
-            short v = (short) (rbz + i);
-            if (v >= hpw.SIZE) {
-                v -= hpw.SIZE;
+            short v = (short) (relativeOffsetZ + i);
+            if (v >= hybridPlotWorld.SIZE) {
+                v -= hybridPlotWorld.SIZE;
             }
-            rz[i] = v;
-            if (hpw.ROAD_WIDTH != 0) {
-                gz[i] = v < hpw.PATH_WIDTH_LOWER || v > hpw.PATH_WIDTH_UPPER;
-                wz[i] = v == hpw.PATH_WIDTH_LOWER || v == hpw.PATH_WIDTH_UPPER;
+            relativeZ[i] = v;
+            if (hybridPlotWorld.ROAD_WIDTH != 0) {
+                insideRoadZ[i] = v < hybridPlotWorld.PATH_WIDTH_LOWER || v > hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideWallZ[i] = v == hybridPlotWorld.PATH_WIDTH_LOWER || v == hybridPlotWorld.PATH_WIDTH_UPPER;
             }
         }
         // generation
         for (short x = 0; x < 16; x++) {
-            if (gx[x]) {
+            if (insideRoadX[x]) {
                 for (short z = 0; z < 16; z++) {
                     // Road
-                    for (int y = 1; y <= hpw.ROAD_HEIGHT; y++) {
-                        result.setBlock(x, y, z, hpw.ROAD_BLOCK.toPattern());
+                    for (int y = 1; y <= hybridPlotWorld.ROAD_HEIGHT; y++) {
+                        result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                     }
-                    if (hpw.ROAD_SCHEMATIC_ENABLED) {
-                        placeSchem(hpw, result, rx[x], rz[z], x, z, true);
+                    if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
+                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true);
                     }
                 }
-            } else if (wx[x]) {
+            } else if (insideWallX[x]) {
                 for (short z = 0; z < 16; z++) {
-                    if (gz[z]) {
+                    if (insideRoadZ[z]) {
                         // road
-                        for (int y = 1; y <= hpw.ROAD_HEIGHT; y++) {
-                            result.setBlock(x, y, z, hpw.ROAD_BLOCK.toPattern());
+                        for (int y = 1; y <= hybridPlotWorld.ROAD_HEIGHT; y++) {
+                            result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                         }
-                        if (hpw.ROAD_SCHEMATIC_ENABLED) {
-                            placeSchem(hpw, result, rx[x], rz[z], x, z, true);
+                        if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true);
                         }
                     } else {
                         // wall
-                        for (int y = 1; y <= hpw.WALL_HEIGHT; y++) {
-                            result.setBlock(x, y, z, hpw.WALL_FILLING.toPattern());
+                        for (int y = 1; y <= hybridPlotWorld.WALL_HEIGHT; y++) {
+                            result.setBlock(x, y, z, hybridPlotWorld.WALL_FILLING.toPattern());
                         }
-                        if (!hpw.ROAD_SCHEMATIC_ENABLED) {
-                            result.setBlock(x, hpw.WALL_HEIGHT + 1, z, hpw.WALL_BLOCK.toPattern());
+                        if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
+                            result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z, hybridPlotWorld.WALL_BLOCK.toPattern());
                         } else {
-                            placeSchem(hpw, result, rx[x], rz[z], x, z, true);
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true);
                         }
                     }
                 }
             } else {
                 for (short z = 0; z < 16; z++) {
-                    if (gz[z]) {
+                    if (insideRoadZ[z]) {
                         // road
-                        for (int y = 1; y <= hpw.ROAD_HEIGHT; y++) {
-                            result.setBlock(x, y, z, hpw.ROAD_BLOCK.toPattern());
+                        for (int y = 1; y <= hybridPlotWorld.ROAD_HEIGHT; y++) {
+                            result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                         }
-                        if (hpw.ROAD_SCHEMATIC_ENABLED) {
-                            placeSchem(hpw, result, rx[x], rz[z], x, z, true);
+                        if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true);
                         }
-                    } else if (wz[z]) {
+                    } else if (insideWallZ[z]) {
                         // wall
-                        for (int y = 1; y <= hpw.WALL_HEIGHT; y++) {
-                            result.setBlock(x, y, z, hpw.WALL_FILLING.toPattern());
+                        for (int y = 1; y <= hybridPlotWorld.WALL_HEIGHT; y++) {
+                            result.setBlock(x, y, z, hybridPlotWorld.WALL_FILLING.toPattern());
                         }
-                        if (!hpw.ROAD_SCHEMATIC_ENABLED) {
-                            result.setBlock(x, hpw.WALL_HEIGHT + 1, z, hpw.WALL_BLOCK.toPattern());
+                        if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
+                            result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z, hybridPlotWorld.WALL_BLOCK.toPattern());
                         } else {
-                            placeSchem(hpw, result, rx[x], rz[z], x, z, true);
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true);
                         }
                     } else {
                         // plot
-                        for (int y = 1; y < hpw.PLOT_HEIGHT; y++) {
-                            result.setBlock(x, y, z, hpw.MAIN_BLOCK.toPattern());
+                        for (int y = 1; y < hybridPlotWorld.PLOT_HEIGHT; y++) {
+                            result.setBlock(x, y, z, hybridPlotWorld.MAIN_BLOCK.toPattern());
                         }
-                        result.setBlock(x, hpw.PLOT_HEIGHT, z, hpw.TOP_BLOCK.toPattern());
-                        if (hpw.PLOT_SCHEMATIC) {
-                            placeSchem(hpw, result, rx[x], rz[z], x, z, false);
+                        result.setBlock(x, hybridPlotWorld.PLOT_HEIGHT, z, hybridPlotWorld.TOP_BLOCK.toPattern());
+                        if (hybridPlotWorld.PLOT_SCHEMATIC) {
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, false);
                         }
                     }
                 }
             }
         }
     }
-
-/*    @Override public boolean populateChunk(ScopedLocalBlockQueue result, PlotArea settings) {
-        HybridPlotWorld hpw = (HybridPlotWorld) settings;
-        if (hpw.G_SCH_STATE != null) {
-            Location min = result.getMin();
-            int cx = min.getX() >> 4;
-            int cz = min.getZ() >> 4;
-            int p1x = cx << 4;
-            int p1z = cz << 4;
-            int bx = p1x - hpw.ROAD_OFFSET_X;
-            int bz = p1z - hpw.ROAD_OFFSET_Z;
-            short rbx;
-            if (bx < 0) {
-                rbx = (short) (hpw.SIZE + (bx % hpw.SIZE));
-            } else {
-                rbx = (short) (bx % hpw.SIZE);
-            }
-            short rbz;
-            if (bz < 0) {
-                rbz = (short) (hpw.SIZE + (bz % hpw.SIZE));
-            } else {
-                rbz = (short) (bz % hpw.SIZE);
-            }
-            short[] rx = new short[16];
-            for (short i = 0; i < 16; i++) {
-                short v = (short) (rbx + i);
-                if (v >= hpw.SIZE) {
-                    v -= hpw.SIZE;
-                }
-                rx[i] = v;
-            }
-            short[] rz = new short[16];
-            for (short i = 0; i < 16; i++) {
-                short v = (short) (rbz + i);
-                if (v >= hpw.SIZE) {
-                    v -= hpw.SIZE;
-                }
-                rz[i] = v;
-            }
-            LocalBlockQueue queue = null;
-            for (short x = 0; x < 16; x++) {
-                for (short z = 0; z < 16; z++) {
-                    int pair = MathMan.pair(rx[x], rz[z]);
-                    HashMap<Integer, CompoundTag> map = hpw.G_SCH_STATE.get(pair);
-                    if (map != null) {
-                        for (Entry<Integer, CompoundTag> entry : map.entrySet()) {
-                            if (queue == null) {
-                                queue = GlobalBlockQueue.IMP.getNewQueue(hpw.worldname, false);
-                            }
-                            CompoundTag tag = entry.getValue();
-                            SchematicHandler.manager
-                                .restoreTile(queue, tag, p1x + x, entry.getKey(), p1z + z);
-                        }
-                    }
-                }
-            }
-            if (queue != null) {
-                queue.flush();
-            }
-        }
-        return false;
-    }*/
 
     @Override public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
         return new HybridPlotWorld(world, id, this, min, max);
