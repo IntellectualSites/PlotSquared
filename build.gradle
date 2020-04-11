@@ -22,7 +22,7 @@ plugins {
     id "org.ajoberstar.grgit" version "4.0.1"
 }
 
-group = "com.github.intellectualsites.plotsquared"
+group = "com.plotsquared"
 
 def rootVersion = "5"
 def revision = ""
@@ -63,7 +63,7 @@ subprojects {
     apply(plugin: "idea")
     apply(plugin: "com.github.johnrengelman.shadow")
 
-    group = "com.github.intellectualsites.plotsquared"
+    group = "com.plotsquared"
 
     clean.doFirst {
         delete("../target")
@@ -112,8 +112,8 @@ subprojects {
         dependencies {
             include(dependency("net.kyori:text-api:3.0.2"))
         }
-        relocate("io.papermc.lib", "com.github.intellectualsites.plotsquared.bukkit.paperlib")
-        relocate("org.json", "com.github.intellectualsites.plotsquared.json")
+        relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")
+        relocate("org.json", "com.plotsquared.json")
         // relocate('org.mcstats', 'com.plotsquared.stats')
         archiveFileName = "${parent.name}-${project.name}-${parent.version}.jar"
         destinationDirectory = file "../target"

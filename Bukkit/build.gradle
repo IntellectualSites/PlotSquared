@@ -45,33 +45,34 @@ processResources {
 
 //noinspection GroovyAssignabilityCheck
 jar.archiveFileName = "PlotSquared-BukkitAPI-${project.parent.version}.jar"
-jar.destinationDirectory = file("../mvn/com/plotsquared/PlotSquared-BukkitAPI/" + project.parent.version)
+jar.destinationDirectory = file("../mvn/com/plotsquared/PlotSquared-Bukkit/" + project.parent.version)
 task createPom {
     doLast {
         pom {
             project {
-                groupId = "com.plotsquared"
-                artifactId = "PlotSquared-BukkitAPI"
-                version = project.parent.version
+                groupId = rootProject.group
+                artifactId = "PlotSquared-Bukkit"
+                version = rootProject.version
             }
-        }.writeTo("../mvn/com/plotsquared/PlotSquared-BukkitAPI/${project.parent.version}/PlotSquared-BukkitAPI-${project.parent.version}.pom")
+        }.writeTo("../mvn/com/plotsquared/PlotSquared-Bukkit/${project.parent.version}/PlotSquared-Bukkit-${project.parent.version}.pom")
         pom {
             project {
-                groupId = "com.plotsquared"
-                artifactId = "PlotSquared-BukkitAPI"
+                groupId = rootProject.group
+                artifactId = "PlotSquared-Bukkit"
                 version = "latest"
             }
-        }.writeTo("../mvn/com/plotsquared/PlotSquared-BukkitAPI/latest/PlotSquared-BukkitAPI-latest.pom")
+        }.writeTo("../mvn/com/plotsquared/PlotSquared-Bukkit/latest/PlotSquared-Bukkit-latest.pom")
+         .writeTo("pom.xml")
     }
 }
 
 task copyFiles {
     doLast {
         copy {
-            from("../mvn/com/plotsquared/PlotSquared-BukkitAPI/${project.parent.version}/")
-            into("../mvn/com/plotsquared/PlotSquared-BukkitAPI/latest/")
-            include("PlotSquared-BukkitAPI*.jar")
-            rename("PlotSquared-BukkitAPI-${project.parent.version}.jar", "PlotSquared-BukkitAPI-latest.jar")
+            from("../mvn/com/plotsquared/PlotSquared-Bukkit/${project.parent.version}/")
+            into("../mvn/com/plotsquared/PlotSquared-Bukkit/latest/")
+            include("PlotSquared-Bukkit*.jar")
+            rename("PlotSquared-Bukkit-${project.parent.version}.jar", "PlotSquared-Bukkit-latest.jar")
         }
     }
 }
