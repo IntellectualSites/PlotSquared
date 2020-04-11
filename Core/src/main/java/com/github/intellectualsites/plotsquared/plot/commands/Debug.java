@@ -37,6 +37,7 @@ import com.github.intellectualsites.plotsquared.plot.util.entity.EntityCategorie
 import com.github.intellectualsites.plotsquared.plot.util.entity.EntityCategory;
 import com.sk89q.worldedit.world.entity.EntityType;
 
+import java.util.Comparator;
 import java.util.Map;
 
 @CommandDeclaration(command = "debug",
@@ -73,6 +74,15 @@ public class Debug extends SubCommand {
                     builder.append(entityType.getId()).append(" ");
                 }
                 player.sendMessage(Captions.PREFIX.getTranslated() + builder.toString());
+            });
+            EntityType.REGISTRY.values().stream()
+                    .sorted(Comparator.comparing(EntityType::getId))
+                    .forEach(entityType -> {
+                long categoryCount = EntityCategory.REGISTRY.values()
+                        .stream()
+                        .filter(category -> category.contains(entityType))
+                        .count();
+                player.sendMessage(Captions.PREFIX.getTranslated() + entityType.getName() + " is in " + categoryCount + " categories");
             });
             return true;
         }

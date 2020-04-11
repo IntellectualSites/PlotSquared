@@ -58,17 +58,25 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.type.WallSign;
+import org.bukkit.entity.Ambient;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Boss;
+import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Ghast;
 import org.bukkit.entity.Golem;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.NPC;
+import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.WaterMob;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -560,6 +568,8 @@ public class BukkitUtil extends WorldUtil {
             case "animal": {
                 allowedInterfaces.add(Golem.class);
                 allowedInterfaces.add(Animals.class);
+                allowedInterfaces.add(WaterMob.class);
+                allowedInterfaces.add(Ambient.class);
             } break;
             case "tameable": {
                 allowedInterfaces.add(Tameable.class);
@@ -571,9 +581,21 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(Monster.class);
                 allowedInterfaces.add(Boss.class);
                 allowedInterfaces.add(Slime.class);
+                allowedInterfaces.add(Ghast.class);
+                allowedInterfaces.add(Phantom.class);
+                allowedInterfaces.add(EnderCrystal.class);
             } break;
             case "hanging": {
                 allowedInterfaces.add(Hanging.class);
+            } break;
+            case "villager": {
+                allowedInterfaces.add(NPC.class);
+            } break;
+            case "projectile": {
+                allowedInterfaces.add(Projectile.class);
+            } break;
+            case "decoration": {
+                allowedInterfaces.add(ArmorStand.class);
             } break;
             default: {
                 PlotSquared.log(Captions.PREFIX + "Unknown entity category requested: " + category);
