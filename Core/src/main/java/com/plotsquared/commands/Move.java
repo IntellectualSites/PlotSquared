@@ -1,0 +1,88 @@
+package com.plotsquared.commands;
+
+import com.plotsquared.PlotSquared;
+import com.plotsquared.config.Captions;
+import com.plotsquared.location.Location;
+import com.plotsquared.plot.Plot;
+import com.plotsquared.plot.PlotArea;
+import com.plotsquared.player.PlotPlayer;
+import com.plotsquared.util.tasks.RunnableVal2;
+import com.plotsquared.util.tasks.RunnableVal3;
+import com.plotsquared.util.MainUtil;
+import com.plotsquared.util.Permissions;
+
+import java.util.concurrent.CompletableFuture;
+
+@CommandDeclaration(usage = "/plot move <X;Z>",
+    command = "move",
+    description = "Move a plot",
+    permission = "plots.move",
+    category = CommandCategory.CLAIMING,
+    requiredType = RequiredType.PLAYER)
+public class Move extends SubCommand {
+
+    @Override public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
+        RunnableVal3<Command, Runnable, Runnable> confirm,
+        RunnableVal2<Command, CommandResult> whenDone) {
+        Location location = player.getLocation();
+        Plot plot1 = location.getPlotAbs();
+        if (plot1 == null) {
+            return CompletableFuture
+                .completedFuture(!MainUtil.sendMessage(player, Captions.NOT_IN_PLOT));
+        }
+        if (!plot1.isOwner(player.getUUID()) && !Permissions
+            .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated())) {
+            MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+            return CompletableFuture.completedFuture(false);
+        }
+        boolean override = false;
+        if (args.length == 2 && args[1].equalsIgnoreCase("-f")) {
+            args = new String[] {args[0]};
+            override = true;
+        }
+        if (args.length != 1) {
+            Captions.COMMAND_SYNTAX.send(player, getUsage());
+            return CompletableFuture.completedFuture(false);
+        }
+        PlotArea area = PlotSquared.get().getPlotAreaByString(args[0]);
+        Plot plot2;
+        if (area == null) {
+            plot2 = MainUtil.getPlotFromString(player, args[0], true);
+            if (plot2 == null) {
+                return CompletableFuture.completedFuture(false);
+            }
+        } else {
+            plot2 = area.getPlotAbs(plot1.getId());
+        }
+        if (plot1.equals(plot2)) {
+            MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_ID);
+            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot copy <X;Z>");
+            return CompletableFuture.completedFuture(false);
+        }
+        if (!plot1.getArea().isCompatible(plot2.getArea()) && (!override || !Permissions
+            .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated()))) {
+            Captions.PLOTWORLD_INCOMPATIBLE.send(player);
+            return CompletableFuture.completedFuture(false);
+        }
+        if (plot1.isMerged() || plot2.isMerged()) {
+            Captions.MOVE_MERGED.send(player);
+            return CompletableFuture.completedFuture(false);
+        }
+
+        return plot1.move(plot2, () -> {}, false)
+            .thenApply(result -> {
+                if (result) {
+                    MainUtil.sendMessage(player, Captions.MOVE_SUCCESS);
+                    return true;
+                } else {
+                    MainUtil.sendMessage(player, Captions.REQUIRES_UNOWNED);
+                    return false;
+                }
+            });
+    }
+
+    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+        return true;
+    }
+
+}

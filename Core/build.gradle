@@ -35,31 +35,31 @@ processResources {
 
 //noinspection GroovyAssignabilityCheck
 jar.archiveFileName = "PlotSquared-CoreAPI-${project.parent.version}.jar"
-jar.destinationDirectory = file("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-CoreAPI/" + project.parent.version)
+jar.destinationDirectory = file("../mvn/com/plotsquared/PlotSquared-CoreAPI/" + project.parent.version)
 task createPom {
     doLast {
         pom {
             project {
-                groupId = "com.github.intellectualsites.plotsquared"
+                groupId = "com.plotsquared"
                 artifactId = "PlotSquared-CoreAPI"
                 version = project.parent.version
             }
-        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-CoreAPI/${project.parent.version}/PlotSquared-CoreAPI-${project.parent.version}.pom")
+        }.writeTo("../mvn/com/plotsquared/PlotSquared-CoreAPI/${project.parent.version}/PlotSquared-CoreAPI-${project.parent.version}.pom")
         pom {
             project {
-                groupId = "com.github.intellectualsites.plotsquared"
+                groupId = "com.plotsquared"
                 artifactId = "PlotSquared-CoreAPI"
                 version = "latest"
             }
-        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-CoreAPI/latest/PlotSquared-CoreAPI-latest.pom")
+        }.writeTo("../mvn/com/plotsquared/PlotSquared-CoreAPI/latest/PlotSquared-CoreAPI-latest.pom")
     }
 }
 
 task copyFiles {
     doLast {
         copy {
-            from("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-CoreAPI/${project.parent.version}/")
-            into("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-CoreAPI/latest/")
+            from("../mvn/com/plotsquared/PlotSquared-CoreAPI/${project.parent.version}/")
+            into("../mvn/com/plotsquared/PlotSquared-CoreAPI/latest/")
             include("*.jar")
             rename("PlotSquared-CoreAPI-${project.parent.version}.jar", "PlotSquared-CoreAPI-latest.jar")
         }
@@ -73,7 +73,7 @@ shadowJar {
         include(dependency("net.kyori:text-serializer-legacy:3.0.2"))
         include(dependency("net.kyori:text-serializer-plain:3.0.2"))
     }
-    relocate('net.kyori.text', 'com.github.intellectualsites.plotsquared.formatting.text')
+    relocate('net.kyori.text', 'com.plotsquared.formatting.text')
 }
 
 shadowJar.doLast {

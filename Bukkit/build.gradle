@@ -45,31 +45,31 @@ processResources {
 
 //noinspection GroovyAssignabilityCheck
 jar.archiveFileName = "PlotSquared-BukkitAPI-${project.parent.version}.jar"
-jar.destinationDirectory = file("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-BukkitAPI/" + project.parent.version)
+jar.destinationDirectory = file("../mvn/com/plotsquared/PlotSquared-BukkitAPI/" + project.parent.version)
 task createPom {
     doLast {
         pom {
             project {
-                groupId = "com.github.intellectualsites.plotsquared"
+                groupId = "com.plotsquared"
                 artifactId = "PlotSquared-BukkitAPI"
                 version = project.parent.version
             }
-        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-BukkitAPI/${project.parent.version}/PlotSquared-BukkitAPI-${project.parent.version}.pom")
+        }.writeTo("../mvn/com/plotsquared/PlotSquared-BukkitAPI/${project.parent.version}/PlotSquared-BukkitAPI-${project.parent.version}.pom")
         pom {
             project {
-                groupId = "com.github.intellectualsites.plotsquared"
+                groupId = "com.plotsquared"
                 artifactId = "PlotSquared-BukkitAPI"
                 version = "latest"
             }
-        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-BukkitAPI/latest/PlotSquared-BukkitAPI-latest.pom")
+        }.writeTo("../mvn/com/plotsquared/PlotSquared-BukkitAPI/latest/PlotSquared-BukkitAPI-latest.pom")
     }
 }
 
 task copyFiles {
     doLast {
         copy {
-            from("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-BukkitAPI/${project.parent.version}/")
-            into("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-BukkitAPI/latest/")
+            from("../mvn/com/plotsquared/PlotSquared-BukkitAPI/${project.parent.version}/")
+            into("../mvn/com/plotsquared/PlotSquared-BukkitAPI/latest/")
             include("PlotSquared-BukkitAPI*.jar")
             rename("PlotSquared-BukkitAPI-${project.parent.version}.jar", "PlotSquared-BukkitAPI-latest.jar")
         }
@@ -83,8 +83,8 @@ shadowJar {
         include(dependency("io.papermc:paperlib:1.0.2"))
         include(dependency("net.kyori:text-adapter-bukkit:3.0.3"))
     }
-    relocate('net.kyori.text', 'com.github.intellectualsites.plotsquared.formatting.text')
-    relocate("io.papermc.lib", "com.github.intellectualsites.plotsquared.bukkit.paperlib")
+    relocate('net.kyori.text', 'com.plotsquared.formatting.text')
+    relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")
     archiveFileName = "${parent.name}-${project.name}-${parent.version}.jar"
     destinationDirectory = file "../target"
 }
