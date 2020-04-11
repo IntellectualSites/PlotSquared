@@ -83,7 +83,6 @@ subprojects {
             exclude(module: "mockito-core")
             exclude(module: "dummypermscompat")
         }
-        compile group: 'org.json', name: 'json', version: '20190722'
 
         implementation("net.kyori:text-api:3.0.2")
         implementation("net.kyori:text-serializer-gson:3.0.2")
