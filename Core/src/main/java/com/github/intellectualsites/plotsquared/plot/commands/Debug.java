@@ -33,6 +33,9 @@ import com.github.intellectualsites.plotsquared.plot.util.ChunkManager;
 import com.github.intellectualsites.plotsquared.plot.util.MainUtil;
 import com.github.intellectualsites.plotsquared.plot.util.StringMan;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
+import com.github.intellectualsites.plotsquared.plot.util.entity.EntityCategories;
+import com.github.intellectualsites.plotsquared.plot.util.entity.EntityCategory;
+import com.sk89q.worldedit.world.entity.EntityType;
 
 import java.util.Map;
 
@@ -58,6 +61,19 @@ public class Debug extends SubCommand {
             TaskManager.runTaskAsync(() -> MainUtil.sendMessage(player,"Loaded chunks: " +
                 ChunkManager.manager.getChunkChunks(player.getLocation().getWorld()).size() + "(" + (System.currentTimeMillis() - start) + "ms) using thread: " +
                 Thread.currentThread().getName()));
+            return true;
+        }
+        if (args.length > 0 && "entitytypes".equalsIgnoreCase(args[0])) {
+            EntityCategories.init();
+            player.sendMessage(Captions.PREFIX.getTranslated() + "§cEntity Categories: ");
+            EntityCategory.REGISTRY.forEach(category -> {
+                final StringBuilder builder = new StringBuilder("§7- §6")
+                    .append(category.getId()).append("§7: §6");
+                for (final EntityType entityType : category.getAll()) {
+                    builder.append(entityType.getId()).append(" ");
+                }
+                player.sendMessage(Captions.PREFIX.getTranslated() + builder.toString());
+            });
             return true;
         }
         if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {
