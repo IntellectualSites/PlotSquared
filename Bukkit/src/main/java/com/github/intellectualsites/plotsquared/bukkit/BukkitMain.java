@@ -43,7 +43,6 @@ import com.github.intellectualsites.plotsquared.bukkit.util.BukkitSchematicHandl
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitSetupUtils;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitTaskManager;
 import com.github.intellectualsites.plotsquared.bukkit.util.BukkitUtil;
-import com.github.intellectualsites.plotsquared.bukkit.util.Metrics;
 import com.github.intellectualsites.plotsquared.bukkit.util.SetGenCB;
 import com.github.intellectualsites.plotsquared.bukkit.util.UpdateUtility;
 import com.github.intellectualsites.plotsquared.bukkit.util.block.BukkitLocalQueue;
@@ -96,6 +95,7 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extension.platform.Actor;
 import lombok.Getter;
 import lombok.NonNull;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
