@@ -63,19 +63,27 @@ public class AugmentedUtils {
         if (!enabled) {
             return false;
         }
-
+        // The coordinates of the block on the
+        // least positive corner of the chunk
         final int blockX = chunkX << 4;
         final int blockZ = chunkZ << 4;
+        // Create a region that contains the
+        // entire chunk
         CuboidRegion region = RegionUtil.createRegion(blockX, blockX + 15, blockZ, blockZ + 15);
+        // Query for plot areas in the chunk
         Set<PlotArea> areas = PlotSquared.get().getPlotAreas(world, region);
         if (areas.isEmpty()) {
             return false;
         }
-        boolean toReturn = false;
+        boolean generationResult = false;
         for (final PlotArea area : areas) {
+            // A normal plot world may not contain any clusters
+            // and so there's no reason to continue searching
             if (area.getType() == PlotAreaType.NORMAL) {
                 return false;
             }
+            // This means that full vanilla generation is used
+            // so we do not interfere
             if (area.getTerrain() == PlotAreaTerrainType.ALL) {
                 continue;
             }
@@ -87,16 +95,17 @@ public class AugmentedUtils {
             }
             LocalBlockQueue primaryMask;
             // coordinates
-            int bxx;
-            int bzz;
-            int txx;
-            int tzz;
-            // gen
+            int relativeBottomX;
+            int relativeBottomZ;
+            int relativeTopX;
+            int relativeTopZ;
+            // Generation
             if (area.getType() == PlotAreaType.PARTIAL) {
-                bxx = Math.max(0, area.getRegion().getMinimumPoint().getX() - blockX);
-                bzz = Math.max(0, area.getRegion().getMinimumPoint().getZ() - blockZ);
-                txx = Math.min(15, area.getRegion().getMaximumPoint().getX() - blockX);
-                tzz = Math.min(15, area.getRegion().getMaximumPoint().getZ() - blockZ);
+                relativeBottomX = Math.max(0, area.getRegion().getMinimumPoint().getX() - blockX);
+                relativeBottomZ = Math.max(0, area.getRegion().getMinimumPoint().getZ() - blockZ);
+                relativeTopX = Math.min(15, area.getRegion().getMaximumPoint().getX() - blockX);
+                relativeTopZ = Math.min(15, area.getRegion().getMaximumPoint().getZ() - blockZ);
+
                 primaryMask = new DelegateLocalBlockQueue(queue) {
                     @Override public boolean setBlock(int x, int y, int z, BlockState id) {
                         if (area.contains(x, z)) {
@@ -113,24 +122,25 @@ public class AugmentedUtils {
                     }
                 };
             } else {
-                bxx = bzz = 0;
-                txx = tzz = 15;
+                relativeBottomX = relativeBottomZ = 0;
+                relativeTopX = relativeTopZ = 15;
                 primaryMask = queue;
             }
+
             LocalBlockQueue secondaryMask;
             BlockState air = BlockTypes.AIR.getDefaultState();
             if (area.getTerrain() == PlotAreaTerrainType.ROAD) {
                 PlotManager manager = area.getPlotManager();
                 final boolean[][] canPlace = new boolean[16][16];
                 boolean has = false;
-                for (int x = bxx; x <= txx; x++) {
-                    for (int z = bzz; z <= tzz; z++) {
-                        int rx = x + blockX;
-                        int rz = z + blockZ;
-                        boolean can = manager.getPlotId(rx, 0, rz) == null;
+                for (int x = relativeBottomX; x <= relativeTopX; x++) {
+                    for (int z = relativeBottomZ; z <= relativeTopZ; z++) {
+                        int worldX = x + blockX;
+                        int worldZ = z + blockZ;
+                        boolean can = manager.getPlotId(worldX, 0, worldZ) == null;
                         if (can) {
                             for (int y = 1; y < 128; y++) {
-                                queue.setBlock(rx, y, rz, air);
+                                queue.setBlock(worldX, y, worldZ, air);
                             }
                             canPlace[x][z] = true;
                             has = true;
@@ -140,7 +150,7 @@ public class AugmentedUtils {
                 if (!has) {
                     continue;
                 }
-                toReturn = true;
+                generationResult = true;
                 secondaryMask = new DelegateLocalBlockQueue(primaryMask) {
                     @Override public boolean setBlock(int x, int y, int z, BlockState id) {
                         if (canPlace[x - blockX][z - blockZ]) {
@@ -173,14 +183,14 @@ public class AugmentedUtils {
                 };
             } else {
                 secondaryMask = primaryMask;
-                for (int x = bxx; x <= txx; x++) {
-                    for (int z = bzz; z <= tzz; z++) {
+                for (int x = relativeBottomX; x <= relativeTopX; x++) {
+                    for (int z = relativeBottomZ; z <= relativeTopZ; z++) {
                         for (int y = 1; y < 128; y++) {
                             queue.setBlock(blockX + x, y, blockZ + z, air);
                         }
                     }
                 }
-                toReturn = true;
+                generationResult = true;
             }
             primaryMask.setChunkObject(chunkObject);
             primaryMask.setForceSync(true);
@@ -196,6 +206,7 @@ public class AugmentedUtils {
             queue.setForceSync(true);
             queue.flush();
         }
-        return toReturn;
+        return generationResult;
     }
+
 }
