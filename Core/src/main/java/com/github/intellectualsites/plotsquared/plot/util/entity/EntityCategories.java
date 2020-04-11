@@ -25,29 +25,19 @@
  */
 package com.github.intellectualsites.plotsquared.plot.util.entity;
 
-import com.sk89q.worldedit.world.entity.EntityType;
-import com.sk89q.worldedit.world.entity.EntityTypes;
-
-import java.util.Arrays;
-import java.util.HashSet;
-
 /**
  * A collection of {@link EntityCategory entity categories}
  */
 public class EntityCategories {
 
     public static final EntityCategory ANIMAL   = register("animal");
-    public static final EntityCategory TAMEABLE = register("tameable",
-        EntityTypes.HORSE, EntityTypes.OCELOT, EntityTypes.WOLF, EntityTypes.DONKEY,
-        EntityTypes.MULE, EntityTypes.PARROT, EntityTypes.LLAMA);
-    public static final EntityCategory VEHICLE = register("vehicle");
-    public static final EntityCategory HOSTILE = register("hostile",
-        EntityTypes.ZOMBIE);
-    public static final EntityCategory HANGING = register("hanging",
-        EntityTypes.PAINTING, EntityTypes.ITEM_FRAME);
+    public static final EntityCategory TAMEABLE = register("tameable");
+    public static final EntityCategory VEHICLE  = register("vehicle");
+    public static final EntityCategory HOSTILE  = register("hostile");
+    public static final EntityCategory HANGING  = register("hanging");
 
-    public static EntityCategory register(final String id, final EntityType ... types) {
-        final EntityCategory entityCategory = new EntityCategory(id, new HashSet<>(Arrays.asList(types)));
+    public static EntityCategory register(final String id) {
+        final EntityCategory entityCategory = new EntityCategory(id);
         EntityCategory.REGISTRY.register(entityCategory.getId(), entityCategory);
         return entityCategory;
     }

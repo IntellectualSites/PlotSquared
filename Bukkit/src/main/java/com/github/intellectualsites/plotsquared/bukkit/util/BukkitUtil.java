@@ -58,13 +58,23 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.type.WallSign;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.Boss;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Golem;
+import org.bukkit.entity.Hanging;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Slime;
+import org.bukkit.entity.Tameable;
+import org.bukkit.entity.Vehicle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -541,6 +551,48 @@ public class BukkitUtil extends WorldUtil {
 
     @Override public void setFoodLevel(PlotPlayer player, int foodLevel) {
         Bukkit.getPlayer(player.getUUID()).setFoodLevel(foodLevel);
+    }
+
+    @Override
+    public Set<com.sk89q.worldedit.world.entity.EntityType> getTypesInCategory(final String category) {
+        final Collection<Class<?>> allowedInterfaces = new HashSet<>();
+        switch (category) {
+            case "animal": {
+                allowedInterfaces.add(Golem.class);
+                allowedInterfaces.add(Animals.class);
+            } break;
+            case "tameable": {
+                allowedInterfaces.add(Tameable.class);
+            } break;
+            case "vehicle": {
+                allowedInterfaces.add(Vehicle.class);
+            } break;
+            case "hostile": {
+                allowedInterfaces.add(Monster.class);
+                allowedInterfaces.add(Boss.class);
+                allowedInterfaces.add(Slime.class);
+            } break;
+            case "hanging": {
+                allowedInterfaces.add(Hanging.class);
+            } break;
+            default: {
+                PlotSquared.log(Captions.PREFIX + "Unknown entity category requested: " + category);
+            } break;
+        }
+        final Set<com.sk89q.worldedit.world.entity.EntityType> types = new HashSet<>();
+        outer: for (final EntityType bukkitType : EntityType.values()) {
+            final Class<? extends Entity> entityClass = bukkitType.getEntityClass();
+            if (entityClass == null) {
+                continue;
+            }
+            for (final Class<?> allowedInterface : allowedInterfaces) {
+                if (allowedInterface.isAssignableFrom(entityClass)) {
+                    types.add(BukkitAdapter.adapt(bukkitType));
+                    continue outer;
+                }
+            }
+        }
+        return types;
     }
 
     private static void ensureLoaded(final String world, final int x, final int z, final Consumer<Chunk> chunkConsumer) {

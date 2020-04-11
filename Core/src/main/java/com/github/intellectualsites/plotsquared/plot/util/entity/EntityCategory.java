@@ -25,6 +25,7 @@
  */
 package com.github.intellectualsites.plotsquared.plot.util.entity;
 
+import com.github.intellectualsites.plotsquared.plot.util.WorldUtil;
 import com.sk89q.worldedit.registry.Category;
 import com.sk89q.worldedit.registry.Keyed;
 import com.sk89q.worldedit.registry.NamespacedRegistry;
@@ -39,15 +40,15 @@ public class EntityCategory extends Category<EntityType> implements Keyed {
 
     public static final NamespacedRegistry<EntityCategory> REGISTRY = new NamespacedRegistry<>("entity type");
 
-    private final Set<EntityType> types;
+    private final String key;
 
-    protected EntityCategory(final String id, final Set<EntityType> types) {
+    protected EntityCategory(final String id) {
         super("plotsquared:" + id);
-        this.types = types;
+        this.key = id;
     }
 
     @Override protected Set<EntityType> load() {
-        return types;
+        return WorldUtil.IMP.getTypesInCategory(this.key);
     }
 
 }

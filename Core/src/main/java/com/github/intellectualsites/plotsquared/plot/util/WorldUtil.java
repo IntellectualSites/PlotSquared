@@ -39,6 +39,7 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockState;
+import com.sk89q.worldedit.world.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
@@ -215,4 +216,7 @@ public abstract class WorldUtil {
     public abstract int getFoodLevel(PlotPlayer player);
 
     public abstract void setFoodLevel(PlotPlayer player, int foodLevel);
+
+    public abstract Set<EntityType> getTypesInCategory(final String category);
+
 }
