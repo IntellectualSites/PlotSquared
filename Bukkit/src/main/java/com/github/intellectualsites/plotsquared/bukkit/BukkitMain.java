@@ -65,6 +65,8 @@ import com.github.intellectualsites.plotsquared.plot.generator.IndependentPlotGe
 import com.github.intellectualsites.plotsquared.plot.listener.PlotListener;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.github.intellectualsites.plotsquared.plot.object.PlotArea;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaTerrainType;
+import com.github.intellectualsites.plotsquared.plot.object.PlotAreaType;
 import com.github.intellectualsites.plotsquared.plot.object.PlotId;
 import com.github.intellectualsites.plotsquared.plot.object.PlotPlayer;
 import com.github.intellectualsites.plotsquared.plot.object.SetupObject;
@@ -121,6 +123,7 @@ import java.lang.reflect.Method;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -692,14 +695,28 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return new BukkitSetupUtils();
     }
 
-    @Deprecated
-    // Metrics are controlled via bstats config
     @Override public void startMetrics() {
         if (this.metricsStarted) {
             return;
         }
         this.metricsStarted = true;
         Metrics metrics = new Metrics(this, BSTATS_ID);// bstats
+        metrics.addCustomChart(new Metrics.DrilldownPie("area_types", () -> {
+            final Map<String, Map<String, Integer>> map = new HashMap<>();
+            for (final PlotAreaType plotAreaType : PlotAreaType.values()) {
+                final Map<String, Integer> terrainTypes = new HashMap<>();
+                for (final PlotAreaTerrainType plotAreaTerrainType : PlotAreaTerrainType.values()) {
+                    terrainTypes.put(plotAreaTerrainType.name().toLowerCase(), 0);
+                }
+                map.put(plotAreaType.name().toLowerCase(), terrainTypes);
+            }
+            for (final PlotArea plotArea : PlotSquared.get().getPlotAreas()) {
+                final Map<String, Integer> terrainTypeMap = map.get(plotArea.getType().name().toLowerCase());
+                terrainTypeMap.put(plotArea.getTerrain().name().toLowerCase(),
+                    terrainTypeMap.get(plotArea.getTerrain().name().toLowerCase()) + 1);
+            }
+            return map;
+        }));
     }
 
     @Override public ChunkManager initChunkManager() {
