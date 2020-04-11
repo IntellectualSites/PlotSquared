@@ -44,7 +44,7 @@ processResources {
 }
 
 //noinspection GroovyAssignabilityCheck
-jar.archiveFileName = "PlotSquared-BukkitAPI-${project.parent.version}.jar"
+jar.archiveFileName = "PlotSquared-Bukkit-${project.parent.version}.jar"
 jar.destinationDirectory = file("../mvn/com/github/intellectualsites/plotsquared/PlotSquared-Bukkit/" + project.parent.version)
 task createPom {
     doLast {
