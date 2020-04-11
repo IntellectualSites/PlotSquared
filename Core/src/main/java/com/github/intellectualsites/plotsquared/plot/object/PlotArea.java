@@ -27,6 +27,7 @@ package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
 import com.github.intellectualsites.plotsquared.plot.config.Settings;
@@ -335,13 +336,7 @@ public abstract class PlotArea {
                 }
             }
         }
-        try {
-            this.getFlagContainer().addAll(parseFlags(flags));
-        } catch (FlagParseException e) {
-            e.printStackTrace();
-            PlotSquared.debug("&cInvalid default flags for " + this.getWorldName() + ": " + StringMan
-                .join(flags, ","));
-        }
+        this.getFlagContainer().addAll(parseFlags(flags));
         this.spawnEggs = config.getBoolean("event.spawn.egg");
         this.spawnCustom = config.getBoolean("event.spawn.custom");
         this.spawnBreeding = config.getBoolean("event.spawn.breeding");
@@ -1017,7 +1012,7 @@ public abstract class PlotArea {
         this.terrain = terrain;
     }
 
-    private static Collection<PlotFlag<?, ?>> parseFlags(List<String> flagStrings) throws FlagParseException {
+    private static Collection<PlotFlag<?, ?>> parseFlags(List<String> flagStrings) {
         final Collection<PlotFlag<?, ?>> flags = new ArrayList<>();
         for (final String key : flagStrings) {
             final String[] split;
@@ -1028,7 +1023,14 @@ public abstract class PlotArea {
             }
             final PlotFlag<?, ?> flagInstance = GlobalFlagContainer.getInstance().getFlagFromString(split[0]);
             if (flagInstance != null) {
-                flags.add(flagInstance.parse(split[1]));
+                try {
+                    flags.add(flagInstance.parse(split[1]));
+                } catch (final FlagParseException e) {
+                    PlotSquared.log(Captions.PREFIX.getTranslated() +
+                        String.format("§2Failed to parse default flag with key §6'%s'§c and value: §6'%s'§c."
+                                + " Reason: %s. This flag will not be added as a default flag.",
+                            e.getFlag().getName(), e.getValue(), e.getErrorMessage()));
+                }
             }
         }
         return flags;
