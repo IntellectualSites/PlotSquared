@@ -27,6 +27,7 @@ package com.github.intellectualsites.plotsquared.plot.object;
 
 import com.github.intellectualsites.plotsquared.configuration.ConfigurationSection;
 import com.github.intellectualsites.plotsquared.plot.PlotSquared;
+import com.github.intellectualsites.plotsquared.plot.config.CaptionUtility;
 import com.github.intellectualsites.plotsquared.plot.config.Captions;
 import com.github.intellectualsites.plotsquared.plot.config.Configuration;
 import com.github.intellectualsites.plotsquared.plot.config.ConfigurationNode;
@@ -337,6 +338,22 @@ public abstract class PlotArea {
             }
         }
         this.getFlagContainer().addAll(parseFlags(flags));
+
+        StringBuilder flagBuilder = new StringBuilder();
+        Collection<PlotFlag<?, ?>> flagCollection = this.getFlagContainer().getFlagMap().values();
+        if (flagCollection.isEmpty()) {
+            flagBuilder.append(Captions.NONE.getTranslated());
+        } else {
+            String prefix = " ";
+            for (final PlotFlag<?, ?> flag : flagCollection) {
+                Object value = flag.toString();
+                flagBuilder.append(prefix).append(CaptionUtility.format(null, Captions.PLOT_FLAG_LIST.getTranslated(),
+                    flag.getName(), CaptionUtility.formatRaw(null, value.toString(), "")));
+                prefix = ", ";
+            }
+        }
+
+        PlotSquared.log(Captions.PREFIX + "&3 - default flags: &7" + flagBuilder.toString());
         this.spawnEggs = config.getBoolean("event.spawn.egg");
         this.spawnCustom = config.getBoolean("event.spawn.custom");
         this.spawnBreeding = config.getBoolean("event.spawn.breeding");
@@ -1027,7 +1044,7 @@ public abstract class PlotArea {
                     flags.add(flagInstance.parse(split[1]));
                 } catch (final FlagParseException e) {
                     PlotSquared.log(Captions.PREFIX.getTranslated() +
-                        String.format("§2Failed to parse default flag with key §6'%s'§c and value: §6'%s'§c."
+                        String.format("§cFailed to parse default flag with key §6'%s'§c and value: §6'%s'§c."
                                 + " Reason: %s. This flag will not be added as a default flag.",
                             e.getFlag().getName(), e.getValue(), e.getErrorMessage()));
                 }

@@ -1675,13 +1675,26 @@ import java.util.concurrent.atomic.AtomicInteger;
         //
         try (final PreparedStatement preparedStatement =
             this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_flags`(`plot_id`, `flag`, `value`) VALUES(?, ?, ?)")) {
+
+            long timeStarted = System.currentTimeMillis();
+            int flagsProcessed = 0;
+            int plotsProcessed = 0;
+
+            int totalFlags = 0;
+            for (final Map<String, String> flags : flagMap.values()) {
+                totalFlags += flags.size();
+            }
+
             for (final Map.Entry<Integer, Map<String, String>> plotFlagEntry : flagMap.entrySet()) {
                 for (final Map.Entry<String, String> flagEntry : plotFlagEntry.getValue().entrySet()) {
                     preparedStatement.setInt(1, plotFlagEntry.getKey());
                     preparedStatement.setString(2, flagEntry.getKey());
                     preparedStatement.setString(3, flagEntry.getValue());
                     preparedStatement.addBatch();
+                    flagsProcessed += 1;
                 }
+                plotsProcessed += 1;
+
                 try {
                     preparedStatement.executeBatch();
                 } catch (final Exception e) {
@@ -1689,6 +1702,12 @@ import java.util.concurrent.atomic.AtomicInteger;
                     e.printStackTrace();
                     continue;
                 }
+
+                if (System.currentTimeMillis() - timeStarted >= 1000L || plotsProcessed >= flagMap.size()) {
+                    timeStarted = System.currentTimeMillis();
+                    PlotSquared.log(Captions.PREFIX.getTranslated() + "... Flag conversion in progress. " + String.format("%.1f", ((float) flagsProcessed / totalFlags) * 100) + "% Done");
+                }
+
                 PlotSquared.debug(Captions.PREFIX.getTranslated() + "- Finished converting flags for plot with entry ID: " + plotFlagEntry.getKey());
             }
         } catch (final Exception e) {

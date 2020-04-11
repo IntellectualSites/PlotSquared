@@ -4,7 +4,6 @@ repositories {
 def textVersion = "3.0.2"
 
 dependencies {
-    compile group: 'org.json', name: 'json', version: '20190722'
     implementation("org.yaml:snakeyaml:1.25")
     implementation("com.google.code.gson:gson:2.8.6") {
         because("Minecraft uses GSON 2.8.0")

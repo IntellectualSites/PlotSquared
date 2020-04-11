@@ -48,7 +48,7 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
 
     @Override public F parse(@NotNull String input) throws FlagParseException {
         final List<BlockTypeWrapper> parsedBlocks = new ArrayList<>();
-        final String[] split = input.split(",(?![^\\(\\[]*[\\]\\)])");
+        final String[] split = input.replaceAll("\\s+", "").split(",(?![^\\(\\[]*[\\]\\)])");
         if (split.length == 0) {
             return this.flagOf(parsedBlocks);
         }
