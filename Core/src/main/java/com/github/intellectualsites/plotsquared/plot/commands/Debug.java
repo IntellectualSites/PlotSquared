@@ -82,6 +82,9 @@ public class Debug extends SubCommand {
                         .stream()
                         .filter(category -> category.contains(entityType))
                         .count();
+                if (categoryCount > 0) {
+                    return;
+                }
                 player.sendMessage(Captions.PREFIX.getTranslated() + entityType.getName() + " is in " + categoryCount + " categories");
             });
             return true;

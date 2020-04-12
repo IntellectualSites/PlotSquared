@@ -102,6 +102,7 @@ import com.github.intellectualsites.plotsquared.plot.util.Permissions;
 import com.github.intellectualsites.plotsquared.plot.util.RegExUtil;
 import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.UUIDHandler;
+import com.github.intellectualsites.plotsquared.plot.util.entity.EntityCategories;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
 import io.papermc.lib.PaperLib;
@@ -116,30 +117,22 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Ageable;
-import org.bukkit.entity.Animals;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Boss;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Fireball;
-import org.bukkit.entity.Golem;
-import org.bukkit.entity.Hanging;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Slime;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.Vehicle;
-import org.bukkit.entity.Villager;
-import org.bukkit.entity.WaterMob;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -276,147 +269,40 @@ public class PlayerEvents extends PlotListener implements Listener {
             .getFlagContainer().getFlagMap().isEmpty()) {
             return false;
         }
-        switch (entity.getType()) {
-            case PLAYER:
-                return false;
-            case ARROW:
-            case DRAGON_FIREBALL:
-            case DROPPED_ITEM:
-            case EGG:
-            case ENDER_PEARL:
-            case FIREBALL:
-            case LLAMA_SPIT:
-            case SHULKER_BULLET:
-            case SMALL_FIREBALL:
-            case SNOWBALL:
-            case SPECTRAL_ARROW:
-            case SPLASH_POTION:
-            case THROWN_EXP_BOTTLE:
-                // projectile
-            case FALLING_BLOCK:
-            case PRIMED_TNT:
-                // Block entities
-            case AREA_EFFECT_CLOUD:
-            case ENDER_CRYSTAL:
-            case ENDER_SIGNAL:
-            case EVOKER_FANGS:
-            case EXPERIENCE_ORB:
-            case FIREWORK:
-            case FISHING_HOOK:
-            case LEASH_HITCH:
-            case LIGHTNING:
-            case UNKNOWN:
-            case WITHER_SKULL:
-                // non moving / unmovable
-                return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED);
-            case ARMOR_STAND:
-            case ITEM_FRAME:
-            case PAINTING:
-                return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
-                    MiscCapFlag.MISC_CAP_UNLIMITED);
-            // misc
-            case BOAT:
-            case MINECART:
-            case MINECART_CHEST:
-            case MINECART_COMMAND:
-            case MINECART_FURNACE:
-            case MINECART_HOPPER:
-            case MINECART_MOB_SPAWNER:
-            case MINECART_TNT:
-                return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
-                    VehicleCapFlag.VEHICLE_CAP_UNLIMITED);
-            case BAT:
-            case CHICKEN:
-            case CAT:
-            case COD:
-            case COW:
-            case DOLPHIN:
-            case DONKEY:
-            case FOX:
-            case HORSE:
-            case IRON_GOLEM:
-            case LLAMA:
-            case MULE:
-            case MUSHROOM_COW:
-            case OCELOT:
-            case PANDA:
-            case PARROT:
-            case PIG:
-            case POLAR_BEAR:
-            case PUFFERFISH:
-            case RABBIT:
-            case SALMON:
-            case SHEEP:
-            case SKELETON_HORSE:
-            case SNOWMAN:
-            case SQUID:
-            case TRADER_LLAMA:
-            case TROPICAL_FISH:
-            case TURTLE:
-            case VILLAGER:
-            case WOLF:
-            case ZOMBIE_HORSE:
-                // animal
-                return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
-                    MobCapFlag.MOB_CAP_UNLIMITED, AnimalCapFlag.ANIMAL_CAP_UNLIMITED);
-            case BLAZE:
-            case CAVE_SPIDER:
-            case CREEPER:
-            case DROWNED:
-            case ELDER_GUARDIAN:
-            case ENDERMAN:
-            case ENDERMITE:
-            case ENDER_DRAGON:
-            case EVOKER:
-            case GHAST:
-            case GIANT:
-            case GUARDIAN:
-            case HUSK:
-            case ILLUSIONER:
-            case MAGMA_CUBE:
-            case PIG_ZOMBIE:
-            case SHULKER:
-            case SILVERFISH:
-            case SKELETON:
-            case SLIME:
-            case SPIDER:
-            case STRAY:
-            case VEX:
-            case VINDICATOR:
-            case WITCH:
-            case WITHER:
-            case WITHER_SKELETON:
-            case ZOMBIE:
-            case ZOMBIE_VILLAGER:
-            case PILLAGER:
-            case PHANTOM:
-            case RAVAGER:
-                // monster
-                return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
-                    MobCapFlag.MOB_CAP_UNLIMITED, HostileCapFlag.HOSTILE_CAP_UNLIMITED);
-            default:
-                if (entity instanceof LivingEntity) {
-                    if (entity instanceof Animals || entity instanceof WaterMob) {
-                        return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
-                            MobCapFlag.MOB_CAP_UNLIMITED, AnimalCapFlag.ANIMAL_CAP_UNLIMITED);
-                    } else if (entity instanceof Monster) {
-                        return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
-                            MobCapFlag.MOB_CAP_UNLIMITED, HostileCapFlag.HOSTILE_CAP_UNLIMITED);
-                    } else {
-                        return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
-                            MobCapFlag.MOB_CAP_UNLIMITED);
-                    }
-                }
-                if (entity instanceof Vehicle) {
-                    return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
-                        VehicleCapFlag.VEHICLE_CAP_UNLIMITED);
-                }
-                if (entity instanceof Hanging) {
-                    return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
-                        MiscCapFlag.MISC_CAP_UNLIMITED);
-                }
-                return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED);
+
+        final com.sk89q.worldedit.world.entity.EntityType entityType = BukkitAdapter.adapt(entity.getType());
+
+        if (EntityCategories.PLAYER.contains(entityType)) {
+            return false;
         }
+
+        if (EntityCategories.PROJECTILE.contains(entityType) ||
+            EntityCategories.OTHER.contains(entityType) ||
+            EntityCategories.HANGING.contains(entityType)) {
+            return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                MiscCapFlag.MISC_CAP_UNLIMITED);
+        }
+
+        // Has to go go before vehicle as horses are both
+        // animals and vehicles
+        if (EntityCategories.ANIMAL.contains(entityType) ||
+            EntityCategories.VILLAGER.contains(entityType) ||
+            EntityCategories.TAMEABLE.contains(entityType)) {
+            return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                MobCapFlag.MOB_CAP_UNLIMITED, AnimalCapFlag.ANIMAL_CAP_UNLIMITED);
+        }
+
+        if (EntityCategories.HOSTILE.contains(entityType)) {
+            return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                MobCapFlag.MOB_CAP_UNLIMITED, HostileCapFlag.HOSTILE_CAP_UNLIMITED);
+        }
+
+        if (EntityCategories.VEHICLE.contains(entityType)) {
+            return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
+                VehicleCapFlag.VEHICLE_CAP_UNLIMITED);
+        }
+
+        return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED);
     }
 
     @EventHandler public void onVehicleEntityCollision(VehicleEntityCollisionEvent e) {
@@ -446,53 +332,6 @@ public class PlayerEvents extends PlotListener implements Listener {
 
     @EventHandler public void onRedstoneEvent(BlockRedstoneEvent event) {
         Block block = event.getBlock();
-/*        switch (block.getType()) {
-            case OBSERVER:
-            case REDSTONE:
-            case REDSTONE_ORE:
-            case REDSTONE_BLOCK:
-            case REDSTONE_TORCH:
-            case REDSTONE_WALL_TORCH:
-            case REDSTONE_WIRE:
-            case REDSTONE_LAMP:
-            case PISTON_HEAD:
-            case PISTON:
-            case STICKY_PISTON:
-            case MOVING_PISTON:
-            case LEVER:
-            case ACACIA_BUTTON:
-            case BIRCH_BUTTON:
-            case DARK_OAK_BUTTON:
-            case JUNGLE_BUTTON:
-            case OAK_BUTTON:
-            case SPRUCE_BUTTON:
-            case STONE_BUTTON:
-            case STONE_PRESSURE_PLATE:
-            case ACACIA_PRESSURE_PLATE:
-            case BIRCH_PRESSURE_PLATE:
-            case DARK_OAK_PRESSURE_PLATE:
-            case HEAVY_WEIGHTED_PRESSURE_PLATE:
-            case JUNGLE_PRESSURE_PLATE:
-            case LIGHT_WEIGHTED_PRESSURE_PLATE:
-            case OAK_PRESSURE_PLATE:
-            case SPRUCE_PRESSURE_PLATE:
-            case SPRUCE_DOOR:
-            case BIRCH_DOOR:
-            case JUNGLE_DOOR:
-            case ACACIA_DOOR:
-            case DARK_OAK_DOOR:
-            case IRON_DOOR:
-            case OAK_DOOR:
-            case IRON_TRAPDOOR:
-            case SPRUCE_FENCE_GATE:
-            case BIRCH_FENCE_GATE:
-            case JUNGLE_FENCE_GATE:
-            case ACACIA_FENCE_GATE:
-            case DARK_OAK_FENCE_GATE:
-            case OAK_FENCE_GATE:
-            case POWERED_RAIL:
-                return;
-            default:*/
         Location location = BukkitUtil.getLocation(block.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
@@ -542,7 +381,6 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
             event.setNewCurrent(0);
         }
-        //}
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -940,27 +778,20 @@ public class PlayerEvents extends PlotListener implements Listener {
                     }
                 }
                 if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
-                    switch (vehicle.getType()) {
-                        case BOAT:
-                        case ENDER_CRYSTAL:
-                        case MINECART:
-                        case MINECART_CHEST:
-                        case MINECART_COMMAND:
-                        case MINECART_FURNACE:
-                        case MINECART_HOPPER:
-                        case MINECART_MOB_SPAWNER:
-                        case MINECART_TNT: {
-                            List<MetadataValue> meta = vehicle.getMetadata("plot");
-                            Plot toPlot = BukkitUtil.getLocation(to).getPlot();
-                            if (!meta.isEmpty()) {
-                                Plot origin = (Plot) meta.get(0).value();
-                                if (!origin.getBasePlot(false).equals(toPlot)) {
-                                    vehicle.remove();
-                                }
-                            } else if (toPlot != null) {
-                                vehicle.setMetadata("plot",
-                                    new FixedMetadataValue((Plugin) PlotSquared.get().IMP, toPlot));
+                    final com.sk89q.worldedit.world.entity.EntityType entityType = BukkitAdapter.adapt(vehicle.getType());
+                    // Horses etc are vehicles, but they're also animals
+                    // so this filters out all living entities
+                    if (EntityCategories.VEHICLE.contains(entityType) && !EntityCategories.ANIMAL.contains(entityType)) {
+                        List<MetadataValue> meta = vehicle.getMetadata("plot");
+                        Plot toPlot = BukkitUtil.getLocation(to).getPlot();
+                        if (!meta.isEmpty()) {
+                            Plot origin = (Plot) meta.get(0).value();
+                            if (origin != null && !origin.getBasePlot(false).equals(toPlot)) {
+                                vehicle.remove();
                             }
+                        } else if (toPlot != null) {
+                            vehicle.setMetadata("plot",
+                                new FixedMetadataValue((Plugin) PlotSquared.get().IMP, toPlot));
                         }
                     }
                 }
@@ -2672,29 +2503,41 @@ public class PlayerEvents extends PlotListener implements Listener {
                 event.setCancelled(true);
             }
         } else if (!plot.isAdded(pp.getUUID())) {
-            Entity entity = event.getRightClicked();
-            if (isMonster(entity) && plot.getFlag(HostileInteractFlag.class)) {
+            final Entity entity = event.getRightClicked();
+            final com.sk89q.worldedit.world.entity.EntityType entityType = BukkitAdapter.adapt(entity.getType());
+
+            if (EntityCategories.HOSTILE.contains(entityType) && plot.getFlag(HostileInteractFlag.class)) {
                 return;
             }
-            if ((entity instanceof Animals || entity instanceof Golem) && plot.getFlag(AnimalInteractFlag.class)) {
+
+            if (EntityCategories.ANIMAL.contains(entityType) && plot.getFlag(AnimalInteractFlag.class)) {
                 return;
             }
+
+            // This actually makes use of the interface, so we don't use the
+            // category
             if (entity instanceof Tameable && ((Tameable) entity).isTamed() && plot
                 .getFlag(TamedInteractFlag.class)) {
                 return;
             }
-            if (entity instanceof Vehicle && plot.getFlag(VehicleUseFlag.class)) {
+
+            if (EntityCategories.VEHICLE.contains(entityType) && plot.getFlag(VehicleUseFlag.class)) {
                 return;
             }
-            if (entity instanceof Player && plot.getFlag(PlayerInteractFlag.class)) {
+
+            if (EntityCategories.PLAYER.contains(entityType) && plot.getFlag(PlayerInteractFlag.class)) {
                 return;
             }
-            if (entity instanceof Villager && plot.getFlag(VillagerInteractFlag.class)) {
+
+            if (EntityCategories.VILLAGER.contains(entityType) && plot.getFlag(VillagerInteractFlag.class)) {
                 return;
             }
-            if (entity instanceof ItemFrame && plot.getFlag(MiscInteractFlag.class)) {
+
+            if ((EntityCategories.HANGING.contains(entityType) ||
+                EntityCategories.OTHER.contains(entityType)) && plot.getFlag(MiscInteractFlag.class)) {
                 return;
             }
+
             if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_INTERACT_OTHER)) {
                 MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
                     Captions.PERMISSION_ADMIN_INTERACT_OTHER);
@@ -2897,7 +2740,9 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         if (player != null) {
             PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
-            if (victim instanceof Hanging) { // hanging
+            final com.sk89q.worldedit.world.entity.EntityType entityType =
+                BukkitAdapter.adapt(victim.getType());
+            if (EntityCategories.HANGING.contains(entityType)) { // hanging
                 if (plot != null && (plot.getFlag(HangingBreakFlag.class)) || plot
                     .isAdded(plotPlayer.getUUID())) {
                     if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
@@ -2925,7 +2770,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                         "plots.admin.destroy." + stub);
                     return false;
                 }
-            } else if (isMonster(victim)) {
+            } else if (EntityCategories.HOSTILE.contains(entityType)) {
                 if (plot != null && (plot.getFlag(HostileAttackFlag.class) || plot
                     .getFlag(PveFlag.class) || plot.isAdded(plotPlayer.getUUID()))) {
                     return true;
@@ -2935,7 +2780,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                         "plots.admin.pve." + stub);
                     return false;
                 }
-            } else if (victim instanceof Tameable) { // victim is tameable
+            } else if (EntityCategories.TAMEABLE.contains(entityType)) { // victim is tameable
                 if (plot != null && (plot.getFlag(TamedAttackFlag.class) || plot
                     .getFlag(PveFlag.class) || plot.isAdded(plotPlayer.getUUID()))) {
                     return true;
@@ -2945,7 +2790,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                         "plots.admin.pve." + stub);
                     return false;
                 }
-            } else if (victim instanceof Player) {
+            } else if (EntityCategories.PLAYER.contains(entityType)) {
                 if (plot != null) {
                     if (!plot.getFlag(PvpFlag.class) && !Permissions
                         .hasPermission(plotPlayer, "plots.admin.pvp." + stub)) {
@@ -2961,7 +2806,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                         "plots.admin.pvp." + stub);
                     return false;
                 }
-            } else if (victim instanceof Creature) { // victim is animal
+            } else if (EntityCategories.ANIMAL.contains(entityType)) { // victim is animal
                 if (plot != null && (plot.getFlag(AnimalAttackFlag.class) || plot
                     .getFlag(PveFlag.class) || plot.isAdded(plotPlayer.getUUID()))) {
                     return true;
@@ -2971,7 +2816,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                         "plots.admin.pve." + stub);
                     return false;
                 }
-            } else if (victim instanceof Vehicle) { // Vehicles are managed in vehicle destroy event
+            } else if (EntityCategories.VEHICLE.contains(entityType)) { // Vehicles are managed in vehicle destroy event
                 return true;
             } else { // victim is something else
                 if (plot != null && (plot.getFlag(PveFlag.class) || plot
@@ -3135,7 +2980,4 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
     }
 
-    private boolean isMonster(Entity entity) {
-        return entity instanceof Monster || entity instanceof Boss || entity instanceof Slime; // :)))
-    }
 }

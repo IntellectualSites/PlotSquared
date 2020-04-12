@@ -41,7 +41,9 @@ import com.github.intellectualsites.plotsquared.plot.util.TaskManager;
 import com.github.intellectualsites.plotsquared.plot.util.block.GlobalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.LocalBlockQueue;
 import com.github.intellectualsites.plotsquared.plot.util.block.ScopedLocalBlockQueue;
+import com.github.intellectualsites.plotsquared.plot.util.entity.EntityCategories;
 import com.github.intellectualsites.plotsquared.plot.util.world.RegionUtil;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -54,8 +56,6 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -71,6 +71,12 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Semaphore;
 
+import static com.github.intellectualsites.plotsquared.plot.util.entity.EntityCategories.CAP_ANIMAL;
+import static com.github.intellectualsites.plotsquared.plot.util.entity.EntityCategories.CAP_ENTITY;
+import static com.github.intellectualsites.plotsquared.plot.util.entity.EntityCategories.CAP_MISC;
+import static com.github.intellectualsites.plotsquared.plot.util.entity.EntityCategories.CAP_MOB;
+import static com.github.intellectualsites.plotsquared.plot.util.entity.EntityCategories.CAP_MONSTER;
+import static com.github.intellectualsites.plotsquared.plot.util.entity.EntityCategories.CAP_VEHICLE;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class BukkitChunkManager extends ChunkManager {
@@ -514,135 +520,27 @@ public class BukkitChunkManager extends ChunkManager {
     }
 
     private void count(int[] count, Entity entity) {
-        switch (entity.getType()) {
-            case PLAYER:
-                // not valid
-                return;
-            case SMALL_FIREBALL:
-            case FIREBALL:
-            case DROPPED_ITEM:
-            case EGG:
-            case THROWN_EXP_BOTTLE:
-            case SPLASH_POTION:
-            case SNOWBALL:
-            case ENDER_PEARL:
-            case ARROW:
-            case TRIDENT:
-            case SHULKER_BULLET:
-            case SPECTRAL_ARROW:
-            case DRAGON_FIREBALL:
-            case LLAMA_SPIT:
-                // projectile
-            case PRIMED_TNT:
-            case FALLING_BLOCK:
-                // Block entities
-            case ENDER_CRYSTAL:
-            case FISHING_HOOK:
-            case ENDER_SIGNAL:
-            case EXPERIENCE_ORB:
-            case LEASH_HITCH:
-            case FIREWORK:
-            case LIGHTNING:
-            case WITHER_SKULL:
-            case UNKNOWN:
-            case AREA_EFFECT_CLOUD:
-            case EVOKER_FANGS:
-                // non moving / unremovable
-                break;
-            case ITEM_FRAME:
-            case PAINTING:
-            case ARMOR_STAND:
-                count[5]++;
-                break;
-            // misc
-            case MINECART:
-            case MINECART_CHEST:
-            case MINECART_COMMAND:
-            case MINECART_FURNACE:
-            case MINECART_HOPPER:
-            case MINECART_MOB_SPAWNER:
-            case MINECART_TNT:
-            case BOAT:
-                count[4]++;
-                break;
-            case POLAR_BEAR:
-            case RABBIT:
-            case SHEEP:
-            case MUSHROOM_COW:
-            case OCELOT:
-            case PIG:
-            case HORSE:
-            case SQUID:
-            case VILLAGER:
-            case IRON_GOLEM:
-            case WOLF:
-            case CHICKEN:
-            case COW:
-            case SNOWMAN:
-            case BAT:
-            case DONKEY:
-            case LLAMA:
-            case SKELETON_HORSE:
-            case ZOMBIE_HORSE:
-            case MULE:
-            case DOLPHIN:
-            case TURTLE:
-            case COD:
-            case PARROT:
-            case SALMON:
-            case PUFFERFISH:
-            case TROPICAL_FISH:
-            case CAT:
-            case FOX:
-            case PANDA:
-                // animal
-                count[3]++;
-                count[1]++;
-                break;
-            case BLAZE:
-            case CAVE_SPIDER:
-            case CREEPER:
-            case ENDERMAN:
-            case ENDERMITE:
-            case ENDER_DRAGON:
-            case GHAST:
-            case GIANT:
-            case GUARDIAN:
-            case MAGMA_CUBE:
-            case PIG_ZOMBIE:
-            case SILVERFISH:
-            case SKELETON:
-            case SLIME:
-            case SPIDER:
-            case WITCH:
-            case WITHER:
-            case ZOMBIE:
-            case SHULKER:
-            case ELDER_GUARDIAN:
-            case STRAY:
-            case HUSK:
-            case EVOKER:
-            case VEX:
-            case WITHER_SKELETON:
-            case ZOMBIE_VILLAGER:
-            case VINDICATOR:
-                // monster
-                count[3]++;
-                count[2]++;
-                break;
-            default:
-                if (entity instanceof Creature) {
-                    count[3]++;
-                    if (entity instanceof Animals) {
-                        count[1]++;
-                    } else {
-                        count[2]++;
-                    }
-                } else {
-                    count[4]++;
-                }
+        final com.sk89q.worldedit.world.entity.EntityType entityType =
+            BukkitAdapter.adapt(entity.getType());
+
+        if (EntityCategories.PLAYER.contains(entityType)) {
+            return;
+        } else if (EntityCategories.PROJECTILE.contains(entityType) ||
+            EntityCategories.OTHER.contains(entityType) ||
+            EntityCategories.HANGING.contains(entityType)) {
+            count[CAP_MISC]++;
+        } else if (EntityCategories.ANIMAL.contains(entityType) ||
+            EntityCategories.VILLAGER.contains(entityType) ||
+            EntityCategories.TAMEABLE.contains(entityType)) {
+            count[CAP_MOB]++;
+            count[CAP_ANIMAL]++;
+        } else if (EntityCategories.VEHICLE.contains(entityType)) {
+            count[CAP_VEHICLE]++;
+        } else if (EntityCategories.HOSTILE.contains(entityType)) {
+            count[CAP_MOB]++;
+            count[CAP_MONSTER]++;
         }
-        count[0]++;
+        count[CAP_ENTITY]++;
     }
 
 

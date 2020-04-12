@@ -60,20 +60,31 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Ambient;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Boss;
 import org.bukkit.entity.EnderCrystal;
+import org.bukkit.entity.EnderSignal;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.EvokerFangs;
+import org.bukkit.entity.ExperienceOrb;
+import org.bukkit.entity.Explosive;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Ghast;
-import org.bukkit.entity.Golem;
 import org.bukkit.entity.Hanging;
+import org.bukkit.entity.IronGolem;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.NPC;
 import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Shulker;
 import org.bukkit.entity.Slime;
+import org.bukkit.entity.Snowman;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.WaterMob;
@@ -566,7 +577,8 @@ public class BukkitUtil extends WorldUtil {
         final Collection<Class<?>> allowedInterfaces = new HashSet<>();
         switch (category) {
             case "animal": {
-                allowedInterfaces.add(Golem.class);
+                allowedInterfaces.add(IronGolem.class);
+                allowedInterfaces.add(Snowman.class);
                 allowedInterfaces.add(Animals.class);
                 allowedInterfaces.add(WaterMob.class);
                 allowedInterfaces.add(Ambient.class);
@@ -578,6 +590,7 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(Vehicle.class);
             } break;
             case "hostile": {
+                allowedInterfaces.add(Shulker.class);
                 allowedInterfaces.add(Monster.class);
                 allowedInterfaces.add(Boss.class);
                 allowedInterfaces.add(Slime.class);
@@ -594,8 +607,20 @@ public class BukkitUtil extends WorldUtil {
             case "projectile": {
                 allowedInterfaces.add(Projectile.class);
             } break;
-            case "decoration": {
+            case "other": {
                 allowedInterfaces.add(ArmorStand.class);
+                allowedInterfaces.add(FallingBlock.class);
+                allowedInterfaces.add(Item.class);
+                allowedInterfaces.add(Explosive.class);
+                allowedInterfaces.add(AreaEffectCloud.class);
+                allowedInterfaces.add(EvokerFangs.class);
+                allowedInterfaces.add(LightningStrike.class);
+                allowedInterfaces.add(ExperienceOrb.class);
+                allowedInterfaces.add(EnderSignal.class);
+                allowedInterfaces.add(Firework.class);
+            } break;
+            case "player": {
+                allowedInterfaces.add(Player.class);
             } break;
             default: {
                 PlotSquared.log(Captions.PREFIX + "Unknown entity category requested: " + category);
