@@ -95,6 +95,12 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static com.github.intellectualsites.plotsquared.plot.commands.SubCommand.sendMessage;
+import static com.github.intellectualsites.plotsquared.plot.util.entity.EntityCategories.CAP_ANIMAL;
+import static com.github.intellectualsites.plotsquared.plot.util.entity.EntityCategories.CAP_VEHICLE;
+import static com.github.intellectualsites.plotsquared.plot.util.entity.EntityCategories.CAP_ENTITY;
+import static com.github.intellectualsites.plotsquared.plot.util.entity.EntityCategories.CAP_MISC;
+import static com.github.intellectualsites.plotsquared.plot.util.entity.EntityCategories.CAP_MOB;
+import static com.github.intellectualsites.plotsquared.plot.util.entity.EntityCategories.CAP_MONSTER;
 
 /**
  * The plot class<br>
@@ -1278,12 +1284,12 @@ public class Plot {
         int[] count = new int[6];
         for (Plot current : this.getConnectedPlots()) {
             int[] result = ChunkManager.manager.countEntities(current);
-            count[0] += result[0];
-            count[1] += result[1];
-            count[2] += result[2];
-            count[3] += result[3];
-            count[4] += result[4];
-            count[5] += result[5];
+            count[CAP_ENTITY]   += result[CAP_ENTITY];
+            count[CAP_ANIMAL]   += result[CAP_ANIMAL];
+            count[CAP_MONSTER]  += result[CAP_MONSTER];
+            count[CAP_MOB]      += result[CAP_MOB];
+            count[CAP_VEHICLE]  += result[CAP_VEHICLE];
+            count[CAP_MISC]     += result[CAP_MISC];
         }
         return count;
     }

@@ -37,17 +37,18 @@ public interface Caption {
         return StringMan.replaceFromMap(getTranslated(), Captions.replacements);
     }
 
-    default void send(PlotPlayer caller, String... args) {
-        send(caller, (Object[]) args);
+    default boolean send(PlotPlayer caller, String... args) {
+        return send(caller, (Object[]) args);
     }
 
-    default void send(PlotPlayer caller, Object... args) {
+    default boolean send(PlotPlayer caller, Object... args) {
         String msg = CaptionUtility.format(caller, this, args);
         if (caller == null) {
             PlotSquared.log(msg);
         } else {
             caller.sendMessage(msg);
         }
+        return true;
     }
 
     boolean usePrefix();

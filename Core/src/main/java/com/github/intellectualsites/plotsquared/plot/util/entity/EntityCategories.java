@@ -30,6 +30,13 @@ package com.github.intellectualsites.plotsquared.plot.util.entity;
  */
 public class EntityCategories {
 
+    public static final int CAP_ENTITY  = 0;
+    public static final int CAP_ANIMAL  = 1;
+    public static final int CAP_MONSTER = 2;
+    public static final int CAP_MOB     = 3;
+    public static final int CAP_VEHICLE = 4;
+    public static final int CAP_MISC    = 5;
+
     public static final EntityCategory ANIMAL       = register("animal");
     public static final EntityCategory TAMEABLE     = register("tameable");
     public static final EntityCategory VEHICLE      = register("vehicle");
