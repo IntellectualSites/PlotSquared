@@ -73,8 +73,8 @@ import org.bukkit.entity.Explosive;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Ghast;
-import org.bukkit.entity.Golem;
 import org.bukkit.entity.Hanging;
+import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Monster;
@@ -82,7 +82,9 @@ import org.bukkit.entity.NPC;
 import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Shulker;
 import org.bukkit.entity.Slime;
+import org.bukkit.entity.Snowman;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.WaterMob;
@@ -575,7 +577,8 @@ public class BukkitUtil extends WorldUtil {
         final Collection<Class<?>> allowedInterfaces = new HashSet<>();
         switch (category) {
             case "animal": {
-                allowedInterfaces.add(Golem.class);
+                allowedInterfaces.add(IronGolem.class);
+                allowedInterfaces.add(Snowman.class);
                 allowedInterfaces.add(Animals.class);
                 allowedInterfaces.add(WaterMob.class);
                 allowedInterfaces.add(Ambient.class);
@@ -587,6 +590,7 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(Vehicle.class);
             } break;
             case "hostile": {
+                allowedInterfaces.add(Shulker.class);
                 allowedInterfaces.add(Monster.class);
                 allowedInterfaces.add(Boss.class);
                 allowedInterfaces.add(Slime.class);
