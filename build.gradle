@@ -12,7 +12,7 @@ buildscript {
     }
     configurations.all {
         resolutionStrategy {
-            force("org.ow2.asm:asm:7.3.1")
+            force("org.ow2.asm:asm:8.0.1")
             force("org.jetbrains:annotations:19.0.0")
         }
     }
