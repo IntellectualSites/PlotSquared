@@ -1,13 +1,12 @@
 package com.plotsquared.bukkit.schematic;
 
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.location.Location;
-import com.plotsquared.bukkit.util.block.StateWrapper;
-import com.plotsquared.util.tasks.RunnableVal;
-import com.plotsquared.util.MainUtil;
-import com.plotsquared.util.SchematicHandler;
-import com.plotsquared.util.tasks.TaskManager;
-import com.plotsquared.queue.LocalBlockQueue;
+import com.plotsquared.core.location.Location;
+import com.plotsquared.core.util.task.RunnableVal;
+import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.SchematicHandler;
+import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.queue.LocalBlockQueue;
 import com.sk89q.jnbt.*;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.extension.platform.Capability;

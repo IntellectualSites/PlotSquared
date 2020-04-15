@@ -2,12 +2,12 @@ package com.plotsquared.bukkit.util;
 
 import com.plotsquared.bukkit.chat.FancyMessage;
 import com.plotsquared.bukkit.player.BukkitPlayer;
-import com.plotsquared.config.Captions;
-import com.plotsquared.config.Settings;
-import com.plotsquared.player.ConsolePlayer;
-import com.plotsquared.plot.message.PlotMessage;
-import com.plotsquared.player.PlotPlayer;
-import com.plotsquared.util.ChatManager;
+import com.plotsquared.core.config.Captions;
+import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.player.ConsolePlayer;
+import com.plotsquared.core.plot.message.PlotMessage;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.util.ChatManager;
 import org.bukkit.ChatColor;
 
 import java.util.Arrays;

@@ -1,16 +1,16 @@
 package com.plotsquared.bukkit.util;
 
 import com.plotsquared.bukkit.player.BukkitPlayer;
-import com.plotsquared.PlotSquared;
-import com.plotsquared.location.Location;
-import com.plotsquared.plot.Plot;
-import com.plotsquared.player.PlotPlayer;
-import com.plotsquared.util.ReflectionUtils.RefClass;
-import com.plotsquared.util.ReflectionUtils.RefConstructor;
-import com.plotsquared.util.ReflectionUtils.RefField;
-import com.plotsquared.util.ReflectionUtils.RefMethod;
-import com.plotsquared.util.tasks.TaskManager;
-import com.plotsquared.util.uuid.UUIDHandler;
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.location.Location;
+import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.util.ReflectionUtils.RefClass;
+import com.plotsquared.core.util.ReflectionUtils.RefConstructor;
+import com.plotsquared.core.util.ReflectionUtils.RefField;
+import com.plotsquared.core.util.ReflectionUtils.RefMethod;
+import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.worldedit.math.BlockVector2;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
 
-import static com.plotsquared.util.ReflectionUtils.getRefClass;
+import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
 /**
  * An utility that can be used to send chunks, rather than using bukkit code

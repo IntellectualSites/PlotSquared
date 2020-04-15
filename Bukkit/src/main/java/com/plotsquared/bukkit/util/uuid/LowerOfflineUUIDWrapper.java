@@ -1,7 +1,7 @@
 package com.plotsquared.bukkit.util.uuid;
 
-import com.plotsquared.player.OfflinePlotPlayer;
-import com.plotsquared.player.PlotPlayer;
+import com.plotsquared.core.player.OfflinePlotPlayer;
+import com.plotsquared.core.player.PlotPlayer;
 import com.google.common.base.Charsets;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;

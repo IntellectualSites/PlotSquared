@@ -1,16 +1,16 @@
 package com.plotsquared.bukkit.player;
 
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.PlotSquared;
-import com.plotsquared.config.Captions;
-import com.plotsquared.location.Location;
-import com.plotsquared.player.PlotPlayer;
-import com.plotsquared.events.TeleportCause;
-import com.plotsquared.util.EconHandler;
-import com.plotsquared.util.MathMan;
-import com.plotsquared.plot.PlotWeather;
-import com.plotsquared.util.StringMan;
-import com.plotsquared.util.uuid.UUIDHandler;
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.config.Captions;
+import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.plot.PlotWeather;
+import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.item.ItemType;

@@ -1,9 +1,9 @@
 package com.plotsquared.bukkit.util;
 
 import com.plotsquared.bukkit.generator.BukkitAugmentedGenerator;
-import com.plotsquared.PlotSquared;
-import com.plotsquared.generator.GeneratorWrapper;
-import com.plotsquared.util.SetupUtils;
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.generator.GeneratorWrapper;
+import com.plotsquared.core.util.SetupUtils;
 import org.bukkit.World;
 import org.bukkit.generator.ChunkGenerator;
 

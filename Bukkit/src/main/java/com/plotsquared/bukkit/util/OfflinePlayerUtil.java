@@ -9,15 +9,15 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
-import static com.plotsquared.util.ReflectionUtils.callConstructor;
-import static com.plotsquared.util.ReflectionUtils.callMethod;
-import static com.plotsquared.util.ReflectionUtils.getCbClass;
-import static com.plotsquared.util.ReflectionUtils.getField;
-import static com.plotsquared.util.ReflectionUtils.getNmsClass;
-import static com.plotsquared.util.ReflectionUtils.getUtilClass;
-import static com.plotsquared.util.ReflectionUtils.makeConstructor;
-import static com.plotsquared.util.ReflectionUtils.makeField;
-import static com.plotsquared.util.ReflectionUtils.makeMethod;
+import static com.plotsquared.core.util.ReflectionUtils.callConstructor;
+import static com.plotsquared.core.util.ReflectionUtils.callMethod;
+import static com.plotsquared.core.util.ReflectionUtils.getCbClass;
+import static com.plotsquared.core.util.ReflectionUtils.getField;
+import static com.plotsquared.core.util.ReflectionUtils.getNmsClass;
+import static com.plotsquared.core.util.ReflectionUtils.getUtilClass;
+import static com.plotsquared.core.util.ReflectionUtils.makeConstructor;
+import static com.plotsquared.core.util.ReflectionUtils.makeField;
+import static com.plotsquared.core.util.ReflectionUtils.makeMethod;
 
 public class OfflinePlayerUtil {
 

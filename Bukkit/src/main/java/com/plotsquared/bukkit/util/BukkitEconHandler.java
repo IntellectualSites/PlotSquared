@@ -2,9 +2,9 @@ package com.plotsquared.bukkit.util;
 
 import com.plotsquared.bukkit.player.BukkitOfflinePlayer;
 import com.plotsquared.bukkit.player.BukkitPlayer;
-import com.plotsquared.player.OfflinePlotPlayer;
-import com.plotsquared.player.PlotPlayer;
-import com.plotsquared.util.EconHandler;
+import com.plotsquared.core.player.OfflinePlotPlayer;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.util.EconHandler;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;

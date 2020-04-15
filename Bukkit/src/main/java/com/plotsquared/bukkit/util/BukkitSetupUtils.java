@@ -1,15 +1,15 @@
 package com.plotsquared.bukkit.util;
 
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
-import com.plotsquared.configuration.ConfigurationSection;
-import com.plotsquared.configuration.file.YamlConfiguration;
-import com.plotsquared.PlotSquared;
-import com.plotsquared.config.ConfigurationNode;
-import com.plotsquared.generator.GeneratorWrapper;
-import com.plotsquared.plot.PlotArea;
-import com.plotsquared.plot.PlotAreaType;
-import com.plotsquared.plot.SetupObject;
-import com.plotsquared.util.SetupUtils;
+import com.plotsquared.core.configuration.ConfigurationSection;
+import com.plotsquared.core.configuration.file.YamlConfiguration;
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.config.ConfigurationNode;
+import com.plotsquared.core.generator.GeneratorWrapper;
+import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotAreaType;
+import com.plotsquared.core.plot.SetupObject;
+import com.plotsquared.core.util.SetupUtils;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;

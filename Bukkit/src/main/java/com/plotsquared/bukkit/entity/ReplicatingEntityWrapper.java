@@ -1,6 +1,6 @@
 package com.plotsquared.bukkit.entity;
 
-import com.plotsquared.PlotSquared;
+import com.plotsquared.core.PlotSquared;
 import org.bukkit.Art;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;

@@ -1,10 +1,10 @@
 package com.plotsquared.bukkit;
 
-import com.plotsquared.bukkit.commands.DebugUUID;
+import com.plotsquared.bukkit.command.DebugUUID;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.commands.MainCommand;
-import com.plotsquared.player.ConsolePlayer;
-import com.plotsquared.player.PlotPlayer;
+import com.plotsquared.core.command.MainCommand;
+import com.plotsquared.core.player.ConsolePlayer;
+import com.plotsquared.core.player.PlotPlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -49,12 +49,12 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         if (args.length == 0) {
             return Collections.singletonList("plots");
         }
-        Collection<com.plotsquared.commands.Command> objects = MainCommand.getInstance().tab(player, args, s.endsWith(" "));
+        Collection<com.plotsquared.core.command.Command> objects = MainCommand.getInstance().tab(player, args, s.endsWith(" "));
         if (objects == null) {
             return null;
         }
         List<String> result = new ArrayList<>();
-        for (com.plotsquared.commands.Command o : objects) {
+        for (com.plotsquared.core.command.Command o : objects) {
             result.add(o.toString());
         }
         return result.isEmpty() ? null : result;

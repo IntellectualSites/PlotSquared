@@ -1,13 +1,13 @@
 package com.plotsquared.bukkit.generator;
 
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.PlotSquared;
-import com.plotsquared.generator.IndependentPlotGenerator;
-import com.plotsquared.location.Location;
-import com.plotsquared.plot.PlotArea;
-import com.plotsquared.plot.PlotId;
-import com.plotsquared.util.MathMan;
-import com.plotsquared.queue.ScopedLocalBlockQueue;
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.generator.IndependentPlotGenerator;
+import com.plotsquared.core.location.Location;
+import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.queue.ScopedLocalBlockQueue;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import java.util.Random;
 import org.bukkit.World;

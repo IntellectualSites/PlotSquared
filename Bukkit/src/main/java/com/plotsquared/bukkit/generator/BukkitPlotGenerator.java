@@ -1,16 +1,16 @@
 package com.plotsquared.bukkit.generator;
 
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.bukkit.util.block.GenChunk;
-import com.plotsquared.PlotSquared;
-import com.plotsquared.generator.GeneratorWrapper;
-import com.plotsquared.generator.IndependentPlotGenerator;
-import com.plotsquared.location.ChunkWrapper;
-import com.plotsquared.plot.PlotArea;
-import com.plotsquared.plot.worlds.SingleWorldGenerator;
-import com.plotsquared.util.ChunkManager;
-import com.plotsquared.util.MainUtil;
-import com.plotsquared.queue.ScopedLocalBlockQueue;
+import com.plotsquared.bukkit.queue.GenChunk;
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.generator.GeneratorWrapper;
+import com.plotsquared.core.generator.IndependentPlotGenerator;
+import com.plotsquared.core.location.ChunkWrapper;
+import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.generator.SingleWorldGenerator;
+import com.plotsquared.core.util.ChunkManager;
+import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.queue.ScopedLocalBlockQueue;
 import com.sk89q.worldedit.math.BlockVector2;
 import lombok.Getter;
 import org.bukkit.World;

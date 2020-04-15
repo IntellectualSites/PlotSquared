@@ -1,6 +1,6 @@
 package com.plotsquared.bukkit.generator;
 
-import com.plotsquared.generator.AugmentedUtils;
+import com.plotsquared.core.generator.AugmentedUtils;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;

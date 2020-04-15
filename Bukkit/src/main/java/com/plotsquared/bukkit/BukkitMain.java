@@ -1,13 +1,13 @@
 package com.plotsquared.bukkit;
 
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
-import com.plotsquared.bukkit.listeners.ChunkListener;
-import com.plotsquared.bukkit.listeners.EntitySpawnListener;
-import com.plotsquared.bukkit.listeners.PlayerEvents;
-import com.plotsquared.bukkit.listeners.SingleWorldListener;
-import com.plotsquared.bukkit.listeners.WorldEvents;
-import com.plotsquared.bukkit.placeholders.PlaceholderFormatter;
-import com.plotsquared.bukkit.placeholders.Placeholders;
+import com.plotsquared.bukkit.listener.ChunkListener;
+import com.plotsquared.bukkit.listener.EntitySpawnListener;
+import com.plotsquared.bukkit.listener.PlayerEvents;
+import com.plotsquared.bukkit.listener.SingleWorldListener;
+import com.plotsquared.bukkit.listener.WorldEvents;
+import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
+import com.plotsquared.bukkit.placeholder.Placeholders;
 import com.plotsquared.bukkit.util.BukkitChatManager;
 import com.plotsquared.bukkit.util.BukkitEconHandler;
 import com.plotsquared.bukkit.generator.BukkitHybridUtils;
@@ -19,51 +19,51 @@ import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.Metrics;
 import com.plotsquared.bukkit.util.SetGenCB;
 import com.plotsquared.bukkit.util.UpdateUtility;
-import com.plotsquared.bukkit.util.block.BukkitLocalQueue;
+import com.plotsquared.bukkit.queue.BukkitLocalQueue;
 import com.plotsquared.bukkit.util.uuid.DefaultUUIDWrapper;
 import com.plotsquared.bukkit.util.uuid.FileUUIDHandler;
 import com.plotsquared.bukkit.util.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.util.uuid.OfflineUUIDWrapper;
 import com.plotsquared.bukkit.util.uuid.SQLUUIDHandler;
-import com.plotsquared.configuration.ConfigurationSection;
-import com.plotsquared.IPlotMain;
-import com.plotsquared.PlotSquared;
-import com.plotsquared.config.Captions;
-import com.plotsquared.config.ChatFormatter;
-import com.plotsquared.config.ConfigurationNode;
-import com.plotsquared.config.Settings;
-import com.plotsquared.generator.GeneratorWrapper;
-import com.plotsquared.generator.HybridGen;
-import com.plotsquared.generator.HybridUtils;
-import com.plotsquared.generator.IndependentPlotGenerator;
-import com.plotsquared.listener.PlotListener;
-import com.plotsquared.plot.Plot;
-import com.plotsquared.plot.PlotArea;
-import com.plotsquared.plot.PlotId;
-import com.plotsquared.player.PlotPlayer;
-import com.plotsquared.plot.SetupObject;
-import com.plotsquared.plot.message.PlainChatManager;
-import com.plotsquared.plot.worlds.PlotAreaManager;
-import com.plotsquared.plot.worlds.SinglePlotArea;
-import com.plotsquared.plot.worlds.SinglePlotAreaManager;
-import com.plotsquared.plot.worlds.SingleWorldGenerator;
-import com.plotsquared.util.ChatManager;
-import com.plotsquared.util.ChunkManager;
-import com.plotsquared.util.ConsoleColors;
-import com.plotsquared.util.EconHandler;
-import com.plotsquared.util.InventoryUtil;
-import com.plotsquared.util.MainUtil;
-import com.plotsquared.util.PremiumVerification;
-import com.plotsquared.util.ReflectionUtils;
-import com.plotsquared.util.SchematicHandler;
-import com.plotsquared.util.SetupUtils;
-import com.plotsquared.util.StringMan;
-import com.plotsquared.util.tasks.TaskManager;
-import com.plotsquared.util.uuid.UUIDHandler;
-import com.plotsquared.util.uuid.UUIDHandlerImplementation;
-import com.plotsquared.util.WorldUtil;
-import com.plotsquared.queue.QueueProvider;
-import com.plotsquared.util.uuid.UUIDWrapper;
+import com.plotsquared.core.configuration.ConfigurationSection;
+import com.plotsquared.core.IPlotMain;
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.config.Captions;
+import com.plotsquared.core.config.ChatFormatter;
+import com.plotsquared.core.config.ConfigurationNode;
+import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.generator.GeneratorWrapper;
+import com.plotsquared.core.generator.HybridGen;
+import com.plotsquared.core.generator.HybridUtils;
+import com.plotsquared.core.generator.IndependentPlotGenerator;
+import com.plotsquared.core.listener.PlotListener;
+import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.SetupObject;
+import com.plotsquared.core.plot.message.PlainChatManager;
+import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.plot.world.SinglePlotArea;
+import com.plotsquared.core.plot.world.SinglePlotAreaManager;
+import com.plotsquared.core.generator.SingleWorldGenerator;
+import com.plotsquared.core.util.ChatManager;
+import com.plotsquared.core.util.ChunkManager;
+import com.plotsquared.core.util.ConsoleColors;
+import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.InventoryUtil;
+import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.PremiumVerification;
+import com.plotsquared.core.util.ReflectionUtils;
+import com.plotsquared.core.util.SchematicHandler;
+import com.plotsquared.core.util.SetupUtils;
+import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.uuid.UUIDHandler;
+import com.plotsquared.core.util.uuid.UUIDHandlerImplementation;
+import com.plotsquared.core.util.WorldUtil;
+import com.plotsquared.core.queue.QueueProvider;
+import com.plotsquared.core.util.uuid.UUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extension.platform.Actor;
@@ -99,8 +99,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.plotsquared.util.PremiumVerification.getUserID;
-import static com.plotsquared.util.ReflectionUtils.getRefClass;
+import static com.plotsquared.core.util.PremiumVerification.getUserID;
+import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
 public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
@@ -381,7 +381,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                         case MINECART_TNT:
                         case BOAT:
                             if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
-                                com.plotsquared.location.Location
+                                com.plotsquared.core.location.Location
                                     location = BukkitUtil.getLocation(entity.getLocation());
                                 Plot plot = location.getPlot();
                                 if (plot == null) {
@@ -438,7 +438,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
                                     PlotId originalPlotId = (PlotId) meta.get(0).value();
                                     if (originalPlotId != null) {
-                                        com.plotsquared.location.Location
+                                        com.plotsquared.core.location.Location
                                             pLoc = BukkitUtil.getLocation(entity.getLocation());
                                         PlotArea area = pLoc.getPlotArea();
                                         if (area != null) {
@@ -457,7 +457,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                     }
                                 } else {
                                     //This is to apply the metadata to already spawned shulkers (see EntitySpawnListener.java)
-                                    com.plotsquared.location.Location
+                                    com.plotsquared.core.location.Location
                                         pLoc = BukkitUtil.getLocation(entity.getLocation());
                                     PlotArea area = pLoc.getPlotArea();
                                     if (area != null) {
