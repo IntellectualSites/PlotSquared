@@ -25,8 +25,8 @@
  */
 package com.plotsquared.core.plot.flag;
 
-import com.plotsquared.core.config.Caption;
 import com.google.common.base.Preconditions;
+import com.plotsquared.core.config.Caption;
 import com.plotsquared.core.config.Captions;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;

@@ -78,7 +78,7 @@ public class SinglePlot extends Plot {
         getCenter(result);
     }
 
-    @Override protected boolean isLoaded() {
+    @Override public boolean isLoaded() {
         getArea().loadWorld(getId());
         return super.isLoaded();
     }

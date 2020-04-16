@@ -32,6 +32,13 @@ import com.plotsquared.core.plot.Plot;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
+import static com.plotsquared.core.util.entity.EntityCategories.CAP_ANIMAL;
+import static com.plotsquared.core.util.entity.EntityCategories.CAP_ENTITY;
+import static com.plotsquared.core.util.entity.EntityCategories.CAP_MISC;
+import static com.plotsquared.core.util.entity.EntityCategories.CAP_MOB;
+import static com.plotsquared.core.util.entity.EntityCategories.CAP_MONSTER;
+import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
+
 /**
  * Entity related general utility methods
  */
@@ -41,23 +48,23 @@ import lombok.experimental.UtilityClass;
         int i;
         switch (flagName) {
             case "mob-cap":
-                i = 3;
+                i = CAP_MOB;
                 break;
             case "hostile-cap":
-                i = 2;
+                i = CAP_MONSTER;
                 break;
             case "animal-cap":
-                i = 1;
+                i = CAP_ANIMAL;
                 break;
             case "vehicle-cap":
-                i = 4;
+                i = CAP_VEHICLE;
                 break;
             case "misc-cap":
-                i = 5;
+                i = CAP_MISC;
                 break;
             case "entity-cap":
             default:
-                i = 0;
+                i = CAP_ENTITY;
         }
         return i;
     }

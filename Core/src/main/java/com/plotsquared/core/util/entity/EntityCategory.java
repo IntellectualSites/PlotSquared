@@ -23,22 +23,32 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.plot;
+package com.plotsquared.core.util.entity;
+
+import com.plotsquared.core.util.WorldUtil;
+import com.sk89q.worldedit.registry.Category;
+import com.sk89q.worldedit.registry.Keyed;
+import com.sk89q.worldedit.registry.NamespacedRegistry;
+import com.sk89q.worldedit.world.entity.EntityType;
 
 import java.util.Set;
-import java.util.UUID;
 
-public class PlotHandler {
-    public static boolean sameOwners(final Plot plot1, final Plot plot2) {
-        if (plot1.getOwnerAbs() == null || plot2.getOwnerAbs() == null) {
-            return false;
-        }
-        final Set<UUID> owners = plot1.getOwners();
-        for (UUID owner : owners) {
-            if (plot2.isOwner(owner)) {
-                return true;
-            }
-        }
-        return false;
+/**
+ * Categories to which an {@link com.sk89q.worldedit.entity.Entity} may belong
+ */
+public class EntityCategory extends Category<EntityType> implements Keyed {
+
+    public static final NamespacedRegistry<EntityCategory> REGISTRY = new NamespacedRegistry<>("entity type");
+
+    private final String key;
+
+    protected EntityCategory(final String id) {
+        super("plotsquared:" + id);
+        this.key = id;
     }
+
+    @Override protected Set<EntityType> load() {
+        return WorldUtil.IMP.getTypesInCategory(this.key);
+    }
+
 }

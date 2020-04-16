@@ -54,7 +54,7 @@ public interface Configuration extends ConfigurationSection {
      * collection, then a new {@link MemoryConfiguration} will be created to
      * hold the new default values.</p>
      *
-     * @param defaults A map of Path->Values to add to defaults.
+     * @param defaults A map of Path-&gt;Values to add to defaults.
      * @throws IllegalArgumentException Thrown if defaults is null.
      */
     void addDefaults(Map<String, Object> defaults);

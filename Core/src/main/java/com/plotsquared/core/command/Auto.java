@@ -162,7 +162,7 @@ public class Auto extends SubCommand {
             return;
         }
         whenDone.value = plot;
-        plot.owner = player.getUUID();
+        plot.setOwnerAbs(player.getUUID());
         DBFunc.createPlotSafe(plot, whenDone,
             () -> autoClaimFromDatabase(player, area, plot.getId(), whenDone));
     }

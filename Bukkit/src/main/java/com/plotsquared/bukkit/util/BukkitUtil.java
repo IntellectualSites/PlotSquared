@@ -58,20 +58,48 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.type.WallSign;
+import org.bukkit.entity.Ambient;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.AreaEffectCloud;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Boss;
+import org.bukkit.entity.EnderCrystal;
+import org.bukkit.entity.EnderSignal;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.EvokerFangs;
+import org.bukkit.entity.ExperienceOrb;
+import org.bukkit.entity.Explosive;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.Ghast;
+import org.bukkit.entity.Hanging;
+import org.bukkit.entity.IronGolem;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.LightningStrike;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.NPC;
+import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Shulker;
+import org.bukkit.entity.Slime;
+import org.bukkit.entity.Snowman;
+import org.bukkit.entity.Tameable;
+import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.WaterMob;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
-
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class BukkitUtil extends WorldUtil {
@@ -541,6 +569,76 @@ public class BukkitUtil extends WorldUtil {
 
     @Override public void setFoodLevel(PlotPlayer player, int foodLevel) {
         Bukkit.getPlayer(player.getUUID()).setFoodLevel(foodLevel);
+    }
+
+    @Override
+    public Set<com.sk89q.worldedit.world.entity.EntityType> getTypesInCategory(final String category) {
+        final Collection<Class<?>> allowedInterfaces = new HashSet<>();
+        switch (category) {
+            case "animal": {
+                allowedInterfaces.add(IronGolem.class);
+                allowedInterfaces.add(Snowman.class);
+                allowedInterfaces.add(Animals.class);
+                allowedInterfaces.add(WaterMob.class);
+                allowedInterfaces.add(Ambient.class);
+            } break;
+            case "tameable": {
+                allowedInterfaces.add(Tameable.class);
+            } break;
+            case "vehicle": {
+                allowedInterfaces.add(Vehicle.class);
+            } break;
+            case "hostile": {
+                allowedInterfaces.add(Shulker.class);
+                allowedInterfaces.add(Monster.class);
+                allowedInterfaces.add(Boss.class);
+                allowedInterfaces.add(Slime.class);
+                allowedInterfaces.add(Ghast.class);
+                allowedInterfaces.add(Phantom.class);
+                allowedInterfaces.add(EnderCrystal.class);
+            } break;
+            case "hanging": {
+                allowedInterfaces.add(Hanging.class);
+            } break;
+            case "villager": {
+                allowedInterfaces.add(NPC.class);
+            } break;
+            case "projectile": {
+                allowedInterfaces.add(Projectile.class);
+            } break;
+            case "other": {
+                allowedInterfaces.add(ArmorStand.class);
+                allowedInterfaces.add(FallingBlock.class);
+                allowedInterfaces.add(Item.class);
+                allowedInterfaces.add(Explosive.class);
+                allowedInterfaces.add(AreaEffectCloud.class);
+                allowedInterfaces.add(EvokerFangs.class);
+                allowedInterfaces.add(LightningStrike.class);
+                allowedInterfaces.add(ExperienceOrb.class);
+                allowedInterfaces.add(EnderSignal.class);
+                allowedInterfaces.add(Firework.class);
+            } break;
+            case "player": {
+                allowedInterfaces.add(Player.class);
+            } break;
+            default: {
+                PlotSquared.log(Captions.PREFIX + "Unknown entity category requested: " + category);
+            } break;
+        }
+        final Set<com.sk89q.worldedit.world.entity.EntityType> types = new HashSet<>();
+        outer: for (final EntityType bukkitType : EntityType.values()) {
+            final Class<? extends Entity> entityClass = bukkitType.getEntityClass();
+            if (entityClass == null) {
+                continue;
+            }
+            for (final Class<?> allowedInterface : allowedInterfaces) {
+                if (allowedInterface.isAssignableFrom(entityClass)) {
+                    types.add(BukkitAdapter.adapt(bukkitType));
+                    continue outer;
+                }
+            }
+        }
+        return types;
     }
 
     private static void ensureLoaded(final String world, final int x, final int z, final Consumer<Chunk> chunkConsumer) {

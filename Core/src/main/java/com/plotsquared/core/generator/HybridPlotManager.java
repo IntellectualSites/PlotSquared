@@ -25,23 +25,22 @@
  */
 package com.plotsquared.core.generator;
 
+import com.google.common.collect.Sets;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.Template;
 import com.plotsquared.core.config.Settings;
-import com.plotsquared.core.util.FileBytes;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.util.task.RunnableVal;
-import com.plotsquared.core.util.ChunkManager;
-import com.plotsquared.core.util.MainUtil;
-import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
-import com.plotsquared.core.util.BlockUtil;
-import com.google.common.collect.Sets;
+import com.plotsquared.core.util.ChunkManager;
+import com.plotsquared.core.util.FileBytes;
+import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.task.RunnableVal;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
@@ -209,13 +208,15 @@ public class HybridPlotManager extends ClassicPlotManager {
         // The component blocks
         final Pattern plotfloor = hybridPlotWorld.TOP_BLOCK.toPattern();
         final Pattern filling = hybridPlotWorld.MAIN_BLOCK.toPattern();
+
         final BlockState bedrock;
+        final BlockState air = BlockTypes.AIR.getDefaultState();
         if (hybridPlotWorld.PLOT_BEDROCK) {
-            bedrock = BlockUtil.get((short) 7, (byte) 0);
+            bedrock = BlockTypes.BEDROCK.getDefaultState();
         } else {
-            bedrock = BlockUtil.get((short) 0, (byte) 0);
+            bedrock = air;
         }
-        final BlockState air = BlockUtil.get((short) 0, (byte) 0);
+
         final BiomeType biome = hybridPlotWorld.getPlotBiome();
         final LocalBlockQueue queue = hybridPlotWorld.getQueue(false);
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {

@@ -83,6 +83,7 @@ public enum Captions implements Caption {
     PERMISSION_COMMANDS_CHAT("plots.admin.command.chat", "static.permissions"),
     PERMISSION_MERGE_OTHER("plots.merge.other", "static.permissions"),
     PERMISSION_MERGE_KEEP_ROAD("plots.merge.keeproad", "static.permissions"),
+    PERMISSION_ADMIN_CAPS_OTHER("plots.admin.caps.other", "static.permissions"),
     PERMISSION_ADMIN_DESTROY_UNOWNED("plots.admin.destroy.unowned", "static.permissions"),
     PERMISSION_ADMIN_DESTROY_GROUNDLEVEL("plots.admin.destroy.groundlevel", "static.permissions"),
     PERMISSION_ADMIN_DESTROY_OTHER("plots.admin.destroy.other", "static.permissions"),
@@ -747,6 +748,12 @@ public enum Captions implements Caption {
 
     //<editor-fold desc="Events">
     EVENT_DENIED("$1%s $2Cancelled by external plugin.", "Events"),
+    //</editor-fold>
+
+    //<editor-fold desc="Caps">
+    PLOT_CAPS_HEADER("$3&m---------&r $1CAPS $3&m---------", false, "Info"),
+    PLOT_CAPS_FORMAT("$2- Cap Type: $1%cap% $2| Status: $1%current%$2/$1%limit% $2($1%percentage%%$2)",
+        false, "Info"),
     //</editor-fold>
 
     /**

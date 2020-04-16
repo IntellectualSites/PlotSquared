@@ -60,6 +60,7 @@ public class MainCommand extends Command {
     public static MainCommand getInstance() {
         if (instance == null) {
             instance = new MainCommand();
+            new Caps();
             new Buy();
             new Save();
             new Load();

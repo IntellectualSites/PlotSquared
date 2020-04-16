@@ -25,13 +25,6 @@
  */
 package com.plotsquared.core;
 
-import com.plotsquared.core.configuration.ConfigurationSection;
-import com.plotsquared.core.configuration.MemorySection;
-import com.plotsquared.core.configuration.file.YamlConfiguration;
-import com.plotsquared.core.configuration.serialization.ConfigurationSerialization;
-import com.plotsquared.core.location.Location;
-import com.plotsquared.core.player.ConsolePlayer;
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.command.WE_Anywhere;
 import com.plotsquared.core.config.Caption;
 import com.plotsquared.core.config.CaptionUtility;
@@ -39,6 +32,10 @@ import com.plotsquared.core.config.Captions;
 import com.plotsquared.core.config.Configuration;
 import com.plotsquared.core.config.Settings;
 import com.plotsquared.core.config.Storage;
+import com.plotsquared.core.configuration.ConfigurationSection;
+import com.plotsquared.core.configuration.MemorySection;
+import com.plotsquared.core.configuration.file.YamlConfiguration;
+import com.plotsquared.core.configuration.serialization.ConfigurationSerialization;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.database.Database;
 import com.plotsquared.core.database.MySQL;
@@ -49,8 +46,9 @@ import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.listener.WESubscriber;
-import com.plotsquared.core.plot.comment.CommentManager;
-import com.plotsquared.core.util.ChatManager;
+import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.ConsolePlayer;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -59,29 +57,31 @@ import com.plotsquared.core.plot.PlotCluster;
 import com.plotsquared.core.plot.PlotFilter;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
-import com.plotsquared.core.util.StringWrapper;
-import com.plotsquared.core.util.ChunkManager;
-import com.plotsquared.core.util.EconHandler;
-import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.LegacyConverter;
-import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.util.SchematicHandler;
-import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.logger.ILogger;
+import com.plotsquared.core.plot.comment.CommentManager;
+import com.plotsquared.core.plot.expiration.ExpireManager;
+import com.plotsquared.core.plot.expiration.ExpiryTask;
 import com.plotsquared.core.plot.world.DefaultPlotAreaManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.plot.expiration.ExpireManager;
-import com.plotsquared.core.plot.expiration.ExpiryTask;
+import com.plotsquared.core.util.ChatManager;
+import com.plotsquared.core.util.ChunkManager;
+import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.InventoryUtil;
+import com.plotsquared.core.util.LegacyConverter;
 import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.ReflectionUtils;
+import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.SetupUtils;
+import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.StringWrapper;
 import com.plotsquared.core.util.WorldUtil;
-import com.plotsquared.core.util.uuid.UUIDHandler;
+import com.plotsquared.core.util.logger.ILogger;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -90,17 +90,38 @@ import lombok.NonNull;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -399,8 +420,8 @@ import java.util.zip.ZipInputStream;
                 UUIDHandler.add(new StringWrapper("*"), DBFunc.EVERYONE);
                 forEachPlotRaw(plot -> {
                     if (plot.hasOwner() && plot.temp != -1) {
-                        if (UUIDHandler.getName(plot.owner) == null) {
-                            UUIDHandler.implementation.unknown.add(plot.owner);
+                        if (UUIDHandler.getName(plot.getOwnerAbs()) == null) {
+                            UUIDHandler.implementation.unknown.add(plot.getOwnerAbs());
                         }
                     }
                 });
@@ -425,11 +446,11 @@ import java.util.zip.ZipInputStream;
     }
 
     /**
-     * Check if `version` is >= `version2`.
+     * Check if `version` is &gt;= `version2`.
      *
      * @param version  First version
      * @param version2 Second version
-     * @return true if `version` is >= `version2`
+     * @return true if `version` is &gt;= `version2`
      */
     public boolean checkVersion(int[] version, int... version2) {
         return version[0] > version2[0] || version[0] == version2[0] && version[1] > version2[1]
@@ -788,7 +809,7 @@ import java.util.zip.ZipInputStream;
         } else {
             list = new ArrayList<>(input);
         }
-        list.sort(Comparator.comparingLong(a -> ExpireManager.IMP.getTimestamp(a.owner)));
+        list.sort(Comparator.comparingLong(a -> ExpireManager.IMP.getTimestamp(a.getOwnerAbs())));
         return list;
     }
 
@@ -2055,7 +2076,7 @@ import java.util.zip.ZipInputStream;
      *
      * @param alias     to search plots
      * @param worldname to filter alias to a specific world [optional] null means all worlds
-     * @return Set<{ @ link Plot }> empty if nothing found
+     * @return Set&lt;{@link Plot }&gt; empty if nothing found
      */
     public Set<Plot> getPlotsByAlias(@Nullable final String alias,
         @NonNull final String worldname) {

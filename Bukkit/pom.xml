@@ -7,9 +7,21 @@
   <version>latest</version>
   <dependencies>
     <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20190722</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.bstats</groupId>
+      <artifactId>bstats-bukkit</artifactId>
+      <version>1.7</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>com.plotsquared</groupId>
       <artifactId>Core</artifactId>
-      <version>latest</version>
+      <version>unspecified</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

@@ -25,33 +25,35 @@
  */
 package com.plotsquared.core.plot;
 
-import com.plotsquared.core.location.Direction;
-import com.plotsquared.core.location.Location;
-import com.plotsquared.core.configuration.ConfigurationSection;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.location.PlotLoc;
-import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.collection.QuadMap;
+import com.plotsquared.core.config.CaptionUtility;
+import com.plotsquared.core.config.Captions;
 import com.plotsquared.core.config.Configuration;
 import com.plotsquared.core.config.ConfigurationNode;
 import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.configuration.ConfigurationSection;
+import com.plotsquared.core.generator.GridPlotWorld;
+import com.plotsquared.core.generator.IndependentPlotGenerator;
+import com.plotsquared.core.location.Direction;
+import com.plotsquared.core.location.Location;
+import com.plotsquared.core.location.PlotLoc;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.flag.FlagContainer;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
-import com.plotsquared.core.generator.GridPlotWorld;
-import com.plotsquared.core.generator.IndependentPlotGenerator;
+import com.plotsquared.core.queue.GlobalBlockQueue;
+import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.collection.QuadMap;
-import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.RegionUtil;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
+import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -340,13 +342,23 @@ public abstract class PlotArea {
                 }
             }
         }
-        try {
-            this.getFlagContainer().addAll(parseFlags(flags));
-        } catch (FlagParseException e) {
-            e.printStackTrace();
-            PlotSquared.debug("&cInvalid default flags for " + this.getWorldName() + ": " + StringMan
-                .join(flags, ","));
+        this.getFlagContainer().addAll(parseFlags(flags));
+
+        StringBuilder flagBuilder = new StringBuilder();
+        Collection<PlotFlag<?, ?>> flagCollection = this.getFlagContainer().getFlagMap().values();
+        if (flagCollection.isEmpty()) {
+            flagBuilder.append(Captions.NONE.getTranslated());
+        } else {
+            String prefix = " ";
+            for (final PlotFlag<?, ?> flag : flagCollection) {
+                Object value = flag.toString();
+                flagBuilder.append(prefix).append(CaptionUtility.format(null, Captions.PLOT_FLAG_LIST.getTranslated(),
+                    flag.getName(), CaptionUtility.formatRaw(null, value.toString(), "")));
+                prefix = ", ";
+            }
         }
+
+        PlotSquared.log(Captions.PREFIX + "&3 - default flags: &7" + flagBuilder.toString());
         this.spawnEggs = config.getBoolean("event.spawn.egg");
         this.spawnCustom = config.getBoolean("event.spawn.custom");
         this.spawnBreeding = config.getBoolean("event.spawn.breeding");
@@ -527,13 +539,13 @@ public abstract class PlotArea {
             || this.region.contains(location.getBlockVector3()));
     }
 
-    @NotNull Set<Plot> getPlotsAbs(final UUID uuid) {
+    @NotNull public Set<Plot> getPlotsAbs(final UUID uuid) {
         if (uuid == null) {
             return Collections.emptySet();
         }
         final HashSet<Plot> myPlots = new HashSet<>();
         forEachPlotAbs(value -> {
-            if (uuid.equals(value.owner)) {
+            if (uuid.equals(value.getOwnerAbs())) {
                 myPlots.add(value);
             }
         });
@@ -1022,7 +1034,7 @@ public abstract class PlotArea {
         this.terrain = terrain;
     }
 
-    private static Collection<PlotFlag<?, ?>> parseFlags(List<String> flagStrings) throws FlagParseException {
+    private static Collection<PlotFlag<?, ?>> parseFlags(List<String> flagStrings) {
         final Collection<PlotFlag<?, ?>> flags = new ArrayList<>();
         for (final String key : flagStrings) {
             final String[] split;
@@ -1033,7 +1045,14 @@ public abstract class PlotArea {
             }
             final PlotFlag<?, ?> flagInstance = GlobalFlagContainer.getInstance().getFlagFromString(split[0]);
             if (flagInstance != null) {
-                flags.add(flagInstance.parse(split[1]));
+                try {
+                    flags.add(flagInstance.parse(split[1]));
+                } catch (final FlagParseException e) {
+                    PlotSquared.log(Captions.PREFIX.getTranslated() +
+                        String.format("§cFailed to parse default flag with key §6'%s'§c and value: §6'%s'§c."
+                                + " Reason: %s. This flag will not be added as a default flag.",
+                            e.getFlag().getName(), e.getValue(), e.getErrorMessage()));
+                }
             }
         }
         return flags;

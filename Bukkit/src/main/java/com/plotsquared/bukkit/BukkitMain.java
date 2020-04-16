@@ -41,7 +41,6 @@ import com.plotsquared.bukkit.schematic.BukkitSchematicHandler;
 import com.plotsquared.bukkit.util.BukkitSetupUtils;
 import com.plotsquared.bukkit.util.BukkitTaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.bukkit.util.Metrics;
 import com.plotsquared.bukkit.util.SetGenCB;
 import com.plotsquared.bukkit.util.UpdateUtility;
 import com.plotsquared.bukkit.queue.BukkitLocalQueue;
@@ -64,6 +63,8 @@ import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotAreaTerrainType;
+import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.SetupObject;
@@ -94,6 +95,7 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extension.platform.Actor;
 import lombok.Getter;
 import lombok.NonNull;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -119,6 +121,7 @@ import java.lang.reflect.Method;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -690,14 +693,28 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return new BukkitSetupUtils();
     }
 
-    @Deprecated
-    // Metrics are controlled via bstats config
     @Override public void startMetrics() {
         if (this.metricsStarted) {
             return;
         }
         this.metricsStarted = true;
         Metrics metrics = new Metrics(this, BSTATS_ID);// bstats
+        metrics.addCustomChart(new Metrics.DrilldownPie("area_types", () -> {
+            final Map<String, Map<String, Integer>> map = new HashMap<>();
+            for (final PlotAreaType plotAreaType : PlotAreaType.values()) {
+                final Map<String, Integer> terrainTypes = new HashMap<>();
+                for (final PlotAreaTerrainType plotAreaTerrainType : PlotAreaTerrainType.values()) {
+                    terrainTypes.put(plotAreaTerrainType.name().toLowerCase(), 0);
+                }
+                map.put(plotAreaType.name().toLowerCase(), terrainTypes);
+            }
+            for (final PlotArea plotArea : PlotSquared.get().getPlotAreas()) {
+                final Map<String, Integer> terrainTypeMap = map.get(plotArea.getType().name().toLowerCase());
+                terrainTypeMap.put(plotArea.getTerrain().name().toLowerCase(),
+                    terrainTypeMap.get(plotArea.getTerrain().name().toLowerCase()) + 1);
+            }
+            return map;
+        }));
     }
 
     @Override public ChunkManager initChunkManager() {

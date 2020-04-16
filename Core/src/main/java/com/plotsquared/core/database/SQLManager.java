@@ -743,7 +743,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 stmt.setInt(i * 5 + 1, plot.getId().x);
                 stmt.setInt(i * 5 + 2, plot.getId().y);
                 try {
-                    stmt.setString(i * 5 + 3, plot.owner.toString());
+                    stmt.setString(i * 5 + 3, plot.getOwnerAbs().toString());
                 } catch (SQLException ignored) {
                     stmt.setString(i * 5 + 3, everyone.toString());
                 }
@@ -757,7 +757,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 stmt.setInt(i * 6 + 2, plot.getId().x);
                 stmt.setInt(i * 6 + 3, plot.getId().y);
                 try {
-                    stmt.setString(i * 6 + 4, plot.owner.toString());
+                    stmt.setString(i * 6 + 4, plot.getOwnerAbs().toString());
                 } catch (SQLException ignored) {
                     stmt.setString(i * 6 + 4, everyone.toString());
                 }
@@ -768,7 +768,7 @@ import java.util.concurrent.atomic.AtomicInteger;
             @Override public void setSQL(PreparedStatement stmt, Plot plot) throws SQLException {
                 stmt.setInt(1, plot.getId().x);
                 stmt.setInt(2, plot.getId().y);
-                stmt.setString(3, plot.owner.toString());
+                stmt.setString(3, plot.getOwnerAbs().toString());
                 stmt.setString(4, plot.getArea().toString());
                 stmt.setTimestamp(5, new Timestamp(plot.getTimestamp()));
 
@@ -1007,7 +1007,7 @@ import java.util.concurrent.atomic.AtomicInteger;
             @Override public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, plot.getId().x);
                 statement.setInt(2, plot.getId().y);
-                statement.setString(3, plot.owner.toString());
+                statement.setString(3, plot.getOwnerAbs().toString());
                 statement.setString(4, plot.getArea().toString());
                 statement.setTimestamp(5, new Timestamp(plot.getTimestamp()));
                 statement.setString(6, plot.getArea().toString());
@@ -1076,7 +1076,7 @@ import java.util.concurrent.atomic.AtomicInteger;
             @Override public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, plot.getId().x);
                 statement.setInt(2, plot.getId().y);
-                statement.setString(3, plot.owner.toString());
+                statement.setString(3, plot.getOwnerAbs().toString());
                 statement.setString(4, plot.getArea().toString());
                 statement.setTimestamp(5, new Timestamp(plot.getTimestamp()));
             }
@@ -1381,7 +1381,7 @@ import java.util.concurrent.atomic.AtomicInteger;
     @Override public void delete(final Plot plot) {
         PlotSquared.debug(
             "Deleting plot... Id: " + plot.getId() + " World: " + plot.getWorldName() + " Owner: "
-                + plot.owner + " Index: " + plot.temp);
+                + plot.getOwnerAbs() + " Index: " + plot.temp);
         deleteSettings(plot);
         deleteDenied(plot);
         deleteHelpers(plot);
@@ -1409,7 +1409,7 @@ import java.util.concurrent.atomic.AtomicInteger;
     @Override public void createPlotSettings(final int id, Plot plot) {
         PlotSquared.debug(
             "Creating plot... Id: " + plot.getId() + " World: " + plot.getWorldName() + " Owner: "
-                + plot.owner + " Index: " + id);
+                + plot.getOwnerAbs() + " Index: " + id);
         addPlotTask(plot, new UniqueStatement("createPlotSettings") {
             @Override public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, id);
@@ -1675,13 +1675,26 @@ import java.util.concurrent.atomic.AtomicInteger;
         //
         try (final PreparedStatement preparedStatement =
             this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_flags`(`plot_id`, `flag`, `value`) VALUES(?, ?, ?)")) {
+
+            long timeStarted = System.currentTimeMillis();
+            int flagsProcessed = 0;
+            int plotsProcessed = 0;
+
+            int totalFlags = 0;
+            for (final Map<String, String> flags : flagMap.values()) {
+                totalFlags += flags.size();
+            }
+
             for (final Map.Entry<Integer, Map<String, String>> plotFlagEntry : flagMap.entrySet()) {
                 for (final Map.Entry<String, String> flagEntry : plotFlagEntry.getValue().entrySet()) {
                     preparedStatement.setInt(1, plotFlagEntry.getKey());
                     preparedStatement.setString(2, flagEntry.getKey());
                     preparedStatement.setString(3, flagEntry.getValue());
                     preparedStatement.addBatch();
+                    flagsProcessed += 1;
                 }
+                plotsProcessed += 1;
+
                 try {
                     preparedStatement.executeBatch();
                 } catch (final Exception e) {
@@ -1689,6 +1702,12 @@ import java.util.concurrent.atomic.AtomicInteger;
                     e.printStackTrace();
                     continue;
                 }
+
+                if (System.currentTimeMillis() - timeStarted >= 1000L || plotsProcessed >= flagMap.size()) {
+                    timeStarted = System.currentTimeMillis();
+                    PlotSquared.log(Captions.PREFIX.getTranslated() + "... Flag conversion in progress. " + String.format("%.1f", ((float) flagsProcessed / totalFlags) * 100) + "% Done");
+                }
+
                 PlotSquared.debug(Captions.PREFIX.getTranslated() + "- Finished converting flags for plot with entry ID: " + plotFlagEntry.getKey());
             }
         } catch (final Exception e) {
@@ -3027,10 +3046,10 @@ import java.util.concurrent.atomic.AtomicInteger;
                 continue;
             }
             // owner
-            if (!plot.owner.equals(dataPlot.owner)) {
+            if (!plot.getOwnerAbs().equals(dataPlot.getOwnerAbs())) {
                 PlotSquared
-                    .debug("&8 - &7Setting owner: " + plot + " -> " + MainUtil.getName(plot.owner));
-                setOwner(plot, plot.owner);
+                    .debug("&8 - &7Setting owner: " + plot + " -> " + MainUtil.getName(plot.getOwnerAbs()));
+                setOwner(plot, plot.getOwnerAbs());
             }
             // trusted
             if (!plot.getTrusted().equals(dataPlot.getTrusted())) {

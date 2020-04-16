@@ -75,6 +75,7 @@ shadowJar {
         include(dependency("net.kyori:text-serializer-plain:3.0.2"))
     }
     relocate('net.kyori.text', 'com.plotsquared.formatting.text')
+    relocate("org.json", "com.plotsquared.json")
 }
 
 shadowJar.doLast {
