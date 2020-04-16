@@ -100,7 +100,8 @@ public abstract class PlotArea {
     @Getter private boolean mobSpawning = false;
     @Getter private boolean mobSpawnerSpawning = false;
     @Getter private BiomeType plotBiome = BiomeTypes.FOREST;
-    @Getter private boolean plotChat = false;
+    @Getter private boolean plotChat = true;
+    @Getter private boolean forcingPlotChat = false;
     @Getter private boolean schematicClaimSpecify = false;
     @Getter private boolean schematicOnClaim = false;
     @Getter private String schematicFile = "null";
@@ -276,6 +277,7 @@ public abstract class PlotArea {
             }
         }
         this.plotChat = config.getBoolean("chat.enabled");
+        this.forcingPlotChat = config.getBoolean("chat.forced");
         this.worldBorder = config.getBoolean("world.border");
         this.maxBuildHeight = config.getInt("world.max_height");
         this.minBuildHeight = config.getInt("world.min_height");
@@ -389,6 +391,7 @@ public abstract class PlotArea {
         options.put("economy.prices.merge", 100);
         options.put("economy.prices.sell", 100);
         options.put("chat.enabled", this.isPlotChat());
+        options.put("chat.forced", this.isForcingPlotChat());
         options.put("flags.default", null);
         options.put("event.spawn.egg", this.isSpawnEggs());
         options.put("event.spawn.custom", this.isSpawnCustom());

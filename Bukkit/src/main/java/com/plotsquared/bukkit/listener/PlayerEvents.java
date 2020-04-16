@@ -935,11 +935,15 @@ public class PlayerEvents extends PlotListener implements Listener {
         PlotPlayer plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
         Location location = plotPlayer.getLocation();
         PlotArea area = location.getPlotArea();
-        if (area == null || !area.isPlotChat() || !plotPlayer.getAttribute("chat")) {
+        if (area == null) {
             return;
         }
         Plot plot = area.getPlot(location);
-        if (plot == null || !plot.getFlag(ChatFlag.class)) {
+        if (plot == null) {
+            return;
+        }
+        if (!((plot.getFlag(ChatFlag.class) && area.isPlotChat() && plotPlayer.getAttribute("chat"))
+            || area.isForcingPlotChat())) {
             return;
         }
         if (plot.isDenied(plotPlayer.getUUID())) {
