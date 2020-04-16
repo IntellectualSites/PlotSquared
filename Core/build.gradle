@@ -35,7 +35,7 @@ processResources {
 
 //noinspection GroovyAssignabilityCheck
 jar.archiveFileName = "PlotSquared-${project.parent.version}.jar"
-jar.destinationDirectory = file("../mvn/com/github/intellectualsites/plotsquared/PlotSquared/" + project.parent.version)
+jar.destinationDirectory = file("../mvn/com/plotsquared/PlotSquared/" + project.parent.version)
 task createPom {
     doLast {
         pom {
@@ -44,14 +44,14 @@ task createPom {
                 artifactId = "PlotSquared"
                 version = project.parent.version
             }
-        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/PlotSquared/${project.parent.version}/PlotSquared-${project.parent.version}.pom")
+        }.writeTo("../mvn/com/plotsquared/PlotSquared/${project.parent.version}/PlotSquared-${project.parent.version}.pom")
         pom {
             project {
                 groupId = rootProject.group
                 artifactId = "PlotSquared"
                 version = "latest"
             }
-        }.writeTo("../mvn/com/github/intellectualsites/plotsquared/PlotSquared/latest/PlotSquared-latest.pom")
+        }.writeTo("../mvn/com/plotsquared/PlotSquared/latest/PlotSquared-latest.pom")
          .writeTo("pom.xml")
     }
 }
@@ -59,8 +59,8 @@ task createPom {
 task copyFiles {
     doLast {
         copy {
-            from("../mvn/com/github/intellectualsites/plotsquared/PlotSquared/${project.parent.version}/")
-            into("../mvn/com/github/intellectualsites/plotsquared/PlotSquared/latest/")
+            from("../mvn/com/plotsquared/PlotSquared/${project.parent.version}/")
+            into("../mvn/com/plotsquared/PlotSquared/latest/")
             include("*.jar")
             rename("PlotSquared-${project.parent.version}.jar", "PlotSquared-latest.jar")
         }
@@ -74,8 +74,8 @@ shadowJar {
         include(dependency("net.kyori:text-serializer-legacy:3.0.2"))
         include(dependency("net.kyori:text-serializer-plain:3.0.2"))
     }
-    relocate("org.json", "com.github.intellectualsites.plotsquared.json")
-    relocate('net.kyori.text', 'com.github.intellectualsites.plotsquared.formatting.text')
+    relocate('net.kyori.text', 'com.plotsquared.formatting.text')
+    relocate("org.json", "com.plotsquared.json")
 }
 
 shadowJar.doLast {
