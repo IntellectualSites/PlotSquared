@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.config.Captions;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.comment.CommentInbox;

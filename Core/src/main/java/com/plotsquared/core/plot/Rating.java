@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot;
 
-import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.configuration.Settings;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -27,8 +27,8 @@ package com.plotsquared.core.util;
 
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.config.CaptionUtility;
-import com.plotsquared.core.config.Captions;
+import com.plotsquared.core.configuration.CaptionUtility;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.sk89q.worldedit.world.block.BlockState;

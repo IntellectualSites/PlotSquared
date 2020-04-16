@@ -26,7 +26,7 @@
 package com.plotsquared.core.generator;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;

@@ -27,9 +27,9 @@ package com.plotsquared.core.database;
 
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.config.Captions;
-import com.plotsquared.core.config.Settings;
-import com.plotsquared.core.config.Storage;
+import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.Storage;
 import com.plotsquared.core.plot.flag.FlagContainer;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;

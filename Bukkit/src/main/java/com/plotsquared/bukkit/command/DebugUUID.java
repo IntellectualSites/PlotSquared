@@ -35,7 +35,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.CommandCategory;
 import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.command.SubCommand;
-import com.plotsquared.core.config.Captions;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.plot.Plot;

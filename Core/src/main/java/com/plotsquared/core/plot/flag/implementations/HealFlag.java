@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.config.Captions;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.types.TimedFlag;
 import org.jetbrains.annotations.NotNull;

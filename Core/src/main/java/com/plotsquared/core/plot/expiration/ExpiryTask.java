@@ -26,7 +26,7 @@
 package com.plotsquared.core.plot.expiration;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotFilter;
@@ -36,7 +36,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ExpiryTask {

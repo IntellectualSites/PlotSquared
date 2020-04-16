@@ -25,8 +25,8 @@
  */
 package com.plotsquared.core.plot.flag.types;
 
-import com.plotsquared.core.config.Caption;
-import com.plotsquared.core.config.Captions;
+import com.plotsquared.core.configuration.Caption;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import org.jetbrains.annotations.NotNull;
 

@@ -27,8 +27,8 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.config.Captions;
-import com.plotsquared.core.config.Configuration;
+import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.generator.AugmentedUtils;
 import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.location.Location;
@@ -239,20 +239,20 @@ public class Area extends SubCommand {
                                     break;
                                 case "f":
                                 case "floor":
-                                    pa.TOP_BLOCK = Configuration.BLOCK_BUCKET.parseString(pair[1]);
+                                    pa.TOP_BLOCK = ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
                                     break;
                                 case "m":
                                 case "main":
-                                    pa.MAIN_BLOCK = Configuration.BLOCK_BUCKET.parseString(pair[1]);
+                                    pa.MAIN_BLOCK = ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
                                     break;
                                 case "w":
                                 case "wall":
                                     pa.WALL_FILLING =
-                                        Configuration.BLOCK_BUCKET.parseString(pair[1]);
+                                        ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
                                     break;
                                 case "b":
                                 case "border":
-                                    pa.WALL_BLOCK = Configuration.BLOCK_BUCKET.parseString(pair[1]);
+                                    pa.WALL_BLOCK = ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
                                     break;
                                 case "terrain":
                                     pa.setTerrain(PlotAreaTerrainType.fromString(pair[1]).orElseThrow(() -> new IllegalArgumentException(pair[1] + " is not a valid terrain.")));

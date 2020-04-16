@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.database;
 
-import com.plotsquared.core.config.Storage;
+import com.plotsquared.core.configuration.Storage;
 import com.plotsquared.core.util.StringMan;
 
 import java.sql.Connection;

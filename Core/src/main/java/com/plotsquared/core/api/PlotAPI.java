@@ -27,8 +27,8 @@ package com.plotsquared.core.api;
 
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.config.Caption;
-import com.plotsquared.core.config.Captions;
+import com.plotsquared.core.configuration.Caption;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;

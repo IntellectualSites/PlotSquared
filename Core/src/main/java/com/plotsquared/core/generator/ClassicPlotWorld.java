@@ -27,9 +27,9 @@ package com.plotsquared.core.generator;
 
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.config.Configuration;
-import com.plotsquared.core.config.ConfigurationNode;
-import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.configuration.ConfigurationNode;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.plot.PlotId;
 import com.sk89q.worldedit.world.block.BlockTypes;
@@ -72,29 +72,29 @@ import java.util.Locale;
     @NotNull @Override public ConfigurationNode[] getSettingNodes() {
         return new ConfigurationNode[] {
             new ConfigurationNode("plot.height", this.PLOT_HEIGHT, "Plot height",
-                Configuration.INTEGER),
+                ConfigurationUtil.INTEGER),
             new ConfigurationNode("plot.size", this.PLOT_WIDTH, "Plot width",
-                Configuration.INTEGER),
+                ConfigurationUtil.INTEGER),
             new ConfigurationNode("plot.filling", this.MAIN_BLOCK, "Plot block",
-                Configuration.BLOCK_BUCKET),
+                ConfigurationUtil.BLOCK_BUCKET),
             new ConfigurationNode("plot.floor", this.TOP_BLOCK, "Plot floor block",
-                Configuration.BLOCK_BUCKET),
+                ConfigurationUtil.BLOCK_BUCKET),
             new ConfigurationNode("wall.block", this.WALL_BLOCK, "Top wall block",
-                Configuration.BLOCK_BUCKET),
+                ConfigurationUtil.BLOCK_BUCKET),
             new ConfigurationNode("wall.block_claimed", this.CLAIMED_WALL_BLOCK,
-                "Wall block (claimed)", Configuration.BLOCK_BUCKET),
+                "Wall block (claimed)", ConfigurationUtil.BLOCK_BUCKET),
             new ConfigurationNode("road.width", this.ROAD_WIDTH, "Road width",
-                Configuration.INTEGER),
+                ConfigurationUtil.INTEGER),
             new ConfigurationNode("road.height", this.ROAD_HEIGHT, "Road height",
-                Configuration.INTEGER),
+                ConfigurationUtil.INTEGER),
             new ConfigurationNode("road.block", this.ROAD_BLOCK, "Road block",
-                Configuration.BLOCK_BUCKET),
+                ConfigurationUtil.BLOCK_BUCKET),
             new ConfigurationNode("wall.filling", this.WALL_FILLING, "Wall filling block",
-                Configuration.BLOCK_BUCKET),
+                ConfigurationUtil.BLOCK_BUCKET),
             new ConfigurationNode("wall.height", this.WALL_HEIGHT, "Wall height",
-                Configuration.INTEGER),
+                ConfigurationUtil.INTEGER),
             new ConfigurationNode("plot.bedrock", this.PLOT_BEDROCK, "Plot bedrock generation",
-                Configuration.BOOLEAN)};
+                ConfigurationUtil.BOOLEAN)};
     }
 
     /**

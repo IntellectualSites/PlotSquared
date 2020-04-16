@@ -23,25 +23,38 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.config;
+package com.plotsquared.core.configuration;
 
-import lombok.RequiredArgsConstructor;
+import com.plotsquared.core.util.StringMan;
 
-@RequiredArgsConstructor public final class StaticCaption implements Caption {
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-    private final String value;
-    private final boolean usePrefix;
+public class PlotSquaredChatFormatter implements ChatFormatter {
 
-    public StaticCaption(final String value) {
-        this(value, true);
-    }
-
-    @Override public String getTranslated() {
-        return this.value;
-    }
-
-    @Override public boolean usePrefix() {
-        return this.usePrefix;
+    @Override public void format(final ChatContext context) {
+        if (context.isRawOutput()) {
+            context.setMessage(context.getMessage().replace('&', '\u2020').replace('\u00A7', '\u2030'));
+        }
+        if (context.getArgs().length == 0) {
+            return;
+        }
+        final Map<String, String> map = new LinkedHashMap<>();
+        for (int i = context.getArgs().length - 1; i >= 0; i--) {
+            String arg = "" + context.getArgs()[i];
+            if (arg.isEmpty()) {
+                map.put("%s" + i, "");
+            } else {
+                if (!context.isRawOutput()) {
+                    arg = Captions.color(arg);
+                }
+                map.put("%s" + i, arg);
+            }
+            if (i == 0) {
+                map.put("%s", arg);
+            }
+        }
+        context.setMessage(StringMan.replaceFromMap(context.getMessage(), map));
     }
 
 }

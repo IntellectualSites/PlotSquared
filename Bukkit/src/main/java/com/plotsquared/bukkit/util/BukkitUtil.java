@@ -28,7 +28,7 @@ package com.plotsquared.bukkit.util;
 import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.config.Captions;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;

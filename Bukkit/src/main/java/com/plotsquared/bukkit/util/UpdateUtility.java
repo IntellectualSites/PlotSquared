@@ -26,8 +26,8 @@
 package com.plotsquared.bukkit.util;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.config.Captions;
-import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;

@@ -23,34 +23,41 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.config;
+package com.plotsquared.core.configuration;
 
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.StringMan;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-public interface Caption {
+public class Storage extends Config {
 
-    String getTranslated();
+    public static String PREFIX = "";
 
-    default String formatted() {
-        return StringMan.replaceFromMap(getTranslated(), Captions.replacements);
+    public static void save(File file) {
+        save(file, Storage.class);
     }
 
-    default boolean send(PlotPlayer caller, String... args) {
-        return send(caller, (Object[]) args);
+    public static void load(File file) {
+        load(file, Storage.class);
     }
 
-    default boolean send(PlotPlayer caller, Object... args) {
-        String msg = CaptionUtility.format(caller, this, args);
-        if (caller == null) {
-            PlotSquared.log(msg);
-        } else {
-            caller.sendMessage(msg);
-        }
-        return true;
+    @Comment("MySQL section") public static final class MySQL {
+        @Comment("Should MySQL be used?") public static boolean USE = false;
+        public static String HOST = "localhost";
+        public static String PORT = "3306";
+        public static String USER = "root";
+        public static String PASSWORD = "password";
+        public static String DATABASE = "plot_db";
+
+        @Comment("Set additional properties: https://goo.gl/wngtN8") public static List<String>
+            PROPERTIES = new ArrayList<>(Collections.singletonList("useSSL=false"));
     }
 
-    boolean usePrefix();
+
+    @Comment("SQLite section") public static final class SQLite {
+        @Comment("Should SQLite be used?") public static boolean USE = true;
+        @Comment("The file to use") public static String DB = "storage";
+    }
 
 }

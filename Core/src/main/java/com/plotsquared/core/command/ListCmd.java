@@ -27,8 +27,8 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.PlotSquared.SortType;
-import com.plotsquared.core.config.CaptionUtility;
-import com.plotsquared.core.config.Captions;
+import com.plotsquared.core.configuration.CaptionUtility;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
 import com.plotsquared.core.plot.Plot;

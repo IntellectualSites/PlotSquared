@@ -25,8 +25,8 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.config.Captions;
-import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.location.Location;

@@ -26,9 +26,9 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.config.Captions;
-import com.plotsquared.core.config.Configuration;
-import com.plotsquared.core.config.ConfigurationNode;
+import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
@@ -311,7 +311,7 @@ public class Setup extends SubCommand {
                 boolean valid = false;
                 try {
                     valid = step.isValid(args[0]);
-                } catch (final Configuration.UnsafeBlockException e) {
+                } catch (final ConfigurationUtil.UnsafeBlockException e) {
                     Captions.NOT_ALLOWED_BLOCK.send(player, e.getUnsafeBlock().toString());
                 }
                 if (valid) {

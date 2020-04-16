@@ -26,8 +26,8 @@
 package com.plotsquared.core.listener;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.config.Captions;
-import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.util.WEManager;
 import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.entity.BaseEntity;

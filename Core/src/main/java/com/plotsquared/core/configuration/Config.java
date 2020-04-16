@@ -23,12 +23,11 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.config;
+package com.plotsquared.core.configuration;
 
-import com.plotsquared.core.configuration.MemorySection;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.config.Settings.Enabled_Components;
+import com.plotsquared.core.configuration.Settings.Enabled_Components;
 import com.plotsquared.core.util.StringMan;
 
 import java.io.File;

@@ -23,41 +23,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.config;
+package com.plotsquared.core.configuration;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
-public class Storage extends Config {
+@RequiredArgsConstructor public final class StaticCaption implements Caption {
 
-    public static String PREFIX = "";
+    private final String value;
+    private final boolean usePrefix;
 
-    public static void save(File file) {
-        save(file, Storage.class);
+    public StaticCaption(final String value) {
+        this(value, true);
     }
 
-    public static void load(File file) {
-        load(file, Storage.class);
+    @Override public String getTranslated() {
+        return this.value;
     }
 
-    @Comment("MySQL section") public static final class MySQL {
-        @Comment("Should MySQL be used?") public static boolean USE = false;
-        public static String HOST = "localhost";
-        public static String PORT = "3306";
-        public static String USER = "root";
-        public static String PASSWORD = "password";
-        public static String DATABASE = "plot_db";
-
-        @Comment("Set additional properties: https://goo.gl/wngtN8") public static List<String>
-            PROPERTIES = new ArrayList<>(Collections.singletonList("useSSL=false"));
-    }
-
-
-    @Comment("SQLite section") public static final class SQLite {
-        @Comment("Should SQLite be used?") public static boolean USE = true;
-        @Comment("The file to use") public static String DB = "storage";
+    @Override public boolean usePrefix() {
+        return this.usePrefix;
     }
 
 }

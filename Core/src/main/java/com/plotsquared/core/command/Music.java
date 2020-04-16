@@ -26,7 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.config.Captions;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;

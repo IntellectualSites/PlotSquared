@@ -26,7 +26,7 @@
 package com.plotsquared.bukkit.placeholder;
 
 import com.plotsquared.bukkit.player.BukkitPlayer;
-import com.plotsquared.core.config.ChatFormatter;
+import com.plotsquared.core.configuration.ChatFormatter;
 import com.plotsquared.core.player.PlotPlayer;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;

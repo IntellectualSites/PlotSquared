@@ -25,8 +25,8 @@
  */
 package com.plotsquared.core.plot.flag;
 
-import com.plotsquared.core.config.Caption;
-import com.plotsquared.core.config.CaptionUtility;
+import com.plotsquared.core.configuration.Caption;
+import com.plotsquared.core.configuration.CaptionUtility;
 
 public class FlagParseException extends Exception {
 

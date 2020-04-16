@@ -26,7 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.config.Captions;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Location;

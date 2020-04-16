@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.generator;
 
-import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;

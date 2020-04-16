@@ -26,9 +26,9 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.config.CaptionUtility;
-import com.plotsquared.core.config.Captions;
-import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.configuration.CaptionUtility;
+import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlayerAutoPlotEvent;
 import com.plotsquared.core.events.PlotAutoMergeEvent;

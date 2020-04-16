@@ -27,8 +27,8 @@ package com.plotsquared.bukkit.util;
 
 import com.plotsquared.bukkit.chat.FancyMessage;
 import com.plotsquared.bukkit.player.BukkitPlayer;
-import com.plotsquared.core.config.Captions;
-import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.plot.message.PlotMessage;
 import com.plotsquared.core.player.PlotPlayer;

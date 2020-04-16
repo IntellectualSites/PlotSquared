@@ -27,7 +27,7 @@ package com.plotsquared.bukkit.listener;
 
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.core.config.Captions;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.implementations.ForcefieldFlag;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;

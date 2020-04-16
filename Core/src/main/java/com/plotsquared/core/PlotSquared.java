@@ -26,12 +26,12 @@
 package com.plotsquared.core;
 
 import com.plotsquared.core.command.WE_Anywhere;
-import com.plotsquared.core.config.Caption;
-import com.plotsquared.core.config.CaptionUtility;
-import com.plotsquared.core.config.Captions;
-import com.plotsquared.core.config.Configuration;
-import com.plotsquared.core.config.Settings;
-import com.plotsquared.core.config.Storage;
+import com.plotsquared.core.configuration.Caption;
+import com.plotsquared.core.configuration.CaptionUtility;
+import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.Storage;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.MemorySection;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
@@ -1449,41 +1449,41 @@ import java.util.zip.ZipInputStream;
                         case "s":
                         case "size":
                             this.worlds.set(base + "plot.size",
-                                Configuration.INTEGER.parseString(value).shortValue());
+                                ConfigurationUtil.INTEGER.parseString(value).shortValue());
                             break;
                         case "g":
                         case "gap":
                             this.worlds.set(base + "road.width",
-                                Configuration.INTEGER.parseString(value).shortValue());
+                                ConfigurationUtil.INTEGER.parseString(value).shortValue());
                             break;
                         case "h":
                         case "height":
                             this.worlds.set(base + "road.height",
-                                Configuration.INTEGER.parseString(value).shortValue());
+                                ConfigurationUtil.INTEGER.parseString(value).shortValue());
                             this.worlds.set(base + "plot.height",
-                                Configuration.INTEGER.parseString(value).shortValue());
+                                ConfigurationUtil.INTEGER.parseString(value).shortValue());
                             this.worlds.set(base + "wall.height",
-                                Configuration.INTEGER.parseString(value).shortValue());
+                                ConfigurationUtil.INTEGER.parseString(value).shortValue());
                             break;
                         case "f":
                         case "floor":
                             this.worlds.set(base + "plot.floor",
-                                Configuration.BLOCK_BUCKET.parseString(value).toString());
+                                ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString());
                             break;
                         case "m":
                         case "main":
                             this.worlds.set(base + "plot.filling",
-                                Configuration.BLOCK_BUCKET.parseString(value).toString());
+                                ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString());
                             break;
                         case "w":
                         case "wall":
                             this.worlds.set(base + "wall.filling",
-                                Configuration.BLOCK_BUCKET.parseString(value).toString());
+                                ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString());
                             break;
                         case "b":
                         case "border":
                             this.worlds.set(base + "wall.block",
-                                Configuration.BLOCK_BUCKET.parseString(value).toString());
+                                ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString());
                             break;
                         default:
                             PlotSquared.log("&cKey not found: &7" + element);

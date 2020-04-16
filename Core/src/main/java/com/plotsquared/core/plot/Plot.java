@@ -32,9 +32,9 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.PlotLoc;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.config.Captions;
-import com.plotsquared.core.config.Configuration;
-import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotComponentSetEvent;
 import com.plotsquared.core.events.PlotMergeEvent;
@@ -1867,7 +1867,7 @@ public class Plot {
      * (components are generator specific)
      */
     @Deprecated public boolean setComponent(String component, String blocks) {
-        BlockBucket parsed = Configuration.BLOCK_BUCKET.parseString(blocks);
+        BlockBucket parsed = ConfigurationUtil.BLOCK_BUCKET.parseString(blocks);
         if (parsed != null && parsed.isEmpty()) {
             return false;
         }

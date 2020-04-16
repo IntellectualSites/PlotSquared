@@ -28,7 +28,7 @@ package com.plotsquared.core.generator;
 import com.google.common.collect.Sets;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.Template;
-import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotAreaTerrainType;

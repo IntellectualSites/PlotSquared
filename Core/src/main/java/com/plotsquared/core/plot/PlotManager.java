@@ -27,7 +27,7 @@ package com.plotsquared.core.plot;
 
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.command.Template;
-import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.util.FileBytes;
 import com.sk89q.worldedit.function.pattern.Pattern;
 

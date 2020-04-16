@@ -26,7 +26,7 @@
 package com.plotsquared.bukkit.listener;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.ReflectionUtils.RefClass;

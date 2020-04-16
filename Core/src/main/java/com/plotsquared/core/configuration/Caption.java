@@ -23,38 +23,34 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.config;
+package com.plotsquared.core.configuration;
 
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.StringMan;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+public interface Caption {
 
-public class PlotSquaredChatFormatter implements ChatFormatter {
+    String getTranslated();
 
-    @Override public void format(final ChatContext context) {
-        if (context.isRawOutput()) {
-            context.setMessage(context.getMessage().replace('&', '\u2020').replace('\u00A7', '\u2030'));
-        }
-        if (context.getArgs().length == 0) {
-            return;
-        }
-        final Map<String, String> map = new LinkedHashMap<>();
-        for (int i = context.getArgs().length - 1; i >= 0; i--) {
-            String arg = "" + context.getArgs()[i];
-            if (arg.isEmpty()) {
-                map.put("%s" + i, "");
-            } else {
-                if (!context.isRawOutput()) {
-                    arg = Captions.color(arg);
-                }
-                map.put("%s" + i, arg);
-            }
-            if (i == 0) {
-                map.put("%s", arg);
-            }
-        }
-        context.setMessage(StringMan.replaceFromMap(context.getMessage(), map));
+    default String formatted() {
+        return StringMan.replaceFromMap(getTranslated(), Captions.replacements);
     }
+
+    default boolean send(PlotPlayer caller, String... args) {
+        return send(caller, (Object[]) args);
+    }
+
+    default boolean send(PlotPlayer caller, Object... args) {
+        String msg = CaptionUtility.format(caller, this, args);
+        if (caller == null) {
+            PlotSquared.log(msg);
+        } else {
+            caller.sendMessage(msg);
+        }
+        return true;
+    }
+
+    boolean usePrefix();
 
 }

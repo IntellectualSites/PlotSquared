@@ -26,8 +26,8 @@
 package com.plotsquared.bukkit.util.uuid;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.config.Captions;
-import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.database.SQLite;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.StringWrapper;

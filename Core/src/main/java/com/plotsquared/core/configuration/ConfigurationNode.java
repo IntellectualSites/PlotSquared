@@ -23,7 +23,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.config;
+package com.plotsquared.core.configuration;
 
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.util.StringMan;
@@ -41,11 +41,11 @@ public class ConfigurationNode {
     private final String constant;
     private final Object defaultValue;
     private final String description;
-    private final Configuration.SettingValue type;
+    private final ConfigurationUtil.SettingValue type;
     private Object value;
 
     public ConfigurationNode(String constant, Object defaultValue, String description,
-        Configuration.SettingValue type) {
+        ConfigurationUtil.SettingValue type) {
         this.constant = constant;
         this.defaultValue = defaultValue;
         this.description = description;
@@ -53,7 +53,7 @@ public class ConfigurationNode {
         this.type = type;
     }
 
-    public Configuration.SettingValue getType() {
+    public ConfigurationUtil.SettingValue getType() {
         return this.type;
     }
 
@@ -62,7 +62,7 @@ public class ConfigurationNode {
             Object result = this.type.parseString(string);
             return result != null;
         } catch (Exception e) {
-            if (e instanceof Configuration.UnknownBlockException) {
+            if (e instanceof ConfigurationUtil.UnknownBlockException) {
                 throw e;
             }
             return false;

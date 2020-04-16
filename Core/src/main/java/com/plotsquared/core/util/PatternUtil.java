@@ -26,7 +26,7 @@
 package com.plotsquared.core.util;
 
 import com.plotsquared.core.command.Command;
-import com.plotsquared.core.config.Captions;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
 import com.google.common.base.Preconditions;
 import com.sk89q.worldedit.WorldEdit;

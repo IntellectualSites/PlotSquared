@@ -23,34 +23,30 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.config;
+package com.plotsquared.core.configuration;
 
 import com.plotsquared.core.player.PlotPlayer;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-public class CaptionUtility {
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
-    public static String formatRaw(PlotPlayer recipient, String message, Object... args) {
-        final ChatFormatter.ChatContext chatContext = new ChatFormatter.ChatContext(recipient, message, args, true);
-        for (final ChatFormatter chatFormatter : ChatFormatter.formatters) {
-            chatFormatter.format(chatContext);
-        }
-        return chatContext.getMessage();
-    }
+@FunctionalInterface public interface ChatFormatter {
 
-    public static String format(PlotPlayer recipient, String message, Object... args) {
-        final ChatFormatter.ChatContext chatContext = new ChatFormatter.ChatContext(recipient, message, args, false);
-        for (final ChatFormatter chatFormatter : ChatFormatter.formatters) {
-            chatFormatter.format(chatContext);
-        }
-        return chatContext.getMessage();
-    }
+    Collection<ChatFormatter> formatters = new ArrayList<>(Collections.singletonList(new PlotSquaredChatFormatter()));
 
-    public static String format(PlotPlayer recipient, Caption caption, Object... args) {
-        if (caption.usePrefix() && caption.getTranslated().length() > 0) {
-            return Captions.PREFIX.getTranslated() + format(recipient, caption.getTranslated(), args);
-        } else {
-            return format(recipient, caption.getTranslated(), args);
-        }
+    void format(ChatContext context);
+
+    @AllArgsConstructor final class ChatContext {
+
+        @Getter private final PlotPlayer recipient;
+        @Getter @Setter private String message;
+        @Getter private final Object[] args;
+        @Getter private final boolean rawOutput;
+
     }
 
 }

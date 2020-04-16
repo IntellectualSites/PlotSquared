@@ -27,8 +27,8 @@ package com.plotsquared.core.plot.world;
 
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.config.Configuration;
-import com.plotsquared.core.config.ConfigurationNode;
+import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.generator.SingleWorldGenerator;
 import com.plotsquared.core.plot.flag.FlagContainer;
 import com.plotsquared.core.generator.GridPlotWorld;
@@ -151,7 +151,7 @@ public class SinglePlotArea extends GridPlotWorld {
 
     @Override public ConfigurationNode[] getSettingNodes() {
         return new ConfigurationNode[] {
-            new ConfigurationNode("void", this.VOID, "Void world", Configuration.BOOLEAN)};
+            new ConfigurationNode("void", this.VOID, "Void world", ConfigurationUtil.BOOLEAN)};
     }
 
     @Nullable @Override public Plot getOwnedPlot(@NotNull final Location location) {

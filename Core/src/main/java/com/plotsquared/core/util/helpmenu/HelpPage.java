@@ -26,7 +26,7 @@
 package com.plotsquared.core.util.helpmenu;
 
 import com.plotsquared.core.command.CommandCategory;
-import com.plotsquared.core.config.Captions;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;

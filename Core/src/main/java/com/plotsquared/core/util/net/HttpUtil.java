@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.util.net;
 
-import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.configuration.Settings;
 
 import java.io.BufferedReader;
 import java.io.IOException;

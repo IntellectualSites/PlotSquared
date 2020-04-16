@@ -29,7 +29,7 @@ import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.config.ConfigurationNode;
+import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaType;

@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot;
 
-import com.plotsquared.core.config.ConfigurationNode;
+import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.util.SetupUtils;
 
 public class SetupObject {

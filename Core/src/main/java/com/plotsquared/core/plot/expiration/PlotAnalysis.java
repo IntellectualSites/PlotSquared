@@ -26,7 +26,7 @@
 package com.plotsquared.core.plot.expiration;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.plot.Plot;

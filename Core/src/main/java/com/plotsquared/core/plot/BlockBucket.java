@@ -26,7 +26,7 @@
 package com.plotsquared.core.plot;
 
 import com.plotsquared.core.configuration.serialization.ConfigurationSerializable;
-import com.plotsquared.core.config.Configuration;
+import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.BlockUtil;
@@ -90,7 +90,7 @@ public final class BlockBucket implements ConfigurationSerializable {
         if (!map.containsKey("blocks")) {
             return null;
         }
-        return Configuration.BLOCK_BUCKET.parseString(map.get("blocks").toString());
+        return ConfigurationUtil.BLOCK_BUCKET.parseString(map.get("blocks").toString());
     }
 
     public void addBlock(@NonNull final BlockState block) {

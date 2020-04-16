@@ -26,8 +26,8 @@
 package com.plotsquared.core.util;
 
 import com.plotsquared.core.command.CommandCaller;
-import com.plotsquared.core.config.Captions;
-import com.plotsquared.core.config.Settings;
+import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
 
 import java.util.HashMap;
