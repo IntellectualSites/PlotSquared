@@ -121,7 +121,7 @@ import java.util.Locale;
             final Field[] fields = this.getClass().getFields();
             for (final Field field : fields) {
                 final String name = field.getName().toLowerCase(Locale.ENGLISH);
-                if (name.equalsIgnoreCase("g_sch")) {
+                if (name.contains("g_sch")) {
                     continue;
                 }
                 Object value;
