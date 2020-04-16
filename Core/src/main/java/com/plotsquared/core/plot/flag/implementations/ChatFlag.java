@@ -35,7 +35,7 @@ public class ChatFlag extends BooleanFlag<ChatFlag> {
     public static final ChatFlag CHAT_FLAG_FALSE = new ChatFlag(false);
 
     protected ChatFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_DENY_EXIT);
+        super(value, Captions.FLAG_DESCRIPTION_CHAT);
     }
 
     @Override protected ChatFlag flagOf(@NotNull Boolean value) {

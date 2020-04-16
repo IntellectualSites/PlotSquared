@@ -604,6 +604,7 @@ public enum Captions implements Caption {
         + " set to `default` to use the gamemode default, and `false` to disable flight entirely.", "Flags"),
     FLAG_DESCRIPTION_UNTRUSTED("Set to `false` to disallow untrusted players from visiting the plot.", "Flags"),
     FLAG_DESCRIPTION_DENY_EXIT("Set to `true` to disallow players from exiting the plot.", "Flags"),
+    FLAG_DESCRIPTION_CHAT("Set to `false` to prevent plot chat on the plot .", "Flags"),
     FLAG_DESCRIPTION_DESCRIPTION("Plot description. Supports '&' color codes.", "Flags"),
     FLAG_DESCRIPTION_GREETING("Message sent to players on plot entry. Supports '&' color codes.", "Flags"),
     FLAG_DESCRIPTION_FAREWELL("Message sent to players when leaving the plot. Supports '&' color codes.", "Flags"),
