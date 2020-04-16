@@ -40,6 +40,7 @@ import com.plotsquared.core.plot.flag.implementations.BlockBurnFlag;
 import com.plotsquared.core.plot.flag.implementations.BlockIgnitionFlag;
 import com.plotsquared.core.plot.flag.implementations.BlockedCmdsFlag;
 import com.plotsquared.core.plot.flag.implementations.BreakFlag;
+import com.plotsquared.core.plot.flag.implementations.ChatFlag;
 import com.plotsquared.core.plot.flag.implementations.CoralDryFlag;
 import com.plotsquared.core.plot.flag.implementations.DenyTeleportFlag;
 import com.plotsquared.core.plot.flag.implementations.DisablePhysicsFlag;
@@ -934,11 +935,11 @@ public class PlayerEvents extends PlotListener implements Listener {
         PlotPlayer plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
         Location location = plotPlayer.getLocation();
         PlotArea area = location.getPlotArea();
-        if (area == null || (area.isPlotChat() == plotPlayer.getAttribute("chat"))) {
+        if (area == null || !area.isPlotChat() || !plotPlayer.getAttribute("chat")) {
             return;
         }
         Plot plot = area.getPlot(location);
-        if (plot == null) {
+        if (plot == null || !plot.getFlag(ChatFlag.class)) {
             return;
         }
         if (plot.isDenied(plotPlayer.getUUID())) {

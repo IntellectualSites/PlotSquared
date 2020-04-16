@@ -33,6 +33,7 @@ import com.plotsquared.core.plot.flag.implementations.BlockBurnFlag;
 import com.plotsquared.core.plot.flag.implementations.BlockIgnitionFlag;
 import com.plotsquared.core.plot.flag.implementations.BlockedCmdsFlag;
 import com.plotsquared.core.plot.flag.implementations.BreakFlag;
+import com.plotsquared.core.plot.flag.implementations.ChatFlag;
 import com.plotsquared.core.plot.flag.implementations.CoralDryFlag;
 import com.plotsquared.core.plot.flag.implementations.DenyExitFlag;
 import com.plotsquared.core.plot.flag.implementations.DenyTeleportFlag;
@@ -171,6 +172,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(ItemDropFlag.ITEM_DROP_TRUE);
         this.addFlag(InstabreakFlag.INSTABREAK_FALSE);
         this.addFlag(InvincibleFlag.INVINCIBLE_FALSE);
+        this.addFlag(ChatFlag.CHAT_FLAG_TRUE);
 
         // Enum Flags
         this.addFlag(WeatherFlag.PLOT_WEATHER_FLAG_OFF);
