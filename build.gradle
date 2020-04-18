@@ -123,7 +123,9 @@ subprojects {
             include(dependency("net.kyori:text-api:3.0.2"))
         }
         relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")
-        relocate("org.json", "com.plotsquared.json")
+        relocate("org.json", "com.plotsquared.json") {
+            exclude "org/json/simple/**"
+        }
         // relocate('org.mcstats', 'com.plotsquared.stats')
         archiveFileName = "${parent.name}-${project.name}-${parent.version}.jar"
         destinationDirectory = file "../target"
