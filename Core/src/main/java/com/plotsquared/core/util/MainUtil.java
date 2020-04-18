@@ -81,6 +81,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
@@ -222,22 +223,12 @@ public class MainUtil {
                     writer.append(CRLF).flush();
                     writer.append("--" + boundary + "--").append(CRLF).flush();
                 }
-                try (Reader response = new InputStreamReader(con.getInputStream(),
-                    StandardCharsets.UTF_8)) {
-                    final char[] buffer = new char[256];
-                    final StringBuilder result = new StringBuilder();
-                    while (true) {
-                        final int r = response.read(buffer);
-                        if (r < 0) {
-                            break;
-                        }
-                        result.append(buffer, 0, r);
-                    }
-                    if (!result.toString().startsWith("Success")) {
-                        PlotSquared.debug(result);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                String content;
+                try (Scanner scanner = new Scanner(con.getInputStream()).useDelimiter("\\A")) {
+                    content = scanner.next().trim();
+                }
+                if (!content.startsWith("<")) {
+                    PlotSquared.debug(content);
                 }
                 int responseCode = ((HttpURLConnection) con).getResponseCode();
                 if (responseCode == 200) {
