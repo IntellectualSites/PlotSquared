@@ -673,19 +673,19 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return;
             }
 
-            if (!UpdateUtility.internalVersion.equals(UpdateUtility.spigotVersion)) {
-                new PlotMessage("-----------------------------------").send(pp);
-                new PlotMessage(
-                    Captions.PREFIX + "There appears to be a PlotSquared update available!")
-                    .color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates")
-                    .send(pp);
-                new PlotMessage(Captions.PREFIX + "The latest version is " + spigotVersion)
-                    .color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates")
-                    .send(pp);
-                new PlotMessage(Captions.PREFIX + "https://www.spigotmc.org/resources/1177/updates")
-                    .color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates")
-                    .send(pp);
-                new PlotMessage("-----------------------------------").send(pp);
+            try {
+                if (!UpdateUtility.internalVersion.equals(UpdateUtility.spigotVersion)) {
+                    new PlotMessage("-----------------------------------").send(pp);
+                    new PlotMessage(Captions.PREFIX + "There appears to be a PlotSquared update available!")
+                        .color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates").send(pp);
+                    new PlotMessage(Captions.PREFIX + "The latest version is " + spigotVersion).color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates")
+                        .send(pp);
+                    new PlotMessage(Captions.PREFIX + "https://www.spigotmc.org/resources/1177/updates")
+                        .color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates").send(pp);
+                    new PlotMessage("-----------------------------------").send(pp);
+                }
+            } catch (final Exception e) {
+                e.printStackTrace();
             }
         }
     }
