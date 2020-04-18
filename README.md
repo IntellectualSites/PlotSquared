@@ -18,7 +18,9 @@ is to provide a lag-free and smooth experience.
 
 
 <p align="center">
-    <img src="https://bstats.org/signatures/bukkit/PlotSquared.svg" />
+    <a href="https://bstats.org/plugin/bukkit/PlotSquared" title="PlotSquared on bStats">
+        <img src="https://bstats.org/signatures/bukkit/PlotSquared.svg" />
+    </a>
 </p>
 
 ## Links
