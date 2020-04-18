@@ -4,7 +4,7 @@ api-version: "1.13"
 version: "${version}"
 load: STARTUP
 description: "Easy, yet powerful Plot World generation and management."
-authors: [Citymonstret, Empire92, MattBDev, dordsor21, NotMyFault]
+authors: [Citymonstret, Empire92, MattBDev, dordsor21, NotMyFault, SirYwell]
 website: https://github.com/IntellectualSites/
 softdepend: [Vault, PlaceholderAPI]
 loadbefore: [MultiWorld, Multiverse-Core]

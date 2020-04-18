@@ -46,7 +46,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
 
 @CommandDeclaration(command = "caps",
     category = CommandCategory.INFO,
-    description = "Show plot mob caps",
+    description = "Show plot entity caps",
     usage = "/plot caps")
 public class Caps extends SubCommand {
 
@@ -80,5 +80,4 @@ public class Caps extends SubCommand {
             .replace("%current%", Integer.toString(current))
             .replace("%limit%", Integer.toString(max)).replace("%percentage%", percentage));
     }
-
 }

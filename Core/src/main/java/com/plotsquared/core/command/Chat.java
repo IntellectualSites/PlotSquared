@@ -25,18 +25,24 @@
  */
 package com.plotsquared.core.command;
 
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.util.MainUtil;
 
 @CommandDeclaration(command = "chat",
-    description = "Toggle plot chat on or off",
-    usage = "/plot chat [on|off]",
+    description = "Toggles plot chat on or off",
+    usage = "/plot chat",
     permission = "plots.chat",
     category = CommandCategory.CHAT,
     requiredType = RequiredType.PLAYER)
 public class Chat extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
-        MainCommand.getInstance().toggle.chat(this, player, new String[0], null, null);
+        if (player.getPlotAreaAbs().isForcingPlotChat()) {
+            MainUtil.sendMessage(player, Captions.PLOT_CHAT_FORCED);
+            return true;
+        }
+        MainCommand.getInstance().toggle.chat(this, player, args, null, null);
         return true;
     }
 }
