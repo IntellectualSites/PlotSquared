@@ -1752,7 +1752,7 @@ public class Plot {
         return this.create(this.owner, true);
     }
 
-    public boolean claim(final PlotPlayer player, boolean teleport, String schematic) {
+    public boolean claim(@NotNull final PlotPlayer player, boolean teleport, String schematic) {
         if (!canClaim(player)) {
             PlotSquared.debug(Captions.PREFIX.getTranslated() + String
                 .format("Player %s attempted to claim plot %s, but was not allowed",
@@ -1762,7 +1762,7 @@ public class Plot {
         return claim(player, teleport, schematic, true);
     }
 
-    public boolean claim(final PlotPlayer player, boolean teleport, String schematic,
+    public boolean claim(@NotNull final PlotPlayer player, boolean teleport, String schematic,
         boolean updateDB) {
 
         if (updateDB) {
@@ -2390,9 +2390,9 @@ public class Plot {
      * @param player the claiming player
      * @return
      */
-    public boolean canClaim(@Nullable PlotPlayer player) {
+    public boolean canClaim(@NotNull PlotPlayer player) {
         PlotCluster cluster = this.getCluster();
-        if (cluster != null && player != null) {
+        if (cluster != null) {
             if (!cluster.isAdded(player.getUUID()) && !Permissions
                 .hasPermission(player, "plots.admin.command.claim")) {
                 return false;
@@ -2400,9 +2400,7 @@ public class Plot {
         }
         final UUID owner = this.guessOwner();
         if (owner != null) {
-            if (player == null || !player.getUUID().equals(owner)) {
-                return false;
-            }
+            return false;
         }
         return !isMerged();
     }

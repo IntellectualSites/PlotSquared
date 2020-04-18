@@ -132,7 +132,7 @@ public class Claim extends SubCommand {
         final String finalSchematic = schematic;
         DBFunc.createPlotSafe(plot, () -> TaskManager.IMP.sync(new RunnableVal<Object>() {
             @Override public void run(Object value) {
-                if (!plot.claim(player, true, finalSchematic)) {
+                if (!plot.claim(player, true, finalSchematic, false)) {
                     PlotSquared.get().getLogger().log(Captions.PREFIX.getTranslated() +
                         String.format("Failed to claim plot %s", plot.getId().toCommaSeparatedString()));
                     sendMessage(player, Captions.PLOT_NOT_CLAIMED);
