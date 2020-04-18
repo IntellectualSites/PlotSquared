@@ -12,21 +12,12 @@ assignees: ''
 <!--- ##### DO NOT REMOVE THIS TEMPLATE!  YOUR ISSUE *WILL* FIT IN IT! ##### -->
 
 <!--- # NOTICE: 
-```diff
-! PlotSquared for Minecraft Java Edition versions between 1.7 through to 1.12.2 are considered
-! legacy, and will receive no support. Please consider upgrading to 1.13+ for
-! future support.  Plugins exist for 1.13+ which bring back behaviors found in 1.8.8
-! All versions of PlotSquared for Sponge and NukkitX will receive limited to no support
-! due to lack of developer interest and time. Additionally, NukkitX has not had feature
-! updates since the Better Together, which prevents some PlotSquared features from ever
-! functioning. Contributions are always welcome however!
-```
 
 **Feature requests & Suggestions are to be submitted at the [PlotSquared Suggestions tracker](https://github.com/IntellectualSites/PlotSquaredSuggestions)**
 
 **Code contributions are to be done through [PRs](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request), tagging the specific issue ticket(s) if applicable.**
 
-**[DISCORD INVITE LINK](https://discord.gg/KxkjDVg)** and please, for the love of the little sanity we have left, use the correct channels!
+**[DISCORD INVITE LINK](https://discord.gg/KxkjDVg)**
 -->
 
 # Bug Report Template:
@@ -42,18 +33,29 @@ assignees: ''
 **Select one**
 <!-- Select the type you are reporting the issue for (put an "X" between of brackets): -->
 - [] Spigot / Paper *(CraftBukkit should not be used, re-test with Spigot first!)*
-- [] Sponge *- NOTE: NOT ACTIVELY MAINTAINED*
-- [] NukkitX *- NOTE: NOT ACTIVELY MAINTAINED*
+- [] Sponge
+- [] NukkitX
+
+### PlotSquared version:
+<!-- Run /plot plugin in-game or in console & paste the full output here: -->
+```
+Paste the output here, between the tick marks, replacing this text
+```
 
 ### Minecraft Version:
 **Select one**
-<!-- Select the type you are reporting the issue for (put an "X" between of brackets): 
-The maintained versions are 1.14.4 and 1.15.x -->
+<!-- Select the type you are reporting the issue for (put an "X" between of brackets) -->
 - [] Minecraft 1.15.2
 - [] Minecraft 1.14.4
 - [] Minecraft 1.13.2
+- [] Minecraft 1.12.2
+- [] Minecraft 1.11.2
+- [] Minecraft 1.10.2
+- [] Minecraft 1.9.4
+- [] Minecraft 1.8.8
 - [] Minecraft Java Edition *other versions, please specify*:
 - [] Minecraft Bedrock Edition *specify version*:
+- [] Minecraft Sponge *specify version*:
 
 ### Server build info: 
 <!--- Run /version in-game or in console & paste the full output here: -->
