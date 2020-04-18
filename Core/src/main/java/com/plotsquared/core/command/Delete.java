@@ -44,7 +44,7 @@ import com.plotsquared.core.util.task.TaskManager;
     permission = "plots.delete",
     description = "Delete the plot you stand on",
     usage = "/plot delete",
-    aliases = {"dispose", "del", "unclaim"},
+    aliases = {"dispose", "del"},
     category = CommandCategory.CLAIMING,
     requiredType = RequiredType.NONE,
     confirmation = true)
