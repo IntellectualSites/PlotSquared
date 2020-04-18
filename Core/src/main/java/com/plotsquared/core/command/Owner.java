@@ -31,12 +31,12 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotChangeOwnerEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.uuid.UUIDHandler;
 
 import java.util.Set;
 import java.util.UUID;
@@ -58,7 +58,6 @@ public class Owner extends SetCommand {
         }
         Set<Plot> plots = plot.getConnectedPlots();
         UUID uuid = null;
-        String name;
         if (value.length() == 36) {
             try {
                 uuid = UUID.fromString(value);
@@ -67,13 +66,10 @@ public class Owner extends SetCommand {
         } else {
             uuid = UUIDHandler.getUUID(value, null);
         }
-        if (uuid == null) {
+        if (uuid == null && !value.equalsIgnoreCase("none") && !value.equalsIgnoreCase("null")
+            && !value.equalsIgnoreCase("-")) {
             Captions.INVALID_PLAYER.send(player, value);
             return false;
-        }
-        if (value.equalsIgnoreCase("none") || value.equalsIgnoreCase("null") || value
-            .equalsIgnoreCase("-")) {
-            uuid = null;
         }
         PlotChangeOwnerEvent event = PlotSquared.get().getEventDispatcher()
             .callOwnerChange(player, plot, plot.hasOwner() ? plot.getOwnerAbs() : null, uuid,
@@ -83,7 +79,6 @@ public class Owner extends SetCommand {
             return false;
         }
         uuid = event.getNewOwner();
-        name = uuid == null ? value : UUIDHandler.getName(uuid);
         boolean force = event.getEventResult() == Result.FORCE;
         if (uuid == null) {
             if (!force && !Permissions
@@ -126,7 +121,7 @@ public class Owner extends SetCommand {
                 return false;
             }
         }
-        final String finalName = name;
+        final String finalName = UUIDHandler.getName(uuid);
         final UUID finalUUID = uuid;
         final boolean removeDenied = plot.isDenied(finalUUID);
         Runnable run = () -> {
