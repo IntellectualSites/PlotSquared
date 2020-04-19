@@ -183,6 +183,7 @@ public enum Captions implements Caption {
     PERMISSION_ALIAS_SET_OBSOLETE("plots.set.alias", "static.permissions"), // Note this is for backwards compatibility
     PERMISSION_ALIAS_SET("plots.alias.set", "static.permissions"),
     PERMISSION_ALIAS_REMOVE("plots.alias.remove", "static.permissions"),
+    PERMISSION_ADMIN_CHAT_BYPASS("plots.admin.chat.bypass", "static.permissions"),
     //</editor-fold>
     //<editor-fold desc="Static Console">
     CONSOLE_JAVA_OUTDATED(
