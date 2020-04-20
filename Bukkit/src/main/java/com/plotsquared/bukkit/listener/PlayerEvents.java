@@ -660,7 +660,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             && Settings.Enabled_Components.UPDATE_NOTIFICATIONS) {
             try {
                 HttpsURLConnection connection = (HttpsURLConnection) new URL(
-                    "https://api.spigotmc.org/legacy/update.php?resource=1177").openConnection();
+                    "https://api.spigotmc.org/legacy/update.php?resource=77506").openConnection();
                 connection.setRequestMethod("GET");
                 spigotVersion =
                     (new BufferedReader(new InputStreamReader(connection.getInputStream())))
@@ -677,11 +677,11 @@ public class PlayerEvents extends PlotListener implements Listener {
                 if (!UpdateUtility.internalVersion.equals(UpdateUtility.spigotVersion)) {
                     new PlotMessage("-----------------------------------").send(pp);
                     new PlotMessage(Captions.PREFIX + "There appears to be a PlotSquared update available!")
-                        .color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates").send(pp);
-                    new PlotMessage(Captions.PREFIX + "The latest version is " + spigotVersion).color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates")
+                        .color("$1").tooltip("https://www.spigotmc.org/resources/77506/updates").send(pp);
+                    new PlotMessage(Captions.PREFIX + "The latest version is " + spigotVersion).color("$1").tooltip("https://www.spigotmc.org/resources/77506/updates")
                         .send(pp);
-                    new PlotMessage(Captions.PREFIX + "https://www.spigotmc.org/resources/1177/updates")
-                        .color("$1").tooltip("https://www.spigotmc.org/resources/1177/updates").send(pp);
+                    new PlotMessage(Captions.PREFIX + "https://www.spigotmc.org/resources/77506/updates")
+                        .color("$1").tooltip("https://www.spigotmc.org/resources/77506/updates").send(pp);
                     new PlotMessage("-----------------------------------").send(pp);
                 }
             } catch (final Exception e) {
