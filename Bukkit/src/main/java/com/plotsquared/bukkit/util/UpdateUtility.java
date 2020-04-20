@@ -56,7 +56,7 @@ public class UpdateUtility implements Listener {
                 Bukkit.getScheduler().runTaskAsynchronously(UpdateUtility.this.javaPlugin, () -> {
                     if (Settings.Enabled_Components.UPDATE_NOTIFICATIONS) {
                         try {
-                            HttpsURLConnection connection = (HttpsURLConnection) new URL("https://api.spigotmc.org/legacy/update.php?resource=1177").openConnection();
+                            HttpsURLConnection connection = (HttpsURLConnection) new URL("https://api.spigotmc.org/legacy/update.php?resource=77506").openConnection();
                             connection.setRequestMethod("GET");
                             spigotVersion = (new BufferedReader(new InputStreamReader(connection.getInputStream()))).readLine();
                         } catch (IOException e) {
@@ -69,7 +69,7 @@ public class UpdateUtility implements Listener {
                         if (!internalVersion.equals(spigotVersion)) {
                             PlotSquared.log(Captions.PREFIX + "&6There appears to be a PlotSquared update available!");
                             PlotSquared.log(Captions.PREFIX + "&6You are running version " + internalVersion + ", &6latest version is " + spigotVersion);
-                            PlotSquared.log(Captions.PREFIX + "&6https://www.spigotmc.org/resources/1177/updates");
+                            PlotSquared.log(Captions.PREFIX + "&6https://www.spigotmc.org/resources/77506/updates");
                         } else {
                             PlotSquared.log(Captions.PREFIX + "Congratulations! You are running the latest PlotSquared version.");
                         }
