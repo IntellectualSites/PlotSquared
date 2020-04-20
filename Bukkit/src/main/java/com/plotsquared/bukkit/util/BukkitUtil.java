@@ -517,17 +517,8 @@ public class BukkitUtil extends WorldUtil {
         for (int x = region.getMinimumPoint().getX(); x <= region.getMaximumPoint().getX(); x++) {
             for (int z = region.getMinimumPoint().getZ();
                  z <= region.getMaximumPoint().getZ(); z++) {
-                for (int y = 0; y < world.getMaxHeight(); y++) {
-                    try {
-                        if (biomeSetter != null) {
-                            biomeSetter.invoke(world, x, z, biome);
-                        } else {
-                            world.setBiome(x, y, z, biome);
-                        }
-                    } catch (final Exception e) {
-                        PlotSquared.log("An error occurred setting the biome:");
-                        e.printStackTrace();
-                    }
+                if (world.getBiome(x, 64, z) != biome) {
+                    world.setBiome(x, z, biome);
                 }
             }
         }
