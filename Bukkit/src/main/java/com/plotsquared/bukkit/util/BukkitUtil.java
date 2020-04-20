@@ -107,7 +107,7 @@ public class BukkitUtil extends WorldUtil {
     private static Method biomeSetter;
     static {
         try {
-            biomeSetter = World.class.getMethod("setBiome", Integer.class, Integer.class, Biome.class);
+            biomeSetter = World.class.getMethod("setBiome", int.class, int.class, Biome.class);
         } catch (final Exception ignored) {
         }
     }
