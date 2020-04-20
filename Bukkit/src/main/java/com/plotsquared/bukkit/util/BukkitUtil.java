@@ -30,16 +30,16 @@ import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal;
+import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.util.BlockUtil;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.StringComparison;
+import com.plotsquared.core.util.WorldUtil;
+import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.uuid.UUIDHandler;
-import com.plotsquared.core.util.WorldUtil;
-import com.plotsquared.core.util.BlockUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -91,7 +91,6 @@ import org.bukkit.entity.WaterMob;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -103,14 +102,6 @@ import java.util.function.IntConsumer;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class BukkitUtil extends WorldUtil {
-
-    private static Method biomeSetter;
-    static {
-        try {
-            biomeSetter = World.class.getMethod("setBiome", int.class, int.class, Biome.class);
-        } catch (final Exception ignored) {
-        }
-    }
 
     private static String lastString = null;
     private static World lastWorld = null;
@@ -517,7 +508,7 @@ public class BukkitUtil extends WorldUtil {
         for (int x = region.getMinimumPoint().getX(); x <= region.getMaximumPoint().getX(); x++) {
             for (int z = region.getMinimumPoint().getZ();
                  z <= region.getMaximumPoint().getZ(); z++) {
-                if (world.getBiome(x, 64, z) != biome) {
+                if (world.getBiome(x, z) != biome) {
                     world.setBiome(x, z, biome);
                 }
             }
