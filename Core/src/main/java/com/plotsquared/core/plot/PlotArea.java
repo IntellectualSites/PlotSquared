@@ -381,7 +381,7 @@ public abstract class PlotArea {
         options.put("mob_spawner_spawning", this.isMobSpawnerSpawning());
         options.put("plot.auto_merge", this.isAutoMerge());
         options.put("plot.create_signs", this.allowSigns());
-        options.put("plot.biome", "FOREST");
+        options.put("plot.biome", "minecraft:forest");
         options.put("schematic.on_claim", this.isSchematicOnClaim());
         options.put("schematic.file", this.getSchematicFile());
         options.put("schematic.specify_on_claim", this.isSchematicClaimSpecify());
