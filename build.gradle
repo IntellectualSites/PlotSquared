@@ -70,7 +70,7 @@ subprojects {
             exclude(module: "dummypermscompat")
         }
 
-        implementation("net.kyori:text-api:3.0.2")
+        implementation("net.kyori:text-api:3.0.4")
         implementation("net.kyori:text-serializer-gson:3.0.2")
         implementation("net.kyori:text-serializer-legacy:3.0.2")
         implementation("net.kyori:text-serializer-plain:3.0.2")
