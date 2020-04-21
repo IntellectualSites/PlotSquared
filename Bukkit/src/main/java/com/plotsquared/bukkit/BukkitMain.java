@@ -190,7 +190,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             return;
         }
 
-        new UpdateUtility(this).updateChecker();
+        if (Settings.Enabled_Components.UPDATE_NOTIFICATIONS) {
+            new UpdateUtility(this).updateChecker();
+        }
 
         if (PremiumVerification.isPremium()) {
             PlotSquared.log(Captions.PREFIX + "&6PlotSquared version licensed to Spigot user " + getUserID());

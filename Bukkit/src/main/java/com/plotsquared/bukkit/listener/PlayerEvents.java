@@ -26,6 +26,9 @@
 package com.plotsquared.bukkit.listener;
 
 import com.destroystokyo.paper.MaterialTags;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.UpdateUtility;
@@ -660,11 +663,13 @@ public class PlayerEvents extends PlotListener implements Listener {
             && Settings.Enabled_Components.UPDATE_NOTIFICATIONS) {
             try {
                 HttpsURLConnection connection = (HttpsURLConnection) new URL(
-                    "https://api.spigotmc.org/legacy/update.php?resource=77506").openConnection();
+                    "https://api.spigotmc.org/simple/0.1/index.php?action=getResource&id=77506")
+                    .openConnection();
                 connection.setRequestMethod("GET");
-                spigotVersion =
-                    (new BufferedReader(new InputStreamReader(connection.getInputStream())))
-                        .readLine();
+                JsonObject result = (new JsonParser())
+                    .parse(new JsonReader(new InputStreamReader(connection.getInputStream())))
+                    .getAsJsonObject();
+                spigotVersion = result.get("current_version").toString();
             } catch (IOException e) {
                 new PlotMessage(Captions.PREFIX
                     + "Unable to check for updates, check console for further information.")
@@ -674,14 +679,15 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
 
             try {
-                if (!UpdateUtility.internalVersion.equals(UpdateUtility.spigotVersion)) {
+                if (!UpdateUtility.internalVersion.equals(spigotVersion)) {
                     new PlotMessage("-----------------------------------").send(pp);
-                    new PlotMessage(Captions.PREFIX + "There appears to be a PlotSquared update available!")
-                        .color("$1").tooltip("https://www.spigotmc.org/resources/77506/updates").send(pp);
-                    new PlotMessage(Captions.PREFIX + "The latest version is " + spigotVersion).color("$1").tooltip("https://www.spigotmc.org/resources/77506/updates")
-                        .send(pp);
-                    new PlotMessage(Captions.PREFIX + "https://www.spigotmc.org/resources/77506/updates")
-                        .color("$1").tooltip("https://www.spigotmc.org/resources/77506/updates").send(pp);
+                    new PlotMessage(
+                        Captions.PREFIX + "There appears to be a PlotSquared update available!")
+                        .color("$1").send(pp);
+                    new PlotMessage(Captions.PREFIX + "The latest version is " + spigotVersion)
+                        .color("$1").send(pp);
+                    new PlotMessage(Captions.PREFIX + "Download at:").color("$1").send(pp);
+                    player.sendMessage("    https://www.spigotmc.org/resources/77506/updates");
                     new PlotMessage("-----------------------------------").send(pp);
                 }
             } catch (final Exception e) {
