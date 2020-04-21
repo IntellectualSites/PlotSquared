@@ -36,6 +36,13 @@ public class PremiumVerification {
     }
 
     /**
+     * @return Resource ID if downloaded through SpigotMC
+     */
+    public static String getResourceID() {
+        return "%%__RESOURCE__%%";
+    }
+
+    /**
      * @return Download ID if downloaded through SpigotMC
      */
     public static String getDownloadID() {
