@@ -1,3 +1,5 @@
+import org.ajoberstar.grgit.Grgit
+
 buildscript {
     repositories {
         mavenCentral()
@@ -22,6 +24,10 @@ plugins {
 }
 
 group = "com.plotsquared"
+
+ext {
+    git = Grgit.open(dir: new File(rootDir.toString() + "/.git"))
+}
 
 version = "5.10.0"
 
