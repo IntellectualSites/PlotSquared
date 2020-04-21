@@ -717,17 +717,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             }
             return map;
         }));
-        metrics.addCustomChart(new Metrics.SimpleBarChart("premium", () -> {
-            final Map<String, Integer> map = new HashMap<>();
-            if(PremiumVerification.isPremium()) {
-                map.put("Premium", 1);
-                map.put("Non-Premium", 0);
-            } else {
-                map.put("Premium", 0);
-                map.put("Non-Premium", 1);
-            }
-            return map;
-        }));
+        metrics.addCustomChart(new Metrics.SimplePie("premium",
+            () -> PremiumVerification.isPremium() ? "Premium" : "Non-Premium"));
     }
 
     @Override public ChunkManager initChunkManager() {
