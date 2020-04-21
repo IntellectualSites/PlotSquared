@@ -352,6 +352,7 @@ import java.util.zip.ZipInputStream;
             copyFile("it-IT.yml", Settings.Paths.TRANSLATIONS);
             copyFile("ko-KR.yml", Settings.Paths.TRANSLATIONS);
             copyFile("hu-HU.yml", Settings.Paths.TRANSLATIONS);
+            copyFile("pt-BR.yml", Settings.Paths.TRANSLATIONS);
             copyFile("fr-FR.yml", Settings.Paths.TRANSLATIONS);
             showDebug();
         } catch (Throwable e) {
