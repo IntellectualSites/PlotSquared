@@ -81,9 +81,9 @@ public class DebugPaste extends SubCommand {
                     "# Welcome to this paste\n# It is meant to provide us at IntellectualSites with better information about your "
                         + "problem\n\n");
                 b.append("# PlotSquared Information\n");
-                b.append("This PlotSquared version (").append(PremiumVerification.getResourceID()).append(") is licensed to the spigot user ")
-                    .append(PremiumVerification.getUserID()).append(" under ").append(
-                    PremiumVerification.getDownloadID()).append("\n");
+                b.append("Resource ID: ").append(PremiumVerification.getResourceID()).append("\n");
+                b.append("Download ID: ").append(PremiumVerification.getDownloadID()).append("\n");
+                b.append("This PlotSquared version is licensed to the spigot user ").append(PremiumVerification.getUserID()).append("\n\n");
                 b.append("# Server Information\n");
                 b.append("Server Version: ").append(PlotSquared.get().IMP.getServerImplementation())
                     .append("\n");

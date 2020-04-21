@@ -49,13 +49,9 @@ import com.plotsquared.bukkit.util.uuid.FileUUIDHandler;
 import com.plotsquared.bukkit.util.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.util.uuid.OfflineUUIDWrapper;
 import com.plotsquared.bukkit.util.uuid.SQLUUIDHandler;
-import com.plotsquared.core.configuration.ConfigurationSection;
+import com.plotsquared.core.configuration.*;
 import com.plotsquared.core.IPlotMain;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.configuration.ChatFormatter;
-import com.plotsquared.core.configuration.ConfigurationNode;
-import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.HybridGen;
 import com.plotsquared.core.generator.HybridUtils;
@@ -127,7 +123,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.plotsquared.core.util.PremiumVerification.getUserID;
+import static com.plotsquared.core.util.PremiumVerification.*;
 import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
 public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
@@ -196,6 +192,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
         if (PremiumVerification.isPremium()) {
             PlotSquared.log(Captions.PREFIX + "&6PlotSquared version licensed to Spigot user " + getUserID());
+            PlotSquared.log(Captions.PREFIX + "&6https://www.spigotmc.org/resources/" + getResourceID());
+            PlotSquared.log(Captions.PREFIX + "&6Download " + getDownloadID());
             PlotSquared.log(Captions.PREFIX + "&6Thanks for supporting us :)");
         } else {
             PlotSquared.log(Captions.PREFIX + "&6Couldn't verify purchase :(");
