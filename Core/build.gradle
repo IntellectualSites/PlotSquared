@@ -70,7 +70,7 @@ task copyFiles {
 shadowJar {
     dependencies {
         include(dependency("net.kyori:text-api:3.0.2"))
-        include(dependency("net.kyori:text-serializer-gson:3.0.2"))
+        include(dependency("net.kyori:text-serializer-gson:3.0.4"))
         include(dependency("net.kyori:text-serializer-legacy:3.0.2"))
         include(dependency("net.kyori:text-serializer-plain:3.0.2"))
     }
