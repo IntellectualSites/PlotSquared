@@ -190,7 +190,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             return;
         }
 
-        if (Settings.Enabled_Components.UPDATE_NOTIFICATIONS) {
+        if (PremiumVerification.isPremium() && Settings.Enabled_Components.UPDATE_NOTIFICATIONS) {
             new UpdateUtility(this).updateChecker();
         }
 
@@ -714,6 +714,17 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 final Map<String, Integer> terrainTypeMap = map.get(plotArea.getType().name().toLowerCase());
                 terrainTypeMap.put(plotArea.getTerrain().name().toLowerCase(),
                     terrainTypeMap.get(plotArea.getTerrain().name().toLowerCase()) + 1);
+            }
+            return map;
+        }));
+        metrics.addCustomChart(new Metrics.SimpleBarChart("premium", () -> {
+            final Map<String, Integer> map = new HashMap<>();
+            if(PremiumVerification.isPremium()) {
+                map.put("Premium", 1);
+                map.put("Non-Premium", 0);
+            } else {
+                map.put("Premium", 0);
+                map.put("Non-Premium", 1);
             }
             return map;
         }));

@@ -98,6 +98,7 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotInventory;
 import com.plotsquared.core.plot.message.PlotMessage;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.StringWrapper;
 import com.plotsquared.core.util.EntityUtil;
 import com.plotsquared.core.util.MainUtil;
@@ -660,7 +661,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         }, 20);
 
         if (pp.hasPermission(Captions.PERMISSION_ADMIN_UPDATE_NOTIFICATION.getTranslated())
-            && Settings.Enabled_Components.UPDATE_NOTIFICATIONS) {
+            && Settings.Enabled_Components.UPDATE_NOTIFICATIONS && PremiumVerification.isPremium()) {
             try {
                 HttpsURLConnection connection = (HttpsURLConnection) new URL(
                     "https://api.spigotmc.org/simple/0.1/index.php?action=getResource&id=77506")
