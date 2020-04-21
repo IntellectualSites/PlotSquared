@@ -204,7 +204,7 @@ public class Plot {
      * @param id   the plot id
      * @see Plot#getPlot(Location) for existing plots
      */
-    public Plot(PlotArea area, @NotNull PlotId id) {
+    public Plot(@NotNull PlotArea area, @NotNull PlotId id) {
         this(area, id, null, 0);
     }
 
