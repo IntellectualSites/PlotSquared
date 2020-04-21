@@ -248,10 +248,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         return this.notifyTasks;
     }
 
-    public synchronized void addPlotTask(Plot plot, UniqueStatement task) {
-        if (plot == null) {
-            plot = new Plot(null, new PlotId(Integer.MAX_VALUE, Integer.MAX_VALUE));
-        }
+    public synchronized void addPlotTask(@NotNull Plot plot, UniqueStatement task) {
         Queue<UniqueStatement> tasks = this.plotTasks.get(plot);
         if (tasks == null) {
             tasks = new ConcurrentLinkedQueue<>();
