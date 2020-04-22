@@ -262,7 +262,12 @@ public abstract class PlotArea {
         this.autoMerge = config.getBoolean("plot.auto_merge");
         this.maxPlotMembers = config.getInt("limits.max-members");
         this.allowSigns = config.getBoolean("plot.create_signs");
-        this.plotBiome = ConfigurationUtil.BIOME.parseString(config.getString("plot.biome"));
+        String biomeString = config.getString("plot.biome");
+        if (!biomeString.startsWith("minecraft:")) {
+            biomeString = "minecraft:" + biomeString;
+            config.set("plot.biome", biomeString.toLowerCase());
+        }
+        this.plotBiome = ConfigurationUtil.BIOME.parseString(biomeString.toLowerCase());
         this.schematicOnClaim = config.getBoolean("schematic.on_claim");
         this.schematicFile = config.getString("schematic.file");
         this.schematicClaimSpecify = config.getBoolean("schematic.specify_on_claim");
