@@ -43,7 +43,9 @@ public class UpdateUtility implements Listener {
 
     public static String internalVersion;
     public static String spigotVersion;
+    public static boolean hasUpdate;
     public final JavaPlugin javaPlugin;
+    private boolean notify = true;
 
     public UpdateUtility(final JavaPlugin javaPlugin) {
         this.javaPlugin = javaPlugin;
@@ -73,10 +75,12 @@ public class UpdateUtility implements Listener {
                     + ", &6latest version is " + spigotVersion);
                 PlotSquared
                     .log(Captions.PREFIX + "&6https://www.spigotmc.org/resources/77506/updates");
-            } else {
+                hasUpdate = true;
+            } else if (notify) {
+                notify = false;
                 PlotSquared.log(Captions.PREFIX
                     + "Congratulations! You are running the latest PlotSquared version.");
             }
-        }, 0L, 12000L);
+        }, 0L, 36000L);
     }
 }

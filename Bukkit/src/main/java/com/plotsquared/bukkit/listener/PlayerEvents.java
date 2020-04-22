@@ -661,39 +661,16 @@ public class PlayerEvents extends PlotListener implements Listener {
         }, 20);
 
         if (pp.hasPermission(Captions.PERMISSION_ADMIN_UPDATE_NOTIFICATION.getTranslated())
-            && Settings.Enabled_Components.UPDATE_NOTIFICATIONS && PremiumVerification.isPremium()) {
-            try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(
-                    "https://api.spigotmc.org/simple/0.1/index.php?action=getResource&id=77506")
-                    .openConnection();
-                connection.setRequestMethod("GET");
-                JsonObject result = (new JsonParser())
-                    .parse(new JsonReader(new InputStreamReader(connection.getInputStream())))
-                    .getAsJsonObject();
-                spigotVersion = result.get("current_version").getAsString();
-            } catch (IOException e) {
-                new PlotMessage(Captions.PREFIX
-                    + "Unable to check for updates, check console for further information.")
-                    .color("$13");
-                PlotSquared.log(Captions.PREFIX + "&cUnable to check for updates because: " + e);
-                return;
-            }
-
-            try {
-                if (!UpdateUtility.internalVersion.equals(spigotVersion)) {
-                    new PlotMessage("-----------------------------------").send(pp);
-                    new PlotMessage(
-                        Captions.PREFIX + "There appears to be a PlotSquared update available!")
-                        .color("$1").send(pp);
-                    new PlotMessage(Captions.PREFIX + "The latest version is " + spigotVersion)
-                        .color("$1").send(pp);
-                    new PlotMessage(Captions.PREFIX + "Download at:").color("$1").send(pp);
-                    player.sendMessage("    https://www.spigotmc.org/resources/77506/updates");
-                    new PlotMessage("-----------------------------------").send(pp);
-                }
-            } catch (final Exception e) {
-                e.printStackTrace();
-            }
+            && Settings.Enabled_Components.UPDATE_NOTIFICATIONS && PremiumVerification.isPremium()
+            && UpdateUtility.hasUpdate) {
+            new PlotMessage("-----------------------------------").send(pp);
+            new PlotMessage(Captions.PREFIX + "There appears to be a PlotSquared update available!")
+                .color("$1").send(pp);
+            new PlotMessage(Captions.PREFIX + "The latest version is " + spigotVersion).color("$1")
+                .send(pp);
+            new PlotMessage(Captions.PREFIX + "Download at:").color("$1").send(pp);
+            player.sendMessage("    https://www.spigotmc.org/resources/77506/updates");
+            new PlotMessage("-----------------------------------").send(pp);
         }
     }
 
