@@ -670,7 +670,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 JsonObject result = (new JsonParser())
                     .parse(new JsonReader(new InputStreamReader(connection.getInputStream())))
                     .getAsJsonObject();
-                spigotVersion = result.get("current_version").toString();
+                spigotVersion = result.get("current_version").getAsString();
             } catch (IOException e) {
                 new PlotMessage(Captions.PREFIX
                     + "Unable to check for updates, check console for further information.")

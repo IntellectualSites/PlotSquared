@@ -60,7 +60,7 @@ public class UpdateUtility implements Listener {
                 JsonObject result = (new JsonParser())
                     .parse(new JsonReader(new InputStreamReader(connection.getInputStream())))
                     .getAsJsonObject();
-                spigotVersion = result.get("current_version").toString();
+                spigotVersion = result.get("current_version").getAsString();
             } catch (IOException e) {
                 PlotSquared.log(Captions.PREFIX + "&cUnable to check for updates because: " + e);
                 return;
