@@ -105,13 +105,14 @@ public class Placeholders extends PlaceholderExpansion {
                 if (uid == null) {
                     return "";
                 }
-                final String name = UUIDHandler.getName(uid);
+                String name = UUIDHandler.getName(uid);
 
-                return (name != null) ?
-                    name :
-                    ((Bukkit.getOfflinePlayer(uid).getName() != null) ?
-                        Bukkit.getOfflinePlayer(uid).getName() :
-                        "unknown");
+                if (name != null) {
+                    return name;
+                }
+
+                name = Bukkit.getOfflinePlayer(uid).getName();
+                return name != null ? name : "unknown";
             }
             case "currentplot_world": {
                 return p.getWorld().getName();
