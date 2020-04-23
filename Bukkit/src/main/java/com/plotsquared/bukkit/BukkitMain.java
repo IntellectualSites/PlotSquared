@@ -200,7 +200,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new Placeholders(this).register();
+            new Placeholders().register();
             if (Settings.Enabled_Components.EXTERNAL_PLACEHOLDERS) {
                 ChatFormatter.formatters.add(new PlaceholderFormatter());
             }
