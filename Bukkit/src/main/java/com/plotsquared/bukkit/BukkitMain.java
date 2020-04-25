@@ -204,9 +204,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             if (Settings.Enabled_Components.EXTERNAL_PLACEHOLDERS) {
                 ChatFormatter.formatters.add(new PlaceholderFormatter());
             }
-            PlotSquared.log(Captions.PREFIX + "&6PlaceholderAPI found! Hook activated.");
+            PlotSquared.log(Captions.PREFIX + "&6PlotSquared hooked into PlaceholderAPI");
         } else {
-            PlotSquared.log(Captions.PREFIX + "&6PlaceholderAPI is not in use. Hook deactivated.");
+            PlotSquared.debug(Captions.PREFIX + "&6PlaceholderAPI is not in use. Hook deactivated.");
         }
 
         this.startMetrics();
