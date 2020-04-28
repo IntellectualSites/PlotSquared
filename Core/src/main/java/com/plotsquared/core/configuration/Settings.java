@@ -263,7 +263,7 @@ public class Settings extends Config {
         @Comment({"The web interface for schematics", " - All schematics are anonymous and private",
             " - Downloads can be deleted by the user",
             " - Supports plot uploads, downloads and saves",}) public static String URL =
-            "https://athion.net/plots/";
+            "https://schem.intellectualsites.com/plots/";
         @Comment({"The web interface for assets", " - All schematics are organized and public",
             " - Assets can be searched, selected and downloaded",}) public static String ASSETS =
             "https://empcraft.com/assetpack/";
