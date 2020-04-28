@@ -128,7 +128,7 @@ public class DebugExec extends SubCommand {
         //create nashorn engine
         this.engine = scriptEngineManager.getEngineByName("nashorn");
         try {
-            engine.eval("print('PlotSquared Scripting Test');");
+            engine.eval("print('PlotSquared scripting engine started');");
         } catch (ScriptException e) {
             e.printStackTrace();
         }
