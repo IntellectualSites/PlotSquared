@@ -1345,7 +1345,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             case BRAIN_CORAL_BLOCK:
             case BUBBLE_CORAL_BLOCK:
             case FIRE_CORAL_BLOCK:
-            case DEAD_HORN_CORAL_BLOCK:
+            case HORN_CORAL_BLOCK:
             case TUBE_CORAL:
             case BRAIN_CORAL:
             case BUBBLE_CORAL:
