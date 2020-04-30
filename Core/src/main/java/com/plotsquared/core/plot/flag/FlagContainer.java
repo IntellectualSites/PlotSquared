@@ -25,7 +25,9 @@
  */
 package com.plotsquared.core.plot.flag;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.plotsquared.core.PlotSquared;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
@@ -128,17 +130,26 @@ public class FlagContainer {
      * @see #addAll(Collection) to add multiple flags
      */
     public <V, T extends PlotFlag<V, ?>> void addFlag(final T flag) {
-        final PlotFlag<?, ?> oldInstance = this.flagMap.put(flag.getClass(), flag);
-        final PlotFlagUpdateType plotFlagUpdateType;
-        if (oldInstance != null) {
-            plotFlagUpdateType = PlotFlagUpdateType.FLAG_UPDATED;
-        } else {
-            plotFlagUpdateType = PlotFlagUpdateType.FLAG_ADDED;
+        try {
+            Preconditions.checkState(flag.getName().length() <= 64,
+                "flag name may not be more than 64 characters. Check: " + flag.getName());
+            final PlotFlag<?, ?> oldInstance = this.flagMap.put(flag.getClass(), flag);
+            final PlotFlagUpdateType plotFlagUpdateType;
+            if (oldInstance != null) {
+                plotFlagUpdateType = PlotFlagUpdateType.FLAG_UPDATED;
+            } else {
+                plotFlagUpdateType = PlotFlagUpdateType.FLAG_ADDED;
+            }
+            if (this.plotFlagUpdateHandler != null) {
+                this.plotFlagUpdateHandler.handle(flag, plotFlagUpdateType);
+            }
+            this.updateSubscribers
+                .forEach(subscriber -> subscriber.handle(flag, plotFlagUpdateType));
+        } catch (IllegalStateException e) {
+            PlotSquared.log(
+                "yo look at this dumb fuck trying to add this thicc flag lol, nah mate, ain't having none of that");
+            e.printStackTrace();
         }
-        if (this.plotFlagUpdateHandler != null) {
-            this.plotFlagUpdateHandler.handle(flag, plotFlagUpdateType);
-        }
-        this.updateSubscribers.forEach(subscriber -> subscriber.handle(flag, plotFlagUpdateType));
     }
 
     /**
